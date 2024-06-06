@@ -6,8 +6,8 @@ redirect_from: reference/mesheryctl/model/list/
 type: reference
 display-title: "false"
 language: en
-command: exp
-subcommand: model
+command: model
+subcommand: list
 ---
 
 # mesheryctl model list
@@ -53,7 +53,7 @@ mesheryctl model list --page 2
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -c, --count      (optional) Get the number of models in total
+      --count      (optional) Get the number of models in total
   -h, --help       help for list
   -p, --page int   (optional) List next set of models with --page (default = 1) (default 1)
 
@@ -64,7 +64,7 @@ mesheryctl model list --page 2
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "~/.meshery/config.yaml")
   -v, --verbose         verbose output
 
 </div>

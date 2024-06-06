@@ -6,8 +6,8 @@ redirect_from: reference/mesheryctl/model/search/
 type: reference
 display-title: "false"
 language: en
-command: exp
-subcommand: model
+command: model
+subcommand: search
 ---
 
 # mesheryctl model search
@@ -47,7 +47,7 @@ mesheryctl model search [query-text]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "~/.meshery/config.yaml")
   -v, --verbose         verbose output
 
 </div>
