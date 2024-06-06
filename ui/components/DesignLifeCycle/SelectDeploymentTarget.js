@@ -55,7 +55,7 @@ const K8sContextConnection = ({ connection, environment }) => {
     selectIsK8sConnectionSelected(state, environment.id, connection.id),
   );
   const dispatch = useDispatchRtk();
-  const toggleConnection = () => dispatch(toggleK8sConnection(environment.id, connection.id));
+  const toggleConnection = () => dispatch(toggleK8sConnection(environment, connection.id));
   return (
     <K8sContextConnectionChip
       ctx={connection}

@@ -21,6 +21,7 @@ export const FinalizeDeployment = ({ design }) => {
   const { configurableComponents } = processDesign(design);
   const selectedEnvironments = useSelectorRtk(selectSelectedEnvs);
   const envNames = Object.values(selectedEnvironments).map((env) => env.name);
+  console.log('selectedEnvironments', selectedEnvironments, envNames);
   const theme = useTheme();
   const palette = theme.palette;
   return (
