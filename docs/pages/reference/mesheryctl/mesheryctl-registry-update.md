@@ -16,7 +16,7 @@ Update the registry with latest data.
 
 ## Synopsis
 
-`Updates the component metadata (SVGs, shapes, styles and other) by referring from a Google Spreadsheet.`
+Updates the component metadata (SVGs, shapes, styles and other) by referring from a Google Spreadsheet.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl registry update [flags]
