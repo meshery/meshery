@@ -1,35 +1,43 @@
 ---
 layout: default
-title: mesheryctl-exp-model-view
-permalink: reference/mesheryctl/exp/model/view
-redirect_from: reference/mesheryctl/exp/model/view/
+title: mesheryctl-model
+permalink: reference/mesheryctl/model
+redirect_from: reference/mesheryctl/model/
 type: reference
 display-title: "false"
 language: en
-command: exp
-subcommand: model
+command: model
+subcommand: nil
 ---
 
-# mesheryctl exp model view
+# mesheryctl model
 
-view model
+View list of models and detail of models
 
 ## Synopsis
 
-view a model queried by its name
+View list of models and detailed information of a specific model
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp model view [flags]
+mesheryctl model [flags]
 
 </div>
 </pre> 
 
 ## Examples
 
-View current provider
+To view list of components
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp model view [model-name]
+mesheryctl model list
+
+</div>
+</pre> 
+
+To view a specific model
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl model view [model-name]
 
 </div>
 </pre> 
@@ -38,8 +46,7 @@ mesheryctl exp model view [model-name]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -h, --help                   help for view
-  -o, --output-format string   (optional) format to display in [json|yaml] (default "yaml")
+  -h, --help   help for model
 
 </div>
 </pre>
@@ -48,7 +55,7 @@ mesheryctl exp model view [model-name]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "~/.meshery/config.yaml")
   -v, --verbose         verbose output
 
 </div>

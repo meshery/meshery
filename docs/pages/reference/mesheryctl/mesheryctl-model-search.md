@@ -1,43 +1,35 @@
 ---
 layout: default
-title: mesheryctl-exp-model
-permalink: reference/mesheryctl/exp/model
-redirect_from: reference/mesheryctl/exp/model/
+title: mesheryctl-model-search
+permalink: reference/mesheryctl/model/search
+redirect_from: reference/mesheryctl/model/search/
 type: reference
 display-title: "false"
 language: en
-command: exp
-subcommand: model
+command: model
+subcommand: search
 ---
 
-# mesheryctl exp model
+# mesheryctl model search
 
-View list of models and detail of models
+search models
 
 ## Synopsis
 
-View list of models and detailed information of a specific model
+search a models by search string
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp model [flags]
+mesheryctl model search [flags]
 
 </div>
 </pre> 
 
 ## Examples
 
-To view list of components
+View current provider
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp model list
-
-</div>
-</pre> 
-
-To view a specific model
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-mesheryctl exp model view [model-name]
+mesheryctl model search [query-text]
 
 </div>
 </pre> 
@@ -46,7 +38,7 @@ mesheryctl exp model view [model-name]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -h, --help   help for model
+  -h, --help   help for search
 
 </div>
 </pre>
@@ -55,7 +47,7 @@ mesheryctl exp model view [model-name]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "~/.meshery/config.yaml")
   -v, --verbose         verbose output
 
 </div>
