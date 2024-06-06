@@ -169,17 +169,6 @@ func (h *Handler) PatternFileHandler(
 	ec := json.NewEncoder(rw)
 	_ = ec.Encode(response)
 }
-func mergeMsgs(msgs []string) string {
-	var finalMsgs []string
-
-	for _, msg := range msgs {
-		if msg != "" {
-			finalMsgs = append(finalMsgs, msg)
-		}
-	}
-
-	return strings.Join(finalMsgs, "\n")
-}
 
 func _processPattern(
 	ctx context.Context,
@@ -277,17 +266,14 @@ func _processPattern(
 			Add(func(data *stages.Data, err error, next stages.ChainStageNextFunction) {
 				data.Lock.Lock()
 				for k, v := range data.Other {
+					var key string
 					if strings.HasSuffix(k, stages.ProvisionSuffixKey) {
-						msg, ok := v.(string)
-						if ok {
-							sap.accumulatedMsgs = append(sap.accumulatedMsgs, msg)
-						}
+						key, _ = strings.CutSuffix(k, stages.ProvisionSuffixKey)
 					}
 					if k == stages.DryRunResponseKey {
-						if v != nil {
-							resp["dryRunResponse"] = v
-						}
+						key, _ = strings.CutSuffix(k, stages.DryRunResponseKey)
 					}
+					resp[key] = v
 				}
 				data.Lock.Unlock()
 				sap.err = err
@@ -296,7 +282,6 @@ func _processPattern(
 				Pattern: &pattern,
 				Other:   map[string]interface{}{},
 			})
-		resp["messages"] = mergeMsgs(sap.accumulatedMsgs)
 		return resp, sap.err
 	}
 	return internal(k8scontexts)
@@ -493,16 +478,16 @@ func getComponentFieldPathFromK8sFieldPath(path string) (newpath string) {
 	return fmt.Sprintf("%s.%s", "settings", path)
 }
 
-func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) (string, error) { // Marshal the component
+func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) ([]patterns.DeploymentMessagePerContext, error) { // Marshal the component
 	jsonComp, err := json.Marshal(ccp.Component)
 	if err != nil {
-		return "", fmt.Errorf("failed to serialize the data: %s", err)
+		return nil, fmt.Errorf("failed to serialize the data: %s", err)
 	}
 
 	// Marshal the configuration
 	jsonConfig, err := json.Marshal(ccp.Configuration)
 	if err != nil {
-		return "", fmt.Errorf("failed to serialize the data: %s", err)
+		return nil, fmt.Errorf("failed to serialize the data: %s", err)
 	}
 
 	for host := range ccp.Hosts {
@@ -544,7 +529,7 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) (string, 
 			addr,
 		)
 		if err != nil {
-			return "", fmt.Errorf("error creating a mesh client: %v", err)
+			return nil, fmt.Errorf("error creating a mesh client: %v", err)
 		}
 		defer func() {
 			_ = mClient.Close()
@@ -576,11 +561,26 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) (string, 
 			OamConfig:   string(jsonConfig),
 			KubeConfigs: kconfigs,
 		})
-
-		return resp.GetMessage(), err
+		sucess := err == nil
+		return []patterns.DeploymentMessagePerContext{
+			{
+				ServerName: host.Hostname,
+				Location:   fmt.Sprintf("%s:%s", host.Hostname, strconv.Itoa(host.Port)),
+				Summary: []patterns.DeploymentMessagePerComp{
+					{
+						Kind:       ccp.Component.Kind,
+						CompName:   ccp.Component.Name,
+						DesignName: sap.patternName,
+						Success:    sucess,
+						Message:    resp.GetMessage(),
+					},
+				},
+			},
+		}, err
 	}
 
-	return "", nil
+	// send error for no hosts found for the component
+	return nil, nil
 }
 
 func (sap *serviceActionProvider) Persist(name string, svc core.Service, isUpdate bool) error {
