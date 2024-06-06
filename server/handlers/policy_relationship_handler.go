@@ -6,7 +6,6 @@ import (
 	"io"
 	"net/http"
 	"strconv"
-	"strings"
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
@@ -143,12 +142,14 @@ func (h *Handler) verifyEvaluationQueries(evaluationQueries []string) (verifiedE
 		for _, relationship := range relationships {
 			if relationship.EvaluationQuery != "" {
 				verifiedEvaluationQueries = append(verifiedEvaluationQueries, relationship.EvaluationQuery)
+			} else {
+				verifiedEvaluationQueries = append(verifiedEvaluationQueries, relationship.GetDefaultEvaluationQuery())
 			}
 		}
 	} else {
 		for _, regoQuery := range evaluationQueries {
 			for _, relationship := range relationships {
-				if strings.TrimSuffix(regoQuery, suffix) == fmt.Sprintf("%s_%s", strings.ToLower(relationship.Kind), strings.ToLower(relationship.SubType)) {
+				if (relationship.EvaluationQuery != "" && regoQuery == relationship.EvaluationQuery) || regoQuery == relationship.GetDefaultEvaluationQuery() {
 					verifiedEvaluationQueries = append(verifiedEvaluationQueries, relationship.EvaluationQuery)
 					break
 				}
