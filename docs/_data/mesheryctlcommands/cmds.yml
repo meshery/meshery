@@ -853,7 +853,29 @@ model:
       example: mesheryctl model --help
   subcommands:
     list:
-      name: list          
+      name: list
+      description: List models present in the registry
+      usage: mesheryctl model list [flags]
+      flags:
+        count:
+          name: --count
+          description: (optional) Get the number of models in total
+        page:
+          name: --page, -p
+          description: list models by specific page number (25 models per page)
+    search:
+      name: search
+      description: Using a keyword(s) search the registry for matching model(s)
+      usage: mesheryctl model search [keyword]
+    view:
+      name: view
+      description: View details of a specific model
+      usage: mesheryctl model view [model-name]
+      flags:
+        output-format:
+          name: -o, --output-format
+          description: (optional) format to display in [json|yaml] (default "yaml")
+
 exp:
   name: exp
   description: Experimental features
