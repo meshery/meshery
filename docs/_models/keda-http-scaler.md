@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/keda-http-scaler
 description: 
 integrations-category: Serverless
 integrations-subcategory: Installable Platform
-registrant: GitHub
+registrant: Artifact Hub
 components: 
 - name: http-scaled-object
   colorIcon: assets/img/integrations/keda-http-scaler/components/http-scaled-object/icons/color/http-scaled-object-color.svg

@@ -46,6 +46,10 @@ components:
   colorIcon: assets/img/integrations/aws-eks-controller/components/access-entry/icons/color/access-entry-color.svg
   whiteIcon: assets/img/integrations/aws-eks-controller/components/access-entry/icons/white/access-entry-white.svg
   description: 
+- name: identity-provider-config
+  colorIcon: assets/img/integrations/aws-eks-controller/components/identity-provider-config/icons/color/identity-provider-config-color.svg
+  whiteIcon: assets/img/integrations/aws-eks-controller/components/identity-provider-config/icons/white/identity-provider-config-white.svg
+  description: 
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",
