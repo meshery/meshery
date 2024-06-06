@@ -23,15 +23,16 @@ export const globalEnvironmentContextSlice = createSlice({
     },
 
     selectK8sConnection: (state, action) => {
-      const { envId, connectionId } = action.payload;
-      const isEnvSelected = selectIsEnvSelected({ globalEnvironmentContext: state }, envId);
+      const { env, connectionId } = action.payload;
+      const isEnvSelected = selectIsEnvSelected({ globalEnvironmentContext: state }, env.id);
       if (!isEnvSelected) {
-        state.selectedEnvs[envId] = {
+        state.selectedEnvs[env.id] = {
+          ...env,
           selectedK8sConnections: [connectionId],
         };
         return;
       }
-      state.selectedEnvs[envId].selectedK8sConnections.push(connectionId);
+      state.selectedEnvs[env.id].selectedK8sConnections.push(connectionId);
     },
 
     unselectK8sConnection: (state, action) => {
@@ -46,12 +47,13 @@ export const globalEnvironmentContextSlice = createSlice({
 export const { selectEnv, unselectEnv, selectK8sConnection, unselectK8sConnection } =
   globalEnvironmentContextSlice.actions;
 
-export const toggleK8sConnection = (envId, connectionId) => (dispatch, getState) => {
+export const toggleK8sConnection = (env, connectionId) => (dispatch, getState) => {
+  const envId = env.id;
   const isSelected = selectIsK8sConnectionSelected(getState(), envId, connectionId);
   if (isSelected) {
     dispatch(unselectK8sConnection({ envId, connectionId }));
   } else {
-    dispatch(selectK8sConnection({ envId, connectionId }));
+    dispatch(selectK8sConnection({ env, connectionId }));
   }
 };
 

@@ -40,7 +40,6 @@ const subscriptionActor = fromCallback(({ sendBack }) => {
       console.error('Invalid event received', result);
       return;
     }
-    console.log('Event received from server:', validatedEvent);
     sendBack(events.eventReceivedFromServer(validatedEvent));
   });
 
@@ -80,7 +79,6 @@ export const operationsCenterActor = createMachine(
         store.dispatch(mesheryApi.util.invalidateTags([PROVIDER_TAGS.EVENT]));
       },
       notifyUI: ({ context, event }) => {
-        console.log('Notifying UI:', event.data.event);
         const validatedEvent = event.data.event;
         context.notify({
           message: validatedEvent.description,

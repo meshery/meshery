@@ -37,8 +37,8 @@ import { SEVERITY_STYLE } from '../NotificationCenter/constants';
 import { Stack } from '@layer5/sistent';
 import { capitalize } from 'lodash';
 import { ErrorMetadataFormatter } from '../NotificationCenter/metadata';
-import _ from 'lodash';
 import FinishFlagIcon from '@/assets/icons/FinishFlagIcon';
+import { alpha } from '@mui/material';
 
 export const ValidateContent = {
   btnText: 'Next',
@@ -58,12 +58,54 @@ const StepContent = styled('div', {
   backgroundColor: backgroundColor || theme.palette.background.constant.white,
 }));
 
+// const sampleErrorEvent = {
+//   id: 'f2c33cbd-8213-4d12-93e9-a267189f7551',
+//   userID: 'ad6f28ae-dd45-4ebb-bf1e-97351fb00fa6',
+//   actedUpon: '92ccd93c-747a-49e9-b8c0-bbfd59b58059',
+//   operationID: 'efc0deac-802f-4779-8448-c969d77da4fc',
+//   systemID: '3a2848fa-8a4f-494c-9391-48e368eebe44',
+//   status: 'unread',
+//   severity: 'error',
+//   action: 'deploy',
+//   category: 'pattern',
+//   description: "deploy error for design 'nginx'",
+//   metadata: {
+//     error: {
+//       Code: 'meshery-server-1073',
+//       Severity: 2,
+//       ShortDescription: [
+//         'unable to Create Comp Config.',
+//         'an empty namespace may not be set during creation',
+//       ],
+//       LongDescription: ['an empty namespace may not be set during creation'],
+//       ProbableCause: [],
+//       SuggestedRemediation: [],
+//     },
+//   },
+//   createdAt: '2024-06-05T17:50:45.897572829+05:30',
+//   updatedAt: '2024-06-05T17:50:45.89759321+05:30',
+//   deletedAt: null,
+//   user_id: 'ad6f28ae-dd45-4ebb-bf1e-97351fb00fa6',
+//   system_id: '3a2848fa-8a4f-494c-9391-48e368eebe44',
+//   updated_at: '2024-06-05T17:50:45.89759321+05:30',
+//   created_at: '2024-06-05T17:50:45.897572829+05:30',
+//   deleted_at: null,
+//   operation_id: 'efc0deac-802f-4779-8448-c969d77da4fc',
+// };
+const StyledDetailBox = styled(Box)(({ theme, severityColor, bgOpacity }) => ({
+  padding: theme.spacing(2),
+  backgroundColor: alpha(severityColor, bgOpacity),
+  borderLeft: `4px solid ${severityColor}`,
+  borderBottom: `1px solid ${theme.palette.divider}`,
+  display: 'flex',
+}));
+
 export const FinishDeploymentStep = ({ perform_deployment, deployment_type }) => {
   const { operationsCenterActorRef } = useContext(NotificationCenterContext);
   const theme = useTheme();
 
   const [isDeploying, setIsDeploying] = useState(false);
-  const [deployEvent, setDeployEvent] = useState({});
+  const [deployEvent, setDeployEvent] = useState();
   const [deployError, setDeployError] = useState(null);
 
   useEffect(() => {
@@ -81,7 +123,7 @@ export const FinishDeploymentStep = ({ perform_deployment, deployment_type }) =>
       OPERATION_CENTER_EVENTS.EVENT_RECEIVED_FROM_SERVER,
       (event) => {
         const serverEvent = event.data.event;
-        console.log('serverEvent', serverEvent);
+        // console.log('serverEvent', serverEvent);
         if (serverEvent.action === deployment_type) {
           setIsDeploying(false);
           setDeployEvent(serverEvent);
@@ -107,30 +149,37 @@ export const FinishDeploymentStep = ({ perform_deployment, deployment_type }) =>
   }
 
   const eventStyle = SEVERITY_STYLE[deployEvent.severity] || {};
-  const details =
-    deployEvent.metadata?.summary?.messages ||
-    deployEvent?.metadata?.error ||
-    deployEvent?.metadata;
-  const hasDetails = !_.isEmpty(details);
-  console.log('deployEvent', eventStyle, deployEvent);
+
+  const errors = deployEvent.metadata?.error;
+  // const message = deployEvent.metadata?.summary?.message;
+  // const hasDetails = !_.isEmpty(details);
+  // console.log('deployEvent', eventStyle, deployEvent);
 
   return (
     <Stack spacing={2}>
       <Typography variant="textB2SemiBold" color={theme.palette.text.secondary}>
         {`${deployment_type}ment Summary`}
       </Typography>
-      <TextWithLinks
-        text={deployEvent?.description || ''}
-        style={{ whiteSpace: 'pre-wrap', color: eventStyle.color }}
-      />
-      {hasDetails && (
-        <Box p={1} borderRadius={'0.5rem'} border={`2px solid ${eventStyle.color} `}>
-          {deployEvent?.severity !== 'error' && <FormatStructuredData data={details} />}
-          {deployEvent?.severity === 'error' && (
-            <ErrorMetadataFormatter metadata={deployEvent.metadata.error} event={deployEvent} />
-          )}
-        </Box>
-      )}
+
+      <Box borderRadius={'0.5rem'} border={`2px solid ${eventStyle.color}`}>
+        <StyledDetailBox severityColor={eventStyle.color} bgOpacity={0.1}>
+          <TextWithLinks
+            text={deployEvent?.description || ''}
+            style={{ whiteSpace: 'pre-wrap', color: theme.palette.text.default }}
+          />
+        </StyledDetailBox>
+        {errors && (
+          <StyledDetailBox severityColor={eventStyle.color} bgOpacity={0}>
+            <ErrorMetadataFormatter metadata={errors} event={deployEvent} />
+          </StyledDetailBox>
+        )}
+        <StyledDetailBox severityColor={eventStyle.color} bgOpacity={0}>
+          <FormatStructuredData data={deployEvent.metadata} />
+        </StyledDetailBox>
+        {/* {hasDetails && (
+
+        {/* )} */}
+      </Box>
     </Stack>
   );
 };
