@@ -12,11 +12,11 @@ subcommand: nil
 
 # mesheryctl registry
 
-Meshery Registry Management
+Model Database
 
 ## Synopsis
 
-Manage the state and contents of Meshery's internal registry of capabilities.
+Manage the state and contents of Meshery’s internal registry of capabilities.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl registry [flags]
@@ -28,7 +28,7 @@ mesheryctl registry [flags]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-	mesheryctl registry [subcommand]
+mesheryctl registry [subcommand]
 
 </div>
 </pre> 
@@ -46,7 +46,7 @@ mesheryctl registry [flags]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "~/.meshery/config.yaml")
+      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
   -v, --verbose         verbose output
 
 </div>
