@@ -25,7 +25,7 @@ type DeploymentMessagePerComp struct {
 
 type DeploymentMessagePerContext struct {
 	Summary    []DeploymentMessagePerComp
-	ServerName string
+	SystemName string
 	Location   string
 }
 
@@ -114,7 +114,7 @@ func ProcessOAM(kconfigs []string, oamComps []string, oamConfig string, isDel bo
 			msgsMx.Lock()
 			msgs = append(msgs, DeploymentMessagePerContext{
 				Summary:    msgsPerComp,
-				ServerName: kcli.RestConfig.ServerName,
+				SystemName: kcli.RestConfig.ServerName,
 				Location:   kcli.RestConfig.Host,
 			})
 			msgsMx.Unlock()
