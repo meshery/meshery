@@ -6,6 +6,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"path"
 	"io"
 	"net/http"
 	"net/url"
@@ -475,8 +476,10 @@ func (h *Handler) handlePatternPOST(
 				return
 			}
 
+			fileName := strings.TrimSuffix(path.Base(parsedBody.URL), filepath.Ext(path.Base(parsedBody.URL)))
+
 			result := string(resp)
-			pattern, err := pCore.NewPatternFileFromK8sManifest(result, "", false, h.registryManager)
+			pattern, err := pCore.NewPatternFileFromK8sManifest(result, fileName, false, h.registryManager)
 			if err != nil {
 				h.log.Error(ErrConvertingHelmChartToDesign(err))
 				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
@@ -896,7 +899,7 @@ func genericHTTPDesignFile(fileURL, sourceType string, reg *meshmodel.RegistryMa
 			return nil, ErrRemoteApplication(err)
 		}
 	}
-
+	
 	pattern, err := pCore.NewPatternFileFromK8sManifest(k8sres, "", false, reg)
 	if err != nil {
 		return nil, err //This error is already a meshkit error
