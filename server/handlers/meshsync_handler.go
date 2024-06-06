@@ -45,26 +45,10 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 
 	var resources []model.KubernetesResource
 	var totalCount int64
-	limitstr := r.URL.Query().Get("pagesize")
-	var limit int
-	if limitstr != "all" {
-		limit, _ = strconv.Atoi(limitstr)
-		if limit <= 0 {
-			limit = defaultPageSize
-		}
-	}
 
-	pagestr := r.URL.Query().Get("page")
-	page, _ := strconv.Atoi(pagestr)
+	page, offset, limit,
+		search, order, sortOnCol, _ := getPaginationParams(r)
 
-	if page < 0 {
-		page = 0
-	}
-
-	offset := page * limit
-	order := r.URL.Query().Get("order")
-	sort := r.URL.Query().Get("sort")
-	search := r.URL.Query().Get("search")
 	apiVersion := r.URL.Query().Get("apiVersion")
 	spec, _ := strconv.ParseBool(r.URL.Query().Get("spec"))
 	status, _ := strconv.ParseBool(r.URL.Query().Get("status"))
@@ -134,7 +118,7 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 
 	order = models.SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
 	if order != "" {
-		if sort == "desc" {
+		if sortOnCol == "desc" {
 			result = result.Order(clause.OrderByColumn{Column: clause.Column{Name: order}, Desc: true})
 		} else {
 			result = result.Order(order)
@@ -149,6 +133,7 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 	}
 
 	var pgSize int
+	limitstr := r.URL.Query().Get("pagesize")
 	if limitstr == "all" {
 		pgSize = len(resources)
 	} else {

@@ -3,7 +3,6 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
-	"strconv"
 
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/server/models"
@@ -40,19 +39,12 @@ func (h *Handler) GetMeshmodelRelationshipByName(rw http.ResponseWriter, r *http
 	typ := mux.Vars(r)["model"]
 	name := mux.Vars(r)["name"]
 	var greedy bool
-	if r.URL.Query().Get("search") == "true" {
+
+	page, _, limit,
+		search, order, sort, _ := getPaginationParams(r)
+	if search == "true" {
 		greedy = true
 	}
-	limitstr := r.URL.Query().Get("pagesize")
-	var limit int
-	if limitstr != "all" {
-		limit, _ = strconv.Atoi(limitstr)
-		if limit == 0 { //If limit is unspecified then it defaults to 25
-			limit = DefaultPageSizeForMeshModelComponents
-		}
-	}
-	pagestr := r.URL.Query().Get("page")
-	page, _ := strconv.Atoi(pagestr)
 	if page <= 0 {
 		page = 1
 	}
@@ -64,11 +56,12 @@ func (h *Handler) GetMeshmodelRelationshipByName(rw http.ResponseWriter, r *http
 		Greedy:    greedy,
 		Limit:     limit,
 		Offset:    offset,
-		OrderOn:   r.URL.Query().Get("order"),
-		Sort:      r.URL.Query().Get("sort"),
+		OrderOn:   order,
+		Sort:      sort,
 	})
 
 	var pgSize int64
+	limitstr := r.URL.Query().Get("pagesize")
 	if limitstr == "all" {
 		pgSize = count
 	} else {
@@ -128,16 +121,8 @@ func (h *Handler) GetAllMeshmodelRelationships(rw http.ResponseWriter, r *http.R
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
 	typ := mux.Vars(r)["model"]
-	limitstr := r.URL.Query().Get("pagesize")
-	var limit int
-	if limitstr != "all" {
-		limit, _ = strconv.Atoi(limitstr)
-		if limit == 0 { //If limit is unspecified then it defaults to 25
-			limit = DefaultPageSizeForMeshModelComponents
-		}
-	}
-	pagestr := r.URL.Query().Get("page")
-	page, _ := strconv.Atoi(pagestr)
+	page, _, limit,
+		_, order, sort, _ := getPaginationParams(r)
 	if page <= 0 {
 		page = 1
 	}
@@ -147,11 +132,12 @@ func (h *Handler) GetAllMeshmodelRelationships(rw http.ResponseWriter, r *http.R
 		ModelName: typ,
 		Limit:     limit,
 		Offset:    offset,
-		OrderOn:   r.URL.Query().Get("order"),
-		Sort:      r.URL.Query().Get("sort"),
+		OrderOn:   order,
+		Sort:      sort,
 	})
 
 	var pgSize int64
+	limitstr := r.URL.Query().Get("pagesize")
 	if limitstr == "all" {
 		pgSize = count
 	} else {
