@@ -564,7 +564,7 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) ([]patter
 		sucess := err == nil
 		return []patterns.DeploymentMessagePerContext{
 			{
-				ServerName: host.Hostname,
+				SystemName: host.Hostname,
 				Location:   fmt.Sprintf("%s:%s", host.Hostname, strconv.Itoa(host.Port)),
 				Summary: []patterns.DeploymentMessagePerComp{
 					{
