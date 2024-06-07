@@ -61,7 +61,7 @@ Meshery gives users control over installing dependencies through a simple checkb
 
 <h3>Frequently Asked Questions</h3>
 
-**Q: How does Meshery determine where to get the chart for provisioning components?**
+**Q: How does Meshery determine where to get the required dependency for provisioning components?**
 
 **A:** Meshery determines the source based on the metadata of models and components. This metadata includes the actual location of the components, whether it's a Helm chart, Kubernetes manifests, or any other format. Depending on the type of source (Helm chart or Kubernetes manifest), Meshery deploys the components accordingly.
 
