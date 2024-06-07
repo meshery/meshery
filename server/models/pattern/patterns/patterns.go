@@ -18,7 +18,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-func ProcessOAM(kconfigs []string, oamComps []string, oamConfig string, isDel bool, patternName string, ec *models.Broadcast, userID string, provider models.Provider, hostname v1beta1.IHost, skipCrdAndOperator bool) (string, error) {
+func ProcessOAM(kconfigs []string, oamComps []string, oamConfig string, isDel bool, patternName string, ec *models.Broadcast, userID string, provider models.Provider, hostname v1beta1.IHost, skipCrdAndOperator, upgradeExistingRelease bool) (string, error) {
 	var comps []v1beta1.Component
 	var config v1alpha1.Configuration
 	mesheryInstanceID, _ := viper.Get("INSTANCE_ID").(*uuid.UUID)
@@ -109,7 +109,7 @@ func ProcessOAM(kconfigs []string, oamComps []string, oamConfig string, isDel bo
 					}
 					fmt.Println("host: ", hostname, " comp: ", comp.Name, "type: ", comp.Spec.Type, comp)
 					// Deploys resources that are required inside cluster for successful deployment of the design.
-					result, err := hostname.HandleDependents(comp, kcli, !isDel)
+					result, err := hostname.HandleDependents(comp, kcli, !isDel, upgradeExistingRelease)
 					// If dependencies were not resolved fail forward, there can be case that dependency already exist in the cluster.
 
 					eventMetadata := map[string]interface{}{
