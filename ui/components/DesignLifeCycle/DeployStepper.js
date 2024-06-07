@@ -56,7 +56,7 @@ const StepContent = styled('div', {
   backgroundColor: backgroundColor || theme.palette.background.default,
 }));
 
-export const FinishDeploymentStep = ({ perform_deployment, deployment_type }) => {
+export const FinishDeploymentStep = ({ perform_deployment, deployment_type, autoOpenView }) => {
   const { operationsCenterActorRef } = useContext(NotificationCenterContext);
 
   const [isDeploying, setIsDeploying] = useState(false);
@@ -81,6 +81,9 @@ export const FinishDeploymentStep = ({ perform_deployment, deployment_type }) =>
         if (serverEvent.action === deployment_type) {
           setIsDeploying(false);
           setDeployEvent(serverEvent);
+          if (autoOpenView) {
+            window.open(serverEvent.metadata.viewUrl, '_blank');
+          }
         }
       },
     );
@@ -178,6 +181,7 @@ export const UpdateDeploymentStepper = ({
 }) => {
   const [includeDependencies, setIncludeDependencies] = useState(false);
   const [bypassDryRun, setBypassDryRun] = useState(false);
+  const [openInVisualizer, setOpenInVisualizer] = useState(false);
 
   const selectedEnvironments = useSelectorRtk(selectSelectedEnvs);
   const selectedEnvCount = Object.keys(selectedEnvironments).length;
@@ -250,7 +254,12 @@ export const UpdateDeploymentStepper = ({
       {
         component: (
           <StepContent backgroundColor={FinalizeBackgroundColor}>
-            <FinalizeDeployment design={design} deployment_type={deployment_type} />
+            <FinalizeDeployment
+              design={design}
+              deployment_type={deployment_type}
+              openInVisualizer={openInVisualizer}
+              setOpenInVisualizer={setOpenInVisualizer}
+            />
           </StepContent>
         ),
         helpText:
@@ -265,6 +274,7 @@ export const UpdateDeploymentStepper = ({
               design={design}
               deployment_type={deployment_type}
               perform_deployment={actionFunction}
+              autoOpenView={openInVisualizer}
             />{' '}
           </StepContent>
         ),
