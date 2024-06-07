@@ -4,17 +4,17 @@ export const globalEnvironmentContextSlice = createSlice({
   initialState: {
     selectedEnvs: {
       // envId : {
-      //   // selectedK8sConnections : [connectionId]
+      //   // selectedConnections : [connection]
       // }
     },
   },
 
   reducers: {
     selectEnv: (state, action) => {
-      const { environment, k8sConnectionsIds = [] } = action.payload;
+      const { environment, selectedConnections = [] } = action.payload;
       state.selectedEnvs[environment.id] = {
         ...environment,
-        selectedK8sConnections: k8sConnectionsIds,
+        selectedConnections,
       };
     },
     unselectEnv: (state, action) => {
@@ -22,62 +22,62 @@ export const globalEnvironmentContextSlice = createSlice({
       delete state.selectedEnvs[envId];
     },
 
-    selectK8sConnection: (state, action) => {
-      const { env, connectionId } = action.payload;
+    selectConnection: (state, action) => {
+      const { env, connection } = action.payload;
       const isEnvSelected = selectIsEnvSelected({ globalEnvironmentContext: state }, env.id);
       if (!isEnvSelected) {
         state.selectedEnvs[env.id] = {
           ...env,
-          selectedK8sConnections: [connectionId],
+          selectedConnections: [connection],
         };
         return;
       }
-      state.selectedEnvs[env.id].selectedK8sConnections.push(connectionId);
+      state.selectedEnvs[env.id].selectedConnections.push(connection);
     },
 
-    unselectK8sConnection: (state, action) => {
+    unselectConnection: (state, action) => {
       const { envId, connectionId } = action.payload;
-      state.selectedEnvs[envId].selectedK8sConnections = state.selectedEnvs[
+      state.selectedEnvs[envId].selectedConnections = state.selectedEnvs[
         envId
-      ].selectedK8sConnections.filter((id) => id !== connectionId);
+      ].selectedConnections.filter((connection) => connection.id !== connectionId);
     },
   },
 });
 
-export const { selectEnv, unselectEnv, selectK8sConnection, unselectK8sConnection } =
+export const { selectEnv, unselectEnv, selectConnection, unselectConnection } =
   globalEnvironmentContextSlice.actions;
 
-export const toggleK8sConnection = (env, connectionId) => (dispatch, getState) => {
+export const toggleConnection = (env, connection) => (dispatch, getState) => {
   const envId = env.id;
-  const isSelected = selectIsK8sConnectionSelected(getState(), envId, connectionId);
+  const connectionId = connection.id;
+  const isSelected = selectIsConnectionSelected(getState(), envId, connection.id);
   if (isSelected) {
-    dispatch(unselectK8sConnection({ envId, connectionId }));
+    dispatch(unselectConnection({ envId, connectionId }));
   } else {
-    dispatch(selectK8sConnection({ env, connectionId }));
+    dispatch(selectConnection({ env, connection }));
   }
 };
 
-export const toggleEnvSelection =
-  (environment, selectedK8sConnectionsIds) => (dispatch, getState) => {
-    const isSelected = selectIsEnvSelected(getState(), environment.id);
-    if (isSelected) {
-      dispatch(unselectEnv({ envId: environment.id }));
-      return;
-    }
-    dispatch(selectEnv({ environment, k8sConnectionsIds: selectedK8sConnectionsIds }));
-  };
+export const toggleEnvSelection = (environment, selectedConnections) => (dispatch, getState) => {
+  const isSelected = selectIsEnvSelected(getState(), environment.id);
+  if (isSelected) {
+    dispatch(unselectEnv({ envId: environment.id }));
+    return;
+  }
+  dispatch(selectEnv({ environment, selectedConnections }));
+};
 
 export default globalEnvironmentContextSlice.reducer;
 
 // selectors
 
-const selectIsK8sConnectionSelected = (state, envId, connectionId) => {
+const selectIsConnectionSelected = (state, envId, connectionId) => {
   if (!selectIsEnvSelected(state, envId)) {
     return false;
   }
-  return state.globalEnvironmentContext.selectedEnvs[envId].selectedK8sConnections.includes(
-    connectionId,
-  );
+  return state.globalEnvironmentContext.selectedEnvs[envId].selectedConnections
+    .map((connection) => connection.id)
+    .includes(connectionId);
 };
 
 const selectIsEnvSelected = (state, envId) =>
@@ -85,20 +85,28 @@ const selectIsEnvSelected = (state, envId) =>
 
 const selectSelectedEnvs = (state) => state.globalEnvironmentContext.selectedEnvs;
 
-const selectSelectedK8sConnections = (state, envId) =>
-  state.globalEnvironmentContext.selectedEnvs[envId]?.selectedK8sConnections || [];
+const selectSelectedConnections = (state, envId) =>
+  state.globalEnvironmentContext.selectedEnvs[envId]?.selectedConnections || [];
 
-const selectAllSelectedK8sConnections = (state) => {
+const selectAllSelectedConnections = (state) => {
   const selectedEnvs = selectSelectedEnvs(state);
-  return Object.values(selectedEnvs).reduce((acc, { selectedK8sConnections }) => {
-    return [...acc, ...selectedK8sConnections];
+  return Object.values(selectedEnvs).reduce((acc, { selectedConnections }) => {
+    return [...acc, ...selectedConnections];
   }, []);
 };
 
+const selectSelectedK8sConnections = (state, envId) =>
+  selectSelectedConnections(state, envId).filter((connection) => connection.kind === 'kubernetes');
+
+const selectAllSelectedK8sConnections = (state) =>
+  selectAllSelectedConnections(state).filter((connection) => connection.kind === 'kubernetes');
+
 export {
-  selectIsK8sConnectionSelected,
+  selectIsConnectionSelected,
   selectIsEnvSelected,
   selectSelectedEnvs,
-  selectSelectedK8sConnections,
+  selectSelectedConnections,
+  selectAllSelectedConnections,
   selectAllSelectedK8sConnections,
+  selectSelectedK8sConnections,
 };
