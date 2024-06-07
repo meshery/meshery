@@ -1,28 +1,25 @@
 import { expect, test } from '@playwright/test';
-import { ENV } from '../env';
+import { ENV } from './env';
 
-test.describe('Test if UI components are displayed on Index Page', () => {
+test.describe('Index Page UI Tests', () => {
   test.beforeEach(async ({ page }) => {
+    // Visit Index Page
     await page.goto(ENV.MESHERY_SERVER_URL);
   });
 
-  test('Left Navigation Panel', async ({ page }) => {
+  test('Test if Left Navigation Panel is displayed', async ({ page }) => {
     await expect(page.locator('[data-test=navigation]')).toBeVisible();
   });
 
-  test('Settings button', async ({ page }) => {
+  test('Test if Settings button is displayed', async ({ page }) => {
     await expect(page.locator('[data-test=settings-button]')).toBeVisible();
   });
 
-  test('Notification button', async ({ page }) => {
+  test('Test if Notification button is displayed', async ({ page }) => {
     await expect(page.locator('[data-test=notification-button]')).toBeVisible();
   });
 
-  test('Profile button', async ({ page }) => {
+  test('Test if Profile button is displayed', async ({ page }) => {
     await expect(page.locator('[data-test=profile-button]')).toBeVisible();
   });
-
-  // test('Service Mesh Section', async ({ page }) => {
-  //   await expect(page.locator('[data-test=service-mesh]')).toBeVisible();
-  // });
 });
