@@ -108,6 +108,8 @@ func (h *Handler) PatternFileHandler(
 		return
 	}
 
+	queryParams := r.URL.Query()
+
 	response, err := _processPattern(
 		r.Context(),
 		provider,
@@ -115,9 +117,10 @@ func (h *Handler) PatternFileHandler(
 		prefObj,
 		user.ID,
 		isDel,
-		r.URL.Query().Get("verify") == "true",
+		queryParams.Get("verify") == "true",
 		isDryRun,
-		r.URL.Query().Get("skipCRD") == "true",
+		queryParams.Get("skipCRD") == "true",
+		queryParams.Get("upgrade") == "true",
 		viper.GetBool("DEBUG"),
 		h.registryManager,
 		h.config.EventBroadcaster,
@@ -184,10 +187,11 @@ func _processPattern(
 	pattern core.Pattern,
 	prefObj *models.Preference,
 	userID string,
-	isDelete bool,
-	validate bool,
-	dryRun bool,
-	skipCrdAndOperator bool,
+	isDelete,
+	validate,
+	dryRun,
+	skipCrdAndOperator,
+	upgradeExistingRelease,
 	skipPrintLogs bool,
 	registry *meshmodel.RegistryManager,
 	ec *models.Broadcast,
@@ -342,13 +346,14 @@ type serviceActionProvider struct {
 	userID          string
 	// kubeconfig  []byte
 	// kubecontext     *models.K8sContext
-	skipCrdAndOperator bool
-	skipPrintLogs      bool
-	accumulatedMsgs    []string
-	err                error
-	eventsChannel      *models.Broadcast
-	registry           *meshmodel.RegistryManager
-	patternName        string
+	skipCrdAndOperator     bool
+	upgradeExistingRelease bool
+	skipPrintLogs          bool
+	accumulatedMsgs        []string
+	err                    error
+	eventsChannel          *models.Broadcast
+	registry               *meshmodel.RegistryManager
+	patternName            string
 }
 
 func (sap *serviceActionProvider) GetRegistry() *meshmodel.RegistryManager {
@@ -525,6 +530,7 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) (string, 
 				sap.provider,
 				host.IHost,
 				sap.skipCrdAndOperator,
+				sap.upgradeExistingRelease,
 			)
 			return resp, err
 		}

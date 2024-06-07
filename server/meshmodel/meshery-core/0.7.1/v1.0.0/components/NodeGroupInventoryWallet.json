@@ -36,7 +36,7 @@
    "relationships": null
   },
   "metadata": {
-   "capabilities": "{\n  \"designer\": {\n    \"pass-events-to\": \"parent\",\n    \"edit\": {\n      \"config\": false,\n      \"copy\": false,\n      \"delete\": false,\n      \"duplicate\": false,\n      \"reset-styles\": false,\n      \"resolve\": false,\n      \"lock\": false,\n      \"shape\": {\n        \"convert-shape\": false\n      },\n      \"style\": false\n    },\n    \"label\": {\n      \"edit\": false,\n      \"show\": false,\n      \"sync-with-config-property\": \"none\"\n    }\n  }\n}",
+   "capabilities": "{\n  \"designer\": {\n    \"pass-events-to\": \"parent\", \"supportsCompoundDragAndDrop\":false,\n    \"edit\": {\n      \"config\": false,\n      \"copy\": false,\n      \"delete\": false,\n      \"duplicate\": false,\n      \"reset-styles\": false,\n      \"resolve\": false,\n      \"lock\": false,\n      \"shape\": {\n        \"convert-shape\": false\n      },\n      \"style\": false\n    },\n    \"label\": {\n      \"edit\": false,\n      \"show\": false,\n      \"sync-with-config-property\": \"none\"\n    }\n  }\n}",
    "defaultData": "{\"label\":\"\"}",
    "genealogy": "parent",
    "isAnnotation": true,
