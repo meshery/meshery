@@ -745,7 +745,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters
 </table>
 
 
-## Meshery Models Registered
+## Meshery Models
 
 <table>
 <thead>
