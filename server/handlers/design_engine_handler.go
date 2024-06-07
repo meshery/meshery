@@ -238,6 +238,7 @@ func _processPattern(
 			// kubecontext:   mk8scontext,
 			skipPrintLogs:      skipPrintLogs,
 			skipCrdAndOperator: skipCrdAndOperator,
+			upgradeExistingRelease: upgradeExistingRelease,
 			ctxTokubeconfig:    ctxToconfig,
 			accumulatedMsgs:    []string{},
 			err:                nil,

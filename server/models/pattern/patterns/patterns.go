@@ -82,13 +82,6 @@ func Process(kconfigs []string, oamComps []string, oamConfig string, isDel bool,
 						DesignName: patternName,
 					}
 
-					// if !isDel {
-					// 	description = fmt.Sprintf("Detected dependency for %s/%s, deploying dependent model %s.", patternName, comp.Name, comp.Spec.Model)
-					// } else {
-					// 	description = fmt.Sprintf("Detected dependency for %s/%s, undeploying dependent model %s.", patternName, comp.Name, comp.Spec.Model)
-					// }
-
-					fmt.Println("host: ", hostname, " comp: ", comp.Name, "type: ", comp.Spec.Type, comp)
 					// Deploys resources that are required inside cluster for successful deployment of the design.
 					result, err := hostname.HandleDependents(comp, kcli, !isDel, upgradeExistingRelease)
 					// If dependencies were not resolved fail forward, there can be case that dependency already exist in the cluster.
@@ -98,6 +91,7 @@ func Process(kconfigs []string, oamComps []string, oamConfig string, isDel bool,
 						errs = append(errs, err)
 						deploymentMsg.Error = err
 					}
+					msgsPerComp = append(msgsPerComp, deploymentMsg)
 				}
 				//All other components will be handled directly by Kubernetes
 				//TODO: Add a Mapper utility function which carries the logic for X hosts can handle Y components under Z circumstances.
