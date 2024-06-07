@@ -11,7 +11,7 @@ import {
   styled,
   EnvironmentIcon,
 } from '@layer5/sistent';
-import { Loading } from './common';
+import { Loading, StepHeading } from './common';
 import { K8sContextConnectionChip } from '../Header';
 import { createContext } from 'react';
 import { useContext } from 'react';
@@ -161,7 +161,7 @@ export const SelectTargetEnvironments = () => {
 
   return (
     <Stack gap={2}>
-      <Typography variant="textH3Medium">Identify Deployment Targets</Typography>
+      <StepHeading>Identify Deployment Targets</StepHeading>
 
       {environments.length === 0 && (
         <EnvironmentsEmptyState message="No environments found. Add a new environment." />

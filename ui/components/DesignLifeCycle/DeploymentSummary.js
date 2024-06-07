@@ -18,7 +18,6 @@ const StyledDetailBox = styled(Box)(({ theme, severityColor, bgOpacity }) => ({
 }));
 
 const DeployementComponentFormatter = ({ componentDetail }) => {
-  const theme = useTheme();
   const { data } = useGetComponentsByModelAndKindQuery({
     model: componentDetail.Model || 'kubernetes',
     component: componentDetail.Kind,
@@ -41,9 +40,7 @@ const DeployementComponentFormatter = ({ componentDetail }) => {
             alt={componentDetail.Kind}
           />
         )}
-        <Typography variant="textB2SemiBold" color={theme.palette.text.secondary}>
-          {componentDetail.Message}
-        </Typography>
+        <Typography variant="textB2SemiBold">{componentDetail.Message}</Typography>
       </Stack>
       {componentDetail.Error && <ErrorMetadataFormatter metadata={componentDetail.Error} />}
       {componentDetail.metadata && <FormatStructuredData data={componentDetail.metadata} />}
@@ -55,14 +52,17 @@ const DeploymentSummaryFormatter_ = ({ event }) => {
   const theme = useTheme();
   const eventStyle = SEVERITY_STYLE[event?.severity] || {};
   const errors = event.metadata?.error;
+
   const componentsDetails = Object.values(event.metadata?.summary || {}).flatMap(
-    (perComponentDetail) =>
-      (perComponentDetail || []).flatMap((perContextDetail) =>
+    (perComponentDetail) => {
+      perComponentDetail = perComponentDetail?.flatMap ? perComponentDetail : [];
+      return perComponentDetail.flatMap((perContextDetail) =>
         perContextDetail?.Summary?.map((detail) => ({
           ...detail,
           Location: perContextDetail.Location,
         })),
-      ),
+      );
+    },
   );
 
   return (
