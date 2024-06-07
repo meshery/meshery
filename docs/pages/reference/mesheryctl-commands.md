@@ -744,6 +744,48 @@ Installation, troubleshooting and debugging of Meshery and its adapters
 </thead>
 </table>
 
+
+## Meshery Models Registered
+
+<table>
+<thead>
+  <tr>
+    <th>Command</th>
+    <th>Subcommand</th>
+    <th>Flag</th>
+    <th>Function</th>
+  </tr>
+  {% assign command12 = site.data.mesheryctlcommands.cmds.model %}
+    <tr>
+      <td rowspan=8><a href="{{ site.baseurl }}/reference/mesheryctl/{{ command12.name }}">{{ command12.name }}</a></td>
+      <td></td>
+      <td></td>
+      <td>{{ command12.description }}</td>
+    </tr>
+    {% for flag_hash in command12.flags %}{% assign flag = flag_hash[1] %}
+      <tr>
+        <td></td>
+        <td>{{ flag.name }}</td>
+        <td>{{ flag.description }}</td>
+      </tr>
+    {% endfor %}
+    {% for subcommand_hash in command12.subcommands %}{% assign subcomand = subcommand_hash[1] %}
+      <tr>
+        <td rowspan={{ subcomand.flags.size | plus:1 }} ><a href="{{ site.baseurl }}/reference/mesheryctl/{{ command12.name }}/{{ subcomand.name }}">{{ subcomand.name }}</a></td>
+        <td></td>
+        <td>{{ subcomand.description }}</td>
+      </tr>
+      {% for flag_hash in subcomand.flags %}{% assign flag = flag_hash[1] %}
+        <tr>
+          <td>{{ flag.name }}</td>
+          <td>{{ flag.description }}</td>
+        </tr>
+      {% endfor %}
+    {% endfor %}
+</thead>
+</table>
+
+
 ## Experimental Features
 
 <table>
