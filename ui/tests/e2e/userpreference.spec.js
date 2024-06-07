@@ -34,7 +34,7 @@ test.describe('User Preferences Page Tests', () => {
       response.url().startsWith(`${ENV.MESHERY_SERVER_URL}/api/user/prefs`),
     );
 
-    // Visit Settings Page
+    // Visit User Preferences Page
     await page.goto(`${ENV.MESHERY_SERVER_URL}/user/preferences`);
 
     // Verify requests and responses expected on initial page load
