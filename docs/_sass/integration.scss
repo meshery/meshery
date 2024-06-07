@@ -43,7 +43,7 @@
   object-fit: contain;
 }
 
-h6.integration {
+h6 > a.integration {
   color: var(--brand-color-secondary);
   & :hover {
     color: var(--brand-color-primary);
