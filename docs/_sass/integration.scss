@@ -42,3 +42,10 @@
   height: 100%;
   object-fit: contain;
 }
+
+h6.integration {
+  color: var(--brand-color-secondary);
+  & :hover {
+    color: var(--brand-color-primary);
+  }
+}
