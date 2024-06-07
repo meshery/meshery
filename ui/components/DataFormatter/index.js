@@ -163,7 +163,7 @@ export const TextWithLinks = ({ text, ...typographyProps }) => {
   const linkRegex = /(https?:\/\/[^\s]+)/g;
 
   // Split the text into parts, alternating between text and link components
-  const parts = text.split(linkRegex);
+  const parts = text?.split?.(linkRegex) || [];
 
   // Map the parts to React elements
   const elements = parts.map((part, idx) => {

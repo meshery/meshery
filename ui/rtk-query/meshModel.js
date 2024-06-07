@@ -125,6 +125,7 @@ export const {
   useGetMeshModelsQuery,
   useGetComponentByNameQuery,
   useGetModelFromCategoryQuery,
+  useGetComponentsByModelAndKindQuery,
 } = meshModelApi;
 
 export const useGetCategoriesSummary = () => {
