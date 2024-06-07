@@ -504,7 +504,7 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) ([]patter
 			for _, v := range sap.ctxTokubeconfig {
 				kconfigs = append(kconfigs, v)
 			}
-			resp, err := patterns.ProcessOAM(
+			resp, err := patterns.Process(
 				kconfigs,
 				[]string{string(jsonComp)},
 				string(jsonConfig),
