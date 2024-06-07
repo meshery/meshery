@@ -15,6 +15,7 @@ import (
 
 type DeploymentMessagePerComp struct {
 	Kind       string
+	Model      string
 	CompName   string
 	Success    bool
 	DesignName string
@@ -73,7 +74,13 @@ func ProcessOAM(kconfigs []string, oamComps []string, oamConfig string, isDel bo
 			for _, comp := range comps {
 
 				if !skipCrdAndOperator && hostname != nil && comp.Spec.Model != (v1beta1.Kubernetes{}).String() {
-					var deploymentMsg DeploymentMessagePerComp
+					deploymentMsg := DeploymentMessagePerComp{
+						Kind: comp.Kind,
+						Model: comp.Spec.Model,
+						CompName: comp.Name,
+						Success: true,
+						DesignName: patternName,
+					}
 
 					// if !isDel {
 					// 	description = fmt.Sprintf("Detected dependency for %s/%s, deploying dependent model %s.", patternName, comp.Name, comp.Spec.Model)
@@ -97,6 +104,7 @@ func ProcessOAM(kconfigs []string, oamComps []string, oamConfig string, isDel bo
 
 				_msg := DeploymentMessagePerComp{
 					Kind:       comp.Spec.Type,
+					Model:      comp.Spec.Model,
 					CompName:   comp.Name,
 					Success:    true,
 					DesignName: patternName,
@@ -106,6 +114,7 @@ func ProcessOAM(kconfigs []string, oamComps []string, oamConfig string, isDel bo
 				if err := k8s.Deploy(kcli, comp, config, isDel); err != nil {
 					_msg.Message = fmt.Sprintf("Error %sing %s/%s", action, patternName, comp.Name)
 					_msg.Error = err
+					_msg.Success = false
 
 				}
 				msgsPerComp = append(msgsPerComp, _msg)

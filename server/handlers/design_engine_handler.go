@@ -569,10 +569,12 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) ([]patter
 				Summary: []patterns.DeploymentMessagePerComp{
 					{
 						Kind:       ccp.Component.Kind,
+						Model:      ccp.Component.Spec.Model,
 						CompName:   ccp.Component.Name,
 						DesignName: sap.patternName,
 						Success:    sucess,
 						Message:    resp.GetMessage(),
+						Error:      err,
 					},
 				},
 			},
