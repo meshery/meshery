@@ -17,7 +17,7 @@ const StyledEnvironment = styled(Box)(({ theme }) => ({
   color: theme.palette.text.neutral.default,
 }));
 
-export const FinalizeDeployment = ({ design }) => {
+export const FinalizeDeployment = ({ design, openInVisualizer, setOpenInVisualizer }) => {
   const { configurableComponents } = processDesign(design);
   const selectedEnvironments = useSelectorRtk(selectSelectedEnvs);
   const envNames = Object.values(selectedEnvironments).map((env) => env.name);
@@ -66,7 +66,11 @@ export const FinalizeDeployment = ({ design }) => {
         </StyledSummaryItem>
       </Box>
       <Stack mt={3} gap={1}>
-        <CheckBoxField label="Open in Visualizer" checked={false} onChange={() => {}} />
+        <CheckBoxField
+          label="Open in Visualizer"
+          checked={openInVisualizer}
+          onChange={() => setOpenInVisualizer(!openInVisualizer)}
+        />
         <CheckBoxField label="Schedule Deployment" checked={false} onChange={() => {}} disabled />
       </Stack>
     </Box>
