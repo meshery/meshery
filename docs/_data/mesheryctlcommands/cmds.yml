@@ -197,7 +197,7 @@ system:
           name: --skip-browser
           description: (optional) skip opening of MesheryUI in browser.
           usage: mesheryctl system dashboard --skip-browser
-          example: mesheryctl system dashboard --skip-browser 
+          example: mesheryctl system dashboard --skip-browser
 
     login:
       name: login
@@ -264,7 +264,7 @@ system-channel:
       name: switch
       description: switch release channel and version
       usage: mesheryctl system channel switch [stable|stable-version|edge|edge-version]
-      example: |  
+      example: |
         mesheryctl system channel switch stable
           mesheryctl system channel switch edge
           mesheryctl system channel switch v0.5.60
@@ -726,7 +726,7 @@ pattern:
           description: Type of source file (ex. manifest / compose / helm)
           usage: mesheryctl pattern onboard mesheryctl pattern onboard --file [filepath] --source-type manifest
           example: mesheryctl mesheryctl pattern onboard -f "bookInfo.yaml" --source-type manifest
-    
+
 filter:
   name: filter
   description: Service Mesh Filter Management
@@ -843,7 +843,7 @@ registry:
           description: id of the spreadsheet to download
 model:
   name: model
-  description: 
+  description: A unit of packaging to define managed infrastructure and their relationships, and details specifics of how to manage them.
   usage: mesheryctl model [command] [flags]
   flags:
     help:
@@ -880,4 +880,3 @@ exp:
   name: exp
   description: Experimental features
   usage: mesheryctl exp [command] [flags]
-  
