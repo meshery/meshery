@@ -4,8 +4,10 @@ layout: default
 
 {{ page.subtitle }}
 {{ content }}
+
 <!-- components -->
 <div>
+    The {{ page.subtitle }} model supports the following components.
     <section class="Compheading">
         {% if page.components.size != 0  %}
         <h3>
@@ -29,7 +31,7 @@ layout: default
     </section>
 </div>
 <!-- components end -->
-{% include_cached models.html %}
+{% include_cached models-components.html %}
 {% include_cached meshery-registry.html %}
 
 {% if page.suggested-reading != false and page.title and page.type and page.category and page.url %}
