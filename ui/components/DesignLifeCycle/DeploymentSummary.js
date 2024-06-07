@@ -40,7 +40,9 @@ const DeployementComponentFormatter = ({ componentDetail }) => {
             alt={componentDetail.Kind}
           />
         )}
-        <Typography variant="textB2SemiBold">{componentDetail.Message}</Typography>
+        <Typography variant="textB1Regular" style={{ textTransform: 'capitalize' }}>
+          {componentDetail.Message}
+        </Typography>
       </Stack>
       {componentDetail.Error && <ErrorMetadataFormatter metadata={componentDetail.Error} />}
       {componentDetail.metadata && <FormatStructuredData data={componentDetail.metadata} />}
