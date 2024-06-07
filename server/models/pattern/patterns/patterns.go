@@ -30,7 +30,7 @@ type DeploymentMessagePerContext struct {
 	Location   string
 }
 
-func Process(kconfigs []string, oamComps []string, oamConfig string, isDel bool, patternName string, ec *models.Broadcast, userID string, provider models.Provider, hostname v1beta1.IHost, skipCrdAndOperator bool) ([]DeploymentMessagePerContext, error) {
+func Process(kconfigs []string, oamComps []string, oamConfig string, isDel bool, patternName string, ec *models.Broadcast, userID string, provider models.Provider, hostname v1beta1.IHost, skipCrdAndOperator, upgradeExistingRelease bool) ([]DeploymentMessagePerContext, error) {
 	var comps []v1beta1.Component
 	var config v1alpha1.Configuration
 	action := "deploy"
