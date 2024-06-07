@@ -88,4 +88,8 @@ export const CheckBoxField = ({
   );
 };
 
+export const StepHeading = ({ children }) => {
+  return <Typography variant="textB2SemiBold"> {children}</Typography>;
+};
+
 export { processDesign };

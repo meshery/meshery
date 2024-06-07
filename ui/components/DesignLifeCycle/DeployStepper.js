@@ -53,7 +53,7 @@ const StepContent = styled('div', {
 })(({ theme, backgroundColor }) => ({
   paddingInline: theme.spacing(4),
   paddingBlock: theme.spacing(2),
-  backgroundColor: backgroundColor || theme.palette.background.constant.white,
+  backgroundColor: backgroundColor || theme.palette.background.default,
 }));
 
 export const FinishDeploymentStep = ({ perform_deployment, deployment_type }) => {
