@@ -17,9 +17,9 @@ import { createContext } from 'react';
 import { useContext } from 'react';
 import {
   selectIsEnvSelected,
-  selectIsK8sConnectionSelected,
+  selectIsConnectionSelected,
   toggleEnvSelection,
-  toggleK8sConnection,
+  toggleConnection,
   selectSelectedK8sConnections,
 } from '@/store/slices/globalEnvironmentContext';
 import { useSelectorRtk, useDispatchRtk } from '@/store/hooks';
@@ -52,14 +52,14 @@ const StyledEnvironmentHeader = styled(Box)(({ theme }) => ({
 const K8sContextConnection = ({ connection, environment }) => {
   const { meshsyncControllerState, connectionMetadataState } = useContext(DeploymentTargetContext);
   const isSelected = useSelectorRtk((state) =>
-    selectIsK8sConnectionSelected(state, environment.id, connection.id),
+    selectIsConnectionSelected(state, environment.id, connection.id),
   );
   const dispatch = useDispatchRtk();
-  const toggleConnection = () => dispatch(toggleK8sConnection(environment, connection.id));
+  const toggleK8sConnection = () => dispatch(toggleConnection(environment, connection));
   return (
     <K8sContextConnectionChip
       ctx={connection}
-      onSelectChange={toggleConnection}
+      onSelectChange={toggleK8sConnection}
       selected={isSelected}
       selectable
       meshsyncControllerState={meshsyncControllerState}
@@ -97,13 +97,7 @@ const EnvironmentCard = ({ environment }) => {
   );
   const selectedConnectionsCount = selectedConnections.length;
 
-  const toggleEnv = () =>
-    dispatch(
-      toggleEnvSelection(
-        environment,
-        connections.map((connection) => connection.id),
-      ),
-    );
+  const toggleEnv = () => dispatch(toggleEnvSelection(environment, connections));
 
   return (
     <StyledEnvironmentCard>
@@ -157,8 +151,6 @@ export const SelectTargetEnvironments = () => {
   const organization = useContext(DeploymentTargetContext).organization;
   const { data, isLoading, isError } = useGetEnvironmentsQuery({ orgId: organization.id });
   const environments = data?.environments || [];
-  const theme = useTheme();
-  console.log('environments', theme, environments);
   if (isLoading) {
     return <Loading />;
   }

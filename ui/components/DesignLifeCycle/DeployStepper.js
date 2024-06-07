@@ -11,12 +11,11 @@ import {
   Box,
   Typography,
 } from '@layer5/sistent';
-import { CheckBoxField, ComponentIcon, DEPLOYMENT_TYPE, Loading } from './common';
+import { CheckBoxField, DEPLOYMENT_TYPE, Loading } from './common';
 import DryRunIcon from '@/assets/icons/DryRunIcon';
 import { DeploymentSelectorIcon } from '@/assets/icons/DeploymentSelectorIcon';
 import CheckIcon from '@/assets/icons/CheckIcon';
-import { useFilterK8sContexts } from '../hooks/useKubernetesHook';
-import { selectK8sContexts, useLegacySelector } from 'lib/store';
+import { useLegacySelector } from 'lib/store';
 import { DeploymentTargetContext, SelectTargetEnvironments } from './SelectDeploymentTarget';
 import { FinalizeDeployment } from './finalizeDeployment';
 import {
@@ -35,14 +34,8 @@ import { useContext } from 'react';
 import { NotificationCenterContext } from '../NotificationCenter';
 import { useEffect } from 'react';
 import { OPERATION_CENTER_EVENTS } from 'machines/operationsCenter';
-import { FormatStructuredData } from '../DataFormatter';
-import { Stack } from '@layer5/sistent';
 import { capitalize } from 'lodash';
-import { ErrorMetadataFormatter } from '../NotificationCenter/metadata';
 import FinishFlagIcon from '@/assets/icons/FinishFlagIcon';
-import { alpha } from '@mui/material';
-import { NOTIFICATIONCOLORS } from '@/themes/index';
-import { useGetComponentsByModelAndKindQuery } from '@/rtk-query/meshModel';
 import { DeploymentSummaryFormatter } from './DeploymentSummary';
 
 export const ValidateContent = {
@@ -180,7 +173,6 @@ export const UpdateDeploymentStepper = ({
   handleClose,
   deployment_type,
   handlePerformDeployment,
-  selectedK8sContexts,
   design,
   validationMachine,
 }) => {
@@ -194,18 +186,10 @@ export const UpdateDeploymentStepper = ({
   const isDryRunning = useIsValidatingDryRun(validationMachine);
   const theme = useTheme();
 
-  const selectedDeployableK8scontextIds = useSelectorRtk(selectAllSelectedK8sConnections);
-  console.log('selectedDeployableK8scontextIds', selectedDeployableK8scontextIds);
-
-  // const k8sContext = useLegacySelector(selectK8sContexts);
-  // const selectedDeployableK8scontexts = useFilterK8sContexts(
-  //   k8sContext,
-  //   ({ context, operatorState }) => {
-  //     const isSelected =
-  //       selectedK8sContexts?.includes(context.id) || selectedK8sContexts?.includes('all');
-  //     return isSelected && operatorState !== 'DISABLED';
-  //   },
-  // );
+  const selectedK8sConnections = useSelectorRtk(selectAllSelectedK8sConnections);
+  const selectedDeployableK8scontextIds = selectedK8sConnections.map(
+    (k8sConnection) => k8sConnection.metadata.id,
+  );
 
   const FinalizeBackgroundColor = theme.palette?.background?.blur.light;
   const actionFunction = () => {
@@ -238,7 +222,7 @@ export const UpdateDeploymentStepper = ({
           </StepContent>
         ),
         helpText:
-          'Select the environment to deploy the design , only the kubernetes clusters with the operator enabled are shown,[learn more](https://docs.meshery.io/guides/infrastructure-management/overview)  about the environment selection',
+          'Select the environment to deploy the design,[learn more](https://docs.meshery.io/guides/infrastructure-management/overview)  about the environment selection',
         icon: EnvironmentIcon,
         label: 'Identify Environments',
       },
@@ -357,15 +341,8 @@ export const UpdateDeploymentStepper = ({
   );
 };
 
-export const DeployStepper = ({
-  handleClose,
-  design,
-  validationMachine,
-  handleDeploy,
-  selectedK8sContexts,
-}) => (
+export const DeployStepper = ({ handleClose, design, validationMachine, handleDeploy }) => (
   <UpdateDeploymentStepper
-    selectedK8sContexts={selectedK8sContexts}
     handleClose={handleClose}
     design={design}
     handlePerformDeployment={handleDeploy}
@@ -374,15 +351,8 @@ export const DeployStepper = ({
   />
 );
 
-export const UnDeployStepper = ({
-  handleClose,
-  design,
-  handleUndeploy,
-  validationMachine,
-  selectedK8sContexts,
-}) => (
+export const UnDeployStepper = ({ handleClose, design, handleUndeploy, validationMachine }) => (
   <UpdateDeploymentStepper
-    selectedK8sContexts={selectedK8sContexts}
     handleClose={handleClose}
     design={design}
     handlePerformDeployment={handleUndeploy}
