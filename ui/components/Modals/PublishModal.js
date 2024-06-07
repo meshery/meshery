@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import Modal from '../Modal';
 import PublicIcon from '@material-ui/icons/Public';
-import _ from 'lodash';
 import { getMeshModels } from '../../api/meshmodel';
 import { modifyRJSFSchema } from '../../utils/utils';
-import dataFetch from '../../lib/data-fetch';
+import { publishCatalogItemSchema, publishCatalogItemUiSchema } from '@layer5/sistent';
 
 // This modal is used in MeshMap also
 export default function PublishModal(props) {
@@ -12,32 +11,28 @@ export default function PublishModal(props) {
   const [publishSchema, setPublishSchema] = useState({});
 
   useEffect(() => {
-    dataFetch(
-      '/api/schema/resource/publish',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      async (result) => {
-        try {
-          const { models } = await getMeshModels();
-          const modelNames = _.uniq(models?.map((model) => model.displayName));
-          modelNames.sort();
+    async function fetchMeshModels() {
+      try {
+        const { models } = await getMeshModels();
+        let modelNames = models?.map((model) => model.displayName) || [];
+        modelNames.sort(); // Sort model names
+        modelNames = Array.from(new Set(modelNames)); // Remove duplicates
 
-          // Modify the schema using the utility function
-          const modifiedSchema = modifyRJSFSchema(
-            result.rjsfSchema,
-            'properties.compatibility.items.enum',
-            modelNames,
-          );
+        // Modify the schema to include mesh models
+        const modifiedSchema = modifyRJSFSchema(
+          publishCatalogItemSchema, // Use publishSchema as the base schema
+          'properties.compatibility.items.enum',
+          modelNames,
+        );
 
-          setPublishSchema({ rjsfSchema: modifiedSchema, uiSchema: result.uiSchema });
-        } catch (err) {
-          console.error(err);
-          setPublishSchema(result);
-        }
-      },
-    );
+        // Set the modified schema and UI schema
+        setPublishSchema({ rjsfSchema: modifiedSchema, uiSchema: publishCatalogItemUiSchema });
+      } catch (error) {
+        console.error('Error fetching mesh models:', error);
+      }
+    }
+
+    fetchMeshModels();
   }, []);
 
   return (
