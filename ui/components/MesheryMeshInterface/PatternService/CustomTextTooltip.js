@@ -1,5 +1,4 @@
 import { makeStyles } from '@material-ui/core/styles';
-import { styled } from '@material-ui/core';
 import { CustomTooltip } from '@layer5/sistent';
 import { UsesSistent } from '@/components/SistentWrapper';
 
@@ -35,14 +34,10 @@ export const RenderTooltipContent = ({ showPriortext, showAftertext, link }) => 
   );
 };
 
-export const CustomTextTooltip = ({ flag, ...props }) => {
-  const StyledTooltip = styled(CustomTooltip)(() => ({
-    fontFamily: flag ? 'Qanelas Soft, sans-serif' : 'inherit',
-  }));
-
+export const CustomTextTooltip = () => {
   return (
     <UsesSistent>
-      <StyledTooltip {...props} />
+      <CustomTooltip />
     </UsesSistent>
   );
 };
