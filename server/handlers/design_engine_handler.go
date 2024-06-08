@@ -153,7 +153,8 @@ func (h *Handler) PatternFileHandler(
 	
 	if action == "deploy" {
 		viewLink := fmt.Sprintf("%s/extension/meshmap?mode=visualize&design=%s", serverURL, patternID)
-		description = fmt.Sprintf("%s. View deployed design %s", description, viewLink)
+		description = fmt.Sprintf("%s.", description)
+		metadata["view_link"] = viewLink
 	}
 
 	event := eventBuilder.WithSeverity(events.Success).WithDescription(description).WithMetadata(metadata).Build()
