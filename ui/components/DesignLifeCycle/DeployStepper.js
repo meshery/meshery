@@ -170,8 +170,7 @@ const DryRunStep = ({
       <CheckBoxField
         label="Include Dependencies"
         checked={includeDependencies}
-        helpText="Deploys Custom Resource Definitions (CRDs) and operators based on the source from which a\
-        particular component was registered, [learn more](https://docs.meshery.io/guides/infrastructure-management/overview#auto-deployment-of-crds-and-operators) about auto deployment of dependencies"
+        helpText="Deploys Custom Resource Definitions (CRDs) and operators based on the source from which a particular component was registered, [learn more](https://docs.meshery.io/guides/infrastructure-management/overview#auto-deployment-of-crds-and-operators) about auto deployment of dependencies"
         onChange={toggleIncludeDependencies}
       />
     </Box>
@@ -271,7 +270,7 @@ export const UpdateDeploymentStepper = ({
           </StepContent>
         ),
         helpText:
-          'Finalize the deployment process and overview the configuration for your deployment. \
+          'Finalize the deployment process and overview the configuration for your deployment.\
           [Learn more](https://docs.meshery.io/guides/infrastructure-management/overview) about the deployment process.',
         label: 'Finalize Deployment',
         icon: DeploymentSelectorIcon,

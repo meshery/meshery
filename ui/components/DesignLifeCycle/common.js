@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, Checkbox, CircularProgress, Stack, Typography } from '@layer5/sistent';
 import PatternIcon from '@/assets/icons/Pattern';
 import { processDesign } from '@/utils/utils';
-import { Tooltip } from '@layer5/sistent';
+import { CustomTooltip } from '@layer5/sistent';
 import { InfoCircleIcon, useTheme } from '@layer5/sistent';
 import { IconButton } from '@layer5/sistent';
 
@@ -78,11 +78,11 @@ export const CheckBoxField = ({
         </Typography>
       </Stack>
       {helpText && (
-        <Tooltip title={helpText} placement="top">
+        <CustomTooltip title={helpText} placement="top">
           <IconButton>
             <InfoCircleIcon fill={color} />
           </IconButton>
-        </Tooltip>
+        </CustomTooltip>
       )}
     </Stack>
   );
