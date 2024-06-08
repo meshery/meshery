@@ -142,6 +142,7 @@ const View = (props) => {
         processObj(obj);
       }, [obj]);
 
+      console.log('hello');
       return (
         <>
           {processedData.map((obj, index) => (
@@ -151,7 +152,7 @@ const View = (props) => {
                 const lastPart = parts[parts.length - 1];
                 const heading = lastPart.replace('_', ' ');
                 return value.length == 1 && value[0].hide == true ? null : (
-                  <div style={{ margin: '2rem 0' }} key={innerIndex}>
+                  <div style={{ margin: '2rem 0', backgroundColor: 'red' }} key={innerIndex}>
                     <Typography
                       style={{
                         fontSize: '.9rem',

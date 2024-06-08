@@ -15,34 +15,36 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.text.secondary,
     borderBottom: `1px solid ${theme.palette.divider}`,
     padding: '7px 12px',
-    [theme.breakpoints.down('sm')]: {
-      color: theme.palette.text.primary,
-      fontSize: '1rem',
-      minWidth: '100%',
-      width: '100%',
-      maxWidth: '100%',
-      display: 'block',
-      borderTop: `1px solid ${theme.palette.divider}`,
-      borderBottom: `none`,
-    },
+    flexBasis: '40%',
+    // [theme.breakpoints.down('sm')]: {
+    //   color: theme.palette.text.primary,
+    //   fontSize: '1rem',
+    //   minWidth: '100%',
+    //   width: '100%',
+    //   maxWidth: '100%',
+    //   display: 'block',
+    //   borderTop: `1px solid ${theme.palette.divider}`,
+    //   borderBottom: `none`,
+    // },
   },
 
   metadataCell: {
     width: '100%',
+    flex: 'grow',
     verticalAlign: 'top',
     fontSize: '1rem',
     overflowWrap: 'anywhere',
     padding: '7px 12px',
     borderBottom: `1px solid ${theme.palette.divider}`,
-    [theme.breakpoints.down('sm')]: {
-      color: theme.palette.text.secondary,
-      minWidth: '100%',
-      width: '100%',
-      maxWidth: '100%',
-      display: 'block',
-      marginBottom: '2rem',
-      borderBottom: `none`,
-    },
+    // [theme.breakpoints.down('sm')]: {
+    //   color: theme.palette.text.secondary,
+    //   minWidth: '100%',
+    //   width: '100%',
+    //   maxWidth: '100%',
+    //   display: 'block',
+    //   marginBottom: '2rem',
+    //   borderBottom: `none`,
+    // },
   },
   metadataRow: {
     borderBottom: `1px solid ${theme.palette.divider}`,
@@ -55,7 +57,9 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: theme.shape.borderRadius,
     backgroundColor: theme.palette.secondary.elevatedComponents2,
     padding: '0.375rem',
-    width: '98%',
+    // width: '98%',
+    display: 'flex',
+    flexDirection: 'column',
   },
   highlightRow: {
     color: theme.palette.tables.head.color,
@@ -135,7 +139,8 @@ export default function NameValueTable(props) {
   );
 
   return (
-    <Grid
+    // This is the container div
+    <div
       container
       component="dl" // mount a Definition List
       className={classes.table}
@@ -163,47 +168,51 @@ export default function NameValueTable(props) {
           const keyname = lastPart.replace(/([a-zA-Z])(?=[A-Z])/g, '$1 ');
           return (
             <>
-              <Grid
-                item
-                key={i}
-                xs={12}
-                lg={2}
-                xl={2}
-                spacing={1}
-                sm={hideValueGridItem ? 12 : 4}
-                component="dt"
-                className={clsx(
-                  last ? classes.metadataLast : '',
-                  classes.metadataNameCell,
-                  withHighlightStyle ? classes.highlightRow : '',
-                )}
-              >
-                {keyname[0].toUpperCase() + keyname.substring(1)}
-              </Grid>
-              {!hideValueGridItem && (
+              <div style={{ display: 'flex' }}>
                 <Grid
                   item
-                  key={i + 10000}
+                  key={i}
                   xs={12}
-                  sm={8}
+                  lg={2}
+                  xl={2}
                   spacing={1}
-                  component="dd"
+                  sm={hideValueGridItem ? 12 : 4}
+                  component="dt"
                   className={clsx(
                     last ? classes.metadataLast : '',
-                    classes.metadataCell,
-                    className ? className : '',
+                    classes.metadataNameCell,
                     withHighlightStyle ? classes.highlightRow : '',
                   )}
-                  {...otherValueCellProps}
-                  {...valueCellProps}
                 >
-                  <Value value={value} />
+                  {keyname[0].toUpperCase() + keyname.substring(1)}
                 </Grid>
-              )}
+                {!hideValueGridItem && (
+                  <Grid
+                    direction="row"
+                    item
+                    key={i + 10000}
+                    xs={12}
+                    sm={8}
+                    xl={20}
+                    spacing={1}
+                    component="dd"
+                    className={clsx(
+                      last ? classes.metadataLast : '',
+                      classes.metadataCell,
+                      className ? className : '',
+                      withHighlightStyle ? classes.highlightRow : '',
+                    )}
+                    {...otherValueCellProps}
+                    {...valueCellProps}
+                  >
+                    <Value value={value} />
+                  </Grid>
+                )}
+              </div>
             </>
           );
         },
       )}
-    </Grid>
+    </div>
   );
 }
