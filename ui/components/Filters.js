@@ -61,6 +61,7 @@ import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import DefaultError from './General/error-404/index';
 import UniversalFilter from '../utils/custom-filter';
+import { UsesSistent } from './SistentWrapper';
 
 const styles = (theme) => ({
   grid: {
@@ -1350,16 +1351,18 @@ function MesheryFilters({
               </div>
             </div>
             {!selectedFilter.show && viewType === 'table' && (
-              <ResponsiveDataTable
-                data={filters}
-                columns={columns}
-                tableCols={tableCols}
-                updateCols={updateCols}
-                columnVisibility={columnVisibility}
-                // @ts-ignore
-                options={options}
-                className={classes.muiRow}
-              />
+              <UsesSistent>
+                <ResponsiveDataTable
+                  data={filters}
+                  columns={columns}
+                  tableCols={tableCols}
+                  updateCols={updateCols}
+                  columnVisibility={columnVisibility}
+                  // @ts-ignore
+                  options={options}
+                  className={classes.muiRow}
+                />
+              </UsesSistent>
             )}
             {!selectedFilter.show && viewType === 'grid' && (
               // grid view

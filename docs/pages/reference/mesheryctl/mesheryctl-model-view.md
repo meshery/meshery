@@ -1,25 +1,25 @@
 ---
 layout: default
-title: mesheryctl-exp-model-search
-permalink: reference/mesheryctl/exp/model/search
-redirect_from: reference/mesheryctl/exp/model/search/
+title: mesheryctl-model-view
+permalink: reference/mesheryctl/model/view
+redirect_from: reference/mesheryctl/model/view/
 type: reference
 display-title: "false"
 language: en
-command: exp
-subcommand: model
+command: model
+subcommand: view
 ---
 
-# mesheryctl exp model search
+# mesheryctl model view
 
-search models
+view model
 
 ## Synopsis
 
-search a models by search string
+view a model queried by its name
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp model search [flags]
+mesheryctl model view [flags]
 
 </div>
 </pre> 
@@ -29,7 +29,7 @@ mesheryctl exp model search [flags]
 View current provider
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp model search [query-text]
+mesheryctl model view [model-name]
 
 </div>
 </pre> 
@@ -38,7 +38,8 @@ mesheryctl exp model search [query-text]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -h, --help   help for search
+  -h, --help                   help for view
+  -o, --output-format string   (optional) format to display in [json|yaml] (default "yaml")
 
 </div>
 </pre>
