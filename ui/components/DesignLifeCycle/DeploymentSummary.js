@@ -77,16 +77,18 @@ const DeploymentSummaryFormatter_ = ({ event }) => {
       >
         <TextWithLinks
           text={event?.description || ''}
-          style={{ whiteSpace: 'pre-wrap', color: theme.palette.text.default }}
+          style={{ color: theme.palette.text.default, textTransform: 'capitalize' }}
         />
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => window.open(event.metadata?.viewLink, '_blank')}
-          style={{ gap: '0.25rem' }}
-        >
-          Open In Visualizer <ExternalLinkIcon fill={theme.palette.common.white} />
-        </Button>
+        {event?.metadata?.view_link && (
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => window.open(event.metadata?.view_link, '_blank')}
+            style={{ gap: '0.25rem' }}
+          >
+            Open In Visualizer <ExternalLinkIcon fill={theme.palette.common.white} />
+          </Button>
+        )}
       </StyledDetailBox>
       {errors && (
         <StyledDetailBox severityColor={eventStyle.color} bgOpacity={0}>
