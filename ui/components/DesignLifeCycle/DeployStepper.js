@@ -37,6 +37,7 @@ import { OPERATION_CENTER_EVENTS } from 'machines/operationsCenter';
 import { capitalize } from 'lodash';
 import FinishFlagIcon from '@/assets/icons/FinishFlagIcon';
 import { DeploymentSummaryFormatter } from './DeploymentSummary';
+import { SEVERITY } from '../NotificationCenter/constants';
 
 export const ValidateContent = {
   btnText: 'Next',
@@ -81,8 +82,12 @@ export const FinishDeploymentStep = ({ perform_deployment, deployment_type, auto
         if (serverEvent.action === deployment_type) {
           setIsDeploying(false);
           setDeployEvent(serverEvent);
-          if (autoOpenView) {
-            window.open(serverEvent.metadata.viewUrl, '_blank');
+          if (
+            autoOpenView &&
+            serverEvent.severity == SEVERITY.SUCCESS &&
+            serverEvent?.metadata?.view_url
+          ) {
+            window.open(serverEvent.metadata.view_url, '_blank');
           }
         }
       },
