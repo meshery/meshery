@@ -87,6 +87,7 @@ import { CustomTextTooltip } from '../MesheryMeshInterface/PatternService/Custom
 import InfoOutlinedIcon from '@/assets/icons/InfoOutlined';
 import { DeleteIcon } from '@layer5/sistent';
 import { withRouter } from 'next/router';
+import { UsesSistent } from '../SistentWrapper';
 
 const ACTION_TYPES = {
   FETCH_CONNECTIONS: {
@@ -1292,15 +1293,17 @@ function Connections(props) {
             </div>
           )}
           {tab === 0 && CAN(keys.VIEW_CONNECTIONS.action, keys.VIEW_CONNECTIONS.subject) && (
-            <ResponsiveDataTable
-              data={connections}
-              columns={columns}
-              options={options}
-              className={classes.muiRow}
-              tableCols={tableCols}
-              updateCols={updateCols}
-              columnVisibility={columnVisibility}
-            />
+            <UsesSistent>
+              <ResponsiveDataTable
+                data={connections}
+                columns={columns}
+                options={options}
+                className={classes.muiRow}
+                tableCols={tableCols}
+                updateCols={updateCols}
+                columnVisibility={columnVisibility}
+              />
+            </UsesSistent>
           )}
           {tab === 1 && (
             <MeshSyncTable
