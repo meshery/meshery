@@ -57,7 +57,7 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: theme.shape.borderRadius,
     backgroundColor: theme.palette.secondary.elevatedComponents2,
     padding: '0.375rem',
-    // width: '98%',
+    width: '98%',
     display: 'flex',
     flexDirection: 'column',
   },
@@ -193,7 +193,6 @@ export default function NameValueTable(props) {
                     key={i + 10000}
                     xs={12}
                     sm={8}
-                    xl={20}
                     spacing={1}
                     component="dd"
                     className={clsx(
