@@ -29,16 +29,20 @@ import (
 	"github.com/spf13/viper"
 )
 
-// represents the mesheryctl exp components list command
+// represents the mesheryctl components list command
 var listComponentCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List registered components",
 	Long:  "List all components registered in Meshery Server",
 	Example: `
-	// View list of components
-mesheryctl exp components list
+// View list of components
+mesheryctl components list
+
 // View list of components with specified page number (25 components per page)
-mesheryctl exp components list --page 2
+mesheryctl components list --page 2
+
+// To view the number of components present in Meshery
+mesheryctl components --count
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		// Check prerequisites for the command here
@@ -72,6 +76,12 @@ mesheryctl exp components list --page 2
 
 		baseUrl := mctlCfg.GetBaseMesheryURL()
 		var url string
+
+		// Run count functionality only if count flag is set
+		if cmd.Flag("count").Value.String() == "true" {
+			return displayCount()
+		}
+
 		if cmd.Flags().Changed("page") {
 			url = fmt.Sprintf("%s/api/meshmodels/components?page=%d", baseUrl, pageNumberFlag)
 		} else {
@@ -134,7 +144,51 @@ mesheryctl exp components list --page 2
 	},
 }
 
+func displayCount() error {
+	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+	if err != nil {
+		return err
+	}
+
+	baseUrl := mctlCfg.GetBaseMesheryURL()
+
+	// Since we are not searching for particular component, we don't need to pass any search parameter
+	url := fmt.Sprintf("%s/api/meshmodels/components?pagesize=all", baseUrl)
+
+	req, err := utils.NewRequest(http.MethodGet, url, nil)
+	if err != nil {
+		utils.Log.Error(err)
+		return err
+	}
+
+	resp, err := utils.MakeRequest(req)
+	if err != nil {
+		utils.Log.Error(err)
+		return err
+	}
+
+	// defers the closing of the response body after its use, ensuring that the resources are properly released.
+	defer resp.Body.Close()
+
+	data, err := io.ReadAll(resp.Body)
+	if err != nil {
+		utils.Log.Error(err)
+		return err
+	}
+
+	componentsResponse := &models.MeshmodelComponentsAPIResponse{}
+	err = json.Unmarshal(data, componentsResponse)
+	if err != nil {
+		utils.Log.Error(err)
+		return err
+	}
+
+	fmt.Println("Total components present: ", componentsResponse.Count)
+	return nil
+}
+
 func init() {
-	// Add the new exp components commands to the ComponentsCmd
-	listComponentCmd.Flags().IntVarP(&pageNumberFlag, "page", "p", 1, "(optional) List next set of models with --page (default = 1)")
+	// Add the new components commands to the ComponentsCmd
+	listComponentCmd.Flags().IntVarP(&pageNumberFlag, "page", "p", 1, "(optional) List next set of components with --page (default = 1)")
+	listComponentCmd.Flags().BoolP("count", "", false, "(optional) Get the number of components in total")
 }

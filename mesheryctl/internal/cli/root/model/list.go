@@ -24,6 +24,9 @@ mesheryctl model list
 
 // View list of models with specified page number (25 models per page)
 mesheryctl model list --page 2
+
+// View number of available models in Meshery
+mesheryctl model list --count
     `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
