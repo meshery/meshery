@@ -1,6 +1,11 @@
 import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme) => ({
+  dialogBox: {
+    '& .MuiDialog-paper': {
+      maxWidth: '820px',
+    },
+  },
   dialogTitle: {
     backgroundColor: theme.palette.secondary.mainBackground,
     justifyContent: 'space-between',
@@ -20,6 +25,8 @@ const useStyles = makeStyles((theme) => ({
 
   text: {
     fontFamily: 'Qanelas Soft, sans-serif',
+    display: 'flex',
+    flexDirection: 'column',
     '&.MuiTypography-root': {
       fontFamily: 'Qanelas Soft, sans-serif',
     },
@@ -32,6 +39,7 @@ const useStyles = makeStyles((theme) => ({
     fontFamily: 'Qanelas Soft, sans-serif',
     textAlign: 'center',
     maxWidth: '200px',
+    marginTop: '0.5rem',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
@@ -53,6 +61,7 @@ const useStyles = makeStyles((theme) => ({
   visibilityGridItem: {
     display: 'flex',
     alignItems: 'center',
+    justifyContent: 'flex-end',
   },
   img: {
     marginLeft: '0.5rem',

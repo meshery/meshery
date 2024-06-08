@@ -1736,6 +1736,7 @@ function MesheryPatterns({
           )}
           {infoModal.open && CAN(keys.DETAILS_OF_DESIGN.action, keys.DETAILS_OF_DESIGN.subject) && (
             <InfoModal
+              handlePublish={handlePublish}
               infoModalOpen={true}
               handleInfoModalClose={handleInfoModalClose}
               dataName="patterns"

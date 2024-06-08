@@ -19,7 +19,6 @@ import {
 import useStyles from './styles';
 import { iconSmall } from '../../../css/icons.styles';
 import { getSharableCommonHostAndprotocolLink } from '../../../utils/utils';
-import OriginalApplicationFileIcon from '../../../assets/icons/OriginalApplicationIcon';
 import moment from 'moment';
 import Application from '../../../public/static/img/drawer-icons/application_svg.js';
 import { useSnackbar } from 'notistack';
@@ -36,6 +35,8 @@ import { store } from '../../../store';
 import { useGetUserByIdQuery } from '../../../rtk-query/user.js';
 import { ErrorBoundary } from '../../General/ErrorBoundary';
 import { getUnit8ArrayForDesign } from '@/utils/utils';
+import ServiceMesheryIcon from '@/assets/icons/ServiceMesheryIcon';
+import { CopyLinkIcon } from '@layer5/sistent';
 
 const APPLICATION_PLURAL = 'applications';
 const FILTER_PLURAL = 'filters';
@@ -51,6 +52,7 @@ const InfoModal_ = React.memo((props) => {
     currentUserID,
     patternFetcher,
     formSchema,
+    handlePublish,
     meshModels = [],
   } = props;
 
@@ -63,7 +65,7 @@ const InfoModal_ = React.memo((props) => {
 
   const classes = useStyles();
   const formatDate = (date) => {
-    return moment(date).utc().format('MMMM Do YYYY, h:mm:ss A');
+    return moment(date).utc().format('MMMM Do YYYY');
   };
 
   const { data: resourceUserProfile } = useGetUserByIdQuery(resourceOwnerID);
@@ -211,15 +213,21 @@ const InfoModal_ = React.memo((props) => {
 
     return (isPrivate && !isOwner) || !isPrivate;
   };
-
+  const handlePublishController = () => {
+    if (formRef.current && formRef.current.validateForm()) {
+      setSaveFormLoading(true);
+      handlePublish(formRef.current.state.formData);
+      setSaveFormLoading(false);
+    }
+  };
   return (
     <div style={{ marginBottom: '1rem' }}>
       <Dialog
         open={infoModalOpen}
         onClose={handleInfoModalClose}
         aria-labelledby="form-dialog-title"
-        maxWidth={dataName === APPLICATION_PLURAL ? 'xs' : 'md'}
         style={{ zIndex: 9999 }}
+        className={classes.dialogBox}
       >
         <DialogTitle textAlign="center" id="form-dialog-title" className={classes.dialogTitle}>
           {renderIcon()}
@@ -243,26 +251,63 @@ const InfoModal_ = React.memo((props) => {
               <Button
                 variant="outlined"
                 disabled
-                startIcon={
-                  <OriginalApplicationFileIcon
-                    style={{
-                      boxShadow: '0px 0px 6px 2px rgba(0, 0, 0, 0.25)',
-                      borderRadius: '20px',
-                    }}
-                    width={150}
-                    height={150}
-                  />
-                }
-              ></Button>
+                style={{
+                  border: '0.1px solid #E6E6E6',
+                  width: '150px',
+                  height: '150px',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              >
+                <ServiceMesheryIcon
+                  style={{
+                    boxShadow: '0px 0px 6px 2px rgba(0, 0, 0, 0.25)',
+                    borderRadius: '20px',
+                  }}
+                  width={100}
+                  height={100}
+                />
+              </Button>
               <Typography className={classes.resourceName} variant="subtitle1">
                 {selectedResource?.name}
               </Typography>
+              <Grid item xs={12} style={{ marginTop: '1rem' }}>
+                <Typography
+                  style={{ whiteSpace: 'nowrap' }}
+                  gutterBottom
+                  variant="subtitle1"
+                  className={classes.text}
+                >
+                  <span style={{ fontWeight: 'bold', color: '#CCCCCC', fontSize: '0.8rem' }}>
+                    Created
+                  </span>{' '}
+                  <span style={{ whiteSpace: 'wrap', color: '#CCCCCC', fontSize: '0.8rem' }}>
+                    {formatDate(selectedResource?.created_at)}
+                  </span>
+                </Typography>
+              </Grid>
+              <Grid item xs={12}>
+                <Typography
+                  style={{ whiteSpace: 'nowrap' }}
+                  gutterBottom
+                  variant="subtitle1"
+                  className={classes.text}
+                >
+                  <span style={{ fontWeight: 'bold', color: '#CCCCCC', fontSize: '0.8rem' }}>
+                    Updated{' '}
+                  </span>{' '}
+                  <span style={{ whiteSpace: 'nowrap', color: '#CCCCCC', fontSize: '0.8rem' }}>
+                    {formatDate(selectedResource?.updated_at)}
+                  </span>
+                </Typography>
+              </Grid>
             </Grid>
             <Grid item xs={8} lg>
               <Grid container spacing={2}>
                 <Grid item xs={dataName === APPLICATION_PLURAL ? 12 : 6}>
-                  <Typography gutterBottom variant="subtitle1" className={classes.text}>
-                    <span style={{ fontWeight: 'bold', paddingRight: '0.2rem' }}>Owner:</span>
+                  <Typography gutterBottom variant="subtitle1">
+                    <span style={{ fontWeight: 'bold', paddingRight: '0.2rem' }}>Owner</span>
                     <Tooltip
                       title={`Owner: ${
                         resourceUserProfile?.first_name + ' ' + resourceUserProfile?.last_name
@@ -277,16 +322,11 @@ const InfoModal_ = React.memo((props) => {
                   xs={dataName === APPLICATION_PLURAL ? 12 : 6}
                   className={classes.visibilityGridItem}
                 >
-                  <Typography gutterBottom variant="subtitle1" className={classes.text}>
-                    <span
-                      style={{
-                        fontWeight: 'bold',
-                        fontFamily: 'Qanelas Soft, sans-serif',
-                      }}
-                    >
-                      Visibility:
-                    </span>{' '}
-                  </Typography>
+                  <Tooltip title={'Copy Link'}>
+                    <IconButton onClick={handleCopy}>
+                      <CopyLinkIcon fill={'#eee'} />
+                    </IconButton>
+                  </Tooltip>
                   <img
                     className={classes.img}
                     src={`/static/img/${selectedResource?.visibility}.svg`}
@@ -305,44 +345,23 @@ const InfoModal_ = React.memo((props) => {
                     />
                   </Grid>
                 )}
-                <Grid item xs={12}>
-                  <Typography
-                    style={{ whiteSpace: 'nowrap' }}
-                    gutterBottom
-                    variant="subtitle1"
-                    className={classes.text}
-                  >
-                    <span style={{ fontWeight: 'bold' }}>Created At:</span>{' '}
-                    <span style={{ whiteSpace: 'wrap' }}>
-                      {formatDate(selectedResource?.created_at)}
-                    </span>
-                  </Typography>
-                </Grid>
-                <Grid item xs={12}>
-                  <Typography
-                    style={{ whiteSpace: 'nowrap' }}
-                    gutterBottom
-                    variant="subtitle1"
-                    className={classes.text}
-                  >
-                    <span style={{ fontWeight: 'bold' }}>Updated At:</span>{' '}
-                    <span style={{ whiteSpace: 'nowrap' }}>
-                      {formatDate(selectedResource?.updated_at)}
-                    </span>
-                  </Typography>
-                </Grid>
               </Grid>
             </Grid>
           </Grid>
         </DialogContent>
         <DialogActions
           style={{
-            justifyContent: 'space-evenly',
-            marginBottom: '0.5rem',
+            justifyContent: 'flex-end',
+            gap: '1rem',
+            margin: '0 1rem 0.5rem 0',
           }}
         >
-          <Button variant="outlined" onClick={handleCopy} className={classes.copyButton}>
-            Copy Link
+          <Button
+            variant="outlined"
+            onClick={handlePublishController}
+            className={classes.copyButton}
+          >
+            Publish to Catalog
           </Button>
           {shouldRenderSaveButton() ? (
             <Button
