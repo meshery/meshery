@@ -951,7 +951,6 @@ function Connections(props) {
   });
 
   useEffect(() => {
-    updateCols(columns);
     if (isEnvironmentsError) {
       notify({
         message: `${ACTION_TYPES.FETCH_ENVIRONMENT.error_msg}: ${environmentsError}`,
