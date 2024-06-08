@@ -1,7 +1,9 @@
 import { useSelectorRtk } from '@/store/hooks';
 import { selectSelectedEnvs } from '@/store/slices/globalEnvironmentContext';
+import { useSelector } from 'react-redux';
 const { Box, Typography, Stack, EnvironmentIcon, useTheme, styled } = require('@layer5/sistent');
 const { processDesign, CheckBoxField, StepHeading } = require('./common');
+const _ = require('lodash');
 
 const StyledSummaryItem = styled(Box)(({ theme }) => ({
   borderRadius: '0.5rem',
@@ -17,11 +19,18 @@ const StyledEnvironment = styled(Box)(({ theme }) => ({
   color: theme.palette.text.neutral.default,
 }));
 
+const isVisualizerEnabled = (capabilitiesRegistry) => {
+  const navigatorExtension = _.get(capabilitiesRegistry, 'extensions.navigator') || [];
+  return navigatorExtension.some((ext) => ext.title === 'MeshMap');
+};
+
 export const FinalizeDeployment = ({ design, openInVisualizer, setOpenInVisualizer }) => {
   const { configurableComponents } = processDesign(design);
   const selectedEnvironments = useSelectorRtk(selectSelectedEnvs);
   const envNames = Object.values(selectedEnvironments).map((env) => env.name);
-  console.log('selectedEnvironments', selectedEnvironments, envNames);
+
+  const capabilitiesRegistry = useSelector((state) => state.get('capabilitiesRegistry'));
+  const visualizerEnabled = isVisualizerEnabled(capabilitiesRegistry);
   const theme = useTheme();
   const palette = theme.palette;
   return (
@@ -66,11 +75,14 @@ export const FinalizeDeployment = ({ design, openInVisualizer, setOpenInVisualiz
         </StyledSummaryItem>
       </Box>
       <Stack mt={3} gap={1}>
-        <CheckBoxField
-          label="Open in Visualizer"
-          checked={openInVisualizer}
-          onChange={() => setOpenInVisualizer(!openInVisualizer)}
-        />
+        {visualizerEnabled && (
+          <CheckBoxField
+            label="Open in Visualizer"
+            checked={openInVisualizer}
+            helpText="Opens the deployed design in visualizer"
+            onChange={() => setOpenInVisualizer(!openInVisualizer)}
+          />
+        )}
         <CheckBoxField label="Schedule Deployment" checked={false} onChange={() => {}} disabled />
       </Stack>
     </Box>
