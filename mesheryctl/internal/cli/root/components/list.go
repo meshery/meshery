@@ -42,7 +42,7 @@ mesheryctl components list
 mesheryctl components list --page 2
 
 // To view the number of components present in Meshery
-mesheryctl components --count
+mesheryctl components list --count
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		// Check prerequisites for the command here
