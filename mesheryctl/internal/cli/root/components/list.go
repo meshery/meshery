@@ -153,7 +153,7 @@ func displayCount() error {
 	baseUrl := mctlCfg.GetBaseMesheryURL()
 
 	// Since we are not searching for particular component, we don't need to pass any search parameter
-	url := fmt.Sprintf("%s/api/meshmodels/components?pagesize=all", baseUrl)
+	url := fmt.Sprintf("%s/api/meshmodels/components?pagesize=1", baseUrl)
 
 	req, err := utils.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
