@@ -133,8 +133,6 @@ const ValidationResults_ = (props) => {
     (result) => result.errors?.length && !result?.componentDefinition?.metatadata?.isAnnotation,
   );
 
-  console.log('errors', componentsWithErrors, currentNodeId);
-
   const isCurrentComponent = (err) => err.component.traits.meshmap.id == currentNodeId;
   const [open, setOpen] = React.useState(componentsWithErrors.map(isCurrentComponent));
 
@@ -146,7 +144,6 @@ const ValidationResults_ = (props) => {
   };
 
   useEffect(() => {
-    console.log('currentComponentErrorRef', currentComponentErrorRef);
     // 👇 Will scroll smoothly to the top of component
     if (currentComponentErrorRef.current) {
       currentComponentErrorRef.current.scrollIntoView({ behavior: 'smooth' });

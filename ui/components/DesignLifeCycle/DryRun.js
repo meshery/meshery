@@ -110,7 +110,6 @@ const ExpandableComponentErrors = withStyles(styles)(({
   validationMachine,
   currentComponentName, // if dry run is initiated by clicking on node's error badge
 }) => {
-  console.log('currentComponentName', currentComponentName, componentName);
   const componentIcon = component
     ? `/${component?.traits?.meshmap?.['meshmodel-metadata'].svgWhite}`
     : null;
@@ -122,7 +121,6 @@ const ExpandableComponentErrors = withStyles(styles)(({
   const currentComponentErrorRef = useRef(null);
 
   const onErrorTap = (error) => {
-    console.log('onTap', error, component);
     if (!validationMachine) {
       return;
     }
@@ -241,7 +239,6 @@ export const FormatDryRunResponse = withStyles(styles)(({
 }) => {
   const totalDryRunErrors = getTotalCountOfDeploymentErrors(dryRunErrors);
 
-  console.log('Format Dry Run Response', dryRunErrors, totalDryRunErrors, designJson);
   return (
     <List
       aria-labelledby="nested-list-subheader"
@@ -296,8 +293,14 @@ export const FormatDryRunResponse = withStyles(styles)(({
 });
 
 const DryRunComponent = (props) => {
-  const { design, validationMachine, currentComponentName, selectedK8sContexts, deployment_type } =
-    props;
+  const {
+    design,
+    validationMachine,
+    currentComponentName,
+    selectedK8sContexts,
+    deployment_type,
+    includeDependencies,
+  } = props;
 
   const dryRunErrors = useDryRunValidationResults(validationMachine);
   const isLoading = useIsValidatingDryRun(validationMachine);
@@ -312,9 +315,10 @@ const DryRunComponent = (props) => {
       dryRunCommand({
         design,
         k8sContexts: selectedK8sContexts,
+        includeDependencies,
       }),
     );
-  }, []);
+  }, [includeDependencies]);
 
   if (isLoading) {
     return <Loading message="Performing a dry run" />;
@@ -352,6 +356,7 @@ export const DryRunDesign = ({
   validationMachine,
   selectedK8sContexts,
   deployment_type,
+  includeDependencies,
 }) => {
   if (!design?.pattern_file) {
     return null;
@@ -360,6 +365,7 @@ export const DryRunDesign = ({
   return (
     <DryRunComponent
       design={design}
+      includeDependencies={includeDependencies}
       validationMachine={validationMachine}
       deployment_type={deployment_type}
       handleClose={handleClose}
