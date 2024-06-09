@@ -35,7 +35,7 @@ import { useGetUserByIdQuery } from '../../../rtk-query/user.js';
 import { ErrorBoundary } from '../../General/ErrorBoundary';
 import { getUnit8ArrayForDesign } from '@/utils/utils';
 import ServiceMesheryIcon from '@/assets/icons/ServiceMesheryIcon';
-import { CopyLinkIcon, ModalButtonPrimary, ModalFooter } from '@layer5/sistent';
+import { CopyLinkIcon, ModalFooter } from '@layer5/sistent';
 import TooltipButton from '@/utils/TooltipButton';
 import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
@@ -365,7 +365,7 @@ const InfoModal_ = React.memo((props) => {
               {selectedResource?.visibility === 'published' ? 'Published' : 'Publish to Catalog'}
             </Button>
             {shouldRenderSaveButton() ? (
-              <ModalButtonPrimary
+              <Button
                 variant="contained"
                 color="primary"
                 className={classes.submitButton}
@@ -379,7 +379,7 @@ const InfoModal_ = React.memo((props) => {
                 ) : (
                   'Save'
                 )}
-              </ModalButtonPrimary>
+              </Button>
             ) : null}
           </ActionContainer>
         </ModalFooter>
