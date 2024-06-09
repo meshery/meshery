@@ -55,15 +55,15 @@ export const designValidatorCommands = {
       validationPayloadType: 'component',
     },
   }),
-  dryRunDesignDeployment: ({ design, k8sContexts, returnAddress }) => ({
+  dryRunDesignDeployment: ({ design, k8sContexts, includeDependencies, returnAddress }) => ({
     type: DESIGN_VALIDATOR_COMMANDS.DRY_RUN_DESIGN,
     returnAddress,
-    data: { design, k8sContexts, dryRunType: DRY_RUN_TYPE.DEPLOY },
+    data: { design, k8sContexts, dryRunType: DRY_RUN_TYPE.DEPLOY, includeDependencies },
   }),
-  dryRunDesignUnDeployment: ({ design, k8sContexts, returnAddress }) => ({
+  dryRunDesignUnDeployment: ({ design, k8sContexts, includeDependencies, returnAddress }) => ({
     type: DESIGN_VALIDATOR_COMMANDS.DRY_RUN_DESIGN,
     returnAddress,
-    data: { design, k8sContexts, dryRunType: DRY_RUN_TYPE.UNDEPLOY },
+    data: { design, k8sContexts, dryRunType: DRY_RUN_TYPE.UNDEPLOY, includeDependencies },
   }),
 };
 
@@ -124,7 +124,7 @@ export const formatDryRunResponse = (dryRunResponse) => {
 };
 
 const DryRunDesignActor = fromPromise(async ({ input: { validationPayload } }) => {
-  const { design, k8sContexts, dryRunType } = validationPayload;
+  const { design, k8sContexts, dryRunType, includeDependencies } = validationPayload;
   const { pattern_file, pattern_id } = design;
   const dryRunEndpoint =
     dryRunType === DRY_RUN_TYPE.DEPLOY
@@ -134,6 +134,7 @@ const DryRunDesignActor = fromPromise(async ({ input: { validationPayload } }) =
   const dryRunResults = await initiateQuery(dryRunEndpoint, {
     pattern_file,
     pattern_id,
+    skipCRD: !includeDependencies,
     selectedK8sContexts: k8sContexts,
     dryRun: true,
     verify: false,
