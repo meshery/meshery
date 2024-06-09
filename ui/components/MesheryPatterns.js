@@ -386,7 +386,7 @@ function MesheryPatterns({
   const designLifecycleModal = useModal({
     headerIcon: <PatternIcon fill="#fff" height={'2rem'} width={'2rem'} />,
   });
-  const infooModal = useModal({
+  const sistentInfoModal = useModal({
     headerIcon: OutlinedPatternIcon,
   });
   const handleDeploy = async ({ design, selectedK8sContexts }) => {
@@ -775,14 +775,14 @@ function MesheryPatterns({
   };
 
   const handleInfoModalClose = () => {
-    infooModal.closeModal();
+    sistentInfoModal.closeModal();
     setInfoModal({
       open: false,
     });
   };
 
   const handleInfoModal = (pattern) => {
-    infooModal.openModal({
+    sistentInfoModal.openModal({
       title: pattern.name,
     });
 
@@ -1699,7 +1699,7 @@ function MesheryPatterns({
 
           <UsesSistent>
             <SistentModal {...designLifecycleModal}></SistentModal>
-            <SistentModal {...infooModal}>
+            <SistentModal {...sistentInfoModal}>
               {CAN(keys.DETAILS_OF_DESIGN.action, keys.DETAILS_OF_DESIGN.subject) &&
                 infoModal.open && (
                   <InfoModal
