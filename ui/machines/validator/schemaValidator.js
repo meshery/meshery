@@ -162,7 +162,6 @@ const SchemaValidateDesignActor = fromPromise(async ({ input }) => {
   const { validationPayload, prevValidationResults } = input;
   const { validationPayloadType } = validationPayload;
 
-  await sleep(10000);
   if (validationPayloadType === 'design') {
     console.log('Validating design', validationPayload);
     const { design, componentDefs } = validationPayload;
@@ -174,6 +173,7 @@ const SchemaValidateDesignActor = fromPromise(async ({ input }) => {
   }
 
   if (validationPayloadType === 'component') {
+    console.log('Validating component', validationPayload);
     const { component, componentDef } = validationPayload;
     const validationResults = validateComponent(
       component,

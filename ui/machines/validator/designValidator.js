@@ -5,23 +5,13 @@ import {
   dataValidatorMachine,
   selectIsValidating,
   selectValidationResults,
-  // RTK_EVENTS,
-  // rtkQueryActorCommands,
-  // sendToActors,
-  // DeferEvents,
 } from '@layer5/sistent';
 import { useSelector } from '@xstate/react';
 import { processDesign } from '@/utils/utils';
 import { designsApi } from '@/rtk-query/design';
 import { initiateQuery } from '@/rtk-query/utils';
-// import { api } from '@/rtk-query/index';
-// import { store } from '@/store/index';
-// import { ACTOR_SYSTEM } from 'machines/registry';
-// import { sendToActor } from '@layer5/sistent';
-// import { sendToActors } from '@layer5/sistent';
-// import { rtkQueryActorCommands } from '@layer5/sistent';
-// import { RTK_EVENTS } from '@layer5/sistent';
-import { componentKey, schemaValidatorMachine } from './schemaValidator';
+
+import { componentKey } from './schemaValidator';
 import { fromWorkerfiedActor } from '@layer5/sistent';
 
 const DESIGN_VALIDATOR_COMMANDS = {
@@ -200,12 +190,7 @@ export const designValidationMachine = createMachine({
               syncSnapshot: true,
             },
           ),
-        // schemaValidator: ({ spawn }) =>
-        //   spawn(schemaValidatorMachine, {
-        //     name: 'schemaValidator',
-        //     id: 'schemaValidator',
-        //     syncSnapshot: true,
-        //   }),
+
         dryRunValidator: ({ spawn }) =>
           spawn(dryRunValidatorMachine, {
             name: 'dryRunValidator',
@@ -220,20 +205,8 @@ export const designValidationMachine = createMachine({
       on: {
         [DESIGN_VALIDATOR_COMMANDS.VALIDATE_DESIGN_SCHEMA]: {
           target: 'validateDesignSchema',
-          // actions: sendTo('schemaValidator', ({ event }) =>
-          //   dataValidatorCommands.validateData({
-          //     validationPayload: event.data,
-          //     returnAddress: event.returnAddress, // directly return the response event from schemaValidator
-          //   }),
-          // ),
         },
         [DESIGN_VALIDATOR_COMMANDS.VALIDATE_DESING_COMPONENT]: {
-          // actions: sendTo('schemaValidator', ({ event }) =>
-          //   dataValidatorCommands.validateData({
-          //     validationPayload: event.data,
-          //     returnAddress: event.returnAddress,
-          //   }),
-          // ),
           target: 'validateComponentSchema',
         },
         [DESIGN_VALIDATOR_COMMANDS.DRY_RUN_DESIGN]: {
@@ -255,27 +228,34 @@ export const designValidationMachine = createMachine({
       invoke: {
         input: ({ context, event }) => ({ context, event }),
         src: fromPromise(async ({ input }) => {
-          const { component } = input.event;
+          console.log('input', input);
+          const { component } = input.event.data;
           const def = await getComponentDefinition(component.type, component.model, {
             apiVersion: component.apiVersion,
             annotations: 'include',
           });
           return {
             validationPayload: {
+              ...input.event.data,
               componentDef: def,
               component: component,
             },
             returnAddress: input.event.returnAddress,
           };
         }),
-      },
-      onDone: {
-        actions: [
-          sendTo('schemaValidator', ({ event }) =>
-            dataValidatorCommands.validateData(event.output),
-          ),
-        ],
-        target: 'idle',
+        onDone: {
+          actions: [
+            sendTo('schemaValidator', ({ event }) =>
+              dataValidatorCommands.validateData(event.output),
+            ),
+          ],
+          target: 'idle',
+        },
+        onError: {
+          target: 'idle',
+          actions: ({ event }) =>
+            console.log('error while relaying validateComponentSchema', event),
+        },
       },
     },
 
@@ -293,6 +273,7 @@ export const designValidationMachine = createMachine({
             returnAddress: event.returnAddress,
           };
         }),
+
         onDone: {
           actions: [
             sendTo('schemaValidator', ({ event }) =>
@@ -300,6 +281,10 @@ export const designValidationMachine = createMachine({
             ),
           ],
           target: 'idle',
+        },
+        onError: {
+          target: 'idle',
+          actions: ({ event }) => console.log('error while relaying validateDesignSchema', event),
         },
       },
     },
