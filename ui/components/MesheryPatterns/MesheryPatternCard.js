@@ -41,7 +41,6 @@ function MesheryPatternCard_({
   pattern_file,
   handleVerify,
   handleDryRun,
-  handlePublishModal,
   handleUnpublishModal,
   handleDeploy,
   handleUnDeploy,
@@ -73,7 +72,6 @@ function MesheryPatternCard_({
   };
 
   const { data: owner } = useGetUserByIdQuery(pattern.user_id || '');
-
   const catalogContentKeys = Object.keys(description);
   const catalogContentValues = Object.values(description);
   const classes = useStyles();
@@ -147,18 +145,7 @@ function MesheryPatternCard_({
           </div>
           <div className={classes.bottomPart}>
             <div className={classes.cardButtons}>
-              {canPublishPattern && visibility !== VISIBILITY.PUBLISHED ? (
-                <TooltipButton
-                  variant="contained"
-                  title="Publish"
-                  className={classes.testsButton}
-                  onClick={(ev) => genericClickHandler(ev, handlePublishModal)}
-                  disabled={!CAN(keys.PUBLISH_DESIGN.action, keys.PUBLISH_DESIGN.subject)}
-                >
-                  <PublicIcon className={classes.iconPatt} />
-                  <span className={classes.btnText}> Publish </span>
-                </TooltipButton>
-              ) : (
+              {canPublishPattern && visibility === VISIBILITY.PUBLISHED && (
                 <TooltipButton
                   variant="contained"
                   title="Unpublish"

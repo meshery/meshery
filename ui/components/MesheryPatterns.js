@@ -13,7 +13,7 @@ import {
   TableCell,
   Typography,
 } from '@material-ui/core';
-import { CustomTooltip } from '@layer5/sistent';
+import { CustomTooltip, OutlinedPatternIcon } from '@layer5/sistent';
 import { withStyles } from '@material-ui/core/styles';
 import CloseIcon from '@material-ui/icons/Close';
 import DeleteIcon from '@material-ui/icons/Delete';
@@ -64,7 +64,7 @@ import InfoModal from './Modals/Information/InfoModal';
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import { SortableTableCell } from './connections/common/index.js';
 import DefaultError from './General/error-404/index';
-import CAN, { ability } from '@/utils/can';
+import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import ExportModal from './ExportModal';
 import UniversalFilter from '../utils/custom-filter';
@@ -386,7 +386,9 @@ function MesheryPatterns({
   const designLifecycleModal = useModal({
     headerIcon: <PatternIcon fill="#fff" height={'2rem'} width={'2rem'} />,
   });
-
+  const infooModal = useModal({
+    headerIcon: OutlinedPatternIcon,
+  });
   const handleDeploy = async ({ design, selectedK8sContexts }) => {
     updateProgress({ showProgress: true });
     await deployPatternMutation({
@@ -423,8 +425,6 @@ function MesheryPatterns({
       content: pattern,
     }));
   };
-
-  console.log('updated ability in pattern', ability);
 
   const [loading, stillLoading] = useState(true);
   const { width } = useWindowDimensions();
@@ -516,27 +516,6 @@ function MesheryPatterns({
       setSearch('');
     }
   }, [viewType]);
-
-  // const handleCatalogPreference = (catalogPref) => {
-  //   let body = Object.assign({}, extensionPreferences);
-  //   body['catalogContent'] = catalogPref;
-
-  //   dataFetch(
-  //     '/api/user/prefs',
-  //     {
-  //       method: 'POST',
-  //       credentials: 'include',
-  //       body: JSON.stringify({ usersExtensionPreferences: body }),
-  //     },
-  //     () => {
-  //       notify({
-  //         message: `Catalog Content was ${catalogPref ? 'enabled' : 'disabled'}`,
-  //         event_type: EVENT_TYPES.SUCCESS,
-  //       });
-  //     },
-  //     (err) => console.error(err),
-  //   );
-  // };
 
   const fetchUserPrefs = () => {
     dataFetch(
@@ -679,7 +658,6 @@ function MesheryPatterns({
   // }, [catalogVisibility]);
 
   const handleSetPatterns = (patterns) => {
-    console.log('Patterns', patterns);
     if (catalogVisibilityRef.current && catalogContentRef.current?.length > 0) {
       setPatterns([
         ...(catalogContentRef.current || []),
@@ -797,12 +775,17 @@ function MesheryPatterns({
   };
 
   const handleInfoModalClose = () => {
+    infooModal.closeModal();
     setInfoModal({
       open: false,
     });
   };
 
   const handleInfoModal = (pattern) => {
+    infooModal.openModal({
+      title: pattern.name,
+    });
+
     setInfoModal({
       open: true,
       ownerID: pattern.user_id,
@@ -1716,6 +1699,23 @@ function MesheryPatterns({
 
           <UsesSistent>
             <SistentModal {...designLifecycleModal}></SistentModal>
+            <SistentModal {...infooModal}>
+              {CAN(keys.DETAILS_OF_DESIGN.action, keys.DETAILS_OF_DESIGN.subject) &&
+                infoModal.open && (
+                  <InfoModal
+                    handlePublish={handlePublish}
+                    infoModalOpen={true}
+                    handleInfoModalClose={handleInfoModalClose}
+                    dataName="patterns"
+                    selectedResource={infoModal.selectedResource}
+                    resourceOwnerID={infoModal.ownerID}
+                    currentUserID={user?.id}
+                    patternFetcher={fetchPatternsCaller}
+                    formSchema={publishSchema}
+                    meshModels={meshModels}
+                  />
+                )}
+            </SistentModal>
           </UsesSistent>
           {canPublishPattern &&
             publishModal.open &&
@@ -1732,20 +1732,6 @@ function MesheryPatterns({
               importFormSchema={importSchema}
               handleClose={handleUploadImportClose}
               handleImportDesign={handleImportDesign}
-            />
-          )}
-          {infoModal.open && CAN(keys.DETAILS_OF_DESIGN.action, keys.DETAILS_OF_DESIGN.subject) && (
-            <InfoModal
-              handlePublish={handlePublish}
-              infoModalOpen={true}
-              handleInfoModalClose={handleInfoModalClose}
-              dataName="patterns"
-              selectedResource={infoModal.selectedResource}
-              resourceOwnerID={infoModal.ownerID}
-              currentUserID={user?.id}
-              patternFetcher={fetchPatternsCaller}
-              formSchema={publishSchema}
-              meshModels={meshModels}
             />
           )}
           <PromptComponent ref={modalRef} />

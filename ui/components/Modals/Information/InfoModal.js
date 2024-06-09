@@ -13,10 +13,9 @@ import {
   Box,
   DialogTitle,
   DialogContent,
-  DialogActions,
   Dialog,
 } from '@material-ui/core';
-import useStyles from './styles';
+import useStyles, { ActionContainer, CreatAtContainer } from './styles';
 import { iconSmall } from '../../../css/icons.styles';
 import { getSharableCommonHostAndprotocolLink } from '../../../utils/utils';
 import moment from 'moment';
@@ -36,7 +35,11 @@ import { useGetUserByIdQuery } from '../../../rtk-query/user.js';
 import { ErrorBoundary } from '../../General/ErrorBoundary';
 import { getUnit8ArrayForDesign } from '@/utils/utils';
 import ServiceMesheryIcon from '@/assets/icons/ServiceMesheryIcon';
-import { CopyLinkIcon } from '@layer5/sistent';
+import { CopyLinkIcon, ModalButtonPrimary, ModalFooter } from '@layer5/sistent';
+import TooltipButton from '@/utils/TooltipButton';
+import { keys } from '@/utils/permission_constants';
+import CAN from '@/utils/can';
+import theme from '@/themes/app';
 
 const APPLICATION_PLURAL = 'applications';
 const FILTER_PLURAL = 'filters';
@@ -279,12 +282,10 @@ const InfoModal_ = React.memo((props) => {
                   variant="subtitle1"
                   className={classes.text}
                 >
-                  <span style={{ fontWeight: 'bold', color: '#CCCCCC', fontSize: '0.8rem' }}>
-                    Created
-                  </span>{' '}
-                  <span style={{ whiteSpace: 'wrap', color: '#CCCCCC', fontSize: '0.8rem' }}>
+                  <CreatAtContainer isBold={true}>Created</CreatAtContainer>
+                  <CreatAtContainer isBold={false}>
                     {formatDate(selectedResource?.created_at)}
-                  </span>
+                  </CreatAtContainer>
                 </Typography>
               </Grid>
               <Grid item xs={12}>
@@ -294,12 +295,10 @@ const InfoModal_ = React.memo((props) => {
                   variant="subtitle1"
                   className={classes.text}
                 >
-                  <span style={{ fontWeight: 'bold', color: '#CCCCCC', fontSize: '0.8rem' }}>
-                    Updated{' '}
-                  </span>{' '}
-                  <span style={{ whiteSpace: 'nowrap', color: '#CCCCCC', fontSize: '0.8rem' }}>
+                  <CreatAtContainer isBold={true}>Updated</CreatAtContainer>
+                  <CreatAtContainer idBold={false}>
                     {formatDate(selectedResource?.updated_at)}
-                  </span>
+                  </CreatAtContainer>
                 </Typography>
               </Grid>
             </Grid>
@@ -322,11 +321,9 @@ const InfoModal_ = React.memo((props) => {
                   xs={dataName === APPLICATION_PLURAL ? 12 : 6}
                   className={classes.visibilityGridItem}
                 >
-                  <Tooltip title={'Copy Link'}>
-                    <IconButton onClick={handleCopy}>
-                      <CopyLinkIcon fill={'#eee'} />
-                    </IconButton>
-                  </Tooltip>
+                  <TooltipButton title={'Copy Link'} onClick={handleCopy}>
+                    <CopyLinkIcon fill={theme.palette.secondary.icon2} />
+                  </TooltipButton>
                   <img
                     className={classes.img}
                     src={`/static/img/${selectedResource?.visibility}.svg`}
@@ -349,38 +346,43 @@ const InfoModal_ = React.memo((props) => {
             </Grid>
           </Grid>
         </DialogContent>
-        <DialogActions
-          style={{
-            justifyContent: 'flex-end',
-            gap: '1rem',
-            margin: '0 1rem 0.5rem 0',
-          }}
+        <ModalFooter
+          helpText={
+            'Upon submitting your catalog item, an approval flow will be initiated. [Learn More](https://docs.meshery.io/concepts/catalog)'
+          }
+          variant="transparent"
         >
-          <Button
-            variant="outlined"
-            onClick={handlePublishController}
-            className={classes.copyButton}
-          >
-            Publish to Catalog
-          </Button>
-          {shouldRenderSaveButton() ? (
+          <ActionContainer>
             <Button
-              variant="contained"
-              color="primary"
-              className={classes.submitButton}
-              onClick={handleSubmit}
-              disabled={isCatalogDataEqual || saveFormLoading}
+              variant="outlined"
+              onClick={handlePublishController}
+              className={classes.copyButton}
+              disabled={
+                !CAN(keys.PUBLISH_DESIGN.action, keys.PUBLISH_DESIGN.subject) ||
+                selectedResource?.visibility === 'published'
+              }
             >
-              {saveFormLoading ? (
-                <Box sx={{ display: 'flex' }}>
-                  <CircularProgress color="inherit" size="1.4rem" />
-                </Box>
-              ) : (
-                'Save'
-              )}
+              {selectedResource?.visibility === 'published' ? 'Published' : 'Publish to Catalog'}
             </Button>
-          ) : null}
-        </DialogActions>
+            {shouldRenderSaveButton() ? (
+              <ModalButtonPrimary
+                variant="contained"
+                color="primary"
+                className={classes.submitButton}
+                onClick={handleSubmit}
+                disabled={isCatalogDataEqual || saveFormLoading}
+              >
+                {saveFormLoading ? (
+                  <Box sx={{ display: 'flex' }}>
+                    <CircularProgress color="inherit" size="1.4rem" />
+                  </Box>
+                ) : (
+                  'Save'
+                )}
+              </ModalButtonPrimary>
+            ) : null}
+          </ActionContainer>
+        </ModalFooter>
       </Dialog>
     </div>
   );

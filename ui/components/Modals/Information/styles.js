@@ -1,4 +1,19 @@
+import { Box, styled } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+
+export const CreatAtContainer = styled('span')(({ theme, isBold }) => ({
+  fontWeight: isBold ? 'bold' : '',
+  whiteSpace: 'wrap',
+  color: theme.palette.type === 'dark' ? '#ccc' : theme.palette.secondary.mainBackground,
+  fontSize: '0.8rem',
+}));
+
+export const ActionContainer = styled(Box)({
+  width: '100%',
+  display: 'flex',
+  gap: '1rem',
+  justifyContent: 'end',
+});
 
 const useStyles = makeStyles((theme) => ({
   dialogBox: {
