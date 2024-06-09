@@ -1,4 +1,4 @@
-import { createMachine, fromPromise, sendTo, assign, emit } from 'xstate';
+import { fromPromise } from 'xstate';
 import Ajv from 'ajv';
 import _ from 'lodash';
 
@@ -68,7 +68,6 @@ const validateComponent = (component, validateAnnotations = false, componentDef)
   //   apiVersion: component.apiVersion,
   //   annotations: 'include',
   // });
-  console.log('validateComponent', component, componentDef);
 
   if (!componentDef || (componentDef?.metadata?.isAnnotation && !validateAnnotations)) {
     // skip validation for annotations
@@ -135,8 +134,6 @@ const validateComponent = (component, validateAnnotations = false, componentDef)
 
 export const componentKey = ({ type, model, apiVersion }) => `${type}-${model}-${apiVersion}`;
 
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
 const validateDesign = (design, componentDefsStore) => {
   const { configurableComponents } = processDesign(design);
 
@@ -163,17 +160,14 @@ const SchemaValidateDesignActor = fromPromise(async ({ input }) => {
   const { validationPayloadType } = validationPayload;
 
   if (validationPayloadType === 'design') {
-    console.log('Validating design', validationPayload);
     const { design, componentDefs } = validationPayload;
     const validationResults = validateDesign(design, componentDefs);
-    console.log('Validation results', validationResults);
     return {
       validationResults,
     };
   }
 
   if (validationPayloadType === 'component') {
-    console.log('Validating component', validationPayload);
     const { component, componentDef } = validationPayload;
     const validationResults = validateComponent(
       component,

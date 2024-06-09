@@ -228,7 +228,6 @@ export const designValidationMachine = createMachine({
       invoke: {
         input: ({ context, event }) => ({ context, event }),
         src: fromPromise(async ({ input }) => {
-          console.log('input', input);
           const { component } = input.event.data;
           const def = await getComponentDefinition(component.type, component.model, {
             apiVersion: component.apiVersion,
