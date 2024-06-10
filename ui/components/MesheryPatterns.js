@@ -1343,7 +1343,9 @@ function MesheryPatterns({
     // Initialize column visibility based on the original columns' visibility
     const initialVisibility = {};
     columns.forEach((col) => {
-      initialVisibility[col.name] = showCols[col.name];
+      if (!(hideVisibility && col.name === 'visibility')) {
+        initialVisibility[col.name] = showCols[col.name];
+      }
     });
     return initialVisibility;
   });
