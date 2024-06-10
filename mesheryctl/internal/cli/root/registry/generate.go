@@ -207,9 +207,7 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 			}
 
 			if mutils.ReplaceSpacesAndConvertToLowercase(model.Registrant) == "artifacthub" {
-				time.Sleep(1 * time.Second)
 				rateLimitArtifactHub()
-
 			}
 			pkg, err := generator.GetPackage()
 			if err != nil {
