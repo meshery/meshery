@@ -192,7 +192,7 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 				wg.Done()
 				weightedSem.Release(1)
 			}()
-			if mutils.ReplaceSpacesAndConvertToLowercase(model.Registrant) {
+			if mutils.ReplaceSpacesAndConvertToLowercase(model.Registrant) == "meshery" {
 				err = GenerateDefsForCoreRegistrant(model)
 				if err != nil {
 					utils.Log.Error(err)
