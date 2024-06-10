@@ -192,7 +192,7 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 				wg.Done()
 				weightedSem.Release(1)
 			}()
-			if model.Registrant == "meshery" {
+			if mutils.ReplaceSpacesAndConvertToLowercase(model.Registrant) {
 				err = GenerateDefsForCoreRegistrant(model)
 				if err != nil {
 					utils.Log.Error(err)
@@ -206,7 +206,7 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 				return
 			}
 
-			if model.Registrant == "Artifact Hub" {
+			if mutils.ReplaceSpacesAndConvertToLowercase(model.Registrant) == "artifacthub" {
 				time.Sleep(1 * time.Second)
 				rateLimitArtifactHub()
 
