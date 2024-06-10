@@ -14,6 +14,7 @@ import { useWindowDimensions } from '../../../utils/dimension';
 import { camelcaseToSnakecase } from '../../../utils/utils';
 import { Slide } from '@material-ui/core';
 import { useSelector } from 'react-redux';
+import { UsesSistent } from '@/components/SistentWrapper';
 
 const ACTION_TYPES = {
   FETCH_MESHSYNC_RESOURCES: {
@@ -220,15 +221,17 @@ const ResourcesTable = (props) => {
               />
             </div>
           </div>
-          <ResponsiveDataTable
-            data={meshSyncResources}
-            columns={tableConfig.columns}
-            options={options}
-            className={classes.muiRow}
-            tableCols={tableCols}
-            updateCols={updateCols}
-            columnVisibility={columnVisibility}
-          />
+          <UsesSistent>
+            <ResponsiveDataTable
+              data={meshSyncResources}
+              columns={tableConfig.columns}
+              options={options}
+              className={classes.muiRow}
+              tableCols={tableCols}
+              updateCols={updateCols}
+              columnVisibility={columnVisibility}
+            />
+          </UsesSistent>
         </div>
       )}
     </>

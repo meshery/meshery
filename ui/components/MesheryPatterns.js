@@ -1667,16 +1667,18 @@ function MesheryPatterns({
           </div>
           {!selectedPattern.show && viewType === 'table' && (
             <>
-              <ResponsiveDataTable
-                data={patterns}
-                columns={columns}
-                // @ts-ignore
-                options={options}
-                className={classes.muiRow}
-                tableCols={tableCols}
-                updateCols={updateCols}
-                columnVisibility={columnVisibility}
-              />
+              <UsesSistent>
+                <ResponsiveDataTable
+                  data={patterns}
+                  columns={columns}
+                  // @ts-ignore
+                  options={options}
+                  className={classes.muiRow}
+                  tableCols={tableCols}
+                  updateCols={updateCols}
+                  columnVisibility={columnVisibility}
+                />
+              </UsesSistent>
               <ExportModal
                 downloadModal={downloadModal}
                 handleDownloadDialogClose={handleDownloadDialogClose}

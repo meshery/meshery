@@ -734,28 +734,28 @@ class MesheryApp extends App {
                             abilityUpdated={this.state.abilityUpdated}
                           />
                         )}
+                        <main
+                          className={classes.mainContent}
+                          style={{
+                            padding: this.props.extensionType === 'navigator' && '0px',
+                          }}
+                        >
+                          <MuiPickersUtilsProvider utils={MomentUtils}>
+                            <ErrorBoundary>
+                              <Component
+                                pageContext={this.pageContext}
+                                contexts={this.state.k8sContexts}
+                                activeContexts={this.state.activeK8sContexts}
+                                setActiveContexts={this.setActiveContexts}
+                                searchContexts={this.searchContexts}
+                                theme={this.state.theme}
+                                themeSetter={this.themeSetter}
+                                {...pageProps}
+                              />
+                            </ErrorBoundary>
+                          </MuiPickersUtilsProvider>
+                        </main>
                       </NotificationCenterProvider>
-                      <main
-                        className={classes.mainContent}
-                        style={{
-                          padding: this.props.extensionType === 'navigator' && '0px',
-                        }}
-                      >
-                        <MuiPickersUtilsProvider utils={MomentUtils}>
-                          <ErrorBoundary>
-                            <Component
-                              pageContext={this.pageContext}
-                              contexts={this.state.k8sContexts}
-                              activeContexts={this.state.activeK8sContexts}
-                              setActiveContexts={this.setActiveContexts}
-                              searchContexts={this.searchContexts}
-                              theme={this.state.theme}
-                              themeSetter={this.themeSetter}
-                              {...pageProps}
-                            />
-                          </ErrorBoundary>
-                        </MuiPickersUtilsProvider>
-                      </main>
                     </SnackbarProvider>
                     <Footer
                       classes={classes}
