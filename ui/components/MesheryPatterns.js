@@ -332,6 +332,7 @@ function MesheryPatterns({
   catalogVisibility,
   disableCreateImportDesignButton = false,
   disableUniversalFilter = false,
+  hideVisibility = false,
   initialFilters = { visibility: 'All' },
   pageTitle = 'Designs',
 }) {
@@ -1723,6 +1724,7 @@ function MesheryPatterns({
               openValidationModal={openValidateModal}
               openDryRunModal={openDryRunModal}
               openDeployModal={openDeployModal}
+              hideVisibility={hideVisibility}
             />
           )}
 

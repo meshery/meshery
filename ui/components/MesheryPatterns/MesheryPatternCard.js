@@ -30,6 +30,8 @@ import { keys } from '@/utils/permission_constants';
 import ActionButton from './ActionButton';
 import DryRunIcon from '@/assets/icons/DryRunIcon';
 import CheckIcon from '@/assets/icons/CheckIcon';
+import PatternIcon from '@/assets/icons/Pattern';
+import { iconLarge } from 'css/icons.styles';
 
 const INITIAL_GRID_SIZE = { xl: 4, md: 6, xs: 12 };
 
@@ -57,6 +59,7 @@ function MesheryPatternCard_({
   user,
   pattern,
   handleInfoModal,
+  hideVisibility = false,
 }) {
   const router = useRouter();
 
@@ -125,7 +128,11 @@ function MesheryPatternCard_({
               >
                 {name}
               </Typography>
-              <img className={classes.img} src={`/static/img/${visibility}.svg`} />
+              {hideVisibility ? (
+                <PatternIcon {...iconLarge} color={true} />
+              ) : (
+                <img className={classes.img} src={`/static/img/${visibility}.svg`} />
+              )}
             </div>
             <div className={classes.lastRunText}>
               <div>

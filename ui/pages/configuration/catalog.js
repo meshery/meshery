@@ -30,6 +30,7 @@ function CatalogPage(props) {
         disableCreateImportDesignButton={true}
         disableUniversalFilter={true}
         initialFilters={{ visibility: VISIBILITY.PUBLISHED }}
+        hideVisibility={true}
         pageTitle="Catalog"
       />
     </NoSsr>
