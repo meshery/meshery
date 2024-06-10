@@ -56,9 +56,7 @@ mesheryctl model list --page 2
 		}
 
 		baseUrl := mctlCfg.GetBaseMesheryURL()
-		var url string
-
-		url = fmt.Sprintf("%s/api/meshmodels/models?%s", baseUrl, getPageQueryParameter(cmd))
+		url := fmt.Sprintf("%s/api/meshmodels/models?%s", baseUrl, getPageQueryParameter(cmd))
 
 		req, err := utils.NewRequest(http.MethodGet, url, nil)
 		if err != nil {
