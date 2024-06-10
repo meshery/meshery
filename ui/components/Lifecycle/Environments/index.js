@@ -385,15 +385,7 @@ const Environments = ({ organization, classes }) => {
   const handleAssignConnectionData = (updatedAssignedData) => {
     const { addedConnectionsIds, removedConnectionsIds } =
       getAddedAndRemovedConnection(updatedAssignedData);
-    (addedConnectionsIds.length > 0 || removedConnectionsIds.length) > 0 &&
-    (CAN(
-      keys.ASSIGN_CONNECTIONS_TO_ENVIRONMENT.action,
-      keys.ASSIGN_CONNECTIONS_TO_ENVIRONMENT.subject,
-    ) ||
-      CAN(
-        keys.REMOVE_CONNECTIONS_FROM_ENVIRONMENT.action,
-        keys.REMOVE_CONNECTIONS_FROM_ENVIRONMENT.subject,
-      ))
+    (addedConnectionsIds.length > 0 || removedConnectionsIds.length) > 0
       ? setDisableTranferButton(false)
       : setDisableTranferButton(true);
 
@@ -598,12 +590,12 @@ const Environments = ({ organization, classes }) => {
                   originalLeftCount={connections?.total_count}
                   originalRightCount={environmentConnections?.total_count}
                   leftPermission={CAN(
-                    keys.REMOVE_CONNECTIONS_FROM_ENVIRONMENT.action,
-                    keys.REMOVE_CONNECTIONS_FROM_ENVIRONMENT.subject,
-                  )}
-                  rightPermission={CAN(
                     keys.ASSIGN_CONNECTIONS_TO_ENVIRONMENT.action,
                     keys.ASSIGN_CONNECTIONS_TO_ENVIRONMENT.subject,
+                  )}
+                  rightPermission={CAN(
+                    keys.REMOVE_CONNECTIONS_FROM_ENVIRONMENT.action,
+                    keys.REMOVE_CONNECTIONS_FROM_ENVIRONMENT.subject,
                   )}
                 />
               </UsesSistent>
