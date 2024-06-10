@@ -60,7 +60,6 @@ var (
 	artifactHubMutex        sync.Mutex
 )
 
-
 var generateCmd = &cobra.Command{
 	Use:   "generate",
 	Short: "Generate Models",
@@ -185,7 +184,6 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 		if err != nil {
 			break
 		}
-		utils.Log.Info("Current model: ", model.Model)
 		wg.Add(1)
 		go func(model utils.ModelCSV) {
 			defer func() {
@@ -208,6 +206,7 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 
 			if mutils.ReplaceSpacesAndConvertToLowercase(model.Registrant) == "artifacthub" {
 				rateLimitArtifactHub()
+
 			}
 			pkg, err := generator.GetPackage()
 			if err != nil {
@@ -232,6 +231,7 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 				utils.Log.Error(ErrGenerateModel(err, model.Model))
 				return
 			}
+			utils.Log.Info("Current model: ", model.Model)
 			utils.Log.Info(" extracted ", len(comps), " components for ", model.ModelDisplayName, " (", model.Model, ")")
 			for _, comp := range comps {
 				comp.Version = defVersion
