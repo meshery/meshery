@@ -7,6 +7,7 @@ import { ResponsiveDataTable } from '@layer5/sistent';
 import { ALL_VIEW } from './resources/config';
 import GetNodeIcon from '../configuratorComponents/MeshModel/NodeIcon';
 import { JsonParse } from '../../utils/utils';
+import { UsesSistent } from '../SistentWrapper';
 
 const View = (props) => {
   const {
@@ -84,16 +85,17 @@ const View = (props) => {
           <Typography style={{ fontSize: '1.2rem', marginBottom: '1rem' }} align="left">
             {key.toUpperCase()}
           </Typography>
-
-          <ResponsiveDataTable
-            classes={classes.muiRow}
-            data={value}
-            columns={columns}
-            options={options}
-            tableCols={columns}
-            updateCols={() => {}}
-            columnVisibility={{}}
-          />
+          <UsesSistent>
+            <ResponsiveDataTable
+              classes={classes.muiRow}
+              data={value}
+              columns={columns}
+              options={options}
+              tableCols={columns}
+              updateCols={() => {}}
+              columnVisibility={{}}
+            />
+          </UsesSistent>
         </div>
       </>
     );

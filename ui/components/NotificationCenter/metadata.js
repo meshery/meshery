@@ -5,16 +5,12 @@ import { FormatStructuredData, SectionBody, reorderObjectProperties } from '../D
 import { isEmptyAtAllDepths } from '../../utils/objects';
 import { canTruncateDescription } from './notification';
 import { TextWithLinks } from '../DataFormatter';
-import { FormatDryRunResponse } from '../MesheryPatterns/DryRunDesign';
+import { FormatDryRunResponse } from '../DesignLifeCycle/DryRun';
+import { formatDryRunResponse } from 'machines/validator/designValidator';
+import { DeploymentSummaryFormatter } from '../DesignLifeCycle/DeploymentSummary';
 
 const DryRunResponse = ({ response }) => {
-  return (
-    <FormatDryRunResponse
-      dryRunResponse={response}
-      numberOfComponentsInDesign={null}
-      onErrorClick={() => {}}
-    />
-  );
+  return <FormatDryRunResponse dryRunErrors={formatDryRunResponse(response)} />;
 };
 
 const TitleLink = ({ href, children, ...props }) => {
@@ -58,7 +54,7 @@ export const ErrorMetadataFormatter = ({ metadata, event }) => {
     <Grid container>
       <div>
         <TitleLink href={errorLink}> {formattedErrorCode} </TitleLink>
-        <FormatStructuredData data={event.description} />
+        {event?.description && <FormatStructuredData data={event.description} />}
         <div style={{ marginTop: '1rem' }}>
           <FormatStructuredData
             data={{
@@ -116,9 +112,21 @@ export const FormattedMetadata = ({ event }) => {
     error: (value) => <ErrorMetadataFormatter metadata={value} event={event} />,
     dryRunResponse: (value) => <DryRunResponse response={value} />,
   };
+
+  const EventTypeFormatters = {
+    deploy: DeploymentSummaryFormatter,
+    undeploy: DeploymentSummaryFormatter,
+  };
+
+  if (EventTypeFormatters[event.action]) {
+    const Formatter = EventTypeFormatters[event.action];
+    return <Formatter event={event} />;
+  }
+
   if (!event || !event.metadata || isEmptyAtAllDepths(event.metadata)) {
     return <EmptyState event={event} />;
   }
+
   const metadata = {
     ...event.metadata,
     ShortDescription:
