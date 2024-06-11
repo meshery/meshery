@@ -47,7 +47,8 @@ import {
   setAdapter,
   updateCapabilities,
 } from '../lib/store';
-import { ButtonGroup, IconButton, Tooltip } from '@material-ui/core';
+import { ButtonGroup, IconButton } from '@material-ui/core';
+import { CustomTooltip } from '@layer5/sistent';
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
 import dataFetch from '../lib/data-fetch';
 import { Collapse } from '@material-ui/core';
@@ -75,7 +76,6 @@ import { iconSmall } from '../css/icons.styles';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomTextTooltip';
-import { CHARCOAL } from '@layer5/sistent';
 
 const styles = (theme) => ({
   root: {
@@ -104,8 +104,8 @@ const styles = (theme) => ({
   itemCategory: {
     backgroundColor: '#263238',
     boxShadow: '0 -1px 0 #404854 inset',
-    paddingTop: 16,
-    paddingBottom: 16,
+    paddingTop: '1.325rem',
+    paddingBottom: '1.325rem',
   },
   firebase: {
     top: 0,
@@ -657,7 +657,7 @@ class Navigator extends React.Component {
 
     let content = (
       <div className={classNames(classes.link)} data-cy={name}>
-        <Tooltip
+        <CustomTooltip
           title={name}
           placement="right"
           disableFocusListener={!drawerCollapsed}
@@ -679,7 +679,7 @@ class Navigator extends React.Component {
               }}
             />
           </ListItemIcon>
-        </Tooltip>
+        </CustomTooltip>
         <ListItemText
           className={drawerCollapsed ? classes.isHidden : classes.isDisplayed}
           classes={{ primary: classes.itemPrimary }}
@@ -1003,7 +1003,7 @@ class Navigator extends React.Component {
     const { classes } = this.props;
     let linkContent = (
       <div className={classNames(classes.link)}>
-        <Tooltip
+        <CustomTooltip
           title={titlec}
           placement="right"
           disableFocusListener={!drawerCollapsed}
@@ -1011,7 +1011,7 @@ class Navigator extends React.Component {
           disableTouchListener={!drawerCollapsed}
         >
           <ListItemIcon className={classes.listIcon}>{iconc} </ListItemIcon>
-        </Tooltip>
+        </CustomTooltip>
         <ListItemText
           className={drawerCollapsed ? classes.isHidden : classes.isDisplayed}
           classes={{ primary: classes.itemPrimary }}
@@ -1072,7 +1072,6 @@ class Navigator extends React.Component {
             style={{ color: 'white' }}
           >
             <CustomTextTooltip
-              backgroundColor={CHARCOAL}
               title={`Newer version of Meshery available: ${latest}`}
               placement="right"
             >
@@ -1201,24 +1200,22 @@ class Navigator extends React.Component {
                 >
                   <Link href={link ? href : ''}>
                     <div data-cy={childId} className={classNames(classes.link)}>
-                      <Tooltip
+                      <CustomTooltip
                         title={childId}
                         placement="right"
                         disableFocusListener={!isDrawerCollapsed}
                         disableHoverListener={true}
                         disableTouchListener={!isDrawerCollapsed}
                         TransitionComponent={Zoom}
-                        arrow
                       >
                         {isDrawerCollapsed &&
                         (this.state.hoveredId === childId ||
                           (this.state.openItems.includes(childId) && submenu)) ? (
                           <div>
-                            <Tooltip
+                            <CustomTooltip
                               title={title}
                               placement="right"
                               TransitionComponent={Zoom}
-                              arrow
                             >
                               <ListItemIcon
                                 onClick={() => this.toggleItemCollapse(childId)}
@@ -1226,12 +1223,12 @@ class Navigator extends React.Component {
                               >
                                 {hovericon}
                               </ListItemIcon>
-                            </Tooltip>
+                            </CustomTooltip>
                           </div>
                         ) : (
                           <ListItemIcon className={classes.listIcon}>{icon}</ListItemIcon>
                         )}
-                      </Tooltip>
+                      </CustomTooltip>
                       <ListItemText
                         className={isDrawerCollapsed ? classes.isHidden : classes.isDisplayed}
                         classes={{ primary: classes.itemPrimary }}
@@ -1294,11 +1291,7 @@ class Navigator extends React.Component {
                     isDrawerCollapsed ? classes.extraPadding : '',
                   )}
                 >
-                  <CustomTextTooltip
-                    backgroundColor={CHARCOAL}
-                    title={title}
-                    placement={isDrawerCollapsed ? 'right' : 'top'}
-                  >
+                  <CustomTextTooltip title={title} placement={isDrawerCollapsed ? 'right' : 'top'}>
                     <ListItemIcon className={classNames(classes.listIcon, classes.helpIcon)}>
                       {icon}
                     </ListItemIcon>
@@ -1312,11 +1305,7 @@ class Navigator extends React.Component {
           className={classes.rightMargin}
           style={!isDrawerCollapsed ? { display: 'none' } : { marginLeft: '4px' }}
         >
-          <CustomTextTooltip
-            backgroundColor={CHARCOAL}
-            title="Help"
-            placement={isDrawerCollapsed ? 'right' : 'top'}
-          >
+          <CustomTextTooltip title="Help" placement={isDrawerCollapsed ? 'right' : 'top'}>
             <IconButton
               className={isDrawerCollapsed ? classes.collapsedHelpButton : classes.rightTranslate}
               onClick={this.toggleSpacing}

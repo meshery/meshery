@@ -127,7 +127,7 @@
     - title: Managing Events with Notification Center
       url: guides/events-management
     - title: GitOps with Meshery
-      url: guides/gitops-with-meshery
+      url: guides/infrastructure-management/gitops-with-meshery
     - title: Using Metrics in Meshery ↆ
       url: guides/performance-management
       children:
@@ -169,10 +169,10 @@
       - title: Understanding Kubernetes ConfigMaps and Secrets
         url: guides/tutorials/kubernetes-configmaps-secrets
     - title: Upgrading Meshery ↆ
-      url: guides/upgrade
+      url: installation/upgrades
       children:
         - title: Meshery CLI
-          url: guides/upgrade#upgrading-meshery-cli
+          url: installation/upgrades#upgrading-meshery-cli
 # - title: ⚙️ Tasks
 #   url: tasks
 #   links:
@@ -277,6 +277,8 @@
   links:
     - title: Error Code Reference
       url: reference/error-codes
+    - title: Permissions Keys Reference
+      url: reference/permissions
     - title: "REST & GraphQL APIs ↆ"
       url: extensibility/api
       children:

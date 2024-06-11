@@ -22,7 +22,7 @@ import Head from 'next/head';
 import { SnackbarProvider } from 'notistack';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { connect, Provider } from 'react-redux';
+import { connect, Provider, useSelector } from 'react-redux';
 import Header from '../components/Header';
 import MesheryProgressBar from '../components/MesheryProgressBar';
 import Navigator from '../components/Navigator';
@@ -36,6 +36,7 @@ import {
   toggleCatalogContent,
   updateTelemetryUrls,
   setConnectionMetadata,
+  LegacyStoreContext,
 } from '../lib/store';
 import theme, { styles } from '../themes';
 import { getConnectionIDsFromContextIds, getK8sConfigIdsFromK8sConfig } from '../utils/multi-ctx';
@@ -64,6 +65,9 @@ import { CONNECTION_KINDS, CONNECTION_KINDS_DEF, CONNECTION_STATES } from '../ut
 import { ability } from '../utils/can';
 import { getCredentialByID } from '@/api/credentials';
 import { DynamicComponentProvider } from '@/utils/context/dynamicContext';
+import { useTheme } from '@material-ui/core/styles';
+import { store } from '../store';
+import { RTKContext } from '@/store/hooks';
 
 if (typeof window !== 'undefined') {
   require('codemirror/mode/yaml/yaml');
@@ -97,6 +101,59 @@ function isMesheryUiRestrictedAndThePageIsNotPlayground(capabilitiesRegistry) {
 export function isExtensionOpen() {
   return window.location.pathname.startsWith(mesheryExtensionRoute);
 }
+
+const Footer = ({ classes, capabilitiesRegistry, handleL5CommunityClick }) => {
+  const theme = useTheme();
+
+  const extension = useSelector((state) => {
+    return state.get('extensionType');
+  });
+
+  if (extension == 'navigator') {
+    return null;
+  }
+
+  return (
+    <footer
+      className={
+        capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted
+          ? classes.playgFooter
+          : theme.palette.type === 'dark'
+          ? classes.footerDark
+          : classes.footer
+      }
+    >
+      <Typography
+        variant="body2"
+        align="center"
+        color="textSecondary"
+        component="p"
+        style={
+          capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted ? { color: '#000' } : {}
+        }
+      >
+        <span onClick={handleL5CommunityClick} className={classes.footerText}>
+          {capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted ? (
+            'ACCESS LIMITED IN MESHERY PLAYGROUND. DEPLOY MESHERY TO ACCESS ALL FEATURES.'
+          ) : (
+            <>
+              {' '}
+              Built with{' '}
+              <FavoriteIcon
+                style={{
+                  color:
+                    theme.palette.type === 'dark' ? theme.palette.secondary.focused : '#00b39f',
+                }}
+                className={classes.footerIcon}
+              />{' '}
+              by the Layer5 Community
+            </>
+          )}
+        </span>
+      </Typography>
+    </footer>
+  );
+};
 
 class MesheryApp extends App {
   constructor() {
@@ -277,7 +334,7 @@ class MesheryApp extends App {
       const res = await getMeshModelComponentByName(formatToTitleCase(kind).concat('Connection'));
       if (res?.components) {
         connectionDef[CONNECTION_KINDS[kind]] = {
-          transitions: res?.components[0].model.metadata.transitions,
+          transitions: res?.components[0].metadata.transitions,
           icon: res?.components[0].metadata.svgColor,
         };
       }
@@ -507,7 +564,9 @@ class MesheryApp extends App {
   };
 
   updateAbility = () => {
-    ability.update(this.state.keys?.map((key) => ({ action: key.id, subject: key.function })));
+    ability.update(
+      this.state.keys?.map((key) => ({ action: key.id, subject: _.lowerCase(key.function) })),
+    );
     this.setState({ abilityUpdated: true });
   };
 
@@ -677,67 +736,34 @@ class MesheryApp extends App {
                             abilityUpdated={this.state.abilityUpdated}
                           />
                         )}
+                        <main
+                          className={classes.mainContent}
+                          style={{
+                            padding: this.props.extensionType === 'navigator' && '0px',
+                          }}
+                        >
+                          <MuiPickersUtilsProvider utils={MomentUtils}>
+                            <ErrorBoundary>
+                              <Component
+                                pageContext={this.pageContext}
+                                contexts={this.state.k8sContexts}
+                                activeContexts={this.state.activeK8sContexts}
+                                setActiveContexts={this.setActiveContexts}
+                                searchContexts={this.searchContexts}
+                                theme={this.state.theme}
+                                themeSetter={this.themeSetter}
+                                {...pageProps}
+                              />
+                            </ErrorBoundary>
+                          </MuiPickersUtilsProvider>
+                        </main>
                       </NotificationCenterProvider>
-                      <main className={classes.mainContent}>
-                        <MuiPickersUtilsProvider utils={MomentUtils}>
-                          <ErrorBoundary>
-                            <Component
-                              pageContext={this.pageContext}
-                              contexts={this.state.k8sContexts}
-                              activeContexts={this.state.activeK8sContexts}
-                              setActiveContexts={this.setActiveContexts}
-                              searchContexts={this.searchContexts}
-                              theme={this.state.theme}
-                              themeSetter={this.themeSetter}
-                              {...pageProps}
-                            />
-                          </ErrorBoundary>
-                        </MuiPickersUtilsProvider>
-                      </main>
                     </SnackbarProvider>
-                    <footer
-                      className={
-                        this.props.capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted
-                          ? classes.playgroundFooter
-                          : this.state.theme === 'dark'
-                          ? classes.footerDark
-                          : classes.footer
-                      }
-                    >
-                      <Typography
-                        variant="body2"
-                        align="center"
-                        color="textSecondary"
-                        component="p"
-                        style={
-                          this.props.capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted
-                            ? { color: '#000' }
-                            : {}
-                        }
-                      >
-                        <span onClick={this.handleL5CommunityClick} className={classes.footerText}>
-                          {this.props.capabilitiesRegistry?.restrictedAccess
-                            ?.isMesheryUiRestricted ? (
-                            'ACCESS LIMITED IN MESHERY PLAYGROUND. DEPLOY MESHERY TO ACCESS ALL FEATURES.'
-                          ) : (
-                            <>
-                              {' '}
-                              Built with{' '}
-                              <FavoriteIcon
-                                style={{
-                                  color:
-                                    this.state.theme === 'dark'
-                                      ? theme.palette.secondary.focused
-                                      : '#00b39f',
-                                }}
-                                className={classes.footerIcon}
-                              />{' '}
-                              by the Layer5 Community
-                            </>
-                          )}
-                        </span>
-                      </Typography>
-                    </footer>
+                    <Footer
+                      classes={classes}
+                      handleL5CommunityClick={this.handleL5CommunityClick}
+                      capabilitiesRegistry={this.props.capabilitiesRegistry}
+                    />
                   </div>
                 </div>
                 <PlaygroundMeshDeploy
@@ -762,6 +788,7 @@ const mapStateToProps = (state) => ({
   capabilitiesRegistry: state.get('capabilitiesRegistry'),
   telemetryURLs: state.get('telemetryURLs'),
   connectionMetadata: state.get('connectionMetadata'),
+  extensionType: state.get('extensionType'),
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -776,14 +803,18 @@ const MesheryWithRedux = withStyles(styles)(
 
 const MesheryAppWrapper = (props) => {
   return (
-    <Provider store={props.store}>
-      <Head>
-        <link rel="shortcut icon" href="/static/img/meshery-logo/meshery-logo.svg" />
-        <title>Meshery</title>
-      </Head>
-      <MuiPickersUtilsProvider utils={MomentUtils}>
-        <MesheryWithRedux {...props} />
-      </MuiPickersUtilsProvider>
+    <Provider store={store} context={RTKContext}>
+      <Provider store={props.store} context={LegacyStoreContext}>
+        <Provider store={props.store}>
+          <Head>
+            <link rel="shortcut icon" href="/static/img/meshery-logo/meshery-logo.svg" />
+            <title>Meshery</title>
+          </Head>
+          <MuiPickersUtilsProvider utils={MomentUtils}>
+            <MesheryWithRedux {...props} />
+          </MuiPickersUtilsProvider>
+        </Provider>
+      </Provider>
     </Provider>
   );
 };

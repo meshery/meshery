@@ -99,11 +99,11 @@ All of Meshery's Models, Components, and Relationships can be found in the Meshe
 To add or update a model, follow these steps:
 
 1. **Create a Model Definition.** Open the <a href='https://docs.google.com/spreadsheets/d/1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw/edit#'>Meshery Integrations spreadsheet</a>. Create a new row (or comment to suggest a new row) to capture the specific details of your model. As you fill-in model details, referernce each column's notes and comments as instructions and an explanation of their purpose.
-2. **Generate Components.** Once you have entered values into the required columns, execute the following command to generate components for your model.
-
+1. **Generate Components.** Once you have entered values into the required columns, either execute step 2.a. or 2.b.
+   1. Execute the following command to generate components for your model.
 {% capture code_content %}$ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred “${{SPREADSHEET_CRED}}"{% endcapture %}
  {% include code.html code=code_content %}
-
+   1. Ask a maintainer to invoke the [Model Generator workflow](https://github.com/meshery/meshery/actions/workflows/model-generator.yml).
 1. **Enhance Component details.** While the default shape for new components is a circle, each component should be considered for its best-fit shape.
 1. Review and familiarize with the available set of predefined relationship types. Refer to the Cytoscape [node types](https://js.cytoscape.org/demos/node-types/) for a list of possible shapes.
 2. Propose a specific shape, best-suited to visually represent the Component. _Example - Deployment as a pentagon._

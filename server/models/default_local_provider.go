@@ -478,7 +478,7 @@ func (l *DefaultLocalProvider) TokenHandler(_ http.ResponseWriter, _ *http.Reque
 func (l *DefaultLocalProvider) ExtractToken(w http.ResponseWriter, _ *http.Request) {
 	resp := map[string]interface{}{
 		"meshery-provider": l.Name(),
-		tokenName:          "",
+		TokenCookieName:          "",
 	}
 	logrus.Debugf("token sent for meshery-provider %v", l.Name())
 	if err := json.NewEncoder(w).Encode(resp); err != nil {
@@ -648,7 +648,7 @@ func (l *DefaultLocalProvider) CloneMesheryPattern(_ *http.Request, patternID st
 }
 
 // GetDesignSourceContent returns design source-content from provider
-func (l *DefaultLocalProvider) GetDesignSourceContent(_ *http.Request, designID string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetDesignSourceContent(_, designID string) ([]byte, error) {
 	id := uuid.FromStringOrNil(designID)
 	return l.MesheryPatternPersister.GetMesheryPatternSource(id)
 }

@@ -16,9 +16,15 @@
   },
   "subCategory": "Uncategorized",
   "metadata": {
+   "capabilities": "",
+   "defaultData": "",
    "isAnnotation": false,
-   "published": false,
-   "subCategory": "Uncategorized",
+   "primaryColor": "#F49325",
+   "secondaryColor": "#F4BC82",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
    "svgColor": "",
    "svgComplete": "",
    "svgWhite": ""

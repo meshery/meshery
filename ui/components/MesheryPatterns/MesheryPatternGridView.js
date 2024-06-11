@@ -22,6 +22,7 @@ function PatternCardGridItem({
   pattern,
   handleDeploy,
   handleVerify,
+  handleDryRun,
   handlePublishModal,
   handleUnpublishModal,
   handleUnDeploy,
@@ -50,6 +51,7 @@ function PatternCardGridItem({
         requestSizeRestore={() => setGridProps(INITIAL_GRID_SIZE)}
         handleDeploy={handleDeploy}
         handleVerify={handleVerify}
+        handleDryRun={handleDryRun}
         handlePublishModal={handlePublishModal}
         handleUnDeploy={handleUnDeploy}
         handleUnpublishModal={handleUnpublishModal}
@@ -133,6 +135,7 @@ function MesheryPatternGrid({
   user,
   handleInfoModal,
   openDeployModal,
+  openValidationModal,
   openUndeployModal,
   openDryRunModal,
 }) {
@@ -211,8 +214,11 @@ function MesheryPatternGrid({
               handleUnDeploy={(e) => {
                 openUndeployModal(e, pattern.pattern_file, pattern.name, pattern.id);
               }}
-              handleVerify={(e) =>
+              handleDryRun={(e) =>
                 openDryRunModal(e, pattern.pattern_file, pattern.name, pattern.id)
+              }
+              handleVerify={(e) =>
+                openValidationModal(e, pattern.pattern_file, pattern.name, pattern.id)
               }
               handlePublishModal={() => handlePublishModal(pattern)}
               handleUnpublishModal={(e) => handleUnpublishModal(e, pattern)()}

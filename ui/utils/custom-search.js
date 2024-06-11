@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import TextField from '@mui/material/TextField';
-import { Tooltip } from '@mui/material';
+import { CustomTooltip } from '@layer5/sistent';
 import IconButton from '@mui/material/IconButton';
 // import SearchIcon from '../assets/icons/search';
 // import CloseIcon from '@mui/icons-material/Close';
@@ -116,7 +116,7 @@ const SearchBar = ({ onSearch, placeholder, expanded, setExpanded, value = '' })
             }
           }}
         >
-          <Tooltip title="Close">
+          <CustomTooltip title="Close">
             <IconButton
               onClick={handleClearIconClick}
               sx={{
@@ -127,10 +127,10 @@ const SearchBar = ({ onSearch, placeholder, expanded, setExpanded, value = '' })
             >
               <CloseIcon className={classes.icon} />
             </IconButton>
-          </Tooltip>
+          </CustomTooltip>
         </ClickAwayListener>
       ) : (
-        <Tooltip title="Search">
+        <CustomTooltip title="Search">
           <IconButton
             onClick={handleSearchIconClick}
             sx={{
@@ -141,7 +141,7 @@ const SearchBar = ({ onSearch, placeholder, expanded, setExpanded, value = '' })
           >
             <SearchIcon className={classes.icon} />
           </IconButton>
-        </Tooltip>
+        </CustomTooltip>
       )}
     </div>
   );

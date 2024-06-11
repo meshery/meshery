@@ -19,20 +19,39 @@
         },
         "metadata": {}
     },
-    "evaluationQuery": "heirarcal_parent_relationship",
+    "evaluationQuery": "hierarchical_parent_relationship",
     "subType": "Parent",
     "selectors": [
         {
             "allow": {
                 "from": [
                     {
-                        "model": "*"
+                        "model": "*",
+                        "kind": "*",
+                        "patch": {
+                            "patchStrategy": "replace",
+                            "mutatedRef": [
+                                [
+                                    "namespace"
+                                ]
+                            ],
+                            "description": "Namespace configuration to be applied to all namespaced resources."
+                        }
                     }
                 ],
                 "to": [
                     {
                         "kind": "Namespace",
-                        "model": "kubernetes"
+                        "model": "kubernetes",
+                        "patch": {
+                            "patchStrategy": "replace",
+                            "mutatorRef": [
+                                [
+                                    "name"
+                                ]
+                            ],
+                            "description": "Namespace configuration to be applied to all namespaced resources."
+                        }
                     },
                     {
                         "kind": "Node",

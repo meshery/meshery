@@ -59,10 +59,10 @@ mesheryctl registry generate --registrant-def [path to connection definition] --
 <div class='codeblock'>
   -h, --help                      help for generate
   -o, --output string             location to output generated models, defaults to ../server/meshmodels (default "../server/meshmodel")
-      --registrant-cred string    path pointing to the registrant credetial definition
+      --registrant-cred string    path pointing to the registrant credential definition
       --registrant-def string     path pointing to the registrant connection definition
       --spreadsheet-cred string   base64 encoded credential to download the spreadsheet
-      --spreadsheet-id string     spreadsheet it for the integration spreadsheet
+      --spreadsheet-id string     spreadsheet ID for the integration spreadsheet
 
 </div>
 </pre>
