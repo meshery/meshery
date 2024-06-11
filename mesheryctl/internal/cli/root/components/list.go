@@ -120,8 +120,10 @@ mesheryctl components list --count
 			return nil
 		}
 
-		if utils.DisplayCountOnly("components", componentsResponse.Count, cmd) {
-			return nil
+		if cmd.Flag("count").Value.String() == "true" {
+			if utils.DisplayCountOnly("components", componentsResponse.Count, utils.GetPageQueryParameter(cmd, pageNumberFlag) == "pagesize=all") {
+				return nil
+			}
 		}
 
 		if cmd.Flags().Changed("page") {
