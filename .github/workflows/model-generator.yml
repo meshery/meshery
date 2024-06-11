@@ -43,7 +43,6 @@ jobs:
           commit_options: "--signoff"
           commit_message: "New Models generated"
           branch: master
-
       - name: Send Email on Model Generator Failure
         if: failure()
         uses: dawidd6/action-send-mail@v3.7.1
@@ -59,7 +58,41 @@ jobs:
           body: |
             The GitHub Actions workflow in ${{ github.repository }} has failed.
             You can find more details in the GitHub Actions log ${{ github.workflow }}.
-
+  check-and-email-registry-generate-error:
+    name: Check and Email Error Log
+    runs-on: ubuntu-22.04
+    needs: generate-components
+    steps:
+      - name: Download registry-generate-error
+        uses: actions/download-artifact@v4
+        with:
+          name: generate-logs
+          path: ./logs
+      - name: Check registry-generate-error file
+        id: check-registry-generate-error
+        run: |
+          if [ -s ./logs/registry-generate-error ]; then
+            echo "registry-generate-error is not empty"
+            echo "registry-generate-error=true" >> $GITHUB_ENV
+          else
+            echo "registry-generate-error is empty"
+            echo "registry-generate-error=false" >> $GITHUB_ENV
+          fi
+      - name: Send Email on Error Logs
+        if: env.registry-generate-error == 'true'
+        uses: dawidd6/action-send-mail@v3.7.1
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          subject: Model Generator Error Log
+          from: |
+            "Model Generator" <no-reply@meshery.io>
+          to: developers@meshery.io
+          body: |
+            The model generation process encountered errors. Please find the attached error log for details.
+          attachments: ./logs/registry-generate-error
   update-components:
     name: Update Components
     needs: generate-components
