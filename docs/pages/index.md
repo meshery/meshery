@@ -227,6 +227,7 @@ list: exclude
           {% endfor %}
       </ul>
     </details>
+    <!-- EVERYTHING ELSE
     <ul>
       {% for item in sorted_pages %}
       {% if item.type=="guides" and item.category!="mesheryctl" and item.category!="infrastructure" and item.category!="troubleshooting" and item.category!="performance" and item.category!="configuration" and item.category!="tutorials" and item.language=="en" -%}
@@ -234,7 +235,7 @@ list: exclude
         </li>
         {% endif %}
       {% endfor %}
-    </ul>
+    </ul> -->
     <!-- <h6><a href="{{ site.baseurl }}/service-meshes" class="text-black section-title">Service Mesh Specific Management</a></h6> -->
     <!-- <ul>
       {% for item in sorted_pages %}

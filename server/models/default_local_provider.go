@@ -648,7 +648,7 @@ func (l *DefaultLocalProvider) CloneMesheryPattern(_ *http.Request, patternID st
 }
 
 // GetDesignSourceContent returns design source-content from provider
-func (l *DefaultLocalProvider) GetDesignSourceContent(_ *http.Request, designID string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetDesignSourceContent(_, designID string) ([]byte, error) {
 	id := uuid.FromStringOrNil(designID)
 	return l.MesheryPatternPersister.GetMesheryPatternSource(id)
 }

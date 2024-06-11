@@ -1239,8 +1239,8 @@ func (l *RemoteProvider) PublishEventToProvider(tokenString string, event events
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		l.Log.Error(ErrPost(err, "event", resp.StatusCode))
-		return ErrPost(err, "event", resp.StatusCode)
+		l.Log.Error(ErrPost(fmt.Errorf("error persisting event with the remote provider"), "event", resp.StatusCode))
+		return ErrPost(fmt.Errorf("error persisting event with the remote provider"), "event", resp.StatusCode)
 	}
 	return nil
 }
@@ -2698,7 +2698,7 @@ func (l *RemoteProvider) GetApplicationSourceContent(req *http.Request, applicat
 }
 
 // GetDesignSourceContent returns design source-content from provider
-func (l *RemoteProvider) GetDesignSourceContent(req *http.Request, designID string) ([]byte, error) {
+func (l *RemoteProvider) GetDesignSourceContent(token, designID string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistMesheryPatterns) {
 		logrus.Error("operation not available")
 		return nil, ErrInvalidCapability("PersistMesheryPatterns", l.ProviderName)
@@ -2711,12 +2711,7 @@ func (l *RemoteProvider) GetDesignSourceContent(req *http.Request, designID stri
 
 	logrus.Infof("attempting to fetch design source content from cloud for id: %s", designID)
 
-	tokenString, err := l.GetToken(req)
-	if err != nil {
-		return nil, err
-	}
-
-	resp, err := l.DoRequest(cReq, tokenString)
+	resp, err := l.DoRequest(cReq, token)
 	if err != nil {
 		if resp == nil {
 			return nil, ErrUnreachableRemoteProvider(err)

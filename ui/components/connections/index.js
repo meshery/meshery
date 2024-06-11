@@ -3,7 +3,6 @@ import {
   NoSsr,
   TableCell,
   Button,
-  Tooltip,
   FormControl,
   Select,
   TableContainer,
@@ -21,6 +20,7 @@ import {
   Box,
   Chip,
 } from '@material-ui/core';
+import { CustomTooltip } from '@layer5/sistent';
 import { withStyles } from '@material-ui/core/styles';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import Moment from 'react-moment';
@@ -60,7 +60,7 @@ import {
 } from '../../utils/Enum';
 import FormatConnectionMetadata from './metadata';
 import useKubernetesHook from '../hooks/useKubernetesHook';
-import theme, { Colors } from '../../themes/app';
+import theme from '../../themes/app';
 import { TootltipWrappedConnectionChip } from './ConnectionChip';
 import { DefaultTableCell, SortableTableCell } from './common';
 import { getColumnValue, getVisibilityColums } from '../../utils/utils';
@@ -78,20 +78,16 @@ import {
   useSaveEnvironmentMutation,
 } from '../../rtk-query/environments';
 import ErrorBoundary from '../ErrorBoundary';
-import { store } from '../../store';
-import { Provider } from 'react-redux';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import DefaultError from '../General/error-404/index';
 import { useGetConnectionsQuery, useUpdateConnectionMutation } from '@/rtk-query/connection';
 import { useGetSchemaQuery } from '@/rtk-query/schema';
-import {
-  CustomTextTooltip,
-  RenderTooltipContent,
-} from '../MesheryMeshInterface/PatternService/CustomTextTooltip';
+import { CustomTextTooltip } from '../MesheryMeshInterface/PatternService/CustomTextTooltip';
 import InfoOutlinedIcon from '@/assets/icons/InfoOutlined';
 import { DeleteIcon } from '@layer5/sistent';
-import { getHyperLinkDiv } from '../MesheryMeshInterface/PatternService/helper';
+import { withRouter } from 'next/router';
+import { UsesSistent } from '../SistentWrapper';
 
 const ACTION_TYPES = {
   FETCH_CONNECTIONS: {
@@ -326,11 +322,6 @@ function Connections(props) {
       });
   };
 
-  const renderTooltipContent = () => {
-    return getHyperLinkDiv(
-      'Learn more about connection status and how to [troubleshoot Kubernetes connections](https://docs.meshery.io/guides/troubleshooting/meshery-operator-meshsync)',
-    );
-  };
   const open = Boolean(anchorEl);
   const _operatorStateRef = useRef(_operatorState);
   _operatorStateRef.current = _operatorState;
@@ -477,10 +468,9 @@ function Connections(props) {
               />
               {kind == 'kubernetes' && (
                 <CustomTextTooltip
-                  backgroundColor={Colors.charcoal}
                   placement="top"
                   interactive={true}
-                  title={renderTooltipContent()}
+                  title="Learn more about connection status and how to [troubleshoot Kubernetes connections](https://docs.meshery.io/guides/troubleshooting/meshery-operator-meshsync)"
                 >
                   <IconButton className={classes.infoIconButton} color="primary">
                     <InfoOutlinedIcon height={20} width={20} className={classes.infoIcon} />
@@ -517,12 +507,7 @@ function Connections(props) {
                   />
                 </IconButton>
               }
-              tooltip={RenderTooltipContent({
-                showPriortext:
-                  'Meshery Environments allow you to logically group related Connections and their associated Credentials.',
-                link: envUrl,
-                showAftertext: 'to learn more about Environments',
-              })}
+              tooltip={`Meshery Environments allow you to logically group related Connections and their associated Credentials. [Learn more](${envUrl})`}
             />
           );
         },
@@ -642,18 +627,17 @@ function Connections(props) {
         },
         customBodyRender: function CustomBody(value) {
           return (
-            <Tooltip
+            <CustomTooltip
               title={
                 <Moment startOf="day" format="LLL">
                   {value}
                 </Moment>
               }
               placement="top"
-              arrow
               interactive
             >
               <Moment format="LL">{value}</Moment>
-            </Tooltip>
+            </CustomTooltip>
           );
         },
       },
@@ -676,7 +660,7 @@ function Connections(props) {
         },
         customBodyRender: function CustomBody(value) {
           return (
-            <Tooltip
+            <CustomTooltip
               title={
                 <Moment startOf="day" format="LLL">
                   {value}
@@ -687,7 +671,7 @@ function Connections(props) {
               interactive
             >
               <Moment format="LL">{value}</Moment>
-            </Tooltip>
+            </CustomTooltip>
           );
         },
       },
@@ -720,12 +704,7 @@ function Connections(props) {
                   />
                 </IconButton>
               }
-              tooltip={RenderTooltipContent({
-                showPriortext:
-                  'Every connection can be in one of the states at any given point of time. Eg: Connected, Registered, Discovered, etc. It allow users more control over whether the discovered infrastructure is to be managed or not (registered for use or not).',
-                link: url,
-                showAftertext: 'to learn more about Connection States',
-              })}
+              tooltip={`Every connection can be in one of the states at any given point of time. Eg: Connected, Registered, Discovered, etc. It allow users more control over whether the discovered infrastructure is to be managed or not (registered for use or not). [Learn more](${url})`}
             />
           );
         },
@@ -972,7 +951,6 @@ function Connections(props) {
   });
 
   useEffect(() => {
-    updateCols(columns);
     if (isEnvironmentsError) {
       notify({
         message: `${ACTION_TYPES.FETCH_ENVIRONMENT.error_msg}: ${environmentsError}`,
@@ -1314,15 +1292,17 @@ function Connections(props) {
             </div>
           )}
           {tab === 0 && CAN(keys.VIEW_CONNECTIONS.action, keys.VIEW_CONNECTIONS.subject) && (
-            <ResponsiveDataTable
-              data={connections}
-              columns={columns}
-              options={options}
-              className={classes.muiRow}
-              tableCols={tableCols}
-              updateCols={updateCols}
-              columnVisibility={columnVisibility}
-            />
+            <UsesSistent>
+              <ResponsiveDataTable
+                data={connections}
+                columns={columns}
+                options={options}
+                className={classes.muiRow}
+                tableCols={tableCols}
+                updateCols={updateCols}
+                columnVisibility={columnVisibility}
+              />
+            </UsesSistent>
           )}
           {tab === 1 && (
             <MeshSyncTable
@@ -1420,9 +1400,7 @@ const ConnectionManagementPageWithErrorBoundary = (props) => {
         FallbackComponent={() => null}
         onError={(e) => console.error('Error in Connection Management', e)}
       >
-        <Provider store={store}>
-          <ConnectionManagementPage {...props} />
-        </Provider>
+        <ConnectionManagementPage {...props} />
       </ErrorBoundary>
     </NoSsr>
   );
@@ -1430,5 +1408,8 @@ const ConnectionManagementPageWithErrorBoundary = (props) => {
 
 // @ts-ignore
 export default withStyles(styles)(
-  connect(mapStateToProps, mapDispatchToProps)(ConnectionManagementPageWithErrorBoundary),
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  )(withRouter(ConnectionManagementPageWithErrorBoundary)),
 );

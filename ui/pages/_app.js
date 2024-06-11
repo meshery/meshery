@@ -36,6 +36,7 @@ import {
   toggleCatalogContent,
   updateTelemetryUrls,
   setConnectionMetadata,
+  LegacyStoreContext,
 } from '../lib/store';
 import theme, { styles } from '../themes';
 import { getConnectionIDsFromContextIds, getK8sConfigIdsFromK8sConfig } from '../utils/multi-ctx';
@@ -65,6 +66,8 @@ import { ability } from '../utils/can';
 import { getCredentialByID } from '@/api/credentials';
 import { DynamicComponentProvider } from '@/utils/context/dynamicContext';
 import { useTheme } from '@material-ui/core/styles';
+import { store } from '../store';
+import { RTKContext } from '@/store/hooks';
 
 if (typeof window !== 'undefined') {
   require('codemirror/mode/yaml/yaml');
@@ -331,7 +334,7 @@ class MesheryApp extends App {
       const res = await getMeshModelComponentByName(formatToTitleCase(kind).concat('Connection'));
       if (res?.components) {
         connectionDef[CONNECTION_KINDS[kind]] = {
-          transitions: res?.components[0].model.metadata.transitions,
+          transitions: res?.components[0].metadata.transitions,
           icon: res?.components[0].metadata.svgColor,
         };
       }
@@ -561,7 +564,9 @@ class MesheryApp extends App {
   };
 
   updateAbility = () => {
-    ability.update(this.state.keys?.map((key) => ({ action: key.id, subject: key.function })));
+    ability.update(
+      this.state.keys?.map((key) => ({ action: key.id, subject: _.lowerCase(key.function) })),
+    );
     this.setState({ abilityUpdated: true });
   };
 
@@ -731,28 +736,28 @@ class MesheryApp extends App {
                             abilityUpdated={this.state.abilityUpdated}
                           />
                         )}
+                        <main
+                          className={classes.mainContent}
+                          style={{
+                            padding: this.props.extensionType === 'navigator' && '0px',
+                          }}
+                        >
+                          <MuiPickersUtilsProvider utils={MomentUtils}>
+                            <ErrorBoundary>
+                              <Component
+                                pageContext={this.pageContext}
+                                contexts={this.state.k8sContexts}
+                                activeContexts={this.state.activeK8sContexts}
+                                setActiveContexts={this.setActiveContexts}
+                                searchContexts={this.searchContexts}
+                                theme={this.state.theme}
+                                themeSetter={this.themeSetter}
+                                {...pageProps}
+                              />
+                            </ErrorBoundary>
+                          </MuiPickersUtilsProvider>
+                        </main>
                       </NotificationCenterProvider>
-                      <main
-                        className={classes.mainContent}
-                        style={{
-                          padding: this.props.extensionType === 'navigator' && '0px',
-                        }}
-                      >
-                        <MuiPickersUtilsProvider utils={MomentUtils}>
-                          <ErrorBoundary>
-                            <Component
-                              pageContext={this.pageContext}
-                              contexts={this.state.k8sContexts}
-                              activeContexts={this.state.activeK8sContexts}
-                              setActiveContexts={this.setActiveContexts}
-                              searchContexts={this.searchContexts}
-                              theme={this.state.theme}
-                              themeSetter={this.themeSetter}
-                              {...pageProps}
-                            />
-                          </ErrorBoundary>
-                        </MuiPickersUtilsProvider>
-                      </main>
                     </SnackbarProvider>
                     <Footer
                       classes={classes}
@@ -798,14 +803,18 @@ const MesheryWithRedux = withStyles(styles)(
 
 const MesheryAppWrapper = (props) => {
   return (
-    <Provider store={props.store}>
-      <Head>
-        <link rel="shortcut icon" href="/static/img/meshery-logo/meshery-logo.svg" />
-        <title>Meshery</title>
-      </Head>
-      <MuiPickersUtilsProvider utils={MomentUtils}>
-        <MesheryWithRedux {...props} />
-      </MuiPickersUtilsProvider>
+    <Provider store={store} context={RTKContext}>
+      <Provider store={props.store} context={LegacyStoreContext}>
+        <Provider store={props.store}>
+          <Head>
+            <link rel="shortcut icon" href="/static/img/meshery-logo/meshery-logo.svg" />
+            <title>Meshery</title>
+          </Head>
+          <MuiPickersUtilsProvider utils={MomentUtils}>
+            <MesheryWithRedux {...props} />
+          </MuiPickersUtilsProvider>
+        </Provider>
+      </Provider>
     </Provider>
   );
 };
