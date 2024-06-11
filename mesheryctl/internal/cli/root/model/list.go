@@ -59,7 +59,7 @@ mesheryctl model list --count
 		}
 
 		baseUrl := mctlCfg.GetBaseMesheryURL()
-		url := fmt.Sprintf("%s/api/meshmodels/models?%s", baseUrl, getPageQueryParameter(cmd))
+		url := fmt.Sprintf("%s/api/meshmodels/models?%s", baseUrl, utils.GetPageQueryParameter(cmd, pageNumberFlag))
 
 		req, err := utils.NewRequest(http.MethodGet, url, nil)
 		if err != nil {
@@ -105,9 +105,7 @@ mesheryctl model list --count
 			return nil
 		}
 
-		if cmd.Flag("count").Value.String() == "true" {
-			// fmt.Println("Total number of models: ", len(rows))
-			whiteBoardPrinter.Println("Total number of models: ", modelsResponse.Count)
+		if utils.DisplayCountOnly("models", modelsResponse.Count, cmd) {
 			return nil
 		}
 
@@ -123,14 +121,4 @@ mesheryctl model list --count
 
 		return nil
 	},
-}
-
-func getPageQueryParameter(cmd *cobra.Command) string {
-	if cmd.Flag("count").Value.String() == "true" {
-		return "page=1"
-	}
-	if cmd.Flags().Changed("page") {
-		return fmt.Sprintf("page=%d", pageNumberFlag)
-	}
-	return "pagesize=all"
 }

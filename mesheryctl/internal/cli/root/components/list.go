@@ -75,18 +75,8 @@ mesheryctl components list --count
 		}
 
 		baseUrl := mctlCfg.GetBaseMesheryURL()
-		var url string
+		url := fmt.Sprintf("%s/api/meshmodels/components?%s", baseUrl, utils.GetPageQueryParameter(cmd, pageNumberFlag))
 
-		// Run count functionality only if count flag is set
-		if cmd.Flag("count").Value.String() == "true" {
-			return displayCount()
-		}
-
-		if cmd.Flags().Changed("page") {
-			url = fmt.Sprintf("%s/api/meshmodels/components?page=%d", baseUrl, pageNumberFlag)
-		} else {
-			url = fmt.Sprintf("%s/api/meshmodels/components?pagesize=all", baseUrl)
-		}
 		req, err := utils.NewRequest(http.MethodGet, url, nil)
 		if err != nil {
 			utils.Log.Error(err)
@@ -130,6 +120,10 @@ mesheryctl components list --count
 			return nil
 		}
 
+		if utils.DisplayCountOnly("components", componentsResponse.Count, cmd) {
+			return nil
+		}
+
 		if cmd.Flags().Changed("page") {
 			utils.PrintToTable(header, rows)
 		} else {
@@ -142,49 +136,6 @@ mesheryctl components list --count
 		}
 		return nil
 	},
-}
-
-func displayCount() error {
-	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-	if err != nil {
-		return err
-	}
-
-	baseUrl := mctlCfg.GetBaseMesheryURL()
-
-	// Since we are not searching for particular component, we don't need to pass any search parameter
-	url := fmt.Sprintf("%s/api/meshmodels/components?pagesize=1", baseUrl)
-
-	req, err := utils.NewRequest(http.MethodGet, url, nil)
-	if err != nil {
-		utils.Log.Error(err)
-		return err
-	}
-
-	resp, err := utils.MakeRequest(req)
-	if err != nil {
-		utils.Log.Error(err)
-		return err
-	}
-
-	// defers the closing of the response body after its use, ensuring that the resources are properly released.
-	defer resp.Body.Close()
-
-	data, err := io.ReadAll(resp.Body)
-	if err != nil {
-		utils.Log.Error(err)
-		return err
-	}
-
-	componentsResponse := &models.MeshmodelComponentsAPIResponse{}
-	err = json.Unmarshal(data, componentsResponse)
-	if err != nil {
-		utils.Log.Error(err)
-		return err
-	}
-
-	fmt.Println("Total components present: ", componentsResponse.Count)
-	return nil
 }
 
 func init() {
