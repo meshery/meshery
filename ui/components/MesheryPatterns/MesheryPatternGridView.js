@@ -8,6 +8,7 @@ import { EVENT_TYPES } from '../../lib/event-types';
 import useStyles from './Grid.styles';
 import Modal from '../Modal';
 import PublicIcon from '@material-ui/icons/Public';
+import { withSnackbar } from 'notistack';
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -294,4 +295,4 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 // @ts-ignore
-export default connect(mapDispatchToProps)(MesheryPatternGrid);
+export default connect(mapDispatchToProps)(withSnackbar(MesheryPatternGrid));
