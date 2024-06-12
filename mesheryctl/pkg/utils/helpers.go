@@ -1240,9 +1240,8 @@ func FindInSlice(key string, items []string) (int, bool) {
 	return -1, false
 }
 
-func DisplayCountOnly(component string, count int64, paginationRequired bool) bool {
+func DisplayCountOnly(component string, count int64) {
 	whiteBoardPrinter.Println("Total number of ", component, ":", count)
-	return !paginationRequired
 }
 
 func GetPageQueryParameter(cmd *cobra.Command, page int) string {

@@ -106,9 +106,7 @@ mesheryctl model list --count
 		}
 
 		if cmd.Flag("count").Value.String() == "true" {
-			if utils.DisplayCountOnly("models", modelsResponse.Count, utils.GetPageQueryParameter(cmd, pageNumberFlag) == "pagesize=all") {
-				return nil
-			}
+			utils.DisplayCountOnly("models", modelsResponse.Count)
 		}
 
 		if cmd.Flags().Changed("page") {

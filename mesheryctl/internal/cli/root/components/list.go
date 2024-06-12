@@ -121,9 +121,7 @@ mesheryctl components list --count
 		}
 
 		if cmd.Flag("count").Value.String() == "true" {
-			if utils.DisplayCountOnly("components", componentsResponse.Count, utils.GetPageQueryParameter(cmd, pageNumberFlag) == "pagesize=all") {
-				return nil
-			}
+			utils.DisplayCountOnly("components", componentsResponse.Count)
 		}
 
 		if cmd.Flags().Changed("page") {
