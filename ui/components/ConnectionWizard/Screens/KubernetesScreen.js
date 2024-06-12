@@ -6,6 +6,7 @@ import { CircularProgress, Grid } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { updateProgress, updateK8SConfig } from '../../../lib/store';
+import { withSnackbar } from 'notistack';
 import { useEffect, useState } from 'react';
 import { isKubernetesConnected, pingKubernetes } from '../helpers/kubernetesHelpers';
 import KubernetesDataPanel from '../DataPanels/Kubernetes';
@@ -121,4 +122,4 @@ const mapDispatchToProps = (dispatch) => ({
   updateK8SConfig: bindActionCreators(updateK8SConfig, dispatch),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(KubernetesScreen);
+export default connect(mapStateToProps, mapDispatchToProps)(withSnackbar(KubernetesScreen));
