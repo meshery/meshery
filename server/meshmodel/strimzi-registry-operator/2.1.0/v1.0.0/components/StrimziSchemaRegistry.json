@@ -12,7 +12,7 @@
    "name": "strimzi-registry-operator",
    "displayName": "Strimzi Registry Operator",
    "description": "",
-   "status": "ignored",
+   "status": "enabled",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "registrant": {
     "hostname": "artifacthub"
@@ -52,7 +52,7 @@
    "secondaryColor": "#5E718C\n",
    "shape": "circle",
    "shapePolygonPoints": "",
-   "status": "ignored",
+   "status": "enabled",
    "styleOverrides": "",
    "styles": "",
    "subCategory": "",
