@@ -106,6 +106,7 @@ const (
 	ErrGrafanaScanCode                    = "meshery-server-1311"
 	ErrDBCreateCode                       = "meshery-server-1312"
 	ErrDoRequestCode                      = "meshery-server-1321"
+	ErrMarshalYAMLCode                    = ""
 )
 
 var (
@@ -410,4 +411,8 @@ func ErrDBCreate(err error) error {
 
 func ErrDoRequest(err error, method, endpoint string) error {
 	return errors.New(ErrDoRequestCode, errors.Alert, []string{fmt.Sprintf("unable to make %s request to %s", method, endpoint)}, []string{err.Error()}, []string{"Requested resource is not reachable.", "Unable to instantiate TCP connection"}, []string{"Ensure correct URL is specified", "Ensure network connectivity to the resource from your network"})
+}
+
+func ErrMarshalYAML(err error, obj string) error {
+	return errors.New(ErrMarshalYAMLCode, errors.Alert, []string{"unable to marshal yaml \"%s\""}, []string{err.Error()}, []string{"Object has invalid yaml format"}, []string{"Make sure to input a valid yaml object"})
 }
