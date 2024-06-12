@@ -564,7 +564,9 @@ class MesheryApp extends App {
   };
 
   updateAbility = () => {
-    ability.update(this.state.keys?.map((key) => ({ action: key.id, subject: key.function })));
+    ability.update(
+      this.state.keys?.map((key) => ({ action: key.id, subject: _.lowerCase(key.function) })),
+    );
     this.setState({ abilityUpdated: true });
   };
 
