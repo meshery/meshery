@@ -53,6 +53,12 @@ var (
 	totalAggregateModel int
 	defVersion          = "v1.0.0"
 )
+var (
+	artifactHubCount        = 0
+	artifactHubRateLimit    = 100
+	artifactHubRateLimitDur = 5 * time.Minute
+	artifactHubMutex        sync.Mutex
+)
 
 var generateCmd = &cobra.Command{
 	Use:   "generate",
@@ -185,7 +191,7 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 				wg.Done()
 				weightedSem.Release(1)
 			}()
-			if model.Registrant == "meshery" {
+			if mutils.ReplaceSpacesAndConvertToLowercase(model.Registrant) == "meshery" {
 				err = GenerateDefsForCoreRegistrant(model)
 				if err != nil {
 					utils.Log.Error(err)
@@ -199,8 +205,9 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 				return
 			}
 
-			if model.Registrant == "artifacthub" {
-				time.Sleep(10 * time.Second)
+			if mutils.ReplaceSpacesAndConvertToLowercase(model.Registrant) == "artifacthub" {
+				rateLimitArtifactHub()
+
 			}
 			pkg, err := generator.GetPackage()
 			if err != nil {
@@ -354,7 +361,16 @@ func parseModelSheet(url string) (*utils.ModelCSVHelper, error) {
 	}
 	return modelCSVHelper, nil
 }
+func rateLimitArtifactHub() {
+	artifactHubMutex.Lock()
+	defer artifactHubMutex.Unlock()
 
+	if artifactHubCount > 0 && artifactHubCount%artifactHubRateLimit == 0 {
+		utils.Log.Info("Rate limit reached for Artifact Hub. Sleeping for 5 minutes...")
+		time.Sleep(artifactHubRateLimitDur)
+	}
+	artifactHubCount++
+}
 func parseComponentSheet(url string) (*utils.ComponentCSVHelper, error) {
 	compCSVHelper, err := utils.NewComponentCSVHelper(url, "Components", componentSpredsheetGID)
 	if err != nil {

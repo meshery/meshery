@@ -58,7 +58,7 @@ const K8sContextConnection = ({ connection, environment }) => {
   const toggleK8sConnection = () => dispatch(toggleConnection(environment, connection));
   return (
     <K8sContextConnectionChip
-      ctx={connection}
+      ctx={connection.metadata}
       onSelectChange={toggleK8sConnection}
       selected={isSelected}
       selectable

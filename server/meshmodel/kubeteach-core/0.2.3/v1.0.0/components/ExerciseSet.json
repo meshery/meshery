@@ -21,9 +21,20 @@
     "name": "Uncategorized",
     "metadata": null
    },
-   "subCategory": "",
+   "subCategory": "Uncategorized",
    "metadata": {
-    "source_uri": "https://github.com/dergeberl/kubeteach-charts/releases/download/kubeteach-core-0.2.3/kubeteach-core-0.2.3.tgz"
+    "capabilities": "",
+    "defaultData": "",
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
    },
    "model": {
     "version": "0.2.3"
@@ -36,11 +47,7 @@
    "defaultData": "",
    "genealogy": "",
    "isAnnotation": false,
-   "isModelAnnotation": "FALSE",
    "isNamespaced": true,
-   "logoURL": "",
-   "model": "kubeteach-core",
-   "modelDisplayName": "Kubeteach Core",
    "primaryColor": "#00B39F",
    "secondaryColor": "#00D3A9",
    "shape": "circle",

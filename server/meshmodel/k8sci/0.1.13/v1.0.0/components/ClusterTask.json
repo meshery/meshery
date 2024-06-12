@@ -21,9 +21,20 @@
     "name": "Uncategorized",
     "metadata": null
    },
-   "subCategory": "",
+   "subCategory": "Uncategorized",
    "metadata": {
-    "source_uri": "https://github.com/keyporttech/helm-charts/releases/download/k8sci-0.1.13/k8sci-0.1.13.tgz"
+    "capabilities": "",
+    "defaultData": "",
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
    },
    "model": {
     "version": "0.1.13"
@@ -36,11 +47,7 @@
    "defaultData": "",
    "genealogy": "",
    "isAnnotation": false,
-   "isModelAnnotation": "FALSE",
    "isNamespaced": false,
-   "logoURL": "",
-   "model": "k8sci",
-   "modelDisplayName": "K8Sci",
    "primaryColor": "#00B39F",
    "secondaryColor": "#00D3A9",
    "shape": "circle",

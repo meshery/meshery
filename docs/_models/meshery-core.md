@@ -54,6 +54,10 @@ components:
   colorIcon: assets/img/integrations/meshery-core/components/image-node/icons/color/image-node-color.svg
   whiteIcon: assets/img/integrations/meshery-core/components/image-node/icons/white/image-node-white.svg
   description: 
+- name: container
+  colorIcon: assets/img/integrations/meshery-core/components/container/icons/color/container-color.svg
+  whiteIcon: assets/img/integrations/meshery-core/components/container/icons/white/container-white.svg
+  description: 
 - name: bounding-box
   colorIcon: assets/img/integrations/meshery-core/components/bounding-box/icons/color/bounding-box-color.svg
   whiteIcon: assets/img/integrations/meshery-core/components/bounding-box/icons/white/bounding-box-white.svg

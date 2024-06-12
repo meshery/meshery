@@ -21,9 +21,20 @@
     "name": "Observability and Analysis",
     "metadata": null
    },
-   "subCategory": "",
+   "subCategory": "Logging",
    "metadata": {
-    "source_uri": "https://github.com/grafana/helm-charts/releases/download/loki-simple-scalable-1.8.11/loki-simple-scalable-1.8.11.tgz"
+    "capabilities": "",
+    "defaultData": "",
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
    },
    "model": {
     "version": "1.8.11"
@@ -36,11 +47,7 @@
    "defaultData": "",
    "genealogy": "",
    "isAnnotation": false,
-   "isModelAnnotation": "FALSE",
    "isNamespaced": true,
-   "logoURL": "https://layer5.io/company/brand",
-   "model": "loki-simple-scalable",
-   "modelDisplayName": "Loki Simple Scalable",
    "primaryColor": "#F15B2A",
    "secondaryColor": "#00D3A9",
    "shape": "circle",

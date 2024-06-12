@@ -241,7 +241,7 @@ function MesheryFilters({
   const [sortOrder, setSortOrder] = useState('');
   const [count, setCount] = useState(0);
   const modalRef = useRef(null);
-  const [pageSize, setPageSize] = useState();
+  const [pageSize, setPageSize] = useState(10);
   const [filters, setFilters] = useState([]);
   const [selectedFilter, setSelectedFilter] = useState(resetSelectedFilter());
   const [selectedRowData, setSelectedRowData] = useState(null);
@@ -555,7 +555,7 @@ function MesheryFilters({
    */
 
   const [visibilityFilter, setVisibilityFilter] = useState(null);
-  function fetchFilters(page, pageSize, search, sortOrder, visibilityFilter) {
+  function fetchFilters(page = 0, pageSize = 10, search, sortOrder, visibilityFilter) {
     if (!search) search = '';
     if (!sortOrder) sortOrder = '';
 
