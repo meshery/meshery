@@ -18,6 +18,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"math"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -56,7 +57,9 @@ var (
 var (
 	artifactHubCount        = 0
 	artifactHubRateLimit    = 100
-	artifactHubRateLimitDur = 5 * time.Minute
+	artifactHubInitialDelay = 30 * time.Second
+	artifactHubMaxDelay     = 15 * time.Minute
+	artifactHubRetryCount   = 0
 	artifactHubMutex        sync.Mutex
 )
 
@@ -366,8 +369,21 @@ func rateLimitArtifactHub() {
 	defer artifactHubMutex.Unlock()
 
 	if artifactHubCount > 0 && artifactHubCount%artifactHubRateLimit == 0 {
-		utils.Log.Info("Rate limit reached for Artifact Hub. Sleeping for 5 minutes...")
-		time.Sleep(artifactHubRateLimitDur)
+		// Calculate exponential backoff delay
+		delay := time.Duration(math.Pow(2, float64(artifactHubRetryCount))) * artifactHubInitialDelay
+
+		if delay > artifactHubMaxDelay {
+			delay = artifactHubMaxDelay
+		}
+
+		utils.Log.Info("Rate limit reached for Artifact Hub. Sleeping for ", delay)
+		time.Sleep(delay)
+
+		// Increment the retry count for exponential backoff
+		artifactHubRetryCount++
+	} else {
+		// Reset the retry count if within rate limit
+		artifactHubRetryCount = 0
 	}
 	artifactHubCount++
 }
