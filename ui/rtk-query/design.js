@@ -1,4 +1,3 @@
-import { store } from '../store';
 import { api } from './index';
 import { ctxUrl } from '@/utils/multi-ctx';
 
