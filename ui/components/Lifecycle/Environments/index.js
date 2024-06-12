@@ -20,8 +20,14 @@ import useStyles from '../../../assets/styles/general/tool.styles';
 import SearchBar from '../../../utils/custom-search';
 import Modal from '../../Modal';
 import PromptComponent, { PROMPT_VARIANTS } from '../../PromptComponent';
-import { EmptyState, GenericModal } from '../General';
-import { TransferList } from '@layer5/sistent';
+import { EmptyState } from '../General';
+import {
+  Modal as SisitentModal,
+  ModalBody,
+  TransferList,
+  ModalFooter,
+  PrimaryActionButtons,
+} from '@layer5/sistent';
 import ConnectionIcon from '../../../assets/icons/Connection';
 import { TRANSFER_COMPONENT } from '../../../utils/Enum';
 import {
@@ -573,12 +579,14 @@ const Environments = ({ organization, classes }) => {
                 initialData={initialData}
               />
             )}
-          <GenericModal
-            open={assignConnectionModal}
-            handleClose={handleonAssignConnectionModalClose}
-            title={`${connectionAssignEnv.name} Resources`}
-            body={
-              <UsesSistent>
+          <UsesSistent>
+            <SisitentModal
+              open={assignConnectionModal}
+              closeModal={handleonAssignConnectionModalClose}
+              title={`${connectionAssignEnv.name} Resources`}
+              headerIcon={<EnvironmentIcon height="2rem" width="2rem" fill="white" />}
+            >
+              <ModalBody>
                 <TransferList
                   name="Connections"
                   assignableData={connectionsData}
@@ -606,15 +614,22 @@ const Environments = ({ organization, classes }) => {
                     keys.ASSIGN_CONNECTIONS_TO_ENVIRONMENT.subject,
                   )}
                 />
-              </UsesSistent>
-            }
-            action={handleAssignConnection}
-            buttonTitle="Save"
-            disabled={disableTranferButton}
-            leftHeaderIcon={<EnvironmentIcon height="2rem" width="2rem" fill="white" />}
-            helpText="Assign connections to environment"
-            maxWidth="md"
-          />
+              </ModalBody>
+              <ModalFooter variant="filled" helpText="Assign connections to environment">
+                <PrimaryActionButtons
+                  primaryText="Save"
+                  secondaryText="Cancel"
+                  primaryButtonProps={{
+                    onClick: handleAssignConnection,
+                    disabled: disableTranferButton,
+                  }}
+                  secondaryButtonProps={{
+                    onClick: handleonAssignConnectionModalClose,
+                  }}
+                />
+              </ModalFooter>
+            </SisitentModal>
+          </UsesSistent>
           <PromptComponent ref={modalRef} />
         </>
       ) : (
