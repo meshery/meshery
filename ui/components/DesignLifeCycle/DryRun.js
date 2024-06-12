@@ -233,12 +233,15 @@ export const FormatDryRunResponse = withStyles(styles)(({
   dryRunErrors,
   designJson,
   configurableComponentsCount,
+  annotationComponentsCount,
   validationMachine,
   classes,
   currentComponentName,
 }) => {
   const totalDryRunErrors = getTotalCountOfDeploymentErrors(dryRunErrors);
 
+  const canShowComponentCount =
+    annotationComponentsCount !== undefined && annotationComponentsCount !== undefined;
   return (
     <List
       aria-labelledby="nested-list-subheader"
@@ -249,9 +252,14 @@ export const FormatDryRunResponse = withStyles(styles)(({
           id="nested-list-subheader"
           className={classes.subHeader}
         >
-          {configurableComponentsCount && (
-            <Typography varaint="h6" disablePadding>
-              {configurableComponentsCount} component(s)
+          {canShowComponentCount && (
+            <Typography
+              varaint="h6"
+              disablePadding
+              // style={{ position: "relative", left: "35px" }}
+            >
+              {configurableComponentsCount} component{configurableComponentsCount > 1 ? 's' : ''}{' '}
+              and {annotationComponentsCount} annotations
             </Typography>
           )}
           <Typography
@@ -304,7 +312,7 @@ const DryRunComponent = (props) => {
 
   const dryRunErrors = useDryRunValidationResults(validationMachine);
   const isLoading = useIsValidatingDryRun(validationMachine);
-  const { designJson, configurableComponents } = processDesign(design);
+  const { designJson, configurableComponents, annotationComponents } = processDesign(design);
 
   useEffect(() => {
     const dryRunCommand =
@@ -342,6 +350,7 @@ const DryRunComponent = (props) => {
     <FormatDryRunResponse
       dryRunErrors={dryRunErrors}
       designJson={designJson}
+      annotationComponentsCount={annotationComponents.length}
       configurableComponentsCount={configurableComponents.length}
       validationMachine={validationMachine}
       currentComponentName={currentComponentName}
