@@ -1,0 +1,66 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "core.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Vault Connection",
+  "description": "",
+  "format": "JSON",
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "core.meshery.io/v1beta1",
+   "version": "v1.0.0",
+   "name": "vault-secrets",
+   "displayName": "Vault Secrets",
+   "description": "",
+   "status": "ignored",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "registrant": {
+    "hostname": "artifacthub"
+   },
+   "category": {
+    "name": "Provisioning",
+    "metadata": null
+   },
+   "subCategory": "Key Management",
+   "metadata": {
+    "capabilities": "",
+    "defaultData": "",
+    "isAnnotation": false,
+    "primaryColor": "#FFD814",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "svgColor": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewBox=\"0 0 73.6 72\" width=\"2500\" height=\"2446\"\u003e\u003cdefs\u003e\u003cpath fill=\"#FFD814\" id=\"a\" d=\"M37.6 36.8c1.2 0 2.1-1 2.1-2.1s-.9-2.1-2.1-2.1-2.1 1-2.1 2.1.9 2.1 2.1 2.1zM31.3 31c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1s-2.1 1-2.1 2.1c0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2 1 2.1 2.1 2.1zm-12.6-5.7c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1s-2.1 1-2.1 2.1c0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2 1 2.1 2.1 2.1zm-6.3-5.7c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1s-2.1 1-2.1 2.1.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1s1 2.1 2.1 2.1zm-12.6 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1s.9 2.1 2.1 2.1zM36.8 72L0 0h73.6L36.8 72z\"/\u003e\u003c/defs\u003e\u003cuse xlink:href=\"#a\" overflow=\"visible\" fill-rule=\"evenodd\" clip-rule=\"evenodd\"/\u003e\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewBox=\"0 0 73.6 72\" width=\"2500\" height=\"2446\"\u003e\u003cdefs\u003e\u003cpath fill=\"#fff\" id=\"a\" d=\"M37.6 36.8c1.2 0 2.1-1 2.1-2.1s-.9-2.1-2.1-2.1-2.1 1-2.1 2.1.9 2.1 2.1 2.1zM31.3 31c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1s-2.1 1-2.1 2.1c0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2 1 2.1 2.1 2.1zm-12.6-5.7c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1s-2.1 1-2.1 2.1c0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2 1 2.1 2.1 2.1zm-6.3-5.7c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1s-2.1 1-2.1 2.1.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1s1 2.1 2.1 2.1zm-12.6 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1s.9 2.1 2.1 2.1zM36.8 72L0 0h73.6L36.8 72z\"/\u003e\u003c/defs\u003e\u003cuse xlink:href=\"#a\" overflow=\"visible\" fill-rule=\"evenodd\" clip-rule=\"evenodd\"/\u003e\u003c/svg\u003e"
+   },
+   "model": {
+    "version": "0.7.1"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "primaryColor": "#FFD814",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "status": "ignored",
+   "styleOverrides": "",
+   "styles": "",
+   "svgColor": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewBox=\"0 0 73.6 72\" width=\"2500\" height=\"2446\"\u003e\u003cdefs\u003e\u003cpath fill=\"#FFD814\" id=\"a\" d=\"M37.6 36.8c1.2 0 2.1-1 2.1-2.1s-.9-2.1-2.1-2.1-2.1 1-2.1 2.1.9 2.1 2.1 2.1zM31.3 31c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1s-2.1 1-2.1 2.1c0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2 1 2.1 2.1 2.1zm-12.6-5.7c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1s-2.1 1-2.1 2.1c0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2 1 2.1 2.1 2.1zm-6.3-5.7c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1s-2.1 1-2.1 2.1.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1s1 2.1 2.1 2.1zm-12.6 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1s.9 2.1 2.1 2.1zM36.8 72L0 0h73.6L36.8 72z\"/\u003e\u003c/defs\u003e\u003cuse xlink:href=\"#a\" overflow=\"visible\" fill-rule=\"evenodd\" clip-rule=\"evenodd\"/\u003e\u003c/svg\u003e",
+   "svgComplete": "",
+   "svgWhite": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewBox=\"0 0 73.6 72\" width=\"2500\" height=\"2446\"\u003e\u003cdefs\u003e\u003cpath fill=\"#fff\" id=\"a\" d=\"M37.6 36.8c1.2 0 2.1-1 2.1-2.1s-.9-2.1-2.1-2.1-2.1 1-2.1 2.1.9 2.1 2.1 2.1zM31.3 31c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1s-2.1 1-2.1 2.1c0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2 1 2.1 2.1 2.1zm-12.6-5.7c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1s-2.1 1-2.1 2.1c0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2 1 2.1 2.1 2.1zm-6.3-5.7c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1s-2.1 1-2.1 2.1.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1s1 2.1 2.1 2.1zm-12.6 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1s.9 2.1 2.1 2.1zM36.8 72L0 0h73.6L36.8 72z\"/\u003e\u003c/defs\u003e\u003cuse xlink:href=\"#a\" overflow=\"visible\" fill-rule=\"evenodd\" clip-rule=\"evenodd\"/\u003e\u003c/svg\u003e"
+  },
+  "component": {
+   "kind": "VaultConnection",
+   "version": "secrets.hashicorp.com/v1beta1",
+   "schema": "{\n \"description\": \"VaultConnection is the Schema for the vaultconnections API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"VaultConnectionSpec defines the desired state of VaultConnection\",\n   \"properties\": {\n    \"address\": {\n     \"description\": \"Address of the Vault server\",\n     \"type\": \"string\"\n    },\n    \"caCertSecretRef\": {\n     \"description\": \"CACertSecretRef is the name of a Kubernetes secret containing the trusted PEM encoded CA certificate chain as `ca.crt`.\",\n     \"type\": \"string\"\n    },\n    \"headers\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"Headers to be included in all Vault requests.\",\n     \"type\": \"object\"\n    },\n    \"skipTLSVerify\": {\n     \"default\": false,\n     \"description\": \"SkipTLSVerify for TLS connections.\",\n     \"type\": \"boolean\"\n    },\n    \"tlsServerName\": {\n     \"description\": \"TLSServerName to use as the SNI host for TLS connections.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"address\",\n    \"skipTLSVerify\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Vault Connection\",\n \"type\": \"object\"\n}"
+  }
+ }

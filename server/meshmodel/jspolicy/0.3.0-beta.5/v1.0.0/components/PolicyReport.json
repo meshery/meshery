@@ -23,8 +23,15 @@
    },
    "subCategory": "Uncategorized",
    "metadata": {
+    "capabilities": "",
+    "defaultData": "",
     "isAnnotation": false,
-    "subCategory": "Uncategorized",
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
     "svgColor": "",
     "svgComplete": "",
     "svgWhite": ""
@@ -38,7 +45,6 @@
   "metadata": {
    "capabilities": "",
    "defaultData": "",
-   "genealogy": "",
    "isAnnotation": false,
    "isNamespaced": true,
    "primaryColor": "#00B39F",
@@ -48,7 +54,6 @@
    "status": "ignored",
    "styleOverrides": "",
    "styles": "",
-   "subCategory": "",
    "svgColor": "",
    "svgComplete": "",
    "svgWhite": ""

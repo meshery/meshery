@@ -1,0 +1,66 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "core.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Trust Policy Statement",
+  "description": "",
+  "format": "JSON",
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "core.meshery.io/v1beta1",
+   "version": "v1.0.0",
+   "name": "k8s-aws-iam-controller",
+   "displayName": "K8s AWS IAM Controller",
+   "description": "",
+   "status": "ignored",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "registrant": {
+    "hostname": "artifacthub"
+   },
+   "category": {
+    "name": "Uncategorized",
+    "metadata": null
+   },
+   "subCategory": "Uncategorized",
+   "metadata": {
+    "capabilities": "",
+    "defaultData": "",
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "model": {
+    "version": "0.1.8"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "status": "ignored",
+   "styleOverrides": "",
+   "styles": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "component": {
+   "kind": "TrustPolicyStatement",
+   "version": "iam.aws.rustrial.org/v1alpha1",
+   "schema": "{\n \"description\": \"Auto-generated derived type for TrustPolicyStatementSpec via `CustomResource`\",\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"providers\": {\n     \"description\": \"AWS EKS Cluster's OpenID Connect Providers, at least one entry is required.\",\n     \"items\": {\n      \"properties\": {\n       \"providerArn\": {\n        \"description\": \"AWS IAM OpenID Connect Provider ARN of EKS Cluster OIDC Provider.\",\n        \"type\": \"string\"\n       },\n       \"statementSid\": {\n        \"description\": \"Trust Policy Statement ID (SID), must be unique.\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"providerArn\",\n       \"statementSid\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"roleArn\": {\n     \"description\": \"AWS IAM Role ARN this statement is applied to.\",\n     \"type\": \"string\"\n    },\n    \"serviceAccountName\": {\n     \"description\": \"ServiceAccount name for which this statement was created.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"providers\",\n    \"roleArn\",\n    \"serviceAccountName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Trust Policy Statement\",\n \"type\": \"object\"\n}"
+  }
+ }

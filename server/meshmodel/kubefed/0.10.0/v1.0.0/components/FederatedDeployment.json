@@ -21,9 +21,20 @@
     "name": "Uncategorized",
     "metadata": null
    },
-   "subCategory": "",
+   "subCategory": "Uncategorized",
    "metadata": {
-    "source_uri": "https://github.com/kubernetes-sigs/kubefed/releases/download/v0.10.0/kubefed-0.10.0.tgz"
+    "capabilities": "",
+    "defaultData": "",
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
    },
    "model": {
     "version": "0.10.0"
@@ -34,13 +45,8 @@
   "metadata": {
    "capabilities": "",
    "defaultData": "",
-   "genealogy": "",
    "isAnnotation": false,
-   "isModelAnnotation": "FALSE",
    "isNamespaced": true,
-   "logoURL": "",
-   "model": "kubefed",
-   "modelDisplayName": "Kubefed",
    "primaryColor": "#00B39F",
    "secondaryColor": "#00D3A9",
    "shape": "circle",
@@ -48,7 +54,6 @@
    "status": "ignored",
    "styleOverrides": "",
    "styles": "",
-   "subCategory": "",
    "svgColor": "",
    "svgComplete": "",
    "svgWhite": ""
