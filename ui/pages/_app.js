@@ -19,7 +19,7 @@ import _ from 'lodash';
 import withRedux from 'next-redux-wrapper';
 import App from 'next/app';
 import Head from 'next/head';
-import { SnackbarContent, SnackbarProvider } from 'notistack';
+import { SnackbarProvider } from 'notistack';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect, Provider, useSelector } from 'react-redux';
@@ -68,8 +68,6 @@ import { DynamicComponentProvider } from '@/utils/context/dynamicContext';
 import { useTheme } from '@material-ui/core/styles';
 import { store } from '../store';
 import { RTKContext } from '@/store/hooks';
-import classNames from 'classnames';
-import { forwardRef } from 'react';
 
 if (typeof window !== 'undefined') {
   require('codemirror/mode/yaml/yaml');
@@ -663,57 +661,6 @@ class MesheryApp extends App {
   render() {
     const { Component, pageProps, classes, isDrawerCollapsed, relayEnvironment } = this.props;
 
-    //eslint-disable-next-line
-    const ThemeResponsiveSnackbar = forwardRef((props, forwardedRef) => {
-      const { variant, message, action, key } = props;
-      return (
-        <SnackbarContent
-          ref={forwardedRef}
-          className={classNames(classes[variant], {
-            [classes.darknotifInfo]: variant === 'info' && this.state.theme === 'dark',
-            [classes.notifInfo]: variant === 'info' && this.state.theme !== 'dark',
-            [classes.darknotifSuccess]: variant === 'success' && this.state.theme === 'dark',
-            [classes.notifSuccess]: variant === 'success' && this.state.theme !== 'dark',
-            [classes.darknotifWarn]: variant === 'warning' && this.state.theme === 'dark',
-            [classes.notifWarn]: variant === 'warning' && this.state.theme !== 'dark',
-            [classes.darknotifError]: variant === 'error' && this.state.theme === 'dark',
-            [classes.notifError]: variant === 'error' && this.state.theme !== 'dark',
-          })}
-          style={{
-            borderRadius: '0.3rem',
-          }}
-        >
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              padding: '0.5rem',
-            }}
-          >
-            {variant === 'error' ? (
-              <Error style={{ marginRight: '0.5rem' }} />
-            ) : variant === 'success' ? (
-              <CheckCircle style={{ marginRight: '0.5rem' }} />
-            ) : variant === 'warning' ? (
-              <Warning style={{ marginRight: '0.5rem' }} />
-            ) : variant === 'info' ? (
-              <Info style={{ marginRight: '0.5rem' }} />
-            ) : null}
-            <div className={classes.message}>{message}</div>
-
-            <div
-              style={{
-                marginLeft: '5px',
-              }}
-              className={classes.action}
-            >
-              {action(key)}
-            </div>
-          </div>
-        </SnackbarContent>
-      );
-    });
-
     return (
       <DynamicComponentProvider>
         <RelayEnvironmentProvider environment={relayEnvironment}>
@@ -759,11 +706,17 @@ class MesheryApp extends App {
                         warning: <Warning style={{ marginRight: '0.5rem' }} />,
                         info: <Info style={{ marginRight: '0.5rem' }} />,
                       }}
-                      Components={{
-                        info: ThemeResponsiveSnackbar,
-                        success: ThemeResponsiveSnackbar,
-                        error: ThemeResponsiveSnackbar,
-                        warning: ThemeResponsiveSnackbar,
+                      classes={{
+                        variantSuccess:
+                          this.state.theme === 'dark'
+                            ? classes.darknotifSuccess
+                            : classes.notifSuccess,
+                        variantError:
+                          this.state.theme === 'dark' ? classes.darknotifError : classes.notifError,
+                        variantWarning:
+                          this.state.theme === 'dark' ? classes.darknotifWarn : classes.notifWarn,
+                        variantInfo:
+                          this.state.theme === 'dark' ? classes.darknotifInfo : classes.notifInfo,
                       }}
                       maxSnack={10}
                     >

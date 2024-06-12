@@ -1,4 +1,5 @@
 import { Component } from 'react';
+import { withSnackbar } from 'notistack';
 import { connect } from 'react-redux';
 import { LinearProgress } from '@material-ui/core';
 
@@ -35,4 +36,4 @@ class MesheryProgressBar extends Component {
 
 const mapStateToProps = (state) => ({ showProgress: state.get('showProgress') });
 
-export default connect(mapStateToProps)(MesheryProgressBar);
+export default connect(mapStateToProps)(withSnackbar(MesheryProgressBar));
