@@ -200,7 +200,6 @@ const User = (props) => {
             transition
             style={{ zIndex: 10000 }}
             placement="top-end"
-            onClose={handleClose}
           >
             {({ TransitionProps, placement }) => (
               <Grow
