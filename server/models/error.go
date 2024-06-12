@@ -106,7 +106,7 @@ const (
 	ErrGrafanaScanCode                    = "meshery-server-1311"
 	ErrDBCreateCode                       = "meshery-server-1312"
 	ErrDoRequestCode                      = "meshery-server-1321"
-	ErrMarshalYAMLCode                    = ""
+	ErrMarshalYAMLCode                    = "meshery-server-1322"
 )
 
 var (
