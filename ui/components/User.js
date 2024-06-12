@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { List, ListItem } from '@material-ui/core';
 import { Avatar } from '@layer5/sistent';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
@@ -51,7 +51,6 @@ const User = (props) => {
   const capabilitiesLoadedRef = useRef(false);
   const { notify } = useNotification();
   const [anchorEl, setAnchorEl] = useState(null);
-  const timeoutRef = useRef(null);
   const router = useRouter();
 
   const {
@@ -77,14 +76,11 @@ const User = (props) => {
   };
 
   const handleOpen = (event) => {
-    clearTimeout(timeoutRef.current);
     setAnchorEl(event.currentTarget);
   };
 
   const handleClose = () => {
-    timeoutRef.current = setTimeout(() => {
-      setAnchorEl(null);
-    }, 100);
+    setAnchorEl(null);
   };
 
   const handleLogout = () => {
@@ -177,12 +173,6 @@ const User = (props) => {
 
   const { color, iconButtonClassName, avatarClassName, classes } = props;
 
-  useEffect(() => {
-    return () => {
-      clearTimeout(timeoutRef.current);
-    };
-  }, []);
-
   const open = Boolean(anchorEl);
   return (
     <div>
@@ -203,7 +193,7 @@ const User = (props) => {
             />
           </IconButton>
         </div>
-        <div onMouseOver={() => clearTimeout(timeoutRef.current)} onMouseLeave={handleClose}>
+        <div onMouseOver={handleOpen} onMouseLeave={handleClose}>
           <Popper
             open={open}
             anchorEl={anchorEl}
