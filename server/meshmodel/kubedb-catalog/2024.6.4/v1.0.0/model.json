@@ -5,7 +5,7 @@
   "name": "kubedb-catalog",
   "displayName": "Kubedb Catalog",
   "description": "",
-  "status": "ignored",
+  "status": "enabled",
   "hostID": "00000000-0000-0000-0000-000000000000",
   "registrant": {
    "hostname": "artifacthub"
