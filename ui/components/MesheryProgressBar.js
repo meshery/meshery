@@ -1,3 +1,4 @@
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { LinearProgress } from '@material-ui/core';
 import React, { useEffect, useRef } from 'react';
