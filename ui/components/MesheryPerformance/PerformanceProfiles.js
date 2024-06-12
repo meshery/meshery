@@ -20,6 +20,7 @@ import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { ResponsiveDataTable } from '@layer5/sistent';
 import Moment from 'react-moment';
+import { withSnackbar } from 'notistack';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 import PerformanceResults from './PerformanceResults';
 import EditIcon from '@material-ui/icons/Edit';
@@ -682,4 +683,6 @@ const mapDispatchToProps = (dispatch) => ({
   updateProgress: bindActionCreators(updateProgress, dispatch),
 });
 
-export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(PerformanceProfile));
+export default withStyles(styles)(
+  connect(mapStateToProps, mapDispatchToProps)(withSnackbar(PerformanceProfile)),
+);
