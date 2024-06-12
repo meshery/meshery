@@ -10,7 +10,13 @@ import classNames from 'classnames';
 import { store } from '../../../store';
 import WorkspaceIcon from '../../../assets/icons/Workspace';
 import { EmptyState, GenericModal } from '../General';
-import { TransferList } from '@layer5/sistent';
+import {
+  TransferList,
+  Modal as SisitentModal,
+  ModalBody,
+  ModalFooter,
+  PrimaryActionButtons,
+} from '@layer5/sistent';
 import useStyles from '../../../assets/styles/general/tool.styles';
 import styles from '../Environments/styles';
 import SearchBar from '../../../utils/custom-search';
@@ -694,12 +700,14 @@ const Workspaces = ({ organization, classes }) => {
                 initialData={initialData}
               />
             )}
-          <GenericModal
-            open={assignEnvironmentModal}
-            handleClose={handleAssignEnvironmentModalClose}
-            title={`Assign Environments to ${environmentAssignWorkspace.name}`}
-            body={
-              <UsesSistent>
+          <UsesSistent>
+            <SisitentModal
+              open={assignEnvironmentModal}
+              closeModal={handleAssignEnvironmentModalClose}
+              title={`Assign Environments to ${environmentAssignWorkspace.name}`}
+              headerIcon={<EnvironmentIcon height="2rem" width="2rem" fill="white" />}
+            >
+              <ModalBody>
                 <TransferList
                   name="Environments"
                   assignableData={environmentsData}
@@ -736,21 +744,29 @@ const Workspaces = ({ organization, classes }) => {
                     keys.REMOVE_ENVIRONMENT_FROM_WORKSPACE.subject,
                   )}
                 />
-              </UsesSistent>
-            }
-            action={handleAssignEnvironments}
-            buttonTitle="Save"
-            disabled={disableTranferButton}
-            leftHeaderIcon={<EnvironmentIcon height="2rem" width="2rem" fill="white" />}
-            helpText="Assign environment to workspace"
-            maxWidth="md"
-          />
-          <GenericModal
-            open={assignDesignModal}
-            handleClose={handleAssignDesignModalClose}
-            title={`Assign Designs to ${designAssignWorkspace.name}`}
-            body={
-              <UsesSistent>
+              </ModalBody>
+              <ModalFooter variant="filled" helpText="Assign environment to workspace">
+                <PrimaryActionButtons
+                  primaryText="Save"
+                  secondaryText="Cancel"
+                  primaryButtonProps={{
+                    onClick: handleAssignEnvironments,
+                    disabled: disableTranferButton,
+                  }}
+                  secondaryButtonProps={{
+                    onClick: handleAssignEnvironmentModalClose,
+                  }}
+                />
+              </ModalFooter>
+            </SisitentModal>
+
+            <SisitentModal
+              open={assignDesignModal}
+              closeModal={handleAssignDesignModalClose}
+              title={`Assign Designs to ${designAssignWorkspace.name}`}
+              headerIcon={<DesignsIcon height="2rem" width="2rem" fill="#ffffff" />}
+            >
+              <ModalBody>
                 <TransferList
                   name="Designs"
                   assignableData={designsData}
@@ -767,15 +783,22 @@ const Workspaces = ({ organization, classes }) => {
                   leftPermission={true}
                   rightPermission={true}
                 />
-              </UsesSistent>
-            }
-            action={handleAssignDesigns}
-            buttonTitle="Save"
-            disabled={disableTranferButton}
-            leftHeaderIcon={<DesignsIcon height="2rem" width="2rem" fill="#ffffff" />}
-            helpText="Assign designs to workspace"
-            maxWidth="md"
-          />
+              </ModalBody>
+              <ModalFooter variant="filled" helpText="Assign designs to workspace">
+                <PrimaryActionButtons
+                  primaryText="Save"
+                  secondaryText="Cancel"
+                  primaryButtonProps={{
+                    onClick: handleAssignDesigns,
+                    disabled: disableTranferButton,
+                  }}
+                  secondaryButtonProps={{
+                    onClick: handleAssignDesignModalClose,
+                  }}
+                />
+              </ModalFooter>
+            </SisitentModal>
+          </UsesSistent>
           <GenericModal
             open={deleteWorkspacesModal}
             handleClose={handleDeleteWorkspacesModalClose}
