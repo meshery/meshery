@@ -17,6 +17,7 @@ import { ArrowDropDown } from '@material-ui/icons';
 import { getSchema } from './MesheryMeshInterface/PatternService/helper';
 import { Snackbar } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
+import { ModalBody, ModalFooter, PrimaryActionButtons } from '@layer5/sistent';
 
 const useStyles = makeStyles((theme) => ({
   '@keyframes rotateCloseIcon': {
@@ -290,3 +291,109 @@ function Modal(props) {
 }
 
 export default React.memo(Modal);
+
+function RJSFModalWrapper({
+  handleClose,
+  schema,
+  uiSchema = {},
+  initialData = {},
+  handleSubmit,
+  title,
+  submitBtnText,
+}) {
+  const formRef = useRef();
+  const classes = useStyles();
+  const formStateRef = useRef();
+  const [canNotSubmit, setCanNotSubmit] = useState(false);
+  const [snackbar, setSnackbar] = useState(false);
+  const [loadingSchema, setLoadingSchema] = useState(true);
+
+  useEffect(() => {
+    setCanNotSubmit(false);
+    const handleDesignNameCheck = () => {
+      const designName = title?.toLowerCase();
+      const forbiddenWords = ['untitled design', 'Untitled', 'lfx'];
+
+      for (const word of forbiddenWords) {
+        if (designName?.includes(word)) {
+          setSnackbar({
+            severity: 'warning',
+            message: `Design name should not contain Untitled Design, Untitled, LFX`,
+            open: true,
+          });
+          setCanNotSubmit(true);
+          break;
+        }
+      }
+    };
+    handleDesignNameCheck();
+  }, [title]);
+
+  const handleFormChange = (data) => {
+    formStateRef.current = data;
+  };
+
+  useEffect(() => {
+    setLoadingSchema(!schema);
+  }, [schema]);
+
+  const handleFormSubmit = () => {
+    if (formRef.current && formRef.current.validateForm()) {
+      handleSubmit(formRef.current.state.formData);
+      handleClose();
+    }
+  };
+
+  return (
+    <>
+      <ModalBody>
+        {loadingSchema ? (
+          <div style={{ textAlign: 'center', padding: '8rem 17rem' }}>
+            <CircularProgress />
+          </div>
+        ) : (
+          <RJSFWrapper
+            formData={initialData}
+            jsonSchema={schema}
+            uiSchema={uiSchema}
+            onChange={handleFormChange}
+            liveValidate={false}
+            formRef={formRef}
+            hideTitle={true}
+          />
+        )}
+      </ModalBody>
+      <ModalFooter variant="filled">
+        <PrimaryActionButtons
+          primaryText={submitBtnText || 'Submit'}
+          secondaryText="Cancel"
+          primaryButtonProps={{
+            onClick: handleFormSubmit,
+            disabled: canNotSubmit,
+          }}
+          secondaryButtonProps={{
+            onClick: handleClose,
+          }}
+        />
+      </ModalFooter>
+      {snackbar && (
+        <Snackbar
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+          open={snackbar.open}
+          autoHideDuration={6000}
+          onClose={() => setSnackbar(null)}
+        >
+          <Alert
+            className={classes.snackbar}
+            onClose={() => setSnackbar(null)}
+            severity={snackbar.severity}
+          >
+            {snackbar.message}
+          </Alert>
+        </Snackbar>
+      )}
+    </>
+  );
+}
+
+export { RJSFModalWrapper };
