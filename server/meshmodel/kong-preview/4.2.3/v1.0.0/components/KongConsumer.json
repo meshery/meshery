@@ -1,0 +1,66 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "core.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Kong Consumer",
+  "description": "",
+  "format": "JSON",
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "core.meshery.io/v1beta1",
+   "version": "v1.0.0",
+   "name": "kong-preview",
+   "displayName": "Kong Preview",
+   "description": "",
+   "status": "ignored",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "registrant": {
+    "hostname": "artifacthub"
+   },
+   "category": {
+    "name": "Uncategorized",
+    "metadata": null
+   },
+   "subCategory": "Uncategorized",
+   "metadata": {
+    "capabilities": "",
+    "defaultData": "",
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "model": {
+    "version": "4.2.3"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "status": "ignored",
+   "styleOverrides": "",
+   "styles": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "component": {
+   "kind": "KongConsumer",
+   "version": "configuration.konghq.com/v1",
+   "schema": "{\n \"description\": \"KongConsumer is the Schema for the kongconsumers API\",\n \"properties\": {\n  \"credentials\": {\n   \"description\": \"Credentials are references to secrets containing a credential to be provisioned in Kong.\",\n   \"items\": {\n    \"type\": \"string\"\n   },\n   \"type\": \"array\"\n  },\n  \"custom_id\": {\n   \"description\": \"CustomID existing unique ID for the consumer - useful for mapping Kong with users in your existing database\",\n   \"type\": \"string\"\n  },\n  \"username\": {\n   \"description\": \"Username unique username of the consumer.\",\n   \"type\": \"string\"\n  }\n },\n \"title\": \"Kong Consumer\",\n \"type\": \"object\"\n}"
+  }
+ }

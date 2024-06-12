@@ -1,0 +1,66 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "core.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Workload Definition",
+  "description": "",
+  "format": "JSON",
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "core.meshery.io/v1beta1",
+   "version": "v1.0.0",
+   "name": "oam-kubernetes-runtime",
+   "displayName": "Oam Kubernetes Runtime",
+   "description": "",
+   "status": "ignored",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "registrant": {
+    "hostname": "artifacthub"
+   },
+   "category": {
+    "name": "Uncategorized",
+    "metadata": null
+   },
+   "subCategory": "Uncategorized",
+   "metadata": {
+    "capabilities": "",
+    "defaultData": "",
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "model": {
+    "version": "0.4.0-rc1.7.g91370c6"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "isAnnotation": false,
+   "isNamespaced": false,
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "status": "ignored",
+   "styleOverrides": "",
+   "styles": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "component": {
+   "kind": "WorkloadDefinition",
+   "version": "core.oam.dev/v1alpha2",
+   "schema": "{\n \"description\": \"A WorkloadDefinition registers a kind of Kubernetes custom resource as a valid OAM workload kind by referencing its CustomResourceDefinition. The CRD is used to validate the schema of the workload when it is embedded in an OAM Component.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"A WorkloadDefinitionSpec defines the desired state of a WorkloadDefinition.\",\n   \"properties\": {\n    \"childResourceKinds\": {\n     \"description\": \"ChildResourceKinds are the list of GVK of the child resources this workload generates\",\n     \"items\": {\n      \"description\": \"A ChildResourceKind defines a child Kubernetes resource kind with a selector\",\n      \"properties\": {\n       \"apiVersion\": {\n        \"description\": \"APIVersion of the child resource\",\n        \"type\": \"string\"\n       },\n       \"kind\": {\n        \"description\": \"Kind of the child resource\",\n        \"type\": \"string\"\n       },\n       \"selector\": {\n        \"additionalProperties\": {\n         \"type\": \"string\"\n        },\n        \"description\": \"Selector to select the child resources that the workload wants to expose to traits\",\n        \"type\": \"object\"\n       }\n      },\n      \"required\": [\n       \"apiVersion\",\n       \"kind\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"definitionRef\": {\n     \"description\": \"Reference to the CustomResourceDefinition that defines this workload kind.\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of the referenced CustomResourceDefinition.\",\n       \"type\": \"string\"\n      },\n      \"version\": {\n       \"description\": \"Version indicate which version should be used if CRD has multiple versions by default it will use the first one if not specified\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"extension\": {\n     \"description\": \"Extension is used for extension needs by OAM platform builders\",\n     \"type\": \"object\"\n    },\n    \"podSpecPath\": {\n     \"description\": \"PodSpecPath indicates where/if this workload has K8s podSpec field if one workload has podSpec, trait can do lot's of assumption such as port, env, volume fields.\",\n     \"type\": \"string\"\n    },\n    \"revisionLabel\": {\n     \"description\": \"RevisionLabel indicates which label for underlying resources(e.g. pods) of this workload can be used by trait to create resource selectors(e.g. label selector for pods).\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"definitionRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Workload Definition\",\n \"type\": \"object\"\n}"
+  }
+ }

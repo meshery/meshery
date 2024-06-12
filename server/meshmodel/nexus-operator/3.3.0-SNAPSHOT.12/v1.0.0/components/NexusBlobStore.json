@@ -1,0 +1,66 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "core.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Nexus Blob Store",
+  "description": "",
+  "format": "JSON",
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "core.meshery.io/v1beta1",
+   "version": "v1.0.0",
+   "name": "nexus-operator",
+   "displayName": "Nexus Operator",
+   "description": "",
+   "status": "ignored",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "registrant": {
+    "hostname": "artifacthub"
+   },
+   "category": {
+    "name": "Uncategorized",
+    "metadata": null
+   },
+   "subCategory": "Uncategorized",
+   "metadata": {
+    "capabilities": "",
+    "defaultData": "",
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "model": {
+    "version": "3.3.0-SNAPSHOT.12"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "status": "ignored",
+   "styleOverrides": "",
+   "styles": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "component": {
+   "kind": "NexusBlobStore",
+   "version": "edp.epam.com/v1alpha1",
+   "schema": "{\n \"description\": \"NexusBlobStore is the Schema for the nexusblobstores API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"NexusBlobStoreSpec defines the desired state of NexusBlobStore.\",\n   \"properties\": {\n    \"file\": {\n     \"description\": \"File type blobstore.\",\n     \"properties\": {\n      \"path\": {\n       \"description\": \"The path to the blobstore contents. This can be an absolute path to anywhere on the system Nexus Repository Manager has access to it or can be a path relative to the sonatype-work directory.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"name\": {\n     \"description\": \"Name of the BlobStore. Name should be unique across all BlobStores.\",\n     \"type\": \"string\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"Value is immutable\",\n       \"rule\": \"self == oldSelf\"\n      }\n     ]\n    },\n    \"nexusRef\": {\n     \"description\": \"NexusRef is a reference to Nexus custom resource.\",\n     \"properties\": {\n      \"kind\": {\n       \"default\": \"Nexus\",\n       \"description\": \"Kind specifies the kind of the Nexus resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name specifies the name of the Nexus resource.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"softQuota\": {\n     \"description\": \"Settings to control the soft quota.\",\n     \"properties\": {\n      \"limit\": {\n       \"description\": \"The limit in MB.\",\n       \"format\": \"int64\",\n       \"minimum\": 1,\n       \"type\": \"integer\"\n      },\n      \"type\": {\n       \"description\": \"Type of the soft quota.\",\n       \"enum\": [\n        \"spaceRemainingQuota\",\n        \"spaceUsedQuota\"\n       ],\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"name\",\n    \"nexusRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Nexus Blob Store\",\n \"type\": \"object\"\n}"
+  }
+ }
