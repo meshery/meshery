@@ -52,7 +52,6 @@ var (
 	registryLocation    string
 	totalAggregateModel int
 	defVersion          = "v1.0.0"
-	errorLogFile        *os.File // Error log file
 )
 var (
 	artifactHubCount        = 0
@@ -88,7 +87,7 @@ mesheryctl registry generate --registrant-def [path to connection definition] --
 
 		utils.LogError.SetLevel(logrus.ErrorLevel)
 		logErrorFilePath := filepath.Join(logDirPath, "registry-generate-error")
-		errFile, err = os.Create(logErrorFilePath)
+		errorLogFile, err = os.Create(logErrorFilePath)
 		if err != nil {
 			return err
 		}
@@ -175,7 +174,7 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 	}
 
 	utils.Log.UpdateLogOutput(logFile)
-	utils.LogError.UpdateLogOutput(errFile)
+	utils.LogError.UpdateLogOutput(errorLogFile)
 	var wgForSpreadsheetUpdate sync.WaitGroup
 	wgForSpreadsheetUpdate.Add(1)
 	go func() {
