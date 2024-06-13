@@ -67,11 +67,11 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: generate-logs
-          path: ./logs
+          path: ~/.meshery/logs/registry
       - name: Check registry-generate-error file
         id: check-registry-generate-error
         run: |
-          if [ -s ./logs/registry-generate-error ]; then
+          if [ -s ~/.meshery/logs/registry/Errors ]; then
             echo "registry-generate-error is not empty"
             echo "registry-generate-error=true" >> $GITHUB_ENV
           else
@@ -92,7 +92,7 @@ jobs:
           to: developers@meshery.io
           body: |
             The model generation process encountered errors. Please find the attached error log for details.
-          attachments: ./logs/registry-generate-error
+          attachments: ~/.meshery/logs/registry/Errors
   update-components:
     name: Update Components
     needs: generate-components
