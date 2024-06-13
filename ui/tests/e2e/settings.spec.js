@@ -29,45 +29,57 @@ const verifyAdapterResBody = (body) => {
 
 test.describe('Settings Page Tests', () => {
   test.beforeEach(async ({ page }) => {
-    const meshAdapterReq = page.waitForRequest(`${ENV.MESHERY_SERVER_URL}/api/system/adapters`);
-    const meshAdapterRes = page.waitForResponse(`${ENV.MESHERY_SERVER_URL}/api/system/adapters`);
+    const meshAdapterReq = page.waitForRequest(
+      (request) =>
+        request.url() === `${ENV.MESHERY_SERVER_URL}/api/system/adapters` &&
+        request.method() === 'GET',
+    );
+    const meshAdapterRes = page.waitForResponse(
+      (response) =>
+        response.url() === `${ENV.MESHERY_SERVER_URL}/api/system/adapters` &&
+        response.status() === 200,
+    );
 
     // Visit Settings Page
     await page.goto(`${ENV.MESHERY_SERVER_URL}/settings`);
 
     // Verify requests and responses expected on initial page load
-    expect((await meshAdapterReq).method()).toBe('GET');
+    await meshAdapterReq;
     const res = await meshAdapterRes;
-    expect(res.status()).toBe(200);
     const body = await res.json();
     verifyAdapterResBody(body);
   });
 
   test('Connect to Meshery Istio Adapter and configure it', async ({ page }) => {
     // Navigate to 'Adapters' tab
-    await page.locator('[data-cy=tabServiceMeshes]').click({ force: true });
-
-    // Verify visibility of 'Adapters' tab
-    await expect(page.locator("[data-cy='mesh-adapter-connections']")).toBeVisible();
+    await page.getByRole('tab', { name: 'Adapters', exact: true }).click({ force: true });
 
     const meshManageReq = page.waitForRequest(
-      `${ENV.MESHERY_SERVER_URL}/api/system/adapter/manage`,
+      (request) =>
+        request.url() === `${ENV.MESHERY_SERVER_URL}/api/system/adapter/manage` &&
+        request.method() === 'POST',
     );
     const meshManageRes = page.waitForResponse(
-      `${ENV.MESHERY_SERVER_URL}/api/system/adapter/manage`,
+      (response) =>
+        response.url() === `${ENV.MESHERY_SERVER_URL}/api/system/adapter/manage` &&
+        response.status() === 200,
     );
 
     // Enter Mesh Adapter URL
-    await page.locator("[data-cy='mesh-adapter-url']").locator('input').fill('localhost:10000');
+    await page
+      .locator('label')
+      .filter({ hasText: /Mesh Adapter URL/ })
+      .locator('..')
+      .locator('input')
+      .fill('localhost:10000');
     await page.keyboard.press('Enter');
 
     // Click 'Connect' Button
-    await page.locator('[data-cy=btnSubmitMeshAdapter]').click();
+    await page.getByRole('button', { name: 'Connect', exact: true }).click();
 
     // Verify requests and responses
-    expect((await meshManageReq).method()).toBe('POST');
+    await meshManageReq;
     const res = await meshManageRes;
-    expect(res.status()).toBe(200);
     const body = await res.json();
     verifyAdapterResBody(body);
 

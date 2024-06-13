@@ -16,14 +16,19 @@ test.describe('Service Mesh Lifecycle Tests', () => {
       await page.goto(`${ENV.MESHERY_SERVER_URL}/settings`);
 
       // Navigate to 'Adapters' tab
-      await page.locator('[data-cy=tabServiceMeshes]').click({ force: true });
+      await page.getByRole('tab', { name: 'Adapters', exact: true }).click({ force: true });
 
       // Enter Mesh Adapter URL
-      await page.locator("[data-cy='mesh-adapter-url']").locator('input').fill('localhost:10000');
+      await page
+        .locator('label')
+        .filter({ hasText: /Mesh Adapter URL/ })
+        .locator('..')
+        .locator('input')
+        .fill('localhost:10000');
       await page.keyboard.press('Enter');
 
       // Click 'Connect' Button
-      await page.locator('[data-cy=btnSubmitMeshAdapter]').click();
+      await page.getByRole('button', { name: 'Connect', exact: true }).click();
 
       // Verify success notification
       await expect(page.getByText('Adapter was configured!')).toBeVisible();
@@ -32,15 +37,17 @@ test.describe('Service Mesh Lifecycle Tests', () => {
       await page.goto(`${ENV.MESHERY_SERVER_URL}/management/service-mesh`);
 
       // Open "Select Service Mesh Type" Dropdown
-      await page.locator('[data-cy="lifecycle-service-mesh-type"]').click();
+      const dropdown = page
+        .locator('label')
+        .filter({ hasText: /Select Service Mesh Type/ })
+        .locator('..');
+      await dropdown.click();
 
       // Select the adapter by URL
-      await page.locator('[role="listbox"]').getByText(ADAPTER_LOCATION).click();
+      await page.getByRole('option', { name: ADAPTER_LOCATION }).click();
 
       // Verify selection of the adapter by URL
-      await expect(page.locator('[data-cy="lifecycle-service-mesh-type"]')).toContainText(
-        ADAPTER_LOCATION,
-      );
+      await expect(dropdown).toContainText(ADAPTER_LOCATION);
     });
 
     test(`Ping ${adapterName} Adapter`, async ({ page }) => {
@@ -48,18 +55,20 @@ test.describe('Service Mesh Lifecycle Tests', () => {
       await page.goto(`${ENV.MESHERY_SERVER_URL}/management/service-mesh`);
 
       // Open "Select Service Mesh Type" Dropdown
-      await page.locator('[data-cy="lifecycle-service-mesh-type"]').click();
+      const dropdown = page
+        .locator('label')
+        .filter({ hasText: /Select Service Mesh Type/ })
+        .locator('..');
+      await dropdown.click();
 
       // Select the adapter by URL
-      await page.locator('[role="listbox"]').getByText(ADAPTER_LOCATION).click();
+      await page.getByRole('option', { name: ADAPTER_LOCATION }).click();
 
       // Verify selection of the adapter by URL
-      await expect(page.locator('[data-cy="lifecycle-service-mesh-type"]')).toContainText(
-        ADAPTER_LOCATION,
-      );
+      await expect(dropdown).toContainText(ADAPTER_LOCATION);
 
       // Ping the adapter by clicking the chip containing adapter URL in "Manage Service Mesh" section
-      await page.locator('[data-cy="adapter-chip-ping"]').click();
+      await page.getByRole('button', { name: ADAPTER_LOCATION, exact: true }).click();
 
       // Verify that the adapter was pinged
       await expect(page.getByText('Adapter pinged!')).toBeVisible();
