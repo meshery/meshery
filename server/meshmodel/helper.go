@@ -12,7 +12,6 @@ import (
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/meshmodel/core"
 	"github.com/layer5io/meshkit/logger"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha2"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 	mutils "github.com/layer5io/meshkit/utils"
@@ -27,7 +26,7 @@ type EntityRegistrationHelper struct {
 	handlerConfig    *models.HandlerConfig
 	regManager       *meshmodel.RegistryManager
 	componentChan    chan v1beta1.ComponentDefinition
-	relationshipChan chan v1alpha2.RelationshipDefinition
+	relationshipChan chan v1beta1.RelationshipDefinition
 	errorChan        chan error
 	log              logger.Handler
 }
@@ -37,7 +36,7 @@ func NewEntityRegistrationHelper(hc *models.HandlerConfig, rm *meshmodel.Registr
 		handlerConfig:    hc,
 		regManager:       rm,
 		componentChan:    make(chan v1beta1.ComponentDefinition),
-		relationshipChan: make(chan v1alpha2.RelationshipDefinition),
+		relationshipChan: make(chan v1beta1.RelationshipDefinition),
 		errorChan:        make(chan error),
 		log:              log,
 	}
@@ -161,7 +160,7 @@ func (erh *EntityRegistrationHelper) generateRelationships(pathToComponents stri
 			return nil
 		}
 		if !info.IsDir() {
-			var rel v1alpha2.RelationshipDefinition
+			var rel v1beta1.RelationshipDefinition
 			byt, err := os.ReadFile(path)
 			if err != nil {
 				erh.errorChan <- mutils.ErrReadFile(errors.Wrapf(err, fmt.Sprintf("unable to read file at %s", path)), path)
