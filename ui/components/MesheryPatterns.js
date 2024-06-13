@@ -335,6 +335,7 @@ function MesheryPatterns({
   hideVisibility = false,
   initialFilters = { visibility: 'All' },
   pageTitle = 'Designs',
+  arePatternsReadOnly = false,
 }) {
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState('');
@@ -1761,6 +1762,7 @@ function MesheryPatterns({
               patternFetcher={fetchPatternsCaller}
               formSchema={publishSchema}
               meshModels={meshModels}
+              isReadOnly={arePatternsReadOnly}
             />
           )}
           <PromptComponent ref={modalRef} />

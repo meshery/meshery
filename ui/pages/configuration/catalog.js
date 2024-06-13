@@ -32,6 +32,7 @@ function CatalogPage(props) {
         initialFilters={{ visibility: VISIBILITY.PUBLISHED }}
         hideVisibility={true}
         pageTitle="Catalog"
+        arePatternsReadOnly={true}
       />
     </NoSsr>
   );
