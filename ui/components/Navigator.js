@@ -22,7 +22,6 @@ import DashboardIcon from '@material-ui/icons/Dashboard';
 import LifecycleIcon from '../public/static/img/drawer-icons/lifecycle_mgmt_svg';
 import PerformanceIcon from '../public/static/img/drawer-icons/performance_svg';
 import ExtensionIcon from '../public/static/img/drawer-icons/extensions_svg';
-import CatalogIcon from '../public/static/img/drawer-icons/catalog_svg';
 import FilterIcon from '../public/static/img/drawer-icons/filter_svg';
 import PatternIcon from '../public/static/img/drawer-icons/pattern_svg';
 import LifecycleHover from '../public/static/img/drawer-icons/lifecycle_hover_svg';
@@ -49,7 +48,8 @@ import {
   updateCapabilities,
 } from '../lib/store';
 import { ButtonGroup, IconButton } from '@material-ui/core';
-import { CustomTooltip } from '@layer5/sistent';
+import { CatalogIcon, CustomTooltip } from '@layer5/sistent';
+import { UsesSistent } from './SistentWrapper';
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
 import dataFetch from '../lib/data-fetch';
 import { Collapse } from '@material-ui/core';
@@ -417,7 +417,16 @@ const getNavigatorComponents = (/** @type {CapabilitiesRegistry} */ capabilityRe
     children: [
       {
         id: CATALOG,
-        icon: <CatalogIcon style={{ ...drawerIconsStyle }} />,
+        icon: (
+          <UsesSistent>
+            <CatalogIcon
+              primaryFill="#FFFFFF"
+              secondaryFill="#FFFFFFb3"
+              tertiaryFill="transparent"
+              style={{ ...drawerIconsStyle }}
+            />
+          </UsesSistent>
+        ),
         href: '/configuration/catalog',
         title: 'Catalog',
         show: capabilityRegistryObj.isNavigatorComponentEnabled([CONFIGURATION, CATALOG]),
