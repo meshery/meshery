@@ -86,12 +86,6 @@ mesheryctl registry generate --registrant-def [path to connection definition] --
 			return err
 		}
 
-		// Create error log file
-		errorLogFilePath := filepath.Join(logDirPath, "registry-generate-error")
-		errorLogFile, err = os.Create(errorLogFilePath)
-		if err != nil {
-			return err
-		}
 		utils.LogError.SetLevel(logrus.ErrorLevel)
 		logErrorFilePath := filepath.Join(logDirPath, "registry-generate-error")
 		errFile, err = os.Create(logErrorFilePath)
