@@ -12,7 +12,7 @@
    "name": "piraeus datastore",
    "displayName": "Piraeus Datastore",
    "description": "",
-   "status": "ignored",
+   "status": "enabled",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "registrant": {
     "hostname": "artifacthub"
@@ -52,7 +52,7 @@
    "secondaryColor": "#5071d5",
    "shape": "circle",
    "shapePolygonPoints": "",
-   "status": "ignored",
+   "status": "enabled",
    "styleOverrides": "",
    "styles": "",
    "subCategory": "",

@@ -122,6 +122,14 @@ components:
   colorIcon: assets/img/integrations/vault-config-operator/components/group/icons/color/group-color.svg
   whiteIcon: assets/img/integrations/vault-config-operator/components/group/icons/white/group-white.svg
   description: 
+- name: azure-auth-engine-config
+  colorIcon: assets/img/integrations/vault-config-operator/components/azure-auth-engine-config/icons/color/azure-auth-engine-config-color.svg
+  whiteIcon: assets/img/integrations/vault-config-operator/components/azure-auth-engine-config/icons/white/azure-auth-engine-config-white.svg
+  description: 
+- name: azure-auth-engine-role
+  colorIcon: assets/img/integrations/vault-config-operator/components/azure-auth-engine-role/icons/color/azure-auth-engine-role-color.svg
+  whiteIcon: assets/img/integrations/vault-config-operator/components/azure-auth-engine-role/icons/white/azure-auth-engine-role-white.svg
+  description: 
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",
