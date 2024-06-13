@@ -16,7 +16,6 @@ import {
 import theme from '../themes/app';
 import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomTextTooltip';
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
-import { getHyperLinkDiv } from './MesheryMeshInterface/PatternService/helper';
 
 const styles = (theme) => ({
   title: {
@@ -210,13 +209,7 @@ class PromptComponent extends React.Component {
               </Typography>
             </PromptActionButton>
             {showInfoIcon && (
-              <CustomTextTooltip
-                backgroundColor="#3C494F"
-                placement="top"
-                interactive={true}
-                style={{ whiteSpace: 'pre-line' }}
-                title={getHyperLinkDiv(showInfoIcon)}
-              >
+              <CustomTextTooltip placement="top" interactive={true} title={showInfoIcon}>
                 <IconButtonWrapper color="primary">
                   <InfoOutlinedIcon />
                 </IconButtonWrapper>

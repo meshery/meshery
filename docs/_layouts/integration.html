@@ -12,6 +12,7 @@ layout: default
         <h3>
             Components ( {{ page.components.size }} )
         </h3>
+        <p>The Meshery model for {{ page.title }} supports the following components.</p>
         {% endif %}
     </section>
 
@@ -30,6 +31,8 @@ layout: default
     </section>
 </div>
 <!-- components end -->
+{% include_cached integration/models-components.html %}
+{% include_cached integration/meshery-registry.html %}
 
 {% if page.suggested-reading != false and page.title and page.type and page.category and page.url %}
 {% assign related_models_by_category = site.models | where_exp: "model", "model.integrations-category == page.integrations-category" %}

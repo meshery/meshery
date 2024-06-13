@@ -145,7 +145,7 @@ func (h *Handler) GrafanaPingHandler(w http.ResponseWriter, req *http.Request, p
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
 
-	connection, statusCode, err := p.GetConnectionByID(token, connectionID, "grafana")
+	connection, statusCode, err := p.GetConnectionByIDAndKind(token, connectionID, "grafana")
 	if err != nil {
 		http.Error(w, err.Error(), statusCode)
 		return
@@ -182,8 +182,8 @@ func (h *Handler) GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request,
 	}
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
-	connection, statusCode, err := p.GetConnectionByID(token, connectionID, "grafana")
-	fmt.Println("CONNECTION ID : ", connectionID)
+	connection, statusCode, err := p.GetConnectionByIDAndKind(token, connectionID, "grafana")
+	h.log.Debug("connection id : ", connectionID)
 	if err != nil {
 		h.log.Error(err)
 		http.Error(w, err.Error(), statusCode)
@@ -198,7 +198,6 @@ func (h *Handler) GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request,
 		return
 	}
 	apiKeyOrBasicAuth, _ := cred.Secret["secret"].(string)
-	fmt.Println(apiKeyOrBasicAuth, "GRAFANA KEY", cred.Secret)
 	if err := h.config.GrafanaClient.Validate(req.Context(), url, apiKeyOrBasicAuth); err != nil {
 		h.log.Error(models.ErrGrafanaScan(err))
 		http.Error(w, models.ErrGrafanaScan(err).Error(), http.StatusInternalServerError)
@@ -234,7 +233,7 @@ func (h *Handler) GrafanaQueryHandler(w http.ResponseWriter, req *http.Request, 
 	reqQuery := req.URL.Query()
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
-	connection, statusCode, err := p.GetConnectionByID(token, connectionID, "grafana")
+	connection, statusCode, err := p.GetConnectionByIDAndKind(token, connectionID, "grafana")
 	if err != nil {
 		http.Error(w, err.Error(), statusCode)
 		return
@@ -268,7 +267,7 @@ func (h *Handler) GrafanaQueryRangeHandler(w http.ResponseWriter, req *http.Requ
 
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
-	connection, statusCode, err := provider.GetConnectionByID(token, connectionID, "grafana")
+	connection, statusCode, err := provider.GetConnectionByIDAndKind(token, connectionID, "grafana")
 	if err != nil {
 		http.Error(w, err.Error(), statusCode)
 		return
@@ -330,7 +329,7 @@ func (h *Handler) SaveSelectedGrafanaBoardsHandler(w http.ResponseWriter, req *h
 
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
-	connection, statusCode, err := p.GetConnectionByID(token, connectionID, "grafana")
+	connection, statusCode, err := p.GetConnectionByIDAndKind(token, connectionID, "grafana")
 	if err != nil {
 		http.Error(w, err.Error(), statusCode)
 		return

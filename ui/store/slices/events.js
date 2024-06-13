@@ -3,7 +3,7 @@ import { SEVERITY, STATUS, validateEvents } from '../../components/NotificationC
 
 const initialState = {
   current_view: {
-    page: 1,
+    page: 0,
     pagesize: 10,
     filters: {
       initial: true,
@@ -132,7 +132,7 @@ export const loadEvents = (fetch, page, filters) => async (dispatch, getState) =
         filters,
       }),
     );
-    if (page <= 1) {
+    if (page <= 0) {
       dispatch(setEvents(validateEvents(data?.events || [])));
       return;
     }

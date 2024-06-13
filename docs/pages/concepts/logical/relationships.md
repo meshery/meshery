@@ -44,70 +44,7 @@ Here is a list of the different types of relationships that Meshery supports:
    1. Inventory
    1. Parent
 
-<details open>
-<summary>Example Visual Representation of Relationships</summary>
-    <details close><summary>Hierarchical</summary>
-        <details close><summary>Inventory</summary>
-            <figure><br><figcaption>1. Hierarchical - Inventory: Namespace and ConfigMap <a target="_blank" href="https://playground.meshery.io/extension/meshmap?design=21d40e36-8ab7-4f9f-9fed-f6a818510446">(see in playground)</a></figcaption>
-            <img alt="Hierarchical Inventory Relationship" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/hierarchical_inventory_relationship.svg"/>
-            </figure>
-        </details>
-        <details close><summary>Parent</summary>
-            <figure><br><figcaption>1. Hierarchical - Parent: Namespace (Parent) and ConfigMap (child), Role (Child) <a target="_blank" href="https://playground.meshery.io/extension/meshmap?mode=design&design=6370ffcd-13a6-4a65-b426-30f1e63dc381">(see in playground)</a></figcaption>
-            <img alt="Hierarchical Parent Relationship" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/hierarchical_parent_relationship.svg"/>
-            </figure>
-        </details>
-    </details>
-    <details close><summary>Edge</summary>
-        <details close><summary>Mount</summary>
-            <br>
-            <p>1. Edge - Mount: Pod and Persistent volume via Persistent volume claim</p>
-            <figure>
-            <img alt="Edge - Mount" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/edge_mount_relationship_pod_persistent_volume.svg"/>
-            </figure>
-        </details>
-        <details close><summary>Network</summary>
-            <br>
-            <figure><figcaption>1. Edge - Network: Ingress to Service</figcaption>
-            <img alt="Edge - Network" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/edge_network_ingress_to_service_relationship.svg"/>
-            </figure>
-            <figure><figcaption>2. Edge - Network: Service to Pod</figcaption>
-            <img alt="Edge - Network: Ingress to Service" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/edge_network_service_to_pod_relationship.svg"/>
-            </figure>
-            <figure><figcaption>3. Edge - Network: Service to Service</figcaption>
-            <img alt="Edge - Network" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/edge_network_service_to_service_relationship.svg"/>
-            </figure>
-            <figure><figcaption>4. Edge - Network: Service to Endpoint</figcaption>
-            <img alt="Edge - Network" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/edge_network_service_to_endpoints_relationship.svg"/>
-            </figure>
-            <figure><figcaption>5. Edge - Network: Service to Deployment</figcaption>
-            <img alt="Edge - Network" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/network_edge_relationship_service_deployment.svg"/>
-            </figure>
-        </details>
-        <details close><summary>Permission</summary>
-            <br>
-            <figure><figcaption>1. Edge - Permission: Cluster Role to Service Account</figcaption>
-            <img alt="Edge - Permission" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/edge_permission_relationship_cluster_role_service_account.svg"/>
-            </figure>
-        </details>
-        <details close><summary>Firewall</summary>
-            <br>
-            <figure><figcaption>1. Edge - Firewall: Pod to Pod</figcaption>
-            <img alt="Edge - Firewall" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/edge_firewall_relationship_pod_to_pod.svg">
-            </figure>
-        </details>
-    </details>
-    <details close><summary>Sibling</summary>
-        <figure><br><figcaption>Hierarchical - Sibling: Matching Label Selectors</figcaption>
-        <img alt=Sibling src="{{ site.baseurl }}/assets/img/meshmodel/relationships/sibling_relationship.png"/>
-        </figure>
-    </details>
-    <!-- <details close><summary>Binding</summary>
-        <figure><br><figcaption>Hierarchical - Binding: Cluster Role with Cluster Role Binding to ConfigMap</figcaption>
-        <img alt=Binding src="{{ site.baseurl }}/assets/img/meshmodel/relationships/binding_relationship.png"/>
-        </figure>
-    </details> -->
-</details>
+{% include relationships.html %}
 
 ## The Meaning of Relationships
 
@@ -117,15 +54,11 @@ Meshery supports a variety of relationships between components. These relationsh
 
 Semantic relationships are those that are meaningful in the context of the application or infrastructure. For example, a `Service` in Kubernetes is semantically related to a `Deployment` or a `Pod`. These relationships are meaningful and are managed by Meshery.
 
-<!-- @iArchitSharma, help, if you would please. 
-
-_[TODO: a visual example is needed here]_ -->
-
 ### Non-Semantic Relationships
 
 Non-semantic relationships are those that are meaningful to you as a user and your mental representation of your infrastructure and applications, but are not meaningful in terms of how Meshery evaluates the design or manages these relationships and their associated components. Non-sematic relationships are ignored by Meshery's lifecycle management engine. For example, a `Rectangle` shape that encloses other components (has a parent relationship with other child components) is not semantically meaningful to the way in which Meshery manages these resources. While the `Rectangle` shape might have a parent-child relationship with any number of Meshery-managed components, such a relationship does not implicate any management that Meshery might perform; they are not managed by Meshery.
 
-<!-- @iArchitSharma, help, if you would please. 
+<!-- @iArchitSharma, help, if you would please.
 
 _[TODO: a visual example is needed here]_ -->
 
@@ -152,12 +85,37 @@ This Relationship type configures the networking between one or more components.
 - Example 1) Service --> Deployment
 - Example 2) Service --> Pod
 - Example 3) IngressController --> Ingress --> Service
+<details close><summary>Visual Representation of Edge-Network Relationships</summary>
+           <br>
+           <figure><figcaption>1. Edge - Network: Ingress to Service<a target="_blank" href="https://playground.meshery.io/extension/meshmap?mode=design&design=1f79b0c6-2efe-4ee9-b08c-e1bd07a3926b"> (open in playground)</a></figcaption>
+           <img alt="Edge - Network" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/edge_network_ingress_to_service_relationship.svg"/>
+           </figure>
+           <figure><figcaption>2. Edge - Network: Service to Pod<a target="_blank" href="https://playground.meshery.io/extension/meshmap?mode=design&design=90a9b4a0-a296-44b5-b1c5-7b1cb4827a77"> (open in playground)</a></figcaption>
+           <img alt="Edge - Network: Ingress to Service" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/edge_network_service_to_pod_relationship.svg"/>
+           </figure>
+           <figure><figcaption>3. Edge - Network: Service to Service<a target="_blank" href="https://playground.meshery.io/extension/meshmap?mode=design&design=4e368e07-5039-400e-b637-96b0241af799"> (open in playground)</a></figcaption>
+           <img alt="Edge - Network" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/edge_network_service_to_service_relationship.svg"/>
+           </figure>
+           <figure><figcaption>4. Edge - Network: Service to Endpoint<a target="_blank" href="https://playground.meshery.io/extension/meshmap?mode=design&design=ab35416d-7cf7-4540-8b2e-7271ffeadde2"> (open in playground)</a></figcaption>
+           <img alt="Edge - Network" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/edge_network_service_to_endpoints_relationship.svg"/>
+           </figure>
+           <figure><figcaption>5. Edge - Network: Service to Deployment<a target="_blank" href="https://playground.meshery.io/extension/meshmap?mode=design&design=33742281-428d-4340-b42e-6a0fd4ba1d0a"> (open in playground)</a></figcaption>
+           <img alt="Edge - Network" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/network_edge_relationship_service_deployment.svg"/>
+           </figure>
+   </details>
 
 ### 2. Edge - Mount
 
 **Example**: Assignment of PersistentVolumes to Pods via PersistenVolumeClaim.
 
 - Example 1) Pod --> PersistenVolumeClaim --> PersistentVolume
+<details close><summary>Visual Representation of Edge-Mount Relationship</summary>
+           <br>
+           <p>1. Edge - Mount: Pod and Persistent volume via Persistent volume claim<a target="_blank" href="https://playground.meshery.io/extension/meshmap?mode=design&design=43d5fdfe-25f8-4c2c-be9d-30861bbc2a08"> (open in playground)</a> </p>
+           <figure>
+           <img alt="Edge - Mount" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/edge_mount_relationship_pod_persistent_volume.svg"/>
+           </figure>
+   </details>
 
 ### 3. Edge - Permission
 
@@ -165,25 +123,47 @@ This Relationship type configures the networking between one or more components.
 
 - Example 1) ClusterRole --> CluserRoleBinding --> ServiceAccount
 - Example 2) Role --> RoleBinding --> ServiceAccount
+<details close><summary>Visual Representation of Edge-Permission Relationship</summary>
+           <br>
+           <figure><figcaption>1. Edge - Permission: Cluster Role to Service Account <a target="_blank" href="https://playground.meshery.io/extension/meshmap?mode=design&design=7dd39d30-7b14-4f9f-a66c-06ba3e5000fa"> (open in playground)</a></figcaption>
+           <img alt="Edge - Permission" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/edge_permission_relationship_cluster_role_service_account.svg"/>
+           </figure>
+   </details>
 
 ### 4. Edge - Firewall
 
 Kubernetes Network Policy for controlling ingress and egress traffic from Pod-to-Pod
 
 - Example 1) Pod --> NetworkPolicy --> Pod
+<details close><summary>Visual Representation of Edge-Firewall Relationship</summary>
+           <br>
+           <figure><figcaption>1. Edge - Firewall: Pod to Pod<a target="_blank" href="https://playground.meshery.io/extension/meshmap?mode=design&design=58fda714-eaa4-490f-b228-b8bcfe3a1e47s"> (open in playground)</a></figcaption>
+           <img alt="Edge - Firewall" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/edge_firewall_relationship_pod_to_pod.svg">
+           </figure>
+   </details>
 
 ### 5. Heirarchical - Inventory
 
 **Example**
 
 - Example 1) (binary and configuration) --> IstioWASMPlugin
-- Example 2)  WASMFilter (binary and configuration) --> IstioEnvoyFilter
+- Example 2) WASMFilter (binary and configuration) --> IstioEnvoyFilter
+<details close><summary>Visual Representation of Hierarchical-Inventory Relationship</summary>
+           <figure><br><figcaption>1. Hierarchical - Inventory: Namespace and ConfigMap<a target="_blank" href="https://playground.meshery.io/extension/meshmap?design=21d40e36-8ab7-4f9f-9fed-f6a818510446"> (open in playground)</a></figcaption>
+           <img alt="Hierarchical Inventory Relationship" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/hierarchical_inventory_relationship.svg"/>
+           </figure>
+   </details>
 
 ### 6. Heirarchical - Parent
 
 **Example**:
 
 - Example 1) Any namespaced Kubernetes component --> Kubernetes Namespace
+<details close><summary>Visual Representation of Hierarchical-Parent Relationship</summary>
+           <figure><br><figcaption>1. Hierarchical - Parent: Namespace (Parent) and ConfigMap (child), Role (Child) <a target="_blank" href="https://playground.meshery.io/extension/meshmap?mode=design&design=6370ffcd-13a6-4a65-b426-30f1e63dc381"> (open in playground)</a></figcaption>
+           <img alt="Hierarchical Parent Relationship" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/hierarchical_parent_relationship.svg"/>
+           </figure>
+   </details>
 
 ## Selectors in Relationships
 
@@ -219,9 +199,9 @@ Selectors can be applied to various components, enabling a wide range of relatio
 </table>
 
 The above relationships pairs have hierarchical inventory relationships, and visual paradigm remain consistent across different components. A snippet of the selector backing this relationship is listed below.
-
-
-```json
+<details>
+<summary>Example Relationship Selector</summary>
+<code><pre>
 "selector": {
     "allow": {
         "from": [
@@ -263,8 +243,12 @@ The above relationships pairs have hierarchical inventory relationships, and vis
         ]
     }
 }
-```
+</pre></code>
+
+</details>
+
 The above snippet defines a selector configuration for allowing relationships between `Kubernetes ConfigMap` and `Kubernetes Pod`.
+
  <!-- add images -->
 
 ## Relationship Evaluation
@@ -273,15 +257,15 @@ The above snippet defines a selector configuration for allowing relationships be
 
 ### How Relationships are formed?
 
-1. You can create relationships manually by using the edge handles, bringing related components to close proximity or dragging a component inside other component. It may happen that, you created a relationship from the UI, but the <a href='/concepts/logical/policies)'>Policy Engine</a> rejected or overrode the decision if all the constraints for a particular relationship are not satisfied.
+1. You can create relationships manually by using the edge handles, bringing related components to close proximity or dragging a component inside other component. It may happen that, you created a relationship from the UI, but the <a href='/concepts/logical/policies'>Policy Engine</a> rejected or overrode the decision if all the constraints for a particular relationship are not satisfied.
 
 2. Relationships are automatically created when a component's configuration is modified in a way that relationship criteria is satisfied.
-  
+
 {% include/alert.html type="info" title="Explore an example relationship" content="To explore an example of this behavior, see the <a href='https://meshery.io/catalog/deployment/7dd39d30-7b14-4f9f-a66c-06ba3e5000fa.html'>Example Edge-Permission Relationship</a> and follow the steps written in its description." %}
 
-When the relationships are created by the user, almost in all cases the config of the involved components are patched. To see the specific of patching refer [Patch Strategies](#patch-strategies)
+When the relationships are created by the user, almost in all cases the config of the involved components are patched. To see the specific of patching refer [Patch Strategies](#patch-strategies).
 
-Designs are evaluated by the [Policy Engine]({{site.baseurl}}/concepts/logical/policies) for potential relationships
+Designs are evaluated by the [Policy Engine]({{site.baseurl}}/concepts/logical/policies) for potential relationships.
 
 <!-- Explain how and what configs get patched when relationships are created -->
 <!-- Explain real time evaluationof relationships on -->
@@ -292,19 +276,23 @@ Designs are evaluated by the [Policy Engine]({{site.baseurl}}/concepts/logical/p
 
 Patches in Meshery relationships utilize strategies and references (mutatorRef/mutatedRef) for the from and to fields. These convey the property path that will be updated as the relationship is created.
 
+### Cavets and Considerations
+1. If the user creates a `Hierarchical Inventory` relationship between `Pod`, `Job`, and any other high-level Kubernetes resources like `Deployment`, `StatefulSet`, or `CronJobs`, after the relationship has been established unfortunately, there’s no system to remove the extra pod configuration automatically. 
+If the design is not configured with `labels` `selectors` and `replicas` appropriately, there's a possibility of additional resources getting provisioned when deployed. eg: The relationship between a Pod and deployment can result in 2 Pods (1 pod coming as part of deployment resource) and 1 Deployment.  It’s important to be aware of this possibility and manage configurations carefully to avoid unexpected issues during deployment
+
 # Itemizing your Relationship Definitions in your Meshery deployment
 
 In any given Meshery deployment, you can reference and search the full set of registered relationships (in Meshery's internal registry) in using either of Meshery's client interfaces.
 
 **Meshery UI**
 
-- Visit *Setttings* --> *Registry*
+- Visit _Setttings_ --> _Registry_
 
 **Meshery CLI**
 
 - Run `mesheryctl relationship list`
 
-<!-- 
+<!--
 ```
 mesheryctl model import -f [ oci:// | file:// ]`
 ``` -->

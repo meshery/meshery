@@ -5,7 +5,7 @@ const TAGS = {
   DESIGNS: 'designs',
 };
 
-const designs = api
+export const designsApi = api
   .enhanceEndpoints({
     addTagTypes: [TAGS.DESIGNS],
   })
@@ -32,10 +32,11 @@ const designs = api
           selectedK8sContexts,
           verify = false,
           dryRun = false,
+          skipCRD = false,
         }) => ({
           url: `${ctxUrl('pattern/deploy', selectedK8sContexts)}${verify ? '&verify=true' : ''}${
             dryRun ? '&dryRun=true' : ''
-          }`,
+          }${skipCRD ? '&skipCRD=true' : ''}`,
           method: 'POST',
           body: {
             pattern_file,
@@ -65,4 +66,4 @@ const designs = api
   });
 
 export const { useGetPatternsQuery, useDeployPatternMutation, useUndeployPatternMutation } =
-  designs;
+  designsApi;

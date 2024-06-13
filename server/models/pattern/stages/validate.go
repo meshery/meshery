@@ -8,7 +8,7 @@ import (
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshery/server/models/pattern/jsonschema"
 	"github.com/layer5io/meshery/server/models/pattern/resource/selector"
-	meshmodel "github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
+	meshmodel "github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	"gopkg.in/yaml.v2"
 )
 
@@ -78,7 +78,7 @@ func Validator(prov ServiceInfoProvider, act ServiceActionProvider, validate boo
 				act.Terminate(err)
 				return
 			}
-			act.Log(fmt.Sprintf("%s version for %s: %s", svc.Model, svc.Name, wc.Model.Version)) //Eg: kubernetes version for Namespace: v1.25.0
+			act.Log(fmt.Sprintf("%s version for %s: %s", svc.Model, svc.Name, wc.Model.Model.Version)) //Eg: kubernetes version for Namespace: v1.25.0
 			if core.Format {
 				svc.Settings = core.Format.DePrettify(svc.Settings, false)
 			}
@@ -131,10 +131,10 @@ func Validator(prov ServiceInfoProvider, act ServiceActionProvider, validate boo
 func validateWorkload(comp map[string]interface{}, wc meshmodel.ComponentDefinition) error {
 	// skip the validation if the component does not have a schema and has isAnnotation set to true.
 	isAnnotation, _ := wc.Metadata["isAnnotation"].(bool)
-	if wc.Schema == "" && isAnnotation {
+	if wc.Component.Schema == "" && isAnnotation {
 		return nil
 	}
-	schemaByt := []byte(wc.Schema)
+	schemaByt := []byte(wc.Component.Schema)
 	// Create schema validator from the schema
 	rs := jsonschema.GlobalJSONSchema()
 	if err := json.Unmarshal(schemaByt, rs); err != nil {

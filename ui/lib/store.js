@@ -2,6 +2,8 @@ import { createStore, applyMiddleware } from 'redux';
 import { composeWithDevTools } from '@redux-devtools/extension';
 import thunkMiddleware from 'redux-thunk';
 import { fromJS } from 'immutable';
+import { createContext } from 'react';
+import { createDispatchHook, createSelectorHook } from 'react-redux';
 
 const initialState = fromJS({
   page: {
@@ -73,11 +75,13 @@ const initialState = fromJS({
   meshSyncState: null,
   connectionMetadataState: null, // store connection definition metadata for state and connection kind management
   organization: null,
+  workspace: null,
   keys: null,
 });
 
 export const actionTypes = {
   UPDATE_PAGE: 'UPDATE_PAGE',
+  SET_WORKSPACE: 'SET_WORKSPACE',
   UPDATE_TITLE: 'UPDATE_TITLE',
   UPDATE_USER: 'UPDATE_USER',
   UPDATE_BETA_BADGE: 'UPDATE_BETA_BADGE',
@@ -212,7 +216,10 @@ export const reducer = (state = initialState, action) => {
       const updatedOrgState = state.mergeDeep({ organization: action.organization });
       sessionStorage.setItem('currentOrg', JSON.stringify(action.organization));
       return updatedOrgState;
-
+    case actionTypes.SET_WORKSPACE:
+      const updatedWorkspaceState = state.mergeDeep({ workspace: action.workspace });
+      sessionStorage.setItem('currentWorkspace', JSON.stringify(action.workspace));
+      return updatedWorkspaceState;
     default:
       return state;
   }
@@ -387,7 +394,11 @@ export const setOrganization =
   (dispatch) => {
     return dispatch({ type: actionTypes.SET_ORGANIZATION, organization });
   };
-
+export const setWorkspace =
+  ({ workspace }) =>
+  (dispatch) => {
+    return dispatch({ type: actionTypes.SET_WORKSPACE, workspace });
+  };
 export const setKeys =
   ({ keys }) =>
   (dispatch) => {
@@ -416,3 +427,13 @@ export const selectSelectedK8sClusters = (state) => {
   const selectedK8sContexts = state.get('selectedK8sContexts');
   return selectedK8sContexts?.toJS?.() || selectedK8sContexts;
 };
+
+export const selectK8sContexts = (state) => {
+  const k8scontext = state.get('k8sConfig');
+  return k8scontext?.toJS?.() || k8scontext;
+};
+
+export const LegacyStoreContext = createContext(null);
+
+export const useLegacySelector = createSelectorHook(LegacyStoreContext);
+export const useLegacyDispactch = createDispatchHook(LegacyStoreContext);

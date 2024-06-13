@@ -135,7 +135,7 @@ list: exclude
     <details>
       <summary>
         <p style="display:inline">
-          <a href="{{ site.baseurl }}/guides/tutorials/" class="text-black">Hands-on Labs using Meshery Playground</a>
+          <a href="{{ site.baseurl }}/guides/tutorials/" class="text-black">🧑‍🔬 Hands-on Labs using Meshery Playground</a>
         </p>
       </summary>
       <ul class="section-title">
@@ -227,25 +227,7 @@ list: exclude
           {% endfor %}
       </ul>
     </details>
-    <details>
-      <summary>
-        <p style="display:inline">
-          <a href="{{ site.baseurl }}/guides/infrastructure-management" class="text-black">🧑‍🔬 Tutorials</a>
-        </p>
-      </summary>
-      <ul class="section-title">
-          {% assign tutorials = site.pages | where: "category","tutorials" %}
-          {% for item in tutorials %}
-          {% if item.type=="guides" and item.category=="tutorials" and item.language=="en" -%}
-            <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
-            {% if item.abstract != " " %}
-              -  {{ item.abstract }}
-            {% endif %}
-            </li>
-            {% endif %}
-          {% endfor %}
-      </ul>
-    </details>
+    <!-- EVERYTHING ELSE
     <ul>
       {% for item in sorted_pages %}
       {% if item.type=="guides" and item.category!="mesheryctl" and item.category!="infrastructure" and item.category!="troubleshooting" and item.category!="performance" and item.category!="configuration" and item.category!="tutorials" and item.language=="en" -%}
@@ -253,7 +235,7 @@ list: exclude
         </li>
         {% endif %}
       {% endfor %}
-    </ul>
+    </ul> -->
     <!-- <h6><a href="{{ site.baseurl }}/service-meshes" class="text-black section-title">Service Mesh Specific Management</a></h6> -->
     <!-- <ul>
       {% for item in sorted_pages %}

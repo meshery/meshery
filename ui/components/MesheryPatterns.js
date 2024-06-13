@@ -11,9 +11,9 @@ import {
   IconButton,
   NoSsr,
   TableCell,
-  Tooltip,
   Typography,
 } from '@material-ui/core';
+import { CustomTooltip } from '@layer5/sistent';
 import { withStyles } from '@material-ui/core/styles';
 import CloseIcon from '@material-ui/icons/Close';
 import DeleteIcon from '@material-ui/icons/Delete';
@@ -22,7 +22,6 @@ import GetAppIcon from '@material-ui/icons/GetApp';
 import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
 import SaveIcon from '@material-ui/icons/Save';
 import CustomToolbarSelect from './MesheryPatterns/CustomToolbarSelect';
-import { withSnackbar } from 'notistack';
 import AddIcon from '@material-ui/icons/AddCircleOutline';
 import React, { useEffect, useRef, useState } from 'react';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
@@ -32,7 +31,6 @@ import { bindActionCreators } from 'redux';
 import dataFetch from '../lib/data-fetch';
 import { toggleCatalogContent, updateProgress } from '../lib/store';
 import DesignConfigurator from '../components/configuratorComponents/MeshModel';
-import { ctxUrl } from '../utils/multi-ctx';
 import { getUnit8ArrayDecodedFile, getUnit8ArrayForDesign } from '../utils/utils';
 import ViewSwitch from './ViewSwitch';
 import MesheryPatternGrid from './MesheryPatterns/MesheryPatternGridView';
@@ -48,7 +46,6 @@ import { useRouter } from 'next/router';
 import Modal from './Modal';
 import downloadContent from '../utils/fileDownloader';
 import ConfigurationSubscription from './graphql/subscriptions/ConfigurationSubscription';
-import ReusableTooltip from './reusable-tooltip';
 import Pattern from '../public/static/img/drawer-icons/pattern_svg.js';
 import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
@@ -72,10 +69,16 @@ import ExportModal from './ExportModal';
 import UniversalFilter from '../utils/custom-filter';
 import { useModal, Modal as SistentModal, ModalBody } from '@layer5/sistent';
 import PatternIcon from '@/assets/icons/Pattern';
-import { DeployStepper, UnDeployStepper } from './MesheryPatterns/lifecycle';
 import { UsesSistent } from './SistentWrapper';
 import DryRunIcon from '@/assets/icons/DryRunIcon';
-import { DryRunDesign } from './MesheryPatterns/DryRunDesign';
+import { useActorRef } from '@xstate/react';
+import { designValidationMachine } from 'machines/validator/designValidator';
+import { UnDeployStepper, DeployStepper } from './DesignLifeCycle/DeployStepper';
+import { DryRunDesign } from './DesignLifeCycle/DryRun';
+import { DEPLOYMENT_TYPE } from './DesignLifeCycle/common';
+import { useDeployPatternMutation, useUndeployPatternMutation } from '@/rtk-query/design';
+import CheckIcon from '@/assets/icons/CheckIcon';
+import { ValidateDesign } from './DesignLifeCycle/ValidateDesign';
 
 const genericClickHandler = (ev, fn) => {
   ev.stopPropagation();
@@ -209,9 +212,9 @@ const styles = (theme) => ({
 
 function TooltipIcon({ children, onClick, title, placement }) {
   return (
-    <Tooltip title={title} placement={placement} arrow interactive>
+    <CustomTooltip title={title} placement={placement} interactive>
       <IconButton onClick={onClick}>{children}</IconButton>
-    </Tooltip>
+    </CustomTooltip>
   );
 }
 
@@ -245,16 +248,16 @@ function YAMLEditor({ pattern, onClose, onSubmit }) {
           </Typography>
         </div>
         <div>
-          <ReusableTooltip
+          <CustomTooltip
             placement="top"
             title={fullScreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
             onClick={toggleFullScreen}
           >
             {fullScreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
-          </ReusableTooltip>
-          <ReusableTooltip placement="top" title="Exit" onClick={onClose}>
+          </CustomTooltip>
+          <CustomTooltip placement="top" title="Exit" onClick={onClose}>
             <CloseIcon />
-          </ReusableTooltip>
+          </CustomTooltip>
         </div>
       </DialogTitle>
       <Divider variant="fullWidth" light />
@@ -276,7 +279,7 @@ function YAMLEditor({ pattern, onClose, onSubmit }) {
       </DialogContent>
       <Divider variant="fullWidth" light />
       <DialogActions>
-        <ReusableTooltip title="Update Pattern">
+        <CustomTooltip title="Update Pattern">
           <IconButton
             aria-label="Update"
             color="primary"
@@ -293,8 +296,8 @@ function YAMLEditor({ pattern, onClose, onSubmit }) {
           >
             <SaveIcon />
           </IconButton>
-        </ReusableTooltip>
-        <ReusableTooltip title="Delete Pattern">
+        </CustomTooltip>
+        <CustomTooltip title="Delete Pattern">
           <IconButton
             aria-label="Delete"
             color="primary"
@@ -311,7 +314,7 @@ function YAMLEditor({ pattern, onClose, onSubmit }) {
           >
             <DeleteIcon />
           </IconButton>
-        </ReusableTooltip>
+        </CustomTooltip>
       </DialogActions>
     </Dialog>
   );
@@ -358,8 +361,10 @@ function MesheryPatterns({
   const [visibilityFilter, setVisibilityFilter] = useState(null);
 
   const PATTERN_URL = '/api/pattern';
-  const DEPLOY_URL = `${PATTERN_URL}/deploy`;
   const CLONE_URL = '/clone';
+
+  const [deployPatternMutation] = useDeployPatternMutation();
+  const [undeployPatternMutation] = useUndeployPatternMutation();
 
   const [importModal, setImportModal] = useState({
     open: false,
@@ -375,9 +380,31 @@ function MesheryPatterns({
     content: null,
   });
 
+  const designValidationActorRef = useActorRef(designValidationMachine);
+
   const designLifecycleModal = useModal({
     headerIcon: <PatternIcon fill="#fff" height={'2rem'} width={'2rem'} />,
   });
+
+  const handleDeploy = async ({ design, selectedK8sContexts }) => {
+    updateProgress({ showProgress: true });
+    await deployPatternMutation({
+      pattern_file: design.pattern_file,
+      pattern_id: design.id,
+      selectedK8sContexts,
+    });
+    updateProgress({ showProgress: false });
+  };
+
+  const handleUndeploy = async ({ design, selectedK8sContexts }) => {
+    updateProgress({ showProgress: true });
+    await undeployPatternMutation({
+      pattern_file: design.pattern_file,
+      pattern_id: design.id,
+      selectedK8sContexts,
+    });
+    updateProgress({ showProgress: false });
+  };
 
   const handleDownloadDialogClose = () => {
     setDownloadModal((prevState) => ({
@@ -676,11 +703,15 @@ function MesheryPatterns({
       title: name,
       reactNode: (
         <DeployStepper
-          pattern_file={pattern_file}
-          name={name}
           handleClose={designLifecycleModal.closeModal}
-          handleComplete={designLifecycleModal.closeModal}
-          pattern_id={pattern_id}
+          validationMachine={designValidationActorRef}
+          design={{
+            name,
+            pattern_file,
+            id: pattern_id,
+          }}
+          handleDeploy={handleDeploy}
+          deployment_type={DEPLOYMENT_TYPE.DEPLOY}
           selectedK8sContexts={selectedK8sContexts}
         />
       ),
@@ -693,12 +724,16 @@ function MesheryPatterns({
       title: name,
       reactNode: (
         <UnDeployStepper
-          pattern_file={pattern_file}
-          name={name}
-          pattern_id={pattern_id}
-          selectedK8sContexts={selectedK8sContexts}
           handleClose={designLifecycleModal.closeModal}
-          handleComplete={designLifecycleModal.closeModal}
+          validationMachine={designValidationActorRef}
+          design={{
+            name,
+            pattern_file,
+            id: pattern_id,
+          }}
+          handleUndeploy={handleUndeploy}
+          deployment_type={DEPLOYMENT_TYPE.UNDEPLOY}
+          selectedK8sContexts={selectedK8sContexts}
         />
       ),
     });
@@ -711,11 +746,37 @@ function MesheryPatterns({
       reactNode: (
         <ModalBody style={{ minWidth: '30rem', width: 'auto' }}>
           <DryRunDesign
-            pattern_file={pattern_file}
-            dryRunType={'deploy'}
-            name={name}
-            pattern_id={pattern_id}
-            selectedContexts={selectedK8sContexts}
+            handleClose={designLifecycleModal.closeModal}
+            validationMachine={designValidationActorRef}
+            design={{
+              name,
+              pattern_file,
+              id: pattern_id,
+            }}
+            deployment_type={DEPLOYMENT_TYPE.DEPLOY}
+            selectedK8sContexts={selectedK8sContexts}
+          />
+        </ModalBody>
+      ),
+    });
+  };
+
+  const openValidateModal = (e, pattern_file, name, pattern_id) => {
+    e.stopPropagation();
+    designLifecycleModal.openModal({
+      title: name,
+      reactNode: (
+        <ModalBody style={{ minWidth: '30rem', width: 'auto' }}>
+          <ValidateDesign
+            handleClose={designLifecycleModal.closeModal}
+            validationMachine={designValidationActorRef}
+            design={{
+              name,
+              pattern_file,
+              id: pattern_id,
+            }}
+            deployment_type={DEPLOYMENT_TYPE.DEPLOY}
+            selectedK8sContexts={selectedK8sContexts}
           />
         </ModalBody>
       ),
@@ -767,6 +828,8 @@ function MesheryPatterns({
           title: `Unpublish Catalog item?`,
           subtitle: `Are you sure you want to unpublish ${pattern?.name}?`,
           options: ['Yes', 'No'],
+          showInfoIcon:
+            "Unpublishing a catolog item removes the item from the public-facing catalog (a public website accessible to anonymous visitors at meshery.io/catalog). The catalog item's visibility will change to either public (or private with a subscription). The ability to for other users to continue to access, edit, clone and collaborate on your content depends upon the assigned visibility level (public or private). Prior collaborators (users with whom you have shared your catalog item) will retain access. However, you can always republish it whenever you want. Remember: unpublished catalog items can still be available to other users if that item is set to public visibility. For detailed information, please refer to the [documentation](https://docs.meshery.io/concepts/designs).",
         });
         if (response === 'Yes') {
           updateProgress({ showProgress: true });
@@ -795,51 +858,6 @@ function MesheryPatterns({
     });
   };
 
-  const handleDeploy = (pattern_file, pattern_id, name) => {
-    updateProgress({ showProgress: true });
-    dataFetch(
-      ctxUrl(DEPLOY_URL, selectedK8sContexts),
-      {
-        credentials: 'include',
-        method: 'POST',
-        body: JSON.stringify({
-          pattern_file: pattern_file,
-          pattern_id: pattern_id,
-        }),
-      },
-      () => {
-        updateProgress({ showProgress: false });
-        notify({
-          message: `"${name}" Design Deployed`,
-          event_type: EVENT_TYPES.SUCCESS,
-        });
-      },
-      handleError(ACTION_TYPES.DEPLOY_PATTERN),
-    );
-  };
-
-  const handleUnDeploy = (pattern_file, pattern_id, name) => {
-    updateProgress({ showProgress: true });
-    dataFetch(
-      ctxUrl(DEPLOY_URL, selectedK8sContexts),
-      {
-        credentials: 'include',
-        method: 'DELETE',
-        body: JSON.stringify({
-          pattern_file: pattern_file,
-          pattern_id: pattern_id,
-        }),
-      },
-      () => {
-        updateProgress({ showProgress: false });
-        notify({
-          message: `"${name}" Design undeployed`,
-          event_type: EVENT_TYPES.SUCCESS,
-        });
-      },
-      handleError(ACTION_TYPES.UNDEPLOY_PATTERN),
-    );
-  };
   const handlePublish = (formData) => {
     const compatibilityStore = _.uniqBy(meshModels, (model) => _.toLower(model.displayName))
       ?.filter((model) =>
@@ -987,7 +1005,11 @@ function MesheryPatterns({
           credentials: 'include',
           method: 'POST',
           body: JSON.stringify({
-            pattern_data: { id, pattern_file: getUnit8ArrayForDesign(data), catalog_data },
+            pattern_data: {
+              id,
+              pattern_file: getUnit8ArrayForDesign(data),
+              catalog_data,
+            },
             save: true,
           }),
         },
@@ -1221,6 +1243,17 @@ function MesheryPatterns({
                   />
                 </TooltipIcon>
               )}
+
+              <TooltipIcon
+                placement="top"
+                title="Validate Design"
+                onClick={(e) =>
+                  openValidateModal(e, rowData.pattern_file, rowData.name, rowData.id)
+                }
+                disabled={!CAN(keys.VALIDATE_DESIGN.action, keys.VALIDATE_DESIGN.subject)}
+              >
+                <CheckIcon data-cy="verify-button" />
+              </TooltipIcon>
               <TooltipIcon
                 placement="top"
                 title="Dry Run"
@@ -1503,6 +1536,10 @@ function MesheryPatterns({
       { credentials: 'include', method: 'POST', body: requestBody },
       () => {
         updateProgress({ showProgress: false });
+        notify({
+          message: `"${name}" design uploaded`,
+          event_type: EVENT_TYPES.SUCCESS,
+        });
         fetchPatternsCaller()();
       },
       handleError(ACTION_TYPES.UPLOAD_PATTERN),
@@ -1631,16 +1668,18 @@ function MesheryPatterns({
           </div>
           {!selectedPattern.show && viewType === 'table' && (
             <>
-              <ResponsiveDataTable
-                data={patterns}
-                columns={columns}
-                // @ts-ignore
-                options={options}
-                className={classes.muiRow}
-                tableCols={tableCols}
-                updateCols={updateCols}
-                columnVisibility={columnVisibility}
-              />
+              <UsesSistent>
+                <ResponsiveDataTable
+                  data={patterns}
+                  columns={columns}
+                  // @ts-ignore
+                  options={options}
+                  className={classes.muiRow}
+                  tableCols={tableCols}
+                  updateCols={updateCols}
+                  columnVisibility={columnVisibility}
+                />
+              </UsesSistent>
               <ExportModal
                 downloadModal={downloadModal}
                 handleDownloadDialogClose={handleDownloadDialogClose}
@@ -1654,11 +1693,8 @@ function MesheryPatterns({
               selectedK8sContexts={selectedK8sContexts}
               canPublishPattern={canPublishPattern}
               patterns={patterns}
-              handleDeploy={handleDeploy}
-              handleVerify={() => {}}
               handlePublish={handlePublish}
               handleUnpublishModal={handleUnpublishModal}
-              handleUnDeploy={handleUnDeploy}
               handleClone={handleClone}
               supportedTypes="null"
               handleSubmit={handleSubmit}
@@ -1675,27 +1711,11 @@ function MesheryPatterns({
               fetch={() => fetchPatterns(page, pageSize, search, sortOrder, visibilityFilter)}
               handleInfoModal={handleInfoModal}
               openUndeployModal={openUndeployModal}
+              openValidationModal={openValidateModal}
               openDryRunModal={openDryRunModal}
               openDeployModal={openDeployModal}
             />
           )}
-          {/*<ConfirmationModal
-            open={modalOpen.open}
-            handleClose={handleModalClose}
-            submit={{
-              deploy: () =>
-                handleDeploy(modalOpen.pattern_file, modalOpen.patternID, modalOpen.name),
-              unDeploy: () =>
-                handleUnDeploy(modalOpen.pattern_file, modalOpen.patternID, modalOpen.name),
-              verify: () => handleVerify(modalOpen.pattern_file, modalOpen.patternID),
-            }}
-            title={modalOpen.name}
-            componentCount={modalOpen.count}
-            tab={modalOpen.subject}
-            validationBody={modalOpen.validationBody}
-            dryRunComponent={modalOpen.dryRunComponent}
-            errors={modalOpen.errors}
-          /> */}
 
           <UsesSistent>
             <SistentModal {...designLifecycleModal}></SistentModal>
@@ -1803,6 +1823,4 @@ const mapStateToProps = (state) => ({
 });
 
 // @ts-ignore
-export default withStyles(styles)(
-  connect(mapStateToProps, mapDispatchToProps)(withSnackbar(MesheryPatterns)),
-);
+export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(MesheryPatterns));

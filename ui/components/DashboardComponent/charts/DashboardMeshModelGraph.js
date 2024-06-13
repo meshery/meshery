@@ -7,10 +7,7 @@ import { dataToColors } from '../../../utils/charts';
 import Link from 'next/link';
 import theme from '../../../themes/app';
 import { iconSmall } from '../../../css/icons.styles';
-import {
-  CustomTextTooltip,
-  RenderTooltipContent,
-} from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
+import { CustomTextTooltip } from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
 import { InfoOutlined } from '@material-ui/icons';
 import {
   useGetCategoriesSummary,
@@ -23,7 +20,7 @@ import { keys } from '@/utils/permission_constants';
 
 function MeshModelContructs({ classes }) {
   const params = {
-    page: 1,
+    page: 0,
     pagesize: '1',
   };
   const modelCount = useGetMeshModelsQuery({ params }).data?.total_count || 0;
@@ -64,8 +61,6 @@ function MeshModelContructs({ classes }) {
     [data],
   );
 
-  const url = `https://docs.meshery.io/concepts/logical/registry`;
-
   return (
     <Link
       href="/settings?settingsCategory=Registry&tab=Models"
@@ -82,15 +77,9 @@ function MeshModelContructs({ classes }) {
           </Typography>
           <div onClick={(e) => e.stopPropagation()}>
             <CustomTextTooltip
-              backgroundColor="#3C494F"
               placement="left"
               interactive={true}
-              title={RenderTooltipContent({
-                showPriortext:
-                  'The Meshery Registry is a critical component acting as the central repository for all capabilities known to Meshery.',
-                showAftertext: 'about the Registry.',
-                link: url,
-              })}
+              title={`The Meshery Registry is a critical component acting as the central repository for all capabilities known to Meshery. [Learn More](https://docs.meshery.io/concepts/logical/registry)`}
             >
               <IconButton disableRipple={true} disableFocusRipple={true}>
                 <InfoOutlined
@@ -155,8 +144,6 @@ function MeshModelCategories({ classes }) {
     [cleanedData],
   );
 
-  const url = `https://docs.meshery.io/concepts/logical/models`;
-
   return (
     <Link href="/settings?settingsCategory=Registry">
       <div className={classes.dashboardSection}>
@@ -166,13 +153,7 @@ function MeshModelCategories({ classes }) {
           </Typography>
           <div onClick={(e) => e.stopPropagation()}>
             <CustomTextTooltip
-              backgroundColor="#3C494F"
-              title={RenderTooltipContent({
-                showPriortext:
-                  'Meshery Models represent the fundamental building blocks of your infrastructure. Models are categorized by their function. For example, a model for Prometheus belongs in the "Observability and Analysis" category.',
-                showAftertext: 'to learn more about all Categories',
-                link: url,
-              })}
+              title={`Meshery Models represent the fundamental building blocks of your infrastructure. Models are categorized by their function. For example, a model for Prometheus belongs in the "Observability and Analysis" category. [Learn More](https://docs.meshery.io/concepts/logical/models)`}
               placement="left"
               interactive={true}
             >

@@ -478,7 +478,7 @@ func (l *DefaultLocalProvider) TokenHandler(_ http.ResponseWriter, _ *http.Reque
 func (l *DefaultLocalProvider) ExtractToken(w http.ResponseWriter, _ *http.Request) {
 	resp := map[string]interface{}{
 		"meshery-provider": l.Name(),
-		tokenName:          "",
+		TokenCookieName:          "",
 	}
 	logrus.Debugf("token sent for meshery-provider %v", l.Name())
 	if err := json.NewEncoder(w).Encode(resp); err != nil {
@@ -648,7 +648,7 @@ func (l *DefaultLocalProvider) CloneMesheryPattern(_ *http.Request, patternID st
 }
 
 // GetDesignSourceContent returns design source-content from provider
-func (l *DefaultLocalProvider) GetDesignSourceContent(_ *http.Request, designID string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetDesignSourceContent(_, designID string) ([]byte, error) {
 	id := uuid.FromStringOrNil(designID)
 	return l.MesheryPatternPersister.GetMesheryPatternSource(id)
 }
@@ -984,8 +984,21 @@ func (l *DefaultLocalProvider) SaveConnection(_ *ConnectionPayload, _ string, _ 
 func (l *DefaultLocalProvider) GetConnections(_ *http.Request, _ string, _, _ int, _, _ string, _ string, _ []string, _ []string) (*connections.ConnectionPage, error) {
 	return nil, ErrLocalProviderSupport
 }
-func (l *DefaultLocalProvider) GetConnectionByID(token string, connectionID uuid.UUID, kind string) (*connections.Connection, int, error) {
+
+func (l *DefaultLocalProvider) GetConnectionByIDAndKind(token string, connectionID uuid.UUID, kind string) (*connections.Connection, int, error) {
 	return nil, http.StatusForbidden, ErrLocalProviderSupport
+}
+
+func (l *DefaultLocalProvider) GetConnectionByID(token string, connectionID uuid.UUID) (*connections.Connection, int, error) {
+	result := connections.Connection{}
+	err := l.DB.Model(&result).Where("id = ?", connectionID).First(&result).Error
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, http.StatusNotFound, ErrResultNotFound(err)
+		}
+		return nil, http.StatusInternalServerError, ErrDBRead(err)
+	}
+	return &result, http.StatusOK, err
 }
 
 func (l *DefaultLocalProvider) GetConnectionsByKind(_ *http.Request, _ string, _, _ int, _, _, _ string) (*map[string]interface{}, error) {
@@ -1146,9 +1159,12 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 			Description: "This is default organization",
 			Owner:       uuid.Nil,
 		}
-		_, err := l.OrganizationPersister.SaveOrganization(org)
-		if err != nil {
-			log.Error(ErrGettingSeededComponents(err, "organization"))
+		count, _ := l.OrganizationPersister.GetOrganizationsCount()
+		if count == 0 {
+			_, err := l.OrganizationPersister.SaveOrganization(org)
+			if err != nil {
+				log.Error(ErrGettingSeededComponents(err, "organization"))
+			}
 		}
 	}()
 }

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { api } from './index';
 import _ from 'lodash';
+import { initiateQuery } from './utils';
 
 const TAGS = {
   MESH_MODELS: 'mesh-models',
@@ -10,7 +11,7 @@ const defaultOptions = {
   trim: false,
   // annotations: false,
   search: '',
-  page: 1,
+  page: 0,
   pagesize: 'all',
 };
 
@@ -98,6 +99,12 @@ const meshModelApi = api
         }),
         providesTags: () => [{ type: TAGS.MESH_MODELS }],
       }),
+      getComponentsByModelAndKind: builder.query({
+        query: (queryArg) => ({
+          url: `meshmodels/models/${queryArg.model}/components/${queryArg.component}`,
+          params: _.merge({}, defaultOptions, queryArg.params),
+        }),
+      }),
     }),
   });
 
@@ -118,6 +125,7 @@ export const {
   useGetMeshModelsQuery,
   useGetComponentByNameQuery,
   useGetModelFromCategoryQuery,
+  useGetComponentsByModelAndKindQuery,
 } = meshModelApi;
 
 export const useGetCategoriesSummary = () => {
@@ -146,3 +154,22 @@ export const useGetCategoriesSummary = () => {
   }, [categories]);
   return categoryMap;
 };
+
+export const getComponentDefinition = async (component, model, params = {}) => {
+  const res = await initiateQuery(meshModelApi.endpoints.getComponentsByModelAndKind, {
+    component,
+    model,
+    params: _.omit({ params, annotations: 'include' }, ['apiVersion']),
+  });
+
+  if (params.apiVersion) {
+    return res?.data?.components?.find((c) => c.component.version === params.apiVersion);
+  }
+  return res?.data?.components?.[0];
+};
+
+export const modelUniqueKey = (model) => `${model.name}-${model.version}`;
+export const componentUniqueKey = (component) =>
+  `${component.component.kind}-${component.component.version}-${component.version}-${modelUniqueKey(
+    component.model,
+  )}`;

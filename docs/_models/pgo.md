@@ -18,6 +18,10 @@ components:
   colorIcon: assets/img/integrations/pgo/components/postgres-cluster/icons/color/postgres-cluster-color.svg
   whiteIcon: assets/img/integrations/pgo/components/postgres-cluster/icons/white/postgres-cluster-white.svg
   description: 
+- name: pg-admin
+  colorIcon: assets/img/integrations/pgo/components/pg-admin/icons/color/pg-admin-color.svg
+  whiteIcon: assets/img/integrations/pgo/components/pg-admin/icons/white/pg-admin-white.svg
+  description: 
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

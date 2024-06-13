@@ -1,0 +1,59 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "core.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Snapshot Group Class",
+  "description": "",
+  "format": "JSON",
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "core.meshery.io/v1beta1",
+   "version": "v1.0.0",
+   "name": "hpe-csi-driver",
+   "displayName": "HPE CSI Driver",
+   "description": "",
+   "status": "ignored",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "registrant": {
+    "hostname": "artifacthub"
+   },
+   "category": {
+    "name": "Uncategorized",
+    "metadata": null
+   },
+   "subCategory": "Uncategorized",
+   "metadata": {
+    "isAnnotation": false,
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "model": {
+    "version": "2.5.0-beta"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": false,
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "component": {
+   "kind": "SnapshotGroupClass",
+   "version": "storage.hpe.com/v1",
+   "schema": "{\n \"description\": \"SnapshotGroupClass specifies parameters that a underlying storage system uses when creating a volumegroup snapshot. A specific SnapshotGroupClass is used by specifying its name in a VolumeGroupSnapshot object. SnapshotGroupClasses are non-namespaced\",\n \"properties\": {\n  \"deletionPolicy\": {\n   \"description\": \"deletionPolicy determines whether a SnapshotGroupContent created through the SnapshotGroupClass should be deleted when its bound SnapshotGroup is deleted. Supported values are \\\"Retain\\\" and \\\"Delete\\\". \\\"Retain\\\" means that the SnapshotGroupContent and its physical snapshotGroup on underlying storage system are kept. \\\"Delete\\\" means that the SnapshotGroupContent and its physical snapshotGroup on underlying storage system are deleted. Required.\",\n   \"enum\": [\n    \"Delete\",\n    \"Retain\"\n   ],\n   \"type\": \"string\"\n  },\n  \"parameters\": {\n   \"additionalProperties\": {\n    \"type\": \"string\"\n   },\n   \"description\": \"parameters is a key-value map with storage driver specific parameters for creating snapshotGroups. These values are opaque to Kubernetes.\",\n   \"type\": \"object\"\n  },\n  \"snapshotter\": {\n   \"description\": \"snapshotter is the name of the storage driver that handles this SnapshotGroupClass. Required.\",\n   \"type\": \"string\"\n  }\n },\n \"required\": [\n  \"deletionPolicy\",\n  \"snapshotter\"\n ],\n \"title\": \"Snapshot Group Class\",\n \"type\": \"object\"\n}"
+  }
+ }

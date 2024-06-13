@@ -24,7 +24,11 @@ func (r *Resolver) fetchPatterns(ctx context.Context, provider models.Provider, 
 	if selector.Search != nil {
 		search = *selector.Search
 	}
-	resp, err := provider.GetMesheryPatterns(tokenString, selector.Page, selector.PageSize, search, order, updateAfter, selector.Visibility, *selector.Metrics)
+	metrics := "false"
+	if selector.Metrics != nil {
+		metrics = *selector.Metrics
+	}
+	resp, err := provider.GetMesheryPatterns(tokenString, selector.Page, selector.PageSize, search, order, updateAfter, selector.Visibility, metrics)
 
 	if err != nil {
 		r.Log.Error(ErrFetchingPatterns(err))

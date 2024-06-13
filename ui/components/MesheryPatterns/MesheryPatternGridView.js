@@ -8,7 +8,6 @@ import { EVENT_TYPES } from '../../lib/event-types';
 import useStyles from './Grid.styles';
 import Modal from '../Modal';
 import PublicIcon from '@material-ui/icons/Public';
-import { withSnackbar } from 'notistack';
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -22,6 +21,7 @@ function PatternCardGridItem({
   pattern,
   handleDeploy,
   handleVerify,
+  handleDryRun,
   handlePublishModal,
   handleUnpublishModal,
   handleUnDeploy,
@@ -50,6 +50,7 @@ function PatternCardGridItem({
         requestSizeRestore={() => setGridProps(INITIAL_GRID_SIZE)}
         handleDeploy={handleDeploy}
         handleVerify={handleVerify}
+        handleDryRun={handleDryRun}
         handlePublishModal={handlePublishModal}
         handleUnDeploy={handleUnDeploy}
         handleUnpublishModal={handleUnpublishModal}
@@ -133,6 +134,7 @@ function MesheryPatternGrid({
   user,
   handleInfoModal,
   openDeployModal,
+  openValidationModal,
   openUndeployModal,
   openDryRunModal,
 }) {
@@ -211,8 +213,11 @@ function MesheryPatternGrid({
               handleUnDeploy={(e) => {
                 openUndeployModal(e, pattern.pattern_file, pattern.name, pattern.id);
               }}
-              handleVerify={(e) =>
+              handleDryRun={(e) =>
                 openDryRunModal(e, pattern.pattern_file, pattern.name, pattern.id)
+              }
+              handleVerify={(e) =>
+                openValidationModal(e, pattern.pattern_file, pattern.name, pattern.id)
               }
               handlePublishModal={() => handlePublishModal(pattern)}
               handleUnpublishModal={(e) => handleUnpublishModal(e, pattern)()}
@@ -289,4 +294,4 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 // @ts-ignore
-export default connect(mapDispatchToProps)(withSnackbar(MesheryPatternGrid));
+export default connect(mapDispatchToProps)(MesheryPatternGrid);

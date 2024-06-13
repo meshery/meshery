@@ -7,7 +7,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
+	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
+	"github.com/layer5io/meshkit/models/meshmodel/entity"
 	"github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshkit/utils/csv"
 )
@@ -54,40 +55,70 @@ type ModelCSV struct {
 	PublishToSites     string `json:"publishToSites" csv:"-"`
 }
 
-func (mcv *ModelCSV) CreateModelDefinition(version string) v1alpha1.Model {
-	var isModelPublished, isAnnotation bool
-	if strings.ToLower(mcv.PublishToRegistry) == "true" {
-		isModelPublished = true
+var modelMetadataValues = []string{
+	"primaryColor", "secondaryColor", "svgColor", "svgWhite", "svgComplete", "styleOverrides", "styles", "shapePolygonPoints", "defaultData", "capabilities", "isAnnotation", "shape",
+}
+
+func (m *ModelCSV) UpdateModelDefinition(modelDef *v1beta1.Model) error {
+
+	metadata := map[string]interface{}{}
+	modelMetadata, err := utils.MarshalAndUnmarshal[ModelCSV, map[string]interface{}](*m)
+	if err != nil {
+		return err
 	}
-	if strings.ToLower(mcv.IsAnnotation) == "true" {
+	metadata = utils.MergeMaps(metadata, modelDef.Metadata)
+
+	for _, key := range modelMetadataValues {
+		if key == "svgColor" || key == "svgWhite" {
+			svg, err := utils.Cast[string](modelMetadata[key])
+			if err == nil {
+				metadata[key], err = utils.UpdateSVGString(svg, SVG_WIDTH, SVG_HEIGHT)
+				if err != nil {
+					// If svg cannot be updated, assign the svg value as it is
+					metadata[key] = modelMetadata[key]
+				}
+			}
+		}
+		metadata[key] = modelMetadata[key]
+	}
+
+	isAnnotation := false
+	if strings.ToLower(m.IsAnnotation) == "true" {
 		isAnnotation = true
 	}
+	metadata["isAnnotation"] = isAnnotation
+	modelDef.Metadata = metadata
+	return nil
+}
 
-	svgColor, err := utils.UpdateSVGString(mcv.SVGColor, SVG_WIDTH, SVG_HEIGHT)
-	if err != nil {
-		svgColor = mcv.SVGColor
+func (mcv *ModelCSV) CreateModelDefinition(version, defVersion string) v1beta1.Model {
+	status := entity.Ignored
+	if strings.ToLower(mcv.PublishToRegistry) == "true" {
+		status = entity.Enabled
 	}
 
-	svgWhite, err := utils.UpdateSVGString(mcv.SVGWhite, SVG_WIDTH, SVG_HEIGHT)
-	if err != nil {
-		svgColor = mcv.SVGWhite
-	}
-
-	model := v1alpha1.Model{
-		Name:        mcv.Model,
-		Version:     version,
-		DisplayName: mcv.ModelDisplayName,
-		Metadata: map[string]interface{}{
-			"isAnnotation": isAnnotation,
-			"svgColor":     svgColor,
-			"svgWhite":     svgWhite,
-			"svgComplete":  mcv.SVGComplete,
-			"subCategory":  mcv.SubCategory, // move as first class attribute
-			"published":    isModelPublished,
+	model := v1beta1.Model{
+		VersionMeta: v1beta1.VersionMeta{
+			Version:       defVersion,
+			SchemaVersion: v1beta1.SchemaVersion,
 		},
-		Category: v1alpha1.Category{
+		Name:        mcv.Model,
+		DisplayName: mcv.ModelDisplayName,
+		Status:      status,
+		Registrant: v1beta1.Host{
+			Hostname: utils.ReplaceSpacesAndConvertToLowercase(mcv.Registrant),
+		},
+		Category: v1beta1.Category{
 			Name: mcv.Category,
 		},
+		SubCategory: mcv.SubCategory,
+		Model: v1beta1.ModelEntity{
+			Version: version,
+		},
+	}
+	err := mcv.UpdateModelDefinition(&model)
+	if err != nil {
+		Log.Error(err)
 	}
 	return model
 }
@@ -104,9 +135,12 @@ func NewModelCSVHelper(sheetURL, spreadsheetName string, spreadsheetID int64) (*
 	sheetURL = sheetURL + "/pub?output=csv" + "&gid=" + strconv.FormatInt(spreadsheetID, 10)
 	Log.Info("Downloading CSV from: ", sheetURL)
 	dirPath := filepath.Join(utils.GetHome(), ".meshery", "content")
-	_ = os.MkdirAll(dirPath, 0755)
+	err := os.MkdirAll(dirPath, 0755)
+	if err != nil {
+		return nil, utils.ErrCreateDir(err, dirPath)
+	}
 	csvPath := filepath.Join(dirPath, "models.csv")
-	err := utils.DownloadFile(csvPath, sheetURL)
+	err = utils.DownloadFile(csvPath, sheetURL)
 	if err != nil {
 		return nil, utils.ErrReadingRemoteFile(err)
 	}
@@ -145,6 +179,7 @@ func (mch *ModelCSVHelper) ParseModelsSheet(parseForDocs bool) error {
 	}
 
 	go func() {
+		Log.Info("Parsing Models...")
 		err := csvReader.Parse(ch, errorChan)
 		if err != nil {
 			errorChan <- err
@@ -155,7 +190,7 @@ func (mch *ModelCSVHelper) ParseModelsSheet(parseForDocs bool) error {
 
 		case data := <-ch:
 			mch.Models = append(mch.Models, data)
-			Log.Info(fmt.Sprintf("Reading Model [ %s ] from Registrant [ %s ] \n", data.Model, data.Registrant))
+			Log.Info(fmt.Sprintf("Reading registrant [%s] model [%s]", data.Registrant, data.Model))
 		case err := <-errorChan:
 			return ErrFileRead(err)
 

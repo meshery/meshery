@@ -12,8 +12,8 @@ import { getK8sClusterIdsFromCtxId } from '../../../utils/multi-ctx';
 import { updateVisibleColumns } from '../../../utils/responsive-column';
 import { useWindowDimensions } from '../../../utils/dimension';
 import { camelcaseToSnakecase } from '../../../utils/utils';
-import { Slide } from '@material-ui/core';
 import { useSelector } from 'react-redux';
+import { UsesSistent } from '@/components/SistentWrapper';
 
 const ACTION_TYPES = {
   FETCH_MESHSYNC_RESOURCES: {
@@ -115,7 +115,7 @@ const ResourcesTable = (props) => {
       search: false,
       responsive: 'standard',
       serverSide: true,
-      selectableRows: false,
+      selectableRows: 'none',
       count,
       rowsPerPage: pageSize,
       fixedHeader: true,
@@ -171,15 +171,7 @@ const ResourcesTable = (props) => {
   };
   return (
     <>
-      <Slide
-        in={view !== ALL_VIEW}
-        timeout={400}
-        direction={'left'}
-        exit={true}
-        enter={true}
-        mountOnEnter
-        unmountOnExit
-      >
+      {view !== ALL_VIEW ? (
         <div>
           <View
             type={`${tableConfig.name}`}
@@ -188,9 +180,7 @@ const ResourcesTable = (props) => {
             classes={classes}
           />
         </div>
-      </Slide>
-
-      {view === ALL_VIEW && (
+      ) : (
         <div>
           <div
             className={StyleClass.toolWrapper}
@@ -220,15 +210,17 @@ const ResourcesTable = (props) => {
               />
             </div>
           </div>
-          <ResponsiveDataTable
-            data={meshSyncResources}
-            columns={tableConfig.columns}
-            options={options}
-            className={classes.muiRow}
-            tableCols={tableCols}
-            updateCols={updateCols}
-            columnVisibility={columnVisibility}
-          />
+          <UsesSistent>
+            <ResponsiveDataTable
+              data={meshSyncResources}
+              columns={tableConfig.columns}
+              options={options}
+              className={classes.muiRow}
+              tableCols={tableCols}
+              updateCols={updateCols}
+              columnVisibility={columnVisibility}
+            />
+          </UsesSistent>
         </div>
       )}
     </>

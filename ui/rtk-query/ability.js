@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ability } from '../utils/can';
 import { useLazyGetUserKeysQuery } from './userKeys';
+import _ from 'lodash';
 
 export const useGetUserAbilities = (org, skip) => {
   const [data, setData] = useState(null);
@@ -11,12 +12,12 @@ export const useGetUserAbilities = (org, skip) => {
   const [getUserQuery] = useLazyGetUserKeysQuery();
 
   useEffect(() => {
-    getUserQuery({ orgId: org.id }, { skip })
+    getUserQuery({ orgId: org?.id }, { skip })
       .unwrap()
       .then((res) => {
         const abilities = res.keys?.map((key) => ({
           action: key.id,
-          subject: key.function,
+          subject: _.lowerCase(key.function),
         }));
 
         setData({
@@ -27,7 +28,7 @@ export const useGetUserAbilities = (org, skip) => {
       .catch((error) => {
         console.error('Error when fetching keys in useGetUserAbilities custom hook', error);
       });
-  }, [org.id, getUserQuery, skip]);
+  }, [org?.id, getUserQuery, skip]);
 
   return data;
 };

@@ -12,8 +12,10 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
+	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	"github.com/layer5io/meshkit/utils"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 const (
@@ -243,14 +245,14 @@ Complete:
 		}
 	}
 }
-func WriteSVGsOnFileSystem(comp *v1alpha1.ComponentDefinition) {
+func WriteSVGsOnFileSystem(comp *v1beta1.ComponentDefinition) {
 	if comp.Metadata == nil {
 		comp.Metadata = make(map[string]interface{})
 	}
 	if comp.Model.Metadata == nil {
 		comp.Model.Metadata = make(map[string]interface{})
 	}
-	writeSVGHelper(comp.Metadata, comp.Model.Name, comp.Kind)             //Write SVG on components
+	writeSVGHelper(comp.Metadata, comp.Model.Name, comp.Component.Kind)   //Write SVG on components
 	writeSVGHelper(comp.Model.Metadata, comp.Model.Name, comp.Model.Name) //Write SVG on models
 }
 
@@ -352,4 +354,9 @@ func MarshalAndUnmarshal[k any, v any](val k) (unmarshalledvalue v, err error) {
 		return
 	}
 	return
+}
+
+func FormatToTitleCase(s string) string {
+	c := cases.Title(language.English)
+	return c.String(s)
 }

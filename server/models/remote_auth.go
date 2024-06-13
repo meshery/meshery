@@ -20,6 +20,17 @@ import (
 	"golang.org/x/oauth2"
 )
 
+const (
+	// Stores meshery provider related info.
+	ProviderCookieName = "meshery-provider"
+
+	// Stores the JWT issued by the remote provider to provide secure access to its API
+	TokenCookieName = "token"
+
+	// Stores the remote provider session cookie (identity cookie) to facilitate logout from remote provider as user logs out of Meshery
+	ProviderSessionCookieName = "session_cookie"
+)
+
 // JWK - a type respresting the JSON web Key
 type JWK map[string]string
 
@@ -34,7 +45,7 @@ func SafeClose(co io.Closer) {
 func (l *RemoteProvider) DoRequest(req *http.Request, tokenString string) (*http.Response, error) {
 	resp, err := l.doRequestHelper(req, tokenString)
 	if err != nil {
-		return nil, ErrTokenRefresh(err)
+		return nil, ErrDoRequest(err, req.Method, req.URL.String())
 	}
 
 	if resp.StatusCode == 401 {
@@ -44,11 +55,15 @@ func (l *RemoteProvider) DoRequest(req *http.Request, tokenString string) (*http
 		resp.Body.Close()
 		logrus.Warn("trying after refresh")
 		newToken, err := l.refreshToken(tokenString)
-		logrus.Info("token refresh successful")
 		if err != nil {
 			return nil, ErrTokenRefresh(err)
 		}
-		return l.doRequestHelper(req, newToken)
+		l.Log.Info("token refresh successful")
+		resp, err := l.doRequestHelper(req, newToken)
+		if err != nil {
+			return nil, ErrDoRequest(err, req.Method, req.URL.String())
+		}
+		return resp, nil
 	}
 	return resp, err
 }
@@ -62,7 +77,7 @@ func (l *RemoteProvider) refreshToken(tokenString string) (string, error) {
 		return newTokenString, nil
 	}
 	bd := map[string]string{
-		tokenName: tokenString,
+		TokenCookieName: tokenString,
 	}
 	jsonString, err := json.Marshal(bd)
 	if err != nil {
@@ -82,21 +97,17 @@ func (l *RemoteProvider) refreshToken(tokenString string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	l.TokenStore[tokenString] = target[tokenName]
+	l.TokenStore[tokenString] = target[TokenCookieName]
 	time.AfterFunc(1*time.Hour, func() {
 		logrus.Infof("deleting old token string")
 		delete(l.TokenStore, tokenString)
 	})
-	return target[tokenName], nil
+	return target[TokenCookieName], nil
 }
 
-func (l *RemoteProvider) doRequestHelper(req *http.Request, tokenString string) (*http.Response, error) {
-	token, err := l.DecodeTokenData(tokenString)
-	if err != nil {
-		return nil, ErrTokenDecode(err)
-	}
+func (l *RemoteProvider) doRequestHelper(req *http.Request, token string) (*http.Response, error) {
 	c := &http.Client{}
-	req.Header.Set("Authorization", fmt.Sprintf("bearer %s", token.AccessToken))
+	req.Header.Set("Authorization", fmt.Sprintf("bearer %s", token))
 	req.Header.Set("SystemID", viper.GetString("INSTANCE_ID")) // Adds the system id to the header for event tracking
 	resp, err := c.Do(req)
 	if err != nil {
@@ -107,7 +118,7 @@ func (l *RemoteProvider) doRequestHelper(req *http.Request, tokenString string) 
 
 // GetToken - extracts token form a request
 func (l *RemoteProvider) GetToken(req *http.Request) (string, error) {
-	ck, err := req.Cookie(tokenName)
+	ck, err := req.Cookie(TokenCookieName)
 	if err != nil {
 		return "", ErrGetToken(err)
 	}
@@ -340,4 +351,47 @@ func (l *RemoteProvider) introspectToken(tokenString string) error {
 	}
 
 	return nil
+}
+
+func setCookie(w http.ResponseWriter, name, value string, duration time.Duration) {
+	http.SetCookie(w, &http.Cookie{
+		Name:     name,
+		Value:    value,
+		Path:     "/",
+		HttpOnly: true,
+		Expires:  time.Now().Add(duration),
+	})
+}
+
+func unsetCookie(w http.ResponseWriter, name string) {
+	http.SetCookie(w, &http.Cookie{
+		Name:   name,
+		Path: "/",
+		HttpOnly: true,
+		MaxAge: -1,
+	})
+}
+
+func (l *RemoteProvider) SetProviderCookie(w http.ResponseWriter, provider string) {
+	setCookie(w, ProviderCookieName, provider, l.CookieDuration)
+}
+
+func (l *RemoteProvider) UnSetProviderCookie(w http.ResponseWriter) {
+	unsetCookie(w, ProviderCookieName)
+}
+
+func (l *RemoteProvider) SetJWTCookie(w http.ResponseWriter, token string) {
+	setCookie(w, TokenCookieName, token, l.CookieDuration)
+}
+
+func (l *RemoteProvider) UnSetJWTCookie(w http.ResponseWriter) {
+	unsetCookie(w, TokenCookieName)
+}
+
+func (l *RemoteProvider) SetProviderSessionCookie(w http.ResponseWriter, sessionCookie string) {
+	setCookie(w, ProviderSessionCookieName, sessionCookie, l.CookieDuration)
+}
+
+func (l *RemoteProvider) UnSetProviderSessionCookie(w http.ResponseWriter) {
+	unsetCookie(w, ProviderSessionCookieName)
 }
