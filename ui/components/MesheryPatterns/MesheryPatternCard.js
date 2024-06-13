@@ -101,6 +101,7 @@ function MesheryPatternCard_({
           updateHandler={updateHandler}
           deleteHandler={deleteHandler}
           type={'pattern'}
+          isReadOnly={isReadOnly}
         />
       )}
       <FlipCard
