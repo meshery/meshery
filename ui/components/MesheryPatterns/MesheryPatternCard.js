@@ -360,27 +360,29 @@ function MesheryPatternCard_({
               </div>
             </Grid>
             <Grid item xs={12}>
-              <div className={classes.updateDeleteButtons}>
-                {/* Save button */}
-                <CustomTooltip title="Save" arrow interactive placement="bottom">
-                  <IconButton
-                    disabled={!CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject)}
-                    onClick={(ev) => genericClickHandler(ev, updateHandler)}
-                  >
-                    <Save color="primary" />
-                  </IconButton>
-                </CustomTooltip>
+              {isReadOnly ? null : (
+                <div className={classes.updateDeleteButtons}>
+                  {/* Save button */}
+                  <CustomTooltip title="Save" arrow interactive placement="bottom">
+                    <IconButton
+                      disabled={!CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject)}
+                      onClick={(ev) => genericClickHandler(ev, updateHandler)}
+                    >
+                      <Save color="primary" />
+                    </IconButton>
+                  </CustomTooltip>
 
-                {/* Delete Button */}
-                <CustomTooltip title="Delete" arrow interactive placement="bottom">
-                  <IconButton
-                    disabled={!CAN(keys.DELETE_A_DESIGN.action, keys.DELETE_A_DESIGN.subject)}
-                    onClick={(ev) => genericClickHandler(ev, deleteHandler)}
-                  >
-                    <DeleteIcon color="primary" />
-                  </IconButton>
-                </CustomTooltip>
-              </div>
+                  {/* Delete Button */}
+                  <CustomTooltip title="Delete" arrow interactive placement="bottom">
+                    <IconButton
+                      disabled={!CAN(keys.DELETE_A_DESIGN.action, keys.DELETE_A_DESIGN.subject)}
+                      onClick={(ev) => genericClickHandler(ev, deleteHandler)}
+                    >
+                      <DeleteIcon color="primary" />
+                    </IconButton>
+                  </CustomTooltip>
+                </div>
+              )}
             </Grid>
           </Grid>
         </>
