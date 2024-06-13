@@ -60,6 +60,7 @@ function MesheryPatternCard_({
   pattern,
   handleInfoModal,
   hideVisibility = false,
+  isReadOnly = false,
 }) {
   const router = useRouter();
 
@@ -154,28 +155,32 @@ function MesheryPatternCard_({
           </div>
           <div className={classes.bottomPart}>
             <div className={classes.cardButtons}>
-              {canPublishPattern && visibility !== VISIBILITY.PUBLISHED ? (
-                <TooltipButton
-                  variant="contained"
-                  title="Publish"
-                  className={classes.testsButton}
-                  onClick={(ev) => genericClickHandler(ev, handlePublishModal)}
-                  disabled={!CAN(keys.PUBLISH_DESIGN.action, keys.PUBLISH_DESIGN.subject)}
-                >
-                  <PublicIcon className={classes.iconPatt} />
-                  <span className={classes.btnText}> Publish </span>
-                </TooltipButton>
-              ) : (
-                <TooltipButton
-                  variant="contained"
-                  title="Unpublish"
-                  className={classes.testsButton}
-                  onClick={(ev) => genericClickHandler(ev, handleUnpublishModal)}
-                  disabled={!CAN(keys.UNPUBLISH_DESIGN.action, keys.UNPUBLISH_DESIGN.subject)}
-                >
-                  <PublicIcon className={classes.iconPatt} />
-                  <span className={classes.btnText}> Unpublish </span>
-                </TooltipButton>
+              {isReadOnly ? null : (
+                <>
+                  {canPublishPattern && visibility !== VISIBILITY.PUBLISHED ? (
+                    <TooltipButton
+                      variant="contained"
+                      title="Publish"
+                      className={classes.testsButton}
+                      onClick={(ev) => genericClickHandler(ev, handlePublishModal)}
+                      disabled={!CAN(keys.PUBLISH_DESIGN.action, keys.PUBLISH_DESIGN.subject)}
+                    >
+                      <PublicIcon className={classes.iconPatt} />
+                      <span className={classes.btnText}> Publish </span>
+                    </TooltipButton>
+                  ) : (
+                    <TooltipButton
+                      variant="contained"
+                      title="Unpublish"
+                      className={classes.testsButton}
+                      onClick={(ev) => genericClickHandler(ev, handleUnpublishModal)}
+                      disabled={!CAN(keys.UNPUBLISH_DESIGN.action, keys.UNPUBLISH_DESIGN.subject)}
+                    >
+                      <PublicIcon className={classes.iconPatt} />
+                      <span className={classes.btnText}> Unpublish </span>
+                    </TooltipButton>
+                  )}
+                </>
               )}
               <ActionButton
                 defaultActionClick={(e) => genericClickHandler(e, handleVerify)}
@@ -246,7 +251,7 @@ function MesheryPatternCard_({
                 </TooltipButton>
               )}
 
-              {userCanEdit && (
+              {!isReadOnly && userCanEdit && (
                 <TooltipButton
                   title="Edit In Configurator"
                   variant="contained"

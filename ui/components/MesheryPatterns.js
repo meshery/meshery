@@ -1728,6 +1728,7 @@ function MesheryPatterns({
               openDryRunModal={openDryRunModal}
               openDeployModal={openDeployModal}
               hideVisibility={hideVisibility}
+              arePatternsReadOnly={arePatternsReadOnly}
             />
           )}
 
