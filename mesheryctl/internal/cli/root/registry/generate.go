@@ -192,7 +192,7 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 		if err != nil {
 			break
 		}
-		utils.Log.Info("Current model: ", model.Model)
+
 		wg.Add(1)
 		go func(model utils.ModelCSV) {
 			defer func() {
@@ -240,6 +240,7 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 				logError(ErrGenerateModel(err, model.Model), model.Model)
 				return
 			}
+			utils.Log.Info("Current model: ", model.Model)
 			utils.Log.Info(" extracted ", len(comps), " components for ", model.ModelDisplayName, " (", model.Model, ")")
 			for _, comp := range comps {
 				comp.Version = defVersion
