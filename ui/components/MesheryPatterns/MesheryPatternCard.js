@@ -325,6 +325,7 @@ function MesheryPatternCard_({
                     // @ts-ignore
                     lint: true,
                     mode: 'text/x-yaml',
+                    readOnly: isReadOnly,
                   }}
                   onChange={(_, data, val) => setYaml(val)}
                 />
