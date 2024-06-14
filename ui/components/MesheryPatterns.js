@@ -1294,7 +1294,7 @@ function MesheryPatterns({
               <TooltipIcon
                 title="Design Information"
                 disabled={!CAN(keys.DETAILS_OF_DESIGN.action, keys.DETAILS_OF_DESIGN.subject)}
-                onClick={(ev) => genericClickHandler(ev, handleInfoModal)}
+                onClick={(ev) => genericClickHandler(ev, () => handleInfoModal(rowData))}
               >
                 <InfoOutlinedIcon data-cy="information-button" />
               </TooltipIcon>
