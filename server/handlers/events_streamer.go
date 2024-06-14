@@ -475,3 +475,47 @@ func closeAdapterConnections(localMeshAdaptersLock *sync.Mutex, localMeshAdapter
 
 	return map[string]*meshes.MeshClient{}
 }
+
+func (h *Handler) UIEventHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+	fmt.Println("POST /api/events hit")
+	userID := uuid.FromStringOrNil(user.ID)
+
+	defer func() {
+		_ = req.Body.Close()
+	}()
+
+	var eventDetails map[string]interface{}
+	body, err := io.ReadAll(req.Body)
+	if err != nil {
+		h.log.Error(ErrRequestBody(err))
+		http.Error(w, ErrRequestBody(err).Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = json.Unmarshal(body, &eventDetails)
+	if err != nil {
+		h.log.Error(models.ErrUnmarshal(err, "event details"))
+		http.Error(w, models.ErrUnmarshal(err, "event details").Error(), http.StatusInternalServerError)
+		return
+	}
+
+	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory(eventDetails["category"].(string)).
+		WithAction(eventDetails["action"].(string)).WithSeverity(events.EventSeverity(eventDetails["severity"].(string))).
+		WithDescription(eventDetails["description"].(string)).WithMetadata(eventDetails["metadata"].(map[string]interface{}))
+
+	if actedUpon, ok := eventDetails["acted_upon"].(string); ok {
+		eventBuilder = eventBuilder.ActedUpon(uuid.FromStringOrNil(actedUpon))
+	}
+
+	event := eventBuilder.Build()
+	_ = provider.PersistEvent(event)
+	go h.config.EventBroadcaster.Publish(userID, event)
+
+	w.WriteHeader(http.StatusCreated)
+	err = json.NewEncoder(w).Encode(event)
+	if err != nil {
+		h.log.Error(models.ErrMarshal(err, "event response"))
+		http.Error(w, models.ErrMarshal(err, "event response").Error(), http.StatusInternalServerError)
+		return
+	}
+}
