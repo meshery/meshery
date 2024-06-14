@@ -1240,16 +1240,13 @@ func FindInSlice(key string, items []string) (int, bool) {
 	return -1, false
 }
 
-func DisplayCountOnly(component string, count int64) {
+func DisplayCount(component string, count int64) {
 	whiteBoardPrinter.Println("Total number of ", component, ":", count)
 }
 
 func GetPageQueryParameter(cmd *cobra.Command, page int) string {
 	if !cmd.Flags().Changed("page") {
 		return "pagesize=all"
-	}
-	if cmd.Flag("count").Value.String() == "true" {
-		return "page=1"
 	}
 	return fmt.Sprintf("page=%d", page)
 }

@@ -15,14 +15,10 @@
 package components
 
 import (
-	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/layer5io/meshery/server/models"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -77,69 +73,11 @@ mesheryctl components list --count
 		baseUrl := mctlCfg.GetBaseMesheryURL()
 		url := fmt.Sprintf("%s/api/meshmodels/components?%s", baseUrl, utils.GetPageQueryParameter(cmd, pageNumberFlag))
 
-		req, err := utils.NewRequest(http.MethodGet, url, nil)
-		if err != nil {
-			utils.Log.Error(err)
-			return err
-		}
-
-		resp, err := utils.MakeRequest(req)
-		if err != nil {
-			utils.Log.Error(err)
-			return err
-		}
-
-		// defers the closing of the response body after its use, ensuring that the resources are properly released.
-		defer resp.Body.Close()
-
-		data, err := io.ReadAll(resp.Body)
-		if err != nil {
-			utils.Log.Error(err)
-			return err
-		}
-
-		componentsResponse := &models.MeshmodelComponentsAPIResponse{}
-		err = json.Unmarshal(data, componentsResponse)
-		if err != nil {
-			utils.Log.Error(err)
-			return err
-		}
-
-		header := []string{"Model", "kind", "Version"}
-		rows := [][]string{}
-
-		for _, component := range componentsResponse.Components {
-			if len(component.DisplayName) > 0 {
-				rows = append(rows, []string{component.Model.Name, component.Component.Kind, component.Component.Version})
-			}
-		}
-
-		if len(rows) == 0 {
-			// if no component is found
-			fmt.Println("No components(s) found")
-			return nil
-		}
-
-		if cmd.Flag("count").Value.String() == "true" {
-			utils.DisplayCountOnly("components", componentsResponse.Count)
-		}
-
-		if cmd.Flags().Changed("page") {
-			utils.PrintToTable(header, rows)
-		} else {
-			maxRowsPerPage := 25
-			err := utils.HandlePagination(maxRowsPerPage, "components", rows, header)
-			if err != nil {
-				utils.Log.Error(err)
-				return err
-			}
-		}
-		return nil
+		return listComponents(cmd, url, false)
 	},
 }
 
 func init() {
 	// Add the new components commands to the ComponentsCmd
 	listComponentCmd.Flags().IntVarP(&pageNumberFlag, "page", "p", 1, "(optional) List next set of components with --page (default = 1)")
-	listComponentCmd.Flags().BoolP("count", "", false, "(optional) Get the number of components in total")
 }

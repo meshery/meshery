@@ -1,17 +1,13 @@
 package model
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/layer5io/meshery/server/models"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"io"
-	"net/http"
 )
 
 var listModelCmd = &cobra.Command{
@@ -61,64 +57,6 @@ mesheryctl model list --count
 		baseUrl := mctlCfg.GetBaseMesheryURL()
 		url := fmt.Sprintf("%s/api/meshmodels/models?%s", baseUrl, utils.GetPageQueryParameter(cmd, pageNumberFlag))
 
-		req, err := utils.NewRequest(http.MethodGet, url, nil)
-		if err != nil {
-			utils.Log.Error(err)
-			return err
-		}
-
-		resp, err := utils.MakeRequest(req)
-		if err != nil {
-			utils.Log.Error(err)
-			return err
-		}
-
-		// defers the closing of the response body after its use, ensuring that the resources are properly released.
-		defer resp.Body.Close()
-
-		data, err := io.ReadAll(resp.Body)
-		if err != nil {
-			utils.Log.Error(err)
-			return err
-		}
-
-		modelsResponse := &models.MeshmodelsAPIResponse{}
-		err = json.Unmarshal(data, modelsResponse)
-		if err != nil {
-			utils.Log.Error(err)
-			return err
-		}
-
-		header := []string{"Model", "Category", "Version"}
-		rows := [][]string{}
-
-		for _, model := range modelsResponse.Models {
-			if len(model.DisplayName) > 0 {
-				rows = append(rows, []string{model.Name, model.Category.Name, model.Version})
-			}
-		}
-
-		if len(rows) == 0 {
-			// if no model is found
-			// fmt.Println("No model(s) found")
-			whiteBoardPrinter.Println("No model(s) found")
-			return nil
-		}
-
-		if cmd.Flag("count").Value.String() == "true" {
-			utils.DisplayCountOnly("models", modelsResponse.Count)
-		}
-
-		if cmd.Flags().Changed("page") {
-			utils.PrintToTable(header, rows)
-		} else {
-			err := utils.HandlePagination(maxRowsPerPage, "models", rows, header)
-			if err != nil {
-				utils.Log.Error(err)
-				return err
-			}
-		}
-
-		return nil
+		return listModel(cmd, url, false)
 	},
 }
