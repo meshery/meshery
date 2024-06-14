@@ -150,7 +150,7 @@ func (h *Handler) PatternFileHandler(
 	}
 
 	serverURL, _ := r.Context().Value(models.MesheryServerURL).(string)
-	
+
 	if action == "deploy" {
 		viewLink := fmt.Sprintf("%s/extension/meshmap?mode=visualize&design=%s", serverURL, patternID)
 		description = fmt.Sprintf("%s.", description)
@@ -261,7 +261,7 @@ func _processPattern(
 		}
 		if !dryRun {
 			chain.
-				Add(stages.Provision(sip, sap)).
+				Add(stages.Provision(sip, sap, sap.log)).
 				Add(stages.Persist(sip, sap))
 		}
 		chain.
@@ -497,7 +497,7 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) ([]patter
 		// creation issue: https://github.com/layer5io/meshery-adapter-library/issues/32
 		time.Sleep(50 * time.Microsecond)
 
-		logrus.Debugf("Adapter to execute operations on: %s", host.Hostname)
+		sap.log.Debug("Adapter to execute operations on: ", host.Hostname)
 
 		// Local call
 		if host.Port == 0 {

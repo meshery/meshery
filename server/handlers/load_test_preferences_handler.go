@@ -132,8 +132,8 @@ func (h *Handler) UserTestPreferenceGet(w http.ResponseWriter, req *http.Request
 		if err != nil {
 			// logrus.Errorf("error writing response: %v", err)
 			// http.Error(w, "error writing response", http.StatusInternalServerError)
-			h.log.Error(ErrWriteResponse)
-			http.Error(w, ErrWriteResponse.Error(), http.StatusInternalServerError)
+			h.log.Error(ErrWriteResponse(err))
+			http.Error(w, ErrWriteResponse(err).Error(), http.StatusInternalServerError)
 			return
 		}
 	}

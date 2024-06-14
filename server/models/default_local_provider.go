@@ -330,11 +330,11 @@ func (l *DefaultLocalProvider) PublishResults(req *http.Request, result *Meshery
 		return "", nil
 	}
 
-	logrus.Debugf("Result: %s, size: %d", data, len(data))
+	l.Log.Debug(fmt.Sprintf("Result: %s, size: %d", data, len(data)))
 	resultID, _ := l.shipResults(req, data)
 
 	key := uuid.FromStringOrNil(resultID)
-	logrus.Debugf("key: %s, is nil: %t", key.String(), (key == uuid.Nil))
+	l.Log.Debug(fmt.Sprintf("key: %s, is nil: %t", key.String(), (key == uuid.Nil)))
 	if key == uuid.Nil {
 		key, _ = uuid.NewV4()
 		result.ID = key
@@ -432,7 +432,7 @@ func (l *DefaultLocalProvider) PublishMetrics(_ string, result *MesheryResult) e
 		return ErrMarshal(err, "Meshery Matrics for shipping")
 	}
 
-	logrus.Debugf("Result: %s, size: %d", data, len(data))
+	l.Log.Debug(fmt.Sprintf("Result: %s, size: %d", data, len(data)))
 	bf := bytes.NewBuffer(data)
 
 	remoteProviderURL, _ := url.Parse(l.ProviderBaseURL + "/result/metrics")
@@ -478,9 +478,9 @@ func (l *DefaultLocalProvider) TokenHandler(_ http.ResponseWriter, _ *http.Reque
 func (l *DefaultLocalProvider) ExtractToken(w http.ResponseWriter, _ *http.Request) {
 	resp := map[string]interface{}{
 		"meshery-provider": l.Name(),
-		TokenCookieName:          "",
+		TokenCookieName:    "",
 	}
-	logrus.Debugf("token sent for meshery-provider %v", l.Name())
+	l.Log.Debug(fmt.Sprintf("token sent for meshery-provider %v", l.Name()))
 	if err := json.NewEncoder(w).Encode(resp); err != nil {
 		logrus.Errorf("Unable to extract auth details: %v", err)
 		http.Error(w, "unable to extract auth details", http.StatusInternalServerError)

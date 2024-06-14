@@ -1595,7 +1595,7 @@ func (h *Handler) DeleteMultiMesheryPatternsHandler(
 		logrus.Error("error marshaling patterns json: ", err)
 	}
 
-	logrus.Debugf("patterns to be deleted: %+v", patterns)
+	h.log.Debug("patterns to be deleted: ", patterns)
 
 	resp, err := provider.DeleteMesheryPatterns(r, patterns)
 
@@ -1684,7 +1684,7 @@ func (h *Handler) formatPatternOutput(rw http.ResponseWriter, content []byte, fo
 			//TODO: The below line has to go away once the client fully supports referencing variables  and pattern imports inside design
 			newpatternfile := evalImportAndReferenceStage(&patternFile)
 
-			cyjs, _ := newpatternfile.ToCytoscapeJS()
+			cyjs, _ := newpatternfile.ToCytoscapeJS(h.log)
 
 			bytes, err := json.Marshal(&cyjs)
 			if err != nil {

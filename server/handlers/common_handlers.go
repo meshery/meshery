@@ -2,6 +2,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 	"time"
 
@@ -51,7 +52,7 @@ func (h *Handler) LogoutHandler(w http.ResponseWriter, req *http.Request, p mode
 		p.HandleUnAuthenticated(w, req)
 		return
 	}
-	logrus.Infof("successfully logged out from %v provider", p.Name())
+	h.log.Info(fmt.Sprintf("successfully logged out from %v provider", p.Name()))
 	http.Redirect(w, req, "/provider", http.StatusFound)
 }
 

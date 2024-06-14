@@ -26,7 +26,6 @@ import (
 
 	"github.com/layer5io/meshkit/utils"
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
@@ -70,14 +69,14 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 	token, ok := req.Context().Value(models.TokenCtxKey).(string)
 	if !ok {
 		err := ErrRetrieveUserToken(fmt.Errorf("failed to retrieve user token"))
-		logrus.Error(err)
+		h.log.Error(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	k8sConfigBytes, err := readK8sConfigFromBody(req)
 	if err != nil {
-		logrus.Error(err)
+		h.log.Error(err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -174,7 +173,7 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 	go h.config.EventBroadcaster.Publish(userID, event)
 
 	if err := json.NewEncoder(w).Encode(saveK8sContextResponse); err != nil {
-		logrus.Error(models.ErrMarshal(err, "kubeconfig"))
+		h.log.Error(models.ErrMarshal(err, "kubeconfig"))
 		http.Error(w, models.ErrMarshal(err, "kubeconfig").Error(), http.StatusInternalServerError)
 		return
 	}
@@ -213,7 +212,7 @@ func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Requ
 
 	k8sConfigBytes, err := readK8sConfigFromBody(req)
 	if err != nil {
-		logrus.Error(err)
+		h.log.Error(err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -231,7 +230,7 @@ func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Requ
 
 	err = json.NewEncoder(w).Encode(contexts)
 	if err != nil {
-		logrus.Error(models.ErrMarshal(err, "kube-context"))
+		h.log.Error(models.ErrMarshal(err, "kube-context"))
 		http.Error(w, models.ErrMarshal(err, "kube-context").Error(), http.StatusInternalServerError)
 		return
 	}
@@ -272,7 +271,7 @@ func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request
 		}
 		version, err := kubeclient.KubeClient.ServerVersion()
 		if err != nil {
-			logrus.Error(ErrKubeVersion(err))
+			h.log.Error(ErrKubeVersion(err))
 			http.Error(w, ErrKubeVersion(err).Error(), http.StatusInternalServerError)
 			return
 		}
@@ -280,7 +279,7 @@ func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request
 			"server_version": version.String(),
 		}); err != nil {
 			err = errors.Wrap(err, "unable to marshal the payload")
-			logrus.Error(models.ErrMarshal(err, "kube-server-version"))
+			h.log.Error(models.ErrMarshal(err, "kube-server-version"))
 			http.Error(w, models.ErrMarshal(err, "kube-server-version").Error(), http.StatusInternalServerError)
 		}
 		return
@@ -300,7 +299,7 @@ func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request
 func (h *Handler) K8sRegistrationHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	k8sConfigBytes, err := readK8sConfigFromBody(req)
 	if err != nil {
-		logrus.Error(err)
+		h.log.Error(err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -308,9 +307,8 @@ func (h *Handler) K8sRegistrationHandler(w http.ResponseWriter, req *http.Reques
 	contexts := models.K8sContextsFromKubeconfig(provider, user.ID, h.config.EventBroadcaster, *k8sConfigBytes, h.SystemID, map[string]interface{}{}) // here we are not concerned for the events becuase inside the middleware the contexts would have been verified.
 	h.K8sCompRegHelper.UpdateContexts(contexts).RegisterComponents(contexts, []models.K8sRegistrationFunction{mcore.RegisterK8sMeshModelComponents}, h.registryManager, h.config.EventBroadcaster, provider, user.ID, false)
 	if _, err = w.Write([]byte(http.StatusText(http.StatusAccepted))); err != nil {
-		logrus.Error(ErrWriteResponse)
-		logrus.Error(err)
-		http.Error(w, ErrWriteResponse.Error(), http.StatusInternalServerError)
+		h.log.Error(ErrWriteResponse(err))
+		http.Error(w, ErrWriteResponse(err).Error(), http.StatusInternalServerError)
 	}
 }
 
@@ -341,13 +339,13 @@ func (h *Handler) DiscoverK8SContextFromKubeConfig(userID string, token string, 
 		if err != nil {
 			metadata["description"] = "Failed to import in-cluster kubeconfig."
 			metadata["error"] = err
-			logrus.Warn("failed to generate in cluster context: ", err)
+			h.log.Warn(ErrGenerateClusterContext(err))
 			return contexts, err
 		}
 		if cc == nil {
 			metadata["description"] = "No contexts detected in the in-cluster kubeconfig."
-			err := fmt.Errorf("nil context generated from in cluster config")
-			logrus.Warn(err)
+
+			h.log.Warn(ErrNilClusterContext(err))
 			return contexts, err
 		}
 		cc.DeploymentType = "in_cluster"
@@ -355,7 +353,7 @@ func (h *Handler) DiscoverK8SContextFromKubeConfig(userID string, token string, 
 		if err != nil {
 			metadata["description"] = fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", cc.Name, cc.Server)
 			metadata["error"] = err
-			logrus.Warn("failed to save the context for incluster: ", err)
+			h.log.Warn(ErrFailToSaveContext(err))
 			return contexts, err
 		}
 		h.log.Debug(conn)
@@ -385,7 +383,7 @@ func (h *Handler) DiscoverK8SContextFromKubeConfig(userID string, token string, 
 		ctx.DeploymentType = "out_of_cluster"
 		conn, err := prov.SaveK8sContext(token, *ctx)
 		if err != nil {
-			logrus.Warn("failed to save the context: ", err)
+			h.log.Warn(ErrFailToSaveContext(err))
 			metadata["description"] = fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", ctx.Name, ctx.Server)
 			metadata["error"] = err
 			continue
