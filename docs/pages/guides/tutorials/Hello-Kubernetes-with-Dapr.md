@@ -34,6 +34,157 @@ Upon completing this tutorial, you will:
 
 > **_NOTE:_**  MeshMap is still in beta.
 
+#### Step 1 - Install Dapr on your meshery playground 
 
+- Refer to the Meshery Playground documentation for instructions on importing Helm charts: [Meshery Playground Helm Docs](https://docs.layer5.io/meshmap/getting-started/starting-helm/)
+- 
+  Specific to Dapr ,To import Dapr  use the direct download link: [Dapr Helm Chart](https://artifacthub.io/packages/helm/dapr/dapr?modal=install).
+
+
+#### Step 2 - Create and configure a Reddis state store
+
+Dapr can use a number of different state stores (Redis, CosmosDB, DynamoDB, Cassandra, etc) to persist and retrieve state. This demo will use Redis.
+1. Follow [these steps](https://docs.dapr.io/getting-started/tutorials/configure-state-pubsub/#step-1-create-a-redis-store) to create a Redis store.
+2. Once your store is created, add the keys to the `redis.yaml` file in the `deploy` directory.
+   > **Note:** the `redis.yaml` file provided in this quickstart will work securely out-of-the-box with a Redis installed with `helm install bitnami/redis`. If you have your own Redis setup, replace the `redisHost` value with your own Redis master address, and the redisPassword with your own Secret. You can learn more [here](https://docs.dapr.io/operations/components/component-secrets/).
+3. Apply the `redis.yaml` file and observe that your state store was successfully configured!
+4. Here is reddis.yaml file you can refer -
+ ```\yaml
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: statestore
+spec:
+  type: state.redis
+  version: v1
+  metadata:
+  # These settings will work out of the box if you use `helm install
+  # bitnami/redis`.  If you have your own setup, replace
+  # `redis-master:6379` with your own Redis master address, and the
+  # Redis password with your own Secret's name. For more information,
+  # see https://docs.dapr.io/operations/components/component-secrets .
+  - name: redisHost
+    value: redis-master:6379
+  - name: redisPassword
+    secretKeyRef:
+      name: redis
+      key: redis-password
+auth:
+  secretStore: kubernetes
+   ```  
+5. Import this file into meshery playground .
+6. once succesfully imported make sure sure to deploy in meshery playground.
+
+#### Step 3 - Deploy the Node.js app with the Dapr sidecar
+
+In this step we will  deploy the Node.js app to Kubernetes. The Dapr control plane will automatically inject the Dapr sidecar to the Pod. If you take a look at the `node.yaml` file, you will see how Dapr is enabled for that deployment:
+```\yaml
+kind: Service
+apiVersion: v1
+metadata:
+  name: nodeapp
+  labels:
+    app: node
+spec:
+  selector:
+    app: node
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 3000
+  type: LoadBalancer
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nodeapp
+  labels:
+    app: node
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: node
+  template:
+    metadata:
+      labels:
+        app: node
+      annotations:
+        dapr.io/enabled: "true"
+        dapr.io/app-id: "nodeapp"
+        dapr.io/app-port: "3000"
+        dapr.io/enable-api-logging: "true"
+    spec:
+      containers:
+      - name: node
+        image: ghcr.io/dapr/samples/hello-k8s-node:latest
+        env:
+        - name: APP_PORT
+          value: "3000"
+        ports:
+        - containerPort: 3000
+        imagePullPolicy: Always
+```
+`dapr.io/enabled: true` - this tells the Dapr control plane to inject a sidecar to this deployment.
+
+`dapr.io/app-id: nodeapp` - this assigns a unique id or name to the Dapr application, so it can be sent messages to and communicated with by other Dapr apps.
+
+`dapr.io/enable-api-logging: "true"` - this is added to node.yaml file by default to see the API logs.
+
+1. Import this file into meshery playground .
+2. once succesfully imported make sure sure to deploy in meshery playground.
+3. merge both reddis and node designs with help of merge designs feature in meshery playground.
+
+### Step 4 - Deploy the Python app with the Dapr sidecar  
+
+Next, take a quick look at the Python app which has kubernetes manifest as :
+```\yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pythonapp
+  labels:
+    app: python
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: python
+  template:
+    metadata:
+      labels:
+        app: python
+      annotations:
+        dapr.io/enabled: "true"
+        dapr.io/app-id: "pythonapp"
+        dapr.io/enable-api-logging: "true"
+    spec:
+      containers:
+      - name: python
+        image: ghcr.io/dapr/samples/hello-k8s-python:latest
+```
+
+At a quick glance, this is a basic Python app that posts JSON messages to `localhost:3500`, which is the default listening port for Dapr. You can invoke the Node.js application's `neworder` endpoint by posting to `v1.0/invoke/nodeapp/method/neworder`. The message contains some `data` with an orderId that increments once per second:
+
+```python
+n = 0
+while True:
+    n += 1
+    message = {"data": {"orderId": n}}
+
+    try:
+        response = requests.post(dapr_url, json=message)
+    except Exception as e:
+        print(e)
+
+    time.sleep(1)
+```
+1. Import this file into meshery playground .
+2. once succesfully imported make sure sure to deploy in meshery playground.
+3. merge both reddis , node, python  designs with help of merge designs feature in meshery playground.
+     
+   
+   
 
 
