@@ -10,7 +10,7 @@
    "schemaVersion": "core.meshery.io/v1beta1",
    "version": "v1.0.0",
    "name": "fluid",
-   "displayName": "fluid",
+   "displayName": "Fluid",
    "description": "",
    "status": "ignored",
    "hostID": "00000000-0000-0000-0000-000000000000",
@@ -21,10 +21,20 @@
     "name": "Orchestration \u0026 Management",
     "metadata": null
    },
-   "subCategory": "",
+   "subCategory": "Scheduling \u0026 Orchestration",
    "metadata": {
+    "capabilities": "",
+    "defaultData": "",
     "isAnnotation": false,
-    "source_uri": "https://xuzhihao.s3.ap-southeast-1.amazonaws.com/fluid-0.6.0.tgz"
+    "primaryColor": "#134fa4",
+    "secondaryColor": "#2b61ad",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
    },
    "model": {
     "version": "0.6.0"
@@ -35,13 +45,8 @@
   "metadata": {
    "capabilities": "",
    "defaultData": "",
-   "genealogy": "",
    "isAnnotation": false,
-   "isModelAnnotation": "FALSE",
    "isNamespaced": true,
-   "logoURL": "https://github.com/cncf/artwork/blob/master/projects/fluid/icon/color/fluid-icon-color.svg",
-   "model": "fluid",
-   "modelDisplayName": "fluid",
    "primaryColor": "#134fa4",
    "secondaryColor": "#2b61ad",
    "shape": "circle",
@@ -49,7 +54,6 @@
    "status": "ignored",
    "styleOverrides": "",
    "styles": "",
-   "subCategory": "",
    "svgColor": "",
    "svgComplete": "",
    "svgWhite": ""
