@@ -174,6 +174,14 @@ components:
   colorIcon: assets/img/integrations/kuma/components/mesh-tcp-route/icons/color/mesh-tcp-route-color.svg
   whiteIcon: assets/img/integrations/kuma/components/mesh-tcp-route/icons/white/mesh-tcp-route-white.svg
   description: 
+- name: mesh-metric
+  colorIcon: assets/img/integrations/kuma/components/mesh-metric/icons/color/mesh-metric-color.svg
+  whiteIcon: assets/img/integrations/kuma/components/mesh-metric/icons/white/mesh-metric-white.svg
+  description: 
+- name: mesh-service
+  colorIcon: assets/img/integrations/kuma/components/mesh-service/icons/color/mesh-service-color.svg
+  whiteIcon: assets/img/integrations/kuma/components/mesh-service/icons/white/mesh-service-white.svg
+  description: 
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

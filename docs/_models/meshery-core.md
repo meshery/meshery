@@ -34,6 +34,10 @@ components:
   colorIcon: assets/img/integrations/meshery-core/components/credential/icons/color/credential-color.svg
   whiteIcon: assets/img/integrations/meshery-core/components/credential/icons/white/credential-white.svg
   description: 
+- name: container
+  colorIcon: assets/img/integrations/meshery-core/components/container/icons/color/container-color.svg
+  whiteIcon: assets/img/integrations/meshery-core/components/container/icons/white/container-white.svg
+  description: 
 - name: node-group-inventory-wallet
   colorIcon: assets/img/integrations/meshery-core/components/node-group-inventory-wallet/icons/color/node-group-inventory-wallet-color.svg
   whiteIcon: assets/img/integrations/meshery-core/components/node-group-inventory-wallet/icons/white/node-group-inventory-wallet-white.svg

@@ -12,7 +12,6 @@ import { getK8sClusterIdsFromCtxId } from '../../../utils/multi-ctx';
 import { updateVisibleColumns } from '../../../utils/responsive-column';
 import { useWindowDimensions } from '../../../utils/dimension';
 import { camelcaseToSnakecase } from '../../../utils/utils';
-import { Slide } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 import { UsesSistent } from '@/components/SistentWrapper';
 
@@ -172,15 +171,7 @@ const ResourcesTable = (props) => {
   };
   return (
     <>
-      <Slide
-        in={view !== ALL_VIEW}
-        timeout={400}
-        direction={'left'}
-        exit={true}
-        enter={true}
-        mountOnEnter
-        unmountOnExit
-      >
+      {view !== ALL_VIEW ? (
         <div>
           <View
             type={`${tableConfig.name}`}
@@ -189,9 +180,7 @@ const ResourcesTable = (props) => {
             classes={classes}
           />
         </div>
-      </Slide>
-
-      {view === ALL_VIEW && (
+      ) : (
         <div>
           <div
             className={StyleClass.toolWrapper}
