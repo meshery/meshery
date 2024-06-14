@@ -847,6 +847,9 @@ model:
   description: A unit of packaging to define managed infrastructure and their relationships, and details specifics of how to manage them.
   usage: mesheryctl model [command] [flags]
   flags:
+    count:
+      name: --count
+      description: (optional) Get the number of models in total
     help:
       name: --help, -h
       description: help for model
@@ -858,9 +861,6 @@ model:
       description: List models present in the registry
       usage: mesheryctl model list [flags]
       flags:
-        count:
-          name: --count
-          description: (optional) Get the number of models in total
         page:
           name: --page, -p
           description: list models by specific page number (25 models per page)
@@ -882,6 +882,9 @@ components:
   description: Fundamental building block used to represent and define the infrastructure under management
   usage: mesheryctl components [command] [flags]
   flags:
+    count:
+      name: --count
+      description: (optional) Get the number of components in total
     help:
       name: --help, -h
       description: help for components
@@ -893,9 +896,6 @@ components:
       description: List all components registered in Meshery Server
       usage: mesheryctl components list [flags]
       flags:
-        count:
-          name: --count
-          description: (optional) Get the number of components in total
         page:
           name: --page, -p
           description: list components by specific page number (25 models per page)
