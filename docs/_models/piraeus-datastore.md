@@ -10,6 +10,54 @@ integrations-category: Cloud Native Storage
 integrations-subcategory: Database
 registrant: Artifact Hub
 components: 
+- name: volume-group-snapshot-class
+  colorIcon: assets/img/integrations/piraeus-datastore/components/volume-group-snapshot-class/icons/color/volume-group-snapshot-class-color.svg
+  whiteIcon: assets/img/integrations/piraeus-datastore/components/volume-group-snapshot-class/icons/white/volume-group-snapshot-class-white.svg
+  description: 
+- name: volume-group-snapshot-content
+  colorIcon: assets/img/integrations/piraeus-datastore/components/volume-group-snapshot-content/icons/color/volume-group-snapshot-content-color.svg
+  whiteIcon: assets/img/integrations/piraeus-datastore/components/volume-group-snapshot-content/icons/white/volume-group-snapshot-content-white.svg
+  description: 
+- name: volume-group-snapshot
+  colorIcon: assets/img/integrations/piraeus-datastore/components/volume-group-snapshot/icons/color/volume-group-snapshot-color.svg
+  whiteIcon: assets/img/integrations/piraeus-datastore/components/volume-group-snapshot/icons/white/volume-group-snapshot-white.svg
+  description: 
+- name: volume-snapshot-class
+  colorIcon: assets/img/integrations/piraeus-datastore/components/volume-snapshot-class/icons/color/volume-snapshot-class-color.svg
+  whiteIcon: assets/img/integrations/piraeus-datastore/components/volume-snapshot-class/icons/white/volume-snapshot-class-white.svg
+  description: 
+- name: volume-snapshot-content
+  colorIcon: assets/img/integrations/piraeus-datastore/components/volume-snapshot-content/icons/color/volume-snapshot-content-color.svg
+  whiteIcon: assets/img/integrations/piraeus-datastore/components/volume-snapshot-content/icons/white/volume-snapshot-content-white.svg
+  description: 
+- name: volume-snapshot
+  colorIcon: assets/img/integrations/piraeus-datastore/components/volume-snapshot/icons/color/volume-snapshot-color.svg
+  whiteIcon: assets/img/integrations/piraeus-datastore/components/volume-snapshot/icons/white/volume-snapshot-white.svg
+  description: 
+- name: volume-group-snapshot-class
+  colorIcon: assets/img/integrations/piraeus-datastore/components/volume-group-snapshot-class/icons/color/volume-group-snapshot-class-color.svg
+  whiteIcon: assets/img/integrations/piraeus-datastore/components/volume-group-snapshot-class/icons/white/volume-group-snapshot-class-white.svg
+  description: 
+- name: volume-group-snapshot-content
+  colorIcon: assets/img/integrations/piraeus-datastore/components/volume-group-snapshot-content/icons/color/volume-group-snapshot-content-color.svg
+  whiteIcon: assets/img/integrations/piraeus-datastore/components/volume-group-snapshot-content/icons/white/volume-group-snapshot-content-white.svg
+  description: 
+- name: volume-group-snapshot
+  colorIcon: assets/img/integrations/piraeus-datastore/components/volume-group-snapshot/icons/color/volume-group-snapshot-color.svg
+  whiteIcon: assets/img/integrations/piraeus-datastore/components/volume-group-snapshot/icons/white/volume-group-snapshot-white.svg
+  description: 
+- name: volume-snapshot-class
+  colorIcon: assets/img/integrations/piraeus-datastore/components/volume-snapshot-class/icons/color/volume-snapshot-class-color.svg
+  whiteIcon: assets/img/integrations/piraeus-datastore/components/volume-snapshot-class/icons/white/volume-snapshot-class-white.svg
+  description: 
+- name: volume-snapshot-content
+  colorIcon: assets/img/integrations/piraeus-datastore/components/volume-snapshot-content/icons/color/volume-snapshot-content-color.svg
+  whiteIcon: assets/img/integrations/piraeus-datastore/components/volume-snapshot-content/icons/white/volume-snapshot-content-white.svg
+  description: 
+- name: volume-snapshot
+  colorIcon: assets/img/integrations/piraeus-datastore/components/volume-snapshot/icons/color/volume-snapshot-color.svg
+  whiteIcon: assets/img/integrations/piraeus-datastore/components/volume-snapshot/icons/white/volume-snapshot-white.svg
+  description: 
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "DRBD-9 has great data replication efficiency. It provides synchronous,semi-synchronous and asynchronous replication schemes, and also supports RDMA for high-speed across-node connection.",

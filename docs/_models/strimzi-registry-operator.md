@@ -10,6 +10,10 @@ integrations-category: App Definition and Development
 integrations-subcategory: Streaming & Messaging
 registrant: Artifact Hub
 components: 
+- name: strimzi-schema-registry
+  colorIcon: assets/img/integrations/strimzi-registry-operator/components/strimzi-schema-registry/icons/color/strimzi-schema-registry-color.svg
+  whiteIcon: assets/img/integrations/strimzi-registry-operator/components/strimzi-schema-registry/icons/white/strimzi-schema-registry-white.svg
+  description: 
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",
