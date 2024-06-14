@@ -49,7 +49,9 @@ function RJSFForm({
   override,
   formRef = null,
   uiSchema = {},
+  validator,
   fieldTemplates = {},
+  extraErrors,
   ...restProps
 }) {
   const globalTheme = useTheme();
@@ -76,7 +78,8 @@ function RJSFForm({
           ref={formRef}
           onChange={onChange}
           formData={data}
-          validator={ajv8validator}
+          extraErrors={extraErrors}
+          validator={validator || ajv8validator}
           templates={{
             ArrayFieldTemplate,
             ObjectFieldTemplate,

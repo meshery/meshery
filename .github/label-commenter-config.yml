@@ -50,6 +50,10 @@ labels:
       # pr:
       #   body: Hi, please note that this issue will need an approved design specification before implementation proceeds. See [Creating a Functional Specification](https://docs.google.com/document/d/1RP3IWLc-MiQS-QYasqCoVuCH7--G87p5ezE5f_nOzB8/edit?usp=sharing) to create a design spec.
       #   action: open
-
+  - name: issue/docs-needed
+    labeled:
+      pr:
+        body: This PR has been labeled with 'issue/docs-needed'. It looks like this PR might need an update to the Meshery Docs. Please ensure the documentation is updated accordingly. Here are docs on [Contributing to Meshery Docs](https://docs.meshery.io/project/contributing/contributing-docs).
+        action: open
 
 
