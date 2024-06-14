@@ -15,7 +15,6 @@ var (
 	availableSubcommands = []*cobra.Command{listConnectionsCmd, deleteConnectionCmd}
 
 	pageNumberFlag int
-	maxRowsPerPage int
 )
 
 var ConnectionsCmd = &cobra.Command{
@@ -40,7 +39,7 @@ mesheryctl exp connections list
 		}
 		ctx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
-			utils.Log.Error(system.ErrGetCurrentContext(err))	
+			utils.Log.Error(system.ErrGetCurrentContext(err))
 			return nil
 		}
 		err = ctx.ValidateVersion()
@@ -53,8 +52,11 @@ mesheryctl exp connections list
 
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
-			return cmd.Help()
-		} 
+			if err := cmd.Usage(); err != nil {
+				return nil
+			}
+			return errors.New("please provide a subcommand")
+		}
 		return nil
 	},
 

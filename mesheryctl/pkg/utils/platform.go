@@ -452,8 +452,8 @@ func ApplyManifestFiles(manifestArr []Manifest, requestedAdapters []string, clie
 		}
 
 		return append(envVarI, map[string]interface{}{
-			"name":  "MESHERY_SERVER_CALLBACK_URL",
-			"value": viper.GetString("MESHERY_SERVER_CALLBACK_URL"),
+			"name":  constants.CallbackURLENV,
+			"value": viper.GetString(constants.CallbackURLENV),
 		}), nil
 	}, "spec", "template", "spec", "containers", "0", "env")
 	if err != nil {
@@ -475,7 +475,7 @@ func ApplyManifestFiles(manifestArr []Manifest, requestedAdapters []string, clie
 	// loop through the required components as specified in the config.yaml file and apply/update/delete each
 	for _, component := range requestedAdapters {
 		// for each component, there is a meshery-componentName-deployment.yaml and meshery-componentName-service.yaml
-		// manifest file. See- https://github.com/layer5io/meshery/tree/master/install/deployment_yamls/k8s
+		// manifest file. See- https://github.com/meshery/meshery/tree/master/install/deployment_yamls/k8s
 		componentFile := filepath.Join(manifestFiles, component)
 		componentDeployment := componentFile + "-deployment.yaml"
 		componentService := componentFile + "-service.yaml"

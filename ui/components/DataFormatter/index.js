@@ -9,13 +9,27 @@ import CopyIcon from '../../assets/icons/CopyIcon';
 const FormatterContext = React.createContext({
   propertyFormatters: {},
 });
+
+/**
+ * Context to store the level / depth of content in the formatter
+ * @type {React.Context<number>}
+ */
 const LevelContext = React.createContext(0);
 
+/**
+ * Level context provider to autoincrement the level of content in the formatter
+ * @param {React.PropsWithChildren<{}>} param0
+ * @returns {React.ReactElement}
+ */
 const Level = ({ children }) => {
   const level = useContext(LevelContext);
   return <LevelContext.Provider value={level + 1}> {children} </LevelContext.Provider>;
 };
 
+/**
+ * Pure function to format data
+ * @returns {string}
+ */
 export const formatDate = (date) => {
   const options = { year: 'numeric', month: 'short', day: 'numeric' };
   const formattedDate = new Date(date).toLocaleDateString('en-US', options);
@@ -34,6 +48,11 @@ export const formatDateTime = (date) => {
   return `${formattedDate} ${formattedTime || ''}`;
 };
 
+/**
+ * Component to format the date
+ * @param {object} param0
+ * @returns {React.ReactElement}
+ */
 export const FormattedDate = ({ date }) => {
   return (
     <Tooltip title={formatDateTime(date)} placement="top">
@@ -144,7 +163,7 @@ export const TextWithLinks = ({ text, ...typographyProps }) => {
   const linkRegex = /(https?:\/\/[^\s]+)/g;
 
   // Split the text into parts, alternating between text and link components
-  const parts = text.split(linkRegex);
+  const parts = text?.split?.(linkRegex) || [];
 
   // Map the parts to React elements
   const elements = parts.map((part, idx) => {
@@ -156,7 +175,7 @@ export const TextWithLinks = ({ text, ...typographyProps }) => {
     }
   });
 
-  return <Typography {...typographyProps}>{elements}</Typography>;
+  return <Typography {...typographyProps}> {elements}</Typography>;
 };
 
 export const KeyValue = ({ Key, Value }) => {
@@ -189,6 +208,7 @@ export const KeyValue = ({ Key, Value }) => {
             color: theme.palette.text.secondary,
             textOverflow: 'ellipsis',
             wordBreak: 'break-all',
+            whiteSpace: 'pre-line',
           }}
         />
       )}
@@ -321,7 +341,13 @@ export const FormatStructuredData = ({ propertyFormatters = {}, data, uiSchema }
           propertyFormatters: propertyFormatters,
         }}
       >
-        <Grid container>
+        <Grid
+          container
+          style={{
+            wordBreak: 'break-word',
+            overflowWrap: 'break-word',
+          }}
+        >
           <DynamicFormatter data={data} uiSchema={uiSchema} />
         </Grid>
       </FormatterContext.Provider>

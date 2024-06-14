@@ -1,0 +1,68 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "core.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Resource Supervisor",
+  "description": "",
+  "format": "JSON",
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "core.meshery.io/v1beta1",
+   "version": "v1.0.0",
+   "name": "stakater-tenant-operator",
+   "displayName": "stakater-tenant-operator",
+   "description": "",
+   "status": "ignored",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "registrant": {
+    "hostname": "artifacthub"
+   },
+   "category": {
+    "name": "Uncategorized",
+    "metadata": null
+   },
+   "subCategory": "Uncategorized",
+   "metadata": {
+    "capabilities": "",
+    "defaultData": "",
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "model": {
+    "version": "0.7.13"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": false,
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "status": "ignored",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "component": {
+   "kind": "ResourceSupervisor",
+   "version": "tenantoperator.stakater.com/v1beta1",
+   "schema": "{\n \"description\": \"ResourceSupervisor is the Schema for the resourcesupervisors API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ResourceSupervisorSpec defines the desired state of ResourceSupervisor\",\n   \"properties\": {\n    \"argocd\": {\n     \"description\": \"ArgoCD contains details about ArgoCD to which the Hibernation schedule will be applied\",\n     \"properties\": {\n      \"appProjects\": {\n       \"description\": \"AppProjects is a list of the ArgoCD AppProject names that will follow the Hibernation schedule\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace is the name of the namespace where the AppProjects are residing\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"appProjects\",\n      \"namespace\"\n     ],\n     \"type\": \"object\"\n    },\n    \"hibernation\": {\n     \"description\": \"Hibernation contains the schedule during which the tenant will be hibernating\",\n     \"properties\": {\n      \"sleepSchedule\": {\n       \"description\": \"SleepSchedule contains the schedule during which the resources within the tenant's namespaces will be put to sleep\",\n       \"type\": \"string\"\n      },\n      \"wakeSchedule\": {\n       \"description\": \"WakeSchedule contains the schedule during which the resources within the tenant's namespaces will be awoken\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"sleepSchedule\",\n      \"wakeSchedule\"\n     ],\n     \"type\": \"object\"\n    },\n    \"namespaces\": {\n     \"description\": \"Namespaces is a list of namespaces to which the Hibernation schedule will be applied\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"hibernation\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Resource Supervisor\",\n \"type\": \"object\"\n}"
+  }
+ }

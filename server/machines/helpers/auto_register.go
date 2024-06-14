@@ -10,16 +10,16 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/machines"
+	helpers "github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/models/events"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
+	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
+	regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
 	"github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshsync/pkg/model"
 	"github.com/spf13/viper"
-	"golang.org/x/text/cases"
-	"golang.org/x/text/language"
 )
 
 var (
@@ -78,7 +78,7 @@ func (arh *AutoRegistrationHelper) processRegistration() {
 			connType := getTypeOfConnection(&data.Obj)
 			if connType != "" {
 				connectionDefs := arh.getConnectionDefinitions(connType)
-				connectionName := FormatToTitleCase(connType)
+				connectionName := helpers.FormatToTitleCase(connType)
 				for _, connectionDef := range connectionDefs {
 					connCapabilities, err := utils.Cast[string](connectionDef.Metadata["capabilities"])
 
@@ -89,7 +89,7 @@ func (arh *AutoRegistrationHelper) processRegistration() {
 					var capabilities map[string]interface{}
 					err = utils.Unmarshal(connCapabilities, &capabilities)
 					if err != nil {
-						arh.log.Error(models.ErrUnmarshal(err, fmt.Sprintf("Connection Definition \"%s\" capabilities", connectionDef.Kind)))
+						arh.log.Error(models.ErrUnmarshal(err, fmt.Sprintf("Connection Definition \"%s\" capabilities", connectionDef.Component.Kind)))
 						continue
 					}
 					autoRegister, ok := capabilities["autoRegister"].(bool)
@@ -146,7 +146,7 @@ func (arh *AutoRegistrationHelper) processRegistration() {
 	}
 }
 
-func getConnectionPayload(connType, objName, objID string, identifier interface{}, userID uuid.UUID, connectionDef *v1alpha1.ComponentDefinition, connMetadata map[string]interface{}) (models.ConnectionPayload, uuid.UUID) {
+func getConnectionPayload(connType, objName, objID string, identifier interface{}, userID uuid.UUID, connectionDef *v1beta1.ComponentDefinition, connMetadata map[string]interface{}) (models.ConnectionPayload, uuid.UUID) {
 
 	id, _ := generateUUID(map[string]interface{}{
 		"name":       objName,
@@ -166,14 +166,21 @@ func getConnectionPayload(connType, objName, objID string, identifier interface{
 	}, id
 }
 
-func (arh *AutoRegistrationHelper) getConnectionDefinitions(connType string) []v1alpha1.ComponentDefinition {
-	connectionCompFilter := &v1alpha1.ComponentFilter{
+func (arh *AutoRegistrationHelper) getConnectionDefinitions(connType string) []v1beta1.ComponentDefinition {
+	connectionCompFilter := &regv1beta1.ComponentFilter{
 		Name:       fmt.Sprintf("%sConnection", connType),
-		APIVersion: "meshery.layer5.io/v1alpha1",
+		APIVersion: "meshery.layer5.io/v1beta1",
 		Greedy:     true,
 	}
 
-	connectionDefs, _, _ := v1alpha1.GetMeshModelComponents(arh.dbHandler, *connectionCompFilter)
+	connectionEntities, _, _, _ := connectionCompFilter.Get(arh.dbHandler)
+	connectionDefs := make([]v1beta1.ComponentDefinition, len(connectionEntities))
+	for _, connectionEntity := range connectionEntities {
+		def, ok := connectionEntity.(*v1beta1.ComponentDefinition)
+		if ok {
+			connectionDefs = append(connectionDefs, *def)
+		}
+	}
 	return connectionDefs
 }
 
@@ -185,11 +192,6 @@ func getTypeOfConnection(obj *model.KubernetesResource) string {
 		return "prometheus"
 	}
 	return ""
-}
-
-func FormatToTitleCase(s string) string {
-	c := cases.Title(language.English)
-	return c.String(s)
 }
 
 func generateUUID(data map[string]interface{}) (uuid.UUID, error) {

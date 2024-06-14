@@ -1,5 +1,7 @@
+import { useEffect, useState } from 'react';
 import { api } from './index';
 import _ from 'lodash';
+import { initiateQuery } from './utils';
 
 const TAGS = {
   MESH_MODELS: 'mesh-models',
@@ -9,7 +11,7 @@ const defaultOptions = {
   trim: false,
   // annotations: false,
   search: '',
-  page: 1,
+  page: 0,
   pagesize: 'all',
 };
 
@@ -97,13 +99,22 @@ const meshModelApi = api
         }),
         providesTags: () => [{ type: TAGS.MESH_MODELS }],
       }),
+      getComponentsByModelAndKind: builder.query({
+        query: (queryArg) => ({
+          url: `meshmodels/models/${queryArg.model}/components/${queryArg.component}`,
+          params: _.merge({}, defaultOptions, queryArg.params),
+        }),
+      }),
     }),
   });
 
 export const {
   useLazyGetMeshModelsQuery,
   useLazyGetComponentsQuery,
+  useGetComponentsQuery,
   useLazyGetRelationshipsQuery,
+  useGetRegistrantsQuery,
+  useGetRelationshipsQuery,
   useLazyGetRegistrantsQuery,
   useLazyGetComponentsFromModalQuery,
   useLazyGetRelationshipsFromModalQuery,
@@ -111,5 +122,54 @@ export const {
   useGetModelCategoriesQuery,
   useLazyGetModelFromCategoryQuery,
   useGetModelByNameQuery,
+  useGetMeshModelsQuery,
   useGetComponentByNameQuery,
+  useGetModelFromCategoryQuery,
+  useGetComponentsByModelAndKindQuery,
 } = meshModelApi;
+
+export const useGetCategoriesSummary = () => {
+  const [getModelFromCategory] = useLazyGetModelFromCategoryQuery();
+  const { data: categories } = useGetModelCategoriesQuery();
+  const [categoryMap, setCategoryMap] = useState({});
+
+  const fetchModelsForCategories = async () => {
+    const categoryMap = {};
+    if (!categories) return categoryMap;
+
+    const requests = categories.categories.map(async (category) => {
+      const { data } = await getModelFromCategory(
+        { category: category.name, params: { page: 1, pagesize: 1 } },
+        true,
+      );
+      categoryMap[category.name] = data?.total_count || 0;
+    });
+    await Promise.allSettled(requests);
+    return categoryMap;
+  };
+
+  useEffect(async () => {
+    const categoryMap = await fetchModelsForCategories();
+    setCategoryMap(categoryMap);
+  }, [categories]);
+  return categoryMap;
+};
+
+export const getComponentDefinition = async (component, model, params = {}) => {
+  const res = await initiateQuery(meshModelApi.endpoints.getComponentsByModelAndKind, {
+    component,
+    model,
+    params: _.omit({ params, annotations: 'include' }, ['apiVersion']),
+  });
+
+  if (params.apiVersion) {
+    return res?.data?.components?.find((c) => c.component.version === params.apiVersion);
+  }
+  return res?.data?.components?.[0];
+};
+
+export const modelUniqueKey = (model) => `${model.name}-${model.version}`;
+export const componentUniqueKey = (component) =>
+  `${component.component.kind}-${component.component.version}-${component.version}-${modelUniqueKey(
+    component.model,
+  )}`;

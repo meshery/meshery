@@ -1,0 +1,68 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "core.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Controller Revision",
+  "description": "",
+  "format": "JSON",
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "core.meshery.io/v1beta1",
+   "version": "v1.0.0",
+   "name": "metacontroller",
+   "displayName": "Metacontroller",
+   "description": "",
+   "status": "ignored",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "registrant": {
+    "hostname": "artifacthub"
+   },
+   "category": {
+    "name": "Uncategorized",
+    "metadata": null
+   },
+   "subCategory": "Uncategorized",
+   "metadata": {
+    "capabilities": "",
+    "defaultData": "",
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "model": {
+    "version": "1.2.2"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "status": "ignored",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "component": {
+   "kind": "ControllerRevision",
+   "version": "metacontroller.k8s.io/v1alpha1",
+   "schema": "{\n \"properties\": {\n  \"children\": {\n   \"items\": {\n    \"properties\": {\n     \"apiGroup\": {\n      \"type\": \"string\"\n     },\n     \"kind\": {\n      \"type\": \"string\"\n     },\n     \"names\": {\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"type\": \"array\"\n     }\n    },\n    \"required\": [\n     \"apiGroup\",\n     \"kind\",\n     \"names\"\n    ],\n    \"type\": \"object\"\n   },\n   \"type\": \"array\"\n  },\n  \"parentPatch\": {\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"metadata\",\n  \"parentPatch\"\n ],\n \"title\": \"Controller Revision\",\n \"type\": \"object\"\n}"
+  }
+ }

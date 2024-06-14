@@ -31,24 +31,21 @@ mesheryctl exp connections delete [connection_id]
 		}
 		err = utils.IsServerRunning(mctlCfg.GetBaseMesheryURL())
 		if err != nil {
-			utils.Log.Error(err)		
 			return err
 		}
 		ctx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
-			utils.Log.Error(system.ErrGetCurrentContext(err))
-			return nil
+			return system.ErrGetCurrentContext(err)
 		}
 		err = ctx.ValidateVersion()
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 		return nil
 	},
 
 	Args: func(_ *cobra.Command, args []string) error {
-		const errMsg = "Usage: mesheryctl exp connection delete \nRun 'mesheryctl exp connection delete --help' to see detailed help message"
+		const errMsg = "Usage: mesheryctl exp connections delete \nRun 'mesheryctl exp connections delete --help' to see detailed help message"
 		if len(args) != 1 {
 			return utils.ErrInvalidArgument(errors.New(errMsg))
 		}
@@ -65,13 +62,11 @@ mesheryctl exp connections delete [connection_id]
 		url := fmt.Sprintf("%s/api/integrations/connections/%s", baseUrl, args[0])
 		req, err := utils.NewRequest(http.MethodDelete, url, nil)
 		if err != nil {
-			utils.Log.Error(err)
 			return err
 		}
 
 		resp, err := utils.MakeRequest(req)
 		if err != nil {
-			utils.Log.Error(err)
 			return err
 		}
 

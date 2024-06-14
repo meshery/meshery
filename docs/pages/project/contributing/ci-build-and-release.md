@@ -175,7 +175,7 @@ As a special case, the meshery repository contains an additional artifact produc
 
 ### Releasing `mesheryctl` to GitHub
 
-Only when a git tag containing a semantic version number is present (is a commit in the master branch) will GoReleaser execute, generate the archives, and also publish the archives to [Meshery’s GitHub releases](https://github.com/layer5io/meshery/releases) automatically. GoReleaser is configured to generate artifacts for the following OS, ARCH combination:
+Only when a git tag containing a semantic version number is present (is a commit in the master branch) will GoReleaser execute, generate the archives, and also publish the archives to [Meshery’s GitHub releases](https://github.com/meshery/meshery/releases) automatically. GoReleaser is configured to generate artifacts for the following OS, ARCH combination:
 
 - Darwin - i386, x86_64
 - Linux - i386, x86_64
@@ -215,7 +215,7 @@ Meshery and its components follow the commonly used, semantic versioning for its
 
 ### Component Versioning
 
-Meshery comprises a number of components including a server, adapters, UI, and CLI. As an application, Meshery is a composition of these different functional components. While all of Meshery’s components generally deploy as a collective unit (together), each component is versioned independently, so as to allow them to be loosely coupled and iterate on functionality independently. Some of the components must be upgraded simultaneously, while others may be upgraded independently. See [Upgrading Meshery](/guide/upgrade) for more information.
+Meshery comprises a number of components including a server, adapters, UI, and CLI. As an application, Meshery is a composition of these different functional components. While all of Meshery’s components generally deploy as a collective unit (together), each component is versioned independently, so as to allow them to be loosely coupled and iterate on functionality independently. Some of the components must be upgraded simultaneously, while others may be upgraded independently. See [Upgrading Meshery](/guides/installation/upgrades) for more information.
 
 GitHub release tags will contain a semantic version number. Semantic version numbers will have to be managed manually by tagging a relevant commit in the master branch with a semantic version number (example: v1.2.3).
 

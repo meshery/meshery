@@ -10,11 +10,11 @@ list: exclude
 
 {% assign sorted_pages = site.pages | sort: "name" | alphabetical %}
 
-<div class="flex flex-col--1">
+<div style="display:grid; justify-items:center">
   <div style="align-self:center; margin-bottom:0px; margin-top:0px;padding-top:0px; padding-bottom:0px;width:clamp(170px, 50%, 800px);">
     {% include svg/meshery-logo.html %}
   </div>
-  <h3>As a self-service engineering platform, Meshery enables collaborative design and operation of cloud and cloud native infrastructure.</h3>
+  <h3 style="font-size:1.6rem">As a self-service engineering platform, Meshery enables collaborative design and operation of cloud and cloud native infrastructure.</h3>
 </div>
 <div class="flex flex-col--2 container">
   <!-- OVERVIEW -->
@@ -135,6 +135,25 @@ list: exclude
     <details>
       <summary>
         <p style="display:inline">
+          <a href="{{ site.baseurl }}/guides/tutorials/" class="text-black">🧑‍🔬 Hands-on Labs using Meshery Playground</a>
+        </p>
+      </summary>
+      <ul class="section-title">
+        {% assign sorted_tutorials = site.pages | where: "type","guides" %}
+        {% for item in sorted_tutorials %}
+        {% if item.type=="guides" and item.category=="tutorials" and item.language=="en" -%}
+          <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+          {% if item.abstract != " " %}
+            - {{ item.abstract }}
+          {% endif %}
+          </li>
+          {% endif %}
+        {% endfor %}
+      </ul>
+    </details>
+    <details>
+      <summary>
+        <p style="display:inline">
           <a href="{{ site.baseurl }}/guides/infrastructure-management" class="text-black">Infrastructure Management</a>
         </p>
       </summary>
@@ -208,25 +227,7 @@ list: exclude
           {% endfor %}
       </ul>
     </details>
-    <details>
-      <summary>
-        <p style="display:inline">
-          <a href="{{ site.baseurl }}/guides/infrastructure-management" class="text-black">🧑‍🔬 Tutorials</a>
-        </p>
-      </summary>
-      <ul class="section-title">
-          {% assign tutorials = site.pages | where: "category","tutorials" %}
-          {% for item in tutorials %}
-          {% if item.type=="guides" and item.category=="tutorials" and item.language=="en" -%}
-            <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
-            {% if item.abstract != " " %}
-              -  {{ item.abstract }}
-            {% endif %}
-            </li>
-            {% endif %}
-          {% endfor %}
-      </ul>
-    </details>
+    <!-- EVERYTHING ELSE
     <ul>
       {% for item in sorted_pages %}
       {% if item.type=="guides" and item.category!="mesheryctl" and item.category!="infrastructure" and item.category!="troubleshooting" and item.category!="performance" and item.category!="configuration" and item.category!="tutorials" and item.language=="en" -%}
@@ -234,7 +235,7 @@ list: exclude
         </li>
         {% endif %}
       {% endfor %}
-    </ul>
+    </ul> -->
     <!-- <h6><a href="{{ site.baseurl }}/service-meshes" class="text-black section-title">Service Mesh Specific Management</a></h6> -->
     <!-- <ul>
       {% for item in sorted_pages %}
@@ -283,7 +284,7 @@ list: exclude
         </p>
       </summary>
       <ul class="section-title">
-        {% assign sorted_ints = site.pages | where: "category", "integrations" | sort: "name" | alphabetical %}
+        {% assign sorted_ints = site.models | sort: "name" | alphabetical %}
         <ul><li>
         See all <a href="{{site.baseurl}}/extensibility/integrations" >{{ sorted_ints | size }} integations</a></li></ul>
         {% for item in sorted_ints %}
@@ -379,9 +380,3 @@ list: exclude
 </div>
 
 <p width="100%">Follow on <a href="https://twitter.com/mesheryio">Twitter</a> or subscribe to our <a href="https://meshery.io/subscribe">newsletter</a> for the latest updates. Get support on our <a href="http://discuss.meshery.io">forum</a>. Join our <a href="https://slack.meshery.io">Slack</a> to interact directly with other users and contributors.</p>
-
-<!-- <div style="text-align:center;padding:0;margin:0;">
-<img src="https://layer5.io/assets/images/meshery/meshery-logo-shadow-light-white-text-side.svg" width="60%" />
-<h1>Documentation</h1>
-</div> -->
-

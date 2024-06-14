@@ -6,7 +6,8 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
-import { AppBar, Paper, Tooltip, Typography } from '@material-ui/core';
+import { AppBar, Paper, Typography } from '@material-ui/core';
+import { CustomTooltip } from '@layer5/sistent';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faPoll, faDatabase, faFileInvoice } from '@fortawesome/free-solid-svg-icons';
 import { faMendeley } from '@fortawesome/free-brands-svg-icons';
@@ -31,6 +32,7 @@ import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { REGISTRY, METRICS, ADAPTERS, RESET, GRAFANA, PROMETHEUS } from '@/constants/navigator';
 import { removeDuplicateVersions } from './MeshModelRegistry/helper';
+import DefaultError from './General/error-404';
 const styles = (theme) => ({
   wrapperClss: {
     flexGrow: 1,
@@ -38,6 +40,7 @@ const styles = (theme) => ({
     height: 'auto',
   },
   tab: {
+    width: '25%',
     minWidth: 40,
     paddingLeft: 0,
     paddingRight: 0,
@@ -46,6 +49,7 @@ const styles = (theme) => ({
     },
   },
   tabs: {
+    width: '100%',
     '& .MuiTabs-indicator': {
       backgroundColor: theme.palette.type === 'dark' ? '#00B39F' : theme.palette.primary,
     },
@@ -318,18 +322,20 @@ class MesherySettings extends React.Component {
     }
     return (
       <>
-        {CAN(keys.VIEW_SETTINGS.action, keys.VIEW_SETTINGS.subject) && (
+        {CAN(keys.VIEW_SETTINGS.action, keys.VIEW_SETTINGS.subject) ? (
           <div className={classes.wrapperClss}>
             <Paper square className={classes.wrapperClss}>
               <Tabs
                 value={tabVal}
                 className={classes.tabs}
                 onChange={this.handleChange('tabVal')}
-                variant="fullWidth"
+                variant={window.innerWidth < 900 ? 'scrollable' : 'fullWidth'}
+                scrollButtons="on"
                 indicatorColor="primary"
                 textColor="primary"
+                centered
               >
-                <Tooltip title="Connect Meshery Adapters" placement="top" value={ADAPTERS}>
+                <CustomTooltip title="Connect Meshery Adapters" placement="top" value={ADAPTERS}>
                   <Tab
                     className={classes.tab}
                     icon={<FontAwesomeIcon icon={faMendeley} style={iconMedium} />}
@@ -338,8 +344,8 @@ class MesherySettings extends React.Component {
                     value={ADAPTERS}
                     disabled={!CAN(keys.VIEW_SERVICE_MESH.action, keys.VIEW_SERVICE_MESH.subject)}
                   />
-                </Tooltip>
-                <Tooltip title="Configure Metrics backends" placement="top" value={METRICS}>
+                </CustomTooltip>
+                <CustomTooltip title="Configure Metrics backends" placement="top" value={METRICS}>
                   <Tab
                     className={classes.tab}
                     icon={<FontAwesomeIcon icon={faPoll} style={iconMedium} />}
@@ -348,8 +354,8 @@ class MesherySettings extends React.Component {
                     value={METRICS}
                     disabled={!CAN(keys.VIEW_METRICS.action, keys.VIEW_METRICS.subject)}
                   />
-                </Tooltip>
-                <Tooltip title="Registry" placement="top" value={REGISTRY}>
+                </CustomTooltip>
+                <CustomTooltip title="Registry" placement="top" value={REGISTRY}>
                   <Tab
                     className={classes.tab}
                     icon={<FontAwesomeIcon icon={faFileInvoice} style={iconMedium} />}
@@ -358,8 +364,8 @@ class MesherySettings extends React.Component {
                     value={REGISTRY}
                     disabled={!CAN(keys.VIEW_REGISTRY.action, keys.VIEW_REGISTRY.subject)}
                   />
-                </Tooltip>
-                <Tooltip title="Reset System" placement="top" value={RESET}>
+                </CustomTooltip>
+                <CustomTooltip title="Reset System" placement="top" value={RESET}>
                   <Tab
                     className={classes.tab}
                     icon={<FontAwesomeIcon icon={faDatabase} style={iconMedium} />}
@@ -368,7 +374,7 @@ class MesherySettings extends React.Component {
                     value={RESET}
                     // disabled={!CAN(keys.VIEW_SYSTEM_RESET.action, keys.VIEW_SYSTEM_RESET.subject)} TODO: uncomment when key get seeded
                   />
-                </Tooltip>
+                </CustomTooltip>
               </Tabs>
             </Paper>
             {tabVal === ADAPTERS &&
@@ -455,6 +461,8 @@ class MesherySettings extends React.Component {
             {backToPlay}
             <PromptComponent ref={this.systemResetPromptRef} />
           </div>
+        ) : (
+          <DefaultError />
         )}
       </>
     );

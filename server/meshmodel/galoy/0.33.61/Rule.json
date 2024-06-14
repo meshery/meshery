@@ -1,0 +1,49 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "kind": "Rule",
+  "apiVersion": "oathkeeper.ory.sh/v1alpha1",
+  "displayName": "Rule",
+  "format": "JSON",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "primaryColor": "#00B39F",
+   "published": false,
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "name": "galoy",
+   "version": "0.33.61",
+   "displayName": "Galoy",
+   "status": "",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "category": {
+    "name": "Uncategorized",
+    "metadata": null
+   },
+   "metadata": {
+    "isAnnotation": false,
+    "published": false,
+    "subCategory": "Uncategorized",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "components": null,
+   "relationships": null
+  },
+  "schema": "{\n \"description\": \"Rule is the Schema for the rules API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"RuleSpec defines the desired state of Rule\",\n   \"properties\": {\n    \"authenticators\": {\n     \"items\": {\n      \"description\": \"Authenticator represents a handler that authenticates provided credentials.\",\n      \"properties\": {\n       \"config\": {\n        \"description\": \"Config configures the handler. Configuration keys vary per handler.\",\n        \"format\": \"textarea\",\n        \"type\": \"string\"\n       },\n       \"handler\": {\n        \"description\": \"Name is the name of a handler\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"handler\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"authorizer\": {\n     \"description\": \"Authorizer represents a handler that authorizes the subject (\\\"user\\\") from the previously validated credentials making the request.\",\n     \"properties\": {\n      \"config\": {\n       \"description\": \"Config configures the handler. Configuration keys vary per handler.\",\n       \"format\": \"textarea\",\n       \"type\": \"string\"\n      },\n      \"handler\": {\n       \"description\": \"Name is the name of a handler\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"handler\"\n     ],\n     \"type\": \"object\"\n    },\n    \"configMapName\": {\n     \"description\": \"ConfigMapName points to the K8s ConfigMap that contains these rules\",\n     \"maxLength\": 253,\n     \"minLength\": 1,\n     \"pattern\": \"[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*\",\n     \"type\": \"string\"\n    },\n    \"errors\": {\n     \"items\": {\n      \"description\": \"Error represents a handler that is responsible for executing logic when an error happens.\",\n      \"properties\": {\n       \"config\": {\n        \"description\": \"Config configures the handler. Configuration keys vary per handler.\",\n        \"format\": \"textarea\",\n        \"type\": \"string\"\n       },\n       \"handler\": {\n        \"description\": \"Name is the name of a handler\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"handler\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"match\": {\n     \"description\": \"Match defines the URL(s) that an access rule should match.\",\n     \"properties\": {\n      \"methods\": {\n       \"description\": \"Methods represent an array of HTTP methods (e.g. GET, POST, PUT, DELETE, ...)\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"url\": {\n       \"description\": \"URL is the URL that should be matched. It supports regex templates.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"methods\",\n      \"url\"\n     ],\n     \"type\": \"object\"\n    },\n    \"mutators\": {\n     \"items\": {\n      \"description\": \"Mutator represents a handler that transforms the HTTP request before forwarding it.\",\n      \"properties\": {\n       \"config\": {\n        \"description\": \"Config configures the handler. Configuration keys vary per handler.\",\n        \"format\": \"textarea\",\n        \"type\": \"string\"\n       },\n       \"handler\": {\n        \"description\": \"Name is the name of a handler\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"handler\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"upstream\": {\n     \"description\": \"Upstream represents the location of a server where requests matching a rule should be forwarded to.\",\n     \"properties\": {\n      \"preserveHost\": {\n       \"description\": \"PreserveHost includes the host and port of the url value if set to false. If true, the host and port of the ORY Oathkeeper Proxy will be used instead.\",\n       \"type\": \"boolean\"\n      },\n      \"stripPath\": {\n       \"description\": \"StripPath replaces the provided path prefix when forwarding the requested URL to the upstream URL.\",\n       \"type\": \"string\"\n      },\n      \"url\": {\n       \"description\": \"URL defines the target URL for incoming requests\",\n       \"maxLength\": 256,\n       \"minLength\": 3,\n       \"pattern\": \"^(?:https?:\\\\/\\\\/)?(?:[^@\\\\/\\\\n]+@)?(?:www\\\\.)?([^:\\\\/\\\\n]+)\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"url\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"match\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Rule\",\n \"type\": \"object\"\n}"
+ }

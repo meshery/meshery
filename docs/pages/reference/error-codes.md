@@ -18,7 +18,7 @@ div.error-heading {
 }
 p.error-details {
     margin-left: 1.5rem;
-    font-size: 1.4rem;
+    font-size: 1rem;
     text-wrap: wrap;
     width:85%
 }
@@ -27,9 +27,10 @@ td {
 }
 .tbl-head-row{
   background-color:#F2F2F2;
+  text-align: left
 }
 .tbl-head-row .error-name-code{
-  display:flex;
+  /* display:flex; */
   justify-content:space-between;
   align-items:flex-end;
   height:5rem;
@@ -45,7 +46,7 @@ td {
 }
 
 .tbl-body-row .error-name-code{
-  display:flex;
+  /* display:flex; */
   justify-content:flex-start;
 }
 
@@ -74,10 +75,16 @@ td {
 
 ## Error Codes and Troubleshooting
 
-Meshery and its components use a common framework (defined within MeshKit) to generate and document an error with a unique error code identifier: the combination of Meshery component moniker and numberic code - `[component-moniker]-[numeric code]`. Each error code identifies the source component for the error and a standard set of information to describe the error and provide helpful details for troubleshooting the situation surrounding the specific error.
+Meshery and its components use a common framework (defined within MeshKit) to generate and document an event with a unique error code identifier as the combination of `[component type]-[component name]-[event moniker]-[numeric code]`. Each error code identifies the source component for the error and a standard set of information to describe the error and provide helpful details for troubleshooting the situation surrounding the specific error.
 
-{% include alert.html type="info" title="Error codes are combination of component moniker and numberic code" content="
-Note: The numeric portion of error codes are component-scoped. The numeric portion of error codes are allowed to overlap between Meshery components. The combination of the `[component-moniker]-[numeric code]` is what makes a given error code globally unique." %}
+{% include alert.html type="info" title="Error codes are combination of component type, component name, event moniker and numberic code" content="Error codes are a hyphenated collection of details that include:
+<ul>
+<li><b>Component Type</b> (string): The type of the component that emits this error event; e.g. <code>adapter</code></li>
+<li><b>Component Name</b> (string): The name of the component that emits this error event; e.g. <code>ameshery-istio</code></li>
+<li><b>Error Moniker</b> (string): A semi-human readable short key used in descriptive reference to the specific event at-hand; e.g. <code>ErrClosingDatabaseInstanceCode</code></li>
+<li><b>Numberic Code</b> (number): Unique number identifying a specific error as scoped by a specific component; e.g. <code>a1000</code></li>
+</ul>
+The numeric portion of error codes are component-scoped. The numeric portion of error codes are allowed to overlap between Meshery components. The combination of the <code>[component type]-[component name]-[event moniker]-[numeric code]</code> is what makes a given error code globally unique." %}
 
 ## Error Code Categories by Component
 
@@ -165,7 +172,7 @@ Note: The numeric portion of error codes are component-scoped. The numeric porti
           <code>{{ err_code[1]["name"] | xml_escape }}-{{ err_code[1]["code"] }}</code>
         </td>
         <td>{{ err_code[1]["short_description"] | xml_escape }}</td>
-        <td><a href="https://discuss.layer5.io/search?q={{ err_code[1]['code'] }}" target="_blank">search forum</a></td>
+        <td><a href="https://discuss.layer5.io/search?q={{ err_code[1]['name'] | xml_escape }}-{{ err_code[1]['code'] }}" target="_blank">search forum</a></td>
       </tr>
       <tr id="{{ component[1].component_name }}-{{ err_code[1]["name"] }}-more-info" class="tbl-hidden-row">
         <td style="word-break:break-all;" colspan="3">

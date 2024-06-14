@@ -8,13 +8,12 @@ import Link from 'next/link';
 import CreateDesignBtn from '../../General/CreateDesignBtn';
 import theme from '../../../themes/app';
 import { iconSmall } from '../../../css/icons.styles';
-import {
-  CustomTextTooltip,
-  RenderTooltipContent,
-} from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
+import { CustomTextTooltip } from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
 import { InfoOutlined } from '@material-ui/icons';
 import { useGetPatternsQuery } from '@/rtk-query/design';
 import { useGetFiltersQuery } from '@/rtk-query/filter';
+import CAN from '@/utils/can';
+import { keys } from '@/utils/permission_constants';
 
 export default function MesheryConfigurationChart({ classes }) {
   // const { notify } = useNotification();
@@ -23,12 +22,12 @@ export default function MesheryConfigurationChart({ classes }) {
 
   const { data: patternsData, error: patternsError } = useGetPatternsQuery({
     page: 0,
-    pagesize: 25,
+    pagesize: 1,
   });
 
   const { data: filtersData, error: filtersError } = useGetFiltersQuery({
     page: 0,
-    pagesize: 25,
+    pagesize: 1,
   });
 
   useEffect(() => {
@@ -72,10 +71,13 @@ export default function MesheryConfigurationChart({ classes }) {
     },
   };
 
-  const url = `https://docs.meshery.io/guides/configuration-management`;
-
   return (
-    <Link href="/configuration/designs">
+    <Link
+      href="/configuration/designs"
+      style={{
+        pointerEvents: !CAN(keys.VIEW_DESIGNS.action, keys.VIEW_DESIGNS.subject) ? 'none' : 'auto',
+      }}
+    >
       <div className={classes.dashboardSection}>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           <Typography variant="h6" gutterBottom className={classes.link}>
@@ -83,13 +85,9 @@ export default function MesheryConfigurationChart({ classes }) {
           </Typography>
           <div onClick={(e) => e.stopPropagation()}>
             <CustomTextTooltip
-              backgroundColor="#3C494F"
               placement="left"
               interactive={true}
-              title={RenderTooltipContent({
-                showPriortext: 'Meshery’s ability to configure infrastructure and applications.',
-                link: url,
-              })}
+              title={`Meshery Designs are descriptive, declarative characterizations of how your Kubernetes infrastructure should be configured. [Learn more](https://docs.meshery.io/concepts/logical/designs)`}
             >
               <IconButton disableRipple={true} disableFocusRipple={true}>
                 <InfoOutlined

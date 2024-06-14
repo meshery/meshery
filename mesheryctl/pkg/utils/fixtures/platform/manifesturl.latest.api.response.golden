@@ -256,14 +256,6 @@
 "url": "https://api.github.com/repos/meshery/meshery/git/trees/4de0bbbcfddbc4fc00497bb5ed7330e5b41e1821"
 },
 {
-"path": ".github/assets/images/meshery/meshery-logo-tag-dark-text-side.png",
-"mode": "100644",
-"type": "blob",
-"sha": "57d58300249e689337523b5163aa8cf4a2750b2b",
-"size": 12562,
-"url": "https://api.github.com/repos/meshery/meshery/git/blobs/57d58300249e689337523b5163aa8cf4a2750b2b"
-},
-{
 "path": ".github/assets/images/meshery/meshery-logo-tag-light-text-side.png",
 "mode": "100644",
 "type": "blob",
@@ -4644,14 +4636,6 @@
 "type": "tree",
 "sha": "59a8053cf608fbccd60fe24bd5c1349ca9ac5e83",
 "url": "https://api.github.com/repos/meshery/meshery/git/trees/59a8053cf608fbccd60fe24bd5c1349ca9ac5e83"
-},
-{
-"path": "docs/assets/img/readme/Layer5-MeshMentors.png",
-"mode": "100644",
-"type": "blob",
-"sha": "2d0e63a95e4221af502a50a31574af5bc737e67d",
-"size": 26329,
-"url": "https://api.github.com/repos/meshery/meshery/git/blobs/2d0e63a95e4221af502a50a31574af5bc737e67d"
 },
 {
 "path": "docs/assets/img/readme/Meshery-Grafana-Charts.png",

@@ -1,0 +1,61 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "core.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "IP Reservation",
+  "description": "",
+  "format": "JSON",
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "core.meshery.io/v1beta1",
+   "version": "v1.0.0",
+   "name": "tigera-operator",
+   "displayName": "Tigera Operator",
+   "description": "",
+   "status": "ignored",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "registrant": {
+    "hostname": "artifacthub"
+   },
+   "category": {
+    "name": "Runtime",
+    "metadata": null
+   },
+   "subCategory": "",
+   "metadata": {
+    "source_uri": "https://github.com/stevehipwell/helm-charts/releases/download/tigera-operator-2.9.0/tigera-operator-2.9.0.tgz"
+   },
+   "model": {
+    "version": "2.4.1"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isModelAnnotation": "FALSE",
+   "isNamespaced": false,
+   "logoURL": "",
+   "model": "tigera-operator",
+   "modelDisplayName": "Tigera Operator",
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "status": "ignored",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "component": {
+   "kind": "IPReservation",
+   "version": "crd.projectcalico.org/v1",
+   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"IPReservationSpec contains the specification for an IPReservation resource.\",\n   \"properties\": {\n    \"reservedCIDRs\": {\n     \"description\": \"ReservedCIDRs is a list of CIDRs and/or IP addresses that Calico IPAM will exclude from new allocations.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"IP Reservation\",\n \"type\": \"object\"\n}"
+  }
+ }

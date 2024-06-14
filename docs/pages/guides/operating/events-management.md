@@ -45,6 +45,8 @@ Meshery allows you to easily share notifications with relevant stakeholders. Whe
 
 Meshery's Notification Center provides the ability to track the status of events. You can mark events as read or unread, helping you to prioritize and manage your response to events efficiently. This status tracking feature ensures that no critical event goes unnoticed, and you can easily keep track of events that require immediate attention.
 
+Particular notifications that Meshery presents are immediately actionable. These are denoted by a red colored highlight. Be on the lookout for these alerts and take action promptly to ensure a smooth running infrastructure.
+
 ### 6. Event Persistence
 
 Events in Meshery are always persisted, ensuring that you have a complete historical record of activities in your clusters and Meshery Server. This persistence is invaluable for compliance, auditing, and historical analysis, enabling you to track the evolution of your infrastructure and detect patterns over time.

@@ -8,7 +8,7 @@ pre.codeblock-pre {
   flex-direction: row;
   overflow: hidden !important;
   margin: 0;
-  font-size: 1.25rem;
+  font-size: .9rem;
   border-radius: 4px;
   width: 100%;
   box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.4);
@@ -29,7 +29,7 @@ pre.codeblock-pre {
 .clipboardjs {
   width: 100%;
   overflow: hidden;
-  font-size: 1.25rem;
+  font-size: .9rem;
   margin: 0px;
   color: #f8f9fa;
   display: flex;
@@ -69,7 +69,7 @@ pre.codeblock-pre {
   margin: 5px;
   border: 0px;
   background-color: transparent;
-  font-size: 1.5rem;
+  font-size: 1.05rem;
   & i::before {
     color: #f1f3f5 !important;
   }

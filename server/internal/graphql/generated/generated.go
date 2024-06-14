@@ -2838,6 +2838,7 @@ input PageFilter {
   to: String
   updated_after: String
   visibility: [String!]
+  metrics: String
 }
 
 # ============== CATALOG =============================
@@ -2847,6 +2848,7 @@ input CatalogSelector {
   pagesize: String!
   search: String!
   order: String!
+  metrics: String
 }
 
 # ================ TELEMETRY ==================== 
@@ -16639,7 +16641,7 @@ func (ec *executionContext) unmarshalInputCatalogSelector(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"page", "pagesize", "search", "order"}
+	fieldsInOrder := [...]string{"page", "pagesize", "search", "order", "metrics"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -16674,6 +16676,13 @@ func (ec *executionContext) unmarshalInputCatalogSelector(ctx context.Context, o
 				return it, err
 			}
 			it.Order = data
+		case "metrics":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("metrics"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Metrics = data
 		}
 	}
 
@@ -16748,7 +16757,7 @@ func (ec *executionContext) unmarshalInputPageFilter(ctx context.Context, obj in
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"page", "pageSize", "order", "search", "from", "to", "updated_after", "visibility"}
+	fieldsInOrder := [...]string{"page", "pageSize", "order", "search", "from", "to", "updated_after", "visibility", "metrics"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -16811,6 +16820,13 @@ func (ec *executionContext) unmarshalInputPageFilter(ctx context.Context, obj in
 				return it, err
 			}
 			it.Visibility = data
+		case "metrics":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("metrics"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Metrics = data
 		}
 	}
 

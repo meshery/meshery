@@ -1,8 +1,14 @@
-{% if include.section-title != "false" %}
-<h2>Suggested Reading</h2>
+<!-- {% if include.section-title != "false" %}
+{% if page.layout == "integration" %}
+  <h2>Related Models in <b>{{ page['integrations-category'] }}</b></h2>
+{% else %}
+{% assign h2_text = include.h2_text | default: "Suggested Reading" %}
+<h2>{{ h2_text }}</h2>
 {% endif %}
 
-{% assign sorted_reading = site.pages | sort: include.title %}
+{% endif %} -->
+
+{% assign sorted_reading = include.reading | default: site.pages | sort: include.title %}
 
 <ul>
   {% for item in sorted_reading %}

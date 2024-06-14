@@ -18,12 +18,12 @@ Meshery CLI commands are categorized by function, which are:
 
 - `mesheryctl` - Global flags and CLI configuration
 - `mesheryctl system` - Meshery Lifecycle and Troubleshooting
-- `mesheryctl mesh` - Cloud Native Lifecycle & Configuration Management: provisioning and configuration best practices
-- `mesheryctl perf` - Cloud Native Performance Management: Workload and cloud native performance characterization
-- `mesheryctl pattern` - Cloud Native Pattern Configuration & Management: cloud native patterns and Open Application Model integration
-- `mesheryctl app` - Cloud Native Application Management
+- `mesheryctl mesh` - Lifecycle & Configuration Management: provisioning and configuration best practices
+- `mesheryctl perf` - Performance Management: Workload and cloud native performance characterization
+- `mesheryctl pattern` - Design Patterns: cloud native patterns and best practices
 - `mesheryctl filter` - Data Plane Intelligence: Registry and configuration of WebAssembly filters for Envoy
-- `mesheryctl registry` - Meshery's Registry Management: Manage the state and contents of Meshery's internal registry of capabilities.
+- `mesheryctl model` - A unit of packaging to define managed infrastructure and their relationships, and details specifics of how to manage them.
+- `mesheryctl registry` - Model Database: Manage the state and contents of Meshery's internal registry of capabilities.
 - `mesheryctl exp` - Experimental features
 
 ## Global Commands and Flags
@@ -522,7 +522,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters
   </tr>
   {% assign command7 = site.data.mesheryctlcommands.cmds.pattern %}
     <tr>
-      <td rowspan=10><a href="{{ site.baseurl }}/reference/mesheryctl/pattern">{{ command7.name }}</a></td>
+      <td rowspan=19><a href="{{ site.baseurl }}/reference/mesheryctl/pattern">{{ command7.name }}</a></td>
       <td></td>
       <td></td>
       <td>{{ command7.description }}</td>
@@ -563,77 +563,9 @@ Installation, troubleshooting and debugging of Meshery and its adapters
           <td>{{ flag.description }}</td>
         </tr>
       {% endfor %}
-    {% assign subcommand3 = command7.subcommands.delete %}
+    {% assign subcommand4 = command7.subcommands.delete %}
       <tr>
-        <td rowspan=2><a href="{{ site.baseurl }}/reference/mesheryctl/pattern/delete">{{ subcommand3.name }}</a></td>
-        <td></td>
-        <td>{{ subcommand3.description }}</td>
-      </tr>
-      {% for flag_hash in subcommand3.flags %}{% assign flag = flag_hash[1] %}
-        <tr>
-          <td>{{ flag.name }}</td>
-          <td>{{ flag.description }}</td>
-        </tr>
-      {% endfor %}
-</thead>
-</table>
-
-## Cloud Native Application Management
-
-<table>
-<thead>
-  <tr>
-    <th>Main Command</th>
-    <th>Command</th>
-    <th>Flag</th>
-    <th>Function</th>
-  </tr>
-  {% assign command8 = site.data.mesheryctlcommands.cmds.app %}
-    <tr>
-      <td rowspan=15><a href="{{ site.baseurl }}/reference/mesheryctl/app">{{ command8.name }}</a></td>
-      <td></td>
-      <td></td>
-      <td>{{ command8.description }}</td>
-    </tr>
-    {% assign subcommand1 = command8.subcommands.import %}
-      <tr>
-        <td rowspan=3><a href="{{ site.baseurl }}/reference/mesheryctl/app/import">{{ subcommand1.name }}</a></td>
-        <td></td>
-        <td>{{ subcommand1.description }}</td>
-      </tr>
-      {% for flag_hash in subcommand1.flags %}{% assign flag = flag_hash[1] %}
-        <tr>
-          <td>{{ flag.name }}</td>
-          <td>{{ flag.description }}</td>
-        </tr>
-      {% endfor %}
-    {% assign subcommand2 = command8.subcommands.onboard %}
-      <tr>
-        <td rowspan=4><a href="{{ site.baseurl }}/reference/mesheryctl/app/onboard">{{ subcommand2.name }}</a></td>
-        <td></td>
-        <td>{{ subcommand2.description }}</td>
-      </tr>
-      {% for flag_hash in subcommand2.flags %}{% assign flag = flag_hash[1] %}
-        <tr>
-          <td>{{ flag.name }}</td>
-          <td>{{ flag.description }}</td>
-        </tr>
-      {% endfor %}
-    {% assign subcommand3 = command8.subcommands.offboard %}
-      <tr>
-        <td rowspan=2><a href="{{ site.baseurl }}/reference/mesheryctl/app/offboard">{{ subcommand3.name }}</a></td>
-        <td></td>
-        <td>{{ subcommand3.description }}</td>
-      </tr>
-      {% for flag_hash in subcommand3.flags %}{% assign flag = flag_hash[1] %}
-        <tr>
-          <td>{{ flag.name }}</td>
-          <td>{{ flag.description }}</td>
-        </tr>
-      {% endfor %}
-    {% assign subcommand4 = command8.subcommands.list %}
-      <tr>
-        <td rowspan=2><a href="{{ site.baseurl }}/reference/mesheryctl/app/list">{{ subcommand4.name }}</a></td>
+        <td rowspan=2><a href="{{ site.baseurl }}/reference/mesheryctl/pattern/delete">{{ subcommand4.name }}</a></td>
         <td></td>
         <td>{{ subcommand4.description }}</td>
       </tr>
@@ -643,9 +575,9 @@ Installation, troubleshooting and debugging of Meshery and its adapters
           <td>{{ flag.description }}</td>
         </tr>
       {% endfor %}
-    {% assign subcommand5 = command8.subcommands.view %}
+    {% assign subcommand5 = command7.subcommands.import %}
       <tr>
-        <td rowspan=3><a href="{{ site.baseurl }}/reference/mesheryctl/app/view">{{ subcommand5.name }}</a></td>
+        <td rowspan=3><a href="{{ site.baseurl }}/reference/mesheryctl/pattern/import">{{ subcommand5.name }}</a></td>
         <td></td>
         <td>{{ subcommand5.description }}</td>
       </tr>
@@ -655,9 +587,33 @@ Installation, troubleshooting and debugging of Meshery and its adapters
           <td>{{ flag.description }}</td>
         </tr>
       {% endfor %}
+    {% assign subcommand6 = command7.subcommands.onboard %}
+      <tr>
+        <td rowspan=4><a href="{{ site.baseurl }}/reference/mesheryctl/pattern/onboard">{{ subcommand6.name }}</a></td>
+        <td></td>
+        <td>{{ subcommand6.description }}</td>
+      </tr>
+      {% for flag_hash in subcommand6.flags %}{% assign flag = flag_hash[1] %}
+        <tr>
+          <td>{{ flag.name }}</td>
+          <td>{{ flag.description }}</td>
+        </tr>
+      {% endfor %}
+    {% assign subcommand7 = command7.subcommands.offboard %}
+      <tr>
+        <td rowspan=2><a href="{{ site.baseurl }}/reference/mesheryctl/pattern/offboard">{{ subcommand7.name }}</a></td>
+        <td></td>
+        <td>{{ subcommand7.description }}</td>
+      </tr>
+      {% for flag_hash in subcommand7.flags %}{% assign flag = flag_hash[1] %}
+        <tr>
+          <td>{{ flag.name }}</td>
+          <td>{{ flag.description }}</td>
+        </tr>
+      {% endfor %}
 </thead>
 </table>
-
+ 
 ## Data Plane Intelligence
 
 <table>
@@ -787,6 +743,48 @@ Installation, troubleshooting and debugging of Meshery and its adapters
       {% endfor %}
 </thead>
 </table>
+
+
+## Meshery Models
+
+<table>
+<thead>
+  <tr>
+    <th>Command</th>
+    <th>Subcommand</th>
+    <th>Flag</th>
+    <th>Function</th>
+  </tr>
+  {% assign command12 = site.data.mesheryctlcommands.cmds.model %}
+    <tr>
+      <td rowspan=8><a href="{{ site.baseurl }}/reference/mesheryctl/{{ command12.name }}">{{ command12.name }}</a></td>
+      <td></td>
+      <td></td>
+      <td>{{ command12.description }}</td>
+    </tr>
+    {% for flag_hash in command12.flags %}{% assign flag = flag_hash[1] %}
+      <tr>
+        <td></td>
+        <td>{{ flag.name }}</td>
+        <td>{{ flag.description }}</td>
+      </tr>
+    {% endfor %}
+    {% for subcommand_hash in command12.subcommands %}{% assign subcomand = subcommand_hash[1] %}
+      <tr>
+        <td rowspan={{ subcomand.flags.size | plus:1 }} ><a href="{{ site.baseurl }}/reference/mesheryctl/{{ command12.name }}/{{ subcomand.name }}">{{ subcomand.name }}</a></td>
+        <td></td>
+        <td>{{ subcomand.description }}</td>
+      </tr>
+      {% for flag_hash in subcomand.flags %}{% assign flag = flag_hash[1] %}
+        <tr>
+          <td>{{ flag.name }}</td>
+          <td>{{ flag.description }}</td>
+        </tr>
+      {% endfor %}
+    {% endfor %}
+</thead>
+</table>
+
 
 ## Experimental Features
 

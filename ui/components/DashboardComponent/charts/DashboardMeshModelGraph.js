@@ -1,5 +1,5 @@
 import Grid from '@material-ui/core/Grid';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import { IconButton, Typography } from '@material-ui/core';
 import BBChart from '../../BBChart';
 import { donut } from 'billboard.js';
@@ -7,67 +7,32 @@ import { dataToColors } from '../../../utils/charts';
 import Link from 'next/link';
 import theme from '../../../themes/app';
 import { iconSmall } from '../../../css/icons.styles';
-import {
-  CustomTextTooltip,
-  RenderTooltipContent,
-} from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
+import { CustomTextTooltip } from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
 import { InfoOutlined } from '@material-ui/icons';
 import {
-  useGetModelCategoriesQuery,
-  useLazyGetComponentsQuery,
-  useLazyGetMeshModelsQuery,
-  useLazyGetModelFromCategoryQuery,
-  useLazyGetRelationshipsQuery,
+  useGetCategoriesSummary,
+  useGetComponentsQuery,
+  useGetMeshModelsQuery,
+  useGetRelationshipsQuery,
 } from '@/rtk-query/meshModel';
+import CAN from '@/utils/can';
+import { keys } from '@/utils/permission_constants';
 
 function MeshModelContructs({ classes }) {
-  const [getAllModels] = useLazyGetMeshModelsQuery();
-  const [getAllComponents] = useLazyGetComponentsQuery();
-  const [getAllRelationships] = useLazyGetRelationshipsQuery();
-
-  // States to hold total counts
-  const [totalModels, setTotalModels] = useState(0);
-  const [totalComponents, setTotalComponents] = useState(0);
-  const [totalRelationships, setTotalRelationships] = useState(0);
-
-  // Fetch data and update state on component mount
-  const fetchData = useCallback(async () => {
-    try {
-      const models = await getAllModels({
-        page: 1,
-        pagesize: 'all',
-      });
-      const components = await getAllComponents({
-        page: 1,
-        pagesize: 'all',
-      });
-      const relationships = await getAllRelationships({
-        page: 1,
-        pagesize: 'all',
-      });
-
-      setTotalModels(models.data.total_count);
-      setTotalComponents(components.data.total_count);
-      setTotalRelationships(relationships.data.total_count);
-    } catch (error) {
-      console.error('Error fetching Mesh Models data:', error);
-    }
-  }, [getAllModels, getAllComponents, getAllRelationships]);
-
-  useEffect(() => {
-    fetchData();
-  }, []);
+  const params = {
+    page: 0,
+    pagesize: '1',
+  };
+  const modelCount = useGetMeshModelsQuery({ params }).data?.total_count || 0;
+  const componentCount = useGetComponentsQuery({ params }).data?.total_count || 0;
+  const relationshipCount = useGetRelationshipsQuery({ params }).data?.total_count || 0;
 
   // Data Cleanup
-  const data = useMemo(() => {
-    // TODO: Add Policies
-    return [
-      ['Models', totalModels],
-      ['Components', totalComponents],
-      ['Relationships', totalRelationships],
-      // TODO: Add Policies
-    ];
-  }, [totalModels, totalRelationships, totalComponents]);
+  const data = [
+    ['Models', modelCount],
+    ['Components', componentCount],
+    ['Relationships', relationshipCount],
+  ];
 
   const chartOptions = useMemo(
     () => ({
@@ -96,10 +61,15 @@ function MeshModelContructs({ classes }) {
     [data],
   );
 
-  const url = `https://docs.meshery.io/concepts/logical/models`;
-
   return (
-    <Link href="/settings#registry">
+    <Link
+      href="/settings?settingsCategory=Registry&tab=Models"
+      style={{
+        pointerEvents: !CAN(keys.VIEW_REGISTRY.action, keys.VIEW_REGISTRY.subject)
+          ? 'none'
+          : 'auto',
+      }}
+    >
       <div className={classes.dashboardSection}>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           <Typography variant="h6" gutterBottom className={classes.link}>
@@ -107,15 +77,9 @@ function MeshModelContructs({ classes }) {
           </Typography>
           <div onClick={(e) => e.stopPropagation()}>
             <CustomTextTooltip
-              backgroundColor="#3C494F"
               placement="left"
               interactive={true}
-              title={RenderTooltipContent({
-                showPriortext:
-                  'Meshery uses a set of resource models to define concrete boundaries to ensure extensible and sustainable management.',
-                showAftertext: 'to learn more about Models, Components, and Relationships',
-                link: url,
-              })}
+              title={`The Meshery Registry is a critical component acting as the central repository for all capabilities known to Meshery. [Learn More](https://docs.meshery.io/concepts/logical/registry)`}
             >
               <IconButton disableRipple={true} disableFocusRipple={true}>
                 <InfoOutlined
@@ -138,31 +102,7 @@ function MeshModelContructs({ classes }) {
 }
 
 function MeshModelCategories({ classes }) {
-  const [categoryMap, setCategoryMap] = useState({});
-  const { data: categories } = useGetModelCategoriesQuery();
-  const [getModelFromCategory] = useLazyGetModelFromCategoryQuery();
-
-  useEffect(() => {
-    const fetchModelsForCategories = async () => {
-      if (categories) {
-        const updatedCategoryMap = { ...categoryMap };
-        for (const category of categories.categories) {
-          const categoryName = category.name;
-          if (!updatedCategoryMap[categoryName]) {
-            const { data: models } = await getModelFromCategory({
-              page: 1,
-              pagesize: 'all',
-              category: categoryName,
-            });
-            updatedCategoryMap[categoryName] = models?.total_count || 0;
-          }
-        }
-        setCategoryMap(updatedCategoryMap);
-      }
-    };
-
-    fetchModelsForCategories();
-  }, [categories]);
+  const categoryMap = useGetCategoriesSummary();
 
   const cleanedData = useMemo(
     () => Object.keys(categoryMap).map((key) => [key, categoryMap[key]]),
@@ -204,24 +144,16 @@ function MeshModelCategories({ classes }) {
     [cleanedData],
   );
 
-  const url = `https://docs.meshery.io/concepts/logical/models`;
-
   return (
-    <Link href="/settings#registry">
+    <Link href="/settings?settingsCategory=Registry">
       <div className={classes.dashboardSection}>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           <Typography variant="h6" gutterBottom className={classes.link}>
-            Categories
+            Models by Category
           </Typography>
           <div onClick={(e) => e.stopPropagation()}>
             <CustomTextTooltip
-              backgroundColor="#3C494F"
-              title={RenderTooltipContent({
-                showPriortext:
-                  'Each Model corresponds to a category, so the category shows the high-level use case of that model, e.g., prometheus is under “Observability and Analysis category.',
-                showAftertext: 'to learn more about all Categories',
-                link: url,
-              })}
+              title={`Meshery Models represent the fundamental building blocks of your infrastructure. Models are categorized by their function. For example, a model for Prometheus belongs in the "Observability and Analysis" category. [Learn More](https://docs.meshery.io/concepts/logical/models)`}
               placement="left"
               interactive={true}
             >

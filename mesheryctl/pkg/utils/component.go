@@ -7,8 +7,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
-
+	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	"github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshkit/utils/csv"
 	"github.com/layer5io/meshkit/utils/manifests"
@@ -23,6 +22,7 @@ type ComponentCSV struct {
 	Registrant         string `json:"registrant" csv:"registrant"`
 	Model              string `json:"model" csv:"model"`
 	Component          string `json:"component" csv:"component"`
+	Description        string `json:"description" csv:"description"`
 	Shape              string `json:"shape" csv:"shape"`
 	PrimaryColor       string `json:"primaryColor" csv:"primaryColor"`
 	SecondaryColor     string `json:"secondaryColor" csv:"secondaryColor"`
@@ -30,7 +30,6 @@ type ComponentCSV struct {
 	SVGWhite           string `json:"svgWhite" csv:"svgWhite"`
 	SVGComplete        string `json:"svgComplete" csv:"svgComplete"`
 	HasSchema          string `json:"hasSchema" csv:"hasSchema"`
-	Description        string `json:"description" csv:"description"`
 	Docs               string `json:"docs" csv:"docs"`
 	StyleOverrides     string `json:"styleOverrides" csv:"styleOverrides"`
 	Styles             string `json:"styles" csv:"styles"`
@@ -47,18 +46,18 @@ type ComponentCSV struct {
 }
 
 // The Component Definition generated assumes or is only for components which have registrant as "meshery"
-func (c *ComponentCSV) CreateComponentDefinition(isModelPublished bool) (v1alpha1.ComponentDefinition, error) {
-	componentDefinition := &v1alpha1.ComponentDefinition{
-		TypeMeta: v1alpha1.TypeMeta{
-			Kind:       c.Component,
-			APIVersion: "core.meshery.io/v1alpha1",
+func (c *ComponentCSV) CreateComponentDefinition(isModelPublished bool, defVersion string) (v1beta1.ComponentDefinition, error) {
+	componentDefinition := &v1beta1.ComponentDefinition{
+		VersionMeta: v1beta1.VersionMeta{
+			SchemaVersion: v1beta1.SchemaVersion,
+			Version:       defVersion,
 		},
 		DisplayName: c.Component,
 		Format:      "JSON",
-		Schema:      "",
 		Metadata: map[string]interface{}{
 			"published": isModelPublished,
 		},
+		Component: v1beta1.ComponentEntity{},
 	}
 	err := c.UpdateCompDefinition(componentDefinition)
 	return *componentDefinition, err
@@ -68,7 +67,7 @@ var compMetadataValues = []string{
 	"primaryColor", "secondaryColor", "svgColor", "svgWhite", "svgComplete", "styleOverrides", "styles", "shapePolygonPoints", "defaultData", "capabilities", "genealogy", "isAnnotation", "shape", "subCategory",
 }
 
-func (c *ComponentCSV) UpdateCompDefinition(compDef *v1alpha1.ComponentDefinition) error {
+func (c *ComponentCSV) UpdateCompDefinition(compDef *v1beta1.ComponentDefinition) error {
 
 	metadata := map[string]interface{}{}
 	compMetadata, err := utils.MarshalAndUnmarshal[ComponentCSV, map[string]interface{}](*c)
@@ -151,6 +150,8 @@ func (mch *ComponentCSVHelper) ParseComponentsSheet() error {
 	}
 
 	go func() {
+		Log.Info("Parsing Components...")
+
 		err := csvReader.Parse(ch, errorChan)
 		if err != nil {
 			errorChan <- err
@@ -168,7 +169,7 @@ func (mch *ComponentCSVHelper) ParseComponentsSheet() error {
 				mch.Components[data.Registrant][data.Model] = make([]ComponentCSV, 0)
 			}
 			mch.Components[data.Registrant][data.Model] = append(mch.Components[data.Registrant][data.Model], data)
-			Log.Info(fmt.Sprintf("Reading Registrant [ %s ] Model [ %s ] Component [%s ]\n", data.Component, data.Model, data.Registrant))
+			Log.Info(fmt.Sprintf("Reading registrant [%s] model [%s] component [%s]", data.Registrant, data.Model, data.Component))
 		case err := <-errorChan:
 			Log.Error(err)
 
@@ -285,11 +286,11 @@ func (m ComponentCSVHelper) Cleanup() error {
 	return nil
 }
 
-func ConvertCompDefToCompCSV(modelcsv *ModelCSV, compDef v1alpha1.ComponentDefinition) *ComponentCSV {
+func ConvertCompDefToCompCSV(modelcsv *ModelCSV, compDef v1beta1.ComponentDefinition) *ComponentCSV {
 	compCSV, _ := utils.MarshalAndUnmarshal[map[string]interface{}, ComponentCSV](compDef.Metadata)
 	compCSV.Registrant = modelcsv.Registrant
 	compCSV.Model = modelcsv.Model
-	compCSV.Component = compDef.Kind
+	compCSV.Component = compDef.Component.Kind
 	compCSV.ModelDisplayName = modelcsv.ModelDisplayName
 	compCSV.Category = modelcsv.Category
 	compCSV.SubCategory = modelcsv.SubCategory

@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
-import { Avatar, Divider, Grid, IconButton, Typography, Tooltip, Link } from '@material-ui/core';
+import { Avatar, Divider, Grid, IconButton, Typography, Link } from '@material-ui/core';
+import { CustomTooltip } from '@layer5/sistent';
 import DeleteIcon from '@material-ui/icons/Delete';
 import Save from '@material-ui/icons/Save';
 import Fullscreen from '@material-ui/icons/Fullscreen';
 import Moment from 'react-moment';
+import GetAppIcon from '@material-ui/icons/GetApp';
 import FlipCard from '../FlipCard';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
 import FullscreenExit from '@material-ui/icons/FullscreenExit';
 import UndeployIcon from '../../public/static/img/UndeployIcon';
 import DoneAllIcon from '@material-ui/icons/DoneAll';
-import DoneIcon from '@material-ui/icons/Done';
 import useStyles from './Cards.styles';
 import YAMLDialog from '../YamlDialog';
 import PublicIcon from '@material-ui/icons/Public';
@@ -26,6 +27,9 @@ import { Provider } from 'react-redux';
 import { store } from '../../store';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
+import ActionButton from './ActionButton';
+import DryRunIcon from '@/assets/icons/DryRunIcon';
+import CheckIcon from '@/assets/icons/CheckIcon';
 
 const INITIAL_GRID_SIZE = { xl: 4, md: 6, xs: 12 };
 
@@ -36,10 +40,12 @@ function MesheryPatternCard_({
   created_at,
   pattern_file,
   handleVerify,
+  handleDryRun,
   handlePublishModal,
   handleUnpublishModal,
   handleDeploy,
   handleUnDeploy,
+  handleDownload,
   updateHandler,
   deleteHandler,
   handleClone,
@@ -164,39 +170,45 @@ function MesheryPatternCard_({
                   <span className={classes.btnText}> Unpublish </span>
                 </TooltipButton>
               )}
-
+              <ActionButton
+                defaultActionClick={(e) => genericClickHandler(e, handleVerify)}
+                options={[
+                  {
+                    label: 'Validate',
+                    icon: <CheckIcon className={classes.iconPatt} />,
+                    onClick: (e) => genericClickHandler(e, handleVerify),
+                    disabled: !CAN(keys.VALIDATE_DESIGN.action, keys.VALIDATE_DESIGN.subject),
+                  },
+                  {
+                    label: 'Dry Run',
+                    icon: <DryRunIcon className={classes.iconPatt} />,
+                    onClick: (e) => genericClickHandler(e, handleDryRun),
+                    disabled: !CAN(keys.VALIDATE_DESIGN.action, keys.VALIDATE_DESIGN.subject),
+                  },
+                  {
+                    label: 'Deploy',
+                    icon: <DoneAllIcon className={classes.iconPatt} />,
+                    onClick: (e) => genericClickHandler(e, handleDeploy),
+                    disabled: !CAN(keys.DEPLOY_DESIGN.action, keys.DEPLOY_DESIGN.subject),
+                  },
+                  {
+                    label: 'Undeploy',
+                    icon: <UndeployIcon fill={'currentColor'} className={classes.iconPatt} />,
+                    onClick: (e) => genericClickHandler(e, handleUnDeploy),
+                    disabled: !CAN(keys.DEPLOY_DESIGN.action, keys.DEPLOY_DESIGN.subject),
+                  },
+                ]}
+              />
               <TooltipButton
-                title="Valildate"
+                title="Download"
                 variant="contained"
+                color="primary"
+                onClick={handleDownload}
                 className={classes.testsButton}
-                onClick={(e) => genericClickHandler(e, handleVerify)}
-                disabled={!CAN(keys.VALIDATE_DESIGN.action, keys.VALIDATE_DESIGN.subject)}
               >
-                <DoneIcon className={classes.iconPatt} />
-                <span className={classes.btnText}> Validate </span>
+                <GetAppIcon data-cy="download-button" />
+                <span className={classes.btnText}> Download </span>
               </TooltipButton>
-
-              <TooltipButton
-                title="Deploy"
-                variant="contained"
-                onClick={(ev) => genericClickHandler(ev, handleDeploy)}
-                className={classes.testsButton}
-                disabled={!CAN(keys.DEPLOY_DESIGN.action, keys.DEPLOY_DESIGN.subject)}
-              >
-                <DoneAllIcon className={classes.iconPatt} />
-                <span className={classes.btnText}>Deploy</span>
-              </TooltipButton>
-              <TooltipButton
-                title="Undeploy"
-                variant="contained"
-                className={classes.undeployButton}
-                onClick={(ev) => genericClickHandler(ev, handleUnDeploy)}
-                disabled={!CAN(keys.DEPLOY_DESIGN.action, keys.DEPLOY_DESIGN.subject)} // use undeploy keys after it get seeded
-              >
-                <UndeployIcon fill="#ffffff" className={classes.iconPatt} />
-                <span className={classes.btnText}>Undeploy</span>
-              </TooltipButton>
-
               {visibility === VISIBILITY.PRIVATE ? (
                 <TooltipButton
                   title="Design"
@@ -220,7 +232,7 @@ function MesheryPatternCard_({
                   color="primary"
                   onClick={(ev) => genericClickHandler(ev, handleClone)}
                   className={classes.testsButton}
-                  // disabled={!CAN(keys.CLONE_DESIGN.action, keys.CLONE_DESIGN.subject)} // TODO: uncomment when key get seeded
+                  disabled={!CAN(keys.CLONE_DESIGN.action, keys.CLONE_DESIGN.subject)}
                 >
                   <CloneIcon fill="#ffffff" className={classes.iconPatt} />
                   <span className={classes.cloneBtnText}> Clone </span>
@@ -233,6 +245,7 @@ function MesheryPatternCard_({
                   variant="contained"
                   color="primary"
                   onClick={(ev) => genericClickHandler(ev, editInConfigurator)}
+                  disabled={!CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject)}
                   className={classes.testsButton}
                 >
                   <Edit style={{ fill: '#fff' }} className={classes.iconPatt} />
@@ -271,7 +284,7 @@ function MesheryPatternCard_({
                 <Link href={`${MESHERY_CLOUD_PROD}/user/${pattern?.user_id}`} target="_blank">
                   <Avatar alt="profile-avatar" src={owner?.avatar_url} />
                 </Link>
-                <Tooltip title="Enter Fullscreen" arrow interactive placement="top">
+                <CustomTooltip title="Enter Fullscreen" arrow interactive placement="top">
                   <IconButton
                     onClick={(ev) =>
                       genericClickHandler(ev, () => {
@@ -283,7 +296,7 @@ function MesheryPatternCard_({
                   >
                     {fullScreen ? <FullscreenExit /> : <Fullscreen />}
                   </IconButton>
-                </Tooltip>
+                </CustomTooltip>
               </div>
             </Grid>
             <Grid item xs={12} onClick={(ev) => genericClickHandler(ev, () => {})}>
@@ -337,24 +350,24 @@ function MesheryPatternCard_({
             <Grid item xs={12}>
               <div className={classes.updateDeleteButtons}>
                 {/* Save button */}
-                <Tooltip title="Save" arrow interactive placement="bottom">
+                <CustomTooltip title="Save" arrow interactive placement="bottom">
                   <IconButton
                     disabled={!CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject)}
                     onClick={(ev) => genericClickHandler(ev, updateHandler)}
                   >
                     <Save color="primary" />
                   </IconButton>
-                </Tooltip>
+                </CustomTooltip>
 
                 {/* Delete Button */}
-                <Tooltip title="Delete" arrow interactive placement="bottom">
+                <CustomTooltip title="Delete" arrow interactive placement="bottom">
                   <IconButton
                     disabled={!CAN(keys.DELETE_A_DESIGN.action, keys.DELETE_A_DESIGN.subject)}
                     onClick={(ev) => genericClickHandler(ev, deleteHandler)}
                   >
                     <DeleteIcon color="primary" />
                   </IconButton>
-                </Tooltip>
+                </CustomTooltip>
               </div>
             </Grid>
           </Grid>

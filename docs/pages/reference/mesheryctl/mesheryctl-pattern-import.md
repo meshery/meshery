@@ -12,11 +12,19 @@ subcommand: import
 
 # mesheryctl pattern import
 
-Import pattern manifests
+Import a Meshery design
 
 ## Synopsis
 
-Import the pattern manifest into Meshery
+
+		Import Helm Charts, Kubernetes Manifest, Docker Compose or Meshery designs by passing
+		remote URL or local file system path to the file. Source type must be provided.
+
+		YAML and TGZ (with helm only) format of file is accepted, if you are importing Meshery Design OCI file format is also supported
+
+		If you are providing remote URL, it should be a direct URL to a downloadable file.
+		For example, if the file is stored on GitHub, the URL should be 'https://raw.githubusercontent.com/path-to-file'.
+	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl pattern import [flags]
@@ -29,7 +37,7 @@ mesheryctl pattern import [flags]
 Import pattern manifest
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl pattern import -f [file/URL] -s [source-type]
+mesheryctl pattern import -f [file/URL] -s [source-type] -n [name]
 
 </div>
 </pre> 
@@ -40,7 +48,8 @@ mesheryctl pattern import -f [file/URL] -s [source-type]
 <div class='codeblock'>
   -f, --file string          Path/URL to pattern file
   -h, --help                 help for import
-  -s, --source-type string   Type of source file (ex. manifest / compose / helm)
+  -n, --name string          Name for the pattern file
+  -s, --source-type string   Type of source file (ex. manifest / compose / helm / design)
 
 </div>
 </pre>

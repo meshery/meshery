@@ -12,15 +12,15 @@
   }
   & .icon-container {
     height: fit-content;
-    margin-top: 3rem;
     z-index: 9;
     display: none;
     @media (max-width: 75em) {
+      margin-top: 3rem;
       display: block;
     }
   }
   @media (max-width: 75em) {
-    transform: translateX(calc(-100% + 4rem));
+    transform: translateX(calc(-100% + 2rem));
     position: fixed;
     display: flex;
   }
@@ -32,11 +32,18 @@
   }
 }
 
+@media (max-width: 37.5em) {
+  .left-container {
+    top: calc(var(--navbar-height) - 0);
+    height: 100vh;
+  }
+}
+
 .nav-toggle-btn--document {
   background-color: var(--color-grey-medium);
   border-radius: 0 5px 5px 0;
   border: none;
-  width: 4rem;
+  width: 2rem;
   height: 6rem;
   display: flex;
   align-items: center;
@@ -45,8 +52,8 @@
   justify-content: center;
 }
 #document-nav-toggle-btn {
-  width: 1.8rem;
-  height: 1.8rem;
+  width: 2.2rem;
+  height: 1.2rem;
   fill: var(--color-secondary-dark);
 }
 
@@ -184,12 +191,12 @@
         }
 
         & > ul {
-          padding-inline-start: .3rem;
+          padding-inline-start: .1rem;
           list-style: none;
           margin-bottom: 0;
 
           & > ul {
-            padding-inline-start: .3rem;
+            padding-inline-start: .1rem;
             list-style: none;
             margin-bottom: 0;
 
@@ -198,7 +205,7 @@
               display: flex;
               flex-direction: column;
               gap: 0.5rem;
-              padding-inline-start: .3rem;
+              padding-inline-start: .1rem;
               margin-bottom: 0;
             }
           }
@@ -208,7 +215,7 @@
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
-            padding-inline-start: .3rem;
+            padding-inline-start: .1rem;
             margin-bottom: 0;
 
             & > li ul {
@@ -216,7 +223,7 @@
               list-style: none !important;
               flex-direction: column;
               gap: .25rem;
-              padding-inline-start: .3rem;
+              padding-inline-start: .1rem;
             }
             // & ul > li {
             //   & ::before {

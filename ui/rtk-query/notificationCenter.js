@@ -85,7 +85,7 @@ export const notificationCenterApi = api
   .injectEndpoints({
     endpoints: (builder) => ({
       getEvents: builder.query({
-        query: ({ page = 1, filters = {} }) => {
+        query: ({ page = 0, filters = {} }) => {
           const parsedFilters = parseFilters(filters);
           return {
             url: `v2/events`,

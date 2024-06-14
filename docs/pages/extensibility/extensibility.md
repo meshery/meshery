@@ -3,7 +3,7 @@ layout: default
 title: Extensibility
 permalink: extensibility
 type: Extensibility
-abstract: 'Meshery architecture is extensible. Meshery provides several extension points for working with different cloud native projects via adapters, load generators and providers.'
+abstract: 'Meshery has an extensible architecture with several different types of extension points.'
 # redirect_from:
 #   - reference/extensibility
 #   - extensibility/
@@ -11,30 +11,9 @@ language: en
 list: exclude
 ---
 
-Meshery has an extensible architecture with several extension points. Meshery provides several extension points for working with different cloud and cloud native infrastructure via [adapters]({{site.baseurl}}/extensibility/adapters), different [load generators]({{site.baseurl}}/extensibility/load-generators) and different [providers]({{site.baseurl}}/extensibility/providers). Meshery also offers a REST API.
+Meshery has an extensible architecture with several different types of extension points.
 
-## Extensibility Topics
-
-{% assign sorted = site.pages | sort: "extensibility" %}
-
-<ul>
-    {% for item in sorted %}
-    {% if item.type=="Extensibility" and item.list!="exclude" and item.language !="es"  -%}
-      <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
-      {% if item.abstract != " " %}
-              -  {{ item.abstract }}
-            {% endif %}
-            </li>
-            {% endif %}
-    {% endfor %}
-</ul>
-
-**Guiding Principles for Extensibility**
-
-The following principles are upheld in the design of Meshery's extensibility.
-
-1. Recognize that different deployment environments have different systems to integrate with.
-1. Offer a default experience that provides the optimal user experience.
+ <!-- via [adapters]({{site.baseurl}}/extensibility/adapters), different [load generators]({{site.baseurl}}/extensibility/load-generators) and different [providers]({{site.baseurl}}/extensibility/providers). Meshery also offers a REST API. -->
 
 ## Extension Points
 
@@ -44,16 +23,32 @@ Meshery is not just an application. It is a set of microservices where the centr
 
 _Figure: Extension points available throughout Meshery_
 
-The following points of extension are currently incorporated into Meshery.
-
-## Types of Extension Points
-
+<!-- 
 1. [Adapters]({{site.baseurl}}/extensibility/adapters)
-   - Messaging Framework (CloudEvents and NATS)
+   -  Messaging Framework (CloudEvents and NATS) 
 1. [GraphQL API](/extensibility/api#graphql)
 1. [Load Generators]({{site.baseurl}}/extensibility/load-generators)
 1. [Providers]({{site.baseurl}}/extensibility/providers)
 1. [REST API](/extensibility/api#rest)
 1. [UI Plugins](extensibility/ui)
 1. [Integrations](/extensibility/integrations)
+1. [Extensions](/extensibility/extensions) 
+-->
 
+## Types of Extension Points
+
+The following points of extension are currently incorporated into Meshery.
+
+{% assign sorted = site.pages | sort: "extensibility" %}
+
+<ul>
+    {% for item in sorted %}
+    {% if item.type=="Extensibility" and item.list!="exclude" and item.language !="es"  -%}
+      <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+      {% if item.abstract != " " %}
+              - {{ item.abstract }}
+            {% endif %}
+            </li>
+            {% endif %}
+    {% endfor %}
+</ul>

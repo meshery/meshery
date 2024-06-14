@@ -50,14 +50,20 @@ export default function LazyComponentForm({ component, disabled, ...otherprops }
     }
 
     setExpanded(true);
-    const { apiVersion, kind, model } = component;
-    const { name: modelName, version } = model;
+    const {
+      component: { vesion: apiVersion, kind },
+      model,
+    } = component;
+    const {
+      name: modelName,
+      model: { version },
+    } = model;
     try {
       if (isEmpty(schemaSet)) {
         const res = await getMeshModelComponent(modelName, kind, version, apiVersion);
         if (res.components[0]) {
           setSchemaSet({
-            workload: JSON.parse(res.components[0].schema), // has to be removed
+            workload: JSON.parse(res.components[0].component.schema), // has to be removed
           });
         } else {
           throw new Error('found null in component definition');

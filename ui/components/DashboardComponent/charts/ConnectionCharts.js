@@ -7,12 +7,11 @@ import ConnectClustersBtn from '../../General/ConnectClustersBtn';
 import Link from 'next/link';
 import theme from '../../../themes/app';
 import { iconSmall } from '../../../css/icons.styles';
-import {
-  CustomTextTooltip,
-  RenderTooltipContent,
-} from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
+import { CustomTextTooltip } from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
 import { useGetAllConnectionStatusQuery } from '@/rtk-query/connection';
 import { InfoOutlined } from '@material-ui/icons';
+import CAN from '@/utils/can';
+import { keys } from '@/utils/permission_constants';
 
 export default function ConnectionStatsChart({ classes }) {
   const { data: statusData } = useGetAllConnectionStatusQuery();
@@ -51,10 +50,15 @@ export default function ConnectionStatsChart({ classes }) {
     },
   };
 
-  const url = `https://docs.meshery.io/concepts/logical/connections`;
-
   return (
-    <Link href="/management/connections">
+    <Link
+      href="/management/connections"
+      style={{
+        pointerEvents: !CAN(keys.VIEW_CONNECTIONS.action, keys.VIEW_CONNECTIONS.subject)
+          ? 'none'
+          : 'auto',
+      }}
+    >
       <div className={classes.dashboardSection}>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           <Typography variant="h6" gutterBottom className={classes.link}>
@@ -62,14 +66,8 @@ export default function ConnectionStatsChart({ classes }) {
           </Typography>
           <div onClick={(e) => e.stopPropagation()}>
             <CustomTextTooltip
-              backgroundColor="#3C494F"
               interactive={true}
-              title={RenderTooltipContent({
-                showPriortext:
-                  'Meshery Connections are managed and unmanaged resources that either through discovery or manual entry are managed by a state machine and used within one or more Environments.',
-                link: url,
-                showAftertext: 'to know more about Meshery Connections',
-              })}
+              title={`Meshery Connections are managed and unmanaged resources that either through discovery or manual entry can be assigned to one or more Environments. [Learn More](https://docs.meshery.io/concepts/logical/connections)`}
               placement="left"
             >
               <IconButton

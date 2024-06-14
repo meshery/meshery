@@ -17,8 +17,8 @@ import (
 
 // Handler type is the bucket for configs and http handlers
 type Handler struct {
-	config *models.HandlerConfig
-	task   *taskq.Task
+	config          *models.HandlerConfig
+	task            *taskq.Task
 	MeshsyncChannel chan struct{}
 	log             logger.Handler
 	// to be removed
