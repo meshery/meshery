@@ -1311,27 +1311,23 @@ function MesheryPatterns({
                 <InfoOutlinedIcon data-cy="information-button" />
               </TooltipIcon>
 
-              {arePatternsReadOnly ? null : (
-                <>
-                  {canPublishPattern && visibility !== VISIBILITY.PUBLISHED ? (
-                    <TooltipIcon
-                      placement="bottom"
-                      title="Publish"
-                      disabled={!CAN(keys.PUBLISH_DESIGN.action, keys.PUBLISH_DESIGN.subject)}
-                      onClick={(ev) => handlePublishModal(ev, rowData)}
-                    >
-                      <PublicIcon fill="#F91313" data-cy="publish-button" />
-                    </TooltipIcon>
-                  ) : (
-                    <TooltipIcon
-                      title="Unpublish"
-                      disabled={!CAN(keys.UNPUBLISH_DESIGN.action, keys.UNPUBLISH_DESIGN.subject)}
-                      onClick={(ev) => handleUnpublishModal(ev, rowData)()}
-                    >
-                      <PublicIcon fill="#F91313" data-cy="unpublish-button" />
-                    </TooltipIcon>
-                  )}
-                </>
+              {canPublishPattern && visibility !== VISIBILITY.PUBLISHED ? (
+                <TooltipIcon
+                  placement="bottom"
+                  title="Publish"
+                  disabled={!CAN(keys.PUBLISH_DESIGN.action, keys.PUBLISH_DESIGN.subject)}
+                  onClick={(ev) => handlePublishModal(ev, rowData)}
+                >
+                  <PublicIcon fill="#F91313" data-cy="publish-button" />
+                </TooltipIcon>
+              ) : (
+                <TooltipIcon
+                  title="Unpublish"
+                  disabled={!CAN(keys.UNPUBLISH_DESIGN.action, keys.UNPUBLISH_DESIGN.subject)}
+                  onClick={(ev) => handleUnpublishModal(ev, rowData)()}
+                >
+                  <PublicIcon fill="#F91313" data-cy="unpublish-button" />
+                </TooltipIcon>
               )}
             </Box>
           );
