@@ -70,6 +70,18 @@ components:
   colorIcon: assets/img/integrations/kubevault-crds/components/vault-policy-binding/icons/color/vault-policy-binding-color.svg
   whiteIcon: assets/img/integrations/kubevault-crds/components/vault-policy-binding/icons/white/vault-policy-binding-white.svg
   description: 
+- name: vault-server-version
+  colorIcon: assets/img/integrations/kubevault-crds/components/vault-server-version/icons/color/vault-server-version-color.svg
+  whiteIcon: assets/img/integrations/kubevault-crds/components/vault-server-version/icons/white/vault-server-version-white.svg
+  description: 
+- name: pki-role
+  colorIcon: assets/img/integrations/kubevault-crds/components/pki-role/icons/color/pki-role-color.svg
+  whiteIcon: assets/img/integrations/kubevault-crds/components/pki-role/icons/white/pki-role-white.svg
+  description: 
+- name: vault-server
+  colorIcon: assets/img/integrations/kubevault-crds/components/vault-server/icons/color/vault-server-color.svg
+  whiteIcon: assets/img/integrations/kubevault-crds/components/vault-server/icons/white/vault-server-white.svg
+  description: 
 featureList: [
   "Deploy TLS secured Vault Servers on Kubernetes using KubeVault. You can use cert-manager to manage VaultServer TLS or you can manage TLS with self-signed.",
   "Invite anyone to review and make changes to your private designs.",

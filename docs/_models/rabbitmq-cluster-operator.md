@@ -62,6 +62,10 @@ components:
   colorIcon: assets/img/integrations/rabbitmq-cluster-operator/components/rabbitmq-cluster/icons/color/rabbitmq-cluster-color.svg
   whiteIcon: assets/img/integrations/rabbitmq-cluster-operator/components/rabbitmq-cluster/icons/white/rabbitmq-cluster-white.svg
   description: 
+- name: operator-policy
+  colorIcon: assets/img/integrations/rabbitmq-cluster-operator/components/operator-policy/icons/color/operator-policy-color.svg
+  whiteIcon: assets/img/integrations/rabbitmq-cluster-operator/components/operator-policy/icons/white/operator-policy-white.svg
+  description: 
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",
