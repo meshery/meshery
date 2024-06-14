@@ -4,7 +4,7 @@ title: Hello Kubernetes with Dapr
 abstract: |
   Dive into this step-by-step tutorial on deploying Dapr in Kubernetes using Meshery Playground. Learn to deploy a Python app for generating messages and a Node app for consuming and persisting them, all orchestrated with Dapr for enhanced application integration.
 permalink: guides/tutorials/Hello-Kubernetes-with-Dapr
-redirect_from: /dapr-quickstart/Hello-Kubernetes-with-Dapr
+redirect_from: guides/tutorials/Hello-Kubernetes-with-Dapr
 type: guide
 category: tutorial
 language: en
