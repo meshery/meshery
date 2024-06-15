@@ -8,7 +8,6 @@ import (
 
 	"github.com/gofrs/uuid"
 	"gopkg.in/yaml.v2"
-	"gorm.io/gorm"
 
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/models/patterns"
@@ -32,6 +31,7 @@ type MesheryPatternPage struct {
 // one local user. We make this distinction to be consistent with the remote provider
 func (mpp *MesheryPatternPersister) GetMesheryPatterns(search, order string, page, pageSize uint64, updatedAfter string, visibility []string) ([]byte, error) {
 	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
+	fmt.Println("Yash search --", search, " order --", order, " page --", page, " pagesize --", pageSize, " visibility --", visibility)
 
 	if order == "" {
 		order = "updated_at desc"
@@ -39,10 +39,13 @@ func (mpp *MesheryPatternPersister) GetMesheryPatterns(search, order string, pag
 
 	count := int64(0)
 	patterns := []*MesheryPattern{}
-	var query *gorm.DB
-	if len(visibility) == 0 {
-		query = mpp.DB.Where("visibility in (?)", visibility)
+
+	query := mpp.DB.Table("meshery_patterns")
+
+	if len(visibility) > 0 {
+		query = query.Where("visibility in (?)", visibility)
 	}
+
 	query = query.Where("updated_at > ?", updatedAfter).Order(order)
 
 	if search != "" {
@@ -50,8 +53,7 @@ func (mpp *MesheryPatternPersister) GetMesheryPatterns(search, order string, pag
 		query = query.Where("(lower(meshery_patterns.name) like ?)", like)
 	}
 
-	query.Table("meshery_patterns").Count(&count)
-
+	query.Count(&count)
 	Paginate(uint(page), uint(pageSize))(query).Find(&patterns)
 
 	mesheryPatternPage := &MesheryPatternPage{
