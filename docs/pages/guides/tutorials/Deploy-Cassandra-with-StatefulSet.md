@@ -53,7 +53,8 @@ spec:
   selector:
     app: cassandra
 ```
-1.Import this file into meshery playground .
+1.Import this file into meshery playground.
+
 2.once succesfully imported make sure sure to deploy in meshery playground.
 
 #### Step2 - Using a StatefulSet to create a Cassandra ring 
@@ -182,7 +183,9 @@ To view the resources deployed we will use the **Visualize** section of the _Mes
 1.  Click **Visualize** to begin.
 2.  Give the view a name (rename).
 3.  Click the filter icon.
-4.  Choose appropriate filters to limited displayed resources in the view. For example, here we want to display StatefullSets,Service,StorageClass etc  Additionally, we will also add a label filter i.e. `tutorial=deployment` in this case. This should show a filtered view with only your resources something similar to the screenshot below:
+4.  Choose appropriate filters to limited displayed resources in the view. For example, here we want to display StatefullSets,Service,StorageClass etc  
+    Additionally, we will also add a label filter i.e. `tutorial=deployment` in this case. This should show a filtered view with only your resources something 
+    similar to the screenshot below:
 
 ### Viewing Statefullset and Service information
 
