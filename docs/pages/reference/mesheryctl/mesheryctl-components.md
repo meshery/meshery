@@ -26,10 +26,10 @@ mesheryctl components [flags]
 
 ## Examples
 
-To view the number of components present in Meshery
+To view total of available components
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp components --count
+mesheryctl model --count
 
 </div>
 </pre> 
@@ -37,7 +37,7 @@ mesheryctl exp components --count
 To view list of components
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp components list
+mesheryctl components list
 
 </div>
 </pre> 
@@ -45,7 +45,7 @@ mesheryctl exp components list
 To view a specific component
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp components view [component-name]
+mesheryctl components view [component-name]
 
 </div>
 </pre> 
@@ -53,7 +53,7 @@ mesheryctl exp components view [component-name]
 To search for a specific component
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp components search [component-name]
+mesheryctl components search [component-name]
 
 </div>
 </pre> 
@@ -62,7 +62,7 @@ mesheryctl exp components search [component-name]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -c, --count   (optional) Get the number of components in total
+      --count   (optional) Get the number of components in total
   -h, --help    help for components
 
 </div>
