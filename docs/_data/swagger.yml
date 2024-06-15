@@ -1946,6 +1946,16 @@ paths:
                 - EventsAPI
             summary: Handle GET request for events.
             operationId: idGetEventStreamer
+        post:
+            responses:
+                "200":
+                    description: ""
+            description: |-
+                Streams UI generated Events to the Notification Center through the server.
+            tags:
+                - EventsAPI
+            summary: Handle POST request for UI generated events.
+            operationId: idUIEventHandler
     /api/integrations/connections/{connectionKind}:
         get:
             description: |-

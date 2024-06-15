@@ -359,6 +359,16 @@ paths:
             summary: Handle GET request for events.
             tags:
                 - EventsAPI
+        post:
+            description: |-
+                Streams UI generated Events to the Notification Center through the server.
+            operationId: idUIEventHandler
+            responses:
+                "200":
+                    description: ""
+            summary: Handle POST request for UI generated events.
+            tags:
+                - EventsAPI 
     /api/events/{id}:
         delete:
             description: Deletes event associated with the id.

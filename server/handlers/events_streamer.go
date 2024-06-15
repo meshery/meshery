@@ -476,6 +476,11 @@ func closeAdapterConnections(localMeshAdaptersLock *sync.Mutex, localMeshAdapter
 	return map[string]*meshes.MeshClient{}
 }
 
+// swagger:route POST /api/events EventsAPI idUIEventHandler
+// Handle sending UI-generated events to the notification center through the server.
+// responses:
+// 200:
+
 func (h *Handler) UIEventHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	fmt.Println("POST /api/events hit")
 	userID := uuid.FromStringOrNil(user.ID)
