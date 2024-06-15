@@ -51,7 +51,7 @@ Learn to efficiently import, configure, and deploy Helm charts within Meshery Pl
 
 ### Note
 
-To import Helm charts into Meshery, any direct downloadable link to a file, follow this format: `https://raw.githubusercontent.com/username/repository/branch/path/to/file.tgz`.
+To import Helm charts into Meshery, `any direct downloadable link to a file ` follow this format: `https://raw.githubusercontent.com/username/repository/branch/path/to/file.tgz`.
 
 Generally, we don't have GitHub raw links readily available, so you can use the [Git-Rawify tool](https://git-rawify.vercel.app/#convert) to convert standard GitHub URLs into raw links. Ensure you copy the file with the `.tgz` extension only.
 
