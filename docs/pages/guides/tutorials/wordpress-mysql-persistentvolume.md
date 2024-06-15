@@ -62,13 +62,13 @@ These YAML files contain the Service definitions, Persistent Volume Claims, and 
 
    - Select `Kubernetes Manifest` from the "Design Type" dropdown menu.
 
-    ![Import modal](./screenshots/wp1.png)
+        ![Import modal](./screenshots/wp1.png)
 
    - Choose `File Upload` for the upload method, and select the file you just downloaded.
 
    - Then, click on `Import`
 
-    ![Import mysql-deployment](./screenshots/wp2.png)
+        ![Import mysql-deployment](./screenshots/wp2.png)
 
 3. Under the "Designs" tab, you will see that we have successfully imported the `mysql-deployment` design.
 
@@ -78,7 +78,7 @@ These YAML files contain the Service definitions, Persistent Volume Claims, and 
 
 4. Now, follow the same steps to import the `wordpress-deployment` file.
 
-  ![wordpress-deployment](./screenshots/wp4.png)
+    ![wordpress-deployment](./screenshots/wp4.png)
 
 #### Merging the Designs
 
@@ -123,7 +123,7 @@ Before you proceed, choose a password and convert it into base64 format. You can
     - Set the _Type_ as `Opaque`.
     - Click **+** next to Data and add the secret as a key value pair `password:cGFzc3dvcmQ=`
 
-    ![Configure secret](./screenshots/wp9.png)
+        ![Configure secret](./screenshots/wp9.png)
 
 3. Click outside the window to close the configuration tab.
 
@@ -145,15 +145,15 @@ Please note that using `hostPath` for Persistent Volumes is generally not recomm
     - Set the "StorageClassName" as `manual`
     - Click **+** next to "AccessMode" and enter `ReadWriteOnce`
 
-    ![Configure persistent volume](./screenshots/wp11.png)
+        ![Configure persistent volume](./screenshots/wp11.png)
 
     - Scroll down to "Capacity" and enter in the key pair `storage:20Gi`
 
-    ![Persistent volume capacity](./screenshots/wp12.png)
+        ![Persistent volume capacity](./screenshots/wp12.png)
 
     - Scroll down to "Hostpath" and input `mnt/data/wp-pv` for the _path_ and `DirectoryOrCreate` for the _type_.
 
-    ![Persistent volume hostpath](./screenshots/wp13.png)
+        ![Persistent volume hostpath](./screenshots/wp13.png)
 
 3. Repeat similar steps for the Mysql Persistent Volume
 
@@ -181,6 +181,14 @@ To make it easier to filter and manage our resources during visualization, let's
 
 5. Now click on `Save As` and save the design.
 
+#### Group Components
+
+The _**Group Components**_ icon on the dock below allows you to group resources based on shared labels or annotations.
+
+This functionality aids in visualizing the relationships between various resources, making it easier to manage them, troubleshoot issues, and understand the overall cluster architecture.
+
+![Group Components](./screenshots/wp21.png)
+
 #### Deploy the Resources
 
 1. Click `Actions` in the top right corner and click on `Deploy`.
@@ -200,6 +208,11 @@ To make it easier to filter and manage our resources during visualization, let's
 4. Finally click `Deploy` to deploy the application to the cluster.
 
     ![Deploy resources](./screenshots/wp18.png)
+
+5. To check the status of your deployment, click on the notification icon on the top right corner. You can click on `Open In visualizer` to navigate to the Visualize section or follow the steps below.
+
+    ![Deploy resources](./screenshots/wp22.png)
+
 
 #### Visualizing the Deployed Resources
 
@@ -221,7 +234,15 @@ To view the resources deployed we will use the Visualize section of the _MeshMap
 
 You can click on any resource to view more details about it in the "Details" section on the right sidebar.
 
-![Get more details](./screenshots/wp20.png)
+**Deployment**
+
+![Get more details about deployment](./screenshots/wp23.png)
+
+**Service**
+
+The Service details only display the cluster IP for now. So there is no means for us to access the application externally.
+
+![Get more details about service](./screenshots/wp20.png)
 
 #### Deleting Resources
 
