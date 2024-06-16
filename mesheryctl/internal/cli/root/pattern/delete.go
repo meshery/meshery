@@ -128,7 +128,7 @@ mesheryctl pattern delete [file | URL]
 			}
 
 			var pattern string
-			err = json.Unmarshal([]byte(patternFile), pattern)
+			err = json.Unmarshal([]byte(patternFile), &pattern)
 			if err != nil {
 				utils.Log.Error(err)
 				return nil
