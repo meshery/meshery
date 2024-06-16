@@ -15,9 +15,13 @@
 package pattern
 
 import (
+	"encoding/json"
 	"fmt"
+	"io"
 
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/layer5io/meshery/server/models"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
@@ -63,4 +67,37 @@ func init() {
 
 	availableSubcommands = []*cobra.Command{applyCmd, deleteCmd, viewCmd, listCmd, importCmd}
 	PatternCmd.AddCommand(availableSubcommands...)
+}
+func getContextID(mctlCfg *config.MesheryCtlConfig) (string, error) {
+	contextURL := mctlCfg.GetBaseMesheryURL() + "/api/system/kubernetes/contexts"
+
+	// Make a GET request to the Contexts API
+	req, err := utils.NewRequest("GET", contextURL, nil)
+	if err != nil {
+		utils.Log.Error(err)
+		return "", err
+	}
+
+	resp, err := utils.MakeRequest(req)
+	if err != nil {
+		utils.Log.Error(err)
+		return "", err
+	}
+
+	// Parse the response to get the context page
+	var contextPage *models.MesheryK8sContextPage
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
+	err = json.Unmarshal(body, &contextPage)
+	if err != nil {
+		utils.Log.Error(err)
+		return "", err
+	}
+
+	contextID := contextPage.Contexts[0].ID
+
+	return contextID, nil
 }

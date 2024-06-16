@@ -11,7 +11,7 @@ import (
 
 func TestDeleteCmd(t *testing.T) {
 	// initialize mock meshery backend
-	go utils.StartMockMesheryServer(t) // nolint 
+	go utils.StartMockMesheryServer(t) // nolint
 
 	// setup current context
 	utils.SetupContextEnv(t)
