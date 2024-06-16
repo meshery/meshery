@@ -12,30 +12,47 @@ list: include
 
 Relationships within Model play a crucial role in establishing concrete visualisations of efficient data flow between different components of Meshery. These are used to classify the nature of interaction between one or more interconnected Components.
 
-## Overview of Tasks
+{% include toc.html %}
 
-1. Identify the relationship and any specific constraints to be enforced between the two specific components, their models, or potentially other components, models, or environmental considerations.
-2. Propose the appropriate relationship type, using one of the predefined set of relationship types, or suggest a new relationship where an existing type does not fit.
-3. Create a Relationship Definition (yaml), including the following attributes:
-4. Identify an existing OPA policy as the `evaluationQuery` suitable to the relationship. If no policy exists, propose a new policy (rego).
-5. Submit a pull request to the Meshery repository with the new relationship definition.
+## Steps to contribute to Model Relationships
 
-### Relationship Visualizations
+##### [1. Identify the relationship and any specific constraints](#relationship-identification)
+Using your domain expertise, define the qualities of this new relationship. Identify and qualify any specific constraints to be enforced between one or more specific components within the same or different models.
 
-{% include relationships.html %}
+For example, a relationship between a `Service` and a `Pod` in the `Kubernetes` model might only exist in the absence of a `Deployment` as the parent of the `Pod` (the relationship between a `Service` and a `Pod` will be indirect in the presence of a `Deployment`, in which case the `Service` and the `Deployment` will have a direct `kind: edge` relationship).
 
-### Defining Relationships: Kinds, Types, Subtypes
+##### [2. Propose a specific visual representation for the relationship](#relationship-visualizations)
+
+   Browse and pick from the list of visualizations on [Relationship Visualizations](https://docs.meshery.io/project/contributing/contributing-relationships#relationship-visualizations). 
+
+   ##### Relationship Visualizations
+
+   {% include relationships.html %}
+
+   Propose the appropriate relationship `kind`, `type`, and `subtype`, using one of the predefined set of relationship types or suggest a new relationship where an existing type does not fit. Review a prior pull request as an example of how to define a Relationships. For example, see [PR #9880](https://github.com/meshery/meshery/pull/9880/files)
+
+##### [3. Create a Relationship Definition as a JSON file](#relationship-definition)
+   Place this new definition into your model folder. See [Contributing to Models](./models). Submit a PR containing the new Relationship Definition.
+1. Propose the appropriate relationship type, using one of the predefined set of relationship types, or suggest a new relationship where an existing type does not fit.
+2. Create a Relationship Definition (yaml), including the following attributes:
+3. Identify an existing OPA policy as the `evaluationQuery` suitable to the relationship. If no policy exists, propose a new policy (rego).
+   1. *(rarely necessary)* Create a new policy for the evaluation of your relationship using Rego. _This step is only necessary and can typically be skipped. Contact a maintainer if the relationship requires a new policy to evaluate the relationship._
+
+4.  Submit a pull request to the Meshery repository with the new relationship definition.
+
+
+
+
+### Defining Relationships
 
 Relationships are defined in the `relationships.yaml` file in their respective [model](/concepts/logical/models). Each relationship definition includes the following attributes:
 
 - `kind`: The genre of relationship (e.g., hierarchical, edge, sibling).
 - `type`: The augmentative category of the relationship (e.g., binding, non-binding, inventory).
-- `subType`: The specific represenative visual paradigm (e.g., parent, mount, network, wallet, badge).
-- `selectors`: The scope of the relationship, including the components involved and any constraints.
-- - **Selectors:** These specify which components the relationship applies to (think of in terms of the `AND` operators in a query).
-- **Selector sets:** Combine multiple selectors for more granular control (think of in terms of the `OR` operators in a query).
-- `evaluationQuery`: The OPA policy to invoke for relationship evaluation.
-- `documentation`: A description of the relationship, its purpose, and any constraints or considerations.
+- `subType`: The specific representative visual paradigm (e.g., parent, mount, network, wallet, badge).
+- `selectors`: The scope of the relationship, including the components involved and any constraints. Selector specify to which component(s) the relationship applies or does not apply (think of in terms of the `AND` operators in a query). Selector Sets are used to combine multiple selectors for more granular control over the logic used when matchmaking (establishing a relationship) between components (think of in terms of the `OR` operators in a query).
+- `evaluationQuery`: Name of the policy or policies (Open Policy Agent rego file(s)) to invoke for relationship evaluation.
+- `description`: A characterization of the relationship, its purpose, and any constraints or considerations of its application.
 
 ### Existing Relationships as Examples
 

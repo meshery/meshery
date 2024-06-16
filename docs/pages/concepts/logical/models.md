@@ -12,19 +12,14 @@ redirect_from:
 
 Models are units of packaging for Meshery's logical object representation. Models (packages) are versioned and bundle any number of components, relationships, policies, connections and credentials. Meshery's internal object model is designed to provide a consistent and extensible way of capturing and characterizing the resources (applications, services, and infrastructure) under Meshery's management. Models serve as an exportable package (OCI-compatible image) to define managed infrastructure, their relationships, and details specifics of how they are to be managed.
 
-The core idea is to create a universal model that provides a foundation for Meshery to build upon and expand. The model should be adaptable to different use cases and enable seamless communication between Meshery's components. It aims to provide a consistent understanding of constructs across various systems within the cloud-native landscape.
-
 Key aspects of Meshery Models:
 
 * **Logical Representation:** Models offer a logical representation of entities under Meshery's management, abstracting away system-specific details.
 * **Packaging:** Model packages can be imported and exported as OCI-compatible images, ensuring portability and encapsulation of intellectual property.
 * **Components:** Components within a Model represent the capabilities of the underlying platform and are used by operators to build applications.
-* **Relationships:** Relationships define interactions and dependencies between components within a Model.
+* **Relationships:** Relationships define interactions and dependencies between components within a model.
 * **Policies:** Policies govern the behavior and constraints of components and relationships, ensuring adherence to desired operational practices.
-* **Extensibility:** The Model is designed to be extensible, allowing users to define custom components, relationships, and policies.
-
-Overall, Meshery Models provide a structured and adaptable approach to representing and managing the complexities of cloud-native systems within the Meshery framework.
-
+* **Extensibility:** Models are highly extensible, allowing you to define custom components, relationships, and policies. See [Contributing to Models](/project/contributing/contributing-models).
 
 As a cloud native manager that provides a comprehensive set of tools for managing multi-cloud and cloud native applications and infrastructure, Meshery needs object models that can granularly characterize a wide range of systems under management from simple applications to complex microservices architectures and their infrastructure. This document describes the Meshery Model and its constituent set of entities  used to represent and manage cloud and cloud native systems.
 
