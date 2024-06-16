@@ -45,6 +45,7 @@
   "metadata": {
    "capabilities": "",
    "defaultData": "",
+   "genealogy": "",
    "isAnnotation": false,
    "isNamespaced": true,
    "primaryColor": "#804998",
@@ -54,6 +55,7 @@
    "status": "ignored",
    "styleOverrides": "",
    "styles": "",
+   "subCategory": "",
    "svgColor": "",
    "svgComplete": "",
    "svgWhite": ""
