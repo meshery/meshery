@@ -20,11 +20,12 @@ import { useWindowDimensions } from '@/utils/dimension';
 const styles = (theme) => ({
   wrapperClss: {
     flexGrow: 1,
-    maxWidth: '100%',
+    maxWidth: '100vw',
     height: 'auto',
   },
   tab: {
-    width: '20%',
+    width: 'max(6rem, 20%)',
+    margin: 0,
     minWidth: 40,
     paddingLeft: 0,
     paddingRight: 0,
@@ -169,7 +170,7 @@ const DashboardComponent = ({ classes, k8sconfig, selectedK8sContexts, updatePro
             onChange={(_e, val) => {
               changeResourceTab(getResourceCategory(val));
             }}
-            variant={width < 800 ? 'scrollable' : 'fullWidth'}
+            variant={width < 1280 ? 'scrollable' : 'fullWidth'}
             scrollButtons="on"
             textColor="primary"
             centered

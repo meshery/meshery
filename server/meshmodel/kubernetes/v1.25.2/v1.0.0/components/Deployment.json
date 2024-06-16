@@ -34,7 +34,7 @@
    "relationships": null
   },
   "metadata": {
-   "capabilities": " {\n  \"designer\": {\n    \"edit\": {\n      \"shape\": {\n        \"convert-shape\": false\n      }\n    }\n  }\n}",
+   "capabilities": "{\n  \"fieldRefs\": [\n    {\n      \"fieldPath\": \"spec.template.spec.containers\",\n      \"jsonSchemaPath\": \"properties.spec.allOf[0].properties.template.allOf[0].properties.spec.allOf[0].properties.containers.items.allOf[0]\",\n      \"component\": {\n        \"kind\": \"Container\",\n        \"model\": \"meshery-core\"\n      },\n      \"renderChildren\": true\n    }\n  ],\n  \"designer\": {\n    \"edit\": {\n      \"shape\": {\n        \"convert-shape\": false\n      }\n    }\n  }\n}",
    "defaultData": "",
    "genealogy": "parent",
    "isAnnotation": false,
@@ -46,7 +46,7 @@
    "modelDisplayName": "Kubernetes",
    "primaryColor": "#326CE5",
    "secondaryColor": "#7aa1f0",
-   "shape": "round-pentagon",
+   "shape": "round-rectangle",
    "shapePolygonPoints": "",
    "status": "enabled",
    "styleOverrides": "{\"border-width\":2,\"background-opacity\":0.5}",
