@@ -31,7 +31,6 @@ type MesheryPatternPage struct {
 // one local user. We make this distinction to be consistent with the remote provider
 func (mpp *MesheryPatternPersister) GetMesheryPatterns(search, order string, page, pageSize uint64, updatedAfter string, visibility []string) ([]byte, error) {
 	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
-	fmt.Println("Yash search --", search, " order --", order, " page --", page, " pagesize --", pageSize, " visibility --", visibility)
 
 	if order == "" {
 		order = "updated_at desc"
