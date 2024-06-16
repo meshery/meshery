@@ -12,7 +12,7 @@
    "name": "grafana-agent-operator",
    "displayName": "Grafana Agent Operator",
    "description": "",
-   "status": "ignored",
+   "status": "enabled",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "registrant": {
     "hostname": "artifacthub"
@@ -52,7 +52,7 @@
    "secondaryColor": "#00D3A9",
    "shape": "circle",
    "shapePolygonPoints": "",
-   "status": "ignored",
+   "status": "enabled",
    "styleOverrides": "",
    "styles": "",
    "subCategory": "",
