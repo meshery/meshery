@@ -27,6 +27,7 @@ import (
 	"strings"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/pattern/core"
@@ -57,10 +58,37 @@ mesheryctl pattern apply -f [file | URL]
 mesheryctl pattern apply [pattern-name]
 	`,
 	Annotations: linkDocPatternApply,
-	Args:        cobra.MinimumNArgs(0),
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		//Check prerequisite
+
+		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+		if err != nil {
+			return utils.ErrLoadConfig(err)
+		}
+		err = utils.IsServerRunning(mctlCfg.GetBaseMesheryURL())
+		if err != nil {
+			return err
+		}
+		ctx, err := mctlCfg.GetCurrentContext()
+		if err != nil {
+			return system.ErrGetCurrentContext(err)
+		}
+		err = ctx.ValidateVersion()
+		if err != nil {
+			return err
+		}
+		return nil
+	},
+	Args: cobra.MinimumNArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var req *http.Request
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+		if err != nil {
+			utils.Log.Error(err)
+			return nil
+		}
+
+		contextID, err := getContextID(mctlCfg)
 		if err != nil {
 			utils.Log.Error(err)
 			return nil
@@ -243,7 +271,7 @@ mesheryctl pattern apply [pattern-name]
 			return nil
 		}
 
-		req, err = utils.NewRequest("POST", deployURL, bytes.NewBuffer(payloadBytes))
+		req, err = utils.NewRequest("POST", deployURL+"?contexts="+contextID, bytes.NewBuffer(payloadBytes))
 		if err != nil {
 			utils.Log.Error(err)
 			return nil
@@ -308,6 +336,39 @@ func multiplePatternsConfirmation(profiles []models.MesheryPattern) int {
 			return index
 		}
 	}
+}
+func getContextID(mctlCfg *config.MesheryCtlConfig) (string, error) {
+	contextURL := mctlCfg.GetBaseMesheryURL() + "/api/system/kubernetes/contexts"
+
+	// Make a GET request to the Contexts API
+	req, err := utils.NewRequest("GET", contextURL, nil)
+	if err != nil {
+		utils.Log.Error(err)
+		return "", err
+	}
+
+	resp, err := utils.MakeRequest(req)
+	if err != nil {
+		utils.Log.Error(err)
+		return "", err
+	}
+
+	// Parse the response to get the context page
+	var contextPage *models.MesheryK8sContextPage
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
+	err = json.Unmarshal(body, &contextPage)
+	if err != nil {
+		utils.Log.Error(err)
+		return "", err
+	}
+
+	contextID := contextPage.Contexts[0].ID
+
+	return contextID, nil
 }
 
 func init() {

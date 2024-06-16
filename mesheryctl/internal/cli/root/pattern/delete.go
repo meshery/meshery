@@ -21,6 +21,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/asaskevich/govalidator"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
@@ -48,97 +49,154 @@ mesheryctl pattern delete [file | URL]
 			return nil
 		}
 
-		pattern := ""
-		isID := false
-		if len(args) > 0 {
-			pattern, isID, err = utils.ValidId(mctlCfg.GetBaseMesheryURL(), args[0], "pattern")
-			if err != nil {
-				utils.Log.Error(ErrPatternInvalidNameOrID(err))
-				return nil
-			}
-		}
-
-		// Delete the pattern using the id
-		if isID {
-			err := utils.DeleteConfiguration(mctlCfg.GetBaseMesheryURL(), pattern, "pattern")
-			if err != nil {
-				utils.Log.Error(err)
-				return errors.Wrap(err, utils.PatternError(fmt.Sprintf("failed to delete pattern %s", args[0])))
-			}
-			utils.Log.Info("Pattern ", args[0], " deleted successfully")
+		contextID, err := getContextID(mctlCfg)
+		if err != nil {
+			utils.Log.Error(err)
 			return nil
 		}
+
 		deployURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern/deploy"
 		patternURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern"
+		// If a file path or URL is provided, delete the pattern using the file
+		if file != "" {
+			var patternFile string
+			// If file path not a valid URL, treat it like a local file path
+			if !govalidator.IsURL(file) {
+				content, err := os.ReadFile(file)
+				if err != nil {
+					utils.Log.Error(utils.ErrFileRead(errors.New(utils.PatternError(fmt.Sprintf("failed to read file %s. Ensure the filename or URL is valid", file)))))
+					return nil
+				}
 
-		// If file path not a valid URL, treat it like a local file path
-		if !govalidator.IsURL(file) {
-			content, err := os.ReadFile(file)
-			if err != nil {
-				utils.Log.Error(utils.ErrFileRead(errors.New(utils.PatternError(fmt.Sprintf("failed to read file %s. Ensure the filename or URL is valid", file)))))
-				return utils.ErrFileRead(errors.New(utils.PatternError(fmt.Sprintf("failed to read file %s. Ensure the filename or URL is valid", file))))
-			}
-
-			patternFile = string(content)
-		} else {
-			// Else treat it like a URL
-			url, path, err := utils.ParseURLGithub(file)
-			if err != nil {
-				utils.Log.Error(utils.ErrParseGithubFile(err, file))
-				return utils.ErrParseGithubFile(err, file)
-			}
-
-			utils.Log.Debug(url)
-			utils.Log.Debug(path)
-
-			var jsonValues []byte
-
-			// Send the URL and path to the server and let it fetch the patternfile and delete
-			// the components
-			if path != "" {
-				jsonValues, _ = json.Marshal(map[string]interface{}{
-					"url":  url,
-					"path": path,
-					"save": false,
-				})
+				patternFile = string(content)
 			} else {
-				jsonValues, _ = json.Marshal(map[string]interface{}{
-					"url":  url,
-					"save": false,
-				})
+				// Else treat it like a URL
+				url, path, err := utils.ParseURLGithub(file)
+				if err != nil {
+					utils.Log.Error(utils.ErrParseGithubFile(err, file))
+					return utils.ErrParseGithubFile(err, file)
+				}
+
+				utils.Log.Debug(url)
+				utils.Log.Debug(path)
+
+				var jsonValues []byte
+
+				// Send the URL and path to the server and let it fetch the patternfile and delete
+				// the components
+				if path != "" {
+					jsonValues, _ = json.Marshal(map[string]interface{}{
+						"url":  url,
+						"path": path,
+						"save": false,
+					})
+				} else {
+					jsonValues, _ = json.Marshal(map[string]interface{}{
+						"url":  url,
+						"save": false,
+					})
+				}
+
+				req, err = utils.NewRequest("POST", patternURL, bytes.NewBuffer(jsonValues))
+				if err != nil {
+					utils.Log.Error(err)
+					return nil
+				}
+
+				resp, err := utils.MakeRequest(req)
+				if err != nil {
+					utils.Log.Error(err)
+					return nil
+				}
+				utils.Log.Debug("remote hosted pattern request success")
+				var response []*models.MesheryPattern
+				defer resp.Body.Close()
+
+				body, err := io.ReadAll(resp.Body)
+				if err != nil {
+					utils.Log.Error(utils.ErrReadResponseBody(errors.Wrap(err, "failed to read response body")))
+					return nil
+				}
+
+				err = json.Unmarshal(body, &response)
+				if err != nil {
+					utils.Log.Error(utils.ErrUnmarshal(err))
+					return nil
+				}
+
+				patternFile = response[0].PatternFile
 			}
 
-			req, err = utils.NewRequest("POST", patternURL, bytes.NewBuffer(jsonValues))
+			var pattern string
+			err = json.Unmarshal([]byte(patternFile), pattern)
 			if err != nil {
 				utils.Log.Error(err)
 				return nil
 			}
 
-			resp, err := utils.MakeRequest(req)
+			err = utils.DeleteConfiguration(mctlCfg.GetBaseMesheryURL(), pattern, "pattern")
 			if err != nil {
 				utils.Log.Error(err)
-				return nil
+				return errors.Wrap(err, utils.PatternError(fmt.Sprintf("failed to delete pattern %s", pattern)))
 			}
-			utils.Log.Debug("remote hosted pattern request success")
-			var response []*models.MesheryPattern
-			defer resp.Body.Close()
-
-			body, err := io.ReadAll(resp.Body)
-			if err != nil {
-				utils.Log.Error(utils.ErrReadResponseBody(errors.Wrap(err, "failed to read response body")))
-				return nil
-			}
-
-			err = json.Unmarshal(body, &response)
-			if err != nil {
-				utils.Log.Error(utils.ErrUnmarshal(err))
-				return nil
-			}
-
-			patternFile = response[0].PatternFile
+			utils.Log.Info("Pattern ", pattern, " deleted successfully")
+			return nil
 		}
 
-		req, err = utils.NewRequest("DELETE", deployURL, bytes.NewBuffer([]byte(patternFile)))
+		// If the --file flag is not set, delete the pattern using the pattern name
+		patternName := ""
+		if len(args) > 0 {
+			patternName = strings.Join(args, "%20")
+		}
+
+		// Fetch the pattern using the pattern name
+		utils.Log.Debug("Fetching patterns")
+		req, err = utils.NewRequest("GET", patternURL+"?search="+patternName, nil)
+		if err != nil {
+			utils.Log.Error(err)
+			return nil
+		}
+
+		resp, err := utils.MakeRequest(req)
+		if err != nil {
+			utils.Log.Error(err)
+			return nil
+		}
+
+		var response *models.PatternsAPIResponse
+		defer resp.Body.Close()
+		body, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return errors.Wrap(err, utils.PatternError("failed to read response body"))
+		}
+		err = json.Unmarshal(body, &response)
+		if err != nil {
+			utils.Log.Error(err)
+			return nil
+		}
+
+		// Delete the pattern using the pattern ID
+		patternID := response.Patterns[0].ID
+		patternFile := response.Patterns[0].PatternFile
+		err = utils.DeleteConfiguration(mctlCfg.GetBaseMesheryURL(), patternID.String(), "pattern")
+		if err != nil {
+			utils.Log.Error(err)
+			return errors.Wrap(err, utils.PatternError(fmt.Sprintf("failed to delete pattern %s", patternName)))
+		}
+		utils.Log.Info("Pattern ", patternName, " deleted successfully")
+
+		payload := models.MesheryPatternFileDeployPayload{
+			PatternFile: patternFile,
+			PatternID:   patternID.String(),
+		}
+
+		payloadBytes, err := json.Marshal(payload)
+		if err != nil {
+			utils.Log.Error(err)
+			return nil
+		}
+
+		req, err = utils.NewRequest("DELETE", deployURL+"?context_id="+contextID, bytes.NewBuffer(payloadBytes))
 		if err != nil {
 			utils.Log.Error(err)
 			return utils.ErrCreatingRequest(err)
@@ -151,7 +209,7 @@ mesheryctl pattern delete [file | URL]
 		}
 
 		defer res.Body.Close()
-		body, err := io.ReadAll(res.Body)
+		body, err = io.ReadAll(res.Body)
 		if err != nil {
 			utils.Log.Error(utils.ErrReadResponseBody(err))
 			return nil
