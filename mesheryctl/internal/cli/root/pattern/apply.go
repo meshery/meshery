@@ -65,10 +65,6 @@ mesheryctl pattern apply [pattern-name]
 		if err != nil {
 			return utils.ErrLoadConfig(err)
 		}
-		err = utils.IsServerRunning(mctlCfg.GetBaseMesheryURL())
-		if err != nil {
-			return err
-		}
 		ctx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
 			return system.ErrGetCurrentContext(err)

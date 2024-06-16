@@ -10,6 +10,9 @@ import (
 )
 
 func TestApplyCmd(t *testing.T) {
+	// initialize mock meshery backend
+	go utils.StartMockMesheryServer(t) // nolint 
+
 	// setup current context
 	utils.SetupContextEnv(t)
 
@@ -53,6 +56,12 @@ func TestApplyCmd(t *testing.T) {
 					Response:     "apply.patternDeploy.response.golden",
 					ResponseCode: 200,
 				},
+				{
+					Method:       "GET",
+					URL:          "http://localhost:9081/api/system/kubernetes/contexts",
+					Response:     "context_response.golden",
+					ResponseCode: 200,
+				},
 			},
 			Token:       filepath.Join(fixturesDir, "token.golden"),
 			ExpectError: false,
@@ -66,6 +75,12 @@ func TestApplyCmd(t *testing.T) {
 					Method:       "POST",
 					URL:          testContext.BaseURL + "/api/pattern/deploy",
 					Response:     "apply.patternDeploy.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "GET",
+					URL:          "http://localhost:9081/api/system/kubernetes/contexts",
+					Response:     "context_response.golden",
 					ResponseCode: 200,
 				},
 			},

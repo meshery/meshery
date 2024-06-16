@@ -10,6 +10,9 @@ import (
 )
 
 func TestDeleteCmd(t *testing.T) {
+	// initialize mock meshery backend
+	go utils.StartMockMesheryServer(t) // nolint 
+
 	// setup current context
 	utils.SetupContextEnv(t)
 
@@ -45,6 +48,12 @@ func TestDeleteCmd(t *testing.T) {
 					Method:       "DELETE",
 					URL:          testContext.BaseURL + "/api/pattern/deploy",
 					Response:     "delete.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "GET",
+					URL:          "http://localhost:9081/api/system/kubernetes/contexts",
+					Response:     "context_response.golden",
 					ResponseCode: 200,
 				},
 			},
