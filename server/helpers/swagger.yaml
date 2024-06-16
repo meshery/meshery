@@ -361,12 +361,12 @@ paths:
                 - EventsAPI
         post:
             description: |-
-                Streams UI generated Events to the Notification Center through the server.
+                Receives client-generated events bound for the Notification Center.
             operationId: idUIEventHandler
             responses:
                 "200":
                     description: ""
-            summary: Handle POST request for UI generated events.
+            summary: Handle POST request for client-generated events.
             tags:
                 - EventsAPI 
     /api/events/{id}:

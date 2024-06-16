@@ -1951,7 +1951,7 @@ paths:
                 "200":
                     description: ""
             description: |-
-                Streams UI generated Events to the Notification Center through the server.
+                Receives client-generated events bound for the Notification Center.
             tags:
                 - EventsAPI
             summary: Handle POST request for UI generated events.
