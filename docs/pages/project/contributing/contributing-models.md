@@ -18,11 +18,13 @@ list: include
 4. What controls are exposed to model contributors?
 5. Are there any Global meshery defaults (can user change them?) -->
 
-Meshery's internal object model is designed to provide a consistent and extensible way of capturing and characterizing the resources under Meshery's management and the capabilities Meshery has at its disposal. Meshery Models serve as the unit of packaging for the object models that define a registered capability or a type of managed infrastructure and their relationships, and details specifics of how to manage them.
+Meshery's internal object model is designed to provide a consistent and extensible way of capturing and characterizing the resources under Meshery's management and the capabilities Meshery has at its disposal. Meshery Models serve as the unit of packaging for the object models that define a registered capability or a type of managed infrastructure and their relationships, and details specifics of how to manage them.Models often represent infrastructure and application technologies, however, they are also capable of defining other types of constructs like annotations, like shapes (infrastructure ambiguous components). Models are used to define the capabilities of Meshery.
 
-Models often represent infrastructure and application technologies, however, they are also capable of defining other types of constructs like annotations, like shapes (infrastructure ambiguous components). Models are used to define the capabilities of Meshery.
+_See [Models]({{site.baseurl}}/concepts/logical/models) to learn more about models as a logical concept._
 
-_See the Meshery [Registry]({{site.baseurl}}/concepts/logical/registry) to learn more._
+Each model includes a set of entities (in the form of definitions) that Meshery can manage. Models are defined and versioned using on the [Model Schema](https://github.com/meshery/schemas/blob/master/openapi/schemas/meshmodels.yml). The schema defines the structure of the model, including the entities it contains, their relationships, and the properties they have. The schema also defines the version of the model and the version of the schema itself.
+
+_See [Registry]({{site.baseurl}}/concepts/logical/registry) to learn more about Meshery's internal registry and how to use it._
 
 [![Model Construct Classification]({{ site.baseurl }}/assets/img/meshmodel/meshmodel-architecture.svg)]({{ site.baseurl }}/assets/img/concepts/meshery-models.png)
 _Figure: Model Construct Classification_
@@ -93,7 +95,8 @@ An _instance_ represents a realized construct. An _instance_ is a dynamic repres
 
 # Instructions for Creating a New Model
 
-All of Meshery's Models, Components, and Relationships can be found in the Meshery Integrations spreadsheet. This spreadsheet is the source of truth for the definition of Meshery's models. On a daily schedule, the contents of the Meshery Integrations spreadsheet is
+All of Meshery's Models, Components, and Relationships can be found in the Meshery Integrations spreadsheet. This spreadsheet is the source of truth for the definition of Meshery's models. On a daily schedule, the contents of the Meshery Integrations spreadsheet is refreshed.
+
 {% include alert.html type="light" title="Model Source Code" content="See examples of <a href='https://github.com/meshery/meshery/tree/master/server/meshmodel'>Models defined in JSON in meshery/meshery</a>." %}
 
 To add or update a model, follow these steps:
@@ -132,3 +135,16 @@ Connections can be:
 
 1. a ConnectionDefinition based Meshery's [Connection Schema](https://github.com/meshery/schemas/) with hand-curated Connection attributes.
 2. a custom ConnectionDefinition based Meshery's Connection Schema that references an existing Component within the same Model.
+
+## Next Steps
+
+The Meshery team is currently working on the following:
+
+* Extending the model to support additional constructs
+* Improving the tooling for working with models
+* Defining relationships between components and embedding those policies within models
+
+We encourage you to get involved in the development of Meshery Models and to share your feedback.
+  
+  {% include alert.html type="info" title="Meshery Models are extensible" content="Meshery Models are designed to be extensible, allowing you to define new components as needed. If you have an idea for a new component, please create one and share it with the Meshery community." %}
+  

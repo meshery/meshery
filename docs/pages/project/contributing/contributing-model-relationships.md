@@ -26,12 +26,14 @@ Relationships within Model play a crucial role in establishing concrete visualis
 
 ### Defining Relationships: Kinds, Types, Subtypes
 
-Relationships are defined in the `relationships.yaml` file in the Meshery repository. Each relationship definition includes the following attributes:
+Relationships are defined in the `relationships.yaml` file in their respective [model](/concepts/logical/models). Each relationship definition includes the following attributes:
 
 - `kind`: The genre of relationship (e.g., hierarchical, edge, sibling).
 - `type`: The augmentative category of the relationship (e.g., binding, non-binding, inventory).
 - `subType`: The specific represenative visual paradigm (e.g., parent, mount, network, wallet, badge).
 - `selectors`: The scope of the relationship, including the components involved and any constraints.
+- - **Selectors:** These specify which components the relationship applies to (think of in terms of the `AND` operators in a query).
+- **Selector sets:** Combine multiple selectors for more granular control (think of in terms of the `OR` operators in a query).
 - `evaluationQuery`: The OPA policy to invoke for relationship evaluation.
 - `documentation`: A description of the relationship, its purpose, and any constraints or considerations.
 
