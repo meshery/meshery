@@ -37,7 +37,7 @@ It also supports a collaborative environment, where DevOps engineers can share t
 * Delete design file:  `mesheryctl design delete --file [path to design file]`
 * View design file:  `mesheryctl design view [design name | ID]`
 * List all designs: `mesheryctl design list`
-5. [Importing](https://docs.meshery.io/reference/mesheryctl#cloud-native-pattern-configuration-and-management) an application. `mesheryctl design import -f [file-path]`
+5. [Importing](https://docs.meshery.io/reference/mesheryctl#cloud-native-pattern-configuration-and-management) a design. `mesheryctl design import -f [file-path] -s [manifest | compose | helm]`
 6. Applying [WASM Filter](https://docs.meshery.io/guides/configuration-management#wasm-filters). `mesheryctl filter import [file | URL] --wasm-config [filepath|string]`
 
 ### FAQ
