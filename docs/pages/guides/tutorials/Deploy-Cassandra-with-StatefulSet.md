@@ -4,10 +4,12 @@ title: Deploying Apache Cassandra with a StatefulSet
 abstract: |
   This tutorial shows you how to run Apache Cassandra on Kubernetes. Cassandra, a database, needs persistent storage to provide data durability (application state). In this example, a custom Cassandra seed provider lets the database discover new Cassandra instances as they join the Cassandra cluster.
 permalink: guides/tutorials/Deploy-Cassandra-with-StatefulSet
-redirect_from: guides/tutorials/Deploy-Cassandra-with-StatefulSet
-type: guide
-category: tutorial
+redirect_from: guides/tutorials/deploy-cassandra-with-statefulset
+model: kubernetes
+type: guides
+category: tutorials
 language: en
+list: include
 ---
 ### Introduction
 
