@@ -3,11 +3,13 @@ layout: default
 title: Deploying PHP Guestbook application(Stateless) with Redis
 abstract: |
   In this tutorial, you'll build and deploy a simple multi-tier web application using Kubernetes and Docker. It includes a Redis database for storing guestbook entries and multiple web frontend instances. You'll learn how to containerize these components, set up Kubernetes deployments and services, and establish communication between them. This hands-on guide is perfect for understanding basic application deployment in a clustered environment.
-permalink: guides/tutorials/Deploying-Guestbook-Application-With-Redis
+permalink: guides/tutorials/deploying-guestbook-application-with-redis
 redirect_from: guides/tutorials/Deploying-Guestbook-Application-With-Redis
-type: guide
-category: tutorial
+model: kubernetes
+type: guides
+category: tutorials
 language: en
+list: include
 ---
 ### Introduction
 
