@@ -188,6 +188,8 @@ func RelationshipsError(msg string, cmd string) string {
 		return formatError(msg, cmdRelationshipView)
 	case "generate":
 		return formatError(msg, cmdRelationshipGenerateDocs)
+	case "list":
+		return formatError(msg, cmdRelationshipList)
 	default:
 		return formatError(msg, cmdRelationships)
 	}

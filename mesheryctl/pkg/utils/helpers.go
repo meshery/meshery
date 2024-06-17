@@ -153,6 +153,7 @@ const (
 	cmdRelationships            cmdType = "relationships"
 	cmdRelationshipGenerateDocs cmdType = "relationships generate docs"
 	cmdRelationshipView         cmdType = "relationship view"
+	cmdRelationshipList         cmdType = "relationship list"
 	cmdWorkspace                cmdType = "workspace"
 	cmdWorkspaceList            cmdType = "workspace list"
 	cmdWorkspaceCreate          cmdType = "workspace create"
@@ -1240,4 +1241,15 @@ func FindInSlice(key string, items []string) (int, bool) {
 		}
 	}
 	return -1, false
+}
+
+func DisplayCount(component string, count int64) {
+	whiteBoardPrinter.Println("Total number of ", component, ":", count)
+}
+
+func GetPageQueryParameter(cmd *cobra.Command, page int) string {
+	if !cmd.Flags().Changed("page") {
+		return "pagesize=all"
+	}
+	return fmt.Sprintf("page=%d", page)
 }
