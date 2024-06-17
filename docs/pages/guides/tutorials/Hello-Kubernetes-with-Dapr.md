@@ -223,7 +223,82 @@ while True:
    ![](./screenshots/dl16.png)
 
 6. Click on `Deploy` at the final stage so that `Hello kubernetes-main` is successfully deployed.
-   ![](./screenshots/dl17.png)  
+   ![](./screenshots/dl17.png)
+
+ #### Step5 - Vizualizing  the `Hello kubernetes wit dapr`
+
+To view the resources deployed we will use the **Visualize** section of the _MeshMap_. A view is created with necessary filters to show the relevant resources.
+
+1.  Click **Visualize** to begin.
+2.  Give the view a name (rename).
+3.  Click the filter icon.
+4.  Choose appropriate filters to limited displayed resources in the view. For example, here we want to display deployment,Service,dapr component,pods  etc  
+    Additionally, we will also add a label filter i.e. `tutorial=Hello kubernetes-main1` in this case. This should show a filtered view with only your resources something 
+    similar to the screenshot below:
+
+### Viewing deployment and Service information
+
+Select the Statefullset from the _View_ to load the Statefullset details to the right. Ensure the _Details_ tab is selected.
+
+Now, select one of the Service to display the service details.
+- u can always `exec` into pod to verify configurations and extract logs .
+
+#### Step 6 - Observe API call logs by using  meshery interative terminal 
+
+u can always `exec` into pod to verify configurations and extract logs .
+
+Now that the Node.js and Python applications are deployed, watch messages come through:
+
+Get the logs of the Node.js app:
+
+<!-- TODO(artursouza): Add "Successfully persisted state for Order ID: X" once the new image is published -->
+
+<!-- STEP
+expected_stdout_lines:
+  - "Got a new order! Order ID: 11"
+  - "Successfully persisted state for Order ID: 11"
+expected_stderr_lines:
+output_match_mode: substring
+match_order: none
+name: Read nodeapp logs
+tags:
+  - normal-run
+-->
+
+```bash
+kubectl logs --selector=app=node -c node --tail=-1
+```
+
+<!-- END_STEP -->
+
+If all went well, you should see logs like this:
+
+```
+Got a new order! Order ID: 1
+Successfully persisted state for Order ID: 1
+Got a new order! Order ID: 2
+Successfully persisted state for Order ID: 2
+Got a new order! Order ID: 3
+Successfully persisted state for Order ID: 3
+```
+#### Step 7 - Confirm successful persistence using meshery interctive terminal 
+
+Call the Node.js app's order endpoint to get the latest order. Grab the external IP address that you saved before and, append "/order" and perform a GET request against it (enter it into your browser, use Postman, or curl it!):
+
+```
+curl $NODE_APP/order
+{"orderID":"42"}
+```
+
+You should see the latest JSON in response!
+
+
+####  Step 8-Deleting the Deployment
+
+To delete the deployment, use the **Undeploy** option from the _Design_ view.
+
+
+
 
    
    
