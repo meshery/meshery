@@ -87,9 +87,9 @@ An _instance_ represents a realized entity. An _instance_ is a dynamic represent
 
 {% include alert.html type="info" title="Instance example" content="NGINX-as234z2 pod running in a cluster as a Kubernetes Pod with port 443 and SSL termination." %}
 
-## Instructions for Creating a new Model
+# Instructions for Creating a New Model
 
-All of Meshery's Models, Components, and Relationships can be found in the Meshery Integrations spreadsheet. This spreadsheet is the source of truth for the definition of Meshery's models. On a daily schedule, the contents of the Meshery Integrations spreadsheet is refreshed.
+All of Meshery's Models, Components, and Relationships can be found in the <a href='https://docs.google.com/spreadsheets/d/1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw/edit#'>Meshery Integrations spreadsheet</a>. This spreadsheet is the source of truth for the definition of Meshery's models. On a daily schedule, the contents of the Meshery Integrations spreadsheet is refreshed.
 
 {% include alert.html type="light" title="Model Source Code" content="See examples of <a href='https://github.com/meshery/meshery/tree/master/server/meshmodel'>Models defined in JSON in meshery/meshery</a>." %}
 
@@ -108,7 +108,15 @@ To add or update a model, follow these steps:
 
 {% include alert.html type="info" title="Using Meshery CLI with the Registry (models)" content="Create new and list existing models by using <code>mesheryctl registry</code> to interact with the Meshery Registry and the <a href='https://docs.google.com/spreadsheets/d/1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw/edit#'>Meshery Integrations spreadsheet</a>." %}
 
-<!-- ### Instructions for Creating a new Component -->
+### Instructions for Creating a New Component
+
+<!-- See the [Contributing to Components]({{site.baseurl}}/project/contributing/contributing-components) for detailed instructions. -->\
+
+Components are the atomic units for designing infrastructure. They represent entities in the Meshery ecosystem and expose capabilities of the underlying platform. Components can be registered, created, and used by users and operators. Components have definitions, instances, and associated metadata. Components having the same `kind`, `apiVersion`, and `model.name` attributes are considered duplicates.
+
+Each component has any number of customizable properties in the form of metadata. The metadata provides additional details about the component, enhancing its capabilities. Metadata can be attached to components to customize their behavior. The metadata can be used to define the component's behavior, appearance, and interactions with other components.
+
+Components optionally have a UI schema, which is a JSON object that describes how a form should be rendered. It can be passed to JSON forms and is categorized into controls or layouts. The UI schema object follows the form field hierarchy's tree structure and defines how each property should be rendered. For example, it can specify the order of controls, their visibility, and the layout.
 
 ### Instructions for Creating a new Relationship
 

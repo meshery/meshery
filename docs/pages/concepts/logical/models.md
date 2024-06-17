@@ -12,7 +12,7 @@ redirect_from:
 
 Models are units of packaging for Meshery's logical object representation. Models (packages) are versioned and bundle any number of components, relationships, policies, connections and credentials. Meshery's internal object model is designed to provide a consistent and extensible way of capturing and characterizing the resources (applications, services, and infrastructure) under Meshery's management. Models serve as an exportable package (OCI-compatible image) to define managed infrastructure, their relationships, and details specifics of how they are to be managed.
 
-Key aspects of Meshery Models:
+## Key aspects of Meshery Models
 
 * **Logical Representation:** Models offer a logical representation of entities under Meshery's management, abstracting away system-specific details.
 * **Packaging:** Model packages can be imported and exported as OCI-compatible images, ensuring portability and encapsulation of intellectual property.
@@ -43,8 +43,6 @@ Meshery Models adhere to several design principles, including establishing a set
 * **Machine-readable:** The model should be machine-readable, allowing it to be used by automation tools.
 
 ## Models as the Unit of Packaging
-
-## Model Packaging
 
 Each model package can be imported and exported from the system as OCI-compatible images, making them portable (a design goal), abstracting their complexity, and encapsulating potential intellectual property that users might have invested into their models. Model packages are versioned and bundle any number of components, relationships, policies, connections and credentials. For example:
 
