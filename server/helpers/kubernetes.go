@@ -7,7 +7,6 @@ import (
 
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/logger"
-	"github.com/sirupsen/logrus"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
@@ -100,7 +99,7 @@ func FetchKubernetesNodes(kubeconfig []byte, contextName string, log logger.Hand
 }
 
 // FetchKubernetesVersion - function used to fetch kubernetes server version
-func FetchKubernetesVersion(kubeconfig []byte, contextName string) (string, error) {
+func FetchKubernetesVersion(kubeconfig []byte, contextName string, log logger.Handler) (string, error) {
 	clientset, err := getK8SClientSet(kubeconfig, contextName)
 	if err != nil {
 		return "", ErrFetchKubernetesVersion(err)
@@ -110,6 +109,6 @@ func FetchKubernetesVersion(kubeconfig []byte, contextName string) (string, erro
 	if err != nil {
 		return "", ErrFetchKubernetesVersion(err)
 	}
-	logrus.Debugf("Kubernetes API Server version: %s", serverVersion.String())
+	log.Debug("Kubernetes API Server version: ", serverVersion.String())
 	return serverVersion.String(), nil
 }

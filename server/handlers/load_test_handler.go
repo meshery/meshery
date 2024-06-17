@@ -488,7 +488,7 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, profil
 				go func() {
 					var serverVersion string
 					var err error
-					serverVersion, err = helpers.FetchKubernetesVersion(k8sconfig, mk8scontext.Name)
+					serverVersion, err = helpers.FetchKubernetesVersion(k8sconfig, mk8scontext.Name, h.log)
 					if err != nil {
 						h.log.Error(ErrFetchKubernetes(err))
 					}

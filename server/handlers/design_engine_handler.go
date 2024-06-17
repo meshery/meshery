@@ -23,7 +23,6 @@ import (
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 	meshkube "github.com/layer5io/meshkit/utils/kubernetes"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -237,14 +236,14 @@ func _processPattern(
 			registry:   registry,
 			// kubeconfig:    kubecfg,
 			// kubecontext:   mk8scontext,
-			skipPrintLogs:      skipPrintLogs,
-			skipCrdAndOperator: skipCrdAndOperator,
+			skipPrintLogs:          skipPrintLogs,
+			skipCrdAndOperator:     skipCrdAndOperator,
 			upgradeExistingRelease: upgradeExistingRelease,
-			ctxTokubeconfig:    ctxToconfig,
-			accumulatedMsgs:    []string{},
-			err:                nil,
-			eventsChannel:      ec,
-			patternName:        strings.ToLower(pattern.Name),
+			ctxTokubeconfig:        ctxToconfig,
+			accumulatedMsgs:        []string{},
+			err:                    nil,
+			eventsChannel:          ec,
+			patternName:            strings.ToLower(pattern.Name),
 		}
 		chain := stages.CreateChain()
 		chain.
@@ -262,7 +261,7 @@ func _processPattern(
 		if !dryRun {
 			chain.
 				Add(stages.Provision(sip, sap, sap.log)).
-				Add(stages.Persist(sip, sap))
+				Add(stages.Persist(sip, sap, sap.log))
 		}
 		chain.
 			Add(func(data *stages.Data, err error, next stages.ChainStageNextFunction) {
@@ -354,7 +353,7 @@ func (sap *serviceActionProvider) Log(msg string) {
 }
 func (sap *serviceActionProvider) Terminate(err error) {
 	if !sap.skipPrintLogs {
-		logrus.Error(err)
+		sap.log.Error(err)
 	}
 	sap.err = err
 }

@@ -19,6 +19,11 @@ const (
 	ErrClosingDatabaseInstanceCode                = "meshery-server-1011"
 	ErrInitializingRegistryManagerCode            = "meshery-server-1012"
 	ErrInitializingKeysRegistrationCode           = "meshery-server-1013"
+	ErrCreateRegoInstanceCode                     = "replace_me"
+)
+
+var (
+	ErrCreatingRegoInstance = errors.New(ErrCreateRegoInstanceCode, errors.Alert, []string{"Error creating Rego Instance."}, []string{"Unable to create Rego instance, policies will not be evaluated."}, []string{}, []string{})
 )
 
 func ErrInitializingRegistryManager(err error) error {

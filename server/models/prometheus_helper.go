@@ -11,28 +11,29 @@ import (
 	"time"
 
 	"github.com/grafana-tools/sdk"
+	"github.com/layer5io/meshkit/logger"
 	promAPI "github.com/prometheus/client_golang/api"
 	promQAPI "github.com/prometheus/client_golang/api/prometheus/v1"
 	promModel "github.com/prometheus/common/model"
-	"github.com/sirupsen/logrus"
 )
 
 // PrometheusClient represents a prometheus client in Meshery
 type PrometheusClient struct {
 	grafanaClient *GrafanaClient
+	logger        *logger.Handler
 	//lint:ignore U1000 PromURL is not useless field over here but the rule will not consider function arguments as a valid option.
 	promURL string
 }
 
 // NewPrometheusClient returns a PrometheusClient
-func NewPrometheusClient() *PrometheusClient {
-	return NewPrometheusClientWithHTTPClient(&http.Client{})
+func NewPrometheusClient(log *logger.Handler) *PrometheusClient {
+	return NewPrometheusClientWithHTTPClient(&http.Client{}, log)
 }
 
 // NewPrometheusClientWithHTTPClient returns a PrometheusClient with a given http.Client
-func NewPrometheusClientWithHTTPClient(client *http.Client) *PrometheusClient {
+func NewPrometheusClientWithHTTPClient(client *http.Client, log *logger.Handler) *PrometheusClient {
 	return &PrometheusClient{
-		grafanaClient: NewGrafanaClientForPrometheusWithHTTPClient(client),
+		grafanaClient: NewGrafanaClientForPrometheusWithHTTPClient(client, log),
 	}
 }
 
@@ -101,7 +102,7 @@ func (p *PrometheusClient) GetNodesStaticBoard(ctx context.Context, promURL stri
 	if err != nil {
 		return nil, ErrPrometheusGetNodes(err)
 	}
-	logrus.Debugf("Instances: %v, length: %d", instances, len(instances))
+	(*p.logger).Debug(fmt.Sprintf("Instances: %v, length: %d", instances, len(instances)))
 	tpl := template.Must(ttt.Parse(staticBoardNodes))
 	if err := tpl.Execute(&buf, map[string]interface{}{
 		"instances":  instances,

@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/layer5io/meshery/server/models"
-	"github.com/sirupsen/logrus"
 )
 
 // swagger:route GET /api/user/login UserAPI idGetUserLogin
@@ -48,7 +47,7 @@ func (h *Handler) LogoutHandler(w http.ResponseWriter, req *http.Request, p mode
 	})
 	err := p.Logout(w, req)
 	if err != nil {
-		logrus.Errorf("Error performing logout: %v", err.Error())
+		h.log.Error(models.ErrLogout(err))
 		p.HandleUnAuthenticated(w, req)
 		return
 	}

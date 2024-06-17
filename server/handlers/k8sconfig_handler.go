@@ -97,7 +97,7 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("create").
 		WithDescription("Kubernetes config uploaded.").WithSeverity(events.Informational)
 	eventMetadata := map[string]interface{}{}
-	contexts := models.K8sContextsFromKubeconfig(provider, user.ID, h.config.EventBroadcaster, *k8sConfigBytes, h.SystemID, eventMetadata)
+	contexts := models.K8sContextsFromKubeconfig(provider, user.ID, h.config.EventBroadcaster, *k8sConfigBytes, h.SystemID, eventMetadata, h.log)
 	len := len(contexts)
 
 	smInstanceTracker := h.ConnectionToStateMachineInstanceTracker
@@ -222,7 +222,7 @@ func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Requ
 
 	eventMetadata := map[string]interface{}{}
 
-	contexts := models.K8sContextsFromKubeconfig(provider, user.ID, h.config.EventBroadcaster, *k8sConfigBytes, h.SystemID, eventMetadata)
+	contexts := models.K8sContextsFromKubeconfig(provider, user.ID, h.config.EventBroadcaster, *k8sConfigBytes, h.SystemID, eventMetadata, h.log)
 
 	event := eventBuilder.WithMetadata(eventMetadata).Build()
 	_ = provider.PersistEvent(event)
@@ -304,7 +304,7 @@ func (h *Handler) K8sRegistrationHandler(w http.ResponseWriter, req *http.Reques
 		return
 	}
 
-	contexts := models.K8sContextsFromKubeconfig(provider, user.ID, h.config.EventBroadcaster, *k8sConfigBytes, h.SystemID, map[string]interface{}{}) // here we are not concerned for the events becuase inside the middleware the contexts would have been verified.
+	contexts := models.K8sContextsFromKubeconfig(provider, user.ID, h.config.EventBroadcaster, *k8sConfigBytes, h.SystemID, map[string]interface{}{}, h.log) // here we are not concerned for the events becuase inside the middleware the contexts would have been verified.
 	h.K8sCompRegHelper.UpdateContexts(contexts).RegisterComponents(contexts, []models.K8sRegistrationFunction{mcore.RegisterK8sMeshModelComponents}, h.registryManager, h.config.EventBroadcaster, provider, user.ID, false)
 	if _, err = w.Write([]byte(http.StatusText(http.StatusAccepted))); err != nil {
 		h.log.Error(ErrWriteResponse(err))
@@ -335,7 +335,7 @@ func (h *Handler) DiscoverK8SContextFromKubeConfig(userID string, token string, 
 		// Could be an in-cluster deployment
 		ctxName := "in-cluster"
 
-		cc, err := models.NewK8sContextFromInClusterConfig(ctxName, mid)
+		cc, err := models.NewK8sContextFromInClusterConfig(ctxName, mid, h.log)
 		if err != nil {
 			metadata["description"] = "Failed to import in-cluster kubeconfig."
 			metadata["error"] = err
@@ -371,7 +371,7 @@ func (h *Handler) DiscoverK8SContextFromKubeConfig(userID string, token string, 
 		return contexts, err
 	}
 
-	ctxs := models.K8sContextsFromKubeconfig(prov, userID, h.config.EventBroadcaster, cfg, mid, eventMetadata)
+	ctxs := models.K8sContextsFromKubeconfig(prov, userID, h.config.EventBroadcaster, cfg, mid, eventMetadata, h.log)
 
 	// Do not persist the generated contexts
 	// consolidate this func and addK8sConfig. In this we explicitly updated status as well as this func perfomr greeedy upload so while consolidating make sure to handle the case.

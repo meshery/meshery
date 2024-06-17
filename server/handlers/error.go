@@ -140,6 +140,10 @@ const (
 	ErrGenerateClusterContextCode          = "replace_me"
 	ErrNilClusterContextCode               = "replace_me"
 	ErrFailToSaveContextCode               = "replace_me"
+	ErrParsingCallBackUrlCode              = "replace_me"
+	ErrReadSessionPersistorCode            = "replace_me"
+	ErrFailToGetK8SContextCode             = "replace_me"
+	ErrFailToLoadK8sContextCode            = "replace_me"
 )
 
 var (
@@ -156,6 +160,8 @@ var (
 	ErrParseDuration              = errors.New(ErrParseDurationCode, errors.Alert, []string{"error parsing test duration"}, []string{}, []string{"The format of the duration passed could be incorrect"}, []string{"please refer to:  https://docs.meshery.io/guides/mesheryctl#performance-management"})
 	ErrPerformanceTest            = errors.New(ErrPerformanceTestCode, errors.Alert, []string{"Load test error"}, []string{}, []string{"Load test endpoint could be not reachable"}, []string{"Make sure load test endpoint is reachable"})
 	ErrEventStreamingNotSupported = errors.New(ErrEventStreamingNotSupportedCode, errors.Alert, []string{"Live events stream not supported."}, []string{"Our server cannot provide live events streaming at the moment. This might be due to a technical issue with our system."}, []string{}, []string{})
+	ErrReadSessionPersistor       = errors.New(ErrReadSessionPersistorCode, errors.Alert, []string{"Unable to read session from the session persister, starting with a new one"}, []string{}, []string{}, []string{})
+	ErrFailToGetK8SContext        = errors.New(ErrFailToGetK8SContextCode, errors.Alert, []string{"Failed to get kubernetes context"}, []string{}, []string{}, []string{})
 )
 
 func ErrGenerateClusterContext(err error) error {
@@ -177,7 +183,12 @@ func ErrGenerateComponents(err error) error {
 func ErrValidate(err error) error {
 	return errors.New(ErrValidateCode, errors.Alert, []string{"failed to validate the given value against the schema"}, []string{err.Error()}, []string{"unable to validate the value against given schema", "either value or schema might not be a valid cue expression"}, []string{"Make sure that the schema and value provided are valid cue values", "Make sure both schema and value are sent", "Make sure appropriate value types are sent"})
 }
-
+func ErrParsingCallBackUrl(err error) error {
+	return errors.New(ErrParsingCallBackUrlCode, errors.Alert, []string{"Failed to parse the callback URL"}, []string{err.Error()}, []string{"callback URL might be empty"}, []string{"Make sure the callback URL is not empty"})
+}
+func ErrFailToLoadK8sContext(err error) error {
+	return errors.New(ErrFailToLoadK8sContextCode, errors.Alert, []string{"Failed to load kubernetes context"}, []string{err.Error()}, []string{}, []string{})
+}
 func ErrPrometheusQuery(err error) error {
 	return errors.New(ErrPrometheusQueryCode, errors.Alert, []string{"Unable to query prometheus"}, []string{err.Error()}, []string{"Prometheus query did not get executed from meshery", "Prometheus query is invalid"}, []string{"Check if your Prometheus query is correct", "Connect to Prometheus and Grafana from the settings page in the UI"})
 }
