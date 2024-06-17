@@ -6,7 +6,8 @@ import (
 	"fmt"
 
 	"github.com/layer5io/meshery/server/helpers"
-	"github.com/sirupsen/logrus"
+	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshkit/logger"
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -37,6 +38,7 @@ func CreateK8sResource(
 	resource string,
 	object interface{},
 	force bool,
+	log logger.Handler,
 ) error {
 	resourceByt, err := json.Marshal(object)
 	if err != nil {
@@ -73,7 +75,8 @@ func CreateK8sResource(
 			FieldManager: "meshery",
 		}); err != nil {
 		if !errors.IsAlreadyExists(err) {
-			logrus.Error("error occurred while creating resource: ", err)
+			err = models.ErrCreateResourceEntry(err)
+			log.Error(err)
 			return err
 		}
 
@@ -85,20 +88,22 @@ func CreateK8sResource(
 			Namespace(obj.GetNamespace()).
 			Get(context.TODO(), obj.GetName(), metav1.GetOptions{})
 		if err != nil {
-			logrus.Error("failed to get pre-existing resource: ", err)
+			err = models.ErrGetResource(err, obj.GetName(), obj.GetNamespace())
+			log.Error(err)
 			return err
 		}
 
 		prevObjLables := prevObj.GetLabels()
 		if prevObjLables["controller"] != "meshery" {
 			if force {
-				logrus.Info("resource not maintained by \"meshery\" - force recreating")
+				log.Info("resource not maintained by \"meshery\" - force recreating")
 				if err := client.
 					Resource(gvr).
 					Namespace(obj.GetNamespace()).
 					Delete(context.TODO(), obj.GetName(), metav1.DeleteOptions{}); err != nil {
-					logrus.Error("failed to delete resource: ", err)
-					return fmt.Errorf("failed to delete resource: %s", obj.GetName())
+					err = models.ErrDeleteResource(err, obj.GetName(), obj.GetNamespace())
+					log.Error(err)
+					return err
 				}
 
 				if _, err := client.
@@ -107,8 +112,9 @@ func CreateK8sResource(
 					Create(context.TODO(), obj, metav1.CreateOptions{
 						FieldManager: "meshery",
 					}); err != nil {
-					logrus.Error("failed to recreate resource: ", err)
-					return fmt.Errorf("failed to recreate resource: %s", obj.GetName())
+					err = models.ErrRecreateResource(err, obj.GetName(), obj.GetNamespace())
+					log.Error(err)
+					return err
 				}
 			}
 
@@ -121,8 +127,9 @@ func CreateK8sResource(
 			Patch(context.TODO(), obj.GetName(), types.MergePatchType, resourceByt, metav1.PatchOptions{
 				FieldManager: "meshery",
 			}); err != nil {
-			logrus.Error(err)
-			return fmt.Errorf("failed to update the resource")
+			err = models.ErrUpdateResource(obj.GetName(), obj.GetNamespace())
+			log.Error(err)
+			return err
 		}
 	}
 

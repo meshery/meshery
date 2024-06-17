@@ -82,7 +82,7 @@ func main() {
 	}
 
 	viper.OnConfigChange(func(event fsnotify.Event) {
-		logrus.Info("received change for", event.Name)
+		log.Info("received change for", event.Name)
 		log.SetLevel(logrus.Level(viper.GetInt("LOG_LEVEL")))
 	})
 
@@ -158,7 +158,7 @@ func main() {
 		viper.SetDefault("KUBECONFIG_FOLDER", path.Join(home, ".kube"))
 	}
 	log.Info("Using kubeconfig at: ", viper.GetString("KUBECONFIG_FOLDER"))
-	logrus.Info("Log level: ", log.GetLevel())
+	log.Info("Log level: ", log.GetLevel())
 
 	adapterURLs := viper.GetStringSlice("ADAPTER_URLS")
 
@@ -243,11 +243,11 @@ func main() {
 
 		KubeConfigFolder: viper.GetString("KUBECONFIG_FOLDER"),
 
-		GrafanaClient:         models.NewGrafanaClient(),
-		GrafanaClientForQuery: models.NewGrafanaClientWithHTTPClient(&http.Client{Timeout: time.Second}),
+		GrafanaClient:         models.NewGrafanaClient(&log),
+		GrafanaClientForQuery: models.NewGrafanaClientWithHTTPClient(&http.Client{Timeout: time.Second}, &log),
 
-		PrometheusClient:         models.NewPrometheusClient(),
-		PrometheusClientForQuery: models.NewPrometheusClientWithHTTPClient(&http.Client{Timeout: time.Second}),
+		PrometheusClient:         models.NewPrometheusClient(&log),
+		PrometheusClientForQuery: models.NewPrometheusClientWithHTTPClient(&http.Client{Timeout: time.Second}, &log),
 
 		ApplicationChannel:        models.NewBroadcaster(),
 		PatternChannel:            models.NewBroadcaster(),
@@ -272,7 +272,7 @@ func main() {
 		r, err := policies.NewRegoInstance(PoliciesPath, regManager)
 		rego = *r
 		if err != nil {
-			logrus.Warn("error creating rego instance, policies will not be evaluated")
+			log.Warn(ErrCreatingOPAInstance)
 		}
 		krh.SeedKeys(viper.GetString("KEYS_PATH"))
 		hc.MeshModelSummaryChannel.Publish()
