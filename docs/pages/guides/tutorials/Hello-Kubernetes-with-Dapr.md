@@ -12,6 +12,7 @@ language: en
 
 ### Introduction :
 This tutorial shows how to deploy Dapr in a Kubernetes cluster using Meshery Playground. You'll deploy a Python app for message generation and a Node app for consumption and persistence, following the classic Hello World example with Dapr. Let's dive in and explore the architecture diagram that illustrates this setup.
+ ![](./screenshots/Architecture_Diag.png)
 
 ### Prerequisites:
 - Basic understanding of containerization , Kubernetes concepts and basic knowledge of Dapr .
@@ -81,8 +82,8 @@ auth:
         ![](./screenshots/dl2.png)
 
 7.
-  - Choose `File Upload` for the upload method, and select [this](https://github.com/dapr/quickstarts/blob/master/tutorials/hello-kubernetes/deploy/redis.yaml) file you just downloaded.
-   - Then, click on `Import`
+  Choose `File Upload` for the upload method, and select [this](https://github.com/dapr/quickstarts/blob/master/tutorials/hello-kubernetes/deploy/redis.yaml) file you just downloaded.
+  Then, click on `Import`
      ![](./screenshots/dl3.png)
 
 8. Under the "Designs" tab, you will see that we have successfully imported the `Hello kubernetes -main` design.
@@ -90,7 +91,7 @@ auth:
      ![](./screenshots/dl4.png)
    - Select your environment , to know more about this refer [docs](https://docs.meshery.io/concepts/logical/environments)
       ![](./screenshots/dl5.png)
-.9 Click on `Deploy` on canvas
+9 .Click on `Deploy` on canvas
     ![](./screenshots/dl6.png)
      ![](./screenshots/dl7.png)
       
@@ -158,7 +159,8 @@ spec:
     ![](./screenshots/dl8.png)
 2. `Drag and Drop` nodeapp design to `Hello kubernetes-main` ,so that merging designs happen properly .
     ![](./screenshots/dl9.png)
-   - Click on `Merge`to merge designs.
+   
+3.  Click on `Merge`to merge designs.
       ![](./screenshots/dl10.png)
        ![](./screenshots/dl11.png)  
 
@@ -215,8 +217,8 @@ while True:
      
 4. After succesfully importing all designs into meshery, On left side click on `actions`, then `deploy`to continue
       ![](./screenshots/dl15.png)
- 5.Select your environment
-      ![](./screenshots/dl16.png)
+5. Select your environment
+   ![](./screenshots/dl16.png)
 6. Click on `Deploy` at final stage, so that `Hello Kubenretes-main` is sucessfully deployed.
     ![](./screenshots/dl17.png)  
       
