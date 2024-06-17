@@ -193,6 +193,7 @@ spec:
 The Redis Services you applied is only accessible within the Kubernetes cluster because the default type for a Service is ClusterIP. ClusterIP provides a single IP address for the set of Pods the Service is pointing to. This IP address is accessible only within the cluster.
 
 If you want guests to be able to access your guestbook, you must configure the frontend Service to be externally visible, so a client can request the Service from outside the Kubernetes cluster. However a Kubernetes user can use kubectl port-forward to access the service even though it uses a ClusterIP
+
 ## Note
 Some cloud providers, like Google Compute Engine or Google Kubernetes Engine, support external load balancers. If your cloud provider supports load balancers and you want to use it, uncomment type: LoadBalancer.
 Here Frontend Service manifest:
@@ -217,5 +218,24 @@ spec:
     app: guestbook
     tier: frontend
 ```
-#### Step6 -Cleaning up
+#### Step6 - Vizualizing  the Cassandra StatefulSet
+
+To view the resources deployed we will use the **Visualize** section of the _MeshMap_. A view is created with necessary filters to show the relevant resources.
+
+1.  Click **Visualize** to begin.
+2.  Give the view a name (rename).
+3.  Click the filter icon.
+4.  Choose appropriate filters to limited displayed resources in the view. For example, here we want to display ,Service,deployments etc  
+    Additionally, we will also add a label filter i.e. `tutorial=deployment` in this case. This should show a filtered view with only your resources something 
+    similar to the screenshot below:
+
+### Viewing deployment and Service information
+
+Select the Statefullset from the _View_ to load the Statefullset details to the right. Ensure the _Details_ tab is selected.
+
+Now, select one of the Service to display the service details. 
+
+
+
+#### Step7 -Cleaning up
 Click on `undeploy` on console to clean up resources
