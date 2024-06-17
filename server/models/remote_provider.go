@@ -342,6 +342,10 @@ func (l *RemoteProvider) GetUserDetails(req *http.Request) (*User, error) {
 }
 
 func (l *RemoteProvider) GetUserByID(req *http.Request, userID string) ([]byte, error) {
+	systemID := viper.GetString("INSTANCE_ID")
+	if userID == systemID {
+		return nil, nil
+	}
 	if !l.Capabilities.IsSupported(UsersProfile) {
 		err := ErrInvalidCapability("UsersProfile", l.ProviderName)
 		l.Log.Warn(err)

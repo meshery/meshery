@@ -3,7 +3,11 @@ package handlers
 
 import (
 	"fmt"
+	"io"
 	"net/http"
+	"net/url"
+	"os"
+	"path/filepath"
 	"time"
 
 	"github.com/layer5io/meshery/server/models"
@@ -76,4 +80,74 @@ func (h *Handler) TokenHandler(w http.ResponseWriter, r *http.Request, p models.
 	// 	return
 	// }
 	p.TokenHandler(w, r, fromMiddleWare)
+}
+
+// swagger:route GET /api/system/viewFile system viewFile idFileViewer
+// Handles GET request to view a file.
+//
+// Retrieves and displays the content of the specified file as plain text.
+//
+// responses:
+//   200:
+//   500:
+
+// ViewHandler handles viewing the file content.
+func (h *Handler) ViewHandler(responseWriter http.ResponseWriter, request *http.Request) {
+	filePath, err := url.QueryUnescape(request.URL.Query().Get("file"))
+
+	if err != nil {
+		http.Error(responseWriter, err.Error(), http.StatusBadRequest)
+		return
+	}
+	file, err := os.Open(filePath)
+	if err != nil {
+		http.Error(responseWriter, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer file.Close()
+
+	// Set the content type to plain text
+	responseWriter.Header().Set("Content-Type", "text/plain")
+
+	// Copy the file content to the response writer
+	_, err = io.Copy(responseWriter, file)
+	if err != nil {
+		http.Error(responseWriter, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+// swagger:route GET /api/system/downloadFile system downloadFile idDownloadFile
+// Handles GET request to download a file.
+//
+// Retrieves and initiates a download for the specified file.
+//
+// responses:
+//   200:
+//   500:
+
+// DownloadHandler handles downloading the file.
+func (h *Handler) DownloadHandler(responseWriter http.ResponseWriter, request *http.Request) {
+	filePath, err := url.QueryUnescape(request.URL.Query().Get("file"))
+	if err != nil {
+		http.Error(responseWriter, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	file, err := os.Open(filePath)
+	if err != nil {
+		http.Error(responseWriter, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer file.Close()
+
+	fileName := filepath.Base(filePath)
+	responseWriter.Header().Set("Content-Type", "text/plain")
+	responseWriter.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", fileName))
+
+	_, err = io.Copy(responseWriter, file)
+	if err != nil {
+		http.Error(responseWriter, err.Error(), http.StatusInternalServerError)
+		return
+	}
 }
