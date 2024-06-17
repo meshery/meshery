@@ -136,14 +136,14 @@ const (
 	ErrConvertingHelmChartToDesignCode     = "meshery-server-1136"
 	ErrInvalidUUIDCode                     = "meshery-server-1137"
 	ErrPersistEventToRemoteProviderCode    = "meshery-server-1320"
-	ErrEventStreamingNotSupportedCode      = "replace_me"
-	ErrGenerateClusterContextCode          = "replace_me"
-	ErrNilClusterContextCode               = "replace_me"
-	ErrFailToSaveContextCode               = "replace_me"
-	ErrParsingCallBackUrlCode              = "replace_me"
-	ErrReadSessionPersistorCode            = "replace_me"
-	ErrFailToGetK8SContextCode             = "replace_me"
-	ErrFailToLoadK8sContextCode            = "replace_me"
+	ErrEventStreamingNotSupportedCode      = "meshery-server-1324"
+	ErrGenerateClusterContextCode          = "meshery-server-1325"
+	ErrNilClusterContextCode               = "meshery-server-1326"
+	ErrFailToSaveContextCode               = "meshery-server-1327"
+	ErrParsingCallBackUrlCode              = "meshery-server-1328"
+	ErrReadSessionPersistorCode            = "meshery-server-1329"
+	ErrFailToGetK8SContextCode             = "meshery-server-1330"
+	ErrFailToLoadK8sContextCode            = "meshery-server-1331"
 )
 
 var (

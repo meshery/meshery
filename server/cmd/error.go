@@ -19,7 +19,7 @@ const (
 	ErrClosingDatabaseInstanceCode                = "meshery-server-1011"
 	ErrInitializingRegistryManagerCode            = "meshery-server-1012"
 	ErrInitializingKeysRegistrationCode           = "meshery-server-1013"
-	ErrCreatingOPAInstanceCode                    = "replace_me"
+	ErrCreatingOPAInstanceCode                    = "meshery-server-1323"
 )
 
 var (
