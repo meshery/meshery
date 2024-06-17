@@ -62,7 +62,7 @@ func HandleError(h v1beta1.Host, en entity.Entity, err error, isModelError bool,
 
 	switch entity := en.(type) {
 	case *v1beta1.ComponentDefinition:
-		entityName := entity.DisplayName
+		entityName := "[ " + entity.Model.Name + " " + entity.Model.Model.Version + " ]" + "( " + entity.DisplayName + " )"
 		isAnnotation, _ := entity.Metadata["isAnnotation"].(bool)
 		if entity.Component.Schema == "" && !isAnnotation && err == nil {
 			err = meshmodel.ErrEmptySchema()
@@ -159,7 +159,8 @@ func FailedMsgCompute(failedMsg string, hostName string) (string, error) {
 	}
 	return failedMsg, nil
 }
-func FailedEventCompute(hostname string, mesheryInstanceID gofrs.UUID, provider *models.Provider) (string, error) {
+func FailedEventCompute(hostname string, mesheryInstanceID gofrs.UUID, provider *models.Provider, userID string, ec *models.Broadcast) (string, error) {
+
 	failedMsg, err := FailedMsgCompute("", hostname)
 	if err != nil {
 		return "", err
@@ -176,7 +177,11 @@ func FailedEventCompute(hostname string, mesheryInstanceID gofrs.UUID, provider 
 			"ViewLink":             filePath,
 		})
 		_ = (*provider).PersistEvent(errorEvent)
+		if userID != "" {
+			userUUID := gofrs.FromStringOrNil(userID)
+			ec.Publish(userUUID, errorEvent)
 
+		}
 	}
 	return failedMsg, nil
 

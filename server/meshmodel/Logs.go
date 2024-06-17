@@ -46,7 +46,7 @@ func (erh *EntityRegistrationHelper) registryLog() {
 		successEvent := eventBuilder.Build()
 		_ = provider.PersistEvent(successEvent)
 
-		failLog, err := helpers.FailedEventCompute(host.Hostname, sysID, &provider)
+		failLog, err := helpers.FailedEventCompute(host.Hostname, sysID, &provider, "", erh.handlerConfig.EventBroadcaster)
 		if err != nil {
 			log.Error(err)
 		}
