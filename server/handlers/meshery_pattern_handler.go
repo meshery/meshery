@@ -25,7 +25,7 @@ import (
 	"github.com/layer5io/meshery/server/models/pattern/stages"
 	"github.com/layer5io/meshkit/errors"
 	"github.com/layer5io/meshkit/logger"
-	"github.com/layer5io/meshkit/models/catalog/v1beta1"
+	"github.com/layer5io/meshkit/models/catalog/v1alpha1"
 	"github.com/layer5io/meshkit/models/events"
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 	"github.com/layer5io/meshkit/models/oci"
@@ -68,7 +68,7 @@ type mesheryPatternPayload struct {
 
 	Location      isql.Map            `json:"location"`
 	Visibility    string              `json:"visibility"`
-	CatalogData   v1beta1.CatalogData `json:"catalog_data,omitempty"`
+	CatalogData   v1alpha1.CatalogData `json:"catalog_data,omitempty"`
 	Type          sql.NullString      `json:"type"`
 	SourceContent []byte              `json:"source_content"`
 }

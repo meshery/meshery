@@ -10,15 +10,28 @@ redirect_from:
 - concepts/models
 ---
 
-Each model includes a set of entities (in the form of definitions) that Meshery can manage.
+Models are units of packaging for Meshery's logical object representation. Models (packages) are versioned and bundle any number of components, relationships, policies, connections and credentials. Meshery's internal object model is designed to provide a consistent and extensible way of capturing and characterizing the resources (applications, services, and infrastructure) under Meshery's management. Models serve as an exportable package (OCI-compatible image) to define managed infrastructure, their relationships, and details specifics of how they are to be managed.
+
+Key aspects of Meshery Models:
+
+* **Logical Representation:** Models offer a logical representation of entities under Meshery's management, abstracting away system-specific details.
+* **Packaging:** Model packages can be imported and exported as OCI-compatible images, ensuring portability and encapsulation of intellectual property.
+* **Components:** Components within a Model represent the capabilities of the underlying platform and are used by operators to build applications.
+* **Relationships:** Relationships define interactions and dependencies between components within a model.
+* **Policies:** Policies govern the behavior and constraints of components and relationships, ensuring adherence to desired operational practices.
+* **Extensibility:** Models are highly extensible, allowing you to define custom components, relationships, and policies. See [Contributing to Models](/project/contributing/contributing-models).
+
+As a cloud native manager that provides a comprehensive set of tools for managing multi-cloud and cloud native applications and infrastructure, Meshery needs object models that can granularly characterize a wide range of systems under management from simple applications to complex microservices architectures and their infrastructure. This document describes the Meshery Model and its constituent set of entities  used to represent and manage cloud and cloud native systems.
+
+Using Meshery Models, users can define and manage cloud-native systems, including applications, services, and infrastructure. Models provide a way to represent the desired state of the system, and they can be used to deploy, monitor, and manage cloud-native applications. Models are designed to be extensible, allowing users to define new constructs as needed. They are also machine-readable, allowing them to be used by automation tools.
+
+### Model Portability and Your Intellectual Property
+
+Each model (package) can be imported and exported from Meshery Server as OCI-compatible images. This makes models portable, abstracts their complexity, and encapsulates intellectual property that you might have created while designing your own models. Model packages are versioned and bundle any number of components, relationships, policies, connections, and credentials.
 
 Every entity type is implemented by a [registrant]({{site.baseurl}}/concepts/logical/registry). Without registrants and models, Meshery can't manage any kind of infrastructure.
 
 Most registrants configure a specific infrastructure platform (either cloud or self-hosted). Registrants vary in their capabilities. Capabilities come in the form of components, some of which represent infrastructure to be managed others of which represent functional additional functionality to augment Meshery's behavior and deepen its feature set. Some registrants offer infrastructure-specific orchestration. For example the Meshery Adapter for Istio offers integration with each of Istio's addons. Others registrants offer specific services. For example, the Meshery Adapter for Nighthawk offers load generation and service performance characteriazation.
-
-Meshery is a cloud native management plane that aims to provide a comprehensive set of tools for managing multi-cloud and cloud native applications and infrastructure. To achieve this, Meshery needs object models that can represent a wide range of constructs, from simple applications to complex microservices architectures. This document describes the Meshery Model, a set of constructs that are used to represent and manage cloud-native systems.
-
-Meshery's internal object model is designed to provide a consistent and extensible way of capturing and characterizing the resources under Meshery's management. Meshery Models serve as an exportable package to define managed infrastructure and their relationships, and details specifics of how to manage them. A Meshery Model is based on the [Model Schema](https://github.com/meshery/schemas/blob/master/openapi/schemas/meshmodels.yml) with well-defined attributes. 
 
 ## Design Principles
 
@@ -79,16 +92,6 @@ Meshery provides a relationship evaluation algorithm to ensure desired behavior 
 
 {% include alert.html title="Metadata" type="info" content="Metadata provide additional details about a component in Meshery. They offer specific functionality or characteristics associated with a component, enhancing its capabilities. Metadata can be attached to components to customize their behavior." %}
 
-## Conclusion
+## Summary
 
-The Meshery Model is a powerful and flexible tool for representing and managing cloud-native systems. It is designed to meet the needs of both users and automation tools, and it is extensible to meet the changing needs of the cloud-native ecosystem.
-
-## Next Steps
-
-The Meshery team is currently working on the following:
-
-* Extending the model to support additional constructs
-* Improving the tooling for working with the model
-* Integrating the model with other Meshery components
-
-We encourage you to get involved in the development of Meshery Models and to share your feedback.
+A Model serves as a unit of packaging for Meshery's logical object representation. Models encompass a structured framework that defines the components, relationships, policies, and other elements that constitute a system or application under Meshery's management. Models offer a way to encapsulate the complexities of diverse systems and provide a standardized representation for management and interaction.
