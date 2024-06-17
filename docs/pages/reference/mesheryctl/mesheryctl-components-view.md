@@ -29,7 +29,7 @@ mesheryctl components view [flags]
 View details of a specific component
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp components view [component-name]
+mesheryctl components view [component-name]
 
 </div>
 </pre> 

@@ -707,7 +707,7 @@ class MesheryApp extends App {
               }}
               className={classes.action}
             >
-              {action(key)}
+              {action && action?.(key)}
             </div>
           </div>
         </SnackbarContent>
