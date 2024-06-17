@@ -74,26 +74,23 @@ auth:
   secretStore: kubernetes
 ```
 
-5. In the left sidebar, click on the upward arrow symbol(import icon) to import the designs into Meshery.
-   ![](./screenshots/dl1.png)
+5. In the left sidebar, click on the upward arrow symbol (import icon) to import the designs into Meshery.
+   ![Import Icon](./screenshots/dl1.png)
 6. In the modal that appears:
-   - Enter a name for your design in the "Design File Name" field (e.g.`Hello kubernetes -main`).
+   - Enter a name for your design in the "Design File Name" field (e.g., `Hello kubernetes -main`).
    - Select `Kubernetes Manifest` from the "Design Type" dropdown menu.
-        ![](./screenshots/dl2.png)
-
-7.
-  Choose `File Upload` for the upload method, and select [this](https://github.com/dapr/quickstarts/blob/master/tutorials/hello-kubernetes/deploy/redis.yaml) file you just downloaded.
-  Then, click on `Import`
-     ![](./screenshots/dl3.png)
-
+     ![Design Modal](./screenshots/dl2.png)
+7. Choose `File Upload` for the upload method, and select [this file](https://github.com/dapr/quickstarts/blob/master/tutorials/hello-kubernetes/deploy/redis.yaml) you just downloaded. Then, click on `Import`.
+     ![File Upload](./screenshots/dl3.png)
 8. Under the "Designs" tab, you will see that we have successfully imported the `Hello kubernetes -main` design.
-   - now click on `actions` on left side of canvas and click on `deploy` to continue
-     ![](./screenshots/dl4.png)
-   - Select your environment , to know more about this refer [docs](https://docs.meshery.io/concepts/logical/environments)
-      ![](./screenshots/dl5.png)
-9 .Click on `Deploy` on canvas
-    ![](./screenshots/dl6.png)
-     ![](./screenshots/dl7.png)
+   - Now click on `actions` on the left side of the canvas and click on `deploy` to continue.
+     ![Actions and Deploy](./screenshots/dl4.png)
+   - Select your environment. To know more about this, refer to [docs](https://docs.meshery.io/concepts/logical/environments).
+     ![Select Environment](./screenshots/dl5.png)
+9. Click on `Deploy` on the canvas.
+    ![Deploy Button](./screenshots/dl6.png)
+    ![Deployment](./screenshots/dl7.png)
+
       
 
   
@@ -155,14 +152,16 @@ spec:
 
 `dapr.io/enable-api-logging: "true"` - this is added to node.yaml file by default to see the API logs.
 
-1. Import [this](https://github.com/dapr/quickstarts/blob/master/tutorials/hello-kubernetes/deploy/node.yaml) file into meshery playground .
-    ![](./screenshots/dl8.png)
-2. `Drag and Drop` nodeapp design to `Hello kubernetes-main` ,so that merging designs happen properly .
-    ![](./screenshots/dl9.png)
-   
-3.  Click on `Merge`to merge designs.
-      ![](./screenshots/dl10.png)
-       ![](./screenshots/dl11.png)  
+1. Import the [nodeapp](https://github.com/dapr/quickstarts/blob/master/tutorials/hello-kubernetes/deploy/node.yaml) file into the Meshery playground.
+   ![](./screenshots/dl8.png)
+
+2. `Drag and Drop` the nodeapp design to `Hello kubernetes-main`, so that merging designs happens properly.
+   ![](./screenshots/dl9.png)
+
+3. Click on `Merge` to merge the designs.
+   ![](./screenshots/dl10.png)
+   ![](./screenshots/dl11.png)
+
 
 ### Step 4 - Deploy the Python app with the Dapr sidecar  
 
@@ -208,20 +207,23 @@ while True:
 
     time.sleep(1)
 ```
-1. Import [pythonapp](https://github.com/dapr/quickstarts/blob/master/tutorials/hello-kubernetes/deploy/python.yaml) file into meshery playground .
- ![](./screenshots/dl12.png)
-2. `Drag and Drop` pythonapp design to `Hello kubernetes-main` ,so that merging designs happen properly .
-    ![](./screenshots/dl13.png)
-3.  Click on `Merge`to merge designs.
-      ![](./screenshots/dl14.png)
+1. Import the [pythonapp](https://github.com/dapr/quickstarts/blob/master/tutorials/hello-kubernetes/deploy/python.yaml) file into the Meshery playground.
+   ![](./screenshots/dl12.png)
+
+2. `Drag and Drop` the pythonapp design to `Hello kubernetes-main` so that the designs are merged properly.
+   ![](./screenshots/dl13.png)
+
+3. Click on `Merge` to merge the designs.
+   ![](./screenshots/dl14.png)
      
-4. After succesfully importing all designs into meshery, On left side click on `actions`, then `deploy`to continue
-      ![](./screenshots/dl15.png)
-5. Select your environment
+4. After successfully importing all designs into Meshery, click on `actions` on the left side, then click `deploy` to continue.
+   ![](./screenshots/dl15.png)
+
+5. Select your environment.
    ![](./screenshots/dl16.png)
-6. Click on `Deploy` at final stage, so that `Hello Kubenretes-main` is sucessfully deployed.
-    ![](./screenshots/dl17.png)  
-      
+
+6. Click on `Deploy` at the final stage so that `Hello kubernetes-main` is successfully deployed.
+   ![](./screenshots/dl17.png)  
 
    
    
