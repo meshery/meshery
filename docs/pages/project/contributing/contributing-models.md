@@ -110,7 +110,7 @@ To add or update a model, follow these steps:
 
 ### Instructions for Creating a New Component
 
-<!-- See the [Contributing to Components]({{site.baseurl}}/project/contributing/contributing-components) for detailed instructions. -->\
+<!-- See the [Contributing to Components]({{site.baseurl}}/project/contributing/contributing-model-components) for detailed instructions. -->
 
 Components are the atomic units for designing infrastructure. They represent entities in the Meshery ecosystem and expose capabilities of the underlying platform. Components can be registered, created, and used by users and operators. Components have definitions, instances, and associated metadata. Components having the same `kind`, `apiVersion`, and `model.name` attributes are considered duplicates.
 
