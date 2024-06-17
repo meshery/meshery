@@ -608,7 +608,7 @@ func (l *RemoteProvider) Logout(w http.ResponseWriter, req *http.Request) error 
 			err = l.revokeToken(ck.Value)
 		}
 		if err != nil {
-			l.Log.Error(ErrLogout(fmt.Errorf("token cannot be revoked:", err)))
+			l.Log.Error(ErrLogout(fmt.Errorf("token cannot be revoked:%v", err)))
 		}
 		l.UnSetJWTCookie(w)
 
