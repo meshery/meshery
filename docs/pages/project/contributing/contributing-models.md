@@ -110,13 +110,7 @@ To add or update a model, follow these steps:
 
 ### Instructions for Creating a New Component
 
-<!-- See the [Contributing to Components]({{site.baseurl}}/project/contributing/contributing-model-components) for detailed instructions. -->
-
-Components are the atomic units for designing infrastructure. They represent entities in the Meshery ecosystem and expose capabilities of the underlying platform. Components can be registered, created, and used by users and operators. Components have definitions, instances, and associated metadata. Components having the same `kind`, `apiVersion`, and `model.name` attributes are considered duplicates.
-
-Each component has any number of customizable properties in the form of metadata. The metadata provides additional details about the component, enhancing its capabilities. Metadata can be attached to components to customize their behavior. The metadata can be used to define the component's behavior, appearance, and interactions with other components.
-
-Components optionally have a UI schema, which is a JSON object that describes how a form should be rendered. It can be passed to JSON forms and is categorized into controls or layouts. The UI schema object follows the form field hierarchy's tree structure and defines how each property should be rendered. For example, it can specify the order of controls, their visibility, and the layout.
+<!-- See the [Contributing to Components]({{site.baseurl}}/project/contributing/contributing-components) for detailed instructions. -->
 
 ### Instructions for Creating a new Relationship
 
