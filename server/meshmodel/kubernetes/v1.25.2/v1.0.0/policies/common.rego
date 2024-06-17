@@ -47,9 +47,17 @@ extract_components(services, selectors) = components {
 	components := {component.traits.meshmap.id: component |
 		selector := selectors[_]
 		service := services[_]
-		selector.kind == service.type
+		is_relationship_feasible(selector, service.type)
 		component := service
 	}
+}
+
+is_relationship_feasible(selector, compType) {
+	selector.kind == "*"
+}
+
+is_relationship_feasible(selector, compType) {
+	selector.kind == compType
 }
 
 has_key(x, k) {

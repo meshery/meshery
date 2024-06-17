@@ -34,7 +34,7 @@
    "relationships": null
   },
   "metadata": {
-   "capabilities": " {\n  \"designer\": {\n    \"edit\": {\n      \"shape\": {\n        \"convert-shape\": false\n      }\n    }\n  }\n}",
+   "capabilities": " { \n  \"designer\": {\n    \"edit\": {\n      \"shape\": {\n        \"convert-shape\": false\n      }\n    }\n  }\n}",
    "defaultData": "",
    "genealogy": "parent",
    "isAnnotation": false,

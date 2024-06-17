@@ -55,6 +55,7 @@ A self-service engineering platform, <a href="https://meshery.io">Meshery</a>, i
 
 <br />
 <br />
+
 - [Functionality](#functionality)
   - [Meshery Architecture](#meshery-architecture)
   - [Join the Meshery community!](#join-the-meshery-community)

@@ -17,7 +17,7 @@ import {
   Dialog,
 } from '@material-ui/core';
 import useStyles from './styles';
-import { iconSmall } from '../../../css/icons.styles';
+import { iconMedium, iconSmall } from '../../../css/icons.styles';
 import { getSharableCommonHostAndprotocolLink } from '../../../utils/utils';
 import OriginalApplicationFileIcon from '../../../assets/icons/OriginalApplicationIcon';
 import moment from 'moment';
@@ -67,13 +67,22 @@ const InfoModal_ = React.memo((props) => {
   };
 
   const { data: resourceUserProfile } = useGetUserByIdQuery(resourceOwnerID);
-  const { enqueueSnackbar } = useSnackbar();
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   const handleCopy = () => {
     navigator.clipboard.writeText(getSharableCommonHostAndprotocolLink(selectedResource));
     enqueueSnackbar(`Link to "${selectedResource.name}" is copied to clipboard`, {
       variant: 'info',
-      autoHideDuration: 2000,
+      action: (key) => (
+        <IconButton
+          // key={`closeevent-${id}`}
+          aria-label="Close"
+          color="inherit"
+          onClick={() => closeSnackbar(key)}
+        >
+          <CloseIcon style={iconMedium} />
+        </IconButton>
+      ),
     });
   };
 

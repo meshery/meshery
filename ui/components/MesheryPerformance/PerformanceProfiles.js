@@ -20,7 +20,6 @@ import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { ResponsiveDataTable } from '@layer5/sistent';
 import Moment from 'react-moment';
-import { withSnackbar } from 'notistack';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 import PerformanceResults from './PerformanceResults';
 import EditIcon from '@material-ui/icons/Edit';
@@ -35,6 +34,7 @@ import { useWindowDimensions } from '@/utils/dimension';
 import { ConditionalTooltip } from '@/utils/utils';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
+import { UsesSistent } from '../SistentWrapper';
 
 const MESHERY_PERFORMANCE_URL = '/api/user/performance/profiles';
 const styles = (theme) => ({
@@ -598,15 +598,17 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
             setPage={setPage}
           />
         ) : (
-          <ResponsiveDataTable
-            data={testProfiles}
-            columns={columns}
-            // @ts-ignore
-            options={options}
-            tableCols={tableCols}
-            updateCols={updateCols}
-            columnVisibility={columnVisibility}
-          />
+          <UsesSistent>
+            <ResponsiveDataTable
+              data={testProfiles}
+              columns={columns}
+              // @ts-ignore
+              options={options}
+              tableCols={tableCols}
+              updateCols={updateCols}
+              columnVisibility={columnVisibility}
+            />
+          </UsesSistent>
         )}
         {testProfiles.length === 0 && viewType === 'grid' && (
           <Paper className={classes.noProfilePaper}>
@@ -680,6 +682,4 @@ const mapDispatchToProps = (dispatch) => ({
   updateProgress: bindActionCreators(updateProgress, dispatch),
 });
 
-export default withStyles(styles)(
-  connect(mapStateToProps, mapDispatchToProps)(withSnackbar(PerformanceProfile)),
-);
+export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(PerformanceProfile));

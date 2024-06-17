@@ -1243,8 +1243,8 @@ func (l *RemoteProvider) PublishEventToProvider(tokenString string, event events
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		l.Log.Error(ErrPost(err, "event", resp.StatusCode))
-		return ErrPost(err, "event", resp.StatusCode)
+		l.Log.Error(ErrPost(fmt.Errorf("error persisting event with the remote provider"), "event", resp.StatusCode))
+		return ErrPost(fmt.Errorf("error persisting event with the remote provider"), "event", resp.StatusCode)
 	}
 	return nil
 }
