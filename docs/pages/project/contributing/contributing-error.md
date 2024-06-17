@@ -145,7 +145,7 @@ func main() {
 		DebugLevel: true,
 	})
 	if err != nil {
-		fmt.Println(err)
+		logrus.Error(err)
 		os.Exit(1)
 	}
 
