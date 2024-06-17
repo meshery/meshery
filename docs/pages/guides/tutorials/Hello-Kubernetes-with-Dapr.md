@@ -71,9 +71,31 @@ spec:
       key: redis-password
 auth:
   secretStore: kubernetes
-   ```  
-5. Import this file into meshery playground .
-6. once succesfully imported make sure sure to deploy in meshery playground.
+```
+
+5. In the left sidebar, click on the upward arrow symbol(import icon) to import the designs into Meshery.
+   ![](./screenshots/dl1.png)
+6. In the modal that appears:
+   - Enter a name for your design in the "Design File Name" field (e.g.`Hello kubernetes -main`).
+   - Select `Kubernetes Manifest` from the "Design Type" dropdown menu.
+        ![](./screenshots/dl2.png)
+
+7.
+  - Choose `File Upload` for the upload method, and select [this](https://github.com/dapr/quickstarts/blob/master/tutorials/hello-kubernetes/deploy/redis.yaml) file you just downloaded.
+   - Then, click on `Import`
+     ![](./screenshots/dl3.png)
+
+8. Under the "Designs" tab, you will see that we have successfully imported the `Hello kubernetes -main` design.
+   - now click on `actions` on left side of canvas and click on `deploy` to continue
+     ![](./screenshots/dl4.png)
+   - Select your environment , to know more about this refer [docs](https://docs.meshery.io/concepts/logical/environments)
+      ![](./screenshots/dl5.png)
+.9 Click on `Deploy` on canvas
+    ![](./screenshots/dl6.png)
+     ![](./screenshots/dl7.png)
+      
+
+  
 
 #### Step 3 - Deploy the Node.js app with the Dapr sidecar
 
@@ -132,9 +154,13 @@ spec:
 
 `dapr.io/enable-api-logging: "true"` - this is added to node.yaml file by default to see the API logs.
 
-1. Import this file into meshery playground .
-2. once succesfully imported make sure sure to deploy in meshery playground.
-3. merge both reddis and node designs with help of merge designs feature in meshery playground.
+1. Import [this](https://github.com/dapr/quickstarts/blob/master/tutorials/hello-kubernetes/deploy/node.yaml) file into meshery playground .
+    ![](./screenshots/dl8.png)
+2. `Drag and Drop` nodeapp design to `Hello kubernetes-main` ,so that merging designs happen properly .
+    ![](./screenshots/dl9.png)
+   - Click on `Merge`to merge designs.
+      ![](./screenshots/dl10.png)
+       ![](./screenshots/dl11.png)  
 
 ### Step 4 - Deploy the Python app with the Dapr sidecar  
 
@@ -180,10 +206,21 @@ while True:
 
     time.sleep(1)
 ```
-1. Import this file into meshery playground .
-2. once succesfully imported make sure sure to deploy in meshery playground.
-3. merge both reddis , node, python  designs with help of merge designs feature in meshery playground.
+1. Import [pythonapp](https://github.com/dapr/quickstarts/blob/master/tutorials/hello-kubernetes/deploy/python.yaml) file into meshery playground .
+ ![](./screenshots/dl12.png)
+2. `Drag and Drop` pythonapp design to `Hello kubernetes-main` ,so that merging designs happen properly .
+    ![](./screenshots/dl13.png)
+3.  Click on `Merge`to merge designs.
+      ![](./screenshots/dl14.png)
      
+4. After succesfully importing all designs into meshery, On left side click on `actions`, then `deploy`to continue
+      ![](./screenshots/dl15.png)
+ 5.Select your environment
+      ![](./screenshots/dl16.png)
+6. Click on `Deploy` at final stage, so that `Hello Kubenretes-main` is sucessfully deployed.
+    ![](./screenshots/dl17.png)  
+      
+
    
    
 
