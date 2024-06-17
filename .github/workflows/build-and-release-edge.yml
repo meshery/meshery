@@ -113,8 +113,8 @@ jobs:
           docker push ${{ secrets.IMAGE_NAME }}:edge-${GITHUB_SHA::8}
           docker push ${{ secrets.IMAGE_NAME }}:edge-${{ env.LATEST_TAG }}
 
-  update-staging-playground:
-    needs:
-      - docker-build-push
-    uses: meshery/meshery/.github/workflows/cncf-staging-playground-deploy-meshery.yaml@master
-    secrets: inherit
+  # update-staging-playground:
+  # needs:
+  # - docker-build-push
+  # uses: meshery/meshery/.github/workflows/cncf-staging-playground-deploy-meshery.yaml@
+  # secrets: inherit
