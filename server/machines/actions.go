@@ -31,6 +31,7 @@ func (da *DefaultConnectAction) ExecuteOnEntry(ctx context.Context, machineCtx i
 }
 
 func (da *DefaultConnectAction) Execute(ctx context.Context, machineCtx interface{}, data interface{}) (EventType, *events.Event, error) {
+
 	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
 	sysID, _ := ctx.Value(models.SystemIDKey).(*uuid.UUID)
 	userUUID := uuid.FromStringOrNil(user.ID)

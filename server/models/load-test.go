@@ -2,13 +2,14 @@ package models
 
 import (
 	"encoding/json"
+	"fmt"
 	"strconv"
 	"time"
 
 	"fortio.org/fortio/fhttp"
 	"fortio.org/fortio/periodic"
 	"github.com/gofrs/uuid"
-	"github.com/sirupsen/logrus"
+	"github.com/layer5io/meshkit/logger"
 )
 
 // LoadGenerator - represents the load generator type
@@ -122,7 +123,7 @@ type MesheryResult struct {
 }
 
 // ConvertToSpec - converts meshery result to SMP
-func (m *MesheryResult) ConvertToSpec() (*PerformanceSpec, error) {
+func (m *MesheryResult) ConvertToSpec(log logger.Handler) (*PerformanceSpec, error) {
 	b := &PerformanceSpec{
 		Latencies: &LatenciesMs{},
 	}
@@ -130,7 +131,7 @@ func (m *MesheryResult) ConvertToSpec() (*PerformanceSpec, error) {
 		results periodic.HasRunnerResult
 	)
 	retcodesString, _ := m.Result["RetCodes"].(map[string]interface{})
-	logrus.Debugf("retcodes: %+v, %T", m.Result["RetCodes"], m.Result["RetCodes"])
+	log.Debug(fmt.Sprintf("retcodes: %+v, %T", m.Result["RetCodes"], m.Result["RetCodes"]))
 	retcodes := map[int]int64{}
 	for k, v := range retcodesString {
 		k1, _ := strconv.Atoi(k)
@@ -138,7 +139,7 @@ func (m *MesheryResult) ConvertToSpec() (*PerformanceSpec, error) {
 	}
 	m.Result["RetCodes"] = retcodes
 	// loadGenerator := m.Result["load-generator"].(string)
-	logrus.Debugf("result to be converted: %+v", m)
+	log.Debug(fmt.Sprintf("result to be converted: %+v", m))
 	if m.Result["RunType"].(string) == "HTTP" {
 		httpResults := &fhttp.HTTPRunnerResults{}
 		resJ, err := json.Marshal(m.Result)
@@ -151,7 +152,7 @@ func (m *MesheryResult) ConvertToSpec() (*PerformanceSpec, error) {
 		}
 
 		results = httpResults
-		logrus.Debugf("httpresults: %+v", httpResults)
+		log.Debug(fmt.Sprintf("httpresults: %+v", httpResults))
 	}
 
 	result := results.Result()
