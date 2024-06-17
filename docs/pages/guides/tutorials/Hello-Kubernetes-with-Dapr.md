@@ -217,8 +217,8 @@ while True:
       ![](./screenshots/dl15.png)
  5.Select your environment
       ![](./screenshots/dl16.png)
-6. Click on `Deploy` at final stage
-    ![](./screenshots/dl117.png)  
+6. Click on `Deploy` at final stage, so that `Hello Kubenretes-main` is sucessfully deployed.
+    ![](./screenshots/dl17.png)  
       
 
    
