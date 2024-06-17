@@ -87,7 +87,7 @@ An _instance_ represents a realized entity. An _instance_ is a dynamic represent
 
 {% include alert.html type="info" title="Instance example" content="NGINX-as234z2 pod running in a cluster as a Kubernetes Pod with port 443 and SSL termination." %}
 
-# Instructions for Creating a New Model
+# Instructions for creating a new Model
 
 All of Meshery's Models, Components, and Relationships can be found in the <a href='https://docs.google.com/spreadsheets/d/1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw/edit#'>Meshery Integrations spreadsheet</a>. This spreadsheet is the source of truth for the definition of Meshery's models. On a daily schedule, the contents of the Meshery Integrations spreadsheet is refreshed.
 
@@ -108,11 +108,11 @@ To add or update a model, follow these steps:
 
 {% include alert.html type="info" title="Using Meshery CLI with the Registry (models)" content="Create new and list existing models by using <code>mesheryctl registry</code> to interact with the Meshery Registry and the <a href='https://docs.google.com/spreadsheets/d/1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw/edit#'>Meshery Integrations spreadsheet</a>." %}
 
-### Instructions for Creating a New Component
+### Instructions for creating a new Component
 
-<!-- See the [Contributing to Components]({{site.baseurl}}/project/contributing/contributing-components) for detailed instructions. -->
+See the [Contributing to Components]({{site.baseurl}}/project/contributing/contributing-components) for detailed instructions.
 
-### Instructions for Creating a new Relationship
+### Instructions for creating a new Relationship
 
 See the [Contributing to Relationships]({{site.baseurl}}/project/contributing/contributing-relationships) for detailed instructions.
 
