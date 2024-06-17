@@ -2891,6 +2891,15 @@
         "short_description": "",
         "probable_cause": "Requested resource is not reachable.\nUnable to instantiate TCP connection",
         "suggested_remediation": "Ensure correct URL is specified\nEnsure network connectivity to the resource from your network"
+      },
+      "1322": {
+        "name": "ErrMarshalYAMLCode",
+        "code": "1322",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "unable to marshal yaml \\\"%s\\",
+        "probable_cause": "Object has invalid yaml format",
+        "suggested_remediation": "Make sure to input a valid yaml object"
       }
     }
   }

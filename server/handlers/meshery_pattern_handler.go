@@ -25,9 +25,12 @@ import (
 	pCore "github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshery/server/models/pattern/stages"
 	"github.com/layer5io/meshkit/errors"
+	"github.com/layer5io/meshkit/models/catalog/v1alpha1"
 	"github.com/layer5io/meshkit/models/events"
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 	"github.com/layer5io/meshkit/models/oci"
+	"github.com/layer5io/meshkit/utils"
+	"github.com/layer5io/meshkit/utils/catalog"
 	"github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/layer5io/meshkit/utils/kubernetes/kompose"
 	"github.com/layer5io/meshkit/utils/walker"
@@ -65,11 +68,11 @@ type mesheryPatternPayload struct {
 	// but the remote provider is allowed to provide one
 	UserID *string `json:"user_id"`
 
-	Location      isql.Map       `json:"location"`
-	Visibility    string         `json:"visibility"`
-	CatalogData   isql.Map       `json:"catalog_data,omitempty"`
-	Type          sql.NullString `json:"type"`
-	SourceContent []byte         `json:"source_content"`
+	Location      isql.Map            `json:"location"`
+	Visibility    string              `json:"visibility"`
+	CatalogData   v1alpha1.CatalogData `json:"catalog_data,omitempty"`
+	Type          sql.NullString      `json:"type"`
+	SourceContent []byte              `json:"source_content"`
 }
 
 // PatternFileRequestHandler will handle requests of both type GET and POST
@@ -1113,6 +1116,7 @@ func (h *Handler) DownloadMesheryPatternHandler(
 
 	patternID := mux.Vars(r)["id"]
 	ociFormat, _ := strconv.ParseBool(r.URL.Query().Get("oci"))
+	ahpkg, _ := strconv.ParseBool(r.URL.Query().Get("pkg"))
 
 	resp, err := provider.GetMesheryPattern(r, patternID, "false")
 	if err != nil {
@@ -1206,6 +1210,35 @@ func (h *Handler) DownloadMesheryPatternHandler(
 			go h.config.EventBroadcaster.Publish(userID, event)
 
 			return
+		}
+
+		artifactHubPkgFilePath := filepath.Join(tmpDir, "artifacthub-pkg.yml")
+		artifactHubPkgFile, err := os.Create(artifactHubPkgFilePath)
+		if err != nil {
+			h.log.Error(ErrCreateFile(err, "artifacthub-pkg.yml"))
+			eb := *eventBuilder
+			event := eb.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Unable to create artifacthub pkg for the design \"%s\"", pattern.Name)).WithMetadata(map[string]interface{}{"error": err}).Build()
+			_ = provider.PersistEvent(event)
+			go h.config.EventBroadcaster.Publish(userID, event)
+		}
+
+		data, err := createArtifactHubPkg(pattern, strings.Trim(fmt.Sprintf("%s %s", user.FirstName, user.LastName), " "))
+		if err != nil {
+			h.log.Error(err)
+			eb := *eventBuilder
+			event := eb.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Unable to create artifacthub pkg for the design \"%s\"", pattern.Name)).WithMetadata(map[string]interface{}{"error": err}).Build()
+			_ = provider.PersistEvent(event)
+			go h.config.EventBroadcaster.Publish(userID, event)
+		}
+
+		_, err = artifactHubPkgFile.Write(data)
+		if err != nil {
+			err = ErrWritingIntoFile(err, "artifacthub-pkg.yml")
+			h.log.Error(err)
+			eb := *eventBuilder
+			event := eb.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Unable to create artifacthub pkg for the design \"%s\"", pattern.Name)).WithMetadata(map[string]interface{}{"error": err}).Build()
+			_ = provider.PersistEvent(event)
+			go h.config.EventBroadcaster.Publish(userID, event)
 		}
 
 		ociImg, err := oci.BuildImage(tmpDir)
@@ -1315,7 +1348,43 @@ func (h *Handler) DownloadMesheryPatternHandler(
 		return
 	}
 
-	rw.Header().Set("Content-Type", "Pattern/x-yaml")
+	if ahpkg {
+		rw.Header().Set("Content-Type", "application/zip")
+		rw.Header().Add("Content-Disposition", fmt.Sprintf("attachment;filename=%s.zip", pattern.Name))
+
+		tarWriter := utils.NewTarWriter()
+		data, _ := createArtifactHubPkg(pattern, strings.Trim(fmt.Sprintf("%s %s", user.FirstName, user.LastName), " "))
+		err = tarWriter.Compress("artifacthub-pkg.yml", data)
+		if err != nil {
+			h.log.Error(err)
+			eb := *eventBuilder
+			event := eb.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Unable to create artifacthub pkg for the design \"%s\"", pattern.Name)).WithMetadata(map[string]interface{}{"error": err}).Build()
+			_ = provider.PersistEvent(event)
+			go h.config.EventBroadcaster.Publish(userID, event)
+		}
+
+		err = tarWriter.Compress(pattern.Name+".yml", []byte(pattern.PatternFile))
+		if err != nil {
+			h.log.Error(err)
+			eb := *eventBuilder
+			event := eb.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Unable to zip design \"%s\" and artifacthub pkg.", pattern.Name)).WithMetadata(map[string]interface{}{"error": err}).Build()
+			_ = provider.PersistEvent(event)
+			go h.config.EventBroadcaster.Publish(userID, event)
+			http.Error(rw, err.Error(), http.StatusInternalServerError)
+			tarWriter.Close()
+			return
+		}
+
+		tarWriter.Close()
+
+		_, err = io.Copy(rw, tarWriter.Buffer)
+		if err != nil {
+			http.Error(rw, err.Error(), http.StatusInternalServerError)
+			return
+		}
+	}
+
+	rw.Header().Set("Content-Type", "application/yaml")
 	if _, err := io.Copy(rw, strings.NewReader(pattern.PatternFile)); err != nil {
 		http.Error(rw, err.Error(), http.StatusInternalServerError)
 		return
@@ -1578,7 +1647,7 @@ func (h *Handler) GetMesheryPatternHandler(
 		http.Error(rw, ErrGetPattern(err).Error(), http.StatusInternalServerError)
 		return
 	}
-		err = h.VerifyAndConvertToDesign(r.Context(), pattern, provider)
+	err = h.VerifyAndConvertToDesign(r.Context(), pattern, provider)
 	if err != nil {
 		event := events.NewEvent().ActedUpon(*pattern.ID).FromSystem(*h.SystemID).FromUser(userID).WithCategory("pattern").WithAction("convert").WithDescription(fmt.Sprintf("The \"%s\" is not in the design format, failed to convert and persist the original source content from \"%s\" to design file format", pattern.Name, pattern.Type.String)).WithMetadata(map[string]interface{}{"error": err}).Build()
 		_ = provider.PersistEvent(event)
@@ -1975,4 +2044,20 @@ func (h *Handler) GetMesheryPatternSourceHandler(
 		h.log.Error(ErrApplicationSourceContent(err, "download"))
 		http.Error(rw, ErrApplicationSourceContent(err, "download").Error(), http.StatusInternalServerError)
 	}
+}
+
+func createArtifactHubPkg(pattern *models.MesheryPattern, user string) ([]byte, error) {
+	isCatalogItem := pattern.Visibility == models.Published
+	var version string
+	if isCatalogItem {
+		version = pattern.CatalogData.PublishedVersion
+	}
+	artifactHubPkg := catalog.BuildArtifactHubPkg(pattern.Name, "", user, version, pattern.CreatedAt.String(), &pattern.CatalogData)
+
+	data, err := yaml.Marshal(artifactHubPkg)
+	if err != nil {
+		return nil, models.ErrMarshalYAML(err, "artifacthub-pkg")
+	}
+
+	return data, nil
 }
