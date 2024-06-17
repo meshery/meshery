@@ -238,7 +238,7 @@ To view the resources deployed we will use the **Visualize** section of the _Mes
 
 ### Viewing deployment and Service information
 
-Select the Statefullset from the _View_ to load the Statefullset details to the right. Ensure the _Details_ tab is selected.
+Select the Statefullset from the _View_ to load the component details to the right. Ensure the _Details_ tab is selected.
 
 Now, select one of the Service to display the service details.
 - u can always `exec` into pod to verify configurations and extract logs .
