@@ -16,21 +16,18 @@ Meshery Relationships define how [components](./components.md) are connected and
 
 Meshery supports different types of relationships to cater to various use cases:
 
-- **Hierarchical Relationships:** These represent parent-child relationships between components, where one component is a dependency of another.
+- **Hierarchical Relationships:** These represent parent-child relationships between components, where one component is a dependency of another. arent-child relationships show clear lineage, similar to a family tree (child, parent, grandparent, etc.).
 - **Sibling Relationships:** These represent relationships between components that are not directly dependent on each other but may still interact or influence each other's behavior; they describe components that share a common origin but operate independently (siblings, cousins, etc.).
-- **Edge Relationships:** These represent relationships that are visually depicted as edges connecting components in MeshMap.
-- **Hierarchical structures:** Parent-child relationships show clear lineage, similar to a family tree (child, parent, grandparent, etc.).
-- **Interdependencies:** This captures how components rely on each other to function.
+- **Edge Relationships:** These represent relationships that are visually depicted as edges connecting components in MeshMap. Edge relationships are used to define how components interact with each other, such as network connections, bindings, or permissions. They are also used to identify interdependencies between components.
 
 **Benefits of Using Meshery Relationships**
 
-* **Improved Visibility:** Relationships provide a clear visual representation of the connections between components, making it easier to understand the system's architecture.
-* **Enhanced Design:** Relationships help you make informed decisions about component selection and placement, leading to better design choices.
-* **Automated Configuration:** Relationship-driven actions can automate the configuration of components, reducing manual effort and potential errors.
-* **Increased Flexibility:** The use of selectors, actions, and operators provides flexibility in defining and managing relationships.
+- **Improved Visibility:** Relationships provide a clear visual representation of the connections between components, making it easier to understand the system's architecture.
+- **Enhanced Design:** Relationships help you make informed decisions about component selection and placement, leading to better design choices.
+- **Automated Configuration:** Relationship-driven actions can automate the configuration of components, reducing manual effort and potential errors.
+- **Increased Flexibility:** The use of selectors, actions, and operators provides flexibility in defining and managing relationships.
 
 {% include/alert.html type="dark" title="Contributor Guide to Meshery Relationships" content="If you want to create a new relationship definition or modify existing relationship definitions, see the <a href='https://docs.meshery.io/project/contributing/contributing-relationships'>Contributing to Meshery Relationships</a> guide." %}
-
 
 ## Types of Relationships
 
@@ -72,15 +69,17 @@ _[TODO: a visual example is needed here]_ -->
 
 The `isAnnotation` attribute of a Relationship or Component determines whether the given Relationship or Component represents a management concern for Meshery; whether the given Relationship or Component is sematically meaningful, and whose lifecycle is managed by Meshery.
 
-## Core Constructs of Relationships
+## Core Concepts of Relationships
 
 - Kinds
+- Types
 - Subtypes
 - Selectors
+- Selectors Sets
 
-## Kind and Subtypes of Relationships
+## Kind, Type, and Subtype of Relationships
 
-The combination of `kind` and `subType` uniquely determines the visual paradigm for a given relationship i.e., relationships with the same `kind` and `subType` will share an identical visual representation regardless of the specific components involved in the relationship.
+The combination of `kind`, `type`, and `subType` uniquely determines the visual paradigm for a given relationship; i.e., relationships with the same `kind`, `type`, and `subType` will share an identical visual representation regardless of the specific components involved in the relationship.
 
 ### 1. Edge - Network
 
