@@ -234,6 +234,8 @@ var (
 	Log logger.Handler
 	// Color for the whiteboard printer
 	whiteBoardPrinter = color.New(color.FgHiBlack, color.BgWhite, color.Bold)
+	//global logger error variable
+	LogError logger.Handler
 )
 
 var CfgFile string
