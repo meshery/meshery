@@ -27,7 +27,7 @@ list: include
 5. [Relationship Testing](#relationship-testing)
 6. [Relationship Contribution](#relationship-contribution)
 
-## Prework to Creating Relationships
+## Prework
 
 <a id="relationship-identification"></a>
 
@@ -137,6 +137,8 @@ Browse and pick the most appropriate visualization for this relationship by usin
 {% include relationships.html %}
 
 Once selected, note the relationship's `kind`, `type`, and `subtype` of your selected visualization. Alternatively, if an existing visualization does not seem appropriate for the relationship, please propose a new visualization at-will. Simply use the whiteboard feature of Meshery's extensions to sketch out the relationship and propose it as a new visualization.
+
+## Development
 
 <a id="relationship-definitions"></a>
 
@@ -311,6 +313,8 @@ All relationship definitions are backed by OPA policies and each relationship de
 So, for example, if you are defining or updating a relationship definition with `kind: edge` and `type: network`, the value for the attribute `evaluationQuery` should be `edge_network_relationship`.
 
 Each policy has a set of evaluation rules defined and the `evaluationQuery` attribute corresponds to the main rule defined inside the policy, during the policy eval the results are collected from this rule.
+
+## Postwork
 
 <a id="relationship-testing"></a>
 
