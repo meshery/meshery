@@ -19,11 +19,11 @@ const (
 	ErrClosingDatabaseInstanceCode                = "meshery-server-1011"
 	ErrInitializingRegistryManagerCode            = "meshery-server-1012"
 	ErrInitializingKeysRegistrationCode           = "meshery-server-1013"
-	ErrCreateRegoInstanceCode                     = "replace_me"
+	ErrCreatingOPAInstanceCode                    = "replace_me"
 )
 
 var (
-	ErrCreatingRegoInstance = errors.New(ErrCreateRegoInstanceCode, errors.Alert, []string{"Error creating Rego Instance."}, []string{"Unable to create Rego instance, policies will not be evaluated."}, []string{}, []string{})
+	ErrCreatingOPAInstance = errors.New(ErrCreatingOPAInstanceCode, errors.Alert, []string{"Error creating OPA Instance."}, []string{"Unable to create OPA instance, policies will not be evaluated."}, []string{}, []string{})
 )
 
 func ErrInitializingRegistryManager(err error) error {
