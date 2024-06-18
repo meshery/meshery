@@ -1,13 +1,13 @@
 {
   "schemaVersion": "core.meshery.io/v1alpha2",
-  "version": "*",
+  "version": "v1.0.0",
   "kind": "Hierarchical",
   "metadata": {
     "description": "A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. E.g Secret->Pod, ConfigMaps->Deployment, etc..."
   },
   "model": {
     "schemaVersion": "core.meshery.io/v1alpha2",
-    "version": "*",
+    "version": "v1.0.0",
     "name": "nginx-ingress",
     "model": {
       "version": "*"
