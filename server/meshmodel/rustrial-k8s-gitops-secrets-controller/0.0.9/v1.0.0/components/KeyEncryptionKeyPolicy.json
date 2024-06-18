@@ -1,0 +1,68 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "core.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Key Encryption Key Policy",
+  "description": "",
+  "format": "JSON",
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "core.meshery.io/v1beta1",
+   "version": "v1.0.0",
+   "name": "rustrial-k8s-gitops-secrets-controller",
+   "displayName": "Rustrial K8S Gitops Secrets Controller",
+   "description": "",
+   "status": "ignored",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "registrant": {
+    "hostname": "artifacthub"
+   },
+   "category": {
+    "name": "Uncategorized",
+    "metadata": null
+   },
+   "subCategory": "Uncategorized",
+   "metadata": {
+    "capabilities": "",
+    "defaultData": "",
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "model": {
+    "version": "0.0.9"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "status": "ignored",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "component": {
+   "kind": "KeyEncryptionKeyPolicy",
+   "version": "secrets.rustrial.org/v1beta1",
+   "schema": "{\n \"description\": \"KeyEncryptionKeyPolicy is the Schema for the keyencryptionkeypolicies API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"KeyEncryptionKeyPolicySpec defines the desired state of KeyEncryptionKeyPolicy\",\n   \"properties\": {\n    \"keyEncryptionKeyId\": {\n     \"description\": \"KeyEncryptionKeyId is the provider specific unique ID of the Key Encryption Key (KEK) use to encrypt/decrypt the Data Encryption Key (DEK). \\n This ID must uniquely identify the KEK and provider and is used in authorization rules to decide which namespaces can access which KEKs.\",\n     \"type\": \"string\"\n    },\n    \"namespaces\": {\n     \"description\": \"White-list of namespaces, which are entitled to use this KEK to decrypt DataEncrpytionKeys.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Key Encryption Key Policy\",\n \"type\": \"object\"\n}"
+  }
+ }

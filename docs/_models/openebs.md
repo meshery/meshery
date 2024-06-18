@@ -106,6 +106,18 @@ components:
   colorIcon: assets/img/integrations/openebs/components/jiva-volume/icons/color/jiva-volume-color.svg
   whiteIcon: assets/img/integrations/openebs/components/jiva-volume/icons/white/jiva-volume-white.svg
   description: 
+- name: volume-snapshot-class
+  colorIcon: assets/img/integrations/openebs/components/volume-snapshot-class/icons/color/volume-snapshot-class-color.svg
+  whiteIcon: assets/img/integrations/openebs/components/volume-snapshot-class/icons/white/volume-snapshot-class-white.svg
+  description: 
+- name: volume-snapshot-content
+  colorIcon: assets/img/integrations/openebs/components/volume-snapshot-content/icons/color/volume-snapshot-content-color.svg
+  whiteIcon: assets/img/integrations/openebs/components/volume-snapshot-content/icons/white/volume-snapshot-content-white.svg
+  description: 
+- name: volume-snapshot
+  colorIcon: assets/img/integrations/openebs/components/volume-snapshot/icons/color/volume-snapshot-color.svg
+  whiteIcon: assets/img/integrations/openebs/components/volume-snapshot/icons/white/volume-snapshot-white.svg
+  description: 
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

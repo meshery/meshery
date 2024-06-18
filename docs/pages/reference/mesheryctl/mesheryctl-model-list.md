@@ -42,6 +42,14 @@ mesheryctl model list --page 2
 </div>
 </pre> 
 
+View number of available models in Meshery
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl model list --count
+
+</div>
+</pre> 
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
     
@@ -53,7 +61,6 @@ mesheryctl model list --page 2
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --count      (optional) Get the number of models in total
   -h, --help       help for list
   -p, --page int   (optional) List next set of models with --page (default = 1) (default 1)
 

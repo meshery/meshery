@@ -23,7 +23,6 @@ import {
 import { CustomTooltip } from '@layer5/sistent';
 import { withStyles } from '@material-ui/core/styles';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import Moment from 'react-moment';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
@@ -87,6 +86,8 @@ import { CustomTextTooltip } from '../MesheryMeshInterface/PatternService/Custom
 import InfoOutlinedIcon from '@/assets/icons/InfoOutlined';
 import { DeleteIcon } from '@layer5/sistent';
 import { withRouter } from 'next/router';
+import { UsesSistent } from '../SistentWrapper';
+import { formatDate } from '../DataFormatter';
 
 const ACTION_TYPES = {
   FETCH_CONNECTIONS: {
@@ -466,15 +467,17 @@ function Connections(props) {
                 width="12rem"
               />
               {kind == 'kubernetes' && (
-                <CustomTextTooltip
-                  placement="top"
-                  interactive={true}
-                  title="Learn more about connection status and how to [troubleshoot Kubernetes connections](https://docs.meshery.io/guides/troubleshooting/meshery-operator-meshsync)"
-                >
-                  <IconButton className={classes.infoIconButton} color="primary">
-                    <InfoOutlinedIcon height={20} width={20} className={classes.infoIcon} />
-                  </IconButton>
-                </CustomTextTooltip>
+                <UsesSistent>
+                  <CustomTextTooltip
+                    placement="top"
+                    interactive={true}
+                    title="Learn more about connection status and how to [troubleshoot Kubernetes connections](https://docs.meshery.io/guides/troubleshooting/meshery-operator-meshsync)"
+                  >
+                    <IconButton className={classes.infoIconButton} color="primary">
+                      <InfoOutlinedIcon height={20} width={20} className={classes.infoIcon} />
+                    </IconButton>
+                  </CustomTextTooltip>
+                </UsesSistent>
               )}
             </>
           );
@@ -624,21 +627,6 @@ function Connections(props) {
             />
           );
         },
-        customBodyRender: function CustomBody(value) {
-          return (
-            <CustomTooltip
-              title={
-                <Moment startOf="day" format="LLL">
-                  {value}
-                </Moment>
-              }
-              placement="top"
-              interactive
-            >
-              <Moment format="LL">{value}</Moment>
-            </CustomTooltip>
-          );
-        },
       },
     },
     {
@@ -658,19 +646,13 @@ function Connections(props) {
           );
         },
         customBodyRender: function CustomBody(value) {
+          const renderValue = formatDate(value);
           return (
-            <CustomTooltip
-              title={
-                <Moment startOf="day" format="LLL">
-                  {value}
-                </Moment>
-              }
-              placement="top"
-              arrow
-              interactive
-            >
-              <Moment format="LL">{value}</Moment>
-            </CustomTooltip>
+            <UsesSistent>
+              <CustomTooltip title={renderValue} placement="top" arrow interactive>
+                {renderValue}
+              </CustomTooltip>
+            </UsesSistent>
           );
         },
       },
@@ -1292,15 +1274,17 @@ function Connections(props) {
             </div>
           )}
           {tab === 0 && CAN(keys.VIEW_CONNECTIONS.action, keys.VIEW_CONNECTIONS.subject) && (
-            <ResponsiveDataTable
-              data={connections}
-              columns={columns}
-              options={options}
-              className={classes.muiRow}
-              tableCols={tableCols}
-              updateCols={updateCols}
-              columnVisibility={columnVisibility}
-            />
+            <UsesSistent>
+              <ResponsiveDataTable
+                data={connections}
+                columns={columns}
+                options={options}
+                className={classes.muiRow}
+                tableCols={tableCols}
+                updateCols={updateCols}
+                columnVisibility={columnVisibility}
+              />
+            </UsesSistent>
           )}
           {tab === 1 && (
             <MeshSyncTable

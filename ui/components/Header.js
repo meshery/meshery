@@ -228,17 +228,17 @@ function LoadTheme({ themeSetter }) {
   return <></>;
 }
 
-export const K8sContextConnectionChip = ({
+const K8sContextConnectionChip_ = ({
   ctx,
   classes,
   selectable = false,
   onSelectChange,
+  connectionMetadataState,
+  meshsyncControllerState,
   selected,
   onDelete,
 }) => {
   const ping = useKubernetesHook();
-  const meshsyncControllerState = useSelector((state) => state.get('controllerState'));
-  const connectionMetadataState = useSelector((state) => state.get('connectionMetadataState'));
   const { getControllerStatesByConnectionID } = useControllerStatus(meshsyncControllerState);
 
   const { operatorState, meshSyncState, natsState } = getControllerStatesByConnectionID(
@@ -279,6 +279,8 @@ export const K8sContextConnectionChip = ({
   );
 };
 
+export const K8sContextConnectionChip = withStyles(styles)(K8sContextConnectionChip_);
+
 function K8sContextMenu({
   classes = {},
   contexts = {},
@@ -294,6 +296,7 @@ function K8sContextMenu({
   const deleteCtxtRef = React.createRef();
   const { notify } = useNotification();
   const connectionMetadataState = useSelector((state) => state.get('connectionMetadataState'));
+  const meshsyncControllerState = useSelector((state) => state.get('controllerState'));
 
   const styleSlider = {
     position: 'absolute',
@@ -460,6 +463,8 @@ function K8sContextMenu({
                       onDelete={handleKubernetesDelete}
                       selected={activeContexts.includes(ctx.id)}
                       onSelectChange={() => setActiveContexts(ctx.id)}
+                      meshsyncControllerState={meshsyncControllerState}
+                      connectionMetadataState={connectionMetadataState}
                     />
                   );
                 })}

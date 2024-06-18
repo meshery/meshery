@@ -7,6 +7,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	isql "github.com/layer5io/meshery/server/internal/sql"
+	"github.com/layer5io/meshkit/models/catalog/v1alpha1"
 	"gopkg.in/yaml.v2"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	types "k8s.io/apimachinery/pkg/types"
@@ -90,11 +91,11 @@ type MesheryPattern struct {
 	// but the remote provider is allowed to provide one
 	UserID *string `json:"user_id"`
 
-	Location      isql.Map       `json:"location"`
-	Visibility    string         `json:"visibility"`
-	CatalogData   isql.Map       `json:"catalog_data,omitempty"`
-	Type          sql.NullString `json:"type"`
-	SourceContent []byte         `json:"source_content"`
+	Location      isql.Map            `json:"location"`
+	Visibility    string              `json:"visibility"`
+	CatalogData   v1alpha1.CatalogData `json:"catalog_data,omitempty" gorm:"type:bytes;serializer:json"`
+	Type          sql.NullString      `json:"type"`
+	SourceContent []byte              `json:"source_content"`
 
 	UpdatedAt *time.Time `json:"updated_at,omitempty"`
 	CreatedAt *time.Time `json:"created_at,omitempty"`
