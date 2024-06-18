@@ -24,7 +24,8 @@ import (
 	pCore "github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshery/server/models/pattern/stages"
 	"github.com/layer5io/meshkit/errors"
-	"github.com/layer5io/meshkit/models/catalog/v1beta1"
+	"github.com/layer5io/meshkit/logger"
+	"github.com/layer5io/meshkit/models/catalog/v1alpha1"
 	"github.com/layer5io/meshkit/models/events"
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 	"github.com/layer5io/meshkit/models/oci"
@@ -33,7 +34,6 @@ import (
 	"github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/layer5io/meshkit/utils/kubernetes/kompose"
 	"github.com/layer5io/meshkit/utils/walker"
-	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
 )
 
@@ -68,7 +68,7 @@ type mesheryPatternPayload struct {
 
 	Location      isql.Map            `json:"location"`
 	Visibility    string              `json:"visibility"`
-	CatalogData   v1beta1.CatalogData `json:"catalog_data,omitempty"`
+	CatalogData   v1alpha1.CatalogData `json:"catalog_data,omitempty"`
 	Type          sql.NullString      `json:"type"`
 	SourceContent []byte              `json:"source_content"`
 }
@@ -574,7 +574,7 @@ func (h *Handler) handlePatternPOST(
 				mesheryPattern.Name = parsedBody.Name
 			} else {
 				// Fallback to generic HTTP import
-				pfs, err := genericHTTPDesignFile(parsedBody.URL, sourcetype, h.registryManager)
+				pfs, err := genericHTTPDesignFile(parsedBody.URL, sourcetype, h.registryManager, h.log)
 				if err != nil {
 					remoteApplicationErr := ErrRemoteApplication(err)
 					http.Error(rw, remoteApplicationErr.Error(), http.StatusInternalServerError)
@@ -873,7 +873,7 @@ func githubRepoDesignScan(
 	return result, ErrRemoteApplication(err)
 }
 
-func genericHTTPDesignFile(fileURL, sourceType string, reg *meshmodel.RegistryManager) ([]models.MesheryPattern, error) {
+func genericHTTPDesignFile(fileURL, sourceType string, reg *meshmodel.RegistryManager, log logger.Handler) ([]models.MesheryPattern, error) {
 	resp, err := http.Get(fileURL)
 	if err != nil {
 		return nil, ErrRemoteApplication(err)
@@ -882,7 +882,7 @@ func genericHTTPDesignFile(fileURL, sourceType string, reg *meshmodel.RegistryMa
 		return nil, ErrRemoteApplication(fmt.Errorf("file not found"))
 	}
 
-	defer models.SafeClose(resp.Body)
+	defer models.SafeClose(resp.Body, log)
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -1587,15 +1587,15 @@ func (h *Handler) DeleteMultiMesheryPatternsHandler(
 ) {
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
-		logrus.Error(rw, "err deleting pattern, converting bytes: ", err)
+		h.log.Error(models.ErrDataRead(err, "Request Body"))
 	}
 	var patterns models.MesheryPatternDeleteRequestBody
 	err = json.Unmarshal([]byte(body), &patterns)
 	if err != nil {
-		logrus.Error("error marshaling patterns json: ", err)
+		h.log.Error(models.ErrMarshal(err, "pattern"))
 	}
 
-	logrus.Debugf("patterns to be deleted: %+v", patterns)
+	h.log.Debug("patterns to be deleted: ", patterns)
 
 	resp, err := provider.DeleteMesheryPatterns(r, patterns)
 
@@ -1684,7 +1684,7 @@ func (h *Handler) formatPatternOutput(rw http.ResponseWriter, content []byte, fo
 			//TODO: The below line has to go away once the client fully supports referencing variables  and pattern imports inside design
 			newpatternfile := evalImportAndReferenceStage(&patternFile)
 
-			cyjs, _ := newpatternfile.ToCytoscapeJS()
+			cyjs, _ := newpatternfile.ToCytoscapeJS(h.log)
 
 			bytes, err := json.Marshal(&cyjs)
 			if err != nil {

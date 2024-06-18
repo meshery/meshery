@@ -23,7 +23,6 @@ import (
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 	meshkube "github.com/layer5io/meshkit/utils/kubernetes"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -150,7 +149,7 @@ func (h *Handler) PatternFileHandler(
 	}
 
 	serverURL, _ := r.Context().Value(models.MesheryServerURL).(string)
-	
+
 	if action == "deploy" {
 		viewLink := fmt.Sprintf("%s/extension/meshmap?mode=visualize&design=%s", serverURL, patternID)
 		description = fmt.Sprintf("%s.", description)
@@ -237,14 +236,14 @@ func _processPattern(
 			registry:   registry,
 			// kubeconfig:    kubecfg,
 			// kubecontext:   mk8scontext,
-			skipPrintLogs:      skipPrintLogs,
-			skipCrdAndOperator: skipCrdAndOperator,
+			skipPrintLogs:          skipPrintLogs,
+			skipCrdAndOperator:     skipCrdAndOperator,
 			upgradeExistingRelease: upgradeExistingRelease,
-			ctxTokubeconfig:    ctxToconfig,
-			accumulatedMsgs:    []string{},
-			err:                nil,
-			eventsChannel:      ec,
-			patternName:        strings.ToLower(pattern.Name),
+			ctxTokubeconfig:        ctxToconfig,
+			accumulatedMsgs:        []string{},
+			err:                    nil,
+			eventsChannel:          ec,
+			patternName:            strings.ToLower(pattern.Name),
 		}
 		chain := stages.CreateChain()
 		chain.
@@ -261,8 +260,8 @@ func _processPattern(
 		}
 		if !dryRun {
 			chain.
-				Add(stages.Provision(sip, sap)).
-				Add(stages.Persist(sip, sap))
+				Add(stages.Provision(sip, sap, sap.log)).
+				Add(stages.Persist(sip, sap, sap.log))
 		}
 		chain.
 			Add(func(data *stages.Data, err error, next stages.ChainStageNextFunction) {
@@ -354,7 +353,7 @@ func (sap *serviceActionProvider) Log(msg string) {
 }
 func (sap *serviceActionProvider) Terminate(err error) {
 	if !sap.skipPrintLogs {
-		logrus.Error(err)
+		sap.log.Error(err)
 	}
 	sap.err = err
 }
@@ -497,7 +496,7 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) ([]patter
 		// creation issue: https://github.com/layer5io/meshery-adapter-library/issues/32
 		time.Sleep(50 * time.Microsecond)
 
-		logrus.Debugf("Adapter to execute operations on: %s", host.Hostname)
+		sap.log.Debug("Adapter to execute operations on: ", host.Hostname)
 
 		// Local call
 		if host.Port == 0 {

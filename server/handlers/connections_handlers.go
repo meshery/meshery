@@ -118,7 +118,7 @@ func (h *Handler) handleRegistrationInitEvent(w http.ResponseWriter, req *http.R
 
 	err := json.NewEncoder(w).Encode(&schema)
 	if err != nil {
-		h.log.Error(ErrWriteResponse)
+		h.log.Error(ErrWriteResponse(err))
 	}
 }
 

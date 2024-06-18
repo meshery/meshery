@@ -51,7 +51,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   mainContainerAnimate: {
-    height: '36rem',
+    height: '73vh',
     [theme.breakpoints.down('sm')]: {
       height: '73rem',
     },
@@ -148,7 +148,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   detailsContainer: {
-    height: '30rem',
+    height: '60vh',
     width: '50%',
     margin: '1rem',
     backgroundColor: theme.palette.secondary.detailsContainer,
@@ -164,7 +164,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   emptyDetailsContainer: {
-    height: '30rem',
+    height: '60vh',
     width: '50%',
     margin: '1rem',
     backgroundColor: theme.palette.secondary.detailsContainer,
