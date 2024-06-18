@@ -1955,7 +1955,7 @@ paths:
             tags:
                 - EventsAPI
             summary: Handle POST request for UI generated events.
-            operationId: idUIEventHandler
+            operationId: idClientEventHandler
     /api/integrations/connections/{connectionKind}:
         get:
             description: |-

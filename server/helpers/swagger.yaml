@@ -362,7 +362,7 @@ paths:
         post:
             description: |-
                 Receives client-generated events bound for the Notification Center.
-            operationId: idUIEventHandler
+            operationId: idClientEventHandler
             responses:
                 "200":
                     description: ""

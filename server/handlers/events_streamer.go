@@ -476,13 +476,12 @@ func closeAdapterConnections(localMeshAdaptersLock *sync.Mutex, localMeshAdapter
 	return map[string]*meshes.MeshClient{}
 }
 
-// swagger:route POST /api/events EventsAPI idUIEventHandler
-// Handle sending UI-generated events to the notification center through the server.
+// swagger:route POST /api/events EventsAPI idClientEventHandler
+// Receives client-generated events bound for the Notification Center.
 // responses:
 // 200:
 
-func (h *Handler) UIEventHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
-	fmt.Println("POST /api/events hit")
+func (h *Handler) ClientEventHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	userID := uuid.FromStringOrNil(user.ID)
 
 	defer func() {
@@ -504,9 +503,47 @@ func (h *Handler) UIEventHandler(w http.ResponseWriter, req *http.Request, prefO
 		return
 	}
 
-	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory(eventDetails["category"].(string)).
-		WithAction(eventDetails["action"].(string)).WithSeverity(events.EventSeverity(eventDetails["severity"].(string))).
-		WithDescription(eventDetails["description"].(string)).WithMetadata(eventDetails["metadata"].(map[string]interface{}))
+	if len(eventDetails) == 0 {
+		http.Error(w, "event details are empty", http.StatusBadRequest)
+		return
+	}
+
+	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID)
+
+	if category, ok := eventDetails["category"].(string); ok {
+		eventBuilder = eventBuilder.WithCategory(category)
+	} else {
+		http.Error(w, "category is missing or not a string", http.StatusBadRequest)
+		return
+	}
+
+	if action, ok := eventDetails["action"].(string); ok {
+		eventBuilder = eventBuilder.WithAction(action)
+	} else {
+		http.Error(w, "action is missing or not a string", http.StatusBadRequest)
+		return
+	}
+
+	if severity, ok := eventDetails["severity"].(string); ok {
+		eventBuilder = eventBuilder.WithSeverity(events.EventSeverity(severity))
+	} else {
+		http.Error(w, "severity is missing or not a string", http.StatusBadRequest)
+		return
+	}
+
+	if description, ok := eventDetails["description"].(string); ok {
+		eventBuilder = eventBuilder.WithDescription(description)
+	} else {
+		http.Error(w, "description is missing or not a string", http.StatusBadRequest)
+		return
+	}
+
+	if metadata, ok := eventDetails["metadata"].(map[string]interface{}); ok {
+		eventBuilder = eventBuilder.WithMetadata(metadata)
+	} else {
+		http.Error(w, "metadata is missing or not a valid map", http.StatusBadRequest)
+		return
+	}
 
 	if actedUpon, ok := eventDetails["acted_upon"].(string); ok {
 		eventBuilder = eventBuilder.ActedUpon(uuid.FromStringOrNil(actedUpon))
