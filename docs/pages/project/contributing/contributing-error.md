@@ -142,10 +142,10 @@ var (
 func main() {
 	log, err := logger.New("test", logger.Options{
 		Format:     logger.SyslogLogFormat,
-		DebugLevel: true,
+		LogLevel: logLevel,
 	})
 	if err != nil {
-		logrus.Error(err)
+		fmt.Println(err)
 		os.Exit(1)
 	}
 
