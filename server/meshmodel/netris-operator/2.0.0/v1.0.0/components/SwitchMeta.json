@@ -1,0 +1,68 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "core.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Switch Meta",
+  "description": "",
+  "format": "JSON",
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "core.meshery.io/v1beta1",
+   "version": "v1.0.0",
+   "name": "netris-operator",
+   "displayName": "Netris Operator",
+   "description": "",
+   "status": "ignored",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "registrant": {
+    "hostname": "artifacthub"
+   },
+   "category": {
+    "name": "Uncategorized",
+    "metadata": null
+   },
+   "subCategory": "Uncategorized",
+   "metadata": {
+    "capabilities": "",
+    "defaultData": "",
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "model": {
+    "version": "2.0.0"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "status": "ignored",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "component": {
+   "kind": "SwitchMeta",
+   "version": "k8s.netris.ai/v1alpha1",
+   "schema": "{\n \"description\": \"SwitchMeta is the Schema for the switchmeta API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"SwitchMetaSpec defines the desired state of SwitchMeta\",\n   \"properties\": {\n    \"asn\": {\n     \"type\": \"integer\"\n    },\n    \"description\": {\n     \"type\": \"string\"\n    },\n    \"id\": {\n     \"type\": \"integer\"\n    },\n    \"imported\": {\n     \"description\": \"INSERT ADDITIONAL SPEC FIELDS - desired state of cluster Important: Run \\\"make\\\" to regenerate code after modifying this file\",\n     \"type\": \"boolean\"\n    },\n    \"macAddress\": {\n     \"type\": \"string\"\n    },\n    \"mainIp\": {\n     \"type\": \"string\"\n    },\n    \"mgmtIp\": {\n     \"type\": \"string\"\n    },\n    \"nos\": {\n     \"properties\": {\n      \"id\": {\n       \"type\": \"integer\"\n      },\n      \"name\": {\n       \"type\": \"string\"\n      },\n      \"tag\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"id\",\n      \"name\",\n      \"tag\"\n     ],\n     \"type\": \"object\"\n    },\n    \"portsCount\": {\n     \"type\": \"integer\"\n    },\n    \"profile\": {\n     \"type\": \"integer\"\n    },\n    \"reclaimPolicy\": {\n     \"type\": \"boolean\"\n    },\n    \"site\": {\n     \"type\": \"integer\"\n    },\n    \"switchGeneration\": {\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"switchName\": {\n     \"type\": \"string\"\n    },\n    \"tenant\": {\n     \"type\": \"integer\"\n    }\n   },\n   \"required\": [\n    \"id\",\n    \"imported\",\n    \"reclaimPolicy\",\n    \"switchGeneration\",\n    \"switchName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Switch Meta\",\n \"type\": \"object\"\n}"
+  }
+ }

@@ -53,7 +53,12 @@ var (
 	totalAggregateModel int
 	defVersion          = "v1.0.0"
 )
-
+var (
+	artifactHubCount        = 0
+	artifactHubRateLimit    = 100
+	artifactHubRateLimitDur = 5 * time.Minute
+	artifactHubMutex        sync.Mutex
+)
 var generateCmd = &cobra.Command{
 	Use:   "generate",
 	Short: "Generate Models",
@@ -74,8 +79,15 @@ mesheryctl registry generate --registrant-def [path to connection definition] --
 			return ErrUpdateRegistry(err, modelLocation)
 		}
 		utils.Log.SetLevel(logrus.DebugLevel)
-		logFilePath := filepath.Join(logDirPath, "registry-generate")
+		logFilePath := filepath.Join(logDirPath, "Logs")
 		logFile, err = os.Create(logFilePath)
+		if err != nil {
+			return err
+		}
+
+		utils.LogError.SetLevel(logrus.ErrorLevel)
+		logErrorFilePath := filepath.Join(logDirPath, "Errors")
+		errorLogFile, err = os.Create(logErrorFilePath)
 		if err != nil {
 			return err
 		}
@@ -96,13 +108,13 @@ mesheryctl registry generate --registrant-def [path to connection definition] --
 
 		srv, err = mutils.NewSheetSRV(spreadsheeetCred)
 		if err != nil {
-			utils.Log.Error(ErrUpdateRegistry(err, modelLocation))
+			utils.LogError.Error(ErrUpdateRegistry(err, modelLocation))
 			return err
 		}
 
 		resp, err := srv.Spreadsheets.Get(spreadsheeetID).Fields().Do()
 		if err != nil || resp.HTTPStatusCode != 200 {
-			utils.Log.Error(ErrUpdateRegistry(err, outputLocation))
+			utils.LogError.Error(ErrUpdateRegistry(err, outputLocation))
 			return err
 		}
 
@@ -114,7 +126,7 @@ mesheryctl registry generate --registrant-def [path to connection definition] --
 		err = InvokeGenerationFromSheet(&wg)
 		if err != nil {
 			// meshkit
-			utils.Log.Error(err)
+			utils.LogError.Error(err)
 			return err
 		}
 
@@ -140,11 +152,13 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 		logModelGenerationSummary(modelToCompGenerateTracker)
 
 		utils.Log.UpdateLogOutput(os.Stdout)
+		utils.LogError.UpdateLogOutput(os.Stdout)
 		utils.Log.Info(fmt.Sprintf("Summary: %d models, %d components generated.", totalAggregateModel, totalAggregateComponents))
 
 		utils.Log.Info("See ", logDirPath, " for detailed logs.")
 
 		_ = logFile.Close()
+		_ = errorLogFile.Close()
 		totalAggregateModel = 0
 		totalAggregateComponents = 0
 	}()
@@ -160,7 +174,7 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 	}
 
 	utils.Log.UpdateLogOutput(logFile)
-
+	utils.LogError.UpdateLogOutput(errorLogFile)
 	var wgForSpreadsheetUpdate sync.WaitGroup
 	wgForSpreadsheetUpdate.Add(1)
 	go func() {
@@ -178,53 +192,55 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 		if err != nil {
 			break
 		}
-		utils.Log.Info("Current model: ", model.Model)
+
 		wg.Add(1)
 		go func(model utils.ModelCSV) {
 			defer func() {
 				wg.Done()
 				weightedSem.Release(1)
 			}()
-			if model.Registrant == "meshery" {
+			if mutils.ReplaceSpacesAndConvertToLowercase(model.Registrant) == "meshery" {
 				err = GenerateDefsForCoreRegistrant(model)
 				if err != nil {
-					utils.Log.Error(err)
+					utils.LogError.Error(err)
 				}
 				return
 			}
 
 			generator, err := generators.NewGenerator(model.Registrant, model.SourceURL, model.Model)
 			if err != nil {
-				utils.Log.Error(ErrGenerateModel(err, model.Model))
+				utils.LogError.Error(ErrGenerateModel(err, model.Model))
 				return
 			}
 
-			if model.Registrant == "artifacthub" {
-				time.Sleep(10 * time.Second)
+			if mutils.ReplaceSpacesAndConvertToLowercase(model.Registrant) == "artifacthub" {
+				rateLimitArtifactHub()
+
 			}
 			pkg, err := generator.GetPackage()
 			if err != nil {
-				utils.Log.Error(ErrGenerateModel(err, model.Model))
+				utils.LogError.Error(ErrGenerateModel(err, model.Model))
 				return
 			}
 
 			version := pkg.GetVersion()
 			modelDirPath, compDirPath, err := createVersionedDirectoryForModelAndComp(version, model.Model)
 			if err != nil {
-				utils.Log.Error(ErrGenerateModel(err, model.Model))
+				utils.LogError.Error(ErrGenerateModel(err, model.Model))
 				return
 			}
 			modelDef, err := writeModelDefToFileSystem(&model, version, modelDirPath)
 			if err != nil {
-				utils.Log.Error(err)
+				utils.LogError.Error(err)
 				return
 			}
 
 			comps, err := pkg.GenerateComponents()
 			if err != nil {
-				utils.Log.Error(ErrGenerateModel(err, model.Model))
+				utils.LogError.Error(ErrGenerateModel(err, model.Model))
 				return
 			}
+			utils.Log.Info("Current model: ", model.Model)
 			utils.Log.Info(" extracted ", len(comps), " components for ", model.ModelDisplayName, " (", model.Model, ")")
 			for _, comp := range comps {
 				comp.Version = defVersion
@@ -282,7 +298,7 @@ func GenerateDefsForCoreRegistrant(model utils.ModelCSV) error {
 	path, err := url.Parse(model.SourceURL)
 	if err != nil {
 		err = ErrGenerateModel(err, model.Model)
-		utils.Log.Error(err)
+		utils.LogError.Error(err)
 		return nil
 	}
 	gitRepo := github.GitRepo{
@@ -292,7 +308,7 @@ func GenerateDefsForCoreRegistrant(model utils.ModelCSV) error {
 	owner, repo, branch, root, err := gitRepo.ExtractRepoDetailsFromSourceURL()
 	if err != nil {
 		err = ErrGenerateModel(err, model.Model)
-		utils.Log.Error(err)
+		utils.LogError.Error(err)
 		return nil
 	}
 
@@ -329,7 +345,7 @@ func GenerateDefsForCoreRegistrant(model utils.ModelCSV) error {
 				err = componentDef.WriteComponentDefinition(compDirPath)
 				if err != nil {
 					err = ErrGenerateComponent(err, model.Model, componentDef.DisplayName)
-					utils.Log.Error(err)
+					utils.LogError.Error(err)
 				}
 				return nil
 			})
@@ -354,7 +370,16 @@ func parseModelSheet(url string) (*utils.ModelCSVHelper, error) {
 	}
 	return modelCSVHelper, nil
 }
+func rateLimitArtifactHub() {
+	artifactHubMutex.Lock()
+	defer artifactHubMutex.Unlock()
 
+	if artifactHubCount > 0 && artifactHubCount%artifactHubRateLimit == 0 {
+		utils.Log.Info("Rate limit reached for Artifact Hub. Sleeping for 5 minutes...")
+		time.Sleep(artifactHubRateLimitDur)
+	}
+	artifactHubCount++
+}
 func parseComponentSheet(url string) (*utils.ComponentCSVHelper, error) {
 	compCSVHelper, err := utils.NewComponentCSVHelper(url, "Components", componentSpredsheetGID)
 	if err != nil {
