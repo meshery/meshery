@@ -5,6 +5,7 @@ on:
     - cron: "0 0 * * *"
 jobs:
   generate-components:
+    if: github.repository == 'meshery/meshery'
     name: Generate Components
     runs-on: ubuntu-22.04
     steps:
@@ -34,6 +35,8 @@ jobs:
         with:
           name: generate-logs
           path: ~/.meshery/logs/
+      - name: Pull changes from remote
+        run: git pull origin master
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
@@ -59,6 +62,7 @@ jobs:
             The GitHub Actions workflow in ${{ github.repository }} has failed.
             You can find more details in the GitHub Actions log ${{ github.workflow }}.
   check-and-email-registry-generate-error:
+    if: github.repository == 'meshery/meshery'
     name: Check and Email Error Log
     runs-on: ubuntu-22.04
     needs: generate-components
@@ -91,9 +95,11 @@ jobs:
             "Model Generator" <no-reply@meshery.io>
           to: developers@meshery.io
           body: |
-            The model generation process encountered errors. Please find the attached error log for details.
+               The Model Generator action encountered errors for several models. For a detailed understanding of the issues, please refer to the attached error logs in the email. 
+               If you need additional information, please review the [Model Generator and Updater](https://github.com/meshery/meshery/actions/runs/${{ github.run_id }}).
           attachments: ~/.meshery/logs/registry/Errors
   update-components:
+    if: github.repository == 'meshery/meshery'
     name: Update Components
     needs: generate-components
     runs-on: ubuntu-22.04
@@ -117,6 +123,8 @@ jobs:
         run: |
           cd mesheryctl;
           ./mesheryctl registry update -i ../server/meshmodel --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw"  --spreadsheet-cred "${{ secrets.INTEGRATION_SPREADSHEET_CRED }}"
+      - name: Pull changes from remote
+        run: git pull origin master     
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
