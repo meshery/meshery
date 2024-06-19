@@ -3,7 +3,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import CloseIcon from '@material-ui/icons/Close';
 import PatternIcon from '../../../assets/icons/Pattern';
 import {
-  Chip,
   Typography,
   IconButton,
   Button,
@@ -15,7 +14,13 @@ import {
   DialogContent,
   Dialog,
 } from '@material-ui/core';
-import useStyles, { ActionContainer, CreatAtContainer } from './styles';
+import useStyles, {
+  ActionContainer,
+  CreatAtContainer,
+  CopyLinkButton,
+  VisibilityTag,
+  ResourceName,
+} from './styles';
 import { iconMedium, iconSmall } from '../../../css/icons.styles';
 import { getSharableCommonHostAndprotocolLink } from '../../../utils/utils';
 import moment from 'moment';
@@ -35,17 +40,11 @@ import { useGetUserByIdQuery } from '../../../rtk-query/user.js';
 import { ErrorBoundary } from '../../General/ErrorBoundary';
 import { getUnit8ArrayForDesign } from '@/utils/utils';
 import ServiceMesheryIcon from '@/assets/icons/ServiceMesheryIcon';
-import {
-  CopyLinkIcon,
-  ModalFooter,
-  ModalButtonPrimary,
-  ModalButtonSecondary,
-} from '@layer5/sistent';
+import { ModalFooter, ModalButtonPrimary, ModalButtonSecondary } from '@layer5/sistent';
 import TooltipButton from '@/utils/TooltipButton';
 import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
-import theme from '@/themes/app';
-import { filterEmptyFields } from '@/utils/object';
+import { filterEmptyFields } from '@/utils/objects';
 
 const APPLICATION_PLURAL = 'applications';
 const FILTER_PLURAL = 'filters';
@@ -58,7 +57,7 @@ const InfoModal_ = React.memo((props) => {
     resourceOwnerID,
     dataName,
     selectedResource,
-    currentUserID,
+    currentUser,
     patternFetcher,
     formSchema,
     handlePublish,
@@ -76,6 +75,8 @@ const InfoModal_ = React.memo((props) => {
   const formatDate = (date) => {
     return moment(date).utc().format('MMMM Do YYYY');
   };
+  const currentUserID = currentUser?.id;
+  const isAdmin = currentUser.role_names.includes('admin');
 
   const { data: resourceUserProfile } = useGetUserByIdQuery(resourceOwnerID);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
@@ -235,10 +236,10 @@ const InfoModal_ = React.memo((props) => {
     if (formSchema) {
       const newUiSchema = { ...formSchema.uiSchema };
 
-      // Only make form readonly if resource is private and user is not owner
-      if (selectedResource?.visibility === 'private' && currentUserID !== resourceOwnerID) {
-        newUiSchema['ui:readonly'] = currentUserID !== resourceOwnerID;
-      }
+      !isAdmin &&
+        selectedResource?.visibility === 'private' &&
+        currentUserID !== resourceOwnerID &&
+        (newUiSchema['ui:readonly'] = currentUserID !== resourceOwnerID);
 
       if (isReadOnly) {
         newUiSchema['ui:readonly'] = true;
@@ -264,7 +265,7 @@ const InfoModal_ = React.memo((props) => {
     const isPrivate = selectedResource?.visibility === 'private';
     const isOwner = currentUserID === resourceOwnerID;
 
-    const renderByPermission = (isPrivate && isOwner) || !isPrivate;
+    const renderByPermission = !(isPrivate && isOwner) || !isPrivate;
     return !isReadOnly && renderByPermission;
   };
 
@@ -279,7 +280,11 @@ const InfoModal_ = React.memo((props) => {
   };
 
   const isPublished = selectedResource?.visibility === 'published';
+  const [imageError, setImageError] = useState(false);
 
+  const handleError = () => {
+    setImageError(true);
+  };
   return (
     <div style={{ marginBottom: '1rem' }}>
       <Dialog
@@ -320,18 +325,27 @@ const InfoModal_ = React.memo((props) => {
                   alignItems: 'center',
                 }}
               >
-                <ServiceMesheryIcon
-                  style={{
-                    boxShadow: '0px 0px 6px 2px rgba(0, 0, 0, 0.25)',
-                    borderRadius: '20px',
-                  }}
-                  width={100}
-                  height={100}
-                />
+                {selectedResource?.catalog_data?.imageURL && !imageError ? (
+                  <img
+                    src={selectedResource.catalog_data.imageURL[0]}
+                    width="140"
+                    alt={selectedResource?.name}
+                    onError={handleError}
+                  />
+                ) : (
+                  <ServiceMesheryIcon
+                    style={{
+                      boxShadow: '0px 0px 6px 2px rgba(0, 0, 0, 0.25)',
+                      borderRadius: '20px',
+                    }}
+                    width={100}
+                    height={100}
+                  />
+                )}
               </Button>
-              <Typography className={classes.resourceName} variant="subtitle1">
+              <ResourceName className={classes.resourceName} variant="subtitle1">
                 {selectedResource?.name}
-              </Typography>
+              </ResourceName>
               <Grid item xs={12} style={{ marginTop: '1rem' }}>
                 <Typography
                   style={{ whiteSpace: 'nowrap' }}
@@ -363,7 +377,6 @@ const InfoModal_ = React.memo((props) => {
               <Grid container spacing={2}>
                 <Grid item xs={dataName === APPLICATION_PLURAL ? 12 : 6}>
                   <Typography gutterBottom variant="subtitle1">
-                    <span style={{ fontWeight: 'bold', paddingRight: '0.2rem' }}>Owner</span>
                     <Tooltip
                       title={`Owner: ${
                         resourceUserProfile?.first_name + ' ' + resourceUserProfile?.last_name
@@ -378,13 +391,14 @@ const InfoModal_ = React.memo((props) => {
                   xs={dataName === APPLICATION_PLURAL ? 12 : 6}
                   className={classes.visibilityGridItem}
                 >
-                  <TooltipButton title={'Copy Link'} onClick={handleCopy}>
-                    <CopyLinkIcon fill={theme.palette.secondary.icon2} />
-                  </TooltipButton>
-                  <img
-                    className={classes.img}
-                    src={`/static/img/${selectedResource?.visibility}.svg`}
-                  />
+                  <Typography
+                    gutterBottom
+                    variant="subtitle1"
+                    className={classes.text}
+                    style={{ display: 'flex', marginRight: '2rem' }}
+                  >
+                    <VisibilityTag>{selectedResource?.visibility}</VisibilityTag>
+                  </Typography>
                 </Grid>
                 {dataName === APPLICATION_PLURAL && formSchema ? null : (
                   <Grid item className={classes.rjsfInfoModalForm}>
@@ -413,13 +427,21 @@ const InfoModal_ = React.memo((props) => {
           variant="filled"
         >
           <ActionContainer>
+            <TooltipButton title={'Copy Design Link'} onClick={handleCopy}>
+              <CopyLinkButton>Copy Link</CopyLinkButton>
+            </TooltipButton>
+
             <ModalButtonSecondary
               variant="outlined"
               onClick={handlePublishController}
               className={classes.copyButton}
               disabled={
-                !CAN(keys.PUBLISH_DESIGN.action, keys.PUBLISH_DESIGN.subject) ||
-                selectedResource?.visibility === 'published'
+                isAdmin
+                  ? false
+                  : !(
+                      CAN(keys.PUBLISH_DESIGN.action, keys.PUBLISH_DESIGN.subject) &&
+                      currentUser?.id === selectedResource?.user_id
+                    ) || isPublished
               }
             >
               {isPublished ? 'Published' : 'Publish to Catalog'}
@@ -430,7 +452,9 @@ const InfoModal_ = React.memo((props) => {
               className={classes.submitButton}
               onClick={handleSubmit}
               disabled={
-                isCatalogDataEqual || saveFormLoading || isPublished || shouldRenderSaveButton()
+                isCatalogDataEqual ||
+                saveFormLoading ||
+                (isAdmin ? false : isPublished || shouldRenderSaveButton())
               }
             >
               {saveFormLoading ? (
@@ -451,21 +475,18 @@ const InfoModal_ = React.memo((props) => {
 const OwnerChip = ({ userProfile }) => {
   const classes = useStyles();
   return (
-    <Chip
-      avatar={<Avatar src={userProfile?.avatar_url} className={classes.chipIcon} />}
-      label={
-        userProfile ? (
+    <Box style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+      <Avatar src={userProfile?.avatar_url} className={classes.chipIcon} />
+      <Typography>
+        {userProfile ? (
           `${userProfile?.first_name} ${userProfile?.last_name}`
         ) : (
           <Box sx={{ display: 'flex' }}>
             <CircularProgress color="inherit" size="1rem" />
           </Box>
-        )
-      }
-      variant="outlined"
-      data-cy="chipDesignDetails"
-      className={classes.chip}
-    />
+        )}
+      </Typography>
+    </Box>
   );
 };
 

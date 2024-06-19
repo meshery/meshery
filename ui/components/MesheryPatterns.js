@@ -861,7 +861,7 @@ function MesheryPatterns({
       ?.map((model) => model.name);
 
     const payload = {
-      id: publishModal.pattern?.id,
+      id: infoModal.selectedResource?.id,
       catalog_data: {
         ...formData,
         compatibility: compatibilityStore,
@@ -1737,7 +1737,7 @@ function MesheryPatterns({
                     dataName="patterns"
                     selectedResource={infoModal.selectedResource}
                     resourceOwnerID={infoModal.ownerID}
-                    currentUserID={user?.id}
+                    currentUser={user}
                     patternFetcher={fetchPatternsCaller}
                     formSchema={publishSchema}
                     meshModels={meshModels}
@@ -1762,7 +1762,7 @@ function MesheryPatterns({
               handleImportDesign={handleImportDesign}
             />
           )}
-          {infoModal.open && CAN(keys.DETAILS_OF_DESIGN.action, keys.DETAILS_OF_DESIGN.subject) && (
+          {/* {infoModal.open && CAN(keys.DETAILS_OF_DESIGN.action, keys.DETAILS_OF_DESIGN.subject) && (
             <InfoModal
               infoModalOpen={true}
               handleInfoModalClose={handleInfoModalClose}
@@ -1775,7 +1775,7 @@ function MesheryPatterns({
               meshModels={meshModels}
               isReadOnly={arePatternsReadOnly}
             />
-          )}
+          )} */}
           <PromptComponent ref={modalRef} />
         </>
       ) : (
