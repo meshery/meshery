@@ -1,6 +1,5 @@
 /* eslint-disable no-unused-vars */
 import { withStyles, Typography, Grid, Chip, IconButton } from '@material-ui/core/';
-import { withSnackbar } from 'notistack';
 
 const chipStyles = (theme) => ({
   chipIcon: { width: theme.spacing(2.5) },

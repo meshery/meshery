@@ -14,6 +14,8 @@ import useStyles from '../assets/styles/general/tool.styles';
 import { PROMPT_VARIANTS } from './PromptComponent';
 import { store } from '../store';
 import { useGetDatabaseSummaryQuery } from '@/rtk-query/system';
+import CAN from '@/utils/can';
+import { keys } from '@/utils/permission_constants';
 
 const styles = (theme) => ({
   textCenter: {
@@ -154,6 +156,7 @@ const DatabaseSummary = (props) => {
             variant="contained"
             color="primary"
             size="medium"
+            disabled={!CAN(keys.RESET_DATABASE.action, keys.RESET_DATABASE.subject)}
             onClick={handleResetDatabase()}
             className={classes.DBBtn}
             data-cy="btnResetDatabase"

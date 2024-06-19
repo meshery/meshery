@@ -1,4 +1,4 @@
-#! /usr/bin/env bash
+#!/usr/bin/env bash
 
 if [ -f site-dir.zip ]; then
     rm -rf site-dir.zip

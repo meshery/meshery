@@ -54,6 +54,10 @@ components:
   colorIcon: assets/img/integrations/kong/components/kong-vault/icons/color/kong-vault-color.svg
   whiteIcon: assets/img/integrations/kong/components/kong-vault/icons/white/kong-vault-white.svg
   description: 
+- name: kong-custom-entity
+  colorIcon: assets/img/integrations/kong/components/kong-custom-entity/icons/color/kong-custom-entity-color.svg
+  whiteIcon: assets/img/integrations/kong/components/kong-custom-entity/icons/white/kong-custom-entity-white.svg
+  description: 
 featureList: [
   "Advanced routing, load balancing, health checking - all configurable via a RESTful admin API or declarative configuration.",
   "Authentication and authorization for APIs using methods like JWT, basic auth, OAuth, ACLs and more.",
