@@ -44,13 +44,21 @@ mesheryctl pattern delete [name]
 `,
 	Args: func(cmd *cobra.Command, args []string) error {
 		const errMsg = "Provide a pattern name or use the --file flag\nRun 'mesheryctl pattern delete --help' to see detailed help message"
-		if len(args) != 1 {
-			return utils.ErrInvalidArgument(errors.New(errMsg))
+
+		// Check if the file flag is set
+		fileFlagSet := cmd.Flags().Changed("file")
+
+		// Ensure only one of the pattern name or file flag is set
+		if len(args) == 1 && !fileFlagSet {
+			return nil
 		}
-		return nil
+		if len(args) == 0 && fileFlagSet {
+			return nil
+		}
+
+		return utils.ErrInvalidArgument(errors.New(errMsg))
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			utils.Log.Error(err)
@@ -65,6 +73,7 @@ mesheryctl pattern delete [name]
 
 		deployURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern/deploy"
 		patternURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern"
+
 		// If a file path or URL is provided, delete the pattern using the file
 		if file != "" {
 			return deleteByFile(file, patternURL, mctlCfg)
@@ -81,6 +90,7 @@ func init() {
 
 func deleteByFile(file string, patternURL string, mctlCfg *config.MesheryCtlConfig) error {
 	var patternFile string
+
 	// If file path not a valid URL, treat it like a local file path
 	if !govalidator.IsURL(file) {
 		content, err := os.ReadFile(file)
@@ -135,7 +145,7 @@ func deleteByFile(file string, patternURL string, mctlCfg *config.MesheryCtlConf
 
 		body, err := io.ReadAll(resp.Body)
 		if err != nil {
-			utils.Log.Error(utils.ErrReadResponseBody(errors.Wrap(err, "failed to read response body")))
+			utils.Log.Error(utils.ErrReadResponseBody(err))
 			return nil
 		}
 
@@ -148,14 +158,15 @@ func deleteByFile(file string, patternURL string, mctlCfg *config.MesheryCtlConf
 		patternFile = response[0].PatternFile
 	}
 
-	var pattern string
+	var pattern interface{}
 	err := json.Unmarshal([]byte(patternFile), &pattern)
 	if err != nil {
 		utils.Log.Error(err)
 		return nil
 	}
 
-	err = utils.DeleteConfiguration(mctlCfg.GetBaseMesheryURL(), pattern, "pattern")
+	patternStr, _ := pattern.(string)
+	err = utils.DeleteConfiguration(mctlCfg.GetBaseMesheryURL(), patternStr, "pattern")
 	if err != nil {
 		utils.Log.Error(err)
 		return errors.Wrap(err, utils.PatternError(fmt.Sprintf("failed to delete pattern %s", pattern)))
