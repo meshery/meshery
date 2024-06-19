@@ -18,10 +18,10 @@ import (
 	"fortio.org/fortio/periodic"
 	"github.com/layer5io/gowrk2/api"
 	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/utils"
 	nighthawk_client "github.com/layer5io/nighthawk-go/pkg/client"
 	nighthawk_proto "github.com/layer5io/nighthawk-go/pkg/proto"
-	"github.com/sirupsen/logrus"
 	"google.golang.org/protobuf/types/known/durationpb"
 	"google.golang.org/protobuf/types/known/wrapperspb"
 
@@ -35,7 +35,7 @@ var (
 )
 
 // FortioLoadTest is the actual code which invokes Fortio to run the load test
-func FortioLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *periodic.RunnerResults, error) {
+func FortioLoadTest(opts *models.LoadTestOptions, log logger.Handler) (map[string]interface{}, *periodic.RunnerResults, error) {
 	defaults := &periodic.DefaultRunnerOptions
 	httpOpts, err := sharedHTTPOptions(opts)
 	if err != nil {
@@ -87,21 +87,21 @@ func FortioLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *peri
 			AbortOn:            0,
 		}
 
-		logrus.Debugf("options string: %s", opts.Options)
+		log.Debug("options string: ", opts.Options)
 		if opts.Options != "" {
-			logrus.Debugf("Fortio config: %+#v", o)
+			log.Debug(fmt.Sprintf("Fortio config: %+#v", o))
 			err := json.Unmarshal([]byte(opts.Options), &o)
 			if err != nil {
 				return nil, nil, models.ErrUnmarshal(err, "options string")
 			}
-			logrus.Debugf("Fortio config with options: %+#v", o)
+			log.Debug(fmt.Sprintf("Fortio config with options: %+#v", o))
 		}
 		res, err = fhttp.RunHTTPTest(&o)
 	}
 	if err != nil {
 		return nil, nil, ErrRunningTest(err)
 	}
-	logrus.Debugf("original version of the test: %+#v", res)
+	log.Debug(fmt.Sprintf("original version of the test: %+#v", res))
 
 	var result *periodic.RunnerResults
 	var bd []byte
@@ -123,12 +123,12 @@ func FortioLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *peri
 	if err != nil {
 		return nil, nil, models.ErrUnmarshal(err, "data to map")
 	}
-	logrus.Debugf("Mapped version of the test: %+#v", resultsMap)
+	log.Debug(fmt.Sprintf("Mapped version of the test: %+#v", resultsMap))
 	return resultsMap, result, nil
 }
 
 // WRK2LoadTest is the actual code which invokes Wrk2 to run the load test
-func WRK2LoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *periodic.RunnerResults, error) {
+func WRK2LoadTest(opts *models.LoadTestOptions, log logger.Handler) (map[string]interface{}, *periodic.RunnerResults, error) {
 	qps := opts.HTTPQPS // TODO possibly use translated <=0 to "max" from results/options normalization in periodic/
 	if qps <= 0 {
 		qps = -1 // 0==unitialized struct == default duration, -1 (0 for flag) is max
@@ -145,14 +145,14 @@ func WRK2LoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *period
 		Percentiles:       []float64{50, 75, 90, 99, 99.99, 99.999},
 	}
 
-	logrus.Debugf("options string: %s", opts.Options)
+	log.Debug("options string: ", opts.Options)
 	if opts.Options != "" {
-		logrus.Debugf("GoWrk2 config: %+#v", ro)
+		log.Debug(fmt.Sprintf("GoWrk2 config: %+#v", ro))
 		err := json.Unmarshal([]byte(opts.Options), &ro)
 		if err != nil {
 			return nil, nil, models.ErrUnmarshal(err, "options string")
 		}
-		logrus.Debugf("GoWrk2 config with options: %+#v", ro)
+		log.Debug(fmt.Sprintf("GoWrk2 config with options: %+#v", ro))
 	}
 
 	var res periodic.HasRunnerResult
@@ -163,14 +163,14 @@ func WRK2LoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *period
 	var gres *api.GoWRK2
 	gres, err = api.WRKRun(ro)
 	if err == nil {
-		logrus.Debugf("WRK Result: %+v", gres)
+		log.Debug(fmt.Sprintf("WRK Result: %+v", gres))
 		res, err = api.TransformWRKToFortio(gres, ro)
 	}
 
 	if err != nil {
 		return nil, nil, ErrRunningTest(err)
 	}
-	logrus.Debugf("original version of the test: %+#v", res)
+	log.Debug(fmt.Sprintf("original version of the test: %+#v", res))
 
 	var result *periodic.RunnerResults
 	var bd []byte
@@ -192,7 +192,7 @@ func WRK2LoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *period
 	if err != nil {
 		return nil, nil, models.ErrUnmarshal(err, "data to map")
 	}
-	logrus.Debugf("Mapped version of the test: %+#v", resultsMap)
+	log.Debug(fmt.Sprintf("Mapped version of the test: %+#v", resultsMap))
 	return resultsMap, result, nil
 }
 
@@ -249,7 +249,7 @@ func startNighthawkServer(timeout int64) error {
 }
 
 // NighthawkLoadTest is the actual code which invokes nighthawk to run the load test
-func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *periodic.RunnerResults, error) {
+func NighthawkLoadTest(opts *models.LoadTestOptions, log logger.Handler) (map[string]interface{}, *periodic.RunnerResults, error) {
 	err := startNighthawkServer(int64(opts.Duration))
 	if err != nil {
 		return nil, nil, ErrRunningNighthawkServer(err)
@@ -392,7 +392,7 @@ func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *p
 		return nil, nil, ErrGrpcSupport(err, "Nighthawk")
 	}
 
-	logrus.Debugf("options string: %s", opts.Options)
+	log.Debug("options string: ", opts.Options)
 	if opts.Options != "" {
 		// logrus.Debugf("Nighthawk CommandLineOptions: %+#v", ro)
 		err := json.Unmarshal([]byte(opts.Options), &ro)
@@ -410,7 +410,7 @@ func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *p
 		return nil, nil, ErrRunningTest(err)
 	}
 
-	logrus.Info("starting test")
+	log.Info("starting test")
 
 	client, err := c.Handler.ExecutionStream(context.TODO())
 	if err != nil {
@@ -429,7 +429,7 @@ func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *p
 	}
 
 	var res1 *nighthawk_proto.ExecutionResponse
-	logrus.Info("listening to test events")
+	log.Info("listening to test events")
 	for {
 		var err error
 		res1, err = client.Recv()
@@ -471,7 +471,7 @@ func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *p
 	if err != nil {
 		return nil, nil, models.ErrUnmarshal(err, "data to map")
 	}
-	logrus.Debugf("Mapped version of the test: %+#v", resultsMap)
+	log.Debug(fmt.Sprintf("Mapped version of the test: %+#v", resultsMap))
 	return resultsMap, result, nil
 }
 

@@ -1,14 +1,17 @@
 package application
 
 import (
-	"fmt"
+	"os"
 
 	"github.com/layer5io/meshery/server/helpers"
+	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/pattern/patterns/application/argo/v1alpha1"
 	patternUtils "github.com/layer5io/meshery/server/models/pattern/utils"
+	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/utils"
 	meshkube "github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -34,6 +37,19 @@ func (ar *ArgoRollout) Install() error {
 
 // Native will do simple rollout
 func (ar *ArgoRollout) Native(opt RolloutEngineGenericOptions) error {
+	logLevel := viper.GetInt("LOG_LEVEL")
+	if viper.GetBool("DEBUG") {
+		logLevel = int(logrus.DebugLevel)
+	}
+	// Initialize Logger instance
+	log, err := logger.New("meshery", logger.Options{
+		Format:   logger.SyslogLogFormat,
+		LogLevel: logLevel,
+	})
+	if err != nil {
+		logrus.Error(err)
+		os.Exit(1)
+	}
 	if opt.Delete {
 		// Delete the rollout
 		if err := patternUtils.DeleteK8sResource(
@@ -44,8 +60,9 @@ func (ar *ArgoRollout) Native(opt RolloutEngineGenericOptions) error {
 			opt.Namespace,
 			opt.Name,
 		); err != nil {
-			logrus.Error("[Native Rollout]:", err)
-			return fmt.Errorf("failed to delete resource with name \"%s\" in namespace \"%s\"", opt.Name, opt.Namespace)
+			err = models.ErrDeleteK8sResource(err, opt.Name, opt.Namespace)
+			log.Error(err)
+			return err
 		}
 
 		if !*opt.Advanced.CreateService {
@@ -61,8 +78,9 @@ func (ar *ArgoRollout) Native(opt RolloutEngineGenericOptions) error {
 			opt.Namespace,
 			opt.Name,
 		); err != nil {
-			logrus.Error("[Native Rollout]:", err)
-			return fmt.Errorf("failed to delete service with name \"%s\" in namespace \"%s\"", opt.Name, opt.Namespace)
+			err = models.ErrDeleteK8sResource(err, opt.Name, opt.Namespace)
+			log.Error(err)
+			return err
 		}
 
 		return nil
@@ -76,9 +94,11 @@ func (ar *ArgoRollout) Native(opt RolloutEngineGenericOptions) error {
 		"rollouts",
 		createNativeArgoResource(opt),
 		false,
+		log,
 	); err != nil {
-		logrus.Error("[Native Rollout]:", err)
-		return fmt.Errorf("failed to create resource with name \"%s\" in namespace \"%s\"", opt.Name, opt.Namespace)
+		err = models.ErrCreateK8sResource(err, opt.Name, opt.Namespace)
+		log.Error(err)
+		return err
 	}
 
 	if !*opt.Advanced.CreateService {
@@ -93,9 +113,11 @@ func (ar *ArgoRollout) Native(opt RolloutEngineGenericOptions) error {
 		"services",
 		createNativeService(opt),
 		false,
+		log,
 	); err != nil {
-		logrus.Error("[Native Rollout]:", err)
-		return fmt.Errorf("failed to create service with name \"%s\" in namespace \"%s\"", opt.Name, opt.Namespace)
+		err = models.ErrCreateK8sResource(err, opt.Name, opt.Namespace)
+		log.Error(err)
+		return err
 	}
 
 	return nil
