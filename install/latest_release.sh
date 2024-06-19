@@ -1,4 +1,4 @@
-#! /usr/bin/env bash
+#!/usr/bin/env bash
 
 # GIT_REF=`git symbolic-ref HEAD`
 # if [[ $GIT_REF = refs/tags* ]]
