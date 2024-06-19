@@ -29,7 +29,7 @@ mesheryctl components search [flags]
 Search for components using a query
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp components search [query-text]
+mesheryctl components search [query-text]
 
 </div>
 </pre> 

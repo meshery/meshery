@@ -7,7 +7,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	isql "github.com/layer5io/meshery/server/internal/sql"
-	"github.com/layer5io/meshkit/models/catalog/v1beta1"
+	"github.com/layer5io/meshkit/models/catalog/v1alpha1"
 	"gopkg.in/yaml.v2"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	types "k8s.io/apimachinery/pkg/types"
@@ -93,7 +93,7 @@ type MesheryPattern struct {
 
 	Location      isql.Map            `json:"location"`
 	Visibility    string              `json:"visibility"`
-	CatalogData   v1beta1.CatalogData `json:"catalog_data,omitempty" gorm:"type:bytes;serializer:json"`
+	CatalogData   v1alpha1.CatalogData `json:"catalog_data,omitempty" gorm:"type:bytes;serializer:json"`
 	Type          sql.NullString      `json:"type"`
 	SourceContent []byte              `json:"source_content"`
 

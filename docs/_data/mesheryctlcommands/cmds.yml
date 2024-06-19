@@ -841,11 +841,15 @@ registry:
         spreadsheet_id:
           name: --spreadsheet-id
           description: id of the spreadsheet to download
+
 model:
   name: model
   description: A unit of packaging to define managed infrastructure and their relationships, and details specifics of how to manage them.
   usage: mesheryctl model [command] [flags]
   flags:
+    count:
+      name: --count
+      description: (optional) Get the number of models in total
     help:
       name: --help, -h
       description: help for model
@@ -857,9 +861,6 @@ model:
       description: List models present in the registry
       usage: mesheryctl model list [flags]
       flags:
-        count:
-          name: --count
-          description: (optional) Get the number of models in total
         page:
           name: --page, -p
           description: list models by specific page number (25 models per page)
@@ -875,6 +876,46 @@ model:
         output-format:
           name: -o, --output-format
           description: (optional) format to display in [json|yaml] (default "yaml")
+
+components:
+  name: components
+  description: Fundamental building block used to represent and define the infrastructure under management
+  usage: mesheryctl components [command] [flags]
+  flags:
+    count:
+      name: --count
+      description: (optional) Get the number of components in total
+    help:
+      name: --help, -h
+      description: help for components
+      usage: mesheryctl components --help
+      example: mesheryctl components --help
+  subcommands:
+    list:
+      name: list
+      description: List all components registered in Meshery Server
+      usage: mesheryctl components list [flags]
+      flags:
+        page:
+          name: --page, -p
+          description: list components by specific page number (25 models per page)
+    search:
+      name: search
+      description: Using a keyword(s) search the registry for matching component(s)
+      usage: mesheryctl components search [keyword]
+    view:
+      name: view
+      description: View details of a specific component
+      usage: mesheryctl components view [component-name]
+      flags:
+        output-format:
+          name: -o, --output-format
+          description: (optional) format to display in [json|yaml] (default "yaml")
+        save:
+          name: --save
+          description: Save output as a JSON/YAML file
+          usage: mesheryctl components view --output-format [json|yaml] --save [filepath]
+          example: mesheryctl components view --save "bookInfo.yaml" --output-format yaml
 
 exp:
   name: exp

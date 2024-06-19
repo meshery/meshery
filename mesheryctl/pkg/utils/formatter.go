@@ -25,13 +25,13 @@ func SetupLogrusFormatter() {
 }
 
 // Initialize Meshkit Logger instance
-func SetupMeshkitLogger(debugLevel bool, output io.Writer) {
+func SetupMeshkitLogger(name string, debugLevel bool, output io.Writer) logger.Handler {
 	logLevel := viper.GetInt("LOG_LEVEL")
 	if !debugLevel {
 		logLevel = int(log.DebugLevel)
 	}
 
-	logger, err := logger.New("mesheryctl", logger.Options{
+	logger, err := logger.New(name, logger.Options{
 		Format:   logger.TerminalLogFormat,
 		LogLevel: logLevel,
 		Output:   output,
@@ -40,5 +40,5 @@ func SetupMeshkitLogger(debugLevel bool, output io.Writer) {
 		log.Error(err)
 		os.Exit(1)
 	}
-	Log = logger
+	return logger
 }

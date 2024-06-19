@@ -4,11 +4,14 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"os"
 
+	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
 	meshkube "github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 )
@@ -46,6 +49,19 @@ func Deploy(
 	oamConfig v1alpha1.Configuration,
 	isDel bool,
 ) error {
+	logLevel := viper.GetInt("LOG_LEVEL")
+	if viper.GetBool("DEBUG") {
+		logLevel = int(logrus.DebugLevel)
+	}
+	// Initialize Logger instance
+	log, err := logger.New("meshery", logger.Options{
+		Format:   logger.SyslogLogFormat,
+		LogLevel: logLevel,
+	})
+	if err != nil {
+		logrus.Error(err)
+		os.Exit(1)
+	}
 	if oamComp.Spec.Type == "Application" {
 		settings, err := getApplicationPatternSettings(oamComp)
 		if err != nil {
@@ -62,7 +78,7 @@ func Deploy(
 		}
 
 		var engineName rolloutEngine
-		detectedEngine := detectRolloutEngine(kubeClient)
+		detectedEngine := detectRolloutEngine(kubeClient, log)
 		if detectedEngine == "" {
 			engineName = argo
 		} else {
@@ -152,8 +168,8 @@ func detectServiceMesh(_ *meshkube.Client) serviceMesh {
 }
 
 // detectRolloutEngine will detect available rollout engine in the k8s cluster
-func detectRolloutEngine(kubeClient *meshkube.Client) rolloutEngine {
-	if detectArgoRollout(kubeClient) {
+func detectRolloutEngine(kubeClient *meshkube.Client, log logger.Handler) rolloutEngine {
+	if detectArgoRollout(kubeClient, log) {
 		return argo
 	}
 
@@ -161,7 +177,7 @@ func detectRolloutEngine(kubeClient *meshkube.Client) rolloutEngine {
 }
 
 // detectArgoRollout returns true if argo rollout is present in the cluster
-func detectArgoRollout(kubeClient *meshkube.Client) bool {
+func detectArgoRollout(kubeClient *meshkube.Client, log logger.Handler) bool {
 	deployments := []string{"argo-rollouts"}
 	nsList := findNamespaces(kubeClient)
 
@@ -176,11 +192,11 @@ func detectArgoRollout(kubeClient *meshkube.Client) bool {
 				}).
 				Namespace(ns).
 				Get(context.TODO(), deployment, v1.GetOptions{}); err == nil {
-				logrus.Debug("found argo rollout in the cluster")
+				log.Debug("found argo rollout in the cluster")
 				return true
 			}
 
-			logrus.Debugf("%s not found in namespace %s", deployment, ns)
+			log.Debug(fmt.Sprintf("%s not found in namespace %s", deployment, ns))
 		}
 	}
 

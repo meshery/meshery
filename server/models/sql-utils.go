@@ -8,7 +8,6 @@ import (
 
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
@@ -66,7 +65,8 @@ func setNewDBInstance() {
 		Logger:   log,
 	})
 	if err != nil {
-		logrus.Fatal(err)
+		err = ErrInitializeDBHandler(err)
+		log.Error(err)
 	}
 }
 
