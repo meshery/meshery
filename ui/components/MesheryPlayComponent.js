@@ -243,7 +243,7 @@ class MesheryPlayComponent extends React.Component {
                   select
                   id="adapter_id"
                   name="adapter_name"
-                  label="Select Service Mesh Type"
+                  label="Select Meshery Adapter"
                   data-cy="lifecycle-service-mesh-type"
                   fullWidth
                   value={adapter && adapter.adapter_location ? adapter.adapter_location : ''}

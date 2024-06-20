@@ -36,10 +36,10 @@ test.describe('Service Mesh Lifecycle Tests', () => {
       // Visit Lifecycle > Service Mesh Page
       await page.goto(`${ENV.MESHERY_SERVER_URL}/management/service-mesh`);
 
-      // Open "Select Service Mesh Type" Dropdown
+      // Open "Select Meshery Adapter" Dropdown
       const dropdown = page
         .locator('label')
-        .filter({ hasText: /Select Service Mesh Type/ })
+        .filter({ hasText: /Select Meshery Adapter/ })
         .locator('..');
       await dropdown.click();
 
@@ -54,10 +54,10 @@ test.describe('Service Mesh Lifecycle Tests', () => {
       // Visit Lifecycle > Service Mesh Page
       await page.goto(`${ENV.MESHERY_SERVER_URL}/management/service-mesh`);
 
-      // Open "Select Service Mesh Type" Dropdown
+      // Open "Select Meshery Adapter" Dropdown
       const dropdown = page
         .locator('label')
-        .filter({ hasText: /Select Service Mesh Type/ })
+        .filter({ hasText: /Select Meshery Adapter/ })
         .locator('..');
       await dropdown.click();
 
