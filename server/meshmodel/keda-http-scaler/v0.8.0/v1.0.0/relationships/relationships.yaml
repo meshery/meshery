@@ -1,0 +1,63 @@
+{
+  "schemaVersion": "core.meshery.io/v1alpha2",
+  "version": "v1.0.0",
+  "kind": "Edge",
+  "type": "Network",
+  "subType": "Network",
+  "metadata": {
+    "description": "A relationship that defines network edges between components",
+    "capabilities":{
+      "designer": {
+        "edit": {
+          "style": true,
+          "config": true,
+          "label": false
+        }
+      }
+    }},
+  "model": {
+    "schemaVersion": "core.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "keda-http-scaler",
+    "model": {
+      "version": "*"
+    },
+  },
+  "selectors": [{
+    "allow": {
+      "from": [
+        {
+          "kind": "HTTPScaledObject",
+          "model": "keda-http-scaler",
+          "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                  [
+                      "settings",
+                      "spec",
+                      "scaleTargetRef",
+                      "service"
+                  ]
+              ],
+              "description": "Namespace configuration to be applied to all namespaced resources."
+          }
+        }
+      ],
+      "to": [
+        {
+          "kind": "Service",
+          "model": "kubernetes",
+          "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                  [
+                      "name"
+                  ]
+              ],
+              "description": "Namespace configuration to be applied to all namespaced resources."
+          }
+        }
+      ]
+    }
+  }]
+}
