@@ -39,7 +39,7 @@
                       "service"
                   ]
               ],
-              "description": "Namespace configuration to be applied to all namespaced resources."
+              "description": "Create an HTTPScaledObject resource to define the scaling behavior for your Deployment or StatefulSet. It specifies the target application (Deployment name) and the minimum/maximum replica count."
           }
         }
       ],
@@ -54,7 +54,7 @@
                       "name"
                   ]
               ],
-              "description": "Namespace configuration to be applied to all namespaced resources."
+              "description": "Autoscale any Kubernetes Deployments and StatefulSets that expose HTTP-based applications (and handles incoming HTTP traffic)."
           }
         }
       ]
