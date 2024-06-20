@@ -23,13 +23,13 @@
     "model": {
         "schemaVersion": "core.meshery.io/v1beta1",
         "version": "v1.0.0",
-        "name": "meshery-shapes",
+        "name": "gcp",
         "model": {
-            "version": "0.7.1"
+            "version": "1.0.0"
         },
-        "displayName": "Meshery Shapes",
+        "displayName": "Google Cloud Platform",
         "category": {
-            "name": "Orchestration \u0026 Management",
+            "name": "Provisioning",
             "metadata": null
         },
         "metadata": {}
@@ -39,10 +39,10 @@
         {
             "allow": {
                 "from": [
-                   
+               
                     {
                         "kind": "*",
-                        "model": "meshery-shapes"
+                        "model": "gcp"
                     }
                 ],
                 "to": [

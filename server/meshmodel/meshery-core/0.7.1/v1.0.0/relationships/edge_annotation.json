@@ -23,11 +23,11 @@
     "model": {
         "schemaVersion": "core.meshery.io/v1beta1",
         "version": "v1.0.0",
-        "name": "meshery-shapes",
+        "name": "meshery-core",
         "model": {
             "version": "0.7.1"
         },
-        "displayName": "Meshery Shapes",
+        "displayName": "Meshery Core",
         "category": {
             "name": "Orchestration \u0026 Management",
             "metadata": null
@@ -39,10 +39,9 @@
         {
             "allow": {
                 "from": [
-                   
                     {
                         "kind": "*",
-                        "model": "meshery-shapes"
+                        "model": "meshery-core"
                     }
                 ],
                 "to": [
