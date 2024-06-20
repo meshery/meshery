@@ -21,7 +21,7 @@
     "name": "keda-http-scaler",
     "model": {
       "version": "*"
-    },
+    }
   },
   "selectors": [{
     "allow": {
