@@ -5,7 +5,7 @@
   "type": "Network",
   "subType": "Network",
   "metadata": {
-    "description": "A relationship that defines network edges between components",
+    "description": "A KEDA HTTPScaledObject is a Kubernetes custom resource definition (CRD) used in conjunction with the KEDA HTTP Add-on to enable the automatic scaling of your HTTP-based applications based on incoming HTTP traffic. This means your application can dynamically adjust the number of replicas (pods) running to handle varying workloads efficiently.",
     "capabilities":{
       "designer": {
         "edit": {
