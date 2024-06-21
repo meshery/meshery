@@ -132,6 +132,8 @@ import (
 
 	meshkitErrors "github.com/layer5io/meshkit/errors"
 	"github.com/layer5io/meshkit/logger"
+	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 )
 
 var (
@@ -140,9 +142,13 @@ var (
 )
 
 func main() {
+	logLevel := viper.GetInt("LOG_LEVEL")
+	if viper.GetBool("DEBUG") {
+		logLevel = int(logrus.DebugLevel)
+	}
 	log, err := logger.New("test", logger.Options{
-		Format:     logger.SyslogLogFormat,
-		LogLevel:   logLevel,
+		Format:   logger.SyslogLogFormat,
+		LogLevel: logLevel,
 	})
 	if err != nil {
 		fmt.Println(err)
@@ -189,9 +195,9 @@ func openFileWithMeshkitError(name string) error {
 
 func ErrOpeningFile(err error) error {
 	return meshkitErrors.New(ErrOpeningFileCode, meshkitErrors.Alert, []string{"unable to open file"},
-	[]string{err.Error()},
-	[]string{"empty string passed as argument ", "file with this name doesn't exist"},
-	[]string{"pass a non-empty string as filename ", "create file before opening it"})
+		[]string{err.Error()},
+		[]string{"empty string passed as argument ", "file with this name doesn't exist"},
+		[]string{"pass a non-empty string as filename ", "create file before opening it"})
 }{% endcapture %}
 {% include code.html code=code_content %}
 
