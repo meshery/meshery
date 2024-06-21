@@ -36,6 +36,8 @@ export const FILTER_PLURAL = 'filters';
 export const APPLICATION_PLURAL = 'applications';
 export const PATTERN_PLURAL = 'patterns';
 
+export const CATALOG = 'catalog';
+
 export const PROFILES = 'profiles';
 export const SMI = 'service_mesh_interface';
 export const TOGGLER = 'toggler';
