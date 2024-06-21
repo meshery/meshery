@@ -921,3 +921,76 @@ exp:
   name: exp
   description: Experimental features
   usage: mesheryctl exp [command] [flags]
+  flags:
+    help:
+      name: --help, -h
+      description: help for exp
+      usage: mesheryctl exp --help
+  subcommands:
+    components:
+      name: components
+      description: View list of components and detail of components
+      usage: mesheryctl exp components [command] [flags]
+      subcommand:
+        list:
+          name: list
+          description: list all components registered in Meshery Server
+        view:
+          name: view
+          description: view a component registered in Meshery Server
+        search:
+          name: search
+          description: search components registered in Meshery Server
+    connections:
+      name: connections
+      description: Manage connections
+      usage: mesheryctl exp connections [command] [flags]
+      subcommand:
+        delete:
+          name: delete
+          description: delete a connection
+        list:
+          name: list
+          description: list all the connections
+    environment:
+      name: environment
+      description: View list of environments and detail of environments
+      usage: mesheryctl exp environment [command] [flags]
+      subcommand:
+        create:
+          name: create
+          description: create a new environments by providing the name and description of the environment
+        delete:
+          name: delete
+          description: delete a new environments by providing the name and description of the environment
+        list:
+          name: list
+          description: list name of all registered environments
+        view:
+          name: view
+          description: view a environments registered in Meshery Server
+    relationship:
+      name: relationship
+      description: View list of relationships and details of relationship
+      usage: mesheryctl exp relationship [command] [flags]
+      subcommand:
+        generate:
+          name: generate
+          description: generate relationships docs from the google spreadsheets
+        list:
+          name: list
+          description: list all relationships registered in Meshery Server
+        view:
+          name: view 
+          description: view a relationship queried by the model name
+    workspace:
+      name: workspace
+      description: View list of workspaces and detail of workspaces
+      usage: mesheryctl exp workspace [command] [flags]
+      subcommand:
+        create:
+          name: create
+          description: create a new workspace by providing the name, description, and organization ID
+        list:
+          name: list
+          description: list name of all registered workspaces

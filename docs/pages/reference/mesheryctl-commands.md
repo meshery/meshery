@@ -831,23 +831,29 @@ Installation, troubleshooting and debugging of Meshery and its adapters
 <thead>
   <tr>
     <th>Command</th>
-    <th>Subcommand</th>
-    <th>Flag</th>
+    <th>Subcommand 1</th>
+    <th>Subcommand 2</th>
     <th>Function</th>
   </tr>
-  {% assign command11 = site.data.mesheryctlcommands.cmds.exp %}
+  {% assign command14 = site.data.mesheryctlcommands.cmds.exp %}
     <tr>
-      <td rowspan=6><a href="{{ site.baseurl }}/reference/mesheryctl/exp">{{ command10.name }}</a></td>
+      <td rowspan=20><a href="{{ site.baseurl }}/reference/mesheryctl/exp">{{ command14.name }}</a></td>
       <td></td>
       <td></td>
-      <td>{{ command11.description }}</td>
+      <td>{{ command14.description }}</td>
     </tr>
-    {% for flag_hash in command11.flags %}{% assign flag = flag_hash[1] %}
+    {% for subcommand_hash in command14.subcommands %}{% assign subcomand1 = subcommand_hash[1] %}
       <tr>
+        <td rowspan={{ subcomand1.subcommand.size | plus:1 }} ><a href="{{ site.baseurl }}/reference/mesheryctl/{{ command14.name }}/{{ subcomand.name }}">{{ subcomand1.name }}</a></td>
         <td></td>
-        <td>{{ flag.name }}</td>
-        <td>{{ flag.description }}</td>
+        <td>{{ subcomand1.description}}</td>
       </tr>
+      {% for subcomand_hash in subcomand1.subcommand %}{% assign subcomand2 = subcomand_hash[1] %}
+        <tr>
+          <td><a href="{{ site.baseurl }}/reference/mesheryctl/{{ command14.name }}/{{ subcomand1.name }}/{{ subcomand2.name }}">{{ subcomand2.name }}</a></td>
+          <td>{{ subcomand2.description }}</td>
+        </tr>
+      {% endfor %}
     {% endfor %}
 </thead>
 </table>
