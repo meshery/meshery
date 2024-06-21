@@ -46,6 +46,7 @@ export const extensionStyles = (theme) => ({
     paddingRight: '1rem',
     height: '80px',
     width: '80px',
+    flexShrink: 0,
   },
   frontSideDescription: {
     paddingTop: '1rem',

@@ -1,0 +1,63 @@
+{
+  "schemaVersion": "core.meshery.io/v1alpha2",
+  "version": "v1.0.0",
+  "kind": "Edge",
+  "type": "Network",
+  "subType": "Network",
+  "metadata": {
+    "description": "A KEDA HTTPScaledObject is a Kubernetes custom resource definition (CRD) used in conjunction with the KEDA HTTP Add-on to enable the automatic scaling of your HTTP-based applications based on incoming HTTP traffic. This means your application can dynamically adjust the number of replicas (pods) running to handle varying workloads efficiently.",
+    "capabilities":{
+      "designer": {
+        "edit": {
+          "style": true,
+          "config": true,
+          "label": false
+        }
+      }
+    }},
+  "model": {
+    "schemaVersion": "core.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "keda-http-scaler",
+    "model": {
+      "version": "*"
+    }
+  },
+  "selectors": [{
+    "allow": {
+      "from": [
+        {
+          "kind": "HTTPScaledObject",
+          "model": "keda-http-scaler",
+          "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                  [
+                      "settings",
+                      "spec",
+                      "scaleTargetRef",
+                      "service"
+                  ]
+              ],
+              "description": "Create an HTTPScaledObject resource to define the scaling behavior for your Deployment or StatefulSet. It specifies the target application (Deployment name) and the minimum/maximum replica count."
+          }
+        }
+      ],
+      "to": [
+        {
+          "kind": "Service",
+          "model": "kubernetes",
+          "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                  [
+                      "name"
+                  ]
+              ],
+              "description": "Autoscale any Kubernetes Deployments and StatefulSets that expose HTTP-based applications (and handles incoming HTTP traffic)."
+          }
+        }
+      ]
+    }
+  }]
+}
