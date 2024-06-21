@@ -7,9 +7,11 @@ import (
 	"strings"
 
 	"github.com/gofrs/uuid"
+	"gopkg.in/yaml.v2"
 	"gorm.io/gorm"
 
 	"github.com/layer5io/meshkit/database"
+	"github.com/layer5io/meshkit/models/patterns"
 )
 
 // MesheryPatternPersister is the persister for persisting
@@ -170,6 +172,11 @@ func (mpp *MesheryPatternPersister) DeleteMesheryPatterns(patterns MesheryPatter
 }
 
 func (mpp *MesheryPatternPersister) SaveMesheryPattern(pattern *MesheryPattern) ([]byte, error) {
+	patternFile, err := patterns.GetPatternFormat(pattern.PatternFile)
+	if err != nil {
+		return nil, err
+	}
+
 	if pattern.Visibility == "" {
 		pattern.Visibility = Private
 	}
@@ -178,7 +185,12 @@ func (mpp *MesheryPatternPersister) SaveMesheryPattern(pattern *MesheryPattern) 
 		if err != nil {
 			return nil, ErrGenerateUUID(err)
 		}
-
+		patternFile.AssignVersion()
+		marshalledPatternFile, err := yaml.Marshal(patternFile)
+		if err != nil {
+			return nil, ErrMarshalYAML(err, "pattern file")
+		}
+		pattern.PatternFile = string(marshalledPatternFile)
 		pattern.ID = &id
 	}
 
