@@ -337,6 +337,28 @@ func formatError(msg string, cmd cmdType) string {
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, relationshipUsageURL)
 	case cmdRelationshipGenerateDocs:
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, cmdRelationshipGenerateDocs)
+	case cmdComponent:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, componentUsageURL)
+	case cmdComponentList:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, componentListURL)
+	case cmdComponentSearch:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, componentSearchURL)
+	case cmdComponentView:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, componentViewURL)
+	case cmdConnection:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, connectionUsageURL)
+	case cmdConnectionDelete:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, connectionDeleteURL)
+	case cmdConnectionList:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, connectionListURL)
+	case cmdExpRelationship:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, expRelationshipUsageURL)
+	case cmdExpRelationshipGenerate:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, expRelationshipGenerateURL)
+	case cmdExpRelationshipView:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, expRelationshipViewURL)
+	case cmdExpRelationshipList:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, expRelationshipListURL)
 	default:
 		return fmt.Sprintf("%s\n", msg)
 	}
