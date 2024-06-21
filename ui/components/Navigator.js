@@ -48,7 +48,8 @@ import {
   updateCapabilities,
 } from '../lib/store';
 import { ButtonGroup, IconButton } from '@material-ui/core';
-import { CustomTooltip } from '@layer5/sistent';
+import { CatalogIcon, CustomTooltip } from '@layer5/sistent';
+import { UsesSistent } from './SistentWrapper';
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
 import dataFetch from '../lib/data-fetch';
 import { Collapse } from '@material-ui/core';
@@ -62,6 +63,7 @@ import {
   DESIGN,
   CONFIGURATION,
   DASHBOARD,
+  CATALOG,
   FILTER,
   LIFECYCLE,
   SERVICE_MESH,
@@ -414,6 +416,28 @@ const getNavigatorComponents = (/** @type {CapabilitiesRegistry} */ capabilityRe
     submenu: true,
     children: [
       {
+        id: CATALOG,
+        icon: (
+          <UsesSistent>
+            <CatalogIcon
+              primaryFill="#FFFFFF"
+              secondaryFill="#FFFFFFb3"
+              tertiaryFill="transparent"
+              style={{ ...drawerIconsStyle }}
+            />
+          </UsesSistent>
+        ),
+        href: '/configuration/catalog',
+        title: 'Catalog',
+        show: capabilityRegistryObj.isNavigatorComponentEnabled([CONFIGURATION, CATALOG]),
+        link: true,
+        isBeta: true,
+        permission: {
+          action: keys.VIEW_CATALOG.action,
+          subject: keys.VIEW_CATALOG.subject,
+        },
+      },
+      {
         id: FILTER,
         icon: <FilterIcon style={{ ...drawerIconsStyle }} />,
         href: '/configuration/filters',
@@ -736,6 +760,15 @@ class Navigator extends React.Component {
         });
 
         cat.show = show;
+      }
+
+      //To Toggle Catalog Extension
+      if (cat.id === CONFIGURATION) {
+        cat.children?.forEach((ch) => {
+          if (ch.id === CATALOG) {
+            ch.show = this.props.catalogVisibility;
+          }
+        });
       }
     });
   }
@@ -1422,6 +1455,7 @@ const mapStateToProps = (state) => {
   const capabilitiesRegistry = state.get('capabilitiesRegistry');
   const organization = state.get('organization');
   const keys = state.get('keys');
+  const catalogVisibility = state.get('catalogVisibility');
   return {
     meshAdapters,
     meshAdaptersts,
@@ -1430,6 +1464,7 @@ const mapStateToProps = (state) => {
     capabilitiesRegistry,
     organization,
     keys,
+    catalogVisibility,
   };
 };
 

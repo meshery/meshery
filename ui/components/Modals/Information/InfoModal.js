@@ -52,6 +52,7 @@ const InfoModal_ = React.memo((props) => {
     patternFetcher,
     formSchema,
     meshModels = [],
+    isReadOnly = false,
   } = props;
 
   const formRef = React.createRef();
@@ -198,6 +199,10 @@ const InfoModal_ = React.memo((props) => {
         newUiSchema['ui:readonly'] = currentUserID !== resourceOwnerID;
       }
 
+      if (isReadOnly) {
+        newUiSchema['ui:readonly'] = true;
+      }
+
       setUiSchema(newUiSchema);
     }
   }, [resourceOwnerID, formSchema, currentUserID]);
@@ -218,7 +223,8 @@ const InfoModal_ = React.memo((props) => {
     const isPrivate = selectedResource?.visibility === 'private';
     const isOwner = currentUserID === resourceOwnerID;
 
-    return (isPrivate && !isOwner) || !isPrivate;
+    const renderByPermission = (isPrivate && !isOwner) || !isPrivate;
+    return !isReadOnly && renderByPermission;
   };
 
   return (
