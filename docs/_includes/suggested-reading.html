@@ -1,4 +1,4 @@
-<!-- {% if include.section-title != "false" %}
+{% if include.section-title != "false" %}
 {% if page.layout == "integration" %}
   <h2>Related Models in <b>{{ page['integrations-category'] }}</b></h2>
 {% else %}
@@ -6,7 +6,7 @@
 <h2>{{ h2_text }}</h2>
 {% endif %}
 
-{% endif %} -->
+{% endif %}
 
 {% assign sorted_reading = include.reading | default: site.pages | sort: include.title %}
 
