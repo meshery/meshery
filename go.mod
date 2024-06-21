@@ -13,7 +13,7 @@ replace (
 
 require (
 	cuelang.org/go v0.6.0
-	fortio.org/fortio v1.63.5
+	fortio.org/fortio v1.63.10
 	github.com/99designs/gqlgen v0.17.45
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2
 	github.com/briandowns/spinner v1.23.0
@@ -64,8 +64,8 @@ require (
 	golang.org/x/text v0.16.0
 	gonum.org/v1/gonum v0.15.0
 	google.golang.org/api v0.169.0
-	google.golang.org/grpc v1.62.1
-	google.golang.org/protobuf v1.33.0
+	google.golang.org/grpc v1.64.0
+	google.golang.org/protobuf v1.34.1
 	gopkg.in/yaml.v2 v2.4.0
 	gorm.io/gorm v1.25.9
 	k8s.io/api v0.28.4
@@ -86,9 +86,11 @@ require (
 require (
 	cloud.google.com/go/compute/metadata v0.3.0 // indirect
 	dario.cat/mergo v1.0.0 // indirect
-	fortio.org/dflag v1.7.1 // indirect
-	fortio.org/log v1.12.1 // indirect
-	fortio.org/sets v1.0.4 // indirect
+	fortio.org/cli v1.5.2 // indirect
+	fortio.org/dflag v1.7.2 // indirect
+	fortio.org/log v1.12.2 // indirect
+	fortio.org/scli v1.14.3 // indirect
+	fortio.org/sets v1.1.1 // indirect
 	fortio.org/struct2env v0.4.0 // indirect
 	fortio.org/version v1.0.4 // indirect
 	github.com/AdaLogics/go-fuzz-headers v0.0.0-20230811130428-ced1acdcaa24 // indirect
@@ -129,7 +131,7 @@ require (
 	github.com/chai2010/gettext-go v1.0.2 // indirect
 	github.com/chzyer/readline v1.5.1 // indirect
 	github.com/cloudflare/circl v1.3.7 // indirect
-	github.com/cncf/xds/go v0.0.0-20231128003011-0fa0005c9caa // indirect
+	github.com/cncf/xds/go v0.0.0-20240318125728-8a4994d93e50 // indirect
 	github.com/cockroachdb/apd/v3 v3.2.1 // indirect
 	github.com/compose-spec/compose-go v1.19.0 // indirect
 	github.com/containerd/containerd v1.7.11 // indirect
@@ -265,7 +267,6 @@ require (
 	github.com/prometheus/client_model v0.6.0 // indirect
 	github.com/prometheus/procfs v0.12.0 // indirect
 	github.com/qri-io/jsonpointer v0.1.1 // indirect
-	github.com/rogpeppe/go-internal v1.12.0 // indirect
 	github.com/rubenv/sql-migrate v1.5.2 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/sagikazarmark/locafero v0.5.0 // indirect
@@ -297,14 +298,14 @@ require (
 	go.starlark.net v0.0.0-20230814145427-12f4cb8177e4 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/crypto v0.24.0 // indirect
-	golang.org/x/exp v0.0.0-20240318143956-a85f2c67cd81 // indirect
-	golang.org/x/mod v0.17.0 // indirect
+	golang.org/x/exp v0.0.0-20240604190554-fc45aab8b7f8 // indirect
+	golang.org/x/mod v0.18.0 // indirect
 	golang.org/x/net v0.26.0 // indirect
 	golang.org/x/sys v0.21.0 // indirect
 	golang.org/x/term v0.21.0 // indirect
 	golang.org/x/time v0.5.0 // indirect
-	golang.org/x/tools v0.21.1-0.20240508182429-e35e4ccd0d2d // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20240318140521-94a12d6c2237 // indirect
+	golang.org/x/tools v0.22.0 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20240521202816-d264139d666e // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/warnings.v0 v0.1.2 // indirect
