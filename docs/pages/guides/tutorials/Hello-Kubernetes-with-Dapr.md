@@ -35,13 +35,11 @@ Upon completing this tutorial, you will:
  - Using your credentials, log in to the [Meshery Playground] (https://meshery.layer5.io/). You should be at the dashboard upon successful login. To close the _Where do you want to start?_ popup (if required), press **X**.
 -   Click **Explore** in the Cloud Native Playground tile to navigate to _MeshMap_.
 
-> **_NOTE:_** MeshMap is still in beta.
-
 #### Step 1: Install Dapr on your meshery playground. 
 
 - Refer to the Meshery Playground documentation for instructions on importing Helm charts: [Meshery Playground Helm Docs](https://docs.layer5.io/meshmap/getting-started/starting-helm/)
-- 
-  Specific to Dapr, To import Dapr, use the direct download link: [Dapr Helm Chart] (https://artifacthub.io/packages/helm/dapr/dapr?modal=install).
+ 
+- Specific to Dapr, To import Dapr, use the direct download link: [Dapr Helm Chart] (https://artifacthub.io/packages/helm/dapr/dapr?modal=install).
 
 
 #### Step 2: Create and configure a Reddis state store.
@@ -49,7 +47,8 @@ Upon completing this tutorial, you will:
 Dapr can use a number of different state stores (Redis, CosmosDB, DynamoDB, Cassandra, etc.) to persist and retrieve the state. This demo will use Redis.
 1. Follow [these steps](https://docs.dapr.io/getting-started/tutorials/configure-state-pubsub/#step-1-create-a-redis-store) to create a Redis store.
 2. Once your store is created, add the keys to the'redis.yaml` file in the `deploy` directory.
-**Note:** The'redis.yaml'` file provided in this quickstart will work securely out-of-the-box with Redis installed with `helm install bitnami/redis`. If you have your own Redis setup, replace the'redisHostt` value with your own Redis master address and the redisPassword with your own secret. You can learn more here: https://docs.dapr.io/operations/components/component-secrets/.
+**Note:** The'redis.yaml'` file provided in this quickstart will work securely out-of-the-box with Redis installed with `helm install bitnami/redis`. If you have your own Redis setup, replace the'redisHostt` 
+  value with your own Redis master address and the redisPassword with your own secret. You can learn more here: https://docs.dapr.io/operations/components/component-secrets/.
 3. Apply the'redis.yaml` file and observe that your state store was successfully configured!
 4. Here is the'redis.yaml'  that you can refer to:
 ```\yaml
