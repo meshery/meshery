@@ -7,7 +7,7 @@ test.describe('Service Mesh Lifecycle Tests', () => {
     { adapterName: 'Consul', adapterPort: '10002', deploy: false },
   ];
 
-  mesheryAdapters.forEach(({ adapterName, adapterPort, deploy }) => {
+  mesheryAdapters.forEach(({ adapterName, adapterPort }) => {
     const ADAPTER_LOCATION = `localhost:${adapterPort}`;
     test(`Configure Existing ${adapterName} adapter through Mesh Adapter URL from Management page`, async ({
       page,
