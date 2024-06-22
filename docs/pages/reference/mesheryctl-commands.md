@@ -825,8 +825,6 @@ Installation, troubleshooting and debugging of Meshery and its adapters
 </thead>
 </table>
 
-## Experimental Features
-
 ## Experimental Features(exp)
 
 <table>
