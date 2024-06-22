@@ -1,9 +1,24 @@
 {
     "schemaVersion": "core.meshery.io/v1alpha2",
     "version": "v1.0.0",
-    "kind": "Hierarchical",
+    "kind": "Edge",
     "metadata": {
-        "description": "A relationship that defines whether a component can be a parent of other components. It is read like: `from` can be a child of `to`, where from and to are any components that match the from and to selectors respectively"
+        "description": "A relationship that defines annotation edges between components",
+        "styles": {
+            "lineStyle": "solid",
+            "lineColor": "#00B39F",
+            "target-arrow-color": "#00B39F",
+            "targetArrowShape": "triangle"
+        },
+        "capabilities": {
+            "designer": {
+                "edit": {
+                    "style": true,
+                    "config": false,
+                    "label": true
+                }
+            }
+        }
     },
     "model": {
         "name": "meshery-shapes",
@@ -19,25 +34,26 @@
         },
         "metadata": {}
     },
-    "subType": "Parent",
+    "subType": "Annotation",
     "selectors": [
         {
             "allow": {
-                "to": [
+                "from": [
+                   
                     {
-                        "kind": "Section",
+                        "kind": "*",
                         "model": "meshery-shapes"
                     }
                 ],
-                "from": [
+                "to": [
                     {
-                        "model": "*"
+                        "kind": "*",
+                        "model": "meshery-shapes"
                     }
                 ]
             },
             "deny": {
-                "from": [],
-                "to": []
+                "from": []
             }
         }
     ]

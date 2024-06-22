@@ -1,0 +1,65 @@
+{
+    "schemaVersion": "core.meshery.io/v1alpha2",
+    "version": "v1.0.0",
+    "kind": "Hierarchical",
+    "metadata": {
+      "description": "A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. In this case, the configuration of the Kubernetes Node (parent) component is patched with the configuration as received from KubeArmorHostPolicy (child) component."
+    },
+    "model": {
+      "schemaVersion": "core.meshery.io/v1lpha2",
+      "version": "v1.0.0",
+      "name": "kubearmor",
+      "model": {
+        "version": "*"
+      },
+      "displayName": "KubeArmor",
+      "category": {
+        "name": "Provisioning",
+        "metadata": null
+      },
+      "metadata": {}
+    },
+    "subType": "Inventory",
+    "evaluationQuery": "hierarchical_inventory_relationship",
+    "selectors": [
+      {
+        "allow": {
+          "from": [
+            {
+              "kind": "KubeArmorPolicy",
+              "model": "kubearmor",
+              "patch": {
+                "patchStrategy": "replace",
+                "mutatorRef": [
+                  [
+                    "name"
+                  ]
+                ],
+                "description": "KubeArmorPolicy defines rules governing system call behavior within Kubernetes Pods, ensuring security and compliance by controlling access to resources and actions. KubeArmorPolicy helps enforce fine-grained security measures tailored to specific application requirements and threat landscapes."
+              }
+            }
+          ],
+          "to": [
+            {
+              "kind": "CronJob",
+              "model": "kubernetes",
+              "patch": {
+                "patchStrategy": "replace",
+                "mutatedRef": [
+                  [
+                    "annotations",
+                    "security.kubearmor.com/policy"
+                  ]
+                ],
+                "description": "CronJobs in Kubernetes can have KubeArmorPolicy associated to enforce security measures during scheduled job executions, ensuring compliance and protection against unauthorized actions."
+              }
+            }
+          ]
+        },
+        "deny": {
+          "from": [],
+          "to": []
+        }
+      }
+    ]
+}
