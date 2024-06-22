@@ -563,7 +563,7 @@ func (h *Handler) handlePatternPOST(
 				mesheryPattern = &pfs[0]
 			} else {
 				// Fallback to generic HTTP import
-				pfs, err = genericHTTPDesignFile(parsedBody.URL, sourcetype, h.registryManager, h.log)
+				pfs, err = genericHTTPDesignFile(parsedBody.URL, parsedBody.Name, sourcetype, h.registryManager, h.log)
 				if err != nil {
 					remoteApplicationErr := ErrRemoteApplication(err)
 					http.Error(rw, remoteApplicationErr.Error(), http.StatusInternalServerError)
@@ -590,7 +590,7 @@ func (h *Handler) handlePatternPOST(
 				String: string(models.Design),
 				Valid:  true,
 			}
-			result, err := genericHTTPDesignFile(parsedBody.URL, sourcetype, h.registryManager, h.log)
+			result, err := genericHTTPDesignFile(parsedBody.URL, parsedBody.Name, sourcetype, h.registryManager, h.log)
 
 			if err != nil {
 				h.log.Error(ErrImportPattern(err))
@@ -878,7 +878,7 @@ func githubRepoDesignScan(
 }
 
 // Always returns a meshery pattern slice of length 1 otherwise an error is returned
-func genericHTTPDesignFile(fileURL, sourceType string, reg *meshmodel.RegistryManager, log logger.Handler) ([]models.MesheryPattern, error) {
+func genericHTTPDesignFile(fileURL, patternName, sourceType string, reg *meshmodel.RegistryManager, log logger.Handler) ([]models.MesheryPattern, error) {
 	resp, err := http.Get(fileURL)
 	if err != nil {
 		return nil, ErrRemoteApplication(err)
@@ -917,6 +917,10 @@ func genericHTTPDesignFile(fileURL, sourceType string, reg *meshmodel.RegistryMa
 		}
 	}
 
+	if patternName != "" {
+		pattern.Name = patternName
+	}
+	 
 	response, err := yaml.Marshal(pattern)
 
 	if err != nil {
