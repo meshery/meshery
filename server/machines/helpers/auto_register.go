@@ -9,8 +9,8 @@ import (
 	"sync"
 
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/server/machines"
 	helpers "github.com/layer5io/meshery/server/helpers/utils"
+	"github.com/layer5io/meshery/server/machines"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"

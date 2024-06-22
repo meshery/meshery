@@ -367,7 +367,7 @@ func (h *Handler) handlePatternPOST(
 				http.Error(rw, ErrInvalidPattern(err).Error(), http.StatusBadRequest)
 				return
 			}
-			
+
 			// Assign a name if no name is provided
 			if parsedBody.PatternData.Name == "" {
 				mesheryPattern.Name = pattern.Name
@@ -920,7 +920,7 @@ func genericHTTPDesignFile(fileURL, patternName, sourceType string, reg *meshmod
 	if patternName != "" {
 		pattern.Name = patternName
 	}
-	 
+
 	response, err := yaml.Marshal(pattern)
 
 	if err != nil {
