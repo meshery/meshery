@@ -95,7 +95,9 @@ jobs:
             "Model Generator" <no-reply@meshery.io>
           to: developers@meshery.io
           body: |
-               Meshery's <a href="https://docs.meshery.io/concepts/logical/registry">Model Generator</a> <a href="https://github.com/meshery/meshery/actions/workflows/model-generator.yml">workflow</a> encountered one or more errors. Refer to the attached error log for details or review the [results of the failed workflow](https://github.com/meshery/meshery/actions/runs/${{ github.run_id }}).
+               The Model Generator workflow (https://github.com/meshery/meshery/actions/workflows/model-generator.yml) encountered one or more errors. Refer to the attached error log for details or review the results of the failed workflow - https://github.com/meshery/meshery/actions/runs/${{ github.run_id }}.
+
+               Learn more about the Meshery Registry - https://docs.meshery.io/concepts/logical/registry.
           attachments: .meshery/logs/registry/Errors
   update-components:
     if: github.repository == 'meshery/meshery'
