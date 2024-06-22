@@ -1,0 +1,68 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "core.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Nexus Cleanup Policy",
+  "description": "",
+  "format": "JSON",
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "core.meshery.io/v1beta1",
+   "version": "v1.0.0",
+   "name": "nexus-operator",
+   "displayName": "Nexus Operator",
+   "description": "",
+   "status": "ignored",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "registrant": {
+    "hostname": "artifacthub"
+   },
+   "category": {
+    "name": "Uncategorized",
+    "metadata": null
+   },
+   "subCategory": "Uncategorized",
+   "metadata": {
+    "capabilities": "",
+    "defaultData": "",
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "model": {
+    "version": "3.3.0-SNAPSHOT.12"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "status": "ignored",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "component": {
+   "kind": "NexusCleanupPolicy",
+   "version": "edp.epam.com/v1alpha1",
+   "schema": "{\n \"description\": \"NexusCleanupPolicy is the Schema for the cleanuppolicies API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"NexusCleanupPolicySpec defines the desired state of NexusCleanupPolicy\",\n   \"properties\": {\n    \"criteria\": {\n     \"description\": \"Criteria for the cleanup policy.\",\n     \"properties\": {\n      \"assetRegex\": {\n       \"description\": \"AssetRegex removes components that match the given regex.\",\n       \"example\": \".*\",\n       \"type\": \"string\"\n      },\n      \"lastBlobUpdated\": {\n       \"description\": \"LastBlobUpdated removes components published over “x” days ago.\",\n       \"example\": \"30\",\n       \"maximum\": 24855,\n       \"minimum\": 1,\n       \"type\": \"integer\"\n      },\n      \"lastDownloaded\": {\n       \"description\": \"LastDownloaded removes components downloaded over “x” days.\",\n       \"example\": \"30\",\n       \"maximum\": 24855,\n       \"minimum\": 1,\n       \"type\": \"integer\"\n      },\n      \"releaseType\": {\n       \"description\": \"ReleaseType removes components that are of the following release type.\",\n       \"enum\": [\n        \"RELEASES\",\n        \"PRERELEASES\",\n        \"\"\n       ],\n       \"example\": \"RELEASES\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"description\": {\n     \"description\": \"Description of the cleanup policy.\",\n     \"example\": \"Cleanup policy for go format\",\n     \"type\": \"string\"\n    },\n    \"format\": {\n     \"description\": \"Format that this cleanup policy can be applied to.\",\n     \"enum\": [\n      \"apt\",\n      \"bower\",\n      \"cocoapods\",\n      \"conan\",\n      \"conda\",\n      \"docker\",\n      \"gitlfs\",\n      \"go\",\n      \"helm\",\n      \"maven2\",\n      \"npm\",\n      \"nuget\",\n      \"p2\",\n      \"pypi\",\n      \"r\",\n      \"raw\",\n      \"rubygems\",\n      \"yum\"\n     ],\n     \"example\": \"go\",\n     \"type\": \"string\"\n    },\n    \"name\": {\n     \"description\": \"Name is a unique name for the cleanup policy.\",\n     \"example\": \"go-cleanup-policy\",\n     \"maxLength\": 512,\n     \"type\": \"string\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"Value is immutable\",\n       \"rule\": \"self == oldSelf\"\n      }\n     ]\n    },\n    \"nexusRef\": {\n     \"description\": \"NexusRef is a reference to Nexus custom resource.\",\n     \"properties\": {\n      \"kind\": {\n       \"default\": \"Nexus\",\n       \"description\": \"Kind specifies the kind of the Nexus resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name specifies the name of the Nexus resource.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"criteria\",\n    \"format\",\n    \"name\",\n    \"nexusRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Nexus Cleanup Policy\",\n \"type\": \"object\"\n}"
+  }
+ }

@@ -30,6 +30,8 @@ import { keys } from '@/utils/permission_constants';
 import ActionButton from './ActionButton';
 import DryRunIcon from '@/assets/icons/DryRunIcon';
 import CheckIcon from '@/assets/icons/CheckIcon';
+import PatternIcon from '@/assets/icons/Pattern';
+import { iconLarge } from 'css/icons.styles';
 
 const INITIAL_GRID_SIZE = { xl: 4, md: 6, xs: 12 };
 
@@ -56,6 +58,8 @@ function MesheryPatternCard_({
   user,
   pattern,
   handleInfoModal,
+  hideVisibility = false,
+  isReadOnly = false,
 }) {
   const router = useRouter();
 
@@ -95,6 +99,7 @@ function MesheryPatternCard_({
           updateHandler={updateHandler}
           deleteHandler={deleteHandler}
           type={'pattern'}
+          isReadOnly={isReadOnly}
         />
       )}
       <FlipCard
@@ -123,7 +128,11 @@ function MesheryPatternCard_({
               >
                 {name}
               </Typography>
-              <img className={classes.img} src={`/static/img/${visibility}.svg`} />
+              {hideVisibility ? (
+                <PatternIcon {...iconLarge} color={true} />
+              ) : (
+                <img className={classes.img} src={`/static/img/${visibility}.svg`} />
+              )}
             </div>
             <div className={classes.lastRunText}>
               <div>
@@ -300,6 +309,7 @@ function MesheryPatternCard_({
                     // @ts-ignore
                     lint: true,
                     mode: 'text/x-yaml',
+                    readOnly: isReadOnly,
                   }}
                   onChange={(_, data, val) => setYaml(val)}
                 />
@@ -335,27 +345,29 @@ function MesheryPatternCard_({
               </div>
             </Grid>
             <Grid item xs={12}>
-              <div className={classes.updateDeleteButtons}>
-                {/* Save button */}
-                <CustomTooltip title="Save" arrow interactive placement="bottom">
-                  <IconButton
-                    disabled={!CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject)}
-                    onClick={(ev) => genericClickHandler(ev, updateHandler)}
-                  >
-                    <Save color="primary" />
-                  </IconButton>
-                </CustomTooltip>
+              {isReadOnly ? null : (
+                <div className={classes.updateDeleteButtons}>
+                  {/* Save button */}
+                  <CustomTooltip title="Save" arrow interactive placement="bottom">
+                    <IconButton
+                      disabled={!CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject)}
+                      onClick={(ev) => genericClickHandler(ev, updateHandler)}
+                    >
+                      <Save color="primary" />
+                    </IconButton>
+                  </CustomTooltip>
 
-                {/* Delete Button */}
-                <CustomTooltip title="Delete" arrow interactive placement="bottom">
-                  <IconButton
-                    disabled={!CAN(keys.DELETE_A_DESIGN.action, keys.DELETE_A_DESIGN.subject)}
-                    onClick={(ev) => genericClickHandler(ev, deleteHandler)}
-                  >
-                    <DeleteIcon color="primary" />
-                  </IconButton>
-                </CustomTooltip>
-              </div>
+                  {/* Delete Button */}
+                  <CustomTooltip title="Delete" arrow interactive placement="bottom">
+                    <IconButton
+                      disabled={!CAN(keys.DELETE_A_DESIGN.action, keys.DELETE_A_DESIGN.subject)}
+                      onClick={(ev) => genericClickHandler(ev, deleteHandler)}
+                    >
+                      <DeleteIcon color="primary" />
+                    </IconButton>
+                  </CustomTooltip>
+                </div>
+              )}
             </Grid>
           </Grid>
         </>

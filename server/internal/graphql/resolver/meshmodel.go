@@ -11,7 +11,6 @@ import (
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 	regv1alpha2 "github.com/layer5io/meshkit/models/meshmodel/registry/v1alpha2"
 	regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
-	"github.com/sirupsen/logrus"
 )
 
 func (r *Resolver) subscribeMeshModelSummary(ctx context.Context, provider models.Provider, selector model.MeshModelSummarySelector) (<-chan *model.MeshModelSummary, error) {
@@ -27,7 +26,7 @@ func (r *Resolver) subscribeMeshModelSummary(ctx context.Context, provider model
 			case <-ch:
 				meshModelSummary, err := r.getMeshModelSummary(ctx, provider, selector)
 				if err != nil {
-					logrus.Error(ErrMeshModelSummarySubscription(err))
+					r.Log.Error(ErrMeshModelSummarySubscription(err))
 					break
 				}
 				respChan <- meshModelSummary

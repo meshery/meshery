@@ -62,7 +62,7 @@
             {% endfor %}
           </div>
           {% endif %}  
-          {% if page.suggested-reading != false and page.title and page.type and page.category and page.url %}
+          {% if page.suggested-reading != false and page.title and page.type and page.category and page.url and page.layout != "integration" %}
             {% include_cached suggested-reading.html  title=page.title type=page.type category=page.category url=page.url language="en" %} 
           {% endif %} 
           {% include_cached feedback.html %}

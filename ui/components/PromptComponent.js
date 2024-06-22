@@ -209,12 +209,7 @@ class PromptComponent extends React.Component {
               </Typography>
             </PromptActionButton>
             {showInfoIcon && (
-              <CustomTextTooltip
-                placement="top"
-                interactive={true}
-                style={{ whiteSpace: 'pre-line' }}
-                title={showInfoIcon}
-              >
+              <CustomTextTooltip placement="top" interactive={true} title={showInfoIcon}>
                 <IconButtonWrapper color="primary">
                   <InfoOutlinedIcon />
                 </IconButtonWrapper>

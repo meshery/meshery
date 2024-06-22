@@ -47,7 +47,7 @@ export const SEVERITY_STYLE = {
   [SEVERITY.ERROR]: {
     icon: ErrorIcon,
     color: NOTIFICATIONCOLORS.ERROR,
-    darlColor: NOTIFICATIONCOLORS.ERROR_DARK,
+    darkColor: NOTIFICATIONCOLORS.ERROR_DARK,
   },
   [SEVERITY.WARNING]: {
     icon: AlertIcon,

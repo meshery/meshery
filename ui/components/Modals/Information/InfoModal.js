@@ -16,7 +16,7 @@ import {
   Dialog,
 } from '@material-ui/core';
 import useStyles, { ActionContainer, CreatAtContainer } from './styles';
-import { iconSmall } from '../../../css/icons.styles';
+import { iconMedium, iconSmall } from '../../../css/icons.styles';
 import { getSharableCommonHostAndprotocolLink } from '../../../utils/utils';
 import moment from 'moment';
 import Application from '../../../public/static/img/drawer-icons/application_svg.js';
@@ -57,6 +57,7 @@ const InfoModal_ = React.memo((props) => {
     formSchema,
     handlePublish,
     meshModels = [],
+    isReadOnly = false,
   } = props;
 
   const formRef = React.createRef();
@@ -72,13 +73,22 @@ const InfoModal_ = React.memo((props) => {
   };
 
   const { data: resourceUserProfile } = useGetUserByIdQuery(resourceOwnerID);
-  const { enqueueSnackbar } = useSnackbar();
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   const handleCopy = () => {
     navigator.clipboard.writeText(getSharableCommonHostAndprotocolLink(selectedResource));
     enqueueSnackbar(`Link to "${selectedResource.name}" is copied to clipboard`, {
       variant: 'info',
-      autoHideDuration: 2000,
+      action: (key) => (
+        <IconButton
+          // key={`closeevent-${id}`}
+          aria-label="Close"
+          color="inherit"
+          onClick={() => closeSnackbar(key)}
+        >
+          <CloseIcon style={iconMedium} />
+        </IconButton>
+      ),
     });
   };
 
@@ -194,6 +204,10 @@ const InfoModal_ = React.memo((props) => {
         newUiSchema['ui:readonly'] = currentUserID !== resourceOwnerID;
       }
 
+      if (isReadOnly) {
+        newUiSchema['ui:readonly'] = true;
+      }
+
       setUiSchema(newUiSchema);
     }
   }, [resourceOwnerID, formSchema, currentUserID]);
@@ -214,7 +228,8 @@ const InfoModal_ = React.memo((props) => {
     const isPrivate = selectedResource?.visibility === 'private';
     const isOwner = currentUserID === resourceOwnerID;
 
-    return (isPrivate && !isOwner) || !isPrivate;
+    const renderByPermission = (isPrivate && !isOwner) || !isPrivate;
+    return !isReadOnly && renderByPermission;
   };
   const handlePublishController = () => {
     if (formRef.current && formRef.current.validateForm()) {

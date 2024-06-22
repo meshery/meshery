@@ -61,6 +61,7 @@ import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import DefaultError from './General/error-404/index';
 import UniversalFilter from '../utils/custom-filter';
+import { UsesSistent } from './SistentWrapper';
 
 const styles = (theme) => ({
   grid: {
@@ -240,7 +241,7 @@ function MesheryFilters({
   const [sortOrder, setSortOrder] = useState('');
   const [count, setCount] = useState(0);
   const modalRef = useRef(null);
-  const [pageSize, setPageSize] = useState();
+  const [pageSize, setPageSize] = useState(10);
   const [filters, setFilters] = useState([]);
   const [selectedFilter, setSelectedFilter] = useState(resetSelectedFilter());
   const [selectedRowData, setSelectedRowData] = useState(null);
@@ -554,7 +555,7 @@ function MesheryFilters({
    */
 
   const [visibilityFilter, setVisibilityFilter] = useState(null);
-  function fetchFilters(page, pageSize, search, sortOrder, visibilityFilter) {
+  function fetchFilters(page = 0, pageSize = 10, search, sortOrder, visibilityFilter) {
     if (!search) search = '';
     if (!sortOrder) sortOrder = '';
 
@@ -1350,16 +1351,18 @@ function MesheryFilters({
               </div>
             </div>
             {!selectedFilter.show && viewType === 'table' && (
-              <ResponsiveDataTable
-                data={filters}
-                columns={columns}
-                tableCols={tableCols}
-                updateCols={updateCols}
-                columnVisibility={columnVisibility}
-                // @ts-ignore
-                options={options}
-                className={classes.muiRow}
-              />
+              <UsesSistent>
+                <ResponsiveDataTable
+                  data={filters}
+                  columns={columns}
+                  tableCols={tableCols}
+                  updateCols={updateCols}
+                  columnVisibility={columnVisibility}
+                  // @ts-ignore
+                  options={options}
+                  className={classes.muiRow}
+                />
+              </UsesSistent>
             )}
             {!selectedFilter.show && viewType === 'grid' && (
               // grid view
