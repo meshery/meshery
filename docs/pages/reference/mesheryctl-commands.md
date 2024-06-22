@@ -827,34 +827,52 @@ Installation, troubleshooting and debugging of Meshery and its adapters
 
 ## Experimental Features
 
+## Experimental Features(exp)
+
 <table>
 <thead>
   <tr>
     <th>Command</th>
-    <th>Subcommand 1</th>
-    <th>Subcommand 2</th>
+    <th>Subcommand</th>
+    <th>Flag</th>
     <th>Function</th>
   </tr>
   {% assign command14 = site.data.mesheryctlcommands.cmds.exp %}
+  {% for cmd_hash in command14 %}
+    {% assign cmd = cmd_hash[1] %}
+    {% assign subcommand_flag_count = 0 %}
+    {% for subcommand_hash in cmd.subcommands %}
+      {% assign subcommand = subcommand_hash[1] %}
+      {% assign subcommand_flag_count = subcommand_flag_count | plus: subcommand.flags.size %}
+    {% endfor %}
+    {% assign total_rowspan = cmd.subcommands.size | plus: subcommand_flag_count | plus: cmd.flags.size | plus: 1 %}
     <tr>
-      <td rowspan=20><a href="{{ site.baseurl }}/reference/mesheryctl/exp">{{ command14.name }}</a></td>
+      <td rowspan="{{ total_rowspan }}"><a href="{{ site.baseurl }}/reference/mesheryctl/exp/{{ cmd.name }}">{{ cmd.name }}</a></td>
       <td></td>
       <td></td>
-      <td>{{ command14.description }}</td>
+      <td>{{ cmd.description }}</td>
     </tr>
-    {% for subcommand_hash in command14.subcommands %}{% assign subcomand1 = subcommand_hash[1] %}
+    {% for flag_hash in cmd.flags %}{% assign flag = flag_hash[1] %}
       <tr>
-        <td rowspan={{ subcomand1.subcommand.size | plus:1 }} ><a href="{{ site.baseurl }}/reference/mesheryctl/{{ command14.name }}/{{ subcomand.name }}">{{ subcomand1.name }}</a></td>
         <td></td>
-        <td>{{ subcomand1.description}}</td>
+        <td>{{ flag.name }}</td>
+        <td>{{ flag.description }}</td>
       </tr>
-      {% for subcomand_hash in subcomand1.subcommand %}{% assign subcomand2 = subcomand_hash[1] %}
+    {% endfor %}
+    {% for subcommand_hash in cmd.subcommands %}{% assign subcommand = subcommand_hash[1] %}
+      <tr>
+        <td rowspan="{{ subcommand.flags.size | plus: 1 }}"><a href="{{ site.baseurl }}/reference/mesheryctl/exp/{{ cmd.name }}/{{ subcommand.name }}">{{ subcommand.name }}</a></td>
+        <td></td>
+        <td>{{ subcommand.description }}</td>
+      </tr>
+      {% for flag_hash in subcommand.flags %}{% assign flag = flag_hash[1] %}
         <tr>
-          <td><a href="{{ site.baseurl }}/reference/mesheryctl/{{ command14.name }}/{{ subcomand1.name }}/{{ subcomand2.name }}">{{ subcomand2.name }}</a></td>
-          <td>{{ subcomand2.description }}</td>
+          <td>{{ flag.name }}</td>
+          <td>{{ flag.description }}</td>
         </tr>
       {% endfor %}
     {% endfor %}
+  {% endfor %}
 </thead>
 </table>
 
