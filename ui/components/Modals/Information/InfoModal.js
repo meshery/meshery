@@ -35,11 +35,17 @@ import { useGetUserByIdQuery } from '../../../rtk-query/user.js';
 import { ErrorBoundary } from '../../General/ErrorBoundary';
 import { getUnit8ArrayForDesign } from '@/utils/utils';
 import ServiceMesheryIcon from '@/assets/icons/ServiceMesheryIcon';
-import { CopyLinkIcon, ModalFooter } from '@layer5/sistent';
+import {
+  CopyLinkIcon,
+  ModalFooter,
+  ModalButtonPrimary,
+  ModalButtonSecondary,
+} from '@layer5/sistent';
 import TooltipButton from '@/utils/TooltipButton';
 import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
 import theme from '@/themes/app';
+import { filterEmptyFields } from '@/utils/object';
 
 const APPLICATION_PLURAL = 'applications';
 const FILTER_PLURAL = 'filters';
@@ -217,11 +223,11 @@ const InfoModal_ = React.memo((props) => {
           type: _.startCase(selectedResource?.catalog_data?.type),
           compatibility: filteredCompatibilityArray,
         };
-        formStateRef.current = modifiedData;
+        formStateRef.current = filterEmptyFields(modifiedData);
         formStateRef.current.compatibility = filteredCompatibilityArray;
       }
     } else {
-      formStateRef.current = selectedResource?.catalog_data;
+      formStateRef.current = filterEmptyFields(selectedResource?.catalog_data);
     }
   }, [selectedResource?.catalog_data, meshModels]);
 
@@ -258,9 +264,10 @@ const InfoModal_ = React.memo((props) => {
     const isPrivate = selectedResource?.visibility === 'private';
     const isOwner = currentUserID === resourceOwnerID;
 
-    const renderByPermission = (isPrivate && !isOwner) || !isPrivate;
+    const renderByPermission = (isPrivate && isOwner) || !isPrivate;
     return !isReadOnly && renderByPermission;
   };
+
   const handlePublishController = () => {
     formRef.current.state.schema['required'] = formSchema.rjsfSchema.required;
     if (formRef.current && formRef.current.validateForm()) {
@@ -270,6 +277,9 @@ const InfoModal_ = React.memo((props) => {
       setSaveFormLoading(false);
     }
   };
+
+  const isPublished = selectedResource?.visibility === 'published';
+
   return (
     <div style={{ marginBottom: '1rem' }}>
       <Dialog
@@ -400,10 +410,10 @@ const InfoModal_ = React.memo((props) => {
           helpText={
             'Upon submitting your catalog item, an approval flow will be initiated. [Learn More](https://docs.meshery.io/concepts/catalog)'
           }
-          variant="transparent"
+          variant="filled"
         >
           <ActionContainer>
-            <Button
+            <ModalButtonSecondary
               variant="outlined"
               onClick={handlePublishController}
               className={classes.copyButton}
@@ -412,25 +422,25 @@ const InfoModal_ = React.memo((props) => {
                 selectedResource?.visibility === 'published'
               }
             >
-              {selectedResource?.visibility === 'published' ? 'Published' : 'Publish to Catalog'}
-            </Button>
-            {shouldRenderSaveButton() ? (
-              <Button
-                variant="contained"
-                color="primary"
-                className={classes.submitButton}
-                onClick={handleSubmit}
-                disabled={isCatalogDataEqual || saveFormLoading}
-              >
-                {saveFormLoading ? (
-                  <Box sx={{ display: 'flex' }}>
-                    <CircularProgress color="inherit" size="1.4rem" />
-                  </Box>
-                ) : (
-                  'Save'
-                )}
-              </Button>
-            ) : null}
+              {isPublished ? 'Published' : 'Publish to Catalog'}
+            </ModalButtonSecondary>
+            <ModalButtonPrimary
+              variant="contained"
+              color="primary"
+              className={classes.submitButton}
+              onClick={handleSubmit}
+              disabled={
+                isCatalogDataEqual || saveFormLoading || isPublished || shouldRenderSaveButton()
+              }
+            >
+              {saveFormLoading ? (
+                <Box sx={{ display: 'flex' }}>
+                  <CircularProgress color="inherit" size="1.4rem" />
+                </Box>
+              ) : (
+                'Save'
+              )}
+            </ModalButtonPrimary>
           </ActionContainer>
         </ModalFooter>
       </Dialog>
