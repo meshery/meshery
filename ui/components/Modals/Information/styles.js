@@ -62,7 +62,7 @@ const useStyles = makeStyles((theme) => ({
   rjsfInfoModalForm: {
     marginLeft: '-1rem',
     marginTop: '-1rem',
-    maxWidth: '44rem',
+    maxWidth: '39rem',
   },
   copyButton: {
     '&:hover': {

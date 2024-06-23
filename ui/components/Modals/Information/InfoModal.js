@@ -1,5 +1,5 @@
 /* eslint-disable react/display-name */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import CloseIcon from '@material-ui/icons/Close';
 import PatternIcon from '../../../assets/icons/Pattern';
 import {
@@ -61,12 +61,11 @@ const InfoModal_ = React.memo((props) => {
   } = props;
 
   const formRef = React.createRef();
-  const [formState, setFormState] = useState(selectedResource?.catalog_data || {});
+  const formStateRef = useRef();
   const [isCatalogDataEqual, setIsCatalogDataEqual] = useState(false);
   const [saveFormLoading, setSaveFormLoading] = useState(false);
   const [uiSchema, setUiSchema] = useState({});
   const { notify } = useNotification();
-
   const classes = useStyles();
   const formatDate = (date) => {
     return moment(date).utc().format('MMMM Do YYYY');
@@ -93,76 +92,76 @@ const InfoModal_ = React.memo((props) => {
   };
 
   const handleSubmit = () => {
-    if (formRef.current && formRef.current.validateForm()) {
+    formRef.current.state.schema['required'] = [];
+    setSaveFormLoading(true);
+
+    const compatibilityStore = _.uniqBy(meshModels, (model) => _.toLower(model.displayName))
+      ?.filter((model) =>
+        formStateRef.current?.compatibility?.some(
+          (comp) => _.toLower(comp) === _.toLower(model.displayName),
+        ),
+      )
+      ?.map((model) => model.name);
+
+    let body = null;
+    let modifiedData = {
+      ...formStateRef.current,
+      type: formStateRef.current?.type?.toLowerCase(),
+      compatibility: compatibilityStore,
+    };
+    if (dataName === PATTERN_PLURAL) {
+      body = JSON.stringify({
+        pattern_data: {
+          catalog_data: modifiedData,
+          pattern_file: getUnit8ArrayForDesign(selectedResource.pattern_file),
+          id: selectedResource.id,
+        },
+        save: true,
+      });
+    } else if (dataName === FILTER_PLURAL) {
       setSaveFormLoading(true);
-
-      const compatibilityStore = _.uniqBy(meshModels, (model) => _.toLower(model.displayName))
-        ?.filter((model) =>
-          formState?.compatibility?.some(
-            (comp) => _.toLower(comp) === _.toLower(model.displayName),
-          ),
-        )
-        ?.map((model) => model.name);
-
-      let body = null;
-      let modifiedData = {
-        ...formState,
-        type: formState?.type?.toLowerCase(),
-        compatibility: compatibilityStore,
-      };
-      if (dataName === PATTERN_PLURAL) {
-        body = JSON.stringify({
-          pattern_data: {
-            catalog_data: modifiedData,
-            pattern_file: getUnit8ArrayForDesign(selectedResource.pattern_file),
-            id: selectedResource.id,
-          },
-          save: true,
-        });
-      } else if (dataName === FILTER_PLURAL) {
-        setSaveFormLoading(true);
-        let config = '';
-        if (selectedResource.filter_resource !== null || selectedResource.filter_resource !== '') {
-          config = JSON.parse(selectedResource.filter_resource).settings.config; // send the config in order to prevent over-write of the config
-        }
-        body = JSON.stringify({
-          filter_data: {
-            catalog_data: modifiedData,
-            id: selectedResource.id,
-            name: selectedResource.name,
-            filter_file: selectedResource.filter_file,
-          },
-          config: config,
-          save: true,
-        });
+      let config = '';
+      if (selectedResource.filter_resource !== null || selectedResource.filter_resource !== '') {
+        config = JSON.parse(selectedResource.filter_resource).settings.config; // send the config in order to prevent over-write of the config
       }
-
-      axios
-        .post(dataName === PATTERN_PLURAL ? PATTERN_ENDPOINT : FILTER_ENDPOINT, body)
-        .then(() => {
-          setSaveFormLoading(false);
-          notify({
-            message: `${selectedResource.name} data saved successfully`,
-            event_type: EVENT_TYPES.SUCCESS,
-          });
-          patternFetcher()();
-        })
-        .catch((error) => {
-          setSaveFormLoading(false);
-          const errorMessage = error.response?.data?.message || error.message;
-
-          notify({
-            message: `Error while saving ${selectedResource.name} data: ${errorMessage}`,
-            event_type: EVENT_TYPES.ERROR,
-          });
-
-          console.error('Error while saving pattern data', error);
-        });
+      body = JSON.stringify({
+        filter_data: {
+          catalog_data: modifiedData,
+          id: selectedResource.id,
+          name: selectedResource.name,
+          filter_file: selectedResource.filter_file,
+        },
+        config: config,
+        save: true,
+      });
     }
+
+    axios
+      .post(dataName === PATTERN_PLURAL ? PATTERN_ENDPOINT : FILTER_ENDPOINT, body)
+      .then(() => {
+        setSaveFormLoading(false);
+        notify({
+          message: `${selectedResource.name} data saved successfully`,
+          event_type: EVENT_TYPES.SUCCESS,
+        });
+        patternFetcher()();
+        handleInfoModalClose();
+      })
+      .catch((error) => {
+        setSaveFormLoading(false);
+        const errorMessage = error.response?.data?.message || error.message;
+
+        notify({
+          message: `Error while saving ${selectedResource.name} data: ${errorMessage}`,
+          event_type: EVENT_TYPES.ERROR,
+        });
+
+        console.error('Error while saving pattern data', error);
+      });
   };
 
   const handleFormChange = (data) => {
-    setFormState(data);
+    formStateRef.current = data;
     const objectsEqual = _.isEqual(selectedResource?.catalog_data, data);
     setIsCatalogDataEqual(objectsEqual);
   };
@@ -188,10 +187,11 @@ const InfoModal_ = React.memo((props) => {
           type: _.startCase(selectedResource?.catalog_data?.type),
           compatibility: filteredCompatibilityArray,
         };
-        setFormState(modifiedData);
+        formStateRef.current = modifiedData;
+        formStateRef.current.compatibility = filteredCompatibilityArray;
       }
     } else {
-      setFormState(selectedResource?.catalog_data);
+      formStateRef.current = selectedResource?.catalog_data;
     }
   }, [selectedResource?.catalog_data, meshModels]);
 
@@ -232,8 +232,10 @@ const InfoModal_ = React.memo((props) => {
     return !isReadOnly && renderByPermission;
   };
   const handlePublishController = () => {
+    formRef.current.state.schema['required'] = formSchema.rjsfSchema.required;
     if (formRef.current && formRef.current.validateForm()) {
       setSaveFormLoading(true);
+      handleInfoModalClose();
       handlePublish(formRef.current.state.formData);
       setSaveFormLoading(false);
     }
@@ -347,8 +349,11 @@ const InfoModal_ = React.memo((props) => {
                 {dataName === APPLICATION_PLURAL && formSchema ? null : (
                   <Grid item className={classes.rjsfInfoModalForm}>
                     <RJSFWrapper
-                      formData={formState}
-                      jsonSchema={{ ...formSchema.rjsfSchema, required: undefined }}
+                      formData={formStateRef.current}
+                      jsonSchema={{
+                        ...formSchema.rjsfSchema,
+                        required: [],
+                      }}
                       uiSchema={uiSchema}
                       onChange={handleFormChange}
                       liveValidate={false}
