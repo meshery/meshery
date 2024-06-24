@@ -21,14 +21,16 @@ assignees: ''
 
 ### Understanding Meshery Models
 
-- 🖥 [Models Overview](https://docs.google.com/presentation/d/1SQMfyu5shjpGKlYONdVzOtd7UYTgLWBcgUvHMLCZ2tY/edit#slide=id.g226f5de5180_19_259)
+- 📚 [Models](https://docs.meshery.io/concepts/logical/models)
+  - 📚 [Components](https://docs.meshery.io/concepts/logical/components)
+  - 📚 [Relationships](https://docs.meshery.io/concepts/logical/components)
 - 👨‍💻[Models Repository](https://github.com/meshery/meshery/tree/master/server/meshmodel)
 
-### Contributing to Meshery Models
-- [Contributing Models](https://docs.meshery.io/project/contributing/contributing-models)
-- [Contributing Components](https://docs.meshery.io/project/contributing/contributing-components)
-- [Contributing Relationships](https://docs.meshery.io/project/contributing/contributing-relationships)
+ ### Contributing to Meshery Models
+ - [Contributing Models](https://docs.meshery.io/project/contributing/contributing-models)
+   - [Contributing Components](https://docs.meshery.io/project/contributing/contributing-components)
+   - [Contributing Relationships](https://docs.meshery.io/project/contributing/contributing-relationships)
 
-<!-- ### Instructions for Policies
-- [Contributing Policies](https://docs.meshery.io/project/contributing/contributing-policies)
- -->
+ <!-- ### Instructions for Policies
+ - [Contributing Policies](https://docs.meshery.io/project/contributing/contributing-policies)
+  -->
