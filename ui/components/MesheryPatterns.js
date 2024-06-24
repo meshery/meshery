@@ -616,7 +616,14 @@ function MesheryPatterns({
       async (result) => {
         try {
           const { models } = await getMeshModels();
-          const modelNames = _.uniq(models?.map((model) => model.displayName));
+          const modelNames = _.uniqBy(
+            models?.map((model) => {
+              if (model.displayName && model.displayName !== '') {
+                return model.displayName;
+              }
+            }),
+            _.toLower,
+          );
           modelNames.sort();
 
           // Modify the schema using the utility function
@@ -1762,20 +1769,6 @@ function MesheryPatterns({
               handleImportDesign={handleImportDesign}
             />
           )}
-          {/* {infoModal.open && CAN(keys.DETAILS_OF_DESIGN.action, keys.DETAILS_OF_DESIGN.subject) && (
-            <InfoModal
-              infoModalOpen={true}
-              handleInfoModalClose={handleInfoModalClose}
-              dataName="patterns"
-              selectedResource={infoModal.selectedResource}
-              resourceOwnerID={infoModal.ownerID}
-              currentUserID={user?.id}
-              patternFetcher={fetchPatternsCaller}
-              formSchema={publishSchema}
-              meshModels={meshModels}
-              isReadOnly={arePatternsReadOnly}
-            />
-          )} */}
           <PromptComponent ref={modalRef} />
         </>
       ) : (

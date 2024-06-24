@@ -178,7 +178,6 @@ const InfoModal_ = React.memo((props) => {
   // Function to compare objects while normalizing case in compatibility array
   function isEqualIgnoringCase(obj1, obj2) {
     // Check each property one by one
-    const isEqualPublishedVersion = obj1.published_version === obj2.published_version;
     const isEqualPatternCaveats = obj1.pattern_caveats === obj2.pattern_caveats;
     const isEqualPatternInfo = obj1.pattern_info === obj2.pattern_info;
     const isEqualType = obj1.type?.toLowerCase() === obj2.type?.toLowerCase();
@@ -189,17 +188,10 @@ const InfoModal_ = React.memo((props) => {
     const isEqualCompatibility = _.isEqual(normalizedCompat1, normalizedCompat2);
 
     // Return true only if all properties are equal
-    return (
-      isEqualPublishedVersion &&
-      isEqualPatternCaveats &&
-      isEqualPatternInfo &&
-      isEqualType &&
-      isEqualCompatibility
-    );
+    return isEqualPatternCaveats && isEqualPatternInfo && isEqualType && isEqualCompatibility;
   }
   const handleFormChange = (data) => {
     formStateRef.current = data;
-    // const objectsEqual = _.isEqual(selectedResource?.catalog_data, data);
     setIsCatalogDataEqual(isEqualIgnoringCase(selectedResource?.catalog_data, data));
   };
 
@@ -236,10 +228,11 @@ const InfoModal_ = React.memo((props) => {
     if (formSchema) {
       const newUiSchema = { ...formSchema.uiSchema };
 
-      !isAdmin &&
-        selectedResource?.visibility === 'private' &&
-        currentUserID !== resourceOwnerID &&
-        (newUiSchema['ui:readonly'] = currentUserID !== resourceOwnerID);
+      // if (!isAdmin) {
+      //   selectedResource?.visibility === 'private' ? null : (
+      //     currentUserID !== resourceOwnerID &&
+      //     (newUiSchema['ui:readonly'] = currentUserID !== resourceOwnerID));
+      // }
 
       if (isReadOnly) {
         newUiSchema['ui:readonly'] = true;
@@ -262,11 +255,14 @@ const InfoModal_ = React.memo((props) => {
   };
 
   const shouldRenderSaveButton = () => {
-    const isPrivate = selectedResource?.visibility === 'private';
-    const isOwner = currentUserID === resourceOwnerID;
+    if (!isAdmin) {
+      const isPrivate = selectedResource?.visibility === 'private';
+      const isOwner = currentUserID === resourceOwnerID;
 
-    const renderByPermission = !(isPrivate && isOwner) || !isPrivate;
-    return !isReadOnly && renderByPermission;
+      const renderByPermission = isPrivate ? true : isPublished ? false : isOwner;
+      return renderByPermission;
+    }
+    return true;
   };
 
   const handlePublishController = () => {
@@ -451,11 +447,7 @@ const InfoModal_ = React.memo((props) => {
               color="primary"
               className={classes.submitButton}
               onClick={handleSubmit}
-              disabled={
-                isCatalogDataEqual ||
-                saveFormLoading ||
-                (isAdmin ? false : isPublished || shouldRenderSaveButton())
-              }
+              disabled={isCatalogDataEqual || !shouldRenderSaveButton() || saveFormLoading}
             >
               {saveFormLoading ? (
                 <Box sx={{ display: 'flex' }}>
