@@ -336,7 +336,7 @@ func formatError(msg string, cmd cmdType) string {
 	case cmdRelationships:
 		return formatUsageDetails(msg, relationshipUsageURL)
 	case cmdRelationshipGenerateDocs:
-		return formatUsageDetails(msg, cmdRelationshipGenerateDocs)
+		return formatUsageDetails(msg, cmdRelationshipGenerateDocsURL)
 	case cmdComponent:
 		return formatUsageDetails(msg, componentUsageURL)
 	case cmdComponentList:
