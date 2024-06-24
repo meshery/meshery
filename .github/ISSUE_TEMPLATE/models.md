@@ -2,7 +2,9 @@
 name: 🖥 💡 Models Update
 about: An update, addition, or removal of one or more of the models, components, relationships, workflows, or policies within Meshery Models.
 title: '[Models] '
-labels: area/models
+labels: 
+- area/models
+- area/devops
 assignees: ''
 ---
 ### Current Situation
@@ -23,15 +25,10 @@ assignees: ''
 - 👨‍💻[Models Repository](https://github.com/meshery/meshery/tree/master/server/meshmodel)
 
 ### Contributing to Meshery Models
-
-- https://docs.meshery.io/project/contributing/contributing-models
-
-### Contributing to Meshery Relationships
-
-- https://docs.meshery.io/project/contributing/contributing-relationships
-
-  Review a prior pull request as an example of how to define a Relationships:   https://github.com/meshery/meshery/pull/9880/files
+- [Contributing Models](https://docs.meshery.io/project/contributing/contributing-models)
+- [Contributing Components](https://docs.meshery.io/project/contributing/contributing-components)
+- [Contributing Relationships](https://docs.meshery.io/project/contributing/contributing-relationships)
 
 <!-- ### Instructions for Policies
-1. _Forthcoming_
+- [Contributing Policies](https://docs.meshery.io/project/contributing/contributing-policies)
  -->
