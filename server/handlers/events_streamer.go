@@ -18,6 +18,7 @@ import (
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/errors"
 	"github.com/layer5io/meshkit/models/events"
+	"github.com/layer5io/meshkit/utils"
 	_events "github.com/layer5io/meshkit/utils/events"
 	"github.com/sirupsen/logrus"
 )
@@ -503,47 +504,39 @@ func (h *Handler) ClientEventHandler(w http.ResponseWriter, req *http.Request, p
 		return
 	}
 
-	if len(eventDetails) == 0 {
-		http.Error(w, "event details are empty", http.StatusBadRequest)
+	category, err := utils.Cast[string](eventDetails["category"])
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID)
-
-	if category, ok := eventDetails["category"].(string); ok {
-		eventBuilder = eventBuilder.WithCategory(category)
-	} else {
-		http.Error(w, "category is missing or not a string", http.StatusBadRequest)
+	action, err := utils.Cast[string](eventDetails["action"])
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	if action, ok := eventDetails["action"].(string); ok {
-		eventBuilder = eventBuilder.WithAction(action)
-	} else {
-		http.Error(w, "action is missing or not a string", http.StatusBadRequest)
+	severity, err := utils.Cast[string](eventDetails["severity"])
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	if severity, ok := eventDetails["severity"].(string); ok {
-		eventBuilder = eventBuilder.WithSeverity(events.EventSeverity(severity))
-	} else {
-		http.Error(w, "severity is missing or not a string", http.StatusBadRequest)
+	description, err := utils.Cast[string](eventDetails["description"])
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	if description, ok := eventDetails["description"].(string); ok {
-		eventBuilder = eventBuilder.WithDescription(description)
-	} else {
-		http.Error(w, "description is missing or not a string", http.StatusBadRequest)
+	metadata, err := utils.Cast[map[string]interface{}](eventDetails["metadata"])
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	if metadata, ok := eventDetails["metadata"].(map[string]interface{}); ok {
-		eventBuilder = eventBuilder.WithMetadata(metadata)
-	} else {
-		http.Error(w, "metadata is missing or not a valid map", http.StatusBadRequest)
-		return
-	}
+	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).
+		WithCategory(category).WithAction(action).WithSeverity(events.EventSeverity(severity)).
+		WithDescription(description).WithMetadata(metadata)
 
 	if actedUpon, ok := eventDetails["acted_upon"].(string); ok {
 		eventBuilder = eventBuilder.ActedUpon(uuid.FromStringOrNil(actedUpon))
