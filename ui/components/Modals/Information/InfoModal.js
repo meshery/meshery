@@ -92,9 +92,7 @@ const InfoModal_ = React.memo((props) => {
   };
 
   const handleSubmit = () => {
-    formRef.current.state.schema['required'] = [];
     setSaveFormLoading(true);
-
     const compatibilityStore = _.uniqBy(meshModels, (model) => _.toLower(model.displayName))
       ?.filter((model) =>
         formStateRef.current?.compatibility?.some(
@@ -159,11 +157,43 @@ const InfoModal_ = React.memo((props) => {
         console.error('Error while saving pattern data', error);
       });
   };
+  function normalizeCompatibility(arr) {
+    return (
+      arr?.map((item) => {
+        if (typeof item === 'string') {
+          return item.toLowerCase().split('-').join(' ');
+        }
+        return item;
+      }) || []
+    );
+  }
 
+  // Function to compare objects while normalizing case in compatibility array
+  function isEqualIgnoringCase(obj1, obj2) {
+    // Check each property one by one
+    const isEqualPublishedVersion = obj1.published_version === obj2.published_version;
+    const isEqualPatternCaveats = obj1.pattern_caveats === obj2.pattern_caveats;
+    const isEqualPatternInfo = obj1.pattern_info === obj2.pattern_info;
+    const isEqualType = obj1.type?.toLowerCase() === obj2.type?.toLowerCase();
+
+    // Normalize and compare compatibility array
+    const normalizedCompat1 = normalizeCompatibility(obj1.compatibility);
+    const normalizedCompat2 = normalizeCompatibility(obj2.compatibility);
+    const isEqualCompatibility = _.isEqual(normalizedCompat1, normalizedCompat2);
+
+    // Return true only if all properties are equal
+    return (
+      isEqualPublishedVersion &&
+      isEqualPatternCaveats &&
+      isEqualPatternInfo &&
+      isEqualType &&
+      isEqualCompatibility
+    );
+  }
   const handleFormChange = (data) => {
     formStateRef.current = data;
-    const objectsEqual = _.isEqual(selectedResource?.catalog_data, data);
-    setIsCatalogDataEqual(objectsEqual);
+    // const objectsEqual = _.isEqual(selectedResource?.catalog_data, data);
+    setIsCatalogDataEqual(isEqualIgnoringCase(selectedResource?.catalog_data, data));
   };
 
   useEffect(() => {
