@@ -1,10 +1,10 @@
 {
-  "schemaVersion": "core.meshery.io/v1alpha2",
+  "schemaVersion": "relationships.meshery.io/v1alpha2",
   "version": "v1.0.0",
   "kind": "Edge",
   "metadata": {
     "description": "A relationship that defines network edges between components",
-    "capabilities":{
+    "capabilities": {
       "designer": {
         "edit": {
           "style": true,
@@ -12,7 +12,8 @@
           "label": false
         }
       }
-    }},
+    }
+  },
   "model": {
     "schemaVersion": "core.meshery.io/v1beta1",
     "version": "v1.0.0",
@@ -29,58 +30,60 @@
   },
   "subType": "Network",
   "evaluationQuery": "edge_network_relationship",
-  "selectors": [{
-    "allow": {
-      "from": [
-        {
-          "kind": "Service",
-          "model": "kubernetes"
-        },
-        {
-          "kind": "Ingress",
-          "model": "kubernetes"
-        }
-      ],
-      "to": [
-        {
-          "kind": "Endpoints",
-          "model": "kubernetes"
-        },
-        {
-          "kind": "Pod",
-          "model": "kubernetes"
-        },
-        {
-          "kind": "Deployment",
-          "model": "kubernetes"
-        },
-        {
-          "kind": "Service",
-          "model": "kubernetes"
-        }
-      ]
-    },
-    "deny": {
-      "from": [
-        {
-          "kind": "Ingress",
-          "model": "kubernetes"
-        }
-      ],
-      "to": [
-        {
-          "kind": "Endpoints",
-          "model": "kubernetes"
-        },
-        {
-          "kind": "Pod",
-          "model": "kubernetes"
-        },
-        {
-          "kind": "Deployment",
-          "model": "kubernetes"
-        }
-      ]
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "Service",
+            "model": "kubernetes"
+          },
+          {
+            "kind": "Ingress",
+            "model": "kubernetes"
+          }
+        ],
+        "to": [
+          {
+            "kind": "Endpoints",
+            "model": "kubernetes"
+          },
+          {
+            "kind": "Pod",
+            "model": "kubernetes"
+          },
+          {
+            "kind": "Deployment",
+            "model": "kubernetes"
+          },
+          {
+            "kind": "Service",
+            "model": "kubernetes"
+          }
+        ]
+      },
+      "deny": {
+        "from": [
+          {
+            "kind": "Ingress",
+            "model": "kubernetes"
+          }
+        ],
+        "to": [
+          {
+            "kind": "Endpoints",
+            "model": "kubernetes"
+          },
+          {
+            "kind": "Pod",
+            "model": "kubernetes"
+          },
+          {
+            "kind": "Deployment",
+            "model": "kubernetes"
+          }
+        ]
+      }
     }
-  }]
+  ]
 }

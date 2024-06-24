@@ -150,7 +150,8 @@ type DryRunFailureCause struct {
 // config file model
 type Pattern struct {
 	// Name is the human-readable, display-friendly descriptor of the pattern
-	Name string `yaml:"name,omitempty" json:"name,omitempty"`
+	Name    string `yaml:"name,omitempty" json:"name,omitempty"`
+	Version string `yaml:"version,omitempty" json:"version,omitempty"`
 	//Vars will be used to configure the pattern when it is imported from other patterns.
 	Vars map[string]interface{} `yaml:"vars,omitempty" json:"vars,omitempty"`
 	// PatternID is the moniker use to uniquely identify any given pattern
