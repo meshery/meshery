@@ -34,7 +34,32 @@ const verifyConnectionsResBody = (body) => {
   }
 };
 
-test.describe('Connections Page Tests', () => {
+// name: Name of the test
+// transitionOption: Option to be chosen from dropdown to transition to another state
+// statusAfterTransition: Text shown in current state after transition
+// restorationOption: Option to be chosen from dropdown to transition back to connected state
+const transitionTests = [
+  {
+    name: 'Transition to disconnected state and then back to connected state',
+    transitionOption: 'Disconnect',
+    statusAfterTransition: 'disconnected',
+    restorationOption: 'Connect',
+  },
+  {
+    name: 'Transition to ignored state and then back to connected state',
+    transitionOption: 'Ignore',
+    statusAfterTransition: 'ignored',
+    restorationOption: 'Register',
+  },
+  {
+    name: 'Transition to not found state and then back to connected state',
+    transitionOption: 'Not Found',
+    statusAfterTransition: 'not found',
+    restorationOption: 'Discover',
+  },
+];
+
+test.describe.serial('Connections Page Tests', () => {
   let connectionCount = 0;
 
   test.beforeEach(async ({ page }) => {
@@ -116,5 +141,84 @@ test.describe('Connections Page Tests', () => {
 
     // Click "OK" button to close success modal
     await page.getByRole('button', { name: 'OK', exact: true }).click();
+  });
+
+  transitionTests.forEach((t) => {
+    test(t.name, async ({ page }) => {
+      const stateTransitionReq = page.waitForRequest(
+        (request) =>
+          request.url() ===
+            `${ENV.MESHERY_SERVER_URL}/api/integrations/connections/kubernetes/status` &&
+          request.method() === 'PUT',
+      );
+
+      const stateTransitionRes = page.waitForResponse(
+        (response) =>
+          response.url() ===
+            `${ENV.MESHERY_SERVER_URL}/api/integrations/connections/kubernetes/status` &&
+          response.status() === 202,
+      );
+
+      const getConnectionsReq = page.waitForRequest(
+        (request) =>
+          request.url().startsWith(`${ENV.MESHERY_SERVER_URL}/api/integrations/connections`) &&
+          request.method() === 'GET',
+      );
+
+      const getConnectionsRes = page.waitForResponse(
+        (response) =>
+          response.url().startsWith(`${ENV.MESHERY_SERVER_URL}/api/integrations/connections`) &&
+          response.status() === 200,
+      );
+
+      // since test run serially, and latest connection appears at topmost,
+      // the connection created in the previous test will appear in the first row of the table
+      const firstRow = page.locator('tbody').locator('tr').first();
+
+      // expect connected state initially
+      await expect(firstRow.locator('span', { hasText: 'connected' })).toBeVisible();
+
+      // ===== TRANSITIONING TO A NEW STATE =====
+
+      // open state transition options dropdown
+      await firstRow.locator('span', { hasText: 'connected' }).click();
+
+      // click required option
+      await page.getByText(t.transitionOption, { exact: true }).click();
+
+      // verify that Confirmation modal opened
+      await expect(page.getByText('Connection Status Transition')).toBeVisible();
+
+      // click "Confirm"
+      await page.getByRole('button', { name: 'Confirm' }).click();
+
+      // verify API requests and responses
+      await stateTransitionReq;
+      await stateTransitionRes;
+      await getConnectionsReq;
+      const res = await getConnectionsRes;
+      const body = await res.json();
+      verifyConnectionsResBody(body);
+
+      // expect new state to be shown as current state
+      await expect(firstRow.locator('span', { hasText: t.statusAfterTransition })).toBeVisible();
+
+      // ===== TRANSITION BACK TO "connected" STATE =====
+
+      // open state transition options dropdown again
+      await firstRow.locator('span', { hasText: t.statusAfterTransition }).click();
+
+      // click the option required to transition back to "connected" state
+      await page.getByText(t.restorationOption, { exact: true }).click();
+
+      // verify that Confirmation modal opened again
+      await expect(page.getByText('Connection Status Transition')).toBeVisible();
+
+      // click "Confirm"
+      await page.getByRole('button', { name: 'Confirm' }).click();
+
+      // expect the state to be restored to "connected"
+      await expect(firstRow.locator('span', { hasText: 'connected' })).toBeVisible();
+    });
   });
 });
