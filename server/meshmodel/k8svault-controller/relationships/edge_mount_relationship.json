@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "core.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "kind": "Edge",
+  "metadata": {
+    "description": ""
+  "model": {
+    "name": "k8svault-controller",
+    "version": "*",
+    "displayName": "K8s Vault Controller",
+    "category": {
+      "name": "Security \u0026 Compliance",
+      "metadata": null
+    },
+    "metadata": {}
+  },
+   "subType": "Mount",
+   "rego_query": "edge_binding_relationship",
+     "selectors": [{
+    "deny": {
+      "from": [],
+      "to": []
+    },
+
+     "allow": {
+        "from": [
+          {
+            "kind": "Secret",
+            "model": "kubernetes",
+              "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  ["name"]
+                  ["namespace"]
+                ]
+              ],
+           }
+          }
+        ],
+
+        "to": [
+          {
+            "kind": "VaultBinding",
+            "model": "k8svault-controller",
+             "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  ["settings" ,"spec", "secret", "name"]
+                  ["settings" ,"spec", "secret", "namespace"]
+                ]
+              ],
+             }  
+           
+          }
+        ]
+      }
+    }]
+  }
+    
+    
