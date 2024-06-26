@@ -92,7 +92,7 @@ Meshery provides a relationship evaluation algorithm to ensure desired behavior 
 
 ## Versioning
 
-![/assets/img/concepts/logical/versioning-meshery-entities.svg]
+![Versioning Models](/assets/img/concepts/logical/versioning-meshery-entities.svg)
 
 
 ## Summary
