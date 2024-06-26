@@ -134,7 +134,7 @@ func main() {
 		log.Error(ErrCreatingUserDataDirectory(viper.GetString("USER_DATA_FOLDER")))
 		os.Exit(1)
 	}
-	logDir := path.Join(home, ".meshery", "logs")
+	logDir := path.Join(home, ".meshery", "logs.txt")
 	errDir = os.MkdirAll(logDir, 0755)
 	if errDir != nil {
 		logrus.Fatalf("Error creating user data directory: %v", err)

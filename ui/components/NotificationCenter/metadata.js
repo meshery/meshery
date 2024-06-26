@@ -12,6 +12,35 @@ import { DeploymentSummaryFormatter } from '../DesignLifeCycle/DeploymentSummary
 const DryRunResponse = ({ response }) => {
   return <FormatDryRunResponse dryRunErrors={formatDryRunResponse(response)} />;
 };
+const ViewDownloadLink = ({ href, children, ...props }) => {
+  const baseUrl = window.location.origin;
+  return (
+    <a
+      href={`${baseUrl}/${href}`}
+      target="_blank"
+      rel="noopener noreferrer"
+      style={{ color: 'inherit' }}
+      {...props}
+    >
+      <Typography
+        variant="h5"
+        style={{
+          textDecorationLine: 'underline',
+          cursor: 'pointer',
+          marginBottom: '0.5rem',
+          fontWeight: 'bolder !important',
+          textTransform: 'uppercase',
+          fontSize: '0.9rem',
+        }}
+      >
+        {children}
+        <sup>
+          <LaunchIcon style={{ width: '1rem', height: '1rem' }} />
+        </sup>
+      </Typography>
+    </a>
+  );
+};
 
 const TitleLink = ({ href, children, ...props }) => {
   return (
@@ -112,12 +141,14 @@ export const FormattedMetadata = ({ event }) => {
     error: (value) => <ErrorMetadataFormatter metadata={value} event={event} />,
     dryRunResponse: (value) => <DryRunResponse response={value} />,
     DownloadLink: (value) => (
-      <TitleLink href={`api/system/fileDownload?file=${encodeURIComponent(value)}`}>
+      <ViewDownloadLink href={`api/system/fileDownload?file=${encodeURIComponent(value)}`}>
         Download
-      </TitleLink>
+      </ViewDownloadLink>
     ),
     ViewLink: (value) => (
-      <TitleLink href={`api/system/fileView?file=${encodeURIComponent(value)}`}>View</TitleLink>
+      <ViewDownloadLink href={`api/system/fileView?file=${encodeURIComponent(value)}`}>
+        View
+      </ViewDownloadLink>
     ),
   };
 
