@@ -19,7 +19,11 @@ Models are units of packaging for Meshery's logical object representation. Model
 * **Components:** Components within a Model represent the capabilities of the underlying platform and are used by operators to build applications.
 * **Relationships:** Relationships define interactions and dependencies between components within a model.
 * **Policies:** Policies govern the behavior and constraints of components and relationships, ensuring adherence to desired operational practices.
-* **Extensibility:** Models are highly extensible, allowing you to define custom components, relationships, and policies. See [Contributing to Models](/project/contributing/contributing-models).
+* **Extensibility:** Models are highly extensible, allowing you to define custom components, relationships, and policies. 
+
+{% include alert.html title="Creating your own models" type="info" content="If you would like to create your own, augement existing models, or contribute new models, please refer to the <a href="/project/contributing/contributing-models">Contributing to Models</a> guide. " %}
+
+See [Contributing to Models](/project/contributing/contributing-models).
 
 As a cloud native manager that provides a comprehensive set of tools for managing multi-cloud and cloud native applications and infrastructure, Meshery needs object models that can granularly characterize a wide range of systems under management from simple applications to complex microservices architectures and their infrastructure. This document describes the Meshery Model and its constituent set of entities  used to represent and manage cloud and cloud native systems.
 
@@ -89,6 +93,11 @@ Meshery provides a relationship evaluation algorithm to ensure desired behavior 
 [Patterns](patterns) are reusable configuration that can be applied to components or designs. They define best practices for configuring and operating cloud-native application functionality. Patterns can be applied to components or designs, and they are read-only.
 
 {% include alert.html title="Metadata" type="info" content="Metadata provide additional details about a component in Meshery. They offer specific functionality or characteristics associated with a component, enhancing its capabilities. Metadata can be attached to components to customize their behavior." %}
+
+## Versioning
+
+![Versioning Models](/assets/img/concepts/logical/versioning-meshery-entities.svg)
+
 
 ## Summary
 
