@@ -79,14 +79,14 @@ mesheryctl registry generate --registrant-def [path to connection definition] --
 			return ErrUpdateRegistry(err, modelLocation)
 		}
 		utils.Log.SetLevel(logrus.DebugLevel)
-		logFilePath := filepath.Join(logDirPath, "Logs")
+		logFilePath := filepath.Join(logDirPath, "Logs.txt")
 		logFile, err = os.Create(logFilePath)
 		if err != nil {
 			return err
 		}
 
 		utils.LogError.SetLevel(logrus.ErrorLevel)
-		logErrorFilePath := filepath.Join(logDirPath, "Errors")
+		logErrorFilePath := filepath.Join(logDirPath, "Errors.txt")
 		errorLogFile, err = os.Create(logErrorFilePath)
 		if err != nil {
 			return err
