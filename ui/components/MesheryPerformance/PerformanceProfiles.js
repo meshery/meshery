@@ -157,7 +157,7 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
           pageSize: `${pageSize}`,
           page: `${page}`,
           search: `${encodeURIComponent(search)}`,
-          order: `${encodeURIComponent(sortOrder)}`,
+          order: `${sortOrder}`,
         },
       },
     );
@@ -187,7 +187,7 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
         pageSize: `${pageSize}`,
         page: `${page}`,
         search: `${encodeURIComponent(search)}`,
-        order: `${encodeURIComponent(sortOrder)}`,
+        order: `${sortOrder}`,
       },
     }).subscribe({
       next: (res) => {
