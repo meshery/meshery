@@ -176,8 +176,8 @@ jobs:
           sleep 60
       - name: Run Playwright End-to-End Tests
         env:
-          REMOTE_PROVIDER_USER_EMAIL: ${{ secrets.LAYER5_ACCOUNT_EMAIL }}
-          REMOTE_PROVIDER_USER_PASSWORD: ${{ secrets.LAYER5_ACCOUNT_PASSWORD }}
+          REMOTE_PROVIDER_USER_EMAIL: ${{ secrets.LAYER5_CLOUD_TESTING_BOT_EMAIL }}
+          REMOTE_PROVIDER_USER_PASSWORD: ${{ secrets.LAYER5_CLOUD_TESTING_BOT_PASSWORD }}
           PROVIDER_TOKEN: ${{ secrets.PROVIDER_TOKEN }}
         run: |
           make test-setup-ui
