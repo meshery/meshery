@@ -86,10 +86,9 @@ The combination of `kind`, `type`, and `subType` uniquely determines the visual 
 
 This Relationship type configures the networking between one or more components.
 
-**Examples**: Relationships between a Service and a Deployment, or between a Service and a Pod, or between an Ingress and a Service.
+**Examples**: An edge-network relationship between a Service and a Deployment or an edge-binding relationship between an Ingress and a Service.
 
 - Example 1) Service --> Deployment
-- Example 2) Service --> Pod
 - Example 3) IngressController --> Ingress --> Service
 
 <details close><summary>Visual Representation of Edge-Network Relationships</summary>
