@@ -90,6 +90,11 @@ Meshery provides a relationship evaluation algorithm to ensure desired behavior 
 
 {% include alert.html title="Metadata" type="info" content="Metadata provide additional details about a component in Meshery. They offer specific functionality or characteristics associated with a component, enhancing its capabilities. Metadata can be attached to components to customize their behavior." %}
 
+## Versioning
+
+![/assets/img/concepts/logical/versioning-meshery-entities.svg]
+
+
 ## Summary
 
 A Model serves as a unit of packaging for Meshery's logical object representation. Models encompass a structured framework that defines the components, relationships, policies, and other elements that constitute a system or application under Meshery's management. Models offer a way to encapsulate the complexities of diverse systems and provide a standardized representation for management and interaction.
