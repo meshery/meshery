@@ -21,7 +21,8 @@ Models are units of packaging for Meshery's logical object representation. Model
 * **Policies:** Policies govern the behavior and constraints of components and relationships, ensuring adherence to desired operational practices.
 * **Extensibility:** Models are highly extensible, allowing you to define custom components, relationships, and policies. 
 
-{% include alert.html title="Creating your own models" type="info" content="If you would like to create your own, augement existing models, or contribute new models, please refer to the <a href="/project/contributing/contributing-models">Contributing to Models</a> guide. " %}
+{% include alert.html title="Creating your own models" content="If you would like to create your own, augment existing models, or contribute new models, please refer to the [Contributing to Models](/project/contributing/contributing-models) guide." %}
+
 
 See [Contributing to Models](/project/contributing/contributing-models).
 
