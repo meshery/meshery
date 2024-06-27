@@ -194,6 +194,10 @@ components:
   colorIcon: assets/img/integrations/kuma/components/hostname-generator/icons/color/hostname-generator-color.svg
   whiteIcon: assets/img/integrations/kuma/components/hostname-generator/icons/white/hostname-generator-white.svg
   description: 
+- name: hostname-generator
+  colorIcon: assets/img/integrations/kuma/components/hostname-generator/icons/color/hostname-generator-color.svg
+  whiteIcon: assets/img/integrations/kuma/components/hostname-generator/icons/white/hostname-generator-white.svg
+  description: 
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",
