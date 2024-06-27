@@ -111,7 +111,7 @@ mesheryctl system dashboard --skip-browser`,
 		switch currCtx.GetPlatform() {
 		case "docker":
 			if runPortForward {
-				log.Warn("The current flag is intended for use exclusively when Meshery is deployed on a Kubernetes platform.")
+				log.Warn("--port-forward is not supported using Docker as Meshery's deployment platform.")
 			}
 		case "kubernetes":
 			client, err := meshkitkube.New([]byte(""))
