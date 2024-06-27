@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/gorilla/mux"
+	"github.com/layer5io/meshery/server/helpers"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha2"
 	"github.com/layer5io/meshkit/models/meshmodel/entity"
@@ -181,13 +182,20 @@ func (h *Handler) RegisterMeshmodelRelationships(rw http.ResponseWriter, r *http
 	}
 	switch cc.EntityType {
 	case entity.RelationshipDefinition:
+		var isModelError bool
+		var isRegistranError bool
 		var r v1alpha2.RelationshipDefinition
 		err = json.Unmarshal(cc.Entity, &r)
 		if err != nil {
 			http.Error(rw, err.Error(), http.StatusBadRequest)
 			return
 		}
-		err = h.registryManager.RegisterEntity(cc.Host, &r)
+		isRegistranError, isModelError, err = h.registryManager.RegisterEntity(cc.Host, &r)
+		helpers.HandleError(cc.Host, &r, err, isModelError, isRegistranError)
+	}
+	err = helpers.WriteLogsToFiles()
+	if err != nil {
+		h.log.Error(err)
 	}
 	if err != nil {
 		http.Error(rw, err.Error(), http.StatusBadRequest)
