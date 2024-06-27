@@ -34,6 +34,18 @@ components:
   colorIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-geo-replication/icons/color/pulsar-geo-replication-color.svg
   whiteIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-geo-replication/icons/white/pulsar-geo-replication-white.svg
   description: 
+- name: pulsar-function
+  colorIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-function/icons/color/pulsar-function-color.svg
+  whiteIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-function/icons/white/pulsar-function-white.svg
+  description: 
+- name: pulsar-package
+  colorIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-package/icons/color/pulsar-package-color.svg
+  whiteIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-package/icons/white/pulsar-package-white.svg
+  description: 
+- name: pulsar-sink
+  colorIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-sink/icons/color/pulsar-sink-color.svg
+  whiteIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-sink/icons/white/pulsar-sink-white.svg
+  description: 
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",
