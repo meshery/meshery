@@ -40,7 +40,7 @@ import SaveIcon from '@material-ui/icons/Save';
 import ConfigurationSubscription from './graphql/subscriptions/ConfigurationSubscription';
 import fetchCatalogFilter from './graphql/queries/CatalogFilterQuery';
 import { iconMedium } from '../css/icons.styles';
-import Modal from './Modal';
+import Modal, { RJSFModalWrapper } from './Modal';
 import { getUnit8ArrayDecodedFile, modifyRJSFSchema } from '../utils/utils';
 import Filter from '../public/static/img/drawer-icons/filter_svg.js';
 import { getMeshModels } from '../api/meshmodel';
@@ -62,6 +62,7 @@ import { keys } from '@/utils/permission_constants';
 import DefaultError from './General/error-404/index';
 import UniversalFilter from '../utils/custom-filter';
 import { UsesSistent } from './SistentWrapper';
+import { Modal as SistentModal } from '@layer5/sistent';
 
 const styles = (theme) => ({
   grid: {
@@ -1446,26 +1447,31 @@ function MesheryFilters({
 const ImportModal = React.memo((props) => {
   const { importFormSchema, handleClose, handleImportFilter } = props;
 
-  const classes = useStyles();
+  // const classes = useStyles();
 
   return (
-    <Modal
-      open={true}
-      schema={importFormSchema.rjsfSchema}
-      uiSchema={importFormSchema.uiSchema}
-      handleClose={handleClose}
-      handleSubmit={handleImportFilter}
-      title="Import Design"
-      submitBtnText="Import"
-      leftHeaderIcon={
-        <Filter
-          fill="#fff"
-          style={{ height: '24px', width: '24px', fonSize: '1.45rem' }}
-          className={undefined}
+    <UsesSistent>
+      <SistentModal
+        open={true}
+        closeModal={handleClose}
+        headerIcon={
+          <Filter
+            fill="#fff"
+            style={{ height: '24px', width: '24px', fonSize: '1.45rem' }}
+            className={undefined}
+          />
+        }
+        title="Import Design"
+      >
+        <RJSFModalWrapper
+          schema={importFormSchema.rjsfSchema}
+          uiSchema={importFormSchema.uiSchema}
+          handleSubmit={handleImportFilter}
+          submitBtnText="Import"
+          handleClose={handleClose}
         />
-      }
-      submitBtnIcon={<PublishIcon className={classes.addIcon} data-cy="import-button" />}
-    />
+      </SistentModal>
+    </UsesSistent>
   );
 });
 
