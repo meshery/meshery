@@ -5,14 +5,13 @@ a > * {
   color: var(--brand-color);
   text-decoration: none;
   background-color: transparent;
-
 }
 img {
   max-width: 100%;
   border-style: none;
 }
 img.center {
-  display:block;
+  display: block;
   margin-left: auto;
   margin-right: auto;
 }
@@ -64,7 +63,7 @@ h5,
 .h5 {
   font-size: 1.4rem;
   font-weight: 400;
-} 
+}
 h6 {
   font-size: 1.2rem;
   font-weight: 300;
@@ -82,7 +81,7 @@ pre {
 }
 
 label {
-  font-size: .9rem;
+  font-size: 0.9rem;
 }
 
 // LIST (UL,OL) ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -94,8 +93,9 @@ ol {
   font-size: 1rem;
   padding-inline-start: 2rem;
 
-  @media (max-width: 37.5em) {
-    font-size: 1.8rem;
+  @media (max-width: 320px) {
+    font-size: 0.8rem;
+    padding-inline-start: 0.5rem;
   }
 
   & li {
@@ -106,26 +106,26 @@ ul {
   font-size: 1rem;
   list-style: disc;
   > li {
-    color: var(--color-secondary-medium)
+    color: var(--color-secondary-medium);
   }
 }
 ol {
   list-style-type: decimal;
 }
 
-li:has(> a[href*="/installation/quick-start"]){
+li:has(> a[href*="/installation/quick-start"]) {
   list-style-type: none;
   margin-left: -2rem;
-} 
-li:has(> a[href*="/guides/tutorials"]){
+}
+li:has(> a[href*="/guides/tutorials"]) {
   list-style-type: none;
   margin-left: -2rem;
-} 
+}
 
-li:has(> a[href*="/extensions"]){
+li:has(> a[href*="/extensions"]) {
   list-style-type: none;
   margin-left: -2rem;
-} 
+}
 
 dt {
   font-weight: bold;

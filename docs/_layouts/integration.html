@@ -8,7 +8,7 @@ layout: default
 <!-- components -->
 <div>
     <section class="Compheading">
-        {% if page.components.size != 0  %}
+        {% if page.components and page.components.size > 0 %}
         <h3>
             Components ( {{ page.components.size }} )
         </h3>

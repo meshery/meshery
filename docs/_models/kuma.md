@@ -174,6 +174,30 @@ components:
   colorIcon: assets/img/integrations/kuma/components/mesh-tcp-route/icons/color/mesh-tcp-route-color.svg
   whiteIcon: assets/img/integrations/kuma/components/mesh-tcp-route/icons/white/mesh-tcp-route-white.svg
   description: 
+- name: mesh-metric
+  colorIcon: assets/img/integrations/kuma/components/mesh-metric/icons/color/mesh-metric-color.svg
+  whiteIcon: assets/img/integrations/kuma/components/mesh-metric/icons/white/mesh-metric-white.svg
+  description: 
+- name: mesh-service
+  colorIcon: assets/img/integrations/kuma/components/mesh-service/icons/color/mesh-service-color.svg
+  whiteIcon: assets/img/integrations/kuma/components/mesh-service/icons/white/mesh-service-white.svg
+  description: 
+- name: mesh-external-service
+  colorIcon: assets/img/integrations/kuma/components/mesh-external-service/icons/color/mesh-external-service-color.svg
+  whiteIcon: assets/img/integrations/kuma/components/mesh-external-service/icons/white/mesh-external-service-white.svg
+  description: 
+- name: mesh-passthrough
+  colorIcon: assets/img/integrations/kuma/components/mesh-passthrough/icons/color/mesh-passthrough-color.svg
+  whiteIcon: assets/img/integrations/kuma/components/mesh-passthrough/icons/white/mesh-passthrough-white.svg
+  description: 
+- name: hostname-generator
+  colorIcon: assets/img/integrations/kuma/components/hostname-generator/icons/color/hostname-generator-color.svg
+  whiteIcon: assets/img/integrations/kuma/components/hostname-generator/icons/white/hostname-generator-white.svg
+  description: 
+- name: hostname-generator
+  colorIcon: assets/img/integrations/kuma/components/hostname-generator/icons/color/hostname-generator-color.svg
+  whiteIcon: assets/img/integrations/kuma/components/hostname-generator/icons/white/hostname-generator-white.svg
+  description: 
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",
