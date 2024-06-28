@@ -44,7 +44,7 @@ func TestPatternList(t *testing.T) {
 	}{
 		{
 			Name:             "Fetch Pattern List",
-			Args:             []string{"list"},
+			Args:             []string{"list", "--page", "2"},
 			ExpectedResponse: "list.pattern.output.golden",
 			Fixture:          "list.pattern.api.response.golden",
 			URL:              testContext.BaseURL + "/api/pattern",
@@ -53,7 +53,7 @@ func TestPatternList(t *testing.T) {
 		},
 		{
 			Name:             "Fetch Pattern List with Local provider",
-			Args:             []string{"list"},
+			Args:             []string{"list", "--page", "1"},
 			ExpectedResponse: "list.pattern.local.output.golden",
 			Fixture:          "list.pattern.local.api.response.golden",
 			URL:              testContext.BaseURL + "/api/pattern",
