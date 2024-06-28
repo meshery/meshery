@@ -141,7 +141,7 @@ func main() {
 	}
 
 	// Create or open the log file
-	logFilePath := path.Join(logDir, "registryLogs.txt")
+	logFilePath := path.Join(logDir, "registryLogs.log")
 	logFile, err := os.Create(logFilePath)
 	if err != nil {
 		logrus.Fatalf("Could not create log file: %v", err)
