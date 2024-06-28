@@ -1,6 +1,26 @@
+import { Box, styled } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
+export const CreatAtContainer = styled('span')(({ theme, isBold }) => ({
+  fontWeight: isBold ? 'bold' : '',
+  whiteSpace: 'wrap',
+  color: theme.palette.type === 'dark' ? '#ccc' : theme.palette.secondary.mainBackground,
+  fontSize: '0.8rem',
+}));
+
+export const ActionContainer = styled(Box)({
+  width: '100%',
+  display: 'flex',
+  gap: '1rem',
+  justifyContent: 'end',
+});
+
 const useStyles = makeStyles((theme) => ({
+  dialogBox: {
+    '& .MuiDialog-paper': {
+      maxWidth: '820px',
+    },
+  },
   dialogTitle: {
     backgroundColor: theme.palette.secondary.mainBackground,
     justifyContent: 'space-between',
@@ -20,6 +40,8 @@ const useStyles = makeStyles((theme) => ({
 
   text: {
     fontFamily: 'Qanelas Soft, sans-serif',
+    display: 'flex',
+    flexDirection: 'column',
     '&.MuiTypography-root': {
       fontFamily: 'Qanelas Soft, sans-serif',
     },
@@ -32,6 +54,7 @@ const useStyles = makeStyles((theme) => ({
     fontFamily: 'Qanelas Soft, sans-serif',
     textAlign: 'center',
     maxWidth: '200px',
+    marginTop: '0.5rem',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
@@ -39,7 +62,7 @@ const useStyles = makeStyles((theme) => ({
   rjsfInfoModalForm: {
     marginLeft: '-1rem',
     marginTop: '-1rem',
-    maxWidth: '44rem',
+    maxWidth: '39rem',
   },
   copyButton: {
     '&:hover': {
@@ -53,6 +76,7 @@ const useStyles = makeStyles((theme) => ({
   visibilityGridItem: {
     display: 'flex',
     alignItems: 'center',
+    justifyContent: 'flex-end',
   },
   img: {
     marginLeft: '0.5rem',
