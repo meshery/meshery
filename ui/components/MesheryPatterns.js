@@ -44,7 +44,7 @@ import LoadingScreen from './LoadingComponents/LoadingComponent';
 import { FILE_OPS, MesheryPatternsCatalog, VISIBILITY } from '../utils/Enum';
 import CloneIcon from '../public/static/img/CloneIcon';
 import { useRouter } from 'next/router';
-import Modal from './Modal';
+import { RJSFModalWrapper } from './Modal';
 import downloadContent from '../utils/fileDownloader';
 import ConfigurationSubscription from './graphql/subscriptions/ConfigurationSubscription';
 import Pattern from '../public/static/img/drawer-icons/pattern_svg.js';
@@ -1761,27 +1761,31 @@ function MesheryPatterns({
 const ImportModal = React.memo((props) => {
   const { importFormSchema, handleClose, handleImportDesign } = props;
 
-  const classes = useStyles();
-
   return (
     <>
-      <Modal
-        open={true}
-        schema={importFormSchema.rjsfSchema}
-        uiSchema={importFormSchema.uiSchema}
-        handleClose={handleClose}
-        handleSubmit={handleImportDesign}
-        title="Import Design"
-        submitBtnText="Import"
-        leftHeaderIcon={
-          <Pattern
-            fill="#fff"
-            style={{ height: '24px', width: '24px', fonSize: '1.45rem' }}
-            className={undefined}
+      <UsesSistent>
+        <SistentModal
+          open={true}
+          closeModal={handleClose}
+          headerIcon={
+            <Pattern
+              fill="#fff"
+              style={{ height: '24px', width: '24px', fonSize: '1.45rem' }}
+              className={undefined}
+            />
+          }
+          maxWidth="sm"
+          title="Import Design"
+        >
+          <RJSFModalWrapper
+            schema={importFormSchema.rjsfSchema}
+            uiSchema={importFormSchema.uiSchema}
+            handleSubmit={handleImportDesign}
+            submitBtnText="Import"
+            handleClose={handleClose}
           />
-        }
-        submitBtnIcon={<PublishIcon className={classes.addIcon} data-cy="import-button" />}
-      />
+        </SistentModal>
+      </UsesSistent>
     </>
   );
 });
@@ -1791,21 +1795,31 @@ const PublishModal = React.memo((props) => {
 
   return (
     <>
-      <Modal
-        open={true}
-        schema={publishFormSchema.rjsfSchema}
-        uiSchema={publishFormSchema.uiSchema}
-        handleClose={handleClose}
-        aria-label="catalog publish"
-        title={title}
-        handleSubmit={handleSubmit}
-        showInfoIcon={{
-          text: 'Upon submitting your catalog item, an approval flow will be initiated.',
-          link: 'https://docs.meshery.io/concepts/catalog',
-        }}
-        submitBtnText="Submit for Approval"
-        submitBtnIcon={<PublicIcon />}
-      />
+      <UsesSistent>
+        <SistentModal
+          open={true}
+          closeModal={handleClose}
+          aria-label="catalog publish"
+          title={title}
+          headerIcon={
+            <Pattern
+              fill="#fff"
+              style={{ height: '24px', width: '24px', fonSize: '1.45rem' }}
+              className={undefined}
+            />
+          }
+          maxWidth="sm"
+        >
+          <RJSFModalWrapper
+            schema={publishFormSchema.rjsfSchema}
+            uiSchema={publishFormSchema.uiSchema}
+            handleSubmit={handleSubmit}
+            submitBtnText="Submit for Approval"
+            handleClose={handleClose}
+            helpText="Upon submitting your catalog item, an approval flow will be initiated.[Learn more](https://docs.meshery.io/concepts/catalog)"
+          />
+        </SistentModal>
+      </UsesSistent>
     </>
   );
 });

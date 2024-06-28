@@ -300,6 +300,7 @@ function RJSFModalWrapper({
   handleSubmit,
   title,
   submitBtnText,
+  helpText,
 }) {
   const formRef = useRef();
   const classes = useStyles();
@@ -363,7 +364,7 @@ function RJSFModalWrapper({
           />
         )}
       </ModalBody>
-      <ModalFooter variant="filled">
+      <ModalFooter variant="filled" helpText={helpText}>
         <PrimaryActionButtons
           primaryText={submitBtnText || 'Submit'}
           secondaryText="Cancel"
