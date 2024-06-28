@@ -1,7 +1,7 @@
 ---
 layout: integration
-title: Apache Shardingsphere Operator Charts
-subtitle: Collaborative and visual infrastructure as code for Apache Shardingsphere Operator Charts
+title: Apache ShardingSphere
+subtitle: Collaborative and visual infrastructure as code for Apache ShardingSphere
 image: /assets/img/integrations/apache-shardingsphere-operator-charts/icons/color/apache-shardingsphere-operator-charts-color.svg
 permalink: extensibility/integrations/apache-shardingsphere-operator-charts
 docURL: https://docs.meshery.io/extensibility/integrations/apache-shardingsphere-operator-charts
