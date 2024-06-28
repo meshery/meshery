@@ -47,8 +47,8 @@ mesheryctl pattern list --page 2
 <pre class='codeblock-pre'>
 <div class='codeblock'>
   -h, --help      help for list
-  -p, --page int   (optional) List next set of patternss with --page (default = 1) (default 1)
   -v, --verbose   Display full length user and pattern file identifiers
+  -p, --page int  (optional) List next set of patternss with --page (default = 1) (default 1)
 
 </div>
 </pre>
