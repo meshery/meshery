@@ -37,7 +37,7 @@ import {
 import { updateProgress } from '../../../lib/store';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import WorkspaceCard from './workspace-card';
-import Modal from '../../Modal';
+import { RJSFModalWrapper } from '../../Modal';
 import PromptComponent, { PROMPT_VARIANTS } from '../../PromptComponent';
 import { debounce } from 'lodash';
 import { EVENT_TYPES } from '../../../lib/event-types';
@@ -687,18 +687,26 @@ const Workspaces = ({ organization, classes }) => {
             ? CAN(keys.CREATE_WORKSPACE.action, keys.CREATE_WORKSPACE.subject)
             : CAN(keys.EDIT_WORKSPACE.action, keys.EDIT_WORKSPACE.subject)) &&
             workspaceModal.open && (
-              <Modal
-                open={workspaceModal.open}
-                schema={workspaceModal.schema.rjsfSchema}
-                uiSchema={workspaceModal.schema.uiSchema}
-                handleClose={handleWorkspaceModalClose}
-                handleSubmit={
-                  actionType === ACTION_TYPES.CREATE ? handleCreateWorkspace : handleEditWorkspace
-                }
-                title={actionType === ACTION_TYPES.CREATE ? 'Create Workspace' : 'Edit Workspace'}
-                submitBtnText={actionType === ACTION_TYPES.CREATE ? 'Save' : 'Update'}
-                initialData={initialData}
-              />
+              <UsesSistent>
+                <SisitentModal
+                  open={workspaceModal.open}
+                  closeModal={handleWorkspaceModalClose}
+                  title={actionType === ACTION_TYPES.CREATE ? 'Create Workspace' : 'Edit Workspace'}
+                >
+                  <RJSFModalWrapper
+                    schema={workspaceModal.schema.rjsfSchema}
+                    uiSchema={workspaceModal.schema.uiSchema}
+                    handleSubmit={
+                      actionType === ACTION_TYPES.CREATE
+                        ? handleCreateWorkspace
+                        : handleEditWorkspace
+                    }
+                    submitBtnText={actionType === ACTION_TYPES.CREATE ? 'Save' : 'Update'}
+                    initialData={initialData}
+                    handleClose={handleWorkspaceModalClose}
+                  />
+                </SisitentModal>
+              </UsesSistent>
             )}
           <UsesSistent>
             <SisitentModal
