@@ -3,7 +3,7 @@
   "schemaVersion": "core.meshery.io/v1beta1",
   "version": "v1.0.0",
   "name": "kube-arangodb",
-  "displayName": "Kube Arangodb",
+  "displayName": "ArangoDB Kubernetes Operator",
   "description": "",
   "status": "ignored",
   "hostID": "00000000-0000-0000-0000-000000000000",
@@ -11,10 +11,10 @@
    "hostname": "artifacthub"
   },
   "category": {
-   "name": "Uncategorized",
+   "name": "App Definition and Development",
    "metadata": null
   },
-  "subCategory": "Uncategorized",
+  "subCategory": "Database",
   "metadata": {
    "capabilities": "",
    "defaultData": "",

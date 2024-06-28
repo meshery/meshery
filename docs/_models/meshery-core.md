@@ -34,6 +34,10 @@ components:
   colorIcon: assets/img/integrations/meshery-core/components/credential/icons/color/credential-color.svg
   whiteIcon: assets/img/integrations/meshery-core/components/credential/icons/white/credential-white.svg
   description: 
+- name: container
+  colorIcon: assets/img/integrations/meshery-core/components/container/icons/color/container-color.svg
+  whiteIcon: assets/img/integrations/meshery-core/components/container/icons/white/container-white.svg
+  description: 
 - name: node-group-inventory-wallet
   colorIcon: assets/img/integrations/meshery-core/components/node-group-inventory-wallet/icons/color/node-group-inventory-wallet-color.svg
   whiteIcon: assets/img/integrations/meshery-core/components/node-group-inventory-wallet/icons/white/node-group-inventory-wallet-white.svg
@@ -53,10 +57,6 @@ components:
 - name: image-node
   colorIcon: assets/img/integrations/meshery-core/components/image-node/icons/color/image-node-color.svg
   whiteIcon: assets/img/integrations/meshery-core/components/image-node/icons/white/image-node-white.svg
-  description: 
-- name: container
-  colorIcon: assets/img/integrations/meshery-core/components/container/icons/color/container-color.svg
-  whiteIcon: assets/img/integrations/meshery-core/components/container/icons/white/container-white.svg
   description: 
 - name: bounding-box
   colorIcon: assets/img/integrations/meshery-core/components/bounding-box/icons/color/bounding-box-color.svg

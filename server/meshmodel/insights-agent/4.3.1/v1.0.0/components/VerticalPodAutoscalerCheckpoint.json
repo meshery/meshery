@@ -1,0 +1,68 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "core.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Vertical Pod Autoscaler Checkpoint",
+  "description": "",
+  "format": "JSON",
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "core.meshery.io/v1beta1",
+   "version": "v1.0.0",
+   "name": "insights-agent",
+   "displayName": "Insights Agent",
+   "description": "",
+   "status": "ignored",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "registrant": {
+    "hostname": "artifacthub"
+   },
+   "category": {
+    "name": "Uncategorized",
+    "metadata": null
+   },
+   "subCategory": "Uncategorized",
+   "metadata": {
+    "capabilities": "",
+    "defaultData": "",
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "model": {
+    "version": "4.3.1"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "primaryColor": "",
+   "secondaryColor": "",
+   "shape": "",
+   "shapePolygonPoints": "",
+   "status": "ignored",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "component": {
+   "kind": "VerticalPodAutoscalerCheckpoint",
+   "version": "autoscaling.k8s.io/v1",
+   "schema": "{\n \"description\": \"VerticalPodAutoscalerCheckpoint is the checkpoint of the internal state of VPA that is used for recovery after recommender's restart.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Specification of the checkpoint. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#spec-and-status.\",\n   \"properties\": {\n    \"containerName\": {\n     \"description\": \"Name of the checkpointed container.\",\n     \"type\": \"string\"\n    },\n    \"vpaObjectName\": {\n     \"description\": \"Name of the VPA object that stored VerticalPodAutoscalerCheckpoint object.\",\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Vertical Pod Autoscaler Checkpoint\",\n \"type\": \"object\"\n}"
+  }
+ }

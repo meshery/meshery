@@ -15,7 +15,7 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt"
-	"github.com/sirupsen/logrus"
+	"github.com/layer5io/meshkit/logger"
 	"github.com/spf13/viper"
 	"golang.org/x/oauth2"
 )
@@ -35,9 +35,9 @@ const (
 type JWK map[string]string
 
 // SafeClose is a helper function help to close the io
-func SafeClose(co io.Closer) {
+func SafeClose(co io.Closer, log logger.Handler) {
 	if cerr := co.Close(); cerr != nil {
-		logrus.Error(cerr)
+		log.Error(ErrCloseIoReader(cerr))
 	}
 }
 
@@ -53,7 +53,7 @@ func (l *RemoteProvider) DoRequest(req *http.Request, tokenString string) (*http
 		// https://github.com/golang/go/issues/19653#issuecomment-341540384
 		_, _ = io.ReadAll(resp.Body)
 		resp.Body.Close()
-		logrus.Warn("trying after refresh")
+		l.Log.Warn(ErrTokenRetry)
 		newToken, err := l.refreshToken(tokenString)
 		if err != nil {
 			return nil, ErrTokenRefresh(err)
@@ -91,7 +91,7 @@ func (l *RemoteProvider) refreshToken(tokenString string) (string, error) {
 		return "", ErrTokenRefresh(fmt.Errorf("failed to refresh token: status code 500"))
 	}
 
-	defer SafeClose(r.Body)
+	defer SafeClose(r.Body, l.Log)
 	var target map[string]string
 	err = json.NewDecoder(r.Body).Decode(&target)
 	if err != nil {
@@ -99,7 +99,7 @@ func (l *RemoteProvider) refreshToken(tokenString string) (string, error) {
 	}
 	l.TokenStore[tokenString] = target[TokenCookieName]
 	time.AfterFunc(1*time.Hour, func() {
-		logrus.Infof("deleting old token string")
+		l.Log.Info("deleting old token string")
 		delete(l.TokenStore, tokenString)
 	})
 	return target[TokenCookieName], nil
@@ -146,7 +146,7 @@ func (l *RemoteProvider) UpdateJWKs() error {
 	if err != nil {
 		return ErrJWKsKeys(err)
 	}
-	defer SafeClose(resp.Body)
+	defer SafeClose(resp.Body, l.Log)
 	jsonDataFromHTTP, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return ErrDataRead(err, "Response Body")
@@ -300,13 +300,14 @@ func (l *RemoteProvider) revokeToken(tokenString string) error {
 
 	remoteURL, err := url.Parse(fmt.Sprintf("%s/revoke", l.RemoteProviderURL))
 	if err != nil {
-		logrus.Errorf("maformed url: %v", err)
+		l.Log.Error(ErrUrlParse(err))
 		return err
 	}
 	r, err := http.Post(remoteURL.String(), "application/json", bytes.NewReader(body))
 
 	if err != nil {
-		logrus.Errorf("Error revoking token: %v", err)
+		err = ErrTokenRevoke(err)
+		l.Log.Error(err)
 		return err
 	}
 
@@ -333,12 +334,13 @@ func (l *RemoteProvider) introspectToken(tokenString string) error {
 
 	remoteURL, err := url.Parse(fmt.Sprintf("%s/introspect", l.RemoteProviderURL))
 	if err != nil {
-		logrus.Errorf("maformed url: %v", err)
+		l.Log.Error(ErrUrlParse(err))
 		return err
 	}
 	r, err := http.Post(remoteURL.String(), "application/json", bytes.NewReader(body))
 	if err != nil {
-		logrus.Errorf("Error introspecting token: %v", err)
+		err = ErrTokenIntrospect(err)
+		l.Log.Error(err)
 		return err
 	}
 
@@ -365,10 +367,10 @@ func setCookie(w http.ResponseWriter, name, value string, duration time.Duration
 
 func unsetCookie(w http.ResponseWriter, name string) {
 	http.SetCookie(w, &http.Cookie{
-		Name:   name,
-		Path: "/",
+		Name:     name,
+		Path:     "/",
 		HttpOnly: true,
-		MaxAge: -1,
+		MaxAge:   -1,
 	})
 }
 

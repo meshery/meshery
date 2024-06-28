@@ -1,7 +1,7 @@
 ---
 layout: integration
-title: Apisix
-subtitle: Collaborative and visual infrastructure as code for Apisix
+title: APISIX
+subtitle: Collaborative and visual infrastructure as code for APISIX
 image: /assets/img/integrations/apisix/icons/color/apisix-color.svg
 permalink: extensibility/integrations/apisix
 docURL: https://docs.meshery.io/extensibility/integrations/apisix

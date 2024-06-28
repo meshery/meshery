@@ -18,8 +18,6 @@ import (
 	regv1alpha2 "github.com/layer5io/meshkit/models/meshmodel/registry/v1alpha2"
 	regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
 	"github.com/layer5io/meshkit/utils"
-
-	"github.com/sirupsen/logrus"
 )
 
 const (
@@ -53,7 +51,7 @@ func (h *Handler) EvaluateRelationshipPolicy(
 
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
-		logrus.Error(ErrRequestBody(err))
+		h.log.Error(ErrRequestBody(err))
 		http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)
 		rw.WriteHeader((http.StatusBadRequest))
 		return

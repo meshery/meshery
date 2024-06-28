@@ -7,7 +7,6 @@ import { FILE_OPS } from '../../utils/Enum';
 import { EVENT_TYPES } from '../../lib/event-types';
 import useStyles from './Grid.styles';
 import { RJSFModalWrapper } from '../Modal';
-import { withSnackbar } from 'notistack';
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -35,6 +34,8 @@ function PatternCardGridItem({
   canPublishPattern = false,
   user,
   handleInfoModal,
+  hideVisibility = false,
+  isReadOnly = false,
 }) {
   const [gridProps, setGridProps] = useState(INITIAL_GRID_SIZE);
   const [yaml, setYaml] = useState(pattern.pattern_file);
@@ -83,6 +84,8 @@ function PatternCardGridItem({
         description={pattern.description}
         visibility={pattern.visibility}
         pattern={pattern}
+        hideVisibility={hideVisibility}
+        isReadOnly={isReadOnly}
       />
     </Grid>
   );
@@ -140,6 +143,8 @@ function MesheryPatternGrid({
   openValidationModal,
   openUndeployModal,
   openDryRunModal,
+  hideVisibility = false,
+  arePatternsReadOnly = false,
 }) {
   const classes = useStyles();
   const { notify } = useNotification();
@@ -228,6 +233,8 @@ function MesheryPatternGrid({
               handleSubmit={handleSubmit}
               handleDownload={(e) => handleDesignDownloadModal(e, pattern)}
               setSelectedPatterns={setSelectedPattern}
+              hideVisibility={hideVisibility}
+              isReadOnly={arePatternsReadOnly}
             />
           ))}
         </Grid>
@@ -307,4 +314,4 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 // @ts-ignore
-export default connect(mapDispatchToProps)(withSnackbar(MesheryPatternGrid));
+export default connect(mapDispatchToProps)(MesheryPatternGrid);
