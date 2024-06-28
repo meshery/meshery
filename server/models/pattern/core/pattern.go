@@ -12,13 +12,13 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/models/pattern/utils"
+	"github.com/layer5io/meshkit/logger"
 	modelv1beta1 "github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	registry "github.com/layer5io/meshkit/models/meshmodel/registry"
 	regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
 	mutils "github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshkit/utils/manifests"
-	"github.com/sirupsen/logrus"
 	cytoscapejs "gonum.org/v1/gonum/graph/formats/cytoscapejs"
 	"gopkg.in/yaml.v2"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -150,7 +150,8 @@ type DryRunFailureCause struct {
 // config file model
 type Pattern struct {
 	// Name is the human-readable, display-friendly descriptor of the pattern
-	Name string `yaml:"name,omitempty" json:"name,omitempty"`
+	Name    string `yaml:"name,omitempty" json:"name,omitempty"`
+	Version string `yaml:"version,omitempty" json:"version,omitempty"`
 	//Vars will be used to configure the pattern when it is imported from other patterns.
 	Vars map[string]interface{} `yaml:"vars,omitempty" json:"vars,omitempty"`
 	// PatternID is the moniker use to uniquely identify any given pattern
@@ -306,7 +307,7 @@ func (p *Pattern) GetServiceType(name string) string {
 }
 
 // ToCytoscapeJS converts pattern file into cytoscape object
-func (p *Pattern) ToCytoscapeJS() (cytoscapejs.GraphElem, error) {
+func (p *Pattern) ToCytoscapeJS(log logger.Handler) (cytoscapejs.GraphElem, error) {
 	var cy cytoscapejs.GraphElem
 
 	// Not specifying any cytoscapejs layout
@@ -318,10 +319,10 @@ func (p *Pattern) ToCytoscapeJS() (cytoscapejs.GraphElem, error) {
 	// Set up the nodes
 	for name, svc := range p.Services {
 		elemData := cytoscapejs.ElemData{
-			ID: getCytoscapeElementID(name, svc),
+			ID: getCytoscapeElementID(name, svc, log),
 		}
 
-		elemPosition, err := getCytoscapeJSPosition(svc)
+		elemPosition, err := getCytoscapeJSPosition(svc, log)
 		if err != nil {
 			return cy, err
 		}
@@ -625,7 +626,7 @@ func isNamespacedComponent(comp *modelv1beta1.ComponentDefinition) bool {
 }
 
 // getCytoscapeElementID returns the element id for a given service
-func getCytoscapeElementID(name string, svc *Service) string {
+func getCytoscapeElementID(name string, svc *Service, log logger.Handler) string {
 	mpi, ok := svc.Traits["meshmap"] // check if service has meshmap as trait
 	if !ok {
 		return name // Assuming that the service names are unique
@@ -633,20 +634,20 @@ func getCytoscapeElementID(name string, svc *Service) string {
 
 	mpStrInterface, ok := mpi.(map[string]interface{})
 	if !ok {
-		logrus.Debugf("failed to cast meshmap trait (MPI): %+#v", mpi)
+		log.Debug(fmt.Sprintf("failed to cast meshmap trait (MPI): %+#v", mpi))
 		return name // Assuming that the service names are unique
 	}
 
 	mpID, ok := mpStrInterface["id"].(string)
 	if !ok {
-		logrus.Debugf("Meshmap id not present in Meshmap interface")
+		log.Debug("Meshmap id not present in Meshmap interface")
 		return name // Assuming that the service names are unique
 	}
 
 	return mpID
 }
 
-func getCytoscapeJSPosition(svc *Service) (cytoscapejs.Position, error) {
+func getCytoscapeJSPosition(svc *Service, log logger.Handler) (cytoscapejs.Position, error) {
 	pos := cytoscapejs.Position{}
 
 	// Check if the service has "meshmap" as a trait
@@ -671,42 +672,42 @@ func getCytoscapeJSPosition(svc *Service) (cytoscapejs.Position, error) {
 
 	mpStrInterface, ok := mpi.(map[string]interface{})
 	if !ok {
-		logrus.Debugf("failed to cast meshmap trait (MPI): %+#v", mpi)
+		log.Debug(fmt.Sprintf("failed to cast meshmap trait (MPI): %+#v", mpi))
 		return pos, nil
 	}
 
 	posInterface, ok := mpStrInterface["position"]
 	if !ok {
-		logrus.Debugf("failed to cast meshmap trait (posInterface): %+#v", mpStrInterface)
+		log.Debug(fmt.Sprintf("failed to cast meshmap trait (posInterface): %+#v", mpStrInterface))
 		return pos, nil
 	}
 
 	posMap, ok := posInterface.(map[string]interface{})
 	if !ok {
-		logrus.Debugf("failed to cast meshmap trait (posMap): %+#v", posInterface)
+		log.Debug(fmt.Sprintf("failed to cast meshmap trait (posMap): %+#v", posInterface))
 		return pos, nil
 	}
 
 	pos.X, ok = posMap["posX"].(float64)
 	if !ok {
-		logrus.Debugf("failed to cast meshmap trait (posMap): %T\n", posMap["posX"])
+		log.Debug(fmt.Sprintf("failed to cast meshmap trait (posMap): %T\n", posMap["posX"]))
 
 		// Attempt to cast as int
 		intX, ok := posMap["posX"].(int)
 		if !ok {
-			logrus.Debugf("failed to cast meshmap trait (posMap): %T\n", posMap["posX"])
+			log.Debug(fmt.Sprintf("failed to cast meshmap trait (posMap): %T\n", posMap["posX"]))
 		}
 
 		pos.X = float64(intX)
 	}
 	pos.Y, ok = posMap["posY"].(float64)
 	if !ok {
-		logrus.Debugf("failed to cast meshmap trait (posMap): %T\n", posMap["posY"])
+		log.Debug(fmt.Sprintf("failed to cast meshmap trait (posMap): %T\n", posMap["posY"]))
 
 		// Attempt to cast as int
 		intY, ok := posMap["posY"].(int)
 		if !ok {
-			logrus.Debugf("failed to cast meshmap trait (posMap): %T\n", posMap["posY"])
+			log.Debug(fmt.Sprintf("failed to cast meshmap trait (posMap): %T\n", posMap["posY"]))
 		}
 
 		pos.Y = float64(intY)

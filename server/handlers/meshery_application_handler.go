@@ -18,6 +18,7 @@ import (
 	"github.com/layer5io/meshery/server/meshes"
 	"github.com/layer5io/meshery/server/models"
 	pCore "github.com/layer5io/meshery/server/models/pattern/core"
+	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/models/events"
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 	"github.com/layer5io/meshkit/utils/kubernetes"
@@ -432,7 +433,7 @@ func (h *Handler) handleApplicationPOST(
 				mesheryApplication = &pfs[0]
 			} else {
 				// Fallback to generic HTTP import
-				pfs, err := genericHTTPApplicationFile(parsedBody.URL, sourcetype, h.registryManager)
+				pfs, err := genericHTTPApplicationFile(parsedBody.URL, sourcetype, h.registryManager, h.log)
 				if err != nil {
 					remoteApplicationErr := ErrRemoteApplication(err)
 					http.Error(rw, remoteApplicationErr.Error(), http.StatusInternalServerError)
@@ -1051,7 +1052,7 @@ func githubRepoApplicationScan(
 }
 
 // Note: Always return meshkit error from this function
-func genericHTTPApplicationFile(fileURL, sourceType string, reg *meshmodel.RegistryManager) ([]models.MesheryApplication, error) {
+func genericHTTPApplicationFile(fileURL, sourceType string, reg *meshmodel.RegistryManager, log logger.Handler) ([]models.MesheryApplication, error) {
 	resp, err := http.Get(fileURL)
 	if err != nil {
 		return nil, ErrRemoteApplication(err)
@@ -1060,7 +1061,7 @@ func genericHTTPApplicationFile(fileURL, sourceType string, reg *meshmodel.Regis
 		return nil, ErrRemoteApplication(fmt.Errorf("file not found"))
 	}
 
-	defer models.SafeClose(resp.Body)
+	defer models.SafeClose(resp.Body, log)
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {

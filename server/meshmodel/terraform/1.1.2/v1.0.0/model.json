@@ -5,7 +5,7 @@
   "name": "terraform",
   "displayName": "Terraform",
   "description": "",
-  "status": "enabled",
+  "status": "ignored",
   "hostID": "00000000-0000-0000-0000-000000000000",
   "registrant": {
    "hostname": "artifacthub"

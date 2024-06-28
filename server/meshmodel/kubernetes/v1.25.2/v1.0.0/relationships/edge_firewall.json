@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "core.meshery.io/v1alpha2",
+  "schemaVersion": "relationships.meshery.io/v1alpha2",
   "version": "v1.0.0",
   "kind": "Edge",
   "metadata": {
