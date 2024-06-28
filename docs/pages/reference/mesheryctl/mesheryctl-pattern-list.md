@@ -34,11 +34,20 @@ mesheryctl pattern list
 </div>
 </pre> 
 
+View list of models with specified page number (25 models per page)
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl pattern list --page 2
+
+</div>
+</pre> 
+
 ## Options
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
   -h, --help      help for list
+  -p, --page int   (optional) List next set of patternss with --page (default = 1) (default 1)
   -v, --verbose   Display full length user and pattern file identifiers
 
 </div>
