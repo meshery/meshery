@@ -52,10 +52,6 @@
                             ],
                             "description": "Namespace configuration to be applied to all namespaced resources."
                         }
-                    },
-                    {
-                        "kind": "Node",
-                        "model": "kubernetes"
                     }
                 ]
             },

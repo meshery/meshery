@@ -32,10 +32,6 @@
           {
             "kind": "Application",
             "model": "argo-cd"
-          },
-          {
-            "kind": "ApplicationSet",
-            "model": "argo-cd"
           }
         ]
       },
