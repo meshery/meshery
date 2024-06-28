@@ -23,7 +23,7 @@ import {
   ExpansionPanelSummary,
   ExpansionPanelDetails,
 } from '@material-ui/core';
-import { CustomTooltip } from '@layer5/sistent';
+import { CustomTooltip, ModalBody, ModalFooter } from '@layer5/sistent';
 import TextField from '@material-ui/core/TextField';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -121,7 +121,6 @@ const styles = (theme) => ({
   },
   buttons: { display: 'flex', justifyContent: 'flex-end' },
   spacing: {
-    marginTop: theme.spacing(3),
     marginLeft: theme.spacing(1),
   },
   button: {
@@ -138,7 +137,7 @@ const styles = (theme) => ({
     paddingLeft: '0.7rem',
     paddingTop: '8px',
   },
-  expansionPanel: { boxShadow: 'none', border: '1px solid rgb(196,196,196)' },
+  expansionPanel: { boxShadow: 'none', border: '1px solid rgb(196,196,196)', background: 'none' },
   margin: { margin: theme.spacing(1) },
   chartTitle: { textAlign: 'center' },
   chartTitleGraf: {
@@ -836,7 +835,8 @@ const MesheryPerformanceComponent = (props) => {
       {CAN(keys.VIEW_PERFORMANCE_PROFILES.action, keys.VIEW_PERFORMANCE_PROFILES.subject) ? (
         <>
           <React.Fragment>
-            <div className={classes.wrapperClss} style={props.style || {}}>
+            {/* <div className={classes.wrapperClss} style={props.style || {}}> */}
+            <ModalBody>
               <Grid container spacing={1}>
                 <Grid item xs={12} md={6}>
                   <TextField
@@ -1196,6 +1196,8 @@ const MesheryPerformanceComponent = (props) => {
                   </FormControl>
                 </Grid>
               </Grid>
+            </ModalBody>
+            <ModalFooter variant="filled">
               <React.Fragment>
                 <div className={classes.buttons}>
                   <Button
@@ -1238,46 +1240,47 @@ const MesheryPerformanceComponent = (props) => {
                   </Button>
                 </div>
               </React.Fragment>
+            </ModalFooter>
 
-              {timerDialogOpenState ? (
-                <div className={classes.centerTimer}>
-                  <LoadTestTimerDialog
-                    open={timerDialogOpenState}
-                    t={tState}
-                    onClose={handleTimerDialogClose}
-                    countDownComplete={handleTimerDialogClose}
+            {timerDialogOpenState ? (
+              <div className={classes.centerTimer}>
+                <LoadTestTimerDialog
+                  open={timerDialogOpenState}
+                  t={tState}
+                  onClose={handleTimerDialogClose}
+                  countDownComplete={handleTimerDialogClose}
+                />
+              </div>
+            ) : null}
+
+            {result && result.runner_results && (
+              <div>
+                <Typography
+                  variant="h6"
+                  gutterBottom
+                  className={classes.chartTitle}
+                  id="timerAnchor"
+                >
+                  Test Results
+                  <IconButton
+                    key="download"
+                    aria-label="download"
+                    color="inherit"
+                    // onClick={() => self.props.closeSnackbar(key) }
+                    href={`/api/perf/profile/result/${encodeURIComponent(result.meshery_id)}`}
+                  >
+                    <GetAppIcon style={iconMedium} />
+                  </IconButton>
+                </Typography>
+                <div className={classes.chartContent} style={chartStyle}>
+                  <MesheryChart
+                    rawdata={[result && result.runner_results ? result : {}]}
+                    data={[result && result.runner_results ? result.runner_results : {}]}
                   />
                 </div>
-              ) : null}
-
-              {result && result.runner_results && (
-                <div>
-                  <Typography
-                    variant="h6"
-                    gutterBottom
-                    className={classes.chartTitle}
-                    id="timerAnchor"
-                  >
-                    Test Results
-                    <IconButton
-                      key="download"
-                      aria-label="download"
-                      color="inherit"
-                      // onClick={() => self.props.closeSnackbar(key) }
-                      href={`/api/perf/profile/result/${encodeURIComponent(result.meshery_id)}`}
-                    >
-                      <GetAppIcon style={iconMedium} />
-                    </IconButton>
-                  </Typography>
-                  <div className={classes.chartContent} style={chartStyle}>
-                    <MesheryChart
-                      rawdata={[result && result.runner_results ? result : {}]}
-                      data={[result && result.runner_results ? result.runner_results : {}]}
-                    />
-                  </div>
-                </div>
-              )}
-            </div>
+              </div>
+            )}
+            {/* </div> */}
           </React.Fragment>
 
           {displayStaticCharts}
