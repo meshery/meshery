@@ -5,7 +5,7 @@
   "name": "nirmata-aws-adapter",
   "displayName": "Nirmata AWS Adapter",
   "description": "",
-  "status": "ignored",
+  "status": "enabled",
   "hostID": "00000000-0000-0000-0000-000000000000",
   "registrant": {
    "hostname": "artifacthub"

@@ -12,7 +12,7 @@
    "name": "open service mesh",
    "displayName": "Open Service Mesh",
    "description": "",
-   "status": "enabled",
+   "status": "ignored",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "registrant": {
     "hostname": "artifacthub"
@@ -52,7 +52,7 @@
    "secondaryColor": "#d3f1ea",
    "shape": "circle",
    "shapePolygonPoints": "",
-   "status": "enabled",
+   "status": "ignored",
    "styleOverrides": "",
    "styles": "",
    "subCategory": "",
