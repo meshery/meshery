@@ -150,3 +150,17 @@ func ErrRetrieveHomeDir(err error) error {
 		[]string{"Operating system environment issue or insufficient permissions."},
 		[]string{"Ensure that the operating system environment is set up correctly and run the application with elevated privileges."})
 }
+func ErrMarkFlagRequire(flagName string, err error) error {
+	return errors.New(ErrCreateFileCode, errors.Alert,
+		[]string{fmt.Sprintf("Failed to mark the flag '%s' as required", flagName)},
+		[]string{err.Error()},
+		[]string{"The flag may not exist or there was some error while specifying the flag."},
+		[]string{"Please ensure that the required flag '%s' is correctly specified and set before running the command."})
+}
+func ErrReadFromBody(err error) error {
+	return errors.New(ErrReadFromBodyCode, errors.Alert,
+		[]string{"Unable to read data from the response body"},
+		[]string{err.Error()},
+		[]string{"The data for the pattern (design) file might be corrupted."},
+		[]string{"Please ensure that your network connection is stable. If the issue continues, check the server response or data format for potential problems."})
+}

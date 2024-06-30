@@ -101,7 +101,11 @@ var exportCmd = &cobra.Command{
 			return nil
 		}
 		buf := new(bytes.Buffer)
-		buf.ReadFrom(resp.Body)
+		_, err = buf.ReadFrom(resp.Body)
+		if err != nil {
+			utils.Log.Error(ErrReadFromBody(err))
+			return nil
+		}
 		var patternName string
 		if designType != "oci" {
 			var pattern models.MesheryPattern
@@ -187,5 +191,8 @@ func init() {
 	exportCmd.Flags().StringVarP(&designType, "dtype", "d", "", "Specify the design type to export")
 	exportCmd.Flags().StringVarP(&outputDir, "output", "o", "", "Specify the output directory to save the design")
 
-	exportCmd.MarkFlagRequired("id")
+	err := exportCmd.MarkFlagRequired("id")
+	if err != nil {
+		utils.Log.Error(ErrMarkFlagRequire("id", err))
+	}
 }
