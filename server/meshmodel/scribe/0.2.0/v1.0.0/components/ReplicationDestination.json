@@ -18,10 +18,10 @@
     "hostname": "artifacthub"
    },
    "category": {
-    "name": "Uncategorized",
+    "name": "Observability and Analysis",
     "metadata": null
    },
-   "subCategory": "Uncategorized",
+   "subCategory": "Logging",
    "metadata": {
     "capabilities": "",
     "defaultData": "",
