@@ -11,6 +11,7 @@ import {
   TableRow,
   Typography,
 } from '@material-ui/core';
+import { CustomTooltip } from '@layer5/sistent';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import Moment from 'react-moment';
@@ -22,7 +23,6 @@ import { useTheme } from '@material-ui/core/styles';
 import moment from 'moment';
 import dataFetch from '../../lib/data-fetch';
 import { MESHERY_CLOUD_PROD } from '../../constants/endpoints';
-import ReusableTooltip from '../reusable-tooltip';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 
@@ -329,7 +329,7 @@ function PerformanceCard({
           </Grid>
           <Grid item xs={4}>
             <div className={classes.deleteEditButton}>
-              <ReusableTooltip title="Edit">
+              <CustomTooltip title="Edit">
                 <IconButton
                   onClick={(ev) => genericClickHandler(ev, handleEdit)}
                   disabled={
@@ -338,8 +338,8 @@ function PerformanceCard({
                 >
                   <EditIcon style={iconMedium} />
                 </IconButton>
-              </ReusableTooltip>
-              <ReusableTooltip title="Delete">
+              </CustomTooltip>
+              <CustomTooltip title="Delete">
                 <IconButton
                   onClick={(ev) => genericClickHandler(ev, handleDelete)}
                   disabled={
@@ -348,7 +348,7 @@ function PerformanceCard({
                 >
                   <DeleteIcon style={iconMedium} />
                 </IconButton>
-              </ReusableTooltip>
+              </CustomTooltip>
             </div>
           </Grid>
         </Grid>

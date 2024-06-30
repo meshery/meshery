@@ -23,7 +23,15 @@
    },
    "subCategory": "Logging",
    "metadata": {
+    "capabilities": "",
+    "defaultData": "",
     "isAnnotation": false,
+    "primaryColor": "#E7157B",
+    "secondaryColor": "",
+    "shape": "rectangle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
     "svgColor": "",
     "svgComplete": "",
     "svgWhite": ""
@@ -44,6 +52,7 @@
    "secondaryColor": "",
    "shape": "rectangle",
    "shapePolygonPoints": "",
+   "status": "ignored",
    "styleOverrides": "",
    "styles": "",
    "subCategory": "",

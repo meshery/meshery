@@ -157,7 +157,7 @@ class ReactSelectWrapper extends React.Component {
       options,
       error,
       isMulti = false,
-      noOptionsMessage = 'No Options',
+      noOptionsMessage = 'Type to create a new Environment',
     } = this.props;
 
     const selectStyles = {

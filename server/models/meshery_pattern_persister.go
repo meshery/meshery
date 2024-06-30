@@ -7,9 +7,11 @@ import (
 	"strings"
 
 	"github.com/gofrs/uuid"
+	"gopkg.in/yaml.v2"
 	"gorm.io/gorm"
 
 	"github.com/layer5io/meshkit/database"
+	"github.com/layer5io/meshkit/models/patterns"
 )
 
 // MesheryPatternPersister is the persister for persisting
@@ -170,6 +172,11 @@ func (mpp *MesheryPatternPersister) DeleteMesheryPatterns(patterns MesheryPatter
 }
 
 func (mpp *MesheryPatternPersister) SaveMesheryPattern(pattern *MesheryPattern) ([]byte, error) {
+	patternFile, err := patterns.GetPatternFormat(pattern.PatternFile)
+	if err != nil {
+		return nil, err
+	}
+
 	if pattern.Visibility == "" {
 		pattern.Visibility = Private
 	}
@@ -178,18 +185,35 @@ func (mpp *MesheryPatternPersister) SaveMesheryPattern(pattern *MesheryPattern) 
 		if err != nil {
 			return nil, ErrGenerateUUID(err)
 		}
+		patterns.AssignVersion(patternFile)
 
 		pattern.ID = &id
+	} else {
+		nextVersion, err := patterns.GetNextVersion(patternFile)
+		if err != nil {
+			return nil, err
+		}
+		patternFile.Version = nextVersion
 	}
+	marshalledPatternFile, err := yaml.Marshal(patternFile)
+	if err != nil {
+		return nil, ErrMarshalYAML(err, "pattern file")
+	}
+
+	pattern.PatternFile = string(marshalledPatternFile)
 
 	return marshalMesheryPatterns([]MesheryPattern{*pattern}), mpp.DB.Save(pattern).Error
 }
 
 // SaveMesheryPatterns batch inserts the given patterns
-func (mpp *MesheryPatternPersister) SaveMesheryPatterns(patterns []MesheryPattern) ([]byte, error) {
+func (mpp *MesheryPatternPersister) SaveMesheryPatterns(mesheryPatterns []MesheryPattern) ([]byte, error) {
 	finalPatterns := []MesheryPattern{}
 	nilUserID := ""
-	for _, pattern := range patterns {
+	for _, pattern := range mesheryPatterns {
+		patternFile, err := patterns.GetPatternFormat(pattern.PatternFile)
+		if err != nil {
+			return nil, err
+		}
 		if pattern.Visibility == "" {
 			pattern.Visibility = Private
 		}
@@ -199,10 +223,21 @@ func (mpp *MesheryPatternPersister) SaveMesheryPatterns(patterns []MesheryPatter
 			if err != nil {
 				return nil, ErrGenerateUUID(err)
 			}
-
+			patterns.AssignVersion(patternFile)
 			pattern.ID = &id
+		} else {
+			nextVersion, err := patterns.GetNextVersion(patternFile)
+			if err != nil {
+				return nil, err
+			}
+			patternFile.Version = nextVersion
+		}
+		marshalledPatternFile, err := yaml.Marshal(patternFile)
+		if err != nil {
+			return nil, ErrMarshalYAML(err, "pattern file")
 		}
 
+		pattern.PatternFile = string(marshalledPatternFile)
 		finalPatterns = append(finalPatterns, pattern)
 	}
 

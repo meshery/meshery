@@ -9,6 +9,7 @@ import (
 	"sync"
 
 	"github.com/gofrs/uuid"
+	helpers "github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/machines"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/database"
@@ -19,8 +20,6 @@ import (
 	"github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshsync/pkg/model"
 	"github.com/spf13/viper"
-	"golang.org/x/text/cases"
-	"golang.org/x/text/language"
 )
 
 var (
@@ -79,7 +78,7 @@ func (arh *AutoRegistrationHelper) processRegistration() {
 			connType := getTypeOfConnection(&data.Obj)
 			if connType != "" {
 				connectionDefs := arh.getConnectionDefinitions(connType)
-				connectionName := FormatToTitleCase(connType)
+				connectionName := helpers.FormatToTitleCase(connType)
 				for _, connectionDef := range connectionDefs {
 					connCapabilities, err := utils.Cast[string](connectionDef.Metadata["capabilities"])
 
@@ -193,11 +192,6 @@ func getTypeOfConnection(obj *model.KubernetesResource) string {
 		return "prometheus"
 	}
 	return ""
-}
-
-func FormatToTitleCase(s string) string {
-	c := cases.Title(language.English)
-	return c.String(s)
 }
 
 func generateUUID(data map[string]interface{}) (uuid.UUID, error) {

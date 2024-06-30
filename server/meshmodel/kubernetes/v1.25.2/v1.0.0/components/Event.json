@@ -46,7 +46,7 @@
    "modelDisplayName": "Kubernetes",
    "primaryColor": "#326CE5",
    "secondaryColor": "#7aa1f0",
-   "shape": "diamond",
+   "shape": "round-rectangle",
    "shapePolygonPoints": "",
    "status": "enabled",
    "styleOverrides": "{\"border-width\":2,\"background-opacity\":0.5}",

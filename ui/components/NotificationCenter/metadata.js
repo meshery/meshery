@@ -5,16 +5,12 @@ import { FormatStructuredData, SectionBody, reorderObjectProperties } from '../D
 import { isEmptyAtAllDepths } from '../../utils/objects';
 import { canTruncateDescription } from './notification';
 import { TextWithLinks } from '../DataFormatter';
-import { FormatDryRunResponse } from '../MesheryPatterns/DryRunDesign';
+import { FormatDryRunResponse } from '../DesignLifeCycle/DryRun';
+import { formatDryRunResponse } from 'machines/validator/designValidator';
+import { DeploymentSummaryFormatter } from '../DesignLifeCycle/DeploymentSummary';
 
 const DryRunResponse = ({ response }) => {
-  return (
-    <FormatDryRunResponse
-      dryRunResponse={response}
-      numberOfComponentsInDesign={null}
-      onErrorClick={() => {}}
-    />
-  );
+  return <FormatDryRunResponse dryRunErrors={formatDryRunResponse(response)} />;
 };
 
 const TitleLink = ({ href, children, ...props }) => {
@@ -58,7 +54,7 @@ export const ErrorMetadataFormatter = ({ metadata, event }) => {
     <Grid container>
       <div>
         <TitleLink href={errorLink}> {formattedErrorCode} </TitleLink>
-        <FormatStructuredData data={event.description} />
+        {event?.description && <FormatStructuredData data={event.description} />}
         <div style={{ marginTop: '1rem' }}>
           <FormatStructuredData
             data={{
@@ -115,10 +111,30 @@ export const FormattedMetadata = ({ event }) => {
     ShortDescription: (value) => <SectionBody body={value} style={{ marginBlock: '0.5rem' }} />,
     error: (value) => <ErrorMetadataFormatter metadata={value} event={event} />,
     dryRunResponse: (value) => <DryRunResponse response={value} />,
+    DownloadLink: (value) => (
+      <TitleLink href={`api/system/fileDownload?file=${encodeURIComponent(value)}`}>
+        Download
+      </TitleLink>
+    ),
+    ViewLink: (value) => (
+      <TitleLink href={`api/system/fileView?file=${encodeURIComponent(value)}`}>View</TitleLink>
+    ),
   };
+
+  const EventTypeFormatters = {
+    deploy: DeploymentSummaryFormatter,
+    undeploy: DeploymentSummaryFormatter,
+  };
+
+  if (EventTypeFormatters[event.action]) {
+    const Formatter = EventTypeFormatters[event.action];
+    return <Formatter event={event} />;
+  }
+
   if (!event || !event.metadata || isEmptyAtAllDepths(event.metadata)) {
     return <EmptyState event={event} />;
   }
+
   const metadata = {
     ...event.metadata,
     ShortDescription:
@@ -127,8 +143,15 @@ export const FormattedMetadata = ({ event }) => {
         : event.description,
   };
 
-  const order = ['doc', 'ShortDescription', 'LongDescription', 'Summary'];
-
+  const order = [
+    'doc',
+    'ShortDescription',
+    'LongDescription',
+    'Summary',
+    'SuggestedRemediation',
+    'DownloadLink',
+    'ViewLink',
+  ];
   const orderdMetadata = reorderObjectProperties(metadata, order);
   return (
     <FormatStructuredData

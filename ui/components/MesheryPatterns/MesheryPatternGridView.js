@@ -8,7 +8,6 @@ import { EVENT_TYPES } from '../../lib/event-types';
 import useStyles from './Grid.styles';
 import Modal from '../Modal';
 import PublicIcon from '@material-ui/icons/Public';
-import { withSnackbar } from 'notistack';
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -22,6 +21,7 @@ function PatternCardGridItem({
   pattern,
   handleDeploy,
   handleVerify,
+  handleDryRun,
   handlePublishModal,
   handleUnpublishModal,
   handleUnDeploy,
@@ -32,6 +32,8 @@ function PatternCardGridItem({
   canPublishPattern = false,
   user,
   handleInfoModal,
+  hideVisibility = false,
+  isReadOnly = false,
 }) {
   const [gridProps, setGridProps] = useState(INITIAL_GRID_SIZE);
   const [yaml, setYaml] = useState(pattern.pattern_file);
@@ -50,6 +52,7 @@ function PatternCardGridItem({
         requestSizeRestore={() => setGridProps(INITIAL_GRID_SIZE)}
         handleDeploy={handleDeploy}
         handleVerify={handleVerify}
+        handleDryRun={handleDryRun}
         handlePublishModal={handlePublishModal}
         handleUnDeploy={handleUnDeploy}
         handleUnpublishModal={handleUnpublishModal}
@@ -79,6 +82,8 @@ function PatternCardGridItem({
         description={pattern.description}
         visibility={pattern.visibility}
         pattern={pattern}
+        hideVisibility={hideVisibility}
+        isReadOnly={isReadOnly}
       />
     </Grid>
   );
@@ -133,8 +138,11 @@ function MesheryPatternGrid({
   user,
   handleInfoModal,
   openDeployModal,
+  openValidationModal,
   openUndeployModal,
   openDryRunModal,
+  hideVisibility = false,
+  arePatternsReadOnly = false,
 }) {
   const classes = useStyles();
   const { notify } = useNotification();
@@ -211,8 +219,11 @@ function MesheryPatternGrid({
               handleUnDeploy={(e) => {
                 openUndeployModal(e, pattern.pattern_file, pattern.name, pattern.id);
               }}
-              handleVerify={(e) =>
+              handleDryRun={(e) =>
                 openDryRunModal(e, pattern.pattern_file, pattern.name, pattern.id)
+              }
+              handleVerify={(e) =>
+                openValidationModal(e, pattern.pattern_file, pattern.name, pattern.id)
               }
               handlePublishModal={() => handlePublishModal(pattern)}
               handleUnpublishModal={(e) => handleUnpublishModal(e, pattern)()}
@@ -220,6 +231,8 @@ function MesheryPatternGrid({
               handleSubmit={handleSubmit}
               handleDownload={(e) => handleDesignDownloadModal(e, pattern)}
               setSelectedPatterns={setSelectedPattern}
+              hideVisibility={hideVisibility}
+              isReadOnly={arePatternsReadOnly}
             />
           ))}
         </Grid>
@@ -289,4 +302,4 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 // @ts-ignore
-export default connect(mapDispatchToProps)(withSnackbar(MesheryPatternGrid));
+export default connect(mapDispatchToProps)(MesheryPatternGrid);
