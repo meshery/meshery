@@ -345,7 +345,7 @@ let theme = createTheme({
       mainBackground: '#396679',
       mainBackground2: '#FFF',
       elevatedComponents: '#FFF',
-      elevatedComponents2: '#eaeff1',
+      elevatedComponents2: 'transparent',
       elevatedComponents3: '#FFF',
       lightText: 'rgba(0, 0, 0, 0.54)',
       icon: 'rgba(0, 0, 0, 0.54)',
@@ -536,7 +536,7 @@ theme = {
     MuiCssBaseline: {
       '@global': {
         body: {
-          backgroundColor: '#e9eff1',
+          background: 'linear-gradient(#DADDE1, #C5C9CC) fixed',
           // scrollbarColor : "#6b6b6b #263238",
           '&::-webkit-scrollbar, & *::-webkit-scrollbar': {
             backgroundColor: '#d7d7d7',
