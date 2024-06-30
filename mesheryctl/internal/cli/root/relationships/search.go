@@ -20,12 +20,14 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 
 	"github.com/eiannone/keyboard"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 )
 
@@ -193,6 +195,9 @@ mesheryctl exp relationship search --[flag] [query-text]`,
 }
 
 func init() {
+	SearchComponentsCmd.Flags().SetNormalizeFunc(func(f *pflag.FlagSet, name string) pflag.NormalizedName {
+		return pflag.NormalizedName(strings.ToLower(name))
+	})
 	SearchComponentsCmd.Flags().StringVarP(&searchKind, "kind", "k", "", "search particular kind of relationships")
 	SearchComponentsCmd.Flags().StringVarP(&searchSubType, "subtype", "s", "", "search particular subtype of relationships")
 	SearchComponentsCmd.Flags().StringVarP(&searchModelName, "model", "m", "", "search relationships of particular model name")

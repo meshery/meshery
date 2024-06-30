@@ -30,12 +30,11 @@ import (
 	"github.com/spf13/viper"
 )
 
-
-
 var (
 	outFormatFlag        string
 	pageNumberFlag       int
-	availableSubcommands = []*cobra.Command{ViewRelationshipsCmd, GenerateRelationshipDocsCmd, listRelationshipsCmd}
+	availableSubcommands = []*cobra.Command{ViewRelationshipsCmd, GenerateRelationshipDocsCmd, listRelationshipsCmd, SearchComponentsCmd}
+	maxRowsPerPage       = 25
 )
 
 type MeshmodelRelationshipsAPIResponse struct {
