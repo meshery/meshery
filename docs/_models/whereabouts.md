@@ -11,12 +11,12 @@ integrations-subcategory: CNI
 registrant: GitHub
 components: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Automates IP address allocation",
+  "Supports IPv4 and IPv6",
+  "Integrates with various CNI plugins"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Manages IP addresses with Whereabouts"
+howItWorksDetails: "Simplified IP address management in Kubernetes"
 language: en
 list: include
 type: extensibility

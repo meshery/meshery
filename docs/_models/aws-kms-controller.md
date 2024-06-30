@@ -1,7 +1,7 @@
 ---
 layout: integration
-title: AWS Kinesis
-subtitle: Collaborative and visual infrastructure as code for AWS Kinesis
+title: AWS KMS
+subtitle: Collaborative and visual infrastructure as code for AWS KMS
 image: /assets/img/integrations/aws-kms-controller/icons/color/aws-kms-controller-color.svg
 permalink: extensibility/integrations/aws-kms-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-kms-controller
@@ -31,12 +31,12 @@ components:
   whiteIcon: assets/img/integrations/aws-kms-controller/components/key/icons/white/key-white.svg
   description: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Secure key management",
+  "Encrypts data at rest and in transit",
+  "Integrates with other AWS services"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Integrates with KMS"
+howItWorksDetails: "Enhanced security for Kubernetes applications and data on AWS"
 language: en
 list: include
 type: extensibility

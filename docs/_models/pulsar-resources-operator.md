@@ -55,12 +55,12 @@ components:
   whiteIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-source/icons/white/pulsar-source-white.svg
   description: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Automates Pulsar resource management",
+  "Simplifies Pulsar configuration",
+  "Integrates with Kubernetes resources"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Manages Pulsar resources"
+howItWorksDetails: "Streamlined Pulsar resource management within Kubernetes"
 language: en
 list: include
 type: extensibility

@@ -47,12 +47,12 @@ components:
   whiteIcon: assets/img/integrations/aws-apigatewayv2-controller/components/vpc-link/icons/white/vpc-link-white.svg
   description: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Handles API requests and responses",
+  "Supports RESTful and WebSocket APIs",
+  "Provides authentication and authorization"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Integrates with API Gateway"
+howItWorksDetails: "Simplified API management and governance in AWS"
 language: en
 list: include
 type: extensibility

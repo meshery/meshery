@@ -1,7 +1,7 @@
 ---
 layout: integration
-title: Cert Manager Crds
-subtitle: Collaborative and visual infrastructure as code for Cert Manager Crds
+title: cert-manager CRDs
+subtitle: Collaborative and visual infrastructure as code for cert-manager CRDs
 image: /assets/img/integrations/cert-manager-crds/icons/color/cert-manager-crds-color.svg
 permalink: extensibility/integrations/cert-manager-crds
 docURL: https://docs.meshery.io/extensibility/integrations/cert-manager-crds
@@ -11,12 +11,12 @@ integrations-subcategory: Security & Compliance
 registrant: Artifact Hub
 components: 
 featureList: [
-  "Simplifies the process of obtaining, renewing and using those certificates.",
-  "Supports issuing certificates from a variety of sources.",
-  "Ensures certificates remain valid and up to date."
+  "Enables declarative certificate management",
+  "Extends Kubernetes API",
+  "Defines cert-manager resources (certificates, issuers, etc.)"
 ]
-howItWorks: "Cloud native certificate management"
-howItWorksDetails: "X.509 certificate management for Kubernetes and OpenShift"
+howItWorks: "Integrates with Cert Manager CRDs"
+howItWorksDetails: "Simplified certificate management within Kubernetes"
 language: en
 list: include
 type: extensibility

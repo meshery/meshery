@@ -23,12 +23,12 @@ components:
   whiteIcon: assets/img/integrations/porter/components/eip/icons/white/eip-white.svg
   description: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Packages applications as bundles for distribution",
+  "Simplifies application installation and management",
+  "Supports various cloud native environments"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Integrates Porter bundles"
+howItWorksDetails: "Streamlined application packaging and deployment in Kubernetes"
 language: en
 list: include
 type: extensibility
