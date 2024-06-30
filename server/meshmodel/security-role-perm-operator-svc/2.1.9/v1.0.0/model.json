@@ -5,13 +5,13 @@
   "name": "security-role-perm-operator-svc",
   "displayName": "Security Role Perm Operator Svc",
   "description": "",
-  "status": "ignored",
+  "status": "enabled",
   "hostID": "00000000-0000-0000-0000-000000000000",
   "registrant": {
    "hostname": "artifacthub"
   },
   "category": {
-   "name": "Uncategorized",
+   "name": "Security \u0026 Compliance",
    "metadata": null
   },
   "subCategory": "Uncategorized",

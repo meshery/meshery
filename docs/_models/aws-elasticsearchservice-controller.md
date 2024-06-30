@@ -19,12 +19,12 @@ components:
   whiteIcon: assets/img/integrations/aws-elasticsearchservice-controller/components/adopted-resource/icons/white/adopted-resource-white.svg
   description: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Scalable search and analytics",
+  "Easy to deploy and manage",
+  "Integrates with other AWS services"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Deploys and manages Elasticsearch"
+howItWorksDetails: "Simplified Elasticsearch management and integration with AWS"
 language: en
 list: include
 type: extensibility

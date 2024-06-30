@@ -47,12 +47,12 @@ components:
   whiteIcon: assets/img/integrations/loki-simple-scalable/components/pod-logs/icons/white/pod-logs-white.svg
   description: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Easy deployment and configuration",
+  "Scalable architecture",
+  "Integrates with Grafana for visualization"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Deploys Loki Simple Scalable with Helm"
+howItWorksDetails: "Simplified Loki deployment and management in Kubernetes"
 language: en
 list: include
 type: extensibility

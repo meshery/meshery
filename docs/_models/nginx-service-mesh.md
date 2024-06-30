@@ -47,12 +47,12 @@ components:
   whiteIcon: assets/img/integrations/nginx-service-mesh/components/rate-limit/icons/white/rate-limit-white.svg
   description: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Manages service-to-service communication",
+  "Provides traffic routing and observability",
+  "Enhances security and reliability"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Manages NGINX Service Mesh"
+howItWorksDetails: "Streamlined service mesh management with enhanced features in Kubernetes"
 language: en
 list: include
 type: extensibility

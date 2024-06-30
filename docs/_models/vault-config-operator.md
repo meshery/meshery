@@ -131,12 +131,12 @@ components:
   whiteIcon: assets/img/integrations/vault-config-operator/components/azure-auth-engine-role/icons/white/azure-auth-engine-role-white.svg
   description: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Automates Vault configuration management",
+  "Simplifies secret management",
+  "Integrates with Kubernetes resources"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Manages Vault configurations"
+howItWorksDetails: "Streamlined Vault configuration management within Kubernetes"
 language: en
 list: include
 type: extensibility

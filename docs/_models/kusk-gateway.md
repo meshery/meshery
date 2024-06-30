@@ -27,8 +27,8 @@ featureList: [
   " Protect your endpoints with automatic request and response validations",
   "Configure critical policies like request timeouts and CORS with no coding required."
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Manages Kusk Gateway configurations"
+howItWorksDetails: "Simplified API gateway management and enhanced customization in Kubernetes"
 language: en
 list: include
 type: extensibility

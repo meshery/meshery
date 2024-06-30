@@ -15,12 +15,12 @@ components:
   whiteIcon: assets/img/integrations/kiali-operator/components/kiali/icons/white/kiali-white.svg
   description: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Kiali Operator is a Kubernetes operator for managing Kiali, a service mesh observability tool.",
+  "Automates Kiali deployment and configuration",
+  "Provides visualizations for Istio service meshes"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Simplifies Istio troubleshooting and monitoring"
+howItWorksDetails: "Integrates Kiali visualizations"
 language: en
 list: include
 type: extensibility

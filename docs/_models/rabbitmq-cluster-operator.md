@@ -67,12 +67,12 @@ components:
   whiteIcon: assets/img/integrations/rabbitmq-cluster-operator/components/operator-policy/icons/white/operator-policy-white.svg
   description: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Automated RabbitMQ cluster deployment and scaling",
+  "High availability configuration",
+  "Monitoring and alerting"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Deploys and manages RabbitMQ clusters"
+howItWorksDetails: "Simplified RabbitMQ cluster management within Kubernetes"
 language: en
 list: include
 type: extensibility

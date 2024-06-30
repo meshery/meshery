@@ -15,12 +15,12 @@ components:
   whiteIcon: assets/img/integrations/kubevault-catalog/components/vault-server-version/icons/white/vault-server-version-white.svg
   description: 
 featureList: [
-  "Deploy TLS secured Vault Servers on Kubernetes using KubeVault. You can use cert-manager to manage VaultServer TLS or you can manage TLS with self-signed.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Simplifies Vault configuration",
+  "Provides pre-configured templates and examples",
+  "Reduces manual configuration effort"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Integrates with KubeVault Catalog"
+howItWorksDetails: "Easier and faster Vault setup with pre-defined configurations"
 language: en
 list: include
 type: extensibility

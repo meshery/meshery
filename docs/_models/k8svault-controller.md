@@ -19,9 +19,9 @@ components:
   whiteIcon: assets/img/integrations/k8svault-controller/components/vault-mirror/icons/white/vault-mirror-white.svg
   description: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Automated deployment and configuration of Vault on Kubernetes",
+  "Integration with Kubernetes authentication and authorization mechanisms",
+  "Simplified management of secrets for applications running on Kubernetes"
 ]
 howItWorks: "Collaborative Infrastructure as Code"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."

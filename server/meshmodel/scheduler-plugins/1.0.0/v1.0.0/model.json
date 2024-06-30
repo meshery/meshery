@@ -5,13 +5,13 @@
   "name": "scheduler-plugins",
   "displayName": "Scheduler Plugins",
   "description": "",
-  "status": "ignored",
+  "status": "enabled",
   "hostID": "00000000-0000-0000-0000-000000000000",
   "registrant": {
    "hostname": "artifacthub"
   },
   "category": {
-   "name": "Uncategorized",
+   "name": "Orchestration \u0026 Management",
    "metadata": null
   },
   "subCategory": "Uncategorized",

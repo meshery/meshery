@@ -23,12 +23,12 @@ components:
   whiteIcon: assets/img/integrations/elasticsearch-operator/components/kibana/icons/white/kibana-white.svg
   description: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Scalable search and analytics",
+  "Full-text search and indexing",
+  "Real-time data analysis"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Integrates Elastic Search"
+howItWorksDetails: "Powerful search and analytics capabilities for Kubernetes data"
 language: en
 list: include
 type: extensibility

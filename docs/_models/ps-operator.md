@@ -23,12 +23,12 @@ components:
   whiteIcon: assets/img/integrations/ps-operator/components/percona-server-my-sql/icons/white/percona-server-my-sql-white.svg
   description: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "d",
+  "Manages backups, restores, and upgrades",
+  "Provides high availability and failover"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Deploys and manages PXC"
+howItWorksDetails: "Streamlined PXC management within Kubernetes"
 language: en
 list: include
 type: extensibility

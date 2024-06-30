@@ -31,11 +31,11 @@ components:
   whiteIcon: assets/img/integrations/pg-db/components/pgpolicy/icons/white/pgpolicy-white.svg
   description: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Automates PostgreSQL deployment and management",
+  "High availability and disaster recovery",
+  "Advanced PostgreSQL features (e.g., backups)"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Deploys and manages PostgreSQL"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

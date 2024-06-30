@@ -11,12 +11,12 @@ integrations-subcategory: Security & Compliance
 registrant: Artifact Hub
 components: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Policy-based control for Kubernetes",
+  "Unifies policy enforcement across the stack",
+  "Supports various policy languages"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Integrates OPA policies"
+howItWorksDetails: "Flexible and consistent policy enforcement in Kubernetes"
 language: en
 list: include
 type: extensibility

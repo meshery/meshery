@@ -59,12 +59,12 @@ components:
   whiteIcon: assets/img/integrations/knative-serving/components/image/icons/white/image-white.svg
   description: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Auto-scaling based on demand",
+  "Request-based routing",
+  "Supports various traffic patterns"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Manages Knative Serving"
+howItWorksDetails: "Simplified serverless application deployment and scaling in Kubernetes"
 language: en
 list: include
 type: extensibility

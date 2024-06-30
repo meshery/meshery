@@ -87,12 +87,12 @@ components:
   whiteIcon: assets/img/integrations/kubevault/components/recommendation/icons/white/recommendation-white.svg
   description: 
 featureList: [
-  "Deploy TLS secured Vault Servers on Kubernetes using KubeVault. You can use cert-manager to manage VaultServer TLS or you can manage TLS with self-signed.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Automates Vault deployment and configuration",
+  "Provides a Kubernetes-native interface for Vault",
+  "Simplifies secret management in Kubernetes"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Integrates KubeVault deployments"
+howItWorksDetails: "Streamlined and secure Vault management within Kubernetes"
 language: en
 list: include
 type: extensibility

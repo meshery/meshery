@@ -199,12 +199,12 @@ components:
   whiteIcon: assets/img/integrations/kuma/components/hostname-generator/icons/white/hostname-generator-white.svg
   description: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Lightweight and flexible service mesh",
+  "Supports multiple data planes",
+  "Multi-zone and multi-mesh support"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Manages Kuma configurations"
+howItWorksDetails: "Simplified service mesh management and enhanced observability in Kubernetes"
 language: en
 list: include
 type: extensibility

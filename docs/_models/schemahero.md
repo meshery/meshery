@@ -11,12 +11,12 @@ integrations-subcategory: Database
 registrant: Artifact Hub
 components: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Log collection from Kubernetes pods",
+  "Log filtering and transformation",
+  "Integration with various logging backends"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Integrates Scribe configurations"
+howItWorksDetails: "Streamlined log management and aggregation within Kubernetes"
 language: en
 list: include
 type: extensibility

@@ -45,7 +45,7 @@ components:
 featureList: [
   "KubeSlice enables Kubernetes pods and services to communicate seamlessly across clusters, clouds, edges, and data centers by creating logical application boundaries known as Slices.",
   "It combines network, application, and deployment services in a framework to accelerate application deployment in a multi-cluster, multi-tenant environment.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Isolate workloads from each other on different slices of a Kubernetes cluster"
 ]
 howItWorks: "Collaborative Infrastructure as Code"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
