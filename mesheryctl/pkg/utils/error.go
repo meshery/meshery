@@ -277,6 +277,8 @@ func formatError(msg string, cmd cmdType) string {
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, patternUsageURL)
 	case cmdPatternView:
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, patternViewURL)
+	case cmdPatternExport:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, patternExportURL)
 	case cmdContextDelete:
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, contextDeleteURL)
 	case cmdContextCreate:

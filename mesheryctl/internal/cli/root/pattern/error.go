@@ -33,6 +33,9 @@ const (
 	ErrPatternsNotFoundCode       = "mesheryctl-1037"
 	ErrInvalidPatternFileCode     = "mesheryctl-1038"
 	ErrPatternInvalidNameOrIDCode = "mesheryctl-1039"
+	ErrCopyDataCode               = "replace_me"
+	ErrCreateFileCode             = "replace_me"
+	ErrRetrieveHomeDirCode        = "replace_me"
 )
 
 const (
@@ -125,4 +128,25 @@ func ErrOffboardPattern(err error) error {
 		[]string{"Unable to offboard pattern due to empty path"},
 		[]string{"File path or pattern name not provided."},
 		[]string{"Provide a file path/pattern name. \n\n%v", errOnboardMsg})
+}
+func ErrCopyData(filepath string, err error) error {
+	return errors.New(ErrCopyDataCode, errors.Alert,
+		[]string{"Error copying data to file"},
+		[]string{fmt.Sprintf("Failed to copy data to the file at path: %s", filepath), err.Error()},
+		[]string{"Insufficient disk space, or file system errors."},
+		[]string{"Check for sufficient disk space, and verify the integrity of the file system."})
+}
+func ErrCreateFile(filepath string, err error) error {
+	return errors.New(ErrCreateFileCode, errors.Alert,
+		[]string{"Error creating file"},
+		[]string{fmt.Sprintf("Failed to create the file at path: %s", filepath), err.Error()},
+		[]string{"Insufficient disk page, filepath could be invalid."},
+		[]string{"Verify that the file path is valid, and ensure there is sufficient disk space available."})
+}
+func ErrRetrieveHomeDir(err error) error {
+	return errors.New(ErrRetrieveHomeDirCode, errors.Alert,
+		[]string{"Error retrieving user home/root directory"},
+		[]string{"Failed to retrieve the home/root directory,", err.Error()},
+		[]string{"Operating system environment issue or insufficient permissions."},
+		[]string{"Ensure that the operating system environment is set up correctly and run the application with elevated privileges."})
 }
