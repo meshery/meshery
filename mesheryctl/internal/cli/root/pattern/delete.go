@@ -34,13 +34,13 @@ import (
 var deleteCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Delete pattern file",
-	Long:  `delete pattern file will trigger deletion of the pattern file`,
+	Long:  `Delete pattern file will trigger deletion of the pattern file`,
 	Example: `
 // delete a pattern file
-mesheryctl pattern delete [file | URL]
+mesheryctl pattern delete -f [file | URL]
 
 // delete a pattern file by name
-mesheryctl pattern delete [name]
+mesheryctl pattern delete [pattern name]
 `,
 	Args: func(cmd *cobra.Command, args []string) error {
 		const errMsg = "Provide a pattern name or use the --file flag\nRun 'mesheryctl pattern delete --help' to see detailed help message"
@@ -76,7 +76,7 @@ mesheryctl pattern delete [name]
 
 		// If a file path or URL is provided, delete the pattern using the file
 		if file != "" {
-			return deleteByFile(file, patternURL, mctlCfg)
+			return deleteByFile(file, patternURL, deployURL, mctlCfg, contextID)
 		}
 
 		// If the --file flag is not set, delete the pattern using the pattern name
@@ -88,7 +88,7 @@ func init() {
 	deleteCmd.Flags().StringVarP(&file, "file", "f", "", "Path to pattern file")
 }
 
-func deleteByFile(file string, patternURL string, mctlCfg *config.MesheryCtlConfig) error {
+func deleteByFile(file string, patternURL string, deployURL string, mctlCfg *config.MesheryCtlConfig, contextID string) error {
 	var patternFile string
 
 	// If file path not a valid URL, treat it like a local file path
@@ -158,20 +158,33 @@ func deleteByFile(file string, patternURL string, mctlCfg *config.MesheryCtlConf
 		patternFile = response[0].PatternFile
 	}
 
-	var pattern interface{}
-	err := json.Unmarshal([]byte(patternFile), &pattern)
+	err := utils.DeleteConfiguration(mctlCfg.GetBaseMesheryURL(), patternFile, "pattern")
 	if err != nil {
 		utils.Log.Error(err)
+		return errors.Wrap(err, utils.PatternError(fmt.Sprintf("failed to delete pattern %s", patternFile)))
+	}
+
+	req, err := utils.NewRequest("DELETE", deployURL, bytes.NewBuffer([]byte(patternFile)))
+	if err != nil {
+		utils.Log.Error(utils.ErrCreatingRequest(err))
 		return nil
 	}
 
-	patternStr, _ := pattern.(string)
-	err = utils.DeleteConfiguration(mctlCfg.GetBaseMesheryURL(), patternStr, "pattern")
+	res, err := utils.MakeRequest(req)
 	if err != nil {
-		utils.Log.Error(err)
-		return errors.Wrap(err, utils.PatternError(fmt.Sprintf("failed to delete pattern %s", pattern)))
+		utils.Log.Error(utils.ErrRequestResponse(err))
+		return nil
 	}
-	utils.Log.Info("Pattern ", pattern, " deleted successfully")
+
+	defer res.Body.Close()
+	body, err := io.ReadAll(res.Body)
+	if err != nil {
+		utils.Log.Error(utils.ErrReadResponseBody(err))
+		return nil
+	}
+
+	utils.Log.Info(string(body))
+
 	return nil
 }
 
@@ -191,7 +204,7 @@ func deleteByName(args []string, patternURL, deployURL string, mctlCfg *config.M
 
 	resp, err := utils.MakeRequest(req)
 	if err != nil {
-		utils.Log.Error(err)
+		utils.Log.Error(utils.ErrFailRequest(err))
 		return nil
 	}
 
@@ -221,7 +234,6 @@ func deleteByName(args []string, patternURL, deployURL string, mctlCfg *config.M
 		PatternFile: patternFile,
 		PatternID:   patternID.String(),
 	}
-
 	payloadBytes, err := json.Marshal(payload)
 	if err != nil {
 		utils.Log.Error(err)
@@ -236,8 +248,8 @@ func deleteByName(args []string, patternURL, deployURL string, mctlCfg *config.M
 
 	res, err := utils.MakeRequest(req)
 	if err != nil {
-		utils.Log.Error(err)
-		return utils.ErrRequestResponse(err)
+		utils.Log.Error(utils.ErrFailRequest(err))
+		return nil
 	}
 
 	defer res.Body.Close()

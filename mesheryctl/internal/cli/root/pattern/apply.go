@@ -75,7 +75,22 @@ mesheryctl pattern apply [pattern-name]
 		}
 		return nil
 	},
-	Args: cobra.MinimumNArgs(0),
+	Args: func(cmd *cobra.Command, args []string) error {
+		const errMsg = "Provide a pattern name or use the --file flag\nRun 'mesheryctl pattern apply --help' to see detailed help message"
+
+		// Check if the file flag is set
+		fileFlagSet := cmd.Flags().Changed("file")
+
+		// Ensure only one of the pattern name or file flag is set
+		if len(args) == 1 && !fileFlagSet {
+			return nil
+		}
+		if len(args) == 0 && fileFlagSet {
+			return nil
+		}
+
+		return utils.ErrInvalidArgument(errors.New(errMsg))
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var req *http.Request
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
@@ -233,7 +248,7 @@ mesheryctl pattern apply [pattern-name]
 
 				resp, err := utils.MakeRequest(req)
 				if err != nil {
-					utils.Log.Error(err)
+					utils.Log.Error(utils.ErrFailRequest(err))
 					return nil
 				}
 				utils.Log.Debug("remote hosted pattern request success")
@@ -263,7 +278,7 @@ mesheryctl pattern apply [pattern-name]
 
 		payloadBytes, err := json.Marshal(payload)
 		if err != nil {
-			utils.Log.Error(err)
+			utils.Log.Error(utils.ErrMarshal(err))
 			return nil
 		}
 
@@ -283,7 +298,7 @@ mesheryctl pattern apply [pattern-name]
 		s.Start()
 		res, err := utils.MakeRequest(req)
 		if err != nil {
-			utils.Log.Error(err)
+			utils.Log.Error(utils.ErrFailRequest(err))
 			return nil
 		}
 

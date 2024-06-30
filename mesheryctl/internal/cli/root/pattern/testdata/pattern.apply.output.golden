@@ -1,2 +1,2 @@
-pattern successfully applied
-successfully deployed application meshapp
+Get "http://localhost:9081/api/system/kubernetes/contexts": no responder found
+Get "http://localhost:9081/api/system/kubernetes/contexts": no responder found
