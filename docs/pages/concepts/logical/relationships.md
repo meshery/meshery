@@ -10,15 +10,9 @@ redirect_from:
   - concepts/relationships
 ---
 
-Meshery Relationships define how [components](./components.md) are connected and interact with each other. Relationships are defined within Meshery modelshelp users visualize and understand the connections between components in a design. This aids in comprehending the overall structure and dependencies within the system. Meshery recognizes that relationships exist in various forms and that the existence of a relationship might be interdependent upon the existence (or absence) of another relationship. To support this complexity, Meshery relationships are highly expressive, characterizing the nature of interaction of interconnected components no matter their genealogy.
+Meshery Relationships characterize how [components](./components) are connected and interact with each other. Relationships are defined within [models](./models) to aid in structuring the interrelationships between one or more components in a [design](./design) to further in comprehending the overall structure and dependencies within managed systems. 
 
-**Types of Relationships**
-
-Meshery supports different types of relationships to cater to various use cases:
-
-- **Hierarchical Relationships:** These represent parent-child relationships between components, where one component is a dependency of another. arent-child relationships show clear lineage, similar to a family tree (child, parent, grandparent, etc.).
-- **Sibling Relationships:** These represent relationships between components that are not directly dependent on each other but may still interact or influence each other's behavior; they describe components that share a common origin but operate independently (siblings, cousins, etc.).
-- **Edge Relationships:** These represent relationships that are visually depicted as edges connecting components in MeshMap. Edge relationships are used to define how components interact with each other, such as network connections, bindings, or permissions. They are also used to identify interdependencies between components.
+Meshery recognizes that relationships exist in various forms and that the existence of a relationship might be interdependent upon the existence (or absence) of another relationship. To support this complexity, Meshery relationships are highly expressive, characterizing the nature of interaction of interconnected components no matter their genealogy.
 
 **Benefits of Using Meshery Relationships**
 
@@ -31,7 +25,14 @@ Meshery supports different types of relationships to cater to various use cases:
 
 ## Types of Relationships
 
-Meshery supports a variety of relationships between components. Relationships are are categorized into different kinds, types, and subtypes, so that can be expressive of the specific manner in which one or more components relate to one another. Each type of relationship can be interpretted by Meshery UI (or other [extensions](/extensibility/extensions)) and mapped to a specific visual paradigm for the given kind relationship. Let's look at some examples of these visual paradigms; let's explore examples of way in which relationships are represented in Meshery.
+Meshery supports different types of relationships to cater to various use cases:
+
+- **Hierarchical Relationships:** These represent parent-child relationships between components, where one component is a dependency of another. arent-child relationships show clear lineage, similar to a family tree (child, parent, grandparent, etc.).
+- **Sibling Relationships:** These represent relationships between components that are not directly dependent on each other but may still interact or influence each other's behavior; they describe components that share a common origin but operate independently (siblings, cousins, etc.).
+- **Edge Relationships:** These represent relationships that are visually depicted as edges connecting components in MeshMap. Edge relationships are used to define how components interact with each other, such as network connections, bindings, or permissions. They are also used to identify interdependencies between components.
+ 
+Relationships are are categorized into different kinds, types, and subtypes, so that can be expressive of the specific manner in which one or more components relate to one another. Each type of relationship can be interpretted by Meshery UI (or other [extensions](/extensibility/extensions)) and mapped to a specific visual paradigm for the given kind relationship. Let's look at some examples of these visual paradigms; let's explore examples of way in which relationships are represented in Meshery.
+
 
 <!-- Broadly, here is a list of the different types of relationships that Meshery supports:
 
@@ -40,10 +41,10 @@ Meshery supports a variety of relationships between components. Relationships ar
       1. Firewall
       2. Load Balancer
       3. Ingress
-   1. Binding
+   2. Binding
       1. Mount
       2. Permission
-1. Heirarchical
+2. Heirarchical
    1. Inventory
    2. Parent -->
 
@@ -85,10 +86,9 @@ The combination of `kind`, `type`, and `subType` uniquely determines the visual 
 
 This Relationship type configures the networking between one or more components.
 
-**Examples**: Relationships between a Service and a Deployment, or between a Service and a Pod, or between an Ingress and a Service.
+**Examples**: An edge-network relationship between a Service and a Deployment or an edge-binding relationship between an Ingress and a Service.
 
 - Example 1) Service --> Deployment
-- Example 2) Service --> Pod
 - Example 3) IngressController --> Ingress --> Service
 
 <details close><summary>Visual Representation of Edge-Network Relationships</summary>

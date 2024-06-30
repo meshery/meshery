@@ -1,5 +1,5 @@
 /* eslint-disable react/display-name */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import CloseIcon from '@material-ui/icons/Close';
 import PatternIcon from '../../../assets/icons/Pattern';
 import {
@@ -13,13 +13,11 @@ import {
   Box,
   DialogTitle,
   DialogContent,
-  DialogActions,
   Dialog,
 } from '@material-ui/core';
-import useStyles from './styles';
+import useStyles, { ActionContainer, CreatAtContainer } from './styles';
 import { iconMedium, iconSmall } from '../../../css/icons.styles';
 import { getSharableCommonHostAndprotocolLink } from '../../../utils/utils';
-import OriginalApplicationFileIcon from '../../../assets/icons/OriginalApplicationIcon';
 import moment from 'moment';
 import Application from '../../../public/static/img/drawer-icons/application_svg.js';
 import { useSnackbar } from 'notistack';
@@ -36,6 +34,12 @@ import { store } from '../../../store';
 import { useGetUserByIdQuery } from '../../../rtk-query/user.js';
 import { ErrorBoundary } from '../../General/ErrorBoundary';
 import { getUnit8ArrayForDesign } from '@/utils/utils';
+import ServiceMesheryIcon from '@/assets/icons/ServiceMesheryIcon';
+import { CopyLinkIcon, ModalFooter } from '@layer5/sistent';
+import TooltipButton from '@/utils/TooltipButton';
+import { keys } from '@/utils/permission_constants';
+import CAN from '@/utils/can';
+import theme from '@/themes/app';
 
 const APPLICATION_PLURAL = 'applications';
 const FILTER_PLURAL = 'filters';
@@ -51,20 +55,20 @@ const InfoModal_ = React.memo((props) => {
     currentUserID,
     patternFetcher,
     formSchema,
+    handlePublish,
     meshModels = [],
     isReadOnly = false,
   } = props;
 
   const formRef = React.createRef();
-  const [formState, setFormState] = useState(selectedResource?.catalog_data || {});
+  const formStateRef = useRef();
   const [isCatalogDataEqual, setIsCatalogDataEqual] = useState(false);
   const [saveFormLoading, setSaveFormLoading] = useState(false);
   const [uiSchema, setUiSchema] = useState({});
   const { notify } = useNotification();
-
   const classes = useStyles();
   const formatDate = (date) => {
-    return moment(date).utc().format('MMMM Do YYYY, h:mm:ss A');
+    return moment(date).utc().format('MMMM Do YYYY');
   };
 
   const { data: resourceUserProfile } = useGetUserByIdQuery(resourceOwnerID);
@@ -88,78 +92,108 @@ const InfoModal_ = React.memo((props) => {
   };
 
   const handleSubmit = () => {
-    if (formRef.current && formRef.current.validateForm()) {
+    setSaveFormLoading(true);
+    const compatibilityStore = _.uniqBy(meshModels, (model) => _.toLower(model.displayName))
+      ?.filter((model) =>
+        formStateRef.current?.compatibility?.some(
+          (comp) => _.toLower(comp) === _.toLower(model.displayName),
+        ),
+      )
+      ?.map((model) => model.name);
+
+    let body = null;
+    let modifiedData = {
+      ...formStateRef.current,
+      type: formStateRef.current?.type?.toLowerCase(),
+      compatibility: compatibilityStore,
+    };
+    if (dataName === PATTERN_PLURAL) {
+      body = JSON.stringify({
+        pattern_data: {
+          catalog_data: modifiedData,
+          pattern_file: getUnit8ArrayForDesign(selectedResource.pattern_file),
+          id: selectedResource.id,
+        },
+        save: true,
+      });
+    } else if (dataName === FILTER_PLURAL) {
       setSaveFormLoading(true);
-
-      const compatibilityStore = _.uniqBy(meshModels, (model) => _.toLower(model.displayName))
-        ?.filter((model) =>
-          formState?.compatibility?.some(
-            (comp) => _.toLower(comp) === _.toLower(model.displayName),
-          ),
-        )
-        ?.map((model) => model.name);
-
-      let body = null;
-      let modifiedData = {
-        ...formState,
-        type: formState?.type?.toLowerCase(),
-        compatibility: compatibilityStore,
-      };
-      if (dataName === PATTERN_PLURAL) {
-        body = JSON.stringify({
-          pattern_data: {
-            catalog_data: modifiedData,
-            pattern_file: getUnit8ArrayForDesign(selectedResource.pattern_file),
-            id: selectedResource.id,
-          },
-          save: true,
-        });
-      } else if (dataName === FILTER_PLURAL) {
-        setSaveFormLoading(true);
-        let config = '';
-        if (selectedResource.filter_resource !== null || selectedResource.filter_resource !== '') {
-          config = JSON.parse(selectedResource.filter_resource).settings.config; // send the config in order to prevent over-write of the config
-        }
-        body = JSON.stringify({
-          filter_data: {
-            catalog_data: modifiedData,
-            id: selectedResource.id,
-            name: selectedResource.name,
-            filter_file: selectedResource.filter_file,
-          },
-          config: config,
-          save: true,
-        });
+      let config = '';
+      if (selectedResource.filter_resource !== null || selectedResource.filter_resource !== '') {
+        config = JSON.parse(selectedResource.filter_resource).settings.config; // send the config in order to prevent over-write of the config
       }
-
-      axios
-        .post(dataName === PATTERN_PLURAL ? PATTERN_ENDPOINT : FILTER_ENDPOINT, body)
-        .then(() => {
-          setSaveFormLoading(false);
-          notify({
-            message: `${selectedResource.name} data saved successfully`,
-            event_type: EVENT_TYPES.SUCCESS,
-          });
-          patternFetcher()();
-        })
-        .catch((error) => {
-          setSaveFormLoading(false);
-          const errorMessage = error.response?.data?.message || error.message;
-
-          notify({
-            message: `Error while saving ${selectedResource.name} data: ${errorMessage}`,
-            event_type: EVENT_TYPES.ERROR,
-          });
-
-          console.error('Error while saving pattern data', error);
-        });
+      body = JSON.stringify({
+        filter_data: {
+          catalog_data: modifiedData,
+          id: selectedResource.id,
+          name: selectedResource.name,
+          filter_file: selectedResource.filter_file,
+        },
+        config: config,
+        save: true,
+      });
     }
-  };
 
+    axios
+      .post(dataName === PATTERN_PLURAL ? PATTERN_ENDPOINT : FILTER_ENDPOINT, body)
+      .then(() => {
+        setSaveFormLoading(false);
+        notify({
+          message: `${selectedResource.name} data saved successfully`,
+          event_type: EVENT_TYPES.SUCCESS,
+        });
+        patternFetcher()();
+        handleInfoModalClose();
+      })
+      .catch((error) => {
+        setSaveFormLoading(false);
+        const errorMessage = error.response?.data?.message || error.message;
+
+        notify({
+          message: `Error while saving ${selectedResource.name} data: ${errorMessage}`,
+          event_type: EVENT_TYPES.ERROR,
+        });
+
+        console.error('Error while saving pattern data', error);
+      });
+  };
+  function normalizeCompatibility(arr) {
+    return (
+      arr?.map((item) => {
+        if (typeof item === 'string') {
+          return item.toLowerCase().split('-').join(' ');
+        }
+        return item;
+      }) || []
+    );
+  }
+
+  // Function to compare objects while normalizing case in compatibility array
+  function isEqualIgnoringCase(obj1, obj2) {
+    // Check each property one by one
+    const isEqualPublishedVersion = obj1.published_version === obj2.published_version;
+    const isEqualPatternCaveats = obj1.pattern_caveats === obj2.pattern_caveats;
+    const isEqualPatternInfo = obj1.pattern_info === obj2.pattern_info;
+    const isEqualType = obj1.type?.toLowerCase() === obj2.type?.toLowerCase();
+
+    // Normalize and compare compatibility array
+    const normalizedCompat1 = normalizeCompatibility(obj1.compatibility);
+    const normalizedCompat2 = normalizeCompatibility(obj2.compatibility);
+    const isEqualCompatibility = _.isEqual(normalizedCompat1, normalizedCompat2);
+
+    // Return true only if all properties are equal
+    return (
+      isEqualPublishedVersion &&
+      isEqualPatternCaveats &&
+      isEqualPatternInfo &&
+      isEqualType &&
+      isEqualCompatibility
+    );
+  }
   const handleFormChange = (data) => {
-    setFormState(data);
-    const objectsEqual = _.isEqual(selectedResource?.catalog_data, data);
-    setIsCatalogDataEqual(objectsEqual);
+    formStateRef.current = data;
+    // const objectsEqual = _.isEqual(selectedResource?.catalog_data, data);
+    setIsCatalogDataEqual(isEqualIgnoringCase(selectedResource?.catalog_data, data));
   };
 
   useEffect(() => {
@@ -183,10 +217,11 @@ const InfoModal_ = React.memo((props) => {
           type: _.startCase(selectedResource?.catalog_data?.type),
           compatibility: filteredCompatibilityArray,
         };
-        setFormState(modifiedData);
+        formStateRef.current = modifiedData;
+        formStateRef.current.compatibility = filteredCompatibilityArray;
       }
     } else {
-      setFormState(selectedResource?.catalog_data);
+      formStateRef.current = selectedResource?.catalog_data;
     }
   }, [selectedResource?.catalog_data, meshModels]);
 
@@ -226,15 +261,23 @@ const InfoModal_ = React.memo((props) => {
     const renderByPermission = (isPrivate && !isOwner) || !isPrivate;
     return !isReadOnly && renderByPermission;
   };
-
+  const handlePublishController = () => {
+    formRef.current.state.schema['required'] = formSchema.rjsfSchema.required;
+    if (formRef.current && formRef.current.validateForm()) {
+      setSaveFormLoading(true);
+      handleInfoModalClose();
+      handlePublish(formRef.current.state.formData);
+      setSaveFormLoading(false);
+    }
+  };
   return (
     <div style={{ marginBottom: '1rem' }}>
       <Dialog
         open={infoModalOpen}
         onClose={handleInfoModalClose}
         aria-labelledby="form-dialog-title"
-        maxWidth={dataName === APPLICATION_PLURAL ? 'xs' : 'md'}
         style={{ zIndex: 9999 }}
+        className={classes.dialogBox}
       >
         <DialogTitle textAlign="center" id="form-dialog-title" className={classes.dialogTitle}>
           {renderIcon()}
@@ -258,26 +301,59 @@ const InfoModal_ = React.memo((props) => {
               <Button
                 variant="outlined"
                 disabled
-                startIcon={
-                  <OriginalApplicationFileIcon
-                    style={{
-                      boxShadow: '0px 0px 6px 2px rgba(0, 0, 0, 0.25)',
-                      borderRadius: '20px',
-                    }}
-                    width={150}
-                    height={150}
-                  />
-                }
-              ></Button>
+                style={{
+                  border: '0.1px solid #E6E6E6',
+                  width: '150px',
+                  height: '150px',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              >
+                <ServiceMesheryIcon
+                  style={{
+                    boxShadow: '0px 0px 6px 2px rgba(0, 0, 0, 0.25)',
+                    borderRadius: '20px',
+                  }}
+                  width={100}
+                  height={100}
+                />
+              </Button>
               <Typography className={classes.resourceName} variant="subtitle1">
                 {selectedResource?.name}
               </Typography>
+              <Grid item xs={12} style={{ marginTop: '1rem' }}>
+                <Typography
+                  style={{ whiteSpace: 'nowrap' }}
+                  gutterBottom
+                  variant="subtitle1"
+                  className={classes.text}
+                >
+                  <CreatAtContainer isBold={true}>Created</CreatAtContainer>
+                  <CreatAtContainer isBold={false}>
+                    {formatDate(selectedResource?.created_at)}
+                  </CreatAtContainer>
+                </Typography>
+              </Grid>
+              <Grid item xs={12}>
+                <Typography
+                  style={{ whiteSpace: 'nowrap' }}
+                  gutterBottom
+                  variant="subtitle1"
+                  className={classes.text}
+                >
+                  <CreatAtContainer isBold={true}>Updated</CreatAtContainer>
+                  <CreatAtContainer idBold={false}>
+                    {formatDate(selectedResource?.updated_at)}
+                  </CreatAtContainer>
+                </Typography>
+              </Grid>
             </Grid>
             <Grid item xs={8} lg>
               <Grid container spacing={2}>
                 <Grid item xs={dataName === APPLICATION_PLURAL ? 12 : 6}>
-                  <Typography gutterBottom variant="subtitle1" className={classes.text}>
-                    <span style={{ fontWeight: 'bold', paddingRight: '0.2rem' }}>Owner:</span>
+                  <Typography gutterBottom variant="subtitle1">
+                    <span style={{ fontWeight: 'bold', paddingRight: '0.2rem' }}>Owner</span>
                     <Tooltip
                       title={`Owner: ${
                         resourceUserProfile?.first_name + ' ' + resourceUserProfile?.last_name
@@ -292,16 +368,9 @@ const InfoModal_ = React.memo((props) => {
                   xs={dataName === APPLICATION_PLURAL ? 12 : 6}
                   className={classes.visibilityGridItem}
                 >
-                  <Typography gutterBottom variant="subtitle1" className={classes.text}>
-                    <span
-                      style={{
-                        fontWeight: 'bold',
-                        fontFamily: 'Qanelas Soft, sans-serif',
-                      }}
-                    >
-                      Visibility:
-                    </span>{' '}
-                  </Typography>
+                  <TooltipButton title={'Copy Link'} onClick={handleCopy}>
+                    <CopyLinkIcon fill={theme.palette.secondary.icon2} />
+                  </TooltipButton>
                   <img
                     className={classes.img}
                     src={`/static/img/${selectedResource?.visibility}.svg`}
@@ -310,8 +379,11 @@ const InfoModal_ = React.memo((props) => {
                 {dataName === APPLICATION_PLURAL && formSchema ? null : (
                   <Grid item className={classes.rjsfInfoModalForm}>
                     <RJSFWrapper
-                      formData={formState}
-                      jsonSchema={{ ...formSchema.rjsfSchema, required: undefined }}
+                      formData={formStateRef.current}
+                      jsonSchema={{
+                        ...formSchema.rjsfSchema,
+                        required: [],
+                      }}
                       uiSchema={uiSchema}
                       onChange={handleFormChange}
                       liveValidate={false}
@@ -320,63 +392,47 @@ const InfoModal_ = React.memo((props) => {
                     />
                   </Grid>
                 )}
-                <Grid item xs={12}>
-                  <Typography
-                    style={{ whiteSpace: 'nowrap' }}
-                    gutterBottom
-                    variant="subtitle1"
-                    className={classes.text}
-                  >
-                    <span style={{ fontWeight: 'bold' }}>Created At:</span>{' '}
-                    <span style={{ whiteSpace: 'wrap' }}>
-                      {formatDate(selectedResource?.created_at)}
-                    </span>
-                  </Typography>
-                </Grid>
-                <Grid item xs={12}>
-                  <Typography
-                    style={{ whiteSpace: 'nowrap' }}
-                    gutterBottom
-                    variant="subtitle1"
-                    className={classes.text}
-                  >
-                    <span style={{ fontWeight: 'bold' }}>Updated At:</span>{' '}
-                    <span style={{ whiteSpace: 'nowrap' }}>
-                      {formatDate(selectedResource?.updated_at)}
-                    </span>
-                  </Typography>
-                </Grid>
               </Grid>
             </Grid>
           </Grid>
         </DialogContent>
-        <DialogActions
-          style={{
-            justifyContent: 'space-evenly',
-            marginBottom: '0.5rem',
-          }}
+        <ModalFooter
+          helpText={
+            'Upon submitting your catalog item, an approval flow will be initiated. [Learn More](https://docs.meshery.io/concepts/catalog)'
+          }
+          variant="transparent"
         >
-          <Button variant="outlined" onClick={handleCopy} className={classes.copyButton}>
-            Copy Link
-          </Button>
-          {shouldRenderSaveButton() ? (
+          <ActionContainer>
             <Button
-              variant="contained"
-              color="primary"
-              className={classes.submitButton}
-              onClick={handleSubmit}
-              disabled={isCatalogDataEqual || saveFormLoading}
+              variant="outlined"
+              onClick={handlePublishController}
+              className={classes.copyButton}
+              disabled={
+                !CAN(keys.PUBLISH_DESIGN.action, keys.PUBLISH_DESIGN.subject) ||
+                selectedResource?.visibility === 'published'
+              }
             >
-              {saveFormLoading ? (
-                <Box sx={{ display: 'flex' }}>
-                  <CircularProgress color="inherit" size="1.4rem" />
-                </Box>
-              ) : (
-                'Save'
-              )}
+              {selectedResource?.visibility === 'published' ? 'Published' : 'Publish to Catalog'}
             </Button>
-          ) : null}
-        </DialogActions>
+            {shouldRenderSaveButton() ? (
+              <Button
+                variant="contained"
+                color="primary"
+                className={classes.submitButton}
+                onClick={handleSubmit}
+                disabled={isCatalogDataEqual || saveFormLoading}
+              >
+                {saveFormLoading ? (
+                  <Box sx={{ display: 'flex' }}>
+                    <CircularProgress color="inherit" size="1.4rem" />
+                  </Box>
+                ) : (
+                  'Save'
+                )}
+              </Button>
+            ) : null}
+          </ActionContainer>
+        </ModalFooter>
       </Dialog>
     </div>
   );
