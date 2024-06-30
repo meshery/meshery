@@ -36,6 +36,8 @@ const (
 	ErrCopyDataCode               = "replace_me"
 	ErrCreateFileCode             = "replace_me"
 	ErrRetrieveHomeDirCode        = "replace_me"
+	ErrReadFromBodyCode           = "replace_me"
+	ErrMarkFlagRequireCode        = "replace_me"
 )
 
 const (
@@ -151,7 +153,7 @@ func ErrRetrieveHomeDir(err error) error {
 		[]string{"Ensure that the operating system environment is set up correctly and run the application with elevated privileges."})
 }
 func ErrMarkFlagRequire(flagName string, err error) error {
-	return errors.New(ErrCreateFileCode, errors.Alert,
+	return errors.New(ErrMarkFlagRequireCode, errors.Alert,
 		[]string{fmt.Sprintf("Failed to mark the flag '%s' as required", flagName)},
 		[]string{err.Error()},
 		[]string{"The flag may not exist or there was some error while specifying the flag."},
