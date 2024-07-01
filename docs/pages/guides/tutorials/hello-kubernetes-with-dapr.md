@@ -41,7 +41,7 @@ Upon completing this tutorial, you will:
 
 - Refer to the Meshery Playground documentation for instructions on importing Helm charts: [Meshery Playground Helm Docs](https://docs.layer5.io/meshmap/getting-started/starting-helm/)
  
-- Specific to Dapr, To import Dapr, use the direct download link: [Dapr Helm Chart] (https://artifacthub.io/packages/helm/dapr/dapr?modal=install).
+- Specific to Dapr, To import Dapr, use the direct download link: [Dapr Helm Chart](https://artifacthub.io/packages/helm/dapr/dapr?modal=install).
 
 
 #### Step 2: Create and configure a Reddis state store.
@@ -49,10 +49,7 @@ Upon completing this tutorial, you will:
 Dapr can use a number of different state stores (Redis, CosmosDB, DynamoDB, Cassandra, etc.) to persist and retrieve the state. This demo will use Redis.
 1. Follow [these steps](https://docs.dapr.io/getting-started/tutorials/configure-state-pubsub/#step-1-create-a-redis-store) to create a Redis store.
 2. Once your store is created, add the keys to the'redis.yaml` file in the `deploy` directory.
-**Note:** The redis.yaml' file provided in this quickstart will work securely out-of-the-box with Redis installed with `helm install bitnami/redis`. If you have your own Redis setup, replace the'redisHost` 
-  value with your own Redis master address and the redisPassword with your own secret.
-3. Apply the'redis.yaml` file and observe that your state store was successfully configured!
-4. Here is the'redis.yaml'  that you can refer to:
+3. Here is the'redis.yaml'  that you can refer to:
 ```\yaml
 apiVersion: dapr.io/v1alpha1
 kind: Component
@@ -76,25 +73,26 @@ spec:
 auth:
   secretStore: kubernetes
 ```
+**Note:** If you have your own Redis setup, replace ther redisHost value with your own Redis master address and the redisPassword with your own secret.
 
-5. To import the designs into Meshery, click the upward arrow symbol (import icon) in the left sidebar.
+4. To import the designs into Meshery, click the upward arrow symbol (import icon) in the left sidebar.
 ![Import Icon](./screenshots/dl1.png)
 
-6.  In the modal that appears:
+5.  In the modal that appears:
   - In the "Design File Name" field, enter a name for your design (e.g., `Hello kubernetes`).
   - Select `Kubernetes Manifest` from the "Design Type" drop-down menu.
 ![Design Modal](./screenshots/dl2.png)
 
-7. Choose `File Upload` for the upload method, and select [this file](https://github.com/dapr/quickstarts/blob/master/tutorials/hello-kubernetes/deploy/redis.yaml) you just downloaded. Then, click on `Import`.
+6. Choose `File Upload` for the upload method, and select [this file](https://github.com/dapr/quickstarts/blob/master/tutorials/hello-kubernetes/deploy/redis.yaml) you just downloaded. Then, click on `Import`.
 ![File Upload](./screenshots/dl3.png)
 
-8. Under the "Designs" tab, you will see that we have successfully imported the `Hello kubernetes` design.
+7. Under the "Designs" tab, you will see that we have successfully imported the `Hello kubernetes` design.
  - To continue, click on `actions` on the left side of the canvas and then `deploy`.
 ![Actions and Deploy](./screenshots/dl4.png)
  - Select your environment. To know more about this, refer to [docs](https://docs.meshery.io/concepts/logical/environments).
 ![Select Environment](./screenshots/dl5.png)
 
-9. On the canvas, click `Deploy`.
+8. On the canvas, click `Deploy`.
 ![Deploy Button](./screenshots/dl6.png)
 ![Deployment](./screenshots/dl7.png)
 
@@ -153,16 +151,11 @@ spec:
         - containerPort: 3000
         imagePullPolicy: Always
 ```
-`dapr.io/enabled: true` - this tells the Dapr control plane to inject a sidecar into this deployment.
 
-`dapr.io/app-id: nodeapp` - this assigns a unique id or name to the Dapr application, so it can be sent messages to and communicated with by other Dapr apps.
-
-`dapr.io/enable-api-logging: "true"` - this is added to node.yaml file by default to see the API logs.
-
-1. Import the [nodeapp] file (https://github.com/dapr/quickstarts/blob/master/tutorials/hello-kubernetes/deploy/node.yaml) into the Meshery.
+1. Import the [nodeapp](https://github.com/dapr/quickstarts/blob/master/tutorials/hello-kubernetes/deploy/node.yaml) into the Meshery.
 ![](./screenshots/dl8.png)
 
-2. `Drag and drop` the nodeapp design to `Hello kubernetes-main`, so that merging designs happen properly.
+2. `Drag and drop` the nodeapp design to `Hello kubernetes`, so that merging designs happen properly.
 ![](./screenshots/dl9.png)
 
 3. Click on `Merge` to merge the designs.
@@ -172,7 +165,7 @@ spec:
 
 ### Step 4: Deploy the Python app using the Dapr sidecar. 
 
-Next, take a quick look at the Python app, which has kubernetes manifest as:
+Next, take a quick look at the Python app, which has Kubernetes manifest as:
 ```\yaml
 apiVersion: apps/v1
 kind: Deployment
@@ -202,7 +195,7 @@ spec:
 1. Import the [pythonapp](https://github.com/dapr/quickstarts/blob/master/tutorials/hello-kubernetes/deploy/python.yaml) into the Meshery playground.
 ![](./screenshots/dl12.png)
 
-2. `Drag and drop` the Python app design to `Hello kubernetes-main` so that the designs are merged properly.
+2. `Drag and drop` the Python app design to `Hello kubernetes` so that the designs are merged properly.
 ![](./screenshots/dl13.png)
 
 3. Click on `Merge` to merge the designs.
@@ -214,7 +207,7 @@ spec:
 5. Select your environment.
 ![](./screenshots/dl16.png)
 
-6. Click on `Deploy` at the final stage so that `Hello kubernetes-main` is successfully deployed.
+6. Click on `Deploy` at the final stage so that `Hello kubernetes` is successfully deployed.
 ![](./screenshots/dl17.png)
 
 #### Step5: Vizualizing the `Hello kubernetes wit dapr`
@@ -225,7 +218,7 @@ To view the resources deployed, we will use the **Visualize** section of the _Me
 2. Give the view a name (rename).
 3. Click the filter icon.
 4. Choose appropriate filters to limited displayed resources in the view. For example, here we want to display deployment,Service,dapr component,pods  etc. 
-Additionally, we will also add a label filter, i.e., `tutorial=Hello kubernetes-main1` in this case. This should show a filtered view with only your resources. 
+Additionally, we will also add a label filter, i.e., `tutorial=Hello kubernetes` in this case. This should show a filtered view with only your resources. 
 similar to the screenshot below:
 
 ### Viewing deployment and service information
