@@ -10,7 +10,7 @@
    "schemaVersion": "core.meshery.io/v1beta1",
    "version": "v1.0.0",
    "name": "cert-manager-csi-driver-cacerts",
-   "displayName": "Cert Manager Csi Driver Cacerts",
+   "displayName": "cert-manager ca-certificates CSI Driver",
    "description": "",
    "status": "enabled",
    "hostID": "00000000-0000-0000-0000-000000000000",

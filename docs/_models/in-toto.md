@@ -11,12 +11,12 @@ integrations-subcategory: Security & Compliance
 registrant: Artifact Hub
 components: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Verifies software build and release processes",
+  "Provides end-to-end supply chain security",
+  "Integrates with various build tools and platforms"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Integrates in-toto attestations"
+howItWorksDetails: "Enhanced security and trust in software supply chains in Kubernetes"
 language: en
 list: include
 type: extensibility
