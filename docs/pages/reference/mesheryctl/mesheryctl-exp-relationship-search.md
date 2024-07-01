@@ -1,8 +1,8 @@
 ---
 layout: default
-title: mesheryctl-exp-relationship
-permalink: reference/mesheryctl/exp/relationship
-redirect_from: reference/mesheryctl/exp/relationship/
+title: mesheryctl-exp-relationship-search
+permalink: reference/mesheryctl/exp/relationship/search
+redirect_from: reference/mesheryctl/exp/relationship/search/
 type: reference
 display-title: "false"
 language: en
@@ -10,42 +10,26 @@ command: exp
 subcommand: relationship
 ---
 
-# mesheryctl exp relationship
+# mesheryctl exp relationship search
 
-View list of relationships and details of relationship
+Searches registered relationships
 
 ## Synopsis
 
-Meshery uses relationships to define how interconnected components interact. View list of relationships and detailed information of a specific relationship
+Searches and finds the realtionship used by different models based on the query-text.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp relationship [flags]
+mesheryctl exp relationship search [flags]
 
 </div>
 </pre> 
 
 ## Examples
 
-To view list of relationships
+Search for relationship using a query
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp relationships list
-
-</div>
-</pre> 
-
-To view a specific relationship
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-mesheryctl exp relationships view [model-name]
-
-</div>
-</pre> 
-
-//To search a specific relationship
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-mesheryctl exp relationships search --[flag] [query-text]
+mesheryctl exp relationship search --[flag] [query-text]
 
 </div>
 </pre> 
@@ -54,7 +38,11 @@ mesheryctl exp relationships search --[flag] [query-text]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -h, --help   help for relationship
+  -h, --help             help for search
+  -k, --kind string      search particular kind of relationships
+  -m, --model string     search relationships of particular model name
+  -s, --subtype string   search particular subtype of relationships
+  -t, --type string      search particular type of relationships
 
 </div>
 </pre>
