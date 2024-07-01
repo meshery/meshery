@@ -104,6 +104,12 @@ func (h *Handler) GetMeshmodelRelationshipByName(rw http.ResponseWriter, r *http
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 // responses:
+//
+// ```?kind={kind}```  Filters relationship based on kind
+//
+// ```?subType={subType}```  Filters relationship based on subType
+//
+// ```?type={type}```  Filters relationship based type
 //	200: meshmodelRelationshipsResponseWrapper
 
 // swagger:route GET /api/meshmodels/models/{model}/relationships GetAllMeshmodelRelationships idGetAllMeshmodelRelationshipsByModel
@@ -123,6 +129,12 @@ func (h *Handler) GetMeshmodelRelationshipByName(rw http.ResponseWriter, r *http
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 // responses:
+//
+// ```?kind={kind}```  Filters relationship based on kind
+//
+// ```?subType={subType}```  Filters relationship based on subType
+//
+// ```?type={type}```  Filters relationship based on type
 //
 //	200: meshmodelRelationshipsResponseWrapper
 func (h *Handler) GetAllMeshmodelRelationships(rw http.ResponseWriter, r *http.Request) {
@@ -144,12 +156,15 @@ func (h *Handler) GetAllMeshmodelRelationships(rw http.ResponseWriter, r *http.R
 	}
 	offset := (page - 1) * limit
 	entities, count, _, _ := h.registryManager.GetEntities(&regv1alpha2.RelationshipFilter{
-		Version:   r.URL.Query().Get("version"),
-		ModelName: typ,
-		Limit:     limit,
-		Offset:    offset,
-		OrderOn:   r.URL.Query().Get("order"),
-		Sort:      r.URL.Query().Get("sort"),
+		Version:          r.URL.Query().Get("version"),
+		ModelName:        typ,
+		Limit:            limit,
+		Offset:           offset,
+		OrderOn:          r.URL.Query().Get("order"),
+		Sort:             r.URL.Query().Get("sort"),
+		Kind:             r.URL.Query().Get("kind"),
+		SubType:          r.URL.Query().Get("subType"),
+		RelationshipType: r.URL.Query().Get("type"),
 	})
 
 	var pgSize int64
