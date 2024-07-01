@@ -38,9 +38,8 @@ mesheryctl pattern list
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -h, --help       help for list
-  -p, --page int   (optional) List next set of patterns with --page (default = 1) (default 1)
-  -v, --verbose    Display full length user and pattern file identifiers
+  -h, --help      help for list
+  -v, --verbose   Display full length user and pattern file identifiers
 
 </div>
 </pre>
@@ -49,7 +48,7 @@ mesheryctl pattern list
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/user/.meshery/config.yaml")
+      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
   -t, --token string    Path to token file default from current context
 
 </div>
