@@ -16,11 +16,11 @@ var deleteConnectionCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Delete a connection",
 	Long: `Delete
-a connection`,
+a connection will trigger a connection deletion`,
 
 	Example: `
 // Delete a connection
-mesheryctl exp connections delete [connection_id]
+mesheryctl exp connections delete [connection-id]
 `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite

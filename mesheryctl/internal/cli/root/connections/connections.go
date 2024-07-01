@@ -12,7 +12,7 @@ import (
 )
 
 var (
-	availableSubcommands = []*cobra.Command{listConnectionsCmd, deleteConnectionCmd}
+	availableSubcommands = []*cobra.Command{listConnectionsCmd, deleteConnectionCmd, viewConnectionCmd}
 
 	pageNumberFlag int
 )
@@ -20,10 +20,16 @@ var (
 var ConnectionsCmd = &cobra.Command{
 	Use:   "connections",
 	Short: "Manage connections",
-	Long:  `Manage connections`,
+	Long:  `List, delete and view available connections`,
 	Example: `
-// List all the connections
+// Entry point to manage available connections
+mesheryctl exp connections
+// To search for a specific connection
+mesheryctl exp components delete [connection-id]
+// To view list of connections
 mesheryctl exp connections list
+// To view a specific connections
+mesheryctl exp connections view [connection-id]
 `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
@@ -53,7 +59,7 @@ mesheryctl exp connections list
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
 			if err := cmd.Usage(); err != nil {
-				return nil
+				return err
 			}
 			return errors.New("please provide a subcommand")
 		}
@@ -79,6 +85,10 @@ mesheryctl exp connections list
 func init() {
 	listConnectionsCmd.Flags().BoolP("count", "c", false, "Display the count of models")
 	listConnectionsCmd.Flags().IntVarP(&pageNumberFlag, "page", "p", 1, "Page number")
+
 	deleteConnectionCmd.Flags().StringP("id", "i", "", "ID of the connection to be deleted")
+
+	viewConnectionCmd.Flags().StringP("id", "i", "", "ID of the connection to be viewed")
+
 	ConnectionsCmd.AddCommand(availableSubcommands...)
 }
