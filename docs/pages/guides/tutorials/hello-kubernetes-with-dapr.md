@@ -4,7 +4,7 @@ title: Hello Kubernetes with Dapr
 abstract: |
   Dive into this step-by-step tutorial on deploying Dapr in Kubernetes using Meshery Playground. Learn to deploy a Python app for generating messages and a Node app for consuming and persisting them, all orchestrated with Dapr for enhanced application integration.
 permalink: guides/tutorials/hello-kubernetes-with-dapr
-redirect_from: guides/tutorials/hello-Kubernetes-with-Dapr
+redirect_from: guides/tutorials/hello-kubernetes-with-dapr
 model: kubernetes
 type: guides
 category: tutorials
@@ -18,11 +18,11 @@ This tutorial demonstrates how to deploy Dapr in a Kubernetes cluster using Mesh
 ![](./screenshots/Architecture_Diag.png)
 
 ### Prerequisites:
-- Basic understanding of containerization, Kubernetes concepts, and basic knowledge of Dapr.
+- Basic understanding of containerization, Kubernetes concepts.
 - Access to the Meshery Playground. If you don't have an account, sign up at [Meshery Playground](https://playground.meshery.io).
 
 ### Lab Scenario:
-You'll be deploying `Hello Kuberentes` applications with the help of `Meshery Playground', which has a Python app that generates messages and a Node app that consumes and persists them.
+You'll be deploying `Hello Kuberentes` applications with the help of Meshery, which has a Python app that generates messages and a Node app that consumes and persists them.
 
 ### Learning Objective:
 Upon completing this tutorial, you will:
@@ -33,9 +33,9 @@ Upon completing this tutorial, you will:
 ### Steps:
 
 #### Access Meshery Playground
-- Using your credentials, log in to the [Meshery Playground] (https://playground.meshery.io). You should be at the dashboard upon successful login. To close the _Where do you want to start?_ popup (if required), 
+- Using your credentials, log in to the [Meshery Playground](https://playground.meshery.io). You should be at the dashboard upon successful login. To close the _Where do you want to start?_ popup (if required), 
   press **X**.
--  Click **Explore** in the Cloud Native Playground tile to navigate to _MeshMap_.
+-  Click **Explore** in the Cloud Native Playground  to navigate to _MeshMap_.
 
 #### Step 1: Install Dapr on your meshery playground. 
 
@@ -49,8 +49,8 @@ Upon completing this tutorial, you will:
 Dapr can use a number of different state stores (Redis, CosmosDB, DynamoDB, Cassandra, etc.) to persist and retrieve the state. This demo will use Redis.
 1. Follow [these steps](https://docs.dapr.io/getting-started/tutorials/configure-state-pubsub/#step-1-create-a-redis-store) to create a Redis store.
 2. Once your store is created, add the keys to the'redis.yaml` file in the `deploy` directory.
-**Note:** The'redis.yaml'` file provided in this quickstart will work securely out-of-the-box with Redis installed with `helm install bitnami/redis`. If you have your own Redis setup, replace the'redisHostt` 
-  value with your own Redis master address and the redisPassword with your own secret. You can learn more here: https://docs.dapr.io/operations/components/component-secrets/.
+**Note:** The redis.yaml' file provided in this quickstart will work securely out-of-the-box with Redis installed with `helm install bitnami/redis`. If you have your own Redis setup, replace the'redisHost` 
+  value with your own Redis master address and the redisPassword with your own secret.
 3. Apply the'redis.yaml` file and observe that your state store was successfully configured!
 4. Here is the'redis.yaml'  that you can refer to:
 ```\yaml
@@ -81,14 +81,14 @@ auth:
 ![Import Icon](./screenshots/dl1.png)
 
 6.  In the modal that appears:
-  - In the "Design File Name" field, enter a name for your design (e.g., `Hello kubernetes-main`).
+  - In the "Design File Name" field, enter a name for your design (e.g., `Hello kubernetes`).
   - Select `Kubernetes Manifest` from the "Design Type" drop-down menu.
 ![Design Modal](./screenshots/dl2.png)
 
 7. Choose `File Upload` for the upload method, and select [this file](https://github.com/dapr/quickstarts/blob/master/tutorials/hello-kubernetes/deploy/redis.yaml) you just downloaded. Then, click on `Import`.
 ![File Upload](./screenshots/dl3.png)
 
-8. Under the "Designs" tab, you will see that we have successfully imported the `Hello kubernetes -main` design.
+8. Under the "Designs" tab, you will see that we have successfully imported the `Hello kubernetes` design.
  - To continue, click on `actions` on the left side of the canvas and then `deploy`.
 ![Actions and Deploy](./screenshots/dl4.png)
  - Select your environment. To know more about this, refer to [docs](https://docs.meshery.io/concepts/logical/environments).
@@ -159,7 +159,7 @@ spec:
 
 `dapr.io/enable-api-logging: "true"` - this is added to node.yaml file by default to see the API logs.
 
-1. Import the [nodeapp] file (https://github.com/dapr/quickstarts/blob/master/tutorials/hello-kubernetes/deploy/node.yaml) into the Meshery playground.
+1. Import the [nodeapp] file (https://github.com/dapr/quickstarts/blob/master/tutorials/hello-kubernetes/deploy/node.yaml) into the Meshery.
 ![](./screenshots/dl8.png)
 
 2. `Drag and drop` the nodeapp design to `Hello kubernetes-main`, so that merging designs happen properly.
@@ -199,21 +199,6 @@ spec:
         image: ghcr.io/dapr/samples/hello-k8s-python:latest
 ```
 
-At a quick glance, this is a basic Python app that posts JSON messages to `localhost:3500`, which is the default listening port for Dapr. You can invoke the Node.js application's `neworder` endpoint by posting to `v1.0/invoke/nodeapp/method/neworder`. The message contains some data, including an order ID that increments once per second:
-
-```python
-n = 0
-while True:
-    n += 1
-    message = {"data": {"orderId": n}}
-
-    try:
-        response = requests.post(dapr_url, json=message)
-    except Exception as e:
-        print(e)
-
-    time.sleep(1)
-```
 1. Import the [pythonapp](https://github.com/dapr/quickstarts/blob/master/tutorials/hello-kubernetes/deploy/python.yaml) into the Meshery playground.
 ![](./screenshots/dl12.png)
 
