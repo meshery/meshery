@@ -101,6 +101,17 @@ const (
 	environmentDeleteURL           = docsBaseURL + "reference/mesheryctl/exp/environment/delete"
 	environmentListURL             = docsBaseURL + "reference/mesheryctl/exp/environment/list"
 	environmentViewURL             = docsBaseURL + "reference/mesheryctl/exp/environment/view"
+	componentUsageURL              = docsBaseURL + "reference/mesheryctl/exp/components"
+	componentListURL               = docsBaseURL + "reference/mesheryctl/exp/components/list"
+	componentSearchURL             = docsBaseURL + "reference/mesheryctl/exp/components/search"
+	componentViewURL               = docsBaseURL + "reference/mesheryctl/exp/components/view"
+	connectionUsageURL             = docsBaseURL + "reference/mesheryctl/exp/connections"
+	connectionDeleteURL            = docsBaseURL + "reference/mesheryctl/exp/connections/delete"
+	connectionListURL              = docsBaseURL + "reference/mesheryctl/exp/connections/list"
+	expRelationshipUsageURL        = docsBaseURL + "reference/mesheryctl/exp/relationship"
+	expRelationshipGenerateURL     = docsBaseURL + "reference/mesheryctl/exp/relationship/generate"
+	expRelationshipViewURL         = docsBaseURL + "reference/mesheryctl/exp/relationship/view"
+	expRelationshipListURL         = docsBaseURL + "reference/mesheryctl/exp/relationship/list"
 
 	// Meshery Server Location
 	EndpointProtocol = "http"
@@ -148,6 +159,7 @@ const (
 	cmdModelView                cmdType = "model view"
 	cmdRegistryPublish          cmdType = "registry publish"
 	cmdRegistry                 cmdType = "regisry"
+	cmdConnection               cmdType = "connection"
 	cmdConnectionList           cmdType = "connection list"
 	cmdConnectionDelete         cmdType = "connection delete"
 	cmdRelationships            cmdType = "relationships"
@@ -162,6 +174,14 @@ const (
 	cmdEnvironmentDelete        cmdType = "environment delete"
 	cmdEnvironmentList          cmdType = "environment list"
 	cmdEnvironmentView          cmdType = "environment view"
+	cmdComponent                cmdType = "component"
+	cmdComponentList            cmdType = "component list"
+	cmdComponentSearch          cmdType = "component search"
+	cmdComponentView            cmdType = "component view"
+	cmdExpRelationship          cmdType = "exp relationship"
+	cmdExpRelationshipGenerate  cmdType = "exp relationship generate"
+	cmdExpRelationshipView      cmdType = "exp relationship view"
+	cmdExpRelationshipList      cmdType = "exp relationship list"
 )
 
 const (
