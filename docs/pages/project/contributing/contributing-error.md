@@ -169,15 +169,9 @@ func main() {
 		log.Error(err)
 	}
 	// OUTPUT
-	// panic: interface conversion: error is *fs.PathError, not *errors.Error
-	// goroutine 1 [running]:
-	// github.com/layer5io/meshkit/errors.GetCode({0x50dfc0, 0xc000068450})
-	//         /home/rudraksh/go/pkg/mod/github.com/layer5io/meshkit@v0.2.33/errors/errors.go:90 +0x90
-	// github.com/layer5io/meshkit/logger.(*Logger).Error(0xc00000e040, {0x50dfc0, 0xc000068450})
-	//         /home/rudraksh/go/pkg/mod/github.com/layer5io/meshkit@v0.2.33/logger/logger.go:57 +0xbb
-	// main.main()
-	//         /home/rudraksh/trash/meshkitplay/main.go:32 +0xe2
-	// exit status 2
+	// ERRO[2024-07-01T19:09:09+05:30] open some.txt: no such file or directory      app=test code=test_code probable-cause="empty string passed as argument .file with this name doesn't exist" severity=2 short-description="unable to open file" suggested-remediation="pass a non-empty string as filename .create file before opening it"
+	// ERRO[2024-07-01T19:09:09+05:30] open some.txt: no such file or directory      app=test code= probable-cause= severity=0 short-description= suggested-remediation=
+	
 
 }
 
