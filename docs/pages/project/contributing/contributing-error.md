@@ -161,7 +161,10 @@ func main() {
 		log.Error(err)
 	}
 	// OUTPUT
-	// ERRO[2021-11-10T17:31:28+05:30] open some.txt: no such file or directory      app=test code=1001 probable-cause="empty string passed as argument .file with this name doesn't exist" severity=2 short-description="unable to open file" suggested-remediation="pass a non-empty string as filename .create file before opening it"
+	// ERRO[2021-11-10T17:31:28+05:30] open some.txt: no such file or directory
+	// app=test code=1001 probable-cause="empty string passed as argument .file with this name doesn't exist"
+	// severity=2 short-description="unable to open file" suggested-remediation="pass a non-empty string as
+	// filename .create file before opening it"
 
 	// logging non meshkit error
 	err = openFile("some.txt")
@@ -169,9 +172,8 @@ func main() {
 		log.Error(err)
 	}
 	// OUTPUT
-	// ERRO[2024-07-01T19:09:09+05:30] open some.txt: no such file or directory      app=test code=test_code probable-cause="empty string passed as argument .file with this name doesn't exist" severity=2 short-description="unable to open file" suggested-remediation="pass a non-empty string as filename .create file before opening it"
-	// ERRO[2024-07-01T19:09:09+05:30] open some.txt: no such file or directory      app=test code= probable-cause= severity=0 short-description= suggested-remediation=
-	
+	// ERRO[2024-07-01T19:09:09+05:30] open some.txt: no such file or directory
+	// app=test code= probable-cause= severity=0 short-description= suggested-remediation=
 
 }
 
