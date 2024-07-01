@@ -24,7 +24,7 @@ test.describe('Service Mesh Lifecycle Tests', () => {
         .filter({ hasText: /Mesh Adapter URL/ })
         .locator('..')
         .locator('input')
-        .fill('localhost:10000');
+        .fill(`localhost:${adapterPort}`);
       await page.keyboard.press('Enter');
 
       // Click 'Connect' Button
