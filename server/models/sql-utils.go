@@ -8,6 +8,7 @@ import (
 
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
@@ -51,11 +52,13 @@ func setNewDBInstance() {
 	defer mx.Unlock()
 
 	// Initialize Logger instance
+	logLevel := viper.GetInt("LOG_LEVEL")
 	log, err := logger.New("meshery", logger.Options{
-		Format: logger.SyslogLogFormat,
+		Format:   logger.SyslogLogFormat,
+		LogLevel: logLevel,
 	})
 	if err != nil {
-		log.Error(err)
+		logrus.Error(err)
 		os.Exit(1)
 	}
 

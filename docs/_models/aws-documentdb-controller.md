@@ -31,12 +31,12 @@ components:
   whiteIcon: assets/img/integrations/aws-documentdb-controller/components/field-export/icons/white/field-export-white.svg
   description: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Scalable NoSQL database",
+  "Supports MongoDB workloads",
+  "Highly available and durable"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Integrates DocumentDB"
+howItWorksDetails: "Simplified NoSQL database management on AWS"
 language: en
 list: include
 type: extensibility
