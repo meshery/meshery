@@ -42,29 +42,10 @@ import (
 func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	rw.Header().Set("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
-
+	page, offset, limit, search, order, sort, _ := getPaginationParams(r)
 	var resources []model.KubernetesResource
 	var totalCount int64
-	limitstr := r.URL.Query().Get("pagesize")
-	var limit int
-	if limitstr != "all" {
-		limit, _ = strconv.Atoi(limitstr)
-		if limit <= 0 {
-			limit = defaultPageSize
-		}
-	}
-
-	pagestr := r.URL.Query().Get("page")
-	page, _ := strconv.Atoi(pagestr)
-
-	if page < 0 {
-		page = 0
-	}
-
-	offset := page * limit
-	order := r.URL.Query().Get("order")
-	sort := r.URL.Query().Get("sort")
-	search := r.URL.Query().Get("search")
+	
 	apiVersion := r.URL.Query().Get("apiVersion")
 	spec, _ := strconv.ParseBool(r.URL.Query().Get("spec"))
 	status, _ := strconv.ParseBool(r.URL.Query().Get("status"))
@@ -149,7 +130,7 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 	}
 
 	var pgSize int
-	if limitstr == "all" {
+	if limit == 0 {
 		pgSize = len(resources)
 	} else {
 		pgSize = limit
