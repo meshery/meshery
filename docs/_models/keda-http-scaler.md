@@ -15,12 +15,12 @@ components:
   whiteIcon: assets/img/integrations/keda-http-scaler/components/http-scaled-object/icons/white/http-scaled-object-white.svg
   description: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Scales based on HTTP requests and metrics",
+  "Integrates with various ingress controllers",
+  "Supports various HTTP metrics"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Scales deployments with KEDA HTTP Scaler"
+howItWorksDetails: "Automated scaling of Kubernetes applications based on HTTP traffic"
 language: en
 list: include
 type: extensibility

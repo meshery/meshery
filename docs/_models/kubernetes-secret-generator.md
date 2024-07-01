@@ -23,9 +23,9 @@ components:
   whiteIcon: assets/img/integrations/kubernetes-secret-generator/components/string-secret/icons/white/string-secret-white.svg
   description: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Create secrets for Kubernetes applications",
+  "Manage secrets securely",
+  "Rotate secrets automatically"
 ]
 howItWorks: "Collaborative Infrastructure as Code"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
