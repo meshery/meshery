@@ -2,7 +2,7 @@
 layout: default
 title: Hello Kubernetes with Dapr
 abstract: |
-  Dive into this step-by-step tutorial on deploying Dapr in Kubernetes using Meshery Playground. Learn to deploy a Python app for generating messages and a Node app for consuming and persisting them, all orchestrated with Dapr for enhanced application integration.
+  Dive into this step-by-step tutorial on deploying Dapr in Kubernetes using Meshery. Learn to deploy a Python app for generating messages and a Node app for consuming and persisting them, all orchestrated with Dapr for enhanced application integration.
 permalink: guides/tutorials/hello-kubernetes-with-dapr
 redirect_from: guides/tutorials/hello-kubernetes-with-dapr
 model: kubernetes
@@ -14,7 +14,7 @@ list: include
 
 
 ### Introduction:
-This tutorial demonstrates how to deploy Dapr in a Kubernetes cluster using Meshery Playground. You'll deploy a Python app for message generation and a Node app for consumption and persistence following the classic Hello World example with Dapr. Let's dive in and explore the architecture diagram that illustrates this setup.
+This tutorial demonstrates how to deploy Dapr in a Kubernetes cluster using Meshery. You'll deploy a Python app for message generation and a Node app for consumption and persistence following the classic Hello World example with Dapr. Let's dive in and explore the architecture diagram that illustrates this setup.
 ![](./screenshots/Architecture_Diag.png)
 
 ### Prerequisites:
@@ -26,22 +26,20 @@ You'll be deploying `Hello Kuberentes` applications with the help of Meshery, wh
 
 ### Learning Objective:
 Upon completing this tutorial, you will:
-- Deploy Hello Kubernetes with Dapr using Meshery Playground.
+- Deploy Hello Kubernetes with Dapr using Meshery.
 - Implement a Python app for message generation and a Node app for consumption and persistence with Dapr.
 - Explore Dapr's features for service invocation, state management, and application observability in Kubernetes.
 
 ### Steps:
 
 #### Access Meshery Playground
-- Using your credentials, log in to the [Meshery Playground](https://playground.meshery.io). You should be at the dashboard upon successful login. To close the _Where do you want to start?_ popup (if required), 
-  press **X**.
--  Click **Explore** in the Cloud Native Playground  to navigate to _MeshMap_.
+- Using your credentials, log in to the [Meshery Playground](https://playground.meshery.io). You should be at the dashboard upon successful login.
 
 #### Step 1: Install Dapr on your meshery playground. 
 
 - Refer to the Meshery Playground documentation for instructions on importing Helm charts: [Meshery Playground Helm Docs](https://docs.layer5.io/meshmap/getting-started/starting-helm/)
  
-- Specific to Dapr, To import Dapr, use the direct download link: [Dapr Helm Chart](https://artifacthub.io/packages/helm/dapr/dapr?modal=install).
+- For importing Dapr , use the direct download link [Dapr Helm Chart](https://artifacthub.io/packages/helm/dapr/dapr?modal=install).
 
 
 #### Step 2: Create and configure a Reddis state store.
@@ -210,7 +208,7 @@ spec:
 6. Click on `Deploy` at the final stage so that `Hello kubernetes` is successfully deployed.
 ![](./screenshots/dl17.png)
 
-#### Step5: Vizualizing the `Hello kubernetes wit dapr`
+#### Step5: Vizualizing the `Hello kubernetes with dapr`
 
 To view the resources deployed, we will use the **Visualize** section of the _MeshMap_. A view is created with the necessary filters to show the relevant resources.
 
