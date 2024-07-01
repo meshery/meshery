@@ -17,7 +17,7 @@
       "metadata": null
     },
     "metadata": {
-      "description": "A VirtualService defines a set of traffic routing rules to apply when a host is addressed and the Gateway describes a load balancer operating at the edge of the mesh receiving incoming or outgoing HTTP/TCP connections. For North-South traffic targetting a particular service, the Gateway is referenced by the VirtualService"
+      "description": "A VirtualService defines a set of traffic routing rules to apply when a host is addressed and the Gateway describes a load balancer operating at the edge of the mesh receiving incoming or outgoing HTTP/TCP connections. For North-South traffic targeting a particular service, the Gateway is referenced by the VirtualService"
     }
   },
   "type": "Network",
