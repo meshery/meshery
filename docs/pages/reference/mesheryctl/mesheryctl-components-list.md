@@ -26,16 +26,10 @@ mesheryctl components list [flags]
 
 ## Examples
 
+View list of components
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-	// View list of components
-
-</div>
-</pre> 
-
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-mesheryctl exp components list
+mesheryctl components list
 
 </div>
 </pre> 
@@ -43,7 +37,15 @@ mesheryctl exp components list
 View list of components with specified page number (25 components per page)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp components list --page 2
+mesheryctl components list --page 2
+
+</div>
+</pre> 
+
+To view the number of components present in Meshery
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl components list --count
 
 </div>
 </pre> 
@@ -53,7 +55,7 @@ mesheryctl exp components list --page 2
 <pre class='codeblock-pre'>
 <div class='codeblock'>
   -h, --help       help for list
-  -p, --page int   (optional) List next set of models with --page (default = 1) (default 1)
+  -p, --page int   (optional) List next set of components with --page (default = 1) (default 1)
 
 </div>
 </pre>

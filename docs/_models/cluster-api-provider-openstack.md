@@ -7,16 +7,16 @@ permalink: extensibility/integrations/cluster-api-provider-openstack
 docURL: https://docs.meshery.io/extensibility/integrations/cluster-api-provider-openstack
 description: 
 integrations-category: Orchestration & Management
-integrations-subcategory: OpenStack
+integrations-subcategory: Orchestration & Management
 registrant: GitHub
 components: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Automates Kubernetes cluster provisioning",
+  "Supports various OpenStack distributions",
+  "Integrates with Cluster API"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Provisions Kubernetes clusters on OpenStack"
+howItWorksDetails: "Streamlined Kubernetes cluster provisioning on OpenStack"
 language: en
 list: include
 type: extensibility

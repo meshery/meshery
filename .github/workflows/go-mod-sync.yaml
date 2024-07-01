@@ -8,6 +8,7 @@ on:
       - "go.mod"
 jobs:
   sync:
+    if: github.repository == 'meshery/meshery'
     name: sync
     runs-on: ubuntu-22.04
     steps:

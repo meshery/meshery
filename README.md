@@ -55,14 +55,14 @@ A self-service engineering platform, <a href="https://meshery.io">Meshery</a>, i
 
 <br />
 <br />
-
+<!--
 - [Functionality](#functionality)
   - [Meshery Architecture](#meshery-architecture)
   - [Join the Meshery community!](#join-the-meshery-community)
   - [Contributing](#contributing)
     - [Stargazers](#stargazers)
     - [License](#license)
-
+-->
 <!-- <p style="clear:both;">&nbsp;</p>
 <a href="https://meshery.io"><picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/readme/meshery-logo-light-text-side.svg">
