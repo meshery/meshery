@@ -11,12 +11,12 @@ integrations-subcategory: Monitoring
 registrant: Artifact Hub
 components: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Periodically runs health checks",
+  "Reports cluster health status",
+  "Integrates with Prometheus for alerting"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Runs Kuberhealthy checks"
+howItWorksDetails: "Proactive health monitoring and alerting for Kubernetes clusters"
 language: en
 list: include
 type: extensibility

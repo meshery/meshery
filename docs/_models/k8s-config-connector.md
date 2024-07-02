@@ -1379,12 +1379,12 @@ components:
   whiteIcon: assets/img/integrations/k8s-config-connector/components/workstations-workstation-cluster/icons/white/workstations-workstation-cluster-white.svg
   description: 
 featureList: [
-  "Config Connector is a Kubernetes add-on that allows customers to manage GCP resources, such as Cloud Spanner or Cloud Storage, through your cluster's API.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Provides a wide range of cloud services",
+  "Integrates with Kubernetes",
+  "Offers various Kubernetes solutions"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Integrates GCP services"
+howItWorksDetails: "Seamless integration of Kubernetes with GCP services"
 language: en
 list: include
 type: extensibility

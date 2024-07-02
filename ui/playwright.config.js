@@ -18,7 +18,10 @@ module.exports = defineConfig({
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
   timeout: BASE_TIMEOUT,
-  expect: BASE_TIMEOUT,
+  expect: {
+    /* The number of milliseconds the test runner will wait for the expect matchers to pass. */
+    timeout: BASE_TIMEOUT,
+  },
   /* Retry on CI only */
   retries: process.env.CI ? 2 : 0,
   /* Opt out of parallel tests on CI. */

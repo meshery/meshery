@@ -213,7 +213,7 @@ function Connections(props) {
     page: page,
     pagesize: pageSize,
     search: search,
-    sortOrder: sortOrder,
+    order: sortOrder,
     status: statusFilter ? JSON.stringify([statusFilter]) : '',
     kind: kindFilter ? JSON.stringify([kindFilter]) : '',
   });

@@ -825,7 +825,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters
 </thead>
 </table>
 
-## Experimental Features
+## Experimental Features(exp)
 
 <table>
 <thead>
@@ -835,20 +835,42 @@ Installation, troubleshooting and debugging of Meshery and its adapters
     <th>Flag</th>
     <th>Function</th>
   </tr>
-  {% assign command11 = site.data.mesheryctlcommands.cmds.exp %}
+  {% assign command14 = site.data.mesheryctlcommands.cmds.exp %}
+  {% for cmd_hash in command14 %}
+    {% assign cmd = cmd_hash[1] %}
+    {% assign subcommand_flag_count = 0 %}
+    {% for subcommand_hash in cmd.subcommands %}
+      {% assign subcommand = subcommand_hash[1] %}
+      {% assign subcommand_flag_count = subcommand_flag_count | plus: subcommand.flags.size %}
+    {% endfor %}
+    {% assign total_rowspan = cmd.subcommands.size | plus: subcommand_flag_count | plus: cmd.flags.size | plus: 1 %}
     <tr>
-      <td rowspan=6><a href="{{ site.baseurl }}/reference/mesheryctl/exp">{{ command10.name }}</a></td>
+      <td rowspan="{{ total_rowspan }}"><a href="{{ site.baseurl }}/reference/mesheryctl/exp/{{ cmd.name }}">{{ cmd.name }}</a></td>
       <td></td>
       <td></td>
-      <td>{{ command11.description }}</td>
+      <td>{{ cmd.description }}</td>
     </tr>
-    {% for flag_hash in command11.flags %}{% assign flag = flag_hash[1] %}
+    {% for flag_hash in cmd.flags %}{% assign flag = flag_hash[1] %}
       <tr>
         <td></td>
         <td>{{ flag.name }}</td>
         <td>{{ flag.description }}</td>
       </tr>
     {% endfor %}
+    {% for subcommand_hash in cmd.subcommands %}{% assign subcommand = subcommand_hash[1] %}
+      <tr>
+        <td rowspan="{{ subcommand.flags.size | plus: 1 }}"><a href="{{ site.baseurl }}/reference/mesheryctl/exp/{{ cmd.name }}/{{ subcommand.name }}">{{ subcommand.name }}</a></td>
+        <td></td>
+        <td>{{ subcommand.description }}</td>
+      </tr>
+      {% for flag_hash in subcommand.flags %}{% assign flag = flag_hash[1] %}
+        <tr>
+          <td>{{ flag.name }}</td>
+          <td>{{ flag.description }}</td>
+        </tr>
+      {% endfor %}
+    {% endfor %}
+  {% endfor %}
 </thead>
 </table>
 

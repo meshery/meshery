@@ -11,12 +11,12 @@ integrations-subcategory: Continuous Integration & Delivery
 registrant: Artifact Hub
 components: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Manages advanced workload types (e.g., SidecarSets, BroadcastJobs)",
+  "Advanced scheduling and deployment strategies",
+  "Integrates with Kubernetes resources"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Integrates OpenKruise controllers"
+howItWorksDetails: "Enhanced workload management and deployment in Kubernetes"
 language: en
 list: include
 type: extensibility

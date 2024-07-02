@@ -1,7 +1,7 @@
 ---
 layout: integration
-title: Cert-Manager
-subtitle: Collaborative and visual infrastructure as code for Cert-Manager
+title: cert-manager
+subtitle: Collaborative and visual infrastructure as code for cert-manager
 image: /assets/img/integrations/cert-manager/icons/color/cert-manager-color.svg
 permalink: extensibility/integrations/cert-manager
 docURL: https://docs.meshery.io/extensibility/integrations/cert-manager
@@ -11,12 +11,12 @@ integrations-subcategory: Key Management
 registrant: GitHub
 components: 
 featureList: [
-  "Config Connector is a Kubernetes add-on that allows customers to manage GCP resources, such as Cloud Spanner or Cloud Storage, through your cluster's API.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Automates certificate issuance and renewal",
+  "Integrates with various certificate authorities",
+  "Simplifies certificate management"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Manages certificates with Cert-Manager"
+howItWorksDetails: "Streamlined certificate management and enhanced security in Kubernetes"
 language: en
 list: include
 type: extensibility
