@@ -110,6 +110,8 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 
 	gMux.Handle("/api/events", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.EventStreamHandler), models.ProviderAuth))).
 		Methods("GET")
+	gMux.Handle("/api/v2/events", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ClientEventHandler), models.ProviderAuth))).
+		Methods("POST")
 		// This will be changed to /api/events once the UI is compeltely updated to use new events and SSE is tunred off, otherwise existing events will break.
 	gMux.Handle("/api/v2/events", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetAllEvents), models.ProviderAuth))).
 		Methods("GET")

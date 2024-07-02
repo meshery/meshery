@@ -19,6 +19,7 @@ import (
 	"github.com/layer5io/meshkit/errors"
 	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/models/events"
+	"github.com/layer5io/meshkit/utils"
 	_events "github.com/layer5io/meshkit/utils/events"
 )
 
@@ -472,4 +473,82 @@ func closeAdapterConnections(localMeshAdaptersLock *sync.Mutex, localMeshAdapter
 	localMeshAdaptersLock.Unlock()
 
 	return map[string]*meshes.MeshClient{}
+}
+
+// swagger:route POST /api/events EventsAPI idClientEventHandler
+// Receives client-generated events bound for the Notification Center.
+// responses:
+// 200:
+
+func (h *Handler) ClientEventHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+	userID := uuid.FromStringOrNil(user.ID)
+
+	defer func() {
+		_ = req.Body.Close()
+	}()
+
+	var eventDetails map[string]interface{}
+	body, err := io.ReadAll(req.Body)
+	if err != nil {
+		h.log.Error(ErrRequestBody(err))
+		http.Error(w, ErrRequestBody(err).Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = json.Unmarshal(body, &eventDetails)
+	if err != nil {
+		h.log.Error(models.ErrUnmarshal(err, "event details"))
+		http.Error(w, models.ErrUnmarshal(err, "event details").Error(), http.StatusInternalServerError)
+		return
+	}
+
+	category, err := utils.Cast[string](eventDetails["category"])
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	action, err := utils.Cast[string](eventDetails["action"])
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	severity, err := utils.Cast[string](eventDetails["severity"])
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	description, err := utils.Cast[string](eventDetails["description"])
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	metadata, err := utils.Cast[map[string]interface{}](eventDetails["metadata"])
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).
+		WithCategory(category).WithAction(action).WithSeverity(events.EventSeverity(severity)).
+		WithDescription(description).WithMetadata(metadata)
+
+	if actedUpon, ok := eventDetails["acted_upon"].(string); ok {
+		eventBuilder = eventBuilder.ActedUpon(uuid.FromStringOrNil(actedUpon))
+	}
+
+	event := eventBuilder.Build()
+	_ = provider.PersistEvent(event)
+	go h.config.EventBroadcaster.Publish(userID, event)
+
+	w.WriteHeader(http.StatusCreated)
+	err = json.NewEncoder(w).Encode(event)
+	if err != nil {
+		h.log.Error(models.ErrMarshal(err, "event response"))
+		http.Error(w, models.ErrMarshal(err, "event response").Error(), http.StatusInternalServerError)
+		return
+	}
 }
