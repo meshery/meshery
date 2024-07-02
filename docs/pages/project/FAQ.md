@@ -67,7 +67,7 @@ category: project
 <summary>
 <h6>Question: How do I install Meshery?</h6>
 </summary>
-<p><strong>Answer:</strong> Meshery runs on a <a href="{site.baseurl}}/installation">number of platforms</a>. You are encouraged to use <code>mesheryctl</code> to configure and control Meshery deployments. Install `mesheryctl` using any of these options:</p>
+<p><strong>Answer:</strong> Meshery runs on a <a href="{{site.baseurl}}/installation">number of platforms</a>. You are encouraged to use <code>mesheryctl</code> to configure and control Meshery deployments. Install `mesheryctl` using any of these options:</p>
 <ul>
 <li><a href="/installation/linux-mac/bash">Bash user</a></li>
 <li><a href="/installation/linux-mac/brew">Brew user</a></li>
