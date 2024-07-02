@@ -136,7 +136,7 @@ const styles = (theme) => ({
     width: '100%',
     display: 'flex',
     justifyContent: 'space-between',
-    whiteSpace: 'nowrap',
+    // whiteSpace: 'nowrap',
     paddingRight: '10px',
   },
   gridCapabilityHeader: {
@@ -146,6 +146,7 @@ const styles = (theme) => ({
     backgroundColor: theme.palette.type === 'dark' ? '#293B43 ' : '#C9DBE3',
   },
   gridExtensionItem: {
+    wordBreak: 'break-word',
     backgroundColor: theme.palette.type === 'dark' ? '#3D4F57 ' : '#E7EFF3',
   },
   line: {
@@ -457,7 +458,7 @@ const UserPreference = (props) => {
                         <Typography
                           variant="body1"
                           className={props.classes.hideScrollbar}
-                          style={{ marginRight: '20px' }}
+                          style={{ marginRight: '20px', wordBreak: 'break-word' }}
                         >
                           {provider}
                         </Typography>
@@ -548,6 +549,7 @@ const UserPreference = (props) => {
                           : index % 2 === 0
                           ? '#E7EFF3'
                           : '#C9DBE3',
+                      overflow: 'hidden',
                     }}
                   >
                     <Typography variant="body1">{capability.feature}</Typography>
@@ -566,6 +568,8 @@ const UserPreference = (props) => {
                           : index % 2 === 0
                           ? '#E7EFF3'
                           : '#C9DBE3',
+                      overflow: 'hidden',
+                      wordWrap: 'break-word',
                     }}
                   >
                     <Typography variant="body1">{capability.endpoint}</Typography>
