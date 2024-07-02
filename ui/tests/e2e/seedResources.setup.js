@@ -1,4 +1,3 @@
-const { ENV } = require('./env');
 const { readFileSync } = require('fs');
 import { expect, test as setup } from '@playwright/test';
 import { writeFile } from 'fs';
