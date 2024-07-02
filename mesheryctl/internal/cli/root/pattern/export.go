@@ -11,11 +11,11 @@ import (
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	mutils "github.com/layer5io/meshery/meshkit/utils"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
-	"gopkg.in/yaml.v2"
 )
 
 var (
@@ -27,7 +27,7 @@ var (
 var exportCmd = &cobra.Command{
 	Use:   "export",
 	Short: "Export a design from Meshery",
-	Long:  "The 'export' command allows you to export a specific design from your Meshery server. You can specify the design by its ID and optionally define the type of design. The command also supports specifying an output directory where the exported design will be saved. By default, the exported design will be saved in the home directory.",
+	Long:  "The 'export' command allows you to export a specific design from your Meshery server. You can specify the design by its ID and optionally define the type of design. The command also supports specifying an output directory where the exported design will be saved. By default, the exported design will be saved in the current directory. The different types of design type allowed are oci,original and current. The default design type is current.",
 	Example: `
 	# Export a design with a specific ID
 	mesheryctl pattern export --id [design-ID]
@@ -71,24 +71,56 @@ var exportCmd = &cobra.Command{
 		designID, _ := cmd.Flags().GetString("id")
 		designType, _ := cmd.Flags().GetString("dtype")
 		if designType == "" {
-			designType = "ahpkg"
+			designType = "current"
 		}
 		baseUrl := mctlCfg.GetBaseMesheryURL()
+		dataURL := baseUrl + "/api/pattern/" + designID
+		req, err := utils.NewRequest(http.MethodGet, dataURL, nil)
+		if err != nil {
+			utils.Log.Error(err)
+			return nil
+		}
+		resp, err := utils.MakeRequest(req)
+		if err != nil {
+			utils.Log.Error(err)
+			return nil
+		}
+		defer resp.Body.Close()
+		if resp.StatusCode != http.StatusOK {
+			err = models.ErrDoRequest(err, resp.Request.Method, dataURL)
+			utils.Log.Error(err)
+			return nil
+		}
+		body, err := io.ReadAll(resp.Body)
+		if err != nil {
+			utils.Log.Error(ErrReadFromBody(err))
+			return nil
+		}
+
+		var pattern models.MesheryPattern
+		err = mutils.Unmarshal(body, &pattern)
+		if err != nil {
+			utils.Log.Error(err)
+			return nil
+		}
+		patternName := pattern.Name
+		originalType := pattern.Type.String
+
 		url := baseUrl + "/api/pattern/download/" + designID
 
 		utils.Log.Info(fmt.Sprintf("Exporting Design of type %s with ID %s", designType, designID))
 		switch designType {
 		case "oci":
 			url = url + "?oci=true"
-		case "ahpkg":
-			url = url + "?ahpkg=true"
+		case "original":
+			url = url + "/" + originalType
 		}
-		req, err := utils.NewRequest(http.MethodGet, url, nil)
+		req, err = utils.NewRequest(http.MethodGet, url, nil)
 		if err != nil {
 			utils.Log.Error(err)
 			return nil
 		}
-		resp, err := utils.MakeRequest(req)
+		resp, err = utils.MakeRequest(req)
 		if err != nil {
 			utils.Log.Error(err)
 			return nil
@@ -106,38 +138,18 @@ var exportCmd = &cobra.Command{
 			utils.Log.Error(ErrReadFromBody(err))
 			return nil
 		}
-		var patternName string
-		if designType != "oci" {
-			var pattern models.MesheryPattern
-			patternContent := buf.String()
-			err = yaml.Unmarshal([]byte(patternContent), &pattern)
-			if err != nil {
-				utils.Log.Error(err)
-				return nil
-			}
-			patternName = pattern.Name
-		}
-
-		if patternName == "" {
-			patternName = "pattern"
-		}
 
 		designIDParts := strings.Split(designID, "-")
 		lastPartOfID := designIDParts[len(designIDParts)-1]
 
 		filename := fmt.Sprintf("%s_%s", patternName, lastPartOfID)
-		if designType != "oci" {
+		if designType != "oci" && designType != "original" {
 			filename += ".yaml"
+		} else if designType == "original" {
+			filename += ".tar.gz"
 		}
 
-		homeDir, err := os.UserHomeDir()
-		if err != nil {
-			err = ErrRetrieveHomeDir(err)
-			utils.Log.Error(err)
-			return nil
-		}
-
-		outputFilePath := filepath.Join(homeDir, outputDir, filename)
+		outputFilePath := filepath.Join(outputDir, filename)
 
 		// Check if file exists and modify filename if needed
 		outputFilePath = getUniqueFilename(outputFilePath)
