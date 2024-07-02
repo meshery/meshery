@@ -703,24 +703,24 @@ pattern:
         mesheryctl pattern export --id [design-ID]
 
         # Export a design with a specific ID and type
-        mesheryctl pattern export --id [design-ID] --dtype [design-type]
+        mesheryctl pattern export --id [design-ID] --type [design-type]
 
         # Export a design and save it to a specific directory
         mesheryctl pattern export --id [design-ID] --output ./designs
 
         # Export a design with a specific type and save it to a directory
-        mesheryctl pattern export --id [design-ID] --dtype [design-type] --output ./exports
+        mesheryctl pattern export --id [design-ID] --type [design-type] --output ./exports
       flags:
         id:
           name: --id, -i
           description: Specify the design ID to export
           usage: mesheryctl pattern export --id [design-ID]
           example: mesheryctl pattern export --id 1234abcd
-        dtype:
-          name: --dtype, -d
-          description: Specify the design type to export (default ahpkg)
-          usage: mesheryctl pattern export --dtype [design-type]
-          example: mesheryctl pattern export --dtype oci
+        type:
+          name: --type
+          description: Specify the design type to export (default current). Supported types are oci,current,original.
+          usage: mesheryctl pattern export --type [design-type]
+          example: mesheryctl pattern export --type oci
         output:
           name: --output, -o
           description: Specify the output directory to save the design

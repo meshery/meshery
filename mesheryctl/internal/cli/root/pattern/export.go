@@ -33,13 +33,13 @@ var exportCmd = &cobra.Command{
 	mesheryctl pattern export --id [design-ID]
 	
 	# Export a design with a specific ID and type
-	mesheryctl pattern export --id [design-ID] --dtype [design-type]
+	mesheryctl pattern export --id [design-ID] --type [design-type]
 	
 	# Export a design and save it to a specific directory
 	mesheryctl pattern export --id [design-ID] --output ./designs
 	
 	# Export a design with a specific type and save it to a directory
-	mesheryctl pattern export --id [design-ID] --dtype [design-type] --output ./exports
+	mesheryctl pattern export --id [design-ID] --type [design-type] --output ./exports
 	`,
 
 	PreRunE: func(cmd *cobra.Command, args []string) error {
@@ -69,7 +69,7 @@ var exportCmd = &cobra.Command{
 		}
 
 		designID, _ := cmd.Flags().GetString("id")
-		designType, _ := cmd.Flags().GetString("dtype")
+		designType, _ := cmd.Flags().GetString("type")
 		if designType == "" {
 			designType = "current"
 		}
@@ -207,7 +207,7 @@ func init() {
 	})
 
 	exportCmd.Flags().StringVarP(&designID, "id", "i", "", "Specify the design ID to export")
-	exportCmd.Flags().StringVarP(&designType, "dtype", "d", "", "Specify the design type to export")
+	exportCmd.Flags().StringVarP(&designType, "type", "", "", "Specify the design type to export")
 	exportCmd.Flags().StringVarP(&outputDir, "output", "o", "", "Specify the output directory to save the design")
 
 	err := exportCmd.MarkFlagRequired("id")
