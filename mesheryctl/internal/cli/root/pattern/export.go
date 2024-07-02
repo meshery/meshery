@@ -11,8 +11,8 @@ import (
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	mutils "github.com/layer5io/meshery/meshkit/utils"
 	"github.com/layer5io/meshery/server/models"
+	meshkitutils "github.com/layer5io/meshkit/utils"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
@@ -91,14 +91,15 @@ var exportCmd = &cobra.Command{
 			utils.Log.Error(err)
 			return nil
 		}
-		body, err := io.ReadAll(resp.Body)
+		buf := new(bytes.Buffer)
+		_, err = buf.ReadFrom(resp.Body)
 		if err != nil {
 			utils.Log.Error(ErrReadFromBody(err))
 			return nil
 		}
 
 		var pattern models.MesheryPattern
-		err = mutils.Unmarshal(body, &pattern)
+		err = meshkitutils.Unmarshal(buf.String(), &pattern)
 		if err != nil {
 			utils.Log.Error(err)
 			return nil
@@ -132,7 +133,7 @@ var exportCmd = &cobra.Command{
 			utils.Log.Error(err)
 			return nil
 		}
-		buf := new(bytes.Buffer)
+		buf = new(bytes.Buffer)
 		_, err = buf.ReadFrom(resp.Body)
 		if err != nil {
 			utils.Log.Error(ErrReadFromBody(err))
@@ -183,8 +184,14 @@ var exportCmd = &cobra.Command{
 }
 
 func getUniqueFilename(filename string) string {
-	ext := filepath.Ext(filename)
-	base := strings.TrimSuffix(filename, ext)
+	var base, ext string
+	if strings.HasSuffix(filename, ".tar.gz") {
+		base = strings.TrimSuffix(filename, ".tar.gz")
+		ext = ".tar.gz"
+	} else {
+		ext = filepath.Ext(filename)
+		base = strings.TrimSuffix(filename, ext)
+	}
 	for i := 1; ; i++ {
 		if _, err := os.Stat(filename); os.IsNotExist(err) {
 			break
