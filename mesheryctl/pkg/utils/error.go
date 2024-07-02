@@ -197,6 +197,21 @@ func RelationshipsError(msg string, cmd string) string {
 	}
 }
 
+func CredentialsError(msg string, cmd string) string {
+	switch cmd {
+	case "list":
+		return formatError(msg, cmdCredentialList)
+	case "create":
+		return formatError(msg, cmdCredentialCreate)
+	case "delete":
+		return formatError(msg, cmdCredentialDelete)
+	case "view":
+		return formatError(msg, cmdCredentialView)
+	default:
+		return formatError(msg, cmdCredential)
+	}
+}
+
 // MeshError returns a formatted error message with a link to 'mesh' command usage page in addition to the error message
 func MeshError(msg string) string {
 	return formatError(msg, cmdMesh)
@@ -594,7 +609,11 @@ func ErrBadRequest(err error) error {
 }
 
 func ErrInvalidArgument(err error) error {
-	return errors.New(ErrInvalidArgumentCode, errors.Alert, []string{"Invalid Argument"}, []string{err.Error()}, []string{"Invalid Argument"}, []string{"Please check the arguments passed"})
+	return errors.New(ErrInvalidArgumentCode, errors.Alert,
+		[]string{"Invalid Argument"},
+		[]string{err.Error()},
+		[]string{"Invalid Argument"},
+		[]string{"Please check the arguments passed"})
 }
 
 func ErrGeneratingIcons(err error, path string) error {
