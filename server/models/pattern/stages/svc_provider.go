@@ -3,6 +3,7 @@ package stages
 import (
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/models/pattern/core"
+	"github.com/layer5io/meshery/server/models/pattern/patterns"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	"github.com/layer5io/meshkit/models/meshmodel/registry"
 )
@@ -22,7 +23,7 @@ type ServiceInfoProvider interface {
 type ServiceActionProvider interface {
 	Terminate(error)
 	Log(msg string)
-	Provision(CompConfigPair) (string, error)
+	Provision(CompConfigPair) ([]patterns.DeploymentMessagePerContext, error)
 	GetRegistry() *registry.RegistryManager
 	Persist(string, core.Service, bool) error
 	DryRun([]v1beta1.Component) (map[string]map[string]core.DryRunResponseWrapper, error)

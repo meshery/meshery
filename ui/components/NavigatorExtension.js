@@ -32,6 +32,10 @@ import { MDEditor } from './Markdown';
 import { FormatStructuredData } from './DataFormatter';
 import { useFilterK8sContexts } from './hooks/useKubernetesHook';
 import { useDynamicComponent } from '@/utils/context/dynamicContext';
+import { ValidateDesign } from './DesignLifeCycle/ValidateDesign';
+import { DryRunDesign } from './DesignLifeCycle/DryRun';
+import { DeployStepper, UnDeployStepper } from './DesignLifeCycle/DeployStepper';
+import { designValidationMachine } from 'machines/validator/designValidator';
 
 const requires = createRequires(getDependencies);
 const useRemoteComponent = createUseRemoteComponent({ requires });
@@ -119,6 +123,11 @@ function NavigatorExtension({
         useNotificationHook: useNotification,
         MDEditor: MDEditor,
         StructuredDataFormatter: FormatStructuredData,
+        ValidateDesign,
+        DryRunDesign,
+        DeployStepper,
+        UnDeployStepper,
+        designValidationMachine,
         hooks: {
           useFilterK8sContexts,
           useDynamicComponent,

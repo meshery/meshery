@@ -14,7 +14,6 @@ import (
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshsync/pkg/model"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
@@ -52,7 +51,7 @@ func (h *Handler) ProviderMiddleware(next http.Handler) http.Handler {
 		ctx = context.WithValue(ctx, models.MesheryServerCallbackURL, callbackURL)
 		_url, err := url.Parse(callbackURL)
 		if err != nil {
-			logrus.Errorf("Error parsing callback url: %v", err)
+			h.log.Error(ErrParsingCallBackUrl(err))
 		} else {
 			ctx = context.WithValue(ctx, models.MesheryServerURL, fmt.Sprintf("%s://%s", _url.Scheme, _url.Host))
 		}
@@ -86,7 +85,7 @@ func (h *Handler) AuthMiddleware(next http.Handler, auth models.AuthenticationMe
 
 			// Because server verifies the value of the "PROVIDER" environemnt variable and doesn't allow unsupported provider value,
 			// the below situation cannot occur.
-			
+
 			// if providerH != "" && providerH != provider.Name() {
 			// 	w.WriteHeader(http.StatusUnauthorized)
 			// 	return
@@ -168,17 +167,17 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 		if err != nil {
 			err1 := provider.Logout(w, req)
 			if err1 != nil {
-				logrus.Errorf("Error performing logout: %v", err1.Error())
+				h.log.Error(models.ErrLogout(err1))
 				provider.HandleUnAuthenticated(w, req)
 				return
 			}
 			h.log.Error(ErrGetUserDetails(err))
-			http.Error(w, "unable to get user details", http.StatusUnauthorized)
+			http.Error(w, ErrGetUserDetails(err).Error(), http.StatusUnauthorized)
 			return
 		}
 		prefObj, err := provider.ReadFromPersister(user.UserID)
 		if err != nil {
-			logrus.Warn("unable to read session from the session persister, starting with a new one")
+			h.log.Warn(ErrReadSessionPersistor)
 		}
 
 		token := provider.UpdateToken(w, req)
@@ -205,7 +204,7 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 	token, ok := ctx.Value(models.TokenCtxKey).(string)
 	if !ok {
 		err := ErrRetrieveUserToken(fmt.Errorf("failed to retrieve user token"))
-		logrus.Error(err)
+		h.log.Error(err)
 		return nil, err
 	}
 	userUUID := uuid.FromStringOrNil(user.ID)
@@ -216,10 +215,10 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 	k8sContextsFromKubeConfig := []*models.K8sContext{}
 
 	if err != nil || len(connectedK8sContexts) == 0 {
-		logrus.Warn("failed to get kubernetes contexts")
+		h.log.Warn(ErrFailToGetK8SContext)
 		k8sContextsFromKubeConfig, err = h.DiscoverK8SContextFromKubeConfig(user.ID, token, provider)
 		if err != nil {
-			logrus.Warn("failed to load kubernetes contexts: ", err.Error())
+			h.log.Warn(ErrFailToLoadK8sContext(err))
 		}
 	}
 

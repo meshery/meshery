@@ -11,12 +11,12 @@ integrations-subcategory: Scheduling & Orchestration
 registrant: Artifact Hub
 components: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Simplifies multi-cluster management",
+  "Provides a unified control plane",
+  "Centralized policy and configuration management"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Integrates Open Cluster Management clusters"
+howItWorksDetails: "Streamlined multi-cluster management and governance"
 language: en
 list: include
 type: extensibility

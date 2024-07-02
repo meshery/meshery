@@ -3,7 +3,7 @@
   "schemaVersion": "core.meshery.io/v1beta1",
   "version": "v1.0.0",
   "name": "calico",
-  "displayName": "Project Calico",
+  "displayName": "Calico",
   "description": "",
   "status": "ignored",
   "hostID": "00000000-0000-0000-0000-000000000000",
@@ -11,12 +11,20 @@
    "hostname": "artifacthub"
   },
   "category": {
-   "name": "Runtime",
+   "name": "Cloud Native Network",
    "metadata": null
   },
-  "subCategory": "Cloud Native Network",
+  "subCategory": "Not Found",
   "metadata": {
+   "capabilities": "",
+   "defaultData": "",
    "isAnnotation": false,
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
    "svgColor": "",
    "svgComplete": "",
    "svgWhite": ""

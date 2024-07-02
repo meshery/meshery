@@ -42,13 +42,33 @@ components:
   colorIcon: assets/img/integrations/kube-prometheus-stack/components/prometheus-credential/icons/color/prometheus-credential-color.svg
   whiteIcon: assets/img/integrations/kube-prometheus-stack/components/prometheus-credential/icons/white/prometheus-credential-white.svg
   description: 
+- name: pod-monitor
+  colorIcon: assets/img/integrations/kube-prometheus-stack/components/pod-monitor/icons/color/pod-monitor-color.svg
+  whiteIcon: assets/img/integrations/kube-prometheus-stack/components/pod-monitor/icons/white/pod-monitor-white.svg
+  description: 
+- name: probe
+  colorIcon: assets/img/integrations/kube-prometheus-stack/components/probe/icons/color/probe-color.svg
+  whiteIcon: assets/img/integrations/kube-prometheus-stack/components/probe/icons/white/probe-white.svg
+  description: 
+- name: prometheus-rule
+  colorIcon: assets/img/integrations/kube-prometheus-stack/components/prometheus-rule/icons/color/prometheus-rule-color.svg
+  whiteIcon: assets/img/integrations/kube-prometheus-stack/components/prometheus-rule/icons/white/prometheus-rule-white.svg
+  description: 
+- name: service-monitor
+  colorIcon: assets/img/integrations/kube-prometheus-stack/components/service-monitor/icons/color/service-monitor-color.svg
+  whiteIcon: assets/img/integrations/kube-prometheus-stack/components/service-monitor/icons/white/service-monitor-white.svg
+  description: 
+- name: service-monitor
+  colorIcon: assets/img/integrations/kube-prometheus-stack/components/service-monitor/icons/color/service-monitor-color.svg
+  whiteIcon: assets/img/integrations/kube-prometheus-stack/components/service-monitor/icons/white/service-monitor-white.svg
+  description: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Provides a full-fledged monitoring solution",
+  "Collects metrics, logs, and traces",
+  "Customizable dashboards and alerting"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Deploys Kube Prometheus Stack with Helm"
+howItWorksDetails: "Comprehensive monitoring and observability for Kubernetes"
 language: en
 list: include
 type: extensibility

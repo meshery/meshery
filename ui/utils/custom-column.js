@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import IconButton from '@mui/material/IconButton';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import Tooltip from '@mui/material/Tooltip';
+import { CustomTooltip } from '@layer5/sistent';
 import Popper from '@mui/material/Popper';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
 import { withStyles } from '@material-ui/core/styles';
@@ -50,7 +50,7 @@ const CustomColumnVisibilityControl = ({ columns, customToolsProps, classes, id 
 
   return (
     <div id={id}>
-      <Tooltip title="View Columns">
+      <CustomTooltip title="View Columns">
         <IconButton
           onClick={handleOpen}
           sx={{
@@ -61,7 +61,7 @@ const CustomColumnVisibilityControl = ({ columns, customToolsProps, classes, id 
         >
           <ColumnIcon className={classes.icon} />
         </IconButton>
-      </Tooltip>
+      </CustomTooltip>
 
       <Box sx={{ overflow: 'hidden' }}>
         <Popper

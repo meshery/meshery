@@ -33,14 +33,14 @@
     "next": "^13.5.4",
     "prop-types": "^15.8.1",
     "react": "^18.3.1",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
-    "@cypress/code-coverage": "^3.12.26",
+    "@cypress/code-coverage": "^3.12.39",
     "cypress": "^13.8.1",
     "eslint": "^8.57.0",
     "eslint-config-next": "^14.1.4",
-    "eslint-plugin-cypress": "^2.15.1",
+    "eslint-plugin-cypress": "^3.3.0",
     "start-server-and-test": "^2.0.3"
   },
   "engines": {

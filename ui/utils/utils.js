@@ -6,6 +6,7 @@ import _ from 'lodash';
 import { getWebAdress } from './webApis';
 import { APPLICATION, DESIGN, FILTER } from '../constants/navigator';
 import { Tooltip } from '@mui/material';
+import jsyaml from 'js-yaml';
 
 /**
  * Check if an object is empty
@@ -368,3 +369,21 @@ export const ResizableCell = ({ value }) => (
     </div>
   </div>
 );
+
+export const processDesign = (design) => {
+  const designJson = jsyaml.load(design.pattern_file);
+
+  const isAnnotation = (component) =>
+    component?.traits?.meshmap?.['meshmodel-metadata']?.isAnnotation;
+
+  const components = Object.values(designJson.services);
+  const configurableComponents = components.filter(_.negate(isAnnotation));
+  const annotationComponents = components.filter(isAnnotation);
+
+  return {
+    configurableComponents,
+    annotationComponents,
+    components,
+    designJson,
+  };
+};
