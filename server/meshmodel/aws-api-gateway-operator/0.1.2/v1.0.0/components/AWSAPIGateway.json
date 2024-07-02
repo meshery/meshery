@@ -10,7 +10,7 @@
    "schemaVersion": "core.meshery.io/v1beta1",
    "version": "v1.0.0",
    "name": "aws-api-gateway-operator",
-   "displayName": "AWS API Gateway Operator",
+   "displayName": "AWS API Gateway",
    "description": "",
    "status": "enabled",
    "hostID": "00000000-0000-0000-0000-000000000000",

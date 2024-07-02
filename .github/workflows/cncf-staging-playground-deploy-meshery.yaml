@@ -15,4 +15,5 @@ jobs:
               username: root
               key: ${{ secrets.METAL_SSH_KEY }}
               script: |
+                mesheryctl system channel set edge
                 mesheryctl system update

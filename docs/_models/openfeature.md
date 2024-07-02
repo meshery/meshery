@@ -11,12 +11,12 @@ integrations-subcategory: Continuous Integration & Delivery
 registrant: Artifact Hub
 components: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Simplifies operator development",
+  "Provides SDKs and tools for building operators",
+  "Promotes best practices for operator development"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Extends Meshery's capabilities"
+howItWorksDetails: "Facilitates the creation of custom operators for Meshery"
 language: en
 list: include
 type: extensibility

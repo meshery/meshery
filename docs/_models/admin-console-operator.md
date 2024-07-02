@@ -1,7 +1,7 @@
 ---
 layout: integration
-title: Epam Delivery Platform (EDP) Admin Console
-subtitle: Collaborative and visual infrastructure as code for Epam Delivery Platform (EDP) Admin Console
+title: EPAM Delivery Platform
+subtitle: Collaborative and visual infrastructure as code for EPAM Delivery Platform
 image: /assets/img/integrations/admin-console-operator/icons/color/admin-console-operator-color.svg
 permalink: extensibility/integrations/admin-console-operator
 docURL: https://docs.meshery.io/extensibility/integrations/admin-console-operator

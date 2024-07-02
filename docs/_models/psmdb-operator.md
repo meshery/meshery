@@ -23,11 +23,11 @@ components:
   whiteIcon: assets/img/integrations/psmdb-operator/components/percona-server-mongo-db/icons/white/percona-server-mongo-db-white.svg
   description: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Automates Percona Server for MongoDB deployment",
+  "Manages MongoDB configuration",
+  "Simplifies MongoDB operations"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Deploys and manages Percona Server for MongoDB"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

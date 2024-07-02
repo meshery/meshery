@@ -23,12 +23,12 @@ components:
   whiteIcon: assets/img/integrations/external-secrets-operator/components/external-secret/icons/white/external-secret-white.svg
   description: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Automates secret synchronization",
+  "Supports multiple secret stores",
+  "Simplifies secret management in Kubernetes"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Manages external secrets"
+howItWorksDetails: "Secure and centralized secret management for Kubernetes applications"
 language: en
 list: include
 type: extensibility

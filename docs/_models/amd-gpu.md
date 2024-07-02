@@ -19,12 +19,12 @@ components:
   whiteIcon: assets/img/integrations/amd-gpu/components/node-feature-rule/icons/white/node-feature-rule-white.svg
   description: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Enables GPU acceleration for Kubernetes workloads",
+  "Supports various AMD GPU models",
+  "Integrates with Kubernetes device plugin framework"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Manages AMD GPU resources"
+howItWorksDetails: "Improved performance for GPU-accelerated workloads in Kubernetes"
 language: en
 list: include
 type: extensibility
