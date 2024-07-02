@@ -4,6 +4,7 @@ import (
 	"path/filepath"
 	"runtime"
 	"testing"
+	
 
 	"github.com/jarcoal/httpmock"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
@@ -45,6 +46,24 @@ func TestPatternView(t *testing.T) {
 			URL:              testContext.BaseURL + "/api/pattern",
 			Token:            filepath.Join(fixturesDir, "token.golden"),
 			ExpectError:      false,
+		},
+		{
+			Name:             "View Specific Pattern by Name",
+			Args:             []string{"view", "design"},
+			ExpectedResponse: "view.pattern.output.golden",
+			Fixture:          "view.pattern.api.response.golden",
+			URL:              testContext.BaseURL + "/api/pattern?name=Untitled Design",
+			Token:            filepath.Join(fixturesDir, "token.golden"),
+			ExpectError:      false,
+		},
+		{
+			Name:             "View Non-Existent Pattern by Name",
+			Args:             []string{"view", "design"},
+			ExpectedResponse: "view.pattern.output.golden",
+			Fixture:          "view.pattern.api.response.golden",
+			URL:              testContext.BaseURL + "/api/pattern?name=NonExistentDesign",
+			Token:            filepath.Join(fixturesDir, "token.golden"),
+			ExpectError:      true,
 		},
 	}
 
@@ -95,6 +114,10 @@ func TestPatternView(t *testing.T) {
 			expectedResponse := golden.Load()
 
 			utils.Equals(t, expectedResponse, actualResponse)
+			
+			if tt.Name == "View Specific Pattern by Name" {
+				t.Logf("Output for '%s': %s", tt.Name, actualResponse)
+			}
 		})
 		t.Log("View Pattern test Passed")
 	}

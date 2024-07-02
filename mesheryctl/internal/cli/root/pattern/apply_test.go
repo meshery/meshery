@@ -72,6 +72,34 @@ func TestApplyCmd(t *testing.T) {
 			Token:       filepath.Join(fixturesDir, "token.golden"),
 			ExpectError: false,
 		},
+
+		{
+			Name:             "Apply Pattern from URL",
+			Args:             []string{"apply", "-f", "https://raw.githubusercontent.com/yash37158/SamplePattern/main/samplepatternwithservicemesh.golden"},
+			ExpectedResponse: "apply.url.output.golden",
+			URLs: []utils.MockURL{
+				{
+					Method:       "GET",
+					URL:          "https://raw.githubusercontent.com/yash37158/SamplePattern/main/samplepatternwithservicemesh.golden",
+					Response:     "samplePattern.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "POST",
+					URL:          testContext.BaseURL + "/api/pattern",
+					Response:     "apply.patternSave.response.golden",
+					ResponseCode: 200,
+				},
+				{
+					Method:       "POST",
+					URL:          testContext.BaseURL + "/api/pattern/deploy",
+					Response:     "apply.patternDeploy.response.golden",
+					ResponseCode: 200,
+				},
+			},
+			Token:       filepath.Join(fixturesDir, "token.golden"),
+			ExpectError: false,
+		},
 	}
 
 	// Run tests
