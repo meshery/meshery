@@ -4,9 +4,6 @@ import { withRouter } from 'next/router';
 import { extensionStyles as styles } from '../../../css/icons.styles';
 import { Grid, Typography, Switch } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { updateProgress } from '../../../lib/store';
 import { adaptersList } from './constants';
 import changeAdapterState from '../../graphql/mutations/AdapterStatusMutation';
 import { LARGE_6_MED_12_GRID_STYLE } from '../../../css/grid.style';
@@ -175,8 +172,4 @@ const Adapters = ({ updateProgress, classes }) => {
   );
 };
 
-const mapDispatchToProps = (dispatch) => ({
-  updateProgress: bindActionCreators(updateProgress, dispatch),
-});
-
-export default withStyles(styles)(connect(() => {}, mapDispatchToProps)(withRouter(Adapters)));
+export default withStyles(styles)(withRouter(Adapters));
