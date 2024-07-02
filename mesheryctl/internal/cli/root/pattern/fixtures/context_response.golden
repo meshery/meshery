@@ -1,0 +1,23 @@
+{
+  "page": 1,
+  "page_size": 1,
+  "total_count": 1,
+  "contexts": [
+    {
+      "id": "12345678-1234-1234-1234-123456789012",
+      "name": "my-context",
+      "auth": {"token": "auth-token"},
+      "cluster": {"server": "https://my-cluster-server"},
+      "server": "https://my-server",
+      "owner": "12345678-1234-1234-1234-123456789012",
+      "created_by": "12345678-1234-1234-1234-123456789012",
+      "meshery_instance_id": "12345678-1234-1234-1234-123456789012",
+      "kubernetes_server_id": "12345678-1234-1234-1234-123456789012",
+      "deployment_type": "out_cluster",
+      "version": "1.0",
+      "updated_at": "2022-01-01T00:00:00Z",
+      "created_at": "2022-01-01T00:00:00Z",
+      "connection_id": "12345678-1234-1234-1234-123456789012"
+    }
+  ]
+}
