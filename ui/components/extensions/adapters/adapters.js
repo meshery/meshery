@@ -58,19 +58,22 @@ const Adapters = ({ updateProgress, classes }) => {
   const handleAdapterDeployment = (payload, msg, selectedAdapter, adapterId) => {
     updateProgress({ showProgress: true });
 
+    const isEnableAction = payload.status === 'ENABLED';
+
     changeAdapterState((response, errors) => {
       updateProgress({ showProgress: false });
 
       if (!isNil(errors)) {
-        // Toggle the switch to it's previous state if the request fails.
+        // Toggle the switch to its previous state if the request fails.
         setAvailableAdapters({
           ...availableAdapters,
           [adapterId]: { ...selectedAdapter, enabled: !selectedAdapter.enabled },
         });
         handleError(msg);
       } else {
+        const actionText = isEnableAction ? 'enabled' : 'disabled';
         notify({
-          message: `Adapter ${response.adapterStatus.toLowerCase()}`,
+          message: `Adapter ${selectedAdapter.name} ${actionText}`,
           event_type: EVENT_TYPES.SUCCESS,
         });
       }
