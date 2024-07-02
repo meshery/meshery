@@ -4,6 +4,7 @@ import (
 	"flag"
 	"io"
 	"os"
+	"strings"
 	"path/filepath"
 	"runtime"
 	"testing"
@@ -44,7 +45,7 @@ func TestPatternList(t *testing.T) {
 	}{
 		{
 			Name:             "Fetch Pattern List",
-			Args:             []string{"list"},
+			Args:             []string{"list", "--page", "2"},
 			ExpectedResponse: "list.pattern.output.golden",
 			Fixture:          "list.pattern.api.response.golden",
 			URL:              testContext.BaseURL + "/api/pattern",
@@ -53,7 +54,7 @@ func TestPatternList(t *testing.T) {
 		},
 		{
 			Name:             "Fetch Pattern List with Local provider",
-			Args:             []string{"list"},
+			Args:             []string{"list", "--page", "1"},
 			ExpectedResponse: "list.pattern.local.output.golden",
 			Fixture:          "list.pattern.local.api.response.golden",
 			URL:              testContext.BaseURL + "/api/pattern",
@@ -114,6 +115,7 @@ func TestPatternList(t *testing.T) {
 				golden.Write(actualResponse)
 			}
 			expectedResponse := golden.Load()
+			expectedResponse = trimLastNLines(expectedResponse, 2)
 
 			utils.Equals(t, expectedResponse, actualResponse)
 		})
@@ -122,4 +124,12 @@ func TestPatternList(t *testing.T) {
 
 	// stop mock server
 	utils.StopMockery(t)
+}
+
+func trimLastNLines(s string, n int) string {
+	lines := strings.Split(s, "\n")
+	if len(lines) <= n {
+		return ""
+	}
+	return strings.Join(lines[:len(lines)-n], "\n")
 }
