@@ -9,7 +9,6 @@ import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { withRouter } from 'next/router';
 import MesheryMetrics from '../MesheryMetrics';
 import PerformanceCalendar from './PerformanceCalendar';
-import GenericModal from '../GenericModal';
 import MesheryPerformanceComponent from './index';
 import fetchPerformanceProfiles from '../graphql/queries/PerformanceProfilesQuery';
 import fetchAllResults from '../graphql/queries/FetchAllResultsQuery';
@@ -18,6 +17,8 @@ import { EVENT_TYPES } from '../../lib/event-types';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import DefaultError from '@/components/General/error-404/index';
+import { Modal } from '@layer5/sistent';
+import { UsesSistent } from '../SistentWrapper';
 
 // const MESHERY_PERFORMANCE_URL = "/api/user/performance/profiles";
 // const MESHERY_PERFORMANCE_TEST_URL = "/api/user/performance/profiles/results";
@@ -247,15 +248,16 @@ function Dashboard({ updateProgress, grafana, router, classes }) {
             </Grid>
           </Grid>
 
-          <GenericModal
-            open={!!runTest}
-            Content={
-              <Paper style={{ margin: 'auto', maxWidth: '90%', outline: 'none' }}>
-                <MesheryPerformanceComponent />
-              </Paper>
-            }
-            handleClose={() => setRunTest(false)}
-          />
+          <UsesSistent>
+            <Modal
+              open={!!runTest}
+              closeModal={() => setRunTest(false)}
+              maxWidth="md"
+              title="Performance Profile Wizard"
+            >
+              <MesheryPerformanceComponent />
+            </Modal>
+          </UsesSistent>
         </>
       ) : (
         <DefaultError />
