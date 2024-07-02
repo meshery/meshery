@@ -69,7 +69,7 @@ The schema represents the skeletal structure of an entity and provides a logical
 
 **Definition** _(static)_ **: An implementation of the Schema containing an outline of the specific attributes of a given, unconfigured entity.**
 
-A definition is an implementation of the schema. It contains specific configurations and values for the entity at hand. The definition provides the actual configuration details for a specific instance of the entity. It is static because it is created based on the schema but does not change once created. The definition is used to instantiate instances of the entity.
+A definition is an implementation of the schema. It contains specific configurations and values for the entity at hand. The definition provides the actual configuration details for a specific instance of the entity. It is static because it is created based on the schema but does not change once created. The definition is used to instantiate declarations of the entity.
 
 {% include alert.html type="info" title="Definition example" content="a generic, unconfigured Kubernetes Pod." %}
 

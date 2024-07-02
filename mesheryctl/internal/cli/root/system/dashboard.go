@@ -76,8 +76,7 @@ mesheryctl system dashboard --port-forward
 mesheryctl system dashboard --port-forward -p 9081
 
 // (optional) skip opening of MesheryUI in browser.
-mesheryctl system dashboard --skip-browser
-	`,
+mesheryctl system dashboard --skip-browser`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		// check if meshery is running or not
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
@@ -109,10 +108,11 @@ mesheryctl system dashboard --skip-browser
 			return nil
 		}
 		log.Debug("Fetching Meshery-UI endpoint")
-
 		switch currCtx.GetPlatform() {
 		case "docker":
-			break
+			if runPortForward {
+				log.Warn("--port-forward is not supported using Docker as Meshery's deployment platform.")
+			}
 		case "kubernetes":
 			client, err := meshkitkube.New([]byte(""))
 			if err != nil {

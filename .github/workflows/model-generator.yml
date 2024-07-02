@@ -75,7 +75,7 @@ jobs:
       - name: Check registry-generate-error file
         id: check-registry-generate-error
         run: |
-          if [ -s .meshery/logs/registry/Errors ]; then
+          if [ -s .meshery/logs/registry/registry-errors.log ]; then
             echo "registry-generate-error is not empty"
             echo "registry-generate-error=true" >> $GITHUB_ENV
           else
@@ -98,7 +98,7 @@ jobs:
                The Model Generator workflow (https://github.com/meshery/meshery/actions/workflows/model-generator.yml) encountered one or more errors. Refer to the attached error log for details or review the results of the failed workflow - https://github.com/meshery/meshery/actions/runs/${{ github.run_id }}.
 
                Learn more about the Meshery Registry - https://docs.meshery.io/concepts/logical/registry.
-          attachments: .meshery/logs/registry/Errors
+          attachments: .meshery/logs/registry/registry-errors.log
   update-components:
     if: github.repository == 'meshery/meshery'
     name: Update Components
