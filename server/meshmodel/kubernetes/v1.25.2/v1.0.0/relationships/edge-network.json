@@ -28,7 +28,7 @@
     },
     "metadata": {}
   },
-  "subType": "Network",
+  "type": "Network",
   "evaluationQuery": "edge_network_relationship",
   "selectors": [
     {
