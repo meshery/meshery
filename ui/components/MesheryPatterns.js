@@ -79,7 +79,6 @@ import { DEPLOYMENT_TYPE } from './DesignLifeCycle/common';
 import { useDeployPatternMutation, useUndeployPatternMutation } from '@/rtk-query/design';
 import CheckIcon from '@/assets/icons/CheckIcon';
 import { ValidateDesign } from './DesignLifeCycle/ValidateDesign';
-import { useDebounce } from './hooks/useDebounce';
 
 const genericClickHandler = (ev, fn) => {
   ev.stopPropagation();
@@ -392,7 +391,6 @@ function MesheryPatterns({
   });
 
   const designValidationActorRef = useActorRef(designValidationMachine);
-  const debouncedSearchValue = useDebounce(search);
   const designLifecycleModal = useModal({
     headerIcon: <PatternIcon fill="#fff" height={'2rem'} width={'2rem'} />,
   });
@@ -519,9 +517,9 @@ function MesheryPatterns({
     document.body.style.overflowX = 'hidden';
     const visibilityFilter =
       selectedFilters.visibility === 'All' ? null : selectedFilters.visibility;
-    fetchPatterns(page, pageSize, debouncedSearchValue, sortOrder, visibilityFilter);
+    fetchPatterns(page, pageSize, search, sortOrder, visibilityFilter);
     return () => (document.body.style.overflowX = 'auto');
-  }, [page, pageSize, debouncedSearchValue, sortOrder, visibilityFilter]);
+  }, [page, pageSize, search, sortOrder, visibilityFilter]);
 
   useEffect(() => {
     if (viewType === 'grid') {
@@ -548,7 +546,7 @@ function MesheryPatterns({
   const initPatternsSubscription = (
     pageNo = page.toString(),
     pagesize = pageSize.toString(),
-    searchText = debouncedSearchValue,
+    searchText = search,
     order = sortOrder,
   ) => {
     if (disposeConfSubscriptionRef.current) {
@@ -1443,7 +1441,7 @@ function MesheryPatterns({
           initPatternsSubscription(
             page.toString(),
             tableState.rowsPerPage.toString(),
-            debouncedSearchValue,
+            search,
             order,
           );
           setPageSize(tableState.rowsPerPage);
@@ -1474,12 +1472,7 @@ function MesheryPatterns({
             }
           }
           if (order !== sortOrder) {
-            initPatternsSubscription(
-              page.toString(),
-              pageSize.toString(),
-              debouncedSearchValue,
-              order,
-            );
+            initPatternsSubscription(page.toString(), pageSize.toString(), search, order);
             setSortOrder(order);
           }
           break;
@@ -1650,16 +1643,11 @@ function MesheryPatterns({
               <SearchBar
                 onSearch={(value) => {
                   setSearch(value);
-                  initPatternsSubscription(
-                    page.toString(),
-                    pageSize.toString(),
-                    debouncedSearchValue,
-                    sortOrder,
-                  );
                 }}
                 expanded={isSearchExpanded}
                 setExpanded={setIsSearchExpanded}
                 placeholder={`Search ${pageTitle.toLowerCase()}...`}
+                value={search}
               />
               {disableUniversalFilter ? null : (
                 <UniversalFilter

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import TextField from '@mui/material/TextField';
 import { CustomTooltip } from '@layer5/sistent';
 import IconButton from '@mui/material/IconButton';
@@ -6,8 +6,8 @@ import IconButton from '@mui/material/IconButton';
 // import CloseIcon from '@mui/icons-material/Close';
 import { makeStyles } from '@material-ui/core/styles';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
-import debounce from './debounce';
 import { CloseIcon, SearchIcon } from '@layer5/sistent';
+import { useDebounce } from '@/components/hooks/useDebounce';
 
 const useStyles = makeStyles((theme) => ({
   icon: {
@@ -55,16 +55,14 @@ const SearchBar = ({ onSearch, placeholder, expanded, setExpanded, value = '' })
   const searchRef = useRef(null);
   const classes = useStyles();
 
-  const debouncedOnSearch = debounce(onSearch, 500);
-
+  const debouncedValue = useDebounce(searchText, 500);
   const handleSearchChange = (event) => {
-    debouncedOnSearch(event.target.value);
     setSearchText(event.target.value);
   };
 
   const handleClearIconClick = () => {
     setSearchText('');
-    debouncedOnSearch('');
+    onSearch('');
     setExpanded(false);
   };
 
@@ -79,7 +77,9 @@ const SearchBar = ({ onSearch, placeholder, expanded, setExpanded, value = '' })
       }, 300);
     }
   };
-
+  useEffect(() => {
+    onSearch(debouncedValue);
+  }, [debouncedValue]);
   const width = window.innerWidth;
   let searchWidth = '200px';
   if (width <= 750) {
