@@ -130,11 +130,12 @@ mesheryctl system update --skip-reset
 				return err
 			}
 			mesheryImageVersion := currCtx.GetVersion()
+			providerURL := viper.GetString(c.ProviderURLsENV)
 			// If the user skips reset, then just restart the pods else fetch updated manifest files and apply them
 			if !utils.SkipResetFlag {
 
 				// Apply the latest helm chart along with the default image tag specified in the charts "stable-latest"
-				if err = applyHelmCharts(kubeClient, currCtx, mesheryImageVersion, false, meshkitkube.UPGRADE, ""); err != nil {
+				if err = applyHelmCharts(kubeClient, currCtx, mesheryImageVersion, false, meshkitkube.UPGRADE, "", providerURL); err != nil {
 					return errors.Wrap(err, "cannot update Meshery")
 				}
 			}
