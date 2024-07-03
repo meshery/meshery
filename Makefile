@@ -392,7 +392,7 @@ graphql-build: dep-check
 
 ## testing
 test-setup-ui:
-	cd meshmap; npm ci ; npx playwright install --with-deps; cd ..
+	cd ui; npm ci ; npx playwright install --with-deps; cd ..
 
 test-ui:
 	cd ui; npm run test:e2e; cd ..

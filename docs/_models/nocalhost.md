@@ -11,12 +11,12 @@ integrations-subcategory: Application Definition & Image Build
 registrant: Artifact Hub
 components: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Provides local development environments",
+  "Synchronizes code changes to Kubernetes in real-time",
+  "Enables debugging and hot reloading"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Integrates Nocalhost environments"
+howItWorksDetails: "Faster and more efficient development of Kubernetes applications"
 language: en
 list: include
 type: extensibility
