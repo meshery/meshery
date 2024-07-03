@@ -24,7 +24,7 @@ func CreateClient(_ context.Context, meshLocationURL string) (*MeshClient, error
 	// } else {
 	opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	// }
-	conn, err := grpc.Dial(meshLocationURL, opts...)
+	conn, err := grpc.NewClient(meshLocationURL, opts...)
 	if err != nil {
 		return nil, err
 	}
