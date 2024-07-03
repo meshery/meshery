@@ -3,12 +3,18 @@ import {
   withStyles,
   Typography,
   DialogContentText,
-  DialogContent,
   FormControlLabel,
   Checkbox,
 } from '@material-ui/core';
 import theme from '../themes/app';
-import { Box, Modal, ModalButtonPrimary, ModalButtonSecondary, ModalFooter } from '@layer5/sistent';
+import {
+  Box,
+  Modal,
+  ModalBody,
+  ModalButtonPrimary,
+  ModalButtonSecondary,
+  ModalFooter,
+} from '@layer5/sistent';
 import { UsesSistent } from './SistentWrapper';
 
 const styles = (theme) => ({
@@ -123,7 +129,7 @@ class PromptComponent extends React.Component {
         <UsesSistent>
           <Modal open={show} closeModal={this.hide} title={title}>
             {subtitle !== '' && (
-              <DialogContent>
+              <ModalBody>
                 <DialogContentText id="alert-dialog-description" className={classes.subtitle}>
                   <Typography variant="body1">{subtitle}</Typography>
                 </DialogContentText>
@@ -140,7 +146,7 @@ class PromptComponent extends React.Component {
                     label={<span className={classes.checkboxLabelStyle}>Do not show again</span>}
                   />
                 )}
-              </DialogContent>
+              </ModalBody>
             )}
             <ModalFooter variant="filled" helpText={showInfoIcon}>
               <Box style={{ width: '100%', display: 'flex', gap: '1rem', justifyContent: 'end' }}>
