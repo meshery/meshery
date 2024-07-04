@@ -6,7 +6,7 @@ image: /assets/img/integrations/edp-component-operator/icons/color/edp-component
 permalink: extensibility/integrations/edp-component-operator
 docURL: https://docs.meshery.io/extensibility/integrations/edp-component-operator
 description: 
-integrations-category: Automation & Configuration
+integrations-category: Provisioning
 integrations-subcategory: Automation & Configuration
 registrant: Artifact Hub
 components: 
