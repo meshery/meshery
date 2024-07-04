@@ -6,7 +6,7 @@ image: /assets/img/integrations/edp-argocd-operator/icons/color/edp-argocd-opera
 permalink: extensibility/integrations/edp-argocd-operator
 docURL: https://docs.meshery.io/extensibility/integrations/edp-argocd-operator
 description: 
-integrations-category: Automation & Configuration
+integrations-category: Provisioning
 integrations-subcategory: Automation & Configuration
 registrant: Artifact Hub
 components: 
