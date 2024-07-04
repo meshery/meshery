@@ -1643,6 +1643,7 @@ function MesheryPatterns({
               <SearchBar
                 onSearch={(value) => {
                   setSearch(value);
+                  initPatternsSubscription(page.toString(), pageSize.toString(), value, sortOrder);
                 }}
                 expanded={isSearchExpanded}
                 setExpanded={setIsSearchExpanded}
