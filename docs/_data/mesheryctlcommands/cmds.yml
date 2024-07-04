@@ -697,25 +697,20 @@ pattern:
     export:
       name: export
       description: Export a design from Meshery
-      usage: mesheryctl pattern export --id [design-ID]
+      usage: mesheryctl pattern export [pattern-name | ID]
       example: |
         # Export a design with a specific ID
-        mesheryctl pattern export --id [design-ID]
+        mesheryctl pattern export [pattern-name | ID]
 
         # Export a design with a specific ID and type
-        mesheryctl pattern export --id [design-ID] --type [design-type]
+        mesheryctl pattern export -[pattern-name | ID] --type [design-type]
 
         # Export a design and save it to a specific directory
-        mesheryctl pattern export --id [design-ID] --output ./designs
+        mesheryctl pattern export -[pattern-name | ID] --output ./designs
 
         # Export a design with a specific type and save it to a directory
-        mesheryctl pattern export --id [design-ID] --type [design-type] --output ./exports
+        mesheryctl pattern export [pattern-name | ID] --type [design-type] --output ./exports
       flags:
-        id:
-          name: --id, -i
-          description: Specify the design ID to export
-          usage: mesheryctl pattern export --id [design-ID]
-          example: mesheryctl pattern export --id 1234abcd
         type:
           name: --type
           description: Specify the design type to export (default current). Supported types are oci,current,original.
