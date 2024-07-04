@@ -39,6 +39,11 @@ var (
 	outputDir  string
 )
 
+type UserProfile struct {
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
+}
+
 var exportCmd = &cobra.Command{
 	Use:   "export [pattern-name | ID]",
 	Short: "Export a design from Meshery",
@@ -148,7 +153,7 @@ func fetchPatternIDByName(baseUrl, patternName string) (string, error) {
 		return response.Patterns[0].ID.String(), nil
 	}
 
-	selectedPattern := selectPatternPrompt(response.Patterns)
+	selectedPattern := selectPatternPrompt(response.Patterns, baseUrl)
 	return selectedPattern.ID.String(), nil
 }
 
@@ -247,20 +252,101 @@ func writeToFile(outputFilePath string, buf *bytes.Buffer) error {
 	return nil
 }
 
-func selectPatternPrompt(patterns []models.MesheryPattern) models.MesheryPattern {
-	patternNames := make([]string, len(patterns))
+func centerAlign(text string, width int) string {
+	if len(text) >= width {
+		return text
+	}
+	leftPadding := (width - len(text)) / 2
+	rightPadding := width - len(text) - leftPadding
+	return strings.Repeat(" ", leftPadding) + text + strings.Repeat(" ", rightPadding)
+}
+
+func getOwnerName(ownerID string, baseURL string) (string, error) {
+	url := fmt.Sprintf("%s/api/user/profile/%s", baseURL, ownerID)
+	resp, err := makeRequest(http.MethodGet, url)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return "", models.ErrDoRequest(err, resp.Request.Method, url)
+	}
+
+	var userProfile models.User
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", ErrReadFromBody(err)
+	}
+
+	if err := meshkitutils.Unmarshal(string(body), &userProfile); err != nil {
+		return "", err
+	}
+
+	return fmt.Sprintf("%s %s", userProfile.FirstName, userProfile.LastName), nil
+}
+
+func selectPatternPrompt(patterns []models.MesheryPattern, baseURL string) models.MesheryPattern {
+	columns := []string{"Pattern Name", "Created At", "Updated At", "Type", "Owner", "Pattern ID"}
+	widths := []int{20, 20, 20, 20, 20, 10}
+
+	headingParts := make([]string, len(columns))
+	for i, col := range columns {
+		headingParts[i] = centerAlign(col, widths[i])
+	}
+	heading := strings.Join(headingParts, " ")
+
+	patternInfos := make([]string, len(patterns)+1)
+	patternInfos[0] = heading
 	for i, pattern := range patterns {
-		patternNames[i] = fmt.Sprintf("%s, ID: %s", pattern.Name, pattern.ID.String())
+		createdAt := "N/A"
+		updatedAt := "N/A"
+		owner := "N/A"
+
+		if pattern.CreatedAt != nil {
+			createdAt = pattern.CreatedAt.Format("2006-01-02 15:04:05")
+		}
+		if pattern.UpdatedAt != nil {
+			updatedAt = pattern.UpdatedAt.Format("2006-01-02 15:04:05")
+		}
+		if pattern.UserID != nil {
+			ownerName, err := getOwnerName(*pattern.UserID, baseURL)
+			if err == nil {
+				owner = ownerName
+			}
+		}
+		id := pattern.ID.String()
+		lastFourID := id[len(id)-4:]
+
+		rowParts := []string{
+			centerAlign(pattern.Name, widths[0]),
+			centerAlign(createdAt, widths[1]),
+			centerAlign(updatedAt, widths[2]),
+			centerAlign(pattern.Type.String, widths[3]),
+			centerAlign(owner, widths[4]),
+			centerAlign(lastFourID, widths[5]),
+		}
+		patternInfos[i+1] = strings.Join(rowParts, " ")
 	}
 
 	prompt := promptui.Select{
 		Label: "Select a pattern",
-		Items: patternNames,
+		Items: patternInfos,
+		Templates: &promptui.SelectTemplates{
+			Label:    "{{ . }}",
+			Active:   "{{ if eq . \"" + heading + "\" }}{{ . | bold }}{{ else }}{{ . | cyan }}{{ end }}",
+			Inactive: "{{ if eq . \"" + heading + "\" }}{{ . | bold }}{{ else }}{{ . }}{{ end }}",
+			Selected: "{{ if eq . \"" + heading + "\" }}{{ . | bold }}{{ else }}{{ . | green }}{{ end }}",
+		},
+		StartInSearchMode: false,
 	}
 
 	for {
-		if i, _, err := prompt.Run(); err == nil {
-			return patterns[i]
+		i, _, err := prompt.Run()
+		if err == nil {
+			if i == 0 {
+				continue
+			}
+			return patterns[i-1]
 		}
 	}
 }
