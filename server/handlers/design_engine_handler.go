@@ -272,7 +272,7 @@ func _processPattern(
 						key, _ = strings.CutSuffix(k, stages.ProvisionSuffixKey)
 					}
 					if k == stages.DryRunResponseKey {
-						key, _ = strings.CutSuffix(k, stages.DryRunResponseKey)
+						key = k
 					}
 					resp[key] = v
 				}
