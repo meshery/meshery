@@ -10,7 +10,7 @@
    "schemaVersion": "core.meshery.io/v1beta1",
    "version": "v1.0.0",
    "name": "opscenter-core",
-   "displayName": "Opscenter Core",
+   "displayName": "AppsCode Opscenter Core",
    "description": "",
    "status": "ignored",
    "hostID": "00000000-0000-0000-0000-000000000000",
@@ -45,7 +45,6 @@
   "metadata": {
    "capabilities": "",
    "defaultData": "",
-   "genealogy": "",
    "isAnnotation": false,
    "isNamespaced": false,
    "primaryColor": "#00B39F",
@@ -55,7 +54,6 @@
    "status": "ignored",
    "styleOverrides": "",
    "styles": "",
-   "subCategory": "",
    "svgColor": "",
    "svgComplete": "",
    "svgWhite": ""
