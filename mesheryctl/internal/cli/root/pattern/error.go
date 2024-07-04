@@ -33,11 +33,11 @@ const (
 	ErrPatternsNotFoundCode       = "mesheryctl-1037"
 	ErrInvalidPatternFileCode     = "mesheryctl-1038"
 	ErrPatternInvalidNameOrIDCode = "mesheryctl-1039"
-	ErrCopyDataCode               = "replace_me"
-	ErrCreateFileCode             = "replace_me"
-	ErrRetrieveHomeDirCode        = "replace_me"
-	ErrReadFromBodyCode           = "replace_me"
-	ErrMarkFlagRequireCode        = "replace_me"
+	ErrCopyDataCode               = "mesheryctl-1122"
+	ErrCreateFileCode             = "mesheryctl-1123"
+	ErrRetrieveHomeDirCode        = "mesheryctl-1124"
+	ErrReadFromBodyCode           = "mesheryctl-1125"
+	ErrMarkFlagRequireCode        = "mesheryctl-1126"
 )
 
 const (
