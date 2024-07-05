@@ -10,9 +10,9 @@ import {
   Avatar,
   Tooltip,
   Box,
-  DialogTitle,
-  DialogContent,
-  Dialog,
+  // DialogTitle,
+  // DialogContent,
+  // Dialog,
 } from '@material-ui/core';
 import useStyles, {
   ActionContainer,
@@ -40,11 +40,18 @@ import { useGetUserByIdQuery } from '../../../rtk-query/user.js';
 import { ErrorBoundary } from '../../General/ErrorBoundary';
 import { getUnit8ArrayForDesign } from '@/utils/utils';
 import ServiceMesheryIcon from '@/assets/icons/ServiceMesheryIcon';
-import { ModalFooter, ModalButtonPrimary, ModalButtonSecondary } from '@layer5/sistent';
+import {
+  Modal,
+  ModalFooter,
+  ModalButtonPrimary,
+  ModalButtonSecondary,
+  ModalBody,
+} from '@layer5/sistent';
 import TooltipButton from '@/utils/TooltipButton';
 import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
 import { filterEmptyFields } from '@/utils/objects';
+// import theme from '@/themes/app';
 
 const APPLICATION_PLURAL = 'applications';
 const FILTER_PLURAL = 'filters';
@@ -283,30 +290,22 @@ const InfoModal_ = React.memo((props) => {
   };
   return (
     <div style={{ marginBottom: '1rem' }}>
-      <Dialog
+      <Modal
         open={infoModalOpen}
-        onClose={handleInfoModalClose}
-        aria-labelledby="form-dialog-title"
-        style={{ zIndex: 9999 }}
-        className={classes.dialogBox}
+        closeModal={handleInfoModalClose}
+        title={selectedResource?.name}
+        headerIcon={renderIcon()}
+        maxWidth={false}
+        sx={{
+          '& .MuiDialog-container': {
+            '& .MuiPaper-root': {
+              width: '100%',
+              maxWidth: '800px',
+            },
+          },
+        }}
       >
-        <DialogTitle textAlign="center" id="form-dialog-title" className={classes.dialogTitle}>
-          {renderIcon()}
-          <Typography className={classes.textHeader} variant="h6">
-            {selectedResource?.name}
-          </Typography>
-          <IconButton
-            aria-label="close"
-            onClick={handleInfoModalClose}
-            component="button"
-            style={{
-              color: '#FFFFFF',
-            }}
-          >
-            <CloseIcon className={classes.closing} />
-          </IconButton>
-        </DialogTitle>
-        <DialogContent style={{ padding: '1.5rem' }}>
+        <ModalBody>
           <Grid container spacing={2}>
             <Grid item>
               <Button
@@ -415,7 +414,7 @@ const InfoModal_ = React.memo((props) => {
               </Grid>
             </Grid>
           </Grid>
-        </DialogContent>
+        </ModalBody>
         <ModalFooter
           helpText={
             'Upon submitting your catalog item, an approval flow will be initiated. [Learn More](https://docs.meshery.io/concepts/catalog)'
@@ -459,7 +458,7 @@ const InfoModal_ = React.memo((props) => {
             </ModalButtonPrimary>
           </ActionContainer>
         </ModalFooter>
-      </Dialog>
+      </Modal>
     </div>
   );
 });
