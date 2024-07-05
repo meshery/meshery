@@ -985,9 +985,9 @@ function Connections(props) {
     let response = await modalRef.current.show({
       title: `Connection Status Transition`,
       subtitle: `Are you sure that you want to transition the connection status to ${e.target.value.toUpperCase()}?`,
-      options: ['Confirm', 'No'],
+      options: ['Confirm', 'Cancel'],
       showInfoIcon: `Learn more about the [lifecycle of connections and the behavior of state transitions](https://docs.meshery.io/concepts/logical/connections) in Meshery Docs.`,
-      variant: PROMPT_VARIANTS.CONFIRMATION,
+      // variant: PROMPT_VARIANTS.CONFIRMATION,
     });
     if (response === 'Confirm') {
       const requestBody = JSON.stringify({
@@ -1002,7 +1002,7 @@ function Connections(props) {
       let response = await modalRef.current.show({
         title: `Delete Connection`,
         subtitle: `Are you sure that you want to delete the connection?`,
-        options: ['Delete', 'No'],
+        options: ['Delete', 'Cancel'],
         showInfoIcon: `Learn more about the [lifecycle of connections and the behavior of state transitions](https://docs.meshery.io/concepts/logical/connections) in Meshery Docs.`,
         variant: PROMPT_VARIANTS.DANGER,
       });
@@ -1020,7 +1020,7 @@ function Connections(props) {
       let response = await modalRef.current.show({
         title: `Delete Connections`,
         subtitle: `Are you sure that you want to delete the connections?`,
-        options: ['Delete', 'No'],
+        options: ['Delete', 'Cancel'],
         showInfoIcon: `Learn more about the [lifecycle of connections and the behavior of state transitions](https://docs.meshery.io/concepts/logical/connections) in Meshery Docs.`,
         variant: PROMPT_VARIANTS.DANGER,
       });

@@ -694,7 +694,34 @@ pattern:
           description: Type of source file (ex. manifest / compose / helm)
           usage: mesheryctl pattern import -f [file/URL] --source-type [manifest/compose/helm]
           example: mesheryctl pattern import -f "bookInfo.yaml" --source-type manifest
+    export:
+      name: export
+      description: Export a design from Meshery
+      usage: mesheryctl pattern export [pattern-name | ID]
+      example: |
+        # Export a design with a specific ID
+        mesheryctl pattern export [pattern-name | ID]
 
+        # Export a design with a specific ID and type
+        mesheryctl pattern export -[pattern-name | ID] --type [design-type]
+
+        # Export a design and save it to a specific directory
+        mesheryctl pattern export -[pattern-name | ID] --output ./designs
+
+        # Export a design with a specific type and save it to a directory
+        mesheryctl pattern export [pattern-name | ID] --type [design-type] --output ./exports
+      flags:
+        type:
+          name: --type
+          description: Specify the design type to export (default current). Supported types are oci,current,original.
+          usage: mesheryctl pattern export --type [design-type]
+          example: mesheryctl pattern export --type oci
+        output:
+          name: --output, -o
+          description: Specify the output directory to save the design
+          usage: mesheryctl pattern export --output [directory-path]
+          example: mesheryctl pattern export --output ./exports
+          
     offboard:
       name: offboard
       description: Offboard application
@@ -918,6 +945,176 @@ components:
           example: mesheryctl components view --save "bookInfo.yaml" --output-format yaml
 
 exp:
-  name: exp
-  description: Experimental features
-  usage: mesheryctl exp [command] [flags]
+  components:
+    name: components
+    description: View list of components and detail of components
+    usage: mesheryctl exp components [command] [flags]
+    flags: 
+      count:
+        name: --count
+        description: (optional) Get the number of exp components in total
+      help:
+        name: --help, -h
+        description: help for exp components
+        usage: mesheryctl exp components --help
+        example: mesheryctl exp components --help
+    subcommands:
+      list:
+        name: list
+        description: list all components registered in Meshery Server
+        usage: mesheryctl exp components list [flags]
+        flags:
+          page:
+            name: -p, --page
+            description: "(optional) List next set of exp components list with --page (default = 1) (default 1)."
+            usage: mesheryctl exp components list --page [page number]
+            example: mesheryctl exp components list --page 2
+      search:
+        name: search
+        description: search components registered in Meshery Server
+        usage: mesheryctl exp components search [query-text]
+      view:
+        name: view
+        description: view a component registered in Meshery Server
+        usage: mesheryctl exp components view [component-name]
+        flags:
+          output-format:
+            name: -o, --output-format
+            description: (optional) format to display in [json|yaml] (default "yaml")
+  connections:
+    name: connections
+    description: Manage connections
+    usage: mesheryctl exp connections [command] [flags]
+    flags: 
+      help:
+        name: --help, -h
+        description: help for exp connections
+        usage: mesheryctl exp connections --help
+        example: mesheryctl exp connections --help
+    subcommands:
+      delete:
+        name: delete
+        description: delete a connection
+        usage: mesheryctl exp connections delete [connection_id]
+      list:
+        name: list
+        description: list all the connections
+        usage: mesheryctl exp connections list [flags]
+        flags:
+          page:
+            name: -p, --page
+            description: "(optional) List next set of exp connections list with --page (default = 1) (default 1)."
+            usage: mesheryctl exp connections list --page [page number]
+            example: mesheryctl exp connections list --page 2
+          count:
+            name: --count
+            description: (optional) Get the number of exp connections in total
+  environment:
+    name: environment
+    description: View list of environments and detail of environments
+    usage: mesheryctl exp environment [command] [flags]
+    flags: 
+    subcommands:
+      create:
+        name: create
+        description: create a new environments by providing the name and description of the environment
+        usage: mesheryctl exp environment create [flags] 
+        example: mesheryctl
+        flags:
+          description:
+            name: -d, --description
+            description: description of the environment
+          name:
+            name: --name, -n
+            description: (optional) name of the environment
+          org:
+            name: -o, --orgId
+            description: organization id
+            usage: mesheryctl exp environment create --orgID [orgID] --name [name] --description [description]
+      delete:
+        name: delete
+        description: delete a new environments by providing the name and description of the environment
+        usage: mesheryctl exp environment delete [environmentId]
+      list:
+        name: list
+        description: list name of all registered environments
+        usage: mesheryctl exp environment list [flags]
+        flags:
+          org:
+            name: -o, --orgId
+            description: organization id
+            usage: mesheryctl exp environment list --orgID [orgId]
+      view:
+        name: view
+        description: view a environments registered in Meshery Server
+        usage: mesheryctl exp environment view [flags] 
+        flags:
+          output-format:
+            name: -o, --output-format
+            description: (optional) format to display in [json|yaml] (default "yaml")
+          save:
+            name: -s, --save
+            description: (optional) save output as a JSON/YAML file
+            usage: mesheryctl exp environment view --output-format [json|yaml] --save [filepath]
+            example: mesheryctl exp environment view --save "bookInfo.yaml" --output-format yaml
+  relationship:
+    name: relationship
+    description: View list of relationships and details of relationship
+    usage: mesheryctl exp relationship [command] [flags]
+    flags: 
+    subcommands:
+      generate:
+        name: generate
+        description: generate relationships docs from the google spreadsheets
+        usage: mesheryctl exp relationship generate [flags]
+        flags:
+          sheet:
+            name: -s, --sheetId
+            description: google sheet id
+      list:
+        name: list
+        description: list all relationships registered in Meshery Server
+        usage: mesheryctl exp relationship list [flags]
+        flags:
+          page:
+            name: -p, --page
+            description: "(optional) List next set of exp relationship list with --page (default = 1) (default 1)."
+            usage: mesheryctl exp relationship list --page [page number]
+            example: mesheryctl exp relationship list --page 2
+      view:
+        name: view 
+        description: view a relationship queried by the model name
+        usage: mesheryctl exp relationship view [flags]
+        flags:
+          output-format:
+            name: -o, --output-format
+            description: (optional) format to display in [json|yaml] (default "yaml")
+  workspace:
+    name: workspace
+    description: View list of workspaces and detail of workspaces
+    usage: mesheryctl exp workspace [command] [flags]
+    flags: 
+    subcommands:
+      create:
+        name: create
+        description: create a new workspace by providing the name, description, and organization ID
+        usage: mesheryctl exp workspace create [flags]
+        flags:
+          description:
+            name: -d, --description
+            description: description of the workspace
+          name:
+            name: -n, --name
+            description: name of the workspace
+          org:
+            name: -o, --orgId
+            description: organization id
+            usage: mesheryctl exp workspace create --orgId [orgId] --name [name] --description [description]
+      list:
+        name: list
+        description: list name of all registered workspaces
+        usage: mesheryctl exp workspace list [flags]
+        flags:
+          org:
+            name: -o, -orgId
+            description: organization id
