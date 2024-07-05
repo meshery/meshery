@@ -1375,6 +1375,31 @@ func prettifyCompDefSchema(entities []entity.Entity) []v1beta1.ComponentDefiniti
 	return comps
 }
 func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+	ociImage := r.FormValue("oci")
+	if ociImage != "" {
+		err := processOCIImage([]byte(ociImage), h)
+		if err != nil {
+			http.Error(rw, fmt.Sprintf("Error processing OCI image: %v", err), http.StatusInternalServerError)
+			return
+		}
+		rw.WriteHeader(http.StatusOK)
+		rw.Write([]byte("OCI image processed successfully"))
+		return
+	}
+
+	dirPath := r.FormValue("dir")
+	if dirPath != "" {
+		err := processDirectory([]byte(dirPath), h)
+		if err != nil {
+			http.Error(rw, fmt.Sprintf("Error processing directory: %v", err), http.StatusInternalServerError)
+			return
+		}
+
+		rw.WriteHeader(http.StatusOK)
+		rw.Write([]byte("Directory processed successfully"))
+		return
+	}
+
 	file, _, err := r.FormFile("file")
 	if err != nil {
 		http.Error(rw, "Error retrieving file", http.StatusBadRequest)
@@ -1382,53 +1407,69 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 	}
 	defer file.Close()
 
+	fileContent, err := io.ReadAll(file)
+	if err != nil {
+		http.Error(rw, "Error reading file", http.StatusInternalServerError)
+		return
+	}
+
+	err = processFileContent(fileContent, h)
+	if err != nil {
+		http.Error(rw, fmt.Sprintf("Error processing file: %v", err), http.StatusInternalServerError)
+		return
+	}
+
+	rw.WriteHeader(http.StatusOK)
+	rw.Write([]byte("File uploaded and processed successfully"))
+}
+
+func processDirectory(data []byte, h *Handler) error {
 	tempFile, err := os.CreateTemp("", "upload-*.tar.gz")
 	if err != nil {
-		http.Error(rw, "Error creating temporary file", http.StatusInternalServerError)
-		return
+		return fmt.Errorf("Error creating temporary file: %v", err)
 	}
 	defer os.Remove(tempFile.Name())
 
-	_, err = io.Copy(tempFile, file)
+	_, err = tempFile.Write(data)
 	if err != nil {
-		http.Error(rw, "Error saving file", http.StatusInternalServerError)
-		return
+		return fmt.Errorf("Error writing to temporary file: %v", err)
 	}
 
+	return processUploadedFile(tempFile.Name(), h)
+}
+
+func processUploadedFile(filePath string, h *Handler) error {
 	tempDir, err := os.MkdirTemp("", "extracted-")
 	if err != nil {
-		http.Error(rw, "Error creating temporary directory", http.StatusInternalServerError)
-		return
+		return fmt.Errorf("Error creating temporary directory: %v", err)
 	}
 	defer os.RemoveAll(tempDir)
 
-	err = extractFile(tempFile.Name(), tempDir)
+	err = extractFile(filePath, tempDir)
 	if err != nil {
-		http.Error(rw, "Error extracting file", http.StatusInternalServerError)
-		return
+		return fmt.Errorf("Error extracting file: %v", err)
 	}
-
 	err = filepath.Walk(tempDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
 		if !info.IsDir() {
 			if meshkitutils.IsYaml(path) {
-				return processFile(path, h)
+				fmt.Println(path)
+				content, err := os.ReadFile(path)
+				if err != nil {
+					return err
+				}
+				return processFileContent(content, h)
 			}
 			if meshkitutils.IsTarGz(path) || meshkitutils.IsZip(path) {
-				return extractFile(path, filepath.Dir(path))
+				return processUploadedFile(path, h)
 			}
 		}
 		return nil
 	})
 
-	if err != nil {
-		http.Error(rw, "Error processing files", http.StatusInternalServerError)
-		return
-	}
-	rw.WriteHeader(http.StatusOK)
-	rw.Write([]byte("File uploaded and extracted successfully"))
+	return err
 }
 
 func extractFile(filePath string, destDir string) error {
@@ -1440,26 +1481,7 @@ func extractFile(filePath string, destDir string) error {
 	return fmt.Errorf("unsupported file type for extraction: %s", filePath)
 }
 
-func processFile(filePath string, h *Handler) error {
-	file, err := os.Open(filePath)
-	if err != nil {
-		return fmt.Errorf("error opening file: %v", err)
-	}
-	defer file.Close()
-
-	content, err := io.ReadAll(file)
-	if err != nil {
-		return err
-	}
-
-	if meshkitutils.IsYaml(filePath) {
-		return processJSON(content, h)
-	}
-
-	return fmt.Errorf("unsupported file type: %s", filePath)
-}
-
-func processJSON(content []byte, h *Handler) error {
+func processFileContent(content []byte, h *Handler) error {
 	var tempMap map[string]interface{}
 	if err := json.Unmarshal(content, &tempMap); err != nil {
 		return fmt.Errorf("error unmarshalling JSON content: %w", err)
@@ -1484,11 +1506,13 @@ func processJSON(content []byte, h *Handler) error {
 			if components, ok := tempMap["components"]; ok && components == nil {
 				return nil
 			}
+
 			if _, ok := tempMap["component"].(map[string]interface{})["kind"].(string); ok {
 				var comp v1beta1.ComponentDefinition
 				if err := json.Unmarshal(content, &comp); err != nil {
 					return fmt.Errorf("error unmarshalling JSON content to ComponentDefinition: %w", err)
 				}
+				utils.WriteSVGsOnFileSystem(&comp)
 				if comp.Model.Registrant.Hostname != "" {
 					isRegistrantError, isModelError, err := h.registryManager.RegisterEntity(v1beta1.Host{
 						Hostname: comp.Model.Registrant.Hostname,
@@ -1504,4 +1528,19 @@ func processJSON(content []byte, h *Handler) error {
 	}
 
 	return fmt.Errorf("error unmarshalling JSON content: unknown type")
+}
+
+func processOCIImage(data []byte, h *Handler) error {
+	tempFile, err := os.CreateTemp("", "upload-*.oci.tar.gz")
+	if err != nil {
+		return fmt.Errorf("Error creating temporary file: %v", err)
+	}
+	defer os.Remove(tempFile.Name())
+
+	_, err = tempFile.Write(data)
+	if err != nil {
+		return fmt.Errorf("Error writing to temporary file: %v", err)
+	}
+
+	return processUploadedFile(tempFile.Name(), h)
 }
