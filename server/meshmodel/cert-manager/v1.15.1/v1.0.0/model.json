@@ -3,7 +3,7 @@
   "schemaVersion": "core.meshery.io/v1beta1",
   "version": "v1.0.0",
   "name": "cert-manager",
-  "displayName": "Cert-Manager",
+  "displayName": "cert-manager",
   "description": "",
   "status": "ignored",
   "hostID": "00000000-0000-0000-0000-000000000000",
