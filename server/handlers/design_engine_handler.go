@@ -23,7 +23,6 @@ import (
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 	meshkube "github.com/layer5io/meshkit/utils/kubernetes"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -108,6 +107,8 @@ func (h *Handler) PatternFileHandler(
 		return
 	}
 
+	queryParams := r.URL.Query()
+
 	response, err := _processPattern(
 		r.Context(),
 		provider,
@@ -115,9 +116,10 @@ func (h *Handler) PatternFileHandler(
 		prefObj,
 		user.ID,
 		isDel,
-		r.URL.Query().Get("verify") == "true",
+		queryParams.Get("verify") == "true",
 		isDryRun,
-		r.URL.Query().Get("skipCRD") == "true",
+		queryParams.Get("skipCRD") == "true",
+		queryParams.Get("upgrade") == "true",
 		viper.GetBool("DEBUG"),
 		h.registryManager,
 		h.config.EventBroadcaster,
@@ -147,10 +149,11 @@ func (h *Handler) PatternFileHandler(
 	}
 
 	serverURL, _ := r.Context().Value(models.MesheryServerURL).(string)
-	
+
 	if action == "deploy" {
 		viewLink := fmt.Sprintf("%s/extension/meshmap?mode=visualize&design=%s", serverURL, patternID)
-		description = fmt.Sprintf("%s. View deployed design %s", description, viewLink)
+		description = fmt.Sprintf("%s.", description)
+		metadata["view_link"] = viewLink
 	}
 
 	event := eventBuilder.WithSeverity(events.Success).WithDescription(description).WithMetadata(metadata).Build()
@@ -166,17 +169,6 @@ func (h *Handler) PatternFileHandler(
 	ec := json.NewEncoder(rw)
 	_ = ec.Encode(response)
 }
-func mergeMsgs(msgs []string) string {
-	var finalMsgs []string
-
-	for _, msg := range msgs {
-		if msg != "" {
-			finalMsgs = append(finalMsgs, msg)
-		}
-	}
-
-	return strings.Join(finalMsgs, "\n")
-}
 
 func _processPattern(
 	ctx context.Context,
@@ -184,10 +176,11 @@ func _processPattern(
 	pattern core.Pattern,
 	prefObj *models.Preference,
 	userID string,
-	isDelete bool,
-	validate bool,
-	dryRun bool,
-	skipCrdAndOperator bool,
+	isDelete,
+	validate,
+	dryRun,
+	skipCrdAndOperator,
+	upgradeExistingRelease,
 	skipPrintLogs bool,
 	registry *meshmodel.RegistryManager,
 	ec *models.Broadcast,
@@ -243,13 +236,14 @@ func _processPattern(
 			registry:   registry,
 			// kubeconfig:    kubecfg,
 			// kubecontext:   mk8scontext,
-			skipPrintLogs:      skipPrintLogs,
-			skipCrdAndOperator: skipCrdAndOperator,
-			ctxTokubeconfig:    ctxToconfig,
-			accumulatedMsgs:    []string{},
-			err:                nil,
-			eventsChannel:      ec,
-			patternName:        strings.ToLower(pattern.Name),
+			skipPrintLogs:          skipPrintLogs,
+			skipCrdAndOperator:     skipCrdAndOperator,
+			upgradeExistingRelease: upgradeExistingRelease,
+			ctxTokubeconfig:        ctxToconfig,
+			accumulatedMsgs:        []string{},
+			err:                    nil,
+			eventsChannel:          ec,
+			patternName:            strings.ToLower(pattern.Name),
 		}
 		chain := stages.CreateChain()
 		chain.
@@ -266,24 +260,21 @@ func _processPattern(
 		}
 		if !dryRun {
 			chain.
-				Add(stages.Provision(sip, sap)).
-				Add(stages.Persist(sip, sap))
+				Add(stages.Provision(sip, sap, sap.log)).
+				Add(stages.Persist(sip, sap, sap.log))
 		}
 		chain.
 			Add(func(data *stages.Data, err error, next stages.ChainStageNextFunction) {
 				data.Lock.Lock()
 				for k, v := range data.Other {
+					var key string
 					if strings.HasSuffix(k, stages.ProvisionSuffixKey) {
-						msg, ok := v.(string)
-						if ok {
-							sap.accumulatedMsgs = append(sap.accumulatedMsgs, msg)
-						}
+						key, _ = strings.CutSuffix(k, stages.ProvisionSuffixKey)
 					}
 					if k == stages.DryRunResponseKey {
-						if v != nil {
-							resp["dryRunResponse"] = v
-						}
+						key = k
 					}
+					resp[key] = v
 				}
 				data.Lock.Unlock()
 				sap.err = err
@@ -292,7 +283,6 @@ func _processPattern(
 				Pattern: &pattern,
 				Other:   map[string]interface{}{},
 			})
-		resp["messages"] = mergeMsgs(sap.accumulatedMsgs)
 		return resp, sap.err
 	}
 	return internal(k8scontexts)
@@ -342,13 +332,14 @@ type serviceActionProvider struct {
 	userID          string
 	// kubeconfig  []byte
 	// kubecontext     *models.K8sContext
-	skipCrdAndOperator bool
-	skipPrintLogs      bool
-	accumulatedMsgs    []string
-	err                error
-	eventsChannel      *models.Broadcast
-	registry           *meshmodel.RegistryManager
-	patternName        string
+	skipCrdAndOperator     bool
+	upgradeExistingRelease bool
+	skipPrintLogs          bool
+	accumulatedMsgs        []string
+	err                    error
+	eventsChannel          *models.Broadcast
+	registry               *meshmodel.RegistryManager
+	patternName            string
 }
 
 func (sap *serviceActionProvider) GetRegistry() *meshmodel.RegistryManager {
@@ -362,7 +353,7 @@ func (sap *serviceActionProvider) Log(msg string) {
 }
 func (sap *serviceActionProvider) Terminate(err error) {
 	if !sap.skipPrintLogs {
-		logrus.Error(err)
+		sap.log.Error(err)
 	}
 	sap.err = err
 }
@@ -488,16 +479,16 @@ func getComponentFieldPathFromK8sFieldPath(path string) (newpath string) {
 	return fmt.Sprintf("%s.%s", "settings", path)
 }
 
-func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) (string, error) { // Marshal the component
+func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) ([]patterns.DeploymentMessagePerContext, error) { // Marshal the component
 	jsonComp, err := json.Marshal(ccp.Component)
 	if err != nil {
-		return "", fmt.Errorf("failed to serialize the data: %s", err)
+		return nil, fmt.Errorf("failed to serialize the data: %s", err)
 	}
 
 	// Marshal the configuration
 	jsonConfig, err := json.Marshal(ccp.Configuration)
 	if err != nil {
-		return "", fmt.Errorf("failed to serialize the data: %s", err)
+		return nil, fmt.Errorf("failed to serialize the data: %s", err)
 	}
 
 	for host := range ccp.Hosts {
@@ -505,7 +496,7 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) (string, 
 		// creation issue: https://github.com/layer5io/meshery-adapter-library/issues/32
 		time.Sleep(50 * time.Microsecond)
 
-		logrus.Debugf("Adapter to execute operations on: %s", host.Hostname)
+		sap.log.Debug("Adapter to execute operations on: ", host.Hostname)
 
 		// Local call
 		if host.Port == 0 {
@@ -514,7 +505,7 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) (string, 
 			for _, v := range sap.ctxTokubeconfig {
 				kconfigs = append(kconfigs, v)
 			}
-			resp, err := patterns.ProcessOAM(
+			resp, err := patterns.Process(
 				kconfigs,
 				[]string{string(jsonComp)},
 				string(jsonConfig),
@@ -525,6 +516,7 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) (string, 
 				sap.provider,
 				host.IHost,
 				sap.skipCrdAndOperator,
+				sap.upgradeExistingRelease,
 			)
 			return resp, err
 		}
@@ -538,7 +530,7 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) (string, 
 			addr,
 		)
 		if err != nil {
-			return "", fmt.Errorf("error creating a mesh client: %v", err)
+			return nil, fmt.Errorf("error creating a mesh client: %v", err)
 		}
 		defer func() {
 			_ = mClient.Close()
@@ -570,11 +562,28 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) (string, 
 			OamConfig:   string(jsonConfig),
 			KubeConfigs: kconfigs,
 		})
-
-		return resp.GetMessage(), err
+		sucess := err == nil
+		return []patterns.DeploymentMessagePerContext{
+			{
+				SystemName: host.Hostname,
+				Location:   fmt.Sprintf("%s:%s", host.Hostname, strconv.Itoa(host.Port)),
+				Summary: []patterns.DeploymentMessagePerComp{
+					{
+						Kind:       ccp.Component.Kind,
+						Model:      ccp.Component.Spec.Model,
+						CompName:   ccp.Component.Name,
+						DesignName: sap.patternName,
+						Success:    sucess,
+						Message:    resp.GetMessage(),
+						Error:      err,
+					},
+				},
+			},
+		}, err
 	}
 
-	return "", nil
+	// send error for no hosts found for the component
+	return nil, nil
 }
 
 func (sap *serviceActionProvider) Persist(name string, svc core.Service, isUpdate bool) error {

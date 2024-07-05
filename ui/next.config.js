@@ -9,6 +9,7 @@ const nextConfig = removeImports({
     return {
       '/404': { page: '/404' },
       '/configuration/filters': { page: '/configuration/filters' },
+      '/configuration/catalog': { page: '/configuration/catalog' },
       '/configuration/designs': { page: '/configuration/designs' },
       '/configuration/designs/configurator': { page: '/configuration/designs/configurator' },
       '/extension/[...component]': { page: '/extension/[...component]' },
@@ -50,3 +51,4 @@ const nextConfig = removeImports({
 })
 
 module.exports = nextConfig
+

@@ -592,7 +592,7 @@ const MesheryTreeView = ({
       ) : (
         <div
           className="scrollElement"
-          style={{ overflowY: 'auto', height: '27rem' }}
+          style={{ overflowY: 'auto', height: '55vh' }}
           onScroll={handleScroll(type)}
         >
           {treeComponent}

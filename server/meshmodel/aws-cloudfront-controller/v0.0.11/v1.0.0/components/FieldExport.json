@@ -18,10 +18,10 @@
     "hostname": "github"
    },
    "category": {
-    "name": "App Definition and Development",
+    "name": "Cloud Native Network",
     "metadata": null
    },
-   "subCategory": "Service Proxy",
+   "subCategory": "Content Delivery Network",
    "metadata": {
     "capabilities": "",
     "defaultData": "",

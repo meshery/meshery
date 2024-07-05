@@ -32,10 +32,11 @@ export const designsApi = api
           selectedK8sContexts,
           verify = false,
           dryRun = false,
+          skipCRD = false,
         }) => ({
           url: `${ctxUrl('pattern/deploy', selectedK8sContexts)}${verify ? '&verify=true' : ''}${
             dryRun ? '&dryRun=true' : ''
-          }`,
+          }${skipCRD ? '&skipCRD=true' : ''}`,
           method: 'POST',
           body: {
             pattern_file,

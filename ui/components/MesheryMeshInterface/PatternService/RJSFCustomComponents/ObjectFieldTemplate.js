@@ -36,7 +36,7 @@ const getRawErrors = (errorSchema) => {
   if (!errorSchema) return [];
   const errors = [];
   Object.keys(errorSchema).forEach((key) => {
-    if (errorSchema[key]?.__errors) {
+    if (errorSchema?.[key]?.__errors) {
       errors.push(...errorSchema[key].__errors);
     }
   });

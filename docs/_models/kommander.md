@@ -187,12 +187,12 @@ components:
   whiteIcon: assets/img/integrations/kommander/components/replica-scheduling-preference/icons/white/replica-scheduling-preference-white.svg
   description: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Simplifies management of multiple clusters",
+  "Provides a unified control plane",
+  "Centralized policy and configuration management"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Integrates Kommander clusters"
+howItWorksDetails: "Streamlined multi-cluster management and governance"
 language: en
 list: include
 type: extensibility

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ability } from '../utils/can';
 import { useLazyGetUserKeysQuery } from './userKeys';
+import _ from 'lodash';
 
 export const useGetUserAbilities = (org, skip) => {
   const [data, setData] = useState(null);
@@ -16,7 +17,7 @@ export const useGetUserAbilities = (org, skip) => {
       .then((res) => {
         const abilities = res.keys?.map((key) => ({
           action: key.id,
-          subject: key.function,
+          subject: _.lowerCase(key.function),
         }));
 
         setData({

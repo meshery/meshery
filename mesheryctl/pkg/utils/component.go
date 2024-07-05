@@ -179,7 +179,7 @@ func (mch *ComponentCSVHelper) ParseComponentsSheet() error {
 	}
 }
 
-func CreateComponentsMetadataAndCreateSVGsForMDXStyle(components []ComponentCSV, path, svgDir string) (string, error) {
+func CreateComponentsMetadataAndCreateSVGsForMDXStyle(model ModelCSV, components []ComponentCSV, path, svgDir string) (string, error) {
 	err := os.MkdirAll(filepath.Join(path, svgDir), 0777)
 	if err != nil {
 		return "", err
@@ -217,11 +217,12 @@ func CreateComponentsMetadataAndCreateSVGsForMDXStyle(components []ComponentCSV,
 			return "", err
 		}
 
-		err = utils.WriteToFile(filepath.Join(path, colorIconDir, compName+"-color.svg"), comp.SVGColor)
+		colorSVG, whiteSVG := getSVGForComponent(model, comp)
+		err = utils.WriteToFile(filepath.Join(path, colorIconDir, compName+"-color.svg"), colorSVG)
 		if err != nil {
 			return "", err
 		}
-		err = utils.WriteToFile(filepath.Join(path, whiteIconDir, compName+"-white.svg"), comp.SVGWhite)
+		err = utils.WriteToFile(filepath.Join(path, whiteIconDir, compName+"-white.svg"), whiteSVG)
 		if err != nil {
 			return "", err
 		}
@@ -232,7 +233,7 @@ func CreateComponentsMetadataAndCreateSVGsForMDXStyle(components []ComponentCSV,
 	return componentMetadata, nil
 }
 
-func CreateComponentsMetadataAndCreateSVGsForMDStyle(components []ComponentCSV, path, svgDir string) (string, error) {
+func CreateComponentsMetadataAndCreateSVGsForMDStyle(model ModelCSV, components []ComponentCSV, path, svgDir string) (string, error) {
 	err := os.MkdirAll(filepath.Join(path), 0777)
 	if err != nil {
 		return "", err
@@ -263,11 +264,12 @@ func CreateComponentsMetadataAndCreateSVGsForMDStyle(components []ComponentCSV, 
 			return "", err
 		}
 
-		err = utils.WriteToFile(filepath.Join(path, compName, "icons", "color", compName+"-color.svg"), comp.SVGColor)
+		colorSVG, whiteSVG := getSVGForComponent(model, comp)
+		err = utils.WriteToFile(filepath.Join(path, compName, "icons", "color", compName+"-color.svg"), colorSVG)
 		if err != nil {
 			return "", err
 		}
-		err = utils.WriteToFile(filepath.Join(path, compName, "icons", "white", compName+"-white.svg"), comp.SVGWhite)
+		err = utils.WriteToFile(filepath.Join(path, compName, "icons", "white", compName+"-white.svg"), whiteSVG)
 		if err != nil {
 			return "", err
 		}
@@ -296,4 +298,18 @@ func ConvertCompDefToCompCSV(modelcsv *ModelCSV, compDef v1beta1.ComponentDefini
 	compCSV.SubCategory = modelcsv.SubCategory
 
 	return &compCSV
+}
+
+func getSVGForComponent(model ModelCSV, component ComponentCSV) (colorSVG string, whiteSVG string) {
+	colorSVG = component.SVGColor
+	whiteSVG = component.SVGWhite
+
+	if colorSVG == "" {
+		colorSVG = model.SVGColor
+	}
+
+	if whiteSVG == "" {
+		whiteSVG = model.SVGWhite
+	}
+	return
 }

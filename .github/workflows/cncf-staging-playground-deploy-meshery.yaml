@@ -1,0 +1,19 @@
+name: Staging Playground CNCF - Deploy
+on:
+  workflow_call:
+  workflow_dispatch:
+jobs:
+    cncf-staging-playground-rollout:
+        name: Update Meshery on CNCF staging playground
+        if: github.repository == 'meshery/meshery'
+        runs-on: ubuntu-latest 
+        steps:
+        - name: Upgrade Meshery Helm Release
+          uses: appleboy/ssh-action@v1.0.3
+          with:
+              host: ${{ secrets.METAL_SERVER3 }}
+              username: root
+              key: ${{ secrets.METAL_SSH_KEY }}
+              script: |
+                mesheryctl system channel set edge
+                PROVIDER_BASE_URLS="https://staging-meshery.layer5.io" mesheryctl system update
