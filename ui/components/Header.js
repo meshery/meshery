@@ -74,13 +74,11 @@ const styles = (theme) => ({
   appBarOnDrawerOpen: {
     backgroundColor: theme.palette.secondary.mainBackground,
     shadowColor: ' #808080',
-    zIndex: 1100,
     [theme.breakpoints.between(635, 732)]: { padding: theme.spacing(0.75, 1.4) },
     [theme.breakpoints.between(600, 635)]: { padding: theme.spacing(0.4, 1.4) },
   },
   appBarOnDrawerClosed: {
     backgroundColor: theme.palette.secondary.mainBackground,
-    zIndex: 1100,
   },
   toolbarOnDrawerClosed: {
     minHeight: 59,
