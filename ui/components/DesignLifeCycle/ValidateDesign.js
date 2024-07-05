@@ -36,8 +36,7 @@ const styles = (theme) => {
       paddingBlock: theme.spacing(1),
       marginInline: theme.spacing(0.5),
       overflow: 'hidden',
-      textOverflow: 'ellipsis',
-      whiteSpace: 'nowrap',
+      whiteSpace: 'wrap',
     },
 
     componentLabel: {
