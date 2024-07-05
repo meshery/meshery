@@ -3,7 +3,10 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strconv"
 
 	"github.com/gofrs/uuid"
@@ -13,9 +16,13 @@ import (
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshkit/models/events"
+	meshkitutils "github.com/layer5io/meshkit/utils"
+
+	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha2"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	"github.com/layer5io/meshkit/models/meshmodel/entity"
 	"github.com/layer5io/meshkit/models/meshmodel/registry"
+
 	regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
 )
 
@@ -1366,4 +1373,135 @@ func prettifyCompDefSchema(entities []entity.Entity) []v1beta1.ComponentDefiniti
 		}
 	}
 	return comps
+}
+func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+	file, _, err := r.FormFile("file")
+	if err != nil {
+		http.Error(rw, "Error retrieving file", http.StatusBadRequest)
+		return
+	}
+	defer file.Close()
+
+	tempFile, err := os.CreateTemp("", "upload-*.tar.gz")
+	if err != nil {
+		http.Error(rw, "Error creating temporary file", http.StatusInternalServerError)
+		return
+	}
+	defer os.Remove(tempFile.Name())
+
+	_, err = io.Copy(tempFile, file)
+	if err != nil {
+		http.Error(rw, "Error saving file", http.StatusInternalServerError)
+		return
+	}
+
+	tempDir, err := os.MkdirTemp("", "extracted-")
+	if err != nil {
+		http.Error(rw, "Error creating temporary directory", http.StatusInternalServerError)
+		return
+	}
+	defer os.RemoveAll(tempDir)
+
+	err = extractFile(tempFile.Name(), tempDir)
+	if err != nil {
+		http.Error(rw, "Error extracting file", http.StatusInternalServerError)
+		return
+	}
+
+	err = filepath.Walk(tempDir, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if !info.IsDir() {
+			if meshkitutils.IsYaml(path) {
+				return processFile(path, h)
+			}
+			if meshkitutils.IsTarGz(path) || meshkitutils.IsZip(path) {
+				return extractFile(path, filepath.Dir(path))
+			}
+		}
+		return nil
+	})
+
+	if err != nil {
+		http.Error(rw, "Error processing files", http.StatusInternalServerError)
+		return
+	}
+	rw.WriteHeader(http.StatusOK)
+	rw.Write([]byte("File uploaded and extracted successfully"))
+}
+
+func extractFile(filePath string, destDir string) error {
+	if meshkitutils.IsTarGz(filePath) {
+		return meshkitutils.ExtractTarGz(destDir, filePath)
+	} else if meshkitutils.IsZip(filePath) {
+		return meshkitutils.ExtractZip(destDir, filePath)
+	}
+	return fmt.Errorf("unsupported file type for extraction: %s", filePath)
+}
+
+func processFile(filePath string, h *Handler) error {
+	file, err := os.Open(filePath)
+	if err != nil {
+		return fmt.Errorf("error opening file: %v", err)
+	}
+	defer file.Close()
+
+	content, err := io.ReadAll(file)
+	if err != nil {
+		return err
+	}
+
+	if meshkitutils.IsYaml(filePath) {
+		return processJSON(content, h)
+	}
+
+	return fmt.Errorf("unsupported file type: %s", filePath)
+}
+
+func processJSON(content []byte, h *Handler) error {
+	var tempMap map[string]interface{}
+	if err := json.Unmarshal(content, &tempMap); err != nil {
+		return fmt.Errorf("error unmarshalling JSON content: %w", err)
+	}
+
+	if schemaVersion, ok := tempMap["schemaVersion"].(string); ok {
+		switch schemaVersion {
+		case "relationships.meshery.io/v1alpha2":
+			var rel v1alpha2.RelationshipDefinition
+			if err := json.Unmarshal(content, &rel); err != nil {
+				return fmt.Errorf("error unmarshalling JSON content to RelationshipDefinition: %w", err)
+			}
+			_, _, err := h.registryManager.RegisterEntity(v1beta1.Host{
+				Hostname: rel.Model.Registrant.Hostname,
+			}, &rel)
+			if err != nil {
+				return err
+			}
+			h.log.Info("Relationship registered successfully")
+			return nil
+		case "core.meshery.io/v1beta1":
+			if components, ok := tempMap["components"]; ok && components == nil {
+				return nil
+			}
+			if _, ok := tempMap["component"].(map[string]interface{})["kind"].(string); ok {
+				var comp v1beta1.ComponentDefinition
+				if err := json.Unmarshal(content, &comp); err != nil {
+					return fmt.Errorf("error unmarshalling JSON content to ComponentDefinition: %w", err)
+				}
+				if comp.Model.Registrant.Hostname != "" {
+					isRegistrantError, isModelError, err := h.registryManager.RegisterEntity(v1beta1.Host{
+						Hostname: comp.Model.Registrant.Hostname,
+					}, &comp)
+					if err != nil {
+						return fmt.Errorf("isRegistrantError: %v, isModelError: %v, error: %w", isRegistrantError, isModelError, err)
+					}
+					h.log.Info("Component registered successfully")
+					return nil
+				}
+			}
+		}
+	}
+
+	return fmt.Errorf("error unmarshalling JSON content: unknown type")
 }
