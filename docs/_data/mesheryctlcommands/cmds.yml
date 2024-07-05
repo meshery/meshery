@@ -694,7 +694,34 @@ pattern:
           description: Type of source file (ex. manifest / compose / helm)
           usage: mesheryctl pattern import -f [file/URL] --source-type [manifest/compose/helm]
           example: mesheryctl pattern import -f "bookInfo.yaml" --source-type manifest
+    export:
+      name: export
+      description: Export a design from Meshery
+      usage: mesheryctl pattern export [pattern-name | ID]
+      example: |
+        # Export a design with a specific ID
+        mesheryctl pattern export [pattern-name | ID]
 
+        # Export a design with a specific ID and type
+        mesheryctl pattern export -[pattern-name | ID] --type [design-type]
+
+        # Export a design and save it to a specific directory
+        mesheryctl pattern export -[pattern-name | ID] --output ./designs
+
+        # Export a design with a specific type and save it to a directory
+        mesheryctl pattern export [pattern-name | ID] --type [design-type] --output ./exports
+      flags:
+        type:
+          name: --type
+          description: Specify the design type to export (default current). Supported types are oci,current,original.
+          usage: mesheryctl pattern export --type [design-type]
+          example: mesheryctl pattern export --type oci
+        output:
+          name: --output, -o
+          description: Specify the output directory to save the design
+          usage: mesheryctl pattern export --output [directory-path]
+          example: mesheryctl pattern export --output ./exports
+          
     offboard:
       name: offboard
       description: Offboard application
