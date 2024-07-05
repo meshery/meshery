@@ -62,7 +62,6 @@ var importModelCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		fmt.Println(filePath)
 		if filePath == "" && dirPath == "" && ociImage == "" {
 			return fmt.Errorf("either file path, directory, or OCI image is required")
 		}

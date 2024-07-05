@@ -1383,7 +1383,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 			return
 		}
 		rw.WriteHeader(http.StatusOK)
-		rw.Write([]byte("OCI image processed successfully"))
+		_, _ = rw.Write([]byte("OCI image processed successfully"))
 		return
 	}
 
@@ -1396,7 +1396,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		}
 
 		rw.WriteHeader(http.StatusOK)
-		rw.Write([]byte("Directory processed successfully"))
+		_, _ = rw.Write([]byte("Directory processed successfully"))
 		return
 	}
 
@@ -1420,7 +1420,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 	}
 
 	rw.WriteHeader(http.StatusOK)
-	rw.Write([]byte("File uploaded and processed successfully"))
+	_, _ = rw.Write([]byte("File uploaded and processed successfully"))
 }
 
 func processDirectory(data []byte, h *Handler) error {
