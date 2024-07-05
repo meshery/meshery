@@ -279,6 +279,8 @@ func formatError(msg string, cmd cmdType) string {
 		return formatUsageDetails(msg, patternUsageURL)
 	case cmdPatternView:
 		return formatUsageDetails(msg, patternViewURL)
+	case cmdPatternExport:
+		return formatUsageDetails(msg, patternExportURL)
 	case cmdContextDelete:
 		return formatUsageDetails(msg, contextDeleteURL)
 	case cmdContextCreate:
