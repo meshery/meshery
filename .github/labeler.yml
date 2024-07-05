@@ -54,3 +54,7 @@ playground:
 - changed-files:
   - any-glob-to-any-file:
     - "install/playground/**/*"
+opa:
+- changed-files:
+  - any-glob-to-any-file:
+    - "*.rego"
