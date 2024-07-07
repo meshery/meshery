@@ -7,7 +7,7 @@ permalink: extensibility/integrations/kyverno
 docURL: https://docs.meshery.io/extensibility/integrations/kyverno
 description: 
 integrations-category: Provisioning
-integrations-subcategory: Security & Compliance
+integrations-subcategory: Provisioning
 registrant: GitHub
 components: 
 featureList: [
