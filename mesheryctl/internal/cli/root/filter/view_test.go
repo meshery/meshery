@@ -51,6 +51,15 @@ func TestViewCmd(t *testing.T) {
 			ExpectError:      false,
 		},
 		{
+			Name:             "View Multi-word Filter",
+			Args:             []string{"view", "Multi", "Word", "Filter"},
+			ExpectedResponse: "view.multiword.filter.output.golden",
+			Fixture:          "view.multiword.filter.api.response.golden",
+			URL:              testContext.BaseURL + "/api/filter?search=Multi%20Word%20Filter",
+			Token:            filepath.Join(fixturesDir, "token.golden"),
+			ExpectError:      false,
+		},
+		{
 			Name:             "Fetch Kuma Filter View with ID",
 			Args:             []string{"view", "957fbc9b-a655-4892-823d-375102a9587c"},
 			ExpectedResponse: "view.id.filter.output.golden",

@@ -1,0 +1,21 @@
+{
+  "page": 0,
+  "page_size": 10,
+  "total_count": 1,
+  "filters": [
+    {
+      "id": "a1b2c3d4-e5f6-4a5b-9c8d-1e2f3a4b5c6d",
+      "name": "Multi Word Filter",
+      "user_id": "24187768-ce8a-41f0-be74-c537c8e41adc",
+      "filter_file": "name: Multi Word Filter\r\nversion: Rollouts-2.4.0\r\n...",
+      "location": {
+        "branch": "",
+        "host": "",
+        "path": "",
+        "type": "local"
+      },
+      "created_at": "2023-07-15T10:30:00.123456Z",
+      "updated_at": "2023-07-15T10:30:00.123456Z"
+    }
+  ]
+}
