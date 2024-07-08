@@ -19,6 +19,7 @@ var exportModal = &cobra.Command{
 // Export a model by name
 mesheryctl model export <modelname> -o json
 mesheryctl model export <modelname> -o yaml
+mesheryctl model export <modelname> -l /home/meshery/
 mesheryctl model export <modelname> --include-components true --include-relationships true
     `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
@@ -42,11 +43,11 @@ mesheryctl model export <modelname> --include-components true --include-relation
 		return nil
 	},
 	Args: func(_ *cobra.Command, args []string) error {
-			const errMsg = "Usage: mesheryctl model export [model-name]\nRun 'mesheryctl model export --help' to see detailed help message"
-			if len(args) == 0 {
-				return utils.ErrInvalidArgument(errors.New("Please provide a model name. " + errMsg))
-			}
-			return nil
+		const errMsg = "Usage: mesheryctl model export [model-name]\nRun 'mesheryctl model export --help' to see detailed help message"
+		if len(args) == 0 {
+			return utils.ErrInvalidArgument(errors.New("Please provide a model name. " + errMsg))
+		}
+		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
@@ -55,7 +56,7 @@ mesheryctl model export <modelname> --include-components true --include-relation
 		}
 		baseUrl := mctlCfg.GetBaseMesheryURL()
 		modelName := args[0]
-		url := fmt.Sprintf("%s/api/meshmodels/models/%s?components=%t&relationships=%t&%s", baseUrl, modelName, includeCompsFlag, includeRelsFlag ,utils.GetPageQueryParameter(cmd, pageNumberFlag))
+		url := fmt.Sprintf("%s/api/meshmodels/models/%s?components=%t&relationships=%t&%s", baseUrl, modelName, includeCompsFlag, includeRelsFlag, utils.GetPageQueryParameter(cmd, pageNumberFlag))
 		return exportModel(args[0], cmd, url, false)
 	},
 }

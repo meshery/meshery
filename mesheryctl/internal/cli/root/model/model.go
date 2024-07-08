@@ -40,6 +40,8 @@ var (
 	// flag used to specify format of output of view {model-name} command
 	outFormatFlag string
 
+	// flag used to specify output location of export {model-name} command
+	outLocationFlag string
 	// flag used to specify format of output of export {model-name} command
 	outTypeFlag string
 	// flag used to specify whether to include components in the model
@@ -142,6 +144,7 @@ func init() {
 	listModelCmd.Flags().IntVarP(&pageNumberFlag, "page", "p", 1, "(optional) List next set of models with --page (default = 1)")
 	viewModelCmd.Flags().StringVarP(&outFormatFlag, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
 
+	exportModal.Flags().StringVarP(&outTypeFlag, "output-location", "l", "./", "(optional) output location (default = current directory)")
 	exportModal.Flags().StringVarP(&outTypeFlag, "output-type", "o", "yaml", "(optional) format to display in [json|yaml] (default = yaml)")
 	exportModal.Flags().BoolVarP(&includeCompsFlag, "include-components", "c", false, "whether to include components in the model definition (default = false)")
 	exportModal.Flags().BoolVarP(&includeRelsFlag, "include-relationships", "r", false, "whether to include components in the model definition (default = false)")
@@ -279,7 +282,7 @@ func exportModel(modelName string, cmd *cobra.Command, url string, displayCountO
 
 	resp, err := utils.MakeRequest(req)
 	if err != nil {
-		utils.Log.Error(fmt.Errorf("Could not reach meshery server: %s", err))
+		utils.Log.Error(err)
 		return err
 	}
 
@@ -288,26 +291,25 @@ func exportModel(modelName string, cmd *cobra.Command, url string, displayCountO
 
 	data, err := io.ReadAll(resp.Body)
 	if err != nil {
-		utils.Log.Error(fmt.Errorf("Invalid response from meshery server: %s", err))
+		utils.Log.Error(err)
 		return err
 	}
 
 	modelsResponse := &models.MeshmodelsAPIResponse{}
 	err = json.Unmarshal(data, modelsResponse)
 	if err != nil {
-		utils.Log.Error(fmt.Errorf("Invalid response from meshery server: %s", err))
+		utils.Log.Error(err)
 		return err
 	}
 	model := modelsResponse.Models[0]
 	// Convert it to the required output type and write it
-	if(outTypeFlag == "yaml"){
-		err = model.WriteModelDefinition(filepath.Join("./", modelName), "yaml")
+	if outTypeFlag == "yaml" {
+		err = model.WriteModelDefinition(filepath.Join(outLocationFlag, modelName), "yaml")
 	}
-	if(outTypeFlag == "json"){
-		err = model.WriteModelDefinition(filepath.Join("./", modelName), "json")
+	if outTypeFlag == "json" {
+		err = model.WriteModelDefinition(filepath.Join(outLocationFlag, modelName), "json")
 	}
 	if err != nil {
-		utils.Log.Error(fmt.Errorf("Could not write model file: %s", err))
 		utils.Log.Error(err)
 		return err
 	}
