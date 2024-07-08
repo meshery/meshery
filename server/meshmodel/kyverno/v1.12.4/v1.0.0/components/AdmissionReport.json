@@ -12,7 +12,7 @@
    "name": "kyverno",
    "displayName": "Kyverno",
    "description": "",
-   "status": "ignored",
+   "status": "enabled",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "registrant": {
     "hostname": "github"
@@ -52,7 +52,7 @@
    "secondaryColor": "#e77e5b",
    "shape": "shield",
    "shapePolygonPoints": "",
-   "status": "ignored",
+   "status": "enabled",
    "styleOverrides": "",
    "styles": "",
    "subCategory": "",
