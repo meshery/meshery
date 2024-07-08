@@ -19,6 +19,7 @@ import ExpandAllIcon from '@/assets/icons/ExpandAll';
 import CircularProgress from '@mui/material/CircularProgress';
 import { Colors } from '../../themes/app';
 import { JustifyAndAlignCenter } from './MeshModel.style';
+import { styled } from '@mui/styles';
 
 const ComponentTree = ({
   expanded,
@@ -364,6 +365,12 @@ const useRegistryRouter = () => {
   };
 };
 
+const MesheryTreeViewWrapper = styled('div')(() => ({
+  width: '100%',
+  height: '100%',
+  display: 'flex',
+  flexDirection: 'column',
+}));
 const MesheryTreeView = ({
   data,
   view,
@@ -603,7 +610,7 @@ const MesheryTreeView = ({
   );
 
   return (
-    <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
+    <MesheryTreeViewWrapper>
       {view === MODELS &&
         renderTree(
           <MesheryTreeViewModel
@@ -656,7 +663,7 @@ const MesheryTreeView = ({
           />,
           RELATIONSHIPS,
         )}
-    </div>
+    </MesheryTreeViewWrapper>
   );
 };
 
