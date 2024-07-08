@@ -6,7 +6,7 @@
         "description": "A relationship that defines whether a component can be a parent of other components. It is read like: `from` can be a child of `to`, where from and to are any components that match the from and to selectors respectively"
     },
     "model": {
-        "schemaVersion": "core.meshery.io/v1beta1",
+        "schemaVersion": "models.meshery.io/v1beta1",
         "version": "v1.0.0",
         "name": "kubernetes",
         "model": {
@@ -40,16 +40,16 @@
                     }
                 ],
                 "to": [
-                        {
-                            "kind": "Node",
-                            "model": "kubernetes"
-                        }
-                    ]
-                },
-                "deny": {
-                    "from": [],
-                    "to": []
-                }
+                    {
+                        "kind": "Node",
+                        "model": "kubernetes"
+                    }
+                ]
+            },
+            "deny": {
+                "from": [],
+                "to": []
             }
-        ]
-    }
+        }
+    ]
+}
