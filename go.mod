@@ -6,6 +6,7 @@ replace (
 	github.com/docker/cli => github.com/docker/cli v23.0.6+incompatible
 	github.com/docker/docker => github.com/docker/docker v23.0.6+incompatible
 	github.com/kubernetes/kompose => github.com/meshery/kompose v1.26.2-0.20230425025309-3bb778d54007
+
 	k8s.io/client-go => k8s.io/client-go v0.28.3
 	k8s.io/kubectl => k8s.io/kubectl v0.28.3
 	oras.land/oras-go v1.2.4 => oras.land/oras-go v1.2.3
@@ -333,4 +334,3 @@ require (
 	sigs.k8s.io/kustomize/kyaml v0.14.3-0.20230601165947-6ce0bf390ce3 // indirect
 	sigs.k8s.io/structured-merge-diff/v4 v4.4.1 // indirect
 	sigs.k8s.io/yaml v1.4.0 // indirect
-)
