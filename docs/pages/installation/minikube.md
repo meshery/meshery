@@ -5,7 +5,7 @@ permalink: installation/kubernetes/minikube
 type: installation
 category: kubernetes
 redirect_from:
-- installation/platforms/minikube
+  - installation/platforms/minikube
 display-title: "false"
 language: en
 list: include
@@ -52,7 +52,7 @@ Read through the following considerations prior to deploying Meshery on Minikube
 ### Preflight: Cluster Connectivity
 
 Start the minikube, if not started using the following command:
-{% capture code_content %}minikube start --cpus 4 --memory 8192 --kubernetes-version=v1.14.1{% endcapture %}
+{% capture code_content %}minikube start --cpus 4 --memory 8192{% endcapture %}
 {% include code.html code=code_content %}
 Check up on your minikube cluster :
 {% capture code_content %}minikube status{% endcapture %}
@@ -64,7 +64,7 @@ Verify your kubeconfig's current context.
 ### Preflight: Plan your access to Meshery UI
 
 1. If you are using port-forwarding, please refer to the [port-forwarding]({{ site.baseurl }}/reference/mesheryctl/system/dashboard) guide for detailed instructions.
-2. Customize your Meshery Provider Callback URL. Meshery Server supports customizing authentication flow callback URL, which can be configured in the following way:
+2. Optionally, customize your Meshery Provider Callback URL. Meshery Server supports customizing authentication flow callback URL, which can be configured in the following way:
 
 {% capture code_content %}$ MESHERY_SERVER_CALLBACK_URL=https://custom-host mesheryctl system start{% endcapture %}
 {% include code.html code=code_content %}
@@ -77,6 +77,8 @@ Use Meshery's CLI to streamline your connection to your Minikube cluster. Config
 
 {% capture code_content %}$ mesheryctl system config minikube{% endcapture %}
 {% include code.html code=code_content %}
+
+Note: The kube config created by minikube is minified and starting meshery will fail with tls issues. Please run this command to flatten the kube config file: `kubectl config view --minify --flatten > ~/.kube/config-2 && rm .kube/config && mv .kube/config-2 .kube/config`
 
 Once configured, execute the following command to start Meshery.
 
