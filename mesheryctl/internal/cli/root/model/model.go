@@ -6,7 +6,7 @@
 //
 //     http://www.apache.org/licenses/LICENSE-2.0
 //
-// Unless required by applicable law or agreed to in writing, software
+// Unless required by a, filepath.Dir(${1:}modelDefPathpplicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
@@ -27,6 +27,7 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
+	"github.com/layer5io/meshkit/models/oci"
 	"github.com/manifoldco/promptui"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
@@ -144,7 +145,7 @@ func init() {
 	listModelCmd.Flags().IntVarP(&pageNumberFlag, "page", "p", 1, "(optional) List next set of models with --page (default = 1)")
 	viewModelCmd.Flags().StringVarP(&outFormatFlag, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
 
-	exportModal.Flags().StringVarP(&outTypeFlag, "output-location", "l", "./", "(optional) output location (default = current directory)")
+	exportModal.Flags().StringVarP(&outLocationFlag, "output-location", "l", "./", "(optional) output location (default = current directory)")
 	exportModal.Flags().StringVarP(&outTypeFlag, "output-type", "o", "yaml", "(optional) format to display in [json|yaml] (default = yaml)")
 	exportModal.Flags().BoolVarP(&includeCompsFlag, "include-components", "c", false, "whether to include components in the model definition (default = false)")
 	exportModal.Flags().BoolVarP(&includeRelsFlag, "include-relationships", "r", false, "whether to include components in the model definition (default = false)")
@@ -304,10 +305,23 @@ func exportModel(modelName string, cmd *cobra.Command, url string, displayCountO
 	model := modelsResponse.Models[0]
 	// Convert it to the required output type and write it
 	if outTypeFlag == "yaml" {
-		err = model.WriteModelDefinition(filepath.Join(outLocationFlag, modelName), "yaml")
+		err = model.WriteModelDefinition(filepath.Join(outLocationFlag, modelName, "model.yaml"), "yaml")
 	}
 	if outTypeFlag == "json" {
-		err = model.WriteModelDefinition(filepath.Join(outLocationFlag, modelName), "json")
+		err = model.WriteModelDefinition(filepath.Join(outLocationFlag, modelName, "model.json"), "json")
+	}
+	if outTypeFlag == "oci" {
+		// write model as yaml temporarily
+		modelDir := filepath.Join(outLocationFlag, modelName)
+		err = model.WriteModelDefinition(filepath.Join(modelDir, "model.yaml"), "yaml")
+		// build oci image for the model
+		img, err := oci.BuildImage(modelDir)
+		if err != nil {
+			utils.Log.Error(err)
+			return err
+		}
+		oci.SaveOCIArtifact(img, outLocationFlag+modelName+".tar", modelName)
+		os.RemoveAll(modelDir)
 	}
 	if err != nil {
 		utils.Log.Error(err)
