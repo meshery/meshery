@@ -408,7 +408,7 @@ func createVersionedDirectoryForModelAndComp(version, modelName string) (string,
 
 func writeModelDefToFileSystem(model *utils.ModelCSV, version, modelDefPath string) (*v1beta1.Model, error) {
 	modelDef := model.CreateModelDefinition(version, defVersion)
-	err := modelDef.WriteModelDefinition(modelDefPath)
+	err := modelDef.WriteModelDefinition(modelDefPath, "json")
 	if err != nil {
 		return nil, err
 	}
