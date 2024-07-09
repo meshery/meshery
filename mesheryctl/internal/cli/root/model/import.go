@@ -3,31 +3,30 @@ package model
 import (
 	"bytes"
 	"compress/gzip"
+	"errors"
 	"fmt"
 	"io"
 	"mime/multipart"
 	"net/http"
 	"os"
 	"path/filepath"
-	"strings"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/layer5io/meshery/server/handlers"
 	"github.com/layer5io/meshery/server/models"
 	meshkitutils "github.com/layer5io/meshkit/utils"
 	"github.com/spf13/cobra"
-	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 )
 
 var importModelCmd = &cobra.Command{
 	Use:   "import",
 	Short: "import models from mesheryctl command",
-	Long:  "import model by specifying the directory, file, or OCI image. Use 'import model --file [filepath]' or 'import model --dir [directory]' or 'import model --oci [image]' to import models and register them to Meshery.",
+	Long:  "import model by specifying the directory, file. Use 'import model [filepath]' or 'import model  [directory]'.",
 	Example: `
-	import model --file /path/to/[file.yaml|file.json]
-	import model --dir /path/to/models
-	import model --oci docker://example.com/repo:tag
+	import model  /path/to/[file.yaml|file.json]
+	import model  /path/to/models
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		// Check prerequisites
@@ -49,67 +48,63 @@ var importModelCmd = &cobra.Command{
 		}
 		return nil
 	},
+	Args: func(_ *cobra.Command, args []string) error {
+		const errMsg = "Usage: mesheryctl model import [ file | filePath ]\nRun 'mesheryctl model import --help' to see detailed help message"
+		if len(args) == 0 {
+			return fmt.Errorf("[ file | filepath ] isn't specified\n\n%v", errMsg)
+		} else if len(args) > 1 {
+			return fmt.Errorf("too many arguments\n\n%v", errMsg)
+		}
+		return nil
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		filePath, err := cmd.Flags().GetString("file")
+		path := args[0]
+		fileInfo, err := os.Stat(path)
 		if err != nil {
+			utils.Log.Error(meshkitutils.ErrReadDir(err, path))
 			return err
 		}
-		dirPath, err := cmd.Flags().GetString("dir")
-		if err != nil {
-			return err
-		}
-		ociImage, err := cmd.Flags().GetString("oci")
-		if err != nil {
-			return err
-		}
-		if filePath == "" && dirPath == "" && ociImage == "" {
-			return fmt.Errorf("either file path, directory, or OCI image is required")
-		}
-
-		if filePath != "" {
-			if meshkitutils.IsYaml(filePath) {
-				fileData, err := os.ReadFile(filePath)
-				if err != nil {
-					return err
-				}
-				fmt.Println("isyaml")
-				err = sendToAPI(fileData, filePath, "file")
-				if err != nil {
-					return err
-				}
-			} else if meshkitutils.IsTarGz(filePath) || meshkitutils.IsZip(filePath) {
-				fileData, err := os.ReadFile(filePath)
-				if err != nil {
-					return err
-				}
-				err = sendToAPI(fileData, filePath, "dir")
-				if err != nil {
-					return err
-				}
-			} else {
-				return fmt.Errorf("unsupported file type: %s", filePath)
-			}
-		}
-
-		if dirPath != "" {
-			tarData, err := compressDirectory(dirPath)
+		if fileInfo.IsDir() {
+			tarData, err := compressDirectory(path)
 			if err != nil {
 				return err
 			}
-			fileName := filepath.Base(dirPath) + ".tar.gz"
+			fileName := filepath.Base(path) + ".tar.gz"
 			err = sendToAPI(tarData, fileName, "dir")
 			if err != nil {
+				utils.Log.Error(err)
 				return err
 			}
-		}
-
-		if ociImage != "" {
-			err := sendToAPI([]byte(ociImage), ociImage, "oci")
-			if err != nil {
-				return err
+		} else {
+			if meshkitutils.IsYaml(path) {
+				fileData, err := os.ReadFile(path)
+				if err != nil {
+					utils.Log.Error(meshkitutils.ErrReadFile(err, path))
+					return nil
+				}
+				err = sendToAPI(fileData, path, "file")
+				if err != nil {
+					utils.Log.Error(err)
+					return nil
+				}
+			} else if meshkitutils.IsTarGz(path) || meshkitutils.IsZip(path) {
+				fileData, err := os.ReadFile(path)
+				if err != nil {
+					err = meshkitutils.ErrReadFile(err, path)
+					utils.Log.Error(err)
+					return nil
+				}
+				err = sendToAPI(fileData, path, "dir")
+				if err != nil {
+					utils.Log.Error(err)
+					return nil
+				}
+			} else {
+				err = utils.ErrInvalidFile(errors.New("invalid file format"))
+				utils.Log.Error(err)
+				return nil
 			}
 		}
-
 		return nil
 	},
 }
@@ -120,7 +115,7 @@ func compressDirectory(dirpath string) ([]byte, error) {
 
 	err := filepath.Walk(dirpath, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
-			return err
+			return meshkitutils.ErrFileWalkDir(err, path)
 		}
 
 		if info.IsDir() {
@@ -129,18 +124,18 @@ func compressDirectory(dirpath string) ([]byte, error) {
 
 		file, err := os.Open(path)
 		if err != nil {
-			return err
+			return handlers.ErrOpenFile(path)
 		}
 		defer file.Close()
 
 		fileData, err := io.ReadAll(file)
 		if err != nil {
-			return err
+			return meshkitutils.ErrReadFile(err, path)
 		}
 
 		relPath, err := filepath.Rel(filepath.Dir(dirpath), path)
 		if err != nil {
-			return err
+			return meshkitutils.ErrRelPath(err, path)
 		}
 
 		if err := tw.Compress(relPath, fileData); err != nil {
@@ -158,10 +153,10 @@ func compressDirectory(dirpath string) ([]byte, error) {
 	gzipWriter := gzip.NewWriter(&buf)
 	_, err = io.Copy(gzipWriter, tw.Buffer)
 	if err != nil {
-		return nil, err
+		return nil, meshkitutils.ErrCopyFile(err)
 	}
 	if err := gzipWriter.Close(); err != nil {
-		return nil, err
+		return nil, meshkitutils.ErrCloseFile(err)
 	}
 
 	return buf.Bytes(), nil
@@ -170,69 +165,54 @@ func compressDirectory(dirpath string) ([]byte, error) {
 func sendToAPI(data []byte, name string, dataType string) error {
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
-		utils.Log.Error(err)
 		return err
 	}
 
 	baseURL := mctlCfg.GetBaseMesheryURL()
-	url := baseURL + "/api/meshmodels/registers"
-	fmt.Println(url)
+	url := baseURL + "/api/meshmodels/register"
 	var b bytes.Buffer
 	writer := multipart.NewWriter(&b)
 
 	var formFile io.Writer
 	if dataType == "file" {
 		formFile, err = writer.CreateFormFile("file", filepath.Base(name))
-	} else if dataType == "oci" {
-		formFile, err = writer.CreateFormField("oci")
 	} else {
 		formFile, err = writer.CreateFormField("dir")
 	}
-
 	if err != nil {
-		utils.Log.Error(fmt.Errorf("failed to create form field: %w", err))
-		return err
-	}
 
+	}
 	_, err = formFile.Write(data)
 	if err != nil {
-		utils.Log.Error(fmt.Errorf("failed to write data to form field: %w", err))
+		err = meshkitutils.ErrWriteFile(err, name)
 		return err
 	}
 
-	err = writer.Close()
-	if err != nil {
-		utils.Log.Error(fmt.Errorf("failed to close writer: %w", err))
-		return err
-	}
+	_ = writer.Close()
 
 	req, err := utils.NewRequest(http.MethodPost, url, &b)
 	if err != nil {
-		utils.Log.Error(fmt.Errorf("failed to create request: %w", err))
 		return err
 	}
 	req.Header.Set("Content-Type", writer.FormDataContentType())
 	resp, err := utils.MakeRequest(req)
 	if err != nil {
-		utils.Log.Error(fmt.Errorf("failed to send request: %w", err))
 		return err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		err = models.ErrDoRequest(err, resp.Request.Method, url)
-		utils.Log.Error(err)
 		return err
 	}
+	bodyBytes, err := io.ReadAll(resp.Body)
+	if err != nil {
+		err = models.ErrDataRead(err, "response body")
+		return err
+	}
+
+	bodyString := string(bodyBytes)
+	utils.Log.Info(bodyString)
 	utils.Log.Info("Models imported successfully")
 	return nil
-}
-
-func init() {
-	importModelCmd.Flags().SetNormalizeFunc(func(f *pflag.FlagSet, name string) pflag.NormalizedName {
-		return pflag.NormalizedName(strings.ToLower(name))
-	})
-	importModelCmd.Flags().StringP("file", "f", "", "Filepath to the tar.gz file containing models")
-	importModelCmd.Flags().StringP("dir", "d", "", "Directory containing models to be tar.gz")
-	importModelCmd.Flags().StringP("oci", "o", "", "OCI image containing models")
 }
