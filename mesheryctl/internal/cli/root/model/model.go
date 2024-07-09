@@ -45,7 +45,7 @@ var (
 	// Color for the whiteboard printer
 	whiteBoardPrinter = color.New(color.FgHiBlack, color.BgWhite, color.Bold)
 
-	availableSubcommands = []*cobra.Command{listModelCmd, viewModelCmd, searchModelCmd}
+	availableSubcommands = []*cobra.Command{listModelCmd, viewModelCmd, searchModelCmd, importModelCmd}
 
 	countFlag bool
 )
