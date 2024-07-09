@@ -903,6 +903,13 @@ model:
         output-format:
           name: -o, --output-format
           description: (optional) format to display in [json|yaml] (default "yaml")
+    import:
+      name: import
+      description: Import models using a file or filepath directly to the meshery registry
+      usage: mesheryctl model import [ file | filepath ]
+      examples:
+         - import model /path/to/[file.yaml|file.json]
+         - import model /path/to/models
 
 components:
   name: components
