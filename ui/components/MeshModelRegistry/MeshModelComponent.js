@@ -358,7 +358,7 @@ const MeshModelComponent_ = ({
                 display: 'flex',
                 alignItems: resourcesDetail.length === 0 ? 'center' : '',
                 justifyContent: resourcesDetail.length === 0 ? 'center' : '',
-                padding: '0.6rem 0.6rem 0rem 0.6rem',
+                padding: '0.6rem',
                 overflow: 'hidden',
               }}
             >

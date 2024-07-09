@@ -130,6 +130,14 @@ components:
   colorIcon: assets/img/integrations/vault-config-operator/components/azure-auth-engine-role/icons/color/azure-auth-engine-role-color.svg
   whiteIcon: assets/img/integrations/vault-config-operator/components/azure-auth-engine-role/icons/white/azure-auth-engine-role-white.svg
   description: 
+- name: azure-secret-engine-config
+  colorIcon: assets/img/integrations/vault-config-operator/components/azure-secret-engine-config/icons/color/azure-secret-engine-config-color.svg
+  whiteIcon: assets/img/integrations/vault-config-operator/components/azure-secret-engine-config/icons/white/azure-secret-engine-config-white.svg
+  description: 
+- name: gcp-auth-engine-config
+  colorIcon: assets/img/integrations/vault-config-operator/components/gcp-auth-engine-config/icons/color/gcp-auth-engine-config-color.svg
+  whiteIcon: assets/img/integrations/vault-config-operator/components/gcp-auth-engine-config/icons/white/gcp-auth-engine-config-white.svg
+  description: 
 featureList: [
   "Automates Vault configuration management",
   "Simplifies secret management",

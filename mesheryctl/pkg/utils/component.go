@@ -49,7 +49,7 @@ type ComponentCSV struct {
 func (c *ComponentCSV) CreateComponentDefinition(isModelPublished bool, defVersion string) (v1beta1.ComponentDefinition, error) {
 	componentDefinition := &v1beta1.ComponentDefinition{
 		VersionMeta: v1beta1.VersionMeta{
-			SchemaVersion: v1beta1.SchemaVersion,
+			SchemaVersion: v1beta1.ComponentSchemaVersion,
 			Version:       defVersion,
 		},
 		DisplayName: c.Component,

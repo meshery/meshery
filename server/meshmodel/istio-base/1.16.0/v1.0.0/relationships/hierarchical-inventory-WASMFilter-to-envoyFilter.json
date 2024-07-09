@@ -1,71 +1,73 @@
 {
-   "schemaVersion": "relationships.meshery.io/v1alpha2",
+  "schemaVersion": "relationships.meshery.io/v1alpha2",
+  "version": "v1.0.0",
+  "kind": "Hierarchical",
+  "metadata": {
+    "description": "A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component."
+  },
+  "model": {
+    "schemaVersion": "models.meshery.io/v1beta1",
     "version": "v1.0.0",
-    "kind": "Hierarchical",
-    "metadata": {
-      "description": "A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component."
-    },
+    "name": "istio-base",
     "model": {
-      "schemaVersion": "core.meshery.io/v1beta1",
-      "version": "v1.0.0",
-      "name": "istio-base",
-      "model": {
-        "version": "v1.16.0"
-      },
-      "displayName": "Istio",
-      "category": {
-        "name": "Cloud Native Network",
-        "metadata": null
-      },
-      "metadata": {}
+      "version": "v1.16.0"
     },
-"subType": "Inventory",
-"evaluationQuery": "hierarchical_inventory_relationship",
-"selectors": [
+    "displayName": "Istio",
+    "category": {
+      "name": "Cloud Native Network",
+      "metadata": null
+    },
+    "metadata": {}
+  },
+  "subType": "Inventory",
+  "evaluationQuery": "hierarchical_inventory_relationship",
+  "selectors": [
     {
-"allow": {
-    "from": [
-      {
-        "kind": "WASMFilter",
-        "model": "istio-base",
-        "patch": {
-          "patchStrategy": "replace",
-          "mutatorRef": [
-            [
-              "settings",
-              "config"
-            ],
-            [
-              "settings",
-              "wasm-filter"
-            ]
-          ],
-          "description": "WASM filter configuration to be applied to Envoy Filter."
-        }
+      "allow": {
+        "from": [
+          {
+            "kind": "WASMFilter",
+            "model": "istio-base",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  "settings",
+                  "config"
+                ],
+                [
+                  "settings",
+                  "wasm-filter"
+                ]
+              ],
+              "description": "WASM filter configuration to be applied to Envoy Filter."
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "EnvoyFilter",
+            "model": "istio-base",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "settings",
+                  "configPatches",
+                  "_",
+                  "patch",
+                  "value"
+                ]
+              ],
+              "description": "Receive the WASM filter configuration."
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
       }
-    ],
-    "to": [
-      {
-        "kind": "EnvoyFilter",
-        "model": "istio-base",
-        "patch": {
-          "patchStrategy": "replace",
-          "mutatedRef": [
-            [
-              "settings",
-              "configPatches",
-              "_",
-              "patch",
-              "value"
-            ]
-          ],
-          "description": "Receive the WASM filter configuration."
-        }
-      }
-    ]
-},
-"deny": {
-  "from": [],
-  "to": []
-}}]
+    }
+  ]
 }
