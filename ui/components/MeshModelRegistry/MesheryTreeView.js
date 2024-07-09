@@ -19,6 +19,7 @@ import ExpandAllIcon from '@/assets/icons/ExpandAll';
 import CircularProgress from '@mui/material/CircularProgress';
 import { Colors } from '../../themes/app';
 import { JustifyAndAlignCenter } from './MeshModel.style';
+import { styled } from '@mui/styles';
 
 const ComponentTree = ({
   expanded,
@@ -364,6 +365,12 @@ const useRegistryRouter = () => {
   };
 };
 
+const MesheryTreeViewWrapper = styled('div')(() => ({
+  width: '100%',
+  height: '100%',
+  display: 'flex',
+  flexDirection: 'column',
+}));
 const MesheryTreeView = ({
   data,
   view,
@@ -489,7 +496,7 @@ const MesheryTreeView = ({
     return view === COMPONENTS;
   };
 
-  const renderHeader = (type) => (
+  const renderHeader = (type, hasRecords) => (
     <div
       style={{
         display: 'flex',
@@ -536,6 +543,7 @@ const MesheryTreeView = ({
                       color="primary"
                       checked={checked}
                       onClick={handleChecked}
+                      disabled={!hasRecords}
                       inputProps={{ 'aria-label': 'controlled' }}
                     />
                   }
@@ -579,8 +587,8 @@ const MesheryTreeView = ({
   };
 
   const renderTree = (treeComponent, type) => (
-    <div>
-      {renderHeader(type)}
+    <>
+      {renderHeader(type, !!data.length)}
       {data.length === 0 && !searchText ? (
         <JustifyAndAlignCenter style={{ height: '27rem' }}>
           <CircularProgress sx={{ color: Colors.keppelGreen }} />
@@ -598,11 +606,11 @@ const MesheryTreeView = ({
           {treeComponent}
         </div>
       )}
-    </div>
+    </>
   );
 
   return (
-    <div style={{ width: '100%', height: '28.86rem' }}>
+    <MesheryTreeViewWrapper>
       {view === MODELS &&
         renderTree(
           <MesheryTreeViewModel
@@ -655,7 +663,7 @@ const MesheryTreeView = ({
           />,
           RELATIONSHIPS,
         )}
-    </div>
+    </MesheryTreeViewWrapper>
   );
 };
 

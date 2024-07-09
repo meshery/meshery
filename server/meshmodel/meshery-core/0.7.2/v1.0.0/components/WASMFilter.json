@@ -54,6 +54,7 @@
   },
   "component": {
    "kind": "WASMFilter",
-   "version": "core.meshery.io/v1alpha1"
+   "version": "core.meshery.io/v1alpha1",
+   "schema": "{\"properties\":{\"wasmFilter\":{\"description\":\"Location (URL) of WASM filter accessible by Istio/Kubernetes.\",\"type\":\"string\"},\"config\":{\"description\":\"Configuration of the `spec.configPatches.patch.value` of the Istio Envoy Filter resource for your specific filter.\",\"type\":\"string\",\"format\":\"textarea\"}},\"required\":[\"wasmFilter\"],\"title\":\"WASM Filter\",\"type\":\"object\"}"
   }
  }
