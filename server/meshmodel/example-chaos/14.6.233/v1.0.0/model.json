@@ -1,6 +1,6 @@
 {
   "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "core.meshery.io/v1beta1",
+  "schemaVersion": "models.meshery.io/v1beta1",
   "version": "v1.0.0",
   "name": "example-chaos",
   "displayName": "Example Chaos",
@@ -8,24 +8,24 @@
   "status": "ignored",
   "hostID": "00000000-0000-0000-0000-000000000000",
   "registrant": {
-   "hostname": "artifacthub"
+    "hostname": "artifacthub"
   },
   "category": {
-   "name": "Orchestration \u0026 Management",
-   "metadata": null
+    "name": "Orchestration \u0026 Management",
+    "metadata": null
   },
   "subCategory": "Coordination \u0026 Service Discovery",
   "metadata": {
-   "isAnnotation": false,
-   "published": false,
-   "subCategory": "Coordination \u0026 Service Discovery",
-   "svgColor": "",
-   "svgComplete": "",
-   "svgWhite": ""
+    "isAnnotation": false,
+    "published": false,
+    "subCategory": "Coordination \u0026 Service Discovery",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
   },
   "model": {
-   "version": "14.6.233"
+    "version": "14.6.233"
   },
   "components": null,
   "relationships": null
- }
+}
