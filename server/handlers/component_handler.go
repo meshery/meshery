@@ -1387,11 +1387,24 @@ func prettifyCompDefSchema(entities []entity.Entity) []v1beta1.ComponentDefiniti
 // request content byte in form value and header of the type in form
 func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	var compCount, relCount int
+	var errCompCount, errRelCount int
+	var totalErrCount int
+	userID := uuid.FromStringOrNil(user.ID)
+	eventBuilder := events.NewEvent().ActedUpon(userID).FromUser(userID).FromSystem(*h.SystemID).WithAction("register")
+	infoeventBuilder := events.NewEvent().ActedUpon(userID).FromUser(userID).FromSystem(*h.SystemID).WithAction("register")
+
+	var message strings.Builder
 	dirPath := r.FormValue("dir")
 	if dirPath != "" {
 		tempFile, err := os.CreateTemp("", "upload-*.tar.gz")
 		if err != nil {
 			err = meshkitutils.ErrCreateFile(err, "/tmp/upload-*.tar.gz")
+			eventBuilder.WithSeverity(events.Error).WithDescription("Failed to create temp Directory ").WithMetadata(map[string]interface{}{
+				"error": err,
+			})
+			_event := eventBuilder.Build()
+			_ = provider.PersistEvent(_event)
+			go h.config.EventBroadcaster.Publish(userID, _event)
 			h.log.Error(err)
 			http.Error(rw, err.Error(), http.StatusBadRequest)
 			return
@@ -1401,29 +1414,65 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		_, err = tempFile.Write([]byte(dirPath))
 		if err != nil {
 			err = meshkitutils.ErrWriteFile(err, tempFile.Name())
+			eventBuilder.WithSeverity(events.Error).WithDescription("Failed to create temp file ").WithMetadata(map[string]interface{}{
+				"error": err,
+			})
+			_event := eventBuilder.Build()
+			_ = provider.PersistEvent(_event)
+			go h.config.EventBroadcaster.Publish(userID, _event)
 			h.log.Error(err)
 			http.Error(rw, err.Error(), http.StatusBadRequest)
 			return
 		}
-
-		err = processUploadedFile(tempFile.Name(), h, &compCount, &relCount)
+		var errMsg string
+		err = processUploadedFile(tempFile.Name(), h, &compCount, &relCount, &errCompCount, &errRelCount, &totalErrCount)
 		if err != nil {
 			h.log.Error(err)
-			http.Error(rw, err.Error(), http.StatusBadRequest)
-			return
 		}
-		message := writeMessageString(compCount, relCount)
+		if totalErrCount > 0 {
+			msg := fmt.Sprintf("Failed to register a total of %d entities:", totalErrCount)
+			if errCompCount > 0 && errRelCount > 0 {
+				msg = fmt.Sprintf("%s %d Components and %d Relationships", msg, errCompCount, errRelCount)
+			} else if errCompCount > 0 {
+				msg = fmt.Sprintf("%s %d Components", msg, errCompCount)
+			} else if errRelCount > 0 {
+				msg = fmt.Sprintf("%s %d Relationships", msg, errRelCount)
+			}
+			eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to validate or register a total of %d entities", totalErrCount)).WithMetadata(map[string]interface{}{
+				"error": msg,
+			})
+			_event := eventBuilder.Build()
+			errMsg = msg
+			_ = provider.PersistEvent(_event)
+			go h.config.EventBroadcaster.Publish(userID, _event)
+		}
+
+		message = writeMessageString(compCount, relCount)
 		if message.Len() > 0 {
 			h.log.Info(message.String())
+			infoeventBuilder.WithSeverity(events.Informational).WithDescription("Succesfully Registered Model(s)").WithMetadata(map[string]interface{}{
+				"Description": message.String(),
+			})
+			event := infoeventBuilder.Build()
+			_ = provider.PersistEvent(event)
+			go h.config.EventBroadcaster.Publish(userID, event)
+			errMsg = message.String() + " and " + errMsg
+			rw.WriteHeader(http.StatusOK)
+			_, _ = rw.Write([]byte(errMsg))
 		}
-		rw.WriteHeader(http.StatusOK)
-		_, _ = rw.Write([]byte(message.String()))
 		return
 	}
 
 	file, _, err := r.FormFile("file")
 	if err != nil {
 		err = ErrRetrieveData(err)
+		eventBuilder.WithSeverity(events.Error).WithDescription("Failed to retrieve data ").WithMetadata(map[string]interface{}{
+			"error": err,
+		})
+		_event := eventBuilder.Build()
+		_ = provider.PersistEvent(_event)
+		go h.config.EventBroadcaster.Publish(userID, _event)
+
 		http.Error(rw, err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -1432,18 +1481,38 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 	fileContent, err := io.ReadAll(file)
 	if err != nil {
 		err = meshkitutils.ErrReadFile(err, string(fileContent))
+		eventBuilder.WithSeverity(events.Error).WithDescription("Failed to read the file data ").WithMetadata(map[string]interface{}{
+			"error": err,
+		})
+		_event := eventBuilder.Build()
+		_ = provider.PersistEvent(_event)
+		go h.config.EventBroadcaster.Publish(userID, _event)
 		http.Error(rw, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	entityType, err := meshkitutils.FindEntityType(fileContent)
 	if err != nil {
+		eventBuilder.WithSeverity(events.Error).WithDescription("Failed to validate schemaversion").WithMetadata(map[string]interface{}{
+			"error": err,
+		})
+		_event := eventBuilder.Build()
+		_ = provider.PersistEvent(_event)
+		go h.config.EventBroadcaster.Publish(userID, _event)
 		h.log.Error(err)
 		http.Error(rw, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	if entityType == "" {
+
 		err = meshkitutils.ErrInvalidSchemaVersion
+
+		eventBuilder.WithSeverity(events.Error).WithDescription("Failed to validate schemaversion").WithMetadata(map[string]interface{}{
+			"error": err,
+		})
+		_event := eventBuilder.Build()
+		_ = provider.PersistEvent(_event)
+		go h.config.EventBroadcaster.Publish(userID, _event)
 		h.log.Error(err)
 		http.Error(rw, err.Error(), http.StatusInternalServerError)
 		return
@@ -1451,28 +1520,36 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 
 	err = RegisterEntity(fileContent, entityType, h)
 	if err != nil {
+		eventBuilder.WithSeverity(events.Error).WithDescription("Failed to register the entity").WithMetadata(map[string]interface{}{
+			"error": err,
+		})
+		_event := eventBuilder.Build()
+		_ = provider.PersistEvent(_event)
+		go h.config.EventBroadcaster.Publish(userID, _event)
 		h.log.Error(err)
 		http.Error(rw, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	message := ""
+
 	if entityType == entity.ComponentDefinition {
-		message = "Successfully registered Component"
+		message.WriteString("Successfully registered Component")
 	} else {
-		message = "Successfully registered Relationship"
+		message.WriteString("Successfully registered Relationship")
 	}
 	h.log.Info(message)
+
+	eventBuilder.WithSeverity(events.Informational).WithDescription("Succesfully Registered Model(s)").WithMetadata(map[string]interface{}{
+		"Description": message,
+	})
 	rw.WriteHeader(http.StatusOK)
-	_, _ = rw.Write([]byte(message))
+	_, _ = rw.Write([]byte(message.String()))
 }
 func writeMessageString(compCount int, relCount int) strings.Builder {
 
 	var message strings.Builder
-
 	if compCount > 0 {
 		message.WriteString(fmt.Sprintf("Total Components Registered: %d", compCount))
 	}
-
 	if relCount > 0 {
 		if message.Len() > 0 {
 			message.WriteString(" and ")
@@ -1481,7 +1558,7 @@ func writeMessageString(compCount int, relCount int) strings.Builder {
 	}
 	return message
 }
-func processUploadedFile(filePath string, h *Handler, compCount *int, relCount *int) error {
+func processUploadedFile(filePath string, h *Handler, compCount *int, relCount *int, errCompCount *int, errRelCount *int, totalErrCount *int) error {
 	tempDir, err := os.MkdirTemp("", "extracted-")
 	if err != nil {
 		return ErrCreateDir(err, "Error creating temp dir")
@@ -1500,27 +1577,36 @@ func processUploadedFile(filePath string, h *Handler, compCount *int, relCount *
 			if meshkitutils.IsYaml(path) {
 				content, err := os.ReadFile(path)
 				if err != nil {
+					*totalErrCount++
 					return meshkitutils.ErrReadFile(err, path)
 				}
 				entityType, err := meshkitutils.FindEntityType(content)
 				if err != nil {
-					return err
+					*totalErrCount++
+					h.log.Error(err)
 				}
 				if entityType != "" {
 					err = RegisterEntity(content, entityType, h)
 					if err != nil {
-						return err
+						if entityType == entity.ComponentDefinition {
+							*totalErrCount++
+							*errCompCount++
+						} else if entityType == entity.RelationshipDefinition {
+							*totalErrCount++
+							*errRelCount++
+						}
+						h.log.Error(err)
 					}
 					if entityType == entity.ComponentDefinition {
 						*compCount++
-					} else {
+					} else if entityType == entity.RelationshipDefinition {
 						*relCount++
 					}
 				}
 
 			}
 			if meshkitutils.IsTarGz(path) || meshkitutils.IsZip(path) {
-				return processUploadedFile(path, h, compCount, relCount)
+				return processUploadedFile(path, h, compCount, relCount, errCompCount, errRelCount, totalErrCount)
 			}
 		}
 		return nil
@@ -1541,7 +1627,7 @@ func RegisterEntity(content []byte, entityType entity.EntityType, h *Handler) er
 		helpers.HandleError(v1beta1.Host{
 			Hostname: c.Model.Registrant.Hostname,
 		}, &c, err, isModelError, isRegistrantError)
-		return nil
+		return err
 	case entity.RelationshipDefinition:
 		var r v1alpha2.RelationshipDefinition
 		err := json.Unmarshal(content, &r)
@@ -1554,6 +1640,11 @@ func RegisterEntity(content []byte, entityType entity.EntityType, h *Handler) er
 		helpers.HandleError(v1beta1.Host{
 			Hostname: r.Model.Registrant.Hostname,
 		}, &r, err, isModelError, isRegistrantError)
+		return err
+	case entity.Model:
+		//handler oci return here
+		return nil
+	case entity.PolicyDefinition:
 		return nil
 	}
 	return meshkitutils.ErrInvalidSchemaVersion

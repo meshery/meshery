@@ -84,6 +84,7 @@ var importModelCmd = &cobra.Command{
 				}
 				err = sendToAPI(fileData, path, "file")
 				if err != nil {
+					utils.Log.Info("Error while sending file to API")
 					utils.Log.Error(err)
 					return nil
 				}
@@ -96,6 +97,7 @@ var importModelCmd = &cobra.Command{
 				}
 				err = sendToAPI(fileData, path, "dir")
 				if err != nil {
+					utils.Log.Info("Error while sending file to API")
 					utils.Log.Error(err)
 					return nil
 				}
@@ -175,12 +177,9 @@ func sendToAPI(data []byte, name string, dataType string) error {
 
 	var formFile io.Writer
 	if dataType == "file" {
-		formFile, err = writer.CreateFormFile("file", filepath.Base(name))
+		formFile, _ = writer.CreateFormFile("file", filepath.Base(name))
 	} else {
-		formFile, err = writer.CreateFormField("dir")
-	}
-	if err != nil {
-
+		formFile, _ = writer.CreateFormField("dir")
 	}
 	_, err = formFile.Write(data)
 	if err != nil {
