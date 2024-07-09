@@ -234,7 +234,7 @@ func ErrExecutionPlan(err error) error {
 }
 
 func ErrCompConfigPairs(err error) error {
-	return errors.New(ErrCompConfigPairsCode, errors.Alert, []string{"Unable to Create Component Config.", err.Error()}, []string{err.Error()}, []string{"Check the design file for any configuration errors.", "Ensure that all required fields in the design file are correctly specified."}, []string{"Review the detailed error message and server logs for more information.", "If the problem persists, contact support with the error details and logs."})
+	return errors.New(ErrCompConfigPairsCode, errors.Alert, []string{"Unable to Create Component Config.", err.Error()}, []string{err.Error()}, []string{"The component configuration might have failed to initialize correctly."}, []string{"Verify the connection status is Connected or Discovered"})
 }
 
 func ErrRequestBody(err error) error {
