@@ -16,7 +16,7 @@
   },
   "model": {
     "name": "kubernetes",
-    "schemaVersion": "core.meshery.io/v1beta1",
+    "schemaVersion": "models.meshery.io/v1beta1",
     "version": "v1.0.0",
     "model": {
       "version": "v1.25.2"

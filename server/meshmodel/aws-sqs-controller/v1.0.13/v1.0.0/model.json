@@ -1,6 +1,6 @@
 {
   "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "core.meshery.io/v1beta1",
+  "schemaVersion": "models.meshery.io/v1beta1",
   "version": "v1.0.0",
   "name": "aws-sqs-controller",
   "displayName": "AWS Simple Queuing Service",
@@ -8,30 +8,30 @@
   "status": "ignored",
   "hostID": "00000000-0000-0000-0000-000000000000",
   "registrant": {
-   "hostname": "github"
+    "hostname": "github"
   },
   "category": {
-   "name": "App Definition and Development",
-   "metadata": null
+    "name": "App Definition and Development",
+    "metadata": null
   },
   "subCategory": "Streaming \u0026 Messaging",
   "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "isAnnotation": false,
-   "primaryColor": "#7AA116",
-   "secondaryColor": "",
-   "shape": "round-rectangle",
-   "shapePolygonPoints": "",
-   "styleOverrides": "",
-   "styles": "",
-   "svgColor": "",
-   "svgComplete": "",
-   "svgWhite": ""
+    "capabilities": "",
+    "defaultData": "",
+    "isAnnotation": false,
+    "primaryColor": "#7AA116",
+    "secondaryColor": "",
+    "shape": "round-rectangle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
   },
   "model": {
-   "version": "v1.0.13"
+    "version": "v1.0.13"
   },
   "components": null,
   "relationships": null
- }
+}
