@@ -1,51 +1,51 @@
 {
-    "schemaVersion": "relationships.meshery.io/v1alpha2",
+  "schemaVersion": "relationships.meshery.io/v1alpha2",
+  "version": "v1.0.0",
+  "kind": "Hierarchical",
+  "metadata": {
+    "description": "A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component."
+  },
+  "model": {
+    "schemaVersion": "models.meshery.io/v1beta1",
     "version": "v1.0.0",
-    "kind": "Hierarchical",
-    "metadata": {
-      "description": "A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component."
-    },
+    "name": "kubernetes",
     "model": {
-      "schemaVersion": "core.meshery.io/v1beta1",
-      "version": "v1.0.0",
-      "name": "kubernetes",
-      "model": {
-        "version": "v1.25.2"
-      },
-      "displayName": "Kubernetes",
-      "category": {
-        "name": "Orchestration \u0026 Management",
-        "metadata": null
-      },
-      "metadata": {}
+      "version": "v1.25.2"
     },
-    "subType": "Inventory",
-    "evaluationQuery": "hierarchical_inventory_relationship",
-    "selectors": [
-      {
-        "allow": {
-            "from": [
-              {
-                "kind": "Deployment",
-                "model": "kubernetes",
-                "patch": {
-                  "patchStrategy": "replace",
-                  "mutatorRef": [
-                    [
-                      "name"
-                    ],
-                    [
-                      "kind"
-                    ],
-                    [
-                      "apiVersion"
-                    ]
-                  ],
-                  "description": "A Deployment in Kubernetes orchestrates the rollout and management of application replicas. By integrating leases into Deployment strategies, Kubernetes maintains control over the deployment process, orchestrating rolling updates or rollbacks with precision and reliability, thus ensuring seamless transitions and high availability of your application."
-                }
-              }
-            ],
-      "to": [
+    "displayName": "Kubernetes",
+    "category": {
+      "name": "Orchestration \u0026 Management",
+      "metadata": null
+    },
+    "metadata": {}
+  },
+  "subType": "Inventory",
+  "evaluationQuery": "hierarchical_inventory_relationship",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "Deployment",
+            "model": "kubernetes",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  "name"
+                ],
+                [
+                  "kind"
+                ],
+                [
+                  "apiVersion"
+                ]
+              ],
+              "description": "A Deployment in Kubernetes orchestrates the rollout and management of application replicas. By integrating leases into Deployment strategies, Kubernetes maintains control over the deployment process, orchestrating rolling updates or rollbacks with precision and reliability, thus ensuring seamless transitions and high availability of your application."
+            }
+          }
+        ],
+        "to": [
           {
             "kind": "Lease",
             "model": "kubernetes",
@@ -73,9 +73,10 @@
           }
         ]
       },
-      
       "deny": {
         "from": [],
         "to": []
       }
-    }]}
+    }
+  ]
+}
