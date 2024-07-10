@@ -146,7 +146,8 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 			footer = []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", "", ""}
 		}
 
-		if cmd.Flag("count").Value.String() == "true" {
+		countFlag := cmd.Flag("count")
+		if countFlag != nil && countFlag.Value.String() == "true" {
 			whiteBoardPrinter.Println("Total number of filter: ", len(data))
 			return nil
 		}

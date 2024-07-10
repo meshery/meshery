@@ -64,7 +64,7 @@ var generateCmd = &cobra.Command{
 	Short: "Generate Models",
 	Long:  "Prerequisite: Excecute this command from the root of a meshery/meshery repo fork.\n\nGiven a Google Sheet with a list of model names and source locations, generate models and components any Registrant (e.g. GitHub, Artifact Hub) repositories.\n\nGenerated Model files are written to local filesystem under `/server/models/<model-name>`.",
 	Example: `
-// Generate Meshery Models from a Google Spreadsheet (i.e. "Meshery Integrations" spreadsheet). 
+// Generate Meshery Models from a Google Spreadsheet (i.e. "Meshery Integrations" spreadsheet).
 mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred
 // Directly generate models from one of the supported registrants by using Registrant Connection Definition and (optional) Registrant Credential Definition
 mesheryctl registry generate --registrant-def [path to connection definition] --registrant-cred [path to credential definition]
@@ -79,14 +79,14 @@ mesheryctl registry generate --registrant-def [path to connection definition] --
 			return ErrUpdateRegistry(err, modelLocation)
 		}
 		utils.Log.SetLevel(logrus.DebugLevel)
-		logFilePath := filepath.Join(logDirPath, "Logs")
+		logFilePath := filepath.Join(logDirPath, "model-generation.log")
 		logFile, err = os.Create(logFilePath)
 		if err != nil {
 			return err
 		}
 
 		utils.LogError.SetLevel(logrus.ErrorLevel)
-		logErrorFilePath := filepath.Join(logDirPath, "Errors")
+		logErrorFilePath := filepath.Join(logDirPath, "registry-errors.log")
 		errorLogFile, err = os.Create(logErrorFilePath)
 		if err != nil {
 			return err
@@ -408,7 +408,7 @@ func createVersionedDirectoryForModelAndComp(version, modelName string) (string,
 
 func writeModelDefToFileSystem(model *utils.ModelCSV, version, modelDefPath string) (*v1beta1.Model, error) {
 	modelDef := model.CreateModelDefinition(version, defVersion)
-	err := modelDef.WriteModelDefinition(modelDefPath)
+	err := modelDef.WriteModelDefinition(modelDefPath+"/model.json", "json")
 	if err != nil {
 		return nil, err
 	}

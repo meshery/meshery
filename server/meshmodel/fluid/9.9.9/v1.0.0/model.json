@@ -1,6 +1,6 @@
 {
   "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "core.meshery.io/v1beta1",
+  "schemaVersion": "models.meshery.io/v1beta1",
   "version": "v1.0.0",
   "name": "fluid",
   "displayName": "Fluid",
@@ -8,24 +8,24 @@
   "status": "ignored",
   "hostID": "00000000-0000-0000-0000-000000000000",
   "registrant": {
-   "hostname": "artifacthub"
+    "hostname": "artifacthub"
   },
   "category": {
-   "name": "Orchestration \u0026 Management",
-   "metadata": null
+    "name": "Orchestration \u0026 Management",
+    "metadata": null
   },
   "subCategory": "Scheduling \u0026 Orchestration",
   "metadata": {
-   "isAnnotation": false,
-   "published": false,
-   "subCategory": "Scheduling \u0026 Orchestration",
-   "svgColor": "",
-   "svgComplete": "",
-   "svgWhite": ""
+    "isAnnotation": false,
+    "published": false,
+    "subCategory": "Scheduling \u0026 Orchestration",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
   },
   "model": {
-   "version": "9.9.9"
+    "version": "9.9.9"
   },
   "components": null,
   "relationships": null
- }
+}
