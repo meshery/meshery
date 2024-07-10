@@ -1,35 +1,41 @@
 ---
 layout: default
-title: mesheryctl-pattern-list
-permalink: reference/mesheryctl/pattern/list
-redirect_from: reference/mesheryctl/pattern/list/
+title: mesheryctl-model-import
+permalink: reference/mesheryctl/model/import
+redirect_from: reference/mesheryctl/model/import/
 type: reference
 display-title: "false"
 language: en
-command: pattern
-subcommand: list
+command: model
+subcommand: import
 ---
 
-# mesheryctl pattern list
+# mesheryctl model import
 
-List patterns
+import models from mesheryctl command
 
 ## Synopsis
 
-Display list of all available pattern files.
+import model by specifying the directory, file. Use 'import model [filepath]' or 'import model  [directory]'.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl pattern list [flags]
+mesheryctl model import [flags]
 
 </div>
 </pre> 
 
 ## Examples
 
-list all available patterns
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl pattern list
+	import model  /path/to/[file.yaml|file.json]
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+	import model  /path/to/models
 
 </div>
 </pre> 
@@ -38,9 +44,7 @@ mesheryctl pattern list
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -h, --help       help for list
-  -p, --page int   (optional) List next set of patterns with --page (default = 1) (default 1)
-  -v, --verbose    Display full length user and pattern file identifiers
+  -h, --help   help for import
 
 </div>
 </pre>
@@ -50,15 +54,10 @@ mesheryctl pattern list
 <pre class='codeblock-pre'>
 <div class='codeblock'>
       --config string   path to config file (default "/home/runner/.meshery/config.yaml")
-  -t, --token string    Path to token file default from current context
+  -v, --verbose         verbose output
 
 </div>
 </pre>
-
-## Screenshots
-
-Usage of mesheryctl pattern list
-![pattern-list-usage](/assets/img/mesheryctl/patternList.png)
 
 ## See Also
 

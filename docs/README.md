@@ -63,7 +63,7 @@ Alternatively, if you are running Windows 10, you may install the Windows Subsys
 - Theme - https://github.com/vsoch/docsy-jekyll
 </details>
 
-# Meshery Documentation Stucture
+# Meshery Documentation Structure
 
 <details>
 <summary>High-Level Outline & Information Architecture for Meshery Documentation</summary>
