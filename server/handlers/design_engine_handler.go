@@ -130,6 +130,7 @@ func (h *Handler) PatternFileHandler(
 	eventBuilder := events.NewEvent().ActedUpon(patternID).FromUser(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction(action)
 
 	if err != nil {
+		err := ErrPatternDeploy(err, patternFile.Name)
 		metadata := map[string]interface{}{
 			"error": err,
 		}
