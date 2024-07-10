@@ -4,9 +4,9 @@ import (
 	"flag"
 	"io"
 	"os"
-	"strings"
 	"path/filepath"
 	"runtime"
+	"strings"
 	"testing"
 
 	"github.com/jarcoal/httpmock"
