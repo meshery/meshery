@@ -175,13 +175,11 @@ func sendToAPI(data []byte, name string, dataType string) error {
 
 	var formFile io.Writer
 	if dataType == "file" {
-		formFile, err = writer.CreateFormFile("file", filepath.Base(name))
+		formFile, _ = writer.CreateFormFile("file", filepath.Base(name))
 	} else {
-		formFile, err = writer.CreateFormField("dir")
+		formFile, _ = writer.CreateFormField("dir")
 	}
-	if err != nil {
 
-	}
 	_, err = formFile.Write(data)
 	if err != nil {
 		err = meshkitutils.ErrWriteFile(err, name)
