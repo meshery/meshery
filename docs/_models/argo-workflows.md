@@ -59,7 +59,7 @@ featureList: [
   "Workflow templating to store commonly used Workflows in the cluster.",
   "Archiving Workflows after executing for later access."
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

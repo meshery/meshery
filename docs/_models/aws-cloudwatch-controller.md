@@ -27,7 +27,7 @@ featureList: [
   "Collects monitoring and operational data in the form of logs, metrics, and traces.",
   "Get a unified view of operational health and gain complete visibility of your AWS resources, applications, and services running on AWS and on-premises."
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

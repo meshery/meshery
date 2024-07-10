@@ -35,7 +35,7 @@ featureList: [
   "Set up your DNS routing in minutes with domain name registration and straightforward visual traffic flow tools.",
   "Customize your DNS routing policies to reduce latency, improve application availability, and maintain compliance."
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

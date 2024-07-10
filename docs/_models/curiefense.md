@@ -15,7 +15,7 @@ featureList: [
   "Includes bot management, WAF, application-layer DDoS protection, session profiling, advanced rate limiting, and much more.",
   "It is integrated with NGINX and Envoy proxy."
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

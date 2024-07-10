@@ -19,7 +19,7 @@ featureList: [
   "MinIO IAM is built with AWS Identity and Access Management (IAM) compatibility at its core and presents that framework to applications and users no matter the environment.",
   "MinIO offers Active Active, Multi-Site Replication for Object Storage is a key requirement for mission-critical production environments."
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

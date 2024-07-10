@@ -15,7 +15,7 @@ featureList: [
   "Simplifies event declaration and delivery across services, platforms, and beyond.",
   "Provides interoperability across services, platforms and systems."
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

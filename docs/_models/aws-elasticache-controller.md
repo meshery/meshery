@@ -47,7 +47,7 @@ featureList: [
   "Add a cache to your relational database",
   "You can create an ElastiCache Serverless cache in a few steps by specifying a cache name in Meshery"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

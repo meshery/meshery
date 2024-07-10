@@ -19,7 +19,7 @@ featureList: [
   "Create APIs that access AWS or other web services, as well as data stored in the AWS Cloud.",
   "API Gateway creates RESTful APIs that enable stateless client-server communication."
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

@@ -19,7 +19,7 @@ featureList: [
   "Allows you to provision the load balancer infrastructure completely outside of Kubernetes.",
   "Used by AWS LoadBalancer controller internally to  support the functionality for Ingress and Service resource as well."
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

@@ -15,7 +15,7 @@ featureList: [
   "Unifies all your infrastructure tooling, services, and documentation to create a streamlined development environment from end to end.",
   "Easily create, maintain, find, and use technical documentation, using a docs like code approach"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

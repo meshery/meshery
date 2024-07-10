@@ -15,7 +15,7 @@ featureList: [
   "Authorization and identity provider solution for your Kubernetes clusters.",
   "Industry Standard Authorization mTLS bound access token."
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

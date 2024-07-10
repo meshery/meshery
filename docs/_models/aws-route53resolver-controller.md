@@ -34,7 +34,7 @@ featureList: [
   "For public domain names, Route 53 Resolver performs recursive lookups against public name servers on the internet.
 "
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

@@ -15,7 +15,7 @@ featureList: [
   "Improves the current OCI image specification.",
   "Supports lazy pulling feature."
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

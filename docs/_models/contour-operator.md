@@ -63,7 +63,7 @@ featureList: [
   "Introduces a new ingress API (HTTPProxy) which is implemented via a Custom Resource Definition (CRD).",
   "Solves shortcomings in the original design."
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Builds upon the basic Kubernetes resource and controller concepts, but includes domain-specific knowledge to automate the entire lifecycle of Contour."
 language: en
 list: include

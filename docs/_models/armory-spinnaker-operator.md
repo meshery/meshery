@@ -23,7 +23,7 @@ featureList: [
   "Expose Spinnaker to the outside world (via LoadBalancer).",
   "Keep secrets separate from your config."
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

@@ -23,7 +23,7 @@ featureList: [
   "It is made for the edge and handles the dynamic appearance and disappearance of leaf devices.",
   "It provides an abstraction layer similar to CNI."
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

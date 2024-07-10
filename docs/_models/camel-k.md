@@ -47,7 +47,7 @@ featureList: [
   "Enables easier integration with all kinds of transport or messaging models.",
   "Minimal dependencies for easy embedding in any Java application."
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

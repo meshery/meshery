@@ -15,7 +15,7 @@ featureList: [
   "Provide high performance traffic serving that can scale to millions of requests per second.",
   "Supports IP address targeting mode for Network Load Balancers."
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Elastic Load Balancing (ELB) automatically distributes incoming application traffic across multiple targets and virtual appliances in one or more Availability Zones (AZs)."
 language: en
 list: include

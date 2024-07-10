@@ -33,7 +33,7 @@ featureList: [
 ",
   "Amazon ECR supports the ability to define and organize repositories in your registry using namespaces."
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

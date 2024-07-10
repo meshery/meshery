@@ -15,7 +15,7 @@ featureList: [
   "Secure shell (SSH) access to containers or VMs",
   "Multi-factor authentication (MFA) support"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Secure and flexible SSH access to Kubernetes resources"
 language: en
 list: include

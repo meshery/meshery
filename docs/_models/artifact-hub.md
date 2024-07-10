@@ -15,7 +15,7 @@ featureList: [
   "Explore content like Helm charts schemas and templates in an interactive way.",
   "Subscribe to packages new releases and security alerts notifications, via email or webhooks."
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

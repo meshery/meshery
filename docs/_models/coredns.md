@@ -15,7 +15,7 @@ featureList: [
   "Retrieves zone data from primaries, i.e., act as a secondary server (AXFR only) (secondary).",
   "Signs zone data on-the-fly (dnssec)."
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

@@ -31,7 +31,7 @@ featureList: [
   "Configuration items from AWS Config that capture resource configuration history and resource compliance history as evaluated by AWS Config rules.",
   "Audit evidence from AWS Audit Manager that contains the information needed to demonstrate compliance with the requirements as specified by Audit Manager controls."
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

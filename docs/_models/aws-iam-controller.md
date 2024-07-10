@@ -47,7 +47,7 @@ featureList: [
   "Set, verify, and right-size permissions toward least privilege",
   "Establish organization-wide and preventative guardrails on AWS"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

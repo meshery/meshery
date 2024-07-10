@@ -15,7 +15,7 @@ featureList: [
   "Highly configurable frontend that lets you define the declarative API it offers.",
   "Provides reliability and security features like Role Based Access Control (RBAC) to orchestrate everything - not just containers."
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

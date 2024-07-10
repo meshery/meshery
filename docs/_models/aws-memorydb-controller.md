@@ -47,7 +47,7 @@ featureList: [
   "Amazon MemoryDB provides native support for JavaScript Object Notation (JSON) documents in addition to the data structures included in open source Redis, at no additional cost.",
   "MemoryDB stores your entire dataset in memory to deliver microsecond read latency, single-digit millisecond write latency, and high throughput. It can handle more than 13 trillion requests per day and support peaks of 160 million requests per second."
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

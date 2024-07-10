@@ -193,7 +193,7 @@ featureList: [
   "Built on Terraform; Supports Terraform resources",
   "Define & manage cloud infrastructures as Kubernetes CRD (Custom Resource Definition)"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

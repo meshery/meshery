@@ -27,7 +27,7 @@ featureList: [
   "Query your log data – You can use CloudWatch Logs Insights to interactively search and analyze your log data. ",
   "Detect and debug using Live Tail – You can use Live Tail to quickly troubleshoot incidents by viewing a streaming list of new log events as they are ingested. "
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

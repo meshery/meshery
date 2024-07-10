@@ -47,7 +47,7 @@ featureList: [
   "It combines network, application, and deployment services in a framework to accelerate application deployment in a multi-cluster, multi-tenant environment.",
   "Isolate workloads from each other on different slices of a Kubernetes cluster"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

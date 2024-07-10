@@ -19,7 +19,7 @@ featureList: [
   "Add-on for Capsule.",
   "Capsule provides multi-tenancy in Kubernetes."
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

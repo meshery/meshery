@@ -27,7 +27,7 @@ featureList: [
   "Use AWS Identity and Access Management (IAM) permissions policies to manage access to your secrets.",
   "Rotate secrets on demand or on a schedule, without redeploying or disrupting active applications."
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

@@ -23,7 +23,7 @@ featureList: [
   "Integration with Kubernetes authentication and authorization mechanisms",
   "Simplified management of secrets for applications running on Kubernetes"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

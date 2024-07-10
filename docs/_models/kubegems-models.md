@@ -19,7 +19,7 @@ featureList: [
   "Predictive scaling for Kubernetes applications",
   "Resource optimization for Kubernetes clusters"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

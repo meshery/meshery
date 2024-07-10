@@ -20,7 +20,7 @@ featureList: [
   "Use Couchbase's multi-purpose NoSQL database to supply your applications' JSON data, and seamlessly grow your environment.
 "
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

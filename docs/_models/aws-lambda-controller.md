@@ -51,7 +51,7 @@ featureList: [
   "Write Lambda functions in your favorite language ",
   "Bring your own code"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

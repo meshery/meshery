@@ -19,7 +19,7 @@ featureList: [
   "Kubernetes native approach (CRD, CR) to declare CI/CD pipelines",
   "Gerrit, GitLab or GitHub as a version control system for your code"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include
