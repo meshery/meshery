@@ -1,0 +1,74 @@
+{
+  "schemaVersion": "relationships.meshery.io/v1alpha2",
+  "version": "v1.0.0",
+  "kind": "Hierarchical",
+  "metadata": {
+    "description": "A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the Sidecar Container(parent) component is patched with the configuration received from the Dapr (child) component.",
+    "type": "SingularNodeInventoryWallet"
+  },
+  "model": {
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "dapr",
+    "model": {
+      "version": "v1.14.0-rc.2"
+    },
+    "displayName": "Dapr",
+    "category": {
+      "name": "Serverless",
+      "metadata": null
+    },
+    "metadata": {}
+  },
+  "subType": "Inventory",
+  "evaluationQuery": "hierarchical_inventory_relationship",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "HTTPEndpoint",
+            "model": "dapr",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  "settings",
+                  "config"
+                ],
+                [
+                  "settings",
+                  "wasm-filter"
+                ]
+              ],
+              "description": "Dapr HTTPEndpoint configuration to be applied to Dapr sidecar."
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "Container",
+            "model": "Meshery",
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "settings",
+                  "configPatches",
+                  "_",
+                  "patch",
+                  "value"
+                ]
+              ],
+              "description": "Receive the Dapr component configuration."
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }
+  ]
+}
