@@ -29,7 +29,7 @@ const Troubleshoot = (props) => {
 
   const handleSupportFormSubmission = async (data) => {
     try {
-      await axios.post('https://hook.us1.make.com/r5qgpjel5tlhtyndcgjvkrdkoc65417y', {
+      await axios.post('api/extensions/api/webhook/support', {
         memberFormOne: {
           ...data,
           name: userData?.first_name + ' ' + userData?.last_name,
