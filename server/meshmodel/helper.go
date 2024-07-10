@@ -227,11 +227,3 @@ func (erh *EntityRegistrationHelper) watchComponents(ctx context.Context) {
 		}
 	}
 }
-func extractFile(filePath string, destDir string) error {
-	if mutils.IsTarGz(filePath) {
-		return mutils.ExtractTarGz(destDir, filePath)
-	} else if mutils.IsZip(filePath) {
-		return mutils.ExtractZip(destDir, filePath)
-	}
-	return mutils.ErrExtractType
-}
