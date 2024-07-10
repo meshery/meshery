@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Fluent Operator
-subtitle: Collaborative and visual infrastructure as code for Fluent Operator
+subtitle: Collaborative and visual infrastructure as design for Fluent Operator
 image: /assets/img/integrations/fluent-operator/icons/color/fluent-operator-color.svg
 permalink: extensibility/integrations/fluent-operator
 docURL: https://docs.meshery.io/extensibility/integrations/fluent-operator

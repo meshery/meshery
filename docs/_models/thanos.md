@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Thanos
-subtitle: Collaborative and visual infrastructure as code for Thanos
+subtitle: Collaborative and visual infrastructure as design for Thanos
 image: /assets/img/integrations/thanos/icons/color/thanos-color.svg
 permalink: extensibility/integrations/thanos
 docURL: https://docs.meshery.io/extensibility/integrations/thanos

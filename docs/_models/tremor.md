@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Tremor
-subtitle: Collaborative and visual infrastructure as code for Tremor
+subtitle: Collaborative and visual infrastructure as design for Tremor
 image: /assets/img/integrations/tremor/icons/color/tremor-color.svg
 permalink: extensibility/integrations/tremor
 docURL: https://docs.meshery.io/extensibility/integrations/tremor

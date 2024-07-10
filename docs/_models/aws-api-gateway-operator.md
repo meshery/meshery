@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: AWS API Gateway
-subtitle: Collaborative and visual infrastructure as code for AWS API Gateway
+subtitle: Collaborative and visual infrastructure as design for AWS API Gateway
 image: /assets/img/integrations/aws-api-gateway-operator/icons/color/aws-api-gateway-operator-color.svg
 permalink: extensibility/integrations/aws-api-gateway-operator
 docURL: https://docs.meshery.io/extensibility/integrations/aws-api-gateway-operator

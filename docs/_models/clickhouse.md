@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: ClickHouse
-subtitle: Collaborative and visual infrastructure as code for ClickHouse
+subtitle: Collaborative and visual infrastructure as design for ClickHouse
 image: /assets/img/integrations/clickhouse/icons/color/clickhouse-color.svg
 permalink: extensibility/integrations/clickhouse
 docURL: https://docs.meshery.io/extensibility/integrations/clickhouse

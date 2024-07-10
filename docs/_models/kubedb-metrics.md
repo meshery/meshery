@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Kubedb Metrics
-subtitle: Collaborative and visual infrastructure as code for Kubedb Metrics
+subtitle: Collaborative and visual infrastructure as design for Kubedb Metrics
 image: /assets/img/integrations/kubedb-metrics/icons/color/kubedb-metrics-color.svg
 permalink: extensibility/integrations/kubedb-metrics
 docURL: https://docs.meshery.io/extensibility/integrations/kubedb-metrics

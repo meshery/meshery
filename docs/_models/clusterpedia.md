@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Clusterpedia
-subtitle: Collaborative and visual infrastructure as code for Clusterpedia
+subtitle: Collaborative and visual infrastructure as design for Clusterpedia
 image: /assets/img/integrations/clusterpedia/icons/color/clusterpedia-color.svg
 permalink: extensibility/integrations/clusterpedia
 docURL: https://docs.meshery.io/extensibility/integrations/clusterpedia

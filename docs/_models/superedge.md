@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Superedge
-subtitle: Collaborative and visual infrastructure as code for Superedge
+subtitle: Collaborative and visual infrastructure as design for Superedge
 image: /assets/img/integrations/superedge/icons/color/superedge-color.svg
 permalink: extensibility/integrations/superedge
 docURL: https://docs.meshery.io/extensibility/integrations/superedge

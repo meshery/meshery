@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Confidential Containers
-subtitle: Collaborative and visual infrastructure as code for Confidential Containers
+subtitle: Collaborative and visual infrastructure as design for Confidential Containers
 image: /assets/img/integrations/confidential-containers/icons/color/confidential-containers-color.svg
 permalink: extensibility/integrations/confidential-containers
 docURL: https://docs.meshery.io/extensibility/integrations/confidential containers

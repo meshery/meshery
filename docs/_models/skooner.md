@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Skooner
-subtitle: Collaborative and visual infrastructure as code for Skooner
+subtitle: Collaborative and visual infrastructure as design for Skooner
 image: /assets/img/integrations/skooner/icons/color/skooner-color.svg
 permalink: extensibility/integrations/skooner
 docURL: https://docs.meshery.io/extensibility/integrations/skooner

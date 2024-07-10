@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Cubefs
-subtitle: Collaborative and visual infrastructure as code for Cubefs
+subtitle: Collaborative and visual infrastructure as design for Cubefs
 image: /assets/img/integrations/cubefs/icons/color/cubefs-color.svg
 permalink: extensibility/integrations/cubefs
 docURL: https://docs.meshery.io/extensibility/integrations/cubefs

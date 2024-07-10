@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: AWS Route 53 Resolver
-subtitle: Collaborative and visual infrastructure as code for AWS Route 53 Resolver
+subtitle: Collaborative and visual infrastructure as design for AWS Route 53 Resolver
 image: /assets/img/integrations/aws-route53resolver-controller/icons/color/aws-route53resolver-controller-color.svg
 permalink: extensibility/integrations/aws-route53resolver-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-route53resolver-controller

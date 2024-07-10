@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Azure Application Gateway 
-subtitle: Collaborative and visual infrastructure as code for Azure Application Gateway 
+subtitle: Collaborative and visual infrastructure as design for Azure Application Gateway 
 image: /assets/img/integrations/aks-appgw-fe/icons/color/aks-appgw-fe-color.svg
 permalink: extensibility/integrations/aks-appgw-fe
 docURL: https://docs.meshery.io/extensibility/integrations/aks-appgw-fe

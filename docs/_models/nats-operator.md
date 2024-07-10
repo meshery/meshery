@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: NATS Operator
-subtitle: Collaborative and visual infrastructure as code for Mongodb Operator
+subtitle: Collaborative and visual infrastructure as design for NATS Operator
 image: /assets/img/integrations/nats-operator/icons/color/nats-operator-color.svg
 permalink: extensibility/integrations/nats-operator
 docURL: https://docs.meshery.io/extensibility/integrations/nats-operator

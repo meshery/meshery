@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Submariner
-subtitle: Collaborative and visual infrastructure as code for Submariner
+subtitle: Collaborative and visual infrastructure as design for Submariner
 image: /assets/img/integrations/submariner/icons/color/submariner-color.svg
 permalink: extensibility/integrations/submariner
 docURL: https://docs.meshery.io/extensibility/integrations/submariner

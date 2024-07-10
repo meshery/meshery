@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: AWS App Mesh
-subtitle: Collaborative and visual infrastructure as code for AWS App Mesh
+subtitle: Collaborative and visual infrastructure as design for AWS App Mesh
 image: /assets/img/integrations/appmesh-controller/icons/color/appmesh-controller-color.svg
 permalink: extensibility/integrations/appmesh-controller
 docURL: https://docs.meshery.io/extensibility/integrations/appmesh-controller

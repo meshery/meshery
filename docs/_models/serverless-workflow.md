@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Serverless Workflow
-subtitle: Collaborative and visual infrastructure as code for Serverless Workflow
+subtitle: Collaborative and visual infrastructure as design for Serverless Workflow
 image: /assets/img/integrations/serverless-workflow/icons/color/serverless-workflow-color.svg
 permalink: extensibility/integrations/serverless-workflow
 docURL: https://docs.meshery.io/extensibility/integrations/serverless workflow

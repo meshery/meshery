@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Aperture Controller
-subtitle: Collaborative and visual infrastructure as code for Aperture Controller
+subtitle: Collaborative and visual infrastructure as design for Aperture Controller
 image: /assets/img/integrations/aperture-controller/icons/color/aperture-controller-color.svg
 permalink: extensibility/integrations/aperture-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aperture-controller

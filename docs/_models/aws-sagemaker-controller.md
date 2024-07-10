@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: AWS SageMaker
-subtitle: Collaborative and visual infrastructure as code for AWS SageMaker
+subtitle: Collaborative and visual infrastructure as design for AWS SageMaker
 image: /assets/img/integrations/aws-sagemaker-controller/icons/color/aws-sagemaker-controller-color.svg
 permalink: extensibility/integrations/aws-sagemaker-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-sagemaker-controller

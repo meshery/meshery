@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Windows
-subtitle: Collaborative and visual infrastructure as code for Windows
+subtitle: Collaborative and visual infrastructure as design for Windows
 image: /assets/img/integrations/windows/icons/color/windows-color.svg
 permalink: extensibility/integrations/windows
 docURL: https://docs.meshery.io/installation//windows

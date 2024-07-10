@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Crossplane
-subtitle: Collaborative and visual infrastructure as code for Crossplane
+subtitle: Collaborative and visual infrastructure as design for Crossplane
 image: /assets/img/integrations/crossplane/icons/color/crossplane-color.svg
 permalink: extensibility/integrations/crossplane
 docURL: https://docs.meshery.io/extensibility/integrations/crossplane

@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Vineyard
-subtitle: Collaborative and visual infrastructure as code for Vineyard
+subtitle: Collaborative and visual infrastructure as design for Vineyard
 image: /assets/img/integrations/vineyard/icons/color/vineyard-color.svg
 permalink: extensibility/integrations/vineyard
 docURL: https://docs.meshery.io/extensibility/integrations/vineyard

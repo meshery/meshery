@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Cortex
-subtitle: Collaborative and visual infrastructure as code for Cortex
+subtitle: Collaborative and visual infrastructure as design for Cortex
 image: /assets/img/integrations/cortex/icons/color/cortex-color.svg
 permalink: extensibility/integrations/cortex
 docURL: https://docs.meshery.io/extensibility/integrations/cortex

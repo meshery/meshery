@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: AWS Lambda
-subtitle: Collaborative and visual infrastructure as code for AWS Lambda
+subtitle: Collaborative and visual infrastructure as design for AWS Lambda
 image: /assets/img/integrations/aws-lambda-controller/icons/color/aws-lambda-controller-color.svg
 permalink: extensibility/integrations/aws-lambda-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-lambda-controller

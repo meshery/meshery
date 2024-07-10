@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Brigade
-subtitle: Collaborative and visual infrastructure as code for Brigade
+subtitle: Collaborative and visual infrastructure as design for Brigade
 image: /assets/img/integrations/brigade/icons/color/brigade-color.svg
 permalink: extensibility/integrations/brigade
 docURL: https://docs.meshery.io/extensibility/integrations/brigade

@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Kubedb UI Server
-subtitle: Collaborative and visual infrastructure as code for Kubedb UI Server
+subtitle: Collaborative and visual infrastructure as design for Kubedb UI Server
 image: /assets/img/integrations/kubedb-ui-server/icons/color/kubedb-ui-server-color.svg
 permalink: extensibility/integrations/kubedb-ui-server
 docURL: https://docs.meshery.io/extensibility/integrations/kubedb-ui-server

@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Telepresence
-subtitle: Collaborative and visual infrastructure as code for Telepresence
+subtitle: Collaborative and visual infrastructure as design for Telepresence
 image: /assets/img/integrations/telepresence/icons/color/telepresence-color.svg
 permalink: extensibility/integrations/telepresence
 docURL: https://docs.meshery.io/extensibility/integrations/telepresence

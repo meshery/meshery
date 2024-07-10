@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: BFE
-subtitle: Collaborative and visual infrastructure as code for BFE
+subtitle: Collaborative and visual infrastructure as design for BFE
 image: /assets/img/integrations/bfe/icons/color/bfe-color.svg
 permalink: extensibility/integrations/bfe
 docURL: https://docs.meshery.io/extensibility/integrations/bfe

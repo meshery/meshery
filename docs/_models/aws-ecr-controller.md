@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: AWS Elastic Container Registry
-subtitle: Collaborative and visual infrastructure as code for AWS Elastic Container Registry
+subtitle: Collaborative and visual infrastructure as design for AWS Elastic Container Registry
 image: /assets/img/integrations/aws-ecr-controller/icons/color/aws-ecr-controller-color.svg
 permalink: extensibility/integrations/aws-ecr-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-ecr-controller

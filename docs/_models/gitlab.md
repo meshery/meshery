@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: GitLab
-subtitle: Collaborative and visual infrastructure as code for GitLab
+subtitle: Collaborative and visual infrastructure as design for GitLab
 image: /assets/img/integrations/gitlab/icons/color/gitlab-color.svg
 permalink: extensibility/integrations/gitlab
 docURL: https://docs.meshery.io/extensibility/integrations/gitlab

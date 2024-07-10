@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Devstream
-subtitle: Collaborative and visual infrastructure as code for Devstream
+subtitle: Collaborative and visual infrastructure as design for Devstream
 image: /assets/img/integrations/devstream/icons/color/devstream-color.svg
 permalink: extensibility/integrations/devstream
 docURL: https://docs.meshery.io/extensibility/integrations/devstream

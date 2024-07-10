@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Wasmcloud
-subtitle: Collaborative and visual infrastructure as code for Wasmcloud
+subtitle: Collaborative and visual infrastructure as design for Wasmcloud
 image: /assets/img/integrations/wasmcloud/icons/color/wasmcloud-color.svg
 permalink: extensibility/integrations/wasmcloud
 docURL: https://docs.meshery.io/extensibility/integrations/wasmcloud

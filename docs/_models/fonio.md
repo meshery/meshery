@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Fonio
-subtitle: Collaborative and visual infrastructure as code for Fonio
+subtitle: Collaborative and visual infrastructure as design for Fonio
 image: /assets/img/integrations/fonio/icons/color/fonio-color.svg
 permalink: extensibility/integrations/fonio
 docURL: https://docs.meshery.io/extensibility/integrations/fonio

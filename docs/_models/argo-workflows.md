@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Argo Workflows
-subtitle: Collaborative and visual infrastructure as code for Argo Workflows
+subtitle: Collaborative and visual infrastructure as design for Argo Workflows
 image: /assets/img/integrations/argo-workflows/icons/color/argo-workflows-color.svg
 permalink: extensibility/integrations/argo-workflows
 docURL: https://docs.meshery.io/extensibility/integrations/argo-workflows

@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Backstage
-subtitle: Collaborative and visual infrastructure as code for Backstage
+subtitle: Collaborative and visual infrastructure as design for Backstage
 image: /assets/img/integrations/backstage/icons/color/backstage-color.svg
 permalink: extensibility/integrations/backstage
 docURL: https://docs.meshery.io/extensibility/integrations/backstage

@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Stackgres Operator
-subtitle: Collaborative and visual infrastructure as code for Stackgres Operator
+subtitle: Collaborative and visual infrastructure as design for Stackgres Operator
 image: /assets/img/integrations/stackgres-operator/icons/color/stackgres-operator-color.svg
 permalink: extensibility/integrations/stackgres-operator
 docURL: https://docs.meshery.io/extensibility/integrations/stackgres-operator

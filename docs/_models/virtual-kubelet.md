@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Virtual Kubelet
-subtitle: Collaborative and visual infrastructure as code for Virtual Kubelet
+subtitle: Collaborative and visual infrastructure as design for Virtual Kubelet
 image: /assets/img/integrations/virtual-kubelet/icons/color/virtual-kubelet-color.svg
 permalink: extensibility/integrations/virtual-kubelet
 docURL: https://docs.meshery.io/extensibility/integrations/virtual kubelet

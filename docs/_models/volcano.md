@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Volcano
-subtitle: Collaborative and visual infrastructure as code for Volcano
+subtitle: Collaborative and visual infrastructure as design for Volcano
 image: /assets/img/integrations/volcano/icons/color/volcano-color.svg
 permalink: extensibility/integrations/volcano
 docURL: https://docs.meshery.io/extensibility/integrations/volcano

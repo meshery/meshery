@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Oras
-subtitle: Collaborative and visual infrastructure as code for Operator
+subtitle: Collaborative and visual infrastructure as design for Oras
 image: /assets/img/integrations/oras/icons/color/oras-color.svg
 permalink: extensibility/integrations/oras
 docURL: https://docs.meshery.io/extensibility/integrations/oras

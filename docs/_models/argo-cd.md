@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Argo CD Applications
-subtitle: Collaborative and visual infrastructure as code for Argo CD Applications
+subtitle: Collaborative and visual infrastructure as design for Argo CD Applications
 image: /assets/img/integrations/argo-cd/icons/color/argo-cd-color.svg
 permalink: extensibility/integrations/argo-cd
 docURL: https://docs.meshery.io/extensibility/integrations/argo-cd

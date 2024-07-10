@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Gitlab Controller
-subtitle: Collaborative and visual infrastructure as code for Gitlab Controller
+subtitle: Collaborative and visual infrastructure as design for Gitlab Controller
 image: /assets/img/integrations/gitlab-controller/icons/color/gitlab-controller-color.svg
 permalink: extensibility/integrations/gitlab-controller
 docURL: https://docs.meshery.io/extensibility/integrations/gitlab-controller

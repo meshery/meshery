@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Pixie
-subtitle: Collaborative and visual infrastructure as code for Pixie
+subtitle: Collaborative and visual infrastructure as design for Pixie
 image: /assets/img/integrations/pixie/icons/color/pixie-color.svg
 permalink: extensibility/integrations/pixie
 docURL: https://docs.meshery.io/extensibility/integrations/pixie

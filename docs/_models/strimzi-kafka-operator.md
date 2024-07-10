@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Strimzi Kafka Operator
-subtitle: Collaborative and visual infrastructure as code for Strimzi Kafka Operator
+subtitle: Collaborative and visual infrastructure as design for Strimzi Kafka Operator
 image: /assets/img/integrations/strimzi-kafka-operator/icons/color/strimzi-kafka-operator-color.svg
 permalink: extensibility/integrations/strimzi-kafka-operator
 docURL: https://docs.meshery.io/extensibility/integrations/strimzi-kafka-operator

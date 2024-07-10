@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Amazon Web Services
-subtitle: Collaborative and visual infrastructure as code for Amazon Web Services
+subtitle: Collaborative and visual infrastructure as design for Amazon Web Services
 image: /assets/img/integrations/aws/icons/color/aws-color.svg
 permalink: extensibility/integrations/aws
 docURL: https://docs.meshery.io/extensibility/integrations/aws

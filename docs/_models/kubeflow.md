@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Kubeflow
-subtitle: Collaborative and visual infrastructure as code for Kubeflow
+subtitle: Collaborative and visual infrastructure as design for Kubeflow
 image: /assets/img/integrations/kubeflow/icons/color/kubeflow-color.svg
 permalink: extensibility/integrations/kubeflow
 docURL: https://docs.meshery.io/extensibility/integrations/kubeflow

@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Trickster
-subtitle: Collaborative and visual infrastructure as code for Trickster
+subtitle: Collaborative and visual infrastructure as design for Trickster
 image: /assets/img/integrations/trickster/icons/color/trickster-color.svg
 permalink: extensibility/integrations/trickster
 docURL: https://docs.meshery.io/extensibility/integrations/trickster

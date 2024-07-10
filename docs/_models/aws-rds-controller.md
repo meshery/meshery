@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: AWS Relational Database Service
-subtitle: Collaborative and visual infrastructure as code for AWS Relational Database Service
+subtitle: Collaborative and visual infrastructure as design for AWS Relational Database Service
 image: /assets/img/integrations/aws-rds-controller/icons/color/aws-rds-controller-color.svg
 permalink: extensibility/integrations/aws-rds-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-rds-controller

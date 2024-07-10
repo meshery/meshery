@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Meshery Core
-subtitle: Collaborative and visual infrastructure as code for Meshery Core
+subtitle: Collaborative and visual infrastructure as design for Meshery Core
 image: /assets/img/integrations/meshery-core/icons/color/meshery-core-color.svg
 permalink: extensibility/integrations/meshery-core
 docURL: https://docs.meshery.io/extensibility/integrations/meshery-core

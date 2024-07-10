@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Kubernetes Secret Generator
-subtitle: Collaborative and visual infrastructure as code for Kubernetes Secret Generator
+subtitle: Collaborative and visual infrastructure as design for Kubernetes Secret Generator
 image: /assets/img/integrations/kubernetes-secret-generator/icons/color/kubernetes-secret-generator-color.svg
 permalink: extensibility/integrations/kubernetes-secret-generator
 docURL: https://docs.meshery.io/extensibility/integrations/kubernetes-secret-generator

@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: AWS Managed Service for Prometheus
-subtitle: Collaborative and visual infrastructure as code for AWS Managed Service for Prometheus
+subtitle: Collaborative and visual infrastructure as design for AWS Managed Service for Prometheus
 image: /assets/img/integrations/aws-prometheusservice-controller/icons/color/aws-prometheusservice-controller-color.svg
 permalink: extensibility/integrations/aws-prometheusservice-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-prometheusservice-controller

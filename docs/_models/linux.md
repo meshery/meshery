@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Linux
-subtitle: The easiest way to get a production-grade Kubernetes cluster up and running
+subtitle: Collaborative and visual infrastructure as design for Linux
 image: /assets/img/integrations/linux/icons/color/linux-color.svg
 permalink: extensibility/integrations/linux
 docURL: https://docs.meshery.io/installation/linux-mac

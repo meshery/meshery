@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Cockroachdb Operator
-subtitle: Collaborative and visual infrastructure as code for Cockroachdb Operator
+subtitle: Collaborative and visual infrastructure as design for Cockroachdb Operator
 image: /assets/img/integrations/cockroachdb-operator/icons/color/cockroachdb-operator-color.svg
 permalink: extensibility/integrations/cockroachdb-operator
 docURL: https://docs.meshery.io/extensibility/integrations/cockroachdb-operator

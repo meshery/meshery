@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Accurate
-subtitle: Collaborative and visual infrastructure as code for Accurate
+subtitle: Collaborative and visual infrastructure as design for Accurate
 image: /assets/img/integrations/accurate/icons/color/accurate-color.svg
 permalink: extensibility/integrations/accurate
 docURL: https://docs.meshery.io/extensibility/integrations/accurate

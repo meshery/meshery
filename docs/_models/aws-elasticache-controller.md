@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: AWS ElastiCache
-subtitle: Collaborative and visual infrastructure as code for AWS ElastiCache
+subtitle: Collaborative and visual infrastructure as design for AWS ElastiCache
 image: /assets/img/integrations/aws-elasticache-controller/icons/color/aws-elasticache-controller-color.svg
 permalink: extensibility/integrations/aws-elasticache-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-elasticache-controller

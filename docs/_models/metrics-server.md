@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Kubernetes Metrics Server
-subtitle: Collaborative and visual infrastructure as code for Kubernetes Metrics Server
+subtitle: Collaborative and visual infrastructure as design for Kubernetes Metrics Server
 image: /assets/img/integrations/metrics-server/icons/color/metrics-server-color.svg
 permalink: extensibility/integrations/metrics-server
 docURL: https://docs.meshery.io/extensibility/integrations/metrics-server

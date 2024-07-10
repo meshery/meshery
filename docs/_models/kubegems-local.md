@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Kubegems Local
-subtitle: Collaborative and visual infrastructure as code for Kubegems Local
+subtitle: Collaborative and visual infrastructure as design for Kubegems Local
 image: /assets/img/integrations/kubegems-local/icons/color/kubegems-local-color.svg
 permalink: extensibility/integrations/kubegems-local
 docURL: https://docs.meshery.io/extensibility/integrations/kubegems-local

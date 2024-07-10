@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Vitess
-subtitle: Collaborative and visual infrastructure as code for Vitess
+subtitle: Collaborative and visual infrastructure as design for Vitess
 image: /assets/img/integrations/vitess/icons/color/vitess-color.svg
 permalink: extensibility/integrations/vitess
 docURL: https://docs.meshery.io/extensibility/integrations/vitess

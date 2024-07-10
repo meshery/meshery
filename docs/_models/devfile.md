@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Devfile
-subtitle: Collaborative and visual infrastructure as code for Devfile
+subtitle: Collaborative and visual infrastructure as design for Devfile
 image: /assets/img/integrations/devfile/icons/color/devfile-color.svg
 permalink: extensibility/integrations/devfile
 docURL: https://docs.meshery.io/extensibility/integrations/devfile

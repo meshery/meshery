@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Rook
-subtitle: Collaborative and visual infrastructure as code for Rook
+subtitle: Collaborative and visual infrastructure as design for Rook
 image: /assets/img/integrations/rook/icons/color/rook-color.svg
 permalink: extensibility/integrations/rook
 docURL: https://docs.meshery.io/extensibility/integrations/rook

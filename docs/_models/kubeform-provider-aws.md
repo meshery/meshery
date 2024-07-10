@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Kubeform Provider AWS
-subtitle: Collaborative and visual infrastructure as code for NGINX Service Mesh
+subtitle: Collaborative and visual infrastructure as design for Kubeform Provider AWS
 image: /assets/img/integrations/kubeform-provider-aws/icons/color/kubeform-provider-aws-color.svg
 permalink: extensibility/integrations/kubeform-provider-aws
 docURL: https://docs.meshery.io/extensibility/integrations/kubeform-provider-aws

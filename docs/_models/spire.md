@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: SPIRE
-subtitle: Collaborative and visual infrastructure as code for SPIRE
+subtitle: Collaborative and visual infrastructure as design for SPIRE
 image: /assets/img/integrations/spire/icons/color/spire-color.svg
 permalink: extensibility/integrations/spire
 docURL: https://docs.meshery.io/extensibility/integrations/spire

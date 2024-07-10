@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Github Actions Runners
-subtitle: Collaborative and visual infrastructure as code for Github Actions Runners
+subtitle: Collaborative and visual infrastructure as design for Github Actions Runners
 image: /assets/img/integrations/github-actions-runners/icons/color/github-actions-runners-color.svg
 permalink: extensibility/integrations/github-actions-runners
 docURL: https://docs.meshery.io/extensibility/integrations/github-actions-runners

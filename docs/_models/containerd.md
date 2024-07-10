@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Containerd
-subtitle: Collaborative and visual infrastructure as code for Containerd
+subtitle: Collaborative and visual infrastructure as design for Containerd
 image: /assets/img/integrations/containerd/icons/color/containerd-color.svg
 permalink: extensibility/integrations/containerd
 docURL: https://docs.meshery.io/extensibility/integrations/containerd

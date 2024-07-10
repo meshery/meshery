@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Tuf
-subtitle: Collaborative and visual infrastructure as code for Tuf
+subtitle: Collaborative and visual infrastructure as design for Tuf
 image: /assets/img/integrations/tuf/icons/color/tuf-color.svg
 permalink: extensibility/integrations/tuf
 docURL: https://docs.meshery.io/extensibility/integrations/tuf

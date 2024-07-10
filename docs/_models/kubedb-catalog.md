@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Kubedb Catalog
-subtitle: Collaborative and visual infrastructure as code for Kubedb Catalog
+subtitle: Collaborative and visual infrastructure as design for Kubedb Catalog
 image: /assets/img/integrations/kubedb-catalog/icons/color/kubedb-catalog-color.svg
 permalink: extensibility/integrations/kubedb-catalog
 docURL: https://docs.meshery.io/extensibility/integrations/kubedb-catalog

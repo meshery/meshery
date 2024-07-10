@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Kubedb CRDs
-subtitle: Collaborative and visual infrastructure as code for Kubedb CRDs
+subtitle: Collaborative and visual infrastructure as design for Kubedb CRDs
 image: /assets/img/integrations/kubedb-crds/icons/color/kubedb-crds-color.svg
 permalink: extensibility/integrations/kubedb-crds
 docURL: https://docs.meshery.io/extensibility/integrations/kubedb-crds

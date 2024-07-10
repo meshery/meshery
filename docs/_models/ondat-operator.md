@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: ondat-operator
-subtitle: Collaborative and visual infrastructure as code for NGINX Service Mesh
+subtitle: Collaborative and visual infrastructure as design for ondat-operator
 image: /assets/img/integrations/ondat-operator/icons/color/ondat-operator-color.svg
 permalink: extensibility/integrations/ondat-operator
 docURL: https://docs.meshery.io/extensibility/integrations/ondat-operator

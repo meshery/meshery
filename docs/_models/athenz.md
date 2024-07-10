@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Athenz
-subtitle: Collaborative and visual infrastructure as code for Athenz
+subtitle: Collaborative and visual infrastructure as design for Athenz
 image: /assets/img/integrations/athenz/icons/color/athenz-color.svg
 permalink: extensibility/integrations/athenz
 docURL: https://docs.meshery.io/extensibility/integrations/athenz

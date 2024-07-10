@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: AWS EC2
-subtitle: Collaborative and visual infrastructure as code for AWS EC2
+subtitle: Collaborative and visual infrastructure as design for AWS EC2
 image: /assets/img/integrations/aws-ec2-controller/icons/color/aws-ec2-controller-color.svg
 permalink: extensibility/integrations/aws-ec2-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-ec2-controller

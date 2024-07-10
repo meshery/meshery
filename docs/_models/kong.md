@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Kong API Gateway
-subtitle: Collaborative and visual infrastructure as code for Kong API Gateway
+subtitle: Collaborative and visual infrastructure as design for Kong API Gateway
 image: /assets/img/integrations/kong/icons/color/kong-color.svg
 permalink: extensibility/integrations/kong
 docURL: https://docs.meshery.io/extensibility/integrations/kong

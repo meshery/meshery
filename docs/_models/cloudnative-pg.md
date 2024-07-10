@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: CloudNativePG
-subtitle: Collaborative and visual infrastructure as code for CloudNativePG
+subtitle: Collaborative and visual infrastructure as design for CloudNativePG
 image: /assets/img/integrations/cloudnative-pg/icons/color/cloudnative-pg-color.svg
 permalink: extensibility/integrations/cloudnative-pg
 docURL: https://docs.meshery.io/extensibility/integrations/cloudnative-pg

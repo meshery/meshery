@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Intel Device Plugins Operator
-subtitle: Collaborative and visual infrastructure as code for Intel Device Plugins Operator
+subtitle: Collaborative and visual infrastructure as design for Intel Device Plugins Operator
 image: /assets/img/integrations/intel-device-plugins-operator/icons/color/intel-device-plugins-operator-color.svg
 permalink: extensibility/integrations/intel-device-plugins-operator
 docURL: https://docs.meshery.io/extensibility/integrations/intel-device-plugins-operator

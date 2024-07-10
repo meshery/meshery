@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Pravega
-subtitle: Collaborative and visual infrastructure as code for Pravega
+subtitle: Collaborative and visual infrastructure as design for Pravega
 image: /assets/img/integrations/pravega/icons/color/pravega-color.svg
 permalink: extensibility/integrations/pravega
 docURL: https://docs.meshery.io/extensibility/integrations/pravega

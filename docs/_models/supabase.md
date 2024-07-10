@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: supabase
-subtitle: Collaborative and visual infrastructure as code for Azure Active Directory (AAD)
+subtitle: Collaborative and visual infrastructure as design for supabase
 image: /assets/img/integrations/supabase/icons/color/supabase-color.svg
 permalink: extensibility/integrations/supabase
 docURL: https://docs.meshery.io/extensibility/integrations/supabase

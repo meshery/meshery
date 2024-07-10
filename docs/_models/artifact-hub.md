@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Artifact Hub
-subtitle: Collaborative and visual infrastructure as code for Artifact Hub
+subtitle: Collaborative and visual infrastructure as design for Artifact Hub
 image: /assets/img/integrations/artifact-hub/icons/color/artifact-hub-color.svg
 permalink: extensibility/integrations/artifact-hub
 docURL: https://docs.meshery.io/extensibility/integrations/artifact-hub

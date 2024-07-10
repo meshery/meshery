@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Thanos Operator
-subtitle: Collaborative and visual infrastructure as code for Thanos Operator
+subtitle: Collaborative and visual infrastructure as design for Thanos Operator
 image: /assets/img/integrations/thanos-operator/icons/color/thanos-operator-color.svg
 permalink: extensibility/integrations/thanos-operator
 docURL: https://docs.meshery.io/extensibility/integrations/thanos-operator

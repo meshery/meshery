@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Azure Orkestra
-subtitle: Collaborative and visual infrastructure as code for Azure Orkestra
+subtitle: Collaborative and visual infrastructure as design for Azure Orkestra
 image: /assets/img/integrations/azureorkestra/icons/color/azureorkestra-color.svg
 permalink: extensibility/integrations/azureorkestra
 docURL: https://docs.meshery.io/extensibility/integrations/azureorkestra

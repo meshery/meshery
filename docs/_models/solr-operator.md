@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Solr Operator
-subtitle: Collaborative and visual infrastructure as code for Solr Operator
+subtitle: Collaborative and visual infrastructure as design for Solr Operator
 image: /assets/img/integrations/solr-operator/icons/color/solr-operator-color.svg
 permalink: extensibility/integrations/solr-operator
 docURL: https://docs.meshery.io/extensibility/integrations/solr-operator

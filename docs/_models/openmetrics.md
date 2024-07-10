@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: OpenMetrics
-subtitle: Collaborative and visual infrastructure as code for OpenMetrics
+subtitle: Collaborative and visual infrastructure as design for OpenMetrics
 image: /assets/img/integrations/openmetrics/icons/color/openmetrics-color.svg
 permalink: extensibility/integrations/openmetrics
 docURL: https://docs.meshery.io/extensibility/integrations/openmetrics

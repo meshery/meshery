@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Github Actions Runner Operator
-subtitle: Collaborative and visual infrastructure as code for Github Actions Runner Operator
+subtitle: Collaborative and visual infrastructure as design for Github Actions Runner Operator
 image: /assets/img/integrations/github-actions-runner-operator/icons/color/github-actions-runner-operator-color.svg
 permalink: extensibility/integrations/github-actions-runner-operator
 docURL: https://docs.meshery.io/extensibility/integrations/github-actions-runner-operator

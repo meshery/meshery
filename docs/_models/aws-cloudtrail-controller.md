@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: AWS CloudTrail
-subtitle: Collaborative and visual infrastructure as code for AWS CloudTrail
+subtitle: Collaborative and visual infrastructure as design for AWS CloudTrail
 image: /assets/img/integrations/aws-cloudtrail-controller/icons/color/aws-cloudtrail-controller-color.svg
 permalink: extensibility/integrations/aws-cloudtrail-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-cloudtrail-controller

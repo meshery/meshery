@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Vault Secrets
-subtitle: Collaborative and visual infrastructure as code for Vault Secrets
+subtitle: Collaborative and visual infrastructure as design for Vault Secrets
 image: /assets/img/integrations/vault-secrets/icons/color/vault-secrets-color.svg
 permalink: extensibility/integrations/vault-secrets
 docURL: https://docs.meshery.io/extensibility/integrations/vault-secrets

@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: OPA Gatekeeper
-subtitle: Collaborative and visual infrastructure as code for Frinx Machine
+subtitle: Collaborative and visual infrastructure as design for OPA Gatekeeper
 image: /assets/img/integrations/gatekeeper/icons/color/gatekeeper-color.svg
 permalink: extensibility/integrations/gatekeeper
 docURL: https://docs.meshery.io/extensibility/integrations/gatekeeper
