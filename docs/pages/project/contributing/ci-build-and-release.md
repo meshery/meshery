@@ -42,6 +42,22 @@ Some portions of the workflow require secrets to accomplish their tasks. These s
 - `CYPRESS_RECORD_KEY`: Used for integration with the Layer5 account on Cypress.
 - `GLOBAL_TOKEN`: Used for securely transmitting performance test results for the None Provider.
 - `NPM_TOKEN`: npm authentication token, used to perform authentication against the npm registry in meshery deployment workflow.
+- `GH_ACCESS_TOKEN`: GitHub access token for various operations
+- `INTEGRATION_SPREADSHEET_CRED`: Credentials for integration spreadsheet access
+- `MAIL_PASSWORD`: Password for email notifications.
+- `MAIL_USERNAME`: Username for email notifications.
+- `MESHERY_PROVIDER_TOKEN`: Token for Meshery provider authentication.
+- `MESHERY_TOKEN`: General Meshery authentication token.
+- `METAL_AUTH_TOKEN`: Authentication token for metal provider.
+- `METAL_SERVER1`: Configuration for metal server 1.
+- `METAL_SERVER2`: Configuration for metal server 2.
+- `METAL_SERVER3`: Configuration for metal server 3.
+- `NETLIFY_AUTH_TOKEN`: Authentication token for Netlify.
+- `NETLIFY_SITE_ID`: Site ID for Netlify deployments
+- `PLAYGROUND_CONFIG`: Configuration for playground environments
+- `PROVIDER_TOKEN`: General provider authentication token
+- `RELEASEDRAFTER_PAT`: Personal access token for Release Drafter
+- `RELEASE_NOTES_PAT`: Personal access token for release notes generation
 
 The Docker Hub user, `mesheryci`, belongs to the "ciusers" team in Docker Hub and acts as the service account under which these automated builds are being pushed. Every time a new Docker Hub repository is created we have to grant “Admin” (in order to update the README in the Docker Hub repository) permissions to the ciusers team.
 
