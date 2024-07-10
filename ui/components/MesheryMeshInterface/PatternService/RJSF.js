@@ -39,6 +39,7 @@ function RJSFForm({
   isLoading,
   ArrayFieldTemplate = MesheryArrayFieldTemplate,
   ObjectFieldTemplate = MesheryCustomObjFieldTemplate,
+  BaseInputTemplate,
   WrapIfAdditionalTemplate = MesheryWrapIfAdditionalTemplate,
   SelectWidget = MesheryCustomSelectWidget,
   LoadingComponent,
@@ -48,6 +49,9 @@ function RJSFForm({
   override,
   formRef = null,
   uiSchema = {},
+  validator,
+  fieldTemplates = {},
+  extraErrors,
   ...restProps
 }) {
   const globalTheme = useTheme();
@@ -74,12 +78,15 @@ function RJSFForm({
           ref={formRef}
           onChange={onChange}
           formData={data}
-          validator={ajv8validator}
+          extraErrors={extraErrors}
+          validator={validator || ajv8validator}
           templates={{
             ArrayFieldTemplate,
             ObjectFieldTemplate,
             WrapIfAdditionalTemplate,
+            BaseInputTemplate,
             FieldTemplate: CustomFieldTemplate, // applying field template universally to every field type.
+            ...fieldTemplates,
           }}
           formContext={{ overrideFlag: override, CustomTextTooltip: CustomTextTooltip }}
           uiSchema={_.merge(schema.uiSchema, uiSchema)}

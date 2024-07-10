@@ -1,0 +1,68 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Grafana Dashboard",
+  "description": "",
+  "format": "JSON",
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "version": "v1.0.0",
+   "name": "scanner",
+   "displayName": "Scanner",
+   "description": "",
+   "status": "ignored",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "registrant": {
+    "hostname": "artifacthub"
+   },
+   "category": {
+    "name": "Security \u0026 Compliance",
+    "metadata": null
+   },
+   "subCategory": "Uncategorized",
+   "metadata": {
+    "capabilities": "",
+    "defaultData": "",
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "model": {
+    "version": "2024.1.18"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "status": "ignored",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "component": {
+   "kind": "GrafanaDashboard",
+   "version": "openviz.dev/v1alpha1",
+   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"folderID\": {\n     \"description\": \"FolderID defines the Grafana folderID\",\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"grafanaRef\": {\n     \"description\": \"GrafanaRef defines the grafana app binding name for the GrafanaDashboard\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"model\": {\n     \"format\": \"textarea\",\n     \"type\": \"string\"\n    },\n    \"overwrite\": {\n     \"description\": \"Overwrite defines the existing grafanadashboard with the same name(if any) should be overwritten or not\",\n     \"type\": \"boolean\"\n    },\n    \"templatize\": {\n     \"description\": \"Templatize defines the fields which supports templating in GrafanaDashboard Model json\",\n     \"properties\": {\n      \"datasource\": {\n       \"type\": \"boolean\"\n      },\n      \"title\": {\n       \"type\": \"boolean\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Grafana Dashboard\",\n \"type\": \"object\"\n}"
+  }
+ }

@@ -1,6 +1,6 @@
 {
   "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "core.meshery.io/v1beta1",
+  "schemaVersion": "models.meshery.io/v1beta1",
   "version": "v1.0.0",
   "name": "eclipse-che",
   "displayName": "Eclipse Che",
@@ -8,22 +8,30 @@
   "status": "ignored",
   "hostID": "00000000-0000-0000-0000-000000000000",
   "registrant": {
-   "hostname": "artifacthub"
+    "hostname": "artifacthub"
   },
   "category": {
-   "name": "App Definition and Development",
-   "metadata": null
+    "name": "App Definition and Development",
+    "metadata": null
   },
   "subCategory": "Application Definition \u0026 Image Build",
   "metadata": {
-   "isAnnotation": false,
-   "svgColor": "",
-   "svgComplete": "",
-   "svgWhite": ""
+    "capabilities": "",
+    "defaultData": "",
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
   },
   "model": {
-   "version": "7.86.0"
+    "version": "7.86.0"
   },
   "components": null,
   "relationships": null
- }
+}

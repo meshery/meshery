@@ -1,16 +1,16 @@
 {
   "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "core.meshery.io/v1beta1",
+  "schemaVersion": "components.meshery.io/v1beta1",
   "version": "v1.0.0",
   "displayName": "OAUTH2Proxy",
   "description": "",
   "format": "JSON",
   "model": {
    "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "core.meshery.io/v1beta1",
+   "schemaVersion": "models.meshery.io/v1beta1",
    "version": "v1.0.0",
    "name": "k8soauth2-proxy-controller",
-   "displayName": "K8s Keycloak Controller",
+   "displayName": "K8s OAuth2 Proxy Controller",
    "description": "",
    "status": "ignored",
    "hostID": "00000000-0000-0000-0000-000000000000",
@@ -21,9 +21,20 @@
     "name": "Uncategorized",
     "metadata": null
    },
-   "subCategory": "",
+   "subCategory": "Uncategorized",
    "metadata": {
-    "source_uri": "https://github.com/DoodleScheduling/k8soauth2-proxy-controller/releases/download/k8soauth2-proxy-controller-0.1.5/k8soauth2-proxy-controller-0.1.5.tgz"
+    "capabilities": "",
+    "defaultData": "",
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
    },
    "model": {
     "version": "0.1.5"
@@ -36,11 +47,7 @@
    "defaultData": "",
    "genealogy": "",
    "isAnnotation": false,
-   "isModelAnnotation": "FALSE",
    "isNamespaced": true,
-   "logoURL": "",
-   "model": "k8soauth2-proxy-controller",
-   "modelDisplayName": "K8s Keycloak Controller",
    "primaryColor": "#00B39F",
    "secondaryColor": "#00D3A9",
    "shape": "circle",

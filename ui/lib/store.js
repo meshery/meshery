@@ -2,6 +2,8 @@ import { createStore, applyMiddleware } from 'redux';
 import { composeWithDevTools } from '@redux-devtools/extension';
 import thunkMiddleware from 'redux-thunk';
 import { fromJS } from 'immutable';
+import { createContext } from 'react';
+import { createDispatchHook, createSelectorHook } from 'react-redux';
 
 const initialState = fromJS({
   page: {
@@ -430,3 +432,8 @@ export const selectK8sContexts = (state) => {
   const k8scontext = state.get('k8sConfig');
   return k8scontext?.toJS?.() || k8scontext;
 };
+
+export const LegacyStoreContext = createContext(null);
+
+export const useLegacySelector = createSelectorHook(LegacyStoreContext);
+export const useLegacyDispactch = createDispatchHook(LegacyStoreContext);

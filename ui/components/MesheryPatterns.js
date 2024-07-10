@@ -11,9 +11,9 @@ import {
   IconButton,
   NoSsr,
   TableCell,
-  Tooltip,
   Typography,
 } from '@material-ui/core';
+import { CustomTooltip, OutlinedPatternIcon } from '@layer5/sistent';
 import { withStyles } from '@material-ui/core/styles';
 import CloseIcon from '@material-ui/icons/Close';
 import DeleteIcon from '@material-ui/icons/Delete';
@@ -22,7 +22,6 @@ import GetAppIcon from '@material-ui/icons/GetApp';
 import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
 import SaveIcon from '@material-ui/icons/Save';
 import CustomToolbarSelect from './MesheryPatterns/CustomToolbarSelect';
-import { withSnackbar } from 'notistack';
 import AddIcon from '@material-ui/icons/AddCircleOutline';
 import React, { useEffect, useRef, useState } from 'react';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
@@ -32,7 +31,6 @@ import { bindActionCreators } from 'redux';
 import dataFetch from '../lib/data-fetch';
 import { toggleCatalogContent, updateProgress } from '../lib/store';
 import DesignConfigurator from '../components/configuratorComponents/MeshModel';
-import { ctxUrl } from '../utils/multi-ctx';
 import { getUnit8ArrayDecodedFile, getUnit8ArrayForDesign } from '../utils/utils';
 import ViewSwitch from './ViewSwitch';
 import MesheryPatternGrid from './MesheryPatterns/MesheryPatternGridView';
@@ -45,10 +43,9 @@ import LoadingScreen from './LoadingComponents/LoadingComponent';
 import { FILE_OPS, MesheryPatternsCatalog, VISIBILITY } from '../utils/Enum';
 import CloneIcon from '../public/static/img/CloneIcon';
 import { useRouter } from 'next/router';
-import Modal from './Modal';
+import { RJSFModalWrapper } from './Modal';
 import downloadContent from '../utils/fileDownloader';
 import ConfigurationSubscription from './graphql/subscriptions/ConfigurationSubscription';
-import ReusableTooltip from './reusable-tooltip';
 import Pattern from '../public/static/img/drawer-icons/pattern_svg.js';
 import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
@@ -66,16 +63,22 @@ import InfoModal from './Modals/Information/InfoModal';
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import { SortableTableCell } from './connections/common/index.js';
 import DefaultError from './General/error-404/index';
-import CAN, { ability } from '@/utils/can';
+import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import ExportModal from './ExportModal';
 import UniversalFilter from '../utils/custom-filter';
 import { useModal, Modal as SistentModal, ModalBody } from '@layer5/sistent';
 import PatternIcon from '@/assets/icons/Pattern';
-import { DeployStepper, UnDeployStepper } from './MesheryPatterns/lifecycle';
 import { UsesSistent } from './SistentWrapper';
 import DryRunIcon from '@/assets/icons/DryRunIcon';
-import { DryRunDesign } from './MesheryPatterns/DryRunDesign';
+import { useActorRef } from '@xstate/react';
+import { designValidationMachine } from 'machines/validator/designValidator';
+import { UnDeployStepper, DeployStepper } from './DesignLifeCycle/DeployStepper';
+import { DryRunDesign } from './DesignLifeCycle/DryRun';
+import { DEPLOYMENT_TYPE } from './DesignLifeCycle/common';
+import { useDeployPatternMutation, useUndeployPatternMutation } from '@/rtk-query/design';
+import CheckIcon from '@/assets/icons/CheckIcon';
+import { ValidateDesign } from './DesignLifeCycle/ValidateDesign';
 
 const genericClickHandler = (ev, fn) => {
   ev.stopPropagation();
@@ -209,13 +212,13 @@ const styles = (theme) => ({
 
 function TooltipIcon({ children, onClick, title, placement }) {
   return (
-    <Tooltip title={title} placement={placement} arrow interactive>
+    <CustomTooltip title={title} placement={placement} interactive>
       <IconButton onClick={onClick}>{children}</IconButton>
-    </Tooltip>
+    </CustomTooltip>
   );
 }
 
-function YAMLEditor({ pattern, onClose, onSubmit }) {
+function YAMLEditor({ pattern, onClose, onSubmit, isReadOnly = false }) {
   const classes = useStyles();
   const [yaml, setYaml] = useState(pattern.pattern_file);
   const [fullScreen, setFullScreen] = useState(false);
@@ -245,16 +248,16 @@ function YAMLEditor({ pattern, onClose, onSubmit }) {
           </Typography>
         </div>
         <div>
-          <ReusableTooltip
+          <CustomTooltip
             placement="top"
             title={fullScreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
             onClick={toggleFullScreen}
           >
             {fullScreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
-          </ReusableTooltip>
-          <ReusableTooltip placement="top" title="Exit" onClick={onClose}>
+          </CustomTooltip>
+          <CustomTooltip placement="top" title="Exit" onClick={onClose}>
             <CloseIcon />
-          </ReusableTooltip>
+          </CustomTooltip>
         </div>
       </DialogTitle>
       <Divider variant="fullWidth" light />
@@ -270,48 +273,53 @@ function YAMLEditor({ pattern, onClose, onSubmit }) {
             // @ts-ignore
             lint: true,
             mode: 'text/x-yaml',
+            readOnly: isReadOnly,
           }}
           onChange={(_, data, val) => setYaml(val)}
         />
       </DialogContent>
       <Divider variant="fullWidth" light />
       <DialogActions>
-        <ReusableTooltip title="Update Pattern">
-          <IconButton
-            aria-label="Update"
-            color="primary"
-            disabled={!CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject)}
-            onClick={() =>
-              onSubmit({
-                data: yaml,
-                id: pattern.id,
-                name: pattern.name,
-                type: FILE_OPS.UPDATE,
-                catalog_data: pattern.catalog_data,
-              })
-            }
-          >
-            <SaveIcon />
-          </IconButton>
-        </ReusableTooltip>
-        <ReusableTooltip title="Delete Pattern">
-          <IconButton
-            aria-label="Delete"
-            color="primary"
-            disabled={!CAN(keys.DELETE_A_DESIGN.action, keys.DELETE_A_DESIGN.subject)}
-            onClick={() =>
-              onSubmit({
-                data: yaml,
-                id: pattern.id,
-                name: pattern.name,
-                type: FILE_OPS.DELETE,
-                catalog_data: pattern.catalog_data,
-              })
-            }
-          >
-            <DeleteIcon />
-          </IconButton>
-        </ReusableTooltip>
+        {isReadOnly ? null : (
+          <>
+            <CustomTooltip title="Update Pattern">
+              <IconButton
+                aria-label="Update"
+                color="primary"
+                disabled={!CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject)}
+                onClick={() =>
+                  onSubmit({
+                    data: yaml,
+                    id: pattern.id,
+                    name: pattern.name,
+                    type: FILE_OPS.UPDATE,
+                    catalog_data: pattern.catalog_data,
+                  })
+                }
+              >
+                <SaveIcon />
+              </IconButton>
+            </CustomTooltip>
+            <CustomTooltip title="Delete Pattern">
+              <IconButton
+                aria-label="Delete"
+                color="primary"
+                disabled={!CAN(keys.DELETE_A_DESIGN.action, keys.DELETE_A_DESIGN.subject)}
+                onClick={() =>
+                  onSubmit({
+                    data: yaml,
+                    id: pattern.id,
+                    name: pattern.name,
+                    type: FILE_OPS.DELETE,
+                    catalog_data: pattern.catalog_data,
+                  })
+                }
+              >
+                <DeleteIcon />
+              </IconButton>
+            </CustomTooltip>
+          </>
+        )}
       </DialogActions>
     </Dialog>
   );
@@ -327,7 +335,12 @@ function MesheryPatterns({
   classes,
   selectedK8sContexts,
   catalogVisibility,
-  // toggleCatalogContent,
+  disableCreateImportDesignButton = false,
+  disableUniversalFilter = false,
+  hideVisibility = false,
+  initialFilters = { visibility: 'All' },
+  pageTitle = 'Designs',
+  arePatternsReadOnly = false,
 }) {
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState('');
@@ -342,7 +355,7 @@ function MesheryPatterns({
   const router = useRouter();
   const [importSchema, setImportSchema] = useState({});
   const [meshModels, setMeshModels] = useState([]);
-  const [selectedFilters, setSelectedFilters] = useState({ visibility: 'All' });
+  const [selectedFilters, setSelectedFilters] = useState(initialFilters);
 
   const [canPublishPattern, setCanPublishPattern] = useState(false);
   const [publishSchema, setPublishSchema] = useState({});
@@ -358,8 +371,10 @@ function MesheryPatterns({
   const [visibilityFilter, setVisibilityFilter] = useState(null);
 
   const PATTERN_URL = '/api/pattern';
-  const DEPLOY_URL = `${PATTERN_URL}/deploy`;
   const CLONE_URL = '/clone';
+
+  const [deployPatternMutation] = useDeployPatternMutation();
+  const [undeployPatternMutation] = useUndeployPatternMutation();
 
   const [importModal, setImportModal] = useState({
     open: false,
@@ -375,9 +390,33 @@ function MesheryPatterns({
     content: null,
   });
 
+  const designValidationActorRef = useActorRef(designValidationMachine);
+
   const designLifecycleModal = useModal({
     headerIcon: <PatternIcon fill="#fff" height={'2rem'} width={'2rem'} />,
   });
+  const sistentInfoModal = useModal({
+    headerIcon: OutlinedPatternIcon,
+  });
+  const handleDeploy = async ({ design, selectedK8sContexts }) => {
+    updateProgress({ showProgress: true });
+    await deployPatternMutation({
+      pattern_file: design.pattern_file,
+      pattern_id: design.id,
+      selectedK8sContexts,
+    });
+    updateProgress({ showProgress: false });
+  };
+
+  const handleUndeploy = async ({ design, selectedK8sContexts }) => {
+    updateProgress({ showProgress: true });
+    await undeployPatternMutation({
+      pattern_file: design.pattern_file,
+      pattern_id: design.id,
+      selectedK8sContexts,
+    });
+    updateProgress({ showProgress: false });
+  };
 
   const handleDownloadDialogClose = () => {
     setDownloadModal((prevState) => ({
@@ -395,8 +434,6 @@ function MesheryPatterns({
       content: pattern,
     }));
   };
-
-  console.log('updated ability in pattern', ability);
 
   const [loading, stillLoading] = useState(true);
   const { width } = useWindowDimensions();
@@ -479,6 +516,8 @@ function MesheryPatterns({
   // @ts-ignore
   useEffect(() => {
     document.body.style.overflowX = 'hidden';
+    const visibilityFilter =
+      selectedFilters.visibility === 'All' ? null : selectedFilters.visibility;
     fetchPatterns(page, pageSize, search, sortOrder, visibilityFilter);
     return () => (document.body.style.overflowX = 'auto');
   }, [page, pageSize, search, sortOrder, visibilityFilter]);
@@ -488,27 +527,6 @@ function MesheryPatterns({
       setSearch('');
     }
   }, [viewType]);
-
-  // const handleCatalogPreference = (catalogPref) => {
-  //   let body = Object.assign({}, extensionPreferences);
-  //   body['catalogContent'] = catalogPref;
-
-  //   dataFetch(
-  //     '/api/user/prefs',
-  //     {
-  //       method: 'POST',
-  //       credentials: 'include',
-  //       body: JSON.stringify({ usersExtensionPreferences: body }),
-  //     },
-  //     () => {
-  //       notify({
-  //         message: `Catalog Content was ${catalogPref ? 'enabled' : 'disabled'}`,
-  //         event_type: EVENT_TYPES.SUCCESS,
-  //       });
-  //     },
-  //     (err) => console.error(err),
-  //   );
-  // };
 
   const fetchUserPrefs = () => {
     dataFetch(
@@ -598,7 +616,14 @@ function MesheryPatterns({
       async (result) => {
         try {
           const { models } = await getMeshModels();
-          const modelNames = _.uniq(models?.map((model) => model.displayName));
+          const modelNames = _.uniqBy(
+            models?.map((model) => {
+              if (model.displayName && model.displayName !== '') {
+                return model.displayName;
+              }
+            }),
+            _.toLower,
+          );
           modelNames.sort();
 
           // Modify the schema using the utility function
@@ -651,7 +676,6 @@ function MesheryPatterns({
   // }, [catalogVisibility]);
 
   const handleSetPatterns = (patterns) => {
-    console.log('Patterns', patterns);
     if (catalogVisibilityRef.current && catalogContentRef.current?.length > 0) {
       setPatterns([
         ...(catalogContentRef.current || []),
@@ -676,11 +700,15 @@ function MesheryPatterns({
       title: name,
       reactNode: (
         <DeployStepper
-          pattern_file={pattern_file}
-          name={name}
           handleClose={designLifecycleModal.closeModal}
-          handleComplete={designLifecycleModal.closeModal}
-          pattern_id={pattern_id}
+          validationMachine={designValidationActorRef}
+          design={{
+            name,
+            pattern_file,
+            id: pattern_id,
+          }}
+          handleDeploy={handleDeploy}
+          deployment_type={DEPLOYMENT_TYPE.DEPLOY}
           selectedK8sContexts={selectedK8sContexts}
         />
       ),
@@ -693,12 +721,16 @@ function MesheryPatterns({
       title: name,
       reactNode: (
         <UnDeployStepper
-          pattern_file={pattern_file}
-          name={name}
-          pattern_id={pattern_id}
-          selectedK8sContexts={selectedK8sContexts}
           handleClose={designLifecycleModal.closeModal}
-          handleComplete={designLifecycleModal.closeModal}
+          validationMachine={designValidationActorRef}
+          design={{
+            name,
+            pattern_file,
+            id: pattern_id,
+          }}
+          handleUndeploy={handleUndeploy}
+          deployment_type={DEPLOYMENT_TYPE.UNDEPLOY}
+          selectedK8sContexts={selectedK8sContexts}
         />
       ),
     });
@@ -711,11 +743,37 @@ function MesheryPatterns({
       reactNode: (
         <ModalBody style={{ minWidth: '30rem', width: 'auto' }}>
           <DryRunDesign
-            pattern_file={pattern_file}
-            dryRunType={'deploy'}
-            name={name}
-            pattern_id={pattern_id}
-            selectedContexts={selectedK8sContexts}
+            handleClose={designLifecycleModal.closeModal}
+            validationMachine={designValidationActorRef}
+            design={{
+              name,
+              pattern_file,
+              id: pattern_id,
+            }}
+            deployment_type={DEPLOYMENT_TYPE.DEPLOY}
+            selectedK8sContexts={selectedK8sContexts}
+          />
+        </ModalBody>
+      ),
+    });
+  };
+
+  const openValidateModal = (e, pattern_file, name, pattern_id) => {
+    e.stopPropagation();
+    designLifecycleModal.openModal({
+      title: name,
+      reactNode: (
+        <ModalBody style={{ minWidth: '30rem', width: 'auto' }}>
+          <ValidateDesign
+            handleClose={designLifecycleModal.closeModal}
+            validationMachine={designValidationActorRef}
+            design={{
+              name,
+              pattern_file,
+              id: pattern_id,
+            }}
+            deployment_type={DEPLOYMENT_TYPE.DEPLOY}
+            selectedK8sContexts={selectedK8sContexts}
           />
         </ModalBody>
       ),
@@ -735,12 +793,17 @@ function MesheryPatterns({
   };
 
   const handleInfoModalClose = () => {
+    sistentInfoModal.closeModal();
     setInfoModal({
       open: false,
     });
   };
 
   const handleInfoModal = (pattern) => {
+    sistentInfoModal.openModal({
+      title: pattern.name,
+    });
+
     setInfoModal({
       open: true,
       ownerID: pattern.user_id,
@@ -767,6 +830,8 @@ function MesheryPatterns({
           title: `Unpublish Catalog item?`,
           subtitle: `Are you sure you want to unpublish ${pattern?.name}?`,
           options: ['Yes', 'No'],
+          showInfoIcon:
+            "Unpublishing a catolog item removes the item from the public-facing catalog (a public website accessible to anonymous visitors at meshery.io/catalog). The catalog item's visibility will change to either public (or private with a subscription). The ability to for other users to continue to access, edit, clone and collaborate on your content depends upon the assigned visibility level (public or private). Prior collaborators (users with whom you have shared your catalog item) will retain access. However, you can always republish it whenever you want. Remember: unpublished catalog items can still be available to other users if that item is set to public visibility. For detailed information, please refer to the [documentation](https://docs.meshery.io/concepts/designs).",
         });
         if (response === 'Yes') {
           updateProgress({ showProgress: true });
@@ -795,51 +860,6 @@ function MesheryPatterns({
     });
   };
 
-  const handleDeploy = (pattern_file, pattern_id, name) => {
-    updateProgress({ showProgress: true });
-    dataFetch(
-      ctxUrl(DEPLOY_URL, selectedK8sContexts),
-      {
-        credentials: 'include',
-        method: 'POST',
-        body: JSON.stringify({
-          pattern_file: pattern_file,
-          pattern_id: pattern_id,
-        }),
-      },
-      () => {
-        updateProgress({ showProgress: false });
-        notify({
-          message: `"${name}" Design Deployed`,
-          event_type: EVENT_TYPES.SUCCESS,
-        });
-      },
-      handleError(ACTION_TYPES.DEPLOY_PATTERN),
-    );
-  };
-
-  const handleUnDeploy = (pattern_file, pattern_id, name) => {
-    updateProgress({ showProgress: true });
-    dataFetch(
-      ctxUrl(DEPLOY_URL, selectedK8sContexts),
-      {
-        credentials: 'include',
-        method: 'DELETE',
-        body: JSON.stringify({
-          pattern_file: pattern_file,
-          pattern_id: pattern_id,
-        }),
-      },
-      () => {
-        updateProgress({ showProgress: false });
-        notify({
-          message: `"${name}" Design undeployed`,
-          event_type: EVENT_TYPES.SUCCESS,
-        });
-      },
-      handleError(ACTION_TYPES.UNDEPLOY_PATTERN),
-    );
-  };
   const handlePublish = (formData) => {
     const compatibilityStore = _.uniqBy(meshModels, (model) => _.toLower(model.displayName))
       ?.filter((model) =>
@@ -848,7 +868,7 @@ function MesheryPatterns({
       ?.map((model) => model.name);
 
     const payload = {
-      id: publishModal.pattern?.id,
+      id: infoModal.selectedResource?.id,
       catalog_data: {
         ...formData,
         compatibility: compatibilityStore,
@@ -1225,6 +1245,17 @@ function MesheryPatterns({
                   />
                 </TooltipIcon>
               )}
+
+              <TooltipIcon
+                placement="top"
+                title="Validate Design"
+                onClick={(e) =>
+                  openValidateModal(e, rowData.pattern_file, rowData.name, rowData.id)
+                }
+                disabled={!CAN(keys.VALIDATE_DESIGN.action, keys.VALIDATE_DESIGN.subject)}
+              >
+                <CheckIcon data-cy="verify-button" />
+              </TooltipIcon>
               <TooltipIcon
                 placement="top"
                 title="Dry Run"
@@ -1265,7 +1296,7 @@ function MesheryPatterns({
               <TooltipIcon
                 title="Design Information"
                 disabled={!CAN(keys.DETAILS_OF_DESIGN.action, keys.DETAILS_OF_DESIGN.subject)}
-                onClick={(ev) => genericClickHandler(ev, handleInfoModal)}
+                onClick={(ev) => genericClickHandler(ev, () => handleInfoModal(rowData))}
               >
                 <InfoOutlinedIcon data-cy="information-button" />
               </TooltipIcon>
@@ -1308,7 +1339,9 @@ function MesheryPatterns({
     // Initialize column visibility based on the original columns' visibility
     const initialVisibility = {};
     columns.forEach((col) => {
-      initialVisibility[col.name] = showCols[col.name];
+      if (!(hideVisibility && col.name === 'visibility')) {
+        initialVisibility[col.name] = showCols[col.name];
+      }
     });
     return initialVisibility;
   });
@@ -1466,7 +1499,7 @@ function MesheryPatterns({
   };
 
   if (loading) {
-    return <LoadingScreen animatedIcon="AnimatedMeshPattern" message="Loading Designs..." />;
+    return <LoadingScreen animatedIcon="AnimatedMeshPattern" message={`Loading ${pageTitle}...`} />;
   }
 
   /**
@@ -1484,15 +1517,19 @@ function MesheryPatterns({
     const { uploadType, name, url, file, designType } = data;
     let requestBody = null;
     switch (uploadType) {
-      case 'File Upload':
+      case 'File Upload': {
+        const fileElement = document.getElementById('root_file');
+        const fileName = fileElement.files[0].name;
         requestBody = JSON.stringify({
           save: true,
           pattern_data: {
             name,
+            file_name: fileName.split('.')[0],
             pattern_file: getUnit8ArrayDecodedFile(file),
           },
         });
         break;
+      }
       case 'URL Import':
         requestBody = JSON.stringify({
           save: true,
@@ -1550,6 +1587,7 @@ function MesheryPatterns({
               pattern={selectedRowData}
               onClose={resetSelectedRowData()}
               onSubmit={handleSubmit}
+              isReadOnly={arePatternsReadOnly}
             />
           )}
           {selectedPattern.show && (
@@ -1564,36 +1602,38 @@ function MesheryPatterns({
               <div style={{ display: 'flex' }}>
                 {!selectedPattern.show && (patterns.length > 0 || viewType === 'table') && (
                   <div className={classes.createButton}>
-                    <div style={{ display: 'flex', order: '1' }}>
-                      <Button
-                        aria-label="Add Pattern"
-                        variant="contained"
-                        color="primary"
-                        size="large"
-                        // @ts-ignore
-                        onClick={() => router.push('designs/configurator')}
-                        style={{ display: 'flex', marginRight: '2rem' }}
-                        disabled={
-                          !CAN(keys.CREATE_NEW_DESIGN.action, keys.CREATE_NEW_DESIGN.subject)
-                        }
-                      >
-                        <AddIcon className={classes.addIcon} />
-                        <span className={classes.btnText}> Create Design </span>
-                      </Button>
-                      <Button
-                        aria-label="Add Pattern"
-                        variant="contained"
-                        color="primary"
-                        size="large"
-                        // @ts-ignore
-                        onClick={handleUploadImport}
-                        style={{ display: 'flex', marginRight: '2rem', marginLeft: '-0.6rem' }}
-                        disabled={!CAN(keys.IMPORT_DESIGN.action, keys.IMPORT_DESIGN.subject)}
-                      >
-                        <PublishIcon className={classes.addIcon} />
-                        <span className={classes.btnText}> Import Design </span>
-                      </Button>
-                    </div>
+                    {disableCreateImportDesignButton ? null : (
+                      <div style={{ display: 'flex', order: '1' }}>
+                        <Button
+                          aria-label="Add Pattern"
+                          variant="contained"
+                          color="primary"
+                          size="large"
+                          // @ts-ignore
+                          onClick={() => router.push('designs/configurator')}
+                          style={{ display: 'flex', marginRight: '2rem' }}
+                          disabled={
+                            !CAN(keys.CREATE_NEW_DESIGN.action, keys.CREATE_NEW_DESIGN.subject)
+                          }
+                        >
+                          <AddIcon className={classes.addIcon} />
+                          <span className={classes.btnText}> Create Design </span>
+                        </Button>
+                        <Button
+                          aria-label="Add Pattern"
+                          variant="contained"
+                          color="primary"
+                          size="large"
+                          // @ts-ignore
+                          onClick={handleUploadImport}
+                          style={{ display: 'flex', marginRight: '2rem', marginLeft: '-0.6rem' }}
+                          disabled={!CAN(keys.IMPORT_DESIGN.action, keys.IMPORT_DESIGN.subject)}
+                        >
+                          <PublishIcon className={classes.addIcon} />
+                          <span className={classes.btnText}> Import Design </span>
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 )}
                 {!selectedPattern.show && (
@@ -1615,15 +1655,17 @@ function MesheryPatterns({
                 }}
                 expanded={isSearchExpanded}
                 setExpanded={setIsSearchExpanded}
-                placeholder="Search designs..."
+                placeholder={`Search ${pageTitle.toLowerCase()}...`}
               />
-              <UniversalFilter
-                id="ref"
-                filters={filter}
-                selectedFilters={selectedFilters}
-                setSelectedFilters={setSelectedFilters}
-                handleApplyFilter={handleApplyFilter}
-              />
+              {disableUniversalFilter ? null : (
+                <UniversalFilter
+                  id="ref"
+                  filters={filter}
+                  selectedFilters={selectedFilters}
+                  setSelectedFilters={setSelectedFilters}
+                  handleApplyFilter={handleApplyFilter}
+                />
+              )}
               {viewType === 'table' && (
                 <CustomColumnVisibilityControl
                   id="ref"
@@ -1639,16 +1681,18 @@ function MesheryPatterns({
           </div>
           {!selectedPattern.show && viewType === 'table' && (
             <>
-              <ResponsiveDataTable
-                data={patterns}
-                columns={columns}
-                // @ts-ignore
-                options={options}
-                className={classes.muiRow}
-                tableCols={tableCols}
-                updateCols={updateCols}
-                columnVisibility={columnVisibility}
-              />
+              <UsesSistent>
+                <ResponsiveDataTable
+                  data={patterns}
+                  columns={columns}
+                  // @ts-ignore
+                  options={options}
+                  className={classes.muiRow}
+                  tableCols={tableCols}
+                  updateCols={updateCols}
+                  columnVisibility={columnVisibility}
+                />
+              </UsesSistent>
               <ExportModal
                 downloadModal={downloadModal}
                 handleDownloadDialogClose={handleDownloadDialogClose}
@@ -1662,11 +1706,8 @@ function MesheryPatterns({
               selectedK8sContexts={selectedK8sContexts}
               canPublishPattern={canPublishPattern}
               patterns={patterns}
-              handleDeploy={handleDeploy}
-              handleVerify={() => {}}
               handlePublish={handlePublish}
               handleUnpublishModal={handleUnpublishModal}
-              handleUnDeploy={handleUnDeploy}
               handleClone={handleClone}
               supportedTypes="null"
               handleSubmit={handleSubmit}
@@ -1683,30 +1724,33 @@ function MesheryPatterns({
               fetch={() => fetchPatterns(page, pageSize, search, sortOrder, visibilityFilter)}
               handleInfoModal={handleInfoModal}
               openUndeployModal={openUndeployModal}
+              openValidationModal={openValidateModal}
               openDryRunModal={openDryRunModal}
               openDeployModal={openDeployModal}
+              hideVisibility={hideVisibility}
+              arePatternsReadOnly={arePatternsReadOnly}
             />
           )}
-          {/*<ConfirmationModal
-            open={modalOpen.open}
-            handleClose={handleModalClose}
-            submit={{
-              deploy: () =>
-                handleDeploy(modalOpen.pattern_file, modalOpen.patternID, modalOpen.name),
-              unDeploy: () =>
-                handleUnDeploy(modalOpen.pattern_file, modalOpen.patternID, modalOpen.name),
-              verify: () => handleVerify(modalOpen.pattern_file, modalOpen.patternID),
-            }}
-            title={modalOpen.name}
-            componentCount={modalOpen.count}
-            tab={modalOpen.subject}
-            validationBody={modalOpen.validationBody}
-            dryRunComponent={modalOpen.dryRunComponent}
-            errors={modalOpen.errors}
-          /> */}
 
           <UsesSistent>
-            <SistentModal {...designLifecycleModal}></SistentModal>
+            <SistentModal maxWidth="sm" {...designLifecycleModal}></SistentModal>
+            <SistentModal {...sistentInfoModal}>
+              {CAN(keys.DETAILS_OF_DESIGN.action, keys.DETAILS_OF_DESIGN.subject) &&
+                infoModal.open && (
+                  <InfoModal
+                    handlePublish={handlePublish}
+                    infoModalOpen={true}
+                    handleInfoModalClose={handleInfoModalClose}
+                    dataName="patterns"
+                    selectedResource={infoModal.selectedResource}
+                    resourceOwnerID={infoModal.ownerID}
+                    currentUser={user}
+                    patternFetcher={fetchPatternsCaller}
+                    formSchema={publishSchema}
+                    meshModels={meshModels}
+                  />
+                )}
+            </SistentModal>
           </UsesSistent>
           {canPublishPattern &&
             publishModal.open &&
@@ -1725,19 +1769,6 @@ function MesheryPatterns({
               handleImportDesign={handleImportDesign}
             />
           )}
-          {infoModal.open && CAN(keys.DETAILS_OF_DESIGN.action, keys.DETAILS_OF_DESIGN.subject) && (
-            <InfoModal
-              infoModalOpen={true}
-              handleInfoModalClose={handleInfoModalClose}
-              dataName="patterns"
-              selectedResource={infoModal.selectedResource}
-              resourceOwnerID={infoModal.ownerID}
-              currentUserID={user?.id}
-              patternFetcher={fetchPatternsCaller}
-              formSchema={publishSchema}
-              meshModels={meshModels}
-            />
-          )}
           <PromptComponent ref={modalRef} />
         </>
       ) : (
@@ -1750,27 +1781,31 @@ function MesheryPatterns({
 const ImportModal = React.memo((props) => {
   const { importFormSchema, handleClose, handleImportDesign } = props;
 
-  const classes = useStyles();
-
   return (
     <>
-      <Modal
-        open={true}
-        schema={importFormSchema.rjsfSchema}
-        uiSchema={importFormSchema.uiSchema}
-        handleClose={handleClose}
-        handleSubmit={handleImportDesign}
-        title="Import Design"
-        submitBtnText="Import"
-        leftHeaderIcon={
-          <Pattern
-            fill="#fff"
-            style={{ height: '24px', width: '24px', fonSize: '1.45rem' }}
-            className={undefined}
+      <UsesSistent>
+        <SistentModal
+          open={true}
+          closeModal={handleClose}
+          headerIcon={
+            <Pattern
+              fill="#fff"
+              style={{ height: '24px', width: '24px', fonSize: '1.45rem' }}
+              className={undefined}
+            />
+          }
+          maxWidth="sm"
+          title="Import Design"
+        >
+          <RJSFModalWrapper
+            schema={importFormSchema.rjsfSchema}
+            uiSchema={importFormSchema.uiSchema}
+            handleSubmit={handleImportDesign}
+            submitBtnText="Import"
+            handleClose={handleClose}
           />
-        }
-        submitBtnIcon={<PublishIcon className={classes.addIcon} data-cy="import-button" />}
-      />
+        </SistentModal>
+      </UsesSistent>
     </>
   );
 });
@@ -1780,21 +1815,31 @@ const PublishModal = React.memo((props) => {
 
   return (
     <>
-      <Modal
-        open={true}
-        schema={publishFormSchema.rjsfSchema}
-        uiSchema={publishFormSchema.uiSchema}
-        handleClose={handleClose}
-        aria-label="catalog publish"
-        title={title}
-        handleSubmit={handleSubmit}
-        showInfoIcon={{
-          text: 'Upon submitting your catalog item, an approval flow will be initiated.',
-          link: 'https://docs.meshery.io/concepts/catalog',
-        }}
-        submitBtnText="Submit for Approval"
-        submitBtnIcon={<PublicIcon />}
-      />
+      <UsesSistent>
+        <SistentModal
+          open={true}
+          closeModal={handleClose}
+          aria-label="catalog publish"
+          title={title}
+          headerIcon={
+            <Pattern
+              fill="#fff"
+              style={{ height: '24px', width: '24px', fonSize: '1.45rem' }}
+              className={undefined}
+            />
+          }
+          maxWidth="sm"
+        >
+          <RJSFModalWrapper
+            schema={publishFormSchema.rjsfSchema}
+            uiSchema={publishFormSchema.uiSchema}
+            handleSubmit={handleSubmit}
+            submitBtnText="Submit for Approval"
+            handleClose={handleClose}
+            helpText="Upon submitting your catalog item, an approval flow will be initiated.[Learn more](https://docs.meshery.io/concepts/catalog)"
+          />
+        </SistentModal>
+      </UsesSistent>
     </>
   );
 });
@@ -1811,6 +1856,4 @@ const mapStateToProps = (state) => ({
 });
 
 // @ts-ignore
-export default withStyles(styles)(
-  connect(mapStateToProps, mapDispatchToProps)(withSnackbar(MesheryPatterns)),
-);
+export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(MesheryPatterns));

@@ -11,6 +11,7 @@ import (
 	"runtime"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/jarcoal/httpmock"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
@@ -170,7 +171,7 @@ func SetupLogrusGrabTesting(_ *testing.T, _ bool) *bytes.Buffer {
 // setup meshkit logger for testing and return the buffer in which commands output is to be set.
 func SetupMeshkitLoggerTesting(_ *testing.T, verbose bool) *bytes.Buffer {
 	b := bytes.NewBufferString("")
-	SetupMeshkitLogger(verbose, b)
+	Log = SetupMeshkitLogger("mesheryctl", verbose, b)
 	return b
 }
 
@@ -258,12 +259,24 @@ func StartMockMesheryServer(t *testing.T) error {
 	if err != nil {
 		return err
 	}
-	// accept and close the connection.
-	// this is to verify IsServerRunning() in auth.go
-	conn, err := l.Accept()
-	if err != nil {
-		return err
-	}
-	defer conn.Close()
+
+	go func() {
+		for {
+			conn, err := l.Accept()
+			if err != nil {
+				// Log error and break the loop if it's a permanent error
+				if opErr, ok := err.(*net.OpError); ok && !opErr.Temporary() {
+					t.Logf("Failed to accept connection: %v", err)
+					break
+				}
+				continue
+			}
+			// Close the connection to verify IsServerRunning() in auth.go
+			conn.Close()
+		}
+	}()
+
+	// Give the server some time to start
+	time.Sleep(100 * time.Millisecond)
 	return nil
 }

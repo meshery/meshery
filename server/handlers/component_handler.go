@@ -3,18 +3,27 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strconv"
+	"strings"
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
+	"github.com/layer5io/meshery/server/helpers"
 	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/pattern/core"
+
 	"github.com/layer5io/meshkit/models/events"
+	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha2"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	"github.com/layer5io/meshkit/models/meshmodel/entity"
 	"github.com/layer5io/meshkit/models/meshmodel/registry"
+	meshkitutils "github.com/layer5io/meshkit/utils"
+
 	regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
 )
 
@@ -1204,13 +1213,20 @@ func (h *Handler) RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Re
 	var c v1beta1.ComponentDefinition
 	switch cc.EntityType {
 	case entity.ComponentDefinition:
+		var isModelError bool
+		var isRegistranError bool
 		err = json.Unmarshal(cc.Entity, &c)
 		if err != nil {
 			http.Error(rw, err.Error(), http.StatusBadRequest)
 			return
 		}
 		utils.WriteSVGsOnFileSystem(&c)
-		err = h.registryManager.RegisterEntity(cc.Host, &c)
+		isRegistranError, isModelError, err = h.registryManager.RegisterEntity(cc.Host, &c)
+		helpers.HandleError(cc.Host, &c, err, isModelError, isRegistranError)
+	}
+	err = helpers.WriteLogsToFiles()
+	if err != nil {
+		h.log.Error(err)
 	}
 	if err != nil {
 		http.Error(rw, err.Error(), http.StatusBadRequest)
@@ -1301,7 +1317,7 @@ func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Reques
 // Update the ignore status of a model based on the provided parameters.
 //
 // responses:
-// 	200: NoContent
+// 	200: noContentWrapper
 
 // request body should be json
 // request body should be of struct containing ID and Status fields
@@ -1358,4 +1374,187 @@ func prettifyCompDefSchema(entities []entity.Entity) []v1beta1.ComponentDefiniti
 		}
 	}
 	return comps
+}
+
+// swagger:route POST /api/meshmodel/register RegisterMeshmodels idRegisterMeshmodels
+// Handle POST request for registering entites like components and relationships model.
+//
+// Register model based on thier Schema Version.
+//
+// responses:
+// 	200: noContentWrapper
+
+// request content byte in form value and header of the type in form
+func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+	var compCount, relCount int
+	dirPath := r.FormValue("dir")
+	if dirPath != "" {
+		tempFile, err := os.CreateTemp("", "upload-*.tar.gz")
+		if err != nil {
+			err = meshkitutils.ErrCreateFile(err, "/tmp/upload-*.tar.gz")
+			h.log.Error(err)
+			http.Error(rw, err.Error(), http.StatusBadRequest)
+			return
+		}
+		defer os.Remove(tempFile.Name())
+
+		_, err = tempFile.Write([]byte(dirPath))
+		if err != nil {
+			err = meshkitutils.ErrWriteFile(err, tempFile.Name())
+			h.log.Error(err)
+			http.Error(rw, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		err = processUploadedFile(tempFile.Name(), h, &compCount, &relCount)
+		if err != nil {
+			h.log.Error(err)
+			http.Error(rw, err.Error(), http.StatusBadRequest)
+			return
+		}
+		message := writeMessageString(compCount, relCount)
+		if message.Len() > 0 {
+			h.log.Info(message.String())
+		}
+		rw.WriteHeader(http.StatusOK)
+		_, _ = rw.Write([]byte(message.String()))
+		return
+	}
+
+	file, _, err := r.FormFile("file")
+	if err != nil {
+		err = ErrRetrieveData(err)
+		http.Error(rw, err.Error(), http.StatusBadRequest)
+		return
+	}
+	defer file.Close()
+
+	fileContent, err := io.ReadAll(file)
+	if err != nil {
+		err = meshkitutils.ErrReadFile(err, string(fileContent))
+		http.Error(rw, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	entityType, err := meshkitutils.FindEntityType(fileContent)
+	if err != nil {
+		h.log.Error(err)
+		http.Error(rw, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	if entityType == "" {
+		err = meshkitutils.ErrInvalidSchemaVersion
+		h.log.Error(err)
+		http.Error(rw, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = RegisterEntity(fileContent, entityType, h)
+	if err != nil {
+		h.log.Error(err)
+		http.Error(rw, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	message := ""
+	if entityType == entity.ComponentDefinition {
+		message = "Successfully registered Component"
+	} else {
+		message = "Successfully registered Relationship"
+	}
+	h.log.Info(message)
+	rw.WriteHeader(http.StatusOK)
+	_, _ = rw.Write([]byte(message))
+}
+func writeMessageString(compCount int, relCount int) strings.Builder {
+
+	var message strings.Builder
+
+	if compCount > 0 {
+		message.WriteString(fmt.Sprintf("Total Components Registered: %d", compCount))
+	}
+
+	if relCount > 0 {
+		if message.Len() > 0 {
+			message.WriteString(" and ")
+		}
+		message.WriteString(fmt.Sprintf("Registered Relationships: %d", relCount))
+	}
+	return message
+}
+func processUploadedFile(filePath string, h *Handler, compCount *int, relCount *int) error {
+	tempDir, err := os.MkdirTemp("", "extracted-")
+	if err != nil {
+		return ErrCreateDir(err, "Error creating temp dir")
+	}
+	defer os.RemoveAll(tempDir)
+
+	err = utils.ExtractFile(filePath, tempDir)
+	if err != nil {
+		return err
+	}
+	err = filepath.Walk(tempDir, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return meshkitutils.ErrFileWalkDir(err, path)
+		}
+		if !info.IsDir() {
+			if meshkitutils.IsYaml(path) {
+				content, err := os.ReadFile(path)
+				if err != nil {
+					return meshkitutils.ErrReadFile(err, path)
+				}
+				entityType, err := meshkitutils.FindEntityType(content)
+				if err != nil {
+					return err
+				}
+				if entityType != "" {
+					err = RegisterEntity(content, entityType, h)
+					if err != nil {
+						return err
+					}
+					if entityType == entity.ComponentDefinition {
+						*compCount++
+					} else {
+						*relCount++
+					}
+				}
+
+			}
+			if meshkitutils.IsTarGz(path) || meshkitutils.IsZip(path) {
+				return processUploadedFile(path, h, compCount, relCount)
+			}
+		}
+		return nil
+	})
+	return err
+}
+func RegisterEntity(content []byte, entityType entity.EntityType, h *Handler) error {
+	switch entityType {
+	case entity.ComponentDefinition:
+		var c v1beta1.ComponentDefinition
+		err := json.Unmarshal(content, &c)
+		if err != nil {
+			return meshkitutils.ErrUnmarshal(err)
+		}
+		isRegistrantError, isModelError, err := h.registryManager.RegisterEntity(v1beta1.Host{
+			Hostname: c.Model.Registrant.Hostname,
+		}, &c)
+		helpers.HandleError(v1beta1.Host{
+			Hostname: c.Model.Registrant.Hostname,
+		}, &c, err, isModelError, isRegistrantError)
+		return nil
+	case entity.RelationshipDefinition:
+		var r v1alpha2.RelationshipDefinition
+		err := json.Unmarshal(content, &r)
+		if err != nil {
+			return meshkitutils.ErrUnmarshal(err)
+		}
+		isRegistrantError, isModelError, err := h.registryManager.RegisterEntity(v1beta1.Host{
+			Hostname: r.Model.Registrant.Hostname,
+		}, &r)
+		helpers.HandleError(v1beta1.Host{
+			Hostname: r.Model.Registrant.Hostname,
+		}, &r, err, isModelError, isRegistrantError)
+		return nil
+	}
+	return meshkitutils.ErrInvalidSchemaVersion
 }

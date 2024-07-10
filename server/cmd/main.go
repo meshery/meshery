@@ -82,7 +82,7 @@ func main() {
 	}
 
 	viper.OnConfigChange(func(event fsnotify.Event) {
-		logrus.Info("received change for", event.Name)
+		log.Info("received change for", event.Name)
 		log.SetLevel(logrus.Level(viper.GetInt("LOG_LEVEL")))
 	})
 
@@ -134,6 +134,20 @@ func main() {
 		log.Error(ErrCreatingUserDataDirectory(viper.GetString("USER_DATA_FOLDER")))
 		os.Exit(1)
 	}
+	logDir := path.Join(home, ".meshery", "logs", "registry")
+	errDir = os.MkdirAll(logDir, 0755)
+	if errDir != nil {
+		logrus.Fatalf("Error creating user data directory: %v", err)
+	}
+
+	// Create or open the log file
+	logFilePath := path.Join(logDir, "registry-logs.log")
+	logFile, err := os.Create(logFilePath)
+	if err != nil {
+		logrus.Fatalf("Could not create log file: %v", err)
+	}
+	defer logFile.Close()
+	viper.Set("REGISTRY_LOG_FILE", logFilePath)
 
 	log.Info("Meshery Database is at: ", viper.GetString("USER_DATA_FOLDER"))
 	if viper.GetString("KUBECONFIG_FOLDER") == "" {
@@ -144,7 +158,7 @@ func main() {
 		viper.SetDefault("KUBECONFIG_FOLDER", path.Join(home, ".kube"))
 	}
 	log.Info("Using kubeconfig at: ", viper.GetString("KUBECONFIG_FOLDER"))
-	logrus.Info("Log level: ", log.GetLevel())
+	log.Info("Log level: ", log.GetLevel())
 
 	adapterURLs := viper.GetStringSlice("ADAPTER_URLS")
 
@@ -229,11 +243,11 @@ func main() {
 
 		KubeConfigFolder: viper.GetString("KUBECONFIG_FOLDER"),
 
-		GrafanaClient:         models.NewGrafanaClient(),
-		GrafanaClientForQuery: models.NewGrafanaClientWithHTTPClient(&http.Client{Timeout: time.Second}),
+		GrafanaClient:         models.NewGrafanaClient(&log),
+		GrafanaClientForQuery: models.NewGrafanaClientWithHTTPClient(&http.Client{Timeout: time.Second}, &log),
 
-		PrometheusClient:         models.NewPrometheusClient(),
-		PrometheusClientForQuery: models.NewPrometheusClientWithHTTPClient(&http.Client{Timeout: time.Second}),
+		PrometheusClient:         models.NewPrometheusClient(&log),
+		PrometheusClientForQuery: models.NewPrometheusClientWithHTTPClient(&http.Client{Timeout: time.Second}, &log),
 
 		ApplicationChannel:        models.NewBroadcaster(),
 		PatternChannel:            models.NewBroadcaster(),
@@ -258,7 +272,7 @@ func main() {
 		r, err := policies.NewRegoInstance(PoliciesPath, regManager)
 		rego = *r
 		if err != nil {
-			logrus.Warn("error creating rego instance, policies will not be evaluated")
+			log.Warn(ErrCreatingOPAInstance)
 		}
 		krh.SeedKeys(viper.GetString("KEYS_PATH"))
 		hc.MeshModelSummaryChannel.Publish()
@@ -267,6 +281,7 @@ func main() {
 	lProv.SeedContent(log)
 	provs[lProv.Name()] = lProv
 
+	providerEnvVar := viper.GetString(constants.ProviderENV)
 	RemoteProviderURLs := viper.GetStringSlice("PROVIDER_BASE_URLS")
 	for _, providerurl := range RemoteProviderURLs {
 		parsedURL, err := url.Parse(providerurl)
@@ -286,6 +301,7 @@ func main() {
 			GenericPersister:           dbHandler,
 			EventsPersister:            &models.EventsPersister{DB: dbHandler},
 			Log:                        log,
+			CookieDuration:             24 * time.Hour,
 		}
 
 		cp.Initialize()
@@ -293,6 +309,14 @@ func main() {
 		cp.SyncPreferences()
 		defer cp.StopSyncPreferences()
 		provs[cp.Name()] = cp
+	}
+
+	// verifies if the provider specified in the "PROVIDER" environment variable is from one of the supported providers.
+	// If it is one of the supported providers, the server gets configured to auto select the specified provider,
+	// else the provider specified in the environment variable is ignored and  each time user logs in they need to select a provider.
+	isProviderEnvVarValid := models.VerifyMesheryProvider(providerEnvVar, provs)
+	if !isProviderEnvVarValid {
+		providerEnvVar = ""
 	}
 
 	operatorDeploymentConfig := models.NewOperatorDeploymentConfig(adapterTracker)
@@ -305,7 +329,7 @@ func main() {
 
 	models.InitMeshSyncRegistrationQueue()
 	mhelpers.InitRegistrationHelperSingleton(dbHandler, log, &connToInstanceTracker, hc.EventBroadcaster)
-	h := handlers.NewHandlerInstance(hc, meshsyncCh, log, brokerConn, k8sComponentsRegistrationHelper, mctrlHelper, dbHandler, events.NewEventStreamer(), regManager, viper.GetString(constants.ProviderENV), &rego, &connToInstanceTracker)
+	h := handlers.NewHandlerInstance(hc, meshsyncCh, log, brokerConn, k8sComponentsRegistrationHelper, mctrlHelper, dbHandler, events.NewEventStreamer(), regManager, providerEnvVar, &rego, &connToInstanceTracker)
 
 	b := broadcast.NewBroadcaster(100)
 	defer b.Close()

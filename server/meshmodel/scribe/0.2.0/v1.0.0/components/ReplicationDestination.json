@@ -1,13 +1,13 @@
 {
   "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "core.meshery.io/v1beta1",
+  "schemaVersion": "components.meshery.io/v1beta1",
   "version": "v1.0.0",
   "displayName": "Replication Destination",
   "description": "",
   "format": "JSON",
   "model": {
    "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "core.meshery.io/v1beta1",
+   "schemaVersion": "models.meshery.io/v1beta1",
    "version": "v1.0.0",
    "name": "scribe",
    "displayName": "Scribe",
@@ -18,12 +18,23 @@
     "hostname": "artifacthub"
    },
    "category": {
-    "name": "Uncategorized",
+    "name": "Observability and Analysis",
     "metadata": null
    },
-   "subCategory": "",
+   "subCategory": "Logging",
    "metadata": {
-    "source_uri": "https://backube.github.io/helm-charts/scribe-0.2.0.tgz"
+    "capabilities": "",
+    "defaultData": "",
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
    },
    "model": {
     "version": "0.2.0"
@@ -36,11 +47,7 @@
    "defaultData": "",
    "genealogy": "",
    "isAnnotation": false,
-   "isModelAnnotation": "FALSE",
    "isNamespaced": true,
-   "logoURL": "",
-   "model": "scribe",
-   "modelDisplayName": "Scribe",
    "primaryColor": "#00B39F",
    "secondaryColor": "#00D3A9",
    "shape": "circle",

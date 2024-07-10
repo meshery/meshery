@@ -1,13 +1,13 @@
 {
   "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "core.meshery.io/v1beta1",
+  "schemaVersion": "components.meshery.io/v1beta1",
   "version": "v1.0.0",
   "displayName": "Node",
   "description": "",
   "format": "JSON",
   "model": {
    "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "core.meshery.io/v1beta1",
+   "schemaVersion": "models.meshery.io/v1beta1",
    "version": "v1.0.0",
    "name": "kubernetes",
    "displayName": "Kubernetes",
@@ -34,7 +34,7 @@
    "relationships": null
   },
   "metadata": {
-   "capabilities": " {\n  \"designer\": {\n    \"edit\": {\n      \"shape\": {\n        \"convert-shape\": false\n      }\n    }\n  }\n}",
+   "capabilities": " { \n  \"designer\": {\n    \"edit\": {\n      \"shape\": {\n        \"convert-shape\": false\n      }\n    }\n  }\n}",
    "defaultData": "",
    "genealogy": "parent",
    "isAnnotation": false,

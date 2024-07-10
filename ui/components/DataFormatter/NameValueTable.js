@@ -167,8 +167,6 @@ export default function NameValueTable(props) {
                 item
                 key={i}
                 xs={12}
-                lg={2}
-                xl={2}
                 spacing={1}
                 sm={hideValueGridItem ? 12 : 4}
                 component="dt"

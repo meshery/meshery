@@ -206,6 +206,22 @@ components:
   colorIcon: assets/img/integrations/kong-mesh/components/rate-limit/icons/color/rate-limit-color.svg
   whiteIcon: assets/img/integrations/kong-mesh/components/rate-limit/icons/white/rate-limit-white.svg
   description: 
+- name: mesh-service
+  colorIcon: assets/img/integrations/kong-mesh/components/mesh-service/icons/color/mesh-service-color.svg
+  whiteIcon: assets/img/integrations/kong-mesh/components/mesh-service/icons/white/mesh-service-white.svg
+  description: 
+- name: hostname-generator
+  colorIcon: assets/img/integrations/kong-mesh/components/hostname-generator/icons/color/hostname-generator-color.svg
+  whiteIcon: assets/img/integrations/kong-mesh/components/hostname-generator/icons/white/hostname-generator-white.svg
+  description: 
+- name: mesh-external-service
+  colorIcon: assets/img/integrations/kong-mesh/components/mesh-external-service/icons/color/mesh-external-service-color.svg
+  whiteIcon: assets/img/integrations/kong-mesh/components/mesh-external-service/icons/white/mesh-external-service-white.svg
+  description: 
+- name: mesh-passthrough
+  colorIcon: assets/img/integrations/kong-mesh/components/mesh-passthrough/icons/color/mesh-passthrough-color.svg
+  whiteIcon: assets/img/integrations/kong-mesh/components/mesh-passthrough/icons/white/mesh-passthrough-white.svg
+  description: 
 featureList: [
   "Built on top of Envoy with 50+ observability charts out of the box, you can collect metrics, traces and logs of all L4-L7 traffic.",
   "Integrate with Kong Ingress Controller to implement authentication, transformations, and other functionalities across Kubernetes clusters with zero downtime.",

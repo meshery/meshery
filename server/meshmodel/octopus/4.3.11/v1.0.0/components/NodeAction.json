@@ -1,0 +1,68 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Node Action",
+  "description": "",
+  "format": "JSON",
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "version": "v1.0.0",
+   "name": "octopus",
+   "displayName": "Octopus",
+   "description": "",
+   "status": "ignored",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "registrant": {
+    "hostname": "artifacthub"
+   },
+   "category": {
+    "name": "Uncategorized",
+    "metadata": null
+   },
+   "subCategory": "Uncategorized",
+   "metadata": {
+    "capabilities": "",
+    "defaultData": "",
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "model": {
+    "version": "4.3.11"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "status": "ignored",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "component": {
+   "kind": "NodeAction",
+   "version": "agent.octopus.openi.org.cn/v1",
+   "schema": "{\n \"description\": \"NodeAction is the Schema for the nodeactions API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"NodeActionSpec defines the desired state of NodeAction\",\n   \"properties\": {\n    \"actions\": {\n     \"properties\": {\n      \"docker\": {\n       \"properties\": {\n        \"commit\": {\n         \"properties\": {\n          \"author\": {\n           \"type\": \"string\"\n          },\n          \"changes\": {\n           \"items\": {\n            \"type\": \"string\"\n           },\n           \"type\": \"array\"\n          },\n          \"container\": {\n           \"type\": \"string\"\n          },\n          \"message\": {\n           \"type\": \"string\"\n          },\n          \"repository\": {\n           \"type\": \"string\"\n          },\n          \"tag\": {\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"changes\"\n         ],\n         \"type\": \"object\"\n        },\n        \"commitAndPush\": {\n         \"properties\": {\n          \"author\": {\n           \"type\": \"string\"\n          },\n          \"changes\": {\n           \"items\": {\n            \"type\": \"string\"\n           },\n           \"type\": \"array\"\n          },\n          \"container\": {\n           \"type\": \"string\"\n          },\n          \"message\": {\n           \"type\": \"string\"\n          },\n          \"repository\": {\n           \"type\": \"string\"\n          },\n          \"tag\": {\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"changes\"\n         ],\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"nodeName\": {\n     \"description\": \"NodeName is where the action will execute\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"actions\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Node Action\",\n \"type\": \"object\"\n}"
+  }
+ }

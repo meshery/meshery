@@ -15,9 +15,9 @@ import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import RJSFWrapper from './MesheryMeshInterface/PatternService/RJSF_wrapper';
 import { ArrowDropDown } from '@material-ui/icons';
 import { getSchema } from './MesheryMeshInterface/PatternService/helper';
-import Link from 'next/link';
 import { Snackbar } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
+import { ModalBody, ModalFooter, PrimaryActionButtons } from '@layer5/sistent';
 
 const useStyles = makeStyles((theme) => ({
   '@keyframes rotateCloseIcon': {
@@ -165,19 +165,6 @@ function Modal(props) {
   const formRef = React.createRef();
   const [loadingSchema, setLoadingSchema] = useState(true);
 
-  const renderTooltipContent = () => (
-    <div>
-      <span>{showInfoIcon.text}</span>
-      {showInfoIcon.link && (
-        <Link href={showInfoIcon.link} passHref onClick={(e) => e.stopPropagation()}>
-          <a className={classes.toolTip} target="_blank" rel="noopener noreferrer">
-            Learn more
-          </a>
-        </Link>
-      )}
-    </div>
-  );
-
   const handleFormSubmit = () => {
     if (formRef.current && formRef.current.validateForm()) {
       handleClose();
@@ -270,10 +257,11 @@ function Modal(props) {
           </Button>
           {showInfoIcon && (
             <CustomTextTooltip
-              backgroundColor="#3C494F"
               placement="top"
               interactive={true}
-              title={renderTooltipContent()}
+              title={`${showInfoIcon.text} ${
+                showInfoIcon.link ? `[Learn more](${showInfoIcon.link})` : ''
+              }`}
             >
               <IconButton className={classes.infoIcon} color="primary">
                 <InfoOutlinedIcon />
@@ -303,3 +291,110 @@ function Modal(props) {
 }
 
 export default React.memo(Modal);
+
+function RJSFModalWrapper({
+  handleClose,
+  schema,
+  uiSchema = {},
+  initialData = {},
+  handleSubmit,
+  title,
+  submitBtnText,
+  helpText,
+}) {
+  const formRef = useRef();
+  const classes = useStyles();
+  const formStateRef = useRef();
+  const [canNotSubmit, setCanNotSubmit] = useState(false);
+  const [snackbar, setSnackbar] = useState(false);
+  const [loadingSchema, setLoadingSchema] = useState(true);
+
+  useEffect(() => {
+    setCanNotSubmit(false);
+    const handleDesignNameCheck = () => {
+      const designName = title?.toLowerCase();
+      const forbiddenWords = ['untitled design', 'Untitled', 'lfx'];
+
+      for (const word of forbiddenWords) {
+        if (designName?.includes(word)) {
+          setSnackbar({
+            severity: 'warning',
+            message: `Design name should not contain Untitled Design, Untitled, LFX`,
+            open: true,
+          });
+          setCanNotSubmit(true);
+          break;
+        }
+      }
+    };
+    handleDesignNameCheck();
+  }, [title]);
+
+  const handleFormChange = (data) => {
+    formStateRef.current = data;
+  };
+
+  useEffect(() => {
+    setLoadingSchema(!schema);
+  }, [schema]);
+
+  const handleFormSubmit = () => {
+    if (formRef.current && formRef.current.validateForm()) {
+      handleSubmit(formRef.current.state.formData);
+      handleClose();
+    }
+  };
+
+  return (
+    <>
+      <ModalBody>
+        {loadingSchema ? (
+          <div style={{ textAlign: 'center', padding: '8rem 17rem' }}>
+            <CircularProgress />
+          </div>
+        ) : (
+          <RJSFWrapper
+            formData={initialData}
+            jsonSchema={schema}
+            uiSchema={uiSchema}
+            onChange={handleFormChange}
+            liveValidate={false}
+            formRef={formRef}
+            hideTitle={true}
+          />
+        )}
+      </ModalBody>
+      <ModalFooter variant="filled" helpText={helpText}>
+        <PrimaryActionButtons
+          primaryText={submitBtnText || 'Submit'}
+          secondaryText="Cancel"
+          primaryButtonProps={{
+            onClick: handleFormSubmit,
+            disabled: canNotSubmit,
+          }}
+          secondaryButtonProps={{
+            onClick: handleClose,
+          }}
+        />
+      </ModalFooter>
+      {snackbar && (
+        <Snackbar
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+          open={snackbar.open}
+          autoHideDuration={6000}
+          onClose={() => setSnackbar(null)}
+        >
+          <Alert
+            className={classes.snackbar}
+            onClose={() => setSnackbar(null)}
+            severity={snackbar.severity}
+          >
+            {snackbar.message}
+          </Alert>
+        </Snackbar>
+      )}
+    </>
+  );
+}
+
+export { RJSFModalWrapper };

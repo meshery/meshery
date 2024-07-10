@@ -24,6 +24,7 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/experimental"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/filter"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/mesh"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/model"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/pattern"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/perf"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/registry"
@@ -114,6 +115,7 @@ func init() {
 		filter.FilterCmd,
 		registry.RegistryCmd,
 		components.ComponentsCmd,
+		model.ModelCmd,
 	}
 
 	RootCmd.AddCommand(availableSubcommands...)
@@ -198,5 +200,6 @@ func setVerbose() {
 }
 
 func setupLogger() {
-	utils.SetupMeshkitLogger(verbose, nil)
+	utils.Log = utils.SetupMeshkitLogger("mesheryctl", verbose, os.Stdout)
+	utils.LogError = utils.SetupMeshkitLogger("mesheryctl-error", verbose, os.Stderr)
 }

@@ -19,7 +19,7 @@ import ExpandAllIcon from '@/assets/icons/ExpandAll';
 import CircularProgress from '@mui/material/CircularProgress';
 import { Colors } from '../../themes/app';
 import { JustifyAndAlignCenter } from './MeshModel.style';
-import { getHyperLinkDiv } from '../MesheryMeshInterface/PatternService/helper';
+import { styled } from '@mui/styles';
 
 const ComponentTree = ({
   expanded,
@@ -365,6 +365,12 @@ const useRegistryRouter = () => {
   };
 };
 
+const MesheryTreeViewWrapper = styled('div')(() => ({
+  width: '100%',
+  height: '100%',
+  display: 'flex',
+  flexDirection: 'column',
+}));
 const MesheryTreeView = ({
   data,
   view,
@@ -490,7 +496,7 @@ const MesheryTreeView = ({
     return view === COMPONENTS;
   };
 
-  const renderHeader = (type) => (
+  const renderHeader = (type, hasRecords) => (
     <div
       style={{
         display: 'flex',
@@ -537,6 +543,7 @@ const MesheryTreeView = ({
                       color="primary"
                       checked={checked}
                       onClick={handleChecked}
+                      disabled={!hasRecords}
                       inputProps={{ 'aria-label': 'controlled' }}
                     />
                   }
@@ -546,11 +553,9 @@ const MesheryTreeView = ({
                 <CustomTextTooltip
                   placement="right"
                   interactive={true}
-                  title={getHyperLinkDiv(
-                    `View all duplicate entries of ${_.toLower(
-                      view,
-                    )}. Entries with identical name and version attributes are considered duplicates. [Learn More](https://docs.meshery.io/concepts/logical/models#models)`,
-                  )}
+                  title={`View all duplicate entries of ${_.toLower(
+                    view,
+                  )}. Entries with identical name and version attributes are considered duplicates. [Learn More](https://docs.meshery.io/concepts/logical/models#models)`}
                 >
                   <IconButton color="primary">
                     <InfoOutlinedIcon height={20} width={20} />
@@ -582,8 +587,8 @@ const MesheryTreeView = ({
   };
 
   const renderTree = (treeComponent, type) => (
-    <div>
-      {renderHeader(type)}
+    <>
+      {renderHeader(type, !!data.length)}
       {data.length === 0 && !searchText ? (
         <JustifyAndAlignCenter style={{ height: '27rem' }}>
           <CircularProgress sx={{ color: Colors.keppelGreen }} />
@@ -595,17 +600,17 @@ const MesheryTreeView = ({
       ) : (
         <div
           className="scrollElement"
-          style={{ overflowY: 'auto', height: '27rem' }}
+          style={{ overflowY: 'auto', height: '55vh' }}
           onScroll={handleScroll(type)}
         >
           {treeComponent}
         </div>
       )}
-    </div>
+    </>
   );
 
   return (
-    <div style={{ width: '100%', height: '28.86rem' }}>
+    <MesheryTreeViewWrapper>
       {view === MODELS &&
         renderTree(
           <MesheryTreeViewModel
@@ -658,7 +663,7 @@ const MesheryTreeView = ({
           />,
           RELATIONSHIPS,
         )}
-    </div>
+    </MesheryTreeViewWrapper>
   );
 };
 

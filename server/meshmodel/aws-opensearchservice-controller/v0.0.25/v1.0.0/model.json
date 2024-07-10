@@ -1,6 +1,6 @@
 {
   "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "core.meshery.io/v1beta1",
+  "schemaVersion": "models.meshery.io/v1beta1",
   "version": "v1.0.0",
   "name": "aws-opensearchservice-controller",
   "displayName": "AWS OpenSearch Service",
@@ -8,22 +8,30 @@
   "status": "ignored",
   "hostID": "00000000-0000-0000-0000-000000000000",
   "registrant": {
-   "hostname": "github"
+    "hostname": "github"
   },
   "category": {
-   "name": "Observability and Analysis",
-   "metadata": null
+    "name": "Observability and Analysis",
+    "metadata": null
   },
   "subCategory": "Logging",
   "metadata": {
-   "isAnnotation": false,
-   "svgColor": "",
-   "svgComplete": "",
-   "svgWhite": ""
+    "capabilities": "",
+    "defaultData": "",
+    "isAnnotation": false,
+    "primaryColor": "#E7157B",
+    "secondaryColor": "",
+    "shape": "rectangle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
   },
   "model": {
-   "version": "v0.0.25"
+    "version": "v0.0.25"
   },
   "components": null,
   "relationships": null
- }
+}

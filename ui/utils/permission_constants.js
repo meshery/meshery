@@ -406,4 +406,8 @@ export const keys = {
     subject: 'View performance profiles',
     action: '6593ac26-820b-4e87-be32-64ee740ea204',
   },
+  RESET_DATABASE: {
+    subject: 'Reset database',
+    action: '84fc402c-f33e-4a21-a0e3-e14f9e20b125',
+  },
 };

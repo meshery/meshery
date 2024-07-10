@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/gorilla/mux"
+	"github.com/layer5io/meshery/server/helpers"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha2"
 	"github.com/layer5io/meshkit/models/meshmodel/entity"
@@ -103,6 +104,12 @@ func (h *Handler) GetMeshmodelRelationshipByName(rw http.ResponseWriter, r *http
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 // responses:
+//
+// ```?kind={kind}```  Filters relationship based on kind
+//
+// ```?subType={subType}```  Filters relationship based on subType
+//
+// ```?type={type}```  Filters relationship based type
 //	200: meshmodelRelationshipsResponseWrapper
 
 // swagger:route GET /api/meshmodels/models/{model}/relationships GetAllMeshmodelRelationships idGetAllMeshmodelRelationshipsByModel
@@ -122,6 +129,12 @@ func (h *Handler) GetMeshmodelRelationshipByName(rw http.ResponseWriter, r *http
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 // responses:
+//
+// ```?kind={kind}```  Filters relationship based on kind
+//
+// ```?subType={subType}```  Filters relationship based on subType
+//
+// ```?type={type}```  Filters relationship based on type
 //
 //	200: meshmodelRelationshipsResponseWrapper
 func (h *Handler) GetAllMeshmodelRelationships(rw http.ResponseWriter, r *http.Request) {
@@ -143,12 +156,15 @@ func (h *Handler) GetAllMeshmodelRelationships(rw http.ResponseWriter, r *http.R
 	}
 	offset := (page - 1) * limit
 	entities, count, _, _ := h.registryManager.GetEntities(&regv1alpha2.RelationshipFilter{
-		Version:   r.URL.Query().Get("version"),
-		ModelName: typ,
-		Limit:     limit,
-		Offset:    offset,
-		OrderOn:   r.URL.Query().Get("order"),
-		Sort:      r.URL.Query().Get("sort"),
+		Version:          r.URL.Query().Get("version"),
+		ModelName:        typ,
+		Limit:            limit,
+		Offset:           offset,
+		OrderOn:          r.URL.Query().Get("order"),
+		Sort:             r.URL.Query().Get("sort"),
+		Kind:             r.URL.Query().Get("kind"),
+		SubType:          r.URL.Query().Get("subType"),
+		RelationshipType: r.URL.Query().Get("type"),
 	})
 
 	var pgSize int64
@@ -181,13 +197,20 @@ func (h *Handler) RegisterMeshmodelRelationships(rw http.ResponseWriter, r *http
 	}
 	switch cc.EntityType {
 	case entity.RelationshipDefinition:
+		var isModelError bool
+		var isRegistranError bool
 		var r v1alpha2.RelationshipDefinition
 		err = json.Unmarshal(cc.Entity, &r)
 		if err != nil {
 			http.Error(rw, err.Error(), http.StatusBadRequest)
 			return
 		}
-		err = h.registryManager.RegisterEntity(cc.Host, &r)
+		isRegistranError, isModelError, err = h.registryManager.RegisterEntity(cc.Host, &r)
+		helpers.HandleError(cc.Host, &r, err, isModelError, isRegistranError)
+	}
+	err = helpers.WriteLogsToFiles()
+	if err != nil {
+		h.log.Error(err)
 	}
 	if err != nil {
 		http.Error(rw, err.Error(), http.StatusBadRequest)

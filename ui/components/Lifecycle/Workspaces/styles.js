@@ -1,7 +1,7 @@
 import { Typography, Card, Checkbox, styled, Box, Button } from '@material-ui/core';
 import theme, { Colors } from '../../../themes/app';
 
-/** Card Styles */
+/** Workspace card wrapper */
 export const CardWrapper = styled(Card)(({ theme }) => ({
   width: '100%',
   display: 'flex',

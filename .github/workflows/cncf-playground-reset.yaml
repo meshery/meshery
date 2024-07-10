@@ -13,7 +13,7 @@ jobs:
     - name: Cluster cleanup by running the cleanup script inside VM
       uses: appleboy/ssh-action@master
       with:
-          host: 147.75.47.9
+          host: secrets.METAL_SERVER1
           username: root
           key: ${{ secrets.METAL_SSH_KEY }}
           script: |
