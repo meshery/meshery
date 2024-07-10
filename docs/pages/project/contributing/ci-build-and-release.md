@@ -44,15 +44,15 @@ Some portions of the workflow require secrets to accomplish their tasks. These s
 - `NPM_TOKEN`: npm authentication token, used to perform authentication against the npm registry in meshery deployment workflow.
 - `GH_ACCESS_TOKEN`: GitHub access token for various operations
 - `INTEGRATION_SPREADSHEET_CRED`: Credentials for integration spreadsheet access
-- `MAIL_PASSWORD`: Password for email notifications
-- `MAIL_USERNAME`: Username for email notifications
-- `MESHERY_PROVIDER_TOKEN`: Token for Meshery provider authentication
-- `MESHERY_TOKEN`: General Meshery authentication token
-- `METAL_AUTH_TOKEN`: Authentication token for metal provider
-- `METAL_SERVER1`: Configuration for metal server 1
-- `METAL_SERVER2`: Configuration for metal server 2
-- `METAL_SERVER3`: Configuration for metal server 3
-- `NETLIFY_AUTH_TOKEN`: Authentication token for Netlify
+- `MAIL_PASSWORD`: Password for email notifications.
+- `MAIL_USERNAME`: Username for email notifications.
+- `MESHERY_PROVIDER_TOKEN`: Token for Meshery provider authentication.
+- `MESHERY_TOKEN`: General Meshery authentication token.
+- `METAL_AUTH_TOKEN`: Authentication token for metal provider.
+- `METAL_SERVER1`: Configuration for metal server 1.
+- `METAL_SERVER2`: Configuration for metal server 2.
+- `METAL_SERVER3`: Configuration for metal server 3.
+- `NETLIFY_AUTH_TOKEN`: Authentication token for Netlify.
 - `NETLIFY_SITE_ID`: Site ID for Netlify deployments
 - `PLAYGROUND_CONFIG`: Configuration for playground environments
 - `PROVIDER_TOKEN`: General provider authentication token
