@@ -356,7 +356,7 @@ const InfoModal_ = React.memo((props) => {
                 </Typography>
               </Grid>
               {version === '' ? null : (
-                <Grid item xs={12} style={{ marginTop: '1rem' }}>
+                <Grid item xs={12} >
                   <Typography
                     style={{ whiteSpace: 'nowrap' }}
                     gutterBottom
