@@ -7,6 +7,7 @@ import { getWebAdress } from './webApis';
 import { APPLICATION, DESIGN, FILTER } from '../constants/navigator';
 import { Tooltip } from '@mui/material';
 import jsyaml from 'js-yaml';
+import yaml from 'js-yaml';
 
 /**
  * Check if an object is empty
@@ -386,4 +387,17 @@ export const processDesign = (design) => {
     components,
     designJson,
   };
+};
+
+export const getDesignVersion = (design) => {
+  if (design.visibility === 'published') {
+    return design.catalog_data.published_version;
+  } else {
+    try {
+      const parsedYaml = yaml.load(design.pattern_file);
+      return parsedYaml.version;
+    } catch (error) {
+      console.error('Error parsing YAML:', error);
+    }
+  }
 };

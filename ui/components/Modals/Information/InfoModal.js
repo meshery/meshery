@@ -11,7 +11,7 @@ import useStyles, {
   ResourceName,
 } from './styles';
 import { iconMedium, iconSmall } from '../../../css/icons.styles';
-import { getSharableCommonHostAndprotocolLink } from '../../../utils/utils';
+import { getDesignVersion, getSharableCommonHostAndprotocolLink } from '../../../utils/utils';
 import moment from 'moment';
 import Application from '../../../public/static/img/drawer-icons/application_svg.js';
 import { useSnackbar } from 'notistack';
@@ -71,8 +71,7 @@ const InfoModal_ = React.memo((props) => {
     return moment(date).utc().format('MMMM Do YYYY');
   };
   const currentUserID = currentUser?.id;
-  const isAdmin = currentUser.role_names.includes('admin');
-
+  const isAdmin = currentUser?.role_names?.includes('admin') || false;
   const { data: resourceUserProfile } = useGetUserByIdQuery(resourceOwnerID);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
@@ -272,6 +271,7 @@ const InfoModal_ = React.memo((props) => {
 
   const isPublished = selectedResource?.visibility === 'published';
   const [imageError, setImageError] = useState(false);
+  const version = getDesignVersion(selectedResource);
 
   const handleError = () => {
     setImageError(true);
@@ -355,6 +355,19 @@ const InfoModal_ = React.memo((props) => {
                   </CreatAtContainer>
                 </Typography>
               </Grid>
+              {version === '' ? null : (
+                <Grid item xs={12} style={{ marginTop: '1rem' }}>
+                  <Typography
+                    style={{ whiteSpace: 'nowrap' }}
+                    gutterBottom
+                    variant="subtitle1"
+                    className={classes.text}
+                  >
+                    <CreatAtContainer isBold={true}>Version</CreatAtContainer>
+                    <CreatAtContainer isBold={false}>{version}</CreatAtContainer>
+                  </Typography>
+                </Grid>
+              )}
             </Grid>
             <Grid item xs={8} lg>
               <Grid container spacing={2}>
