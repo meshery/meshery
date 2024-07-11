@@ -9,7 +9,6 @@ type: project
 category: contributing
 list: include
 ---
-
 [Relationships](/concepts/logical/relationships) within [Models](/concepts/logical/models) play a crucial role in establishing concrete visualisations of efficient data flow between different components of Meshery. These are used to classify the nature of interaction between one or more interconnected [Components](/concepts/logical/components).
 
 ## Overview of Steps to Create Relationships
@@ -35,7 +34,7 @@ list: include
 
 Using your domain expertise, define the qualities of this new relationship. Identify and qualify any specific constraints to be enforced between one or more specific components within the same or different models. Let's take an example to understand this better.
 
-For example, you might know that a Kubernetes `Service` can have a network-based relatinship with a Kubernetes `Pod`. To codify this relationship, you would define the relationship as a `kind: edge` relationship with a `type: network`.
+For example, you might know that a Kubernetes `Service` can have a network-based relationship with a Kubernetes `Pod`. To codify this relationship, you would define the relationship as a `kind: edge` relationship with a `type: network`.
 
 <details close>
 <summary>Relationship Example</summary>
@@ -329,6 +328,8 @@ Each policy has a set of evaluation rules defined and the `evaluationQuery` attr
 1. To configure a relationship to be applied across models, ensure the `model` property for those relationships is set to `*`, to limit the relationships to a specific model, specify the correct `model`(case sensitive).
 1. To configure a relationship to be applied across all versions of a particular model, ensure the `version` property for those relationships is set to `*`, to limit the relationships to a specific version of a model, specify the correct model version.
 1. Specify `version` property as a regex to ensure relationships are applied to a subset of versions of a model.
+
+{% include alert.html title="Caution While Defining Relationships" type="warning" content="Relationships are not imported directly and they have to be packaged inside a model. Use caution when defining relationships that span models." %}
 
 ##### Actions
 
