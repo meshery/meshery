@@ -8,30 +8,30 @@
   "status": "ignored",
   "hostID": "00000000-0000-0000-0000-000000000000",
   "registrant": {
-    "hostname": "artifacthub"
+   "hostname": "artifacthub"
   },
   "category": {
-    "name": "Orchestration \u0026 Management",
-    "metadata": null
+   "name": "Orchestration \u0026 Management",
+   "metadata": null
   },
   "subCategory": "Scheduling \u0026 Orchestration",
   "metadata": {
-    "capabilities": "",
-    "defaultData": "",
-    "isAnnotation": false,
-    "primaryColor": "#134fa4",
-    "secondaryColor": "#2b61ad",
-    "shape": "circle",
-    "shapePolygonPoints": "",
-    "styleOverrides": "",
-    "styles": "",
-    "svgColor": "",
-    "svgComplete": "",
-    "svgWhite": ""
+   "capabilities": "",
+   "defaultData": "",
+   "isAnnotation": false,
+   "primaryColor": "#134fa4",
+   "secondaryColor": "#2b61ad",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
   },
   "model": {
-    "version": "0.6.0"
+   "version": "0.6.0"
   },
   "components": null,
   "relationships": null
-}
+ }
