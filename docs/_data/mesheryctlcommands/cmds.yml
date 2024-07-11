@@ -994,7 +994,7 @@ exp:
             description: (optional) format to display in [json|yaml] (default "yaml")
   connections:
     name: connections
-    description: Manage connections
+    description: Manage Meshery connections
     usage: mesheryctl exp connections [command] [flags]
     flags: 
       help:
