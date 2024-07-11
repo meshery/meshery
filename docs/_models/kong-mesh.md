@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Kong Mesh
-subtitle: Collaborative and visual infrastructure as code for Kong Mesh
+subtitle: Collaborative and visual infrastructure as design for Kong Mesh
 image: /assets/img/integrations/kong-mesh/icons/color/kong-mesh-color.svg
 permalink: extensibility/integrations/kong-mesh
 docURL: https://docs.meshery.io/extensibility/integrations/kong-mesh
@@ -227,7 +227,7 @@ featureList: [
   "Integrate with Kong Ingress Controller to implement authentication, transformations, and other functionalities across Kubernetes clusters with zero downtime.",
   "Configure Mesh natively using an API, web UI, or with declarative configuration to manage updates via your CI/CD pipelines."
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

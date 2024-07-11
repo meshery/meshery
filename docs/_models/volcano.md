@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Volcano
-subtitle: Collaborative and visual infrastructure as code for Volcano
+subtitle: Collaborative and visual infrastructure as design for Volcano
 image: /assets/img/integrations/volcano/icons/color/volcano-color.svg
 permalink: extensibility/integrations/volcano
 docURL: https://docs.meshery.io/extensibility/integrations/volcano
@@ -15,7 +15,7 @@ featureList: [
   "Invite anyone to review and make changes to your private designs.",
   "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

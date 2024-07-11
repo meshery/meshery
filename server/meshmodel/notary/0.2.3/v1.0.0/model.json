@@ -8,30 +8,30 @@
   "status": "ignored",
   "hostID": "00000000-0000-0000-0000-000000000000",
   "registrant": {
-    "hostname": "artifacthub"
+   "hostname": "artifacthub"
   },
   "category": {
-    "name": "Provisioning",
-    "metadata": null
+   "name": "Provisioning",
+   "metadata": null
   },
   "subCategory": "Security \u0026 Compliance",
   "metadata": {
-    "capabilities": "",
-    "defaultData": "",
-    "isAnnotation": false,
-    "primaryColor": "#000000",
-    "secondaryColor": "#7ADFDC",
-    "shape": "circle",
-    "shapePolygonPoints": "",
-    "styleOverrides": "",
-    "styles": "",
-    "svgColor": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" viewBox=\"-0.04 -0.04 324.58 444.08\"\u003e\u003cpath d=\"M316.09 350.24V8.64H8.69v427h307.5v-85.4zm-102.4 0v-204.9h-102.5v204.9h-51.3V94.04h205v256.2z\"/\u003e\u003c/svg\u003e\n",
-    "svgComplete": "",
-    "svgWhite": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" viewBox=\"-0.04 -0.04 324.58 444.08\"\u003e\u003cpath fill=\"#fff\" d=\"M316.09 350.24V8.64H8.69v427h307.5v-85.4zm-102.4 0v-204.9h-102.5v204.9h-51.3V94.04h205v256.2z\"/\u003e\u003c/svg\u003e"
+   "capabilities": "",
+   "defaultData": "",
+   "isAnnotation": false,
+   "primaryColor": "#000000",
+   "secondaryColor": "#7ADFDC",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
+   "svgColor": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" viewBox=\"-0.04 -0.04 324.58 444.08\"\u003e\u003cpath d=\"M316.09 350.24V8.64H8.69v427h307.5v-85.4zm-102.4 0v-204.9h-102.5v204.9h-51.3V94.04h205v256.2z\"/\u003e\u003c/svg\u003e\n",
+   "svgComplete": "",
+   "svgWhite": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" viewBox=\"-0.04 -0.04 324.58 444.08\"\u003e\u003cpath fill=\"#fff\" d=\"M316.09 350.24V8.64H8.69v427h307.5v-85.4zm-102.4 0v-204.9h-102.5v204.9h-51.3V94.04h205v256.2z\"/\u003e\u003c/svg\u003e"
   },
   "model": {
-    "version": "0.2.3"
+   "version": "0.2.3"
   },
   "components": null,
   "relationships": null
-}
+ }

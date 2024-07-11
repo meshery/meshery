@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Tinkerbell
-subtitle: Collaborative and visual infrastructure as code for Tinkerbell
+subtitle: Collaborative and visual infrastructure as design for Tinkerbell
 image: /assets/img/integrations/tinkerbell/icons/color/tinkerbell-color.svg
 permalink: extensibility/integrations/tinkerbell
 docURL: https://docs.meshery.io/extensibility/integrations/tinkerbell
@@ -15,7 +15,7 @@ featureList: [
   "Invite anyone to review and make changes to your private designs.",
   "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

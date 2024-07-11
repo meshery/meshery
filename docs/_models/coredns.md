@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Coredns
-subtitle: Collaborative and visual infrastructure as code for Coredns
+subtitle: Collaborative and visual infrastructure as design for Coredns
 image: /assets/img/integrations/coredns/icons/color/coredns-color.svg
 permalink: extensibility/integrations/coredns
 docURL: https://docs.meshery.io/extensibility/integrations/coredns
@@ -15,7 +15,7 @@ featureList: [
   "Retrieves zone data from primaries, i.e., act as a secondary server (AXFR only) (secondary).",
   "Signs zone data on-the-fly (dnssec)."
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include
