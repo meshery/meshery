@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Notary
-subtitle: Collaborative and visual infrastructure as code for NGINX Service Mesh
+subtitle: Collaborative and visual infrastructure as design for Notary
 image: /assets/img/integrations/notary/icons/color/notary-color.svg
 permalink: extensibility/integrations/notary
 docURL: https://docs.meshery.io/extensibility/integrations/notary

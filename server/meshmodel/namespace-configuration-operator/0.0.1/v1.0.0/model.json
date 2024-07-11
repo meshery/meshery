@@ -8,30 +8,30 @@
   "status": "ignored",
   "hostID": "00000000-0000-0000-0000-000000000000",
   "registrant": {
-    "hostname": "artifacthub"
+   "hostname": "artifacthub"
   },
   "category": {
-    "name": "Uncategorized",
-    "metadata": null
+   "name": "Uncategorized",
+   "metadata": null
   },
   "subCategory": "Uncategorized",
   "metadata": {
-    "capabilities": "",
-    "defaultData": "",
-    "isAnnotation": false,
-    "primaryColor": "#00B39F",
-    "secondaryColor": "#00D3A9",
-    "shape": "circle",
-    "shapePolygonPoints": "",
-    "styleOverrides": "",
-    "styles": "",
-    "svgColor": "",
-    "svgComplete": "",
-    "svgWhite": ""
+   "capabilities": "",
+   "defaultData": "",
+   "isAnnotation": false,
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
   },
   "model": {
-    "version": "0.0.1"
+   "version": "0.0.1"
   },
   "components": null,
   "relationships": null
-}
+ }

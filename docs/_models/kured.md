@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Kured
-subtitle: Collaborative and visual infrastructure as code for Kured
+subtitle: Collaborative and visual infrastructure as design for Kured
 image: /assets/img/integrations/kured/icons/color/kured-color.svg
 permalink: extensibility/integrations/kured
 docURL: https://docs.meshery.io/extensibility/integrations/kured

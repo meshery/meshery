@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Kubeflow MPI Operator
-subtitle: Collaborative and visual infrastructure as code for Mongodb Operator
+subtitle: Collaborative and visual infrastructure as design for Kubeflow MPI Operator
 image: /assets/img/integrations/mpi-operator/icons/color/mpi-operator-color.svg
 permalink: extensibility/integrations/mpi-operator
 docURL: https://docs.meshery.io/extensibility/integrations/mpi-operator
@@ -19,7 +19,7 @@ featureList: [
   "Invite anyone to review and make changes to your private designs.",
   "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include
