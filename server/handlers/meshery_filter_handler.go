@@ -628,7 +628,7 @@ func (h *Handler) generateFilterComponent(config string) (string, error) {
 	res, _, _, _ := h.registryManager.GetEntities(&regv1beta1.ComponentFilter{
 		Name:       "WASMFilter",
 		Trim:       false,
-		APIVersion: v1beta1.SchemaVersion,
+		APIVersion: v1beta1.ComponentSchemaVersion,
 		Version:    "v1.0.0",
 		Limit:      1,
 	})

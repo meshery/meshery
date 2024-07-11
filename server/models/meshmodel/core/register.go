@@ -135,7 +135,7 @@ func RegisterMeshmodelComponentsForCRDS(reg registry.RegistryManager, k8sYaml []
 		kind := def.Spec.Metadata["k8sKind"]
 		comp := &v1beta1.ComponentDefinition{
 			VersionMeta: v1beta1.VersionMeta{
-				SchemaVersion: v1beta1.SchemaVersion,
+				SchemaVersion: v1beta1.ComponentSchemaVersion,
 				Version:       "v1.0.0",
 			},
 			Format: v1beta1.JSON,
@@ -149,7 +149,7 @@ func RegisterMeshmodelComponentsForCRDS(reg registry.RegistryManager, k8sYaml []
 			DisplayName: manifests.FormatToReadableString(kind),
 			Model: v1beta1.Model{
 				VersionMeta: v1beta1.VersionMeta{
-					SchemaVersion: v1beta1.SchemaVersion,
+					SchemaVersion: v1beta1.ModelSchemaVersion,
 					Version:       "v1.0.0",
 				},
 				Model: v1beta1.ModelEntity{
@@ -257,7 +257,7 @@ func GetK8sMeshModelComponents(kubeconfig []byte) ([]v1beta1.ComponentDefinition
 		apiVersion := crd.apiVersion
 		c := v1beta1.ComponentDefinition{
 			VersionMeta: v1beta1.VersionMeta{
-				SchemaVersion: v1beta1.SchemaVersion,
+				SchemaVersion: v1beta1.ComponentSchemaVersion,
 				Version:       "v1.0.0",
 			},
 			Format: v1beta1.JSON,
@@ -272,7 +272,7 @@ func GetK8sMeshModelComponents(kubeconfig []byte) ([]v1beta1.ComponentDefinition
 			DisplayName: manifests.FormatToReadableString(crd.kind),
 			Model: v1beta1.Model{
 				VersionMeta: v1beta1.VersionMeta{
-					SchemaVersion: v1beta1.SchemaVersion,
+					SchemaVersion: v1beta1.ModelSchemaVersion,
 					Version:       "v1.0.0",
 				},
 				Model: v1beta1.ModelEntity{

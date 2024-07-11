@@ -50,7 +50,7 @@ jobs:
       - name: Pubish to meshery.io site
         working-directory: ./meshery/mesheryctl
         run: |
-          ./mesheryctl registry publish website ${{ secrets.INTEGRATION_SPREADSHEET_CRED }} 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw ../meshery.io/integrations ../meshery.io/assets/images/integration -o js
+          ./mesheryctl registry publish website ${{ secrets.INTEGRATION_SPREADSHEET_CRED }} 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw ../../meshery.io/integrations ../meshery.io/assets/images/integration -o js
       - name: Pubish to layer5.io site
         working-directory: ./meshery/mesheryctl
         run: |

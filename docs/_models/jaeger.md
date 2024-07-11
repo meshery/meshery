@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Jaeger
-subtitle: Collaborative and visual infrastructure as code for Jaeger
+subtitle: Collaborative and visual infrastructure as design for Jaeger
 image: /assets/img/integrations/jaeger/icons/color/jaeger-color.svg
 permalink: extensibility/integrations/jaeger
 docURL: https://docs.meshery.io/extensibility/integrations/jaeger
