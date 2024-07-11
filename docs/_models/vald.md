@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Vald
-subtitle: Collaborative and visual infrastructure as code for Vald
+subtitle: Collaborative and visual infrastructure as design for Vald
 image: /assets/img/integrations/vald/icons/color/vald-color.svg
 permalink: extensibility/integrations/vald
 docURL: https://docs.meshery.io/extensibility/integrations/vald

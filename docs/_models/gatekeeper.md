@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: OPA Gatekeeper
-subtitle: Collaborative and visual infrastructure as code for Frinx Machine
+subtitle: Collaborative and visual infrastructure as design for OPA Gatekeeper
 image: /assets/img/integrations/gatekeeper/icons/color/gatekeeper-color.svg
 permalink: extensibility/integrations/gatekeeper
 docURL: https://docs.meshery.io/extensibility/integrations/gatekeeper
@@ -67,7 +67,7 @@ featureList: [
   "An extensible, parameterized policy library",
   "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

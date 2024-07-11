@@ -554,7 +554,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters
       {% endfor %}
     {% assign subcommand3 = command7.subcommands.list %}
       <tr>
-        <td rowspan=2><a href="{{ site.baseurl }}/reference/mesheryctl/pattern/list">{{ subcommand3.name }}</a></td>
+        <td rowspan=3><a href="{{ site.baseurl }}/reference/mesheryctl/pattern/list">{{ subcommand3.name }}</a></td>
         <td></td>
         <td>{{ subcommand3.description }}</td>
       </tr>

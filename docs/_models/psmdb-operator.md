@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Percona Operator for MongoDB
-subtitle: Collaborative and visual infrastructure as code for Percona Operator for MongoDB
+subtitle: Collaborative and visual infrastructure as design for Percona Operator for MongoDB
 image: /assets/img/integrations/psmdb-operator/icons/color/psmdb-operator-color.svg
 permalink: extensibility/integrations/psmdb-operator
 docURL: https://docs.meshery.io/extensibility/integrations/psmdb-operator

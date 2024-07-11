@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: AWS ElastiCache
-subtitle: Collaborative and visual infrastructure as code for AWS ElastiCache
+subtitle: Collaborative and visual infrastructure as design for AWS ElastiCache
 image: /assets/img/integrations/aws-elasticache-controller/icons/color/aws-elasticache-controller-color.svg
 permalink: extensibility/integrations/aws-elasticache-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-elasticache-controller
@@ -47,7 +47,7 @@ featureList: [
   "Add a cache to your relational database",
   "You can create an ElastiCache Serverless cache in a few steps by specifying a cache name in Meshery"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include
