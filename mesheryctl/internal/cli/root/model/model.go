@@ -25,6 +25,7 @@ import (
 	"github.com/fatih/color"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/layer5io/meshery/server/handlers"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	"github.com/layer5io/meshkit/models/oci"
@@ -320,7 +321,10 @@ func exportModel(modelName string, cmd *cobra.Command, url string, displayCountO
 			utils.Log.Error(err)
 			return err
 		}
-		oci.SaveOCIArtifact(img, outLocationFlag+modelName+".tar", modelName)
+		err = oci.SaveOCIArtifact(img, outLocationFlag+modelName+".tar", modelName)
+		if err != nil {
+			utils.Log.Error(handlers.ErrSaveOCIArtifact(err))
+		}
 		os.RemoveAll(modelDir)
 	}
 	if err != nil {

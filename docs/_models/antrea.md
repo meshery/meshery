@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Antrea
-subtitle: Collaborative and visual infrastructure as code for Antrea
+subtitle: Collaborative and visual infrastructure as design for Antrea
 image: /assets/img/integrations/antrea/icons/color/antrea-color.svg
 permalink: extensibility/integrations/antrea
 docURL: https://docs.meshery.io/extensibility/integrations/antrea
