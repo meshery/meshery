@@ -35,13 +35,13 @@ var (
 )
 
 var viewCmd = &cobra.Command{
-	Use:   "view [filter-name | ID]",
+	Use:   "view",
 	Short: "View filter(s)",
 	Long:  `Displays the contents of a specific filter based on name or id`,
 	Example: `
 // View the specified WASM filter
 // A unique prefix of the name or ID can also be provided. If the prefix is not unique, the first match will be returned.
-mesheryctl filter view [filter-name | ID]
+mesheryctl filter view "[filter-name | ID]"
 
 // View all filter files
 mesheryctl filter view --all
