@@ -33,6 +33,7 @@ import { keys } from '@/utils/permission_constants';
 import { REGISTRY, METRICS, ADAPTERS, RESET, GRAFANA, PROMETHEUS } from '@/constants/navigator';
 import { removeDuplicateVersions } from './MeshModelRegistry/helper';
 import DefaultError from './General/error-404';
+import MesheryRegistrationLogs from './MesheryRegistrationLogs';
 const styles = (theme) => ({
   wrapperClss: {
     flexGrow: 1,
@@ -448,6 +449,11 @@ class MesherySettings extends React.Component {
                       registrantCount={this.state.registrantCount}
                       settingsRouter={settingsRouter}
                     />
+                  </TabContainer>
+                </TabContainer>
+                <TabContainer>
+                  <TabContainer>
+                    <MesheryRegistrationLogs />
                   </TabContainer>
                 </TabContainer>
                 {/* </div> */}
