@@ -397,7 +397,7 @@ export const getDesignVersion = (design) => {
       const parsedYaml = yaml.load(design.pattern_file);
       return parsedYaml.version;
     } catch (error) {
-      console.error('Error parsing YAML:', error);
+      console.error('Version is not available for this design: ', error);
     }
   }
 };
