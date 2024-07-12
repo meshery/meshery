@@ -161,6 +161,8 @@ const MesherySettingsEnvButtons = () => {
         </>
       ),
       options: ['IMPORT', 'CANCEL'],
+      showInfoIcon:
+        'If your config has not been autodetected, you can manually upload your kubeconfig file (or any number of kubeconfig files). By default, Meshery will attempt to connect to and deploy Meshery Operator to each reachable context contained in the imported kubeconfig files. [See Managing Kubernetes Clusters for more information](https://docs.meshery.io/installation/kubernetes).',
     });
 
     if (response === 'IMPORT') {

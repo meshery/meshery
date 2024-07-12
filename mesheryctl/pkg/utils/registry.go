@@ -89,7 +89,7 @@ func GenerateMDXStyleDocs(model ModelCSV, components []ComponentCSV, modelPath, 
 
 	// generate components metadata and create svg files
 	compIconsSubDir := filepath.Join("icons", "components")
-	componentMetadata, err := CreateComponentsMetadataAndCreateSVGsForMDXStyle(components, modelDir, compIconsSubDir)
+	componentMetadata, err := CreateComponentsMetadataAndCreateSVGsForMDXStyle(model, components, modelDir, compIconsSubDir)
 	if err != nil {
 		return err
 	}
@@ -192,7 +192,7 @@ func GenerateMDStyleDocs(model ModelCSV, components []ComponentCSV, modelPath, i
 	// generate components metadata and create svg files
 	_iconsSubDir := filepath.Join(filepath.Join(strings.Split(imgPath, "/")[1:]...), modelName, "components") // "assets", "img", "integrations"
 	_imgOutputPath := filepath.Join(imgsOutputPath, "components")
-	componentMetadata, err := CreateComponentsMetadataAndCreateSVGsForMDStyle(components, _imgOutputPath, _iconsSubDir)
+	componentMetadata, err := CreateComponentsMetadataAndCreateSVGsForMDStyle(model, components, _imgOutputPath, _iconsSubDir)
 	if err != nil {
 		return err
 	}
@@ -251,7 +251,7 @@ func GenerateIcons(model ModelCSV, components []ComponentCSV, imgPath string) er
 	// Generate components metadata and create SVG files
 	_iconsSubDir := filepath.Join(filepath.Join(strings.Split(imgPath, "/")[1:]...), modelName, "components")
 	_imgOutputPath := filepath.Join(imgsOutputPath, "components")
-	_, err = CreateComponentsMetadataAndCreateSVGsForMDStyle(components, _imgOutputPath, _iconsSubDir)
+	_, err = CreateComponentsMetadataAndCreateSVGsForMDStyle(model, components, _imgOutputPath, _iconsSubDir)
 	if err != nil {
 		return err
 	}

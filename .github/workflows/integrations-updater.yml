@@ -1,4 +1,5 @@
 name: Meshery Integrations Updater
+
 on:
   push:
     branches:
@@ -25,54 +26,40 @@ jobs:
         with:
           path: meshery
           token: ${{ secrets.GH_ACCESS_TOKEN }}
+          
       - name: Checkout Layer5.io repo
         uses: actions/checkout@master
         with:
           repository: layer5io/layer5
           token: ${{ secrets.GH_ACCESS_TOKEN }}
           path: layer5
+          
       - name: Checkout Meshery.io repo
         uses: actions/checkout@master
         with:
           repository: meshery/meshery.io
           token: ${{ secrets.GH_ACCESS_TOKEN }}
           path: meshery.io
+          
       - name: Checkout cloud repo
         uses: actions/checkout@master
         with:
           repository: layer5io/meshery-cloud
           token: ${{ secrets.GH_ACCESS_TOKEN }}
           path: meshery-cloud
+
       - name: Build mesheryctl
         working-directory: ./meshery/mesheryctl
-        run: |
-          make;
-      - name: Pubish to meshery.io site
+        run: make;
+
+      - name: Publish to meshery.io site
         working-directory: ./meshery/mesheryctl
-        run: |
-          ./mesheryctl registry publish website ${{ secrets.INTEGRATION_SPREADSHEET_CRED }} 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw ../meshery.io/integrations ../meshery.io/assets/images/integration -o js
-      - name: Pubish to layer5.io site
-        working-directory: ./meshery/mesheryctl
-        run: |
-          ./mesheryctl registry publish website ${{ secrets.INTEGRATION_SPREADSHEET_CRED }} 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw ../layer5/src/collections/integrations ../layer5/src/collections/integrations -o mdx
-      - name: Pubish to Meshery docs
-        working-directory: ./meshery/mesheryctl
-        run: |
-          ./mesheryctl registry publish website ${{ secrets.INTEGRATION_SPREADSHEET_CRED }} 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw docs/_models docs/assets/img/integrations -o md
-      - name: Pubish to Meshery docs
-        working-directory: ./meshery/mesheryctl
-        run: |
-          ./mesheryctl registry publish remote-provider ${{ secrets.INTEGRATION_SPREADSHEET_CRED }} 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw ../meshery-cloud/meshmodels/models ../meshery-cloud/ui/public/img/meshmodels
-      - name: Commit changes to Layer5.io repo
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_user_name: l5io
-          repository: ./layer5
-          commit_user_email: ci@layer5.io
-          commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
-          commit_options: "--signoff"
-          commit_message: "[Docs] Generated documentation for Integration"
-          branch: master
+        run: ./mesheryctl registry publish website ${{ secrets.INTEGRATION_SPREADSHEET_CRED }} 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw ../../meshery.io/integrations ../meshery.io/assets/images/integration -o js
+
+      - name: Pull latest changes from Meshery.io repo
+        working-directory: ./meshery.io
+        run: git pull origin master
+
       - name: Commit changes to Meshery.io repo
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
@@ -83,6 +70,34 @@ jobs:
           commit_options: "--signoff"
           commit_message: "[Docs] Generated documentation for Integration"
           branch: master
+
+      - name: Publish to Layer5.io site
+        working-directory: ./meshery/mesheryctl
+        run: ./mesheryctl registry publish website ${{ secrets.INTEGRATION_SPREADSHEET_CRED }} 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw ../layer5/src/collections/integrations ../layer5/src/collections/integrations -o mdx
+
+      - name: Pull latest changes from Layer5.io repo
+        working-directory: ./layer5
+        run: git pull origin master
+
+      - name: Commit changes to Layer5.io repo
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_user_name: l5io
+          repository: ./layer5
+          commit_user_email: ci@layer5.io
+          commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+          commit_options: "--signoff"
+          commit_message: "[Docs] Generated documentation for Integration"
+          branch: master
+
+      - name: Publish to Meshery docs
+        working-directory: ./meshery/mesheryctl
+        run: ./mesheryctl registry publish website ${{ secrets.INTEGRATION_SPREADSHEET_CRED }} 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw docs/_models docs/assets/img/integrations -o md
+
+      - name: Pull latest changes from Meshery repo
+        working-directory: ./meshery
+        run: git pull origin master
+
       - name: Commit changes to Meshery repo
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
@@ -93,7 +108,16 @@ jobs:
           commit_options: "--signoff"
           commit_message: "[Docs] Generated documentation for Integration"
           branch: master
-      - name: Commit changes to Cloud
+
+      - name: Publish to Meshery Cloud
+        working-directory: ./meshery/mesheryctl
+        run: ./mesheryctl registry publish remote-provider ${{ secrets.INTEGRATION_SPREADSHEET_CRED }} 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw ../meshery-cloud/meshmodels/models ../meshery-cloud/ui/public/img/meshmodels
+
+      - name: Pull latest changes from Meshery Cloud repo
+        working-directory: ./meshery-cloud
+        run: git pull origin master
+
+      - name: Commit changes to Cloud repo
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_user_name: l5io
@@ -103,6 +127,7 @@ jobs:
           commit_options: "--signoff"
           commit_message: "Models Updated"
           branch: master
+
       - name: Send Email on Model Publish Failure
         if: failure()
         uses: dawidd6/action-send-mail@v3.7.1

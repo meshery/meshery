@@ -1,32 +1,32 @@
 {
   "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "core.meshery.io/v1beta1",
+  "schemaVersion": "components.meshery.io/v1beta1",
   "version": "v1.0.0",
   "displayName": "Quick Link",
   "description": "",
   "format": "JSON",
   "model": {
    "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "core.meshery.io/v1beta1",
+   "schemaVersion": "models.meshery.io/v1beta1",
    "version": "v1.0.0",
    "name": "edp-install",
    "displayName": "EDP Install",
    "description": "",
-   "status": "ignored",
+   "status": "enabled",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "registrant": {
     "hostname": "artifacthub"
    },
    "category": {
-    "name": "Uncategorized",
+    "name": "Provisioning",
     "metadata": null
    },
-   "subCategory": "Uncategorized",
+   "subCategory": "Automation \u0026 Configuration",
    "metadata": {
     "capabilities": "",
     "defaultData": "",
     "isAnnotation": false,
-    "primaryColor": "#00B39F",
+    "primaryColor": "#00ABCD",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
     "shapePolygonPoints": "",
@@ -52,7 +52,7 @@
    "secondaryColor": "",
    "shape": "circle",
    "shapePolygonPoints": "",
-   "status": "ignored",
+   "status": "enabled",
    "styleOverrides": "",
    "styles": "",
    "subCategory": "",

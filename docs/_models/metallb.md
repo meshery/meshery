@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Metallb
-subtitle: Collaborative and visual infrastructure as code for Metallb
+subtitle: Collaborative and visual infrastructure as design for Metallb
 image: /assets/img/integrations/metallb/icons/color/metallb-color.svg
 permalink: extensibility/integrations/metallb
 docURL: https://docs.meshery.io/extensibility/integrations/metallb

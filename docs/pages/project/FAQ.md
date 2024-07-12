@@ -50,7 +50,7 @@ category: project
     <summary>
 <h6>Question: Why should I use Meshery?</h6>
 </summary>
-<p><strong>Answer:</strong> Meshery is a powerful tool for managing ​Kubernetes infrastructure. It seamlessly integrates with different hundreds of tools and offers extensibility through many different <a href="{{site.baseurl}}/extensibility/#extension-points">extension points</a>. With Meshery, you can easily discover your environment, collaboratively manage multiple Kubernetes clusters, connect your Git and Helm repos, and analyze app and infra performance.</p>
+<p><strong>Answer:</strong> Meshery is a powerful tool for managing ​Kubernetes infrastructure. It seamlessly integrates with different hundreds of tools and offers extensibility through many different <a href="{{site.baseurl}}/extensibility#extension-points">extension points</a>. With Meshery, you can easily discover your environment, collaboratively manage multiple Kubernetes clusters, connect your Git and Helm repos, and analyze app and infra performance.</p>
 </details>
 
 
@@ -67,7 +67,7 @@ category: project
 <summary>
 <h6>Question: How do I install Meshery?</h6>
 </summary>
-<p><strong>Answer:</strong> Meshery runs on a <a href="{site.baseurl}}/installation">number of platforms</a>. You are encouraged to use <code>mesheryctl</code> to configure and control Meshery deployments. Install `mesheryctl` using any of these options:</p>
+<p><strong>Answer:</strong> Meshery runs on a <a href="{{site.baseurl}}/installation">number of platforms</a>. You are encouraged to use <code>mesheryctl</code> to configure and control Meshery deployments. Install `mesheryctl` using any of these options:</p>
 <ul>
 <li><a href="/installation/linux-mac/bash">Bash user</a></li>
 <li><a href="/installation/linux-mac/brew">Brew user</a></li>

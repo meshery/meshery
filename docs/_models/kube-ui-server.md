@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Kubernetes UI Server
-subtitle: Collaborative and visual infrastructure as code for Kubernetes UI Server
+subtitle: Collaborative and visual infrastructure as design for Kubernetes UI Server
 image: /assets/img/integrations/kube-ui-server/icons/color/kube-ui-server-color.svg
 permalink: extensibility/integrations/kube-ui-server
 docURL: https://docs.meshery.io/extensibility/integrations/kube-ui-server
@@ -59,7 +59,7 @@ featureList: [
   "PodView resource exposes actual resource usage by a Pod. The resource usage information is read from Prometheus.",
   "Identity Server is a Kubernetes extended apiserver (EAS). As an EAS, it has access to the user who is making an api call to the whoami server."
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

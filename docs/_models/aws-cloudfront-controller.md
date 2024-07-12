@@ -1,13 +1,13 @@
 ---
 layout: integration
 title: AWS CloudFront
-subtitle: Collaborative and visual infrastructure as code for AWS CloudFront
+subtitle: Collaborative and visual infrastructure as design for AWS CloudFront
 image: /assets/img/integrations/aws-cloudfront-controller/icons/color/aws-cloudfront-controller-color.svg
 permalink: extensibility/integrations/aws-cloudfront-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-cloudfront-controller
 description: 
-integrations-category: App Definition and Development
-integrations-subcategory: wddddddddddx
+integrations-category: Cloud Native Network
+integrations-subcategory: Content Delivery Network
 registrant: GitHub
 components: 
 - name: field-export

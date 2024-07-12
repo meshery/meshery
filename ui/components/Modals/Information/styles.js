@@ -1,10 +1,9 @@
-import { Box, styled } from '@material-ui/core';
+import { Box, styled, Button, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
-export const CreatAtContainer = styled('span')(({ theme, isBold }) => ({
+export const CreatAtContainer = styled(Typography)(({ isBold }) => ({
   fontWeight: isBold ? 'bold' : '',
   whiteSpace: 'wrap',
-  color: theme.palette.type === 'dark' ? '#ccc' : theme.palette.secondary.mainBackground,
   fontSize: '0.8rem',
 }));
 
@@ -14,6 +13,31 @@ export const ActionContainer = styled(Box)({
   gap: '1rem',
   justifyContent: 'end',
 });
+
+export const CopyLinkButton = styled(Button)(({ theme }) => ({
+  color: theme.palette.secondary.primaryModalText,
+}));
+
+export const VisibilityTag = styled(`div`)(({ theme }) => ({
+  border: `0.5px solid ${theme.palette.secondary.textMain}`,
+  color: theme.palette.secondary.textMain,
+  borderRadius: '0.2rem',
+  paddingInline: '0.2rem',
+  paddingBlock: '0.2rem',
+  fontSize: '0.7rem',
+  textTransform: 'uppercase',
+  textAlign: 'center',
+  marginLeft: '0.5rem',
+}));
+
+export const ResourceName = styled(Typography)(() => ({
+  fontFamily: 'Qanelas Soft, sans-serif',
+  textAlign: 'left',
+  marginTop: '0.5rem',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  maxWidth: '10rem',
+}));
 
 const useStyles = makeStyles((theme) => ({
   dialogBox: {
@@ -50,15 +74,6 @@ const useStyles = makeStyles((theme) => ({
     fontFamily: 'Qanelas Soft, sans-serif',
     textAlign: 'center',
   },
-  resourceName: {
-    fontFamily: 'Qanelas Soft, sans-serif',
-    textAlign: 'center',
-    maxWidth: '200px',
-    marginTop: '0.5rem',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    whiteSpace: 'nowrap',
-  },
   rjsfInfoModalForm: {
     marginLeft: '-1rem',
     marginTop: '-1rem',
@@ -90,7 +105,7 @@ const useStyles = makeStyles((theme) => ({
     // backgroundColor: "red",
   },
   chipIcon: {
-    width: '1rem',
+    width: '2rem',
   },
   // TODO this style needs to be refactored and applied to all modal globally
   closing: {

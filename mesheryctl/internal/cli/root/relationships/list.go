@@ -103,7 +103,7 @@ var listRelationshipsCmd = &cobra.Command{
 			return err
 		}
 
-		relationshipsResponse := &MeshmodelRegistrantsAPIResponse{}
+		relationshipsResponse := &MeshmodelRelationshipsAPIResponse{}
 		err = json.Unmarshal(data, relationshipsResponse)
 		if err != nil {
 			utils.Log.Error(err)

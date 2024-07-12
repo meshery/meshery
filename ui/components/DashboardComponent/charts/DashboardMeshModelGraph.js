@@ -79,6 +79,7 @@ function MeshModelContructs({ classes }) {
             <CustomTextTooltip
               placement="left"
               interactive={true}
+              variant="standard"
               title={`The Meshery Registry is a critical component acting as the central repository for all capabilities known to Meshery. [Learn More](https://docs.meshery.io/concepts/logical/registry)`}
             >
               <IconButton disableRipple={true} disableFocusRipple={true}>
@@ -155,6 +156,7 @@ function MeshModelCategories({ classes }) {
             <CustomTextTooltip
               title={`Meshery Models represent the fundamental building blocks of your infrastructure. Models are categorized by their function. For example, a model for Prometheus belongs in the "Observability and Analysis" category. [Learn More](https://docs.meshery.io/concepts/logical/models)`}
               placement="left"
+              variant="standard"
               interactive={true}
             >
               <IconButton disableRipple={true} disableFocusRipple={true}>

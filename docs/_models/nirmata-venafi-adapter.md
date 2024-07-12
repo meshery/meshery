@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Nirmata Venafi Adapter
-subtitle: Collaborative and visual infrastructure as code for NGINX Service Mesh
+subtitle: Collaborative and visual infrastructure as design for Nirmata Venafi Adapter
 image: /assets/img/integrations/nirmata-venafi-adapter/icons/color/nirmata-venafi-adapter-color.svg
 permalink: extensibility/integrations/nirmata-venafi-adapter
 docURL: https://docs.meshery.io/extensibility/integrations/nirmata-venafi-adapter
