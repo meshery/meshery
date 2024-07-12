@@ -29,7 +29,6 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/layer5io/meshery/server/models"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -101,7 +100,7 @@ mesheryctl exp relationship view [model-name]
 			return err
 		}
 
-		relationshipsResponse := &models.MeshmodelRelationshipsViewAPIResponse{}
+		relationshipsResponse := &MeshmodelRelationshipsAPIResponse{}
 
 		err = json.Unmarshal(data, relationshipsResponse)
 		if err != nil {
