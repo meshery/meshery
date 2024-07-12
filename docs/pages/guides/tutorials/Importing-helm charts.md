@@ -5,7 +5,6 @@ permalink: guides/tutorials/Importing-helm charts/
 redirect_from: guides/tutorial/Importing-helm charts/
 model: Kubernetes
 kind: helm-charts
-model: kubernetes
 type: guides
 category: tutorials
 language: en
