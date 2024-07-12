@@ -21,6 +21,8 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha2"
+
 	"gopkg.in/yaml.v2"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/components"
@@ -28,8 +30,6 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/models/meshmodel/entity"
-
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -101,23 +101,23 @@ mesheryctl exp relationship view [model-name]
 			return err
 		}
 
-		relationshipsResponse := &models.MeshmodelRelationshipsAPIResponse{}
+		relationshipsResponse := &models.MeshmodelRelationshipsViewAPIResponse{}
+
 		err = json.Unmarshal(data, relationshipsResponse)
 		if err != nil {
 			return err
 		}
 
-		var selectedModel entity.Entity
+		var selectedModel *v1alpha2.RelationshipDefinition
 
 		if relationshipsResponse.Count == 0 {
 			utils.Log.Info("No relationship(s) found for the given name ", model)
 			return nil
 		} else if relationshipsResponse.Count == 1 {
-			selectedModel = relationshipsResponse.Relationships[0]
+			selectedModel = &relationshipsResponse.Relationships[0]
 		} else {
 			selectedModel = selectRelationshipPrompt(relationshipsResponse.Relationships)
 		}
-
 		var output []byte
 
 		// user may pass flag in lower or upper case but we have to keep it lower
