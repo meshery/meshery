@@ -1,17 +1,12 @@
 package meshmodel
 
 import (
-	"context"
-	"encoding/json"
 	"fmt"
-	"io/fs"
 	"os"
 	"path/filepath"
 
-	"github.com/layer5io/meshery/server/helpers"
-	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshery/server/models/meshmodel/core"
+	reg "github.com/layer5io/meshery/server/models/meshmodel/registration"
 	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha2"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
@@ -46,189 +41,55 @@ func NewEntityRegistrationHelper(hc *models.HandlerConfig, rm *meshmodel.Registr
 
 // seed the local meshmodel components
 func (erh *EntityRegistrationHelper) SeedComponents() {
-	// Watch channels and register components and relationships with the registry manager
-	ctx, cancel := context.WithCancel(context.TODO())
-	defer cancel()
-
-	go erh.watchComponents(ctx)
-
 	models, err := os.ReadDir(ModelsPath)
 	if err != nil {
-		erh.errorChan <- mutils.ErrReadDir(errors.Wrapf(err, "error while reading directory for generating components"), ModelsPath)
+		 erh.log.Error(mutils.ErrReadDir(errors.Wrapf(err, "error while reading directory for generating components"), ModelsPath))
 		return
 	}
-
-	relationships := make([]string, 0)
-
-	// change to queue approach to register comps, relationships and policies
-	// Read component and relationship definitions from files and send them to respective channels
 
 	for _, model := range models {
 		modelVersionsDirPath := filepath.Join(ModelsPath, model.Name())
 		// contains all versions for the model
 		modelVersionsDir, err := os.ReadDir(modelVersionsDirPath)
 		if err != nil {
-			erh.errorChan <- mutils.ErrReadDir(errors.Wrapf(err, "error while reading directory for registering components"), modelVersionsDirPath)
+			erh.log.Error(mutils.ErrReadDir(errors.Wrapf(err, "error while reading directory for registering components"), modelVersionsDirPath))
 			continue
 		}
-
 		for _, version := range modelVersionsDir {
 			modelDefVersionsDirPath := filepath.Join(modelVersionsDirPath, version.Name())
 
-			// contains all def versions for a particular version of a model.
 			modelDefVersionsDir, err := os.ReadDir(modelDefVersionsDirPath)
 			if err != nil {
-				erh.errorChan <- mutils.ErrReadDir(errors.Wrapf(err, "error while reading directory for registering components"), modelVersionsDirPath)
+				erh.log.Error(mutils.ErrReadDir(errors.Wrapf(err, "error while reading directory for registering components"), modelVersionsDirPath))
 			}
 			for _, defVersion := range modelDefVersionsDir {
 				defPath := filepath.Join(modelDefVersionsDirPath, defVersion.Name())
-
-				entities, err := os.ReadDir(defPath)
-				if err != nil {
-					erh.errorChan <- mutils.ErrReadDir(errors.Wrapf(err, "error while reading directory for registering components"), modelVersionsDirPath)
+				fmt.Println("DEBUG: registering for models inside: ", defPath)
+				// contains all def versions for a particular version of a model.
+				dir := reg.NewDir(defPath)
+				pkgUnit, err := dir.PkgUnit()
+				if(err != nil){
+					erh.log.Error(mutils.ErrReadDir(errors.Wrapf(err, "Given model directory is not a valid unit of packaging"), modelVersionsDirPath))
 					continue
 				}
-				for _, entity := range entities {
-					entityPath := filepath.Join(defPath, entity.Name())
-					if entity.IsDir() {
-						switch entity.Name() {
-						case "relationships":
-							relationships = append(relationships, entityPath)
-						case "policies":
-						default:
-							erh.generateComponents(entityPath) // register components first
-						}
+				pipeline := reg.NewPipeline(erh.log, erh.handlerConfig, erh.regManager, pkgUnit)
+				errorChan := make(chan error, 0)
+				go func(echan chan error){
+					for {
+						err := <- echan
+						// Using this temp
+						fmt.Println(err)
+						erh.log.Error(mutils.ErrCloseFile(errors.Wrapf(err, "Error in the registration pipeline")))
 					}
-				}
+				}(errorChan)
+				pipeline.Start(errorChan)
+
+
 			}
+
+
 		}
 	}
-	for _, relationship := range relationships {
-		erh.generateRelationships(relationship)
-	}
-}
 
-// reads component definitions from files and sends them to the component channel
-func (erh *EntityRegistrationHelper) generateComponents(pathToComponents string) {
-	path, err := filepath.Abs(pathToComponents)
-	if err != nil {
-		erh.errorChan <- mutils.ErrReadDir(errors.Wrapf(err, "error while getting absolute path for generating components"), pathToComponents)
-		return
-	}
-
-	err = filepath.Walk(path, func(path string, info fs.FileInfo, err error) error {
-		if info == nil {
-			return nil
-		}
-
-		if !info.IsDir() {
-			// Read the component definition from file
-			var comp v1beta1.ComponentDefinition
-			byt, err := os.ReadFile(path)
-			if err != nil {
-				erh.errorChan <- mutils.ErrReadFile(errors.Wrapf(err, fmt.Sprintf("unable to read file at %s", path)), path)
-				return nil
-			}
-			err = json.Unmarshal(byt, &comp)
-			if err != nil {
-				erh.errorChan <- mutils.ErrMarshal(errors.Wrapf(err, fmt.Sprintf("unmarshal json failed for %s", path)))
-				return nil
-			}
-
-			// Only register components that have been marked as published
-			if comp.Metadata != nil && comp.Metadata["status"] == "enabled" {
-				// Generate SVGs for the component and save them on the file system
-				utils.WriteSVGsOnFileSystem(&comp)
-				erh.componentChan <- comp
-			}
-		}
-		return nil
-	})
-	if err != nil {
-		erh.errorChan <- mutils.ErrReadDir(errors.Wrapf(err, "error while generating components"), pathToComponents)
-	}
-}
-
-// reads relationship definitions from files and sends them to the relationship channel
-func (erh *EntityRegistrationHelper) generateRelationships(pathToComponents string) {
-	path, err := filepath.Abs(pathToComponents)
-	if err != nil {
-		erh.errorChan <- mutils.ErrReadDir(errors.Wrapf(err, "error while getting absolute path for generating relationships"), pathToComponents)
-		return
-	}
-
-	err = filepath.Walk(path, func(path string, info fs.FileInfo, err error) error {
-		if info == nil {
-			return nil
-		}
-		if !info.IsDir() {
-			var rel v1alpha2.RelationshipDefinition
-			byt, err := os.ReadFile(path)
-			if err != nil {
-				erh.errorChan <- mutils.ErrReadFile(errors.Wrapf(err, fmt.Sprintf("unable to read file at %s", path)), path)
-				return nil
-			}
-			err = json.Unmarshal(byt, &rel)
-			if err != nil {
-				erh.errorChan <- mutils.ErrUnmarshal(errors.Wrapf(err, fmt.Sprintf("unmarshal json failed for %s", path)))
-				return nil
-			}
-			erh.relationshipChan <- rel
-		}
-		return nil
-	})
-	if err != nil {
-		erh.errorChan <- mutils.ErrReadDir(errors.Wrapf(err, "error while generating relationships"), pathToComponents)
-	}
-}
-
-// watches the component and relationship channels for incoming definitions and registers them with the registry manager
-// If an error occurs, it logs the error
-func (erh *EntityRegistrationHelper) watchComponents(ctx context.Context) {
-	var err error
-	var isModelError bool
-	var isRegistrantError bool
-	
-	for {
-		relationshipHostname := "Meshery Server"
-		select {
-		case comp := <-erh.componentChan:
-			isRegistrantError, isModelError, err = erh.regManager.RegisterEntity(v1beta1.Host{
-				Hostname: comp.Model.Registrant.Hostname,
-			}, &comp)
-			if err != nil {
-				err = core.ErrRegisterEntity(err, string(comp.Type()), comp.DisplayName)
-			}
-			helpers.HandleError(v1beta1.Host{
-				Hostname: comp.Model.Registrant.Hostname,
-			}, &comp, err, isModelError, isRegistrantError)
-		case rel := <-erh.relationshipChan:
-			if rel.Model.Registrant.Hostname != "" {
-				relationshipHostname = rel.Model.Registrant.Hostname
-			}
-			isRegistrantError, isModelError, err = erh.regManager.RegisterEntity(v1beta1.Host{
-				Hostname: relationshipHostname,
-			}, &rel)
-			helpers.HandleError(v1beta1.Host{
-				Hostname: relationshipHostname,
-			}, &rel, err, isModelError, isRegistrantError)
-			if err != nil {
-				err = core.ErrRegisterEntity(err, string(rel.Type()), rel.Kind)
-			}
-
-		//Watching and logging errors from error channel
-		case mhErr := <-erh.errorChan:
-			if err != nil {
-				erh.log.Error(mhErr)
-			}
-
-		case <-ctx.Done():
-			erh.registryLog()
-			return
-		}
-
-		if err != nil {
-			go func() { erh.errorChan <- err }()
-		}
-	}
+	erh.registryLog()
 }
