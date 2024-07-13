@@ -4,7 +4,7 @@ type Tar struct {
     path string
 }
 
-func (t Tar) PkgUnit() (PackagingUnit, error){
-	pkg := PackagingUnit{}
+func (t Tar) PkgUnit() (packagingUnit, error){
+	pkg := packagingUnit{}
 	return pkg, nil
 }

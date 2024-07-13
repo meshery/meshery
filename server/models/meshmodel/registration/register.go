@@ -6,7 +6,6 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/helpers"
 	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshery/server/models/meshmodel/core"
 	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/models/events"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha2"
@@ -15,7 +14,8 @@ import (
 	"github.com/spf13/viper"
 )
 
-type PackagingUnit struct {
+// packaingUnit (an opaque type) is the representation of the atomic unit that can be registered into meshery server
+type packagingUnit struct {
 	model v1beta1.Model
 	components []v1beta1.ComponentDefinition
 	relationships []v1alpha2.RelationshipDefinition
@@ -32,26 +32,25 @@ func NewRegistrationHelper(log logger.Handler, hc *models.HandlerConfig, regm *m
 	return RegistrationHelper{handlerConfig: hc, log: log, regManager: regm}
 }
 
-// Register will accept a dir, oci or tar. Register assumes that whatever is given in its argument is a single unit of
-// packaging (model) and interpret it like that. inputs that have models inside models are not considered valid. This is
-// enforce the fact that registration should happen through the unit of packaing (model)
-// Given that, it does not care about the folder structure as long as we have one file defining the `model` and others
-// `components` etc.
-// For bulk registration, use BulkRegister
-// Using any because of lack of type strength in go
+/*
+	Register will accept a RegisterableEntity (dir, tar or oci for now).
+*/
 func (rh *RegistrationHelper) Register(entity RegisterableEntity) error {
 	// get the packaging units
-	pu, err := entity.PkgUnit()
+	pu, err, _ := entity.PkgUnit()
 	if(err != nil){
-		// given input is not a valid model, or it should not be packaged like this
+		// given input is not a valid model, or could not walk the directory
 		return err
 	}
+	// fmt.Printf("Packaging Unit: Model name: %s, comps: %d, rels: %d\n", pu.model.Name, len(pu.components), len(pu.relationships))
 	return rh.register(pu)
 }
 
-// This function will take meshery's unit of packaging, a model in any format (tar.gz, oci, or a directory) and register
-// it
-func (rh *RegistrationHelper)register(pkg PackagingUnit) error {
+/*
+	register will return an error if it is not able to register the `model`.
+	If there are errors when registering other entities, they are handled properly but does not stop the registration process.
+*/
+func (rh *RegistrationHelper)register(pkg packagingUnit) error {
 	// 1. Register the model
 	model := pkg.model
 	_, _, err := rh.regManager.RegisterEntity(
@@ -59,7 +58,7 @@ func (rh *RegistrationHelper)register(pkg PackagingUnit) error {
 		&model,
 		)
 	if err != nil {
-		err = core.ErrRegisterEntity(err, string(model.Type()), model.DisplayName)
+		err = ErrRegisterEntity(err, string(model.Type()), model.DisplayName)
 		return err
 	}
 
@@ -72,7 +71,7 @@ func (rh *RegistrationHelper)register(pkg PackagingUnit) error {
 		&comp,
 		)
 	if err != nil {
-		err = core.ErrRegisterEntity(err, string(comp.Type()), comp.DisplayName)
+		err = ErrRegisterEntity(err, string(comp.Type()), comp.DisplayName)
 		rh.log.Error(err)
 	}
 	helpers.HandleError(v1beta1.Host{
@@ -87,7 +86,7 @@ func (rh *RegistrationHelper)register(pkg PackagingUnit) error {
 			Hostname: rel.Model.Registrant.Hostname,
 		}, &rel)
 		if err != nil {
-			err = core.ErrRegisterEntity(err, string(rel.Type()), rel.Kind)
+			err = ErrRegisterEntity(err, string(rel.Type()), rel.Kind)
 			rh.log.Error(err)
 			helpers.HandleError(v1beta1.Host{
 			Hostname: rel.Model.Registrant.Hostname,

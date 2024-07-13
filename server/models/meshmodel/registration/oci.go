@@ -10,7 +10,7 @@ type OCIImage struct {
     img gcrv1.Image
 }
 
-func (o OCIImage) PkgUnit() (PackagingUnit, error){
-	pkg := PackagingUnit{}
+func (o OCIImage) PkgUnit() (packagingUnit, error){
+	pkg := packagingUnit{}
 	return pkg, nil
 }

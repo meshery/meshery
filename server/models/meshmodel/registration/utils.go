@@ -1,74 +1,71 @@
 package registration
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
-	"gopkg.in/yaml.v2"
-	"github.com/layer5io/meshkit/models/meshmodel/entity"
+
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha2"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
+	"github.com/layer5io/meshkit/models/meshmodel/entity"
+	"gopkg.in/yaml.v2"
 )
 
-
-// TODO: refactor this and use CUE
-func getEntity(byt []byte, filetype string) (entity.Entity, error) {
-    var versionMeta v1beta1.VersionMeta
-    switch filetype {
+func unmarshal(byt []byte, filetype string, out interface{}, strict bool) error {
+	switch filetype {
     case "yaml":
-		err := yaml.Unmarshal(byt, &versionMeta)
+		decoder := yaml.NewDecoder(bytes.NewReader(byt))
+		// this makes sure it errors out if the schema does not match the expected struct
+		// decoder.SetStrict(true)
+		err := decoder.Decode(out)
 		if(err != nil){
-			return nil, err
+			return err
 		}
     case "json":
-		err := json.Unmarshal(byt, &versionMeta)
+		decoder := json.NewDecoder(bytes.NewReader(byt))
+		// this makes sure it errors out if the schema does not match the expected struct
+		if(strict){
+			decoder.DisallowUnknownFields()
+		}
+		err := decoder.Decode(out)
 		if(err != nil){
-			return nil, err
+			return err
 		}
     }
+	return nil
+}
+
+// TODO: refactor this and use CUE
+func getEntity(byt []byte, filetype string) (et entity.Entity, _ error) {
+    var versionMeta v1beta1.VersionMeta
+	err  := unmarshal(byt, filetype, &versionMeta, false)
+	if err != nil {
+		return nil, fmt.Errorf("Invalid document: %s", err.Error())
+	}
 	switch (versionMeta.SchemaVersion) {
 		case v1beta1.ComponentSchemaVersion:
 			var compDef v1beta1.ComponentDefinition
-			switch filetype {
-				case "yaml":
-					err := yaml.Unmarshal(byt, &compDef)
-					if(err == nil){
-						return &compDef, nil
-					}
-				case "json":
-					err := json.Unmarshal(byt, &compDef)
-					if(err == nil){
-						return &compDef, nil
-					}
+			err  := unmarshal(byt, filetype, &compDef, false)
+			if err != nil {
+				return nil, fmt.Errorf("Invalid component definition: %s", err.Error())
 			}
+			et = &compDef
 		case v1beta1.ModelSchemaVersion:
 			var model v1beta1.Model
-			switch filetype {
-				case "yaml":
-					err := yaml.Unmarshal(byt, &model)
-					if(err == nil){
-						return &model, nil
-					}
-				case "json":
-					err := json.Unmarshal(byt, &model)
-					if(err == nil){
-						return &model, nil
-					}
+			err  := unmarshal(byt, filetype, &model, false)
+			if err != nil {
+				return nil, fmt.Errorf("Invalid model definition: %s", err.Error())
 			}
-
+			et = &model
 		case v1alpha2.RelationshipSchemaVersion:
 			var rel v1alpha2.RelationshipDefinition
-			switch filetype {
-				case "yaml":
-					err := yaml.Unmarshal(byt, &rel)
-					if(err == nil){
-						return &rel, nil
-					}
-				case "json":
-					err := json.Unmarshal(byt, &rel)
-					if(err == nil){
-						return &rel, nil
-					}
+			err  := unmarshal(byt, filetype, &rel, false)
+			if err != nil {
+				return nil, fmt.Errorf("Invalid relationship definition: %s", err.Error())
 			}
+			et = &rel
+		default:
+			return nil, fmt.Errorf("Document does not belong to any meshmodel construct")
 	}
-	return nil, fmt.Errorf("")
+	return et, nil
 }
