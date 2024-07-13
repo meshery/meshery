@@ -1,0 +1,66 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Numatopology",
+  "description": "",
+  "format": "JSON",
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "version": "v1.0.0",
+   "name": "octopus",
+   "displayName": "Octopus",
+   "description": "",
+   "status": "ignored",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "registrant": {
+    "hostname": "artifacthub"
+   },
+   "category": {
+    "name": "Uncategorized",
+    "metadata": null
+   },
+   "subCategory": "Uncategorized",
+   "metadata": {
+    "capabilities": "",
+    "defaultData": "",
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "model": {
+    "version": "4.3.12"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "isAnnotation": false,
+   "isNamespaced": false,
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "status": "ignored",
+   "styleOverrides": "",
+   "styles": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "component": {
+   "kind": "Numatopology",
+   "version": "nodeinfo.volcano.sh/v1alpha1",
+   "schema": "{\n \"description\": \"Numatopology is the Schema for the Numatopologies API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Specification of the numa information of the worker node\",\n   \"properties\": {\n    \"cpuDetail\": {\n     \"additionalProperties\": {\n      \"description\": \"CPUInfo is the cpu topology detail\",\n      \"properties\": {\n       \"core\": {\n        \"type\": \"integer\"\n       },\n       \"numa\": {\n        \"type\": \"integer\"\n       },\n       \"socket\": {\n        \"type\": \"integer\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"description\": \"Specifies the cpu topology info Key is cpu id\",\n     \"type\": \"object\"\n    },\n    \"numares\": {\n     \"additionalProperties\": {\n      \"description\": \"ResourceInfo is the sets about resource capacity and allocatable\",\n      \"properties\": {\n       \"allocatable\": {\n        \"type\": \"string\"\n       },\n       \"capacity\": {\n        \"type\": \"integer\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"description\": \"Specifies the numa info for the resource Key is resource name\",\n     \"type\": \"object\"\n    },\n    \"policies\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"Specifies the policy of the manager\",\n     \"type\": \"object\"\n    },\n    \"resReserved\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"Specifies the reserved resource of the node Key is resource name\",\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Numatopology\",\n \"type\": \"object\"\n}"
+  }
+ }
