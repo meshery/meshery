@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Vault Config Operator
-subtitle: Collaborative and visual infrastructure as code for Vault Config Operator
+subtitle: Collaborative and visual infrastructure as design for Vault Config Operator
 image: /assets/img/integrations/vault-config-operator/icons/color/vault-config-operator-color.svg
 permalink: extensibility/integrations/vault-config-operator
 docURL: https://docs.meshery.io/extensibility/integrations/vault-config-operator
@@ -129,6 +129,22 @@ components:
 - name: azure-auth-engine-role
   colorIcon: assets/img/integrations/vault-config-operator/components/azure-auth-engine-role/icons/color/azure-auth-engine-role-color.svg
   whiteIcon: assets/img/integrations/vault-config-operator/components/azure-auth-engine-role/icons/white/azure-auth-engine-role-white.svg
+  description: 
+- name: azure-secret-engine-config
+  colorIcon: assets/img/integrations/vault-config-operator/components/azure-secret-engine-config/icons/color/azure-secret-engine-config-color.svg
+  whiteIcon: assets/img/integrations/vault-config-operator/components/azure-secret-engine-config/icons/white/azure-secret-engine-config-white.svg
+  description: 
+- name: gcp-auth-engine-config
+  colorIcon: assets/img/integrations/vault-config-operator/components/gcp-auth-engine-config/icons/color/gcp-auth-engine-config-color.svg
+  whiteIcon: assets/img/integrations/vault-config-operator/components/gcp-auth-engine-config/icons/white/gcp-auth-engine-config-white.svg
+  description: 
+- name: gcp-auth-engine-role
+  colorIcon: assets/img/integrations/vault-config-operator/components/gcp-auth-engine-role/icons/color/gcp-auth-engine-role-color.svg
+  whiteIcon: assets/img/integrations/vault-config-operator/components/gcp-auth-engine-role/icons/white/gcp-auth-engine-role-white.svg
+  description: 
+- name: gcp-auth-engine-role
+  colorIcon: assets/img/integrations/vault-config-operator/components/gcp-auth-engine-role/icons/color/gcp-auth-engine-role-color.svg
+  whiteIcon: assets/img/integrations/vault-config-operator/components/gcp-auth-engine-role/icons/white/gcp-auth-engine-role-white.svg
   description: 
 featureList: [
   "Automates Vault configuration management",

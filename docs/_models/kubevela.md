@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Kubevela
-subtitle: Collaborative and visual infrastructure as code for Kubevela
+subtitle: Collaborative and visual infrastructure as design for Kubevela
 image: /assets/img/integrations/kubevela/icons/color/kubevela-color.svg
 permalink: extensibility/integrations/kubevela
 docURL: https://docs.meshery.io/extensibility/integrations/kubevela

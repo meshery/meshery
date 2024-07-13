@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Dragonfly
-subtitle: Collaborative and visual infrastructure as code for Dragonfly
+subtitle: Collaborative and visual infrastructure as design for Dragonfly
 image: /assets/img/integrations/dragonfly/icons/color/dragonfly-color.svg
 permalink: extensibility/integrations/dragonfly
 docURL: https://docs.meshery.io/extensibility/integrations/dragonfly

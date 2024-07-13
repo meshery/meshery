@@ -657,10 +657,14 @@ pattern:
       description: displays a list of available pattern files
       usage: mesheryctl pattern list
       flags:
-        all:
-          name: --all, -a
+        page:
+          name: --page, -p
+          description: list patterns by specific page number (25 patterns per page)
+        verbose:
+          name: --verbose, -v
           description: show all pattern file metadata
-          usage: mesheryctl pattern list --all
+          usage: mesheryctl pattern list --verbose
+          example: mesheryctl pattern list -v
 
     view:
       name: view
@@ -903,6 +907,13 @@ model:
         output-format:
           name: -o, --output-format
           description: (optional) format to display in [json|yaml] (default "yaml")
+    import:
+      name: import
+      description: Import models using a file or filepath directly to the meshery registry
+      usage: mesheryctl model import [ file | filepath ]
+      examples:
+         - import model /path/to/[file.yaml|file.json]
+         - import model /path/to/models
 
 components:
   name: components

@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Security Role Perm Operator Svc
-subtitle: Collaborative and visual infrastructure as code for Security Role Perm Operator Svc
+subtitle: Collaborative and visual infrastructure as design for Security Role Perm Operator Svc
 image: /assets/img/integrations/security-role-perm-operator-svc/icons/color/security-role-perm-operator-svc-color.svg
 permalink: extensibility/integrations/security-role-perm-operator-svc
 docURL: https://docs.meshery.io/extensibility/integrations/security-role-perm-operator-svc

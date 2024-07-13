@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Argo CD Applications
-subtitle: Collaborative and visual infrastructure as code for Argo CD Applications
+subtitle: Collaborative and visual infrastructure as design for Argo CD Applications
 image: /assets/img/integrations/argo-cd/icons/color/argo-cd-color.svg
 permalink: extensibility/integrations/argo-cd
 docURL: https://docs.meshery.io/extensibility/integrations/argo-cd
@@ -31,7 +31,7 @@ featureList: [
   "Design application definitions using the intuitive, context-aware visual designer, MeshMap.",
   "Visualize your declarative, GitOps continuous delivery tool for Kubernetes."
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

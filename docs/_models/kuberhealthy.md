@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Kuberhealthy
-subtitle: Collaborative and visual infrastructure as code for Kuberhealthy
+subtitle: Collaborative and visual infrastructure as design for Kuberhealthy
 image: /assets/img/integrations/kuberhealthy/icons/color/kuberhealthy-color.svg
 permalink: extensibility/integrations/kuberhealthy
 docURL: https://docs.meshery.io/extensibility/integrations/kuberhealthy
