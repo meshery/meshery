@@ -65,6 +65,8 @@ func HandleError(h v1beta1.Host, en entity.Entity, err error, isModelError bool,
 	switch entity := en.(type) {
 	case *v1beta1.ComponentDefinition:
 		entityName := "[ " + entity.Model.Name + " " + entity.Model.Model.Version + " ]" + "( " + entity.DisplayName + " )"
+		//TODO:  Move this outside this function - this function is supposed to handle errrors, not check
+		//whether there is an error
 		isAnnotation, _ := entity.Metadata["isAnnotation"].(bool)
 		if entity.Component.Schema == "" && !isAnnotation && err == nil {
 			err = meshmodel.ErrEmptySchema()

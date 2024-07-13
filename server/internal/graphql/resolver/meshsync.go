@@ -117,10 +117,9 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 			if err != nil {
 				return "", err
 			}
-			ch := meshmodel.NewEntityRegistrationHelper(r.Config, rm, r.Log)
 
 			go func() {
-				ch.SeedComponents()
+				meshmodel.SeedComponents(r.Log, r.Config, rm)
 				krh.SeedKeys(viper.GetString("KEYS_PATH"))
 			}()
 			r.Log.Info("Hard reset complete.")

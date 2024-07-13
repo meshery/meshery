@@ -9,7 +9,8 @@ import (
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 )
 
-// this smells bad.. refactor it
+
+// TODO: refactor this and use CUE
 func getEntity(byt []byte, filetype string) (entity.Entity, error) {
     var versionMeta v1beta1.VersionMeta
     switch filetype {

@@ -276,10 +276,9 @@ func main() {
 		os.Exit(1)
 	}
 	//seed the local meshmodel components
-	ch := meshmodelhelper.NewEntityRegistrationHelper(hc, regManager, log)
 	rego := policies.Rego{}
 	go func() {
-		ch.SeedComponents()
+		meshmodelhelper.SeedComponents(log, hc, regManager)
 		r, err := policies.NewRegoInstance(PoliciesPath, regManager)
 		rego = *r
 		if err != nil {
