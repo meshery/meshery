@@ -69,8 +69,10 @@ func (rh *RegistrationHelper)register(pkg packagingUnit) error {
 	modelName := model.Name
 	// 2. Register components
 	for _, comp := range pkg.components {
-		// TODO: After we make sure that the models are accurately generated (by artifacthub specifically), we have to use pu.model as the model for
-		// components
+		comp.Model = model
+		if(comp.Model.Status != entity.Enabled){
+			continue
+		}
 		_, _, err := rh.regManager.RegisterEntity(
 		v1beta1.Host{Hostname: hostname,},
 		&comp,
