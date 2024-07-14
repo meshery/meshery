@@ -55,6 +55,7 @@ func (rh *RegistrationHelper) Register(entity RegisterableEntity) {
 func (rh *RegistrationHelper)register(pkg packagingUnit) {
 	// 1. Register the model
 	model := pkg.model
+	if(model.Status != entity.Enabled){return}
 	_, _, err := rh.regManager.RegisterEntity(
 		v1beta1.Host{Hostname: model.Registrant.Hostname,},
 		&model,
