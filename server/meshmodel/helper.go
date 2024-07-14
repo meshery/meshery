@@ -59,11 +59,7 @@ func SeedComponents(log logger.Handler, hc *models.HandlerConfig, regm *meshmode
 	}
 	for _, dirPath := range modelDirPaths {
 		dir := 	reg.NewDir(dirPath)
-		err := regHelper.Register(dir)
-		if err != nil {
-			// handle error
-			// log.Error(err)
-		}
+		regHelper.Register(dir)
 	}
 	regHelper.RegistryLog()
 }

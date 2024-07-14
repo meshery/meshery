@@ -19,7 +19,7 @@ type packagingUnit struct {
 	model v1beta1.Model
 	components []v1beta1.ComponentDefinition
 	relationships []v1alpha2.RelationshipDefinition
-	policies []v1beta1.PolicyDefinition
+	_ []v1beta1.PolicyDefinition
 }
 
 type RegistrationHelper struct {
@@ -34,16 +34,17 @@ func NewRegistrationHelper(log logger.Handler, hc *models.HandlerConfig, regm *m
 
 /*
 	Register will accept a RegisterableEntity (dir, tar or oci for now).
+	Errors are written to the log file.
 */
-func (rh *RegistrationHelper) Register(entity RegisterableEntity) error {
+func (rh *RegistrationHelper) Register(entity RegisterableEntity) {
 	// get the packaging units
 	pu, err := entity.PkgUnit()
 	if(err != nil){
 		// given input is not a valid model, or could not walk the directory
-		return err
+		return
 	}
 	// fmt.Printf("Packaging Unit: Model name: %s, comps: %d, rels: %d\n", pu.model.Name, len(pu.components), len(pu.relationships))
-	return rh.register(pu)
+	rh.register(pu)
 }
 
 
@@ -51,7 +52,7 @@ func (rh *RegistrationHelper) Register(entity RegisterableEntity) error {
 	register will return an error if it is not able to register the `model`.
 	If there are errors when registering other entities, they are handled properly but does not stop the registration process.
 */
-func (rh *RegistrationHelper)register(pkg packagingUnit) error {
+func (rh *RegistrationHelper)register(pkg packagingUnit) {
 	// 1. Register the model
 	model := pkg.model
 	_, _, err := rh.regManager.RegisterEntity(
@@ -59,11 +60,10 @@ func (rh *RegistrationHelper)register(pkg packagingUnit) error {
 		&model,
 		)
 	if err != nil {
-		fmt.Println(model)
 		err = ErrRegisterEntity(err, string(model.Type()), model.DisplayName)
 		RegLog.InsertEntityRegFailure(model.Registrant.Hostname, "",entity.Model, model.Name, err)
 		// If model cannot be registered, don't register anything else
-		return err
+		return
 	}
 
 	hostname := model.Registrant.Hostname
@@ -82,7 +82,6 @@ func (rh *RegistrationHelper)register(pkg packagingUnit) error {
 		err = ErrRegisterEntity(err, string(comp.Type()), comp.DisplayName)
 		RegLog.InsertEntityRegFailure(hostname, modelName ,entity.ComponentDefinition, comp.DisplayName, err)
 		rh.log.Error(err)
-
 	}
 	}
 
@@ -98,7 +97,6 @@ func (rh *RegistrationHelper)register(pkg packagingUnit) error {
 			RegLog.InsertEntityRegFailure(hostname, modelName ,entity.RelationshipDefinition, rel.ID.String(), err)
 		}
 	}
-	return nil
 }
 
 func (erh *RegistrationHelper) RegistryLog() {

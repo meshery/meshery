@@ -54,17 +54,15 @@ func (rfl *registrationFailureLog) GetNonRegisteredEntitiesCount()map[string]v1b
 	res := make(map[string]v1beta1.EntitySummary)
 	for registrant, modelNamespacedData := range rfl.failureData {
 		entitySummary := v1beta1.EntitySummary{}
-		if(modelNamespacedData != nil){
-			for modelName, entityTypeNamespacedData := range modelNamespacedData {
-				if(modelName == ""){
-					modelsCount := len(entityTypeNamespacedData[string(entity.Model)])
-					entitySummary.Models = int64(modelsCount)
-					continue
-				}
-				entitySummary.Components = int64(len(entityTypeNamespacedData[string(entity.ComponentDefinition)]))
-				entitySummary.Relationships = int64(len(entityTypeNamespacedData[string(entity.RelationshipDefinition)]))
-				entitySummary.Policies = int64(len(entityTypeNamespacedData[string(entity.PolicyDefinition)]))
+		for modelName, entityTypeNamespacedData := range modelNamespacedData {
+			if(modelName == ""){
+				modelsCount := len(entityTypeNamespacedData[string(entity.Model)])
+				entitySummary.Models = int64(modelsCount)
+				continue
 			}
+			entitySummary.Components = int64(len(entityTypeNamespacedData[string(entity.ComponentDefinition)]))
+			entitySummary.Relationships = int64(len(entityTypeNamespacedData[string(entity.RelationshipDefinition)]))
+			entitySummary.Policies = int64(len(entityTypeNamespacedData[string(entity.PolicyDefinition)]))
 		}
 		res[registrant] = entitySummary
 	}

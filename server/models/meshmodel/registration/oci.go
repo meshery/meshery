@@ -7,7 +7,7 @@ import(
 )
 
 type OCIImage struct {
-    img gcrv1.Image
+    _ gcrv1.Image
 }
 
 func (o OCIImage) PkgUnit() (packagingUnit, error){

@@ -81,7 +81,7 @@ func (d Dir) PkgUnit() (_ packagingUnit, err error){
 		return pkg, ErrDirPkgUnitParseFail(d.dirpath, fmt.Errorf("Could not completely walk the file tree: %e", err))
 	}
 	if (reflect.ValueOf(pkg.model).IsZero()){
-		err = fmt.Errorf("Cannot find `model` in the directory. Directory without a `model` definition is invalid.")
+		err := fmt.Errorf("Cannot find `model` in the directory. Directory without a `model` definition is invalid.")
 		RegLog.invalidDefinitions[d.dirpath] = err
 		return pkg, err
 	}

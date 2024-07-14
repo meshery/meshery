@@ -1,7 +1,7 @@
 package registration
 
 type Tar struct {
-    path string
+    _ string
 }
 
 func (t Tar) PkgUnit() (packagingUnit, error){
