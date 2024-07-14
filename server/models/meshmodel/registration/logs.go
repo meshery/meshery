@@ -15,7 +15,7 @@ import (
 	gofrs "github.com/gofrs/uuid"
 )
 
-var RegLog registrationFailureLog
+var RegLog *registrationFailureLog
 var TAB = "    "
 
 // representation of what could not be registered
@@ -25,10 +25,15 @@ type registrationFailureLog struct {
 	// {'artifacthub': {'': 'model': {'model': error}}}
 	// think of it like every model belongs to a global model called ''
 	failureData map[string](map[string](map[string]((map[string]error))))
+
+	// invalid definitions while parsing the given input (oci, tar, dir) into meshmodel entities
+	invalidDefinitions map[string](error)
 }
+
 func init() {
-	RegLog = registrationFailureLog{
+	RegLog = &registrationFailureLog{
 		failureData: make(map[string](map[string](map[string]((map[string]error))))),
+		invalidDefinitions:  make(map[string]error),
 	}
 }
 
@@ -121,6 +126,11 @@ func writeLogsToFiles() error {
 	// Initialize the formatted log message
 	var logMessage strings.Builder
 
+	logMessage.WriteString("Invalid Definitions: \n")
+	for path, err := range RegLog.invalidDefinitions {
+		logMessage.WriteString(TAB + "[" + path + "] " + err.Error() + " \n" )
+	}
+	logMessage.WriteString("---------------------------------------- \n")
 	for host, modelNamespacedData := range RegLog.failureData {
 	logMessage.WriteString(fmt.Sprintf("%s failed to register:\n", host))
 		for modelName, entityTypeNamespacedData := range modelNamespacedData {

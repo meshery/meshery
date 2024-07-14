@@ -10,6 +10,7 @@ const (
 	ErrDirPkgUnitParseFailCode = "replace_me"
 	ErrGetEntityCode = "replace_me"
 	ErrRegisterEntityCode = "replace_me"
+	ErrInvalidMeshmodelDefinitionCode = "replace_me"
 )
 
 
@@ -18,9 +19,13 @@ func ErrRegisterEntity(err error, name, entity string) error {
 }
 
 func ErrGetEntity(err error) error {
-	return errors.New(ErrGetEntityCode, errors.Alert, []string{err.Error()}, []string{}, []string{}, []string{})
+	return errors.New(ErrGetEntityCode, errors.Alert, []string{err.Error()}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrDirPkgUnitParseFail(dirpath string, err error) error {
 	return errors.New(ErrDirPkgUnitParseFailCode, errors.Alert, []string{fmt.Sprintf("Directory %s is not a valid packaging unit for registration", dirpath)}, []string{fmt.Sprintf("Could not parse the given directory %s into a packaging unit:  %s", dirpath, err.Error())}, []string{}, []string{} )
+}
+
+func ErrInvalidMeshmodelDefinition(path string, err error) error {
+	return errors.New(ErrDirPkgUnitParseFailCode, errors.Alert, []string{fmt.Sprintf("The file at path %s is not a valid meshmodel definition", path)}, []string{fmt.Sprintf("Could not parse meshmodel entity:  %s", err.Error())}, []string{}, []string{} )
 }

@@ -37,7 +37,7 @@ func NewRegistrationHelper(log logger.Handler, hc *models.HandlerConfig, regm *m
 */
 func (rh *RegistrationHelper) Register(entity RegisterableEntity) error {
 	// get the packaging units
-	pu, err, _ := entity.PkgUnit()
+	pu, err := entity.PkgUnit()
 	if(err != nil){
 		// given input is not a valid model, or could not walk the directory
 		return err
@@ -59,6 +59,7 @@ func (rh *RegistrationHelper)register(pkg packagingUnit) error {
 		&model,
 		)
 	if err != nil {
+		fmt.Println(model)
 		err = ErrRegisterEntity(err, string(model.Type()), model.DisplayName)
 		RegLog.InsertEntityRegFailure(model.Registrant.Hostname, "",entity.Model, model.Name, err)
 		// If model cannot be registered, don't register anything else
@@ -79,7 +80,7 @@ func (rh *RegistrationHelper)register(pkg packagingUnit) error {
 		)
 	if err != nil {
 		err = ErrRegisterEntity(err, string(comp.Type()), comp.DisplayName)
-		RegLog.InsertEntityRegFailure(hostname, modelName ,entity.Model, comp.DisplayName, err)
+		RegLog.InsertEntityRegFailure(hostname, modelName ,entity.ComponentDefinition, comp.DisplayName, err)
 		rh.log.Error(err)
 
 	}
@@ -94,7 +95,7 @@ func (rh *RegistrationHelper)register(pkg packagingUnit) error {
 		if err != nil {
 			err = ErrRegisterEntity(err, string(rel.Type()), rel.Kind)
 			rh.log.Error(err)
-			RegLog.InsertEntityRegFailure(hostname, model.Name ,entity.Model, rel.ID.String(), err)
+			RegLog.InsertEntityRegFailure(hostname, modelName ,entity.RelationshipDefinition, rel.ID.String(), err)
 		}
 	}
 	return nil
@@ -111,7 +112,6 @@ func (erh *RegistrationHelper) RegistryLog() {
 	if err != nil {
 		log.Error(err)
 	}
-	fmt.Println("hosts: ", hosts)
 
 	for _, host := range hosts {
 		eventBuilder := events.NewEvent().FromSystem(sysID).FromUser(sysID).WithCategory("entity").WithAction("get_summary")
@@ -148,25 +148,3 @@ func (erh *RegistrationHelper) RegistryLog() {
 		log.Error(err)
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

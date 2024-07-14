@@ -26,14 +26,13 @@ func NewDir(path string) Dir {
 
 /* PkgUnit parses all the files inside the directory and finds out if they are any valid meshery definitions. Valid meshery definitions are added to the packagingUnit struct.
 */
-func (d Dir) PkgUnit() (_ packagingUnit, err error, parsingErrors []error){
+func (d Dir) PkgUnit() (_ packagingUnit, err error){
 	pkg := packagingUnit{}
 	// check if the given is a directory
 	_, err = os.ReadDir(d.dirpath)
 	if(err != nil){
-		return pkg, ErrDirPkgUnitParseFail(d.dirpath, fmt.Errorf("Could not ready the directory: %e", err)), parsingErrors
+		return pkg, ErrDirPkgUnitParseFail(d.dirpath, fmt.Errorf("Could not read the directory: %e", err))
 	}
-	parsingErrors = make([]error, 0)
 	err = filepath.Walk(d.dirpath, func (path string, f os.FileInfo, err error) error {
 		if err != nil {
 			return err
@@ -47,13 +46,13 @@ func (d Dir) PkgUnit() (_ packagingUnit, err error, parsingErrors []error){
 			e, err = getEntity(byt, "yaml")
 			if(err != nil){
 				// we skip unrecognisable entities
-				parsingErrors = append(parsingErrors, ErrGetEntity(err))
+				RegLog.invalidDefinitions[path] = ErrInvalidMeshmodelDefinition(path, err)
 				return nil
 			}
 		} else if(filepath.Ext(path) == ".json"){
 			e, err = getEntity(byt, "json")
 			if(err != nil){
-				parsingErrors = append(parsingErrors, ErrGetEntity(err))
+				RegLog.invalidDefinitions[path] = ErrInvalidMeshmodelDefinition(path, err)
 				return nil
 			}
 		} else if(filepath.Ext(path) == ".cue"){
@@ -79,10 +78,12 @@ func (d Dir) PkgUnit() (_ packagingUnit, err error, parsingErrors []error){
 		return nil
 	})
 	if err != nil {
-		return pkg, ErrDirPkgUnitParseFail(d.dirpath, fmt.Errorf("Could not completely walk the file tree: %e", err)), parsingErrors
+		return pkg, ErrDirPkgUnitParseFail(d.dirpath, fmt.Errorf("Could not completely walk the file tree: %e", err))
 	}
 	if (reflect.ValueOf(pkg.model).IsZero()){
-		return pkg, ErrDirPkgUnitParseFail(d.dirpath, fmt.Errorf("Cannot find `model` in the directory. Directory without a `model` definition is invalid.")), parsingErrors
+		err = fmt.Errorf("Cannot find `model` in the directory. Directory without a `model` definition is invalid.")
+		RegLog.invalidDefinitions[d.dirpath] = err
+		return pkg, err
 	}
-	return pkg, err, parsingErrors
+	return pkg, err
 }

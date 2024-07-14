@@ -15,9 +15,6 @@ var ModelsPath = "../meshmodel"
 
 func GetModelDirectoryPaths() ([]string, error) {
 	dirEntries := make([]string, 0)
-	//dirEntries = append(dirEntries, "../meshmodel/istio-base/1.16.0/v1.0.0/")
-	//dirEntries = append(dirEntries, "../meshmodel/istio-base/1.16.0/v1.0.0/")
-	//return dirEntries, nil
 	modelsDirs, err := os.ReadDir(ModelsPath)
 	if(err != nil){
 		return dirEntries, err
@@ -65,7 +62,7 @@ func SeedComponents(log logger.Handler, hc *models.HandlerConfig, regm *meshmode
 		err := regHelper.Register(dir)
 		if err != nil {
 			// handle error
-			log.Error(err)
+			// log.Error(err)
 		}
 	}
 	regHelper.RegistryLog()

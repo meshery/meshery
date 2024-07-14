@@ -40,32 +40,32 @@ func getEntity(byt []byte, filetype string) (et entity.Entity, _ error) {
     var versionMeta v1beta1.VersionMeta
 	err  := unmarshal(byt, filetype, &versionMeta, false)
 	if err != nil {
-		return nil, fmt.Errorf("Invalid document: %s", err.Error())
+		return nil, ErrGetEntity(fmt.Errorf("Does not contain versionmeta: %s", err.Error()))
 	}
 	switch (versionMeta.SchemaVersion) {
 		case v1beta1.ComponentSchemaVersion:
 			var compDef v1beta1.ComponentDefinition
 			err  := unmarshal(byt, filetype, &compDef, false)
 			if err != nil {
-				return nil, fmt.Errorf("Invalid component definition: %s", err.Error())
+				return nil, ErrGetEntity(fmt.Errorf("Invalid component definition: %s", err.Error()))
 			}
 			et = &compDef
 		case v1beta1.ModelSchemaVersion:
 			var model v1beta1.Model
 			err  := unmarshal(byt, filetype, &model, false)
 			if err != nil {
-				return nil, fmt.Errorf("Invalid model definition: %s", err.Error())
+				return nil, ErrGetEntity(fmt.Errorf("Invalid model definition: %s", err.Error()))
 			}
 			et = &model
 		case v1alpha2.RelationshipSchemaVersion:
 			var rel v1alpha2.RelationshipDefinition
 			err  := unmarshal(byt, filetype, &rel, false)
 			if err != nil {
-				return nil, fmt.Errorf("Invalid relationship definition: %s", err.Error())
+				return nil, ErrGetEntity(fmt.Errorf("Invalid relationship definition: %s", err.Error()))
 			}
 			et = &rel
 		default:
-			return nil, fmt.Errorf("Document does not belong to any meshmodel construct")
+			return nil, ErrGetEntity(fmt.Errorf("Not a valid component definition, model definition, or relationship definition"))
 	}
 	return et, nil
 }
