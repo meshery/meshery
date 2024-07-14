@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Loki Simple Scalable
-subtitle: Collaborative and visual infrastructure as code for Loki Simple Scalable
+subtitle: Collaborative and visual infrastructure as design for Loki Simple Scalable
 image: /assets/img/integrations/loki-simple-scalable/icons/color/loki-simple-scalable-color.svg
 permalink: extensibility/integrations/loki-simple-scalable
 docURL: https://docs.meshery.io/extensibility/integrations/loki-simple-scalable

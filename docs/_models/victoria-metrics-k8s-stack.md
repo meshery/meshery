@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Victoria Metrics K8S Stack
-subtitle: Collaborative and visual infrastructure as code for Victoria Metrics K8S Stack
+subtitle: Collaborative and visual infrastructure as design for Victoria Metrics K8S Stack
 image: /assets/img/integrations/victoria-metrics-k8s-stack/icons/color/victoria-metrics-k8s-stack-color.svg
 permalink: extensibility/integrations/victoria-metrics-k8s-stack
 docURL: https://docs.meshery.io/extensibility/integrations/victoria-metrics-k8s-stack
@@ -75,7 +75,7 @@ featureList: [
   "Invite anyone to review and make changes to your private designs.",
   "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

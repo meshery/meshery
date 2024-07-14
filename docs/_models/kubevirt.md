@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Kubevirt
-subtitle: Collaborative and visual infrastructure as code for Kubevirt
+subtitle: Collaborative and visual infrastructure as design for Kubevirt
 image: /assets/img/integrations/kubevirt/icons/color/kubevirt-color.svg
 permalink: extensibility/integrations/kubevirt
 docURL: https://docs.meshery.io/extensibility/integrations/kubevirt

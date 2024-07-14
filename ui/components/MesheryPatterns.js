@@ -1733,7 +1733,7 @@ function MesheryPatterns({
           )}
 
           <UsesSistent>
-            <SistentModal {...designLifecycleModal}></SistentModal>
+            <SistentModal maxWidth="sm" {...designLifecycleModal}></SistentModal>
             <SistentModal {...sistentInfoModal}>
               {CAN(keys.DETAILS_OF_DESIGN.action, keys.DETAILS_OF_DESIGN.subject) &&
                 infoModal.open && (
