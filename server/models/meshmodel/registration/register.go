@@ -4,17 +4,17 @@ import (
 	"fmt"
 
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/server/helpers"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/models/events"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha2"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
+	"github.com/layer5io/meshkit/models/meshmodel/entity"
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 	"github.com/spf13/viper"
 )
 
-// packaingUnit (an opaque type) is the representation of the atomic unit that can be registered into meshery server
+// packaingUnit is the representation of the atomic unit that can be registered into meshery server
 type packagingUnit struct {
 	model v1beta1.Model
 	components []v1beta1.ComponentDefinition
@@ -46,6 +46,7 @@ func (rh *RegistrationHelper) Register(entity RegisterableEntity) error {
 	return rh.register(pu)
 }
 
+
 /*
 	register will return an error if it is not able to register the `model`.
 	If there are errors when registering other entities, they are handled properly but does not stop the registration process.
@@ -59,41 +60,41 @@ func (rh *RegistrationHelper)register(pkg packagingUnit) error {
 		)
 	if err != nil {
 		err = ErrRegisterEntity(err, string(model.Type()), model.DisplayName)
+		RegLog.InsertEntityRegFailure(model.Registrant.Hostname, "",entity.Model, model.Name, err)
+		// If model cannot be registered, don't register anything else
 		return err
 	}
 
+	hostname := model.Registrant.Hostname
+	modelName := model.Name
 	// 2. Register components
 	for _, comp := range pkg.components {
 		// TODO: After we make sure that the models are accurately generated (by artifacthub specifically), we have to use pu.model as the model for
 		// components
-		isRegistrantError, isModelError, err := rh.regManager.RegisterEntity(
-		v1beta1.Host{Hostname: comp.Model.Registrant.Hostname,},
+		_, _, err := rh.regManager.RegisterEntity(
+		v1beta1.Host{Hostname: hostname,},
 		&comp,
 		)
 	if err != nil {
 		err = ErrRegisterEntity(err, string(comp.Type()), comp.DisplayName)
+		RegLog.InsertEntityRegFailure(hostname, modelName ,entity.Model, comp.DisplayName, err)
 		rh.log.Error(err)
+
 	}
-	helpers.HandleError(v1beta1.Host{
-				Hostname: comp.Model.Registrant.Hostname,
-			}, &comp, err, isModelError, isRegistrantError)
 	}
 
 	// 3. Register relationships
 	for _, rel := range pkg.relationships {
 		rel.Model = model
-		isRegistrantError, isModelError, err := rh.regManager.RegisterEntity(v1beta1.Host{
-			Hostname: rel.Model.Registrant.Hostname,
+		_, _, err := rh.regManager.RegisterEntity(v1beta1.Host{
+			Hostname: hostname,
 		}, &rel)
 		if err != nil {
 			err = ErrRegisterEntity(err, string(rel.Type()), rel.Kind)
 			rh.log.Error(err)
-			helpers.HandleError(v1beta1.Host{
-			Hostname: rel.Model.Registrant.Hostname,
-			}, &rel, err, isModelError, isRegistrantError)
+			RegLog.InsertEntityRegFailure(hostname, model.Name ,entity.Model, rel.ID.String(), err)
 		}
 	}
-
 	return nil
 }
 
@@ -108,6 +109,7 @@ func (erh *RegistrationHelper) RegistryLog() {
 	if err != nil {
 		log.Error(err)
 	}
+	fmt.Println("hosts: ", hosts)
 
 	for _, host := range hosts {
 		eventBuilder := events.NewEvent().FromSystem(sysID).FromUser(sysID).WithCategory("entity").WithAction("get_summary")
@@ -130,7 +132,7 @@ func (erh *RegistrationHelper) RegistryLog() {
 		successEvent := eventBuilder.Build()
 		_ = provider.PersistEvent(successEvent)
 
-		failLog, err := helpers.FailedEventCompute(host.Hostname, sysID, &provider, "", erh.handlerConfig.EventBroadcaster)
+		failLog, err := FailedEventCompute(host.Hostname, sysID, &provider, "", erh.handlerConfig.EventBroadcaster)
 		if err != nil {
 			log.Error(err)
 		}
@@ -139,12 +141,11 @@ func (erh *RegistrationHelper) RegistryLog() {
 		}
 
 	}
-	err = helpers.WriteLogsToFiles()
+	err = writeLogsToFiles()
 	if err != nil {
 		log.Error(err)
 	}
 }
-
 
 
 
