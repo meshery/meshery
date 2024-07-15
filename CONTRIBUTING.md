@@ -348,7 +348,7 @@ Meshery UI utilizes three component libraries:
 2. Material-UI (MUI) v5
 3. Sistent
 
-While MUI v4 and v5 are being phased out, Sistent is now the preferred component library. Sistent internally uses MUI v5, and Meshery UI globally still relies on MUI v5. This can lead to conflicts between themes when Sistent components are used directly.
+While MUI v4 and v5 are being phased out, Sistent is now the preferred component library. Sistent internally uses MUI v5, and Meshery UI globally still relies on MUI v4. This can lead to conflicts between themes when Sistent components are used directly.
 
 ## The `UseSistent` Wrapper
 
