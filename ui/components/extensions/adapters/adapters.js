@@ -7,7 +7,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { updateProgress } from '../../../lib/store';
-import { adaptersList } from './constants';
+import { ADAPTER_STATUS, adaptersList } from './constants';
 import changeAdapterState from '../../graphql/mutations/AdapterStatusMutation';
 import { LARGE_6_MED_12_GRID_STYLE } from '../../../css/grid.style';
 import { promisifiedDataFetch } from '../../../lib/data-fetch';
@@ -58,8 +58,6 @@ const Adapters = ({ updateProgress, classes }) => {
   const handleAdapterDeployment = (payload, msg, selectedAdapter, adapterId) => {
     updateProgress({ showProgress: true });
 
-    const isEnableAction = payload.status === 'ENABLED';
-
     changeAdapterState((response, errors) => {
       updateProgress({ showProgress: false });
 
@@ -71,9 +69,9 @@ const Adapters = ({ updateProgress, classes }) => {
         });
         handleError(msg);
       } else {
-        const actionText = isEnableAction ? 'enabled' : 'disabled';
+        const actionText = payload.status.toLowerCase();
         notify({
-          message: `Adapter ${selectedAdapter.name} ${actionText}`,
+          message: `${selectedAdapter.name} adapter ${actionText}`,
           event_type: EVENT_TYPES.SUCCESS,
         });
       }
@@ -94,14 +92,14 @@ const Adapters = ({ updateProgress, classes }) => {
       msg = '';
     if (!selectedAdapter.enabled) {
       payload = {
-        status: 'ENABLED',
+        status: ADAPTER_STATUS.ENABLED,
         adapter: selectedAdapter.label,
         targetPort: selectedAdapter.defaultPort,
       };
       msg = 'Unable to Deploy adapter';
     } else {
       payload = {
-        status: 'DISABLED',
+        status: ADAPTER_STATUS.DISABLED,
         adapter: selectedAdapter.label,
         targetPort: selectedAdapter.defaultPort,
       };
