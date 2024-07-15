@@ -95,6 +95,8 @@ const useStyles = makeStyles((theme) => ({
         ? theme.palette.secondary.toolbarBg2
         : theme.palette.secondary.toolbarBg1,
     display: 'flex',
+    gap: '1rem',
+    padding: '1rem',
     flexDirection: 'row',
     width: '100%',
     position: 'absolute',
@@ -150,7 +152,6 @@ const useStyles = makeStyles((theme) => ({
   detailsContainer: {
     height: '60vh',
     width: '50%',
-    margin: '1rem',
     backgroundColor: theme.palette.secondary.detailsContainer,
     borderRadius: '6px',
     padding: '1rem 2rem',
@@ -165,7 +166,6 @@ const useStyles = makeStyles((theme) => ({
   emptyDetailsContainer: {
     height: '60vh',
     width: '50%',
-    margin: '1rem',
     backgroundColor: theme.palette.secondary.detailsContainer,
     borderRadius: '6px',
     padding: '2.5rem',
