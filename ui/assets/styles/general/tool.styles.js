@@ -155,7 +155,6 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: '6px',
     padding: '1rem 2rem',
     overflowY: 'auto',
-    boxShadow: 'inset 0 0 6px 2px rgba(0, 0, 0,0.4)',
     [theme.breakpoints.down('sm')]: {
       width: '90%',
       padding: '1rem',
@@ -171,7 +170,6 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: '6px',
     padding: '2.5rem',
     overflowY: 'auto',
-    boxShadow: 'inset 0 0 6px 2px rgba(0, 0, 0,0.4)',
     display: 'flex',
     flexDirection: 'column',
     // justifyContent: 'center',
