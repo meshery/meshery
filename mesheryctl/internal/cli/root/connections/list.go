@@ -17,7 +17,7 @@ import (
 var listConnectionsCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List all the connections",
-	Long:  `List all the connections`,
+	Long:  `List all of the available connections in Meshery`,
 	Example: `
 // List all the connections
 mesheryctl exp connections list
@@ -58,12 +58,11 @@ mesheryctl exp connections list --page 2
 			utils.Log.Error(err)
 			return nil
 		}
-
-		// defers the closing of the response body after its use, ensuring that the resources are properly released.
 		defer resp.Body.Close()
 
 		data, err := io.ReadAll(resp.Body)
 		if err != nil {
+			err = utils.ErrReadResponseBody(err)
 			utils.Log.Error(err)
 			return nil
 		}
