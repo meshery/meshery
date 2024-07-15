@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Emissary Ingress
-subtitle: Collaborative and visual infrastructure as code for Emissary Ingress
+subtitle: Collaborative and visual infrastructure as design for Emissary Ingress
 image: /assets/img/integrations/emissary-ingress/icons/color/emissary-ingress-color.svg
 permalink: extensibility/integrations/emissary-ingress
 docURL: https://docs.meshery.io/extensibility/integrations/emissary-ingress

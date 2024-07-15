@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: OpenGitOps
-subtitle: Collaborative and visual infrastructure as code for OpenEBS
+subtitle: Collaborative and visual infrastructure as design for OpenGitOps
 image: /assets/img/integrations/opengitops/icons/color/opengitops-color.svg
 permalink: extensibility/integrations/opengitops
 docURL: https://docs.meshery.io/extensibility/integrations/opengitops
