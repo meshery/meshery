@@ -2,7 +2,15 @@ import React from 'react';
 import useStyles from '../../assets/styles/general/tool.styles';
 import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../../constants/navigator';
 import { FormatStructuredData, reorderObjectProperties } from '../DataFormatter';
-import { FormControl, Select, MenuItem, Chip, CircularProgress, useTheme } from '@material-ui/core';
+import {
+  FormControl,
+  Select,
+  MenuItem,
+  Chip,
+  CircularProgress,
+  useTheme,
+  Paper,
+} from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import styles from '../connections/styles';
 import { REGISTRY_ITEM_STATES, REGISTRY_ITEM_STATES_TO_TRANSITION_MAP } from '../../utils/Enum';
@@ -462,11 +470,11 @@ const MeshModelDetails = ({ view, showDetailsData }) => {
   };
 
   return (
-    <div
+    <Paper
       className={isEmptyDetails ? StyleClass.emptyDetailsContainer : StyleClass.detailsContainer}
     >
       {isEmptyDetails ? renderEmptyDetails() : getContent(showDetailsData.type)}
-    </div>
+    </Paper>
   );
 };
 
