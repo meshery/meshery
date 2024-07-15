@@ -18,12 +18,13 @@ Meshery CLI commands are categorized by function, which are:
 
 - `mesheryctl` - Global flags and CLI configuration
 - `mesheryctl system` - Meshery Lifecycle and Troubleshooting
-- `mesheryctl mesh` - Cloud Native Lifecycle & Configuration Management: provisioning and configuration best practices
-- `mesheryctl perf` - Cloud Native Performance Management: Workload and cloud native performance characterization
-- `mesheryctl pattern` - Cloud Native Pattern Configuration & Management: cloud native patterns and Open Application Model integration
-- `mesheryctl app` - Cloud Native Application Management
+- `mesheryctl mesh` - Lifecycle & Configuration Management: provisioning and configuration best practices
+- `mesheryctl perf` - Performance Management: Workload and cloud native performance characterization
+- `mesheryctl pattern` - Design Patterns: cloud native patterns and best practices
 - `mesheryctl filter` - Data Plane Intelligence: Registry and configuration of WebAssembly filters for Envoy
-- `mesheryctl registry` - Meshery's Registry Management: Manage the state and contents of Meshery's internal registry of capabilities.
+- `mesheryctl model` - A unit of packaging to define managed infrastructure and their relationships, and details specifics of how to manage them.
+- `mesheryctl components` - Fundamental building block used to represent and define the infrastructure under management
+- `mesheryctl registry` - Model Database: Manage the state and contents of Meshery's internal registry of capabilities.
 - `mesheryctl exp` - Experimental features
 
 ## Global Commands and Flags
@@ -522,7 +523,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters
   </tr>
   {% assign command7 = site.data.mesheryctlcommands.cmds.pattern %}
     <tr>
-      <td rowspan=19><a href="{{ site.baseurl }}/reference/mesheryctl/pattern">{{ command7.name }}</a></td>
+      <td rowspan=22><a href="{{ site.baseurl }}/reference/mesheryctl/pattern">{{ command7.name }}</a></td>
       <td></td>
       <td></td>
       <td>{{ command7.description }}</td>
@@ -553,7 +554,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters
       {% endfor %}
     {% assign subcommand3 = command7.subcommands.list %}
       <tr>
-        <td rowspan=2><a href="{{ site.baseurl }}/reference/mesheryctl/pattern/list">{{ subcommand3.name }}</a></td>
+        <td rowspan=3><a href="{{ site.baseurl }}/reference/mesheryctl/pattern/list">{{ subcommand3.name }}</a></td>
         <td></td>
         <td>{{ subcommand3.description }}</td>
       </tr>
@@ -590,6 +591,18 @@ Installation, troubleshooting and debugging of Meshery and its adapters
     {% assign subcommand6 = command7.subcommands.onboard %}
       <tr>
         <td rowspan=4><a href="{{ site.baseurl }}/reference/mesheryctl/pattern/onboard">{{ subcommand6.name }}</a></td>
+        <td></td>
+        <td>{{ subcommand6.description }}</td>
+      </tr>
+      {% for flag_hash in subcommand6.flags %}{% assign flag = flag_hash[1] %}
+        <tr>
+          <td>{{ flag.name }}</td>
+          <td>{{ flag.description }}</td>
+        </tr>
+      {% endfor %}
+      {% assign subcommand6 = command7.subcommands.export %}
+      <tr>
+        <td rowspan=3><a href="{{ site.baseurl }}/reference/mesheryctl/pattern/export">{{ subcommand6.name }}</a></td>
         <td></td>
         <td>{{ subcommand6.description }}</td>
       </tr>
@@ -744,7 +757,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters
 </thead>
 </table>
 
-## Experimental Features
+## Meshery Models
 
 <table>
 <thead>
@@ -754,20 +767,122 @@ Installation, troubleshooting and debugging of Meshery and its adapters
     <th>Flag</th>
     <th>Function</th>
   </tr>
-  {% assign command11 = site.data.mesheryctlcommands.cmds.exp %}
+  {% assign command12 = site.data.mesheryctlcommands.cmds.model %}
     <tr>
-      <td rowspan=6><a href="{{ site.baseurl }}/reference/mesheryctl/exp">{{ command10.name }}</a></td>
+      <td rowspan=9><a href="{{ site.baseurl }}/reference/mesheryctl/{{ command12.name }}">{{ command12.name }}</a></td>
       <td></td>
       <td></td>
-      <td>{{ command11.description }}</td>
+      <td>{{ command12.description }}</td>
     </tr>
-    {% for flag_hash in command11.flags %}{% assign flag = flag_hash[1] %}
+    {% for flag_hash in command12.flags %}{% assign flag = flag_hash[1] %}
       <tr>
         <td></td>
         <td>{{ flag.name }}</td>
         <td>{{ flag.description }}</td>
       </tr>
     {% endfor %}
+    {% for subcommand_hash in command12.subcommands %}{% assign subcomand = subcommand_hash[1] %}
+      <tr>
+        <td rowspan={{ subcomand.flags.size | plus:1 }} ><a href="{{ site.baseurl }}/reference/mesheryctl/{{ command12.name }}/{{ subcomand.name }}">{{ subcomand.name }}</a></td>
+        <td></td>
+        <td>{{ subcomand.description }}</td>
+      </tr>
+      {% for flag_hash in subcomand.flags %}{% assign flag = flag_hash[1] %}
+        <tr>
+          <td>{{ flag.name }}</td>
+          <td>{{ flag.description }}</td>
+        </tr>
+      {% endfor %}
+    {% endfor %}
+</thead>
+</table>
+
+## Meshery Components
+
+<table>
+<thead>
+  <tr>
+    <th>Command</th>
+    <th>Subcommand</th>
+    <th>Flag</th>
+    <th>Function</th>
+  </tr>
+  {% assign command13 = site.data.mesheryctlcommands.cmds.components %}
+    <tr>
+      <td rowspan=9><a href="{{ site.baseurl }}/reference/mesheryctl/{{ command13.name }}">{{ command13.name }}</a></td>
+      <td></td>
+      <td></td>
+      <td>{{ command13.description }}</td>
+    </tr>
+    {% for flag_hash in command13.flags %}{% assign flag = flag_hash[1] %}
+      <tr>
+        <td></td>
+        <td>{{ flag.name }}</td>
+        <td>{{ flag.description }}</td>
+      </tr>
+    {% endfor %}
+    {% for subcommand_hash in command13.subcommands %}{% assign subcomand = subcommand_hash[1] %}
+      <tr>
+        <td rowspan={{ subcomand.flags.size | plus:1 }} ><a href="{{ site.baseurl }}/reference/mesheryctl/{{ command13.name }}/{{ subcomand.name }}">{{ subcomand.name }}</a></td>
+        <td></td>
+        <td>{{ subcomand.description }}</td>
+      </tr>
+      {% for flag_hash in subcomand.flags %}{% assign flag = flag_hash[1] %}
+        <tr>
+          <td>{{ flag.name }}</td>
+          <td>{{ flag.description }}</td>
+        </tr>
+      {% endfor %}
+    {% endfor %}
+</thead>
+</table>
+
+## Experimental Features(exp)
+
+<table>
+<thead>
+  <tr>
+    <th>Command</th>
+    <th>Subcommand</th>
+    <th>Flag</th>
+    <th>Function</th>
+  </tr>
+  {% assign command14 = site.data.mesheryctlcommands.cmds.exp %}
+  {% for cmd_hash in command14 %}
+    {% assign cmd = cmd_hash[1] %}
+    {% assign subcommand_flag_count = 0 %}
+    {% for subcommand_hash in cmd.subcommands %}
+      {% assign subcommand = subcommand_hash[1] %}
+      {% assign subcommand_flag_count = subcommand_flag_count | plus: subcommand.flags.size %}
+    {% endfor %}
+    {% assign total_rowspan = cmd.subcommands.size | plus: subcommand_flag_count | plus: cmd.flags.size | plus: 1 %}
+    <tr>
+      <td rowspan="{{ total_rowspan }}"><a href="{{ site.baseurl }}/reference/mesheryctl/exp/{{ cmd.name }}">{{ cmd.name }}</a></td>
+      <td></td>
+      <td></td>
+      <td>{{ cmd.description }}</td>
+    </tr>
+    {% for flag_hash in cmd.flags %}{% assign flag = flag_hash[1] %}
+      <tr>
+        <td></td>
+        <td>{{ flag.name }}</td>
+        <td>{{ flag.description }}</td>
+      </tr>
+    {% endfor %}
+    {% for subcommand_hash in cmd.subcommands %}{% assign subcommand = subcommand_hash[1] %}
+      <tr>
+        <td rowspan="{{ subcommand.flags.size | plus: 1 }}"><a href="{{ site.baseurl }}/reference/mesheryctl/exp/{{ cmd.name }}/{{ subcommand.name }}">{{ subcommand.name }}</a></td>
+        <td></td>
+        <td>{{ subcommand.description }}</td>
+      </tr>
+      {% for flag_hash in subcommand.flags %}{% assign flag = flag_hash[1] %}
+        <tr>
+          <td>{{ flag.name }}</td>
+          <td>{{ flag.description }}</td>
+        </tr>
+      {% endfor %}
+    {% endfor %}
+  {% endfor %}
 </thead>
 </table>
 

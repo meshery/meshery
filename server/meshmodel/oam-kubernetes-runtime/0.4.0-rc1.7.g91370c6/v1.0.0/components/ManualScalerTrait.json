@@ -1,0 +1,68 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Manual Scaler Trait",
+  "description": "",
+  "format": "JSON",
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "version": "v1.0.0",
+   "name": "oam-kubernetes-runtime",
+   "displayName": "Oam Kubernetes Runtime",
+   "description": "",
+   "status": "ignored",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "registrant": {
+    "hostname": "artifacthub"
+   },
+   "category": {
+    "name": "Uncategorized",
+    "metadata": null
+   },
+   "subCategory": "Uncategorized",
+   "metadata": {
+    "capabilities": "",
+    "defaultData": "",
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "model": {
+    "version": "0.4.0-rc1.7.g91370c6"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "status": "ignored",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "component": {
+   "kind": "ManualScalerTrait",
+   "version": "core.oam.dev/v1alpha2",
+   "schema": "{\n \"description\": \"A ManualScalerTrait determines how many replicas a workload should have.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"A ManualScalerTraitSpec defines the desired state of a ManualScalerTrait.\",\n   \"properties\": {\n    \"replicaCount\": {\n     \"description\": \"ReplicaCount of the workload this trait applies to.\",\n     \"format\": \"int32\",\n     \"type\": \"integer\"\n    },\n    \"workloadRef\": {\n     \"description\": \"WorkloadReference to the workload this trait applies to.\",\n     \"properties\": {\n      \"apiVersion\": {\n       \"description\": \"APIVersion of the referenced object.\",\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"description\": \"Kind of the referenced object.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referenced object.\",\n       \"type\": \"string\"\n      },\n      \"uid\": {\n       \"description\": \"UID of the referenced object.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"apiVersion\",\n      \"kind\",\n      \"name\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"replicaCount\",\n    \"workloadRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Manual Scaler Trait\",\n \"type\": \"object\"\n}"
+  }
+ }

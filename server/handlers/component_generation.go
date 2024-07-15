@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 
+	"github.com/layer5io/meshery/server/helpers"
 	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/models"
 	meshkitmodels "github.com/layer5io/meshkit/generators/models"
@@ -69,13 +70,17 @@ func (h *Handler) MeshModelGenerationHandler(rw http.ResponseWriter, r *http.Req
 		}
 		if gpi.Register {
 			for _, comp := range comps {
+				var isModelError bool
+				var isRegistranError bool
 				utils.WriteSVGsOnFileSystem(&comp)
 				host := fmt.Sprintf("%s.artifacthub.meshery", gpi.Name)
-				err = h.registryManager.RegisterEntity(v1beta1.Host{
+				isRegistranError, isModelError, err = h.registryManager.RegisterEntity(v1beta1.Host{
 					IHost:    v1beta1.ArtifactHub{},
 					Hostname: v1beta1.ArtifactHub{}.String(),
 					Metadata: host,
 				}, &comp)
+				helpers.HandleError(v1beta1.Host{
+					IHost: v1beta1.ArtifactHub{}}, &comp, err, isModelError, isRegistranError)
 				if err != nil {
 					h.log.Error(ErrGenerateComponents(err))
 				}
@@ -83,8 +88,13 @@ func (h *Handler) MeshModelGenerationHandler(rw http.ResponseWriter, r *http.Req
 				h.log.Info(comp.DisplayName, " component for ", gpi.Name, " generated")
 			}
 		}
+
 		responseItem.Components = comps
 		response = append(response, responseItem)
+	}
+	err = helpers.WriteLogsToFiles()
+	if err != nil {
+		h.log.Error(err)
 	}
 	// Send response
 	rw.Header().Set("Content-Type", "application/json")

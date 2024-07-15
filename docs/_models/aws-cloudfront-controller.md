@@ -1,13 +1,13 @@
 ---
 layout: integration
 title: AWS CloudFront
-subtitle: Collaborative and visual infrastructure as code for AWS CloudFront
+subtitle: Collaborative and visual infrastructure as design for AWS CloudFront
 image: /assets/img/integrations/aws-cloudfront-controller/icons/color/aws-cloudfront-controller-color.svg
 permalink: extensibility/integrations/aws-cloudfront-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-cloudfront-controller
 description: 
-integrations-category: App Definition and Development
-integrations-subcategory: Service Proxy
+integrations-category: Cloud Native Network
+integrations-subcategory: Content Delivery Network
 registrant: GitHub
 components: 
 - name: field-export
@@ -43,12 +43,12 @@ components:
   whiteIcon: assets/img/integrations/aws-cloudfront-controller/components/response-headers-policy/icons/white/response-headers-policy-white.svg
   description: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Global content delivery",
+  "Improves website and application performance",
+  "Provides security features like DDoS protection"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Integrates with CloudFront"
+howItWorksDetails: "Improved content delivery and security for Kubernetes applications"
 language: en
 list: include
 type: extensibility

@@ -163,7 +163,7 @@ export const TextWithLinks = ({ text, ...typographyProps }) => {
   const linkRegex = /(https?:\/\/[^\s]+)/g;
 
   // Split the text into parts, alternating between text and link components
-  const parts = text.split(linkRegex);
+  const parts = text?.split?.(linkRegex) || [];
 
   // Map the parts to React elements
   const elements = parts.map((part, idx) => {
@@ -175,7 +175,7 @@ export const TextWithLinks = ({ text, ...typographyProps }) => {
     }
   });
 
-  return <Typography {...typographyProps}>{elements}</Typography>;
+  return <Typography {...typographyProps}> {elements}</Typography>;
 };
 
 export const KeyValue = ({ Key, Value }) => {
@@ -208,6 +208,7 @@ export const KeyValue = ({ Key, Value }) => {
             color: theme.palette.text.secondary,
             textOverflow: 'ellipsis',
             wordBreak: 'break-all',
+            whiteSpace: 'pre-line',
           }}
         />
       )}
@@ -340,7 +341,13 @@ export const FormatStructuredData = ({ propertyFormatters = {}, data, uiSchema }
           propertyFormatters: propertyFormatters,
         }}
       >
-        <Grid container>
+        <Grid
+          container
+          style={{
+            wordBreak: 'break-word',
+            overflowWrap: 'break-word',
+          }}
+        >
           <DynamicFormatter data={data} uiSchema={uiSchema} />
         </Grid>
       </FormatterContext.Provider>

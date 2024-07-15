@@ -5,6 +5,7 @@ on:
     - cron: "0 0 * * *"
 jobs:
   generate-components:
+    if: github.repository == 'meshery/meshery'
     name: Generate Components
     runs-on: ubuntu-22.04
     steps:
@@ -34,6 +35,8 @@ jobs:
         with:
           name: generate-logs
           path: ~/.meshery/logs/
+      - name: Pull changes from remote
+        run: git pull origin master
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
@@ -43,7 +46,6 @@ jobs:
           commit_options: "--signoff"
           commit_message: "New Models generated"
           branch: master
-
       - name: Send Email on Model Generator Failure
         if: failure()
         uses: dawidd6/action-send-mail@v3.7.1
@@ -59,8 +61,46 @@ jobs:
           body: |
             The GitHub Actions workflow in ${{ github.repository }} has failed.
             You can find more details in the GitHub Actions log ${{ github.workflow }}.
+  check-and-email-registry-generate-error:
+    if: github.repository == 'meshery/meshery'
+    name: Check and Email Error Log
+    runs-on: ubuntu-22.04
+    needs: generate-components
+    steps:
+      - name: Download registry-generate-error
+        uses: actions/download-artifact@v4
+        with:
+          name: generate-logs
+          path: .meshery/logs
+      - name: Check registry-generate-error file
+        id: check-registry-generate-error
+        run: |
+          if [ -s .meshery/logs/registry/registry-errors.log ]; then
+            echo "registry-generate-error is not empty"
+            echo "registry-generate-error=true" >> $GITHUB_ENV
+          else
+            echo "registry-generate-error is empty"
+            echo "registry-generate-error=false" >> $GITHUB_ENV
+          fi
+      - name: Send Email on Error Logs
+        if: env.registry-generate-error == 'true'
+        uses: dawidd6/action-send-mail@v3.7.1
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          subject: Model Generator Error Log
+          from: |
+            "Model Generator" <no-reply@meshery.io>
+          to: developers@meshery.io
+          body: |
+               The Model Generator workflow (https://github.com/meshery/meshery/actions/workflows/model-generator.yml) encountered one or more errors. Refer to the attached error log for details or review the results of the failed workflow - https://github.com/meshery/meshery/actions/runs/${{ github.run_id }}.
 
+               Learn more about the Meshery Registry - https://docs.meshery.io/concepts/logical/registry.
+          attachments: .meshery/logs/registry/registry-errors.log
   update-components:
+    if: github.repository == 'meshery/meshery'
     name: Update Components
     needs: generate-components
     runs-on: ubuntu-22.04
@@ -84,6 +124,8 @@ jobs:
         run: |
           cd mesheryctl;
           ./mesheryctl registry update -i ../server/meshmodel --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw"  --spreadsheet-cred "${{ secrets.INTEGRATION_SPREADSHEET_CRED }}"
+      - name: Pull changes from remote
+        run: git pull origin master     
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:

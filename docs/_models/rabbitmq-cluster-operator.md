@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: RabbitMQ Cluster Operator
-subtitle: Collaborative and visual infrastructure as code for RabbitMQ Cluster Operator
+subtitle: Collaborative and visual infrastructure as design for RabbitMQ Cluster Operator
 image: /assets/img/integrations/rabbitmq-cluster-operator/icons/color/rabbitmq-cluster-operator-color.svg
 permalink: extensibility/integrations/rabbitmq-cluster-operator
 docURL: https://docs.meshery.io/extensibility/integrations/rabbitmq-cluster-operator
@@ -62,13 +62,17 @@ components:
   colorIcon: assets/img/integrations/rabbitmq-cluster-operator/components/rabbitmq-cluster/icons/color/rabbitmq-cluster-color.svg
   whiteIcon: assets/img/integrations/rabbitmq-cluster-operator/components/rabbitmq-cluster/icons/white/rabbitmq-cluster-white.svg
   description: 
+- name: operator-policy
+  colorIcon: assets/img/integrations/rabbitmq-cluster-operator/components/operator-policy/icons/color/operator-policy-color.svg
+  whiteIcon: assets/img/integrations/rabbitmq-cluster-operator/components/operator-policy/icons/white/operator-policy-white.svg
+  description: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Automated RabbitMQ cluster deployment and scaling",
+  "High availability configuration",
+  "Monitoring and alerting"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Deploys and manages RabbitMQ clusters"
+howItWorksDetails: "Simplified RabbitMQ cluster management within Kubernetes"
 language: en
 list: include
 type: extensibility

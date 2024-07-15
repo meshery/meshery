@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Meshery Core
-subtitle: Collaborative and visual infrastructure as code for Meshery Core
+subtitle: Collaborative and visual infrastructure as design for Meshery Core
 image: /assets/img/integrations/meshery-core/icons/color/meshery-core-color.svg
 permalink: extensibility/integrations/meshery-core
 docURL: https://docs.meshery.io/extensibility/integrations/meshery-core
@@ -33,6 +33,10 @@ components:
 - name: credential
   colorIcon: assets/img/integrations/meshery-core/components/credential/icons/color/credential-color.svg
   whiteIcon: assets/img/integrations/meshery-core/components/credential/icons/white/credential-white.svg
+  description: 
+- name: container
+  colorIcon: assets/img/integrations/meshery-core/components/container/icons/color/container-color.svg
+  whiteIcon: assets/img/integrations/meshery-core/components/container/icons/white/container-white.svg
   description: 
 - name: node-group-inventory-wallet
   colorIcon: assets/img/integrations/meshery-core/components/node-group-inventory-wallet/icons/color/node-group-inventory-wallet-color.svg
@@ -71,7 +75,7 @@ featureList: [
   "Invite anyone to review and make changes to your private designs.",
   "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

@@ -8,10 +8,7 @@ import Link from 'next/link';
 import CreateDesignBtn from '../../General/CreateDesignBtn';
 import theme from '../../../themes/app';
 import { iconSmall } from '../../../css/icons.styles';
-import {
-  CustomTextTooltip,
-  RenderTooltipContent,
-} from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
+import { CustomTextTooltip } from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
 import { InfoOutlined } from '@material-ui/icons';
 import { useGetPatternsQuery } from '@/rtk-query/design';
 import { useGetFiltersQuery } from '@/rtk-query/filter';
@@ -74,8 +71,6 @@ export default function MesheryConfigurationChart({ classes }) {
     },
   };
 
-  const url = `https://docs.meshery.io/concepts/logical/designs`;
-
   return (
     <Link
       href="/configuration/designs"
@@ -90,14 +85,10 @@ export default function MesheryConfigurationChart({ classes }) {
           </Typography>
           <div onClick={(e) => e.stopPropagation()}>
             <CustomTextTooltip
-              backgroundColor="#3C494F"
               placement="left"
               interactive={true}
-              title={RenderTooltipContent({
-                showPriortext:
-                  'Meshery Designs are descriptive, declarative characterizations of how your Kubernetes infrastructure should be configured.',
-                link: url,
-              })}
+              variant="standard"
+              title={`Meshery Designs are descriptive, declarative characterizations of how your Kubernetes infrastructure should be configured. [Learn more](https://docs.meshery.io/concepts/logical/designs)`}
             >
               <IconButton disableRipple={true} disableFocusRipple={true}>
                 <InfoOutlined

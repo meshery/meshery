@@ -4,7 +4,6 @@ import React from 'react';
 import { CustomTextTooltip } from '../CustomTextTooltip';
 import HelpOutlineIcon from '../../../../assets/icons/HelpOutlineIcon';
 import { iconSmall } from '../../../../css/icons.styles';
-import { getHyperLinkDiv } from '../helper';
 
 export const CustomCheckboxWidget = (props) => {
   const {
@@ -43,9 +42,8 @@ export const CustomCheckboxWidget = (props) => {
             {labelValue(label, hideLabel, required)}
             {schema.description && (
               <CustomTextTooltip
-                backgroundColor="#3C494F"
                 flag={props?.formContext?.overrideFlag}
-                title={getHyperLinkDiv(schema?.description)}
+                title={schema?.description}
                 interactive={true}
               >
                 <IconButton component="span" size="small">

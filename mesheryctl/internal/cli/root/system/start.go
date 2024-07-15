@@ -18,6 +18,7 @@ import (
 	"bufio"
 	"context"
 	"fmt"
+	"github.com/pkg/errors"
 	"os"
 	"os/exec"
 	"path"
@@ -25,11 +26,9 @@ import (
 	"strings"
 	"time"
 
-	c "github.com/layer5io/meshery/mesheryctl/pkg/constants"
-	"github.com/pkg/errors"
-
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
+	pkgconstants "github.com/layer5io/meshery/mesheryctl/pkg/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 
 	dockerCmd "github.com/docker/cli/cli/command"
@@ -71,6 +70,9 @@ mesheryctl system start --reset
 
 // Specify Platform to deploy Meshery to.
 mesheryctl system start -p docker
+
+// Specify Provider to use.
+mesheryctl system start --provider Meshery
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
@@ -113,7 +115,7 @@ mesheryctl system start -p docker
 		return nil
 	},
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		latestVersions, err := meshkitutils.GetLatestReleaseTagsSorted(c.GetMesheryGitHubOrg(), c.GetMesheryGitHubRepo())
+		latestVersions, err := meshkitutils.GetLatestReleaseTagsSorted(pkgconstants.GetMesheryGitHubOrg(), pkgconstants.GetMesheryGitHubRepo())
 		version := constants.GetMesheryctlVersion()
 		if err == nil {
 			if len(latestVersions) == 0 {
@@ -124,7 +126,7 @@ mesheryctl system start -p docker
 			if latest != version {
 				log.Printf("A new release of mesheryctl is available: %s → %s", version, latest)
 				log.Printf("https://github.com/meshery/meshery/releases/tag/%s", latest)
-				log.Print("Check https://docs.meshery.io/guides/upgrade#upgrading-meshery-cli for instructions on how to update mesheryctl\n")
+				log.Print("Check https://docs.meshery.io/installation/upgrades#upgrading-meshery-cli for instructions on how to update mesheryctl\n")
 			}
 		}
 	},
@@ -163,15 +165,19 @@ func start() error {
 	if utils.PlatformFlag != "" {
 		if utils.PlatformFlag == "docker" || utils.PlatformFlag == "kubernetes" {
 			currCtx.SetPlatform(utils.PlatformFlag)
-
-			// update the context to config
-			err = config.UpdateContextInConfig(currCtx, mctlCfg.GetCurrentContextName())
-			if err != nil {
-				return err
-			}
 		} else {
 			return ErrUnsupportedPlatform(utils.PlatformFlag, utils.CfgFile)
 		}
+	}
+
+	if providerFlag != "" {
+		currCtx.SetProvider(providerFlag)
+	}
+
+	// update the context to config
+	err = config.UpdateContextInConfig(currCtx, mctlCfg.GetCurrentContextName())
+	if err != nil {
+		return err
 	}
 
 	// Reset Meshery config file to default settings
@@ -182,6 +188,8 @@ func start() error {
 		}
 	}
 
+	callbackURL := viper.GetString(pkgconstants.CallbackURLENV)
+	providerURL := viper.GetString(pkgconstants.ProviderURLsENV)
 	// deploy to platform specified in the config.yaml
 	switch currCtx.GetPlatform() {
 	case "docker":
@@ -251,12 +259,26 @@ func start() error {
 			spliter := strings.Split(temp.Image, ":")
 			temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], currCtx.GetChannel(), "latest")
 			if v == "meshery" {
-				if !utils.ContainsStringPrefix(temp.Environment, "MESHERY_SERVER_CALLBACK_URL") {
-					temp.Environment = append(temp.Environment, fmt.Sprintf("%s=%s", "MESHERY_SERVER_CALLBACK_URL", viper.GetString("MESHERY_SERVER_CALLBACK_URL")))
+				callbackEnvVaridx, ok := utils.FindInSlice(pkgconstants.CallbackURLENV, temp.Environment)
+				if !ok {
+					temp.Environment = append(temp.Environment, fmt.Sprintf("%s=%s", pkgconstants.CallbackURLENV, callbackURL))
+				} else if callbackURL != "" {
+					if ok {
+						temp.Environment[callbackEnvVaridx] = fmt.Sprintf("%s=%s", pkgconstants.CallbackURLENV, callbackURL)
+					}
 				}
 
-				if currCtx.GetProvider() != "" {
-					temp.Environment = append(temp.Environment, fmt.Sprintf("%s=%s", "PROVIDER", currCtx.GetProvider()))
+				providerEnvVar := currCtx.GetProvider()
+				// If user has specified provider using --provider flag use that.
+				if providerFlag != "" {
+					providerEnvVar = providerFlag
+				}
+				proivderEnvVaridx, ok := utils.FindInSlice(pkgconstants.ProviderENV, temp.Environment)
+
+				if !ok {
+					temp.Environment = append(temp.Environment, fmt.Sprintf("%s=%s", pkgconstants.ProviderENV, providerEnvVar))
+				} else if providerEnvVar != "" {
+					temp.Environment[proivderEnvVaridx] = fmt.Sprintf("%s=%s", pkgconstants.ProviderENV, providerEnvVar)
 				}
 
 				temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], currCtx.GetChannel(), mesheryImageVersion)
@@ -409,7 +431,7 @@ func start() error {
 		}
 
 		// Applying Meshery Helm charts for installing Meshery
-		if err = applyHelmCharts(kubeClient, currCtx, mesheryImageVersion, false, meshkitkube.INSTALL); err != nil {
+		if err = applyHelmCharts(kubeClient, currCtx, mesheryImageVersion, false, meshkitkube.INSTALL, callbackURL, providerURL); err != nil {
 			return err
 		}
 
@@ -442,12 +464,13 @@ func init() {
 	startCmd.Flags().BoolVarP(&skipUpdateFlag, "skip-update", "", false, "(optional) skip checking for new Meshery's container images.")
 	startCmd.Flags().BoolVarP(&utils.ResetFlag, "reset", "", false, "(optional) reset Meshery's configuration file to default settings.")
 	startCmd.Flags().BoolVarP(&skipBrowserFlag, "skip-browser", "", false, "(optional) skip opening of MesheryUI in browser.")
+	startCmd.PersistentFlags().StringVar(&providerFlag, "provider", "", "(optional) Defaults to the provider specified in the current context")
 }
 
 // Apply Meshery helm charts
-func applyHelmCharts(kubeClient *meshkitkube.Client, currCtx *config.Context, mesheryImageVersion string, dryRun bool, act meshkitkube.HelmChartAction) error {
+func applyHelmCharts(kubeClient *meshkitkube.Client, currCtx *config.Context, mesheryImageVersion string, dryRun bool, act meshkitkube.HelmChartAction, callbackURL, providerURL string) error {
 	// get value overrides to install the helm chart
-	overrideValues := utils.SetOverrideValues(currCtx, mesheryImageVersion)
+	overrideValues := utils.SetOverrideValues(currCtx, mesheryImageVersion, callbackURL, providerURL)
 
 	// install the helm charts with specified override values
 	var chartVersion string

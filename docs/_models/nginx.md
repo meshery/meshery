@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: NGINX
-subtitle: Collaborative and visual infrastructure as code for NGINX
+subtitle: Collaborative and visual infrastructure as design for NGINX
 image: /assets/img/integrations/nginx/icons/color/nginx-color.svg
 permalink: extensibility/integrations/nginx
 docURL: https://docs.meshery.io/extensibility/integrations/nginx
@@ -11,12 +11,12 @@ integrations-subcategory: Service Proxy
 registrant: Artifact Hub
 components: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Handles HTTP and HTTPS traffic",
+  "High performance and scalability",
+  "Extensible with modules"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Integrates NGINX"
+howItWorksDetails: "Powerful and flexible web serving and load balancing in Kubernetes"
 language: en
 list: include
 type: extensibility

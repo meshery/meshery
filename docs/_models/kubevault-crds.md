@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Kubevault Crds
-subtitle: Collaborative and visual infrastructure as code for Kubevault Crds
+subtitle: Collaborative and visual infrastructure as design for Kubevault Crds
 image: /assets/img/integrations/kubevault-crds/icons/color/kubevault-crds-color.svg
 permalink: extensibility/integrations/kubevault-crds
 docURL: https://docs.meshery.io/extensibility/integrations/kubevault-crds
@@ -70,13 +70,25 @@ components:
   colorIcon: assets/img/integrations/kubevault-crds/components/vault-policy-binding/icons/color/vault-policy-binding-color.svg
   whiteIcon: assets/img/integrations/kubevault-crds/components/vault-policy-binding/icons/white/vault-policy-binding-white.svg
   description: 
+- name: vault-server-version
+  colorIcon: assets/img/integrations/kubevault-crds/components/vault-server-version/icons/color/vault-server-version-color.svg
+  whiteIcon: assets/img/integrations/kubevault-crds/components/vault-server-version/icons/white/vault-server-version-white.svg
+  description: 
+- name: pki-role
+  colorIcon: assets/img/integrations/kubevault-crds/components/pki-role/icons/color/pki-role-color.svg
+  whiteIcon: assets/img/integrations/kubevault-crds/components/pki-role/icons/white/pki-role-white.svg
+  description: 
+- name: vault-server
+  colorIcon: assets/img/integrations/kubevault-crds/components/vault-server/icons/color/vault-server-color.svg
+  whiteIcon: assets/img/integrations/kubevault-crds/components/vault-server/icons/white/vault-server-white.svg
+  description: 
 featureList: [
-  "Deploy TLS secured Vault Servers on Kubernetes using KubeVault. You can use cert-manager to manage VaultServer TLS or you can manage TLS with self-signed.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Enables declarative Vault management",
+  "Defines Vault resources in Kubernetes",
+  "Streamlines Vault configuration"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Integrates with KubeVault CRDs"
+howItWorksDetails: "Simplified and Kubernetes-native Vault management"
 language: en
 list: include
 type: extensibility

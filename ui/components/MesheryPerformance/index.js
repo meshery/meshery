@@ -9,7 +9,6 @@ import Grid from '@material-ui/core/Grid';
 import { URLValidator } from '../../utils/URLValidator';
 import {
   NoSsr,
-  Tooltip,
   MenuItem,
   IconButton,
   CircularProgress,
@@ -24,6 +23,7 @@ import {
   ExpansionPanelSummary,
   ExpansionPanelDetails,
 } from '@material-ui/core';
+import { CustomTooltip, ModalBody, ModalFooter } from '@layer5/sistent';
 import TextField from '@material-ui/core/TextField';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -51,6 +51,7 @@ import { generateTestName, generateUUID } from './helper';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import DefaultError from '@/components/General/error-404/index';
+import { CustomTextTooltip } from '../MesheryMeshInterface/PatternService/CustomTextTooltip';
 
 // =============================== HELPER FUNCTIONS ===========================
 
@@ -120,7 +121,6 @@ const styles = (theme) => ({
   },
   buttons: { display: 'flex', justifyContent: 'flex-end' },
   spacing: {
-    marginTop: theme.spacing(3),
     marginLeft: theme.spacing(1),
   },
   button: {
@@ -137,7 +137,7 @@ const styles = (theme) => ({
     paddingLeft: '0.7rem',
     paddingTop: '8px',
   },
-  expansionPanel: { boxShadow: 'none', border: '1px solid rgb(196,196,196)' },
+  expansionPanel: { boxShadow: 'none', border: '1px solid rgb(196,196,196)', background: 'none' },
   margin: { margin: theme.spacing(1) },
   chartTitle: { textAlign: 'center' },
   chartTitleGraf: {
@@ -835,7 +835,8 @@ const MesheryPerformanceComponent = (props) => {
       {CAN(keys.VIEW_PERFORMANCE_PROFILES.action, keys.VIEW_PERFORMANCE_PROFILES.subject) ? (
         <>
           <React.Fragment>
-            <div className={classes.wrapperClss} style={props.style || {}}>
+            {/* <div className={classes.wrapperClss} style={props.style || {}}> */}
+            <ModalBody>
               <Grid container spacing={1}>
                 <Grid item xs={12} md={6}>
                   <TextField
@@ -852,9 +853,9 @@ const MesheryPerformanceComponent = (props) => {
                     }}
                     InputProps={{
                       endAdornment: (
-                        <Tooltip title="Create a profile providing a name, if a profile name is not provided, a random one will be generated for you.">
+                        <CustomTooltip title="Create a profile providing a name, if a profile name is not provided, a random one will be generated for you.">
                           <HelpOutlineOutlinedIcon className={classes.iconColor} />
-                        </Tooltip>
+                        </CustomTooltip>
                       ),
                     }}
                   />
@@ -910,9 +911,9 @@ const MesheryPerformanceComponent = (props) => {
                     onChange={handleChange('url')}
                     InputProps={{
                       endAdornment: (
-                        <Tooltip title="The Endpoint where the load will be generated and the perfromance test will run against.">
+                        <CustomTooltip title="The Endpoint where the load will be generated and the perfromance test will run against.">
                           <HelpOutlineOutlinedIcon className={classes.iconColor} />
-                        </Tooltip>
+                        </CustomTooltip>
                       ),
                     }}
                   />
@@ -933,9 +934,9 @@ const MesheryPerformanceComponent = (props) => {
                     InputLabelProps={{ shrink: true }}
                     InputProps={{
                       endAdornment: (
-                        <Tooltip title="Load Testing tool will create this many concurrent request against the endpoint.">
+                        <CustomTooltip title="Load Testing tool will create this many concurrent request against the endpoint.">
                           <HelpOutlineOutlinedIcon className={classes.iconColor} />
-                        </Tooltip>
+                        </CustomTooltip>
                       ),
                     }}
                   />
@@ -956,15 +957,15 @@ const MesheryPerformanceComponent = (props) => {
                     InputLabelProps={{ shrink: true }}
                     InputProps={{
                       endAdornment: (
-                        <Tooltip title="The Number of queries/second. If not provided then the MAX number of queries/second will be requested">
+                        <CustomTooltip title="The Number of queries/second. If not provided then the MAX number of queries/second will be requested">
                           <HelpOutlineOutlinedIcon className={classes.iconColor} />
-                        </Tooltip>
+                        </CustomTooltip>
                       ),
                     }}
                   />
                 </Grid>
                 <Grid item xs={12} md={4}>
-                  <Tooltip
+                  <CustomTooltip
                     title={
                       "Please use 'h', 'm' or 's' suffix for hour, minute or second respectively."
                     }
@@ -990,13 +991,13 @@ const MesheryPerformanceComponent = (props) => {
                       )}
                       InputProps={{
                         endAdornment: (
-                          <Tooltip title="Default duration is 30 seconds">
+                          <CustomTooltip title="Default duration is 30 seconds">
                             <HelpOutlineOutlinedIcon className={classes.iconColor} />
-                          </Tooltip>
+                          </CustomTooltip>
                         ),
                       }}
                     />
-                  </Tooltip>
+                  </CustomTooltip>
                 </Grid>
                 <Grid item xs={12} md={12}>
                   <ExpansionPanel className={classes.expansionPanel}>
@@ -1105,9 +1106,9 @@ const MesheryPerformanceComponent = (props) => {
                                 />
                                 Browse
                               </Button>
-                              <Tooltip title={infoFlags} interactive>
+                              <CustomTooltip title={infoFlags} interactive>
                                 <HelpOutlineOutlinedIcon className={classes.smallIcons} />
-                              </Tooltip>
+                              </CustomTooltip>
                             </label>
                           </Grid>
                         </Grid>
@@ -1150,9 +1151,9 @@ const MesheryPerformanceComponent = (props) => {
                                 />
                                 Browse
                               </Button>
-                              <Tooltip title={infoCRTCertificates} interactive>
+                              <CustomTooltip title={infoCRTCertificates} interactive>
                                 <HelpOutlineOutlinedIcon className={classes.smallIcons} />
-                              </Tooltip>
+                              </CustomTooltip>
                             </label>
                           </Grid>
                         </Grid>
@@ -1171,9 +1172,9 @@ const MesheryPerformanceComponent = (props) => {
                       }}
                     >
                       Load generator
-                      <Tooltip title={infoloadGenerators} interactive>
+                      <CustomTextTooltip title={infoloadGenerators} interactive>
                         <HelpOutlineOutlinedIcon className={classes.smallIcons} />
-                      </Tooltip>
+                      </CustomTextTooltip>
                     </FormLabel>
                     <RadioGroup
                       aria-label="loadGenerator"
@@ -1195,6 +1196,8 @@ const MesheryPerformanceComponent = (props) => {
                   </FormControl>
                 </Grid>
               </Grid>
+            </ModalBody>
+            <ModalFooter variant="filled">
               <React.Fragment>
                 <div className={classes.buttons}>
                   <Button
@@ -1237,46 +1240,47 @@ const MesheryPerformanceComponent = (props) => {
                   </Button>
                 </div>
               </React.Fragment>
+            </ModalFooter>
 
-              {timerDialogOpenState ? (
-                <div className={classes.centerTimer}>
-                  <LoadTestTimerDialog
-                    open={timerDialogOpenState}
-                    t={tState}
-                    onClose={handleTimerDialogClose}
-                    countDownComplete={handleTimerDialogClose}
+            {timerDialogOpenState ? (
+              <div className={classes.centerTimer}>
+                <LoadTestTimerDialog
+                  open={timerDialogOpenState}
+                  t={tState}
+                  onClose={handleTimerDialogClose}
+                  countDownComplete={handleTimerDialogClose}
+                />
+              </div>
+            ) : null}
+
+            {result && result.runner_results && (
+              <div>
+                <Typography
+                  variant="h6"
+                  gutterBottom
+                  className={classes.chartTitle}
+                  id="timerAnchor"
+                >
+                  Test Results
+                  <IconButton
+                    key="download"
+                    aria-label="download"
+                    color="inherit"
+                    // onClick={() => self.props.closeSnackbar(key) }
+                    href={`/api/perf/profile/result/${encodeURIComponent(result.meshery_id)}`}
+                  >
+                    <GetAppIcon style={iconMedium} />
+                  </IconButton>
+                </Typography>
+                <div className={classes.chartContent} style={chartStyle}>
+                  <MesheryChart
+                    rawdata={[result && result.runner_results ? result : {}]}
+                    data={[result && result.runner_results ? result.runner_results : {}]}
                   />
                 </div>
-              ) : null}
-
-              {result && result.runner_results && (
-                <div>
-                  <Typography
-                    variant="h6"
-                    gutterBottom
-                    className={classes.chartTitle}
-                    id="timerAnchor"
-                  >
-                    Test Results
-                    <IconButton
-                      key="download"
-                      aria-label="download"
-                      color="inherit"
-                      // onClick={() => self.props.closeSnackbar(key) }
-                      href={`/api/perf/profile/result/${encodeURIComponent(result.meshery_id)}`}
-                    >
-                      <GetAppIcon style={iconMedium} />
-                    </IconButton>
-                  </Typography>
-                  <div className={classes.chartContent} style={chartStyle}>
-                    <MesheryChart
-                      rawdata={[result && result.runner_results ? result : {}]}
-                      data={[result && result.runner_results ? result.runner_results : {}]}
-                    />
-                  </div>
-                </div>
-              )}
-            </div>
+              </div>
+            )}
+            {/* </div> */}
           </React.Fragment>
 
           {displayStaticCharts}

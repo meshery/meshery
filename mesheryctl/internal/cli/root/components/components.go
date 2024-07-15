@@ -17,13 +17,13 @@ package components
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/layer5io/meshery/server/models"
 	"io"
 	"net/http"
 	"os"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	"github.com/manifoldco/promptui"
 	"github.com/pkg/errors"
@@ -41,80 +41,56 @@ var (
 	countFlag      bool
 )
 
-// ComponentsCmd represents the mesheryctl exp components command
+// ComponentsCmd represents the mesheryctl components command
 var ComponentsCmd = &cobra.Command{
 	Use:   "components",
 	Short: "View list of components and detail of components",
 	Long:  "View list of components and detailed information of a specific component",
 	Example: `
-// To view the number of components present in Meshery
-mesheryctl exp components --count
+// To view total of available components
+mesheryctl model --count
+
 // To view list of components
-mesheryctl exp components list
+mesheryctl components list
+
 // To view a specific component
-mesheryctl exp components view [component-name]
+mesheryctl components view [component-name]
+
 // To search for a specific component
-mesheryctl exp components search [component-name]
+mesheryctl components search [component-name]
 	`,
+	Args: func(cmd *cobra.Command, args []string) error {
+		if len(args) == 0 && !countFlag {
+			if err := cmd.Usage(); err != nil {
+				return err
+			}
+			return utils.ErrInvalidArgument(errors.New("please provide a subcommand"))
+		}
+		return nil
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if len(args) == 0 {
-			_ = cmd.Help()
+		if countFlag {
+			mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+			if err != nil {
+				log.Fatalln(err, "error processing config")
+			}
+
+			baseUrl := mctlCfg.GetBaseMesheryURL()
+			url := fmt.Sprintf("%s/api/meshmodels/components?page=1", baseUrl)
+			return listComponents(cmd, url, countFlag)
 		}
 
+		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
+			return errors.New(utils.SystemModelSubError(fmt.Sprintf("'%s' is an invalid subcommand. Please provide required options from [view]. Use 'mesheryctl components --help' to display usage guide.\n", args[0]), "model"))
+		}
 		_, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			log.Fatalln(err, "error processing config")
 		}
-
 		err = cmd.Usage()
 		if err != nil {
 			return err
 		}
-
-		// Run count functionality only if count flag is set
-		if countFlag {
-			mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-			if err != nil {
-				return err
-			}
-
-			baseUrl := mctlCfg.GetBaseMesheryURL()
-
-			// Since we are not searching for particular component, we don't need to pass any search parameter
-			url := fmt.Sprintf("%s/api/meshmodels/components?pagesize=all", baseUrl)
-
-			req, err := utils.NewRequest(http.MethodGet, url, nil)
-			if err != nil {
-				utils.Log.Error(err)
-				return err
-			}
-
-			resp, err := utils.MakeRequest(req)
-			if err != nil {
-				utils.Log.Error(err)
-				return err
-			}
-
-			// defers the closing of the response body after its use, ensuring that the resources are properly released.
-			defer resp.Body.Close()
-
-			data, err := io.ReadAll(resp.Body)
-			if err != nil {
-				utils.Log.Error(err)
-				return err
-			}
-
-			componentsResponse := &models.MeshmodelComponentsAPIResponse{}
-			err = json.Unmarshal(data, componentsResponse)
-			if err != nil {
-				utils.Log.Error(err)
-				return err
-			}
-
-			fmt.Println("Total components present: ", componentsResponse.Count)
-			return nil
-		}
-
 		return nil
 	},
 }
@@ -174,15 +150,69 @@ func prettifyJson(component interface{}) error {
 	return enc.Encode(component)
 }
 
-// Common function to get the min of two integers
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
-}
-
 func init() {
 	ComponentsCmd.AddCommand(availableSubcommands...)
-	ComponentsCmd.Flags().BoolVarP(&countFlag, "count", "c", false, "(optional) Get the number of components in total")
+	ComponentsCmd.Flags().BoolVarP(&countFlag, "count", "", false, "(optional) Get the number of components in total")
+}
+
+func listComponents(cmd *cobra.Command, url string, displayCountOnly bool) error {
+	req, err := utils.NewRequest(http.MethodGet, url, nil)
+	if err != nil {
+		utils.Log.Error(err)
+		return err
+	}
+
+	resp, err := utils.MakeRequest(req)
+	if err != nil {
+		utils.Log.Error(err)
+		return err
+	}
+
+	// defers the closing of the response body after its use, ensuring that the resources are properly released.
+	defer resp.Body.Close()
+
+	data, err := io.ReadAll(resp.Body)
+	if err != nil {
+		utils.Log.Error(err)
+		return err
+	}
+
+	componentsResponse := &models.MeshmodelComponentsAPIResponse{}
+	err = json.Unmarshal(data, componentsResponse)
+	if err != nil {
+		utils.Log.Error(err)
+		return err
+	}
+
+	header := []string{"Model", "kind", "Version"}
+	rows := [][]string{}
+
+	for _, component := range componentsResponse.Components {
+		if len(component.DisplayName) > 0 {
+			rows = append(rows, []string{component.Model.Name, component.Component.Kind, component.Component.Version})
+		}
+	}
+
+	if len(rows) == 0 {
+		// if no component is found
+		fmt.Println("No components(s) found")
+		return nil
+	}
+
+	utils.DisplayCount("components", componentsResponse.Count)
+	if displayCountOnly {
+		return nil
+	}
+
+	if cmd.Flags().Changed("page") {
+		utils.PrintToTable(header, rows)
+	} else {
+		maxRowsPerPage := 25
+		err := utils.HandlePagination(maxRowsPerPage, "components", rows, header)
+		if err != nil {
+			utils.Log.Error(err)
+			return err
+		}
+	}
+	return nil
 }

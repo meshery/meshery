@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"strconv"
-	"strings"
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
@@ -19,8 +17,6 @@ import (
 	regv1alpha2 "github.com/layer5io/meshkit/models/meshmodel/registry/v1alpha2"
 	regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
 	"github.com/layer5io/meshkit/utils"
-
-	"github.com/sirupsen/logrus"
 )
 
 const (
@@ -54,7 +50,7 @@ func (h *Handler) EvaluateRelationshipPolicy(
 
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
-		logrus.Error(ErrRequestBody(err))
+		h.log.Error(ErrRequestBody(err))
 		http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)
 		rw.WriteHeader((http.StatusBadRequest))
 		return
@@ -143,12 +139,14 @@ func (h *Handler) verifyEvaluationQueries(evaluationQueries []string) (verifiedE
 		for _, relationship := range relationships {
 			if relationship.EvaluationQuery != "" {
 				verifiedEvaluationQueries = append(verifiedEvaluationQueries, relationship.EvaluationQuery)
+			} else {
+				verifiedEvaluationQueries = append(verifiedEvaluationQueries, relationship.GetDefaultEvaluationQuery())
 			}
 		}
 	} else {
 		for _, regoQuery := range evaluationQueries {
 			for _, relationship := range relationships {
-				if strings.TrimSuffix(regoQuery, suffix) == fmt.Sprintf("%s_%s", strings.ToLower(relationship.Kind), strings.ToLower(relationship.SubType)) {
+				if (relationship.EvaluationQuery != "" && regoQuery == relationship.EvaluationQuery) || regoQuery == relationship.GetDefaultEvaluationQuery() {
 					verifiedEvaluationQueries = append(verifiedEvaluationQueries, relationship.EvaluationQuery)
 					break
 				}
@@ -178,37 +176,25 @@ func (h *Handler) verifyEvaluationQueries(evaluationQueries []string) (verifiedE
 func (h *Handler) GetAllMeshmodelPoliciesByName(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
+	page, offset, limit, search, order, sort, _ := getPaginationParams(r)
 	typ := mux.Vars(r)["model"]
 	name := mux.Vars(r)["name"]
 	var greedy bool
-	if r.URL.Query().Get("search") == "true" {
+	if search == "true" {
 		greedy = true
 	}
-	limitstr := r.URL.Query().Get("pagesize")
-	var limit int
-	if limitstr != "all" {
-		limit, _ = strconv.Atoi(limitstr)
-		if limit == 0 { //If limit is unspecified then it defaults to 25
-			limit = DefaultPageSizeForMeshModelComponents
-		}
-	}
-	pagestr := r.URL.Query().Get("page")
-	page, _ := strconv.Atoi(pagestr)
-	if page <= 0 {
-		page = 1
-	}
-	offset := (page - 1) * limit
+
 	entities, _, _, _ := h.registryManager.GetEntities(&regv1beta1.PolicyFilter{
 		Kind:      name,
 		ModelName: typ,
 		Greedy:    greedy,
 		Offset:    offset,
-		OrderOn:   r.URL.Query().Get("order"),
-		Sort:      r.URL.Query().Get("sort"),
+		OrderOn:   order,
+		Sort:      sort,
 	})
 
 	var pgSize int64
-	if limitstr == "all" {
+	if limit == 0 {
 		pgSize = 0
 	} else {
 		pgSize = int64(limit)
@@ -247,37 +233,25 @@ func (h *Handler) GetAllMeshmodelPoliciesByName(rw http.ResponseWriter, r *http.
 func (h *Handler) GetAllMeshmodelPolicies(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
+	page, offset, limit, search, order, sort, _ := getPaginationParams(r)
 	typ := mux.Vars(r)["model"]
 
 	var greedy bool
-	if r.URL.Query().Get("search") == "true" {
+	if search == "true" {
 		greedy = true
 	}
-	limitstr := r.URL.Query().Get("pagesize")
-	var limit int
-	if limitstr != "all" {
-		limit, _ = strconv.Atoi(limitstr)
-		if limit == 0 { //If limit is unspecified then it defaults to 25
-			limit = DefaultPageSizeForMeshModelComponents
-		}
-	}
-	pagestr := r.URL.Query().Get("page")
-	page, _ := strconv.Atoi(pagestr)
-	offset := (page - 1) * limit
-	if page <= 0 {
-		page = 1
-	}
+	
 	entities, _, _, _ := h.registryManager.GetEntities(&regv1beta1.PolicyFilter{
 		ModelName: typ,
 		Greedy:    greedy,
 		Offset:    offset,
-		OrderOn:   r.URL.Query().Get("order"),
-		Sort:      r.URL.Query().Get("sort"),
+		OrderOn:   order,
+		Sort:      sort,
 	})
 
 	var pgSize int64
 
-	if limitstr == "all" {
+	if limit == 0 {
 		pgSize = 0
 	} else {
 		pgSize = int64(limit)

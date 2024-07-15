@@ -4,10 +4,11 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/sirupsen/logrus"
+	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshkit/logger"
 )
 
-func Persist(_ ServiceInfoProvider, act ServiceActionProvider) ChainStageFunction {
+func Persist(_ ServiceInfoProvider, act ServiceActionProvider, log logger.Handler) ChainStageFunction {
 	return func(data *Data, err error, next ChainStageNextFunction) {
 		if err != nil {
 			act.Terminate(err)
@@ -23,7 +24,8 @@ func Persist(_ ServiceInfoProvider, act ServiceActionProvider) ChainStageFunctio
 				_, ok := data.Other[fmt.Sprintf("%s%s", k, UpdateSuffixKey)]
 				if err := act.Persist(k, *data.Pattern.Services[k], ok); err != nil {
 					// Just log the error - non critical issue
-					logrus.Warn("failed to create resource entry:", err)
+					err = models.ErrCreateResourceEntry(err)
+					log.Warn(err)
 				}
 			}
 		}

@@ -6,7 +6,6 @@ import Hidden from '@material-ui/core/Hidden';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import { connect, useSelector } from 'react-redux';
 import NoSsr from '@material-ui/core/NoSsr';
@@ -40,11 +39,11 @@ import useKubernetesHook, { useControllerStatus } from './hooks/useKubernetesHoo
 import { formatToTitleCase } from '../utils/utils';
 import { CONNECTION_KINDS } from '../utils/Enum';
 import { OutlinedSettingsIcon } from '@layer5/sistent';
-import { CHARCOAL } from '@layer5/sistent';
 import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomTextTooltip';
 import { Colors } from '@/themes/app';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
+import SpaceSwitcher from './SpacesSwitcher/SpaceSwitcher';
 
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 const styles = (theme) => ({
@@ -71,12 +70,6 @@ const styles = (theme) => ({
   pageTitleWrapper: {
     flexGrow: 1,
     marginRight: 'auto',
-  },
-  betaBadge: { color: '#EEEEEE', fontWeight: '300', fontSize: '13px' },
-  pageTitle: {
-    paddingLeft: theme.spacing(2),
-    fontSize: '1.25rem',
-    [theme.breakpoints.up('sm')]: { fontSize: '1.65rem' },
   },
   appBarOnDrawerOpen: {
     backgroundColor: theme.palette.secondary.mainBackground,
@@ -235,17 +228,17 @@ function LoadTheme({ themeSetter }) {
   return <></>;
 }
 
-export const K8sContextConnectionChip = ({
+const K8sContextConnectionChip_ = ({
   ctx,
   classes,
   selectable = false,
   onSelectChange,
+  connectionMetadataState,
+  meshsyncControllerState,
   selected,
   onDelete,
 }) => {
   const ping = useKubernetesHook();
-  const meshsyncControllerState = useSelector((state) => state.get('controllerState'));
-  const connectionMetadataState = useSelector((state) => state.get('connectionMetadataState'));
   const { getControllerStatesByConnectionID } = useControllerStatus(meshsyncControllerState);
 
   const { operatorState, meshSyncState, natsState } = getControllerStatesByConnectionID(
@@ -255,7 +248,6 @@ export const K8sContextConnectionChip = ({
   return (
     <div id={ctx.id} className={classes.chip}>
       <CustomTextTooltip
-        backgroundColor={CHARCOAL}
         title={`Server: ${ctx.server},  Operator: ${formatToTitleCase(
           operatorState,
         )}, MeshSync: ${formatToTitleCase(meshSyncState)}, Broker: ${formatToTitleCase(natsState)}`}
@@ -287,6 +279,8 @@ export const K8sContextConnectionChip = ({
   );
 };
 
+export const K8sContextConnectionChip = withStyles(styles)(K8sContextConnectionChip_);
+
 function K8sContextMenu({
   classes = {},
   contexts = {},
@@ -302,6 +296,7 @@ function K8sContextMenu({
   const deleteCtxtRef = React.createRef();
   const { notify } = useNotification();
   const connectionMetadataState = useSelector((state) => state.get('connectionMetadataState'));
+  const meshsyncControllerState = useSelector((state) => state.get('controllerState'));
 
   const styleSlider = {
     position: 'absolute',
@@ -383,7 +378,7 @@ function K8sContextMenu({
               src={
                 connectionMetadataState
                   ? `/${connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon}`
-                  : ''
+                  : '/static/img/kubernetes.svg'
               }
               width="24px"
               height="24px"
@@ -461,12 +456,15 @@ function K8sContextMenu({
                 {contexts?.contexts?.map((ctx) => {
                   return (
                     <K8sContextConnectionChip
+                      key={ctx.id}
                       classes={classes}
                       ctx={ctx}
                       selectable
                       onDelete={handleKubernetesDelete}
                       selected={activeContexts.includes(ctx.id)}
                       onSelectChange={() => setActiveContexts(ctx.id)}
+                      meshsyncControllerState={meshsyncControllerState}
+                      connectionMetadataState={connectionMetadataState}
                     />
                   );
                 })}
@@ -559,15 +557,7 @@ class Header extends React.PureComponent {
                   </Grid>
                 </Hidden>
                 <Grid item xs container alignItems="center" className={classes.pageTitleWrapper}>
-                  <Typography
-                    color="inherit"
-                    variant="h5"
-                    className={classes.pageTitle}
-                    data-cy="headerPageTitle"
-                  >
-                    {title}
-                    {isBeta ? <sup className={classes.betaBadge}>BETA</sup> : ''}
-                  </Typography>
+                  <SpaceSwitcher title={title} isBeta={isBeta} />
                 </Grid>
                 <Grid
                   item

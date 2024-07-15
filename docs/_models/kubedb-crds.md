@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Kubedb CRDs
-subtitle: Collaborative and visual infrastructure as code for Kubedb CRDs
+subtitle: Collaborative and visual infrastructure as design for Kubedb CRDs
 image: /assets/img/integrations/kubedb-crds/icons/color/kubedb-crds-color.svg
 permalink: extensibility/integrations/kubedb-crds
 docURL: https://docs.meshery.io/extensibility/integrations/kubedb-crds
@@ -190,12 +190,216 @@ components:
   colorIcon: assets/img/integrations/kubedb-crds/components/kafka-ops-request/icons/color/kafka-ops-request-color.svg
   whiteIcon: assets/img/integrations/kubedb-crds/components/kafka-ops-request/icons/white/kafka-ops-request-white.svg
   description: 
+- name: maria-db-archiver
+  colorIcon: assets/img/integrations/kubedb-crds/components/maria-db-archiver/icons/color/maria-db-archiver-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/maria-db-archiver/icons/white/maria-db-archiver-white.svg
+  description: 
+- name: mongo-db-archiver
+  colorIcon: assets/img/integrations/kubedb-crds/components/mongo-db-archiver/icons/color/mongo-db-archiver-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/mongo-db-archiver/icons/white/mongo-db-archiver-white.svg
+  description: 
+- name: my-sql-archiver
+  colorIcon: assets/img/integrations/kubedb-crds/components/my-sql-archiver/icons/color/my-sql-archiver-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/my-sql-archiver/icons/white/my-sql-archiver-white.svg
+  description: 
+- name: postgres-archiver
+  colorIcon: assets/img/integrations/kubedb-crds/components/postgres-archiver/icons/color/postgres-archiver-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/postgres-archiver/icons/white/postgres-archiver-white.svg
+  description: 
+- name: druid-autoscaler
+  colorIcon: assets/img/integrations/kubedb-crds/components/druid-autoscaler/icons/color/druid-autoscaler-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/druid-autoscaler/icons/white/druid-autoscaler-white.svg
+  description: 
+- name: kafka-autoscaler
+  colorIcon: assets/img/integrations/kubedb-crds/components/kafka-autoscaler/icons/color/kafka-autoscaler-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/kafka-autoscaler/icons/white/kafka-autoscaler-white.svg
+  description: 
+- name: pgpool-autoscaler
+  colorIcon: assets/img/integrations/kubedb-crds/components/pgpool-autoscaler/icons/color/pgpool-autoscaler-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/pgpool-autoscaler/icons/white/pgpool-autoscaler-white.svg
+  description: 
+- name: rabbit-mq-autoscaler
+  colorIcon: assets/img/integrations/kubedb-crds/components/rabbit-mq-autoscaler/icons/color/rabbit-mq-autoscaler-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/rabbit-mq-autoscaler/icons/white/rabbit-mq-autoscaler-white.svg
+  description: 
+- name: singlestore-autoscaler
+  colorIcon: assets/img/integrations/kubedb-crds/components/singlestore-autoscaler/icons/color/singlestore-autoscaler-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/singlestore-autoscaler/icons/white/singlestore-autoscaler-white.svg
+  description: 
+- name: click-house-version
+  colorIcon: assets/img/integrations/kubedb-crds/components/click-house-version/icons/color/click-house-version-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/click-house-version/icons/white/click-house-version-white.svg
+  description: 
+- name: druid-version
+  colorIcon: assets/img/integrations/kubedb-crds/components/druid-version/icons/color/druid-version-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/druid-version/icons/white/druid-version-white.svg
+  description: 
+- name: ferret-db-version
+  colorIcon: assets/img/integrations/kubedb-crds/components/ferret-db-version/icons/color/ferret-db-version-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/ferret-db-version/icons/white/ferret-db-version-white.svg
+  description: 
+- name: kafka-connector-version
+  colorIcon: assets/img/integrations/kubedb-crds/components/kafka-connector-version/icons/color/kafka-connector-version-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/kafka-connector-version/icons/white/kafka-connector-version-white.svg
+  description: 
+- name: mssql-server-version
+  colorIcon: assets/img/integrations/kubedb-crds/components/mssql-server-version/icons/color/mssql-server-version-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/mssql-server-version/icons/white/mssql-server-version-white.svg
+  description: 
+- name: pgpool-version
+  colorIcon: assets/img/integrations/kubedb-crds/components/pgpool-version/icons/color/pgpool-version-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/pgpool-version/icons/white/pgpool-version-white.svg
+  description: 
+- name: rabbit-mq-version
+  colorIcon: assets/img/integrations/kubedb-crds/components/rabbit-mq-version/icons/color/rabbit-mq-version-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/rabbit-mq-version/icons/white/rabbit-mq-version-white.svg
+  description: 
+- name: schema-registry-version
+  colorIcon: assets/img/integrations/kubedb-crds/components/schema-registry-version/icons/color/schema-registry-version-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/schema-registry-version/icons/white/schema-registry-version-white.svg
+  description: 
+- name: singlestore-version
+  colorIcon: assets/img/integrations/kubedb-crds/components/singlestore-version/icons/color/singlestore-version-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/singlestore-version/icons/white/singlestore-version-white.svg
+  description: 
+- name: solr-version
+  colorIcon: assets/img/integrations/kubedb-crds/components/solr-version/icons/color/solr-version-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/solr-version/icons/white/solr-version-white.svg
+  description: 
+- name: zoo-keeper-version
+  colorIcon: assets/img/integrations/kubedb-crds/components/zoo-keeper-version/icons/color/zoo-keeper-version-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/zoo-keeper-version/icons/white/zoo-keeper-version-white.svg
+  description: 
+- name: connect-cluster
+  colorIcon: assets/img/integrations/kubedb-crds/components/connect-cluster/icons/color/connect-cluster-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/connect-cluster/icons/white/connect-cluster-white.svg
+  description: 
+- name: connector
+  colorIcon: assets/img/integrations/kubedb-crds/components/connector/icons/color/connector-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/connector/icons/white/connector-white.svg
+  description: 
+- name: schema-registry
+  colorIcon: assets/img/integrations/kubedb-crds/components/schema-registry/icons/color/schema-registry-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/schema-registry/icons/white/schema-registry-white.svg
+  description: 
+- name: click-house
+  colorIcon: assets/img/integrations/kubedb-crds/components/click-house/icons/color/click-house-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/click-house/icons/white/click-house-white.svg
+  description: 
+- name: druid
+  colorIcon: assets/img/integrations/kubedb-crds/components/druid/icons/color/druid-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/druid/icons/white/druid-white.svg
+  description: 
+- name: elasticsearch
+  colorIcon: assets/img/integrations/kubedb-crds/components/elasticsearch/icons/color/elasticsearch-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/elasticsearch/icons/white/elasticsearch-white.svg
+  description: 
+- name: etcd
+  colorIcon: assets/img/integrations/kubedb-crds/components/etcd/icons/color/etcd-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/etcd/icons/white/etcd-white.svg
+  description: 
+- name: ferret-db
+  colorIcon: assets/img/integrations/kubedb-crds/components/ferret-db/icons/color/ferret-db-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/ferret-db/icons/white/ferret-db-white.svg
+  description: 
+- name: kafka
+  colorIcon: assets/img/integrations/kubedb-crds/components/kafka/icons/color/kafka-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/kafka/icons/white/kafka-white.svg
+  description: 
+- name: maria-db
+  colorIcon: assets/img/integrations/kubedb-crds/components/maria-db/icons/color/maria-db-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/maria-db/icons/white/maria-db-white.svg
+  description: 
+- name: memcached
+  colorIcon: assets/img/integrations/kubedb-crds/components/memcached/icons/color/memcached-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/memcached/icons/white/memcached-white.svg
+  description: 
+- name: mongo-db
+  colorIcon: assets/img/integrations/kubedb-crds/components/mongo-db/icons/color/mongo-db-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/mongo-db/icons/white/mongo-db-white.svg
+  description: 
+- name: mssql-server
+  colorIcon: assets/img/integrations/kubedb-crds/components/mssql-server/icons/color/mssql-server-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/mssql-server/icons/white/mssql-server-white.svg
+  description: 
+- name: my-sql
+  colorIcon: assets/img/integrations/kubedb-crds/components/my-sql/icons/color/my-sql-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/my-sql/icons/white/my-sql-white.svg
+  description: 
+- name: percona-xtra-db
+  colorIcon: assets/img/integrations/kubedb-crds/components/percona-xtra-db/icons/color/percona-xtra-db-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/percona-xtra-db/icons/white/percona-xtra-db-white.svg
+  description: 
+- name: pg-bouncer
+  colorIcon: assets/img/integrations/kubedb-crds/components/pg-bouncer/icons/color/pg-bouncer-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/pg-bouncer/icons/white/pg-bouncer-white.svg
+  description: 
+- name: pgpool
+  colorIcon: assets/img/integrations/kubedb-crds/components/pgpool/icons/color/pgpool-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/pgpool/icons/white/pgpool-white.svg
+  description: 
+- name: postgres
+  colorIcon: assets/img/integrations/kubedb-crds/components/postgres/icons/color/postgres-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/postgres/icons/white/postgres-white.svg
+  description: 
+- name: proxy-sql
+  colorIcon: assets/img/integrations/kubedb-crds/components/proxy-sql/icons/color/proxy-sql-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/proxy-sql/icons/white/proxy-sql-white.svg
+  description: 
+- name: rabbit-mq
+  colorIcon: assets/img/integrations/kubedb-crds/components/rabbit-mq/icons/color/rabbit-mq-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/rabbit-mq/icons/white/rabbit-mq-white.svg
+  description: 
+- name: redis
+  colorIcon: assets/img/integrations/kubedb-crds/components/redis/icons/color/redis-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/redis/icons/white/redis-white.svg
+  description: 
+- name: redis-sentinel
+  colorIcon: assets/img/integrations/kubedb-crds/components/redis-sentinel/icons/color/redis-sentinel-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/redis-sentinel/icons/white/redis-sentinel-white.svg
+  description: 
+- name: singlestore
+  colorIcon: assets/img/integrations/kubedb-crds/components/singlestore/icons/color/singlestore-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/singlestore/icons/white/singlestore-white.svg
+  description: 
+- name: solr
+  colorIcon: assets/img/integrations/kubedb-crds/components/solr/icons/color/solr-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/solr/icons/white/solr-white.svg
+  description: 
+- name: zoo-keeper
+  colorIcon: assets/img/integrations/kubedb-crds/components/zoo-keeper/icons/color/zoo-keeper-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/zoo-keeper/icons/white/zoo-keeper-white.svg
+  description: 
+- name: druid-ops-request
+  colorIcon: assets/img/integrations/kubedb-crds/components/druid-ops-request/icons/color/druid-ops-request-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/druid-ops-request/icons/white/druid-ops-request-white.svg
+  description: 
+- name: mssql-ops-request
+  colorIcon: assets/img/integrations/kubedb-crds/components/mssql-ops-request/icons/color/mssql-ops-request-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/mssql-ops-request/icons/white/mssql-ops-request-white.svg
+  description: 
+- name: pgpool-ops-request
+  colorIcon: assets/img/integrations/kubedb-crds/components/pgpool-ops-request/icons/color/pgpool-ops-request-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/pgpool-ops-request/icons/white/pgpool-ops-request-white.svg
+  description: 
+- name: rabbit-mq-ops-request
+  colorIcon: assets/img/integrations/kubedb-crds/components/rabbit-mq-ops-request/icons/color/rabbit-mq-ops-request-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/rabbit-mq-ops-request/icons/white/rabbit-mq-ops-request-white.svg
+  description: 
+- name: singlestore-ops-request
+  colorIcon: assets/img/integrations/kubedb-crds/components/singlestore-ops-request/icons/color/singlestore-ops-request-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/singlestore-ops-request/icons/white/singlestore-ops-request-white.svg
+  description: 
+- name: solr-ops-request
+  colorIcon: assets/img/integrations/kubedb-crds/components/solr-ops-request/icons/color/solr-ops-request-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/solr-ops-request/icons/white/solr-ops-request-white.svg
+  description: 
 featureList: [
   "KubeDB simplifies many of the difficult or tedious management tasks of running a production grade databases on private and public clouds. Maintain one stack for all your stateless and stateful applications and simplify the operational complexity.",
   "Standard Kubernetes is all you need. If you can run Kubernetes, you can provision and manage databases using KubeDB. Use standard Kubernetes CLI and API to provision and manage databases.",
   "KubeDB uses Persistent Volume Claims (PVC) to dynamically provision disks for database instances. Using appropriately defined StorageClasses, KubeDB provisioned database instances are designed to scale from small development workloads up to performance-intensive workloads on private and public cloud environments."
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

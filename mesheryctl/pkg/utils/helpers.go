@@ -20,7 +20,10 @@ import (
 	"time"
 
 	"github.com/briandowns/spinner"
+	"github.com/eiannone/keyboard"
+	"github.com/fatih/color"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/layer5io/meshery/mesheryctl/pkg/constants"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/utils"
@@ -66,8 +69,7 @@ const (
 	filterViewURL                  = docsBaseURL + "reference/mesheryctl/filter/view"
 	patternUsageURL                = docsBaseURL + "reference/mesheryctl/pattern"
 	patternViewURL                 = docsBaseURL + "reference/mesheryctl/pattern/view"
-	appUsageURL                    = docsBaseURL + "reference/mesheryctl/app"
-	appViewURL                     = docsBaseURL + "reference/mesheryctl/app/view"
+	patternExportURL               = docsBaseURL + "reference/mesheryctl/pattern/export"
 	contextDeleteURL               = docsBaseURL + "reference/mesheryctl/system/context/delete"
 	contextViewURL                 = docsBaseURL + "reference/mesheryctl/system/context/view"
 	contextCreateURL               = docsBaseURL + "reference/mesheryctl/system/context/create"
@@ -85,6 +87,7 @@ const (
 	tokenUsageURL                  = docsBaseURL + "reference/mesheryctl/system/token"
 	modelUsageURL                  = docsBaseURL + "reference/mesheryctl/system/model"
 	modelListURL                   = docsBaseURL + "reference/mesheryctl/system/model/list"
+	modelImportURl                 = docsBaseURL + "reference/mesheryctl/system/model/import"
 	modelViewURL                   = docsBaseURL + "reference/mesheryctl/system/model/view"
 	registryUsageURL               = docsBaseURL + "reference/mesheryctl/system/registry"
 	relationshipUsageURL           = docsBaseURL + "reference/mesheryctl/relationships"
@@ -98,6 +101,17 @@ const (
 	environmentDeleteURL           = docsBaseURL + "reference/mesheryctl/exp/environment/delete"
 	environmentListURL             = docsBaseURL + "reference/mesheryctl/exp/environment/list"
 	environmentViewURL             = docsBaseURL + "reference/mesheryctl/exp/environment/view"
+	componentUsageURL              = docsBaseURL + "reference/mesheryctl/exp/components"
+	componentListURL               = docsBaseURL + "reference/mesheryctl/exp/components/list"
+	componentSearchURL             = docsBaseURL + "reference/mesheryctl/exp/components/search"
+	componentViewURL               = docsBaseURL + "reference/mesheryctl/exp/components/view"
+	connectionUsageURL             = docsBaseURL + "reference/mesheryctl/exp/connections"
+	connectionDeleteURL            = docsBaseURL + "reference/mesheryctl/exp/connections/delete"
+	connectionListURL              = docsBaseURL + "reference/mesheryctl/exp/connections/list"
+	expRelationshipUsageURL        = docsBaseURL + "reference/mesheryctl/exp/relationship"
+	expRelationshipGenerateURL     = docsBaseURL + "reference/mesheryctl/exp/relationship/generate"
+	expRelationshipViewURL         = docsBaseURL + "reference/mesheryctl/exp/relationship/view"
+	expRelationshipListURL         = docsBaseURL + "reference/mesheryctl/exp/relationship/list"
 
 	// Meshery Server Location
 	EndpointProtocol = "http"
@@ -123,8 +137,7 @@ const (
 	cmdFilterView               cmdType = "filter view"
 	cmdPattern                  cmdType = "pattern"
 	cmdPatternView              cmdType = "pattern view"
-	cmdApp                      cmdType = "app"
-	cmdAppView                  cmdType = "app view"
+	cmdPatternExport            cmdType = "pattern export"
 	cmdContext                  cmdType = "context"
 	cmdContextDelete            cmdType = "delete"
 	cmdContextCreate            cmdType = "create"
@@ -142,14 +155,18 @@ const (
 	cmdToken                    cmdType = "token"
 	cmdModel                    cmdType = "model"
 	cmdModelList                cmdType = "model list"
+	cmdModelImport              cmdType = "model import"
 	cmdModelView                cmdType = "model view"
 	cmdRegistryPublish          cmdType = "registry publish"
 	cmdRegistry                 cmdType = "regisry"
+	cmdConnection               cmdType = "connection"
 	cmdConnectionList           cmdType = "connection list"
 	cmdConnectionDelete         cmdType = "connection delete"
 	cmdRelationships            cmdType = "relationships"
 	cmdRelationshipGenerateDocs cmdType = "relationships generate docs"
 	cmdRelationshipView         cmdType = "relationship view"
+	cmdRelationshipSearch       cmdType = "relationship search"
+	cmdRelationshipList         cmdType = "relationship list"
 	cmdWorkspace                cmdType = "workspace"
 	cmdWorkspaceList            cmdType = "workspace list"
 	cmdWorkspaceCreate          cmdType = "workspace create"
@@ -158,6 +175,14 @@ const (
 	cmdEnvironmentDelete        cmdType = "environment delete"
 	cmdEnvironmentList          cmdType = "environment list"
 	cmdEnvironmentView          cmdType = "environment view"
+	cmdComponent                cmdType = "component"
+	cmdComponentList            cmdType = "component list"
+	cmdComponentSearch          cmdType = "component search"
+	cmdComponentView            cmdType = "component view"
+	cmdExpRelationship          cmdType = "exp relationship"
+	cmdExpRelationshipGenerate  cmdType = "exp relationship generate"
+	cmdExpRelationshipView      cmdType = "exp relationship view"
+	cmdExpRelationshipList      cmdType = "exp relationship list"
 )
 
 const (
@@ -228,6 +253,10 @@ var (
 	TokenFlag = "Not Set"
 	// global logger variable
 	Log logger.Handler
+	// Color for the whiteboard printer
+	whiteBoardPrinter = color.New(color.FgHiBlack, color.BgWhite, color.Bold)
+	//global logger error variable
+	LogError logger.Handler
 )
 
 var CfgFile string
@@ -1076,7 +1105,7 @@ func ConvertMapInterfaceMapString(v interface{}) interface{} {
 }
 
 // SetOverrideValues returns the value overrides based on current context to install/upgrade helm chart
-func SetOverrideValues(ctx *config.Context, mesheryImageVersion string) map[string]interface{} {
+func SetOverrideValues(ctx *config.Context, mesheryImageVersion, callbackURL, providerURL string) map[string]interface{} {
 	// first initialize all the components' "enabled" field to false
 	// this matches to the components listed in install/kubernetes/helm/meshery/values.yaml
 	valueOverrides := map[string]interface{}{
@@ -1126,7 +1155,19 @@ func SetOverrideValues(ctx *config.Context, mesheryImageVersion string) map[stri
 	// set the provider
 	if ctx.GetProvider() != "" {
 		valueOverrides["env"] = map[string]interface{}{
-			"PROVIDER": ctx.GetProvider(),
+			constants.ProviderENV: ctx.GetProvider(),
+		}
+	}
+
+	if callbackURL != "" {
+		valueOverrides["env"] = map[string]interface{}{
+			constants.CallbackURLENV: callbackURL,
+		}
+	}
+
+	if providerURL != "" {
+		valueOverrides["env"] = map[string]interface{}{
+			constants.ProviderURLsENV: providerURL,
 		}
 	}
 
@@ -1161,4 +1202,81 @@ func Contains(key string, col []string) int {
 		}
 	}
 	return -1
+}
+
+// HandlePagination handles interactive pagination and prints the content in the terminal.
+// It takes the page size, data to paginate, header for the data table, and an optional footer.
+// If no footer is provided, it will be omitted.
+// Pagination allows users to navigate through the data using Enter or ↓ to continue,
+// Esc or Ctrl+C (Ctrl+Cmd for OS users) to exit.
+func HandlePagination(pageSize int, component string, data [][]string, header []string, footer ...[]string) error {
+
+	startIndex := 0
+	endIndex := min(len(data), startIndex+pageSize)
+	for {
+		// Clear the entire terminal screen
+		ClearLine()
+
+		// Print number of filter files and current page number
+		whiteBoardPrinter.Print("Total number of ", component, ":", len(data))
+		fmt.Println()
+		whiteBoardPrinter.Print("Page: ", startIndex/pageSize+1)
+		fmt.Println()
+
+		whiteBoardPrinter.Println("Press Enter or ↓ to continue, Esc or Ctrl+C (Ctrl+Cmd for OS user) to exit")
+
+		if len(footer) > 0 {
+			PrintToTableWithFooter(header, data[startIndex:endIndex], footer[0])
+		} else {
+			PrintToTable(header, data[startIndex:endIndex])
+		}
+		keysEvents, err := keyboard.GetKeys(10)
+		if err != nil {
+			return err
+		}
+
+		defer func() {
+			_ = keyboard.Close()
+		}()
+
+		event := <-keysEvents
+		if event.Err != nil {
+			Log.Error(fmt.Errorf("unable to capture keyboard events"))
+			break
+		}
+
+		if event.Key == keyboard.KeyEsc || event.Key == keyboard.KeyCtrlC {
+			break
+		}
+
+		if event.Key == keyboard.KeyEnter || event.Key == keyboard.KeyArrowDown {
+			startIndex += pageSize
+			endIndex = min(len(data), startIndex+pageSize)
+		}
+
+		if startIndex >= len(data) {
+			break
+		}
+	}
+	return nil
+}
+
+func FindInSlice(key string, items []string) (int, bool) {
+	for idx, item := range items {
+		if item == key {
+			return idx, true
+		}
+	}
+	return -1, false
+}
+
+func DisplayCount(component string, count int64) {
+	whiteBoardPrinter.Println("Total number of ", component, ":", count)
+}
+
+func GetPageQueryParameter(cmd *cobra.Command, page int) string {
+	if !cmd.Flags().Changed("page") {
+		return "pagesize=all"
+	}
+	return fmt.Sprintf("page=%d", page)
 }

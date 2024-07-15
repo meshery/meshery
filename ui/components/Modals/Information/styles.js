@@ -1,6 +1,50 @@
+import { Box, styled, Button, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
+export const CreatAtContainer = styled(Typography)(({ isBold }) => ({
+  fontWeight: isBold ? 'bold' : '',
+  whiteSpace: 'wrap',
+  fontSize: '0.8rem',
+}));
+
+export const ActionContainer = styled(Box)({
+  width: '100%',
+  display: 'flex',
+  gap: '1rem',
+  justifyContent: 'end',
+});
+
+export const CopyLinkButton = styled(Button)(({ theme }) => ({
+  color: theme.palette.secondary.primaryModalText,
+}));
+
+export const VisibilityTag = styled(`div`)(({ theme }) => ({
+  border: `0.5px solid ${theme.palette.secondary.textMain}`,
+  color: theme.palette.secondary.textMain,
+  borderRadius: '0.2rem',
+  paddingInline: '0.2rem',
+  paddingBlock: '0.2rem',
+  fontSize: '0.7rem',
+  textTransform: 'uppercase',
+  textAlign: 'center',
+  marginLeft: '0.5rem',
+}));
+
+export const ResourceName = styled(Typography)(() => ({
+  fontFamily: 'Qanelas Soft, sans-serif',
+  textAlign: 'left',
+  marginTop: '0.5rem',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  maxWidth: '10rem',
+}));
+
 const useStyles = makeStyles((theme) => ({
+  dialogBox: {
+    '& .MuiDialog-paper': {
+      maxWidth: '820px',
+    },
+  },
   dialogTitle: {
     backgroundColor: theme.palette.secondary.mainBackground,
     justifyContent: 'space-between',
@@ -20,6 +64,8 @@ const useStyles = makeStyles((theme) => ({
 
   text: {
     fontFamily: 'Qanelas Soft, sans-serif',
+    display: 'flex',
+    flexDirection: 'column',
     '&.MuiTypography-root': {
       fontFamily: 'Qanelas Soft, sans-serif',
     },
@@ -28,18 +74,10 @@ const useStyles = makeStyles((theme) => ({
     fontFamily: 'Qanelas Soft, sans-serif',
     textAlign: 'center',
   },
-  resourceName: {
-    fontFamily: 'Qanelas Soft, sans-serif',
-    textAlign: 'center',
-    maxWidth: '200px',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    whiteSpace: 'nowrap',
-  },
   rjsfInfoModalForm: {
     marginLeft: '-1rem',
     marginTop: '-1rem',
-    maxWidth: '44rem',
+    maxWidth: '39rem',
   },
   copyButton: {
     '&:hover': {
@@ -53,6 +91,7 @@ const useStyles = makeStyles((theme) => ({
   visibilityGridItem: {
     display: 'flex',
     alignItems: 'center',
+    justifyContent: 'flex-end',
   },
   img: {
     marginLeft: '0.5rem',
@@ -66,7 +105,7 @@ const useStyles = makeStyles((theme) => ({
     // backgroundColor: "red",
   },
   chipIcon: {
-    width: '1rem',
+    width: '2rem',
   },
   // TODO this style needs to be refactored and applied to all modal globally
   closing: {

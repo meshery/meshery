@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/layer5io/meshery/server/helpers"
 	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/meshmodel/core"
@@ -185,19 +186,27 @@ func (erh *EntityRegistrationHelper) generateRelationships(pathToComponents stri
 // If an error occurs, it logs the error
 func (erh *EntityRegistrationHelper) watchComponents(ctx context.Context) {
 	var err error
+	var isModelError bool
+	var isRegistrantError bool
 	for {
 		select {
 		case comp := <-erh.componentChan:
-			err = erh.regManager.RegisterEntity(v1beta1.Host{
-				Hostname: ArtifactHubComponentsHandler.String(),
+			isRegistrantError, isModelError, err = erh.regManager.RegisterEntity(v1beta1.Host{
+				Hostname: comp.Model.Registrant.Hostname,
 			}, &comp)
 			if err != nil {
 				err = core.ErrRegisterEntity(err, string(comp.Type()), comp.DisplayName)
 			}
+			helpers.HandleError(v1beta1.Host{
+				Hostname: comp.Model.Registrant.Hostname,
+			}, &comp, err, isModelError, isRegistrantError)
 		case rel := <-erh.relationshipChan:
-			err = erh.regManager.RegisterEntity(v1beta1.Host{
-				Hostname: ArtifactHubComponentsHandler.String(),
+			isRegistrantError, isModelError, err = erh.regManager.RegisterEntity(v1beta1.Host{
+				Hostname: rel.Model.Registrant.Hostname,
 			}, &rel)
+			helpers.HandleError(v1beta1.Host{
+				Hostname: rel.Model.Registrant.Hostname,
+			}, &rel, err, isModelError, isRegistrantError)
 			if err != nil {
 				err = core.ErrRegisterEntity(err, string(rel.Type()), rel.Kind)
 			}
@@ -209,6 +218,7 @@ func (erh *EntityRegistrationHelper) watchComponents(ctx context.Context) {
 			}
 
 		case <-ctx.Done():
+			erh.registryLog()
 			return
 		}
 

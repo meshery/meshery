@@ -6,18 +6,17 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import MesheryPlayComponent from '../../components/MesheryPlayComponent';
 import { updatepagepath } from '../../lib/store';
-class Manage extends React.Component {
-  render() {
-    return (
-      <NoSsr>
-        <Head>
-          <title>Management | Meshery </title>
-        </Head>
-        <MesheryPlayComponent />
-      </NoSsr>
-    );
-  }
-}
+
+const Manage = () => {
+  return (
+    <NoSsr>
+      <Head>
+        <title>Management | Meshery </title>
+      </Head>
+      <MesheryPlayComponent />
+    </NoSsr>
+  );
+};
 
 const mapDispatchToProps = (dispatch) => {
   return { updatepagepath: bindActionCreators(updatepagepath, dispatch) };
