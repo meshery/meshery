@@ -78,7 +78,7 @@ Use Meshery's CLI to streamline your connection to your Minikube cluster. Config
 {% capture code_content %}$ mesheryctl system config minikube{% endcapture %}
 {% include code.html code=code_content %}
 
-Note: The kubeconfig created by minikube is minified and starting Meshery will fail with TLS issues (an invalid certificate). Please run this command to flatten the kubeconfig file: `kubectl config view --minify --flatten > ~/.kube/config-2 && rm .kube/config && mv .kube/config-2 .kube/config`
+Note: The kubeconfig created by minikube is minified and starting Meshery will fail with TLS issues (an invalid certificate). Please run this command to flatten the kubeconfig file: `kubectl config view --minify --flatten > ~/.kube/config-2 && rm ~/.kube/config && mv ~/.kube/config-2 ~/.kube/config`. This command will replace the minified kubeconfig file with the flattened kubeconfig file.
 
 Once configured, execute the following command to start Meshery.
 
