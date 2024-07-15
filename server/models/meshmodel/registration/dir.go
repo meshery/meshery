@@ -45,7 +45,7 @@ func (d Dir) PkgUnit() (_ packagingUnit, err error){
 		if(filepath.Ext(path) == ".yaml"){
 			e, err = getEntity(byt, "yaml")
 			if(err != nil){
-				// we skip unrecognisable entities
+				// Skip and log unrecognizable entities.
 				RegLog.invalidDefinitions[path] = ErrInvalidMeshmodelDefinition(path, err)
 				return nil
 			}
