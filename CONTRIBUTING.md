@@ -337,7 +337,6 @@ We are using ES-Lint to maintain code quality & consistency in our UI Code. To m
 - We will soon be adding Pre-Commit Hooks to make sure you get to know your errors before you commit the code.
 - In case you are unable to fix your lint errors, ping us on our [Slack](https://slack.meshery.io).
 
-Certainly, here's the content converted into proper markdown format:
 
 # Using Sistent in Meshery UI
 
