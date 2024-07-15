@@ -337,6 +337,85 @@ We are using ES-Lint to maintain code quality & consistency in our UI Code. To m
 - We will soon be adding Pre-Commit Hooks to make sure you get to know your errors before you commit the code.
 - In case you are unable to fix your lint errors, ping us on our [Slack](https://slack.meshery.io).
 
+Certainly, here's the content converted into proper markdown format:
+
+# Using Sistent in Meshery UI
+
+## Overview
+
+Meshery UI utilizes three component libraries:
+
+1. Material-UI (MUI) v4
+2. Material-UI (MUI) v5
+3. Sistent
+
+While MUI v4 and v5 are being phased out, Sistent is now the preferred component library. Sistent internally uses MUI v5, and Meshery UI globally still relies on MUI v5. This can lead to conflicts between themes when Sistent components are used directly.
+
+## The `UseSistent` Wrapper
+
+To resolve theme conflicts and ensure proper functionality, a custom wrapper called `UseSistent` has been created. This wrapper provides the Sistent theme to its child components.
+
+## Usage Guidelines
+
+1. Wrap any custom component that exclusively uses Sistent components with `UseSistent`.
+2. Individual Sistent components can also be wrapped with `UseSistent`.
+3. Avoid using MUI v4 components within a component wrapped with `UseSistent`.
+
+## Examples
+
+### Example 1: Wrapping a custom component
+
+```jsx
+import { UseSistent } from './UseSistent';
+import { Button, TextField } from 'sistent';
+
+const MyCustomForm = () => (
+  <UseSistent>
+    <form>
+      <TextField label="Name" />
+      <Button>Submit</Button>
+    </form>
+  </UseSistent>
+);
+```
+
+### Example 2: Wrapping an individual Sistent component
+
+```jsx
+import { UseSistent } from './UseSistent';
+import { DataGrid } from 'sistent';
+
+const MyDataGridComponent = ({ data }) => (
+  <UseSistent>
+    <DataGrid rows={data} columns={columns} />
+  </UseSistent>
+);
+```
+
+### Example 3: Incorrect usage (avoid this)
+
+```jsx
+import { UseSistent } from './UseSistent';
+import { Button } from 'sistent';
+import { TextField } from '@material-ui/core'; // MUI v4
+
+// Don't do this!
+const IncorrectUsage = () => (
+  <UseSistent>
+    <Button>Sistent Button</Button>
+    <TextField label="MUI v4 TextField" /> {/* This will cause conflicts */}
+  </UseSistent>
+);
+```
+
+## Best Practices
+
+1. Gradually migrate components to use Sistent instead of MUI v4 or v5.
+2. Always wrap Sistent components or custom components using Sistent with `UseSistent`.
+3. Keep MUI v4 components separate from Sistent components to avoid theme conflicts.
+
+
+
 ## <a name="contributing-mesheryctl">Mesheryctl Documentation</a>
 
 ### mesheryctl
