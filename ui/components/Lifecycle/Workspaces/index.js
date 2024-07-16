@@ -49,13 +49,16 @@ import CAN from '@/utils/can';
 import DefaultError from '@/components/General/error-404/index';
 import { useGetSchemaQuery } from '@/rtk-query/schema';
 import { UsesSistent } from '@/components/SistentWrapper';
+import { getCurrentOrg } from '@/store/slices/globalContext';
+import { useSelectorRtk } from '@/store/hooks';
 
 const ACTION_TYPES = {
   CREATE: 'create',
   EDIT: 'edit',
 };
 
-const Workspaces = ({ organization, classes }) => {
+const Workspaces = ({ classes }) => {
+  const organization = useSelectorRtk(getCurrentOrg);
   const [workspaceModal, setWorkspaceModal] = useState({
     open: false,
     schema: {},
@@ -823,15 +826,8 @@ const Workspaces = ({ organization, classes }) => {
   );
 };
 
-const mapStateToProps = (state) => {
-  const organization = state.get('organization');
-  return {
-    organization,
-  };
-};
-
 export default withStyles(styles)(
-  connect(mapStateToProps)(
+  connect(null)(
     withRouter((props) => (
       <Provider store={store}>
         <Workspaces {...props} />

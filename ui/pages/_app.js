@@ -67,9 +67,10 @@ import { getCredentialByID } from '@/api/credentials';
 import { DynamicComponentProvider } from '@/utils/context/dynamicContext';
 import { useTheme } from '@material-ui/core/styles';
 import { store } from '../store';
-import { RTKContext } from '@/store/hooks';
+import { RTKContext, useDispatchRtk } from '@/store/hooks';
 import classNames from 'classnames';
 import { forwardRef } from 'react';
+import { selectCurrentOrg, selectCurrentWorkspace } from '@/store/slices/globalContext';
 
 if (typeof window !== 'undefined') {
   require('codemirror/mode/yaml/yaml');
@@ -470,7 +471,7 @@ class MesheryApp extends App {
     if (currentOrg && currentOrg !== 'undefined') {
       let org = JSON.parse(currentOrg);
       await this.loadAbility(org.id, reFetchKeys);
-      this.setOrganization(org);
+      this.props.rtkDispatch(selectCurrentOrg(org));
       await this.loadWorkspace(org.id);
     }
 
@@ -491,14 +492,14 @@ class MesheryApp extends App {
             reFetchKeys = true;
             await this.loadAbility(organizationToSet.id, reFetchKeys);
             await this.loadWorkspace(organizationToSet.id);
-            this.setOrganization(organizationToSet);
+            this.props.rtkDispatch(selectCurrentOrg(organizationToSet));
           }
         } else {
           organizationToSet = result.organizations[0];
           reFetchKeys = true;
           await this.loadWorkspace(organizationToSet.id);
           await this.loadAbility(organizationToSet.id, reFetchKeys);
-          this.setOrganization(organizationToSet);
+          this.props.rtkDispatch(selectCurrentOrg(organizationToSet));
         }
       },
       (err) => console.log('There was an error fetching available orgs:', err),
@@ -507,8 +508,8 @@ class MesheryApp extends App {
   loadWorkspace = async (orgId) => {
     const currentWorkspace = sessionStorage.getItem('currentWorkspace');
     if (currentWorkspace && currentWorkspace !== 'undefined') {
-      let workspace = JSON.parse(currentWorkspace);
-      this.setWorkspace(workspace);
+      // let workspace = JSON.parse(currentWorkspace);
+      // this.props.rtkDispatch(selectCurrentWorkspace(result.workspaces[0]));
     } else {
       dataFetch(
         `/api/workspaces?search=&order=&page=0&pagesize=10&orgID=${orgId}`,
@@ -517,25 +518,11 @@ class MesheryApp extends App {
           credentials: 'include',
         },
         async (result) => {
-          this.setWorkspace(result.workspaces[0]);
+          this.props.rtkDispatch(selectCurrentWorkspace(result.workspaces[0]));
         },
         (err) => console.log('There was an error fetching workspaces:', err),
       );
     }
-  };
-  setOrganization = (org) => {
-    const { store } = this.props;
-    store.dispatch({
-      type: actionTypes.SET_ORGANIZATION,
-      organization: org,
-    });
-  };
-  setWorkspace = (workspace) => {
-    const { store } = this.props;
-    store.dispatch({
-      type: actionTypes.SET_WORKSPACE,
-      workspace: workspace,
-    });
   };
   loadAbility = async (orgID, reFetchKeys) => {
     const storedKeys = sessionStorage.getItem('keys');
@@ -844,9 +831,12 @@ const mapDispatchToProps = (dispatch) => ({
   setConnectionMetadata: bindActionCreators(setConnectionMetadata, dispatch),
 });
 
-const MesheryWithRedux = withStyles(styles)(
-  connect(mapStateToProps, mapDispatchToProps)(MesheryApp),
-);
+const Meshery = withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(MesheryApp));
+
+const MesheryWithRedux = (props) => {
+  const rtkDispatch = useDispatchRtk();
+  return <Meshery {...props} rtkDispatch={rtkDispatch} />;
+};
 
 const MesheryAppWrapper = (props) => {
   return (

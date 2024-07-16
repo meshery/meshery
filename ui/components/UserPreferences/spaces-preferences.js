@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 import { withRouter } from 'next/router';
 import { FormGroup, FormControlLabel, Grid } from '@material-ui/core';
 import NoSsr from '@material-ui/core/NoSsr';
-import { setOrganization, setKeys } from '../../lib/store';
+import { setKeys } from '../../lib/store';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { useGetOrgsQuery } from '../../rtk-query/organization';
@@ -17,6 +17,8 @@ import { Select, MenuItem, FormControl, FormLabel } from '@material-ui/core';
 import styles from './style';
 import theme from '../../themes/app';
 import { useGetCurrentAbilities } from '../../rtk-query/ability';
+import { getCurrentOrg, selectCurrentOrg } from '@/store/slices/globalContext';
+import { useDispatchRtk, useSelectorRtk } from '@/store/hooks';
 
 const SpacesPreferences = (props) => {
   const {
@@ -26,7 +28,12 @@ const SpacesPreferences = (props) => {
     error: orgsError,
   } = useGetOrgsQuery({});
   let orgs = orgsResponse?.organizations || [];
-  const { organization, setOrganization, classes } = props;
+  const { classes } = props;
+  const rtkDispatch = useDispatchRtk();
+  const setOrganization = (val) => {
+    rtkDispatch(selectCurrentOrg(val));
+  };
+  const organization = useSelectorRtk(getCurrentOrg);
   const [skip, setSkip] = React.useState(true);
 
   const { notify } = useNotification();
@@ -45,7 +52,7 @@ const SpacesPreferences = (props) => {
   const handleOrgSelect = (e) => {
     const id = e.target.value;
     const selected = orgs.find((org) => org.id === id);
-    setOrganization({ organization: selected });
+    setOrganization(selected);
     setSkip(false);
   };
 
@@ -99,16 +106,8 @@ const SpacesPreferences = (props) => {
 };
 
 const mapDispatchToProps = (dispatch) => ({
-  setOrganization: bindActionCreators(setOrganization, dispatch),
   setKeys: bindActionCreators(setKeys, dispatch),
 });
-
-const mapStateToProps = (state) => {
-  const organization = state.get('organization');
-  return {
-    organization,
-  };
-};
 
 const SpacesPreferencesWithErrorBoundary = (props) => {
   return (
@@ -126,5 +125,5 @@ const SpacesPreferencesWithErrorBoundary = (props) => {
 };
 
 export default withStyles(styles)(
-  connect(mapStateToProps, mapDispatchToProps)(withRouter(SpacesPreferencesWithErrorBoundary)),
+  connect(null, mapDispatchToProps)(withRouter(SpacesPreferencesWithErrorBoundary)),
 );

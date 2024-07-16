@@ -1,15 +1,23 @@
 const { createSlice } = require('@reduxjs/toolkit');
-export const globalEnvironmentContextSlice = createSlice({
-  name: 'globalEnvironmentContext',
+export const globalContextSlice = createSlice({
+  name: 'globalContextSlice',
   initialState: {
     selectedEnvs: {
       // envId : {
       //   // selectedConnections : [connection]
       // }
     },
+    selectedOrg: {},
+    selectedWorkspace: {},
   },
 
   reducers: {
+    selectOrg: (state, action) => {
+      state.selectedOrg = action.payload;
+    },
+    selectWorkspace: (state, action) => {
+      state.selectedWorkspace = action.payload;
+    },
     selectEnv: (state, action) => {
       const { environment, selectedConnections = [] } = action.payload;
       state.selectedEnvs[environment.id] = {
@@ -24,7 +32,7 @@ export const globalEnvironmentContextSlice = createSlice({
 
     selectConnection: (state, action) => {
       const { env, connection } = action.payload;
-      const isEnvSelected = selectIsEnvSelected({ globalEnvironmentContext: state }, env.id);
+      const isEnvSelected = selectIsEnvSelected({ globalContextSlice: state }, env.id);
       if (!isEnvSelected) {
         state.selectedEnvs[env.id] = {
           ...env,
@@ -44,8 +52,14 @@ export const globalEnvironmentContextSlice = createSlice({
   },
 });
 
-export const { selectEnv, unselectEnv, selectConnection, unselectConnection } =
-  globalEnvironmentContextSlice.actions;
+export const {
+  selectEnv,
+  unselectEnv,
+  selectConnection,
+  unselectConnection,
+  selectOrg,
+  selectWorkspace,
+} = globalContextSlice.actions;
 
 export const toggleConnection = (env, connection) => (dispatch, getState) => {
   const envId = env.id;
@@ -57,7 +71,12 @@ export const toggleConnection = (env, connection) => (dispatch, getState) => {
     dispatch(selectConnection({ env, connection }));
   }
 };
-
+export const selectCurrentOrg = (orgVal) => (dispatch) => {
+  dispatch(selectOrg(orgVal));
+};
+export const selectCurrentWorkspace = (workspaceVal) => (dispatch) => {
+  dispatch(selectWorkspace(workspaceVal));
+};
 export const toggleEnvSelection = (environment, selectedConnections) => (dispatch, getState) => {
   const isSelected = selectIsEnvSelected(getState(), environment.id);
   if (isSelected) {
@@ -67,7 +86,10 @@ export const toggleEnvSelection = (environment, selectedConnections) => (dispatc
   dispatch(selectEnv({ environment, selectedConnections }));
 };
 
-export default globalEnvironmentContextSlice.reducer;
+export const getCurrentOrg = (state) => state.globalContext.selectedOrg;
+export const getCurrentWorkspace = (state) => state.globalContext.selectedWorkspace;
+
+export default globalContextSlice.reducer;
 
 // selectors
 
@@ -75,18 +97,17 @@ const selectIsConnectionSelected = (state, envId, connectionId) => {
   if (!selectIsEnvSelected(state, envId)) {
     return false;
   }
-  return state.globalEnvironmentContext.selectedEnvs[envId].selectedConnections
+  return state.globalContext.selectedEnvs[envId].selectedConnections
     .map((connection) => connection.id)
     .includes(connectionId);
 };
 
-const selectIsEnvSelected = (state, envId) =>
-  Boolean(state.globalEnvironmentContext.selectedEnvs[envId]);
+const selectIsEnvSelected = (state, envId) => Boolean(state.globalContext.selectedEnvs[envId]);
 
-const selectSelectedEnvs = (state) => state.globalEnvironmentContext.selectedEnvs;
+const selectSelectedEnvs = (state) => state.globalContext.selectedEnvs;
 
 const selectSelectedConnections = (state, envId) =>
-  state.globalEnvironmentContext.selectedEnvs[envId]?.selectedConnections || [];
+  state.globalContext.selectedEnvs[envId]?.selectedConnections || [];
 
 const selectAllSelectedConnections = (state) => {
   const selectedEnvs = selectSelectedEnvs(state);

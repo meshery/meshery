@@ -1453,7 +1453,6 @@ const mapStateToProps = (state) => {
   const path = state.get('page').get('path');
   const isDrawerCollapsed = state.get('isDrawerCollapsed');
   const capabilitiesRegistry = state.get('capabilitiesRegistry');
-  const organization = state.get('organization');
   const keys = state.get('keys');
   const catalogVisibility = state.get('catalogVisibility');
   return {
@@ -1462,7 +1461,6 @@ const mapStateToProps = (state) => {
     path,
     isDrawerCollapsed,
     capabilitiesRegistry,
-    organization,
     keys,
     catalogVisibility,
   };

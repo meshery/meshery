@@ -21,7 +21,7 @@ import {
   toggleEnvSelection,
   toggleConnection,
   selectSelectedK8sConnections,
-} from '@/store/slices/globalEnvironmentContext';
+} from '@/store/slices/globalContext';
 import { useSelectorRtk, useDispatchRtk } from '@/store/hooks';
 import Link from 'next/link';
 import { Button } from '@layer5/sistent';

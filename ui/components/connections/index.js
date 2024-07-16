@@ -83,6 +83,8 @@ import { DeleteIcon } from '@layer5/sistent';
 import { withRouter } from 'next/router';
 import { UsesSistent } from '../SistentWrapper';
 import { formatDate } from '../DataFormatter';
+import { getCurrentOrg } from '@/store/slices/globalContext';
+import { useSelectorRtk } from '@/store/hooks';
 
 const ACTION_TYPES = {
   FETCH_CONNECTIONS: {
@@ -170,8 +172,8 @@ function Connections(props) {
     k8sconfig,
     connectionMetadataState,
     meshsyncControllerState,
-    organization,
   } = props;
+  const organization = useSelectorRtk(getCurrentOrg);
   const modalRef = useRef(null);
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState();
@@ -1273,7 +1275,6 @@ const mapStateToProps = (state) => {
   const operatorState = state.get('operatorState');
   const connectionMetadataState = state.get('connectionMetadataState');
   const meshsyncControllerState = state.get('controllerState');
-  const organization = state.get('organization');
 
   return {
     k8sconfig,
@@ -1281,7 +1282,6 @@ const mapStateToProps = (state) => {
     operatorState,
     connectionMetadataState,
     meshsyncControllerState,
-    organization,
   };
 };
 
