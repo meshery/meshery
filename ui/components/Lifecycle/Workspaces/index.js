@@ -605,7 +605,7 @@ const Workspaces = ({ organization, classes }) => {
               onSearch={(value) => {
                 setSearch(value);
               }}
-              placeholder="Search connections..."
+              placeholder="Search Workspaces..."
               expanded={isSearchExpanded}
               setExpanded={setIsSearchExpanded}
             />

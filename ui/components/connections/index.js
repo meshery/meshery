@@ -1180,7 +1180,7 @@ function Connections(props) {
                   onSearch={(value) => {
                     setSearch(value);
                   }}
-                  placeholder="Search connections..."
+                  placeholder="Search Connections..."
                   expanded={isSearchExpanded}
                   setExpanded={setIsSearchExpanded}
                 />

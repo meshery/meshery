@@ -564,7 +564,7 @@ export default function MeshSyncTable(props) {
             }}
             expanded={isSearchExpanded}
             setExpanded={setIsSearchExpanded}
-            placeholder="Search connections..."
+            placeholder="Search Connections..."
           />
 
           <UniversalFilter
