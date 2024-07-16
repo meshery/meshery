@@ -59,7 +59,7 @@ mesheryctl model search [query-text]
 		baseUrl := mctlCfg.GetBaseMesheryURL()
 		queryText := args[0]
 
-		url := fmt.Sprintf("%s/api/meshmodels/models?search=%s&pagesize=all", baseUrl, queryText)
+		url := fmt.Sprintf("%s/api/meshmodels/models/%s?search=true&pagesize=all", baseUrl, queryText)
 		req, err := utils.NewRequest(http.MethodGet, url, nil)
 		if err != nil {
 			utils.Log.Error(err)
