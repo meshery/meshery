@@ -42,19 +42,13 @@ test.describe('Service Mesh Lifecycle Tests', () => {
         await page.goto(`${ENV.MESHERY_SERVER_URL}/management/service-mesh`);
       });
 
-      await test.step('And I open `Select Meshery Adapter` Dropdown', async () => {
+      await test.step('And I Open `Select Meshery Adapter` Dropdown, select the adapter by URL, and verify the selection', async () => {
         const dropdown = page
           .locator('label')
           .filter({ hasText: /Select Meshery Adapter/ })
           .locator('..');
         await dropdown.click();
-      });
-
-      await test.step('And I select the adapter by URL', async () => {
         await page.getByRole('option', { name: ADAPTER_LOCATION }).click();
-      });
-
-      await test.step('And I verify the selection of the adapter by URL', async () => {
         await expect(dropdown).toContainText(ADAPTER_LOCATION);
       });
     });
@@ -64,19 +58,13 @@ test.describe('Service Mesh Lifecycle Tests', () => {
         await page.goto(`${ENV.MESHERY_SERVER_URL}/management/service-mesh`);
       });
 
-      await test.step('And I open `Select Meshery Adapter` dropdown', async () => {
+      await test.step('And I Open `Select Meshery Adapter` Dropdown, select the adapter by URL, and verify the selection', async () => {
         const dropdown = page
           .locator('label')
           .filter({ hasText: /Select Meshery Adapter/ })
           .locator('..');
         await dropdown.click();
-      });
-
-      await test.step('And I select the adapter by URL', async () => {
         await page.getByRole('option', { name: ADAPTER_LOCATION }).click();
-      });
-
-      await test.step('And I verify selection of the adapter by URL', async () => {
         await expect(dropdown).toContainText(ADAPTER_LOCATION);
       });
 
