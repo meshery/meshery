@@ -133,8 +133,8 @@ func processFile(path string, h *Handler, mu *sync.Mutex, response *models.Regis
 			mu.Lock()
 			addUnsuccessfulEntry(path, response, err)
 			mu.Unlock()
-		} else if entityType != entity.Model {
-			incrementCountersOnSuccess(mu, entityType, &response.EntityCount.CompCount, &response.EntityCount.RelCount)
+		} else {
+			incrementCountersOnSuccess(mu, entityType, &response.EntityCount.CompCount, &response.EntityCount.RelCount, &response.EntityCount.ModelCount)
 			addSuccessfulEntry(content, entityType, response)
 		}
 	}
@@ -205,13 +205,15 @@ func incrementCountersOnErr(mu *sync.Mutex, entityType entity.EntityType, respon
 	}
 }
 
-func incrementCountersOnSuccess(mu *sync.Mutex, entityType entity.EntityType, compCount *int, relCount *int) {
+func incrementCountersOnSuccess(mu *sync.Mutex, entityType entity.EntityType, compCount *int, relCount *int, modelCount *int) {
 	mu.Lock()
 	defer mu.Unlock()
 	if entityType == entity.ComponentDefinition {
 		*compCount++
 	} else if entityType == entity.RelationshipDefinition {
 		*relCount++
+	} else if entityType == entity.Model {
+		*modelCount++
 	}
 }
 
@@ -265,12 +267,16 @@ func (h *Handler) sendFileEvent(userID uuid.UUID, provider models.Provider, resp
 		"ImportedModel":                   response.EntityTypeSummary.SuccessfulModels,
 		"UnsuccessfulEntityNameWithError": errEvent,
 	}
+	eventType := events.Informational
+	if response.EntityCount.CompCount == 0 && response.EntityCount.RelCount == 0 && response.EntityCount.ModelCount == 0 {
+		eventType = events.Error
+	}
 	event := events.NewEvent().
 		ActedUpon(userID).
 		FromUser(userID).
 		FromSystem(*h.SystemID).
 		WithAction("register").
-		WithSeverity(events.Informational).
+		WithSeverity(eventType).
 		WithDescription(description).
 		WithMetadata(metadata).
 		Build()
@@ -318,7 +324,7 @@ func RegisterEntity(content []byte, entityType entity.EntityType, h *Handler, re
 				continue
 			}
 			mu.Lock()
-			incrementCountersOnSuccess(mu, entity.ComponentDefinition, &response.EntityCount.CompCount, &response.EntityCount.RelCount)
+			incrementCountersOnSuccess(mu, entity.ComponentDefinition, &response.EntityCount.CompCount, &response.EntityCount.RelCount, &response.EntityCount.ModelCount)
 			mu.Unlock()
 			addSuccessfulEntry(content, entity.ComponentDefinition, response)
 		}

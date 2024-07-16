@@ -47,6 +47,7 @@ type MeshmodelRelationshipsAPIResponse struct {
 type EntityCount struct {
 	CompCount     int `json:"comp_count"`
 	RelCount      int `json:"rel_count"`
+	ModelCount    int `json:"model_count"`
 	ErrCompCount  int `json:"err_comp_count"`
 	ErrRelCount   int `json:"err_rel_count"`
 	ErrModelCount int `json:"err_model_count"`
