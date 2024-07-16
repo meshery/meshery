@@ -44,6 +44,26 @@ type MeshmodelRelationshipsAPIResponse struct {
 	Count         int64           `json:"total_count"`
 	Relationships []entity.Entity `json:"relationships"`
 }
+type EntityCount struct {
+	CompCount     int `json:"comp_count"`
+	RelCount      int `json:"rel_count"`
+	ErrCompCount  int `json:"err_comp_count"`
+	ErrRelCount   int `json:"err_rel_count"`
+	ErrModelCount int `json:"err_model_count"`
+	TotalErrCount int `json:"total_err_count"`
+}
+type EntityTypeSummary struct {
+	SuccessfulComponents            []map[string]interface{} `json:"successful_components"`
+	SuccessfulRelationships         []map[string]interface{} `json:"successful_relationships"`
+	SuccessfulModels                []map[string]interface{} `json:"successful_models"`
+	UnsuccessfulEntityNameWithError []map[string]interface{} `json:"unsuccessful_component_names"`
+}
+type RegisterMeshmodelAPIResponse struct {
+	EntityCount       EntityCount       `json:"entity_count"`
+	ErrMsg            string            `json:"err_msg"`
+	EntityTypeSummary EntityTypeSummary `json:"entity_type_summary"`
+	ModelName         []string          `json:"model_name"`
+}
 
 // API response model for meshmodel categories API
 type MeshmodelCategoriesAPIResponse struct {

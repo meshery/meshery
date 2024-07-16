@@ -361,6 +361,7 @@ func FormatToTitleCase(s string) string {
 	return c.String(s)
 }
 func ExtractFile(filePath string, destDir string) error {
+
 	if utils.IsTarGz(filePath) {
 		return utils.ExtractTarGz(destDir, filePath)
 	} else if utils.IsZip(filePath) {
