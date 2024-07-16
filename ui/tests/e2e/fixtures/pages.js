@@ -66,6 +66,17 @@ export class DesignsPage {
   }
 }
 
+export class MesheryDashboardPage {
+  /**
+   * @param {PlaywrightPage} page
+   */
+  constructor(page) {
+    this.page = page;
+  }
+  async goTo() {
+    await this.page.goto(ENV.MESHERY_SERVER_URL);
+  }
+}
 export class ConnectionsPage {
   /**
    * @param {PlaywrightPage} page
@@ -73,8 +84,70 @@ export class ConnectionsPage {
   constructor(page) {
     this.page = page;
   }
+  async goTo() {
+    await this.page.goto(ENV.MESHERY_SERVER_URL + '/management/connections');
+  }
 }
 
+export class EnvironmentsPage {
+  /**
+   * @param {PlaywrightPage} page
+   */
+  constructor(page) {
+    this.page = page;
+  }
+  async goTo() {
+    await this.page.goto(ENV.MESHERY_SERVER_URL + '/management/environments');
+  }
+}
+
+export class WorkspacesPage {
+  /**
+   * @param {PlaywrightPage} page
+   */
+  constructor(page) {
+    this.page = page;
+  }
+  async goTo() {
+    await this.page.goto(ENV.MESHERY_SERVER_URL + '/management/workspaces');
+  }
+}
+
+export class AdaptersPage {
+  constructor(page) {
+    this.page = page;
+  }
+  async goTo() {
+    await this.page.goto(ENV.MESHERY_SERVER_URL + '/management/adapters');
+  }
+}
+
+export class CatalogPage {
+  constructor(page) {
+    this.page = page;
+  }
+  async goTo() {
+    await this.page.goto(ENV.MESHERY_SERVER_URL + '/configuration/catalog');
+  }
+}
+
+export class FiltersPage {
+  constructor(page) {
+    this.page = page;
+  }
+  async goTo() {
+    await this.page.goto(ENV.MESHERY_SERVER_URL + 'configuration/filters');
+  }
+}
+
+export class ExtensionsPage {
+  constructor(page) {
+    this.page = page;
+  }
+  async goTo() {
+    await this.page.goto(ENV.MESHERY_SERVER_URL + '/extensions');
+  }
+}
 export const test = base.test.extend({
   designsPage: async ({ page }, use) => {
     const designerPage = new DesignsPage(page);

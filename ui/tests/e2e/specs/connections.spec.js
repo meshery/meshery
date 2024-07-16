@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
-import { ENV } from './env';
+import { ENV } from '../env';
 import os from 'os';
+import { ConnectionsPage } from '../fixtures/pages';
 
 const verifyConnectionsResBody = (body) => {
   expect(body).toEqual(
@@ -63,6 +64,7 @@ test.describe.serial('Connections Page Tests', () => {
   let connectionCount = 0;
 
   test.beforeEach(async ({ page }) => {
+    const connectionsPage = new ConnectionsPage(page);
     const connectionsReq = page.waitForRequest(
       (request) =>
         request.url().startsWith(`${ENV.MESHERY_SERVER_URL}/api/integrations/connections`) &&
@@ -78,9 +80,7 @@ test.describe.serial('Connections Page Tests', () => {
     });
 
     // Visit Connections Page
-    await page.goto(`${ENV.MESHERY_SERVER_URL}`);
-    await page.getByRole('button', { name: 'Lifecycle' }).click();
-    await page.getByRole('button', { name: 'Connections' }).click();
+    await connectionsPage.goTo();
 
     // Verify requests and responses expected on initial page load
     await connectionsReq;
@@ -92,55 +92,72 @@ test.describe.serial('Connections Page Tests', () => {
   });
 
   test('Verify that UI components are displayed', async ({ page }) => {
-    // Verify that connections table is displayed (by checking for table headings)
-    for (const heading of ['Name', 'Environments', 'Kind', 'Category', 'Status', 'Actions']) {
-      await expect(page.getByRole('columnheader', { name: heading })).toBeVisible();
-    }
+    await test.step('I see the connections table is displayed', async () => {
+      for (const heading of ['Name', 'Environments', 'Kind', 'Category', 'Status', 'Actions']) {
+        await expect(page.getByRole('columnheader', { name: heading })).toBeVisible();
+      }
+    });
 
-    // Verify that all connections returned by server are displayed (by counting number of rows in the table)
-    expect((await page.locator('tr').count()) - 2).toEqual(connectionCount); // -2 for not considering header and footer
+    await test.step('And I see the available connections are displayed in the table', async () => {
+      const actualConnectionCount = (await page.locator('tr').count()) - 2; // -2 for not considering header and footer
+      expect(actualConnectionCount).toEqual(connectionCount);
+    });
   });
 
   test('Add a cluster connection by uploading kubeconfig file', async ({ page }) => {
-    // Navigate to 'Connections' tab
-    await page.getByRole('tab', { name: 'Connections' }).click();
+    let addConnectionReq;
+    let addConnectionRes;
+    await test.step('When I navigate to connections tab', async () => {
+      await page.getByRole('tab', { name: 'Connections' }).click();
+    });
 
-    const addConnectionReq = page.waitForRequest(
-      (request) =>
-        request.url() === `${ENV.MESHERY_SERVER_URL}/api/system/kubernetes` &&
-        request.method() === 'POST',
-    );
-    const addConnectionRes = page.waitForResponse(
-      (response) =>
-        response.url() === `${ENV.MESHERY_SERVER_URL}/api/system/kubernetes` &&
-        response.status() === 200,
-    );
+    await test.step('Initiate add connection request', async () => {
+      addConnectionReq = page.waitForRequest(
+        (request) =>
+          request.url() === `${ENV.MESHERY_SERVER_URL}/api/system/kubernetes` &&
+          request.method() === 'POST',
+      );
+      addConnectionRes = page.waitForResponse(
+        (response) =>
+          response.url() === `${ENV.MESHERY_SERVER_URL}/api/system/kubernetes` &&
+          response.status() === 200,
+      );
+    });
 
-    // Click Add Cluster button
-    await page.getByRole('button', { name: 'Add Cluster' }).click();
+    await test.step('And I click the Add Cluster', async () => {
+      await page.getByRole('button', { name: 'Add Cluster' }).click();
+    });
 
-    // Verify "Add Kubernetes Cluster(s)" modal opens
-    await expect(page.getByRole('heading', { name: 'Add Kubernetes Cluster(s)' })).toBeVisible();
+    await test.step('Then I verify `Add Kubernetes Cluster(s)` modal opens', async () => {
+      await expect(page.getByText('Add Kubernetes Cluster(s)')).toBeVisible();
+      await expect(page.getByRole('heading', { name: 'Upload your kubeconfig' })).toBeVisible();
+    });
 
-    // Attach existing kubeconfig file of the system, to test the upload without making any changes in configuration
-    const kubeConfigPath = `${os.homedir()}/.kube/config`;
-    await page.locator('input[type="file"]').setInputFiles(kubeConfigPath);
+    await test.step('And I attach the existing kubeconfig file of the system, to test the upload withou making changes in the configuration', async () => {
+      const kubeConfigPath = `${os.homedir()}/.kube/config`;
+      await page.locator('input[type="file"]').setInputFiles(kubeConfigPath);
+    });
 
-    // Click "IMPORT" button
-    await page.getByRole('button', { name: 'IMPORT', exact: true }).click();
+    await test.step('And I click `import` button', async () => {
+      await page.getByRole('button', { name: 'IMPORT', exact: true }).click();
+    });
 
-    // Verify requests and responses
-    await addConnectionReq;
-    await addConnectionRes;
+    test.step('And I verify the requests and responses', async () => {
+      await addConnectionReq;
+      await addConnectionRes;
+    });
 
-    // Verify displaying of success modal
-    await expect(page.getByText('Available contexts in')).toBeVisible();
+    await test.step('And I see a success modal', async () => {
+      await expect(page.getByText('Available contexts in')).toBeVisible();
+    });
 
-    // Verify available contexts were connected
-    await expect(page.getByRole('menuitem', { name: 'connected' })).toBeVisible();
+    await test.step('And I see that available contexts were connected', async () => {
+      await expect(page.getByRole('menuitem', { name: 'connected' })).toBeVisible();
+    });
 
-    // Click "OK" button to close success modal
-    await page.getByRole('button', { name: 'OK', exact: true }).click();
+    await test.step('And I click `OK` button to close the modal`', async () => {
+      await page.getByRole('button', { name: 'OK', exact: true }).click();
+    });
   });
 
   transitionTests.forEach((t) => {

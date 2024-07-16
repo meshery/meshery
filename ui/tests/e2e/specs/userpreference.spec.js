@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { ENV } from './env';
+import { ENV } from '../env';
 
 const userPreferenceTests = [
   {

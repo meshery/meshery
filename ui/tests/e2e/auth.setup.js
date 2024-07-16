@@ -13,12 +13,24 @@ const authFile = 'playwright/.auth/user.json';
 setup('authenticate', async ({ page }) => {
   // Perform authentication steps. Replace these actions with your own.
 
-  await page.goto(ENV.PROVIDER_SELECTION_URL);
-  await page.getByLabel('Select Provider').click();
-  await page.getByRole('menuitem', { name: 'Meshery' }).click();
-  await page.getByLabel('E-Mail').fill(ENV.REMOTE_PROVIDER_USER.email);
-  await page.getByLabel('Password').fill(ENV.REMOTE_PROVIDER_USER.password);
-  await page.getByRole('button', { name: 'Sign in', exact: true }).click();
+  setup.step('When I visit the `provider` page', async () => {
+    await page.goto(ENV.PROVIDER_SELECTION_URL);
+  });
+
+  setup.step('Then I select `Meshery` as provider', async () => {
+    await page.getByLabel('Select Provider').click();
+    await page.getByRole('menuitem', { name: 'Meshery' }).click();
+  });
+
+  setup.step('And I enter my `credentials`', async () => {
+    await page.getByLabel('E-Mail').fill(ENV.REMOTE_PROVIDER_USER.email);
+    await page.getByLabel('Password').fill(ENV.REMOTE_PROVIDER_USER.password);
+  });
+
+  setup.step('After filling the credentials, I click `Signin` button', async () => {
+    await page.getByRole('button', { name: 'Sign in', exact: true }).click();
+  });
+
   // Wait until the page receives the cookies.
   // Sometimes login flow sets cookies in the process of several redirects.
   // Wait for the final URL to ensure that the cookies are actually set.
