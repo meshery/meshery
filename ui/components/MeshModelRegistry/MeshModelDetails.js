@@ -25,6 +25,10 @@ import {
 import _ from 'lodash';
 import { JustifyAndAlignCenter } from './MeshModel.style';
 import { withSuppressedErrorBoundary } from '../General/ErrorBoundary';
+import { UsesSistent } from '../SistentWrapper';
+import { Button, DownloadIcon } from '@layer5/sistent';
+
+const ExportAvailable = true;
 
 const KeyValue = ({ property, value }) => {
   let formattedValue = value;
@@ -157,10 +161,30 @@ const ModelContents = withSuppressedErrorBoundary(({ modelDef }) => {
   const orderdMetadataRight = reorderObjectProperties(metaDataRight, orderRight);
   const isShowStatusSelector = !Array.isArray(modelDef?.model.version);
 
+  const handleExport = () => {
+    const a = document.createElement('a');
+    a.href = '/api/meshmodels/export?id=' + modelDef.id;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  };
+
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <TitleWithImg displayName={modelDef.displayName} iconSrc={modelDef?.metadata?.svgColor} />
+        {ExportAvailable ? (
+          <UsesSistent>
+            <Button
+              onClick={handleExport}
+              variant="contained"
+              startIcon={<DownloadIcon />}
+              style={{ height: '2rem', marginRight: '1rem' }}
+            >
+              Export
+            </Button>
+          </UsesSistent>
+        ) : null}
         {isShowStatusSelector && <StatusChip entityData={modelDef} entityType="models" />}
       </div>
       <RenderContents
@@ -349,7 +373,7 @@ const Description = ({ description }) => (
 );
 
 const TitleWithImg = ({ displayName, iconSrc }) => (
-  <div style={{ display: 'flex', alignItems: 'center' }}>
+  <div style={{ display: 'flex', alignItems: 'center', flexBasis: '60%' }}>
     {iconSrc && <img src={iconSrc} height="55px" width="55px" style={{ marginRight: '0.6rem' }} />}
     <Title title={displayName} />
   </div>

@@ -105,12 +105,20 @@ const meshModelApi = api
           params: _.merge({}, defaultOptions, queryArg.params),
         }),
       }),
+      exportModel: builder.query({
+        query: (queryArg) => ({
+          url: `meshmodels/export`,
+          params: _.merge({}, defaultOptions, queryArg.params),
+          providesTags: () => [{ type: TAGS.MESH_MODELS }],
+        }),
+      }),
     }),
   });
 
 export const {
   useLazyGetMeshModelsQuery,
   useLazyGetComponentsQuery,
+  useLazyExportModelQuery,
   useGetComponentsQuery,
   useLazyGetRelationshipsQuery,
   useGetRegistrantsQuery,

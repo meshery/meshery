@@ -21,6 +21,7 @@ import (
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	"github.com/layer5io/meshkit/models/meshmodel/entity"
 	"github.com/layer5io/meshkit/models/meshmodel/registry"
+	"github.com/layer5io/meshkit/models/oci"
 	meshkitutils "github.com/layer5io/meshkit/utils"
 
 	regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
@@ -1178,6 +1179,59 @@ func prettifyCompDefSchema(entities []entity.Entity) []v1beta1.ComponentDefiniti
 	return comps
 }
 
+// swagger:route POST /api/meshmodel/export ExportModel idExportModel
+// Handle GET request for exporting a model.
+//
+// Export model with the given id in the output format specified
+//
+// ```?id={id}```
+// ```?output_format={output_format}``` Can be `json`, `yaml`, or `oci`. Default is `oci`
+//
+// responses:
+//	200: []byte
+func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
+	modelId := r.URL.Query().Get("id")
+
+	// 1. Get the model data
+	modelFilter := &regv1beta1.ModelFilter{Id: modelId}
+	e, err := h.registryManager.GetEntityById(modelFilter)
+	if err != nil {
+		h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
+		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+	}
+	model := e.(*v1beta1.Model)
+
+	// 2. Convert it to oci
+	temp := os.TempDir()
+	modelDir := filepath.Join(temp, model.Name)
+	os.Mkdir(modelDir, 0700)
+	defer os.RemoveAll(modelDir)
+	err = model.WriteModelDefinition(filepath.Join(modelDir, "model.yaml"), "yaml")
+	// build oci image for the model
+	img, err := oci.BuildImage(modelDir)
+	if err != nil {
+		h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
+		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+	}
+	tarfileName := filepath.Join(modelDir, "model.tar")
+	err = oci.SaveOCIArtifact(img, tarfileName, model.Name)
+	if err != nil {
+		h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
+		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+	}
+	// 3. Send response
+	byt,_ := os.ReadFile(tarfileName)
+	rw.Header().Add("Content-Type", "application/x-tar")
+	rw.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s.tar\"",model.Name))
+	rw.Header().Set("Content-Length", string(len(byt)))
+	_,err = rw.Write(byt)
+	if err != nil {
+		h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
+		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+	}
+}
+
+
 // swagger:route POST /api/meshmodel/register RegisterMeshmodels idRegisterMeshmodels
 // Handle POST request for registering entites like components and relationships model.
 //
@@ -1329,6 +1383,7 @@ func processUploadedFile(filePath string, h *Handler, compCount *int, relCount *
 	})
 	return err
 }
+
 func RegisterEntity(content []byte, entityType entity.EntityType, h *Handler) error {
 	switch entityType {
 	case entity.ComponentDefinition:

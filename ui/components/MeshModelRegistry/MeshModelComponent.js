@@ -120,7 +120,7 @@ const MeshModelComponent_ = ({
             {
               params: {
                 page: searchText ? 0 : page.Models,
-                pagesize: 'all',
+                pagesize: '20',
                 components: true,
                 relationships: true,
                 search: searchText || '',
@@ -134,7 +134,7 @@ const MeshModelComponent_ = ({
             {
               params: {
                 page: searchText ? 0 : page.Components,
-                pagesize: searchText ? 'all' : rowsPerPage,
+                pagesize: searchText ? '20' : rowsPerPage,
                 search: searchText || '',
                 trim: true,
               },
@@ -148,7 +148,7 @@ const MeshModelComponent_ = ({
             {
               params: {
                 page: 0,
-                pagesize: 'all',
+                pagesize: '20',
                 paginated: true,
                 search: searchText || '',
               },
