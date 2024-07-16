@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Argo CD Operator
-subtitle: Collaborative and visual infrastructure as code for Argo CD Operator
+subtitle: Collaborative and visual infrastructure as design for Argo CD Operator
 image: /assets/img/integrations/argocd-operator/icons/color/argocd-operator-color.svg
 permalink: extensibility/integrations/argocd-operator
 docURL: https://docs.meshery.io/extensibility/integrations/argocd-operator

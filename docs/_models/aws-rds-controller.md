@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: AWS Relational Database Service
-subtitle: Collaborative and visual infrastructure as code for AWS Relational Database Service
+subtitle: Collaborative and visual infrastructure as design for AWS Relational Database Service
 image: /assets/img/integrations/aws-rds-controller/icons/color/aws-rds-controller-color.svg
 permalink: extensibility/integrations/aws-rds-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-rds-controller
@@ -63,7 +63,7 @@ featureList: [
   "Amazon Aurora supports quick, efficient cloning operations, where entire multi-terabyte database clusters can be cloned in minutes.",
   "Amazon RDS provides Amazon CloudWatch metrics for your database instances at no additional charge."
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

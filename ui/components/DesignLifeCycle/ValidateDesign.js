@@ -25,6 +25,7 @@ const styles = (theme) => {
   const saffron = NOTIFICATIONCOLORS.WARNING;
   return {
     singleErrorRoot: {
+      gap: '0.5rem',
       backgroundColor: theme.palette.secondary.mainBackground2,
       cursor: 'pointer',
       '&:hover': {
@@ -109,7 +110,7 @@ const ComponentErrorList = ({ component, classes, errors, validatorActor }) => {
           <ListItemText
             primary={message(error)}
             disableTypography
-            className={classes.singleError}
+            className={classes.nested}
           ></ListItemText>
         </ListItem>
       ))}

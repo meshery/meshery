@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Karmada
-subtitle: Collaborative and visual infrastructure as code for Karmada
+subtitle: Collaborative and visual infrastructure as design for Karmada
 image: /assets/img/integrations/karmada/icons/color/karmada-color.svg
 permalink: extensibility/integrations/karmada
 docURL: https://docs.meshery.io/extensibility/integrations/karmada
