@@ -96,14 +96,14 @@ const Adapters = ({ updateProgress, classes }) => {
         adapter: selectedAdapter.label,
         targetPort: selectedAdapter.defaultPort,
       };
-      msg = 'Unable to Deploy adapter';
+      msg = 'Unable to deploy adapter';
     } else {
       payload = {
         status: ADAPTER_STATUS.DISABLED,
         adapter: selectedAdapter.label,
         targetPort: selectedAdapter.defaultPort,
       };
-      msg = 'Unable to Undeploy adapter';
+      msg = 'Unable to undeploy adapter';
     }
     handleAdapterDeployment(payload, msg, selectedAdapter, adapterId);
   };
