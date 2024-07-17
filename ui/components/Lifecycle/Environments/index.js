@@ -476,7 +476,7 @@ const Environments = ({ organization, classes }) => {
               onSearch={(value) => {
                 setSearch(value);
               }}
-              placeholder="Search connections..."
+              placeholder="Search Environments..."
               expanded={isSearchExpanded}
               setExpanded={setIsSearchExpanded}
             />
