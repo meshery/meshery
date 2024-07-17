@@ -1,13 +1,13 @@
 {
   "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "core.meshery.io/v1beta1",
+  "schemaVersion": "components.meshery.io/v1beta1",
   "version": "v1.0.0",
   "displayName": "Component",
   "description": "",
   "format": "JSON",
   "model": {
    "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "core.meshery.io/v1beta1",
+   "schemaVersion": "models.meshery.io/v1beta1",
    "version": "v1.0.0",
    "name": "oam-kubernetes-runtime",
    "displayName": "Oam Kubernetes Runtime",
@@ -45,6 +45,7 @@
   "metadata": {
    "capabilities": "",
    "defaultData": "",
+   "genealogy": "",
    "isAnnotation": false,
    "isNamespaced": true,
    "primaryColor": "#00B39F",
@@ -54,6 +55,7 @@
    "status": "ignored",
    "styleOverrides": "",
    "styles": "",
+   "subCategory": "",
    "svgColor": "",
    "svgComplete": "",
    "svgWhite": ""

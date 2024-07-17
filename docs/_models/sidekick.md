@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Sidekick
-subtitle: Collaborative and visual infrastructure as code for Sidekick
+subtitle: Collaborative and visual infrastructure as design for Sidekick
 image: /assets/img/integrations/sidekick/icons/color/sidekick-color.svg
 permalink: extensibility/integrations/sidekick
 docURL: https://docs.meshery.io/extensibility/integrations/sidekick

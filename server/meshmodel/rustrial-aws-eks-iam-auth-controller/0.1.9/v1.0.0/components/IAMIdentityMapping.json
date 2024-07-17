@@ -1,13 +1,13 @@
 {
   "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "core.meshery.io/v1beta1",
+  "schemaVersion": "components.meshery.io/v1beta1",
   "version": "v1.0.0",
   "displayName": "IAM Identity Mapping",
   "description": "",
   "format": "JSON",
   "model": {
    "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "core.meshery.io/v1beta1",
+   "schemaVersion": "models.meshery.io/v1beta1",
    "version": "v1.0.0",
    "name": "rustrial-aws-eks-iam-auth-controller",
    "displayName": "Rustrial Aws Eks Iam Auth Controller",
@@ -45,6 +45,7 @@
   "metadata": {
    "capabilities": "",
    "defaultData": "",
+   "genealogy": "",
    "isAnnotation": false,
    "isNamespaced": false,
    "primaryColor": "#00B39F",
@@ -54,7 +55,8 @@
    "status": "ignored",
    "styleOverrides": "",
    "styles": "",
-   "svgColor": " ",
+   "subCategory": "",
+   "svgColor": "",
    "svgComplete": "",
    "svgWhite": ""
   },

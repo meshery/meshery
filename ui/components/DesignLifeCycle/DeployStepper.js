@@ -330,7 +330,7 @@ export const UpdateDeploymentStepper = ({
   return (
     <>
       <ModalBody style={{ padding: 0 }}>
-        <Box style={{ width: '80vw', maxWidth: '40rem' }}>
+        <Box style={{ maxWidth: '40rem' }}>
           <CustomizedStepper {...deployStepper} ContentWrapper={StepWrapper}>
             {deployStepper.activeStepComponent}
           </CustomizedStepper>

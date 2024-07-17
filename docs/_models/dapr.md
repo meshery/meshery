@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Dapr
-subtitle: Collaborative and visual infrastructure as code for Dapr
+subtitle: Collaborative and visual infrastructure as design for Dapr
 image: /assets/img/integrations/dapr/icons/color/dapr-color.svg
 permalink: extensibility/integrations/dapr
 docURL: https://docs.meshery.io/extensibility/integrations/dapr
@@ -35,7 +35,7 @@ featureList: [
   "Provides you with APIs that abstract away the complexity of common challenges developers encounter regularly when building distributed applications.",
   "Leverages proven practices for distributed application development that enable you to build resilient, secured systems."
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

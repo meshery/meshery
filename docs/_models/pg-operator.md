@@ -42,12 +42,16 @@ components:
   colorIcon: assets/img/integrations/pg-operator/components/pg-upgrade/icons/color/pg-upgrade-color.svg
   whiteIcon: assets/img/integrations/pg-operator/components/pg-upgrade/icons/white/pg-upgrade-white.svg
   description: 
+- name: pg-upgrade
+  colorIcon: assets/img/integrations/pg-operator/components/pg-upgrade/icons/color/pg-upgrade-color.svg
+  whiteIcon: assets/img/integrations/pg-operator/components/pg-upgrade/icons/white/pg-upgrade-white.svg
+  description: 
 featureList: [
   "Create and manage highly available, enterprise-ready MySQL, PostgreSQL, and MongoDB clusters on Kubernetes.",
   "Percona Operators include backup/restore, high availability, replication, sharding, logging features and more.",
   "Create ready-to-use database clusters of open source, enterprise-ready versions of MySQL, MongoDB, and PostgreSQL, created and supported by the Percona team."
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

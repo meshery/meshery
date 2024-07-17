@@ -69,8 +69,7 @@ const (
 	filterViewURL                  = docsBaseURL + "reference/mesheryctl/filter/view"
 	patternUsageURL                = docsBaseURL + "reference/mesheryctl/pattern"
 	patternViewURL                 = docsBaseURL + "reference/mesheryctl/pattern/view"
-	appUsageURL                    = docsBaseURL + "reference/mesheryctl/app"
-	appViewURL                     = docsBaseURL + "reference/mesheryctl/app/view"
+	patternExportURL               = docsBaseURL + "reference/mesheryctl/pattern/export"
 	contextDeleteURL               = docsBaseURL + "reference/mesheryctl/system/context/delete"
 	contextViewURL                 = docsBaseURL + "reference/mesheryctl/system/context/view"
 	contextCreateURL               = docsBaseURL + "reference/mesheryctl/system/context/create"
@@ -88,6 +87,7 @@ const (
 	tokenUsageURL                  = docsBaseURL + "reference/mesheryctl/system/token"
 	modelUsageURL                  = docsBaseURL + "reference/mesheryctl/system/model"
 	modelListURL                   = docsBaseURL + "reference/mesheryctl/system/model/list"
+	modelImportURl                 = docsBaseURL + "reference/mesheryctl/system/model/import"
 	modelViewURL                   = docsBaseURL + "reference/mesheryctl/system/model/view"
 	registryUsageURL               = docsBaseURL + "reference/mesheryctl/system/registry"
 	relationshipUsageURL           = docsBaseURL + "reference/mesheryctl/relationships"
@@ -137,8 +137,7 @@ const (
 	cmdFilterView               cmdType = "filter view"
 	cmdPattern                  cmdType = "pattern"
 	cmdPatternView              cmdType = "pattern view"
-	cmdApp                      cmdType = "app"
-	cmdAppView                  cmdType = "app view"
+	cmdPatternExport            cmdType = "pattern export"
 	cmdContext                  cmdType = "context"
 	cmdContextDelete            cmdType = "delete"
 	cmdContextCreate            cmdType = "create"
@@ -156,6 +155,7 @@ const (
 	cmdToken                    cmdType = "token"
 	cmdModel                    cmdType = "model"
 	cmdModelList                cmdType = "model list"
+	cmdModelImport              cmdType = "model import"
 	cmdModelView                cmdType = "model view"
 	cmdRegistryPublish          cmdType = "registry publish"
 	cmdRegistry                 cmdType = "regisry"
@@ -1105,7 +1105,7 @@ func ConvertMapInterfaceMapString(v interface{}) interface{} {
 }
 
 // SetOverrideValues returns the value overrides based on current context to install/upgrade helm chart
-func SetOverrideValues(ctx *config.Context, mesheryImageVersion, callbackURL string) map[string]interface{} {
+func SetOverrideValues(ctx *config.Context, mesheryImageVersion, callbackURL, providerURL string) map[string]interface{} {
 	// first initialize all the components' "enabled" field to false
 	// this matches to the components listed in install/kubernetes/helm/meshery/values.yaml
 	valueOverrides := map[string]interface{}{
@@ -1162,6 +1162,12 @@ func SetOverrideValues(ctx *config.Context, mesheryImageVersion, callbackURL str
 	if callbackURL != "" {
 		valueOverrides["env"] = map[string]interface{}{
 			constants.CallbackURLENV: callbackURL,
+		}
+	}
+
+	if providerURL != "" {
+		valueOverrides["env"] = map[string]interface{}{
+			constants.ProviderURLsENV: providerURL,
 		}
 	}
 

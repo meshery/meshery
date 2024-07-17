@@ -657,10 +657,14 @@ pattern:
       description: displays a list of available pattern files
       usage: mesheryctl pattern list
       flags:
-        all:
-          name: --all, -a
+        page:
+          name: --page, -p
+          description: list patterns by specific page number (25 patterns per page)
+        verbose:
+          name: --verbose, -v
           description: show all pattern file metadata
-          usage: mesheryctl pattern list --all
+          usage: mesheryctl pattern list --verbose
+          example: mesheryctl pattern list -v
 
     view:
       name: view
@@ -694,7 +698,34 @@ pattern:
           description: Type of source file (ex. manifest / compose / helm)
           usage: mesheryctl pattern import -f [file/URL] --source-type [manifest/compose/helm]
           example: mesheryctl pattern import -f "bookInfo.yaml" --source-type manifest
+    export:
+      name: export
+      description: Export a design from Meshery
+      usage: mesheryctl pattern export [pattern-name | ID]
+      example: |
+        # Export a design with a specific ID
+        mesheryctl pattern export [pattern-name | ID]
 
+        # Export a design with a specific ID and type
+        mesheryctl pattern export -[pattern-name | ID] --type [design-type]
+
+        # Export a design and save it to a specific directory
+        mesheryctl pattern export -[pattern-name | ID] --output ./designs
+
+        # Export a design with a specific type and save it to a directory
+        mesheryctl pattern export [pattern-name | ID] --type [design-type] --output ./exports
+      flags:
+        type:
+          name: --type
+          description: Specify the design type to export (default current). Supported types are oci,current,original.
+          usage: mesheryctl pattern export --type [design-type]
+          example: mesheryctl pattern export --type oci
+        output:
+          name: --output, -o
+          description: Specify the output directory to save the design
+          usage: mesheryctl pattern export --output [directory-path]
+          example: mesheryctl pattern export --output ./exports
+          
     offboard:
       name: offboard
       description: Offboard application
@@ -876,6 +907,13 @@ model:
         output-format:
           name: -o, --output-format
           description: (optional) format to display in [json|yaml] (default "yaml")
+    import:
+      name: import
+      description: Import models using a file or filepath directly to the meshery registry
+      usage: mesheryctl model import [ file | filepath ]
+      examples:
+         - import model /path/to/[file.yaml|file.json]
+         - import model /path/to/models
 
 components:
   name: components

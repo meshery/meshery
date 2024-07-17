@@ -1679,7 +1679,7 @@ func (l *RemoteProvider) GetMesheryPatterns(tokenString string, page, pageSize, 
 		l.Log.Info("designs successfully retrieved from remote provider")
 		return bdr, nil
 	}
-	err = ErrFetch(err, "designs", resp.StatusCode)
+	err = ErrFetch(fmt.Errorf("unable to fetch designs"), "designs", resp.StatusCode)
 	l.Log.Error(err)
 	return nil, err
 }

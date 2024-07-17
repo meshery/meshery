@@ -1,6 +1,5 @@
 /* eslint-disable react/display-name */
 import {
-  Avatar,
   Box,
   Button,
   Dialog,
@@ -30,7 +29,6 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import dataFetch from '../lib/data-fetch';
 import { toggleCatalogContent, updateProgress } from '../lib/store';
-import DesignConfigurator from '../components/configuratorComponents/MeshModel';
 import { getUnit8ArrayDecodedFile, getUnit8ArrayForDesign } from '../utils/utils';
 import ViewSwitch from './ViewSwitch';
 import MesheryPatternGrid from './MesheryPatterns/MesheryPatternGridView';
@@ -43,7 +41,7 @@ import LoadingScreen from './LoadingComponents/LoadingComponent';
 import { FILE_OPS, MesheryPatternsCatalog, VISIBILITY } from '../utils/Enum';
 import CloneIcon from '../public/static/img/CloneIcon';
 import { useRouter } from 'next/router';
-import Modal from './Modal';
+import { RJSFModalWrapper } from './Modal';
 import downloadContent from '../utils/fileDownloader';
 import ConfigurationSubscription from './graphql/subscriptions/ConfigurationSubscription';
 import Pattern from '../public/static/img/drawer-icons/pattern_svg.js';
@@ -79,6 +77,7 @@ import { DEPLOYMENT_TYPE } from './DesignLifeCycle/common';
 import { useDeployPatternMutation, useUndeployPatternMutation } from '@/rtk-query/design';
 import CheckIcon from '@/assets/icons/CheckIcon';
 import { ValidateDesign } from './DesignLifeCycle/ValidateDesign';
+import PatternConfigureIcon from '@/assets/icons/PatternConfigure';
 
 const genericClickHandler = (ev, fn) => {
   ev.stopPropagation();
@@ -199,14 +198,6 @@ const styles = (theme) => ({
     minWidth: '120px',
     maxWidth: 150,
     marginRight: 'auto',
-  },
-  iconAvatar: {
-    width: '24px',
-    height: '24px',
-    '& .MuiAvatar-img': {
-      height: '100%',
-      width: '100%',
-    },
   },
 });
 
@@ -615,7 +606,14 @@ function MesheryPatterns({
       async (result) => {
         try {
           const { models } = await getMeshModels();
-          const modelNames = _.uniq(models?.map((model) => model.displayName));
+          const modelNames = _.uniqBy(
+            models?.map((model) => {
+              if (model.displayName && model.displayName !== '') {
+                return model.displayName;
+              }
+            }),
+            _.toLower,
+          );
           modelNames.sort();
 
           // Modify the schema using the utility function
@@ -860,7 +858,7 @@ function MesheryPatterns({
       ?.map((model) => model.name);
 
     const payload = {
-      id: publishModal.pattern?.id,
+      id: infoModal.selectedResource?.id,
       catalog_data: {
         ...formData,
         compatibility: compatibilityStore,
@@ -1226,15 +1224,11 @@ function MesheryPatterns({
                   placement={'top'}
                   onClick={(e) => {
                     e.stopPropagation();
-                    setSelectedPattern({ pattern: patterns[tableMeta.rowIndex], show: true });
+                    handleOpenInConfigurator(patterns[tableMeta.rowIndex].id);
                   }}
                   disabled={!CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject)}
                 >
-                  <Avatar
-                    src="/static/img/pattwhite.svg"
-                    className={classes.iconAvatar}
-                    imgProps={{ height: '24px', width: '24px' }}
-                  />
+                  <PatternConfigureIcon />
                 </TooltipIcon>
               )}
 
@@ -1582,13 +1576,6 @@ function MesheryPatterns({
               isReadOnly={arePatternsReadOnly}
             />
           )}
-          {selectedPattern.show && (
-            <DesignConfigurator
-              onSubmit={handleSubmit}
-              show={setSelectedPattern}
-              pattern={selectedPattern.pattern}
-            />
-          )}
           <div className={StyleClass.toolWrapper}>
             {width < 600 && isSearchExpanded ? null : (
               <div style={{ display: 'flex' }}>
@@ -1726,7 +1713,7 @@ function MesheryPatterns({
           )}
 
           <UsesSistent>
-            <SistentModal {...designLifecycleModal}></SistentModal>
+            <SistentModal maxWidth="sm" {...designLifecycleModal}></SistentModal>
             <SistentModal {...sistentInfoModal}>
               {CAN(keys.DETAILS_OF_DESIGN.action, keys.DETAILS_OF_DESIGN.subject) &&
                 infoModal.open && (
@@ -1737,7 +1724,7 @@ function MesheryPatterns({
                     dataName="patterns"
                     selectedResource={infoModal.selectedResource}
                     resourceOwnerID={infoModal.ownerID}
-                    currentUserID={user?.id}
+                    currentUser={user}
                     patternFetcher={fetchPatternsCaller}
                     formSchema={publishSchema}
                     meshModels={meshModels}
@@ -1762,20 +1749,6 @@ function MesheryPatterns({
               handleImportDesign={handleImportDesign}
             />
           )}
-          {infoModal.open && CAN(keys.DETAILS_OF_DESIGN.action, keys.DETAILS_OF_DESIGN.subject) && (
-            <InfoModal
-              infoModalOpen={true}
-              handleInfoModalClose={handleInfoModalClose}
-              dataName="patterns"
-              selectedResource={infoModal.selectedResource}
-              resourceOwnerID={infoModal.ownerID}
-              currentUserID={user?.id}
-              patternFetcher={fetchPatternsCaller}
-              formSchema={publishSchema}
-              meshModels={meshModels}
-              isReadOnly={arePatternsReadOnly}
-            />
-          )}
           <PromptComponent ref={modalRef} />
         </>
       ) : (
@@ -1788,27 +1761,31 @@ function MesheryPatterns({
 const ImportModal = React.memo((props) => {
   const { importFormSchema, handleClose, handleImportDesign } = props;
 
-  const classes = useStyles();
-
   return (
     <>
-      <Modal
-        open={true}
-        schema={importFormSchema.rjsfSchema}
-        uiSchema={importFormSchema.uiSchema}
-        handleClose={handleClose}
-        handleSubmit={handleImportDesign}
-        title="Import Design"
-        submitBtnText="Import"
-        leftHeaderIcon={
-          <Pattern
-            fill="#fff"
-            style={{ height: '24px', width: '24px', fonSize: '1.45rem' }}
-            className={undefined}
+      <UsesSistent>
+        <SistentModal
+          open={true}
+          closeModal={handleClose}
+          headerIcon={
+            <Pattern
+              fill="#fff"
+              style={{ height: '24px', width: '24px', fonSize: '1.45rem' }}
+              className={undefined}
+            />
+          }
+          maxWidth="sm"
+          title="Import Design"
+        >
+          <RJSFModalWrapper
+            schema={importFormSchema.rjsfSchema}
+            uiSchema={importFormSchema.uiSchema}
+            handleSubmit={handleImportDesign}
+            submitBtnText="Import"
+            handleClose={handleClose}
           />
-        }
-        submitBtnIcon={<PublishIcon className={classes.addIcon} data-cy="import-button" />}
-      />
+        </SistentModal>
+      </UsesSistent>
     </>
   );
 });
@@ -1818,21 +1795,31 @@ const PublishModal = React.memo((props) => {
 
   return (
     <>
-      <Modal
-        open={true}
-        schema={publishFormSchema.rjsfSchema}
-        uiSchema={publishFormSchema.uiSchema}
-        handleClose={handleClose}
-        aria-label="catalog publish"
-        title={title}
-        handleSubmit={handleSubmit}
-        showInfoIcon={{
-          text: 'Upon submitting your catalog item, an approval flow will be initiated.',
-          link: 'https://docs.meshery.io/concepts/catalog',
-        }}
-        submitBtnText="Submit for Approval"
-        submitBtnIcon={<PublicIcon />}
-      />
+      <UsesSistent>
+        <SistentModal
+          open={true}
+          closeModal={handleClose}
+          aria-label="catalog publish"
+          title={title}
+          headerIcon={
+            <Pattern
+              fill="#fff"
+              style={{ height: '24px', width: '24px', fonSize: '1.45rem' }}
+              className={undefined}
+            />
+          }
+          maxWidth="sm"
+        >
+          <RJSFModalWrapper
+            schema={publishFormSchema.rjsfSchema}
+            uiSchema={publishFormSchema.uiSchema}
+            handleSubmit={handleSubmit}
+            submitBtnText="Submit for Approval"
+            handleClose={handleClose}
+            helpText="Upon submitting your catalog item, an approval flow will be initiated.[Learn more](https://docs.meshery.io/concepts/catalog)"
+          />
+        </SistentModal>
+      </UsesSistent>
     </>
   );
 });
