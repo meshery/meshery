@@ -1,6 +1,5 @@
 /* eslint-disable react/display-name */
 import {
-  Avatar,
   Box,
   Button,
   Dialog,
@@ -30,7 +29,6 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import dataFetch from '../lib/data-fetch';
 import { toggleCatalogContent, updateProgress } from '../lib/store';
-import DesignConfigurator from '../components/configuratorComponents/MeshModel';
 import { getUnit8ArrayDecodedFile, getUnit8ArrayForDesign } from '../utils/utils';
 import ViewSwitch from './ViewSwitch';
 import MesheryPatternGrid from './MesheryPatterns/MesheryPatternGridView';
@@ -79,6 +77,7 @@ import { DEPLOYMENT_TYPE } from './DesignLifeCycle/common';
 import { useDeployPatternMutation, useUndeployPatternMutation } from '@/rtk-query/design';
 import CheckIcon from '@/assets/icons/CheckIcon';
 import { ValidateDesign } from './DesignLifeCycle/ValidateDesign';
+import PatternConfigureIcon from '@/assets/icons/PatternConfigure';
 
 const genericClickHandler = (ev, fn) => {
   ev.stopPropagation();
@@ -199,14 +198,6 @@ const styles = (theme) => ({
     minWidth: '120px',
     maxWidth: 150,
     marginRight: 'auto',
-  },
-  iconAvatar: {
-    width: '24px',
-    height: '24px',
-    '& .MuiAvatar-img': {
-      height: '100%',
-      width: '100%',
-    },
   },
 });
 
@@ -1234,15 +1225,11 @@ function MesheryPatterns({
                   placement={'top'}
                   onClick={(e) => {
                     e.stopPropagation();
-                    setSelectedPattern({ pattern: patterns[tableMeta.rowIndex], show: true });
+                    handleOpenInConfigurator(patterns[tableMeta.rowIndex].id);
                   }}
                   disabled={!CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject)}
                 >
-                  <Avatar
-                    src="/static/img/pattwhite.svg"
-                    className={classes.iconAvatar}
-                    imgProps={{ height: '24px', width: '24px' }}
-                  />
+                  <PatternConfigureIcon />
                 </TooltipIcon>
               )}
 
@@ -1588,13 +1575,6 @@ function MesheryPatterns({
               onClose={resetSelectedRowData()}
               onSubmit={handleSubmit}
               isReadOnly={arePatternsReadOnly}
-            />
-          )}
-          {selectedPattern.show && (
-            <DesignConfigurator
-              onSubmit={handleSubmit}
-              show={setSelectedPattern}
-              pattern={selectedPattern.pattern}
             />
           )}
           <div className={StyleClass.toolWrapper}>

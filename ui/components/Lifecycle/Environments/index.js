@@ -591,6 +591,7 @@ const Environments = ({ organization, classes }) => {
               closeModal={handleonAssignConnectionModalClose}
               title={`${connectionAssignEnv.name} Resources`}
               headerIcon={<EnvironmentIcon height="2rem" width="2rem" fill="white" />}
+              maxWidth="md"
             >
               <ModalBody>
                 <TransferList
