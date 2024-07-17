@@ -359,7 +359,7 @@ func (h *Handler) handlePatternPOST(
 			}
 
 			var pattern pCore.Pattern
-			err = yaml.Unmarshal(bytPattern, &pattern)
+			err = yaml.Unmarshal([]byte(mesheryPattern.PatternFile), &pattern)
 			if err != nil {
 				h.log.Error(utils.ErrDecodeYaml(err))
 				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
@@ -1347,6 +1347,9 @@ func (h *Handler) DownloadMesheryPatternHandler(
 		event = eventBuilder.Build()
 		go h.config.EventBroadcaster.Publish(userID, event)
 		_ = provider.PersistEvent(event)
+
+		rw.Header().Set("Content-Type", "application/tar")
+		rw.Header().Add("Content-Disposition", fmt.Sprintf("attachment;filename=%s.tar", pattern.Name))
 
 		reader := bytes.NewReader(content)
 		if _, err := io.Copy(rw, reader); err != nil {
