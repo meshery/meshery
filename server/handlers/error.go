@@ -234,7 +234,7 @@ func ErrExecutionPlan(err error) error {
 }
 
 func ErrPatternDeploy(err error, patternName string) error {
-	return errors.New(ErrPatternDeployCode, errors.Alert, []string{"Unable to deploy the selected design \"%s\"", patternName}, []string{err.Error()}, []string{"Connection Error: There was an error connecting to the current k8s connection", "The available connection might not be assigned to the selected environment"}, []string{"Verify that the Kubernetes connection status is 'Connected' or try uploading a new kubeconfig", "Assign the current Kubernetes connection to the selected environment"})
+	return errors.New(ErrPatternDeployCode, errors.Alert, []string{"Unable to deploy the selected design \"%s\"", patternName}, []string{err.Error()}, []string{"Connection Error: There was an error connecting to the current k8s connection.", "The available connection might not be assigned to the selected environment."}, []string{"Verify that the Kubernetes connection status is 'Connected' or try uploading a new kubeconfig.", "Assign the current Kubernetes connection to the selected environment."})
 }
 
 func ErrRequestBody(err error) error {
