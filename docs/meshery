@@ -182,7 +182,7 @@ else
   fi
 fi
 
-#Transfering permissions and ownership to client USER
+#Transferring permissions and ownership to client USER
 if [ "$SUDO_USER" == "" ] ;
 then
   if chown $WHOAMI $install_dir/mesheryctl ; then

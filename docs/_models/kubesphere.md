@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Kubesphere
-subtitle: Collaborative and visual infrastructure as code for Kubesphere
+subtitle: Collaborative and visual infrastructure as design for Kubesphere
 image: /assets/img/integrations/kubesphere/icons/color/kubesphere-color.svg
 permalink: extensibility/integrations/kubesphere
 docURL: https://docs.meshery.io/installation/kubernetes/kubesphere

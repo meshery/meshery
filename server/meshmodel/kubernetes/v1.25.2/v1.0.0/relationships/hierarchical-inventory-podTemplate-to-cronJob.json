@@ -6,7 +6,7 @@
     "description": "A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component."
   },
   "model": {
-    "schemaVersion": "core.meshery.io/v1beta1",
+    "schemaVersion": "models.meshery.io/v1beta1",
     "version": "v1.0.0",
     "name": "kubernetes",
     "model": {
@@ -64,4 +64,6 @@
           "to": []
         }
       }
-    }]}
+    }
+  ]
+}

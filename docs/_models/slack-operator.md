@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Slack Operator
-subtitle: Collaborative and visual infrastructure as code for Slack Operator
+subtitle: Collaborative and visual infrastructure as design for Slack Operator
 image: /assets/img/integrations/slack-operator/icons/color/slack-operator-color.svg
 permalink: extensibility/integrations/slack-operator
 docURL: https://docs.meshery.io/extensibility/integrations/slack-operator

@@ -67,6 +67,7 @@ export default function ConnectionStatsChart({ classes }) {
           <div onClick={(e) => e.stopPropagation()}>
             <CustomTextTooltip
               interactive={true}
+              variant="standard"
               title={`Meshery Connections are managed and unmanaged resources that either through discovery or manual entry can be assigned to one or more Environments. [Learn More](https://docs.meshery.io/concepts/logical/connections)`}
               placement="left"
             >

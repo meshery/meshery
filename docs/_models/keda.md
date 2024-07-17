@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Keda
-subtitle: Collaborative and visual infrastructure as code for Keda
+subtitle: Collaborative and visual infrastructure as design for Keda
 image: /assets/img/integrations/keda/icons/color/keda-color.svg
 permalink: extensibility/integrations/keda
 docURL: https://docs.meshery.io/extensibility/integrations/keda

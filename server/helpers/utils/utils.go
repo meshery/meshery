@@ -360,3 +360,11 @@ func FormatToTitleCase(s string) string {
 	c := cases.Title(language.English)
 	return c.String(s)
 }
+func ExtractFile(filePath string, destDir string) error {
+	if utils.IsTarGz(filePath) {
+		return utils.ExtractTarGz(destDir, filePath)
+	} else if utils.IsZip(filePath) {
+		return utils.ExtractZip(destDir, filePath)
+	}
+	return utils.ErrExtractType
+}

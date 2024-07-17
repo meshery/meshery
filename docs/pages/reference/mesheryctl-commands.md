@@ -523,7 +523,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters
   </tr>
   {% assign command7 = site.data.mesheryctlcommands.cmds.pattern %}
     <tr>
-      <td rowspan=19><a href="{{ site.baseurl }}/reference/mesheryctl/pattern">{{ command7.name }}</a></td>
+      <td rowspan=22><a href="{{ site.baseurl }}/reference/mesheryctl/pattern">{{ command7.name }}</a></td>
       <td></td>
       <td></td>
       <td>{{ command7.description }}</td>
@@ -554,7 +554,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters
       {% endfor %}
     {% assign subcommand3 = command7.subcommands.list %}
       <tr>
-        <td rowspan=2><a href="{{ site.baseurl }}/reference/mesheryctl/pattern/list">{{ subcommand3.name }}</a></td>
+        <td rowspan=3><a href="{{ site.baseurl }}/reference/mesheryctl/pattern/list">{{ subcommand3.name }}</a></td>
         <td></td>
         <td>{{ subcommand3.description }}</td>
       </tr>
@@ -591,6 +591,18 @@ Installation, troubleshooting and debugging of Meshery and its adapters
     {% assign subcommand6 = command7.subcommands.onboard %}
       <tr>
         <td rowspan=4><a href="{{ site.baseurl }}/reference/mesheryctl/pattern/onboard">{{ subcommand6.name }}</a></td>
+        <td></td>
+        <td>{{ subcommand6.description }}</td>
+      </tr>
+      {% for flag_hash in subcommand6.flags %}{% assign flag = flag_hash[1] %}
+        <tr>
+          <td>{{ flag.name }}</td>
+          <td>{{ flag.description }}</td>
+        </tr>
+      {% endfor %}
+      {% assign subcommand6 = command7.subcommands.export %}
+      <tr>
+        <td rowspan=3><a href="{{ site.baseurl }}/reference/mesheryctl/pattern/export">{{ subcommand6.name }}</a></td>
         <td></td>
         <td>{{ subcommand6.description }}</td>
       </tr>
@@ -757,7 +769,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters
   </tr>
   {% assign command12 = site.data.mesheryctlcommands.cmds.model %}
     <tr>
-      <td rowspan=8><a href="{{ site.baseurl }}/reference/mesheryctl/{{ command12.name }}">{{ command12.name }}</a></td>
+      <td rowspan=9><a href="{{ site.baseurl }}/reference/mesheryctl/{{ command12.name }}">{{ command12.name }}</a></td>
       <td></td>
       <td></td>
       <td>{{ command12.description }}</td>

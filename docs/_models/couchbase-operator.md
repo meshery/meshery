@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Couchbase Operator
-subtitle: Collaborative and visual infrastructure as code for Couchbase Operator
+subtitle: Collaborative and visual infrastructure as design for Couchbase Operator
 image: /assets/img/integrations/couchbase-operator/icons/color/couchbase-operator-color.svg
 permalink: extensibility/integrations/couchbase-operator
 docURL: https://docs.meshery.io/extensibility/integrations/couchbase-operator
