@@ -1,0 +1,66 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Volume Snapshot Location",
+  "description": "",
+  "format": "JSON",
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "version": "v1.0.0",
+   "name": "vmware-tanzu",
+   "displayName": "Vmware Tanzu",
+   "description": "",
+   "status": "ignored",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "registrant": {
+    "hostname": "artifacthub"
+   },
+   "category": {
+    "name": "Uncategorized",
+    "metadata": null
+   },
+   "subCategory": "Uncategorized",
+   "metadata": {
+    "capabilities": "",
+    "defaultData": "",
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "model": {
+    "version": "7.1.1"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "status": "ignored",
+   "styleOverrides": "",
+   "styles": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "component": {
+   "kind": "VolumeSnapshotLocation",
+   "version": "velero.io/v1",
+   "schema": "{\n \"description\": \"VolumeSnapshotLocation is a location where Velero stores volume snapshots.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"VolumeSnapshotLocationSpec defines the specification for a Velero VolumeSnapshotLocation.\",\n   \"properties\": {\n    \"config\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"Config is for provider-specific configuration fields.\",\n     \"type\": \"object\"\n    },\n    \"credential\": {\n     \"description\": \"Credential contains the credential information intended to be used with this location\",\n     \"properties\": {\n      \"key\": {\n       \"description\": \"The key of the secret to select from.  Must be a valid secret key.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\\nTODO: Add other useful fields. apiVersion, kind, uid?\",\n       \"type\": \"string\"\n      },\n      \"optional\": {\n       \"description\": \"Specify whether the Secret or its key must be defined\",\n       \"type\": \"boolean\"\n      }\n     },\n     \"required\": [\n      \"key\"\n     ],\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    },\n    \"provider\": {\n     \"description\": \"Provider is the provider of the volume storage.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"provider\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Volume Snapshot Location\",\n \"type\": \"object\"\n}"
+  }
+ }
