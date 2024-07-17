@@ -25,7 +25,7 @@ import AddIcon from '@material-ui/icons/AddCircleOutline';
 import React, { useEffect, useRef, useState } from 'react';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
 import Moment from 'react-moment';
-import { connect } from 'react-redux';
+import { Provider, connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import dataFetch from '../lib/data-fetch';
 import { toggleCatalogContent, updateProgress } from '../lib/store';
@@ -37,7 +37,7 @@ import DoneAllIcon from '@material-ui/icons/DoneAll';
 import PublicIcon from '@material-ui/icons/Public';
 import PublishIcon from '@material-ui/icons/Publish';
 import PromptComponent, { PROMPT_VARIANTS } from './PromptComponent';
-import LoadingScreen from './LoadingComponents/LoadingComponent';
+// import LoadingScreen from './LoadingComponents/LoadingComponent';
 import { FILE_OPS, MesheryPatternsCatalog, VISIBILITY } from '../utils/Enum';
 import CloneIcon from '../public/static/img/CloneIcon';
 import { useRouter } from 'next/router';
@@ -74,10 +74,17 @@ import { designValidationMachine } from 'machines/validator/designValidator';
 import { UnDeployStepper, DeployStepper } from './DesignLifeCycle/DeployStepper';
 import { DryRunDesign } from './DesignLifeCycle/DryRun';
 import { DEPLOYMENT_TYPE } from './DesignLifeCycle/common';
-import { useDeployPatternMutation, useUndeployPatternMutation } from '@/rtk-query/design';
+import {
+  useDeployPatternMutation,
+  useGetPatternsQuery,
+  useUndeployPatternMutation,
+} from '@/rtk-query/design';
 import CheckIcon from '@/assets/icons/CheckIcon';
 import { ValidateDesign } from './DesignLifeCycle/ValidateDesign';
 import PatternConfigureIcon from '@/assets/icons/PatternConfigure';
+// import { useGetUserPrefQuery } from '@/rtk-query/user';
+import { store } from '../store';
+import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
 
 const genericClickHandler = (ev, fn) => {
   ev.stopPropagation();
@@ -342,7 +349,6 @@ function MesheryPatterns({
   const [patterns, setPatterns] = useState([]);
   const [selectedRowData, setSelectedRowData] = useState(null);
   const [selectedPattern, setSelectedPattern] = useState(resetSelectedPattern());
-  const [setExtensionPreferences] = useState({});
   const router = useRouter();
   const [importSchema, setImportSchema] = useState({});
   const [meshModels, setMeshModels] = useState([]);
@@ -366,6 +372,28 @@ function MesheryPatterns({
 
   const [deployPatternMutation] = useDeployPatternMutation();
   const [undeployPatternMutation] = useUndeployPatternMutation();
+  const { data: patternsData } = useGetPatternsQuery({
+    page: page,
+    pagesize: pageSize,
+    search: search,
+    order: sortOrder,
+    visibility: JSON.stringify([visibilityFilter]),
+  });
+
+  useEffect(() => {
+    if (patternsData) {
+      const filteredPatterns = patternsData.patterns.filter((content) => {
+        if (visibilityFilter === null || content.visibility === visibilityFilter) {
+          return true;
+        }
+        return false;
+      });
+      setCount(patternsData.total_count || 0);
+      handleSetPatterns(filteredPatterns);
+      setVisibilityFilter(visibilityFilter);
+      setPatterns(patternsData.patterns || []);
+    }
+  }, [patternsData]);
 
   const [importModal, setImportModal] = useState({
     open: false,
@@ -426,7 +454,7 @@ function MesheryPatterns({
     }));
   };
 
-  const [loading, stillLoading] = useState(true);
+  // const [loading, stillLoading] = useState(true);
   const { width } = useWindowDimensions();
 
   const catalogVisibilityRef = useRef(false);
@@ -480,24 +508,16 @@ function MesheryPatterns({
    * Checking whether users are signed in under a provider that doesn't have
    * publish pattern capability and setting the canPublishPattern state accordingly
    */
+  const { data: capabilitiesData } = useGetProviderCapabilitiesQuery();
+
   useEffect(() => {
-    dataFetch(
-      '/api/provider/capabilities',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      (result) => {
-        if (result) {
-          const capabilitiesRegistry = result;
-          const patternsCatalogueCapability = capabilitiesRegistry?.capabilities.filter(
-            (val) => val.feature === MesheryPatternsCatalog,
-          );
-          if (patternsCatalogueCapability?.length > 0) setCanPublishPattern(true);
-        }
-      },
-      (err) => console.error(err),
-    );
+    if (capabilitiesData) {
+      const capabilitiesRegistry = capabilitiesData;
+      const patternsCatalogueCapability = capabilitiesRegistry?.capabilities.filter(
+        (val) => val.feature === MesheryPatternsCatalog,
+      );
+      if (patternsCatalogueCapability?.length > 0) setCanPublishPattern(true);
+    }
   }, []);
 
   const searchTimeout = useRef(null);
@@ -507,33 +527,14 @@ function MesheryPatterns({
   // @ts-ignore
   useEffect(() => {
     document.body.style.overflowX = 'hidden';
-    const visibilityFilter =
-      selectedFilters.visibility === 'All' ? null : selectedFilters.visibility;
-    fetchPatterns(page, pageSize, search, sortOrder, visibilityFilter);
     return () => (document.body.style.overflowX = 'auto');
-  }, [page, pageSize, search, sortOrder, visibilityFilter]);
+  }, []);
 
   useEffect(() => {
     if (viewType === 'grid') {
       setSearch('');
     }
   }, [viewType]);
-
-  const fetchUserPrefs = () => {
-    dataFetch(
-      '/api/user/prefs',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      (result) => {
-        if (result) {
-          setExtensionPreferences(result?.usersExtensionPreferences);
-        }
-      },
-      (err) => console.error(err),
-    );
-  };
 
   const initPatternsSubscription = (
     pageNo = page.toString(),
@@ -546,7 +547,7 @@ function MesheryPatterns({
     }
     const configurationSubscription = ConfigurationSubscription(
       (result) => {
-        stillLoading(false);
+        // stillLoading(false);
         setPage(result.configuration?.patterns?.page || 0);
         setPageSize(result.configuration?.patterns?.page_size || 0);
         setCount(result.configuration?.patterns?.total_count || 0);
@@ -581,10 +582,6 @@ function MesheryPatterns({
   //   catalogVisibilityRef.current = !catalogVisibility;
   //   toggleCatalogContent({ catalogVisibility: !catalogVisibility });
   // };
-
-  useEffect(() => {
-    fetchUserPrefs();
-  }, [catalogVisibility]);
 
   useEffect(() => {
     dataFetch(
@@ -677,13 +674,6 @@ function MesheryPatterns({
 
     setPatterns(patterns?.filter((content) => content.visibility !== VISIBILITY.PUBLISHED) || []);
   };
-
-  // useEffect(() => {
-  //   setPage(0);
-  //   setPageSize(10);
-  //   setCount(0);
-  //   fetchPatterns(0, 10, search, sortOrder,visibilityFilter);
-  // }, [viewType]);
 
   const openDeployModal = (e, pattern_file, name, pattern_id) => {
     e.stopPropagation();
@@ -909,48 +899,10 @@ function MesheryPatterns({
     );
   }
 
-  function fetchPatterns(page, pageSize, search, sortOrder, visibilityFilter) {
-    if (!search) search = '';
-    if (!sortOrder) sortOrder = '';
-    const query =
-      `?page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(
-        search,
-      )}&order=${encodeURIComponent(sortOrder)}` +
-      (visibilityFilter
-        ? `&visibility=${encodeURIComponent(JSON.stringify([visibilityFilter]))}`
-        : '');
-
-    updateProgress({ showProgress: true });
-    dataFetch(
-      `/api/pattern${query}`,
-      { credentials: 'include' },
-      (result) => {
-        console.log('PatternFile API', `/api/pattern${query}`);
-        updateProgress({ showProgress: false });
-        stillLoading(false);
-        if (result) {
-          const filteredPatterns = result.patterns.filter((content) => {
-            if (visibilityFilter === null || content.visibility === visibilityFilter) {
-              return true;
-            }
-            return false;
-          });
-          // setPage(result.page || 0);
-          // setPageSize(result.page_size || 0);
-          setCount(result.total_count || 0);
-          handleSetPatterns(filteredPatterns);
-          setVisibilityFilter(visibilityFilter);
-          setPatterns(result.patterns || []);
-        }
-      },
-      handleError(ACTION_TYPES.FETCH_PATTERNS),
-    );
-  }
-
   // this function returns fetchPattern function with latest values so that it can be used in child components
-  function fetchPatternsCaller() {
-    return () => fetchPatterns(page, pageSize, search, sortOrder, visibilityFilter);
-  }
+  // function fetchPatternsCaller() {
+  //   return () => fetchPatterns(page, pageSize, search, sortOrder, visibilityFilter);
+  // }
 
   const handleError = (action) => (error) => {
     updateProgress({ showProgress: false });
@@ -1447,13 +1399,6 @@ function MesheryPatterns({
           }
           searchTimeout.current = setTimeout(() => {
             if (search !== tableState.searchText) {
-              fetchPatterns(
-                page,
-                pageSize,
-                tableState.searchText !== null ? tableState.searchText : '',
-                sortOrder,
-                visibilityFilter,
-              );
               setSearch(tableState.searchText);
             }
           }, 500);
@@ -1485,9 +1430,9 @@ function MesheryPatterns({
     },
   };
 
-  if (loading) {
-    return <LoadingScreen animatedIcon="AnimatedMeshPattern" message={`Loading ${pageTitle}...`} />;
-  }
+  // if (loading) {
+  //   return <LoadingScreen animatedIcon="AnimatedMeshPattern" message={`Loading ${pageTitle}...`} />;
+  // }
 
   /**
    * Gets the data of Import Filter and handles submit operation
@@ -1535,7 +1480,7 @@ function MesheryPatterns({
           message: `"${name}" design uploaded`,
           event_type: EVENT_TYPES.SUCCESS,
         });
-        fetchPatternsCaller()();
+        // fetchPatternsCaller()();
       },
       handleError(ACTION_TYPES.UPLOAD_PATTERN),
     );
@@ -1561,7 +1506,7 @@ function MesheryPatterns({
   const handleApplyFilter = () => {
     const visibilityFilter =
       selectedFilters.visibility === 'All' ? null : selectedFilters.visibility;
-    fetchPatterns(page, pageSize, search, sortOrder, visibilityFilter);
+    setVisibilityFilter(visibilityFilter);
   };
 
   return (
@@ -1701,7 +1646,7 @@ function MesheryPatterns({
               setPublishModal={setPublishModal}
               publishSchema={publishSchema}
               user={user}
-              fetch={() => fetchPatterns(page, pageSize, search, sortOrder, visibilityFilter)}
+              // fetch={() => fetchPatterns(page, pageSize, search, sortOrder, visibilityFilter)}
               handleInfoModal={handleInfoModal}
               openUndeployModal={openUndeployModal}
               openValidationModal={openValidateModal}
@@ -1725,7 +1670,7 @@ function MesheryPatterns({
                     selectedResource={infoModal.selectedResource}
                     resourceOwnerID={infoModal.ownerID}
                     currentUser={user}
-                    patternFetcher={fetchPatternsCaller}
+                    patternFetcher={''}
                     formSchema={publishSchema}
                     meshModels={meshModels}
                   />
@@ -1824,6 +1769,14 @@ const PublishModal = React.memo((props) => {
   );
 });
 
+const MesheryPatternsProvider = (props) => {
+  return (
+    <Provider store={store}>
+      <MesheryPatterns {...props} />
+    </Provider>
+  );
+};
+
 const mapDispatchToProps = (dispatch) => ({
   updateProgress: bindActionCreators(updateProgress, dispatch),
   toggleCatalogContent: bindActionCreators(toggleCatalogContent, dispatch),
@@ -1836,4 +1789,6 @@ const mapStateToProps = (state) => ({
 });
 
 // @ts-ignore
-export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(MesheryPatterns));
+export default withStyles(styles)(
+  connect(mapStateToProps, mapDispatchToProps)(MesheryPatternsProvider),
+);

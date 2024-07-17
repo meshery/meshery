@@ -5,7 +5,7 @@ import { bindActionCreators } from 'redux';
 import Head from 'next/head';
 import { getPath } from '../../lib/path';
 import { updatepagepath } from '../../lib/store';
-import MesheryPatterns from '@/components/MesheryPatterns';
+import MesheryPatternsProvider from '@/components/MesheryPatterns';
 import { VISIBILITY } from '../../utils/Enum';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
@@ -30,7 +30,7 @@ function CatalogPage(props) {
         <title>Catalog | Meshery</title>
       </Head>
       {CAN(keys.VIEW_CATALOG.action, keys.VIEW_CATALOG.subject) || false ? (
-        <MesheryPatterns
+        <MesheryPatternsProvider
           disableCreateImportDesignButton={true}
           disableUniversalFilter={true}
           initialFilters={{ visibility: VISIBILITY.PUBLISHED }}

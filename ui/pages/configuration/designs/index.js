@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { NoSsr, withStyles } from '@material-ui/core';
-import MesheryPatterns from '../../../components/MesheryPatterns';
+import MesheryPatternsProvider from '../../../components/MesheryPatterns';
 import { updatepagepath } from '../../../lib/store';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -25,7 +25,7 @@ function Patterns({ updatepagepath }) {
       <Head>
         <title>Designs | Meshery</title>
       </Head>
-      <MesheryPatterns />
+      <MesheryPatternsProvider />
     </NoSsr>
   );
 }
