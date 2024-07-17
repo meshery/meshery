@@ -133,13 +133,25 @@ const MesheryTreeViewItem = ({
   selected,
   expanded,
 }) => {
+  const imgSrc = modelDef?.metadata?.svgColor;
   return (
     <StyledTreeItem
       key={modelDef.id}
       nodeId={`${registrantID ? `${registrantID}.1.` : ''}${modelDef.id}`}
       data-id={`${registrantID ? `${registrantID}.1.` : ''}${modelDef.id}`}
       top
-      labelText={modelDef.displayName}
+      labelText={
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '1rem',
+          }}
+        >
+          {imgSrc ? <img src={imgSrc} style={{ height: '1.5rem', width: '1.5rem' }} /> : null}
+          <span>{modelDef.displayName}</span>
+        </div>
+      }
       onClick={() => {
         setShowDetailsData({
           type: MODELS,

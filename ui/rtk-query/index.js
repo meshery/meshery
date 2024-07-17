@@ -9,9 +9,11 @@ import {
 const createApi = buildCreateApi(
   coreModule(),
   reactHooksModule({
-    useSelector: useSelectorRtk,
-    useDispatch: useDispatchRtk,
-    useStore: useStoreRtk,
+    hooks: {
+      useSelector: useSelectorRtk,
+      useDispatch: useDispatchRtk,
+      useStore: useStoreRtk,
+    },
   }),
 );
 export const api = createApi({

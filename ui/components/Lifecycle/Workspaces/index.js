@@ -717,6 +717,7 @@ const Workspaces = ({ classes }) => {
               closeModal={handleAssignEnvironmentModalClose}
               title={`Assign Environments to ${environmentAssignWorkspace.name}`}
               headerIcon={<EnvironmentIcon height="2rem" width="2rem" fill="white" />}
+              maxWidth="md"
             >
               <ModalBody>
                 <TransferList
@@ -776,6 +777,7 @@ const Workspaces = ({ classes }) => {
               closeModal={handleAssignDesignModalClose}
               title={`Assign Designs to ${designAssignWorkspace.name}`}
               headerIcon={<DesignsIcon height="2rem" width="2rem" fill="#ffffff" />}
+              maxWidth="md"
             >
               <ModalBody>
                 <TransferList

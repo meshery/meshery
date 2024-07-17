@@ -19,6 +19,7 @@ import (
 	"fmt"
 	"io"
 	"net/url"
+	"strings"
 
 	"github.com/ghodss/yaml"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
@@ -34,18 +35,18 @@ var (
 )
 
 var viewCmd = &cobra.Command{
-	Use:   "view [filter-name | ID]",
+	Use:   "view",
 	Short: "View filter(s)",
 	Long:  `Displays the contents of a specific filter based on name or id`,
 	Example: `
 // View the specified WASM filter
 // A unique prefix of the name or ID can also be provided. If the prefix is not unique, the first match will be returned.
-mesheryctl filter view [filter-name | ID]	
+mesheryctl filter view "[filter-name | ID]"
 
 // View all filter files
 mesheryctl filter view --all
-	`,
-	Args: cobra.MaximumNArgs(1),
+        `,
+	Args: cobra.ArbitraryArgs,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
@@ -54,12 +55,27 @@ mesheryctl filter view --all
 
 		filter := ""
 		isID := false
+		var filterArg string
 		// if filter name/id available
 		if len(args) > 0 {
 			if viewAllFlag {
 				return errors.New(utils.FilterViewError("--all cannot be used when filter name or ID is specified\nUse 'mesheryctl filter view --help' to display usage guide\n"))
 			}
-			filter, isID, err = utils.ValidId(mctlCfg.GetBaseMesheryURL(), args[0], "filter")
+			fullArg := strings.Join(args, " ")
+
+			// Check if the argument starts and ends with double quotes
+			if strings.HasPrefix(fullArg, "\"") && strings.HasSuffix(fullArg, "\"") {
+				// Remove the quotes and use the entire content
+				filterArg = strings.Trim(fullArg, "\"")
+			} else if len(args) == 1 {
+				// If it's a single word without quotes, use it as is
+				filterArg = args[0]
+			} else {
+				// If multiple words without quotes, return an error
+				return errors.New(utils.FilterViewError("multi-word filter names must be enclosed in double quotes\nUse 'mesheryctl filter view --help' to display usage guide\n"))
+			}
+
+			filter, isID, err = utils.ValidId(mctlCfg.GetBaseMesheryURL(), filterArg, "filter")
 			if err != nil {
 				utils.Log.Error(ErrFilterNameOrID(err))
 				return nil
