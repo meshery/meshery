@@ -77,7 +77,7 @@ export default function Provider() {
 
   useEffect(() => {
     loadProvidersFromServer();
-  }, []);
+  }, [selectedProvider]);
 
   function loadProvidersFromServer() {
     dataFetch(
