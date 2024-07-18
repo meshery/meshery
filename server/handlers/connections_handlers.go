@@ -605,3 +605,34 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 	h.log.Info("connection deleted.")
 	w.WriteHeader(http.StatusOK)
 }
+
+// swagger:route GET /api/integrations/connections/{id} GetConnectionByID idGetConnectionByID
+// Handle GET request for getting a connection by connection ID
+//
+//```{id}``` The ID of the connection to retrieve
+// responses:
+// 200: mesheryConnectionResponseWrapper
+func (h *Handler) GetConnectionById(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+	id := mux.Vars(req)["connectionId"]
+
+	connectionID, err:= uuid.FromString(id)
+	if err != nil {
+		h.log.Error(ErrInvalidUUID(err))
+		http.Error(w, ErrInvalidUUID(err).Error(), http.StatusBadRequest)
+		return
+	}
+
+	token, _ := req.Context().Value(models.TokenCtxKey).(string)
+	connection, status, err := provider.GetConnectionByID(token, connectionID)
+	if err != nil {
+		h.log.Error(ErrGetResult(err))
+		http.Error(w, ErrGetResult(err).Error(), status)
+		return
+	}
+
+	if err := json.NewEncoder(w).Encode(connection); err != nil {
+		h.log.Error(models.ErrEncoding(err, "connection"))
+		http.Error(w, models.ErrEncoding(err, "connection").Error(), http.StatusInternalServerError)
+		return
+	}
+}
