@@ -20,6 +20,12 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { Colors } from '../../themes/app';
 import { JustifyAndAlignCenter } from './MeshModel.style';
 import { styled } from '@mui/styles';
+import {
+  useLazyGetComponentsFromModalQuery,
+  useLazyGetRelationshipsFromModalQuery,
+} from '@/rtk-query/meshModel';
+import { useNotification } from '@/utils/hooks/useNotification';
+import { EVENT_TYPES } from 'lib/event-types';
 
 const ComponentTree = ({
   expanded,
@@ -133,6 +139,50 @@ const MesheryTreeViewItem = ({
   selected,
   expanded,
 }) => {
+  const { notify } = useNotification();
+
+  const [
+    getComponentsTrigger,
+    {
+      data: componentsData,
+      isLoading: isComponentsLoading,
+      isUninitialized: isComponentsUninitialized,
+      isError: isComponentsErr,
+      error: componentsErr,
+    },
+  ] = useLazyGetComponentsFromModalQuery();
+  const [
+    getRelationshipsTrigger,
+    {
+      data: relationshipsData,
+      isLoading: isRelationshipsLoading,
+      isUninitialized: isRelationshipsUnintilialized,
+      isError: isRelationShipsErr,
+      error: relationShipsErr,
+    },
+  ] = useLazyGetRelationshipsFromModalQuery();
+
+  useEffect(() => {
+    if (relationShipsErr) {
+      notify({
+        message: `There was an error fetching model data: ${relationShipsErr?.data}`,
+        event_type: EVENT_TYPES.ERROR,
+      });
+    }
+    if (componentsErr) {
+      notify({
+        message: `There was an error fetching model data: ${componentsErr?.data}`,
+        event_type: EVENT_TYPES.ERROR,
+      });
+    }
+  }, [isRelationShipsErr, isComponentsErr, relationShipsErr, componentsErr, notify]);
+
+  const loading =
+    isComponentsLoading ||
+    isRelationshipsLoading ||
+    isComponentsUninitialized ||
+    isRelationshipsUnintilialized;
+
   const imgSrc = modelDef?.metadata?.svgColor;
   return (
     <StyledTreeItem
@@ -176,69 +226,92 @@ const MesheryTreeViewItem = ({
             }
             check={true}
             onClick={() => {
+              //Lazy fetch on click
+              getComponentsTrigger(
+                {
+                  model: versionedModelDef.name,
+                  params: { version: versionedModelDef.model.version },
+                },
+                true,
+              );
+              getRelationshipsTrigger(
+                {
+                  model: versionedModelDef.name,
+                  params: { version: versionedModelDef.model.version },
+                },
+                true,
+              );
+
               setShowDetailsData({
                 type: MODELS,
                 data: versionedModelDef,
               });
             }}
           >
-            <StyledTreeItem
-              nodeId={`${registrantID ? `${registrantID}.1.` : ''}${modelDef.id}.${
-                versionedModelDef.id
-              }.1`}
-              data-id={`${registrantID ? `${registrantID}.1.` : ''}${modelDef.id}.${
-                versionedModelDef.id
-              }.1`}
-              labelText={`Components (${
-                versionedModelDef.components ? versionedModelDef.components.length : 0
-              })`}
-            >
-              {versionedModelDef.components &&
-                versionedModelDef.components.map((component, subIndex) => {
-                  return (
-                    <StyledTreeItem
-                      key={subIndex}
-                      nodeId={`${registrantID ? `${registrantID}.1.` : ''}${modelDef.id}.${
-                        versionedModelDef.id
-                      }.1.${component.id}`}
-                      data-id={`${registrantID ? `${registrantID}.1.` : ''}${modelDef.id}.${
-                        versionedModelDef.id
-                      }.1.${component.id}`}
-                      labelText={component.displayName}
-                      onClick={() => {
-                        setShowDetailsData({
-                          type: COMPONENTS,
-                          data: component,
-                        });
-                      }}
-                    />
-                  );
-                })}
-            </StyledTreeItem>
-            <StyledTreeItem
-              nodeId={`${registrantID ? `${registrantID}.1.` : ''}${modelDef.id}.${
-                versionedModelDef.id
-              }.2`}
-              data-id={`${registrantID ? `${registrantID}.1.` : ''}${modelDef.id}.${
-                versionedModelDef.id
-              }.2`}
-              labelText={`Relationships (${
-                versionedModelDef.relationships ? versionedModelDef.relationships.length : 0
-              })`}
-            >
-              <RelationshipTree
-                handleToggle={handleToggle}
-                handleSelect={handleSelect}
-                expanded={expanded}
-                selected={selected}
-                data={versionedModelDef.relationships}
-                view={MODELS}
-                setShowDetailsData={setShowDetailsData}
-                idForKindAsProp={`${registrantID ? `${registrantID}.1.` : ''}${modelDef.id}.${
-                  versionedModelDef.id
-                }.2`}
-              />
-            </StyledTreeItem>
+            {loading ? (
+              <CircularProgress color="inherit" />
+            ) : (
+              <>
+                <StyledTreeItem
+                  nodeId={`${registrantID ? `${registrantID}.1.` : ''}${modelDef.id}.${
+                    versionedModelDef.id
+                  }.1`}
+                  data-id={`${registrantID ? `${registrantID}.1.` : ''}${modelDef.id}.${
+                    versionedModelDef.id
+                  }.1`}
+                  labelText={`Components (${
+                    componentsData.components ? componentsData.components.length : 0
+                  })`}
+                >
+                  {componentsData.components &&
+                    componentsData.components.map((component, subIndex) => {
+                      // console.log("component", component);
+                      return (
+                        <StyledTreeItem
+                          key={subIndex}
+                          nodeId={`${registrantID ? `${registrantID}.1.` : ''}${modelDef.id}.${
+                            versionedModelDef.id
+                          }.1.${component.id}`}
+                          data-id={`${registrantID ? `${registrantID}.1.` : ''}${modelDef.id}.${
+                            versionedModelDef.id
+                          }.1.${component.id}`}
+                          labelText={component.displayName}
+                          onClick={() => {
+                            setShowDetailsData({
+                              type: COMPONENTS,
+                              data: component,
+                            });
+                          }}
+                        />
+                      );
+                    })}
+                </StyledTreeItem>
+                <StyledTreeItem
+                  nodeId={`${registrantID ? `${registrantID}.1.` : ''}${modelDef.id}.${
+                    versionedModelDef.id
+                  }.2`}
+                  data-id={`${registrantID ? `${registrantID}.1.` : ''}${modelDef.id}.${
+                    versionedModelDef.id
+                  }.2`}
+                  labelText={`Relationships (${
+                    versionedModelDef.relationships ? versionedModelDef.relationships.length : 0
+                  })`}
+                >
+                  <RelationshipTree
+                    handleToggle={handleToggle}
+                    handleSelect={handleSelect}
+                    expanded={expanded}
+                    selected={selected}
+                    data={relationshipsData.relationships}
+                    view={MODELS}
+                    setShowDetailsData={setShowDetailsData}
+                    idForKindAsProp={`${registrantID ? `${registrantID}.1.` : ''}${modelDef.id}.${
+                      versionedModelDef.id
+                    }.2`}
+                  />
+                </StyledTreeItem>
+              </>
+            )}
           </StyledTreeItem>
         ))}
     </StyledTreeItem>

@@ -122,6 +122,7 @@ export const {
   useGetModelCategoriesQuery,
   useLazyGetModelFromCategoryQuery,
   useGetModelByNameQuery,
+  useLazyGetModelByNameQuery,
   useGetMeshModelsQuery,
   useGetComponentByNameQuery,
   useGetModelFromCategoryQuery,
