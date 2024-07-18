@@ -80,7 +80,7 @@ mesheryctl exp connections view [connection-id]
 		}
 
 		baseUrl := mctlCfg.GetBaseMesheryURL()
-		url := fmt.Sprintf("%s/api/integrations/connections/?id=%s", baseUrl, args[0])
+		url := fmt.Sprintf("%s/api/integrations/connections/%s", baseUrl, args[0])
 		req, err := utils.NewRequest(http.MethodGet, url, nil)
 		if err != nil {
 			utils.Log.Error(err)
@@ -99,16 +99,16 @@ mesheryctl exp connections view [connection-id]
 		data, err := io.ReadAll(resp.Body)
 		if err != nil {
 			utils.Log.Error(err)
-			return utils.ErrReadResponseBody(err)
+			return nil
 		}
 
-		connection := &connections.Connection{}
-		err = json.Unmarshal(data, connection)
+		connectionPage := &connections.ConnectionPage{}
+		err = json.Unmarshal(data, connectionPage)
 		if err != nil {
 			utils.Log.Error(err)
 			return utils.ErrUnmarshal(err)
 		}
 
-		return components.OutputJson(connection)
+		return components.OutputJson(connectionPage)
 	},
 }
