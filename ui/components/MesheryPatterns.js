@@ -75,6 +75,7 @@ import { UnDeployStepper, DeployStepper } from './DesignLifeCycle/DeployStepper'
 import { DryRunDesign } from './DesignLifeCycle/DryRun';
 import { DEPLOYMENT_TYPE } from './DesignLifeCycle/common';
 import {
+  useClonePatternMutation,
   useDeployPatternMutation,
   useGetPatternsQuery,
   useUndeployPatternMutation,
@@ -367,9 +368,6 @@ function MesheryPatterns({
   const StyleClass = useStyles();
   const [visibilityFilter, setVisibilityFilter] = useState(null);
 
-  const PATTERN_URL = '/api/pattern';
-  const CLONE_URL = '/clone';
-
   const [deployPatternMutation] = useDeployPatternMutation();
   const [undeployPatternMutation] = useUndeployPatternMutation();
   const { data: patternsData } = useGetPatternsQuery({
@@ -379,6 +377,7 @@ function MesheryPatterns({
     order: sortOrder,
     visibility: JSON.stringify([visibilityFilter]),
   });
+  const [clonePattern] = useClonePatternMutation();
 
   useEffect(() => {
     if (patternsData) {
@@ -881,22 +880,24 @@ function MesheryPatterns({
 
   function handleClone(patternID, name) {
     updateProgress({ showProgress: true });
-    dataFetch(
-      PATTERN_URL.concat(CLONE_URL, '/', patternID),
-      {
-        credentials: 'include',
-        method: 'POST',
-        body: JSON.stringify({ name: name + ' (Copy)' }),
-      },
-      () => {
+    clonePattern({
+      patternID: patternID,
+    })
+      .unwrap()
+      .then(() => {
         updateProgress({ showProgress: false });
         notify({
           message: `"${name}" Design cloned`,
           event_type: EVENT_TYPES.SUCCESS,
         });
-      },
-      handleError(ACTION_TYPES.CLONE_PATTERN),
-    );
+      })
+      .catch(() => {
+        updateProgress({ showProgress: false });
+        notify({
+          message: `Failed to clone "${name}" Design`,
+          event_type: EVENT_TYPES.ERROR,
+        });
+      });
   }
 
   // this function returns fetchPattern function with latest values so that it can be used in child components

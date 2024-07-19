@@ -62,8 +62,19 @@ export const designsApi = api
           },
         }),
       }),
+      clonePattern: builder.mutation({
+        query: (queryArg) => ({
+          url: `pattern/clone/${queryArg.patternID}`,
+          method: 'POST',
+          body: queryArg.body,
+        }),
+      }),
     }),
   });
 
-export const { useGetPatternsQuery, useDeployPatternMutation, useUndeployPatternMutation } =
-  designsApi;
+export const {
+  useGetPatternsQuery,
+  useDeployPatternMutation,
+  useUndeployPatternMutation,
+  useClonePatternMutation,
+} = designsApi;
