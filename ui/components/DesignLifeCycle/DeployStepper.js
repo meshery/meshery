@@ -19,9 +19,10 @@ import { useLegacySelector } from 'lib/store';
 import { DeploymentTargetContext, SelectTargetEnvironments } from './SelectDeploymentTarget';
 import { FinalizeDeployment } from './finalizeDeployment';
 import {
+  getCurrentOrg,
   selectAllSelectedK8sConnections,
   selectSelectedEnvs,
-} from '@/store/slices/globalEnvironmentContext';
+} from '@/store/slices/globalContext';
 import {
   useDryRunValidationResults,
   useIsValidatingDryRun,
@@ -118,7 +119,7 @@ export const FinishDeploymentStep = ({ perform_deployment, deployment_type, auto
 };
 
 const SelectTargetStep = () => {
-  const organization = useLegacySelector((state) => state.get('organization'));
+  const organization = useSelectorRtk(getCurrentOrg);
   const connectionMetadataState = useLegacySelector((state) =>
     state.get('connectionMetadataState'),
   );

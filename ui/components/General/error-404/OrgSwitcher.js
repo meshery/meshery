@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'next/router';
 import NoSsr from '@material-ui/core/NoSsr';
-import { setOrganization, setKeys } from 'lib/store';
+import { setKeys } from 'lib/store';
 import { EVENT_TYPES } from 'lib/event-types';
 import { useNotification } from 'utils/hooks/useNotification';
 import { useGetOrgsQuery } from 'rtk-query/organization';
@@ -21,6 +21,8 @@ import {
 } from './styles';
 import theme from 'themes/app';
 import { useGetCurrentAbilities } from 'rtk-query/ability';
+import { getCurrentOrg, selectCurrentOrg } from '@/store/slices/globalContext';
+import { useDispatchRtk, useSelectorRtk } from '@/store/hooks';
 
 const OrgSwitcher = (props) => {
   const {
@@ -30,7 +32,11 @@ const OrgSwitcher = (props) => {
     error: orgsError,
   } = useGetOrgsQuery({});
   let orgs = orgsResponse?.organizations || [];
-  const { organization, setOrganization } = props;
+  const organization = useSelectorRtk(getCurrentOrg);
+  const rtkDispatch = useDispatchRtk();
+  const setOrganization = (val) => {
+    rtkDispatch(selectCurrentOrg(val));
+  };
   const [skip, setSkip] = React.useState(true);
 
   const { notify } = useNotification();
@@ -49,7 +55,7 @@ const OrgSwitcher = (props) => {
   const handleOrgSelect = (e) => {
     const id = e.target.value;
     const selected = orgs.find((org) => org.id === id);
-    setOrganization({ organization: selected });
+    setOrganization(selected);
     setSkip(false);
 
     setTimeout(() => {
@@ -100,16 +106,8 @@ const OrgSwitcher = (props) => {
 };
 
 const mapDispatchToProps = (dispatch) => ({
-  setOrganization: bindActionCreators(setOrganization, dispatch),
   setKeys: bindActionCreators(setKeys, dispatch),
 });
-
-const mapStateToProps = (state) => {
-  const organization = state.get('organization');
-  return {
-    organization,
-  };
-};
 
 const OrgSwitcherWithErrorBoundary = (props) => {
   return (
@@ -126,7 +124,4 @@ const OrgSwitcherWithErrorBoundary = (props) => {
   );
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(withRouter(OrgSwitcherWithErrorBoundary));
+export default connect(null, mapDispatchToProps)(withRouter(OrgSwitcherWithErrorBoundary));

@@ -86,6 +86,10 @@ export const MesheryFiltersCatalog = 'meshery-filters-catalog';
 // Remove this fetch all connections initially
 export const CONNECTION_KINDS_DEF = ['MESHERY', 'KUBERNETES', 'PROMETHEUS', 'GRAFANA', 'GITHUB'];
 
+export const CURRENT_ORG_KEY = 'Layer5-Current-Orgid';
+
+export const CURRENT_WORKSPACE_KEY = 'Layer5-Current-Workspaceid';
+
 export const CONNECTION_KINDS = {
   MESHERY: 'meshery',
   KUBERNETES: 'kubernetes',

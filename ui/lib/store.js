@@ -389,16 +389,6 @@ export const setConnectionMetadata =
     return dispatch({ type: actionTypes.SET_CONNECTION_METADATA, connectionMetadataState });
   };
 
-export const setOrganization =
-  ({ organization }) =>
-  (dispatch) => {
-    return dispatch({ type: actionTypes.SET_ORGANIZATION, organization });
-  };
-export const setWorkspace =
-  ({ workspace }) =>
-  (dispatch) => {
-    return dispatch({ type: actionTypes.SET_WORKSPACE, workspace });
-  };
 export const setKeys =
   ({ keys }) =>
   (dispatch) => {

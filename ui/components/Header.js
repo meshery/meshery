@@ -346,7 +346,14 @@ function K8sContextMenu({
 
   return (
     <>
-      <div style={show ? cursorNotAllowed : {}}>
+      <div
+        style={
+          show ||
+          !CAN(keys.VIEW_ALL_KUBERNETES_CLUSTERS.action, keys.VIEW_ALL_KUBERNETES_CLUSTERS.subject)
+            ? cursorNotAllowed
+            : {}
+        }
+      >
         <IconButton
           aria-label="contexts"
           className="k8s-icon-button"
@@ -592,7 +599,8 @@ class Header extends React.PureComponent {
                     data-test="settings-button"
                     aria-describedby={abilityUpdated}
                     style={
-                      !this.state.capabilityregistryObj?.isHeaderComponentEnabled([SETTINGS])
+                      !this.state.capabilityregistryObj?.isHeaderComponentEnabled([SETTINGS]) ||
+                      !CAN(keys.VIEW_SETTINGS.action, keys.VIEW_SETTINGS.subject)
                         ? cursorNotAllowed
                         : {}
                     }

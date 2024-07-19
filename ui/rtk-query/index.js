@@ -1,4 +1,6 @@
 import { useSelectorRtk, useDispatchRtk, useStoreRtk } from '@/store/hooks';
+import { getCurrentOrg, getCurrentWorkspace, selectCurrentOrg } from '@/store/slices/globalContext';
+import { CURRENT_ORG_KEY, CURRENT_WORKSPACE_KEY } from '@/utils/Enum';
 import {
   coreModule,
   reactHooksModule,
@@ -16,6 +18,17 @@ const createApi = buildCreateApi(
 );
 export const api = createApi({
   reducerPath: 'mesheryApi',
-  baseQuery: fetchBaseQuery({ baseUrl: '/api/' }),
+  baseQuery: fetchBaseQuery({
+    baseUrl: '/api/',
+    credentials: 'include',
+    prepareHeaders: (headers, { getState }) => {
+      const state = getState();
+      const currentOrg = getCurrentOrg(state);
+      const currentWorkspace = getCurrentWorkspace(state);
+      headers.set(CURRENT_ORG_KEY, currentOrg?.id);
+      headers.set(CURRENT_WORKSPACE_KEY, currentWorkspace?.id);
+      return headers;
+    },
+  }),
   endpoints: () => ({}),
 });

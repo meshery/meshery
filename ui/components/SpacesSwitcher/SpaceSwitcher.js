@@ -16,7 +16,7 @@ import {
   withStyles,
   Select,
 } from '@material-ui/core';
-import { setKeys, setOrganization, setWorkspace } from '../../lib/store';
+import { setKeys } from '../../lib/store';
 import { connect, Provider } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import styles from './../UserPreferences/style';
@@ -31,6 +31,14 @@ import theme from '@/themes/app';
 import { useDynamicComponent } from '@/utils/context/dynamicContext';
 import { UsesSistent } from '../SistentWrapper';
 import _ from 'lodash';
+import {
+  getCurrentOrg,
+  getCurrentWorkspace,
+  selectCurrentOrg,
+  selectCurrentWorkspace,
+} from '@/store/slices/globalContext';
+import { useDispatchRtk, useSelectorRtk } from '@/store/hooks';
+import WorkspaceOutlinedIcon from '@/assets/icons/WorkspaceOutlined';
 export const SlideInMenu = styled('div')(() => ({
   width: 0,
   overflow: 'hidden',
@@ -95,7 +103,12 @@ function OrgMenu(props) {
   } = useGetOrgsQuery({});
   let orgs = orgsResponse?.organizations || [];
   let uniqueOrgs = _.uniqBy(orgs, 'id');
-  const { organization, setOrganization, open } = props;
+  const { open } = props;
+  const rtkDispatch = useDispatchRtk();
+  const setOrganization = (val) => {
+    rtkDispatch(selectCurrentOrg(val));
+  };
+  const organization = useSelectorRtk(getCurrentOrg);
   const [skip, setSkip] = React.useState(true);
   const { notify } = useNotification();
   useGetCurrentAbilities(organization, props.setKeys, skip);
@@ -111,7 +124,7 @@ function OrgMenu(props) {
   const handleOrgSelect = (e) => {
     const id = e.target.value;
     const selected = orgs.find((org) => org.id === id);
-    setOrganization({ organization: selected });
+    setOrganization(selected);
     setSkip(false);
   };
   return (
@@ -175,7 +188,13 @@ function OrgMenu(props) {
   );
 }
 
-export function WorkspaceSwitcher({ organization, open, workspace, setWorkspace }) {
+export function WorkspaceSwitcher({ open }) {
+  const organization = useSelectorRtk(getCurrentOrg);
+  const workspace = useSelectorRtk(getCurrentWorkspace);
+  const rtkDispatch = useDispatchRtk();
+  const setWorkspace = (val) => {
+    rtkDispatch(selectCurrentWorkspace(val));
+  };
   const [orgId, setOrgId] = useState('');
   const { data: workspacesData, isError: isWorkspacesError } = useGetWorkspacesQuery(
     {
@@ -189,24 +208,23 @@ export function WorkspaceSwitcher({ organization, open, workspace, setWorkspace 
       skip: !orgId ? true : false,
     },
   );
-
   const handleWorkspaceSelect = (e) => {
     const id = e.target.value;
     const selected = workspacesData.workspaces.find((org) => org.id === id);
-    setWorkspace({ workspace: selected });
+    setWorkspace(selected);
   };
 
   useEffect(() => {
     setOrgId(organization?.id);
   }, [organization]);
 
-  if (!organization || !workspace) {
+  if (!organization) {
     return null;
   }
 
   return (
     <NoSsr>
-      {!isWorkspacesError && workspace && (
+      {!isWorkspacesError && (
         <div
           style={{
             width: open ? 'auto' : 0,
@@ -222,9 +240,16 @@ export function WorkspaceSwitcher({ organization, open, workspace, setWorkspace 
                   <Grid container spacing={1} alignItems="flex-end">
                     <Grid item xs={12} data-cy="mesh-adapter-url">
                       <StyledSelect
-                        value={workspace.id}
+                        value={workspace?.id}
                         onChange={handleWorkspaceSelect}
-                        SelectDisplayProps={{ style: { display: 'flex', flexDirection: 'row' } }}
+                        SelectDisplayProps={{
+                          style: {
+                            display: 'flex',
+                            flexDirection: 'row',
+                            fill: '#eee',
+                            color: theme.palette.secondary.white,
+                          },
+                        }}
                         MenuProps={{
                           anchorOrigin: {
                             vertical: 'bottom',
@@ -287,7 +312,7 @@ function DefaultHeader({ title, isBeta }) {
 
 function SpaceSwitcher(props) {
   const [orgOpen, setOrgOpen] = useState(false);
-  // const [workspaceOpen, setWorkspaceOpen] = useState(false);
+  const [workspaceOpen, setWorkspaceOpen] = useState(false);
   const { DynamicComponent } = useDynamicComponent();
   return (
     <NoSsr>
@@ -311,14 +336,13 @@ function SpaceSwitcher(props) {
               <OrgOutlinedIcon {...iconXLarge} fill={'#eee'} />
             </Button>
             <OrgMenu {...props} open={orgOpen} />/
-            {/* /
-          <Button
-            onClick={() => setWorkspaceOpen(!workspaceOpen)}
-            style={{ marginRight: workspaceOpen ? '1rem' : '0' }}
-          >
-            <WorkspaceOutlinedIcon {...iconXLarge} />
-          </Button>
-          <WorkspaceSwitcher {...props} open={workspaceOpen} />/ */}
+            <Button
+              onClick={() => setWorkspaceOpen(!workspaceOpen)}
+              style={{ marginRight: workspaceOpen ? '1rem' : '0' }}
+            >
+              <WorkspaceOutlinedIcon {...iconXLarge} />
+            </Button>
+            <WorkspaceSwitcher {...props} open={workspaceOpen} />/
             <div
               id="meshery-dynamic-header"
               style={{ marginLeft: DynamicComponent ? '1rem' : '' }}
@@ -331,21 +355,8 @@ function SpaceSwitcher(props) {
   );
 }
 
-const mapStateToProps = (state) => {
-  const organization = state.get('organization');
-  const workspace = state.get('workspace');
-  return {
-    organization,
-    workspace,
-  };
-};
-
 const mapDispatchToProps = (dispatch) => ({
-  setOrganization: bindActionCreators(setOrganization, dispatch),
-  setWorkspace: bindActionCreators(setWorkspace, dispatch),
   setKeys: bindActionCreators(setKeys, dispatch),
 });
 
-export default withStyles(styles)(
-  connect(mapStateToProps, mapDispatchToProps)(withRouter(SpaceSwitcher)),
-);
+export default withStyles(styles)(connect(null, mapDispatchToProps)(withRouter(SpaceSwitcher)));

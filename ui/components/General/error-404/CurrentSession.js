@@ -16,10 +16,12 @@ import { store } from '../../../store';
 import NoSsr from '@material-ui/core/NoSsr';
 import OrgIcon from 'assets/icons/OrgIcon';
 import { useTheme } from '@material-ui/core/styles';
+import { getCurrentOrg } from '@/store/slices/globalContext';
+import { useSelectorRtk } from '@/store/hooks';
 
-const CurrentSessionInfo = (props) => {
+const CurrentSessionInfo = () => {
   const theme = useTheme();
-  const { organization } = props;
+  const organization = useSelectorRtk(getCurrentOrg);
   const {
     data: rolesRes,
     // isSuccess: isRolesSuccess,
@@ -86,11 +88,4 @@ const CurrentSessionInfoWithErrorBoundary = (props) => {
   );
 };
 
-const mapStateToProps = (state) => {
-  const organization = state.get('organization');
-  return {
-    organization,
-  };
-};
-
-export default connect(mapStateToProps)(withRouter(CurrentSessionInfoWithErrorBoundary));
+export default connect(null)(withRouter(CurrentSessionInfoWithErrorBoundary));

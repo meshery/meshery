@@ -1,5 +1,5 @@
 import { useSelectorRtk } from '@/store/hooks';
-import { selectSelectedEnvs } from '@/store/slices/globalEnvironmentContext';
+import { selectSelectedEnvs } from '@/store/slices/globalContext';
 import { useSelector } from 'react-redux';
 const { Box, Typography, Stack, EnvironmentIcon, useTheme, styled } = require('@layer5/sistent');
 const { processDesign, CheckBoxField, StepHeading } = require('./common');
