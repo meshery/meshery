@@ -59,11 +59,11 @@ Select from the list of [Providers]({{ site.baseurl }}/extensibility/providers) 
 
 ## 4. Configure Connections to your Kubernetes Clusters
 
-If you have deployed Meshery in-cluster, Meshery will automatically connect to any available Kubernetes clusters found in your kubeconfig (under `$HOME/.kube/config`). Once connected, operator, broker and meshsync will automatically get deployed in the same clusters.
+**Out-of-Cluster Deployments**
+If you have deployed Meshery out-of-cluster, Meshery Server will automatically attempt to connect to any available Kubernetes clusters found in your kubeconfig (under `$HOME/.kube/config`) and in kubeconfigs uploaded through Meshery UI. Meshery Server deploys [Meshery Operator](/concepts/architecture/operator), [MeshSync](/concepts/architecture/meshsync), and Broker into the `meshery` namespace (by default).
 
-You can run <code>kubectl get pod -n meshery</code> to see the pods.
-
-If you have deployed Meshery out-of-cluster, Meshery will automatically connect to the Kubernetes API Server availabe in the control plane. Ensure that Meshery is connected to one or more of your Kubernetes clusters.
+**In-Cluster Deployments**
+If you have deployed Meshery in-cluster, Meshery Server will automatically connect to the Kubernetes API Server availabe in the control plane.
 
 Visit <i class="fas fa-cog"></i> Settings:
 
