@@ -42,7 +42,7 @@ Meshery Operator, MeshSync, and Broker are deployed in the same cluster as Meshe
 ### Out-of-Cluster Deployment
 
 1. Meshery Server is deployed on any Docker host (- Meshery Server is deployed on a Docker host, and Meshery Operator is deployed on a Kubernetes cluster).
-_or_
+   _or_
 2. Meshery is managing multiple clusters, some of which are not the cluster unto which Meshery Server is deployed.
 
 ## Fault Scenarios
@@ -50,10 +50,10 @@ _or_
 Common failure situations that Meshery users might face are described below.
 
 1. No deployment of Meshery Operator, MeshSync, and Broker.
-    1. Probable cause: Meshery Server cannot connect to Kubernetes cluster; cluster unreachable or kubeconfig without proper permissions needed to deploy Meshery Operator; Kubernetes config initialization issues.
+   1. Probable cause: Meshery Server cannot connect to Kubernetes cluster; cluster unreachable or kubeconfig without proper permissions needed to deploy Meshery Operator; Kubernetes config initialization issues.
 1. Meshery Operator with MeshSync and Broker deployed, but Meshery Server is not receiving data from MeshSync or data the [Meshery Database]({{site.baseurl}}/concepts/architecture/database) is stale.
-    1. Probable cause: Meshery Server lost subscription to Meshery Broker; Broker server not exposed to external IP; MeshSync not connected to Broker; MeshSync not running; Meshery Database is stale.
-    2. The SQL database in Meshery serves as a cache for cluster state. A single button allows users to dump/reset the Meshery Database.
+   1. Probable cause: Meshery Server lost subscription to Meshery Broker; Broker server not exposed to external IP; MeshSync not connected to Broker; MeshSync not running; Meshery Database is stale.
+   2. The SQL database in Meshery serves as a cache for cluster state. A single button allows users to dump/reset the Meshery Database.
 1. Orphaned MeshSync and Broker controllers - Meshery Operator is not present, but MeshSync and Broker controllers are running.
 
 ## Operating Meshery without Meshery Operator
