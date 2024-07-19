@@ -1190,7 +1190,6 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 
 	userID := uuid.FromStringOrNil(user.ID)
 	var message strings.Builder
-	var event map[string]error
 
 	dirPath := r.FormValue("dir")
 	if dirPath != "" {
@@ -1219,10 +1218,10 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 
 			if response.EntityCount.TotalErrCount > 0 {
 				response.ErrMsg = ErrMsgContruct(response.EntityCount.TotalErrCount, response.EntityCount.ErrCompCount, response.EntityCount.ErrRelCount)
-				event = h.sendErrorEventWithIndividualError(&response)
 			}
+
 			message = writeMessageString(response.EntityCount.CompCount, response.EntityCount.RelCount)
-			h.sendSuccessResponse(rw, userID, provider, message.String(), response.ErrMsg, &response, event)
+			h.sendSuccessResponse(rw, userID, provider, message.String(), response.ErrMsg, &response)
 			return
 		}
 	}

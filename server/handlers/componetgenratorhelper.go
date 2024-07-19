@@ -20,7 +20,7 @@ import (
 	meshkitutils "github.com/layer5io/meshkit/utils"
 )
 
-func (h *Handler) sendSuccessResponse(rw http.ResponseWriter, userID uuid.UUID, provider models.Provider, message string, errMsg string, response *models.RegisterMeshmodelAPIResponse, event map[string]error) {
+func (h *Handler) sendSuccessResponse(rw http.ResponseWriter, userID uuid.UUID, provider models.Provider, message string, errMsg string, response *models.RegisterMeshmodelAPIResponse) {
 	if errMsg != "" {
 		if message != "" {
 			h.log.Info(message + " and " + errMsg)
@@ -37,8 +37,7 @@ func (h *Handler) sendSuccessResponse(rw http.ResponseWriter, userID uuid.UUID, 
 	if len(response.EntityTypeSummary.UnsuccessfulEntityNameWithError) > 0 {
 		h.log.Info("Unsuccessful Entities: ", response.EntityTypeSummary.UnsuccessfulEntityNameWithError)
 	}
-	h.sendFileEvent(userID, provider, response, event)
-
+	h.sendFileEvent(userID, provider, response)
 	rw.WriteHeader(http.StatusOK)
 	if err := json.NewEncoder(rw).Encode(response); err != nil {
 		h.log.Error(err)
@@ -92,7 +91,7 @@ func processFile(path string, h *Handler, mu *sync.Mutex, response *models.Regis
 			incrementCounter(mu, &response.EntityCount.TotalErrCount)
 			h.log.Error(meshkitutils.ErrCreateDir(err, "Error creating nested temp directory"))
 			mu.Lock()
-			addUnsuccessfulEntry(path, response, meshkitutils.ErrCreateDir(err, "Error creating nested temp directory"))
+			addUnsuccessfulEntry(path, response, meshkitutils.ErrCreateDir(err, "Error creating nested temp directory"), "")
 			mu.Unlock()
 			return
 		}
@@ -101,7 +100,7 @@ func processFile(path string, h *Handler, mu *sync.Mutex, response *models.Regis
 			incrementCounter(mu, &response.EntityCount.TotalErrCount)
 			h.log.Error(err)
 			mu.Lock()
-			addUnsuccessfulEntry(path, response, err)
+			addUnsuccessfulEntry(path, response, err, "")
 			mu.Unlock()
 			return
 		}
@@ -113,7 +112,7 @@ func processFile(path string, h *Handler, mu *sync.Mutex, response *models.Regis
 		incrementCounter(mu, &response.EntityCount.TotalErrCount)
 		h.log.Error(meshkitutils.ErrReadFile(err, path))
 		mu.Lock()
-		addUnsuccessfulEntry(path, response, meshkitutils.ErrReadFile(err, path))
+		addUnsuccessfulEntry(path, response, meshkitutils.ErrReadFile(err, path), "")
 		mu.Unlock()
 		return
 	}
@@ -122,20 +121,23 @@ func processFile(path string, h *Handler, mu *sync.Mutex, response *models.Regis
 	if err != nil {
 		incrementCounter(mu, &response.EntityCount.TotalErrCount)
 		mu.Lock()
-		addUnsuccessfulEntry(path, response, err)
+		addUnsuccessfulEntry(path, response, err, "")
 		mu.Unlock()
 	}
 	if entityType != "" {
-		err = RegisterEntity(content, entityType, h, response, mu)
+		path, err := RegisterEntity(content, entityType, h, response, mu)
 		if err != nil {
 			incrementCountersOnErr(mu, entityType, response)
 			h.log.Error(err)
 			mu.Lock()
-			addUnsuccessfulEntry(path, response, err)
+			addUnsuccessfulEntry(path, response, err, string(entityType))
 			mu.Unlock()
 		} else {
-			incrementCountersOnSuccess(mu, entityType, &response.EntityCount.CompCount, &response.EntityCount.RelCount, &response.EntityCount.ModelCount)
-			addSuccessfulEntry(content, entityType, response)
+			if path != "" {
+				incrementCountersOnSuccess(mu, entityType, &response.EntityCount.CompCount, &response.EntityCount.RelCount, &response.EntityCount.ModelCount)
+				addSuccessfulEntry(content, entityType, response)
+			}
+
 		}
 	}
 }
@@ -181,11 +183,19 @@ func addSuccessfulEntry(content []byte, entityType entity.EntityType, response *
 	}
 }
 
-func addUnsuccessfulEntry(path string, response *models.RegisterMeshmodelAPIResponse, err error) {
-	filename := filepath.Base(path)
+func addUnsuccessfulEntry(path string, response *models.RegisterMeshmodelAPIResponse, err error, entityType string) {
+	filename := path
 
-	response.EntityTypeSummary.UnsuccessfulEntityNameWithError = append(response.EntityTypeSummary.UnsuccessfulEntityNameWithError, map[string]interface{}{filename: err})
+	filename = filepath.Base(path)
+
+	entry := map[string]interface{}{
+		"name":       filename,
+		"entityType": entityType,
+		"error":      err,
+	}
+	response.EntityTypeSummary.UnsuccessfulEntityNameWithError = append(response.EntityTypeSummary.UnsuccessfulEntityNameWithError, entry)
 }
+
 func incrementCounter(mu *sync.Mutex, counter *int) {
 	mu.Lock()
 	defer mu.Unlock()
@@ -224,25 +234,6 @@ func (h *Handler) sendErrorEvent(userID uuid.UUID, provider models.Provider, des
 	_ = provider.PersistEvent(event)
 	go h.config.EventBroadcaster.Publish(userID, event)
 }
-func (h *Handler) sendErrorEventWithIndividualError(response *models.RegisterMeshmodelAPIResponse) map[string]error {
-	metadata := make(map[string]error)
-
-	for _, entity := range response.EntityTypeSummary.UnsuccessfulEntityNameWithError {
-		// Assuming entity is of type map[string]interface{}
-		for name, errInterface := range entity {
-			// Assert the interface{} to error type
-			err, ok := errInterface.(error)
-			if !ok {
-				h.log.Info("Unexpected type for error: ", errInterface)
-				continue
-			}
-			metadata[name] = err
-			h.log.Error(err)
-		}
-	}
-
-	return metadata
-}
 
 func ModelNames(response *models.RegisterMeshmodelAPIResponse) string {
 	msg := ""
@@ -257,7 +248,7 @@ func ModelNames(response *models.RegisterMeshmodelAPIResponse) string {
 
 	return msg
 }
-func (h *Handler) sendFileEvent(userID uuid.UUID, provider models.Provider, response *models.RegisterMeshmodelAPIResponse, errEvent map[string]error) {
+func (h *Handler) sendFileEvent(userID uuid.UUID, provider models.Provider, response *models.RegisterMeshmodelAPIResponse) {
 	s := ModelNames(response)
 	description := fmt.Sprintf("Imported model(s) %s", s)
 	metadata := map[string]interface{}{
@@ -265,7 +256,7 @@ func (h *Handler) sendFileEvent(userID uuid.UUID, provider models.Provider, resp
 		"ImportedComponent":               response.EntityTypeSummary.SuccessfulComponents,
 		"ImportedRelationship":            response.EntityTypeSummary.SuccessfulRelationships,
 		"ImportedModel":                   response.EntityTypeSummary.SuccessfulModels,
-		"UnsuccessfulEntityNameWithError": errEvent,
+		"UnsuccessfulEntityNameWithError": response.EntityTypeSummary.UnsuccessfulEntityNameWithError,
 	}
 	eventType := events.Informational
 	if response.EntityCount.CompCount == 0 && response.EntityCount.RelCount == 0 && response.EntityCount.ModelCount == 0 {
@@ -284,43 +275,55 @@ func (h *Handler) sendFileEvent(userID uuid.UUID, provider models.Provider, resp
 	go h.config.EventBroadcaster.Publish(userID, event)
 }
 
-func RegisterEntity(content []byte, entityType entity.EntityType, h *Handler, response *models.RegisterMeshmodelAPIResponse, mu *sync.Mutex) error {
+func RegisterEntity(content []byte, entityType entity.EntityType, h *Handler, response *models.RegisterMeshmodelAPIResponse, mu *sync.Mutex) (string, error) {
 	switch entityType {
 	case entity.ComponentDefinition:
 		var c v1beta1.ComponentDefinition
 		if err := meshkitutils.Unmarshal(string(content), &c); err != nil {
-			return err
+			return "", err
 		}
 		utils.WriteSVGsOnFileSystem(&c)
 		isRegistrantError, isModelError, err := h.registryManager.RegisterEntity(v1beta1.Host{Hostname: c.Model.Registrant.Hostname}, &c)
 		helpers.HandleError(v1beta1.Host{Hostname: c.Model.Registrant.Hostname}, &c, err, isModelError, isRegistrantError)
-		return err
+
+		return c.DisplayName, err
 	case entity.RelationshipDefinition:
 		var r v1alpha2.RelationshipDefinition
 		if err := meshkitutils.Unmarshal(string(content), &r); err != nil {
-			return meshkitutils.ErrUnmarshal(err)
+			return "", meshkitutils.ErrUnmarshal(err)
 		}
 		isRegistrantError, isModelError, err := h.registryManager.RegisterEntity(v1beta1.Host{Hostname: r.Model.Registrant.Hostname}, &r)
 		helpers.HandleError(v1beta1.Host{Hostname: r.Model.Registrant.Hostname}, &r, err, isModelError, isRegistrantError)
-		return err
+
+		return r.Kind, err
 	case entity.Model:
 		var m v1beta1.Model
+		checkBool := false
 		if err := meshkitutils.Unmarshal(string(content), &m); err != nil {
 			err = meshkitutils.ErrUnmarshal(err)
-			return err
+			return "", err
 		}
 		components := m.Components
-		// relationships, _ := meshkitutils.Cast[string](m.Relationships)
-		for _, c := range components {
-			utils.WriteSVGsOnFileSystem(&c)
-			isRegistrantError, isModelError, err := h.registryManager.RegisterEntity(v1beta1.Host{Hostname: c.Model.Registrant.Hostname}, &c)
-			helpers.HandleError(v1beta1.Host{Hostname: c.Model.Registrant.Hostname}, &c, err, isModelError, isRegistrantError)
+		var rel []v1alpha2.RelationshipDefinition
+		relationships, _ := meshkitutils.Cast[string](m.Relationships)
+		if relationships != "" {
+			if err := meshkitutils.Unmarshal((relationships), &rel); err != nil {
+				return "", err
+			}
+		}
+		if len(components) > 0 || len(rel) > 0 {
+			checkBool = true
+		}
+		for _, comp := range components {
+			utils.WriteSVGsOnFileSystem(&comp)
+			isRegistrantError, isModelError, err := h.registryManager.RegisterEntity(v1beta1.Host{Hostname: comp.Model.Registrant.Hostname}, &comp)
+			helpers.HandleError(v1beta1.Host{Hostname: comp.Model.Registrant.Hostname}, &comp, err, isModelError, isRegistrantError)
 			if err != nil {
-				componetName := m.DisplayName + "-" + c.DisplayName
+				componetName := m.DisplayName + "-" + comp.DisplayName
 				mu.Lock()
 				incrementCountersOnErr(mu, entity.ComponentDefinition, response)
 				mu.Unlock()
-				response.EntityTypeSummary.UnsuccessfulEntityNameWithError = append(response.EntityTypeSummary.UnsuccessfulEntityNameWithError, map[string]interface{}{componetName: err})
+				addUnsuccessfulEntry(componetName, response, err, string(entity.ComponentDefinition))
 				continue
 			}
 			mu.Lock()
@@ -332,12 +335,30 @@ func RegisterEntity(content []byte, entityType entity.EntityType, h *Handler, re
 		// 	//future when we fix from interface to array of relationship definition
 
 		// }
-		return nil
+		for _, r := range rel {
+			isRegistrantError, isModelError, err := h.registryManager.RegisterEntity(v1beta1.Host{Hostname: r.Model.Registrant.Hostname}, &r)
+			helpers.HandleError(v1beta1.Host{Hostname: r.Model.Registrant.Hostname}, &r, err, isModelError, isRegistrantError)
+			if err != nil {
+				relName := m.DisplayName + "-" + r.Kind
+				mu.Lock()
+				incrementCountersOnErr(mu, entity.RelationshipDefinition, response)
+				mu.Unlock()
+				addUnsuccessfulEntry(relName, response, err, string(entity.RelationshipDefinition))
+				continue
+
+			}
+		}
+		if checkBool {
+			if response.EntityCount.CompCount == 0 || response.EntityCount.RelCount == 0 {
+				return "", nil
+			}
+		}
+		return m.DisplayName, nil
 	case entity.PolicyDefinition:
 		//future when we support policy
-		return nil
+		return "", nil
 	}
-	return meshkitutils.ErrInvalidSchemaVersion
+	return "", meshkitutils.ErrInvalidSchemaVersion
 }
 
 func writeMessageString(compCount, relCount int) strings.Builder {

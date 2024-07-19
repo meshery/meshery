@@ -229,31 +229,29 @@ func sendToAPI(data []byte, name string, dataType string) error {
 	if len(response.EntityTypeSummary.UnsuccessfulEntityNameWithError) > 0 {
 		utils.Log.Info("\033[1m\nImport failed for these Entity(s): \033[0m")
 		for _, entity := range response.EntityTypeSummary.UnsuccessfulEntityNameWithError {
-			for name, errInterface := range entity {
-				errMap, ok := errInterface.(map[string]interface{})
-				if !ok {
-					utils.Log.Infof("Error: unable to assert errInterface as map[string]interface{}")
-					return nil
-				}
-				longDescription, ok := errMap["LongDescription"].([]interface{})
-				if !ok {
-					utils.Log.Infof("Error: unable to assert LongDescription as []interface{}")
-					return nil
-				}
-
-				// Convert []interface{} to []string
-				var longDescriptionStrings []string
-				for _, desc := range longDescription {
-					if strDesc, ok := desc.(string); ok {
-						longDescriptionStrings = append(longDescriptionStrings, strDesc)
-					}
-				}
-
-				// Join the strings with a separator, e.g., space or newline
-				longDescriptionText := strings.Join(longDescriptionStrings, " ")
-
-				utils.Log.Infof("\nEntity File Name: \033[1m%s\033[0m and error: \033[1m%s\033[0m", name, longDescriptionText)
+			entityMap, ok := entity.(map[string]interface{})
+			if !ok {
+				utils.Log.Info("Error: unable to assert entity as map[string]interface{}")
+				continue
 			}
+
+			name, ok := entityMap["name"].(string)
+			if !ok {
+				utils.Log.Info("Error: unable to assert name as string")
+				continue
+			}
+			errorDetails, ok := entityMap["error"].(map[string]interface{})
+			if !ok {
+				utils.Log.Info("Error: unable to assert errorDetails as map[string]interface{}")
+				continue
+			}
+			longDescription, ok := errorDetails["LongDescription"]
+			if !ok {
+				utils.Log.Info("Error: unable to assert LongDescription as string")
+				continue
+			}
+
+			utils.Log.Infof("\nEntity File Name: \033[1m%s\033[0m and error: \033[1m%s\033[0m", name, longDescription)
 		}
 	}
 

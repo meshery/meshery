@@ -64,37 +64,29 @@ const ComponentWithIcon = ({ component }) => {
 
   return (
     <>
-      <StyledDetailBox
-        severityColor={SEVERITY_STYLE[SEVERITY.INFO].color}
-        bgOpacity={0.1}
-        display="flex"
-        gap={2}
-        flexDirection="column"
-      >
-        <Typography variant="body1">{`Model ${Model.displayName} imported Component`}</Typography>
-        <Grid container alignItems="center" spacing={1}>
-          <Grid item>
-            <Typography variant="body1">{DisplayName}</Typography>
-          </Grid>
-          <Grid item>
-            <Typography variant="body2">
-              {Model.model ? Model.model.version : 'Version not available'}
-            </Typography>
-          </Grid>
-          <Grid item>
-            <div
-              style={{
-                maxWidth: '30px',
-                maxHeight: '30px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-              dangerouslySetInnerHTML={{ __html: svgColor }}
-            />
-          </Grid>
+      <Typography variant="body1">{`Model ${Model.displayName} imported Component`}</Typography>
+      <Grid container alignItems="center" spacing={1}>
+        <Grid item>
+          <Typography variant="body1">{DisplayName}</Typography>
         </Grid>
-      </StyledDetailBox>
+        <Grid item>
+          <Typography variant="body2">
+            {Model.model ? Model.model.version : 'Version not available'}
+          </Typography>
+        </Grid>
+        <Grid item>
+          <div
+            style={{
+              maxWidth: '30px',
+              maxHeight: '30px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+            dangerouslySetInnerHTML={{ __html: svgColor }}
+          />
+        </Grid>
+      </Grid>
     </>
   );
 };
@@ -109,12 +101,11 @@ const RelationshipDetail = ({ relationship }) => {
 };
 
 const ModelDetail = ({ model }) => {
-  const { Model, Kind, Subtype } = model;
-  return (
-    <Typography variant="body1">
-      {Kind} {Subtype} {Model.displayName}
-    </Typography>
-  );
+  const { Subtype } = model;
+  if (Subtype !== undefined) {
+    console.log(Subtype);
+  }
+  return <></>;
 };
 
 export const ErrorMetadataFormatter = ({ metadata, event }) => {
@@ -207,30 +198,27 @@ const ImportedModel = ({ models }) => (
     ))}
   </>
 );
+
 const UnsuccessfulEntityWithError = ({ errors }) => {
+  const parsedErrors = Array.isArray(errors) ? errors : [];
+
   return (
     <Stack spacing={2}>
-      {Object.entries(errors).map(([name, error], index) => (
-        <StyledDetailBox
-          severityColor={SEVERITY_STYLE[SEVERITY.ERROR].color}
-          bgOpacity={0.1}
-          display="flex"
-          gap={2}
-          flexDirection="column"
-        >
-          <Box key={index}>
-            <Typography variant="h6">
-              {`Entity with file name `}
-              <span style={{ textDecoration: 'underline' }}>{name}</span>
-              {` failed to import`}
-            </Typography>
-            <ErrorMetadataFormatter metadata={error} event={{}} />
-          </Box>
-        </StyledDetailBox>
+      {parsedErrors.map((entry, index) => (
+        <Box key={index}>
+          <Typography variant="h6">
+            {`Entity with filename `}
+            <span style={{ textDecoration: 'underline' }}>{entry.name}</span>
+            {entry.entityType ? ` of type ${entry.entityType}` : ''}
+            {` failed to import`}
+          </Typography>
+          <ErrorMetadataFormatter metadata={entry.error} event={{}} />
+        </Box>
       ))}
     </Stack>
   );
 };
+
 export const FormattedMetadata = ({ event }) => {
   const PropertyFormatters = {
     doc: (value) => <TitleLink href={value}>Doc</TitleLink>,
@@ -245,61 +233,55 @@ export const FormattedMetadata = ({ event }) => {
     ViewLink: (value) => (
       <TitleLink href={'/api/system/fileView?file=' + encodeURIComponent(value)}>View</TitleLink>
     ),
-    ImportedModelName: (value) => (
-      <StyledDetailBox
-        severityColor={SEVERITY_STYLE[SEVERITY.INFO].color}
-        bgOpacity={0.1}
-        display="flex"
-        gap={2}
-        flexDirection="column"
-      >
-        <ModelImportedSection modelName={value} />
-      </StyledDetailBox>
-    ),
-    ImportedComponent: (value) => (
-      <StyledDetailBox
-        severityColor={SEVERITY_STYLE[SEVERITY.INFO].color}
-        bgOpacity={0.1}
-        display="flex"
-        gap={2}
-        flexDirection="column"
-      >
-        <ComponentsSection components={value} />
-      </StyledDetailBox>
-    ),
-    ImportedRelationship: (value) => (
-      <StyledDetailBox
-        severityColor={SEVERITY_STYLE[SEVERITY.INFO].color}
-        bgOpacity={0.1}
-        display="flex"
-        gap={2}
-        flexDirection="column"
-      >
-        <RelationshipsSection relationships={value} />
-      </StyledDetailBox>
-    ),
-    ImportedModel: (value) => (
-      <StyledDetailBox
-        severityColor={SEVERITY_STYLE[SEVERITY.INFO].color}
-        bgOpacity={0.1}
-        display="flex"
-        gap={2}
-        flexDirection="column"
-      >
+    ImportedModelName: (value) =>
+      value && (
+        <StyledDetailBox
+          severityColor={SEVERITY_STYLE[SEVERITY.INFO].color}
+          bgOpacity={0.1}
+          display="flex"
+          gap={2}
+          flexDirection="column"
+        >
+          <ModelImportedSection modelName={value} />
+        </StyledDetailBox>
+      ),
+    ImportedComponent: (value) =>
+      value && (
+        <StyledDetailBox
+          severityColor={SEVERITY_STYLE[SEVERITY.INFO].color}
+          bgOpacity={0.1}
+          display="flex"
+          gap={2}
+          flexDirection="column"
+        >
+          <ComponentsSection components={value} />
+        </StyledDetailBox>
+      ),
+    ImportedRelationship: (value) => value && <RelationshipsSection relationships={value} />,
+    ImportedModel: (value) =>
+      value && (
+        // <StyledDetailBox
+        //   severityColor={SEVERITY_STYLE[SEVERITY.INFO].color}
+        //   bgOpacity={0.1}
+        //   display="flex"
+        //   gap={2}
+        //   flexDirection="column"
+        // >
         <ImportedModel models={value} />
-      </StyledDetailBox>
-    ),
-    UnsuccessfulEntityNameWithError: (value) => (
-      <StyledDetailBox
-        severityColor={SEVERITY_STYLE[SEVERITY.ERROR].color}
-        bgOpacity={0.1}
-        display="flex"
-        gap={2}
-        flexDirection="column"
-      >
-        <UnsuccessfulEntityWithError errors={value} />
-      </StyledDetailBox>
-    ),
+        // </StyledDetailBox>
+      ),
+    UnsuccessfulEntityNameWithError: (value) =>
+      value && (
+        <StyledDetailBox
+          severityColor={SEVERITY_STYLE[SEVERITY.ERROR].color}
+          bgOpacity={0.1}
+          display="flex"
+          gap={2}
+          flexDirection="column"
+        >
+          <UnsuccessfulEntityWithError errors={value} />
+        </StyledDetailBox>
+      ),
   };
 
   const EventTypeFormatters = {

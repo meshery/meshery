@@ -57,7 +57,7 @@ type EntityTypeSummary struct {
 	SuccessfulComponents            []map[string]interface{} `json:"successful_components"`
 	SuccessfulRelationships         []map[string]interface{} `json:"successful_relationships"`
 	SuccessfulModels                []map[string]interface{} `json:"successful_models"`
-	UnsuccessfulEntityNameWithError []map[string]interface{} `json:"unsuccessful_component_names"`
+	UnsuccessfulEntityNameWithError []interface{}            `json:"unsuccessful_component_names"`
 }
 type RegisterMeshmodelAPIResponse struct {
 	EntityCount       EntityCount       `json:"entity_count"`
