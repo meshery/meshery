@@ -251,7 +251,7 @@ func sendToAPI(data []byte, name string, dataType string) error {
 				continue
 			}
 
-			utils.Log.Infof("\nEntity File Name: \033[1m%s\033[0m and error: \033[1m%s\033[0m", name, longDescription)
+			utils.Log.Infof("\nEntity Filename: \033[1m%s\033[0m and error: \033[1m%s\033[0m", name, longDescription)
 		}
 	}
 
