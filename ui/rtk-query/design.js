@@ -97,6 +97,26 @@ export const designsApi = api
           body: queryArg.importBody,
         }),
       }),
+      deletePatternFile: builder.mutation({
+        query: (queryArg) => ({
+          url: `pattern/${queryArg.id}`,
+          method: 'DELETE',
+        }),
+      }),
+      updatePatternFile: builder.mutation({
+        query: (queryArg) => ({
+          url: `pattern`,
+          method: 'POST',
+          body: queryArg.updateBody,
+        }),
+      }),
+      uploadPatternFile: builder.mutation({
+        query: (queryArg) => ({
+          url: `pattern/`,
+          method: 'POST',
+          body: queryArg.uploadBody,
+        }),
+      }),
     }),
   });
 
@@ -109,4 +129,7 @@ export const {
   useUnpublishPatternMutation,
   useDeletePatternMutation,
   useImportPatternMutation,
+  useUpdatePatternFileMutation,
+  useUploadPatternFileMutation,
+  useDeletePatternFileMutation,
 } = designsApi;

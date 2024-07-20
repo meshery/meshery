@@ -83,6 +83,8 @@ import {
   usePublishPatternMutation,
   useUndeployPatternMutation,
   useUnpublishPatternMutation,
+  useUpdatePatternFileMutation,
+  useUploadPatternFileMutation,
 } from '@/rtk-query/design';
 import CheckIcon from '@/assets/icons/CheckIcon';
 import { ValidateDesign } from './DesignLifeCycle/ValidateDesign';
@@ -386,6 +388,9 @@ function MesheryPatterns({
   const [unpublishCatalog] = useUnpublishPatternMutation();
   const [deletePattern] = useDeletePatternMutation();
   const [importPattern] = useImportPatternMutation();
+  const [updatePattern] = useUpdatePatternFileMutation();
+  const [uploadPatternFile] = useUploadPatternFileMutation();
+  const [deletePatternFile] = useDeletePatternMutation();
 
   useEffect(() => {
     if (patternsData) {
@@ -946,44 +951,41 @@ function MesheryPatterns({
         updateProgress({ showProgress: false });
         return;
       }
-      dataFetch(
-        `/api/pattern/${id}`,
-        {
-          credentials: 'include',
-          method: 'DELETE',
-        },
-        () => {
-          console.log('PatternFile API', `/api/pattern/${id}`);
+      deletePatternFile({
+        id: id,
+      })
+        .unwrap()
+        .then(() => {
           updateProgress({ showProgress: false });
           notify({ message: `"${name}" Design deleted`, event_type: EVENT_TYPES.SUCCESS });
           resetSelectedRowData()();
-        },
-        handleError(ACTION_TYPES.DELETE_PATTERN),
-      );
+        })
+        .catch(() => {
+          updateProgress({ showProgress: false });
+          handleError(ACTION_TYPES.DELETE_PATTERN);
+        });
     }
 
     if (type === FILE_OPS.UPDATE) {
-      dataFetch(
-        `/api/pattern`,
-        {
-          credentials: 'include',
-          method: 'POST',
-          body: JSON.stringify({
-            pattern_data: {
-              id,
-              pattern_file: getUnit8ArrayForDesign(data),
-              catalog_data,
-            },
-            save: true,
-          }),
-        },
-        () => {
-          console.log('PatternFile API', `/api/pattern`);
+      updatePattern({
+        updateBody: JSON.stringify({
+          pattern_data: {
+            id,
+            pattern_file: getUnit8ArrayForDesign(data),
+            catalog_data,
+          },
+          save: true,
+        }),
+      })
+        .unwrap()
+        .then(() => {
           updateProgress({ showProgress: false });
           notify({ message: `"${name}" Design updated`, event_type: EVENT_TYPES.SUCCESS });
-        },
-        handleError(ACTION_TYPES.UPDATE_PATTERN),
-      );
+        })
+        .catch(() => {
+          updateProgress({ showProgress: false });
+          handleError(ACTION_TYPES.UPDATE_PATTERN);
+        });
     }
 
     if (type === FILE_OPS.FILE_UPLOAD || type === FILE_OPS.URL_UPLOAD) {
@@ -1006,19 +1008,17 @@ function MesheryPatterns({
           catalog_data,
         });
       }
-      dataFetch(
-        `/api/pattern`,
-        {
-          credentials: 'include',
-          method: 'POST',
-          body,
-        },
-        () => {
-          console.log('PatternFile API', `/api/pattern`);
+      uploadPatternFile({
+        uploadBody: body,
+      })
+        .unwrap()
+        .then(() => {
           updateProgress({ showProgress: false });
-        },
-        handleError(ACTION_TYPES.UPLOAD_PATTERN),
-      );
+        })
+        .catch(() => {
+          updateProgress({ showProgress: false });
+          handleError(ACTION_TYPES.UPLOAD_PATTERN);
+        });
     }
   }
 
