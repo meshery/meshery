@@ -26,6 +26,6 @@ func ErrDirPkgUnitParseFail(dirpath string, err error) error {
 	return errors.New(ErrDirPkgUnitParseFailCode, errors.Alert, []string{fmt.Sprintf("Directory %s is not a valid packaging unit for registration", dirpath)}, []string{fmt.Sprintf("Could not parse the given directory %s into a packaging unit:  %s", dirpath, err.Error())}, []string{}, []string{} )
 }
 
-func ErrInvalidMeshmodelDefinition(path string, err error) error {
-	return errors.New(ErrDirPkgUnitParseFailCode, errors.Alert, []string{fmt.Sprintf("The file at path %s is not a valid meshmodel definition", path)}, []string{fmt.Sprintf("Could not parse meshmodel entity:  %s", err.Error())}, []string{}, []string{} )
+func ErrInvalidModelDefinition(path string, err error) error {
+	return errors.New(ErrDirPkgUnitParseFailCode, errors.Alert, []string{fmt.Sprintf("The file at path %s is not a valid Model definition", path)}, []string{fmt.Sprintf("Could not parse Model:  %s", err.Error())}, []string{}, []string{} )
 }

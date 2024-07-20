@@ -45,14 +45,14 @@ func (d Dir) PkgUnit() (_ packagingUnit, err error){
 		if(filepath.Ext(path) == ".yaml"){
 			e, err = getEntity(byt, "yaml")
 			if(err != nil){
-				// Skip and log unrecognizable entities.
-				RegLog.invalidDefinitions[path] = ErrInvalidMeshmodelDefinition(path, err)
+				// we skip unrecognisable entities
+				RegLog.invalidDefinitions[path] = ErrInvalidModelDefinition(path, err)
 				return nil
 			}
 		} else if(filepath.Ext(path) == ".json"){
 			e, err = getEntity(byt, "json")
 			if(err != nil){
-				RegLog.invalidDefinitions[path] = ErrInvalidMeshmodelDefinition(path, err)
+				RegLog.invalidDefinitions[path] = ErrInvalidModelDefinition(path, err)
 				return nil
 			}
 		} else if(filepath.Ext(path) == ".cue"){
@@ -81,9 +81,8 @@ func (d Dir) PkgUnit() (_ packagingUnit, err error){
 		return pkg, ErrDirPkgUnitParseFail(d.dirpath, fmt.Errorf("Could not completely walk the file tree: %e", err))
 	}
 	if (reflect.ValueOf(pkg.model).IsZero()){
-		err := fmt.Errorf("Cannot find `model` in the directory. Directory without a `model` definition is invalid.")
+		err := fmt.Errorf("Model definition not found in imported package. Model definitions often use the filename `model.json`, but are not required to have this filename. One and exactly one entity containing schema: model.core....... ...... must be present, otherwise the model package is considered malformed..")
 		RegLog.invalidDefinitions[d.dirpath] = err
 		return pkg, err
 	}
 	return pkg, err
-}

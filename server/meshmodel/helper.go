@@ -49,13 +49,11 @@ func GetModelDirectoryPaths() ([]string, error) {
 	return dirEntries, nil
 }
 
-// seed the local meshmodel components
 func SeedComponents(log logger.Handler, hc *models.HandlerConfig, regm *meshmodel.RegistryManager) {
 	regHelper := reg.NewRegistrationHelper(log, hc, regm)
 	modelDirPaths, err := GetModelDirectoryPaths()
 	if(err != nil){
-		// handle error
-		fmt.Println(err)
+		ErrSeedingComponents(err)
 	}
 	for _, dirPath := range modelDirPaths {
 		dir := 	reg.NewDir(dirPath)
