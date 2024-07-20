@@ -329,7 +329,7 @@ Each policy has a set of evaluation rules defined and the `evaluationQuery` attr
 1. To configure a relationship to be applied across all versions of a particular model, ensure the `version` property for those relationships is set to `*`, to limit the relationships to a specific version of a model, specify the correct model version.
 1. Specify `version` property as a regex to ensure relationships are applied to a subset of versions of a model.
 
-{% include alert.html title="Gratuitous Scoping of Relationships" type="warning" content="Relationships are not imported directly and they have to be packaged inside a model. Use caution when defining relationships that span models." %}
+{% include alert.html title="Gratuitous Scoping of Relationships" type="warning" content="Relationships are scoped to a Model by default. They are not imported directly and have to be packaged inside a Model. Relationships can span multiple Models, but one has to be cautious when defining relationships that span Models, as this allows unrestricted access to alter the properties of a foreign Model." %}
 
 ##### Actions
 
