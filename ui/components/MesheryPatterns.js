@@ -76,8 +76,10 @@ import { DryRunDesign } from './DesignLifeCycle/DryRun';
 import { DEPLOYMENT_TYPE } from './DesignLifeCycle/common';
 import {
   useClonePatternMutation,
+  useDeletePatternMutation,
   useDeployPatternMutation,
   useGetPatternsQuery,
+  useImportPatternMutation,
   usePublishPatternMutation,
   useUndeployPatternMutation,
   useUnpublishPatternMutation,
@@ -382,6 +384,8 @@ function MesheryPatterns({
   const [clonePattern] = useClonePatternMutation();
   const [publishCatalog] = usePublishPatternMutation();
   const [unpublishCatalog] = useUnpublishPatternMutation();
+  const [deletePattern] = useDeletePatternMutation();
+  const [importPattern] = useImportPatternMutation();
 
   useEffect(() => {
     if (patternsData) {
@@ -1316,15 +1320,11 @@ function MesheryPatterns({
     const jsonPatterns = JSON.stringify(patterns);
 
     updateProgress({ showProgress: true });
-    dataFetch(
-      '/api/patterns/delete',
-      {
-        method: 'POST',
-        credentials: 'include',
-        body: jsonPatterns,
-      },
-      () => {
-        console.log('PatternFile Delete Multiple API', `/api/pattern/delete`);
+    deletePattern({
+      deleteBody: jsonPatterns,
+    })
+      .unwrap()
+      .then(() => {
         updateProgress({ showProgress: false });
         setTimeout(() => {
           notify({
@@ -1333,9 +1333,11 @@ function MesheryPatterns({
           });
           resetSelectedRowData()();
         }, 1200);
-      },
-      handleError(ACTION_TYPES.DELETE_PATTERN),
-    );
+      })
+      .catch(() => {
+        updateProgress({ showProgress: false });
+        handleError(ACTION_TYPES.DELETE_PATTERN);
+      });
   }
 
   const options = {
@@ -1486,19 +1488,23 @@ function MesheryPatterns({
         break;
     }
 
-    dataFetch(
-      `/api/pattern/${designType}`,
-      { credentials: 'include', method: 'POST', body: requestBody },
-      () => {
+    importPattern({
+      importBody: requestBody,
+      type: designType,
+    })
+      .unwrap()
+      .then(() => {
         updateProgress({ showProgress: false });
         notify({
           message: `"${name}" design uploaded`,
           event_type: EVENT_TYPES.SUCCESS,
         });
         // fetchPatternsCaller()();
-      },
-      handleError(ACTION_TYPES.UPLOAD_PATTERN),
-    );
+      })
+      .catch(() => {
+        updateProgress({ showProgress: false });
+        handleError(ACTION_TYPES.UPLOAD_PATTERN);
+      });
   }
 
   const filter = {

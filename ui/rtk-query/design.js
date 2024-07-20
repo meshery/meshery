@@ -83,6 +83,20 @@ export const designsApi = api
           body: queryArg.unpublishBody,
         }),
       }),
+      deletePattern: builder.mutation({
+        query: (queryArg) => ({
+          url: `patterns/delete`,
+          method: 'POST',
+          body: queryArg.deleteBody,
+        }),
+      }),
+      importPattern: builder.mutation({
+        query: (queryArg) => ({
+          url: `pattern/${queryArg.type}`,
+          method: 'POST',
+          body: queryArg.importBody,
+        }),
+      }),
     }),
   });
 
@@ -93,4 +107,6 @@ export const {
   useClonePatternMutation,
   usePublishPatternMutation,
   useUnpublishPatternMutation,
+  useDeletePatternMutation,
+  useImportPatternMutation,
 } = designsApi;
