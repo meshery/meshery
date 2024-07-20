@@ -76,6 +76,13 @@ export const designsApi = api
           body: queryArg.publishBody,
         }),
       }),
+      unpublishPattern: builder.mutation({
+        query: (queryArg) => ({
+          url: `pattern/catalog/unpublish`,
+          method: 'DELETE',
+          body: queryArg.unpublishBody,
+        }),
+      }),
     }),
   });
 
@@ -85,4 +92,5 @@ export const {
   useUndeployPatternMutation,
   useClonePatternMutation,
   usePublishPatternMutation,
+  useUnpublishPatternMutation,
 } = designsApi;

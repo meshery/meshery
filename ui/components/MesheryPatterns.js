@@ -80,6 +80,7 @@ import {
   useGetPatternsQuery,
   usePublishPatternMutation,
   useUndeployPatternMutation,
+  useUnpublishPatternMutation,
 } from '@/rtk-query/design';
 import CheckIcon from '@/assets/icons/CheckIcon';
 import { ValidateDesign } from './DesignLifeCycle/ValidateDesign';
@@ -380,6 +381,7 @@ function MesheryPatterns({
   });
   const [clonePattern] = useClonePatternMutation();
   const [publishCatalog] = usePublishPatternMutation();
+  const [unpublishCatalog] = useUnpublishPatternMutation();
 
   useEffect(() => {
     if (patternsData) {
@@ -528,8 +530,11 @@ function MesheryPatterns({
   // @ts-ignore
   useEffect(() => {
     document.body.style.overflowX = 'hidden';
+    const visibilityFilter =
+      selectedFilters.visibility === 'All' ? null : selectedFilters.visibility;
+    setVisibilityFilter(visibilityFilter);
     return () => (document.body.style.overflowX = 'auto');
-  }, []);
+  }, [visibilityFilter]);
 
   useEffect(() => {
     if (viewType === 'grid') {
@@ -817,18 +822,21 @@ function MesheryPatterns({
         });
         if (response === 'Yes') {
           updateProgress({ showProgress: true });
-          dataFetch(
-            `/api/pattern/catalog/unpublish`,
-            { credentials: 'include', method: 'DELETE', body: JSON.stringify({ id: pattern?.id }) },
-            () => {
+          unpublishCatalog({
+            unpublishBody: JSON.stringify({ id: pattern?.id }),
+          })
+            .unwrap()
+            .then(() => {
               updateProgress({ showProgress: false });
               notify({
                 message: `Design Unpublished`,
                 event_type: EVENT_TYPES.SUCCESS,
               });
-            },
-            handleError(ACTION_TYPES.UNPUBLISH_CATALOG),
-          );
+            })
+            .catch(() => {
+              updateProgress({ showProgress: false });
+              handleError(ACTION_TYPES.UNPUBLISH_CATALOG);
+            });
         }
       };
     }
