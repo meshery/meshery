@@ -78,6 +78,7 @@ import {
   useClonePatternMutation,
   useDeployPatternMutation,
   useGetPatternsQuery,
+  usePublishPatternMutation,
   useUndeployPatternMutation,
 } from '@/rtk-query/design';
 import CheckIcon from '@/assets/icons/CheckIcon';
@@ -378,6 +379,7 @@ function MesheryPatterns({
     visibility: JSON.stringify([visibilityFilter]),
   });
   const [clonePattern] = useClonePatternMutation();
+  const [publishCatalog] = usePublishPatternMutation();
 
   useEffect(() => {
     if (patternsData) {
@@ -856,14 +858,15 @@ function MesheryPatterns({
       },
     };
     updateProgress({ showProgress: true });
-    dataFetch(
-      `/api/pattern/catalog/publish`,
-      { credentials: 'include', method: 'POST', body: JSON.stringify(payload) },
-      () => {
+    publishCatalog({
+      publishBody: JSON.stringify(payload),
+    })
+      .unwrap()
+      .then(() => {
         updateProgress({ showProgress: false });
         if (user.role_names.includes('admin')) {
           notify({
-            message: `${publishModal.pattern?.name} Design Published`,
+            message: `${publishModal?.name} Design Published`,
             event_type: EVENT_TYPES.SUCCESS,
           });
         } else {
@@ -873,9 +876,11 @@ function MesheryPatterns({
             event_type: EVENT_TYPES.SUCCESS,
           });
         }
-      },
-      handleError(ACTION_TYPES.PUBLISH_CATALOG),
-    );
+      })
+      .catch(() => {
+        updateProgress({ showProgress: false });
+        handleError(ACTION_TYPES.PUBLISH_CATALOG);
+      });
   };
 
   function handleClone(patternID, name) {

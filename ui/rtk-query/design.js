@@ -69,6 +69,13 @@ export const designsApi = api
           body: queryArg.body,
         }),
       }),
+      publishPattern: builder.mutation({
+        query: (queryArg) => ({
+          url: `pattern/catalog/publish`,
+          method: 'POST',
+          body: queryArg.publishBody,
+        }),
+      }),
     }),
   });
 
@@ -77,4 +84,5 @@ export const {
   useDeployPatternMutation,
   useUndeployPatternMutation,
   useClonePatternMutation,
+  usePublishPatternMutation,
 } = designsApi;
