@@ -881,6 +881,7 @@ function MesheryPatterns({
   function handleClone(patternID, name) {
     updateProgress({ showProgress: true });
     clonePattern({
+      body: JSON.stringify({ name: name + ' (Copy)' }),
       patternID: patternID,
     })
       .unwrap()
