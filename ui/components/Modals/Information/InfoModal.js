@@ -6,7 +6,6 @@ import { Typography, IconButton, Button, Grid, Avatar, Tooltip, Box } from '@mat
 import useStyles, {
   ActionContainer,
   CreatAtContainer,
-  CopyLinkButton,
   VisibilityTag,
   ResourceName,
 } from './styles';
@@ -35,6 +34,8 @@ import {
   ModalButtonPrimary,
   ModalButtonSecondary,
   ModalBody,
+  CopyLinkIcon,
+  useTheme,
 } from '@layer5/sistent';
 import TooltipButton from '@/utils/TooltipButton';
 import { keys } from '@/utils/permission_constants';
@@ -62,6 +63,7 @@ const InfoModal_ = React.memo((props) => {
     isReadOnly = false,
   } = props;
 
+  const theme = useTheme();
   const formRef = React.createRef();
   const formStateRef = useRef();
   const [isCatalogDataEqual, setIsCatalogDataEqual] = useState(false);
@@ -285,7 +287,14 @@ const InfoModal_ = React.memo((props) => {
       <Modal
         open={infoModalOpen}
         closeModal={handleInfoModalClose}
-        title={selectedResource?.name}
+        title={
+          <>
+            <span style={{ marginLeft: '4rem' }}>{selectedResource?.name}</span>
+            <TooltipButton title={'Copy Design Link'} onClick={handleCopy}>
+              <CopyLinkIcon height="24" width="24" fill={theme.palette.common.white} />
+            </TooltipButton>
+          </>
+        }
         headerIcon={renderIcon()}
         maxWidth={false}
         sx={{
@@ -442,10 +451,6 @@ const InfoModal_ = React.memo((props) => {
           variant="filled"
         >
           <ActionContainer>
-            <TooltipButton title={'Copy Design Link'} onClick={handleCopy}>
-              <CopyLinkButton>Copy Link</CopyLinkButton>
-            </TooltipButton>
-
             <ModalButtonSecondary
               variant="outlined"
               onClick={handlePublishController}
