@@ -9,7 +9,7 @@ layout: null
         $('[data-toggle="popover"]').popover();
         $('.popover-dismiss').popover({
             trigger: 'focus'
-        })
+        });
     });
 
     function bottomPos(element) {
@@ -18,7 +18,7 @@ layout: null
     $(function() {
         var promo = $(".js-td-cover");
         if (!promo.length) {
-            return
+            return;
         }
         var promoOffset = bottomPos(promo);
         var navbarOffset = $('.js-navbar-scroll').offset().top;
@@ -38,7 +38,8 @@ layout: null
             }
         });
     });
-}(jQuery));
+})(jQuery);
+
 (function($) {
     'use strict';
     var Search = {
@@ -46,7 +47,7 @@ layout: null
             $(document).ready(function() {
                 $(document).on('keypress', '.sidebar__search-input', function(e) {
                     if (e.keyCode !== 13) {
-                        return
+                        return;
                     }
                     var query = $(this).val();
                     var searchPage = "{{ site.baseurl }}/search/?q=" + query;
@@ -54,25 +55,22 @@ layout: null
                     return false;
                 });
             });
-        },
+        }
     };
     Search.init();
-}(jQuery));
-
+})(jQuery);
 
 /*popup-hidden-div*/
-
 function HideToggleFunction() {
     var hide = document.getElementById("hiddendiv");
     if (hide.style.display === "block") {
-      hide.style.display = "none";
+        hide.style.display = "none";
     } else {
-      hide.style.display = "block";
+        hide.style.display = "block";
     }
-  }
+}
 
 /*clipboard*/
-
 var getcodeelement = $('.clipboardjs'); /*create custom id*/
 
 getcodeelement.each(function(i) {  
@@ -83,22 +81,22 @@ getcodeelement.each(function(i) {
     /*trigger*/
     var text = $(this).text();
     text = text.replace(/\$ /gi, '')
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/'/g, "&#39;")
-    .replace(/"/g, "&quot;");
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/'/g, "&#39;")
+        .replace(/"/g, "&quot;");
     var clipButton = '<div class="btn-copy-wrap"><button class="clipbtn" data-clipboard-text="' + text + '" data-clipboard-target="#' + currentId + '"><i class="far fa-copy"></i></button></div>';
-       $(this).after(clipButton);
+    $(this).after(clipButton);
 });
 
 var clipboard = new Clipboard('.clipbtn');
 
 /* Change copy icon to text when successfully copied*/
-clipboard.on("success", (e)=>{
+clipboard.on("success", function(e) {
     console.info(e.trigger);
     console.info(e.trigger.childNodes[0]);
-    let originalIcon = e.trigger.childNodes[0];
+    var originalIcon = e.trigger.childNodes[0];
 
     var icon = e.trigger.childNodes[0];
     var text = document.createElement('span');
@@ -107,25 +105,25 @@ clipboard.on("success", (e)=>{
 
     e.trigger.replaceChild(text, icon);
 
-    setTimeout(()=>{
+    setTimeout(function() {
         e.trigger.replaceChild(originalIcon, text);
-    },2000)
-})
+    }, 2000);
+});
 
-const toggleBtnSidebarNav=document.querySelector(".nav-toggle-btn--document");
+var toggleBtnSidebarNav = document.querySelector(".nav-toggle-btn--document");
 
-toggleBtnSidebarNav.addEventListener("click",()=>{
-    let sidebarNav=document.querySelector(".left-container")
-    if(sidebarNav){
-        sidebarNav.classList.toggle("left-container--active")
+toggleBtnSidebarNav.addEventListener("click", function() {
+    var sidebarNav = document.querySelector(".left-container");
+    if (sidebarNav) {
+        sidebarNav.classList.toggle("left-container--active");
     }
-})
+});
 
-const toggleBtnMainNav=document.querySelector(".nav-toggle-btn--main");
+var toggleBtnMainNav = document.querySelector(".nav-toggle-btn--main");
 
-toggleBtnMainNav.addEventListener("click",()=>{
-    let sidebarNav=document.getElementById("main_navbar")
-    if(sidebarNav){
-        sidebarNav.classList.toggle("main-navbar--active")
+toggleBtnMainNav.addEventListener("click", function() {
+    var sidebarNav = document.getElementById("main_navbar");
+    if (sidebarNav) {
+        sidebarNav.classList.toggle("main-navbar--active");
     }
-})
+});
