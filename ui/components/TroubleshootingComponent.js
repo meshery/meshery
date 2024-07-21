@@ -6,14 +6,15 @@ import { helpAndSupportModalSchema, helpAndSupportModalUiSchema } from '@layer5/
 import { useNotification } from '@/utils/hooks/useNotification';
 import { useGetLoggedInUserQuery } from '@/rtk-query/user';
 import SupportIcon from '@/assets/icons/support';
-import axios from 'axios';
 import { EVENT_TYPES } from 'lib/event-types';
 import { UsesSistent } from './SistentWrapper';
+import { useSupportWebHookMutation } from '@/rtk-query/webhook';
 
 const Troubleshoot = (props) => {
   const [open, setOpen] = React.useState(true);
   const [openForm, setOpenForm] = React.useState(false);
   const { notify } = useNotification();
+  const [triggerWebhook] = useSupportWebHookMutation();
   const handleOpen = () => {
     setOpen(true);
   };
@@ -29,26 +30,31 @@ const Troubleshoot = (props) => {
   };
 
   const handleSupportFormSubmission = async (data) => {
-    try {
-      await axios.post('api/extensions/api/webhook/support', {
+    triggerWebhook({
+      body: {
         memberFormOne: {
           ...data,
           firstname: userData?.first_name,
           lastname: userData?.last_name,
           email: userData?.email,
         },
+      },
+      type: 'support',
+    })
+      .unwrap()
+      .then(() => {
+        notify({
+          message:
+            'Your response has been recorded. We will endeavor to promptly contact you with a suitable solution',
+          event_type: EVENT_TYPES.SUCCESS,
+        });
+      })
+      .catch(() => {
+        notify({
+          message: 'Sorry we are unable to submit your request',
+          event_type: EVENT_TYPES.ERROR,
+        });
       });
-      notify({
-        message:
-          'Your response has been recorded. We will endeavor to promptly contact you with a suitable solution',
-        event_type: EVENT_TYPES.SUCCESS,
-      });
-    } catch (error) {
-      notify({
-        message: 'Sorry we are unable to submit your request',
-        event_type: EVENT_TYPES.ERROR,
-      });
-    }
   };
 
   return (
