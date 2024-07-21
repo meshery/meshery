@@ -90,7 +90,7 @@ mesheryctl pattern import -f [file/URL] -s [source-type] -n [name]
 			return nil
 		}
 
-		fmt.Printf("pattern file imported successfully. \nID of the pattern: %s \n", utils.TruncateID(pattern.ID.String()))
+		fmt.Printf("The pattern file has been imported successfully.\nPattern ID for reference: %s\n", utils.TruncateID(pattern.ID.String()))
 
 		return nil
 	},
@@ -167,7 +167,7 @@ func importPattern(sourceType string, file string, patternURL string, save bool)
 		if err != nil {
 			return nil, utils.ErrRequestResponse(err)
 		}
-		utils.Log.Debug("remote hosted pattern request success")
+		utils.Log.Debug("Successfully fetched the pattern from the remote host")
 		var response []*models.MesheryPattern
 		defer resp.Body.Close()
 
