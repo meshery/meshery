@@ -1,0 +1,68 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Medusa Restore Job",
+  "description": "",
+  "format": "JSON",
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "version": "v1.0.0",
+   "name": "k8ssandra",
+   "displayName": "K8ssandra",
+   "description": "",
+   "status": "ignored",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "registrant": {
+    "hostname": "artifacthub"
+   },
+   "category": {
+    "name": "App Definition and Development",
+    "metadata": null
+   },
+   "subCategory": "Database",
+   "metadata": {
+    "capabilities": "",
+    "defaultData": "",
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "model": {
+    "version": "1.18.0-20240719233231-4c6da55c"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "primaryColor": "",
+   "secondaryColor": "",
+   "shape": "",
+   "shapePolygonPoints": "",
+   "status": "ignored",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "component": {
+   "kind": "MedusaRestoreJob",
+   "version": "medusa.k8ssandra.io/v1alpha1",
+   "schema": "{\n \"description\": \"MedusaRestoreJob is the Schema for the medusarestorejobs API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"MedusaRestoreJobSpec defines the desired state of MedusaRestoreJob\",\n   \"properties\": {\n    \"backup\": {\n     \"description\": \"The name of the MedusaBackup to restore.\",\n     \"type\": \"string\"\n    },\n    \"cassandraDatacenter\": {\n     \"description\": \"Name of the Cassandra datacenter to perform the restore on.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"backup\",\n    \"cassandraDatacenter\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Medusa Restore Job\",\n \"type\": \"object\"\n}"
+  }
+ }
