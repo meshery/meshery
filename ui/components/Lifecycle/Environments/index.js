@@ -18,7 +18,7 @@ import { updateProgress } from '../../../lib/store';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import useStyles from '../../../assets/styles/general/tool.styles';
 import SearchBar from '../../../utils/custom-search';
-import { RJSFModalWrapper } from '../../Modal';
+import Modal from '../../Modal';
 import PromptComponent, { PROMPT_VARIANTS } from '../../PromptComponent';
 import { EmptyState } from '../General';
 import {
@@ -562,28 +562,22 @@ const Environments = ({ organization, classes }) => {
           {(CAN(keys.CREATE_ENVIRONMENT.action, keys.CREATE_ENVIRONMENT.subject) ||
             CAN(keys.EDIT_ENVIRONMENT.action, keys.EDIT_ENVIRONMENT.subject)) &&
             environmentModal.open && (
-              <UsesSistent>
-                <SisitentModal
-                  open={environmentModal.open}
-                  closeModal={handleEnvironmentModalClose}
-                  title={
-                    actionType === ACTION_TYPES.CREATE ? 'Create Environment' : 'Edit Environment'
-                  }
-                >
-                  <RJSFModalWrapper
-                    schema={environmentModal.schema.rjsfSchema}
-                    uiSchema={environmentModal.schema.uiSchema}
-                    handleSubmit={
-                      actionType === ACTION_TYPES.CREATE
-                        ? handleCreateEnvironment
-                        : handleEditEnvironment
-                    }
-                    submitBtnText={actionType === ACTION_TYPES.CREATE ? 'Save' : 'Update'}
-                    initialData={initialData}
-                    handleClose={handleEnvironmentModalClose}
-                  />
-                </SisitentModal>
-              </UsesSistent>
+              <Modal
+                open={environmentModal.open}
+                handleClose={handleEnvironmentModalClose}
+                title={
+                  actionType === ACTION_TYPES.CREATE ? 'Create Environment' : 'Edit Environment'
+                }
+                schema={environmentModal.schema.rjsfSchema}
+                uiSchema={environmentModal.schema.uiSchema}
+                handleSubmit={
+                  actionType === ACTION_TYPES.CREATE
+                    ? handleCreateEnvironment
+                    : handleEditEnvironment
+                }
+                submitBtnText={actionType === ACTION_TYPES.CREATE ? 'Save' : 'Update'}
+                initialData={initialData}
+              />
             )}
           <UsesSistent>
             <SisitentModal

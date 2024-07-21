@@ -26,7 +26,7 @@ import PromptComponent from './PromptComponent';
 import { CapabilitiesRegistry } from '../utils/disabledComponents';
 import TroubleshootingComponent from './TroubleshootingComponent';
 import { useNotification } from '../utils/hooks/useNotification';
-import Modal, { RJSFModalWrapper } from './Modal';
+import Modal from './Modal';
 import ExportModal from './ExportModal';
 import { MDEditor } from './Markdown';
 import { FormatStructuredData } from './DataFormatter';
@@ -116,7 +116,6 @@ function NavigatorExtension({
         PublishModal,
         ExportModal,
         GenericRJSFModal: Modal,
-        RJSFModalWrapper: RJSFModalWrapper,
         PromptComponent,
         generateValidatePayload,
         capabilitiesRegistry,

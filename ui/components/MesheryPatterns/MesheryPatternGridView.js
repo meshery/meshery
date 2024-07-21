@@ -6,7 +6,7 @@ import DesignConfigurator from '../configuratorComponents/MeshModel';
 import { FILE_OPS } from '../../utils/Enum';
 import { EVENT_TYPES } from '../../lib/event-types';
 import useStyles from './Grid.styles';
-import { RJSFModalWrapper } from '../Modal';
+import Modal from '../Modal';
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -14,8 +14,6 @@ import { updateProgress } from '../../lib/store';
 import ExportModal from '../ExportModal';
 import downloadContent from '@/utils/fileDownloader';
 import { useNotification } from '@/utils/hooks/useNotification';
-import { Modal as SistentModal } from '@layer5/sistent';
-import { UsesSistent } from '../SistentWrapper';
 import Pattern from '../../public/static/img/drawer-icons/pattern_svg';
 const INITIAL_GRID_SIZE = { xl: 4, md: 6, xs: 12 };
 
@@ -274,31 +272,25 @@ function MesheryPatternGrid({
       ) : null}
 
       {canPublishPattern && publishModal.open && (
-        <UsesSistent>
-          <SistentModal
-            open={true}
-            title={publishModal.pattern?.name}
-            closeModal={handlePublishModalClose}
-            aria-label="catalog publish"
-            maxWidth="sm"
-            headerIcon={
-              <Pattern
-                fill="#fff"
-                style={{ height: '24px', width: '24px', fonSize: '1.45rem' }}
-                className={undefined}
-              />
-            }
-          >
-            <RJSFModalWrapper
-              schema={publishSchema.rjsfSchema}
-              uiSchema={publishSchema.uiSchema}
-              submitBtnText="Submit for Approval"
-              handleSubmit={handlePublish}
-              helpText="Upon submitting your catalog item, an approval flow will be initiated.[Learn more](https://docs.meshery.io/concepts/catalog)"
-              handleClose={handlePublishModalClose}
+        <Modal
+          open={true}
+          title={publishModal.pattern?.name}
+          handleClose={handlePublishModalClose}
+          aria-label="catalog publish"
+          maxWidth="sm"
+          headerIcon={
+            <Pattern
+              fill="#fff"
+              style={{ height: '24px', width: '24px', fonSize: '1.45rem' }}
+              className={undefined}
             />
-          </SistentModal>
-        </UsesSistent>
+          }
+          schema={publishSchema.rjsfSchema}
+          uiSchema={publishSchema.uiSchema}
+          submitBtnText="Submit for Approval"
+          handleSubmit={handlePublish}
+          helpText="Upon submitting your catalog item, an approval flow will be initiated.[Learn more](https://docs.meshery.io/concepts/catalog)"
+        />
       )}
       <ExportModal
         downloadModal={downloadModal}

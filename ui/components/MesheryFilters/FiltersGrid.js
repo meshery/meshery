@@ -8,11 +8,9 @@ import ConfirmationMsg from '../ConfirmationModal';
 import { getComponentsinFile } from '../../utils/utils';
 import PublishIcon from '@material-ui/icons/Publish';
 import useStyles from '../MesheryPatterns/Grid.styles';
-import { RJSFModalWrapper } from '../Modal';
+import Modal from '../Modal';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
-import { Modal as SistentModal } from '@layer5/sistent';
-import { UsesSistent } from '../SistentWrapper';
 import Filter from '../../public/static/img/drawer-icons/filter_svg.js';
 
 const INITIAL_GRID_SIZE = { xl: 4, md: 6, xs: 12 };
@@ -258,30 +256,24 @@ function FiltersGrid({
         tab={modalOpen.deploy ? 2 : 1}
       />
       {canPublishFilter && publishModal.open && (
-        <UsesSistent>
-          <SistentModal
-            open={true}
-            title={publishModal.filter?.name}
-            closeModal={handlePublishModalClose}
-            maxWidth="sm"
-            headerIcon={
-              <Filter
-                fill="#fff"
-                style={{ height: '24px', width: '24px', fonSize: '1.45rem' }}
-                className={undefined}
-              />
-            }
-          >
-            <RJSFModalWrapper
-              schema={publishSchema.rjsfSchema}
-              uiSchema={publishSchema.uiSchema}
-              handleSubmit={handlePublish}
-              handleClose={handlePublishModalClose}
-              submitBtnText="Submit for Approval"
-              helpText="Upon submitting your catalog item, an approval flow will be initiated.[Learn more](https://docs.meshery.io/concepts/catalog)"
+        <Modal
+          open={true}
+          title={publishModal.filter?.name}
+          handleClose={handlePublishModalClose}
+          maxWidth="sm"
+          headerIcon={
+            <Filter
+              fill="#fff"
+              style={{ height: '24px', width: '24px', fonSize: '1.45rem' }}
+              className={undefined}
             />
-          </SistentModal>
-        </UsesSistent>
+          }
+          schema={publishSchema.rjsfSchema}
+          uiSchema={publishSchema.uiSchema}
+          handleSubmit={handlePublish}
+          submitBtnText="Submit for Approval"
+          helpText="Upon submitting your catalog item, an approval flow will be initiated.[Learn more](https://docs.meshery.io/concepts/catalog)"
+        />
       )}
     </div>
   );
