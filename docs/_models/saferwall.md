@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Saferwall
-subtitle: Collaborative and visual infrastructure as code for Saferwall
+subtitle: Collaborative and visual infrastructure as design for Saferwall
 image: /assets/img/integrations/saferwall/icons/color/saferwall-color.svg
 permalink: extensibility/integrations/saferwall
 docURL: https://docs.meshery.io/extensibility/integrations/saferwall

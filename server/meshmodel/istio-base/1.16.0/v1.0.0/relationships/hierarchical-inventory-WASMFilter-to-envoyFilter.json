@@ -3,7 +3,8 @@
   "version": "v1.0.0",
   "kind": "Hierarchical",
   "metadata": {
-    "description": "A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component."
+    "description": "A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.",
+    "type": "SingularNodeInventoryWallet"
   },
   "model": {
     "schemaVersion": "models.meshery.io/v1beta1",
@@ -27,18 +28,12 @@
         "from": [
           {
             "kind": "WASMFilter",
-            "model": "istio-base",
+            "model": "meshery-core",
             "patch": {
               "patchStrategy": "replace",
               "mutatorRef": [
-                [
-                  "settings",
-                  "config"
-                ],
-                [
-                  "settings",
-                  "wasm-filter"
-                ]
+                ["settings", "config"],
+                ["settings", "wasm-filter"]
               ],
               "description": "WASM filter configuration to be applied to Envoy Filter."
             }
@@ -50,15 +45,7 @@
             "model": "istio-base",
             "patch": {
               "patchStrategy": "replace",
-              "mutatedRef": [
-                [
-                  "settings",
-                  "configPatches",
-                  "_",
-                  "patch",
-                  "value"
-                ]
-              ],
+              "mutatedRef": [["settings", "configPatches", "_", "patch", "value"]],
               "description": "Receive the WASM filter configuration."
             }
           }

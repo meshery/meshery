@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: AWS EventBridge
-subtitle: Collaborative and visual infrastructure as code for AWS EventBridge
+subtitle: Collaborative and visual infrastructure as design for AWS EventBridge
 image: /assets/img/integrations/aws-eventbridge-controller/icons/color/aws-eventbridge-controller-color.svg
 permalink: extensibility/integrations/aws-eventbridge-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-eventbridge-controller
@@ -39,7 +39,7 @@ featureList: [
   "Amazon EventBridge Pipes is a serverless point-to-point integration resource that helps you connect event producers to event consumers with optional filtering, enrichment, and transformation capabilities.",
   "Use Amazon EventBridge Scheduler to schedule tasks and events at scale."
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

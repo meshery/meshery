@@ -11,7 +11,6 @@ import {
   TableRow,
   IconButton,
   Typography,
-  Switch,
   Popover,
   AppBar,
   Tabs,
@@ -37,8 +36,6 @@ import Modal from '../Modal';
 import { iconMedium } from '../../css/icons.styles';
 import PromptComponent, { PROMPT_VARIANTS } from '../PromptComponent';
 import resetDatabase from '../graphql/queries/ResetDatabaseQuery';
-import changeOperatorState from '../graphql/mutations/OperatorStatusMutation';
-import fetchMesheryOperatorStatus from '../graphql/queries/OperatorStatusQuery';
 import MesherySettingsEnvButtons from '../MesherySettingsEnvButtons';
 import styles from './styles';
 import MeshSyncTable from './meshSync';
@@ -53,8 +50,6 @@ import ExploreIcon from '@mui/icons-material/Explore';
 import {
   CONNECTION_KINDS,
   CONNECTION_STATES,
-  CONTROLLERS,
-  CONTROLLER_STATES,
   CONNECTION_STATE_TO_TRANSITION_MAP,
 } from '../../utils/Enum';
 import FormatConnectionMetadata from './metadata';
@@ -185,7 +180,7 @@ function Connections(props) {
   const [rowsExpanded, setRowsExpanded] = useState([]);
   const [rowData, setSelectedRowData] = useState({});
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const [_operatorState, _setOperatorState] = useState(operatorState || []);
+  const [_operatorState] = useState(operatorState || []);
   const [tab, setTab] = useState(0);
   const ping = useKubernetesHook();
   const { width } = useWindowDimensions();
@@ -1085,73 +1080,6 @@ function Connections(props) {
     };
   };
 
-  function getOperatorStatus() {
-    const ctxId = connections?.metadata?.id;
-    const operator = meshsyncControllerState?.find(
-      (op) => op.contextId === ctxId && op.controller === CONTROLLERS.OPERATOR,
-    );
-    if (!operator) {
-      return {};
-    }
-    return {
-      operatorState: operator.status === CONTROLLER_STATES.DEPLOYED,
-      operatorVersion: operator?.version,
-    };
-  }
-
-  const handleOperatorSwitch = (index, checked) => {
-    const contextId = connections[index].metadata?.id;
-    const connectionID = connections[index]?.id;
-    const variables = {
-      status: `${checked ? CONTROLLER_STATES.DEPLOYED : CONTROLLER_STATES.DISABLED}`,
-      contextID: contextId,
-    };
-
-    updateProgress({ showProgress: true });
-
-    changeOperatorState((response, errors) => {
-      updateProgress({ showProgress: false });
-
-      if (errors !== undefined) {
-        handleError(`Unable to ${!checked ? 'Uni' : 'I'}nstall operator`);
-      }
-      notify({
-        message: `Operator ${response.operatorStatus?.toLowerCase()}`,
-        event_type: EVENT_TYPES.SUCCESS,
-      });
-      // react-realy fetchQuery function returns a "Observable". To start a request subscribe needs to be called.
-      // The data is stored into the react-relay store, the data is retrieved by subscribing to the relay store.
-      // This subscription only subscribes to the fetching of the query and not to any subsequent changes to data in the relay store.
-      const tempSubscription = fetchMesheryOperatorStatus({ connectionID: connectionID }).subscribe(
-        {
-          next: (res) => {
-            _setOperatorState(updateCtxInfo(contextId, res));
-            tempSubscription.unsubscribe();
-          },
-          error: (err) => console.log('error at operator scan: ' + err),
-        },
-      );
-    }, variables);
-  };
-
-  const updateCtxInfo = (ctxId, newInfo) => {
-    if (newInfo.operator.error) {
-      handleError('There is problem With operator')(newInfo.operator.error.description);
-      return;
-    }
-
-    const state = _operatorStateRef.current;
-    const op = state?.find((ctx) => ctx.contextID === ctxId);
-    if (!op) {
-      return [...state, { contextID: ctxId, operatorStatus: newInfo.operator }];
-    }
-
-    let ctx = { ...op };
-    const removeCtx = state?.filter((ctx) => ctx.contextID !== ctxId);
-    ctx.operatorStatus = newInfo.operator;
-    return removeCtx ? [...removeCtx, ctx] : [ctx];
-  };
-
   const filters = {
     status: {
       name: 'Status',
@@ -1252,7 +1180,7 @@ function Connections(props) {
                   onSearch={(value) => {
                     setSearch(value);
                   }}
-                  placeholder="Search connections..."
+                  placeholder="Search Connections..."
                   expanded={isSearchExpanded}
                   setExpanded={setIsSearchExpanded}
                 />
@@ -1322,24 +1250,6 @@ function Connections(props) {
                       Flush MeshSync
                     </Typography>
                   </Button>
-                </Box>
-              </div>
-              <div className={classes.list}>
-                <Box className={classes.listItem} sx={{ width: '100%' }}>
-                  <div className={classes.listContainer}>
-                    <Switch
-                      defaultChecked={getOperatorStatus(rowData.rowIndex)?.operatorState}
-                      onClick={(e) => handleOperatorSwitch(rowData.rowIndex, e.target.checked)}
-                      name="OperatorSwitch"
-                      color="primary"
-                      className={classes.OperatorSwitch}
-                      disabled={
-                        // TODO: update keys here for operator action
-                        !CAN(keys.FLUSH_MESHSYNC_DATA.action, keys.FLUSH_MESHSYNC_DATA.subject)
-                      }
-                    />
-                    <Typography variant="body1">Operator</Typography>
-                  </div>
                 </Box>
               </div>
             </Grid>

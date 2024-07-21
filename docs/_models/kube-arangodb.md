@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: ArangoDB Kubernetes Operator
-subtitle: Collaborative and visual infrastructure as code for ArangoDB Kubernetes Operator
+subtitle: Collaborative and visual infrastructure as design for ArangoDB Kubernetes Operator
 image: /assets/img/integrations/kube-arangodb/icons/color/kube-arangodb-color.svg
 permalink: extensibility/integrations/kube-arangodb
 docURL: https://docs.meshery.io/extensibility/integrations/kube-arangodb
@@ -19,7 +19,7 @@ featureList: [
   "Scaling and high availability of ArangoDB",
   "Backup and restore functionality for ArangoDB"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Openkruise
-subtitle: Collaborative and visual infrastructure as code for OpenEBS
+subtitle: Collaborative and visual infrastructure as design for Openkruise
 image: /assets/img/integrations/openkruise/icons/color/openkruise-color.svg
 permalink: extensibility/integrations/openkruise
 docURL: https://docs.meshery.io/extensibility/integrations/openkruise

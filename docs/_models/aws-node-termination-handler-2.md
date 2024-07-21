@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: AWS Node Termination Handler
-subtitle: Collaborative and visual infrastructure as code for AWS Node Termination Handler
+subtitle: Collaborative and visual infrastructure as design for AWS Node Termination Handler
 image: /assets/img/integrations/aws-node-termination-handler-2/icons/color/aws-node-termination-handler-2-color.svg
 permalink: extensibility/integrations/aws-node-termination-handler-2
 docURL: https://docs.meshery.io/extensibility/integrations/aws-node-termination-handler-2
@@ -19,7 +19,7 @@ featureList: [
   "Use MeshMap&lsquo;s visual designer to explore your App Mesh configuration",
   "Deploy Meshery on your EKS clusters for App Mesh management"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include
