@@ -76,6 +76,11 @@ export class MesheryDashboardPage {
   async goTo() {
     await this.page.goto(ENV.MESHERY_SERVER_URL);
   }
+  async hoverAndClickMenuItem(menuItemName) {
+    await this.page.locator('[data-test="profile-button"]').getByRole('button').hover();
+    await this.page.waitForTimeout(500); // Adding a delay to ensure the menu appears
+    await this.page.getByRole('menuitem', { name: menuItemName }).click();
+  }
 }
 export class ConnectionsPage {
   /**

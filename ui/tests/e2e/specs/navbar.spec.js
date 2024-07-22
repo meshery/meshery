@@ -1,23 +1,38 @@
 const { test, expect, MesheryDashboardPage } = require('../fixtures/pages');
 
-test('Verifies the logout functionality', async ({ page }) => {
-  const dashboardPage = new MesheryDashboardPage(page);
+const fs = require('fs').promises;
+test.describe('Navbar Tests', () => {
+  let dashboardPage;
 
-  await test.step('When I visit the dashboard page', async () => {
-    await dashboardPage.goTo();
+  test.beforeEach(async ({ page }) => {
+    dashboardPage = new MesheryDashboardPage(page);
+    await test.step('When I visit the dashboard page', async () => {
+      await dashboardPage.goTo();
+    });
   });
 
-  await test.step('And I hover over the profile and click `logout` button', async () => {
-    const profileButton = dashboardPage.page
-      .locator('[data-test="profile-button"]')
-      .getByRole('button');
-    await profileButton.hover();
-    await page.waitForTimeout(500); // Adding a delay to ensure the menu appears
-    await expect(dashboardPage.page.getByRole('menuitem', { name: 'Logout' })).toBeVisible();
-    await dashboardPage.page.getByRole('menuitem', { name: 'Logout' }).click();
+  test('Verifies the download authentication token', async () => {
+    await test.step('I Hover over the profile and click `Get Token`', async () => {
+      await dashboardPage.hoverAndClickMenuItem('Get Token');
+    });
+
+    await test.step('And I see the file contains the token details', async () => {
+      const [download] = await Promise.all([dashboardPage.page.waitForEvent('download')]);
+      const path = await download.path();
+      const content = await fs.readFile(path, 'utf-8');
+      const jsonContent = JSON.parse(content);
+      expect(jsonContent['meshery-provider']).toBe('Meshery');
+      expect(jsonContent).toHaveProperty('token');
+    });
   });
 
-  await test.step('And I see successfully logged out', async () => {
-    await expect(page.getByLabel('Select Provider')).toBeVisible();
+  test('Verifies the logout functionality', async () => {
+    await test.step('I Hover over the profile and click `Logout`', async () => {
+      await dashboardPage.hoverAndClickMenuItem('Logout');
+    });
+
+    await test.step('And I see successfully logged out', async () => {
+      await expect(dashboardPage.page.getByLabel('Select Provider')).toBeVisible();
+    });
   });
 });
