@@ -923,9 +923,9 @@ function MesheryPatterns({
   }
 
   // this function returns fetchPattern function with latest values so that it can be used in child components
-  // function fetchPatternsCaller() {
-  //   return () => fetchPatterns(page, pageSize, search, sortOrder, visibilityFilter);
-  // }
+  function fetchPatternsCaller() {
+    return () => getPatterns();
+  }
 
   const handleError = (action) => (error) => {
     updateProgress({ showProgress: false });
@@ -1666,7 +1666,7 @@ function MesheryPatterns({
               setPublishModal={setPublishModal}
               publishSchema={publishSchema}
               user={user}
-              // fetch={() => fetchPatterns(page, pageSize, search, sortOrder, visibilityFilter)}
+              fetch={() => getPatterns()}
               handleInfoModal={handleInfoModal}
               openUndeployModal={openUndeployModal}
               openValidationModal={openValidateModal}
@@ -1690,7 +1690,7 @@ function MesheryPatterns({
                     selectedResource={infoModal.selectedResource}
                     resourceOwnerID={infoModal.ownerID}
                     currentUser={user}
-                    patternFetcher={getPatterns}
+                    patternFetcher={fetchPatternsCaller}
                     formSchema={publishSchema}
                     meshModels={meshModels}
                   />
