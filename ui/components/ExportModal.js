@@ -1,23 +1,15 @@
-import {
-  Dialog,
-  DialogTitle,
-  Typography,
-  IconButton,
-  DialogContent,
-  Button,
-  Box,
-} from '@material-ui/core';
+import { Typography, Button, Box } from '@material-ui/core';
 import React from 'react';
 import PatternIcon from '@/assets/icons/Pattern';
-import { CloseIcon } from '@layer5/sistent';
+import { ModalFooter } from '@layer5/sistent';
 import { GetApp as GetAppIcon } from '@material-ui/icons';
 import OriginalApplicationFileIcon from '@/assets/icons/OriginalApplicationIcon';
 import ModifiedApplicationFileIcon from '@/assets/icons/ModifiedApplicationIcon';
 import { withStyles } from '@material-ui/core/styles';
-import { CustomTextTooltip } from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
-import InfoOutlinedIcon from '@/assets/icons/InfoOutlined';
-import { DialogActions } from '@layer5/sistent';
-import { Colors } from '@/themes/app';
+import { Modal, ModalBody } from '@layer5/sistent';
+import theme, { Colors } from '@/themes/app';
+import { iconMedium } from 'css/icons.styles';
+import { UsesSistent } from './SistentWrapper';
 
 const styles = (theme) => ({
   dialogTitle: {
@@ -130,74 +122,71 @@ const ExportModal = (props) => {
     justifyContent: 'center',
   };
   return (
-    <Dialog
-      open={downloadModal.open}
-      onClose={handleClose}
-      aria-labelledby="download-design-dialog"
-      aria-describedby="download-design-dialog-description"
-      maxWidth="xl"
-    >
-      <DialogTitle
-        textAlign="center"
-        id="download-design-dialog-title"
-        className={classes.dialogTitle}
+    <UsesSistent>
+      <Modal
+        open={downloadModal.open}
+        closeModal={handleClose}
+        title="Export Design"
+        headerIcon={<PatternIcon style={iconMedium} fill={theme.palette.secondary.whiteIcon} />}
+        aria-labelledby="download-design-dialog"
+        aria-describedby="download-design-dialog-description"
+        maxWidth="sm"
       >
-        <PatternIcon width={30} height={30} style={{ filter: 'none', opacity: 1 }} fill="#FFF" />
-        <Typography className={classes.textHeader} variant="h6">
-          Export Design
-        </Typography>
-        <IconButton
-          aria-label="close"
-          onClick={handleClose}
-          component="button"
-          style={{
-            color: '#FFFFFF',
-          }}
-        >
-          <CloseIcon className={classes.closing} fill={'#FFF'} />
-        </IconButton>
-      </DialogTitle>
-      <DialogContent
-        style={{
-          display: 'inline-table',
-          maxWidth: '50rem',
-          padding: '3rem',
-          margin: '0 auto',
-        }}
-      >
-        <Box
-          sx={{
-            display: 'flex',
-            gap: '2.5rem',
-            width: 'auto',
-            textAlign: 'center',
-            alignItems: 'center',
-            justifyContent: 'center',
-            flexWrap: 'wrap',
-          }}
-        >
-          {downloadModal?.content?.type?.String && (
+        <ModalBody>
+          <Box
+            sx={{
+              display: 'flex',
+              gap: '2.5rem',
+              width: 'auto',
+              textAlign: 'center',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexWrap: 'wrap',
+            }}
+          >
+            {downloadModal?.content?.type?.String && (
+              <div>
+                <Typography
+                  component={'h4'}
+                  style={{ paddingBottom: '1.5rem', maxWidth: '9rem' }}
+                  className={classes.text}
+                >
+                  Original ({downloadModal?.content?.type?.String})
+                </Typography>
+                <div style={exportBtnStyles}>
+                  <Button
+                    onClick={(e) =>
+                      handleDesignDownload(
+                        e,
+                        downloadModal.content,
+                        downloadModal?.content.type?.String,
+                      )
+                    }
+                  >
+                    <div style={exportWrpStyles}>
+                      <OriginalApplicationFileIcon width={75} height={75} />
+                      <div style={{ display: 'flex', padding: '0.8rem' }}>
+                        <Typography> EXPORT </Typography>
+                        <GetAppIcon />
+                      </div>
+                    </div>
+                  </Button>
+                </div>
+              </div>
+            )}
             <div>
               <Typography
-                component={'h4'}
-                style={{ paddingBottom: '1.5rem', maxWidth: '9rem' }}
+                component="p"
+                style={{ paddingBottom: '1.5rem' }}
                 className={classes.text}
               >
-                Original ({downloadModal?.content?.type?.String})
+                Current
               </Typography>
               <div style={exportBtnStyles}>
-                <Button
-                  onClick={(e) =>
-                    handleDesignDownload(
-                      e,
-                      downloadModal.content,
-                      downloadModal?.content.type?.String,
-                    )
-                  }
-                >
+                <Button onClick={(e) => handleDesignDownload(e, downloadModal.content)}>
                   <div style={exportWrpStyles}>
-                    <OriginalApplicationFileIcon width={75} height={75} />
-                    <div style={{ display: 'flex', padding: '0.8rem' }}>
+                    <ModifiedApplicationFileIcon width={75} height={82} />
+                    <div style={{ display: 'flex', padding: '0.4rem' }}>
                       <Typography> EXPORT </Typography>
                       <GetAppIcon />
                     </div>
@@ -205,57 +194,34 @@ const ExportModal = (props) => {
                 </Button>
               </div>
             </div>
-          )}
-          <div>
-            <Typography component="p" style={{ paddingBottom: '1.5rem' }} className={classes.text}>
-              Current
-            </Typography>
-            <div style={exportBtnStyles}>
-              <Button onClick={(e) => handleDesignDownload(e, downloadModal.content)}>
-                <div style={exportWrpStyles}>
-                  <ModifiedApplicationFileIcon width={75} height={82} />
-                  <div style={{ display: 'flex', padding: '0.4rem' }}>
-                    <Typography> EXPORT </Typography>
-                    <GetAppIcon />
-                  </div>
-                </div>
-              </Button>
-            </div>
-          </div>
-          <div>
-            <Typography style={{ paddingBottom: '1.5rem' }} className={classes.text}>
-              OCI
-            </Typography>
+            <div>
+              <Typography style={{ paddingBottom: '1.5rem' }} className={classes.text}>
+                OCI
+              </Typography>
 
-            <div style={exportBtnStyles}>
-              <Button
-                onClick={(e) => handleDesignDownload(e, downloadModal.content, null, 'oci=true')}
-              >
-                <div style={exportWrpStyles}>
-                  <ModifiedApplicationFileIcon width={75} height={82} />
-                  <div style={{ display: 'flex', padding: '0.4rem' }}>
-                    <Typography> EXPORT </Typography>
-                    <GetAppIcon />
+              <div style={exportBtnStyles}>
+                <Button
+                  onClick={(e) => handleDesignDownload(e, downloadModal.content, null, 'oci=true')}
+                >
+                  <div style={exportWrpStyles}>
+                    <ModifiedApplicationFileIcon width={75} height={82} />
+                    <div style={{ display: 'flex', padding: '0.4rem' }}>
+                      <Typography> EXPORT </Typography>
+                      <GetAppIcon />
+                    </div>
                   </div>
-                </div>
-              </Button>
+                </Button>
+              </div>
             </div>
-          </div>
-          {ExtensibleButton && <ExtensibleButton {...props} closed={closed} />}
-        </Box>
-      </DialogContent>
-      <DialogActions className={classes.dialogAction}>
-        <CustomTextTooltip
-          placement="top"
-          interactive={true}
-          title="MeshMap Designer offers multiple export options, allowing you to choose the format that suits your needs. [Learn more](https://docs.layer5.io/meshmap/designer/export-designs/)"
-        >
-          <IconButton className={classes.infoIconButton} color="primary">
-            <InfoOutlinedIcon height={24} width={24} className={classes.infoIcon} />
-          </IconButton>
-        </CustomTextTooltip>
-      </DialogActions>
-    </Dialog>
+            {ExtensibleButton && <ExtensibleButton {...props} closed={closed} />}
+          </Box>
+        </ModalBody>
+        <ModalFooter
+          variant="filled"
+          helpText="MeshMap Designer offers multiple export options, allowing you to choose the format that suits your needs. [Learn more](https://docs.layer5.io/meshmap/designer/export-designs/)"
+        ></ModalFooter>
+      </Modal>
+    </UsesSistent>
   );
 };
 
