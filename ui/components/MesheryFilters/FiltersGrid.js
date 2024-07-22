@@ -12,6 +12,8 @@ import Modal from '../Modal';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import Filter from '../../public/static/img/drawer-icons/filter_svg.js';
+import theme from '@/themes/app';
+import { iconMedium } from 'css/icons.styles';
 
 const INITIAL_GRID_SIZE = { xl: 4, md: 6, xs: 12 };
 
@@ -261,13 +263,7 @@ function FiltersGrid({
           title={publishModal.filter?.name}
           handleClose={handlePublishModalClose}
           maxWidth="sm"
-          headerIcon={
-            <Filter
-              fill="#fff"
-              style={{ height: '24px', width: '24px', fonSize: '1.45rem' }}
-              className={undefined}
-            />
-          }
+          leftHeaderIcon={<Filter fill={theme.palette.secondary.whiteIcon} style={iconMedium} />}
           schema={publishSchema.rjsfSchema}
           uiSchema={publishSchema.uiSchema}
           handleSubmit={handlePublish}

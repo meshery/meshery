@@ -78,6 +78,8 @@ import { useDeployPatternMutation, useUndeployPatternMutation } from '@/rtk-quer
 import CheckIcon from '@/assets/icons/CheckIcon';
 import { ValidateDesign } from './DesignLifeCycle/ValidateDesign';
 import PatternConfigureIcon from '@/assets/icons/PatternConfigure';
+import { iconMedium } from 'css/icons.styles';
+import theme from '@/themes/app';
 
 const genericClickHandler = (ev, fn) => {
   ev.stopPropagation();
@@ -1766,13 +1768,7 @@ const ImportModal = React.memo((props) => {
       <Modal
         open={true}
         handleClose={handleClose}
-        leftHeaderIcon={
-          <Pattern
-            fill="#fff"
-            style={{ height: '24px', width: '24px', fonSize: '1.45rem' }}
-            className={undefined}
-          />
-        }
+        leftHeaderIcon={<Pattern fill={theme.palette.secondary.whiteIcon} style={iconMedium} />}
         maxWidth="sm"
         title="Import Design"
         schema={importFormSchema.rjsfSchema}
@@ -1794,13 +1790,7 @@ const PublishModal = React.memo((props) => {
         handleClose={handleClose}
         aria-label="catalog publish"
         title={title}
-        headerIcon={
-          <Pattern
-            fill="#fff"
-            style={{ height: '24px', width: '24px', fonSize: '1.45rem' }}
-            className={undefined}
-          />
-        }
+        leftHeaderIcon={<Pattern fill={theme.palette.secondary.whiteIcon} style={iconMedium} />}
         maxWidth="sm"
         schema={publishFormSchema.rjsfSchema}
         uiSchema={publishFormSchema.uiSchema}

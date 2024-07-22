@@ -62,6 +62,7 @@ import { keys } from '@/utils/permission_constants';
 import DefaultError from './General/error-404/index';
 import UniversalFilter from '../utils/custom-filter';
 import { UsesSistent } from './SistentWrapper';
+import theme from '@/themes/app';
 
 const styles = (theme) => ({
   grid: {
@@ -1446,19 +1447,11 @@ function MesheryFilters({
 const ImportModal = React.memo((props) => {
   const { importFormSchema, handleClose, handleImportFilter } = props;
 
-  // const classes = useStyles();
-
   return (
     <Modal
       open={true}
       handleClose={handleClose}
-      headerIcon={
-        <Filter
-          fill="#fff"
-          style={{ height: '24px', width: '24px', fonSize: '1.45rem' }}
-          className={undefined}
-        />
-      }
+      leftHeaderIcon={<Filter fill={theme.palette.secondary.whiteIcon} style={iconMedium} />}
       title="Import Design"
       maxWidth="sm"
       schema={importFormSchema.rjsfSchema}
@@ -1476,13 +1469,7 @@ const PublishModal = React.memo((props) => {
     <Modal
       open={true}
       handleClose={handleClose}
-      headerIcon={
-        <Filter
-          fill="#fff"
-          style={{ height: '24px', width: '24px', fonSize: '1.45rem' }}
-          className={undefined}
-        />
-      }
+      leftHeaderIcon={<Filter fill={theme.palette.secondary.whiteIcon} style={iconMedium} />}
       closeModal={handleClose}
       aria-label="catalog publish"
       title={title}

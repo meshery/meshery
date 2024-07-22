@@ -15,6 +15,8 @@ import ExportModal from '../ExportModal';
 import downloadContent from '@/utils/fileDownloader';
 import { useNotification } from '@/utils/hooks/useNotification';
 import Pattern from '../../public/static/img/drawer-icons/pattern_svg';
+import { iconMedium } from 'css/icons.styles';
+import theme from '@/themes/app';
 const INITIAL_GRID_SIZE = { xl: 4, md: 6, xs: 12 };
 
 function PatternCardGridItem({
@@ -278,13 +280,7 @@ function MesheryPatternGrid({
           handleClose={handlePublishModalClose}
           aria-label="catalog publish"
           maxWidth="sm"
-          headerIcon={
-            <Pattern
-              fill="#fff"
-              style={{ height: '24px', width: '24px', fonSize: '1.45rem' }}
-              className={undefined}
-            />
-          }
+          leftHeaderIcon={<Pattern fill={theme.palette.secondary.whiteIcon} style={iconMedium} />}
           schema={publishSchema.rjsfSchema}
           uiSchema={publishSchema.uiSchema}
           submitBtnText="Submit for Approval"

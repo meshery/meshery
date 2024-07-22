@@ -90,6 +90,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+// This component is not in use thats why currently commented out.
+
 // const SchemaVersion = ({ schema_array, type, schemaChangeHandler }) => {
 //   const [anchorEl, setAnchorEl] = React.useState(null);
 //   const open = Boolean(anchorEl);
