@@ -1,5 +1,8 @@
 name: Extension Test On PR Dispatch
 on:
+  push:
+    branches:
+      - test-workflow
   workflow_dispatch:
     inputs:
       logLevel:
