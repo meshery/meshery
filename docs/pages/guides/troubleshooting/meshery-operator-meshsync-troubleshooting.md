@@ -39,7 +39,7 @@ Because Meshery is versatile in its deployment models, there are a number of sce
 
 <!-- Meshery Operator, MeshSync, and Broker are deployed in the same cluster as Meshery Server. This is the default deployment scenario when using `mesheryctl system start` or `make run-local`. -->
 
-Whether using [`mesheryctl system start`](][{{site.baseurl}}/installation]), `[helm install]({{site.baseurl}}/installation/kubernetes/helm) or `make run-local` Meshery Server will automatically connect to any available Kubernetes clusters found in your kubeconfig (under `$HOME/.kube/config`). Once connected, operator, broker(NATS) and meshsync will automatically get deployed in the same clusters.
+Whether using [`mesheryctl system start`](][{{site.baseurl}}/installation]), `[helm install]({{site.baseurl}}/installation/kubernetes/helm)` or `make run-local`, Meshery Server will automatically connect to any available Kubernetes clusters found in your kubeconfig (under `$HOME/.kube/config`). Once connected, operator, broker(NATS) and meshsync will automatically get deployed in the same clusters.
 
 If everything is fine, by viewing the connection in Meshery UI, MeshSync should be in **CONNECTED:** state. Otherwise, check the Operator's pod logs:
 
