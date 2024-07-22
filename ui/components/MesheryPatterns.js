@@ -37,7 +37,7 @@ import DoneAllIcon from '@material-ui/icons/DoneAll';
 import PublicIcon from '@material-ui/icons/Public';
 import PublishIcon from '@material-ui/icons/Publish';
 import PromptComponent, { PROMPT_VARIANTS } from './PromptComponent';
-// import LoadingScreen from './LoadingComponents/LoadingComponent';
+import LoadingScreen from './LoadingComponents/LoadingComponent';
 import { FILE_OPS, MesheryPatternsCatalog, VISIBILITY } from '../utils/Enum';
 import CloneIcon from '../public/static/img/CloneIcon';
 import { useRouter } from 'next/router';
@@ -375,7 +375,11 @@ function MesheryPatterns({
 
   const [deployPatternMutation] = useDeployPatternMutation();
   const [undeployPatternMutation] = useUndeployPatternMutation();
-  const { data: patternsData, refetch: getPatterns } = useGetPatternsQuery({
+  const {
+    data: patternsData,
+    isLoading: ispatternsLoading,
+    refetch: getPatterns,
+  } = useGetPatternsQuery({
     page: page,
     pagesize: pageSize,
     search: search,
@@ -1446,9 +1450,9 @@ function MesheryPatterns({
     },
   };
 
-  // if (loading) {
-  //   return <LoadingScreen animatedIcon="AnimatedMeshPattern" message={`Loading ${pageTitle}...`} />;
-  // }
+  if (ispatternsLoading) {
+    return <LoadingScreen animatedIcon="AnimatedMeshPattern" message={`Loading ${pageTitle}...`} />;
+  }
 
   /**
    * Gets the data of Import Filter and handles submit operation
