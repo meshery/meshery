@@ -451,7 +451,7 @@ const InfoModal_ = React.memo((props) => {
               onClick={handlePublishController}
               className={classes.copyButton}
               disabled={
-                isAdmin
+                !isPublished
                   ? false
                   : !(
                       CAN(keys.PUBLISH_DESIGN.action, keys.PUBLISH_DESIGN.subject) &&
