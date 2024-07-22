@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
 import { NoSsr, withStyles } from '@material-ui/core';
-import MesheryPatternsProvider from '../../../components/MesheryPatterns';
 import { updatepagepath } from '../../../lib/store';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Head from 'next/head';
 import { getPath } from '../../../lib/path';
+import MesheryPatterns from '../../../components/MesheryPatterns';
 
 const styles = {
   paper: {
@@ -25,7 +25,7 @@ function Patterns({ updatepagepath }) {
       <Head>
         <title>Designs | Meshery</title>
       </Head>
-      <MesheryPatternsProvider />
+      <MesheryPatterns />
     </NoSsr>
   );
 }

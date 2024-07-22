@@ -25,7 +25,7 @@ import AddIcon from '@material-ui/icons/AddCircleOutline';
 import React, { useEffect, useRef, useState } from 'react';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
 import Moment from 'react-moment';
-import { Provider, connect } from 'react-redux';
+import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import dataFetch from '../lib/data-fetch';
 import { toggleCatalogContent, updateProgress } from '../lib/store';
@@ -90,7 +90,6 @@ import CheckIcon from '@/assets/icons/CheckIcon';
 import { ValidateDesign } from './DesignLifeCycle/ValidateDesign';
 import PatternConfigureIcon from '@/assets/icons/PatternConfigure';
 // import { useGetUserPrefQuery } from '@/rtk-query/user';
-import { store } from '../store';
 import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
 
 const genericClickHandler = (ev, fn) => {
@@ -376,7 +375,7 @@ function MesheryPatterns({
 
   const [deployPatternMutation] = useDeployPatternMutation();
   const [undeployPatternMutation] = useUndeployPatternMutation();
-  const { data: patternsData } = useGetPatternsQuery({
+  const { data: patternsData, refetch: getPatterns } = useGetPatternsQuery({
     page: page,
     pagesize: pageSize,
     search: search,
@@ -1499,7 +1498,7 @@ function MesheryPatterns({
           message: `"${name}" design uploaded`,
           event_type: EVENT_TYPES.SUCCESS,
         });
-        // fetchPatternsCaller()();
+        getPatterns();
       })
       .catch(() => {
         updateProgress({ showProgress: false });
@@ -1691,7 +1690,7 @@ function MesheryPatterns({
                     selectedResource={infoModal.selectedResource}
                     resourceOwnerID={infoModal.ownerID}
                     currentUser={user}
-                    patternFetcher={''}
+                    patternFetcher={getPatterns}
                     formSchema={publishSchema}
                     meshModels={meshModels}
                   />
@@ -1790,14 +1789,6 @@ const PublishModal = React.memo((props) => {
   );
 });
 
-const MesheryPatternsProvider = (props) => {
-  return (
-    <Provider store={store}>
-      <MesheryPatterns {...props} />
-    </Provider>
-  );
-};
-
 const mapDispatchToProps = (dispatch) => ({
   updateProgress: bindActionCreators(updateProgress, dispatch),
   toggleCatalogContent: bindActionCreators(toggleCatalogContent, dispatch),
@@ -1810,6 +1801,4 @@ const mapStateToProps = (state) => ({
 });
 
 // @ts-ignore
-export default withStyles(styles)(
-  connect(mapStateToProps, mapDispatchToProps)(MesheryPatternsProvider),
-);
+export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(MesheryPatterns));
