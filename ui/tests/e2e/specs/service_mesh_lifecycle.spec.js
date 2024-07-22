@@ -20,7 +20,7 @@ test.describe('Service Mesh Lifecycle Tests', () => {
         await page.getByRole('tab', { name: 'Adapters', exact: true }).click({ force: true });
       });
 
-      await test.step('And I etner the Mesh adapter URL', async () => {
+      await test.step('And I enter the Mesh adapter URL', async () => {
         await page
           .locator('label')
           .filter({ hasText: /Mesh Adapter URL/ })
