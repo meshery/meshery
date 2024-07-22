@@ -25,6 +25,7 @@ setup('authenticate', async ({ page }) => {
 
   await expect(async () => {
     const url = page.url();
+    console.log(url);
     const redirect_urls = new Set([ENV.MESHERY_SERVER_URL + '/', ENV.REMOTE_PROVIDER_URL + '/']);
     const redirected = redirect_urls.has(url);
     return expect(redirected).toBeTruthy();
