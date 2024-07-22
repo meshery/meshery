@@ -29,11 +29,13 @@ jobs:
         uses: actions/setup-go@master
         with:
           go-version: "1.21"
+      - name: Update /etc/hosts
+        run: echo "127.0.0.1 mesherylocal.layer5.io" | sudo tee -a /etc/hosts
       - name: Build Meshery Server
         env:
-          PROVIDER_BASE_URLS: http://localhost:9876
+          PROVIDER_BASE_URLS: https://meshery.layer5.io
           PORT: 9081
-          ADAPTER_URLS: "localhost:10000 localhost:10001 localhost:10002 localhost:10003 localhost:10004 localhost:10009 localhost:10007 localhost:10013"
+          ADAPTER_URLS: "mesherylocal.layer5.io:10000 mesherylocal.layer5.io:10001 mesherylocal.layer5.io:10002 mesherylocal.layer5.io:10003 mesherylocal.layer5.io:10004 mesherylocal.layer5.io:10008 mesherylocal.layer5.io:10009 mesherylocal.layer5.io:10007"
         run: |
           make build-server
   ui-build:
@@ -120,6 +122,8 @@ jobs:
         uses: helm/kind-action@v1.8.0
         with:
           cluster_name: "kind-cluster"
+      - name: Update /etc/hosts
+        run: echo "127.0.0.1 mesherylocal.layer5.io" | sudo tee -a /etc/hosts
       - name: Setup Go
         uses: actions/setup-go@master
         with:
@@ -168,9 +172,9 @@ jobs:
           path: /home/runner/work/meshery/meshery/provider-ui/out
       - name: Run Meshery UI and Server
         env:
-          PROVIDER_BASE_URLS: http://localhost:9876
+          PROVIDER_BASE_URLS: https://meshery.layer5.io
           PORT: 9081
-          ADAPTER_URLS: "localhost:10000 localhost:10001 localhost:10002 localhost:10003 localhost:10004 localhost:10009 localhost:10007"
+          ADAPTER_URLS: "mesherylocal.layer5.io:10000 mesherylocal.layer5.io:10001 mesherylocal.layer5.io:10002 mesherylocal.layer5.io:10003 mesherylocal.layer5.io:10004 mesherylocal.layer5.io:10008 mesherylocal.layer5.io:10009 mesherylocal.layer5.io:10007"
         run: |
           make server &
           sleep 60
