@@ -41,45 +41,13 @@
                 "from": [
                     {
                         "kind": "*",
-                        "model": "meshery-core"
-                    },
-                    {
-                        "kind": "*",
-                        "model": "meshery-shapes"
-                    },
-                    {
-                        "kind": "*",
-                        "model": "aws"
-                    },
-                    {
-                        "kind": "*",
-                        "model": "gcp"
-                    },
-                    {
-                        "kind": "*",
-                        "model": "meshery-flowchart"
+                        "model": "*"
                     }
                 ],
                 "to": [
                     {
                         "kind": "*",
-                        "model": "meshery-shapes"
-                    },
-                    {
-                        "kind": "*",
-                        "model": "meshery-core"
-                    },
-                    {
-                        "kind": "*",
-                        "model": "aws"
-                    },
-                    {
-                        "kind": "*",
-                        "model": "gcp"
-                    },
-                    {
-                        "kind": "*",
-                        "model": "meshery-flowchart"
+                        "model": "*"
                     }
                 ]
             },
