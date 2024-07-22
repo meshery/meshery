@@ -94,10 +94,10 @@ jobs:
 
       - name: Run  Tests
         id: run_tests
-        working-directory: meshery-extensions
+        working-directory: meshery
         run: |
           echo 'test-results<<EOF' >> $GITHUB_OUTPUT
-          make test >> $GITHUB_OUTPUT
+          make test-ui >> $GITHUB_OUTPUT
           echo 'EOF' >> $GITHUB_OUTPUT
         env:
           PROVIDER_TOKEN: ${{ secrets.PROVIDER_TOKEN }}
@@ -106,9 +106,3 @@ jobs:
           REMOTE_PROVIDER_USER_EMAIL: ${{ secrets.LAYER5_CLOUD_TESTING_BOT_EMAIL }}
           REMOTE_PROVIDER_USER_PASSWORD: ${{ secrets.LAYER5_CLOUD_TESTING_BOT_PASSWORD }}
 
-      - uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() }}
-        with:
-          name: playwright-report
-          path: meshery-extensions/meshmap/test-results/
-          retention-days: 30
