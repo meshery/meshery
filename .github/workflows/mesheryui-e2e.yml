@@ -40,7 +40,6 @@ jobs:
         with:
           github-token: ${{ secrets.GH_ACCESS_TOKEN }}
           repository: "layer5labs/meshery-extensions"
-          number: ${{ inputs.pr_number }}
           id: extension-test
           message: "Starting [Meshery Extensions tests](https://github.com/layer5labs/meshery-extensions-packages/actions/runs/${{ github.run_id }})..."
           recreate: true
@@ -58,7 +57,6 @@ jobs:
         with:
           github-token: ${{ secrets.GH_ACCESS_TOKEN }}
           repository: "layer5labs/meshery-extensions"
-          number: ${{ inputs.pr_number }}
           id: extension-test
           message: ":heavy_check_mark: Meshery UI and Meshery Server builds complete."
           append: true
@@ -71,7 +69,6 @@ jobs:
           repository: layer5labs/meshery-extensions
           path: ./meshery-extensions
           fetch-depth: 1
-          ref: ${{ inputs.branch_name }}
           token: ${{ secrets.GH_ACCESS_TOKEN }}
 
       - name: Checkout Meshery code
@@ -113,7 +110,6 @@ jobs:
         with:
           github-token: ${{ secrets.GH_ACCESS_TOKEN }}
           repository: "layer5labs/meshery-extensions"
-          number: ${{ inputs.pr_number }}
           id: extension-test
           message: ":heavy_check_mark: Meshery Extensions build complete."
           append: true
@@ -123,12 +119,11 @@ jobs:
         with:
           github-token: ${{ secrets.GH_ACCESS_TOKEN }}
           repository: "layer5labs/meshery-extensions"
-          number: ${{ inputs.pr_number }}
           id: extension-test
           message: ":x: Meshery Extensions build Failed."
           append: true
   tests-ui-e2e:
-    needs: [build-ui-and-server, build-meshery-extension]
+    needs: [build-ui-and-server]
     name: UI end-to-end tests
     runs-on: ubuntu-latest
     outputs:
@@ -139,7 +134,6 @@ jobs:
         with:
           github-token: ${{ secrets.GH_ACCESS_TOKEN }}
           repository: "layer5labs/meshery-extensions"
-          number: ${{ inputs.pr_number }}
           id: extension-test
           message: ":heavy_check_mark: Setting up test environment..."
           append: true
@@ -197,12 +191,6 @@ jobs:
           cd ./meshery-consul
           go run main.go &
           sleep 60
-      - name: Set Release extensions
-        run: |
-          curl -s https://api.github.com/repos/layer5labs/meshery-extensions-packages/releases >> extension_releases.json
-          export TAG=$(jq .[0].tag_name extension_releases.json)
-          echo tag=$TAG >> $GITHUB_ENV
-          echo $TAG
       - name: make directories
         run: |
           echo ${{env.tag}}
@@ -233,7 +221,6 @@ jobs:
           repository: layer5labs/meshery-extensions
           path: ./meshery-extensions
           fetch-depth: 1
-          ref: ${{ inputs.branch_name }}
           token: ${{ secrets.GH_ACCESS_TOKEN }}
 
       - uses: actions/setup-node@v4
@@ -251,7 +238,6 @@ jobs:
         with:
           github-token: ${{ secrets.GH_ACCESS_TOKEN }}
           repository: "layer5labs/meshery-extensions"
-          number: ${{ inputs.pr_number }}
           id: extension-test
           message: ":heavy_check_mark: Test environment ready. Starting tests..."
           append: true
@@ -279,7 +265,6 @@ jobs:
 
           github-token: ${{ secrets.GH_ACCESS_TOKEN }}
           repository: "layer5labs/meshery-extensions"
-          number: ${{ inputs.pr_number }}
           id: extension-test
           append: true
 
@@ -296,7 +281,6 @@ jobs:
         with:
           github-token: ${{ secrets.GH_ACCESS_TOKEN }}
           repository: "layer5labs/meshery-extensions"
-          number: ${{ inputs.pr_number }}
           id: extension-test
           message: ":x: One or more tests have failed."
           append: true
@@ -307,7 +291,6 @@ jobs:
         with:
           github-token: ${{ secrets.GH_ACCESS_TOKEN }}
           repository: "layer5labs/meshery-extensions"
-          number: ${{ inputs.pr_number }}
           id: extension-test
           message: ":heavy_check_mark: Extension [test results](https://github.com/layer5labs/meshery-extensions-packages/actions/runs/${{ github.run_id }})."
           append: true
