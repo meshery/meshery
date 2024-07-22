@@ -9,134 +9,18 @@ on:
         description: "Log level"
         required: true
         default: "warning"
-  workflow_call:
-    inputs:
-      branch_name:
-        required: true
-        type: string
-      pr_number:
-        required: false
-        type: string
-    secrets:
-      PROVIDER_TOKEN:
-        required: true
-      NODE_VERSION:
-        required: true
-      GO_VERSION:
-        required: true
-      GH_ACCESS_TOKEN:
-        required: true
-      LAYER5_CLOUD_TESTING_BOT_EMAIL:
-        required: true
-      LAYER5_CLOUD_TESTING_BOT_PASSWORD:
-        required: true
 
 jobs:
-  comment-starting-point:
-    runs-on: ubuntu-latest
-    steps:
-      - name: comment starting point
-        uses: hasura/comment-progress@v2.3.0
-        with:
-          github-token: ${{ secrets.GH_ACCESS_TOKEN }}
-          repository: "layer5labs/meshery-extensions"
-          id: extension-test
-          message: "Starting [Meshery Extensions tests](https://github.com/layer5labs/meshery-extensions-packages/actions/runs/${{ github.run_id }})..."
-          recreate: true
   build-ui-and-server:
     uses: meshery/meshery/.github/workflows/build-ui-server-reusable-workflow.yml@master
     secrets:
       NODE_VERSION: ${{ secrets.NODE_VERSION }}
       GO_VERSION: ${{ secrets.GO_VERSION }}
-  comment-success:
-    runs-on: ubuntu-latest
-    needs: [build-ui-and-server]
-    steps:
-      - name: comment progress
-        uses: hasura/comment-progress@v2.3.0
-        with:
-          github-token: ${{ secrets.GH_ACCESS_TOKEN }}
-          repository: "layer5labs/meshery-extensions"
-          id: extension-test
-          message: ":heavy_check_mark: Meshery UI and Meshery Server builds complete."
-          append: true
-  build-meshery-extension:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Meshery-extensions code
-        uses: actions/checkout@v4
-        with:
-          repository: layer5labs/meshery-extensions
-          path: ./meshery-extensions
-          fetch-depth: 1
-          token: ${{ secrets.GH_ACCESS_TOKEN }}
-
-      - name: Checkout Meshery code
-        uses: actions/checkout@v4
-        with:
-          repository: meshery/meshery
-          path: ./meshery
-          fetch-depth: 1
-          token: ${{ secrets.GH_ACCESS_TOKEN }}
-
-      - name: Setup go
-        uses: actions/setup-go@v5
-        with:
-          go-version: ${{ secrets.GO_VERSION }}
-      - name: setup node
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ secrets.NODE_VERSION }}
-      - name: Build Meshery Extension UI
-        working-directory: ./meshery-extensions
-        run: make meshmap # gql build is not done for now
-      - name: Build Graphql Plugin
-        working-directory: ./meshery-extensions
-        run: make graphql
-      - name: Show runner tree
-        run: tree /home/runner/.meshery
-      - name: relocate meshery-extension-ui
-        run: mv /home/runner/.meshery/provider/Meshery/*/provider /home/runner/provider
-      - name: Show runner tree
-        run: tree /home/runner/ -L 3
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: meshery-extension-ui
-          path: /home/runner/provider
-          if-no-files-found: error
-      - name: comment progress
-        uses: hasura/comment-progress@v2.3.0
-        with:
-          github-token: ${{ secrets.GH_ACCESS_TOKEN }}
-          repository: "layer5labs/meshery-extensions"
-          id: extension-test
-          message: ":heavy_check_mark: Meshery Extensions build complete."
-          append: true
-      - name: comment Failure
-        if: failure()
-        uses: hasura/comment-progress@v2.3.0
-        with:
-          github-token: ${{ secrets.GH_ACCESS_TOKEN }}
-          repository: "layer5labs/meshery-extensions"
-          id: extension-test
-          message: ":x: Meshery Extensions build Failed."
-          append: true
   tests-ui-e2e:
     needs: [build-ui-and-server]
     name: UI end-to-end tests
     runs-on: ubuntu-latest
-    outputs:
-      test-results: ${{ steps.run_tests.outputs.test-results }}
     steps:
-      - name: comment progress start
-        uses: hasura/comment-progress@v2.3.0
-        with:
-          github-token: ${{ secrets.GH_ACCESS_TOKEN }}
-          repository: "layer5labs/meshery-extensions"
-          id: extension-test
-          message: ":heavy_check_mark: Setting up test environment..."
-          append: true
       - name: Check out Meshery code
         uses: actions/checkout@v4
         with:
@@ -191,11 +75,6 @@ jobs:
           cd ./meshery-consul
           go run main.go &
           sleep 60
-      - name: make directories
-        run: |
-          echo ${{env.tag}}
-          echo ${{env}}
-          mkdir -p /home/runner/.meshery/provider/Meshery/${{env.tag}}/provider/
       - name: Run backend
         working-directory: meshery
         env:
@@ -205,42 +84,13 @@ jobs:
         run: |
           cd server/cmd
           chmod +x ./main
-          BUILD=${{env.tag}} ./main &
-      - name: Download Meshery-extension-ui artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: meshery-extension-ui
-          path: provider
-      - name: Move provider files
-        run: |
-          mv /home/runner/work/meshery-extensions-packages/meshery-extensions-packages/provider/ /home/runner/.meshery/provider/Meshery/${{env.tag}}/
-
-      - name: Checkout Meshery-extensions code
-        uses: actions/checkout@v4
-        with:
-          repository: layer5labs/meshery-extensions
-          path: ./meshery-extensions
-          fetch-depth: 1
-          token: ${{ secrets.GH_ACCESS_TOKEN }}
-
+          ./main &
       - uses: actions/setup-node@v4
         with:
           node-version: 18
 
-      - name: show tree
-        run: tree  -L 2
-
       - name: Install dependencies
-        run: ls && cd meshery-extensions && make test-setup
-
-      - name: comment progress start
-        uses: hasura/comment-progress@v2.3.0
-        with:
-          github-token: ${{ secrets.GH_ACCESS_TOKEN }}
-          repository: "layer5labs/meshery-extensions"
-          id: extension-test
-          message: ":heavy_check_mark: Test environment ready. Starting tests..."
-          append: true
+        run: make test-setup-ui
 
       - name: Run  Tests
         id: run_tests
@@ -256,41 +106,9 @@ jobs:
           REMOTE_PROVIDER_USER_EMAIL: ${{ secrets.LAYER5_CLOUD_TESTING_BOT_EMAIL }}
           REMOTE_PROVIDER_USER_PASSWORD: ${{ secrets.LAYER5_CLOUD_TESTING_BOT_PASSWORD }}
 
-      - name: comment the summary
-        uses: hasura/comment-progress@v2.3.0
-        if: always()
-        with:
-          message: |
-            ${{join(steps.run_tests.outputs.*, '\n')}}
-
-          github-token: ${{ secrets.GH_ACCESS_TOKEN }}
-          repository: "layer5labs/meshery-extensions"
-          id: extension-test
-          append: true
-
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
           name: playwright-report
           path: meshery-extensions/meshmap/test-results/
           retention-days: 30
-
-      - name: Comment Test failure
-        uses: hasura/comment-progress@v2.3.0
-        if: ${{ failure()  }}
-        with:
-          github-token: ${{ secrets.GH_ACCESS_TOKEN }}
-          repository: "layer5labs/meshery-extensions"
-          id: extension-test
-          message: ":x: One or more tests have failed."
-          append: true
-
-      - name: Comment Final Status
-        if: always()
-        uses: hasura/comment-progress@v2.3.0
-        with:
-          github-token: ${{ secrets.GH_ACCESS_TOKEN }}
-          repository: "layer5labs/meshery-extensions"
-          id: extension-test
-          message: ":heavy_check_mark: Extension [test results](https://github.com/layer5labs/meshery-extensions-packages/actions/runs/${{ github.run_id }})."
-          append: true
