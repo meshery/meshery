@@ -7,7 +7,7 @@ import CustomColumnVisibilityControl from '../../../utils/custom-column';
 import useStyles from '../../../assets/styles/general/tool.styles';
 import SearchBar from '../../../utils/custom-search';
 import View from '../view';
-import { ALL_VIEW } from './config';
+import { ALL_VIEW, SINGLE_VIEW } from './config';
 import { getK8sClusterIdsFromCtxId } from '../../../utils/multi-ctx';
 import { updateVisibleColumns } from '../../../utils/responsive-column';
 import { useWindowDimensions } from '../../../utils/dimension';
@@ -128,6 +128,10 @@ const ResourcesTable = (props) => {
         },
       },
       enableNestedDataAccess: '.',
+      onCellClick: (_, meta) =>
+        meta.columnName !== 'cluster_id' &&
+        switchView(SINGLE_VIEW, meshSyncResources[meta.rowIndex]),
+
       onTableChange: (action, tableState) => {
         const sortInfo = tableState.announceText ? tableState.announceText.split(' : ') : [];
         const columnName = camelcaseToSnakecase(tableConfig.columns[tableState.activeColumn]?.name);
