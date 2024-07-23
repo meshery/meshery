@@ -289,7 +289,7 @@ func (l *RemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _
 			Path:     "/",
 			HttpOnly: true,
 		})
-		
+
 		var refURL []string
 		// If refURL is empty, generate the refURL based on the current requests path and query param.
 		if refURLqueryParam == "" {
@@ -297,8 +297,6 @@ func (l *RemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _
 		} else {
 			refURL = append(refURL, refURLqueryParam)
 		}
-		
-		fmt.Println("TETS hhhhh------------------\n\n\n\n", refURL, refURLqueryParam)
 
 		queryParams := url.Values{
 			"source":           []string{base64.RawURLEncoding.EncodeToString([]byte(baseCallbackURL))},
@@ -3436,8 +3434,6 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ 
 	if refQueryParam != "" {
 		redirectURL = refQueryParam
 	}
-
-	fmt.Println("\n\n\n\n\n--------------------------------------- COOKIES : ", redirectURL)
 
 	go func() {
 		_metadata := map[string]string{

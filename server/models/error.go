@@ -162,7 +162,7 @@ var (
 	ErrContextAlreadyPersisted = errors.New(ErrContextAlreadyPersistedCode, errors.Alert, []string{"kubernetes context already persisted with provider"}, []string{"kubernetes context already persisted with provider"}, []string{}, []string{})
 	ErrTokenRetry              = errors.New(ErrTokenRetryCode, errors.Alert, []string{"Error occurred, retrying after refresh to fetch token"}, []string{}, []string{}, []string{})
 	ErrOperationNotAvaibale    = errors.New(ErrOperationNotAvaibaleCode, errors.Alert, []string{"Operation not available"}, []string{}, []string{}, []string{})
-	ErrEmptySession = errors.New(ErrEmptySessionCode, errors.Alert, []string{}, []string{}, []string{}, []string{})
+	ErrEmptySession = errors.New(ErrEmptySessionCode, errors.Alert, []string{"No session found in the request"}, []string{"Unable to find \"token\" cookie in the request."}, []string{"User is not authenticated with the remote provider.", "Browser might be restricting the cookies."}, []string{"Select and log in with one of the available provider", "Allow cookies in your browser."})
 )
 
 func ErrCloseIoReader(err error) error {

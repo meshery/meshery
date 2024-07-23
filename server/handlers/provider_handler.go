@@ -26,8 +26,7 @@ func (h *Handler) ProviderHandler(w http.ResponseWriter, r *http.Request) {
 				Path:     "/",
 				HttpOnly: true,
 			})
-			refParam := r.URL.Query().Get("ref")
-			redirectURL := "/user/login?ref=" + refParam
+			redirectURL := "/user/login?" + r.URL.RawQuery
 			if provider == "None" {
 				redirectURL = "/"
 			}
