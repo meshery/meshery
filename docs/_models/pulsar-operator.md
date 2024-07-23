@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Pulsar Operator
-subtitle: Collaborative and visual infrastructure as code for Pulsar Operator
+subtitle: Collaborative and visual infrastructure as design for Pulsar Operator
 image: /assets/img/integrations/pulsar-operator/icons/color/pulsar-operator-color.svg
 permalink: extensibility/integrations/pulsar-operator
 docURL: https://docs.meshery.io/extensibility/integrations/pulsar-operator
@@ -27,12 +27,12 @@ components:
   whiteIcon: assets/img/integrations/pulsar-operator/components/zoo-keeper-cluster/icons/white/zoo-keeper-cluster-white.svg
   description: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Automates Pulsar deployment and scaling",
+  "Manages Pulsar configuration",
+  "Integrates with Kubernetes resources"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Deploys and manages Pulsar"
+howItWorksDetails: "Simplified Pulsar management within Kubernetes"
 language: en
 list: include
 type: extensibility

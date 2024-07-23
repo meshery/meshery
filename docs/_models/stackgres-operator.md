@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Stackgres Operator
-subtitle: Collaborative and visual infrastructure as code for Stackgres Operator
+subtitle: Collaborative and visual infrastructure as design for Stackgres Operator
 image: /assets/img/integrations/stackgres-operator/icons/color/stackgres-operator-color.svg
 permalink: extensibility/integrations/stackgres-operator
 docURL: https://docs.meshery.io/extensibility/integrations/stackgres-operator
@@ -66,12 +66,16 @@ components:
   colorIcon: assets/img/integrations/stackgres-operator/components/sg-sharded-db-ops/icons/color/sg-sharded-db-ops-color.svg
   whiteIcon: assets/img/integrations/stackgres-operator/components/sg-sharded-db-ops/icons/white/sg-sharded-db-ops-white.svg
   description: 
+- name: sg-stream
+  colorIcon: assets/img/integrations/stackgres-operator/components/sg-stream/icons/color/sg-stream-color.svg
+  whiteIcon: assets/img/integrations/stackgres-operator/components/sg-stream/icons/white/sg-stream-white.svg
+  description: 
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",
   "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

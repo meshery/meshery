@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Kube Prometheus Stack
-subtitle: Collaborative and visual infrastructure as code for Kube Prometheus Stack
+subtitle: Collaborative and visual infrastructure as design for Kube Prometheus Stack
 image: /assets/img/integrations/kube-prometheus-stack/icons/color/kube-prometheus-stack-color.svg
 permalink: extensibility/integrations/kube-prometheus-stack
 docURL: https://docs.meshery.io/extensibility/integrations/kube-prometheus-stack
@@ -63,12 +63,12 @@ components:
   whiteIcon: assets/img/integrations/kube-prometheus-stack/components/service-monitor/icons/white/service-monitor-white.svg
   description: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Provides a full-fledged monitoring solution",
+  "Collects metrics, logs, and traces",
+  "Customizable dashboards and alerting"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Deploys Kube Prometheus Stack with Helm"
+howItWorksDetails: "Comprehensive monitoring and observability for Kubernetes"
 language: en
 list: include
 type: extensibility

@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Vald Helm Operator
-subtitle: Collaborative and visual infrastructure as code for Vald Helm Operator
+subtitle: Collaborative and visual infrastructure as design for Vald Helm Operator
 image: /assets/img/integrations/vald-helm-operator/icons/color/vald-helm-operator-color.svg
 permalink: extensibility/integrations/vald-helm-operator
 docURL: https://docs.meshery.io/extensibility/integrations/vald-helm-operator
@@ -19,12 +19,12 @@ components:
   whiteIcon: assets/img/integrations/vald-helm-operator/components/vald-release/icons/white/vald-release-white.svg
   description: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Automates Vald deployment and management",
+  "Manages Vald configuration",
+  "Integrates with Kubernetes resources"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Deploys and manages Vald"
+howItWorksDetails: "Simplified Vald management within Kubernetes"
 language: en
 list: include
 type: extensibility

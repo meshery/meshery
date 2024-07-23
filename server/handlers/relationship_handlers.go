@@ -3,7 +3,6 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
-	"strconv"
 
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/server/helpers"
@@ -38,26 +37,14 @@ import (
 func (h *Handler) GetMeshmodelRelationshipByName(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
+	page, offset, limit, search, order, sort, _ := getPaginationParams(r)
 	typ := mux.Vars(r)["model"]
 	name := mux.Vars(r)["name"]
 	var greedy bool
-	if r.URL.Query().Get("search") == "true" {
+	if search == "true" {
 		greedy = true
 	}
-	limitstr := r.URL.Query().Get("pagesize")
-	var limit int
-	if limitstr != "all" {
-		limit, _ = strconv.Atoi(limitstr)
-		if limit == 0 { //If limit is unspecified then it defaults to 25
-			limit = DefaultPageSizeForMeshModelComponents
-		}
-	}
-	pagestr := r.URL.Query().Get("page")
-	page, _ := strconv.Atoi(pagestr)
-	if page <= 0 {
-		page = 1
-	}
-	offset := (page - 1) * limit
+	
 	entities, count, _, _ := h.registryManager.GetEntities(&regv1alpha2.RelationshipFilter{
 		Version:   r.URL.Query().Get("version"),
 		Kind:      name,
@@ -65,12 +52,12 @@ func (h *Handler) GetMeshmodelRelationshipByName(rw http.ResponseWriter, r *http
 		Greedy:    greedy,
 		Limit:     limit,
 		Offset:    offset,
-		OrderOn:   r.URL.Query().Get("order"),
-		Sort:      r.URL.Query().Get("sort"),
+		OrderOn:   order,
+		Sort:      sort,
 	})
 
 	var pgSize int64
-	if limitstr == "all" {
+	if limit == 0 {
 		pgSize = count
 	} else {
 		pgSize = int64(limit)
@@ -104,6 +91,12 @@ func (h *Handler) GetMeshmodelRelationshipByName(rw http.ResponseWriter, r *http
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 // responses:
+//
+// ```?kind={kind}```  Filters relationship based on kind
+//
+// ```?subType={subType}```  Filters relationship based on subType
+//
+// ```?type={type}```  Filters relationship based type
 //	200: meshmodelRelationshipsResponseWrapper
 
 // swagger:route GET /api/meshmodels/models/{model}/relationships GetAllMeshmodelRelationships idGetAllMeshmodelRelationshipsByModel
@@ -124,36 +117,33 @@ func (h *Handler) GetMeshmodelRelationshipByName(rw http.ResponseWriter, r *http
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 // responses:
 //
+// ```?kind={kind}```  Filters relationship based on kind
+//
+// ```?subType={subType}```  Filters relationship based on subType
+//
+// ```?type={type}```  Filters relationship based on type
+//
 //	200: meshmodelRelationshipsResponseWrapper
 func (h *Handler) GetAllMeshmodelRelationships(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
+	page, offset, limit, _, order, sort, _ := getPaginationParams(r)
 	typ := mux.Vars(r)["model"]
-	limitstr := r.URL.Query().Get("pagesize")
-	var limit int
-	if limitstr != "all" {
-		limit, _ = strconv.Atoi(limitstr)
-		if limit == 0 { //If limit is unspecified then it defaults to 25
-			limit = DefaultPageSizeForMeshModelComponents
-		}
-	}
-	pagestr := r.URL.Query().Get("page")
-	page, _ := strconv.Atoi(pagestr)
-	if page <= 0 {
-		page = 1
-	}
-	offset := (page - 1) * limit
+	
 	entities, count, _, _ := h.registryManager.GetEntities(&regv1alpha2.RelationshipFilter{
-		Version:   r.URL.Query().Get("version"),
-		ModelName: typ,
-		Limit:     limit,
-		Offset:    offset,
-		OrderOn:   r.URL.Query().Get("order"),
-		Sort:      r.URL.Query().Get("sort"),
+		Version:          r.URL.Query().Get("version"),
+		ModelName:        typ,
+		Limit:            limit,
+		Offset:           offset,
+		OrderOn:          order,
+		Sort:             sort,
+		Kind:             r.URL.Query().Get("kind"),
+		SubType:          r.URL.Query().Get("subType"),
+		RelationshipType: r.URL.Query().Get("type"),
 	})
 
 	var pgSize int64
-	if limitstr == "all" {
+	if limit == 0 {
 		pgSize = count
 	} else {
 		pgSize = int64(limit)

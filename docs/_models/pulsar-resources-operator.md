@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Pulsar Resources Operator
-subtitle: Collaborative and visual infrastructure as code for Pulsar Resources Operator
+subtitle: Collaborative and visual infrastructure as design for Pulsar Resources Operator
 image: /assets/img/integrations/pulsar-resources-operator/icons/color/pulsar-resources-operator-color.svg
 permalink: extensibility/integrations/pulsar-resources-operator
 docURL: https://docs.meshery.io/extensibility/integrations/pulsar-resources-operator
@@ -34,13 +34,33 @@ components:
   colorIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-geo-replication/icons/color/pulsar-geo-replication-color.svg
   whiteIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-geo-replication/icons/white/pulsar-geo-replication-white.svg
   description: 
+- name: pulsar-function
+  colorIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-function/icons/color/pulsar-function-color.svg
+  whiteIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-function/icons/white/pulsar-function-white.svg
+  description: 
+- name: pulsar-package
+  colorIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-package/icons/color/pulsar-package-color.svg
+  whiteIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-package/icons/white/pulsar-package-white.svg
+  description: 
+- name: pulsar-sink
+  colorIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-sink/icons/color/pulsar-sink-color.svg
+  whiteIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-sink/icons/white/pulsar-sink-white.svg
+  description: 
+- name: pulsar-source
+  colorIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-source/icons/color/pulsar-source-color.svg
+  whiteIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-source/icons/white/pulsar-source-white.svg
+  description: 
+- name: pulsar-source
+  colorIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-source/icons/color/pulsar-source-color.svg
+  whiteIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-source/icons/white/pulsar-source-white.svg
+  description: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Automates Pulsar resource management",
+  "Simplifies Pulsar configuration",
+  "Integrates with Kubernetes resources"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Manages Pulsar resources"
+howItWorksDetails: "Streamlined Pulsar resource management within Kubernetes"
 language: en
 list: include
 type: extensibility

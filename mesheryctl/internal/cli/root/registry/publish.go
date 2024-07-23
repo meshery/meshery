@@ -272,7 +272,7 @@ func init() {
 func WriteModelDefToFileSystem(model *utils.ModelCSV, version string, location string) (string, *v1beta1.Model, error) {
 	modelDef := model.CreateModelDefinition(version, defVersion)
 	modelDefPath := filepath.Join(location, modelDef.Name)
-	err := modelDef.WriteModelDefinition(modelDefPath)
+	err := modelDef.WriteModelDefinition(modelDefPath+"/model.json", "json")
 	if err != nil {
 		return "", nil, err
 	}

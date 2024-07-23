@@ -352,13 +352,13 @@ const MeshModelComponent_ = ({
           <div
             className={`${StyleClass.treeWrapper} ${convert ? StyleClass.treeWrapperAnimate : ''}`}
           >
-            <div
+            <Paper
               className={StyleClass.detailsContainer}
               style={{
                 display: 'flex',
                 alignItems: resourcesDetail.length === 0 ? 'center' : '',
                 justifyContent: resourcesDetail.length === 0 ? 'center' : '',
-                padding: '0.6rem 0.6rem 0rem 0.6rem',
+                padding: '0.6rem',
                 overflow: 'hidden',
               }}
             >
@@ -374,7 +374,7 @@ const MeshModelComponent_ = ({
                 showDetailsData={showDetailsData}
                 setResourcesDetail={setResourcesDetail}
               />
-            </div>
+            </Paper>
             <MeshModelDetails
               view={view}
               setShowDetailsData={setShowDetailsData}

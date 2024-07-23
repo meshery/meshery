@@ -18,10 +18,16 @@ import { updateProgress } from '../../../lib/store';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import useStyles from '../../../assets/styles/general/tool.styles';
 import SearchBar from '../../../utils/custom-search';
-import Modal from '../../Modal';
+import { RJSFModalWrapper } from '../../Modal';
 import PromptComponent, { PROMPT_VARIANTS } from '../../PromptComponent';
-import { EmptyState, GenericModal } from '../General';
-import { TransferList } from '@layer5/sistent';
+import { EmptyState } from '../General';
+import {
+  Modal as SisitentModal,
+  ModalBody,
+  TransferList,
+  ModalFooter,
+  PrimaryActionButtons,
+} from '@layer5/sistent';
 import ConnectionIcon from '../../../assets/icons/Connection';
 import { TRANSFER_COMPONENT } from '../../../utils/Enum';
 import {
@@ -470,7 +476,7 @@ const Environments = ({ organization, classes }) => {
               onSearch={(value) => {
                 setSearch(value);
               }}
-              placeholder="Search connections..."
+              placeholder="Search Environments..."
               expanded={isSearchExpanded}
               setExpanded={setIsSearchExpanded}
             />
@@ -556,29 +562,38 @@ const Environments = ({ organization, classes }) => {
           {(CAN(keys.CREATE_ENVIRONMENT.action, keys.CREATE_ENVIRONMENT.subject) ||
             CAN(keys.EDIT_ENVIRONMENT.action, keys.EDIT_ENVIRONMENT.subject)) &&
             environmentModal.open && (
-              <Modal
-                open={environmentModal.open}
-                schema={environmentModal.schema.rjsfSchema}
-                uiSchema={environmentModal.schema.uiSchema}
-                handleClose={handleEnvironmentModalClose}
-                handleSubmit={
-                  actionType === ACTION_TYPES.CREATE
-                    ? handleCreateEnvironment
-                    : handleEditEnvironment
-                }
-                title={
-                  actionType === ACTION_TYPES.CREATE ? 'Create Environment' : 'Edit Environment'
-                }
-                submitBtnText={actionType === ACTION_TYPES.CREATE ? 'Save' : 'Update'}
-                initialData={initialData}
-              />
-            )}
-          <GenericModal
-            open={assignConnectionModal}
-            handleClose={handleonAssignConnectionModalClose}
-            title={`${connectionAssignEnv.name} Resources`}
-            body={
               <UsesSistent>
+                <SisitentModal
+                  open={environmentModal.open}
+                  closeModal={handleEnvironmentModalClose}
+                  title={
+                    actionType === ACTION_TYPES.CREATE ? 'Create Environment' : 'Edit Environment'
+                  }
+                >
+                  <RJSFModalWrapper
+                    schema={environmentModal.schema.rjsfSchema}
+                    uiSchema={environmentModal.schema.uiSchema}
+                    handleSubmit={
+                      actionType === ACTION_TYPES.CREATE
+                        ? handleCreateEnvironment
+                        : handleEditEnvironment
+                    }
+                    submitBtnText={actionType === ACTION_TYPES.CREATE ? 'Save' : 'Update'}
+                    initialData={initialData}
+                    handleClose={handleEnvironmentModalClose}
+                  />
+                </SisitentModal>
+              </UsesSistent>
+            )}
+          <UsesSistent>
+            <SisitentModal
+              open={assignConnectionModal}
+              closeModal={handleonAssignConnectionModalClose}
+              title={`${connectionAssignEnv.name} Resources`}
+              headerIcon={<EnvironmentIcon height="2rem" width="2rem" fill="white" />}
+              maxWidth="md"
+            >
+              <ModalBody>
                 <TransferList
                   name="Connections"
                   assignableData={connectionsData}
@@ -606,15 +621,22 @@ const Environments = ({ organization, classes }) => {
                     keys.ASSIGN_CONNECTIONS_TO_ENVIRONMENT.subject,
                   )}
                 />
-              </UsesSistent>
-            }
-            action={handleAssignConnection}
-            buttonTitle="Save"
-            disabled={disableTranferButton}
-            leftHeaderIcon={<EnvironmentIcon height="2rem" width="2rem" fill="white" />}
-            helpText="Assign connections to environment"
-            maxWidth="md"
-          />
+              </ModalBody>
+              <ModalFooter variant="filled" helpText="Assign connections to environment">
+                <PrimaryActionButtons
+                  primaryText="Save"
+                  secondaryText="Cancel"
+                  primaryButtonProps={{
+                    onClick: handleAssignConnection,
+                    disabled: disableTranferButton,
+                  }}
+                  secondaryButtonProps={{
+                    onClick: handleonAssignConnectionModalClose,
+                  }}
+                />
+              </ModalFooter>
+            </SisitentModal>
+          </UsesSistent>
           <PromptComponent ref={modalRef} />
         </>
       ) : (

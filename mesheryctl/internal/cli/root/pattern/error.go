@@ -33,6 +33,11 @@ const (
 	ErrPatternsNotFoundCode       = "mesheryctl-1037"
 	ErrInvalidPatternFileCode     = "mesheryctl-1038"
 	ErrPatternInvalidNameOrIDCode = "mesheryctl-1039"
+	ErrCopyDataCode               = "mesheryctl-1122"
+	ErrCreateFileCode             = "mesheryctl-1123"
+	ErrRetrieveHomeDirCode        = "mesheryctl-1124"
+	ErrReadFromBodyCode           = "mesheryctl-1125"
+	ErrMarkFlagRequireCode        = "mesheryctl-1126"
 )
 
 const (
@@ -125,4 +130,39 @@ func ErrOffboardPattern(err error) error {
 		[]string{"Unable to offboard pattern due to empty path"},
 		[]string{"File path or pattern name not provided."},
 		[]string{"Provide a file path/pattern name. \n\n%v", errOnboardMsg})
+}
+func ErrCopyData(filepath string, err error) error {
+	return errors.New(ErrCopyDataCode, errors.Alert,
+		[]string{"Error copying data to file"},
+		[]string{fmt.Sprintf("Failed to copy data to the file at path: %s", filepath), err.Error()},
+		[]string{"Insufficient disk space, or file system errors."},
+		[]string{"Check for sufficient disk space, and verify the integrity of the file system."})
+}
+func ErrCreateFile(filepath string, err error) error {
+	return errors.New(ErrCreateFileCode, errors.Alert,
+		[]string{"Error creating file"},
+		[]string{fmt.Sprintf("Failed to create the file at path: %s", filepath), err.Error()},
+		[]string{"Insufficient disk page, filepath could be invalid."},
+		[]string{"Verify that the file path is valid, and ensure there is sufficient disk space available."})
+}
+func ErrRetrieveHomeDir(err error) error {
+	return errors.New(ErrRetrieveHomeDirCode, errors.Alert,
+		[]string{"Error retrieving user home/root directory"},
+		[]string{"Failed to retrieve the home/root directory,", err.Error()},
+		[]string{"Operating system environment issue or insufficient permissions."},
+		[]string{"Ensure that the operating system environment is set up correctly and run the application with elevated privileges."})
+}
+func ErrMarkFlagRequire(flagName string, err error) error {
+	return errors.New(ErrMarkFlagRequireCode, errors.Alert,
+		[]string{fmt.Sprintf("Failed to mark the flag '%s' as required", flagName)},
+		[]string{err.Error()},
+		[]string{"The flag may not exist or there was some error while specifying the flag."},
+		[]string{"Please ensure that the required flag '%s' is correctly specified and set before running the command."})
+}
+func ErrReadFromBody(err error) error {
+	return errors.New(ErrReadFromBodyCode, errors.Alert,
+		[]string{"Unable to read data from the response body"},
+		[]string{err.Error()},
+		[]string{"The data for the pattern (design) file might be corrupted."},
+		[]string{"Please ensure that your network connection is stable. If the issue continues, check the server response or data format for potential problems."})
 }

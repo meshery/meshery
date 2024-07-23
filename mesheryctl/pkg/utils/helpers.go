@@ -69,8 +69,7 @@ const (
 	filterViewURL                  = docsBaseURL + "reference/mesheryctl/filter/view"
 	patternUsageURL                = docsBaseURL + "reference/mesheryctl/pattern"
 	patternViewURL                 = docsBaseURL + "reference/mesheryctl/pattern/view"
-	appUsageURL                    = docsBaseURL + "reference/mesheryctl/app"
-	appViewURL                     = docsBaseURL + "reference/mesheryctl/app/view"
+	patternExportURL               = docsBaseURL + "reference/mesheryctl/pattern/export"
 	contextDeleteURL               = docsBaseURL + "reference/mesheryctl/system/context/delete"
 	contextViewURL                 = docsBaseURL + "reference/mesheryctl/system/context/view"
 	contextCreateURL               = docsBaseURL + "reference/mesheryctl/system/context/create"
@@ -88,6 +87,7 @@ const (
 	tokenUsageURL                  = docsBaseURL + "reference/mesheryctl/system/token"
 	modelUsageURL                  = docsBaseURL + "reference/mesheryctl/system/model"
 	modelListURL                   = docsBaseURL + "reference/mesheryctl/system/model/list"
+	modelImportURl                 = docsBaseURL + "reference/mesheryctl/system/model/import"
 	modelViewURL                   = docsBaseURL + "reference/mesheryctl/system/model/view"
 	registryUsageURL               = docsBaseURL + "reference/mesheryctl/system/registry"
 	relationshipUsageURL           = docsBaseURL + "reference/mesheryctl/relationships"
@@ -101,6 +101,17 @@ const (
 	environmentDeleteURL           = docsBaseURL + "reference/mesheryctl/exp/environment/delete"
 	environmentListURL             = docsBaseURL + "reference/mesheryctl/exp/environment/list"
 	environmentViewURL             = docsBaseURL + "reference/mesheryctl/exp/environment/view"
+	componentUsageURL              = docsBaseURL + "reference/mesheryctl/exp/components"
+	componentListURL               = docsBaseURL + "reference/mesheryctl/exp/components/list"
+	componentSearchURL             = docsBaseURL + "reference/mesheryctl/exp/components/search"
+	componentViewURL               = docsBaseURL + "reference/mesheryctl/exp/components/view"
+	connectionUsageURL             = docsBaseURL + "reference/mesheryctl/exp/connections"
+	connectionDeleteURL            = docsBaseURL + "reference/mesheryctl/exp/connections/delete"
+	connectionListURL              = docsBaseURL + "reference/mesheryctl/exp/connections/list"
+	expRelationshipUsageURL        = docsBaseURL + "reference/mesheryctl/exp/relationship"
+	expRelationshipGenerateURL     = docsBaseURL + "reference/mesheryctl/exp/relationship/generate"
+	expRelationshipViewURL         = docsBaseURL + "reference/mesheryctl/exp/relationship/view"
+	expRelationshipListURL         = docsBaseURL + "reference/mesheryctl/exp/relationship/list"
 
 	// Meshery Server Location
 	EndpointProtocol = "http"
@@ -126,8 +137,7 @@ const (
 	cmdFilterView               cmdType = "filter view"
 	cmdPattern                  cmdType = "pattern"
 	cmdPatternView              cmdType = "pattern view"
-	cmdApp                      cmdType = "app"
-	cmdAppView                  cmdType = "app view"
+	cmdPatternExport            cmdType = "pattern export"
 	cmdContext                  cmdType = "context"
 	cmdContextDelete            cmdType = "delete"
 	cmdContextCreate            cmdType = "create"
@@ -145,14 +155,17 @@ const (
 	cmdToken                    cmdType = "token"
 	cmdModel                    cmdType = "model"
 	cmdModelList                cmdType = "model list"
+	cmdModelImport              cmdType = "model import"
 	cmdModelView                cmdType = "model view"
 	cmdRegistryPublish          cmdType = "registry publish"
 	cmdRegistry                 cmdType = "regisry"
+	cmdConnection               cmdType = "connection"
 	cmdConnectionList           cmdType = "connection list"
 	cmdConnectionDelete         cmdType = "connection delete"
 	cmdRelationships            cmdType = "relationships"
 	cmdRelationshipGenerateDocs cmdType = "relationships generate docs"
 	cmdRelationshipView         cmdType = "relationship view"
+	cmdRelationshipSearch       cmdType = "relationship search"
 	cmdRelationshipList         cmdType = "relationship list"
 	cmdWorkspace                cmdType = "workspace"
 	cmdWorkspaceList            cmdType = "workspace list"
@@ -162,6 +175,14 @@ const (
 	cmdEnvironmentDelete        cmdType = "environment delete"
 	cmdEnvironmentList          cmdType = "environment list"
 	cmdEnvironmentView          cmdType = "environment view"
+	cmdComponent                cmdType = "component"
+	cmdComponentList            cmdType = "component list"
+	cmdComponentSearch          cmdType = "component search"
+	cmdComponentView            cmdType = "component view"
+	cmdExpRelationship          cmdType = "exp relationship"
+	cmdExpRelationshipGenerate  cmdType = "exp relationship generate"
+	cmdExpRelationshipView      cmdType = "exp relationship view"
+	cmdExpRelationshipList      cmdType = "exp relationship list"
 )
 
 const (
@@ -1084,7 +1105,7 @@ func ConvertMapInterfaceMapString(v interface{}) interface{} {
 }
 
 // SetOverrideValues returns the value overrides based on current context to install/upgrade helm chart
-func SetOverrideValues(ctx *config.Context, mesheryImageVersion, callbackURL string) map[string]interface{} {
+func SetOverrideValues(ctx *config.Context, mesheryImageVersion, callbackURL, providerURL string) map[string]interface{} {
 	// first initialize all the components' "enabled" field to false
 	// this matches to the components listed in install/kubernetes/helm/meshery/values.yaml
 	valueOverrides := map[string]interface{}{
@@ -1141,6 +1162,12 @@ func SetOverrideValues(ctx *config.Context, mesheryImageVersion, callbackURL str
 	if callbackURL != "" {
 		valueOverrides["env"] = map[string]interface{}{
 			constants.CallbackURLENV: callbackURL,
+		}
+	}
+
+	if providerURL != "" {
+		valueOverrides["env"] = map[string]interface{}{
+			constants.ProviderURLsENV: providerURL,
 		}
 	}
 

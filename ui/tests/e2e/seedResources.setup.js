@@ -1,35 +1,14 @@
-const { ENV } = require('./env');
 const { readFileSync } = require('fs');
 import { expect, test as setup } from '@playwright/test';
 import { writeFile } from 'fs';
 import { isEmpty } from 'lodash';
+import { fetchData } from './utils/fetch';
 
 const fileToUnit8Array = (file) => {
   const arrayBuffer = new Uint8Array(file);
   return Array.from(arrayBuffer);
 };
 
-async function fetchData(endpoint, method = 'GET', body = null) {
-  const url = `${ENV.MESHERY_SERVER_URL}/api${endpoint}`;
-  const yourToken = ENV.PROVIDER_TOKEN;
-
-  const headers = {
-    'meshery-token': yourToken,
-    Cookie: `meshery-provider=Meshery; meshery.layer5.io_ref=/;token=${yourToken}`,
-  };
-
-  try {
-    const response = await fetch(url, { headers, method, body });
-    if (!response.ok) {
-      throw new Error(`Error fetching data: ${response.status}`);
-    }
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error('Error:', error);
-    return null; // Or handle the error differently
-  }
-}
 const updatePatternsByDesignType = async ({ designType, body }) => {
   return fetchData(`/pattern/${designType}`, 'POST', body);
 };

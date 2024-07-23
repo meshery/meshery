@@ -123,7 +123,7 @@ type HandlerInterface interface {
 	UpdateEntityStatus(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 
 	GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Request)
-
+	RegisterMeshmodels(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	HandleResourceSchemas(rw http.ResponseWriter, r *http.Request)
 
 	GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.Request)

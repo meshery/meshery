@@ -1,6 +1,5 @@
 /* eslint-disable react/display-name */
 import {
-  Avatar,
   Box,
   Button,
   Dialog,
@@ -30,7 +29,6 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import dataFetch from '../lib/data-fetch';
 import { toggleCatalogContent, updateProgress } from '../lib/store';
-import DesignConfigurator from '../components/configuratorComponents/MeshModel';
 import { getUnit8ArrayDecodedFile, getUnit8ArrayForDesign } from '../utils/utils';
 import ViewSwitch from './ViewSwitch';
 import MesheryPatternGrid from './MesheryPatterns/MesheryPatternGridView';
@@ -43,7 +41,7 @@ import LoadingScreen from './LoadingComponents/LoadingComponent';
 import { FILE_OPS, MesheryPatternsCatalog, VISIBILITY } from '../utils/Enum';
 import CloneIcon from '../public/static/img/CloneIcon';
 import { useRouter } from 'next/router';
-import Modal from './Modal';
+import { RJSFModalWrapper } from './Modal';
 import downloadContent from '../utils/fileDownloader';
 import ConfigurationSubscription from './graphql/subscriptions/ConfigurationSubscription';
 import Pattern from '../public/static/img/drawer-icons/pattern_svg.js';
@@ -76,9 +74,23 @@ import { designValidationMachine } from 'machines/validator/designValidator';
 import { UnDeployStepper, DeployStepper } from './DesignLifeCycle/DeployStepper';
 import { DryRunDesign } from './DesignLifeCycle/DryRun';
 import { DEPLOYMENT_TYPE } from './DesignLifeCycle/common';
-import { useDeployPatternMutation, useUndeployPatternMutation } from '@/rtk-query/design';
+import {
+  useClonePatternMutation,
+  useDeletePatternMutation,
+  useDeployPatternMutation,
+  useGetPatternsQuery,
+  useImportPatternMutation,
+  usePublishPatternMutation,
+  useUndeployPatternMutation,
+  useUnpublishPatternMutation,
+  useUpdatePatternFileMutation,
+  useUploadPatternFileMutation,
+} from '@/rtk-query/design';
 import CheckIcon from '@/assets/icons/CheckIcon';
 import { ValidateDesign } from './DesignLifeCycle/ValidateDesign';
+import PatternConfigureIcon from '@/assets/icons/PatternConfigure';
+// import { useGetUserPrefQuery } from '@/rtk-query/user';
+import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
 
 const genericClickHandler = (ev, fn) => {
   ev.stopPropagation();
@@ -199,14 +211,6 @@ const styles = (theme) => ({
     minWidth: '120px',
     maxWidth: 150,
     marginRight: 'auto',
-  },
-  iconAvatar: {
-    width: '24px',
-    height: '24px',
-    '& .MuiAvatar-img': {
-      height: '100%',
-      width: '100%',
-    },
   },
 });
 
@@ -351,7 +355,6 @@ function MesheryPatterns({
   const [patterns, setPatterns] = useState([]);
   const [selectedRowData, setSelectedRowData] = useState(null);
   const [selectedPattern, setSelectedPattern] = useState(resetSelectedPattern());
-  const [setExtensionPreferences] = useState({});
   const router = useRouter();
   const [importSchema, setImportSchema] = useState({});
   const [meshModels, setMeshModels] = useState([]);
@@ -370,11 +373,42 @@ function MesheryPatterns({
   const StyleClass = useStyles();
   const [visibilityFilter, setVisibilityFilter] = useState(null);
 
-  const PATTERN_URL = '/api/pattern';
-  const CLONE_URL = '/clone';
-
   const [deployPatternMutation] = useDeployPatternMutation();
   const [undeployPatternMutation] = useUndeployPatternMutation();
+  const {
+    data: patternsData,
+    isLoading: ispatternsLoading,
+    refetch: getPatterns,
+  } = useGetPatternsQuery({
+    page: page,
+    pagesize: pageSize,
+    search: search,
+    order: sortOrder,
+    visibility: JSON.stringify([visibilityFilter]),
+  });
+  const [clonePattern] = useClonePatternMutation();
+  const [publishCatalog] = usePublishPatternMutation();
+  const [unpublishCatalog] = useUnpublishPatternMutation();
+  const [deletePattern] = useDeletePatternMutation();
+  const [importPattern] = useImportPatternMutation();
+  const [updatePattern] = useUpdatePatternFileMutation();
+  const [uploadPatternFile] = useUploadPatternFileMutation();
+  const [deletePatternFile] = useDeletePatternMutation();
+
+  useEffect(() => {
+    if (patternsData) {
+      const filteredPatterns = patternsData.patterns.filter((content) => {
+        if (visibilityFilter === null || content.visibility === visibilityFilter) {
+          return true;
+        }
+        return false;
+      });
+      setCount(patternsData.total_count || 0);
+      handleSetPatterns(filteredPatterns);
+      setVisibilityFilter(visibilityFilter);
+      setPatterns(patternsData.patterns || []);
+    }
+  }, [patternsData]);
 
   const [importModal, setImportModal] = useState({
     open: false,
@@ -435,7 +469,7 @@ function MesheryPatterns({
     }));
   };
 
-  const [loading, stillLoading] = useState(true);
+  // const [loading, stillLoading] = useState(true);
   const { width } = useWindowDimensions();
 
   const catalogVisibilityRef = useRef(false);
@@ -489,24 +523,16 @@ function MesheryPatterns({
    * Checking whether users are signed in under a provider that doesn't have
    * publish pattern capability and setting the canPublishPattern state accordingly
    */
+  const { data: capabilitiesData } = useGetProviderCapabilitiesQuery();
+
   useEffect(() => {
-    dataFetch(
-      '/api/provider/capabilities',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      (result) => {
-        if (result) {
-          const capabilitiesRegistry = result;
-          const patternsCatalogueCapability = capabilitiesRegistry?.capabilities.filter(
-            (val) => val.feature === MesheryPatternsCatalog,
-          );
-          if (patternsCatalogueCapability?.length > 0) setCanPublishPattern(true);
-        }
-      },
-      (err) => console.error(err),
-    );
+    if (capabilitiesData) {
+      const capabilitiesRegistry = capabilitiesData;
+      const patternsCatalogueCapability = capabilitiesRegistry?.capabilities.filter(
+        (val) => val.feature === MesheryPatternsCatalog,
+      );
+      if (patternsCatalogueCapability?.length > 0) setCanPublishPattern(true);
+    }
   }, []);
 
   const searchTimeout = useRef(null);
@@ -518,31 +544,15 @@ function MesheryPatterns({
     document.body.style.overflowX = 'hidden';
     const visibilityFilter =
       selectedFilters.visibility === 'All' ? null : selectedFilters.visibility;
-    fetchPatterns(page, pageSize, search, sortOrder, visibilityFilter);
+    setVisibilityFilter(visibilityFilter);
     return () => (document.body.style.overflowX = 'auto');
-  }, [page, pageSize, search, sortOrder, visibilityFilter]);
+  }, [visibilityFilter]);
 
   useEffect(() => {
     if (viewType === 'grid') {
       setSearch('');
     }
   }, [viewType]);
-
-  const fetchUserPrefs = () => {
-    dataFetch(
-      '/api/user/prefs',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      (result) => {
-        if (result) {
-          setExtensionPreferences(result?.usersExtensionPreferences);
-        }
-      },
-      (err) => console.error(err),
-    );
-  };
 
   const initPatternsSubscription = (
     pageNo = page.toString(),
@@ -555,7 +565,7 @@ function MesheryPatterns({
     }
     const configurationSubscription = ConfigurationSubscription(
       (result) => {
-        stillLoading(false);
+        // stillLoading(false);
         setPage(result.configuration?.patterns?.page || 0);
         setPageSize(result.configuration?.patterns?.page_size || 0);
         setCount(result.configuration?.patterns?.total_count || 0);
@@ -592,10 +602,6 @@ function MesheryPatterns({
   // };
 
   useEffect(() => {
-    fetchUserPrefs();
-  }, [catalogVisibility]);
-
-  useEffect(() => {
     dataFetch(
       '/api/schema/resource/design',
       {
@@ -616,7 +622,14 @@ function MesheryPatterns({
       async (result) => {
         try {
           const { models } = await getMeshModels();
-          const modelNames = _.uniq(models?.map((model) => model.displayName));
+          const modelNames = _.uniqBy(
+            models?.map((model) => {
+              if (model.displayName && model.displayName !== '') {
+                return model.displayName;
+              }
+            }),
+            _.toLower,
+          );
           modelNames.sort();
 
           // Modify the schema using the utility function
@@ -679,13 +692,6 @@ function MesheryPatterns({
 
     setPatterns(patterns?.filter((content) => content.visibility !== VISIBILITY.PUBLISHED) || []);
   };
-
-  // useEffect(() => {
-  //   setPage(0);
-  //   setPageSize(10);
-  //   setCount(0);
-  //   fetchPatterns(0, 10, search, sortOrder,visibilityFilter);
-  // }, [viewType]);
 
   const openDeployModal = (e, pattern_file, name, pattern_id) => {
     e.stopPropagation();
@@ -828,18 +834,21 @@ function MesheryPatterns({
         });
         if (response === 'Yes') {
           updateProgress({ showProgress: true });
-          dataFetch(
-            `/api/pattern/catalog/unpublish`,
-            { credentials: 'include', method: 'DELETE', body: JSON.stringify({ id: pattern?.id }) },
-            () => {
+          unpublishCatalog({
+            unpublishBody: JSON.stringify({ id: pattern?.id }),
+          })
+            .unwrap()
+            .then(() => {
               updateProgress({ showProgress: false });
               notify({
                 message: `Design Unpublished`,
                 event_type: EVENT_TYPES.SUCCESS,
               });
-            },
-            handleError(ACTION_TYPES.UNPUBLISH_CATALOG),
-          );
+            })
+            .catch(() => {
+              updateProgress({ showProgress: false });
+              handleError(ACTION_TYPES.UNPUBLISH_CATALOG);
+            });
         }
       };
     }
@@ -861,7 +870,7 @@ function MesheryPatterns({
       ?.map((model) => model.name);
 
     const payload = {
-      id: publishModal.pattern?.id,
+      id: infoModal.selectedResource?.id,
       catalog_data: {
         ...formData,
         compatibility: compatibilityStore,
@@ -869,14 +878,15 @@ function MesheryPatterns({
       },
     };
     updateProgress({ showProgress: true });
-    dataFetch(
-      `/api/pattern/catalog/publish`,
-      { credentials: 'include', method: 'POST', body: JSON.stringify(payload) },
-      () => {
+    publishCatalog({
+      publishBody: JSON.stringify(payload),
+    })
+      .unwrap()
+      .then(() => {
         updateProgress({ showProgress: false });
         if (user.role_names.includes('admin')) {
           notify({
-            message: `${publishModal.pattern?.name} Design Published`,
+            message: `${publishModal?.name} Design Published`,
             event_type: EVENT_TYPES.SUCCESS,
           });
         } else {
@@ -886,72 +896,39 @@ function MesheryPatterns({
             event_type: EVENT_TYPES.SUCCESS,
           });
         }
-      },
-      handleError(ACTION_TYPES.PUBLISH_CATALOG),
-    );
+      })
+      .catch(() => {
+        updateProgress({ showProgress: false });
+        handleError(ACTION_TYPES.PUBLISH_CATALOG);
+      });
   };
 
   function handleClone(patternID, name) {
     updateProgress({ showProgress: true });
-    dataFetch(
-      PATTERN_URL.concat(CLONE_URL, '/', patternID),
-      {
-        credentials: 'include',
-        method: 'POST',
-        body: JSON.stringify({ name: name + ' (Copy)' }),
-      },
-      () => {
+    clonePattern({
+      body: JSON.stringify({ name: name + ' (Copy)' }),
+      patternID: patternID,
+    })
+      .unwrap()
+      .then(() => {
         updateProgress({ showProgress: false });
         notify({
           message: `"${name}" Design cloned`,
           event_type: EVENT_TYPES.SUCCESS,
         });
-      },
-      handleError(ACTION_TYPES.CLONE_PATTERN),
-    );
-  }
-
-  function fetchPatterns(page, pageSize, search, sortOrder, visibilityFilter) {
-    if (!search) search = '';
-    if (!sortOrder) sortOrder = '';
-    const query =
-      `?page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(
-        search,
-      )}&order=${encodeURIComponent(sortOrder)}` +
-      (visibilityFilter
-        ? `&visibility=${encodeURIComponent(JSON.stringify([visibilityFilter]))}`
-        : '');
-
-    updateProgress({ showProgress: true });
-    dataFetch(
-      `/api/pattern${query}`,
-      { credentials: 'include' },
-      (result) => {
-        console.log('PatternFile API', `/api/pattern${query}`);
+      })
+      .catch(() => {
         updateProgress({ showProgress: false });
-        stillLoading(false);
-        if (result) {
-          const filteredPatterns = result.patterns.filter((content) => {
-            if (visibilityFilter === null || content.visibility === visibilityFilter) {
-              return true;
-            }
-            return false;
-          });
-          // setPage(result.page || 0);
-          // setPageSize(result.page_size || 0);
-          setCount(result.total_count || 0);
-          handleSetPatterns(filteredPatterns);
-          setVisibilityFilter(visibilityFilter);
-          setPatterns(result.patterns || []);
-        }
-      },
-      handleError(ACTION_TYPES.FETCH_PATTERNS),
-    );
+        notify({
+          message: `Failed to clone "${name}" Design`,
+          event_type: EVENT_TYPES.ERROR,
+        });
+      });
   }
 
   // this function returns fetchPattern function with latest values so that it can be used in child components
   function fetchPatternsCaller() {
-    return () => fetchPatterns(page, pageSize, search, sortOrder, visibilityFilter);
+    return () => getPatterns();
   }
 
   const handleError = (action) => (error) => {
@@ -977,44 +954,41 @@ function MesheryPatterns({
         updateProgress({ showProgress: false });
         return;
       }
-      dataFetch(
-        `/api/pattern/${id}`,
-        {
-          credentials: 'include',
-          method: 'DELETE',
-        },
-        () => {
-          console.log('PatternFile API', `/api/pattern/${id}`);
+      deletePatternFile({
+        id: id,
+      })
+        .unwrap()
+        .then(() => {
           updateProgress({ showProgress: false });
           notify({ message: `"${name}" Design deleted`, event_type: EVENT_TYPES.SUCCESS });
           resetSelectedRowData()();
-        },
-        handleError(ACTION_TYPES.DELETE_PATTERN),
-      );
+        })
+        .catch(() => {
+          updateProgress({ showProgress: false });
+          handleError(ACTION_TYPES.DELETE_PATTERN);
+        });
     }
 
     if (type === FILE_OPS.UPDATE) {
-      dataFetch(
-        `/api/pattern`,
-        {
-          credentials: 'include',
-          method: 'POST',
-          body: JSON.stringify({
-            pattern_data: {
-              id,
-              pattern_file: getUnit8ArrayForDesign(data),
-              catalog_data,
-            },
-            save: true,
-          }),
-        },
-        () => {
-          console.log('PatternFile API', `/api/pattern`);
+      updatePattern({
+        updateBody: JSON.stringify({
+          pattern_data: {
+            id,
+            pattern_file: getUnit8ArrayForDesign(data),
+            catalog_data,
+          },
+          save: true,
+        }),
+      })
+        .unwrap()
+        .then(() => {
           updateProgress({ showProgress: false });
           notify({ message: `"${name}" Design updated`, event_type: EVENT_TYPES.SUCCESS });
-        },
-        handleError(ACTION_TYPES.UPDATE_PATTERN),
-      );
+        })
+        .catch(() => {
+          updateProgress({ showProgress: false });
+          handleError(ACTION_TYPES.UPDATE_PATTERN);
+        });
     }
 
     if (type === FILE_OPS.FILE_UPLOAD || type === FILE_OPS.URL_UPLOAD) {
@@ -1037,19 +1011,17 @@ function MesheryPatterns({
           catalog_data,
         });
       }
-      dataFetch(
-        `/api/pattern`,
-        {
-          credentials: 'include',
-          method: 'POST',
-          body,
-        },
-        () => {
-          console.log('PatternFile API', `/api/pattern`);
+      uploadPatternFile({
+        uploadBody: body,
+      })
+        .unwrap()
+        .then(() => {
           updateProgress({ showProgress: false });
-        },
-        handleError(ACTION_TYPES.UPLOAD_PATTERN),
-      );
+        })
+        .catch(() => {
+          updateProgress({ showProgress: false });
+          handleError(ACTION_TYPES.UPLOAD_PATTERN);
+        });
     }
   }
 
@@ -1227,15 +1199,11 @@ function MesheryPatterns({
                   placement={'top'}
                   onClick={(e) => {
                     e.stopPropagation();
-                    setSelectedPattern({ pattern: patterns[tableMeta.rowIndex], show: true });
+                    handleOpenInConfigurator(patterns[tableMeta.rowIndex].id);
                   }}
                   disabled={!CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject)}
                 >
-                  <Avatar
-                    src="/static/img/pattwhite.svg"
-                    className={classes.iconAvatar}
-                    imgProps={{ height: '24px', width: '24px' }}
-                  />
+                  <PatternConfigureIcon />
                 </TooltipIcon>
               )}
 
@@ -1355,15 +1323,11 @@ function MesheryPatterns({
     const jsonPatterns = JSON.stringify(patterns);
 
     updateProgress({ showProgress: true });
-    dataFetch(
-      '/api/patterns/delete',
-      {
-        method: 'POST',
-        credentials: 'include',
-        body: jsonPatterns,
-      },
-      () => {
-        console.log('PatternFile Delete Multiple API', `/api/pattern/delete`);
+    deletePattern({
+      deleteBody: jsonPatterns,
+    })
+      .unwrap()
+      .then(() => {
         updateProgress({ showProgress: false });
         setTimeout(() => {
           notify({
@@ -1372,9 +1336,11 @@ function MesheryPatterns({
           });
           resetSelectedRowData()();
         }, 1200);
-      },
-      handleError(ACTION_TYPES.DELETE_PATTERN),
-    );
+      })
+      .catch(() => {
+        updateProgress({ showProgress: false });
+        handleError(ACTION_TYPES.DELETE_PATTERN);
+      });
   }
 
   const options = {
@@ -1453,13 +1419,6 @@ function MesheryPatterns({
           }
           searchTimeout.current = setTimeout(() => {
             if (search !== tableState.searchText) {
-              fetchPatterns(
-                page,
-                pageSize,
-                tableState.searchText !== null ? tableState.searchText : '',
-                sortOrder,
-                visibilityFilter,
-              );
               setSearch(tableState.searchText);
             }
           }, 500);
@@ -1491,7 +1450,7 @@ function MesheryPatterns({
     },
   };
 
-  if (loading) {
+  if (ispatternsLoading) {
     return <LoadingScreen animatedIcon="AnimatedMeshPattern" message={`Loading ${pageTitle}...`} />;
   }
 
@@ -1510,15 +1469,19 @@ function MesheryPatterns({
     const { uploadType, name, url, file, designType } = data;
     let requestBody = null;
     switch (uploadType) {
-      case 'File Upload':
+      case 'File Upload': {
+        const fileElement = document.getElementById('root_file');
+        const fileName = fileElement.files[0].name;
         requestBody = JSON.stringify({
           save: true,
           pattern_data: {
             name,
+            file_name: fileName.split('.')[0],
             pattern_file: getUnit8ArrayDecodedFile(file),
           },
         });
         break;
+      }
       case 'URL Import':
         requestBody = JSON.stringify({
           save: true,
@@ -1528,19 +1491,23 @@ function MesheryPatterns({
         break;
     }
 
-    dataFetch(
-      `/api/pattern/${designType}`,
-      { credentials: 'include', method: 'POST', body: requestBody },
-      () => {
+    importPattern({
+      importBody: requestBody,
+      type: designType,
+    })
+      .unwrap()
+      .then(() => {
         updateProgress({ showProgress: false });
         notify({
           message: `"${name}" design uploaded`,
           event_type: EVENT_TYPES.SUCCESS,
         });
-        fetchPatternsCaller()();
-      },
-      handleError(ACTION_TYPES.UPLOAD_PATTERN),
-    );
+        getPatterns();
+      })
+      .catch(() => {
+        updateProgress({ showProgress: false });
+        handleError(ACTION_TYPES.UPLOAD_PATTERN);
+      });
   }
 
   const filter = {
@@ -1563,7 +1530,7 @@ function MesheryPatterns({
   const handleApplyFilter = () => {
     const visibilityFilter =
       selectedFilters.visibility === 'All' ? null : selectedFilters.visibility;
-    fetchPatterns(page, pageSize, search, sortOrder, visibilityFilter);
+    setVisibilityFilter(visibilityFilter);
   };
 
   return (
@@ -1577,13 +1544,6 @@ function MesheryPatterns({
               onClose={resetSelectedRowData()}
               onSubmit={handleSubmit}
               isReadOnly={arePatternsReadOnly}
-            />
-          )}
-          {selectedPattern.show && (
-            <DesignConfigurator
-              onSubmit={handleSubmit}
-              show={setSelectedPattern}
-              pattern={selectedPattern.pattern}
             />
           )}
           <div className={StyleClass.toolWrapper}>
@@ -1710,7 +1670,7 @@ function MesheryPatterns({
               setPublishModal={setPublishModal}
               publishSchema={publishSchema}
               user={user}
-              fetch={() => fetchPatterns(page, pageSize, search, sortOrder, visibilityFilter)}
+              fetch={() => getPatterns()}
               handleInfoModal={handleInfoModal}
               openUndeployModal={openUndeployModal}
               openValidationModal={openValidateModal}
@@ -1722,7 +1682,7 @@ function MesheryPatterns({
           )}
 
           <UsesSistent>
-            <SistentModal {...designLifecycleModal}></SistentModal>
+            <SistentModal maxWidth="sm" {...designLifecycleModal}></SistentModal>
             <SistentModal {...sistentInfoModal}>
               {CAN(keys.DETAILS_OF_DESIGN.action, keys.DETAILS_OF_DESIGN.subject) &&
                 infoModal.open && (
@@ -1733,7 +1693,7 @@ function MesheryPatterns({
                     dataName="patterns"
                     selectedResource={infoModal.selectedResource}
                     resourceOwnerID={infoModal.ownerID}
-                    currentUserID={user?.id}
+                    currentUser={user}
                     patternFetcher={fetchPatternsCaller}
                     formSchema={publishSchema}
                     meshModels={meshModels}
@@ -1758,20 +1718,6 @@ function MesheryPatterns({
               handleImportDesign={handleImportDesign}
             />
           )}
-          {infoModal.open && CAN(keys.DETAILS_OF_DESIGN.action, keys.DETAILS_OF_DESIGN.subject) && (
-            <InfoModal
-              infoModalOpen={true}
-              handleInfoModalClose={handleInfoModalClose}
-              dataName="patterns"
-              selectedResource={infoModal.selectedResource}
-              resourceOwnerID={infoModal.ownerID}
-              currentUserID={user?.id}
-              patternFetcher={fetchPatternsCaller}
-              formSchema={publishSchema}
-              meshModels={meshModels}
-              isReadOnly={arePatternsReadOnly}
-            />
-          )}
           <PromptComponent ref={modalRef} />
         </>
       ) : (
@@ -1784,27 +1730,31 @@ function MesheryPatterns({
 const ImportModal = React.memo((props) => {
   const { importFormSchema, handleClose, handleImportDesign } = props;
 
-  const classes = useStyles();
-
   return (
     <>
-      <Modal
-        open={true}
-        schema={importFormSchema.rjsfSchema}
-        uiSchema={importFormSchema.uiSchema}
-        handleClose={handleClose}
-        handleSubmit={handleImportDesign}
-        title="Import Design"
-        submitBtnText="Import"
-        leftHeaderIcon={
-          <Pattern
-            fill="#fff"
-            style={{ height: '24px', width: '24px', fonSize: '1.45rem' }}
-            className={undefined}
+      <UsesSistent>
+        <SistentModal
+          open={true}
+          closeModal={handleClose}
+          headerIcon={
+            <Pattern
+              fill="#fff"
+              style={{ height: '24px', width: '24px', fonSize: '1.45rem' }}
+              className={undefined}
+            />
+          }
+          maxWidth="sm"
+          title="Import Design"
+        >
+          <RJSFModalWrapper
+            schema={importFormSchema.rjsfSchema}
+            uiSchema={importFormSchema.uiSchema}
+            handleSubmit={handleImportDesign}
+            submitBtnText="Import"
+            handleClose={handleClose}
           />
-        }
-        submitBtnIcon={<PublishIcon className={classes.addIcon} data-cy="import-button" />}
-      />
+        </SistentModal>
+      </UsesSistent>
     </>
   );
 });
@@ -1814,21 +1764,31 @@ const PublishModal = React.memo((props) => {
 
   return (
     <>
-      <Modal
-        open={true}
-        schema={publishFormSchema.rjsfSchema}
-        uiSchema={publishFormSchema.uiSchema}
-        handleClose={handleClose}
-        aria-label="catalog publish"
-        title={title}
-        handleSubmit={handleSubmit}
-        showInfoIcon={{
-          text: 'Upon submitting your catalog item, an approval flow will be initiated.',
-          link: 'https://docs.meshery.io/concepts/catalog',
-        }}
-        submitBtnText="Submit for Approval"
-        submitBtnIcon={<PublicIcon />}
-      />
+      <UsesSistent>
+        <SistentModal
+          open={true}
+          closeModal={handleClose}
+          aria-label="catalog publish"
+          title={title}
+          headerIcon={
+            <Pattern
+              fill="#fff"
+              style={{ height: '24px', width: '24px', fonSize: '1.45rem' }}
+              className={undefined}
+            />
+          }
+          maxWidth="sm"
+        >
+          <RJSFModalWrapper
+            schema={publishFormSchema.rjsfSchema}
+            uiSchema={publishFormSchema.uiSchema}
+            handleSubmit={handleSubmit}
+            submitBtnText="Submit for Approval"
+            handleClose={handleClose}
+            helpText="Upon submitting your catalog item, an approval flow will be initiated.[Learn more](https://docs.meshery.io/concepts/catalog)"
+          />
+        </SistentModal>
+      </UsesSistent>
     </>
   );
 });

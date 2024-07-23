@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Hybridnet
-subtitle: Collaborative and visual infrastructure as code for Hybridnet
+subtitle: Collaborative and visual infrastructure as design for Hybridnet
 image: /assets/img/integrations/hybridnet/icons/color/hybridnet-color.svg
 permalink: extensibility/integrations/hybridnet
 docURL: https://docs.meshery.io/extensibility/integrations/hybridnet
@@ -75,12 +75,12 @@ components:
   whiteIcon: assets/img/integrations/hybridnet/components/network-policy/icons/white/network-policy-white.svg
   description: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Flexible network configuration",
+  "Supports both overlay and underlay networks",
+  "Multi-cluster networking"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Integrates Hybridnet configurations"
+howItWorksDetails: "Streamlined network management and flexibility in Kubernetes"
 language: en
 list: include
 type: extensibility

@@ -1,6 +1,6 @@
 {
   "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "core.meshery.io/v1beta1",
+  "schemaVersion": "models.meshery.io/v1beta1",
   "version": "v1.0.0",
   "name": "sealed-secrets",
   "displayName": "Sealed Secrets",
@@ -11,10 +11,10 @@
    "hostname": "artifacthub"
   },
   "category": {
-   "name": "Uncategorized",
+   "name": "Security \u0026 Compliance",
    "metadata": null
   },
-  "subCategory": "Uncategorized",
+  "subCategory": "Secrets Management",
   "metadata": {
    "capabilities": "",
    "defaultData": "",
