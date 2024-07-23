@@ -65,6 +65,7 @@ import { UsesSistent } from './SistentWrapper';
 import { Modal as SistentModal } from '@layer5/sistent';
 import { useGetFiltersQuery } from '@/rtk-query/filter';
 import LoadingScreen from './LoadingComponents/LoadingComponent';
+import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
 
 const styles = (theme) => ({
   grid: {
@@ -308,6 +309,8 @@ function MesheryFilters({
     visibility: JSON.stringify([visibilityFilter]),
   });
 
+  const { data: capabilitiesData } = useGetProviderCapabilitiesQuery();
+
   useEffect(() => {
     if (filtersData) {
       const filteredWasmFilters = filtersData.filters.filter((content) => {
@@ -405,24 +408,32 @@ function MesheryFilters({
       },
       handleError(ACTION_TYPES.SCHEMA_FETCH),
     );
-    dataFetch(
-      '/api/provider/capabilities',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      (result) => {
-        if (result) {
-          const capabilitiesRegistry = result;
-          const filtersCatalogueCapability = capabilitiesRegistry?.capabilities.filter(
-            (val) => val.feature === MesheryFiltersCatalog,
-          );
-          if (filtersCatalogueCapability?.length > 0) setCanPublishFilter(true);
-        }
-      },
-      (err) => console.error(err),
-    );
-  }, []);
+    // dataFetch(
+    //   '/api/provider/capabilities',
+    //   {
+    //     method: 'GET',
+    //     credentials: 'include',
+    //   },
+    //   (result) => {
+    //     if (result) {
+    //       const capabilitiesRegistry = result;
+    //       const filtersCatalogueCapability = capabilitiesRegistry?.capabilities.filter(
+    //         (val) => val.feature === MesheryFiltersCatalog,
+    //       );
+    //       if (filtersCatalogueCapability?.length > 0) setCanPublishFilter(true);
+    //     }
+    //   },
+    //   (err) => console.error(err),
+    // );
+
+    if (capabilitiesData) {
+      const capabilitiesRegistry = capabilitiesData;
+      const filtersCatalogCapability = capabilitiesRegistry?.capabilities.filter(
+        (val) => val.feature === MesheryFiltersCatalog,
+      );
+      if (filtersCatalogCapability?.length > 0) setCanPublishFilter(true);
+    }
+  }, [capabilitiesData]);
 
   const searchTimeout = useRef(null);
 
