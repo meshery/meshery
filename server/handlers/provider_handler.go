@@ -26,8 +26,8 @@ func (h *Handler) ProviderHandler(w http.ResponseWriter, r *http.Request) {
 				Path:     "/",
 				HttpOnly: true,
 			})
-
-			redirectURL := "/user/login"
+			refParam := r.URL.Query().Get("ref")
+			redirectURL := "/user/login?ref=" + refParam
 			if provider == "None" {
 				redirectURL = "/"
 			}
@@ -75,6 +75,8 @@ func (h *Handler) ProvidersHandler(w http.ResponseWriter, _ *http.Request) {
 
 // ProviderUIHandler - serves providers UI
 func (h *Handler) ProviderUIHandler(w http.ResponseWriter, r *http.Request) {
+	refURLB64 := GetRefURL(r)
+
 	if h.config.PlaygroundBuild || h.Provider != "" { //Always use Remote provider for Playground build or when Provider is enforced
 		http.SetCookie(w, &http.Cookie{
 			Name:     h.config.ProviderCookieName,
@@ -82,7 +84,8 @@ func (h *Handler) ProviderUIHandler(w http.ResponseWriter, r *http.Request) {
 			Path:     "/",
 			HttpOnly: true,
 		})
-		redirectURL := "/user/login"
+
+		redirectURL := "/user/login?ref=" + refURLB64
 		http.Redirect(w, r, redirectURL, http.StatusFound)
 		return
 	}

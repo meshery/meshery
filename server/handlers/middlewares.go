@@ -3,6 +3,7 @@ package handlers
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -64,6 +65,8 @@ func (h *Handler) ProviderMiddleware(next http.Handler) http.Handler {
 // AuthMiddleware is a middleware to validate if a user is authenticated
 func (h *Handler) AuthMiddleware(next http.Handler, auth models.AuthenticationMechanism) http.Handler {
 	fn := func(w http.ResponseWriter, req *http.Request) {
+		refURLB64 := GetRefURL(req)
+
 		providerH := h.Provider
 		if auth == models.NoAuth && providerH != "" {
 			auth = models.ProviderAuth //If a provider is enforced then use provider authentication even in case of NoAuth
@@ -79,7 +82,7 @@ func (h *Handler) AuthMiddleware(next http.Handler, auth models.AuthenticationMe
 			// logrus.Debugf("models.ProviderCtxKey %s", models.ProviderCtxKey)
 			provider, ok := providerI.(models.Provider)
 			if !ok {
-				http.Redirect(w, req, "/provider", http.StatusFound)
+				http.Redirect(w, req, "/provider?ref="+refURLB64, http.StatusFound)
 				return
 			}
 
@@ -91,19 +94,15 @@ func (h *Handler) AuthMiddleware(next http.Handler, auth models.AuthenticationMe
 			// 	return
 			// }
 			// logrus.Debugf("provider %s", provider)
-			isValid := h.validateAuth(provider, req)
+			isValid, err := h.validateAuth(provider, req)
 			// logrus.Debugf("validate auth: %t", isValid)
 			if !isValid {
-				// if h.GetProviderType() == models.RemoteProviderType {
-				// 	http.Redirect(w, req, "/user/login", http.StatusFound)
-				// } else { // Local Provider
-				// 	h.LoginHandler(w, req)
-				// }
-				// return
-				if provider.GetProviderType() == models.RemoteProviderType {
+				fmt.Println("line 98 -------------", errors.Is(models.ErrEmptySession, err), provider.GetProviderType())
+				if !errors.Is(models.ErrEmptySession, err) && provider.GetProviderType() == models.RemoteProviderType {
 					provider.HandleUnAuthenticated(w, req)
 					return
 				}
+
 				// Local Provider
 				h.LoginHandler(w, req, provider, true)
 			}
@@ -113,13 +112,14 @@ func (h *Handler) AuthMiddleware(next http.Handler, auth models.AuthenticationMe
 	return http.HandlerFunc(fn)
 }
 
-func (h *Handler) validateAuth(provider models.Provider, req *http.Request) bool {
-	if err := provider.GetSession(req); err == nil {
+func (h *Handler) validateAuth(provider models.Provider, req *http.Request) (bool, error) {
+	err := provider.GetSession(req)
+	if err == nil {
 		// logrus.Debugf("session: %v", sess)
-		return true
+		return true, nil
 	}
 	// logrus.Errorf("session invalid, error: %v", err)
-	return false
+	return false, err
 }
 
 // KubernetesMiddleware is a middleware that is responsible for handling kubernetes related stuff such as

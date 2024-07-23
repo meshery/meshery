@@ -2,6 +2,7 @@
 package handlers
 
 import (
+	"encoding/base64"
 	"fmt"
 	"io"
 	"net/http"
@@ -150,4 +151,10 @@ func (h *Handler) DownloadHandler(responseWriter http.ResponseWriter, request *h
 		http.Error(responseWriter, err.Error(), http.StatusInternalServerError)
 		return
 	}
+}
+
+func GetRefURL(req *http.Request) string {
+	refURL := req.URL.Path + "?" + req.URL.RawQuery
+	refURLB64 := base64.RawURLEncoding.EncodeToString([]byte(refURL))
+	return refURLB64
 }

@@ -131,6 +131,7 @@ const (
 	ErrDeleteResourceCode                 = "meshery-server-1353"
 	ErrRecreateResourceCode               = "meshery-server-1354"
 	ErrUpdateResourceCode                 = "meshery-server-1355"
+	ErrEmptySessionCode                   = ""
 )
 
 var (
@@ -161,6 +162,7 @@ var (
 	ErrContextAlreadyPersisted = errors.New(ErrContextAlreadyPersistedCode, errors.Alert, []string{"kubernetes context already persisted with provider"}, []string{"kubernetes context already persisted with provider"}, []string{}, []string{})
 	ErrTokenRetry              = errors.New(ErrTokenRetryCode, errors.Alert, []string{"Error occurred, retrying after refresh to fetch token"}, []string{}, []string{}, []string{})
 	ErrOperationNotAvaibale    = errors.New(ErrOperationNotAvaibaleCode, errors.Alert, []string{"Operation not available"}, []string{}, []string{}, []string{})
+	ErrEmptySession = errors.New(ErrEmptySessionCode, errors.Alert, []string{}, []string{}, []string{}, []string{})
 )
 
 func ErrCloseIoReader(err error) error {
