@@ -63,6 +63,8 @@ import DefaultError from './General/error-404/index';
 import UniversalFilter from '../utils/custom-filter';
 import { UsesSistent } from './SistentWrapper';
 import { Modal as SistentModal } from '@layer5/sistent';
+import { useGetFiltersQuery } from '@/rtk-query/filter';
+import LoadingScreen from './LoadingComponents/LoadingComponent';
 
 const styles = (theme) => ({
   grid: {
@@ -294,6 +296,33 @@ function MesheryFilters({
 
   const [visibilityFilter, setVisibilityFilter] = useState(null);
 
+  const {
+    data: filtersData,
+    isLoading: isFiltersLoading,
+    refetch: getFilters,
+  } = useGetFiltersQuery({
+    page: page,
+    pagesize: pageSize,
+    search: search,
+    order: sortOrder,
+    visibility: JSON.stringify([visibilityFilter]),
+  });
+
+  useEffect(() => {
+    if (filtersData) {
+      const filteredWasmFilters = filtersData.filters.filter((content) => {
+        if (visibilityFilter === null || content.visibility === visibilityFilter) {
+          return true;
+        }
+        return false;
+      });
+      setCount(filtersData.total_count || 0);
+      handleSetFilters(filteredWasmFilters);
+      setVisibilityFilter(visibilityFilter);
+      setFilters(filtersData.filters || []);
+    }
+  }, [filtersData]);
+
   const ACTION_TYPES = {
     FETCH_FILTERS: {
       name: 'FETCH_FILTERS',
@@ -470,10 +499,6 @@ function MesheryFilters({
   };
 
   useEffect(() => {
-    fetchFilters(page, pageSize, search, sortOrder, visibilityFilter);
-  }, [page, pageSize, search, sortOrder, visibilityFilter]);
-
-  useEffect(() => {
     if (viewType === 'grid') setSearch('');
   }, [viewType]);
 
@@ -557,44 +582,44 @@ function MesheryFilters({
    * @param {string} sortOrder order of sort
    */
 
-  function fetchFilters(page = 0, pageSize = 10, search, sortOrder, visibilityFilter) {
-    if (!search) search = '';
-    if (!sortOrder) sortOrder = '';
-
-    const query =
-      `?page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(
-        search,
-      )}&order=${encodeURIComponent(sortOrder)}` +
-      (visibilityFilter
-        ? `&visibility=${encodeURIComponent(JSON.stringify([visibilityFilter]))}`
-        : '');
-
-    updateProgress({ showProgress: true });
-
-    dataFetch(
-      `/api/filter${query}`,
-      { credentials: 'include' },
-      (result) => {
-        console.log('FilterFile API', `/api/filter${query}`);
-        updateProgress({ showProgress: false });
-        if (result) {
-          const filteredFilters = result.filters.filter((content) => {
-            if (visibilityFilter === null || content.visibility === visibilityFilter) {
-              return true;
-            }
-            return false;
-          });
-          handleSetFilters(filteredFilters);
-          // setPage(result.page || 0);
-          setPageSize(result.page_size || 0);
-          setCount(result.total_count || 0);
-          setVisibilityFilter(visibilityFilter);
-        }
-      },
-      // handleError
-      handleError(ACTION_TYPES.FETCH_FILTERS),
-    );
-  }
+  // function fetchFilters(page = 0, pageSize = 10, search, sortOrder, visibilityFilter) {
+  //   if (!search) search = '';
+  //   if (!sortOrder) sortOrder = '';
+  //
+  //   const query =
+  //     `?page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(
+  //       search,
+  //     )}&order=${encodeURIComponent(sortOrder)}` +
+  //     (visibilityFilter
+  //       ? `&visibility=${encodeURIComponent(JSON.stringify([visibilityFilter]))}`
+  //       : '');
+  //
+  //   updateProgress({ showProgress: true });
+  //
+  //   dataFetch(
+  //     `/api/filter${query}`,
+  //     { credentials: 'include' },
+  //     (result) => {
+  //       console.log('FilterFile API', `/api/filter${query}`);
+  //       updateProgress({ showProgress: false });
+  //       if (result) {
+  //         const filteredFilters = result.filters.filter((content) => {
+  //           if (visibilityFilter === null || content.visibility === visibilityFilter) {
+  //             return true;
+  //           }
+  //           return false;
+  //         });
+  //         handleSetFilters(filteredFilters);
+  //         // setPage(result.page || 0);
+  //         setPageSize(result.page_size || 0);
+  //         setCount(result.total_count || 0);
+  //         setVisibilityFilter(visibilityFilter);
+  //       }
+  //     },
+  //     // handleError
+  //     handleError(ACTION_TYPES.FETCH_FILTERS),
+  //   );
+  // }
 
   const handleDeploy = (filter_file, name) => {
     dataFetch(
@@ -1147,13 +1172,13 @@ function MesheryFilters({
           }
           searchTimeout.current = setTimeout(() => {
             if (search !== tableState.searchText) {
-              fetchFilters(
-                page,
-                pageSize,
-                tableState.searchText !== null ? tableState.searchText : '',
-                sortOrder,
-                visibilityFilter,
-              );
+              // fetchFilters(
+              //   page,
+              //   pageSize,
+              //   tableState.searchText !== null ? tableState.searchText : '',
+              //   sortOrder,
+              //   visibilityFilter,
+              // );
               setSearch(tableState.searchText);
             }
           }, 500);
@@ -1271,8 +1296,13 @@ function MesheryFilters({
   const handleApplyFilter = () => {
     const visibilityFilter =
       selectedFilters.visibility === 'All' ? null : selectedFilters.visibility;
-    fetchFilters(page, pageSize, search, sortOrder, visibilityFilter);
+    // fetchFilters(page, pageSize, search, sortOrder, visibilityFilter);
+    setVisibilityFilter(visibilityFilter);
   };
+
+  if (isFiltersLoading) {
+    return <LoadingScreen animatedIcon="AnimatedFilter" message={`Loading Filters...`} />;
+  }
 
   return (
     <>
@@ -1389,7 +1419,7 @@ function MesheryFilters({
                 publishModal={publishModal}
                 setPublishModal={setPublishModal}
                 publishSchema={publishSchema}
-                fetch={() => fetchFilters(page, pageSize, search, sortOrder, visibilityFilter)}
+                fetch={() => getFilters()}
                 handleInfoModal={handleInfoModal}
               />
             )}
@@ -1433,6 +1463,7 @@ function MesheryFilters({
                   currentUserID={user?.id}
                   formSchema={publishSchema}
                   meshModels={meshModels}
+                  patternFetcher={() => getFilters()}
                 />
               )}
             <PromptComponent ref={modalRef} />
