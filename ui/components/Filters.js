@@ -292,6 +292,8 @@ function MesheryFilters({
   const catalogVisibilityRef = useRef();
   const disposeConfSubscriptionRef = useRef(null);
 
+  const [visibilityFilter, setVisibilityFilter] = useState(null);
+
   const ACTION_TYPES = {
     FETCH_FILTERS: {
       name: 'FETCH_FILTERS',
@@ -555,7 +557,6 @@ function MesheryFilters({
    * @param {string} sortOrder order of sort
    */
 
-  const [visibilityFilter, setVisibilityFilter] = useState(null);
   function fetchFilters(page = 0, pageSize = 10, search, sortOrder, visibilityFilter) {
     if (!search) search = '';
     if (!sortOrder) sortOrder = '';
