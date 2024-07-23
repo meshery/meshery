@@ -149,7 +149,7 @@ const MesheryTreeViewItem = ({
           }}
         >
           {imgSrc ? <img src={imgSrc} style={{ height: '1.5rem', width: '1.5rem' }} /> : null}
-          <span>{modelDef.displayName}</span>
+          <span>{modelDef.displayName ? modelDef.displayName : modelDef.name}</span>
         </div>
       }
       onClick={() => {
@@ -195,7 +195,6 @@ const MesheryTreeViewItem = ({
             >
               {versionedModelDef.components &&
                 versionedModelDef.components.map((component, subIndex) => {
-                  // console.log("component", component);
                   return (
                     <StyledTreeItem
                       key={subIndex}
@@ -378,8 +377,6 @@ const useRegistryRouter = () => {
 };
 
 const MesheryTreeViewWrapper = styled('div')(() => ({
-  width: '100%',
-  height: '100%',
   display: 'flex',
   flexDirection: 'column',
 }));
@@ -515,6 +512,8 @@ const MesheryTreeView = ({
         flexDirection: 'row',
         justifyContent: 'space-between',
         borderBottom: '1px solid #d2d3d4',
+        width: '100%',
+        height: '2.55rem',
       }}
     >
       <div>
@@ -622,7 +621,7 @@ const MesheryTreeView = ({
   );
 
   return (
-    <MesheryTreeViewWrapper>
+    <MesheryTreeViewWrapper style={{ width: '100%', height: '100%' }}>
       {view === MODELS &&
         renderTree(
           <MesheryTreeViewModel
