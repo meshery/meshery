@@ -32,7 +32,8 @@ function AlertUnauthenticatedSession() {
     const timer = setTimeout(() => {
       if (countDown === 1) {
         handleClose();
-        window.location = "/user/login";
+        const existingQueryString = window.location.search;
+        window.location = `/user/login${existingQueryString}`;
       }
       setCountDown((countDown) => countDown - 1);
     }, 1000);

@@ -298,7 +298,7 @@ func (l *RemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _
 			refURL = append(refURL, refURLqueryParam)
 		}
 		
-		fmt.Println("TETS hhhhh------------------\n\n\n\n", refURL)
+		fmt.Println("TETS hhhhh------------------\n\n\n\n", refURL, refURLqueryParam)
 
 		queryParams := url.Values{
 			"source":           []string{base64.RawURLEncoding.EncodeToString([]byte(baseCallbackURL))},
@@ -657,7 +657,7 @@ func (l *RemoteProvider) HandleUnAuthenticated(w http.ResponseWriter, req *http.
 	if err == nil {
 		// remove the cookie from the browser and redirect to inform about expired session.
 		l.UnSetJWTCookie(w)
-		http.Redirect(w, req, "/auth/login", http.StatusFound)
+		http.Redirect(w, req, "/auth/login?"+req.URL.RawQuery, http.StatusFound)
 		return
 	}
 	http.Redirect(w, req, "/provider", http.StatusFound)

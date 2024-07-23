@@ -78,11 +78,16 @@ func (h *Handler) AuthMiddleware(next http.Handler, auth models.AuthenticationMe
 		// 		return
 		// 	}
 		case models.ProviderAuth:
+
+			queryParams := req.URL.Query()
+			if refURLB64 != "" {
+				queryParams["ref"] = []string{refURLB64} 
+			}
 			providerI := req.Context().Value(models.ProviderCtxKey)
 			// logrus.Debugf("models.ProviderCtxKey %s", models.ProviderCtxKey)
 			provider, ok := providerI.(models.Provider)
 			if !ok {
-				http.Redirect(w, req, "/provider?ref="+refURLB64, http.StatusFound)
+				http.Redirect(w, req, fmt.Sprintf("/provider?%s", queryParams.Encode()), http.StatusFound)
 				return
 			}
 
@@ -97,7 +102,6 @@ func (h *Handler) AuthMiddleware(next http.Handler, auth models.AuthenticationMe
 			isValid, err := h.validateAuth(provider, req)
 			// logrus.Debugf("validate auth: %t", isValid)
 			if !isValid {
-				fmt.Println("line 98 -------------", errors.Is(models.ErrEmptySession, err), provider.GetProviderType())
 				if !errors.Is(models.ErrEmptySession, err) && provider.GetProviderType() == models.RemoteProviderType {
 					provider.HandleUnAuthenticated(w, req)
 					return
@@ -105,6 +109,7 @@ func (h *Handler) AuthMiddleware(next http.Handler, auth models.AuthenticationMe
 
 				// Local Provider
 				h.LoginHandler(w, req, provider, true)
+				return
 			}
 		}
 		next.ServeHTTP(w, req)
