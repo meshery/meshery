@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector, Provider } from 'react-redux';
-import { selectEvents } from '../store/slices/events';
 import { CircularProgress, Box } from '@material-ui/core';
 import axios from 'axios';
-import { store } from '../store';
 
 const Loading = () => {
   return (
@@ -14,8 +11,6 @@ const Loading = () => {
 };
 
 const EventsView = () => {
-  const events = useSelector(selectEvents) || [];
-  const logsUrl = events.find((event) => event.category === 'registration')?.metadata?.ViewLink;
   const [data, setData] = useState('No Logs Available');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -23,19 +18,23 @@ const EventsView = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(
-          `/api/system/fileView?file=${encodeURIComponent(logsUrl)}`,
-        );
-        setData(response.data);
+        const response1 = await axios.get(`/api/v2/events?category=["registration"]`);
+        const path = response1.data.events[0].metadata.ViewLink;
+        console.log('Path:', path);
+
+        const response2 = await axios.get(`/api/system/fileView?file=${encodeURIComponent(path)}`);
+        console.log('Response Data:', response2.data);
+
+        setData(response2.data);
       } catch (err) {
-        setError(error);
+        setError(err.message);
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, [events]);
+  }, []);
 
   if (loading) {
     return <Loading />;
@@ -47,7 +46,7 @@ const EventsView = () => {
 
   return (
     <>
-      <pre style={{ whiteSpace: 'pre-line' }}>{JSON.stringify(data)}</pre>
+      <p>{JSON.stringify(data, null, 2)}</p>
     </>
   );
 };
@@ -55,10 +54,8 @@ const EventsView = () => {
 const MesheryRegistrationLogs = () => {
   return (
     <>
-      <div>MesheryRegistrationLogs</div>
-      <Provider store={store}>
-        <EventsView />
-      </Provider>
+      <div>Meshery Registration Logs</div>
+      <EventsView />
     </>
   );
 };
