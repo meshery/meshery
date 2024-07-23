@@ -28,7 +28,6 @@ import (
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/layer5io/meshkit/utils/walker"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"gorm.io/gorm"
 )
@@ -327,7 +326,7 @@ func (l *DefaultLocalProvider) FetchResults(_, page, pageSize, _, _, profileID s
 	if err != nil {
 		return nil, ErrPageSize(err)
 	}
-	return l.ResultPersister.GetResults(pg, pgs, profileID)
+	return l.ResultPersister.GetResults(pg, pgs, profileID, l.Log)
 }
 
 // FetchResults - fetches results from provider backend
@@ -347,7 +346,7 @@ func (l *DefaultLocalProvider) FetchAllResults(_, page, pageSize, _, _, _, _ str
 		return nil, ErrPageSize(err)
 	}
 
-	return l.ResultPersister.GetAllResults(pg, pgs)
+	return l.ResultPersister.GetAllResults(pg, pgs, l.Log)
 }
 
 // GetResult - fetches result from provider backend for the given result id
@@ -356,7 +355,7 @@ func (l *DefaultLocalProvider) GetResult(_ string, resultID uuid.UUID) (*Meshery
 	if resultID == uuid.Nil {
 		return nil, ErrResultID
 	}
-	return l.ResultPersister.GetResult(resultID)
+	return l.ResultPersister.GetResult(resultID, l.Log)
 }
 
 // PublishResults - publishes results to the provider backend synchronously
@@ -377,11 +376,11 @@ func (l *DefaultLocalProvider) PublishResults(req *http.Request, result *Meshery
 		return "", nil
 	}
 
-	logrus.Debugf("Result: %s, size: %d", data, len(data))
+	l.Log.Debug(fmt.Sprintf("Result: %s, size: %d", data, len(data)))
 	resultID, _ := l.shipResults(req, data)
 
 	key := uuid.FromStringOrNil(resultID)
-	logrus.Debugf("key: %s, is nil: %t", key.String(), (key == uuid.Nil))
+	l.Log.Debug(fmt.Sprintf("key: %s, is nil: %t", key.String(), (key == uuid.Nil)))
 	if key == uuid.Nil {
 		key, _ = uuid.NewV4()
 		result.ID = key
@@ -439,7 +438,7 @@ func (l *DefaultLocalProvider) shipResults(_ *http.Request, data []byte) (string
 	c := &http.Client{}
 	resp, err := c.Do(cReq)
 	if err != nil {
-		logrus.Warnf("unable to send results: %v", err)
+		l.Log.Warn(ErrDoRequest(err, cReq.Method, remoteProviderURL.String()))
 		return "", nil
 	}
 	defer func() {
@@ -448,14 +447,14 @@ func (l *DefaultLocalProvider) shipResults(_ *http.Request, data []byte) (string
 
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
-		logrus.Warnf("unable to read response body: %v", err)
+		l.Log.Warn(ErrDataRead(err, "body"))
 		return "", nil
 	}
 	if resp.StatusCode == http.StatusCreated {
 		// logrus.Infof("results successfully published to reomote provider")
 		idMap := map[string]string{}
 		if err = json.Unmarshal(bdr, &idMap); err != nil {
-			logrus.Warnf("unable to unmarshal body: %v", err)
+			l.Log.Warn(ErrUnmarshal(err, "body"))
 			return "", nil
 		}
 		resultID, ok := idMap["id"]
@@ -464,7 +463,7 @@ func (l *DefaultLocalProvider) shipResults(_ *http.Request, data []byte) (string
 		}
 		return "", nil
 	}
-	logrus.Warnf("error while sending results: %s", bdr)
+	l.Log.Warn(ErrDoRequest(err, resp.Request.Method, remoteProviderURL.String()))
 	return "", nil
 }
 
@@ -479,7 +478,7 @@ func (l *DefaultLocalProvider) PublishMetrics(_ string, result *MesheryResult) e
 		return ErrMarshal(err, "Meshery Matrics for shipping")
 	}
 
-	logrus.Debugf("Result: %s, size: %d", data, len(data))
+	l.Log.Debug(fmt.Sprintf("Result: %s, size: %d", data, len(data)))
 	bf := bytes.NewBuffer(data)
 
 	remoteProviderURL, _ := url.Parse(l.ProviderBaseURL + "/result/metrics")
@@ -488,22 +487,22 @@ func (l *DefaultLocalProvider) PublishMetrics(_ string, result *MesheryResult) e
 	c := &http.Client{}
 	resp, err := c.Do(cReq)
 	if err != nil {
-		logrus.Warnf("unable to send metrics: %v", err)
+		l.Log.Warn(ErrDoRequest(err, cReq.Method, remoteProviderURL.String()))
 		return nil
 	}
 	if resp.StatusCode == http.StatusOK {
-		logrus.Infof("metrics successfully published to remote provider")
+		l.Log.Info("metrics successfully published to remote provider")
 		return nil
 	}
 	defer func() {
 		_ = resp.Body.Close()
 	}()
-	bdr, err := io.ReadAll(resp.Body)
+	_, err = io.ReadAll(resp.Body)
 	if err != nil {
-		logrus.Warnf("unable to read response body: %v", err)
+		l.Log.Warn(ErrDataRead(err, "body"))
 		return nil
 	}
-	logrus.Warnf("error while sending metrics: %s", bdr)
+	l.Log.Warn(ErrDoRequest(err, resp.Request.Method, remoteProviderURL.String()))
 	return nil
 }
 
@@ -527,10 +526,10 @@ func (l *DefaultLocalProvider) ExtractToken(w http.ResponseWriter, _ *http.Reque
 		"meshery-provider": l.Name(),
 		TokenCookieName:    "",
 	}
-	logrus.Debugf("token sent for meshery-provider %v", l.Name())
+	l.Log.Debug(fmt.Sprintf("token sent for meshery-provider %v", l.Name()))
 	if err := json.NewEncoder(w).Encode(resp); err != nil {
-		logrus.Errorf("Unable to extract auth details: %v", err)
-		http.Error(w, "unable to extract auth details", http.StatusInternalServerError)
+		l.Log.Error(ErrEncoding(err, "token"))
+		http.Error(w, ErrEncoding(err, "token").Error(), http.StatusInternalServerError)
 	}
 }
 
@@ -741,7 +740,7 @@ func (l *DefaultLocalProvider) RemotePatternFile(_ *http.Request, resourceURL, p
 	}
 
 	// Fallback to generic HTTP import
-	pfs, err := genericHTTPPatternFile(resourceURL)
+	pfs, err := genericHTTPPatternFile(resourceURL, l.Log)
 	if err != nil {
 		return nil, err
 	}
@@ -857,7 +856,7 @@ func (l *DefaultLocalProvider) RemoteFilterFile(_ *http.Request, resourceURL, pa
 	}
 
 	// Fallback to generic HTTP import
-	ffs, err := genericHTTPFilterFile(resourceURL)
+	ffs, err := genericHTTPFilterFile(resourceURL, l.Log)
 	if err != nil {
 		return nil, err
 	}
@@ -1546,7 +1545,7 @@ func githubRepoFilterScan(
 	return result, err
 }
 
-func genericHTTPPatternFile(fileURL string) ([]MesheryPattern, error) {
+func genericHTTPPatternFile(fileURL string, log logger.Handler) ([]MesheryPattern, error) {
 	resp, err := http.Get(fileURL)
 	if err != nil {
 		return nil, err
@@ -1555,7 +1554,7 @@ func genericHTTPPatternFile(fileURL string) ([]MesheryPattern, error) {
 		return nil, fmt.Errorf("file not found")
 	}
 
-	defer SafeClose(resp.Body)
+	defer SafeClose(resp.Body, log)
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -1582,7 +1581,7 @@ func genericHTTPPatternFile(fileURL string) ([]MesheryPattern, error) {
 	return []MesheryPattern{pf}, nil
 }
 
-func genericHTTPFilterFile(fileURL string) ([]MesheryFilter, error) {
+func genericHTTPFilterFile(fileURL string, log logger.Handler) ([]MesheryFilter, error) {
 	resp, err := http.Get(fileURL)
 	if err != nil {
 		return nil, err
@@ -1591,7 +1590,7 @@ func genericHTTPFilterFile(fileURL string) ([]MesheryFilter, error) {
 		return nil, fmt.Errorf("file not found")
 	}
 
-	defer SafeClose(resp.Body)
+	defer SafeClose(resp.Body, log)
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {

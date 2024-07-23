@@ -42,6 +42,14 @@ mesheryctl exp relationships view [model-name]
 </div>
 </pre> 
 
+//To search a specific relationship
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl exp relationships search --[flag] [query-text]
+
+</div>
+</pre> 
+
 ## Options
 
 <pre class='codeblock-pre'>

@@ -1,5 +1,4 @@
 import { withStyles } from '@material-ui/core';
-import { withSnackbar } from 'notistack';
 import React, { useState, useEffect, useCallback } from 'react';
 import { Paper } from '@material-ui/core';
 import UploadIcon from '@mui/icons-material/Upload';
@@ -353,13 +352,13 @@ const MeshModelComponent_ = ({
           <div
             className={`${StyleClass.treeWrapper} ${convert ? StyleClass.treeWrapperAnimate : ''}`}
           >
-            <div
+            <Paper
               className={StyleClass.detailsContainer}
               style={{
                 display: 'flex',
                 alignItems: resourcesDetail.length === 0 ? 'center' : '',
                 justifyContent: resourcesDetail.length === 0 ? 'center' : '',
-                padding: '0.6rem 0.6rem 0rem 0.6rem',
+                padding: '0.6rem',
                 overflow: 'hidden',
               }}
             >
@@ -375,7 +374,7 @@ const MeshModelComponent_ = ({
                 showDetailsData={showDetailsData}
                 setResourcesDetail={setResourcesDetail}
               />
-            </div>
+            </Paper>
             <MeshModelDetails
               view={view}
               setShowDetailsData={setShowDetailsData}
@@ -459,4 +458,4 @@ const MeshModelComponent = (props) => {
   );
 };
 
-export default withStyles(meshmodelStyles)(withSnackbar(MeshModelComponent));
+export default withStyles(meshmodelStyles)(MeshModelComponent);

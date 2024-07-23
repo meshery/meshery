@@ -1,6 +1,6 @@
 {
   "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "core.meshery.io/v1beta1",
+  "schemaVersion": "models.meshery.io/v1beta1",
   "version": "v1.0.0",
   "name": "fluid",
   "displayName": "Fluid",
@@ -16,9 +16,15 @@
   },
   "subCategory": "Scheduling \u0026 Orchestration",
   "metadata": {
+   "capabilities": "",
+   "defaultData": "",
    "isAnnotation": false,
-   "published": false,
-   "subCategory": "Scheduling \u0026 Orchestration",
+   "primaryColor": "#134fa4",
+   "secondaryColor": "#2b61ad",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
    "svgColor": "",
    "svgComplete": "",
    "svgWhite": ""

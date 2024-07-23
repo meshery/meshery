@@ -40,6 +40,7 @@ import {
   useGetMeshSyncResourceKindsQuery,
   useGetMeshSyncResourcesQuery,
 } from '@/rtk-query/meshsync';
+import { UsesSistent } from '@/components/SistentWrapper';
 
 const ACTION_TYPES = {
   FETCH_MESHSYNC_RESOURCES: {
@@ -563,7 +564,7 @@ export default function MeshSyncTable(props) {
             }}
             expanded={isSearchExpanded}
             setExpanded={setIsSearchExpanded}
-            placeholder="Search connections..."
+            placeholder="Search Connections..."
           />
 
           <UniversalFilter
@@ -581,15 +582,17 @@ export default function MeshSyncTable(props) {
           />
         </div>
       </div>
-      <ResponsiveDataTable
-        data={meshSyncResources}
-        columns={columns}
-        options={options}
-        className={classes.muiRow}
-        tableCols={tableCols}
-        updateCols={updateCols}
-        columnVisibility={columnVisibility}
-      />
+      <UsesSistent>
+        <ResponsiveDataTable
+          data={meshSyncResources}
+          columns={columns}
+          options={options}
+          className={classes.muiRow}
+          tableCols={tableCols}
+          updateCols={updateCols}
+          columnVisibility={columnVisibility}
+        />
+      </UsesSistent>
       <RegisterConnectionModal
         handleRegistrationModalClose={handleRegistrationModalClose}
         openRegistrationModal={openRegistrationModal}

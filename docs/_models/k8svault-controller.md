@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: K8s Vault Controller
-subtitle: Collaborative and visual infrastructure as code for K8s Vault Controller
+subtitle: Collaborative and visual infrastructure as design for K8s Vault Controller
 image: /assets/img/integrations/k8svault-controller/icons/color/k8svault-controller-color.svg
 permalink: extensibility/integrations/k8svault-controller
 docURL: https://docs.meshery.io/extensibility/integrations/k8svault-controller
@@ -19,11 +19,11 @@ components:
   whiteIcon: assets/img/integrations/k8svault-controller/components/vault-mirror/icons/white/vault-mirror-white.svg
   description: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Automated deployment and configuration of Vault on Kubernetes",
+  "Integration with Kubernetes authentication and authorization mechanisms",
+  "Simplified management of secrets for applications running on Kubernetes"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

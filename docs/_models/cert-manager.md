@@ -1,22 +1,22 @@
 ---
 layout: integration
-title: Cert Manager
-subtitle: Cloud native certificate management with Cert Manager and Meshery
+title: cert-manager
+subtitle: Collaborative and visual infrastructure as design for cert-manager
 image: /assets/img/integrations/cert-manager/icons/color/cert-manager-color.svg
 permalink: extensibility/integrations/cert-manager
 docURL: https://docs.meshery.io/extensibility/integrations/cert-manager
 description: 
-integrations-category: Security & Compliance
-integrations-subcategory: Security & Compliance
-registrant: Artifact Hub
+integrations-category: Provisioning
+integrations-subcategory: Key Management Service
+registrant: GitHub
 components: 
 featureList: [
-  "Simplifies the process of obtaining, renewing and using those certificates.",
-  "Supports issuing certificates from a variety of sources.",
-  "Ensures certificates remain valid and up to date."
+  "Automates certificate issuance and renewal",
+  "Integrates with various certificate authorities",
+  "Simplifies certificate management"
 ]
-howItWorks: "Cloud native certificate management"
-howItWorksDetails: "X.509 certificate management for Kubernetes and OpenShift"
+howItWorks: "Manages certificates with Cert-Manager"
+howItWorksDetails: "Streamlined certificate management and enhanced security in Kubernetes"
 language: en
 list: include
 type: extensibility

@@ -6,6 +6,7 @@ const REMOTE_PROVIDER_USER = {
 };
 const PROVIDER_SELECTION_URL = `${MESHERY_SERVER_URL}/provider`;
 const PROVIDER_TOKEN = process.env.PROVIDER_TOKEN;
+const AUTHFILE = 'playwright/.auth/user.json';
 
 export const ENV = {
   MESHERY_SERVER_URL,
@@ -13,4 +14,5 @@ export const ENV = {
   REMOTE_PROVIDER_URL,
   REMOTE_PROVIDER_USER,
   PROVIDER_TOKEN,
+  AUTHFILE,
 };

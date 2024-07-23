@@ -1,0 +1,68 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Component Definition",
+  "description": "",
+  "format": "JSON",
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "version": "v1.0.0",
+   "name": "vela-core",
+   "displayName": "Vela Core",
+   "description": "",
+   "status": "ignored",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "registrant": {
+    "hostname": "artifacthub"
+   },
+   "category": {
+    "name": "App Definition and Development",
+    "metadata": null
+   },
+   "subCategory": "Application Definition \u0026 Image Build",
+   "metadata": {
+    "capabilities": "",
+    "defaultData": "",
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "model": {
+    "version": "1.9.11"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "status": "ignored",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "component": {
+   "kind": "ComponentDefinition",
+   "version": "core.oam.dev/v1beta1",
+   "schema": "{\n \"description\": \"ComponentDefinition is the Schema for the componentdefinitions API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ComponentDefinitionSpec defines the desired state of ComponentDefinition\",\n   \"properties\": {\n    \"childResourceKinds\": {\n     \"description\": \"ChildResourceKinds are the list of GVK of the child resources this workload generates\",\n     \"items\": {\n      \"description\": \"A ChildResourceKind defines a child Kubernetes resource kind with a selector\",\n      \"properties\": {\n       \"apiVersion\": {\n        \"description\": \"APIVersion of the child resource\",\n        \"type\": \"string\"\n       },\n       \"kind\": {\n        \"description\": \"Kind of the child resource\",\n        \"type\": \"string\"\n       },\n       \"selector\": {\n        \"additionalProperties\": {\n         \"type\": \"string\"\n        },\n        \"description\": \"Selector to select the child resources that the workload wants to expose to traits\",\n        \"type\": \"object\"\n       }\n      },\n      \"required\": [\n       \"apiVersion\",\n       \"kind\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"extension\": {\n     \"description\": \"Extension is used for extension needs by OAM platform builders\",\n     \"format\": \"textarea\",\n     \"type\": \"string\"\n    },\n    \"podSpecPath\": {\n     \"description\": \"PodSpecPath indicates where/if this workload has K8s podSpec field if one workload has podSpec, trait can do lot's of assumption such as port, env, volume fields.\",\n     \"type\": \"string\"\n    },\n    \"revisionLabel\": {\n     \"description\": \"RevisionLabel indicates which label for underlying resources(e.g. pods) of this workload can be used by trait to create resource selectors(e.g. label selector for pods).\",\n     \"type\": \"string\"\n    },\n    \"schematic\": {\n     \"description\": \"Schematic defines the data format and template of the encapsulation of the workload\",\n     \"properties\": {\n      \"cue\": {\n       \"description\": \"CUE defines the encapsulation in CUE format\",\n       \"properties\": {\n        \"template\": {\n         \"description\": \"Template defines the abstraction template data of the capability, it will replace the old CUE template in extension field. Template is a required field if CUE is defined in Capability Definition.\",\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"template\"\n       ],\n       \"type\": \"object\"\n      },\n      \"terraform\": {\n       \"description\": \"Terraform is the struct to describe cloud resources managed by Hashicorp Terraform\",\n       \"properties\": {\n        \"configuration\": {\n         \"description\": \"Configuration is Terraform Configuration\",\n         \"type\": \"string\"\n        },\n        \"customRegion\": {\n         \"description\": \"Region is cloud provider's region. It will override the region in the region field of ProviderReference\",\n         \"type\": \"string\"\n        },\n        \"deleteResource\": {\n         \"default\": true,\n         \"description\": \"DeleteResource will determine whether provisioned cloud resources will be deleted when CR is deleted\",\n         \"type\": \"boolean\"\n        },\n        \"gitCredentialsSecretReference\": {\n         \"description\": \"GitCredentialsSecretReference specifies the reference to the secret containing the git credentials\",\n         \"properties\": {\n          \"name\": {\n           \"description\": \"name is unique within a namespace to reference a secret resource.\",\n           \"type\": \"string\"\n          },\n          \"namespace\": {\n           \"description\": \"namespace defines the space within which the secret name must be unique.\",\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\",\n         \"x-kubernetes-map-type\": \"atomic\"\n        },\n        \"path\": {\n         \"description\": \"Path is the sub-directory of remote git repository. It's valid when remote is set\",\n         \"type\": \"string\"\n        },\n        \"providerRef\": {\n         \"description\": \"ProviderReference specifies the reference to Provider\",\n         \"properties\": {\n          \"name\": {\n           \"description\": \"Name of the referenced object.\",\n           \"type\": \"string\"\n          },\n          \"namespace\": {\n           \"default\": \"default\",\n           \"description\": \"Namespace of the referenced object.\",\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"name\"\n         ],\n         \"type\": \"object\"\n        },\n        \"type\": {\n         \"default\": \"hcl\",\n         \"description\": \"Type specifies which Terraform configuration it is, HCL or JSON syntax\",\n         \"enum\": [\n          \"hcl\",\n          \"json\",\n          \"remote\"\n         ],\n         \"type\": \"string\"\n        },\n        \"writeConnectionSecretToRef\": {\n         \"description\": \"WriteConnectionSecretToReference specifies the namespace and name of a Secret to which any connection details for this managed resource should be written. Connection details frequently include the endpoint, username, and password required to connect to the managed resource.\",\n         \"properties\": {\n          \"name\": {\n           \"description\": \"Name of the secret.\",\n           \"type\": \"string\"\n          },\n          \"namespace\": {\n           \"description\": \"Namespace of the secret.\",\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"name\"\n         ],\n         \"type\": \"object\"\n        }\n       },\n       \"required\": [\n        \"configuration\"\n       ],\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"status\": {\n     \"description\": \"Status defines the custom health policy and status message for workload\",\n     \"properties\": {\n      \"customStatus\": {\n       \"description\": \"CustomStatus defines the custom status message that could display to user\",\n       \"type\": \"string\"\n      },\n      \"healthPolicy\": {\n       \"description\": \"HealthPolicy defines the health check policy for the abstraction\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"workload\": {\n     \"description\": \"Workload is a workload type descriptor\",\n     \"properties\": {\n      \"definition\": {\n       \"description\": \"Definition mutually exclusive to workload.type, a embedded WorkloadDefinition\",\n       \"properties\": {\n        \"apiVersion\": {\n         \"type\": \"string\"\n        },\n        \"kind\": {\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"apiVersion\",\n        \"kind\"\n       ],\n       \"type\": \"object\"\n      },\n      \"type\": {\n       \"description\": \"Type ref to a WorkloadDefinition via name\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"workload\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Component Definition\",\n \"type\": \"object\"\n}"
+  }
+ }

@@ -1,13 +1,13 @@
 {
   "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "core.meshery.io/v1beta1",
+  "schemaVersion": "components.meshery.io/v1beta1",
   "version": "v1.0.0",
   "displayName": "Task",
   "description": "",
   "format": "JSON",
   "model": {
    "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "core.meshery.io/v1beta1",
+   "schemaVersion": "models.meshery.io/v1beta1",
    "version": "v1.0.0",
    "name": "kubeteach-core",
    "displayName": "Kubeteach Core",
@@ -21,9 +21,20 @@
     "name": "Uncategorized",
     "metadata": null
    },
-   "subCategory": "",
+   "subCategory": "Uncategorized",
    "metadata": {
-    "source_uri": "https://github.com/dergeberl/kubeteach-charts/releases/download/kubeteach-core-0.2.3/kubeteach-core-0.2.3.tgz"
+    "capabilities": "",
+    "defaultData": "",
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
    },
    "model": {
     "version": "0.2.3"
@@ -36,11 +47,7 @@
    "defaultData": "",
    "genealogy": "",
    "isAnnotation": false,
-   "isModelAnnotation": "FALSE",
    "isNamespaced": true,
-   "logoURL": "",
-   "model": "kubeteach-core",
-   "modelDisplayName": "Kubeteach Core",
    "primaryColor": "#00B39F",
    "secondaryColor": "#00D3A9",
    "shape": "circle",

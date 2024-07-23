@@ -5,7 +5,7 @@ const TAGS = {
   DESIGNS: 'designs',
 };
 
-const designs = api
+export const designsApi = api
   .enhanceEndpoints({
     addTagTypes: [TAGS.DESIGNS],
   })
@@ -32,10 +32,11 @@ const designs = api
           selectedK8sContexts,
           verify = false,
           dryRun = false,
+          skipCRD = false,
         }) => ({
           url: `${ctxUrl('pattern/deploy', selectedK8sContexts)}${verify ? '&verify=true' : ''}${
             dryRun ? '&dryRun=true' : ''
-          }`,
+          }${skipCRD ? '&skipCRD=true' : ''}`,
           method: 'POST',
           body: {
             pattern_file,
@@ -61,8 +62,74 @@ const designs = api
           },
         }),
       }),
+      clonePattern: builder.mutation({
+        query: (queryArg) => ({
+          url: `pattern/clone/${queryArg.patternID}`,
+          method: 'POST',
+          body: queryArg.body,
+        }),
+      }),
+      publishPattern: builder.mutation({
+        query: (queryArg) => ({
+          url: `pattern/catalog/publish`,
+          method: 'POST',
+          body: queryArg.publishBody,
+        }),
+      }),
+      unpublishPattern: builder.mutation({
+        query: (queryArg) => ({
+          url: `pattern/catalog/unpublish`,
+          method: 'DELETE',
+          body: queryArg.unpublishBody,
+        }),
+      }),
+      deletePattern: builder.mutation({
+        query: (queryArg) => ({
+          url: `patterns/delete`,
+          method: 'POST',
+          body: queryArg.deleteBody,
+        }),
+      }),
+      importPattern: builder.mutation({
+        query: (queryArg) => ({
+          url: `pattern/${queryArg.type}`,
+          method: 'POST',
+          body: queryArg.importBody,
+        }),
+      }),
+      deletePatternFile: builder.mutation({
+        query: (queryArg) => ({
+          url: `pattern/${queryArg.id}`,
+          method: 'DELETE',
+        }),
+      }),
+      updatePatternFile: builder.mutation({
+        query: (queryArg) => ({
+          url: `pattern`,
+          method: 'POST',
+          body: queryArg.updateBody,
+        }),
+      }),
+      uploadPatternFile: builder.mutation({
+        query: (queryArg) => ({
+          url: `pattern/`,
+          method: 'POST',
+          body: queryArg.uploadBody,
+        }),
+      }),
     }),
   });
 
-export const { useGetPatternsQuery, useDeployPatternMutation, useUndeployPatternMutation } =
-  designs;
+export const {
+  useGetPatternsQuery,
+  useDeployPatternMutation,
+  useUndeployPatternMutation,
+  useClonePatternMutation,
+  usePublishPatternMutation,
+  useUnpublishPatternMutation,
+  useDeletePatternMutation,
+  useImportPatternMutation,
+  useUpdatePatternFileMutation,
+  useUploadPatternFileMutation,
+  useDeletePatternFileMutation,
+} = designsApi;

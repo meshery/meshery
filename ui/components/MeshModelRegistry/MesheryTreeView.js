@@ -19,7 +19,7 @@ import ExpandAllIcon from '@/assets/icons/ExpandAll';
 import CircularProgress from '@mui/material/CircularProgress';
 import { Colors } from '../../themes/app';
 import { JustifyAndAlignCenter } from './MeshModel.style';
-import { getHyperLinkDiv } from '../MesheryMeshInterface/PatternService/helper';
+import { styled } from '@mui/styles';
 
 const ComponentTree = ({
   expanded,
@@ -133,13 +133,25 @@ const MesheryTreeViewItem = ({
   selected,
   expanded,
 }) => {
+  const imgSrc = modelDef?.metadata?.svgColor;
   return (
     <StyledTreeItem
       key={modelDef.id}
       nodeId={`${registrantID ? `${registrantID}.1.` : ''}${modelDef.id}`}
       data-id={`${registrantID ? `${registrantID}.1.` : ''}${modelDef.id}`}
       top
-      labelText={modelDef.displayName}
+      labelText={
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '1rem',
+          }}
+        >
+          {imgSrc ? <img src={imgSrc} style={{ height: '1.5rem', width: '1.5rem' }} /> : null}
+          <span>{modelDef.displayName ? modelDef.displayName : modelDef.name}</span>
+        </div>
+      }
       onClick={() => {
         setShowDetailsData({
           type: MODELS,
@@ -183,7 +195,6 @@ const MesheryTreeViewItem = ({
             >
               {versionedModelDef.components &&
                 versionedModelDef.components.map((component, subIndex) => {
-                  // console.log("component", component);
                   return (
                     <StyledTreeItem
                       key={subIndex}
@@ -365,6 +376,10 @@ const useRegistryRouter = () => {
   };
 };
 
+const MesheryTreeViewWrapper = styled('div')(() => ({
+  display: 'flex',
+  flexDirection: 'column',
+}));
 const MesheryTreeView = ({
   data,
   view,
@@ -490,13 +505,15 @@ const MesheryTreeView = ({
     return view === COMPONENTS;
   };
 
-  const renderHeader = (type) => (
+  const renderHeader = (type, hasRecords) => (
     <div
       style={{
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'space-between',
         borderBottom: '1px solid #d2d3d4',
+        width: '100%',
+        height: '2.55rem',
       }}
     >
       <div>
@@ -537,6 +554,7 @@ const MesheryTreeView = ({
                       color="primary"
                       checked={checked}
                       onClick={handleChecked}
+                      disabled={!hasRecords}
                       inputProps={{ 'aria-label': 'controlled' }}
                     />
                   }
@@ -546,11 +564,9 @@ const MesheryTreeView = ({
                 <CustomTextTooltip
                   placement="right"
                   interactive={true}
-                  title={getHyperLinkDiv(
-                    `View all duplicate entries of ${_.toLower(
-                      view,
-                    )}. Entries with identical name and version attributes are considered duplicates. [Learn More](https://docs.meshery.io/concepts/logical/models#models)`,
-                  )}
+                  title={`View all duplicate entries of ${_.toLower(
+                    view,
+                  )}. Entries with identical name and version attributes are considered duplicates. [Learn More](https://docs.meshery.io/concepts/logical/models#models)`}
                 >
                   <IconButton color="primary">
                     <InfoOutlinedIcon height={20} width={20} />
@@ -582,8 +598,8 @@ const MesheryTreeView = ({
   };
 
   const renderTree = (treeComponent, type) => (
-    <div>
-      {renderHeader(type)}
+    <>
+      {renderHeader(type, !!data.length)}
       {data.length === 0 && !searchText ? (
         <JustifyAndAlignCenter style={{ height: '27rem' }}>
           <CircularProgress sx={{ color: Colors.keppelGreen }} />
@@ -595,17 +611,17 @@ const MesheryTreeView = ({
       ) : (
         <div
           className="scrollElement"
-          style={{ overflowY: 'auto', height: '27rem' }}
+          style={{ overflowY: 'auto', height: '55vh' }}
           onScroll={handleScroll(type)}
         >
           {treeComponent}
         </div>
       )}
-    </div>
+    </>
   );
 
   return (
-    <div style={{ width: '100%', height: '28.86rem' }}>
+    <MesheryTreeViewWrapper style={{ width: '100%', height: '100%' }}>
       {view === MODELS &&
         renderTree(
           <MesheryTreeViewModel
@@ -658,7 +674,7 @@ const MesheryTreeView = ({
           />,
           RELATIONSHIPS,
         )}
-    </div>
+    </MesheryTreeViewWrapper>
   );
 };
 

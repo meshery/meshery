@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Inclavare Containers
-subtitle: Collaborative and visual infrastructure as code for Inclavare Containers
+subtitle: Collaborative and visual infrastructure as design for Inclavare Containers
 image: /assets/img/integrations/inclavare-containers/icons/color/inclavare-containers-color.svg
 permalink: extensibility/integrations/inclavare-containers
 docURL: https://docs.meshery.io/extensibility/integrations/inclavare containers
@@ -11,12 +11,12 @@ integrations-subcategory: Container Runtime
 registrant: Artifact Hub
 components: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Securely isolates sensitive workloads",
+  "Protects data in use and at rest",
+  "Enhances container security"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Integrates Inclavare Containers"
+howItWorksDetails: "Confidential computing for sensitive applications in Kubernetes"
 language: en
 list: include
 type: extensibility

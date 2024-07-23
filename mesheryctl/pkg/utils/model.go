@@ -100,7 +100,7 @@ func (mcv *ModelCSV) CreateModelDefinition(version, defVersion string) v1beta1.M
 	model := v1beta1.Model{
 		VersionMeta: v1beta1.VersionMeta{
 			Version:       defVersion,
-			SchemaVersion: v1beta1.SchemaVersion,
+			SchemaVersion: v1beta1.ModelSchemaVersion,
 		},
 		Name:        mcv.Model,
 		DisplayName: mcv.ModelDisplayName,

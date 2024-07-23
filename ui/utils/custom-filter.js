@@ -7,9 +7,9 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  Tooltip,
   IconButton,
 } from '@material-ui/core';
+import { CustomTooltip } from '@layer5/sistent';
 import { withStyles } from '@material-ui/core/styles';
 import { FilterIcon } from '@layer5/sistent';
 
@@ -74,7 +74,7 @@ const UniversalFilter = ({
 
   return (
     <div>
-      <Tooltip title="Filter" arrow>
+      <CustomTooltip title="Filter">
         <IconButton
           onClick={handleClick}
           sx={{
@@ -89,7 +89,7 @@ const UniversalFilter = ({
         >
           <FilterIcon className={classes.icon} />
         </IconButton>
-      </Tooltip>
+      </CustomTooltip>
       <Popper
         //
         id={id}

@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Keycloak Operator
-subtitle: Collaborative and visual infrastructure as code for Keycloak Operator
+subtitle: Collaborative and visual infrastructure as design for Keycloak Operator
 image: /assets/img/integrations/keycloak-operator/icons/color/keycloak-operator-color.svg
 permalink: extensibility/integrations/keycloak-operator
 docURL: https://docs.meshery.io/extensibility/integrations/keycloak-operator
@@ -75,12 +75,12 @@ components:
   whiteIcon: assets/img/integrations/keycloak-operator/components/cluster-keycloak-realm/icons/white/cluster-keycloak-realm-white.svg
   description: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Automates Keycloak deployment and management",
+  "Simplifies Keycloak configuration",
+  "Integrates with Kubernetes resources"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Deploys and manages Keycloak"
+howItWorksDetails: "Streamlined Keycloak management within Kubernetes"
 language: en
 list: include
 type: extensibility

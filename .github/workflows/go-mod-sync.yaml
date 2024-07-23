@@ -8,6 +8,7 @@ on:
       - "go.mod"
 jobs:
   sync:
+    if: github.repository == 'meshery/meshery'
     name: sync
     runs-on: ubuntu-22.04
     steps:
@@ -57,8 +58,17 @@ jobs:
           to: support@layer5.io
           from: Meshery extensions go.mod sync workflow
           body: |
+            The workflow (https://github.com/meshery/meshery/actions/workflows/go-mod-sync.yml) encountered error(s). This mainly occurs when the go.mod file in the meshery-extensions repository is not in sync with the go.mod file in the meshery/meshery repository. The workflow attempts to update the go.mod file in the meshery-extensions repository to ensure it matches the go.mod file in the meshery/meshery repository. 
+
             The workflow failed. Here are the details:
 
-            Job: ${{ job.status }}
-            Job Name: ${{ job.job_name }}
-            Error: ${{ job.steps[*].outcome }}
+            Job Status: ${{ job.status }}
+            Repository: ${{ github.repository }}
+            Run ID: ${{ github.run_id }}
+            Workflow Name: ${{ github.workflow }}
+
+            Steps and their outcomes:
+            ${{ toJson(job.steps) }}
+
+            Refer to the GitHub Actions log for more details: https://github.com/meshery/meshery/actions/runs/${{ github.run_id }}
+

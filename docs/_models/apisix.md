@@ -1,7 +1,7 @@
 ---
 layout: integration
-title: Apisix
-subtitle: Collaborative and visual infrastructure as code for Apisix
+title: APISIX
+subtitle: Collaborative and visual infrastructure as design for APISIX
 image: /assets/img/integrations/apisix/icons/color/apisix-color.svg
 permalink: extensibility/integrations/apisix
 docURL: https://docs.meshery.io/extensibility/integrations/apisix
@@ -39,12 +39,12 @@ components:
   whiteIcon: assets/img/integrations/apisix/components/apisix-upstream/icons/white/apisix-upstream-white.svg
   description: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Dynamic routing and load balancing",
+  "Authentication and authorization",
+  "Observability and analytics"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Integrates APISIX configurations"
+howItWorksDetails: "Streamlined API gateway management and enhanced traffic routing in Kubernetes"
 language: en
 list: include
 type: extensibility

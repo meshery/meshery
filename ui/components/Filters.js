@@ -1,7 +1,6 @@
 /* eslint-disable react/display-name */
 import React, { useState, useEffect, useRef } from 'react';
 import { withStyles } from '@material-ui/core/styles';
-// import { createTheme } from '@material-ui/core/styles';
 import {
   NoSsr,
   TableCell,
@@ -11,7 +10,6 @@ import {
   DialogContent,
   DialogActions,
   Divider,
-  Tooltip,
   Typography,
   Button,
 } from '@material-ui/core';
@@ -42,7 +40,7 @@ import SaveIcon from '@material-ui/icons/Save';
 import ConfigurationSubscription from './graphql/subscriptions/ConfigurationSubscription';
 import fetchCatalogFilter from './graphql/queries/CatalogFilterQuery';
 import { iconMedium } from '../css/icons.styles';
-import Modal from './Modal';
+import { RJSFModalWrapper } from './Modal';
 import { getUnit8ArrayDecodedFile, modifyRJSFSchema } from '../utils/utils';
 import Filter from '../public/static/img/drawer-icons/filter_svg.js';
 import { getMeshModels } from '../api/meshmodel';
@@ -51,7 +49,7 @@ import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
 import SearchBar from '../utils/custom-search';
 import CustomColumnVisibilityControl from '../utils/custom-column';
-import { ResponsiveDataTable } from '@layer5/sistent';
+import { CustomTooltip, ResponsiveDataTable } from '@layer5/sistent';
 import useStyles from '../assets/styles/general/tool.styles';
 import { updateVisibleColumns } from '../utils/responsive-column';
 import { useWindowDimensions } from '../utils/dimension';
@@ -63,6 +61,8 @@ import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import DefaultError from './General/error-404/index';
 import UniversalFilter from '../utils/custom-filter';
+import { UsesSistent } from './SistentWrapper';
+import { Modal as SistentModal } from '@layer5/sistent';
 
 const styles = (theme) => ({
   grid: {
@@ -114,9 +114,9 @@ const styles = (theme) => ({
 
 function TooltipIcon({ children, onClick, title }) {
   return (
-    <Tooltip title={title} placement="top" arrow interactive>
+    <CustomTooltip title={title} placement="top" interactive>
       <IconButton onClick={onClick}>{children}</IconButton>
-    </Tooltip>
+    </CustomTooltip>
   );
 }
 
@@ -184,7 +184,7 @@ function YAMLEditor({ filter, onClose, onSubmit, classes }) {
       </DialogContent>
       <Divider variant="fullWidth" light />
       <DialogActions>
-        <Tooltip title="Update Filter">
+        <CustomTooltip title="Update Filter">
           <IconButton
             aria-label="Update"
             color="primary"
@@ -201,8 +201,8 @@ function YAMLEditor({ filter, onClose, onSubmit, classes }) {
           >
             <SaveIcon style={iconMedium} />
           </IconButton>
-        </Tooltip>
-        <Tooltip title="Delete Filter">
+        </CustomTooltip>
+        <CustomTooltip title="Delete Filter">
           <IconButton
             aria-label="Delete"
             color="primary"
@@ -219,7 +219,7 @@ function YAMLEditor({ filter, onClose, onSubmit, classes }) {
           >
             <DeleteIcon style={iconMedium} />
           </IconButton>
-        </Tooltip>
+        </CustomTooltip>
       </DialogActions>
     </Dialog>
   );
@@ -242,7 +242,7 @@ function MesheryFilters({
   const [sortOrder, setSortOrder] = useState('');
   const [count, setCount] = useState(0);
   const modalRef = useRef(null);
-  const [pageSize, setPageSize] = useState();
+  const [pageSize, setPageSize] = useState(10);
   const [filters, setFilters] = useState([]);
   const [selectedFilter, setSelectedFilter] = useState(resetSelectedFilter());
   const [selectedRowData, setSelectedRowData] = useState(null);
@@ -438,12 +438,7 @@ function MesheryFilters({
           title: `Unpublish Catalog item?`,
           subtitle: `Are you sure that you want to unpublish "${filter?.name}"?`,
           options: ['Yes', 'No'],
-          showInfoIcon: `Unpublishing a catolog item removes the item from the public-facing catalog (a public website accessible to anonymous visitors at meshery.io/catalog). The catalog item's visibility will change to either public (or private with a subscription). The ability to for other users to continue to access, edit, clone and collaborate on your content depends upon the assigned visibility level (public or private). Prior collaborators (users with whom you have shared your catalog item) will retain access. However, you can always republish it whenever you want.
-      
-          Remember: unpublished catalog items can still be available to other users if that item is set to public visibility.
-
-          For detailed information, please refer to the documentation https://docs.meshery.io/concepts/designs.
-          `,
+          showInfoIcon: `Unpublishing a catolog item removes the item from the public-facing catalog (a public website accessible to anonymous visitors at meshery.io/catalog). The catalog item's visibility will change to either public (or private with a subscription). The ability to for other users to continue to access, edit, clone and collaborate on your content depends upon the assigned visibility level (public or private). Prior collaborators (users with whom you have shared your catalog item) will retain access. However, you can always republish it whenever you want.  Remember: unpublished catalog items can still be available to other users if that item is set to public visibility. For detailed information, please refer to the documentation https://docs.meshery.io/concepts/designs.`,
         });
         if (response === 'Yes') {
           updateProgress({ showProgress: true });
@@ -561,7 +556,7 @@ function MesheryFilters({
    */
 
   const [visibilityFilter, setVisibilityFilter] = useState(null);
-  function fetchFilters(page, pageSize, search, sortOrder, visibilityFilter) {
+  function fetchFilters(page = 0, pageSize = 10, search, sortOrder, visibilityFilter) {
     if (!search) search = '';
     if (!sortOrder) sortOrder = '';
 
@@ -1357,16 +1352,18 @@ function MesheryFilters({
               </div>
             </div>
             {!selectedFilter.show && viewType === 'table' && (
-              <ResponsiveDataTable
-                data={filters}
-                columns={columns}
-                tableCols={tableCols}
-                updateCols={updateCols}
-                columnVisibility={columnVisibility}
-                // @ts-ignore
-                options={options}
-                className={classes.muiRow}
-              />
+              <UsesSistent>
+                <ResponsiveDataTable
+                  data={filters}
+                  columns={columns}
+                  tableCols={tableCols}
+                  updateCols={updateCols}
+                  columnVisibility={columnVisibility}
+                  // @ts-ignore
+                  options={options}
+                  className={classes.muiRow}
+                />
+              </UsesSistent>
             )}
             {!selectedFilter.show && viewType === 'grid' && (
               // grid view
@@ -1450,26 +1447,32 @@ function MesheryFilters({
 const ImportModal = React.memo((props) => {
   const { importFormSchema, handleClose, handleImportFilter } = props;
 
-  const classes = useStyles();
+  // const classes = useStyles();
 
   return (
-    <Modal
-      open={true}
-      schema={importFormSchema.rjsfSchema}
-      uiSchema={importFormSchema.uiSchema}
-      handleClose={handleClose}
-      handleSubmit={handleImportFilter}
-      title="Import Design"
-      submitBtnText="Import"
-      leftHeaderIcon={
-        <Filter
-          fill="#fff"
-          style={{ height: '24px', width: '24px', fonSize: '1.45rem' }}
-          className={undefined}
+    <UsesSistent>
+      <SistentModal
+        open={true}
+        closeModal={handleClose}
+        headerIcon={
+          <Filter
+            fill="#fff"
+            style={{ height: '24px', width: '24px', fonSize: '1.45rem' }}
+            className={undefined}
+          />
+        }
+        title="Import Design"
+        maxWidth="sm"
+      >
+        <RJSFModalWrapper
+          schema={importFormSchema.rjsfSchema}
+          uiSchema={importFormSchema.uiSchema}
+          handleSubmit={handleImportFilter}
+          submitBtnText="Import"
+          handleClose={handleClose}
         />
-      }
-      submitBtnIcon={<PublishIcon className={classes.addIcon} data-cy="import-button" />}
-    />
+      </SistentModal>
+    </UsesSistent>
   );
 });
 
@@ -1477,21 +1480,31 @@ const PublishModal = React.memo((props) => {
   const { publishFormSchema, handleClose, handlePublish, title } = props;
 
   return (
-    <Modal
-      open={true}
-      schema={publishFormSchema.rjsfSchema}
-      uiSchema={publishFormSchema.uiSchema}
-      handleClose={handleClose}
-      aria-label="catalog publish"
-      title={title}
-      handleSubmit={handlePublish}
-      showInfoIcon={{
-        text: 'Upon submitting your catalog item, an approval flow will be initiated.',
-        link: 'https://docs.meshery.io/concepts/catalog',
-      }}
-      submitBtnText="Submit for Approval"
-      submitBtnIcon={<PublicIcon />}
-    />
+    <UsesSistent>
+      <SistentModal
+        open={true}
+        headerIcon={
+          <Filter
+            fill="#fff"
+            style={{ height: '24px', width: '24px', fonSize: '1.45rem' }}
+            className={undefined}
+          />
+        }
+        closeModal={handleClose}
+        aria-label="catalog publish"
+        title={title}
+        maxWidth="sm"
+      >
+        <RJSFModalWrapper
+          schema={publishFormSchema.rjsfSchema}
+          uiSchema={publishFormSchema.uiSchema}
+          submitBtnText="Submit for Approval"
+          handleSubmit={handlePublish}
+          helpText="Upon submitting your catalog item, an approval flow will be initiated.[Learn more](https://docs.meshery.io/concepts/catalog)"
+          handleClose={handleClose}
+        />
+      </SistentModal>
+    </UsesSistent>
   );
 });
 

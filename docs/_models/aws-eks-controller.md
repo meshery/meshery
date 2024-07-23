@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: AWS Elastic Kubernetes Service
-subtitle: Collaborative and visual infrastructure as code for AWS Elastic Kubernetes Service
+subtitle: Collaborative and visual infrastructure as design for AWS Elastic Kubernetes Service
 image: /assets/img/integrations/aws-eks-controller/icons/color/aws-eks-controller-color.svg
 permalink: extensibility/integrations/aws-eks-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-eks-controller
@@ -46,13 +46,17 @@ components:
   colorIcon: assets/img/integrations/aws-eks-controller/components/access-entry/icons/color/access-entry-color.svg
   whiteIcon: assets/img/integrations/aws-eks-controller/components/access-entry/icons/white/access-entry-white.svg
   description: 
+- name: identity-provider-config
+  colorIcon: assets/img/integrations/aws-eks-controller/components/identity-provider-config/icons/color/identity-provider-config-color.svg
+  whiteIcon: assets/img/integrations/aws-eks-controller/components/identity-provider-config/icons/white/identity-provider-config-white.svg
+  description: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Simplifies Kubernetes cluster creation and management",
+  "Integrates with other AWS services",
+  "High availability and scalability"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Deploys and manages EKS clusters"
+howItWorksDetails: "Easy and scalable Kubernetes management on AWS"
 language: en
 list: include
 type: extensibility

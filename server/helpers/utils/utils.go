@@ -17,6 +17,8 @@ import (
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	"github.com/layer5io/meshkit/utils"
 	"gorm.io/gorm"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 const (
@@ -400,4 +402,17 @@ func ApplyFilters(query *gorm.DB, filter string, dynamicKeys []string) *gorm.DB 
 	}
 
 	return query
+}
+
+func FormatToTitleCase(s string) string {
+	c := cases.Title(language.English)
+	return c.String(s)
+}
+func ExtractFile(filePath string, destDir string) error {
+	if utils.IsTarGz(filePath) {
+		return utils.ExtractTarGz(destDir, filePath)
+	} else if utils.IsZip(filePath) {
+		return utils.ExtractZip(destDir, filePath)
+	}
+	return utils.ErrExtractType
 }

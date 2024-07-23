@@ -4,13 +4,21 @@ layout: default
 
 {{ page.subtitle }}
 {{ content }}
+<script>
+    function handleImageError(image) {
+        image.onerror = null;
+        image.src = '{{ page.image }}';
+    }
+</script>
+
 <!-- components -->
 <div>
     <section class="Compheading">
-        {% if page.components.size != 0  %}
+        {% if page.components and page.components.size > 0 %}
         <h3>
             Components ( {{ page.components.size }} )
         </h3>
+        <p>The Meshery model for {{ page.title }} supports the following components.</p>
         {% endif %}
     </section>
 
@@ -19,7 +27,7 @@ layout: default
         {% if component.name %}
         <div class="maincontainer">
             <div class="componentimg">
-                <img id="logo-dark-light" src="/{{ component.colorIcon }}" alt="{{ component.name }}"  data-logo-for-dark="/{{ component.whiteIcon }}"
+                <img id="logo-dark-light" src="/{{ component.colorIcon }}" alt="{{ component.name }}" onerror="handleImageError(this)" data-logo-for-dark="/{{ component.whiteIcon }}"
                 data-logo-for-light="/{{ component.colorIcon }}" />
             </div>
             <p class="Compitems">{{ component.name }}</p>
@@ -29,8 +37,8 @@ layout: default
     </section>
 </div>
 <!-- components end -->
-{% include_cached models.html %}
-{% include_cached meshery-registry.html %}
+{% include_cached integration/models-components.html %}
+{% include_cached integration/meshery-registry.html %}
 
 {% if page.suggested-reading != false and page.title and page.type and page.category and page.url %}
 {% assign related_models_by_category = site.models | where_exp: "model", "model.integrations-category == page.integrations-category" %}

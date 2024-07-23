@@ -1,25 +1,17 @@
 /* eslint-disable react/display-name */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import CloseIcon from '@material-ui/icons/Close';
 import PatternIcon from '../../../assets/icons/Pattern';
-import {
-  Chip,
-  Typography,
-  IconButton,
-  Button,
-  Grid,
-  Avatar,
-  Tooltip,
-  Box,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Dialog,
-} from '@material-ui/core';
-import useStyles from './styles';
-import { iconSmall } from '../../../css/icons.styles';
-import { getSharableCommonHostAndprotocolLink } from '../../../utils/utils';
-import OriginalApplicationFileIcon from '../../../assets/icons/OriginalApplicationIcon';
+import { Typography, IconButton, Button, Grid, Avatar, Tooltip, Box } from '@material-ui/core';
+import useStyles, {
+  ActionContainer,
+  CreatAtContainer,
+  CopyLinkButton,
+  VisibilityTag,
+  ResourceName,
+} from './styles';
+import { iconMedium, iconSmall } from '../../../css/icons.styles';
+import { getDesignVersion, getSharableCommonHostAndprotocolLink } from '../../../utils/utils';
 import moment from 'moment';
 import Application from '../../../public/static/img/drawer-icons/application_svg.js';
 import { useSnackbar } from 'notistack';
@@ -36,6 +28,20 @@ import { store } from '../../../store';
 import { useGetUserByIdQuery } from '../../../rtk-query/user.js';
 import { ErrorBoundary } from '../../General/ErrorBoundary';
 import { getUnit8ArrayForDesign } from '@/utils/utils';
+import ServiceMesheryIcon from '@/assets/icons/ServiceMesheryIcon';
+import {
+  Modal,
+  ModalFooter,
+  ModalButtonPrimary,
+  ModalButtonSecondary,
+  ModalBody,
+} from '@layer5/sistent';
+import TooltipButton from '@/utils/TooltipButton';
+import { keys } from '@/utils/permission_constants';
+import CAN from '@/utils/can';
+import { filterEmptyFields } from '@/utils/objects';
+import { VIEW_VISIBILITY, VisibilityMenu } from '@/components/VisibilityMenu';
+import { Lock, Public } from '@material-ui/icons';
 
 const APPLICATION_PLURAL = 'applications';
 const FILTER_PLURAL = 'filters';
@@ -48,108 +54,144 @@ const InfoModal_ = React.memo((props) => {
     resourceOwnerID,
     dataName,
     selectedResource,
-    currentUserID,
+    currentUser,
     patternFetcher,
     formSchema,
+    handlePublish,
     meshModels = [],
+    isReadOnly = false,
   } = props;
 
   const formRef = React.createRef();
-  const [formState, setFormState] = useState(selectedResource?.catalog_data || {});
+  const formStateRef = useRef();
   const [isCatalogDataEqual, setIsCatalogDataEqual] = useState(false);
+  const [dataIsUpdated, setDataIsUpdated] = useState(false);
+  const [visibility, setVisibility] = useState(selectedResource?.visibility);
   const [saveFormLoading, setSaveFormLoading] = useState(false);
   const [uiSchema, setUiSchema] = useState({});
   const { notify } = useNotification();
-
   const classes = useStyles();
   const formatDate = (date) => {
-    return moment(date).utc().format('MMMM Do YYYY, h:mm:ss A');
+    return moment(date).utc().format('MMMM Do YYYY');
   };
-
+  const currentUserID = currentUser?.id;
+  const isAdmin = currentUser?.role_names?.includes('admin') || false;
   const { data: resourceUserProfile } = useGetUserByIdQuery(resourceOwnerID);
-  const { enqueueSnackbar } = useSnackbar();
-
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const isOwner = currentUserID === resourceOwnerID;
   const handleCopy = () => {
     navigator.clipboard.writeText(getSharableCommonHostAndprotocolLink(selectedResource));
     enqueueSnackbar(`Link to "${selectedResource.name}" is copied to clipboard`, {
       variant: 'info',
-      autoHideDuration: 2000,
+      action: (key) => (
+        <IconButton
+          // key={`closeevent-${id}`}
+          aria-label="Close"
+          color="inherit"
+          onClick={() => closeSnackbar(key)}
+        >
+          <CloseIcon style={iconMedium} />
+        </IconButton>
+      ),
     });
   };
 
   const handleSubmit = () => {
-    if (formRef.current && formRef.current.validateForm()) {
+    setSaveFormLoading(true);
+    const compatibilityStore = _.uniqBy(meshModels, (model) => _.toLower(model.displayName))
+      ?.filter((model) =>
+        formStateRef.current?.compatibility?.some(
+          (comp) => _.toLower(comp) === _.toLower(model.displayName),
+        ),
+      )
+      ?.map((model) => model.name);
+
+    let body = null;
+    let modifiedData = {
+      ...formStateRef.current,
+      type: formStateRef.current?.type?.toLowerCase(),
+      compatibility: compatibilityStore,
+    };
+    if (dataName === PATTERN_PLURAL) {
+      body = JSON.stringify({
+        pattern_data: {
+          catalog_data: modifiedData,
+          pattern_file: getUnit8ArrayForDesign(selectedResource.pattern_file),
+          id: selectedResource.id,
+          visibility: visibility,
+        },
+        save: true,
+      });
+    } else if (dataName === FILTER_PLURAL) {
       setSaveFormLoading(true);
-
-      const compatibilityStore = _.uniqBy(meshModels, (model) => _.toLower(model.displayName))
-        ?.filter((model) =>
-          formState?.compatibility?.some(
-            (comp) => _.toLower(comp) === _.toLower(model.displayName),
-          ),
-        )
-        ?.map((model) => model.name);
-
-      let body = null;
-      let modifiedData = {
-        ...formState,
-        type: formState?.type?.toLowerCase(),
-        compatibility: compatibilityStore,
-      };
-      if (dataName === PATTERN_PLURAL) {
-        body = JSON.stringify({
-          pattern_data: {
-            catalog_data: modifiedData,
-            pattern_file: getUnit8ArrayForDesign(selectedResource.pattern_file),
-            id: selectedResource.id,
-          },
-          save: true,
-        });
-      } else if (dataName === FILTER_PLURAL) {
-        setSaveFormLoading(true);
-        let config = '';
-        if (selectedResource.filter_resource !== null || selectedResource.filter_resource !== '') {
-          config = JSON.parse(selectedResource.filter_resource).settings.config; // send the config in order to prevent over-write of the config
-        }
-        body = JSON.stringify({
-          filter_data: {
-            catalog_data: modifiedData,
-            id: selectedResource.id,
-            name: selectedResource.name,
-            filter_file: selectedResource.filter_file,
-          },
-          config: config,
-          save: true,
-        });
+      let config = '';
+      if (selectedResource.filter_resource !== null || selectedResource.filter_resource !== '') {
+        config = JSON.parse(selectedResource.filter_resource).settings.config; // send the config in order to prevent over-write of the config
       }
-
-      axios
-        .post(dataName === PATTERN_PLURAL ? PATTERN_ENDPOINT : FILTER_ENDPOINT, body)
-        .then(() => {
-          setSaveFormLoading(false);
-          notify({
-            message: `${selectedResource.name} data saved successfully`,
-            event_type: EVENT_TYPES.SUCCESS,
-          });
-          patternFetcher()();
-        })
-        .catch((error) => {
-          setSaveFormLoading(false);
-          const errorMessage = error.response?.data?.message || error.message;
-
-          notify({
-            message: `Error while saving ${selectedResource.name} data: ${errorMessage}`,
-            event_type: EVENT_TYPES.ERROR,
-          });
-
-          console.error('Error while saving pattern data', error);
-        });
+      body = JSON.stringify({
+        filter_data: {
+          catalog_data: modifiedData,
+          id: selectedResource.id,
+          name: selectedResource.name,
+          filter_file: selectedResource.filter_file,
+        },
+        config: config,
+        save: true,
+      });
     }
-  };
 
+    axios
+      .post(dataName === PATTERN_PLURAL ? PATTERN_ENDPOINT : FILTER_ENDPOINT, body)
+      .then(() => {
+        setSaveFormLoading(false);
+        notify({
+          message: `${selectedResource.name} data saved successfully`,
+          event_type: EVENT_TYPES.SUCCESS,
+        });
+        patternFetcher()();
+        handleInfoModalClose();
+      })
+      .catch((error) => {
+        setSaveFormLoading(false);
+        const errorMessage = error.response?.data?.message || error.message;
+
+        notify({
+          message: `Error while saving ${selectedResource.name} data: ${errorMessage}`,
+          event_type: EVENT_TYPES.ERROR,
+        });
+
+        console.error('Error while saving pattern data', error);
+      });
+  };
+  function normalizeCompatibility(arr) {
+    return (
+      arr?.map((item) => {
+        if (typeof item === 'string') {
+          return item.toLowerCase().split('-').join(' ');
+        }
+        return item;
+      }) || []
+    );
+  }
+
+  // Function to compare objects while normalizing case in compatibility array
+  function isEqualIgnoringCase(obj1, obj2) {
+    // Check each property one by one
+    const isEqualPatternCaveats = obj1.pattern_caveats === obj2.pattern_caveats;
+    const isEqualPatternInfo = obj1.pattern_info === obj2.pattern_info;
+    const isEqualType = obj1.type?.toLowerCase() === obj2.type?.toLowerCase();
+
+    // Normalize and compare compatibility array
+    const normalizedCompat1 = normalizeCompatibility(obj1.compatibility);
+    const normalizedCompat2 = normalizeCompatibility(obj2.compatibility);
+    const isEqualCompatibility = _.isEqual(normalizedCompat1, normalizedCompat2);
+
+    // Return true only if all properties are equal
+    return isEqualPatternCaveats && isEqualPatternInfo && isEqualType && isEqualCompatibility;
+  }
   const handleFormChange = (data) => {
-    setFormState(data);
-    const objectsEqual = _.isEqual(selectedResource?.catalog_data, data);
-    setIsCatalogDataEqual(objectsEqual);
+    formStateRef.current = data;
+    setIsCatalogDataEqual(isEqualIgnoringCase(selectedResource?.catalog_data, data));
   };
 
   useEffect(() => {
@@ -173,10 +215,11 @@ const InfoModal_ = React.memo((props) => {
           type: _.startCase(selectedResource?.catalog_data?.type),
           compatibility: filteredCompatibilityArray,
         };
-        setFormState(modifiedData);
+        formStateRef.current = filterEmptyFields(modifiedData);
+        formStateRef.current.compatibility = filteredCompatibilityArray;
       }
     } else {
-      setFormState(selectedResource?.catalog_data);
+      formStateRef.current = filterEmptyFields(selectedResource?.catalog_data);
     }
   }, [selectedResource?.catalog_data, meshModels]);
 
@@ -184,9 +227,14 @@ const InfoModal_ = React.memo((props) => {
     if (formSchema) {
       const newUiSchema = { ...formSchema.uiSchema };
 
-      // Only make form readonly if resource is private and user is not owner
-      if (selectedResource?.visibility === 'private' && currentUserID !== resourceOwnerID) {
-        newUiSchema['ui:readonly'] = currentUserID !== resourceOwnerID;
+      // if (!isAdmin) {
+      //   selectedResource?.visibility === 'private' ? null : (
+      //     currentUserID !== resourceOwnerID &&
+      //     (newUiSchema['ui:readonly'] = currentUserID !== resourceOwnerID));
+      // }
+
+      if (isReadOnly) {
+        newUiSchema['ui:readonly'] = true;
       }
 
       setUiSchema(newUiSchema);
@@ -206,63 +254,129 @@ const InfoModal_ = React.memo((props) => {
   };
 
   const shouldRenderSaveButton = () => {
-    const isPrivate = selectedResource?.visibility === 'private';
-    const isOwner = currentUserID === resourceOwnerID;
+    if (!isAdmin) {
+      const isPrivate = selectedResource?.visibility === 'private';
 
-    return (isPrivate && !isOwner) || !isPrivate;
+      const renderByPermission = isPrivate ? true : isPublished ? false : isOwner;
+      return renderByPermission;
+    }
+    return true;
   };
 
+  const handlePublishController = () => {
+    formRef.current.state.schema['required'] = formSchema.rjsfSchema.required;
+    if (formRef.current && formRef.current.validateForm()) {
+      setSaveFormLoading(true);
+      handleInfoModalClose();
+      handlePublish(formRef.current.state.formData);
+      setSaveFormLoading(false);
+    }
+  };
+
+  const isPublished = selectedResource?.visibility === 'published';
+  const [imageError, setImageError] = useState(false);
+  const version = getDesignVersion(selectedResource);
+
+  const handleError = () => {
+    setImageError(true);
+  };
   return (
     <div style={{ marginBottom: '1rem' }}>
-      <Dialog
+      <Modal
         open={infoModalOpen}
-        onClose={handleInfoModalClose}
-        aria-labelledby="form-dialog-title"
-        maxWidth={dataName === APPLICATION_PLURAL ? 'xs' : 'md'}
-        style={{ zIndex: 9999 }}
+        closeModal={handleInfoModalClose}
+        title={selectedResource?.name}
+        headerIcon={renderIcon()}
+        maxWidth={false}
+        sx={{
+          '& .MuiDialog-container': {
+            '& .MuiPaper-root': {
+              width: '100%',
+              maxWidth: '800px',
+            },
+          },
+        }}
       >
-        <DialogTitle textAlign="center" id="form-dialog-title" className={classes.dialogTitle}>
-          {renderIcon()}
-          <Typography className={classes.textHeader} variant="h6">
-            {selectedResource?.name}
-          </Typography>
-          <IconButton
-            aria-label="close"
-            onClick={handleInfoModalClose}
-            component="button"
-            style={{
-              color: '#FFFFFF',
-            }}
-          >
-            <CloseIcon className={classes.closing} />
-          </IconButton>
-        </DialogTitle>
-        <DialogContent style={{ padding: '1.5rem' }}>
+        <ModalBody>
           <Grid container spacing={2}>
             <Grid item>
               <Button
                 variant="outlined"
                 disabled
-                startIcon={
-                  <OriginalApplicationFileIcon
+                style={{
+                  border: '0.1px solid #E6E6E6',
+                  width: '150px',
+                  height: '150px',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              >
+                {selectedResource?.catalog_data?.imageURL && !imageError ? (
+                  <img
+                    src={selectedResource.catalog_data.imageURL[0]}
+                    width="140"
+                    alt={selectedResource?.name}
+                    onError={handleError}
+                  />
+                ) : (
+                  <ServiceMesheryIcon
                     style={{
                       boxShadow: '0px 0px 6px 2px rgba(0, 0, 0, 0.25)',
                       borderRadius: '20px',
                     }}
-                    width={150}
-                    height={150}
+                    width={100}
+                    height={100}
                   />
-                }
-              ></Button>
-              <Typography className={classes.resourceName} variant="subtitle1">
+                )}
+              </Button>
+              <ResourceName className={classes.resourceName} variant="subtitle1">
                 {selectedResource?.name}
-              </Typography>
+              </ResourceName>
+              <Grid item xs={12} style={{ marginTop: '1rem' }}>
+                <Typography
+                  style={{ whiteSpace: 'nowrap' }}
+                  gutterBottom
+                  variant="subtitle1"
+                  className={classes.text}
+                >
+                  <CreatAtContainer isBold={true}>Created</CreatAtContainer>
+                  <CreatAtContainer isBold={false}>
+                    {formatDate(selectedResource?.created_at)}
+                  </CreatAtContainer>
+                </Typography>
+              </Grid>
+              <Grid item xs={12}>
+                <Typography
+                  style={{ whiteSpace: 'nowrap' }}
+                  gutterBottom
+                  variant="subtitle1"
+                  className={classes.text}
+                >
+                  <CreatAtContainer isBold={true}>Updated</CreatAtContainer>
+                  <CreatAtContainer idBold={false}>
+                    {formatDate(selectedResource?.updated_at)}
+                  </CreatAtContainer>
+                </Typography>
+              </Grid>
+              {version === '' ? null : (
+                <Grid item xs={12}>
+                  <Typography
+                    style={{ whiteSpace: 'nowrap' }}
+                    gutterBottom
+                    variant="subtitle1"
+                    className={classes.text}
+                  >
+                    <CreatAtContainer isBold={true}>Version</CreatAtContainer>
+                    <CreatAtContainer isBold={false}>{version}</CreatAtContainer>
+                  </Typography>
+                </Grid>
+              )}
             </Grid>
             <Grid item xs={8} lg>
               <Grid container spacing={2}>
                 <Grid item xs={dataName === APPLICATION_PLURAL ? 12 : 6}>
-                  <Typography gutterBottom variant="subtitle1" className={classes.text}>
-                    <span style={{ fontWeight: 'bold', paddingRight: '0.2rem' }}>Owner:</span>
+                  <Typography gutterBottom variant="subtitle1">
                     <Tooltip
                       title={`Owner: ${
                         resourceUserProfile?.first_name + ' ' + resourceUserProfile?.last_name
@@ -277,26 +391,38 @@ const InfoModal_ = React.memo((props) => {
                   xs={dataName === APPLICATION_PLURAL ? 12 : 6}
                   className={classes.visibilityGridItem}
                 >
-                  <Typography gutterBottom variant="subtitle1" className={classes.text}>
-                    <span
-                      style={{
-                        fontWeight: 'bold',
-                        fontFamily: 'Qanelas Soft, sans-serif',
-                      }}
-                    >
-                      Visibility:
-                    </span>{' '}
+                  <Typography
+                    gutterBottom
+                    variant="subtitle1"
+                    className={classes.text}
+                    style={{ display: 'flex', marginRight: '2rem' }}
+                  >
+                    {!isPublished && isOwner ? (
+                      <VisibilityMenu
+                        value={visibility}
+                        onChange={(value) => {
+                          setVisibility(value);
+                          setDataIsUpdated(value != selectedResource?.visibility);
+                        }}
+                        enabled={true}
+                        options={[
+                          [VIEW_VISIBILITY.PUBLIC, Public],
+                          [VIEW_VISIBILITY.PRIVATE, Lock],
+                        ]}
+                      />
+                    ) : (
+                      <VisibilityTag>{selectedResource?.visibility}</VisibilityTag>
+                    )}
                   </Typography>
-                  <img
-                    className={classes.img}
-                    src={`/static/img/${selectedResource?.visibility}.svg`}
-                  />
                 </Grid>
                 {dataName === APPLICATION_PLURAL && formSchema ? null : (
                   <Grid item className={classes.rjsfInfoModalForm}>
                     <RJSFWrapper
-                      formData={formState}
-                      jsonSchema={{ ...formSchema.rjsfSchema, required: undefined }}
+                      formData={formStateRef.current}
+                      jsonSchema={{
+                        ...formSchema.rjsfSchema,
+                        required: [],
+                      }}
                       uiSchema={uiSchema}
                       onChange={handleFormChange}
                       liveValidate={false}
@@ -305,52 +431,46 @@ const InfoModal_ = React.memo((props) => {
                     />
                   </Grid>
                 )}
-                <Grid item xs={12}>
-                  <Typography
-                    style={{ whiteSpace: 'nowrap' }}
-                    gutterBottom
-                    variant="subtitle1"
-                    className={classes.text}
-                  >
-                    <span style={{ fontWeight: 'bold' }}>Created At:</span>{' '}
-                    <span style={{ whiteSpace: 'wrap' }}>
-                      {formatDate(selectedResource?.created_at)}
-                    </span>
-                  </Typography>
-                </Grid>
-                <Grid item xs={12}>
-                  <Typography
-                    style={{ whiteSpace: 'nowrap' }}
-                    gutterBottom
-                    variant="subtitle1"
-                    className={classes.text}
-                  >
-                    <span style={{ fontWeight: 'bold' }}>Updated At:</span>{' '}
-                    <span style={{ whiteSpace: 'nowrap' }}>
-                      {formatDate(selectedResource?.updated_at)}
-                    </span>
-                  </Typography>
-                </Grid>
               </Grid>
             </Grid>
           </Grid>
-        </DialogContent>
-        <DialogActions
-          style={{
-            justifyContent: 'space-evenly',
-            marginBottom: '0.5rem',
-          }}
+        </ModalBody>
+        <ModalFooter
+          helpText={
+            'Upon submitting your catalog item, an approval flow will be initiated. [Learn More](https://docs.meshery.io/concepts/catalog)'
+          }
+          variant="filled"
         >
-          <Button variant="outlined" onClick={handleCopy} className={classes.copyButton}>
-            Copy Link
-          </Button>
-          {shouldRenderSaveButton() ? (
-            <Button
+          <ActionContainer>
+            <TooltipButton title={'Copy Design Link'} onClick={handleCopy}>
+              <CopyLinkButton>Copy Link</CopyLinkButton>
+            </TooltipButton>
+
+            <ModalButtonSecondary
+              variant="outlined"
+              onClick={handlePublishController}
+              className={classes.copyButton}
+              disabled={
+                !isPublished
+                  ? false
+                  : !(
+                      CAN(keys.PUBLISH_DESIGN.action, keys.PUBLISH_DESIGN.subject) &&
+                      currentUser?.id === selectedResource?.user_id
+                    ) || isPublished
+              }
+            >
+              {isPublished ? 'Published' : 'Publish to Catalog'}
+            </ModalButtonSecondary>
+            <ModalButtonPrimary
               variant="contained"
               color="primary"
               className={classes.submitButton}
               onClick={handleSubmit}
-              disabled={isCatalogDataEqual || saveFormLoading}
+              disabled={
+                (isCatalogDataEqual && !dataIsUpdated) ||
+                !shouldRenderSaveButton() ||
+                saveFormLoading
+              }
             >
               {saveFormLoading ? (
                 <Box sx={{ display: 'flex' }}>
@@ -359,10 +479,10 @@ const InfoModal_ = React.memo((props) => {
               ) : (
                 'Save'
               )}
-            </Button>
-          ) : null}
-        </DialogActions>
-      </Dialog>
+            </ModalButtonPrimary>
+          </ActionContainer>
+        </ModalFooter>
+      </Modal>
     </div>
   );
 });
@@ -370,21 +490,18 @@ const InfoModal_ = React.memo((props) => {
 const OwnerChip = ({ userProfile }) => {
   const classes = useStyles();
   return (
-    <Chip
-      avatar={<Avatar src={userProfile?.avatar_url} className={classes.chipIcon} />}
-      label={
-        userProfile ? (
+    <Box style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+      <Avatar src={userProfile?.avatar_url} className={classes.chipIcon} />
+      <Typography>
+        {userProfile ? (
           `${userProfile?.first_name} ${userProfile?.last_name}`
         ) : (
           <Box sx={{ display: 'flex' }}>
             <CircularProgress color="inherit" size="1rem" />
           </Box>
-        )
-      }
-      variant="outlined"
-      data-cy="chipDesignDetails"
-      className={classes.chip}
-    />
+        )}
+      </Typography>
+    </Box>
   );
 };
 
