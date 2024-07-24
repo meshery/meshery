@@ -422,23 +422,6 @@ function MesheryFilters({
       },
       handleError(ACTION_TYPES.SCHEMA_FETCH),
     );
-    // dataFetch(
-    //   '/api/provider/capabilities',
-    //   {
-    //     method: 'GET',
-    //     credentials: 'include',
-    //   },
-    //   (result) => {
-    //     if (result) {
-    //       const capabilitiesRegistry = result;
-    //       const filtersCatalogueCapability = capabilitiesRegistry?.capabilities.filter(
-    //         (val) => val.feature === MesheryFiltersCatalog,
-    //       );
-    //       if (filtersCatalogueCapability?.length > 0) setCanPublishFilter(true);
-    //     }
-    //   },
-    //   (err) => console.error(err),
-    // );
 
     if (capabilitiesData) {
       const capabilitiesRegistry = capabilitiesData;
@@ -598,54 +581,6 @@ function MesheryFilters({
       disposeConfSubscriptionRef.current?.dispose();
     };
   }, []);
-
-  /**
-   * fetchFilters constructs the queries based on the parameters given
-   * and fetches the filters
-   * @param {number} page current page
-   * @param {number} pageSize items per page
-   * @param {string} search search string
-   * @param {string} sortOrder order of sort
-   */
-
-  // function fetchFilters(page = 0, pageSize = 10, search, sortOrder, visibilityFilter) {
-  //   if (!search) search = '';
-  //   if (!sortOrder) sortOrder = '';
-  //
-  //   const query =
-  //     `?page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(
-  //       search,
-  //     )}&order=${encodeURIComponent(sortOrder)}` +
-  //     (visibilityFilter
-  //       ? `&visibility=${encodeURIComponent(JSON.stringify([visibilityFilter]))}`
-  //       : '');
-  //
-  //   updateProgress({ showProgress: true });
-  //
-  //   dataFetch(
-  //     `/api/filter${query}`,
-  //     { credentials: 'include' },
-  //     (result) => {
-  //       console.log('FilterFile API', `/api/filter${query}`);
-  //       updateProgress({ showProgress: false });
-  //       if (result) {
-  //         const filteredFilters = result.filters.filter((content) => {
-  //           if (visibilityFilter === null || content.visibility === visibilityFilter) {
-  //             return true;
-  //           }
-  //           return false;
-  //         });
-  //         handleSetFilters(filteredFilters);
-  //         // setPage(result.page || 0);
-  //         setPageSize(result.page_size || 0);
-  //         setCount(result.total_count || 0);
-  //         setVisibilityFilter(visibilityFilter);
-  //       }
-  //     },
-  //     // handleError
-  //     handleError(ACTION_TYPES.FETCH_FILTERS),
-  //   );
-  // }
 
   const handleDeploy = (filter_file, name) => {
     dataFetch(
@@ -1189,13 +1124,6 @@ function MesheryFilters({
           }
           searchTimeout.current = setTimeout(() => {
             if (search !== tableState.searchText) {
-              // fetchFilters(
-              //   page,
-              //   pageSize,
-              //   tableState.searchText !== null ? tableState.searchText : '',
-              //   sortOrder,
-              //   visibilityFilter,
-              // );
               setSearch(tableState.searchText);
             }
           }, 500);
