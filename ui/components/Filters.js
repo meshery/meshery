@@ -63,7 +63,15 @@ import DefaultError from './General/error-404/index';
 import UniversalFilter from '../utils/custom-filter';
 import { UsesSistent } from './SistentWrapper';
 import { Modal as SistentModal } from '@layer5/sistent';
-import { useGetFiltersQuery } from '@/rtk-query/filter';
+import {
+  useGetFiltersQuery,
+  useCloneFilterMutation,
+  usePublishFilterMutation,
+  useUnpublishFilterMutation,
+  useDeleteFilterMutation,
+  useUpdateFilterFileMutation,
+  useUploadFilterFileMutation,
+} from '@/rtk-query/filter';
 import LoadingScreen from './LoadingComponents/LoadingComponent';
 import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
 
@@ -261,7 +269,6 @@ function MesheryFilters({
   );
   const FILTER_URL = '/api/filter';
   const DEPLOY_URL = FILTER_URL + '/deploy';
-  const CLONE_URL = '/clone';
 
   //hooks
   const { notify } = useNotification();
@@ -310,6 +317,13 @@ function MesheryFilters({
   });
 
   const { data: capabilitiesData } = useGetProviderCapabilitiesQuery();
+
+  const [cloneFilter] = useCloneFilterMutation();
+  const [publishFilter] = usePublishFilterMutation();
+  const [unpublishFilter] = useUnpublishFilterMutation();
+  const [deleteFilterFile] = useDeleteFilterMutation();
+  const [updateFilterFile] = useUpdateFilterFileMutation();
+  const [uploadFilterFile] = useUploadFilterFileMutation();
 
   useEffect(() => {
     if (filtersData) {
@@ -484,18 +498,19 @@ function MesheryFilters({
         });
         if (response === 'Yes') {
           updateProgress({ showProgress: true });
-          dataFetch(
-            `/api/filter/catalog/unpublish`,
-            { credentials: 'include', method: 'DELETE', body: JSON.stringify({ id: filter?.id }) },
-            () => {
+          unpublishFilter({ unpublishBody: JSON.stringify({ id: filter?.id }) })
+            .unwrap()
+            .then(() => {
               updateProgress({ showProgress: false });
               notify({
                 message: `"${filter?.name}" filter unpublished`,
                 event_type: EVENT_TYPES.SUCCESS,
               });
-            },
-            handleError(ACTION_TYPES.UNPUBLISH_CATALOG),
-          );
+            })
+            .catch(() => {
+              updateProgress({ showProgress: false });
+              handleError(ACTION_TYPES.UNPUBLISH_CATALOG);
+            });
         }
       };
     }
@@ -673,10 +688,9 @@ function MesheryFilters({
       },
     };
     updateProgress({ showProgress: true });
-    dataFetch(
-      `/api/filter/catalog/publish`,
-      { credentials: 'include', method: 'POST', body: JSON.stringify(payload) },
-      () => {
+    publishFilter({ publishBody: JSON.stringify(payload) })
+      .unwrap()
+      .then(() => {
         updateProgress({ showProgress: false });
         if (user.role_names.includes('admin')) {
           notify({
@@ -690,26 +704,28 @@ function MesheryFilters({
             event_type: EVENT_TYPES.SUCCESS,
           });
         }
-      },
-      handleError(ACTION_TYPES.PUBLISH_CATALOG),
-    );
+      })
+      .catch(() => {
+        updateProgress({ showProgress: false });
+        handleError(ACTION_TYPES.PUBLISH_CATALOG);
+      });
   };
 
   function handleClone(filterID, name) {
     updateProgress({ showProgress: true });
-    dataFetch(
-      FILTER_URL.concat(CLONE_URL, '/', filterID),
-      {
-        credentials: 'include',
-        method: 'POST',
-        body: JSON.stringify({ name: name + ' (Copy)' }),
-      },
-      () => {
+    cloneFilter({
+      body: JSON.stringify({ name: name + ' (Copy)' }),
+      filterID: filterID,
+    })
+      .unwrap()
+      .then(() => {
         updateProgress({ showProgress: false });
         notify({ message: `"${name}" filter cloned`, event_type: EVENT_TYPES.SUCCESS });
-      },
-      handleError(ACTION_TYPES.CLONE_FILTERS),
-    );
+      })
+      .catch(() => {
+        updateProgress({ showProgress: false });
+        handleError(ACTION_TYPES.CLONE_FILTERS);
+      });
   }
 
   // function handleError(error) {
@@ -799,17 +815,17 @@ function MesheryFilters({
         updateProgress({ showProgress: false });
         return;
       }
-      dataFetch(
-        `/api/filter/${id}`,
-        { credentials: 'include', method: 'DELETE' },
-        () => {
+      deleteFilterFile({ id: id })
+        .unwrap()
+        .then(() => {
           updateProgress({ showProgress: false });
           notify({ message: `"${name}" filter deleted`, event_type: EVENT_TYPES.SUCCESS });
           resetSelectedRowData()();
-        },
-        // handleError
-        handleError(ACTION_TYPES.DELETE_FILTERS),
-      );
+        })
+        .catch(() => {
+          updateProgress({ showProgress: false });
+          handleError(ACTION_TYPES.DELETE_FILTERS);
+        });
     }
 
     if (type === FILE_OPS.FILE_UPLOAD || type === FILE_OPS.URL_UPLOAD) {
@@ -825,41 +841,33 @@ function MesheryFilters({
       if (type === FILE_OPS.URL_UPLOAD) {
         body = JSON.stringify({ ...body, url: data, name: metadata.name, config: metadata.config });
       }
-      dataFetch(
-        `/api/filter`,
-        {
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/octet-stream', // Set appropriate content type for binary data
-          },
-          method: 'POST',
-          body,
-        },
-        () => {
+      uploadFilterFile({ uploadBody: body })
+        .unwrap()
+        .then(() => {
           updateProgress({ showProgress: false });
-        },
-        // handleError
-        handleError(ACTION_TYPES.UPLOAD_FILTERS),
-      );
+        })
+        .catch(() => {
+          updateProgress({ showProgress: false });
+          handleError(ACTION_TYPES.UPLOAD_FILTERS);
+        });
     }
 
     if (type === FILE_OPS.UPDATE) {
-      dataFetch(
-        `/api/filter`,
-        {
-          credentials: 'include',
-          method: 'POST',
-          body: JSON.stringify({
-            filter_data: { id, name: name, catalog_data },
-            config: data,
-            save: true,
-          }),
-        },
-        () => {
+      updateFilterFile({
+        updateBody: JSON.stringify({
+          filter_data: { id, name: name, catalog_data },
+          config: data,
+          save: true,
+        }),
+      })
+        .unwrap()
+        .then(() => {
           updateProgress({ showProgress: false });
-        },
-        handleError(ACTION_TYPES.UPLOAD_FILTERS),
-      );
+        })
+        .catch(() => {
+          updateProgress({ showProgress: false });
+          handleError(ACTION_TYPES.UPLOAD_FILTERS);
+        });
     }
   }
 
@@ -1102,18 +1110,16 @@ function MesheryFilters({
   }
 
   function deleteFilter(id) {
-    dataFetch(
-      `/api/filter/${id}`,
-      {
-        method: 'DELETE',
-        credentials: 'include',
-      },
-      () => {
+    deleteFilterFile({ id: id })
+      .unwrap()
+      .then(() => {
         updateProgress({ showProgress: false });
         notify({ message: `Filter deleted`, event_type: EVENT_TYPES.SUCCESS });
-      },
-      handleError('Failed To Delete Filter'),
-    );
+      })
+      .catch(() => {
+        updateProgress({ showProgress: false });
+        handleError(ACTION_TYPES.DELETE_FILTERS);
+      });
   }
 
   const options = {
@@ -1259,18 +1265,20 @@ function MesheryFilters({
         break;
     }
 
-    dataFetch(
-      '/api/filter',
-      { credentials: 'include', method: 'POST', body: requestBody },
-      () => {
+    updateFilterFile({ updateBody: requestBody })
+      .unwrap()
+      .then(() => {
         updateProgress({ showProgress: false });
         notify({
           message: `"${name}" filter uploaded`,
           event_type: EVENT_TYPES.SUCCESS,
         });
-      },
-      handleError(ACTION_TYPES.UPLOAD_FILTERS),
-    );
+        getFilters();
+      })
+      .catch(() => {
+        updateProgress({ showProgress: false });
+        handleError(ACTION_TYPES.UPLOAD_FILTERS);
+      });
   }
 
   const [tableCols, updateCols] = useState(columns);
