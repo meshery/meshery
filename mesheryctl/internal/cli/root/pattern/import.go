@@ -167,7 +167,7 @@ func importPattern(sourceType string, file string, patternURL string, save bool)
 		if err != nil {
 			return nil, utils.ErrRequestResponse(err)
 		}
-		utils.Log.Debug("Successfully fetched the pattern from the remote host")
+		utils.Log.Debug("Fetched the pattern from the remote host")
 		var response []*models.MesheryPattern
 		defer resp.Body.Close()
 
