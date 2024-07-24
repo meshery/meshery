@@ -1,6 +1,13 @@
 import { expect, test } from '@playwright/test';
 import { ENV } from '../env';
 
+const mesheryAdapters = [
+  { adapterName: 'Istio', adapterPort: '10000', deploy: false },
+  { adapterName: 'Consul', adapterPort: '10002', deploy: false },
+  { adapterName: 'Linkerd', adapterPort: '10001', deploy: false },
+  { adapterName: 'Kuma', adapterPort: '10007', deploy: false },
+];
+
 const verifyAdapterResBody = (body) => {
   expect(body).toBeInstanceOf(Array);
   body.forEach(({ adapter_location, name, version, git_commit_sha, ops }) => {
@@ -50,50 +57,52 @@ test.describe('Settings Page Tests', () => {
     verifyAdapterResBody(body);
   });
 
-  test('Connect to Meshery Istio Adapter and configure it', async ({ page }) => {
-    let meshManageReq;
-    let meshManageRes;
+  mesheryAdapters.forEach((adapter) => {
+    test(`Connect to Meshery ${adapter.adapterName} Adapter and configure it`, async ({ page }) => {
+      let meshManageReq;
+      let meshManageRes;
 
-    await test.step('When I click the `Adapters tab`', async () => {
-      await page.getByRole('tab', { name: 'Adapters', exact: true }).click({ force: true });
-    });
+      await test.step('When I click the `Adapters tab`', async () => {
+        await page.getByRole('tab', { name: 'Adapters', exact: true }).click({ force: true });
+      });
 
-    await test.step('Initiate the request and response', async () => {
-      meshManageReq = page.waitForRequest(
-        (request) =>
-          request.url() === `${ENV.MESHERY_SERVER_URL}/api/system/adapter/manage` &&
-          request.method() === 'POST',
-      );
-      meshManageRes = page.waitForResponse(
-        (response) =>
-          response.url() === `${ENV.MESHERY_SERVER_URL}/api/system/adapter/manage` &&
-          response.status() === 200,
-      );
-    });
+      await test.step('Initiate the request and response', async () => {
+        meshManageReq = page.waitForRequest(
+          (request) =>
+            request.url() === `${ENV.MESHERY_SERVER_URL}/api/system/adapter/manage` &&
+            request.method() === 'POST',
+        );
+        meshManageRes = page.waitForResponse(
+          (response) =>
+            response.url() === `${ENV.MESHERY_SERVER_URL}/api/system/adapter/manage` &&
+            response.status() === 200,
+        );
+      });
 
-    await test.step('And I enter the mesh adapter url', async () => {
-      await page
-        .locator('label')
-        .filter({ hasText: /Mesh Adapter URL/ })
-        .locator('..')
-        .locator('input')
-        .fill('localhost:10000');
-      await page.keyboard.press('Enter');
-    });
+      await test.step('And I enter the mesh adapter url', async () => {
+        await page
+          .locator('label')
+          .filter({ hasText: /Mesh Adapter URL/ })
+          .locator('..')
+          .locator('input')
+          .fill(`localhost:${adapter.adapterPort}`);
+        await page.keyboard.press('Enter');
+      });
 
-    await test.step('And I click the connect button', async () => {
-      await page.getByRole('button', { name: 'Connect', exact: true }).click();
-    });
+      await test.step('And I click the connect button', async () => {
+        await page.getByRole('button', { name: 'Connect', exact: true }).click();
+      });
 
-    await test.step('And I verify the requests and reponses', async () => {
-      await meshManageReq;
-      const res = await meshManageRes;
-      const body = await res.json();
-      verifyAdapterResBody(body);
-    });
+      await test.step('And I verify the requests and reponses', async () => {
+        await meshManageReq;
+        const res = await meshManageRes;
+        const body = await res.json();
+        verifyAdapterResBody(body);
+      });
 
-    await test.step('And I see success notification', async () => {
-      await expect(page.getByText('Adapter was configured!')).toBeVisible();
+      await test.step('And I see success notification', async () => {
+        await expect(page.getByText('Adapter was configured!')).toBeVisible();
+      });
     });
   });
 });
