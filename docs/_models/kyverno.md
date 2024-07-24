@@ -6,8 +6,8 @@ image: /assets/img/integrations/kyverno/icons/color/kyverno-color.svg
 permalink: extensibility/integrations/kyverno
 docURL: https://docs.meshery.io/extensibility/integrations/kyverno
 description: 
-integrations-category: Provisioning
-integrations-subcategory: Provisioning
+integrations-category: Security & Compliance
+integrations-subcategory: Container Security
 registrant: GitHub
 components: 
 - name: admission-report

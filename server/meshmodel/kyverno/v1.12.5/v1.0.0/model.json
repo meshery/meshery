@@ -11,10 +11,10 @@
    "hostname": "github"
   },
   "category": {
-   "name": "Provisioning",
+   "name": "Security \u0026 Compliance",
    "metadata": null
   },
-  "subCategory": "Provisioning",
+  "subCategory": "Container Security",
   "metadata": {
    "capabilities": "",
    "defaultData": "",

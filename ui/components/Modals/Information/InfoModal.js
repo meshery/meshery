@@ -40,6 +40,8 @@ import TooltipButton from '@/utils/TooltipButton';
 import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
 import { filterEmptyFields } from '@/utils/objects';
+import { VIEW_VISIBILITY, VisibilityMenu } from '@/components/VisibilityMenu';
+import { Lock, Public } from '@material-ui/icons';
 
 const APPLICATION_PLURAL = 'applications';
 const FILTER_PLURAL = 'filters';
@@ -63,6 +65,8 @@ const InfoModal_ = React.memo((props) => {
   const formRef = React.createRef();
   const formStateRef = useRef();
   const [isCatalogDataEqual, setIsCatalogDataEqual] = useState(false);
+  const [dataIsUpdated, setDataIsUpdated] = useState(false);
+  const [visibility, setVisibility] = useState(selectedResource?.visibility);
   const [saveFormLoading, setSaveFormLoading] = useState(false);
   const [uiSchema, setUiSchema] = useState({});
   const { notify } = useNotification();
@@ -74,7 +78,7 @@ const InfoModal_ = React.memo((props) => {
   const isAdmin = currentUser?.role_names?.includes('admin') || false;
   const { data: resourceUserProfile } = useGetUserByIdQuery(resourceOwnerID);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
-
+  const isOwner = currentUserID === resourceOwnerID;
   const handleCopy = () => {
     navigator.clipboard.writeText(getSharableCommonHostAndprotocolLink(selectedResource));
     enqueueSnackbar(`Link to "${selectedResource.name}" is copied to clipboard`, {
@@ -114,6 +118,7 @@ const InfoModal_ = React.memo((props) => {
           catalog_data: modifiedData,
           pattern_file: getUnit8ArrayForDesign(selectedResource.pattern_file),
           id: selectedResource.id,
+          visibility: visibility,
         },
         save: true,
       });
@@ -251,7 +256,6 @@ const InfoModal_ = React.memo((props) => {
   const shouldRenderSaveButton = () => {
     if (!isAdmin) {
       const isPrivate = selectedResource?.visibility === 'private';
-      const isOwner = currentUserID === resourceOwnerID;
 
       const renderByPermission = isPrivate ? true : isPublished ? false : isOwner;
       return renderByPermission;
@@ -393,7 +397,22 @@ const InfoModal_ = React.memo((props) => {
                     className={classes.text}
                     style={{ display: 'flex', marginRight: '2rem' }}
                   >
-                    <VisibilityTag>{selectedResource?.visibility}</VisibilityTag>
+                    {!isPublished && isOwner ? (
+                      <VisibilityMenu
+                        value={visibility}
+                        onChange={(value) => {
+                          setVisibility(value);
+                          setDataIsUpdated(value != selectedResource?.visibility);
+                        }}
+                        enabled={true}
+                        options={[
+                          [VIEW_VISIBILITY.PUBLIC, Public],
+                          [VIEW_VISIBILITY.PRIVATE, Lock],
+                        ]}
+                      />
+                    ) : (
+                      <VisibilityTag>{selectedResource?.visibility}</VisibilityTag>
+                    )}
                   </Typography>
                 </Grid>
                 {dataName === APPLICATION_PLURAL && formSchema ? null : (
@@ -432,7 +451,7 @@ const InfoModal_ = React.memo((props) => {
               onClick={handlePublishController}
               className={classes.copyButton}
               disabled={
-                isAdmin
+                !isPublished
                   ? false
                   : !(
                       CAN(keys.PUBLISH_DESIGN.action, keys.PUBLISH_DESIGN.subject) &&
@@ -447,7 +466,11 @@ const InfoModal_ = React.memo((props) => {
               color="primary"
               className={classes.submitButton}
               onClick={handleSubmit}
-              disabled={isCatalogDataEqual || !shouldRenderSaveButton() || saveFormLoading}
+              disabled={
+                (isCatalogDataEqual && !dataIsUpdated) ||
+                !shouldRenderSaveButton() ||
+                saveFormLoading
+              }
             >
               {saveFormLoading ? (
                 <Box sx={{ display: 'flex' }}>

@@ -10,7 +10,7 @@
    "schemaVersion": "models.meshery.io/v1beta1",
    "version": "v1.0.0",
    "name": "keda",
-   "displayName": "Keda",
+   "displayName": "KEDA",
    "description": "",
    "status": "enabled",
    "hostID": "00000000-0000-0000-0000-000000000000",
@@ -18,10 +18,10 @@
     "hostname": "github"
    },
    "category": {
-    "name": "Serverless",
+    "name": "Orchestration \u0026 Management",
     "metadata": null
    },
-   "subCategory": "Installable Platform",
+   "subCategory": "Scheduling \u0026 Orchestration",
    "metadata": {
     "capabilities": "",
     "defaultData": "",

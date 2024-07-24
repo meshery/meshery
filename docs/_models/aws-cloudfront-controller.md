@@ -42,6 +42,10 @@ components:
   colorIcon: assets/img/integrations/aws-cloudfront-controller/components/response-headers-policy/icons/color/response-headers-policy-color.svg
   whiteIcon: assets/img/integrations/aws-cloudfront-controller/components/response-headers-policy/icons/white/response-headers-policy-white.svg
   description: 
+- name: origin-access-control
+  colorIcon: assets/img/integrations/aws-cloudfront-controller/components/origin-access-control/icons/color/origin-access-control-color.svg
+  whiteIcon: assets/img/integrations/aws-cloudfront-controller/components/origin-access-control/icons/white/origin-access-control-white.svg
+  description: 
 featureList: [
   "Global content delivery",
   "Improves website and application performance",
