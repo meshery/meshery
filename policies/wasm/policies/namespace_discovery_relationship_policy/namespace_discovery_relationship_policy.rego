@@ -1,62 +1,35 @@
-# https://play.openpolicyagent.org/p/wFNhyGsIej
 package hierarchical_policy
 
-available_namespaces[namespace_key] {
-  service := input.services[_];
-  namespace_key = service.namespace
+import rego.v1
+
+available_namespaces contains service.namespace if {
+	some service in input.services
 }
 
-available_namespaces[namespace_key] {
-  service := input.services[_];
-  service.type == "Namespace";
-  namespace_key = service.name
+available_namespaces contains service.name if {
+	some service in input.services
+	service.type == "Namespace"
 }
 
-parent_child_mapping = { namespace_map: ns |
-	some namespace_map
-	available_namespaces[namespace_map]
-    service := input.services[key]
-    service.namespace
-    service.namespace == namespace_map
-    ns := {ns_serv: comp_id |
-        some ns_serv
-         x := input.services[ns_serv]
-         x.namespace == namespace_map
-         comp_id := x.traits.meshmap.id
-    }
+parent_child_mapping[namespace_map] := ns if {
+	some namespace_map in available_namespaces
+	some key, service in input.services
+	service.namespace == namespace_map
+	ns := {ns_serv: comp_id |
+		some ns_serv, x in input.services
+		x.namespace == namespace_map
+		comp_id := x.traits.meshmap.id
+	}
 }
 
-namespaces_to_create[namespaces2] {
-	some namespace
-    available_namespaces[namespace]
-    print(namespace)
-    ns_creation_status = is_present(check_namespace_present_status(namespace))
-    print(ns_creation_status)
-    ns_creation_status != true
-    namespaces2 = namespace
+namespaces_to_create contains namespace if {
+	some namespace in available_namespaces
+	not namespace_present(namespace, input.services)
 }
 
 # incase of present: {"present": true}, in absent, returns empty set
-check_namespace_present_status(ns) = is_present {
-  is_present := {"present": is |
-    some svc
-    s := input.services[svc]
-    s.type == "Namespace"
-    s.name == ns
-    is = true
-  }
+namespace_present(ns, all_services) if {
+	some s in all_services
+	s.type == "Namespace"
+	s.name == ns
 }
-
-# Is present function wraps the result of check_namespace_present_status to true or false
-is_present(obj) {
-	obj.present == true
-}
-
-is_present(obj) = pre {
- not obj.present
- pre = false
-}
-
-
-
-
