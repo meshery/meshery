@@ -26,6 +26,7 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	meshkitUtils "github.com/layer5io/meshkit/utils"
+	"github.com/layer5io/meshkit/utils/registry"
 )
 
 var (
@@ -34,8 +35,8 @@ var (
 	sheetID               string
 	modelsOutputPath      string
 	imgsOutputPath        string
-	models                = []utils.ModelCSV{}
-	components            = map[string]map[string][]utils.ComponentCSV{}
+	models                = []registry.ModelCSV{}
+	components            = map[string]map[string][]registry.ComponentCSV{}
 	outputFormat          string
 )
 
@@ -103,14 +104,14 @@ mesheryctl registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwiz
 			return nil
 		}
 
-		modelCSVHelper := &utils.ModelCSVHelper{}
-		componentCSVHelper := &utils.ComponentCSVHelper{}
+		modelCSVHelper := &registry.ModelCSVHelper{}
+		componentCSVHelper := &registry.ComponentCSVHelper{}
 		GoogleSpreadSheetURL += sheetID
 
 		for _, v := range resp.Sheets {
 			switch v.Properties.Title {
 			case "Models":
-				modelCSVHelper, err = utils.NewModelCSVHelper(GoogleSpreadSheetURL, v.Properties.Title, v.Properties.SheetId)
+				modelCSVHelper, err = registry.NewModelCSVHelper(GoogleSpreadSheetURL, v.Properties.Title, v.Properties.SheetId)
 				if err != nil {
 					utils.Log.Error(err)
 					return nil
@@ -121,7 +122,7 @@ mesheryctl registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwiz
 					return nil
 				}
 			case "Components":
-				componentCSVHelper, err = utils.NewComponentCSVHelper(GoogleSpreadSheetURL, v.Properties.Title, v.Properties.SheetId)
+				componentCSVHelper, err = registry.NewComponentCSVHelper(GoogleSpreadSheetURL, v.Properties.Title, v.Properties.SheetId)
 				if err != nil {
 					utils.Log.Error(err)
 					return nil
@@ -188,7 +189,7 @@ func remoteProviderSystem() error {
 		comps, ok := components[model.Registrant][model.Model]
 		if !ok {
 			utils.Log.Debug("no components found for ", model.Model)
-			comps = []utils.ComponentCSV{}
+			comps = []registry.ComponentCSV{}
 		}
 
 		err := utils.GenerateIcons(model, comps, imgsOutputPath)
@@ -215,7 +216,7 @@ func websiteSystem() error {
 		comps, ok := components[model.Registrant][model.Model]
 		if !ok {
 			utils.Log.Debug("no components found for ", model.Model)
-			comps = []utils.ComponentCSV{}
+			comps = []registry.ComponentCSV{}
 		}
 
 		switch outputFormat {
@@ -269,7 +270,7 @@ func init() {
 	// publishCmd.MarkFlagRequired("imgs-output-path")
 }
 
-func WriteModelDefToFileSystem(model *utils.ModelCSV, version string, location string) (string, *v1beta1.Model, error) {
+func WriteModelDefToFileSystem(model *registry.ModelCSV, version string, location string) (string, *v1beta1.Model, error) {
 	modelDef := model.CreateModelDefinition(version, defVersion)
 	modelDefPath := filepath.Join(location, modelDef.Name)
 	err := modelDef.WriteModelDefinition(modelDefPath+"/model.json", "json")

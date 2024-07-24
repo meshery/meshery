@@ -23,6 +23,7 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	mutils "github.com/layer5io/meshkit/utils"
+	"github.com/layer5io/meshkit/utils/registry"
 	"github.com/layer5io/meshkit/utils/store"
 	"github.com/sirupsen/logrus"
 
@@ -76,7 +77,7 @@ mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 			return err
 		}
 
-		sheetGID = GetSheetIDFromTitle(resp, "Components")
+		sheetGID = registry.GetSheetIDFromTitle(resp, "Components")
 
 		err = InvokeCompUpdate()
 		if err != nil {
@@ -114,7 +115,7 @@ func InvokeCompUpdate() error {
 	modelToCompUpdateTracker := store.NewGenericThreadSafeStore[[]compUpdateTracker]()
 
 	url := GoogleSpreadSheetURL + spreadsheeetID
-	componentCSVHelper, err := utils.NewComponentCSVHelper(url, "Components", sheetGID)
+	componentCSVHelper, err := registry.NewComponentCSVHelper(url, "Components", sheetGID)
 	if err != nil {
 		return err
 	}
