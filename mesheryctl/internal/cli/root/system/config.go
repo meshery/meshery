@@ -406,7 +406,12 @@ func setToken() {
 		fmt.Print("Enter choice (number): ")
 		_, err = fmt.Scanf("%d", &choice)
 		if err != nil {
-			log.Fatalf("Error reading input:  %s", err.Error())
+			log.Warnf("Error reading input:  %s", err.Error())
+			log.Info("Let's try again. Please enter the choice (number):")
+			_, err = fmt.Scanf("%d", &choice)
+			if err != nil {
+				log.Fatalf("Error reading input: %s", err.Error())
+			}
 		}
 		choosenCtx = contexts[choice-1]
 	}
