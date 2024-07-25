@@ -1,14 +1,48 @@
 package pattern
 
 import (
+	"bytes"
+	"net/http"
 	"path/filepath"
 	"runtime"
 	"testing"
-	
 
 	"github.com/jarcoal/httpmock"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 )
+
+func setupDesign(t *testing.T, testContext *utils.TestHelper, name string, shouldExist bool) {
+	design := `{ "name": "` + name + `" }` // Replace with actual design JSON
+	url := testContext.BaseURL + "/api/pattern"
+
+	if shouldExist {
+		// Mock uploading the design
+		httpmock.RegisterResponder("POST", url,
+			httpmock.NewStringResponder(201, design))
+		
+		// Upload design
+		_, err := http.Post(url, "application/json", bytes.NewBuffer([]byte(design)))
+		if err != nil {
+			t.Fatalf("Failed to upload design: %v", err)
+		}
+	} else {
+		// Mock deleting the design
+		httpmock.RegisterResponder("DELETE", url+"?name="+name,
+			httpmock.NewStringResponder(200, ""))
+
+		// Delete design
+		req, err := http.NewRequest("DELETE", url+"?name="+name, nil)
+		if err != nil {
+			t.Fatalf("Failed to create delete request: %v", err)
+		}
+
+		client := &http.Client{}
+		_, err = client.Do(req)
+		if err != nil {
+			t.Fatalf("Failed to delete design: %v", err)
+		}
+	}
+}
 
 func TestPatternView(t *testing.T) {
 	// setup current context
@@ -28,7 +62,13 @@ func TestPatternView(t *testing.T) {
 	currDir := filepath.Dir(filename)
 	fixturesDir := filepath.Join(currDir, "fixtures")
 
-	// test scenrios for fetching data
+	// Ensure design exists
+	setupDesign(t, testContext, "Untitled Design", true)
+
+	// Ensure design does not exist
+	setupDesign(t, testContext, "NonExistentDesign", false)
+
+	// test scenarios for fetching data
 	tests := []struct {
 		Name             string
 		Args             []string
@@ -114,7 +154,7 @@ func TestPatternView(t *testing.T) {
 			expectedResponse := golden.Load()
 
 			utils.Equals(t, expectedResponse, actualResponse)
-			
+
 			if tt.Name == "View Specific Pattern by Name" {
 				t.Logf("Output for '%s': %s", tt.Name, actualResponse)
 			}

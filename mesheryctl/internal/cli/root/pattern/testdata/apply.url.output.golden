@@ -1,4 +1,4 @@
-https://raw.githubusercontent.com/yash37158/SamplePattern/main/samplepatternwithservicemesh.golden
+https://raw.githubusercontent.com/meshery/meshery/master/mesheryctl/internal/cli/root/pattern/fixtures/pattern.golden
 
 remote hosted pattern request success
 pattern successfully applied
