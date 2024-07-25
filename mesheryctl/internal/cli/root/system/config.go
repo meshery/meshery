@@ -407,7 +407,7 @@ func setToken() {
 		_, err = fmt.Scanf("%d", &choice)
 		if err != nil {
 			log.Warnf("Error reading input:  %s", err.Error())
-			log.Info("Let's try again. Please enter the choice (number):")
+			log.Info("Let's try again. Please enter choose an option by number:")
 			_, err = fmt.Scanf("%d", &choice)
 			if err != nil {
 				log.Fatalf("Error reading input: %s", err.Error())
