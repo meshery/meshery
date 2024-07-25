@@ -83,7 +83,6 @@ const MeshModelComponent_ = ({
   const router = useRouter();
   const { handleChangeSelectedTab } = settingsRouter(router);
   const [resourcesDetail, setResourcesDetail] = useState([]);
-  const [, setCount] = useState();
   const { selectedTab, searchQuery, selectedPageSize } = useMeshModelComponentRouter();
   const [page, setPage] = useState({
     Models: 0,
@@ -141,7 +140,6 @@ const MeshModelComponent_ = ({
             },
             true,
           );
-          setCount(response.total_count);
           break;
         case RELATIONSHIPS:
           response = await getRelationshipsData(
@@ -155,7 +153,6 @@ const MeshModelComponent_ = ({
             },
             true,
           );
-          setCount(response?.total_count);
           break;
         case REGISTRANTS:
           response = await getRegistrants();
@@ -246,7 +243,6 @@ const MeshModelComponent_ = ({
         },
       };
     }
-    setCount(response.total_count);
     setRowsPerPage(25);
     return response;
   };
