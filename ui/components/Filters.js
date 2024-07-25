@@ -47,9 +47,13 @@ import { getMeshModels } from '../api/meshmodel';
 import _ from 'lodash';
 import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
-import SearchBar from '../utils/custom-search';
-import CustomColumnVisibilityControl from '../utils/custom-column';
-import { CustomTooltip, ResponsiveDataTable } from '@layer5/sistent';
+import {
+  CustomColumnVisibilityControl,
+  CustomTooltip,
+  ResponsiveDataTable,
+  SearchBar,
+  UniversalFilter,
+} from '@layer5/sistent';
 import useStyles from '../assets/styles/general/tool.styles';
 import { updateVisibleColumns } from '../utils/responsive-column';
 import { useWindowDimensions } from '../utils/dimension';
@@ -60,7 +64,6 @@ import { SortableTableCell } from './connections/common/index.js';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import DefaultError from './General/error-404/index';
-import UniversalFilter from '../utils/custom-filter';
 import { UsesSistent } from './SistentWrapper';
 import { Modal as SistentModal } from '@layer5/sistent';
 import {
@@ -1300,29 +1303,36 @@ function MesheryFilters({
                 </div>
               )}
               <div className={classes.searchWrapper} style={{ display: 'flex' }}>
-                <SearchBar
-                  onSearch={(value) => {
-                    setSearch(value);
-                    initFiltersSubscription(page.toString(), pageSize.toString(), value, sortOrder);
-                  }}
-                  expanded={isSearchExpanded}
-                  setExpanded={setIsSearchExpanded}
-                  placeholder="Search"
-                />
-                <UniversalFilter
-                  id="ref"
-                  filters={filter}
-                  selectedFilters={selectedFilters}
-                  setSelectedFilters={setSelectedFilters}
-                  handleApplyFilter={handleApplyFilter}
-                />
-                {viewType === 'table' && (
-                  <CustomColumnVisibilityControl
-                    id="ref"
-                    columns={columns}
-                    customToolsProps={{ columnVisibility, setColumnVisibility }}
+                <UsesSistent>
+                  <SearchBar
+                    onSearch={(value) => {
+                      setSearch(value);
+                      initFiltersSubscription(
+                        page.toString(),
+                        pageSize.toString(),
+                        value,
+                        sortOrder,
+                      );
+                    }}
+                    expanded={isSearchExpanded}
+                    setExpanded={setIsSearchExpanded}
+                    placeholder="Search"
                   />
-                )}
+                  <UniversalFilter
+                    id="ref"
+                    filters={filter}
+                    selectedFilters={selectedFilters}
+                    setSelectedFilters={setSelectedFilters}
+                    handleApplyFilter={handleApplyFilter}
+                  />
+                  {viewType === 'table' && (
+                    <CustomColumnVisibilityControl
+                      id="ref"
+                      columns={columns}
+                      customToolsProps={{ columnVisibility, setColumnVisibility }}
+                    />
+                  )}
+                </UsesSistent>
 
                 {!selectedFilter.show && (
                   <ViewSwitch data-cy="table-view" view={viewType} changeView={setViewType} />
