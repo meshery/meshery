@@ -19,7 +19,12 @@ import {
   Box,
   Chip,
 } from '@material-ui/core';
-import { CustomTooltip } from '@layer5/sistent';
+import {
+  CustomColumnVisibilityControl,
+  CustomTooltip,
+  SearchBar,
+  UniversalFilter,
+} from '@layer5/sistent';
 import { withStyles } from '@material-ui/core/styles';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import { connect } from 'react-redux';
@@ -28,8 +33,8 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { updateProgress } from '../../lib/store';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
-import CustomColumnVisibilityControl from '../../utils/custom-column';
-import SearchBar from '../../utils/custom-search';
+// import CustomColumnVisibilityControl from '../../utils/custom-column';
+// import SearchBar from '../../utils/custom-search';
 import { ResponsiveDataTable } from '@layer5/sistent';
 import useStyles from '../../assets/styles/general/tool.styles';
 import Modal from '../Modal';
@@ -63,7 +68,7 @@ import NotInterestedRoundedIcon from '@mui/icons-material/NotInterestedRounded';
 import DisconnectIcon from '../../assets/icons/disconnect';
 import { updateVisibleColumns } from '../../utils/responsive-column';
 import { useWindowDimensions } from '../../utils/dimension';
-import UniversalFilter from '../../utils/custom-filter';
+// import UniversalFilter from '../../utils/custom-filter';
 import MultiSelectWrapper from '../multi-select-wrapper';
 import {
   useGetEnvironmentsQuery,
@@ -1169,36 +1174,38 @@ function Connections(props) {
             </div> */}
                 <MesherySettingsEnvButtons />
               </div>
-              <div
-                className={classes.searchAndView}
-                style={{
-                  display: 'flex',
-                  borderRadius: '0.5rem 0.5rem 0 0',
-                }}
-              >
-                <SearchBar
-                  onSearch={(value) => {
-                    setSearch(value);
+              <UsesSistent>
+                <div
+                  className={classes.searchAndView}
+                  style={{
+                    display: 'flex',
+                    borderRadius: '0.5rem 0.5rem 0 0',
                   }}
-                  placeholder="Search Connections..."
-                  expanded={isSearchExpanded}
-                  setExpanded={setIsSearchExpanded}
-                />
+                >
+                  <SearchBar
+                    onSearch={(value) => {
+                      setSearch(value);
+                    }}
+                    placeholder="Search Connections..."
+                    expanded={isSearchExpanded}
+                    setExpanded={setIsSearchExpanded}
+                  />
 
-                <UniversalFilter
-                  id="ref"
-                  filters={filters}
-                  selectedFilters={selectedFilters}
-                  setSelectedFilters={setSelectedFilters}
-                  handleApplyFilter={handleApplyFilter}
-                />
+                  <UniversalFilter
+                    id="ref"
+                    filters={filters}
+                    selectedFilters={selectedFilters}
+                    setSelectedFilters={setSelectedFilters}
+                    handleApplyFilter={handleApplyFilter}
+                  />
 
-                <CustomColumnVisibilityControl
-                  id="ref"
-                  columns={getVisibilityColums(columns)}
-                  customToolsProps={{ columnVisibility, setColumnVisibility }}
-                />
-              </div>
+                  <CustomColumnVisibilityControl
+                    id="ref"
+                    columns={getVisibilityColums(columns)}
+                    customToolsProps={{ columnVisibility, setColumnVisibility }}
+                  />
+                </div>
+              </UsesSistent>
             </div>
           )}
           {tab === 0 && CAN(keys.VIEW_CONNECTIONS.action, keys.VIEW_CONNECTIONS.subject) && (
