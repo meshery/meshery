@@ -389,26 +389,23 @@ function MesheryFilters({
    * Checking whether users are signed in under a provider that doesn't have
    * publish filter capability and setting the canPublishFilter state accordingly
    */
-  useEffect(() => {
-    async (result) => {
-      try {
-        const { models } = await getMeshModels();
-        const modelNames = _.uniq(models?.map((model) => model.displayName));
-        modelNames.sort();
+  useEffect(async () => {
+    try {
+      const { models } = await getMeshModels();
+      const modelNames = _.uniq(models?.map((model) => model.displayName));
+      modelNames.sort();
 
-        // Modify the schema using the utility function
-        const modifiedSchema = modifyRJSFSchema(
-          publishCatalogItemSchema,
-          'properties.compatibility.items.enum',
-          modelNames,
-        );
-        setPublishSchema({ rjsfSchema: modifiedSchema, uiSchema: publishCatalogItemUiSchema });
-        setMeshModels(models);
-      } catch (err) {
-        console.error(err);
-        setPublishSchema(result);
-      }
-    };
+      // Modify the schema using the utility function
+      const modifiedSchema = modifyRJSFSchema(
+        publishCatalogItemSchema,
+        'properties.compatibility.items.enum',
+        modelNames,
+      );
+      setPublishSchema({ rjsfSchema: modifiedSchema, uiSchema: publishCatalogItemUiSchema });
+      setMeshModels(models);
+    } catch (err) {
+      console.error(err);
+    }
 
     if (capabilitiesData) {
       const capabilitiesRegistry = capabilitiesData;
@@ -1392,17 +1389,19 @@ function MesheryFilters({
             )}
             {infoModal.open &&
               CAN(keys.DETAILS_OF_WASM_FILTER.action, keys.DETAILS_OF_WASM_FILTER.subject) && (
-                <InfoModal
-                  infoModalOpen={true}
-                  handleInfoModalClose={handleInfoModalClose}
-                  dataName="filters"
-                  selectedResource={infoModal.selectedResource}
-                  resourceOwnerID={infoModal.ownerID}
-                  currentUserID={user?.id}
-                  formSchema={publishSchema}
-                  meshModels={meshModels}
-                  patternFetcher={() => getFilters()}
-                />
+                <UsesSistent>
+                  <InfoModal
+                    infoModalOpen={true}
+                    handleInfoModalClose={handleInfoModalClose}
+                    dataName="filters"
+                    selectedResource={infoModal.selectedResource}
+                    resourceOwnerID={infoModal.ownerID}
+                    currentUserID={user?.id}
+                    formSchema={publishSchema}
+                    meshModels={meshModels}
+                    patternFetcher={() => getFilters()}
+                  />
+                </UsesSistent>
               )}
             <PromptComponent ref={modalRef} />
           </>

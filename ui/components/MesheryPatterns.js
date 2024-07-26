@@ -606,36 +606,34 @@ function MesheryPatterns({
   //   toggleCatalogContent({ catalogVisibility: !catalogVisibility });
   // };
 
-  useEffect(() => {
-    async (result) => {
-      try {
-        const { models } = await getMeshModels();
-        const modelNames = _.uniqBy(
-          models?.map((model) => {
-            if (model.displayName && model.displayName !== '') {
-              return model.displayName;
-            }
-          }),
-          _.toLower,
-        );
-        modelNames.sort();
+  useEffect(async () => {
+    try {
+      const { models } = await getMeshModels();
+      const modelNames = _.uniqBy(
+        models?.map((model) => {
+          if (model.displayName && model.displayName !== '') {
+            return model.displayName;
+          }
+        }),
+        _.toLower,
+      );
+      modelNames.sort();
 
-        // Modify the schema using the utility function
-        const modifiedSchema = modifyRJSFSchema(
-          publishCatalogItemSchema,
-          'properties.compatibility.items.enum',
-          modelNames,
-        );
+      // Modify the schema using the utility function
+      const modifiedSchema = modifyRJSFSchema(
+        publishCatalogItemSchema,
+        'properties.compatibility.items.enum',
+        modelNames,
+      );
 
-        setPublishSchema({ rjsfSchema: modifiedSchema, uiSchema: publishCatalogItemUiSchema });
-        setMeshModels(models);
-      } catch (err) {
-        console.error(err);
-        handleError(ACTION_TYPES.SCHEMA_FETCH);
-        setPublishSchema(result);
-      }
-    },
-      (catalogVisibilityRef.current = catalogVisibility);
+      setPublishSchema({ rjsfSchema: modifiedSchema, uiSchema: publishCatalogItemUiSchema });
+      setMeshModels(models);
+    } catch (err) {
+      console.error(err);
+      handleError(ACTION_TYPES.SCHEMA_FETCH);
+    }
+
+    catalogVisibilityRef.current = catalogVisibility;
 
     /*
                                      Below is a graphql query that fetches the catalog patterns that is published so
