@@ -365,6 +365,8 @@ const MesheryTreeViewRegistrants = ({
   expanded,
   selected,
   setShowDetailsData,
+  lastRegistrantRef,
+  isRegistrantFetching,
 }) => {
   return (
     <TreeView
@@ -417,6 +419,8 @@ const MesheryTreeViewRegistrants = ({
           </div>
         </StyledTreeItem>
       ))}
+      <div ref={lastRegistrantRef}></div>
+      {isRegistrantFetching && <CircularProgress color="inherit" />}
     </TreeView>
   );
 };
@@ -724,6 +728,8 @@ const MesheryTreeView = ({
             expanded={expanded}
             selected={selected}
             setShowDetailsData={setShowDetailsData}
+            lastRegistrantRef={lastItemRef[REGISTRANTS]}
+            isRegistrantFetching={isFetching[REGISTRANTS]}
           />,
           REGISTRANTS,
         )}

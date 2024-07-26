@@ -130,13 +130,8 @@ const MeshModelComponent_ = ({
   });
   const [animate, setAnimate] = useState(false);
   const [checked, setChecked] = useState(false);
-  const [modelFilters, setModelsFilters] = useState({
-    page: 0,
-    // pagesize: searchText ? 'all' : 25,
-    // components: true,
-    // relationships: true,
-    // search: searchText || '',
-  });
+  const [modelFilters, setModelsFilters] = useState({ page: 0 });
+  const [registrantFilters, setRegistrantsFilters] = useState({ page: 0 });
 
   /**
    * RTK Lazy Queries
@@ -144,17 +139,31 @@ const MeshModelComponent_ = ({
   const [getMeshModelsData, modelsRes] = useLazyGetMeshModelsQuery();
   const [getComponentsData] = useLazyGetComponentsQuery();
   const [getRelationshipsData] = useLazyGetRelationshipsQuery();
-  const [getRegistrantsData] = useLazyGetRegistrantsQuery();
+  const [getRegistrantsData, registrantsRes] = useLazyGetRegistrantsQuery();
 
   const modelsData = modelsRes.data;
+  const registrantsData = registrantsRes.data;
 
   const hasMoreModels = modelsData?.total_count > modelsData?.page_size * modelsData?.page;
+  const hasMoreRegistrants =
+    registrantsData?.total_count > registrantsData?.page_size * registrantsData?.page;
 
   const loadNextModelsPage = () => {
     if (modelsRes.isLoading || modelsRes.isFetching || !hasMoreModels) {
       return;
     }
     setModelsFilters((prev) => {
+      return {
+        ...prev,
+        page: prev.page + 1,
+      };
+    });
+  };
+  const loadNextRegistrantsPage = () => {
+    if (registrantsRes.isLoading || registrantsRes.isFetching || !hasMoreRegistrants) {
+      return;
+    }
+    setRegistrantsFilters((prev) => {
       return {
         ...prev,
         page: prev.page + 1,
@@ -168,7 +177,7 @@ const MeshModelComponent_ = ({
   const lastModelRef = useInfiniteScrollRef(loadNextModelsPage);
   // const lastComponentRef = useInfiniteScrollRef();
   // const lastRelationshipRef = useInfiniteScrollRef();
-  // const lastRegistrantRef = useInfiniteScrollRef();
+  const lastRegistrantRef = useInfiniteScrollRef(loadNextRegistrantsPage);
 
   const fetchData = useCallback(async () => {
     try {
@@ -254,6 +263,7 @@ const MeshModelComponent_ = ({
     getRelationshipsData,
     getRegistrantsData,
     modelFilters,
+    registrantFilters,
     view,
     page,
     rowsPerPage,
@@ -268,8 +278,8 @@ const MeshModelComponent_ = ({
     registrantResponse = await getRegistrantsData(
       {
         params: {
-          page: searchText ? 0 : page.Registrants,
-          pagesize: searchText ? 'all' : rowsPerPage,
+          page: searchText ? 0 : registrantFilters.page,
+          pagesize: searchText ? 'all' : 25,
           search: searchText || '',
         },
       },
@@ -364,7 +374,7 @@ const MeshModelComponent_ = ({
 
   useEffect(() => {
     fetchData();
-  }, [view, page, rowsPerPage, checked, searchText, modelFilters]);
+  }, [view, page, rowsPerPage, checked, searchText, modelFilters, registrantFilters]);
 
   return (
     <div data-test="workloads">
@@ -431,8 +441,11 @@ const MeshModelComponent_ = ({
                 setShowDetailsData={setShowDetailsData}
                 showDetailsData={showDetailsData}
                 setResourcesDetail={setResourcesDetail}
-                lastItemRef={{ [MODELS]: lastModelRef }}
-                isFetching={{ [MODELS]: modelsRes.isFetching }}
+                lastItemRef={{ [MODELS]: lastModelRef, [REGISTRANTS]: lastRegistrantRef }}
+                isFetching={{
+                  [MODELS]: modelsRes.isFetching,
+                  [REGISTRANTS]: registrantsRes.isFetching,
+                }}
               />
             </Paper>
             <MeshModelDetails
