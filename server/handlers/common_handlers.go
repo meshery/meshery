@@ -152,7 +152,7 @@ func (h *Handler) DownloadHandler(responseWriter http.ResponseWriter, request *h
 		return
 	}
 }
-
+// Deep-link and redirect support to land user on their originally requested page post authentication instead of dropping user on the root (home) page.
 func GetRefURL(req *http.Request) string {
 	refURL := req.URL.Path + "?" + req.URL.RawQuery
 	// If the source is "/", and doesn't include any path or param, set refURL as empty string.
