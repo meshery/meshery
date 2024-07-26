@@ -378,7 +378,7 @@ const MesheryTreeViewModel = ({
           setShowDetailsData={setShowDetailsData}
         />
       ))}
-      <div ref={lastModelRef}></div>
+      <div ref={lastModelRef} style={{ height: '3rem' }}></div>
       {isModelFetching ? <CircularProgress color="inherit" /> : null}
     </TreeView>
   );
@@ -446,7 +446,7 @@ const MesheryTreeViewRegistrants = ({
           </div>
         </StyledTreeItem>
       ))}
-      <div ref={lastRegistrantRef}></div>
+      <div ref={lastRegistrantRef} style={{ height: '3rem' }}></div>
       {isRegistrantFetching && <CircularProgress color="inherit" />}
     </TreeView>
   );

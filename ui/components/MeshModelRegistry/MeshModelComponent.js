@@ -91,7 +91,7 @@ const useInfiniteScrollRef = (callback) => {
           }
         });
       },
-      { threshold: 1 },
+      { threshold: 0.01 },
     );
     observerRef.current.observe(triggerRef.current);
     return () => {
