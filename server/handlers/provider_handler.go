@@ -81,7 +81,7 @@ func (h *Handler) ProviderUIHandler(w http.ResponseWriter, r *http.Request) {
 			Path:     "/",
 			HttpOnly: true,
 		})
-
+		// Propagate existing request parameters, if present.
 		redirectURL := "/user/login?" + r.URL.RawQuery
 		http.Redirect(w, r, redirectURL, http.StatusFound)
 		return
