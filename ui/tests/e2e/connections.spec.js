@@ -1,3 +1,5 @@
+/* jshint esversion: 11 */
+
 import { expect, test } from '@playwright/test';
 import { ENV } from './env';
 import os from 'os';
@@ -9,7 +11,7 @@ const verifyConnectionsResBody = (body) => {
       total_count: expect.any(Number),
       page: expect.any(Number),
       page_size: expect.any(Number),
-    }),
+    })
   );
   for (const connection of body.connections) {
     expect(connection).toEqual(
@@ -29,7 +31,7 @@ const verifyConnectionsResBody = (body) => {
           Time: expect.any(String),
           Valid: expect.any(Boolean),
         }),
-      }),
+      })
     );
   }
 };
@@ -66,7 +68,7 @@ test.describe.serial('Connections Page Tests', () => {
     const connectionsReq = page.waitForRequest(
       (request) =>
         request.url().startsWith(`${ENV.MESHERY_SERVER_URL}/api/integrations/connections`) &&
-        request.method() === 'GET',
+        request.method() === 'GET'
     );
     const connectionsRes = page.waitForResponse(async (response) => {
       if (!response.url().startsWith(`${ENV.MESHERY_SERVER_URL}/api/integrations/connections`))
@@ -108,12 +110,12 @@ test.describe.serial('Connections Page Tests', () => {
     const addConnectionReq = page.waitForRequest(
       (request) =>
         request.url() === `${ENV.MESHERY_SERVER_URL}/api/system/kubernetes` &&
-        request.method() === 'POST',
+        request.method() === 'POST'
     );
     const addConnectionRes = page.waitForResponse(
       (response) =>
         response.url() === `${ENV.MESHERY_SERVER_URL}/api/system/kubernetes` &&
-        response.status() === 200,
+        response.status() === 200
     );
 
     // Click Add Cluster button
@@ -149,26 +151,26 @@ test.describe.serial('Connections Page Tests', () => {
         (request) =>
           request.url() ===
             `${ENV.MESHERY_SERVER_URL}/api/integrations/connections/kubernetes/status` &&
-          request.method() === 'PUT',
+          request.method() === 'PUT'
       );
 
       const stateTransitionRes = page.waitForResponse(
         (response) =>
           response.url() ===
             `${ENV.MESHERY_SERVER_URL}/api/integrations/connections/kubernetes/status` &&
-          response.status() === 202,
+          response.status() === 202
       );
 
       const getConnectionsReq = page.waitForRequest(
         (request) =>
           request.url().startsWith(`${ENV.MESHERY_SERVER_URL}/api/integrations/connections`) &&
-          request.method() === 'GET',
+          request.method() === 'GET'
       );
 
       const getConnectionsRes = page.waitForResponse(
         (response) =>
           response.url().startsWith(`${ENV.MESHERY_SERVER_URL}/api/integrations/connections`) &&
-          response.status() === 200,
+          response.status() === 200
       );
 
       // since test run serially, and latest connection appears at topmost,
