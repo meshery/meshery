@@ -483,7 +483,7 @@ const NotificationCenterDrawer = () => {
   const open = Boolean(anchorEl) || isNotificationCenterOpen;
 
   const handleFilter = (filters) => {
-    dispatch(loadEvents(fetchEvents, 1, filters));
+    dispatch(loadEvents(fetchEvents, 0, filters));
   };
   const drawerRef = useRef();
   const clickwayHandler = (e) => {
