@@ -3060,8 +3060,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Unable to perform logout",
-        "probable_cause": "User token might be invalid\ndb might be corrupted",
-        "suggested_remediation": "Relogin to Meshery"
+        "probable_cause": "Session might already been revoked\nRemote provider is not able to complete the request",
+        "suggested_remediation": "Close the tabs and open Meshery UI again. Optionally, try using a private/incognito browser window."
       },
       "1341": {
         "name": "ErrGetSessionCookieCode",
@@ -3197,6 +3197,15 @@
         "short_description": "",
         "probable_cause": "Possible causes include invalid resource configuration, insufficient permissions, or network issues.",
         "suggested_remediation": "Verify the resource configuration and ensure it is correct. Ensure you have the necessary permissions to update the resource. Check network connectivity to the Kubernetes cluster."
+      },
+      "1356": {
+        "name": "ErrEmptySessionCode",
+        "code": "1356",
+        "severity": "Alert",
+        "long_description": "Unable to find \\\"token\\\" cookie in the request.",
+        "short_description": "No session found in the request",
+        "probable_cause": "User is not authenticated with the selected Provider.\nBrowser might be restricting use of cookies.",
+        "suggested_remediation": "Choose a Provider and login to establish an active session (receive a new token and cookie). Optionally, try using a private/incognito browser window.\nVerify that your browser settings allow cookies."
       }
     }
   }
