@@ -31,6 +31,7 @@ import {
 import NoSsr from '@material-ui/core/NoSsr';
 import { groupRelationshipsByKind, removeDuplicateVersions } from './helper';
 import _ from 'lodash';
+import { useRef } from 'react';
 
 const meshmodelStyles = (theme) => ({
   wrapperClss: {
@@ -73,6 +74,34 @@ const useMeshModelComponentRouter = () => {
   return { searchQuery, selectedTab, selectedPageSize };
 };
 
+const useInfiniteScrollRef = (callback) => {
+  const observerRef = useRef(null);
+  const triggerRef = useRef(null);
+
+  useEffect(() => {
+    if (!triggerRef.current) {
+      return () => observerRef.current && observerRef.current.disconnect();
+    }
+
+    observerRef.current = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            callback();
+          }
+        });
+      },
+      { threshold: 1 },
+    );
+    observerRef.current.observe(triggerRef.current);
+    return () => {
+      observerRef.current && observerRef.current.disconnect();
+    };
+  }, [callback, triggerRef.current]);
+
+  return triggerRef;
+};
+
 const MeshModelComponent_ = ({
   modelsCount,
   componentsCount,
@@ -101,14 +130,45 @@ const MeshModelComponent_ = ({
   });
   const [animate, setAnimate] = useState(false);
   const [checked, setChecked] = useState(false);
+  const [modelFilters, setModelsFilters] = useState({
+    page: 0,
+    // pagesize: searchText ? 'all' : 25,
+    // components: true,
+    // relationships: true,
+    // search: searchText || '',
+  });
 
   /**
    * RTK Lazy Queries
    */
-  const [getMeshModelsData] = useLazyGetMeshModelsQuery();
+  const [getMeshModelsData, modelsRes] = useLazyGetMeshModelsQuery();
   const [getComponentsData] = useLazyGetComponentsQuery();
   const [getRelationshipsData] = useLazyGetRelationshipsQuery();
   const [getRegistrantsData] = useLazyGetRegistrantsQuery();
+
+  const modelsData = modelsRes.data;
+
+  const hasMoreModels = modelsData?.total_count > modelsData?.page_size * modelsData?.page;
+
+  const loadNextModelsPage = () => {
+    if (modelsRes.isLoading || modelsRes.isFetching || !hasMoreModels) {
+      return;
+    }
+    setModelsFilters((prev) => {
+      return {
+        ...prev,
+        page: prev.page + 1,
+      };
+    });
+  };
+
+  /**
+   * IntersectionObservers
+   */
+  const lastModelRef = useInfiniteScrollRef(loadNextModelsPage);
+  // const lastComponentRef = useInfiniteScrollRef();
+  // const lastRelationshipRef = useInfiniteScrollRef();
+  // const lastRegistrantRef = useInfiniteScrollRef();
 
   const fetchData = useCallback(async () => {
     try {
@@ -118,8 +178,9 @@ const MeshModelComponent_ = ({
           response = await getMeshModelsData(
             {
               params: {
-                page: searchText ? 0 : page.Models,
-                pagesize: 'all',
+                page: searchText ? 0 : modelFilters.page,
+                // pagesize: 'all',
+                pagesize: searchText ? 'all' : 25,
                 components: false,
                 relationships: false,
                 search: searchText || '',
@@ -192,6 +253,7 @@ const MeshModelComponent_ = ({
     getComponentsData,
     getRelationshipsData,
     getRegistrantsData,
+    modelFilters,
     view,
     page,
     rowsPerPage,
@@ -302,7 +364,7 @@ const MeshModelComponent_ = ({
 
   useEffect(() => {
     fetchData();
-  }, [view, page, rowsPerPage, checked, searchText]);
+  }, [view, page, rowsPerPage, checked, searchText, modelFilters]);
 
   return (
     <div data-test="workloads">
@@ -369,6 +431,8 @@ const MeshModelComponent_ = ({
                 setShowDetailsData={setShowDetailsData}
                 showDetailsData={showDetailsData}
                 setResourcesDetail={setResourcesDetail}
+                lastItemRef={{ [MODELS]: lastModelRef }}
+                isFetching={{ [MODELS]: modelsRes.isFetching }}
               />
             </Paper>
             <MeshModelDetails

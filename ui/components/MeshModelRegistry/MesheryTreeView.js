@@ -325,6 +325,8 @@ const MesheryTreeViewModel = ({
   expanded,
   selected,
   setShowDetailsData,
+  lastModelRef,
+  isModelFetching,
 }) => {
   return (
     <TreeView
@@ -349,6 +351,8 @@ const MesheryTreeViewModel = ({
           setShowDetailsData={setShowDetailsData}
         />
       ))}
+      <div ref={lastModelRef}></div>
+      {isModelFetching ? <CircularProgress color="inherit" /> : null}
     </TreeView>
   );
 };
@@ -464,6 +468,8 @@ const MesheryTreeView = ({
   setShowDetailsData,
   showDetailsData,
   setResourcesDetail,
+  lastItemRef,
+  isFetching,
 }) => {
   const { handleUpdateSelectedRoute, selectedItemUUID } = useRegistryRouter();
   const [expanded, setExpanded] = React.useState([]);
@@ -704,6 +710,8 @@ const MesheryTreeView = ({
             expanded={expanded}
             selected={selected}
             setShowDetailsData={setShowDetailsData}
+            lastModelRef={lastItemRef[MODELS]}
+            isModelFetching={isFetching[MODELS]}
           />,
           MODELS,
         )}
