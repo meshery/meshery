@@ -6,9 +6,10 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshery/server/models/pattern/utils"
+	mutils "github.com/layer5io/meshkit/utils"
 	"github.com/meshery/schemas/models/v1beta1"
+	"github.com/pkg/errors"
 )
 
 const FillerPattern = `\$\(#ref\..+\)`
@@ -32,37 +33,40 @@ func Filler(skipPrintLogs bool) ChainStageFunction {
 		}
 
 		// Flatten the service map to perform queries
-		flatSvc := map[string]interface{}{}
-		utils.FlattenMap("", utils.ToMapStringInterface(data.Pattern), flatSvc)
+		flattenedComponent := map[string]interface{}{}
+		utils.FlattenMap("", utils.ToMapStringInterface(data.Pattern), flattenedComponent)
 		if !skipPrintLogs {
-			fmt.Printf("%+#v\n", flatSvc)
+			fmt.Printf("%+#v\n", flattenedComponent)
 		}
-		err = fill(data.Pattern, flatSvc)
+		err = fill(data.Pattern, flattenedComponent)
 		if next != nil {
 			next(data, err)
 		}
 	}
 }
 
-func fill(p *v1beta1.PatternFile, flatSvc map[string]interface{}) error {
+func fill(p *v1beta1.PatternFile, flattenedComponent map[string]interface{}) error {
 	var errs []error
-	for _, v := range p.Services {
-		if err := fillDependsOn(v, flatSvc); err != nil {
+	for _, component := range p.Components {
+		if err := fillDependsOn(component, flattenedComponent); err != nil {
+			err = ErrResolveReference(err)
 			errs = append(errs, err)
 		}
-		if err := fillNamespace(v, flatSvc); err != nil {
+		if err := fillNamespace(component, flattenedComponent); err != nil {
+			err = ErrResolveReference(err)
 			errs = append(errs, err)
 		}
-		if err := fillVersion(v, flatSvc); err != nil {
+		if err := fillVersion(component, flattenedComponent); err != nil {
+			err = ErrResolveReference(err)
 			errs = append(errs, err)
 		}
-		if err := fillSettings(v, flatSvc); err != nil {
+		if err := fillConfiguration(component, flattenedComponent); err != nil {
+			err = ErrResolveReference(err)
 			errs = append(errs, err)
 		}
-		if err := fillTraits(v, flatSvc); err != nil {
-			errs = append(errs, err)
-		}
-		if err := fillType(v, flatSvc); err != nil {
+		
+		if err := fillType(component, flattenedComponent); err != nil {
+			err = ErrResolveReference(err)
 			errs = append(errs, err)
 		}
 	}
@@ -70,105 +74,122 @@ func fill(p *v1beta1.PatternFile, flatSvc map[string]interface{}) error {
 	return mergeErrors(errs)
 }
 
-func fillDependsOn(svc *core.Service, flatSvc map[string]interface{}) error {
-	for i, d := range svc.DependsOn {
+func fillDependsOn(component *v1beta1.ComponentDefinition, flattenedPattern map[string]interface{}) error {
+	dependsOn, err := mutils.Cast[[]string](component.Metadata.AdditionalProperties["dependsOn"])
+	if err != nil {
+		return err
+	}
+
+	for i, d := range dependsOn {
 		k, ok := matchPattern(d)
 		if !ok {
 			continue
 		}
 
-		val, found := flatSvc[k]
+		val, found := flattenedPattern[k]
 		if !found {
-			return fmt.Errorf("invalid reference query: %s", k)
+			return fmt.Errorf("failed to resolve reference \"%s\": %s", "dependsOn", k)
 		}
 
-		cval, ok := val.(string)
-		if !ok {
-			return fmt.Errorf("resolved reference query [%s] does not return string", k)
+		cval, err := mutils.Cast[string](val)
+		if err != nil {
+			return errors.Wrapf(err, "failed to resolve reference \"%s\": %s", "dependsOn", val)
 		}
 
-		svc.DependsOn[i] = cval
+		dependsOn[i] = cval
 	}
 
 	return nil
 }
-func fillVersion(svc *core.Service, flatSvc map[string]interface{}) error {
-	nsKey, ok := matchPattern(svc.Version)
+
+func fillVersion(component *v1beta1.ComponentDefinition, flattenedPattern map[string]interface{}) error {
+	// Refernce to a version?
+	// So that if user chooses a comp def of other comps but all other comps in design refer to some other version,
+	// So instead of choosing new comp of correct version, user can quickly point to particular version?
+	// But it can be that the version are not compatible??
+	versionKey, ok := matchPattern(component.Model.Model.Version)
 	if !ok {
 		return nil
 	}
 
-	val, found := flatSvc[nsKey]
+	val, found := flattenedPattern[versionKey]
+	if !found {
+		return fmt.Errorf("failed to resolve reference \"%s\": %s", "version", versionKey)
+	}
+
+	vVal, err := mutils.Cast[string](val)
+	if err != nil {
+		return errors.Wrapf(err, "failed to resolve reference \"%s\": %s", "version", versionKey)
+	}
+
+	component.Model.Model.Version = vVal
+	return nil
+}
+
+func fillNamespace(component *v1beta1.ComponentDefinition, flattenedPattern map[string]interface{}) error {
+	configurationMetadata, err := mutils.Cast[map[string]interface{}](component.Configuration["metadata"])
+	if err != nil {
+		return errors.Wrapf(err, "failed to resolve namespace reference for \"%s: %s\"", component.DisplayName, component.Component.Kind)
+	}
+	
+	namespaceKey, err := mutils.Cast[string](configurationMetadata["namespace"])
+	if err != nil {
+		return errors.Wrapf(err, "failed to resolve namespace reference for \"%s: %s\"", component.DisplayName, component.Component.Kind)
+	}
+
+	nsKey, ok := matchPattern(namespaceKey)
+	if !ok {
+		return nil
+	}
+
+	val, found := flattenedPattern[nsKey]
 	if !found {
 		return fmt.Errorf("invalid reference query: %s", nsKey)
 	}
 
-	vVal, ok := val.(string)
-	if !ok {
-		return fmt.Errorf("resolved reference query [%s] does not return string", nsKey)
+	nsVal, err := mutils.Cast[string](val)
+	if err != nil {
+		return errors.Wrapf(err, "failed to resolve reference \"%s\": %s", "namespace", nsKey)
 	}
 
-	svc.Version = vVal
+	configurationMetadata["namespace"] = nsVal
+	component.Configuration["metadata"] = configurationMetadata
 	return nil
 }
-func fillNamespace(svc *core.Service, flatSvc map[string]interface{}) error {
-	nsKey, ok := matchPattern(svc.Namespace)
+
+func fillType(component *v1beta1.ComponentDefinition, flattenedPattern map[string]interface{}) error {
+	kindKey, ok := matchPattern(component.Kind)
 	if !ok {
 		return nil
 	}
 
-	val, found := flatSvc[nsKey]
+	val, found := flattenedPattern[kindKey]
 	if !found {
-		return fmt.Errorf("invalid reference query: %s", nsKey)
+		return  errors.Wrapf(fmt.Errorf("failed to resolve reference"), "failed to resolve \"kind\" reference for \"%s: %s\"", kindKey, component.Component.Kind)
 	}
 
-	nsVal, ok := val.(string)
-	if !ok {
-		return fmt.Errorf("resolved reference query [%s] does not return string", nsKey)
+	kindVal, err := mutils.Cast[string](val)
+	if err != nil {
+		return errors.Wrapf(err, "failed to resolved \"kind\" reference: %s", kindKey)
 	}
 
-	svc.Namespace = nsVal
+	component.Kind = kindVal
 	return nil
 }
 
-func fillType(svc *core.Service, flatSvc map[string]interface{}) error {
-	tKey, ok := matchPattern(svc.Type)
-	if !ok {
-		return nil
-	}
-
-	val, found := flatSvc[tKey]
-	if !found {
-		return fmt.Errorf("invalid reference query: %s", tKey)
-	}
-
-	tVal, ok := val.(string)
-	if !ok {
-		return fmt.Errorf("resolved reference query [%s] does not return string", tKey)
-	}
-
-	svc.Type = tVal
-	return nil
-}
-
-func fillSettings(svc *core.Service, flatSvc map[string]interface{}) (err error) {
-	svc.Settings, err = fillMap(svc.Settings, flatSvc)
+func fillConfiguration(component *v1beta1.ComponentDefinition, flattenedPattern map[string]interface{}) (err error) {
+	component.Configuration, err = fillMap(component.Configuration, flattenedPattern)
 	return
 }
 
-func fillTraits(svc *core.Service, flatSvc map[string]interface{}) (err error) {
-	svc.Traits, err = fillMap(svc.Traits, flatSvc)
-	return
-}
-
-func fillMap(mp map[string]interface{}, flatSvc map[string]interface{}) (map[string]interface{}, error) {
+func fillMap(mp map[string]interface{}, flattenedPattern map[string]interface{}) (map[string]interface{}, error) {
 	var _fillMap func(mp map[string]interface{}) (map[string]interface{}, error)
 
 	_fillMap = func(mp map[string]interface{}) (map[string]interface{}, error) {
 		for k, v := range mp {
 			switch cNode := v.(type) {
 			case string:
-				val, ok, err := fillMapString(cNode, flatSvc)
+				val, ok, err := fillMapString(cNode, flattenedPattern)
 				if err != nil {
 					return mp, err
 				}
@@ -182,7 +203,7 @@ func fillMap(mp map[string]interface{}, flatSvc map[string]interface{}) (map[str
 				for i, el := range cNode {
 					switch ccNode := el.(type) {
 					case string:
-						val, ok, err := fillMapString(ccNode, flatSvc)
+						val, ok, err := fillMapString(ccNode, flattenedPattern)
 						if err != nil {
 							return mp, err
 						}
@@ -216,13 +237,13 @@ func fillMap(mp map[string]interface{}, flatSvc map[string]interface{}) (map[str
 	return _fillMap(mp)
 }
 
-func fillMapString(str string, flatSvc map[string]interface{}) (string, bool, error) {
+func fillMapString(str string, flattenedPattern map[string]interface{}) (string, bool, error) {
 	res, ok := matchPattern(str)
 	if !ok {
 		return "", false, nil
 	}
 
-	val, found := flatSvc[res]
+	val, found := flattenedPattern[res]
 	if !found {
 		return "", false, fmt.Errorf("invalid reference query: %s", res)
 	}

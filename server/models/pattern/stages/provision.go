@@ -73,9 +73,7 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider, log logger.H
 				comp.GetAnnotations(),
 				getAdditionalAnnotations(data.Pattern),
 			))
-			if core.Format { //deprettify the component before deploying
-				comp.Spec.Settings = core.Format.DePrettify(comp.Spec.Settings, false)
-			}
+			
 			ccp.Component = comp
 			// Add configuration only if traits are applied to the component
 			if len(svc.Traits) > 0 {
