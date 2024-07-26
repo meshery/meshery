@@ -238,7 +238,6 @@ func _processPattern(
 		chain := stages.CreateChain()
 		chain.
 			// Add(stages.Import(sip, sap)).
-			Add(stages.ServiceIdentifierAndMutator(sip, sap)).
 			Add(stages.Filler(skipPrintLogs)).
 			// Calling this stage `The Validation stage` is a bit deceiving considering
 			// that the validation stage also formats the `data` (chain function parameter) that the
