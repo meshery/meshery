@@ -9,6 +9,7 @@ import (
 	"github.com/layer5io/meshery/server/models/pattern/planner"
 	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
+	pattern "github.com/meshery/schemas/models/v1beta1"
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
 )
@@ -63,7 +64,6 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider, log logger.H
 			// Generate hosts list
 			ccp.Hosts = generateHosts(
 				data.PatternSvcWorkloadCapabilities[name],
-				data.PatternSvcTraitCapabilities[name],
 				act.GetRegistry(),
 			)
 
@@ -101,7 +101,7 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider, log logger.H
 	}
 }
 
-func processAnnotations(pattern *core.Pattern) {
+func processAnnotations(pattern *pattern.PatternFile) {
 	for name, svc := range pattern.Services {
 		if svc.IsAnnotation {
 			// this particular block is present so that designs with previous filters don't break
@@ -124,7 +124,7 @@ func processAnnotations(pattern *core.Pattern) {
 	}
 }
 
-func generateHosts(wc v1beta1.ComponentDefinition, _ []core.TraitCapability, reg *meshmodel.RegistryManager) map[v1beta1.Host]bool {
+func generateHosts(wc v1beta1.ComponentDefinition, reg *meshmodel.RegistryManager) map[v1beta1.Host]bool {
 	res := map[v1beta1.Host]bool{}
 	host := reg.GetRegistrant(&wc)
 	res[host] = true

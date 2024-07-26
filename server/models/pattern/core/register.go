@@ -97,6 +97,7 @@ type crdhelper struct {
 	Metadata map[string]interface{} `json:"metadata"`
 }
 
+// not in use
 // GetK8Components returns all the generated definitions and schemas for available api resources
 func GetK8Components(ctxt context.Context, config []byte) (*manifests.Component, error) {
 	cli, err := kubernetes.New(config)

@@ -3,11 +3,12 @@ package planner
 import (
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshkit/logger"
+	"github.com/meshery/schemas/models/v1beta1"
 )
 
 // Plan struct represents a node of an execution plan
 type Plan struct {
-	Data core.Pattern
+	Data v1beta1.PatternFile
 	*Graph
 }
 
@@ -25,7 +26,7 @@ func (p *Plan) Execute(cb func(string, core.Service) bool, log logger.Handler) e
 }
 
 // CreatePlan takes in the application components and creates a plan of execution for it
-func CreatePlan(pattern core.Pattern, invert bool) (*Plan, error) {
+func CreatePlan(pattern v1beta1.PatternFile, invert bool) (*Plan, error) {
 	g := NewGraph()
 
 	for name, svc := range pattern.Services {

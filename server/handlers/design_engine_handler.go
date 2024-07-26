@@ -173,7 +173,7 @@ func (h *Handler) PatternFileHandler(
 func _processPattern(
 	ctx context.Context,
 	provider models.Provider,
-	pattern core.Pattern,
+	pattern v1beta1.PatternFile,
 	prefObj *models.Preference,
 	userID string,
 	isDelete,
@@ -199,17 +199,6 @@ func _processPattern(
 		return nil, ErrInvalidKubeHandler(fmt.Errorf("failed to find k8s handler for \"%s\"", pattern.Name), "_processPattern couldn't find a valid k8s handler")
 	}
 
-	// // Get the kubernetes config from the context
-	// kubecfg, ok := ctx.Value(models.KubeConfigKey).([]byte)
-	// if !ok || kubecfg == nil {
-	// 	return "", ErrInvalidKubeConfig(fmt.Errorf("failed to find k8s config"), "_processPattern couldn't find a valid k8s config")
-	// }
-
-	// // Get the kubernetes context from the context
-	// mk8scontext, ok := ctx.Value(models.KubeContextKey).(*models.K8sContext)
-	// if !ok || mk8scontext == nil {
-	// 	return "", ErrInvalidKubeContext(fmt.Errorf("failed to find k8s context"), "_processPattern couldn't find a valid k8s context")
-	// }
 	var ctxToconfig = make(map[string]string)
 	for _, ctx := range k8scontexts {
 		cfg, err := ctx.GenerateKubeConfig()
@@ -219,6 +208,7 @@ func _processPattern(
 		ctxToconfig[ctx.ID] = string(cfg)
 		// configs = append(configs, string(cfg))
 	}
+
 	internal := func(mk8scontext []models.K8sContext) (map[string]interface{}, error) {
 		sip := &serviceInfoProvider{
 			token:      token,
@@ -247,7 +237,7 @@ func _processPattern(
 		}
 		chain := stages.CreateChain()
 		chain.
-			Add(stages.Import(sip, sap)).
+			// Add(stages.Import(sip, sap)).
 			Add(stages.ServiceIdentifierAndMutator(sip, sap)).
 			Add(stages.Filler(skipPrintLogs)).
 			// Calling this stage `The Validation stage` is a bit deceiving considering
@@ -357,7 +347,7 @@ func (sap *serviceActionProvider) Terminate(err error) {
 	}
 	sap.err = err
 }
-func (sap *serviceActionProvider) Mutate(p *core.Pattern) {
+func (sap *serviceActionProvider) Mutate(p *v1beta1.PatternFile) {
 	//TODO: externalize these mutation rules with policies.
 	//1. Enforce the deployment of CRDs before other resources
 	for name, svc := range p.Services {

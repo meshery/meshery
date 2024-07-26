@@ -27,5 +27,5 @@ type ServiceActionProvider interface {
 	GetRegistry() *registry.RegistryManager
 	Persist(string, core.Service, bool) error
 	DryRun([]v1beta1.Component) (map[string]map[string]core.DryRunResponseWrapper, error)
-	Mutate(*core.Pattern) //Uses pre-defined policies/configuration to mutate the pattern
+	Mutate(*v1beta1.PatternFile) //Uses pre-defined policies/configuration to mutate the pattern
 }

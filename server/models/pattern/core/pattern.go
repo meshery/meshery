@@ -235,26 +235,7 @@ func IsValidPattern(stringifiedFile string) (err error) {
 // GetApplicationComponent generates OAM Application Components from the
 // the given Pattern file
 func (p *Pattern) GetApplicationComponent(name string) (modelv1beta1.Component, error) {
-	svc, ok := p.Services[name]
-	if !ok {
-		return modelv1beta1.Component{}, fmt.Errorf("invalid service name")
-	}
-	comp := modelv1beta1.Component{
-		TypeMeta: v1.TypeMeta{Kind: "Component", APIVersion: "core.oam.dev/v1alpha2"},
-		ObjectMeta: v1.ObjectMeta{
-			Name:        svc.Name,
-			Namespace:   svc.Namespace,
-			Labels:      svc.Labels,
-			Annotations: svc.Annotations,
-		},
-		Spec: modelv1beta1.ComponentSpec{
-			Type:       svc.Type,
-			Version:    svc.Version,
-			Model:      svc.Model,
-			APIVersion: svc.APIVersion,
-			Settings:   svc.Settings,
-		},
-	}
+	
 	if comp.ObjectMeta.Labels == nil {
 		comp.ObjectMeta.Labels = make(map[string]string)
 	}

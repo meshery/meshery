@@ -8,6 +8,7 @@ import (
 
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshery/server/models/pattern/utils"
+	"github.com/meshery/schemas/models/v1beta1"
 )
 
 const FillerPattern = `\$\(#ref\..+\)`
@@ -43,7 +44,7 @@ func Filler(skipPrintLogs bool) ChainStageFunction {
 	}
 }
 
-func fill(p *core.Pattern, flatSvc map[string]interface{}) error {
+func fill(p *v1beta1.PatternFile, flatSvc map[string]interface{}) error {
 	var errs []error
 	for _, v := range p.Services {
 		if err := fillDependsOn(v, flatSvc); err != nil {
