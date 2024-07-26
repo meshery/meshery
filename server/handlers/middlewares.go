@@ -78,7 +78,7 @@ func (h *Handler) AuthMiddleware(next http.Handler, auth models.AuthenticationMe
 		// 		return
 		// 	}
 		case models.ProviderAuth:
-
+			// Propagate existing request parameters, if present.
 			queryParams := req.URL.Query()
 			if refURLB64 != "" {
 				queryParams["ref"] = []string{refURLB64} 

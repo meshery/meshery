@@ -32,6 +32,7 @@ function AlertUnauthenticatedSession() {
     const timer = setTimeout(() => {
       if (countDown === 1) {
         handleClose();
+        // Propagate existing request parameters, if present.
         const existingQueryString = window.location.search;
         window.location = `/user/login${existingQueryString}`;
       }

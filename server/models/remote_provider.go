@@ -272,6 +272,7 @@ func (l *RemoteProvider) executePrefSync(tokenString string, sess *Preference) {
 func (l *RemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _ bool) {
 	baseCallbackURL := r.Context().Value(MesheryServerCallbackURL).(string)
 
+	// Support for deep-link and redirection to land user on their originally requested page post authentication instead of dropping user on the root (home) page.
 	refURLqueryParam := r.URL.Query().Get("ref")
 
 	mesheryVersion := viper.GetString("BUILD")
