@@ -125,7 +125,7 @@ const InfoModal_ = React.memo((props) => {
     } else if (dataName === FILTER_PLURAL) {
       setSaveFormLoading(true);
       let config = '';
-      if (selectedResource.filter_resource !== null || selectedResource.filter_resource !== '') {
+      if (selectedResource?.filter_resource && selectedResource?.filter_resource !== '') {
         config = JSON.parse(selectedResource.filter_resource).settings.config; // send the config in order to prevent over-write of the config
       }
       body = JSON.stringify({
@@ -451,7 +451,7 @@ const InfoModal_ = React.memo((props) => {
               onClick={handlePublishController}
               className={classes.copyButton}
               disabled={
-                isAdmin
+                !isPublished
                   ? false
                   : !(
                       CAN(keys.PUBLISH_DESIGN.action, keys.PUBLISH_DESIGN.subject) &&
