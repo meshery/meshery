@@ -188,7 +188,6 @@ const MeshModelComponent_ = ({
             {
               params: {
                 page: searchText ? 0 : modelFilters.page,
-                // pagesize: 'all',
                 pagesize: searchText ? 'all' : 25,
                 components: false,
                 relationships: false,
