@@ -652,13 +652,13 @@
         "suggested_remediation": "Check Trait Definition"
       },
       "1073": {
-        "name": "ErrCompConfigPairsCode",
+        "name": "ErrPatternDeployCode",
         "code": "1073",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "unable to Create Comp Config.",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "short_description": "Unable to deploy the selected design \\\"%s\\",
+        "probable_cause": "Connection Error: There was an error connecting to the selected target platform (i.e. Kubernetes cluster(s)).\nThis connection might not be assigned to the selected environment.",
+        "suggested_remediation": "Verify that the Kubernetes connection status is 'Connected' or try uploading a new kubeconfig.\nAssign the current Kubernetes connection to the selected environment."
       },
       "1074": {
         "name": "ErrCreateDirCode",
