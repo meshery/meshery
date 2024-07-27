@@ -325,6 +325,8 @@ const MeshModelComponent_ = ({
       setSearchText(null);
       setResourcesDetail([]);
     }
+    setModelsFilters({ page: 0 });
+    setRegistrantsFilters({ page: 0 });
     setPage({
       Models: 0,
       Components: 0,
