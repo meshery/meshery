@@ -161,7 +161,7 @@ const MeshModelComponent_ = ({
           break;
       }
 
-      if (response.data) {
+      if (response.data && response.data[view.toLowerCase()]) {
         // When search or "show duplicates" functionality is active:
         // Avoid appending data to the previous dataset.
         // preventing duplicate entries and ensuring the UI reflects the API's response accurately.

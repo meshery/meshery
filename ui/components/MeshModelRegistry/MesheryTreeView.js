@@ -311,9 +311,9 @@ const MesheryTreeViewItem = ({
               versionedModelDef.id
             }`}
             labelText={
-              versionedModelDef.model.version[0] == 'v'
-                ? versionedModelDef.model.version
-                : `v${versionedModelDef.model.version}`
+              versionedModelDef?.model?.version?.[0] == 'v'
+                ? versionedModelDef?.model?.version
+                : `v${versionedModelDef?.model?.version}`
             }
             check={true}
             onClick={() => {
@@ -421,7 +421,7 @@ const MesheryTreeViewRegistrants = ({
             <StyledTreeItem
               nodeId={`${registrant.id}.1`}
               data-id={`${registrant.id}.1`}
-              labelText={`Models (${registrant?.models.length})`}
+              labelText={`Models (${registrant?.models?.length})`}
             >
               {registrant?.models.map((modelDef, index) => (
                 <MesheryTreeViewItem
