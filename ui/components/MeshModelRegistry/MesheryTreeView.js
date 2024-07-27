@@ -394,7 +394,7 @@ const MesheryTreeViewRegistrants = ({
             <StyledTreeItem
               nodeId={`${registrant.id}.1`}
               data-id={`${registrant.id}.1`}
-              labelText={`Models (${registrant?.models.length})`}
+              labelText={`Models (${registrant?.models?.length})`}
             >
               {registrant?.models.map((modelDef, index) => (
                 <MesheryTreeViewItem
