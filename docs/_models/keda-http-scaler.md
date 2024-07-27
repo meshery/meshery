@@ -6,8 +6,8 @@ image: /assets/img/integrations/keda-http-scaler/icons/color/keda-http-scaler-co
 permalink: extensibility/integrations/keda-http-scaler
 docURL: https://docs.meshery.io/extensibility/integrations/keda-http-scaler
 description: 
-integrations-category: Serverless
-integrations-subcategory: Installable Platform
+integrations-category: Orchestration & Management
+integrations-subcategory: Scheduling & Orchestration
 registrant: Artifact Hub
 components: 
 - name: http-scaled-object

@@ -78,6 +78,7 @@ type UserPref struct {
 const (
 	remoteUploadURL   = "/upload"
 	remoteDownloadURL = "/download"
+	refURLCookie      = "meshery_ref"
 )
 
 // Initialize function will initialize the RemoteProvider instance with the metadata
@@ -269,8 +270,16 @@ func (l *RemoteProvider) executePrefSync(tokenString string, sess *Preference) {
 //
 // Every Remote Provider must offer this function
 func (l *RemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _ bool) {
-	callbackURL := r.Context().Value(MesheryServerCallbackURL).(string)
+	baseCallbackURL := r.Context().Value(MesheryServerCallbackURL).(string)
+
+	// Support for deep-link and redirection to land user on their originally requested page post authentication instead of dropping user on the root (home) page.
+	refURLqueryParam := r.URL.Query().Get("ref")
+
 	mesheryVersion := viper.GetString("BUILD")
+
+	callbackURL, _ := url.Parse(baseCallbackURL)
+	callbackURL = callbackURL.JoinPath(r.URL.EscapedPath())
+	callbackURL.RawQuery = r.URL.RawQuery
 
 	_, err := r.Cookie(TokenCookieName)
 	if err != nil {
@@ -281,7 +290,23 @@ func (l *RemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _
 			Path:     "/",
 			HttpOnly: true,
 		})
-		http.Redirect(w, r, l.RemoteProviderURL+"/login?source="+base64.RawURLEncoding.EncodeToString([]byte(callbackURL))+"&provider_version="+l.ProviderVersion+"&meshery_version="+mesheryVersion, http.StatusFound)
+
+		var refURL []string
+		// If refURL is empty, generate the refURL based on the current requests path and query param.
+		if refURLqueryParam == "" {
+			refURL = []string{base64.RawURLEncoding.EncodeToString([]byte(strings.TrimPrefix(callbackURL.String(), baseCallbackURL)))}
+		} else {
+			refURL = append(refURL, refURLqueryParam)
+		}
+
+		queryParams := url.Values{
+			"source":           []string{base64.RawURLEncoding.EncodeToString([]byte(baseCallbackURL))},
+			"provider_version": []string{l.ProviderVersion},
+			"meshery_version":  []string{mesheryVersion},
+			"ref":              refURL,
+		}
+
+		http.Redirect(w, r, l.RemoteProviderURL+"/login?"+queryParams.Encode(), http.StatusFound)
 		return
 	}
 
@@ -501,7 +526,7 @@ func (l *RemoteProvider) GetSession(req *http.Request) error {
 	ts, err := l.GetToken(req)
 	if err != nil || ts == "" {
 		l.Log.Info("session not found")
-		return err
+		return ErrEmptySession
 	}
 	jwtClaims, err := l.VerifyToken(ts)
 	if err != nil {
@@ -631,7 +656,7 @@ func (l *RemoteProvider) HandleUnAuthenticated(w http.ResponseWriter, req *http.
 	if err == nil {
 		// remove the cookie from the browser and redirect to inform about expired session.
 		l.UnSetJWTCookie(w)
-		http.Redirect(w, req, "/auth/login", http.StatusFound)
+		http.Redirect(w, req, "/auth/login?"+req.URL.RawQuery, http.StatusFound)
 		return
 	}
 	http.Redirect(w, req, "/provider", http.StatusFound)
@@ -3404,6 +3429,11 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ 
 	isPlayGround, _ := strconv.ParseBool(viper.GetString("PLAYGROUND"))
 	if isPlayGround {
 		redirectURL = "/extension/meshmap"
+	}
+
+	refQueryParam := r.URL.Query().Get("ref")
+	if refQueryParam != "" {
+		redirectURL = refQueryParam
 	}
 
 	go func() {

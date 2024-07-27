@@ -476,7 +476,7 @@ const Environments = ({ organization, classes }) => {
               onSearch={(value) => {
                 setSearch(value);
               }}
-              placeholder="Search connections..."
+              placeholder="Search Environments..."
               expanded={isSearchExpanded}
               setExpanded={setIsSearchExpanded}
             />
@@ -591,6 +591,7 @@ const Environments = ({ organization, classes }) => {
               closeModal={handleonAssignConnectionModalClose}
               title={`${connectionAssignEnv.name} Resources`}
               headerIcon={<EnvironmentIcon height="2rem" width="2rem" fill="white" />}
+              maxWidth="md"
             >
               <ModalBody>
                 <TransferList
