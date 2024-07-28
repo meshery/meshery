@@ -404,7 +404,7 @@ function MesheryFilters({
       setPublishSchema({ rjsfSchema: modifiedSchema, uiSchema: publishCatalogItemUiSchema });
       setMeshModels(models);
     } catch (err) {
-      console.error(err);
+      handleError(ACTION_TYPES.SCHEMA_FETCH);
     }
 
     if (capabilitiesData) {
