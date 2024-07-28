@@ -30,7 +30,7 @@ type CountBySeverityLevel struct {
 func (e *EventsPersister) GetEventTypes(userID uuid.UUID, sysID uuid.UUID) (map[string]interface{}, error) {
 	eventTypes := make(map[string]interface{}, 2)
 	var categories, actions []string
-	err := e.DB.Table("events").Distinct("category").Where("user_id = ? OR user_id = ?", userID, sysID).Find(&categories).Error
+	err := e.DB.Table("events").Distinct("category").Where("user_id = ? OR system_id = ?", userID, sysID).Find(&categories).Error
 	if err != nil {
 		return nil, err
 	}
@@ -47,7 +47,7 @@ func (e *EventsPersister) GetEventTypes(userID uuid.UUID, sysID uuid.UUID) (map[
 
 func (e *EventsPersister) GetAllEvents(eventsFilter *events.EventsFilter, userID uuid.UUID, sysID uuid.UUID) (*EventsResponse, error) {
 	eventsDB := []*events.Event{}
-	finder := e.DB.Model(&events.Event{}).Where("user_id = ? OR user_id = ?", userID, sysID)
+	finder := e.DB.Model(&events.Event{}).Where("user_id = ? OR system_id = ?", userID, sysID)
 
 	if len(eventsFilter.Category) != 0 {
 		finder = finder.Where("category IN ?", eventsFilter.Category)
@@ -160,7 +160,7 @@ func (e *EventsPersister) getCountBySeverity(userID, sysID uuid.UUID, eventStatu
 	}
 
 	eventsBySeverity := []*CountBySeverityLevel{}
-	err := e.DB.Model(&events.Event{}).Select("severity, count(severity) as count").Where("status = ? AND (user_id = ? OR user_id = ?)", eventStatus, userID, sysID).Group("severity").Find(&eventsBySeverity).Error
+	err := e.DB.Model(&events.Event{}).Select("severity, count(severity) as count").Where("status = ? AND (user_id = ? OR system_id = ?)", eventStatus, userID, sysID).Group("severity").Find(&eventsBySeverity).Error
 	if err != nil {
 		return nil, err
 	}
