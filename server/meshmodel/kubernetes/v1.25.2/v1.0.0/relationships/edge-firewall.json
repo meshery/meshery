@@ -4,6 +4,7 @@
   "kind": "Edge",
   "metadata": {
     "description": "A relationship that act as a firewall for ingress and egress traffic from Pods.",
+    "animation": "marching-ants",
     "capabilities": {
       "designer": {
         "edit": {

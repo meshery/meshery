@@ -42,6 +42,10 @@ components:
   colorIcon: assets/img/integrations/aws-elasticache-controller/components/replication-group/icons/color/replication-group-color.svg
   whiteIcon: assets/img/integrations/aws-elasticache-controller/components/replication-group/icons/white/replication-group-white.svg
   description: 
+- name: cache-cluster
+  colorIcon: assets/img/integrations/aws-elasticache-controller/components/cache-cluster/icons/color/cache-cluster-color.svg
+  whiteIcon: assets/img/integrations/aws-elasticache-controller/components/cache-cluster/icons/white/cache-cluster-white.svg
+  description: 
 featureList: [
   "Fully managed Redis and Memcached",
   "Add a cache to your relational database",

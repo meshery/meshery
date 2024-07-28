@@ -390,6 +390,30 @@ components:
   colorIcon: assets/img/integrations/kubedb-crds/components/singlestore-ops-request/icons/color/singlestore-ops-request-color.svg
   whiteIcon: assets/img/integrations/kubedb-crds/components/singlestore-ops-request/icons/white/singlestore-ops-request-white.svg
   description: 
+- name: solr-ops-request
+  colorIcon: assets/img/integrations/kubedb-crds/components/solr-ops-request/icons/color/solr-ops-request-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/solr-ops-request/icons/white/solr-ops-request-white.svg
+  description: 
+- name: click-house-autoscaler
+  colorIcon: assets/img/integrations/kubedb-crds/components/click-house-autoscaler/icons/color/click-house-autoscaler-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/click-house-autoscaler/icons/white/click-house-autoscaler-white.svg
+  description: 
+- name: ferret-db-autoscaler
+  colorIcon: assets/img/integrations/kubedb-crds/components/ferret-db-autoscaler/icons/color/ferret-db-autoscaler-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/ferret-db-autoscaler/icons/white/ferret-db-autoscaler-white.svg
+  description: 
+- name: mssql-server-autoscaler
+  colorIcon: assets/img/integrations/kubedb-crds/components/mssql-server-autoscaler/icons/color/mssql-server-autoscaler-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/mssql-server-autoscaler/icons/white/mssql-server-autoscaler-white.svg
+  description: 
+- name: solr-autoscaler
+  colorIcon: assets/img/integrations/kubedb-crds/components/solr-autoscaler/icons/color/solr-autoscaler-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/solr-autoscaler/icons/white/solr-autoscaler-white.svg
+  description: 
+- name: zoo-keeper-autoscaler
+  colorIcon: assets/img/integrations/kubedb-crds/components/zoo-keeper-autoscaler/icons/color/zoo-keeper-autoscaler-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/zoo-keeper-autoscaler/icons/white/zoo-keeper-autoscaler-white.svg
+  description: 
 featureList: [
   "KubeDB simplifies many of the difficult or tedious management tasks of running a production grade databases on private and public clouds. Maintain one stack for all your stateless and stateful applications and simplify the operational complexity.",
   "Standard Kubernetes is all you need. If you can run Kubernetes, you can provision and manage databases using KubeDB. Use standard Kubernetes CLI and API to provision and manage databases.",
