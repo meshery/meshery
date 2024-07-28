@@ -10,7 +10,7 @@ const (
 	ErrDirPkgUnitParseFailCode = "replace_me"
 	ErrGetEntityCode = "replace_me"
 	ErrRegisterEntityCode = "replace_me"
-	ErrInvalidMeshmodelDefinitionCode = "replace_me"
+	ErrInvalidModelDefinitionCode = "replace_me"
 )
 
 
@@ -27,5 +27,5 @@ func ErrDirPkgUnitParseFail(dirpath string, err error) error {
 }
 
 func ErrInvalidModelDefinition(path string, err error) error {
-	return errors.New(ErrDirPkgUnitParseFailCode, errors.Alert, []string{fmt.Sprintf("The file at path %s is not a valid Model definition", path)}, []string{fmt.Sprintf("Could not parse Model:  %s", err.Error())}, []string{}, []string{} )
+	return errors.New(ErrInvalidModelDefinitionCode, errors.Alert, []string{fmt.Sprintf("The file at path %s is not a valid Model definition", path)}, []string{fmt.Sprintf("Could not parse Model:  %s", err.Error())}, []string{}, []string{} )
 }

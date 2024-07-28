@@ -52,7 +52,7 @@ func SeedComponents(log logger.Handler, hc *models.HandlerConfig, regm *meshmode
 	regHelper := reg.NewRegistrationHelper(log, hc, regm)
 	modelDirPaths, err := GetModelDirectoryPaths()
 	if(err != nil){
-		ErrSeedingComponents(err)
+		log.Error(ErrSeedingComponents(err))
 	}
 	for _, dirPath := range modelDirPaths {
 		dir := 	reg.NewDir(dirPath)
