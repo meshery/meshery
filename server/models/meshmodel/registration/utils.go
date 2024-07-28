@@ -10,8 +10,6 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-
-
 func unmarshal(byt []byte, out interface{}) error {
 	err := json.Unmarshal(byt, out)
 	if(err != nil){
@@ -24,11 +22,11 @@ func unmarshal(byt []byte, out interface{}) error {
 }
 
 // TODO: refactor this and use CUE
-func getEntity(byt []byte, filetype string) (et entity.Entity, _ error) {
+func getEntity(byt []byte) (et entity.Entity, _ error) {
     var versionMeta v1beta1.VersionMeta
 	err  := unmarshal(byt, &versionMeta)
-	if err != nil {
-		return nil, ErrGetEntity(fmt.Errorf("Does not contain versionmeta: %s", err.Error()))
+	if err != nil || versionMeta.SchemaVersion == "" {
+		return nil, ErrGetEntity(fmt.Errorf("Does not contain versionmeta"))
 	}
 	switch (versionMeta.SchemaVersion) {
 		case v1beta1.ComponentSchemaVersion:

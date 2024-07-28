@@ -1,7 +1,6 @@
 package meshmodel
 
 import (
-	"fmt"
 	"os"
 	"path/filepath"
 

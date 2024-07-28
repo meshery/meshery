@@ -41,22 +41,13 @@ func (d Dir) PkgUnit() (_ packagingUnit, err error){
 				return nil
 		}
 		byt, _ := os.ReadFile(path)
+		if(byt == nil){
+			 return nil
+		}
+
 		var e entity.Entity
-		if(filepath.Ext(path) == ".yaml"){
-			e, err = getEntity(byt, "yaml")
-			if(err != nil){
-				// we skip unrecognisable entities
-				RegLog.invalidDefinitions[path] = ErrInvalidModelDefinition(path, err)
-				return nil
-			}
-		} else if(filepath.Ext(path) == ".json"){
-			e, err = getEntity(byt, "json")
-			if(err != nil){
-				RegLog.invalidDefinitions[path] = ErrInvalidModelDefinition(path, err)
-				return nil
-			}
-		} else if(filepath.Ext(path) == ".cue"){
-		} else {
+		e, err = getEntity(byt)
+		if err != nil {
 			return nil
 		}
 		// set it to pkgunit
@@ -86,3 +77,4 @@ func (d Dir) PkgUnit() (_ packagingUnit, err error){
 		return pkg, err
 	}
 	return pkg, err
+}
