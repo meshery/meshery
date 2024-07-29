@@ -1954,7 +1954,7 @@ paths:
                 Receives client-generated events bound for the Notification Center.
             tags:
                 - EventsAPI
-            summary: Handle POST request for UI generated events.
+            summary: Handle POST request for client generated events.
             operationId: idClientEventHandler
     /api/integrations/connections/{connectionKind}:
         get:

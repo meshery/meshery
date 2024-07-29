@@ -1,4 +1,4 @@
-// Package handlers :collection of handlers (aka "HTTP middleware")
+
 package handlers
 
 import (
@@ -19,7 +19,6 @@ import (
 	"github.com/layer5io/meshkit/errors"
 	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/models/events"
-	"github.com/layer5io/meshkit/utils"
 	_events "github.com/layer5io/meshkit/utils/events"
 )
 
@@ -487,7 +486,7 @@ func (h *Handler) ClientEventHandler(w http.ResponseWriter, req *http.Request, p
 		_ = req.Body.Close()
 	}()
 
-	var eventDetails map[string]interface{}
+	var evt events.Event
 	body, err := io.ReadAll(req.Body)
 	if err != nil {
 		h.log.Error(ErrRequestBody(err))
@@ -495,53 +494,31 @@ func (h *Handler) ClientEventHandler(w http.ResponseWriter, req *http.Request, p
 		return
 	}
 
-	err = json.Unmarshal(body, &eventDetails)
+	err = json.Unmarshal(body, &evt)
 	if err != nil {
-		h.log.Error(models.ErrUnmarshal(err, "event details"))
-		http.Error(w, models.ErrUnmarshal(err, "event details").Error(), http.StatusInternalServerError)
+		h.log.Error(models.ErrUnmarshal(err, "event"))
+		http.Error(w, models.ErrUnmarshal(err, "event").Error(), http.StatusInternalServerError)
 		return
 	}
 
-	category, err := utils.Cast[string](eventDetails["category"])
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	action, err := utils.Cast[string](eventDetails["action"])
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	severity, err := utils.Cast[string](eventDetails["severity"])
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	description, err := utils.Cast[string](eventDetails["description"])
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	metadata, err := utils.Cast[map[string]interface{}](eventDetails["metadata"])
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+	if(evt.ActedUpon.IsNil() || evt.Action == "" || evt.Category == "" || evt.Severity == ""){
+		h.log.Error(models.ErrInvalidEventData())
+		http.Error(w, models.ErrInvalidEventData().Error(), http.StatusBadRequest)
 		return
 	}
 
 	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).
-		WithCategory(category).WithAction(action).WithSeverity(events.EventSeverity(severity)).
-		WithDescription(description).WithMetadata(metadata)
-
-	if actedUpon, ok := eventDetails["acted_upon"].(string); ok {
-		eventBuilder = eventBuilder.ActedUpon(uuid.FromStringOrNil(actedUpon))
-	}
+		WithCategory(evt.Category).WithAction(evt.Action).WithSeverity(events.EventSeverity(evt.Severity)).
+		WithDescription(evt.Description).WithMetadata(evt.Metadata).ActedUpon(evt.ActedUpon)
 
 	event := eventBuilder.Build()
-	_ = provider.PersistEvent(event)
+	err = provider.PersistEvent(event)
+	if err != nil {
+		h.log.Error(models.ErrPersistEvent(err))
+		http.Error(w, models.ErrPersistEvent(err).Error(), http.StatusInternalServerError)
+		return
+
+	}
 	go h.config.EventBroadcaster.Publish(userID, event)
 
 	w.WriteHeader(http.StatusCreated)
