@@ -200,7 +200,7 @@ func (h *Handler) GetConnections(w http.ResponseWriter, req *http.Request, prefO
 	pageSizeStr := q.Get("pagesize")
 	filter := q.Get("filter")
 
-	pageSize := 10
+	var pageSize int
 	if pageSizeStr == "all" {
 		pageSize = 100
 	} else {
