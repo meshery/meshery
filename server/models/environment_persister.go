@@ -232,15 +232,6 @@ func (ep *EnvironmentPersister) GetEnvironmentConnections(environmentID uuid.UUI
         order = "updated_at desc"
     }
 
-    pageUint, err := strconv.ParseUint(page, 10, 32)
-    if err != nil {
-        return nil, err
-    }
-    pageSizeUint, err := strconv.ParseUint(pageSize, 10, 32)
-    if err != nil {
-        return nil, err
-    }
-
     // Build the query to find connections associated with the given environment ID
     query := ep.DB.Table("environment_connection_mappings").
         Select("connections.*").
@@ -261,13 +252,28 @@ func (ep *EnvironmentPersister) GetEnvironmentConnections(environmentID uuid.UUI
     count := int64(0)
     query.Count(&count)
 
-    // Fetch connections with pagination
     var connectionsFetched []*connections.Connection
-    Paginate(uint(pageUint), uint(pageSizeUint))(query).Find(&connectionsFetched)
+	pageUint, err := strconv.ParseUint(page, 10, 32)
+	if err != nil {
+		return nil, err
+	}
+    // Fetch all connections if pageSize is "all"
+    if pageSize == "all" {
+        query.Find(&connectionsFetched)
+    } else {
+        // Convert page and pageSize from string to uint
+        pageSizeUint, err := strconv.ParseUint(pageSize, 10, 32)
+        if err != nil {
+            return nil, err
+        }
+
+        // Fetch connections with pagination
+        Paginate(uint(pageUint), uint(pageSizeUint))(query).Find(&connectionsFetched)
+    }
 
     connectionsPage := &connections.ConnectionPage{
         Page:        int(pageUint),
-        PageSize:    int(pageSizeUint),
+        PageSize:    len(connectionsFetched),
         TotalCount:  int(count),
         Connections: connectionsFetched,
     }
@@ -279,6 +285,7 @@ func (ep *EnvironmentPersister) GetEnvironmentConnections(environmentID uuid.UUI
 
     return connsJSON, nil
 }
+
 
 // DeleteConnectionFromEnvironment deletes a connection from an environment
 func (ep *EnvironmentPersister) DeleteConnectionFromEnvironment(environmentID, connectionID uuid.UUID) ([]byte, error) {
