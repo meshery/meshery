@@ -16,7 +16,6 @@ package registry
 
 import (
 	"io"
-	"log"
 	"os"
 	"path/filepath"
 	"sync"
@@ -71,7 +70,7 @@ mesheryctl registry generate --registrant-def [path to connection definition] --
 		if err != nil {
 			return ErrUpdateRegistry(err, modelLocation)
 		}
-		
+
 		utils.Log.SetLevel(logrus.DebugLevel)
 		logFilePath := filepath.Join(logDirPath, "model-generation.log")
 		logFile, err = os.Create(logFilePath)
@@ -89,9 +88,8 @@ mesheryctl registry generate --registrant-def [path to connection definition] --
 		multiWriter := io.MultiWriter(logFile, os.Stdout)
 		multiErrorWriter := io.MultiWriter(errorLogFile, os.Stderr)
 
-		log.SetOutput(multiWriter)
-		log.SetOutput(multiErrorWriter)
-
+		logrus.SetOutput(multiWriter)
+		logrus.SetOutput(multiErrorWriter)
 		return nil
 	},
 
