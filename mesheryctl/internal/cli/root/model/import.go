@@ -3,9 +3,9 @@ package model
 import (
 	"bytes"
 	"compress/gzip"
+	"encoding/json"
 	"fmt"
 	"io"
-	"mime/multipart"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -19,6 +19,15 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
+
+type ImportRequestBody struct {
+	ImportBody struct {
+		ModelFile []byte `json:"model_file"`
+		URL       string `json:"url,omitempty"`
+		FileName  string `json:"file_name,omitempty"`
+	} `json:"importBody"`
+	UploadType string `json:"uploadType"`
+}
 
 var importModelCmd = &cobra.Command{
 	Use:   "import",
@@ -59,13 +68,33 @@ var importModelCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		path := args[0]
-		//if oci then validate and send
-		tarData, err := compressDirectory(path)
+
+		info, err := os.Stat(path)
 		if err != nil {
-			return err
+			return fmt.Errorf("could not access the specified path: %v", err)
 		}
-		fileName := filepath.Base(path) + ".tar.gz"
-		err = sendToAPI(tarData, fileName, "dir")
+
+		var tarData []byte
+		var fileName string
+
+		if info.IsDir() {
+			// If the input is a directory, compress it
+			tarData, err = compressDirectory(path)
+			if err != nil {
+				return err
+			}
+			fileName = filepath.Base(path) + ".tar.gz"
+		} else {
+			// If the input is a file, read its contents
+			fileData, err := os.ReadFile(path)
+			if err != nil {
+				return fmt.Errorf("could not read the specified file: %v", err)
+			}
+			tarData = fileData
+			fileName = filepath.Base(path)
+		}
+
+		err = registerModel(tarData, fileName, "file")
 		if err != nil {
 			utils.Log.Error(err)
 			return err
@@ -126,7 +155,7 @@ func compressDirectory(dirpath string) ([]byte, error) {
 
 	return buf.Bytes(), nil
 }
-func sendToAPI(data []byte, name string, dataType string) error {
+func registerModel(data []byte, name string, dataType string) error {
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
 		return err
@@ -134,32 +163,31 @@ func sendToAPI(data []byte, name string, dataType string) error {
 
 	baseURL := mctlCfg.GetBaseMesheryURL()
 	url := baseURL + "/api/meshmodels/register"
-	var b bytes.Buffer
-	writer := multipart.NewWriter(&b)
-
-	var formFile io.Writer
-	if dataType == "oci" {
-		formFile, _ = writer.CreateFormField("oci")
-	} else {
-		formFile, _ = writer.CreateFormField("dir")
+	importRequest := ImportRequestBody{
+		UploadType: dataType,
 	}
-	_, err = formFile.Write(data)
-	if err != nil {
-		err = meshkitutils.ErrWriteFile(err, name)
-		return err
-	}
+	importRequest.ImportBody.ModelFile = data
+	importRequest.ImportBody.FileName = name
 
-	_ = writer.Close()
-
-	req, err := utils.NewRequest(http.MethodPost, url, &b)
+	// Marshal the request body to JSON
+	requestBody, err := json.Marshal(importRequest)
 	if err != nil {
 		return err
 	}
-	req.Header.Set("Content-Type", writer.FormDataContentType())
+
+	// Create the HTTP request
+	req, err := utils.NewRequest(http.MethodPost, url, bytes.NewReader(requestBody))
+	if err != nil {
+		return err
+	}
+	req.Header.Set("Content-Type", "application/json")
+
+	// Make the HTTP request
 	resp, err := utils.MakeRequest(req)
 	if err != nil {
 		return err
 	}
+
 	defer resp.Body.Close()
 	if resp.StatusCode != http.StatusOK {
 
@@ -171,17 +199,18 @@ func sendToAPI(data []byte, name string, dataType string) error {
 		err = models.ErrDataRead(err, "response body")
 		return err
 	}
-	var response models.RegisterMeshmodelAPIResponse
+	var response models.RegistryAPIResponse
 
 	if err := meshkitutils.Unmarshal(string(bodyBytes), &response); err != nil {
 		err = models.ErrUnmarshal(err, "response body")
 		return err
 	}
+	utils.Log.Info(response.ErrMsg)
 
-	utils.Log.Info("\n\033[1m", response.ErrMsg, "\033[0m\n")
 	if len(response.EntityTypeSummary.SuccessfulComponents) > 0 {
-		utils.Log.Infof("\033[1mTotal Component(s) Imported: %d\033[0m\n", response.EntityCount.CompCount)
-		fmt.Printf("\033[1m%-30s %-30s %-10s\033[0m\n", centerText("DisplayName", 30), centerText("ModelName", 30), centerText("Version", 10))
+		header := []string{"Component Name", "Model Name", "Version"}
+		rows := [][]string{}
+		utils.Log.Info("\n", utils.BoldString("Imported Component(s)"), "\n")
 
 		for _, comp := range response.EntityTypeSummary.SuccessfulComponents {
 			displayName, _ := comp["DisplayName"].(string)
@@ -189,120 +218,125 @@ func sendToAPI(data []byte, name string, dataType string) error {
 			modelDisplayName, _ := modelData["displayName"].(string)
 			modelVersion, _ := modelData["model"].(map[string]interface{})["version"].(string)
 
-			displayNameLines := wrapText(displayName, 30)
-			modelNameLines := wrapText(modelDisplayName, 30)
-			versionLines := wrapText(modelVersion, 10)
-
-			maxLines := max(len(displayNameLines), len(modelNameLines))
-
-			for i := 0; i < maxLines; i++ {
-				fmt.Printf(
-					"%-30s %-30s %-10s\n",
-					centerText(getLine(displayNameLines, i), 30),
-					centerText(getLine(modelNameLines, i), 30),
-					centerText(getLine(versionLines, i), 10))
-			}
+			rows = append(rows, []string{displayName, modelDisplayName, modelVersion})
 		}
+		utils.PrintToTable(header, rows)
+
 	}
 
 	if len(response.EntityTypeSummary.SuccessfulRelationships) > 0 {
-		utils.Log.Infof("\nTotal Relationship(s) Imported: %d", (response.EntityCount.RelCount))
-		//fmt.Printf("\033[1m%-20s %-20s %-20s\033[0m\n", centerText("Type", 20), centerText("SubType", 20), centerText("Kind", 20))
-		fmt.Printf("\033[1m %-20s %-20s\033[0m\n", centerText("SubType", 20), centerText("Kind", 20))
-
+		header := []string{"From(CompoentName/ModelName)", "To(ComponentName/ModelNAme)", "Kind", "SubType"}
+		rows := [][]string{}
+		utils.Log.Info("\n", utils.BoldString("Imported Relationship(s)"), "\n")
 		for _, rel := range response.EntityTypeSummary.SuccessfulRelationships {
+			kind := rel["Kind"].(string)
+			subtype := rel["Subtype"].(string)
+			selectors := rel["Selectors"].([]interface{})
+			for _, selector := range selectors {
+				selectorMap := selector.(map[string]interface{})
+				allow := selectorMap["allow"].(map[string]interface{})
+				from := allow["from"].([]interface{})
+				to := allow["to"].([]interface{})
 
-			//future when we support relationship type
+				fromComponent := fmt.Sprintf("%s/%s", from[0].(map[string]interface{})["kind"], from[0].(map[string]interface{})["model"])
+				toComponent := fmt.Sprintf("%s/%s", to[0].(map[string]interface{})["kind"], to[0].(map[string]interface{})["model"])
+				rows = append(rows, []string{fromComponent, toComponent, kind, subtype})
+			}
 
-			// fmt.Printf("%-20s %-20s %-20s\n",
-			// 	centerText(rel["RelationshipType"].(string), 20),
-			// 	centerText(rel["Subtype"].(string), 20),
-			// 	centerText(rel["Kind"].(string), 20))
-
-			fmt.Printf("%-20s %-20s\n ",
-				centerText(rel["Subtype"].(string), 20),
-				centerText(rel["Kind"].(string), 20))
 		}
+		utils.PrintToTable(header, rows)
 	}
 
 	modelNames := ModelNames(&response)
 	if len(response.EntityTypeSummary.UnsuccessfulEntityNameWithError) > 0 {
-		utils.Log.Info("\033[1m\nImport failed for these Entity(s): \033[0m")
+		utils.Log.Info("\n", utils.BoldString("Import failed for these Entity(s): "), "\n")
 		for _, entity := range response.EntityTypeSummary.UnsuccessfulEntityNameWithError {
-			entityMap, ok := entity.(map[string]interface{})
-			if !ok {
-				utils.Log.Info("Error: unable to assert entity as map[string]interface{}")
+			entityMap, err := meshkitutils.Cast[map[string]interface{}](entity)
+			if err != nil {
+				utils.Log.Error(err)
 				continue
 			}
 
-			name, ok := entityMap["name"].(string)
-			if !ok {
-				utils.Log.Info("Error: unable to assert name as string")
-				continue
-			}
-			errorDetails, ok := entityMap["error"].(map[string]interface{})
-			if !ok {
-				utils.Log.Info("Error: unable to assert errorDetails as map[string]interface{}")
-				continue
-			}
-			longDescription, ok := errorDetails["LongDescription"]
-			if !ok {
-				utils.Log.Info("Error: unable to assert LongDescription as string")
+			names, err := meshkitutils.Cast[[]interface{}](entityMap["name"])
+			if err != nil {
+				utils.Log.Error(err)
 				continue
 			}
 
-			utils.Log.Infof("\nEntity Filename: \033[1m%s\033[0m and error: \033[1m%s\033[0m", name, longDescription)
+			entityTypes, err := meshkitutils.Cast[[]interface{}](entityMap["entityType"])
+			if err != nil {
+				utils.Log.Error(err)
+				continue
+			}
+
+			errorDetails, err := meshkitutils.Cast[map[string]interface{}](entityMap["error"])
+			if err != nil {
+				utils.Log.Error(err)
+				continue
+			}
+
+			longDescriptionInterface := errorDetails["LongDescription"]
+			longDescriptionSlice, ok := longDescriptionInterface.([]interface{})
+			if !ok {
+				utils.Log.Infof("Type assertion to []interface{} failed for LongDescription: %v (type %T)", longDescriptionInterface, longDescriptionInterface)
+				continue
+			}
+
+			var longDescription string
+			for _, item := range longDescriptionSlice {
+				str, ok := item.(string)
+				if !ok {
+					utils.Log.Infof("Item in LongDescription is not a string: %v (type %T)", item, item)
+					continue
+				}
+				longDescription += str + " "
+			}
+
+			longDescription = strings.TrimSpace(longDescription)
+			EntityTypeLine := ""
+			for i, name := range names {
+				entityType := ""
+				if i < len(entityTypes) {
+					entityType = entityTypes[i].(string)
+				}
+
+				if entityType == "" {
+					// If entityType is not present, log normal message
+					utils.Log.Infof("Entity Filename: %s and error: \n%s", name, longDescription)
+				} else {
+					if EntityTypeLine != "" {
+						EntityTypeLine += ", "
+					}
+					EntityTypeLine = fmt.Sprintf("%s entity of type %s with model name %s", EntityTypeLine, utils.BoldString(entityType), utils.BoldString(name.(string)))
+				}
+			}
+			if EntityTypeLine != "" {
+				utils.Log.Infof("Import did not occur for%s and error: \n%s\n", EntityTypeLine, longDescription)
+			}
+
 		}
 	}
+	totalEntityCount := response.EntityCount.CompCount + response.EntityCount.RelCount
+	if totalEntityCount != 0 {
+		utils.Log.Infof("\n%s model(s) imported", utils.BoldString(modelNames))
 
-	utils.Log.Infof("\033[1m\n%s model(s) imported\033[0m", modelNames)
+	}
 	return nil
 }
-func ModelNames(response *models.RegisterMeshmodelAPIResponse) string {
-	msg := ""
+func ModelNames(response *models.RegistryAPIResponse) string {
+	var builder strings.Builder
 	seen := make(map[string]bool) // map to track seen model names
 
 	for _, model := range response.ModelName {
-		if !seen[model] {
-			msg += model + " "
-			seen[model] = true
+		if model != "" {
+			if !seen[model] {
+				if builder.Len() > 0 {
+					builder.WriteString(", ")
+				}
+				builder.WriteString(model)
+				seen[model] = true
+			}
 		}
 	}
-
-	return msg
-}
-func wrapText(text string, width int) []string {
-	var wrapped []string
-	for len(text) > width {
-		spaceIndex := strings.LastIndex(text[:width], " ")
-		if spaceIndex == -1 {
-			spaceIndex = width
-		}
-		wrapped = append(wrapped, text[:spaceIndex])
-		text = strings.TrimSpace(text[spaceIndex:])
-	}
-	wrapped = append(wrapped, text)
-	return wrapped
-}
-
-func getLine(lines []string, index int) string {
-	if index < len(lines) {
-		return lines[index]
-	}
-	return ""
-}
-
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
-}
-
-func centerText(text string, width int) string {
-	if len(text) >= width {
-		return text
-	}
-	padding := (width - len(text)) / 2
-	return fmt.Sprintf("%*s%*s", padding+len(text), text, width-len(text)-padding, "")
+	return builder.String()
 }

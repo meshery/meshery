@@ -105,6 +105,17 @@ const meshModelApi = api
           params: _.merge({}, defaultOptions, queryArg.params),
         }),
       }),
+      importMeshModel: builder.mutation({
+        query: (queryArgs) => {
+          console.log('Query Arguments Body:', queryArgs);
+          return {
+            url: `meshmodels/register`,
+            method: 'POST',
+            body: queryArgs.importBody,
+          };
+        },
+        invalidatesTags: [TAGS.MESH_MODELS],
+      }),
     }),
   });
 
@@ -126,6 +137,7 @@ export const {
   useGetComponentByNameQuery,
   useGetModelFromCategoryQuery,
   useGetComponentsByModelAndKindQuery,
+  useImportMeshModelMutation,
 } = meshModelApi;
 
 export const useGetCategoriesSummary = () => {

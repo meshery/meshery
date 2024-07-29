@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Typography, Grid, Box, Stack, styled, useTheme } from '@layer5/sistent';
+import { Typography, Grid, Box, styled, useTheme } from '@layer5/sistent';
 import { Launch as LaunchIcon } from '@material-ui/icons';
 import {
   FormatStructuredData,
@@ -21,7 +21,6 @@ const StyledDetailBox = styled(Box)(({ theme, severityColor, bgOpacity }) => ({
   backgroundColor: alpha(severityColor, bgOpacity),
   border: `1px solid ${theme.palette.divider}`,
   display: 'flex',
-  justifyContent: 'space-between',
 }));
 
 const DryRunResponse = ({ response }) => {
@@ -60,52 +59,57 @@ const TitleLink = ({ href, children, ...props }) => {
 const ComponentWithIcon = ({ component }) => {
   const theme = useTheme();
   const { DisplayName, Metadata, Model } = component;
-  const svgColor = theme.palette.mode === 'dark' ? Metadata.svgWhite : Metadata.svgColor;
+  const svgColor =
+    theme.palette.mode === 'dark' && Metadata.svgWhite && Metadata.svgColor
+      ? Metadata.svgWhite
+      : Metadata.svgColor || Metadata.svgWhite;
 
   return (
-    <>
-      <Typography variant="body1">{`Model ${Model.displayName} imported Component`}</Typography>
-      <Grid container alignItems="center" spacing={1}>
-        <Grid item>
-          <Typography variant="body1">{DisplayName}</Typography>
-        </Grid>
-        <Grid item>
-          <Typography variant="body2">
-            {Model.model ? Model.model.version : 'Version not available'}
-          </Typography>
-        </Grid>
-        <Grid item>
-          <div
-            style={{
-              maxWidth: '30px',
-              maxHeight: '30px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-            dangerouslySetInnerHTML={{ __html: svgColor }}
-          />
-        </Grid>
+    <Grid container alignItems="center" spacing={1}>
+      <Grid item>
+        <Typography variant="body1">{`${DisplayName}/${Model.displayName}`}</Typography>
       </Grid>
-    </>
+      <Grid item>
+        <Typography variant="body2">
+          {Model.model ? Model.model.version : 'Version not available'}
+        </Typography>
+      </Grid>
+      <Grid item>
+        <div
+          style={{
+            maxWidth: '30px',
+            maxHeight: '30px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+          dangerouslySetInnerHTML={{ __html: svgColor }}
+        />
+      </Grid>
+    </Grid>
   );
 };
 
 const RelationshipDetail = ({ relationship }) => {
-  const { Model, Kind, Subtype } = relationship;
-  return (
-    <Typography variant="body1">
-      {Kind} {Subtype} {Model.displayName}
-    </Typography>
-  );
-};
+  const { Model, Kind, Subtype, Selectors } = relationship;
 
-const ModelDetail = ({ model }) => {
-  const { Subtype } = model;
-  if (Subtype !== undefined) {
-    console.log(Subtype);
-  }
-  return <></>;
+  const renderSelectors = (selectors) => {
+    return selectors.map((selector, index) => {
+      const from = selector.allow.from.map((f) => `${f.kind}/${f.model}`).join(', ');
+      const to = selector.allow.to.map((t) => `${t.kind}/${t.model}`).join(', ');
+      return (
+        <Typography key={index} variant="body1">
+          <strong>Model Name:</strong> {Model.displayName} <strong>Kind:</strong> {Kind}{' '}
+          <strong>SubType:</strong> {Subtype}
+          <br />
+          <strong>From</strong> {from}
+          <strong> To</strong> {to}
+        </Typography>
+      );
+    });
+  };
+
+  return <div>{Selectors && Selectors.length > 0 && <div>{renderSelectors(Selectors)}</div>}</div>;
 };
 
 export const ErrorMetadataFormatter = ({ metadata, event }) => {
@@ -172,9 +176,9 @@ const EmptyState = ({ event }) => {
 };
 
 const ModelImportedSection = ({ modelName }) => (
-  <Typography variant="h6">{`Imported Model(s) ${modelName}`}</Typography>
+  <Typography variant="body1">{`${modelName}`}</Typography>
 );
-
+const ModelImportMessage = ({ message }) => <Typography variant="body1">{message}</Typography>;
 const ComponentsSection = ({ components }) => (
   <>
     {components.map((component, index) => (
@@ -191,31 +195,41 @@ const RelationshipsSection = ({ relationships }) => (
   </>
 );
 
-const ImportedModel = ({ models }) => (
-  <>
-    {models.map((model, index) => (
-      <ModelDetail key={index} model={model} />
-    ))}
-  </>
-);
-
 const UnsuccessfulEntityWithError = ({ errors }) => {
   const parsedErrors = Array.isArray(errors) ? errors : [];
 
   return (
-    <Stack spacing={2}>
+    <>
       {parsedErrors.map((entry, index) => (
-        <Box key={index}>
-          <Typography variant="h6">
-            {`Entity with filename `}
-            <span style={{ textDecoration: 'underline' }}>{entry.name}</span>
-            {entry.entityType ? ` of type ${entry.entityType}` : ''}
-            {` failed to import`}
-          </Typography>
-          <ErrorMetadataFormatter metadata={entry.error} event={{}} />
-        </Box>
+        <StyledDetailBox
+          key={index}
+          severityColor={SEVERITY_STYLE[SEVERITY.ERROR].color}
+          bgOpacity={0.1}
+          display="flex"
+          gap={2}
+          flexDirection="column"
+        >
+          <Box key={index}>
+            <Typography variant="h6">Import encountered an error:</Typography>
+            <Typography variant="body1">
+              <ul>
+                {entry.name.map((name, idx) => (
+                  <li key={idx}>
+                    <strong>Entity Type:</strong>{' '}
+                    {entry.entityType && entry.entityType[idx]
+                      ? entry.entityType[idx].charAt(0).toUpperCase() +
+                        entry.entityType[idx].slice(1)
+                      : 'N/A'}
+                    ,<strong> Model Name:</strong> {name}
+                  </li>
+                ))}
+              </ul>
+            </Typography>
+            <ErrorMetadataFormatter metadata={entry.error} event={{}} />
+          </Box>
+        </StyledDetailBox>
       ))}
-    </Stack>
+    </>
   );
 };
 
@@ -233,6 +247,18 @@ export const FormattedMetadata = ({ event }) => {
     ViewLink: (value) => (
       <TitleLink href={'/api/system/fileView?file=' + encodeURIComponent(value)}>View</TitleLink>
     ),
+    ModelImportMessage: (value) =>
+      value && (
+        <StyledDetailBox
+          severityColor={SEVERITY_STYLE[SEVERITY.INFO].color}
+          bgOpacity={0.1}
+          display="flex"
+          gap={2}
+          flexDirection="column"
+        >
+          <ModelImportMessage message={value} />
+        </StyledDetailBox>
+      ),
     ImportedModelName: (value) =>
       value && (
         <StyledDetailBox
@@ -242,6 +268,7 @@ export const FormattedMetadata = ({ event }) => {
           gap={2}
           flexDirection="column"
         >
+          <Typography variant="h6">Imported Model(s)</Typography>
           <ModelImportedSection modelName={value} />
         </StyledDetailBox>
       ),
@@ -254,34 +281,25 @@ export const FormattedMetadata = ({ event }) => {
           gap={2}
           flexDirection="column"
         >
+          <Typography variant="h6">Imported Component(s)</Typography>
           <ComponentsSection components={value} />
         </StyledDetailBox>
       ),
-    ImportedRelationship: (value) => value && <RelationshipsSection relationships={value} />,
-    ImportedModel: (value) =>
-      value && (
-        // <StyledDetailBox
-        //   severityColor={SEVERITY_STYLE[SEVERITY.INFO].color}
-        //   bgOpacity={0.1}
-        //   display="flex"
-        //   gap={2}
-        //   flexDirection="column"
-        // >
-        <ImportedModel models={value} />
-        // </StyledDetailBox>
-      ),
-    UnsuccessfulEntityNameWithError: (value) =>
+    ImportedRelationship: (value) =>
       value && (
         <StyledDetailBox
-          severityColor={SEVERITY_STYLE[SEVERITY.ERROR].color}
+          severityColor={SEVERITY_STYLE[SEVERITY.INFO].color}
           bgOpacity={0.1}
           display="flex"
           gap={2}
           flexDirection="column"
         >
-          <UnsuccessfulEntityWithError errors={value} />
+          <Typography variant="h6">Imported Relationship(s)</Typography>
+          <RelationshipsSection relationships={value} />
         </StyledDetailBox>
       ),
+    UnsuccessfulEntityNameWithError: (value) =>
+      value && <UnsuccessfulEntityWithError errors={value} />,
   };
 
   const EventTypeFormatters = {
@@ -314,10 +332,10 @@ export const FormattedMetadata = ({ event }) => {
     'SuggestedRemediation',
     'DownloadLink',
     'ViewLink',
+    'ModelImportMessage',
     'ImportedModelName',
     'ImportedComponent',
     'ImportedRelationship',
-    'ImportedModel',
     'UnsuccessfulEntityNameWithError',
   ];
   const hasImportedModelName = !!metadata.ImportedModelName;

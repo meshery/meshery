@@ -1,8 +1,9 @@
 import { withStyles } from '@material-ui/core';
 import React, { useState, useEffect, useCallback } from 'react';
-import { Paper } from '@material-ui/core';
+import { Paper, Button } from '@material-ui/core';
 import UploadIcon from '@mui/icons-material/Upload';
 import DoNotDisturbOnIcon from '@mui/icons-material/DoNotDisturbOn';
+import { getUnit8ArrayDecodedFile } from '../../utils/utils';
 import {
   OVERVIEW,
   MODELS,
@@ -27,10 +28,14 @@ import {
   useLazyGetComponentsQuery,
   useLazyGetRelationshipsQuery,
   useLazyGetRegistrantsQuery,
+  useImportMeshModelMutation,
 } from '@/rtk-query/meshModel';
 import NoSsr from '@material-ui/core/NoSsr';
 import { groupRelationshipsByKind, removeDuplicateVersions } from './helper';
 import _ from 'lodash';
+import { Modal as SistentModal } from '@layer5/sistent';
+import { UsesSistent } from '../SistentWrapper';
+import { RJSFModalWrapper } from '../Modal';
 
 const meshmodelStyles = (theme) => ({
   wrapperClss: {
@@ -72,7 +77,6 @@ const useMeshModelComponentRouter = () => {
 
   return { searchQuery, selectedTab, selectedPageSize };
 };
-
 const MeshModelComponent_ = ({
   modelsCount,
   componentsCount,
@@ -96,12 +100,76 @@ const MeshModelComponent_ = ({
   const StyleClass = useStyles();
   const [view, setView] = useState(OVERVIEW);
   const [convert, setConvert] = useState(false);
+  const [importSchema, setImportSchema] = useState({});
+  const [importModal, setImportModal] = useState({
+    open: false,
+  });
   const [showDetailsData, setShowDetailsData] = useState({
     type: '', // Type of selected data eg. (models, components)
     data: {},
   });
   const [animate, setAnimate] = useState(false);
   const [checked, setChecked] = useState(false);
+  const [importModelReq] = useImportMeshModelMutation();
+
+  const handleUploadImport = () => {
+    setImportModal({
+      open: true,
+    });
+  };
+
+  const handleUploadImportClose = () => {
+    setImportModal({
+      open: false,
+    });
+  };
+
+  const handleImportModel = async (data) => {
+    const { uploadType, url, file } = data;
+    let requestBody = null;
+
+    const fileElement = document.getElementById('root_file');
+    const fileName = fileElement.files[0].name;
+
+    switch (uploadType) {
+      case 'File Upload': {
+        const fileData = getUnit8ArrayDecodedFile(file);
+        if (fileData) {
+          requestBody = {
+            importBody: {
+              model_file: fileData,
+              url: '',
+              filename: fileName,
+            },
+            uploadType: 'file',
+          };
+        } else {
+          console.error('Error: File data is empty or invalid');
+          return;
+        }
+        break;
+      }
+      case 'URL Import': {
+        if (url) {
+          requestBody = {
+            importBody: {
+              url: url,
+            },
+            uploadType: 'url',
+          };
+        } else {
+          console.error('Error: URL is empty');
+          return;
+        }
+        break;
+      }
+      default: {
+        console.error('Error: Invalid upload type');
+        return;
+      }
+    }
+    importModelReq({ importBody: requestBody }).unwrap();
+  };
 
   /**
    * RTK Lazy Queries
@@ -307,10 +375,33 @@ const MeshModelComponent_ = ({
   useEffect(() => {
     fetchData();
   }, [view, page, rowsPerPage, checked, searchText]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('/api/schema/resource/model', {
+          method: 'GET',
+          credentials: 'include',
+        });
+        const result = await response.json();
+        setImportSchema(result);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <div data-test="workloads">
-      <TabBar animate={animate} />
+      <TabBar animate={animate} handleUploadImport={handleUploadImport} />
+      {importModal.open && (
+        <ImportModal
+          importFormSchema={importSchema}
+          handleClose={handleUploadImportClose}
+          handleImportModel={handleImportModel}
+        />
+      )}
       <div
         className={`${StyleClass.mainContainer} ${animate ? StyleClass.mainContainerAnimate : ''}`}
       >
@@ -386,24 +477,48 @@ const MeshModelComponent_ = ({
     </div>
   );
 };
+const ImportModal = React.memo((props) => {
+  const { importFormSchema, handleClose, handleImportModel } = props;
 
-const TabBar = ({ animate }) => {
+  return (
+    <>
+      <UsesSistent>
+        <SistentModal open={true} closeModal={handleClose} maxWidth="sm" title="Import Model(s)">
+          <RJSFModalWrapper
+            schema={importFormSchema.rjsfSchema}
+            uiSchema={importFormSchema.uiSchema}
+            handleSubmit={handleImportModel}
+            submitBtnText="Import"
+            handleClose={handleClose}
+          />
+        </SistentModal>
+      </UsesSistent>
+    </>
+  );
+});
+
+ImportModal.displayName = 'ImportModal';
+
+const TabBar = ({ animate, handleUploadImport }) => {
   const StyleClass = useStyles();
+
   return (
     <div
       className={`${StyleClass.meshModelToolbar} ${animate ? StyleClass.toolWrapperAnimate : ''}`}
     >
-      <DisableButton
-        disabled
+      <Button
+        aria-label="Add Pattern"
         variant="contained"
-        style={{
-          visibility: `${animate ? 'visible' : 'hidden'}`,
-        }}
+        color="primary"
         size="large"
-        startIcon={<UploadIcon />}
+        onClick={handleUploadImport}
+        style={{ display: 'flex', visibility: `${animate ? 'visible' : 'hidden'}` }}
+        disabled={false} //TODO: Need to make key for this component
       >
+        <UploadIcon />
         Import
-      </DisableButton>
+      </Button>
+
       <DisableButton
         disabled
         variant="contained"
@@ -457,5 +572,4 @@ const MeshModelComponent = (props) => {
     </NoSsr>
   );
 };
-
 export default withStyles(meshmodelStyles)(MeshModelComponent);

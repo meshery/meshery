@@ -1,11 +1,13 @@
 package handlers
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"os"
 	"strings"
+	"sync"
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
@@ -14,6 +16,7 @@ import (
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshkit/models/events"
+	meshkitoci "github.com/layer5io/meshkit/models/oci"
 	meshkitutils "github.com/layer5io/meshkit/utils"
 
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
@@ -1186,43 +1189,142 @@ func prettifyCompDefSchema(entities []entity.Entity) []v1beta1.ComponentDefiniti
 // request content byte in form value and header of the type in form
 
 func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
-	var response models.RegisterMeshmodelAPIResponse
-
+	var response models.RegistryAPIResponse
+	defer func() {
+		_ = r.Body.Close()
+	}()
+	var mu sync.Mutex
 	userID := uuid.FromStringOrNil(user.ID)
 	var message strings.Builder
 
-	dirPath := r.FormValue("dir")
-	if dirPath != "" {
+	var importRequest struct {
+		ImportBody struct {
+			ModelFile []byte `json:"model_file"`
+			URL       string `json:"url,omitempty"`
+			FileName  string `json:"file_name,omitempty"`
+		} `json:"importBody"`
+		UploadType string `json:"uploadType"`
+	}
 
-		if tempFile, err := createTempFile(dirPath); err != nil {
-			h.sendErrorEvent(userID, provider, "Failed to create temp file", err)
-			h.log.Error(err)
-			http.Error(rw, err.Error(), http.StatusInternalServerError)
+	err := json.NewDecoder(r.Body).Decode(&importRequest)
+	if err != nil {
+		h.log.Info("Error in unmarshalling request body")
+		http.Error(rw, "Invalid request format", http.StatusBadRequest)
+		return
+	}
+	base64Data, err := json.Marshal(importRequest.ImportBody.ModelFile)
+	if err != nil {
+		http.Error(rw, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+	base64String := string(base64Data)
+	//remove double quotes
+	base64String = base64String[1 : len(base64String)-1]
+
+	decodedBytes, err := base64.StdEncoding.DecodeString(base64String)
+	if err != nil {
+		http.Error(rw, "Invalid base64 data", http.StatusBadRequest)
+		return
+	}
+	switch importRequest.UploadType {
+	case "url":
+		//future implementation
+		break
+	case "file":
+		tempFile, err := os.CreateTemp("", importRequest.ImportBody.FileName)
+		if err != nil {
+			err = meshkitutils.ErrCreateFile(err, "Error creating temp file")
+			h.handleError(rw, err, err.Error())
+
 			return
-		} else {
-			defer os.Remove(tempFile.Name())
-			tempDir, err := os.MkdirTemp("", "extracted-")
+		}
+		defer os.Remove(tempFile.Name())
+
+		_, err = tempFile.Write(decodedBytes)
+		if err != nil {
+			err = meshkitutils.ErrWriteFile(err, importRequest.ImportBody.FileName)
+			h.handleError(rw, err, err.Error())
+			return
+		}
+		tempFile.Close()
+		isYaml := meshkitutils.IsYaml(tempFile.Name())
+		if isYaml {
+			processFileToRegistry(&response, decodedBytes, &mu, importRequest.ImportBody.FileName, h)
+			if response.EntityCount.TotalErrCount > 0 {
+				response.ErrMsg = ErrMsgContruct(response.EntityCount.TotalErrCount, response.EntityCount.ErrCompCount, response.EntityCount.ErrRelCount)
+			}
+			break
+		}
+		isOci := meshkitoci.IsOCIArtifact((decodedBytes))
+		if isOci {
+			tempFile, err := os.CreateTemp("", "oci-artifact-*.tar")
 			if err != nil {
-				err = meshkitutils.ErrCreateDir(err, "Error creating temp directory")
-				h.sendErrorEvent(uuid.Nil, provider, "Error creating temp directory", err)
-				h.log.Error(err)
-				http.Error(rw, err.Error(), http.StatusInternalServerError)
+				err = meshkitutils.ErrCreateFile(err, "Error creating temp file")
+				h.handleError(rw, err, err.Error())
 				return
 			}
-			defer os.RemoveAll(tempDir)
-			if err := processUploadedFile(tempFile.Name(), tempDir, h, &response, provider); err != nil {
-				h.log.Error(err)
-				http.Error(rw, err.Error(), http.StatusInternalServerError)
+			defer os.Remove(tempFile.Name())
+
+			if _, err := tempFile.Write(decodedBytes); err != nil {
+				err = meshkitutils.ErrWriteFile(err, importRequest.ImportBody.FileName)
+				h.handleError(rw, err, err.Error())
+
+				return
+			}
+
+			extractedDir, err := os.MkdirTemp("", "oci-extracted-")
+			if err != nil {
+				err = meshkitutils.ErrCreateDir(err, "Error creating temp directory")
+				h.handleError(rw, err, err.Error())
+				return
+			}
+			defer os.RemoveAll(extractedDir)
+
+			if err := meshkitoci.UnCompressOCIArtifact(tempFile.Name(), extractedDir); err != nil {
+				h.handleError(rw, err, err.Error())
+				return
+			}
+
+			tarFilePath, err := findTarFile(extractedDir)
+			if err != nil {
+				h.handleError(rw, err, err.Error())
+				return
+			}
+			if err := processUploadedFile(tarFilePath, extractedDir, h, &response, provider); err != nil {
+				h.handleError(rw, err, err.Error())
 				return
 			}
 
 			if response.EntityCount.TotalErrCount > 0 {
 				response.ErrMsg = ErrMsgContruct(response.EntityCount.TotalErrCount, response.EntityCount.ErrCompCount, response.EntityCount.ErrRelCount)
 			}
+		} else {
+			if tempFile, err := createTempFile(string(decodedBytes)); err != nil {
+				h.sendErrorEvent(userID, provider, "Failed to create temp file", err)
+				h.handleError(rw, err, err.Error())
+				return
+			} else {
+				defer os.Remove(tempFile.Name())
+				tempDir, err := os.MkdirTemp("", "extracted-")
+				if err != nil {
+					err = meshkitutils.ErrCreateDir(err, "Error creating temp directory")
+					h.handleError(rw, err, err.Error())
+					http.Error(rw, err.Error(), http.StatusInternalServerError)
+					return
+				}
+				defer os.RemoveAll(tempDir)
+				if err := processUploadedFile(tempFile.Name(), tempDir, h, &response, provider); err != nil {
+					h.handleError(rw, err, err.Error())
+					return
+				}
 
-			message = writeMessageString(response.EntityCount.CompCount, response.EntityCount.RelCount)
-			h.sendSuccessResponse(rw, userID, provider, message.String(), response.ErrMsg, &response)
-			return
+				if response.EntityCount.TotalErrCount > 0 {
+					response.ErrMsg = ErrMsgContruct(response.EntityCount.TotalErrCount, response.EntityCount.ErrCompCount, response.EntityCount.ErrRelCount)
+				}
+			}
 		}
+
 	}
+	message = writeMessageString(&response)
+	h.sendSuccessResponse(rw, userID, provider, message.String(), response.ErrMsg, &response)
 }
