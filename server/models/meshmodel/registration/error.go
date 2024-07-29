@@ -11,6 +11,7 @@ const (
 	ErrGetEntityCode = "replace_me"
 	ErrRegisterEntityCode = "replace_me"
 	ErrInvalidModelDefinitionCode = "replace_me"
+	ErrImportFailureCode = "replace_me"
 )
 
 
@@ -28,4 +29,8 @@ func ErrDirPkgUnitParseFail(dirpath string, err error) error {
 
 func ErrInvalidModelDefinition(path string, err error) error {
 	return errors.New(ErrInvalidModelDefinitionCode, errors.Alert, []string{fmt.Sprintf("The file at path %s is not a valid Model definition", path)}, []string{fmt.Sprintf("Could not parse Model:  %s", err.Error())}, []string{}, []string{} )
+}
+
+func ErrImportFailure(hostname string, failedMsg string) error {
+	return errors.New(ErrImportFailureCode, errors.Alert, []string{}, []string{fmt.Sprintf("The import process for a registrant %s encountered difficulties,due to which %s. Specific issues during the import process resulted in certain entities not being successfully registered in the table.", hostname, failedMsg)}, []string{}, []string{fmt.Sprintf("Visit docs with the error code %s", "https://docs.meshery.io/reference/error-codes")})
 }
