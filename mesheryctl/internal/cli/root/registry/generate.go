@@ -19,7 +19,6 @@ import (
 	"os"
 	"path/filepath"
 	"sync"
-	"time"
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshkit/generators"
@@ -45,12 +44,7 @@ var (
 	totalAggregateModel int
 	defVersion          = "v1.0.0"
 )
-var (
-	artifactHubCount        = 0
-	artifactHubRateLimit    = 100
-	artifactHubRateLimitDur = 5 * time.Minute
-	artifactHubMutex        sync.Mutex
-)
+
 var generateCmd = &cobra.Command{
 	Use:   "generate",
 	Short: "Generate Models",
@@ -88,8 +82,8 @@ mesheryctl registry generate --registrant-def [path to connection definition] --
 		multiWriter := io.MultiWriter(logFile, os.Stdout)
 		multiErrorWriter := io.MultiWriter(errorLogFile, os.Stderr)
 
-		logrus.SetOutput(multiWriter)
-		logrus.SetOutput(multiErrorWriter)
+		utils.Log.UpdateLogOutput(multiWriter)
+		utils.Log.UpdateLogOutput(multiErrorWriter)
 		return nil
 	},
 
@@ -131,11 +125,6 @@ mesheryctl registry generate --registrant-def [path to connection definition] --
 
 		return err
 	},
-}
-
-type compGenerateTracker struct {
-	totalComps int
-	version    string
 }
 
 func init() {
