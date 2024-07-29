@@ -5,13 +5,13 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/models/connections"
-	"github.com/layer5io/meshery/server/models/environments"
 	"github.com/layer5io/meshkit/broker"
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/models/events"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
+	"github.com/meshery/schemas/models/v1beta1"
 )
 
 // ContextKey is a custom type for setting context key
@@ -491,9 +491,9 @@ type Provider interface {
 
 	GetEnvironments(token, page, pageSize, search, order, filter, orgID string) ([]byte, error)
 	GetEnvironmentByID(req *http.Request, environmentID, orgID string) ([]byte, error)
-	SaveEnvironment(req *http.Request, env *environments.EnvironmentPayload, token string, skipTokenCheck bool) ([]byte, error)
+	SaveEnvironment(req *http.Request, env *v1beta1.EnvironmentPayload, token string, skipTokenCheck bool) ([]byte, error)
 	DeleteEnvironment(req *http.Request, environmentID string) ([]byte, error)
-	UpdateEnvironment(req *http.Request, env *environments.EnvironmentPayload, environmentID string) (*environments.EnvironmentData, error)
+	UpdateEnvironment(req *http.Request, env *v1beta1.EnvironmentPayload, environmentID string) (*v1beta1.Environment, error)
 	AddConnectionToEnvironment(req *http.Request, environmentID string, connectionID string) ([]byte, error)
 	RemoveConnectionFromEnvironment(req *http.Request, environmentID string, connectionID string) ([]byte, error)
 	GetConnectionsOfEnvironment(req *http.Request, environmentID, page, pagesize, search, order, filter string) ([]byte, error)

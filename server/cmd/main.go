@@ -35,6 +35,7 @@ import (
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 	"github.com/spf13/viper"
 
+	"github.com/meshery/schemas/models/v1beta1"
 	"github.com/sirupsen/logrus"
 )
 
@@ -208,6 +209,8 @@ func main() {
 		models.Organization{},
 		models.Key{},
 		connections.Connection{},
+		v1beta1.Environment{},
+		v1beta1.EnvironmentConnectionMapping{},
 		_events.Event{},
 	)
 	if err != nil {
@@ -229,6 +232,7 @@ func main() {
 		MesheryK8sContextPersister:      &models.MesheryK8sContextPersister{DB: dbHandler},
 		OrganizationPersister:           &models.OrganizationPersister{DB: dbHandler},
 		ConnectionPersister:             &models.ConnectionPersister{DB: dbHandler},
+		EnvironmentPersister:			 &models.EnvironmentPersister{DB: dbHandler},
 		KeyPersister:                    &models.KeyPersister{DB: dbHandler},
 		EventsPersister:                 &models.EventsPersister{DB: dbHandler},
 		GenericPersister:                dbHandler,
