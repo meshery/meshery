@@ -181,16 +181,21 @@ func (l *DefaultLocalProvider) UpdateEnvironment(_ *http.Request, environmentPay
 	return l.EnvironmentPersister.UpdateEnvironmentByID(environment)
 }
 
-func (l *DefaultLocalProvider) AddConnectionToEnvironment(_ *http.Request, _ string, _ string) ([]byte, error) {
-	return []byte(""), ErrLocalProviderSupport
+func (l *DefaultLocalProvider) AddConnectionToEnvironment(_ *http.Request, environmentID string, connectionID string) ([]byte, error) {
+	envId, _ := uuid.FromString(environmentID)
+	conId, _ :=  uuid.FromString(connectionID)
+	return l.EnvironmentPersister.AddConnectionToEnvironment(envId, conId)
 }
 
-func (l *DefaultLocalProvider) RemoveConnectionFromEnvironment(_ *http.Request, _ string, _ string) ([]byte, error) {
-	return []byte(""), ErrLocalProviderSupport
+func (l *DefaultLocalProvider) RemoveConnectionFromEnvironment(_ *http.Request, environmentID string, connectionID string) ([]byte, error) {
+	envId, _ := uuid.FromString(environmentID)
+	conId, _ :=  uuid.FromString(connectionID)
+	return l.EnvironmentPersister.DeleteConnectionFromEnvironment(envId, conId)
 }
 
-func (l *DefaultLocalProvider) GetConnectionsOfEnvironment(_ *http.Request, _, _, _, _, _, _ string) ([]byte, error) {
-	return []byte(""), ErrLocalProviderSupport
+func (l *DefaultLocalProvider) GetConnectionsOfEnvironment(_ *http.Request, environmentID, page, pageSize, search, order, filter string) ([]byte, error) {
+	envId, _ := uuid.FromString(environmentID)
+	return l.EnvironmentPersister.GetEnvironmentConnections(envId, search, order, page, pageSize, filter)
 }
 
 // GetSession - returns the session

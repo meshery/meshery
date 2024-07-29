@@ -210,6 +210,7 @@ func main() {
 		models.Key{},
 		connections.Connection{},
 		v1beta1.Environment{},
+		v1beta1.EnvironmentConnectionMapping{},
 		_events.Event{},
 	)
 	if err != nil {
