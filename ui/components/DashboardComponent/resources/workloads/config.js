@@ -46,7 +46,7 @@ export const WorkloadTableConfig = (
           name: 'metadata.name',
           label: 'Name',
           options: {
-            sort: false,
+            sort: true,
             customHeadRender: function CustomHead({ ...column }) {
               return <DefaultTableCell columnData={column} />;
             },
@@ -230,7 +230,7 @@ export const WorkloadTableConfig = (
           name: 'metadata.name',
           label: 'Name',
           options: {
-            sort: false,
+            sort: true,
             customHeadRender: function CustomHead({ ...column }) {
               return <DefaultTableCell columnData={column} />;
             },
@@ -386,7 +386,7 @@ export const WorkloadTableConfig = (
           name: 'metadata.name',
           label: 'Name',
           options: {
-            sort: false,
+            sort: true,
             customHeadRender: function CustomHead({ ...column }) {
               return <DefaultTableCell columnData={column} />;
             },
@@ -522,7 +522,7 @@ export const WorkloadTableConfig = (
           name: 'metadata.name',
           label: 'Name',
           options: {
-            sort: false,
+            sort: true,
             customHeadRender: function CustomHead({ ...column }) {
               return <DefaultTableCell columnData={column} />;
             },
@@ -658,7 +658,7 @@ export const WorkloadTableConfig = (
           name: 'metadata.name',
           label: 'Name',
           options: {
-            sort: false,
+            sort: true,
             customHeadRender: function CustomHead({ ...column }) {
               return <DefaultTableCell columnData={column} />;
             },
@@ -824,7 +824,7 @@ export const WorkloadTableConfig = (
           name: 'metadata.name',
           label: 'Name',
           options: {
-            sort: false,
+            sort: true,
             customHeadRender: function CustomHead({ ...column }) {
               return <DefaultTableCell columnData={column} />;
             },
@@ -972,7 +972,7 @@ export const WorkloadTableConfig = (
           name: 'metadata.name',
           label: 'Name',
           options: {
-            sort: false,
+            sort: true,
             customHeadRender: function CustomHead({ ...column }) {
               return <DefaultTableCell columnData={column} />;
             },
@@ -1092,7 +1092,7 @@ export const WorkloadTableConfig = (
           name: 'metadata.name',
           label: 'Name',
           options: {
-            sort: false,
+            sort: true,
             customHeadRender: function CustomHead({ ...column }) {
               return <DefaultTableCell columnData={column} />;
             },

@@ -39,7 +39,7 @@ export const SecurityTypesConfig = (
           name: 'metadata.name',
           label: 'Name',
           options: {
-            sort: false,
+            sort: true,
             customHeadRender: function CustomHead({ ...column }) {
               return <DefaultTableCell columnData={column} />;
             },
@@ -146,7 +146,7 @@ export const SecurityTypesConfig = (
           name: 'metadata.name',
           label: 'Name',
           options: {
-            sort: false,
+            sort: true,
             customHeadRender: function CustomHead({ ...column }) {
               return <DefaultTableCell columnData={column} />;
             },
@@ -284,7 +284,7 @@ export const SecurityTypesConfig = (
           name: 'metadata.name',
           label: 'Name',
           options: {
-            sort: false,
+            sort: true,
             customHeadRender: function CustomHead({ ...column }) {
               return <DefaultTableCell columnData={column} />;
             },
@@ -391,7 +391,7 @@ export const SecurityTypesConfig = (
           name: 'metadata.name',
           label: 'Name',
           options: {
-            sort: false,
+            sort: true,
             customHeadRender: function CustomHead({ ...column }) {
               return <DefaultTableCell columnData={column} />;
             },
@@ -498,7 +498,7 @@ export const SecurityTypesConfig = (
           name: 'metadata.name',
           label: 'Name',
           options: {
-            sort: false,
+            sort: true,
             customHeadRender: function CustomHead({ ...column }) {
               return <DefaultTableCell columnData={column} />;
             },
