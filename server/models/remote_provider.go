@@ -400,15 +400,15 @@ func (l *RemoteProvider) GetUserByID(req *http.Request, userID string) ([]byte, 
 
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
-		l.Log.Error(ErrDataRead(err, "respone body"))
+		l.Log.Error(ErrDataRead(err, "response body"))
 		return nil, err
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		l.Log.Info("user profile successfully retrieved from remote provider")
+		l.Log.Info("User profile retrieved from remote provider.")
 		return bdr, nil
 	}
-	err = ErrFetch(fmt.Errorf(fmt.Sprintf("error retrieving user with id: %s", userID)), "User Profile", resp.StatusCode)
+	err = ErrFetch(fmt.Errorf(fmt.Sprintf("Error retrieving user with ID: %s", userID)), "User Profile", resp.StatusCode)
 	l.Log.Error(err)
 	return nil, err
 }
@@ -860,7 +860,7 @@ func (l *RemoteProvider) GetK8sContext(token, connectionID string) (K8sContext, 
 			return kc, ErrUnmarshal(err, "Kubernetes context")
 		}
 
-		l.Log.Info("kubernetes context successfully retrieved from remote provider")
+		l.Log.Info("Retrieved Kubernetes context from remote provider.")
 		return kc, nil
 	}
 
@@ -868,7 +868,7 @@ func (l *RemoteProvider) GetK8sContext(token, connectionID string) (K8sContext, 
 	if err != nil {
 		return K8sContext{}, ErrDataRead(err, "Kubernetes context")
 	}
-	err = ErrFetch(fmt.Errorf("failed to get kubernetes context"), fmt.Sprint(bdr), resp.StatusCode)
+	err = ErrFetch(fmt.Errorf("Failed to retrieve Kubernetes context."), fmt.Sprint(bdr), resp.StatusCode)
 	l.Log.Error(err)
 	return K8sContext{}, err
 }
@@ -924,7 +924,7 @@ func (l *RemoteProvider) FetchResults(tokenVal string, page, pageSize, search, o
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		l.Log.Info("results successfully retrieved from remote provider")
+		l.Log.Info("Retrieved results from remote provider")
 		return bdr, nil
 	}
 	err = ErrFetch(err, fmt.Sprint(bdr), resp.StatusCode)
@@ -941,7 +941,7 @@ func (l *RemoteProvider) FetchAllResults(tokenString string, page, pageSize, sea
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistResults)
 
-	l.Log.Info("attempting to fetch results from cloud")
+	l.Log.Info("Fetching results from remote provider.")
 
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
 	q := remoteProviderURL.Query()
@@ -984,7 +984,7 @@ func (l *RemoteProvider) FetchAllResults(tokenString string, page, pageSize, sea
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		l.Log.Info("results successfully retrieved from remote provider")
+		l.Log.Info("Retrieved results from remote provider.")
 		return bdr, nil
 	}
 	err = ErrFetch(err, fmt.Sprint(bdr), resp.StatusCode)
@@ -1096,7 +1096,7 @@ func (l *RemoteProvider) FetchSmiResult(req *http.Request, page, pageSize, searc
 		return nil, ErrDataRead(err, "SMI Result")
 	}
 	if resp.StatusCode == http.StatusOK {
-		l.Log.Info("result successfully retrieved from remote provider")
+		l.Log.Info("Retrieved result from remote provider")
 		return bdr, nil
 	}
 	err = ErrFetch(err, "SMI Result", resp.StatusCode)
@@ -1201,7 +1201,7 @@ func (l *RemoteProvider) PublishResults(req *http.Request, result *MesheryResult
 		return "", ErrDataRead(err, "Perf Result")
 	}
 	if resp.StatusCode == http.StatusCreated {
-		l.Log.Info("results successfully published to remote provider")
+		l.Log.Info("Published results to remote provider.")
 		idMap := map[string]string{}
 		if err = json.Unmarshal(bdr, &idMap); err != nil {
 			return "", ErrUnmarshal(err, "Perf Result")
@@ -1422,7 +1422,7 @@ func (l *RemoteProvider) GetMesheryPatternResource(token, resourceID string) (*P
 			return nil, ErrUnmarshal(err, "Design resource")
 		}
 
-		l.Log.Info("design resource successfully retrieved from remote provider")
+		l.Log.Info("Retrieved design from remote provider.")
 		return &pr, nil
 	}
 
@@ -1452,7 +1452,7 @@ func (l *RemoteProvider) GetMesheryPatternResources(
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryPatternResources)
-	l.Log.Debug("attempting to fetch designs resource from cloud")
+	l.Log.Debug("Fetching designs resource from remote provider.")
 
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
 	q := remoteProviderURL.Query()
@@ -1506,7 +1506,7 @@ func (l *RemoteProvider) GetMesheryPatternResources(
 			return nil, ErrUnmarshal(err, "design Page Resource")
 		}
 
-		l.Log.Debug("design resources successfully retrieved from remote provider")
+		l.Log.Debug("Retrieved design from remote provider")
 		return &pr, nil
 	}
 
@@ -1514,7 +1514,7 @@ func (l *RemoteProvider) GetMesheryPatternResources(
 	if err != nil {
 		return nil, ErrDataRead(err, "design Page Resource")
 	}
-	err = ErrFetch(fmt.Errorf("error while fetching design resource: %s", bdr), fmt.Sprint(bdr), resp.StatusCode)
+	err = ErrFetch(fmt.Errorf("Failed to fetch design: %s", bdr), fmt.Sprint(bdr), resp.StatusCode)
 	l.Log.Error(err)
 	return nil, err
 }
@@ -1526,7 +1526,7 @@ func (l *RemoteProvider) DeleteMesheryPatternResource(token, resourceID string) 
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryPatternResources)
 
-	l.Log.Info("attempting to fetch design from cloud for id: ", resourceID)
+	l.Log.Info("Fetching design from remote provider for ID: ", resourceID)
 
 	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, resourceID))
 	l.Log.Debug("constructed design url: ", remoteProviderURL.String())
@@ -1544,10 +1544,10 @@ func (l *RemoteProvider) DeleteMesheryPatternResource(token, resourceID string) 
 	}()
 
 	if resp.StatusCode == http.StatusOK {
-		l.Log.Info("design resource successfully deleted from remote provider")
+		l.Log.Info("Deleted design from remote provider.")
 		return nil
 	}
-	err = ErrDelete(fmt.Errorf("error while deleting design resource"), "design: "+resourceID, resp.StatusCode)
+	err = ErrDelete(fmt.Errorf("Error while deleting design."), "design: "+resourceID, resp.StatusCode)
 	l.Log.Error(err)
 	return err
 }
