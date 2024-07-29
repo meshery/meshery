@@ -20,7 +20,6 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/models/connections"
-	"github.com/layer5io/meshery/server/models/environments"
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/models/events"
@@ -140,7 +139,7 @@ func (l *DefaultLocalProvider) GetUsers(_, _, _, _, _, _ string) ([]byte, error)
 	return []byte(""), ErrLocalProviderSupport
 }
 
-func (l *DefaultLocalProvider) GetEnvironments(_, page, pageSize int, search, order, filter string, orgID string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetEnvironments(_, page, pageSize, search, order, filter string, orgID string) ([]byte, error) {
 	return l.EnvironmentPersister.GetEnvironments(search, order, page, pageSize, filter)
 }
 
@@ -151,28 +150,35 @@ func (l *DefaultLocalProvider) GetEnvironmentByID(_ *http.Request, environmentID
 
 func (l *DefaultLocalProvider) DeleteEnvironment(_ *http.Request, environmentID string) ([]byte, error) {
 	id := uuid.FromStringOrNil(environmentID)
-	environment := v1beta1.Environment{
-		ID:        id,
-	}
-	return l.EnvironmentPersister.DeleteEnvironment(&environment)
+	return l.EnvironmentPersister.DeleteEnvironmentByID(id)
 }
 
-func (l *DefaultLocalProvider) SaveEnvironment(_ *http.Request, environment *v1beta1.EnvironmentPayload, _ string, _ bool) ([]byte, error) {
-	return l.EnvironmentPersister.SaveEnvironment(environment)
-}
-
-func (l *DefaultLocalProvider) UpdateEnvironment(_ *http.Request, EnvironmentPayload *v1beta1.EnvironmentPayload, environmentID string) (*environments.EnvironmentData, error) {
-	id := uuid.FromStringOrNil(environmentID)
-	environment := v1beta1.Environment{
-		ID:        id,
+func (l *DefaultLocalProvider) SaveEnvironment(_ *http.Request, environmentPayload *v1beta1.EnvironmentPayload, _ string, _ bool) ([]byte, error) {
+	orgId, _ :=  uuid.FromString(environmentPayload.OrgId)
+	environment := &v1beta1.Environment{
 		CreatedAt: time.Now(),
-		Description: EnvironmentPayload.Description,
-		Name: EnvironmentPayload.Name,
-		OrganizationID: EnvironmentPayload.OrgID,
+		Description: environmentPayload.Description,
+		Name: environmentPayload.Name,
+		OrganizationId: orgId,
 		Owner: "Meshery",
 		UpdatedAt:time.Now(),
 	}
-	return l.EnvironmentPersister.UpdateEnvironmentByID(&environment)
+	return l.EnvironmentPersister.SaveEnvironment(environment)
+}
+
+func (l *DefaultLocalProvider) UpdateEnvironment(_ *http.Request, environmentPayload *v1beta1.EnvironmentPayload, environmentID string) (*v1beta1.Environment, error) {
+	id, _ := uuid.FromString(environmentID)
+	orgId, _ :=  uuid.FromString(environmentPayload.OrgId)
+	environment := &v1beta1.Environment{
+		ID:        id,
+		CreatedAt: time.Now(),
+		Description: environmentPayload.Description,
+		Name: environmentPayload.Name,
+		OrganizationId: orgId,
+		Owner: "Meshery",
+		UpdatedAt:time.Now(),
+	}
+	return l.EnvironmentPersister.UpdateEnvironmentByID(environment)
 }
 
 func (l *DefaultLocalProvider) AddConnectionToEnvironment(_ *http.Request, _ string, _ string) ([]byte, error) {
