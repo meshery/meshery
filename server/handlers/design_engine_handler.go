@@ -130,7 +130,7 @@ func (h *Handler) PatternFileHandler(
 	eventBuilder := events.NewEvent().ActedUpon(patternID).FromUser(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction(action)
 
 	if err != nil {
-		err := ErrCompConfigPairs(err)
+		err := ErrPatternDeploy(err, patternFile.Name)
 		metadata := map[string]interface{}{
 			"error": err,
 		}
@@ -196,7 +196,7 @@ func _processPattern(
 	// // Get the kubehandler from the context
 	k8scontexts, ok := ctx.Value(models.KubeClustersKey).([]models.K8sContext)
 	if !ok || len(k8scontexts) == 0 {
-		return nil, ErrInvalidKubeHandler(fmt.Errorf("failed to find k8s handler"), "_processPattern couldn't find a valid k8s handler")
+		return nil, ErrInvalidKubeHandler(fmt.Errorf("failed to find k8s handler for \"%s\"", pattern.Name), "_processPattern couldn't find a valid k8s handler")
 	}
 
 	// // Get the kubernetes config from the context

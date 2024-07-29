@@ -2,10 +2,8 @@ import React, { useEffect, useMemo, useState } from 'react';
 import dataFetch from '../../../lib/data-fetch';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
-import { ResponsiveDataTable } from '@layer5/sistent';
-import CustomColumnVisibilityControl from '../../../utils/custom-column';
+import { CustomColumnVisibilityControl, ResponsiveDataTable, SearchBar } from '@layer5/sistent';
 import useStyles from '../../../assets/styles/general/tool.styles';
-import SearchBar from '../../../utils/custom-search';
 import View from '../view';
 import { ALL_VIEW } from './config';
 import { getK8sClusterIdsFromCtxId } from '../../../utils/multi-ctx';
@@ -187,28 +185,30 @@ const ResourcesTable = (props) => {
             style={{ marginBottom: '5px', marginTop: '1rem' }}
           >
             <div className={classes.createButton}>{/* <MesherySettingsEnvButtons /> */}</div>
-            <div
-              className={classes.searchAndView}
-              style={{
-                display: 'flex',
-                borderRadius: '0.5rem 0.5rem 0 0',
-              }}
-            >
-              <SearchBar
-                onSearch={(value) => {
-                  setSearch(value);
+            <UsesSistent>
+              <div
+                className={classes.searchAndView}
+                style={{
+                  display: 'flex',
+                  borderRadius: '0.5rem 0.5rem 0 0',
                 }}
-                expanded={isSearchExpanded}
-                setExpanded={setIsSearchExpanded}
-                placeholder={`Search ${tableConfig.name}...`}
-              />
+              >
+                <SearchBar
+                  onSearch={(value) => {
+                    setSearch(value);
+                  }}
+                  expanded={isSearchExpanded}
+                  setExpanded={setIsSearchExpanded}
+                  placeholder={`Search ${tableConfig.name}...`}
+                />
 
-              <CustomColumnVisibilityControl
-                id="ref"
-                columns={tableConfig.columns}
-                customToolsProps={{ columnVisibility, setColumnVisibility }}
-              />
-            </div>
+                <CustomColumnVisibilityControl
+                  id="ref"
+                  columns={tableConfig.columns}
+                  customToolsProps={{ columnVisibility, setColumnVisibility }}
+                />
+              </div>
+            </UsesSistent>
           </div>
           <UsesSistent>
             <ResponsiveDataTable
