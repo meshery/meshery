@@ -41,8 +41,15 @@ export const ConfigurationTableConfig = (
           label: 'Name',
           options: {
             sort: true,
-            customHeadRender: function CustomHead({ ...column }) {
-              return <DefaultTableCell columnData={column} />;
+            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+              return (
+                <SortableTableCell
+                  index={index}
+                  columnData={column}
+                  columnMeta={columnMeta}
+                  onSort={() => sortColumn(index)}
+                />
+              );
             },
             customBodyRender: function CustomBody(value, tableMeta) {
               return (
@@ -158,8 +165,15 @@ export const ConfigurationTableConfig = (
           label: 'Name',
           options: {
             sort: true,
-            customHeadRender: function CustomHead({ ...column }) {
-              return <DefaultTableCell columnData={column} />;
+            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+              return (
+                <SortableTableCell
+                  index={index}
+                  columnData={column}
+                  columnMeta={columnMeta}
+                  onSort={() => sortColumn(index)}
+                />
+              );
             },
             customBodyRender: function CustomBody(value, tableMeta) {
               return (
@@ -293,8 +307,15 @@ export const ConfigurationTableConfig = (
           label: 'Name',
           options: {
             sort: true,
-            customHeadRender: function CustomHead({ ...column }) {
-              return <DefaultTableCell columnData={column} />;
+            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+              return (
+                <SortableTableCell
+                  index={index}
+                  columnData={column}
+                  columnMeta={columnMeta}
+                  onSort={() => sortColumn(index)}
+                />
+              );
             },
             customBodyRender: function CustomBody(value, tableMeta) {
               return (
@@ -410,8 +431,15 @@ export const ConfigurationTableConfig = (
           label: 'Name',
           options: {
             sort: true,
-            customHeadRender: function CustomHead({ ...column }) {
-              return <DefaultTableCell columnData={column} />;
+            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+              return (
+                <SortableTableCell
+                  index={index}
+                  columnData={column}
+                  columnMeta={columnMeta}
+                  onSort={() => sortColumn(index)}
+                />
+              );
             },
             customBodyRender: function CustomBody(value, tableMeta) {
               return (
@@ -529,8 +557,15 @@ export const ConfigurationTableConfig = (
           label: 'Name',
           options: {
             sort: true,
-            customHeadRender: function CustomHead({ ...column }) {
-              return <DefaultTableCell columnData={column} />;
+            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+              return (
+                <SortableTableCell
+                  index={index}
+                  columnData={column}
+                  columnMeta={columnMeta}
+                  onSort={() => sortColumn(index)}
+                />
+              );
             },
             customBodyRender: function CustomBody(value, tableMeta) {
               return (
@@ -692,8 +727,15 @@ export const ConfigurationTableConfig = (
           label: 'Name',
           options: {
             sort: true,
-            customHeadRender: function CustomHead({ ...column }) {
-              return <DefaultTableCell columnData={column} />;
+            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+              return (
+                <SortableTableCell
+                  index={index}
+                  columnData={column}
+                  columnMeta={columnMeta}
+                  onSort={() => sortColumn(index)}
+                />
+              );
             },
             customBodyRender: function CustomBody(value, tableMeta) {
               return (
@@ -811,8 +853,15 @@ export const ConfigurationTableConfig = (
           label: 'Name',
           options: {
             sort: true,
-            customHeadRender: function CustomHead({ ...column }) {
-              return <DefaultTableCell columnData={column} />;
+            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+              return (
+                <SortableTableCell
+                  index={index}
+                  columnData={column}
+                  columnMeta={columnMeta}
+                  onSort={() => sortColumn(index)}
+                />
+              );
             },
             customBodyRender: function CustomBody(value, tableMeta) {
               return (
@@ -988,8 +1037,15 @@ export const ConfigurationTableConfig = (
           label: 'Name',
           options: {
             sort: true,
-            customHeadRender: function CustomHead({ ...column }) {
-              return <DefaultTableCell columnData={column} />;
+            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+              return (
+                <SortableTableCell
+                  index={index}
+                  columnData={column}
+                  columnMeta={columnMeta}
+                  onSort={() => sortColumn(index)}
+                />
+              );
             },
             customBodyRender: function CustomBody(value, tableMeta) {
               return (
@@ -1105,8 +1161,15 @@ export const ConfigurationTableConfig = (
           label: 'Name',
           options: {
             sort: true,
-            customHeadRender: function CustomHead({ ...column }) {
-              return <DefaultTableCell columnData={column} />;
+            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+              return (
+                <SortableTableCell
+                  index={index}
+                  columnData={column}
+                  columnMeta={columnMeta}
+                  onSort={() => sortColumn(index)}
+                />
+              );
             },
             customBodyRender: function CustomBody(value, tableMeta) {
               return (
@@ -1224,8 +1287,15 @@ export const ConfigurationTableConfig = (
           label: 'Name',
           options: {
             sort: true,
-            customHeadRender: function CustomHead({ ...column }) {
-              return <DefaultTableCell columnData={column} />;
+            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+              return (
+                <SortableTableCell
+                  index={index}
+                  columnData={column}
+                  columnMeta={columnMeta}
+                  onSort={() => sortColumn(index)}
+                />
+              );
             },
             customBodyRender: function CustomBody(value, tableMeta) {
               return (
@@ -1356,8 +1426,15 @@ export const ConfigurationTableConfig = (
           label: 'Name',
           options: {
             sort: true,
-            customHeadRender: function CustomHead({ ...column }) {
-              return <DefaultTableCell columnData={column} />;
+            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+              return (
+                <SortableTableCell
+                  index={index}
+                  columnData={column}
+                  columnMeta={columnMeta}
+                  onSort={() => sortColumn(index)}
+                />
+              );
             },
             customBodyRender: function CustomBody(value, tableMeta) {
               return (
