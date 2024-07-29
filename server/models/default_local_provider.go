@@ -140,7 +140,7 @@ func (l *DefaultLocalProvider) GetUsers(_, _, _, _, _, _ string) ([]byte, error)
 }
 
 func (l *DefaultLocalProvider) GetEnvironments(_, page, pageSize, search, order, filter string, orgID string) ([]byte, error) {
-	return l.EnvironmentPersister.GetEnvironments(search, order, page, pageSize, filter)
+	return l.EnvironmentPersister.GetEnvironments(orgID, search, order, page, pageSize, filter)
 }
 
 func (l *DefaultLocalProvider) GetEnvironmentByID(_ *http.Request, environmentID string, _ string) ([]byte, error) {

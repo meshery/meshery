@@ -30,24 +30,20 @@ func (ep *EnvironmentPersister) fetchUserDetails() *User {
 }
 
 // GetEnvironments returns all of the environments
-func (ep *EnvironmentPersister) GetEnvironments(search, order, page, pageSize, filter string) ([]byte, error) {
+func (ep *EnvironmentPersister) GetEnvironments(orgID, search, order, page, pageSize, filter string) ([]byte, error) {
 	// Sanitize the order input
 	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
 	if order == "" {
 		order = "updated_at desc"
 	}
 
-	// Convert page and pageSize from string to uint
-	pageUint, err := strconv.ParseUint(page, 10, 32)
-	if err != nil {
-		return nil, err
-	}
-	pageSizeUint, err := strconv.ParseUint(pageSize, 10, 32)
-	if err != nil {
-		return nil, err
-	}
-
 	query := ep.DB.Model(&v1beta1.Environment{})
+	
+	// Filter by organization ID
+	if orgID != "" {
+		query = query.Where("organization_id = ?", orgID)
+	}
+	
 	if search != "" {
 		like := "%" + strings.ToLower(search) + "%"
 		query = query.Where("lower(name) like ?", like)
@@ -61,14 +57,29 @@ func (ep *EnvironmentPersister) GetEnvironments(search, order, page, pageSize, f
 	count := int64(0)
 	query.Table("environments").Count(&count)
 
-	// Fetch environments with pagination
 	environmentsFetched := []v1beta1.Environment{}
-	Paginate(uint(pageUint), uint(pageSizeUint))(query).Find(&environmentsFetched)
+	pageUint, err := strconv.ParseUint(page, 10, 32)
+	if err != nil {
+		return nil, err
+	}
+	// Fetch all environments if pageSize is "all"
+	if pageSize == "all" {
+		query.Find(&environmentsFetched)
+	} else {
+		// Convert page and pageSize from string to uint
+		pageSizeUint, err := strconv.ParseUint(pageSize, 10, 32)
+		if err != nil {
+			return nil, err
+		}
+		
+		// Fetch environments with pagination
+		Paginate(uint(pageUint), uint(pageSizeUint))(query).Find(&environmentsFetched)
+	}
 
 	// Prepare the response
 	environmentsPage := &v1beta1.EnvironmentPage{
 		Page:         int(pageUint),
-		PageSize:     int(pageSizeUint),
+		PageSize:     len(environmentsFetched),
 		TotalCount:   int(count),
 		Environments: environmentsFetched,
 	}
