@@ -46,7 +46,6 @@ import styles from './styles';
 import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
 import DefaultError from '../../General/error-404/index';
-// import { useGetSchemaQuery } from '@/rtk-query/schema';
 import { UsesSistent } from '@/components/SistentWrapper';
 
 const ACTION_TYPES = {
