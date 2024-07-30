@@ -213,6 +213,7 @@ func main() {
 		v1beta1.EnvironmentConnectionMapping{},
 		v1beta1.Workspace{},
 		v1beta1.WorkspacesEnvironmentsMapping{},
+		v1beta1.WorkspacesDesignsMapping{},
 		_events.Event{},
 	)
 	if err != nil {
