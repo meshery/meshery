@@ -96,6 +96,7 @@ const (
 	ErrUnreachableRemoteProviderCode      = "meshery-server-1301"
 	ErrShareFilterCode                    = "meshery-server-1302"
 	ErrPersistEventCode                   = "meshery-server-1303"
+	ErrInvalidEventDataCode		          = "replace-me"
 	ErrUnreachableKubeAPICode             = "meshery-server-1304"
 	ErrFlushMeshSyncDataCode              = "meshery-server-1305"
 	ErrUpdateConnectionStatusCode         = "meshery-server-1306"
@@ -461,6 +462,10 @@ func ErrUnreachableRemoteProvider(err error) error {
 }
 func ErrPersistEvent(err error) error {
 	return errors.New(ErrPersistEventCode, errors.Alert, []string{"Could not persist event"}, []string{err.Error()}, []string{"Database could be down or not reachable", "Meshery Database handler is not accessible to perform operations"}, []string{"Restart Meshery Server or Perform Hard Reset"})
+}
+
+func ErrInvalidEventData() error {
+	return errors.New(ErrInvalidEventDataCode, errors.Alert, []string{"The event provided is not valid"}, []string{"ActedUpon, Action, Category and Severity are required fields of an event"}, []string{}, []string{"Ensure that ActedUpon, Action, Category and Severity are present in the event"})
 }
 
 func ErrUnreachableKubeAPI(err error, server string) error {
