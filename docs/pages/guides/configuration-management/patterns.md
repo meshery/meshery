@@ -44,7 +44,7 @@ You can import a pattern using `mesheryctl` or Meshery UI. Patterns can be impor
 ```
 $ mesheryctl pattern import -f <path to the pattern>
 Importing pattern…
-Pattern successfully imported.
+Pattern imported.
 ```
 
 ### Using Meshery UI:

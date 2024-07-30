@@ -56,7 +56,7 @@ func (h *Handler) LogoutHandler(w http.ResponseWriter, req *http.Request, p mode
 		p.HandleUnAuthenticated(w, req)
 		return
 	}
-	h.log.Info(fmt.Sprintf("successfully logged out from %v provider", p.Name()))
+	h.log.Info(fmt.Sprintf("logged out from %v provider", p.Name()))
 	http.Redirect(w, req, "/provider", http.StatusFound)
 }
 
@@ -152,6 +152,7 @@ func (h *Handler) DownloadHandler(responseWriter http.ResponseWriter, request *h
 		return
 	}
 }
+
 // Deep-link and redirect support to land user on their originally requested page post authentication instead of dropping user on the root (home) page.
 func GetRefURL(req *http.Request) string {
 	refURL := req.URL.Path + "?" + req.URL.RawQuery
