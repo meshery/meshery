@@ -37,7 +37,7 @@ import (
 	"github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/layer5io/meshkit/utils/kubernetes/kompose"
 	"github.com/layer5io/meshkit/utils/walker"
-	v1beta1 "github.com/meshery/schemas/models/v1beta1"
+	"github.com/meshery/schemas/models/v1beta1/pattern"
 	"gopkg.in/yaml.v2"
 )
 
@@ -1751,7 +1751,7 @@ func (h *Handler) formatPatternOutput(rw http.ResponseWriter, content []byte, fo
 
 // Since the client currently does not support pattern imports and externalized variables, the first(import) stage of pattern engine
 // is evaluated here to simplify the pattern file such that it is valid when a deploy takes place
-func evalImportAndReferenceStage(p *v1beta1.PatternFile) (newp v1beta1.PatternFile) {
+func evalImportAndReferenceStage(p *pattern.PatternFile) (newp pattern.PatternFile) {
 	chain := stages.CreateChain()
 	chain.
 		// Add(stages.Import(sip, sap)). enable this

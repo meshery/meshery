@@ -16,6 +16,7 @@ import (
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshery/server/models/pattern/patterns"
+
 	"github.com/layer5io/meshery/server/models/pattern/patterns/k8s"
 	"github.com/layer5io/meshery/server/models/pattern/stages"
 	"github.com/layer5io/meshkit/logger"
@@ -23,7 +24,8 @@ import (
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 	"github.com/layer5io/meshkit/utils"
 	meshkube "github.com/layer5io/meshkit/utils/kubernetes"
-	v1beta1 "github.com/meshery/schemas/models/v1beta1"
+	"github.com/meshery/schemas/models/v1beta1/model"
+	"github.com/meshery/schemas/models/v1beta1/pattern"
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -56,8 +58,10 @@ func (h *Handler) PatternFileHandler(
 	var payload models.MesheryPatternFileDeployPayload
 	var patternFileByte []byte
 
+	fmt.Println("line 61 reached")
 	// Read the PatternFile
 	body, err := io.ReadAll(r.Body)
+	fmt.Println("line 64 reached", string(body), err)
 	if err != nil {
 		h.log.Error(ErrRequestBody(err))
 		http.Error(rw, ErrRequestBody(err).Error(), http.StatusInternalServerError)
@@ -175,7 +179,7 @@ func (h *Handler) PatternFileHandler(
 func _processPattern(
 	ctx context.Context,
 	provider models.Provider,
-	pattern v1beta1.PatternFile,
+	pattern pattern.PatternFile,
 	prefObj *models.Preference,
 	userID string,
 	isDelete,
@@ -237,6 +241,8 @@ func _processPattern(
 			eventsChannel:          ec,
 			patternName:            strings.ToLower(pattern.Name),
 		}
+		fmt.Println("line 244 reached")
+
 		chain := stages.CreateChain()
 		chain.
 			// Add(stages.Import(sip, sap)).
@@ -253,8 +259,8 @@ func _processPattern(
 		if !dryRun {
 			chain.
 				Add(stages.Provision(sip, sap, sap.log))
-				// Removed Persist stage
-				// Add(stages.Persist(sip, sap, sap.log))
+			// Removed Persist stage
+			// Add(stages.Persist(sip, sap, sap.log))
 		}
 		chain.
 			Add(func(data *stages.Data, err error, next stages.ChainStageNextFunction) {
@@ -350,7 +356,7 @@ func (sap *serviceActionProvider) Terminate(err error) {
 	}
 	sap.err = err
 }
-func (sap *serviceActionProvider) Mutate(p *v1beta1.PatternFile) {
+func (sap *serviceActionProvider) Mutate(p *pattern.PatternFile) {
 	//TODO: externalize these mutation rules with policies.
 	//1. Enforce the deployment of CRDs before other resources
 	for _, component := range p.Components {
@@ -374,7 +380,7 @@ func (sap *serviceActionProvider) Mutate(p *v1beta1.PatternFile) {
 // v1.StatusApplyConfiguration has deprecated, needed to find a different option to do this
 // NOTE: Currently tied to kubernetes
 // Returns ComponentName->ContextID->Response
-func (sap *serviceActionProvider) DryRun(comps []v1beta1.ComponentDefinition) (resp map[string]map[string]core.DryRunResponseWrapper, err error) {
+func (sap *serviceActionProvider) DryRun(comps []model.ComponentDefinition) (resp map[string]map[string]core.DryRunResponseWrapper, err error) {
 	for _, cmp := range comps {
 		for ctxID, kc := range sap.ctxTokubeconfig {
 			cl, err := meshkube.New([]byte(kc))
@@ -397,7 +403,7 @@ func (sap *serviceActionProvider) DryRun(comps []v1beta1.ComponentDefinition) (r
 	return
 }
 
-func dryRunComponent(cl *meshkube.Client, cmd v1beta1.ComponentDefinition) (core.DryRunResponseWrapper, error) {
+func dryRunComponent(cl *meshkube.Client, cmd model.ComponentDefinition) (core.DryRunResponseWrapper, error) {
 	st, ok, err := k8s.DryRunHelper(cl, cmd)
 	dResp := core.DryRunResponseWrapper{Success: ok, Component: &cmd}
 	if ok {
@@ -483,15 +489,18 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) ([]patter
 	// 	return nil, fmt.Errorf("failed to serialize the data: %s", err)
 	// }
 
-	for host := range ccp.Hosts {
+	fmt.Println("ccp.Hosts-----------: 491 ", ccp.Hosts)
+
+	for _, host := range ccp.Hosts {
 		// Hack until adapters fix the concurrent client
 		// creation issue: https://github.com/layer5io/meshery-adapter-library/issues/32
 		time.Sleep(50 * time.Microsecond)
 
-		sap.log.Debug("Adapter to execute operations on: ", host.Hostname)
+		sap.log.Debug("Execute operations on: ", host.Kind)
 
+		_hostPort, ok := host.Metadata["port"]
 		// Local call
-		if host.Port == 0 {
+		if !ok {
 			//TODO: Accommodate internal calls to use context mapping with kubeconfig
 			var kconfigs []string
 			for _, v := range sap.ctxTokubeconfig {
@@ -499,21 +508,31 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) ([]patter
 			}
 			resp, err := patterns.Process(
 				kconfigs,
-				[]v1beta1.ComponentDefinition{ccp.Component},
+				[]model.ComponentDefinition{ccp.Component},
 				sap.opIsDelete,
 				sap.patternName,
 				sap.eventsChannel,
 				sap.userID,
 				sap.provider,
-				host.IHost,
+				host,
 				sap.skipCrdAndOperator,
 				sap.upgradeExistingRelease,
 			)
 			return resp, err
 		}
-		addr := host.Hostname
-		if host.Port != 0 {
-			addr += ":" + strconv.Itoa(host.Port)
+		hostName, err := utils.Cast[string](host.Metadata["host_name"])
+		if err != nil {
+			return nil, fmt.Errorf("error execute operation on %v: %v", host, err)
+		}
+
+		hostPort, err := utils.Cast[int](_hostPort)
+		if err != nil {
+			return nil, fmt.Errorf("error execute operation on %v: %v", host, err)
+		}
+
+		addr := hostName
+		if hostPort != 0 {
+			addr += ":" + strconv.Itoa(hostPort)
 		}
 		// Create mesh client
 		mClient, err := meshes.CreateClient(
@@ -549,15 +568,13 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) ([]patter
 		resp, err := mClient.MClient.ProcessOAM(context.TODO(), &meshes.ProcessOAMRequest{
 			Username:    sap.userID,
 			DeleteOp:    sap.opIsDelete,
-			// OamComps:    []string{string(jsonComp)},
-			// OamConfig:   string(jsonConfig),
 			KubeConfigs: kconfigs,
 		})
 		sucess := err == nil
 		return []patterns.DeploymentMessagePerContext{
 			{
-				SystemName: host.Hostname,
-				Location:   fmt.Sprintf("%s:%s", host.Hostname, strconv.Itoa(host.Port)),
+				SystemName: hostName,
+				Location:   fmt.Sprintf("%s:%s", hostName, strconv.Itoa(hostPort)),
 				Summary: []patterns.DeploymentMessagePerComp{
 					{
 						Kind:       ccp.Component.Kind,

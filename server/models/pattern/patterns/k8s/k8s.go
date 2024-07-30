@@ -9,14 +9,15 @@ import (
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/utils"
 	meshkube "github.com/layer5io/meshkit/utils/kubernetes"
-	"github.com/meshery/schemas/models/v1beta1"
 	_errors "github.com/pkg/errors"
+		"github.com/meshery/schemas/models/v1beta1/model"
+
 	"gopkg.in/yaml.v2"
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/client-go/rest"
 )
 
-func Deploy(kubeClient *meshkube.Client, comp v1beta1.ComponentDefinition, isDel bool) error {
+func Deploy(kubeClient *meshkube.Client, comp model.ComponentDefinition, isDel bool) error {
 	resource := createK8sResourceStructure(comp)
 	manifest, err := yaml.Marshal(resource)
 	if err != nil {
@@ -24,9 +25,15 @@ func Deploy(kubeClient *meshkube.Client, comp v1beta1.ComponentDefinition, isDel
 	}
 
 	// Define a function to extract namesapce, labels and annotations in the componetn definiotn
-	namespace, err := utils.Cast[string](comp.Configuration["namespace"])
+	confMetadata, err := utils.Cast[map[string]interface{}](comp.Configuration["metadata"])
 	if err != nil {
 		err = _errors.Wrapf(err, "unable to extract namespace from component configuration")
+		return err
+	}
+
+	namespace, errr := utils.Cast[string](confMetadata["namespace"])
+	if errr != nil {
+		err = _errors.Wrapf(errr, "unable to extract namespace from component configuration")
 		return err
 	}
 
@@ -46,7 +53,7 @@ func Deploy(kubeClient *meshkube.Client, comp v1beta1.ComponentDefinition, isDel
 	return nil
 }
 
-func DryRunHelper(client *meshkube.Client, comp v1beta1.ComponentDefinition) (st map[string]interface{}, success bool, err error) {
+func DryRunHelper(client *meshkube.Client, comp model.ComponentDefinition) (st map[string]interface{}, success bool, err error) {
 	resource := createK8sResourceStructure(comp)
 	// Define a function to extract namesapce, labels and annotations in the componetn definiotn
 	_namespace, ok := comp.Configuration["namespace"]
@@ -111,7 +118,7 @@ func kindToResource(kind string) string {
 	return strings.ToLower(kind) + "s"
 }
 
-func createK8sResourceStructure(comp v1beta1.ComponentDefinition) map[string]interface{} {
+func createK8sResourceStructure(comp model.ComponentDefinition) map[string]interface{} {
 
 	component := map[string]interface{}{
 		"apiVersion": comp.Component.Version,

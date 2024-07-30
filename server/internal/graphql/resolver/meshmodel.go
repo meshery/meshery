@@ -7,7 +7,7 @@ import (
 	"github.com/layer5io/meshery/server/internal/graphql/model"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha2"
-	"github.com/meshery/schemas/models/v1beta1"
+	_model "github.com/meshery/schemas/models/v1beta1/model"
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 	regv1alpha2 "github.com/layer5io/meshkit/models/meshmodel/registry/v1alpha2"
 	regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
@@ -104,7 +104,7 @@ func getMeshModelComponents(regManager *meshmodel.RegistryManager) []*model.Mesh
 	components := make([]*model.MeshModelComponent, 0)
 	var response = make(map[string]*MeshModelComponentResponse)
 	for _, r := range res {
-		def, _ := r.(*v1beta1.ComponentDefinition)
+		def, _ := r.(*_model.ComponentDefinition)
 		if response[def.Model.Name] == nil {
 			response[def.Model.Name] = &MeshModelComponentResponse{
 				Name:     def.Model.Name,

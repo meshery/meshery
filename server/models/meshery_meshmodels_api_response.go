@@ -1,9 +1,9 @@
 package models
 
 import (
-	model "github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
+	models "github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	"github.com/layer5io/meshkit/models/meshmodel/entity"
-	"github.com/meshery/schemas/models/v1beta1"
+	"github.com/meshery/schemas/models/v1beta1/model"
 )
 
 // API response model for meshmodel models API
@@ -11,7 +11,7 @@ type MeshmodelsAPIResponse struct {
 	Page     int                       `json:"page"`
 	PageSize int                       `json:"page_size"`
 	Count    int64                     `json:"total_count"`
-	Models   []v1beta1.ModelDefinition `json:"models"`
+	Models   []model.ModelDefinition `json:"models"`
 }
 
 // API response model for meshmodel models API that contains the number of duplicates for each model
@@ -24,10 +24,10 @@ type MeshmodelsDuplicateAPIResponse struct {
 
 // API response model for meshmodel components API
 type MeshmodelComponentsAPIResponse struct {
-	Page       int                           `json:"page"`
-	PageSize   int                           `json:"page_size"`
-	Count      int64                         `json:"total_count"`
-	Components []v1beta1.ComponentDefinition `json:"components"`
+	Page       int                         `json:"page"`
+	PageSize   int                         `json:"page_size"`
+	Count      int64                       `json:"total_count"`
+	Components []model.ComponentDefinition `json:"components"`
 }
 
 // API response model for meshmodel components API that contains the number of duplicates for each component
@@ -63,12 +63,12 @@ type MeshmodelPoliciesAPIResponse struct {
 }
 
 type DuplicateResponseComponent struct {
-	v1beta1.ComponentDefinition
+	model.ComponentDefinition
 	Duplicates int `json:"duplicates"`
 }
 
 type DuplicateResponseModels struct {
-	v1beta1.ModelDefinition
+	model.ModelDefinition
 	Duplicates int `json:"duplicates"`
 }
 
@@ -76,10 +76,10 @@ type MeshmodelRegistrantsAPIResponse struct {
 	Page        int                                     `json:"page"`
 	PageSize    int                                     `json:"page_size"`
 	Count       int64                                   `json:"total_count"`
-	Registrants []model.MeshModelHostsWithEntitySummary `json:"registrants"`
+	Registrants []models.MeshModelHostsWithEntitySummary `json:"registrants"`
 }
 
-func FindDuplicateComponents(components []v1beta1.ComponentDefinition) []DuplicateResponseComponent {
+func FindDuplicateComponents(components []model.ComponentDefinition) []DuplicateResponseComponent {
 	set := make(map[string]int)
 
 	for _, comp := range components {
@@ -101,7 +101,7 @@ func FindDuplicateComponents(components []v1beta1.ComponentDefinition) []Duplica
 	return comps
 }
 
-func FindDuplicateModels(models []v1beta1.ModelDefinition) []DuplicateResponseModels {
+func FindDuplicateModels(models []model.ModelDefinition) []DuplicateResponseModels {
 	set := make(map[string]int)
 
 	for _, model := range models {
@@ -115,8 +115,8 @@ func FindDuplicateModels(models []v1beta1.ModelDefinition) []DuplicateResponseMo
 		key := model.Name + "@" + model.Version
 
 		mods = append(mods, DuplicateResponseModels{
-			ModelDefinition:      model,
-			Duplicates: set[key] - 1,
+			ModelDefinition: model,
+			Duplicates:      set[key] - 1,
 		})
 	}
 

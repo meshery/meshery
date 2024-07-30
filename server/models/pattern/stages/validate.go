@@ -6,7 +6,7 @@ import (
 	"fmt"
 
 	"github.com/layer5io/meshery/server/models/pattern/jsonschema"
-	"github.com/meshery/schemas/models/v1beta1"
+	"github.com/meshery/schemas/models/v1beta1/model"
 
 	"gopkg.in/yaml.v2"
 )
@@ -124,7 +124,7 @@ func formatValue(path string, val map[string]interface{}) error {
 // 	}
 // }
 
-func validateWorkload(comp map[string]interface{}, wc v1beta1.ComponentDefinition) error {
+func validateWorkload(comp map[string]interface{}, wc model.ComponentDefinition) error {
 	// skip the validation if the component does not have a schema and has isAnnotation set to true.
 	isAnnotation := wc.Metadata.IsAnnotation
 	if wc.Component.Schema == "" && isAnnotation {

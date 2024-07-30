@@ -15,7 +15,8 @@ import (
 	"sync"
 
 	"github.com/layer5io/meshkit/utils"
-	"github.com/meshery/schemas/models/v1beta1"
+	"github.com/meshery/schemas/models/v1beta1/model"
+
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 	"gorm.io/gorm"
@@ -243,21 +244,21 @@ Complete:
 	}
 	return
 }
-func WriteSVGsOnFileSystem(comp *v1beta1.ComponentDefinition) {
+func WriteSVGsOnFileSystem(comp *model.ComponentDefinition) {
 
 	writeSVGHelper(
-		comp.Metadata.SvgColor, 
+		comp.Metadata.SvgColor,
 		comp.Metadata.SvgWhite,
 		comp.Metadata.SvgComplete,
-		comp.Model.Name, 
+		comp.Model.Name,
 		comp.Component.Kind) //Write SVG on components
-	
+
 	writeSVGHelper(
-		comp.Model.Metadata.SvgColor, 
-		comp.Model.Metadata.SvgWhite, 
-		comp.Model.Metadata.SvgComplete, 
-		comp.Model.Name, 
-		comp.Model.Name)   //Write SVG on models
+		comp.Model.Metadata.SvgColor,
+		comp.Model.Metadata.SvgWhite,
+		comp.Model.Metadata.SvgComplete,
+		comp.Model.Name,
+		comp.Model.Name) //Write SVG on models
 }
 
 func DeleteSVGsFromFileSystem() {

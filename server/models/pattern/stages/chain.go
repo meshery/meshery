@@ -3,12 +3,12 @@ package stages
 import (
 	"sync"
 
-	"github.com/meshery/schemas/models/v1beta1"
+	"github.com/meshery/schemas/models/v1beta1/pattern"
 )
 
 // Data is the struct that will be passed on each stage
 type Data struct {
-	Pattern *v1beta1.PatternFile
+	Pattern *pattern.PatternFile
 
 	// Other is for passing metadata across different stages
 	Lock  sync.Mutex

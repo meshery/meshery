@@ -3,13 +3,14 @@ package planner
 import (
 	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/utils"
-	"github.com/meshery/schemas/models/v1beta1"
+	"github.com/meshery/schemas/models/v1beta1/model"
+	"github.com/meshery/schemas/models/v1beta1/pattern"
 	"github.com/pkg/errors"
 )
 
 // Plan struct represents a node of an execution plan
 type Plan struct {
-	Data v1beta1.PatternFile
+	Data pattern.PatternFile
 	*Graph
 }
 
@@ -20,22 +21,27 @@ func (p *Plan) IsFeasible() bool {
 
 // Execute traverses the plan and calls the callback function
 // on each of the node
-func (p *Plan) Execute(cb func(string, v1beta1.ComponentDefinition) bool, log logger.Handler) error {
+func (p *Plan) Execute(cb func(string, model.ComponentDefinition) bool, log logger.Handler) error {
 	parallelGraph := NewParallelProcessGraph(p.Graph)
 	parallelGraph.Traverse(cb, log)
 	return nil
 }
 
 // CreatePlan takes in the application components and creates a plan of execution for it
-func CreatePlan(pattern v1beta1.PatternFile, invert bool) (*Plan, error) {
+func CreatePlan(pattern pattern.PatternFile, invert bool) (*Plan, error) {
 	g := NewGraph()
 
 	for _, component := range pattern.Components {
-		g.AddNode(component.DisplayName, *component)
+		g.AddNode(component.Id.String(), *component)
 	}
 
 	for _, component := range pattern.Components {
-		dependsOn, err := utils.Cast[[]string](component.Metadata.AdditionalProperties["dependsOn"])
+		_dependsOn, ok := component.Metadata.AdditionalProperties["dependsOn"]
+		if !ok {
+			continue
+		}
+
+		dependsOn, err := utils.Cast[[]string](_dependsOn)
 		if err != nil {
 			err = errors.Wrapf(err, "Failed to cast 'dependsOn' to []string for component %s", component.DisplayName)
 			return nil, err

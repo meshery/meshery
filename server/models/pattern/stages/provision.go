@@ -8,21 +8,26 @@ import (
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshery/server/models/pattern/planner"
 	"github.com/layer5io/meshkit/logger"
-	model "github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
+	models "github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
+
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 	"github.com/layer5io/meshkit/utils"
-	"github.com/meshery/schemas/models/v1beta1"
+	"github.com/meshery/schemas/models/v1beta1/connection"
+	"github.com/meshery/schemas/models/v1beta1/model"
+	"github.com/meshery/schemas/models/v1beta1/pattern"
 )
 
 type CompConfigPair struct {
-	Component v1beta1.ComponentDefinition
-	Hosts     map[v1beta1.Connection]bool
+	Component model.ComponentDefinition
+	Hosts     []connection.Connection
 }
 
 const ProvisionSuffixKey = ".isProvisioned"
 
 func Provision(prov ServiceInfoProvider, act ServiceActionProvider, log logger.Handler) ChainStageFunction {
 	return func(data *Data, err error, next ChainStageNextFunction) {
+		fmt.Println("line 29 reached", err)
+
 		if err != nil {
 			act.Terminate(err)
 			return
@@ -32,6 +37,7 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider, log logger.H
 
 		// Create provision plan
 		plan, err := planner.CreatePlan(*data.Pattern, prov.IsDelete())
+		fmt.Println("plan-----------: 40 ",data.Pattern.Components, err)
 		if err != nil {
 			act.Terminate(err)
 			return
@@ -51,7 +57,7 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider, log logger.H
 		errs := []error{}
 
 		// Execute the plan
-		_ = plan.Execute(func(name string, component v1beta1.ComponentDefinition) bool {
+		_ = plan.Execute(func(name string, component model.ComponentDefinition) bool {
 			ccp := CompConfigPair{}
 
 			core.AssignAdditionalLabels(&component)
@@ -69,13 +75,28 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider, log logger.H
 				act.GetRegistry(),
 			)
 
-			annotations, err := utils.Cast[map[string]string](component.Configuration["annotations"])
+			var annotations map[string]string
+
+			fmt.Println("ccp.Hosts-----------: ", ccp.Hosts)
+			_annotations, ok := component.Configuration["annotations"]
+			if !ok {
+				_annotations = map[string]string{}
+			} else {
+				annotations, err = utils.Cast[map[string]string](_annotations)
+				if err != nil {
+					errs = append(errs, err)
+					return false
+				}
+			}
+
+
 			// Get annotations for the component and merge with existing, if any
 			component.Configuration["annotations"] = helpers.MergeStringMaps(
 				annotations,
 				getAdditionalAnnotations(data.Pattern),
 			)
 
+			fmt.Println("ccp.Component-----------: ", ccp.Component)
 			ccp.Component = component
 			// // Add configuration only if traits are applied to the component
 			// if len(svc.Traits) > 0 {
@@ -101,8 +122,8 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider, log logger.H
 	}
 }
 
-func processAnnotations(pattern *v1beta1.PatternFile) {
-	components := []*v1beta1.ComponentDefinition{}
+func processAnnotations(pattern *pattern.PatternFile) {
+	components := []*model.ComponentDefinition{}
 	for _, component := range pattern.Components {
 		if !component.Metadata.IsAnnotation {
 			components = append(components, component)
@@ -111,15 +132,16 @@ func processAnnotations(pattern *v1beta1.PatternFile) {
 	pattern.Components = components
 }
 
-func generateHosts(cd v1beta1.ComponentDefinition, reg *meshmodel.RegistryManager) map[v1beta1.Connection]bool {
-	res := map[v1beta1.Connection]bool{}
-	host := reg.GetRegistrant(&cd)
-	res[host] = true
+func generateHosts(cd model.ComponentDefinition, reg *meshmodel.RegistryManager) []connection.Connection {
+	// res := map[connection.Connection]bool{}
+	_connection := reg.GetRegistrant(&cd)
+	fmt.Println("id :::::::::::", cd.Id.String())
+	// tcs, _ := reg.GetRegistrants(&cd)
 	// for _, tc := range tcs {
 	// 	res[tc.Host] = true
 	// }
 
-	return res
+	return []connection.Connection{_connection}
 }
 
 func mergeErrors(errs []error) error {
@@ -137,9 +159,9 @@ func mergeErrors(errs []error) error {
 
 // move into meshkit and change annotations prefix name
 
-func getAdditionalAnnotations(pattern *v1beta1.PatternFile) map[string]string {
+func getAdditionalAnnotations(pattern *pattern.PatternFile) map[string]string {
 	annotations := make(map[string]string, 2)
-	annotations[fmt.Sprintf("%s.name", model.MesheryAnnotationPrefix)] = pattern.Name
-	annotations[fmt.Sprintf("%s.id", model.MesheryAnnotationPrefix)] = pattern.Id.String()
+	annotations[fmt.Sprintf("%s.name", models.MesheryAnnotationPrefix)] = pattern.Name
+	annotations[fmt.Sprintf("%s.id", models.MesheryAnnotationPrefix)] = pattern.Id.String()
 	return annotations
 }

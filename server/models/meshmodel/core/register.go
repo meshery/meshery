@@ -19,7 +19,8 @@ import (
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshkit/models/events"
 	"github.com/layer5io/meshkit/models/meshmodel/registry"
-	"github.com/meshery/schemas/models/v1beta1"
+	"github.com/meshery/schemas/models/v1beta1/model"
+	"github.com/meshery/schemas/models/v1beta1/connection"
 
 	// regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
 
@@ -59,13 +60,13 @@ func RegisterK8sMeshModelComponents(provider *models.Provider, _ context.Context
 		var isRegistranError bool
 		var isModelError bool
 		writeK8sMetadata(&c, reg)
-		isRegistranError, isModelError, err = reg.RegisterEntity(v1beta1.Connection{
+		isRegistranError, isModelError, err = reg.RegisterEntity(connection.Connection{
 			Kind: "kubernetes",
 			Metadata: map[string]interface{}{
 				"context_id": ctxID,
 			},
 		}, &c)
-		helpers.HandleError(v1beta1.Connection{
+		helpers.HandleError(connection.Connection{
 			Kind: "kubernetes"}, &c, err, isModelError, isRegistranError)
 		count++
 	}
@@ -87,7 +88,7 @@ func RegisterK8sMeshModelComponents(provider *models.Provider, _ context.Context
 	return
 }
 
-func writeK8sMetadata(comp *v1beta1.ComponentDefinition, reg *registry.RegistryManager) {
+func writeK8sMetadata(comp *model.ComponentDefinition, reg *registry.RegistryManager) {
 	// ent, _, _, _ := reg.GetEntities(&regv1beta1.ComponentFilter{
 	// 	Name:       comp.Component.Kind,
 	// 	APIVersion: comp.Component.Version,
@@ -97,7 +98,7 @@ func writeK8sMetadata(comp *v1beta1.ComponentDefinition, reg *registry.RegistryM
 	// 	comp.Metadata = utils.MergeMaps(comp.Metadata, models.K8sMeshModelMetadata)
 	// 	mutil.WriteSVGsOnFileSystem(comp)
 	// } else {
-	// 	existingComp, ok := ent[0].(*v1beta1.ComponentDefinition)
+	// 	existingComp, ok := ent[0].(*model.ComponentDefinition)
 	// 	if !ok {
 	// 		comp.Metadata = utils.MergeMaps(comp.Metadata, models.K8sMeshModelMetadata)
 	// 		return
@@ -135,7 +136,7 @@ func RegisterMeshmodelComponentsForCRDS(reg registry.RegistryManager, k8sYaml []
 			return
 		}
 		// kind := def.Spec.Metadata["k8sKind"]
-		comp := &v1beta1.ComponentDefinition{
+		comp := &model.ComponentDefinition{
 			// VersionMeta: v1beta1.VersionMeta{
 			// 	SchemaVersion: v1beta1.ComponentSchemaVersion,
 			// 	Version:       "v1.0.0",
@@ -167,13 +168,13 @@ func RegisterMeshmodelComponentsForCRDS(reg registry.RegistryManager, k8sYaml []
 		var isRegistranError bool
 		var isModelError bool
 		writeK8sMetadata(comp, &reg)
-		isRegistranError, isModelError, err = reg.RegisterEntity(v1beta1.Connection{
+		isRegistranError, isModelError, err = reg.RegisterEntity(connection.Connection{
 			Kind: "kubernetes",
 			Metadata: map[string]interface{}{
 				"context_id": contextID,
 			},
 		}, comp)
-		helpers.HandleError(v1beta1.Connection{
+		helpers.HandleError(connection.Connection{
 			Kind: "kubernetes"}, comp, err, isModelError, isRegistranError)
 
 	}
@@ -208,7 +209,7 @@ func mergeAllAPIResults(content []byte, cli *kubernetes.Client) [][]byte {
 }
 
 // move to meshmodel
-func GetK8sMeshModelComponents(kubeconfig []byte) ([]v1beta1.ComponentDefinition, error) {
+func GetK8sMeshModelComponents(kubeconfig []byte) ([]model.ComponentDefinition, error) {
 	cli, err := kubernetes.New(kubeconfig)
 	if err != nil {
 		return nil, core.ErrGetK8sComponents(err)
@@ -253,13 +254,13 @@ func GetK8sMeshModelComponents(kubeconfig []byte) ([]v1beta1.ComponentDefinition
 	for _, content := range contents {
 		crds = append(crds, getCRDsFromManifest(string(content), arrAPIResources)...)
 	}
-	components := make([]v1beta1.ComponentDefinition, 0)
+	components := make([]model.ComponentDefinition, 0)
 	for _, crd := range crds {
 		m := make(map[string]interface{})
 		m[customResourceKey] = customResources[crd.kind]
 		m[namespacedKey] = kindToNamespace[crd.kind]
 		// apiVersion := crd.apiVersion
-		c := v1beta1.ComponentDefinition{
+		c := model.ComponentDefinition{
 			// VersionMeta: v1beta1.VersionMeta{
 			// 	SchemaVersion: v1beta1.ComponentSchemaVersion,
 			// 	Version:       "v1.0.0",

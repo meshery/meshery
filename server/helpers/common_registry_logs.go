@@ -6,16 +6,17 @@ import (
 	"strings"
 	"sync"
 
-	gofrs "github.com/gofrs/uuid"
 	"github.com/gofrs/uuid"
+	gofrs "github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/models"
 	mutils "github.com/layer5io/meshkit/utils"
 	"github.com/spf13/viper"
+		"github.com/meshery/schemas/models/v1beta1/connection"
+		"github.com/meshery/schemas/models/v1beta1/model"
 
 	"github.com/layer5io/meshkit/models/events"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha2"
-	model 	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
-	"github.com/meshery/schemas/models/v1beta1"
+	_models "github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	entity "github.com/layer5io/meshkit/models/meshmodel/entity"
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 )
@@ -35,7 +36,7 @@ type EntityTypeCountWithErrors struct {
 }
 
 type logRegistryHandler struct {
-	NonImportModel   map[string]model.EntitySummary
+	NonImportModel   map[string]_models.EntitySummary
 	RegisterAttempts map[string]*EntityTypeCountWithErrors
 }
 
@@ -43,12 +44,12 @@ var LogHandler logRegistryHandler
 
 func init() {
 	LogHandler = logRegistryHandler{
-		NonImportModel:   make(map[string]model.EntitySummary),
+		NonImportModel:   make(map[string]_models.EntitySummary),
 		RegisterAttempts: make(map[string]*EntityTypeCountWithErrors),
 	}
 }
 
-func HandleError(c v1beta1.Connection, en entity.Entity, err error, isModelError bool, isRegistrantError bool) {
+func HandleError(c connection.Connection, en entity.Entity, err error, isModelError bool, isRegistrantError bool) {
 	if LogHandler.RegisterAttempts == nil {
 		LogHandler.RegisterAttempts = make(map[string]*EntityTypeCountWithErrors)
 	}
@@ -64,7 +65,7 @@ func HandleError(c v1beta1.Connection, en entity.Entity, err error, isModelError
 	}
 
 	switch entity := en.(type) {
-	case *v1beta1.ComponentDefinition:
+	case *model.ComponentDefinition:
 		entityName := "[ " + entity.Model.Name + " " + entity.Model.Model.Version + " ]" + "( " + entity.DisplayName + " )"
 		isAnnotation := entity.Metadata.IsAnnotation
 		if entity.Component.Schema == "" && !isAnnotation && err == nil {
@@ -111,7 +112,7 @@ func HandleError(c v1beta1.Connection, en entity.Entity, err error, isModelError
 	}
 }
 
-func handleModelOrRegistrantError(c v1beta1.Connection, modelName string, err error, isModelError, isRegistrantError bool) {
+func handleModelOrRegistrantError(c connection.Connection, modelName string, err error, isModelError, isRegistrantError bool) {
 	if LogHandler.RegisterAttempts == nil {
 		LogHandler.RegisterAttempts = make(map[string]*EntityTypeCountWithErrors)
 	}

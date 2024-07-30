@@ -1,7 +1,7 @@
 package stages
 
 import (
-	"github.com/meshery/schemas/models/v1beta1"
+	"github.com/meshery/schemas/models/v1beta1/model"
 )
 
 // import "github.com/layer5io/meshery/server/models/pattern/patterns"
@@ -25,9 +25,9 @@ func DryRun(_ ServiceInfoProvider, act ServiceActionProvider) ChainStageFunction
 			act.Terminate(err)
 			return
 		}
-		var comps []v1beta1.ComponentDefinition
+		var comps []model.ComponentDefinition
 		processAnnotations(data.Pattern)
-		
+
 		resp, err := act.DryRun(comps)
 		if err != nil {
 			act.Terminate(err)

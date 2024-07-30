@@ -16,8 +16,9 @@ import (
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshery/server/models/pattern/utils"
 	"github.com/layer5io/meshkit/models/events"
-	"github.com/meshery/schemas/models/v1beta1"
 	regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
+	"github.com/meshery/schemas/models/v1beta1"
+	"github.com/meshery/schemas/models/v1beta1/model"
 )
 
 // swagger:route GET /api/filter/file/{id} FiltersAPI idGetFilterFile
@@ -635,7 +636,7 @@ func (h *Handler) generateFilterComponent(config string) (string, error) {
 
 	if len(res) > 0 {
 		filterEntity := res[0]
-		filterCompDef, ok := filterEntity.(*v1beta1.ComponentDefinition)
+		filterCompDef, ok := filterEntity.(*model.ComponentDefinition)
 		if ok {
 			filterID, _ := uuid.NewV4()
 			filterSvc := core.Service{

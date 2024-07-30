@@ -13,12 +13,12 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/models/pattern/utils"
 	"github.com/layer5io/meshkit/logger"
-	
+"github.com/meshery/schemas/models/v1beta1/model"
 	registry "github.com/layer5io/meshkit/models/meshmodel/registry"
 	regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
 	mutils "github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshkit/utils/manifests"
-	"github.com/meshery/schemas/models/v1beta1"
+	"github.com/meshery/schemas/models/v1beta1/pattern"
 	cytoscapejs "gonum.org/v1/gonum/graph/formats/cytoscapejs"
 	"gopkg.in/yaml.v2"
 )
@@ -130,9 +130,9 @@ const Format prettifier = true
 type DryRunResponseWrapper struct {
 	//When success is true, error will be nil and Component will contain the structure of the component as it will look after deployment
 	//When success is false, error will contain the errors. And Component will be set to Nil
-	Success   bool            `json:"success"`
-	Error     *DryRunResponse `json:"error"`
-	Component *v1beta1.ComponentDefinition        `json:"component"` //Service is synonymous with Component. Later Service is to be changed to "Component"
+	Success   bool                       `json:"success"`
+	Error     *DryRunResponse            `json:"error"`
+	Component *model.ComponentDefinition `json:"component"` //Service is synonymous with Component. Later Service is to be changed to "Component"
 }
 type DryRunResponse struct {
 	Status string
@@ -185,7 +185,7 @@ type Service struct {
 }
 
 // NewPatternFile takes in raw yaml and encodes it into a construct
-func NewPatternFile(yml []byte) (patternFile v1beta1.PatternFile, err error) {
+func NewPatternFile(yml []byte) (patternFile pattern.PatternFile, err error) {
 	err = yaml.Unmarshal(yml, &patternFile)
 	if err != nil {
 		return patternFile, err
@@ -228,15 +228,22 @@ func IsValidPattern(stringifiedFile string) (err error) {
 }
 
 // AssignAdditionalLabels adds labels to identify resources deployed by meshery.
-func AssignAdditionalLabels(comp *v1beta1.ComponentDefinition) error {
+func AssignAdditionalLabels(comp *model.ComponentDefinition) error {
+
+	if comp.Metadata.AdditionalProperties == nil {
+		comp.Metadata.AdditionalProperties = make(map[string]interface{})
+	}
+
+	existingLabels := map[string]interface{}{}
+	var err error
 
 	if comp.Metadata.AdditionalProperties["labels"] == nil {
 		comp.Metadata.AdditionalProperties["labels"] = make(map[string]interface{})
-	}
-	
-	existingLabels, err := mutils.Cast[map[string]interface{}](comp.Metadata.AdditionalProperties["labels"])
-	if err != nil {
-		return err
+	} else {
+		existingLabels, err = mutils.Cast[map[string]interface{}](comp.Metadata.AdditionalProperties["labels"])
+		if err != nil {
+			return err
+		}
 	}
 
 	existingLabels["resource.pattern.meshery.io/id"] = comp.Id.String() //set the patternID to track back the object
@@ -300,7 +307,7 @@ func (p *Pattern) GetServiceType(name string) string {
 }
 
 // ToCytoscapeJS converts pattern file into cytoscape object
-func ToCytoscapeJS(patternFile *v1beta1.PatternFile, log logger.Handler) (cytoscapejs.GraphElem, error) {
+func ToCytoscapeJS(patternFile *pattern.PatternFile, log logger.Handler) (cytoscapejs.GraphElem, error) {
 	var cy cytoscapejs.GraphElem
 
 	// Not specifying any cytoscapejs layout
@@ -325,7 +332,7 @@ func ToCytoscapeJS(patternFile *v1beta1.PatternFile, log logger.Handler) (cytosc
 			Position:   &elemPosition,
 			Selectable: true,
 			Grabbable:  true,
-			Scratch: map[string]v1beta1.ComponentDefinition{
+			Scratch: map[string]model.ComponentDefinition{
 				"_data": *component,
 			},
 		}
@@ -556,7 +563,7 @@ func createPatternServiceFromK8s(manifest map[string]interface{}, regManager *re
 		return "", Service{}, ErrCreatePatternService(fmt.Errorf("no resources found for APIVersion: %s Kind: %s", apiVersion, kind))
 	}
 	// just needs the first entry to grab meshmodel-metadata and other model requirements
-	comp, ok := componentList[0].(*v1beta1.ComponentDefinition)
+	comp, ok := componentList[0].(*model.ComponentDefinition)
 	if !ok {
 		return "", Service{}, ErrCreatePatternService(fmt.Errorf("cannot cast to the component-definition for APIVersion: %s Kind: %s", apiVersion, kind))
 	}
@@ -599,7 +606,7 @@ func createPatternServiceFromK8s(manifest map[string]interface{}, regManager *re
 	return id, svc, nil
 }
 
-func assignNamespaceForNamespacedScopedComp(svc *Service, metadata map[string]interface{}, compDef *v1beta1.ComponentDefinition) *Service {
+func assignNamespaceForNamespacedScopedComp(svc *Service, metadata map[string]interface{}, compDef *model.ComponentDefinition) *Service {
 	if isNamespacedComponent(compDef) {
 		namespace, _ := mutils.Cast[string](metadata["namespace"])
 		if namespace == "" {
@@ -613,17 +620,17 @@ func assignNamespaceForNamespacedScopedComp(svc *Service, metadata map[string]in
 
 // Checks whether the component is namespaced scope or not.
 // While determining if an error occurs, the conversion process skips assigning a namespace value. If comp is originally namespaced scope, then k8s automatically assign a "default" namespace.
-func isNamespacedComponent(comp *v1beta1.ComponentDefinition) bool {
+func isNamespacedComponent(comp *model.ComponentDefinition) bool {
 	isNamespaced, _ := mutils.Cast[bool](comp.Metadata.AdditionalProperties["isNamespaced"])
 	return isNamespaced
 }
 
 // getCytoscapeElementID returns the element id for a given service
-func getCytoscapeElementID(name string, component *v1beta1.ComponentDefinition, log logger.Handler) string {
+func getCytoscapeElementID(name string, component *model.ComponentDefinition, log logger.Handler) string {
 	return component.Id.String()
 }
 
-func getCytoscapeJSPosition(component *v1beta1.ComponentDefinition, log logger.Handler) (cytoscapejs.Position, error) {
+func getCytoscapeJSPosition(component *model.ComponentDefinition, log logger.Handler) (cytoscapejs.Position, error) {
 	pos := cytoscapejs.Position{}
 
 	// Check if the service has "meshmap" as a trait
@@ -645,7 +652,6 @@ func getCytoscapeJSPosition(component *v1beta1.ComponentDefinition, log logger.H
 
 		return pos, nil
 	}
-
 
 	posMap, err := mutils.Cast[map[string]interface{}](positionInterface)
 	if err != nil {

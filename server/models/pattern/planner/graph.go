@@ -4,7 +4,7 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"github.com/meshery/schemas/models/v1beta1"
+	"github.com/meshery/schemas/models/v1beta1/model"
 )
 
 // Graph represents the graph data structure
@@ -17,7 +17,7 @@ type Graph struct {
 
 // Node is a graph node
 type Node struct {
-	Data v1beta1.ComponentDefinition
+	Data model.ComponentDefinition
 }
 
 // NewGraph creates a new instance of the graph and returns a pointer to it
@@ -29,10 +29,10 @@ func NewGraph() *Graph {
 }
 
 // VisitFn is the function definition for the visitor function
-type VisitFn func(name string, node v1beta1.ComponentDefinition) bool
+type VisitFn func(name string, node model.ComponentDefinition) bool
 
 // AddNode adds a node to the graph
-func (g *Graph) AddNode(name string, data v1beta1.ComponentDefinition) *Graph {
+func (g *Graph) AddNode(name string, data model.ComponentDefinition) *Graph {
 	g.Lock()
 	defer g.Unlock()
 
@@ -74,7 +74,7 @@ func (g *Graph) AddEdge(src, dest string) *Graph {
 // DetectCycle will return true if there is a cycle
 // in the graph
 func (g *Graph) DetectCycle() bool {
-	return !g.topologicalSort(func(_ string, _ v1beta1.ComponentDefinition) bool { return true })
+	return !g.topologicalSort(func(_ string, _ model.ComponentDefinition) bool { return true })
 }
 
 // Traverse traverses the graph in topological sorted order
@@ -92,7 +92,7 @@ func (g *Graph) topologicalSort(fn VisitFn) bool {
 		indegree[node] = 0
 	}
 
-	g.Visit(func(name string, _ v1beta1.ComponentDefinition) bool {
+	g.Visit(func(name string, _ model.ComponentDefinition) bool {
 		indegree[name]++
 		return true
 	})

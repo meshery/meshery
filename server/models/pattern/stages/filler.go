@@ -8,7 +8,8 @@ import (
 
 	"github.com/layer5io/meshery/server/models/pattern/utils"
 	mutils "github.com/layer5io/meshkit/utils"
-	"github.com/meshery/schemas/models/v1beta1"
+	"github.com/meshery/schemas/models/v1beta1/model"
+	"github.com/meshery/schemas/models/v1beta1/pattern"
 	"github.com/pkg/errors"
 )
 
@@ -31,7 +32,7 @@ func Filler(skipPrintLogs bool) ChainStageFunction {
 			next(data, err)
 			return
 		}
-
+		fmt.Println("skipPrintLogs: ---", skipPrintLogs)	
 		// Flatten the service map to perform queries
 		flattenedComponent := map[string]interface{}{}
 		utils.FlattenMap("", utils.ToMapStringInterface(data.Pattern), flattenedComponent)
@@ -45,7 +46,7 @@ func Filler(skipPrintLogs bool) ChainStageFunction {
 	}
 }
 
-func fill(p *v1beta1.PatternFile, flattenedComponent map[string]interface{}) error {
+func fill(p *pattern.PatternFile, flattenedComponent map[string]interface{}) error {
 	var errs []error
 	for _, component := range p.Components {
 		if err := fillDependsOn(component, flattenedComponent); err != nil {
@@ -64,7 +65,7 @@ func fill(p *v1beta1.PatternFile, flattenedComponent map[string]interface{}) err
 			err = ErrResolveReference(err)
 			errs = append(errs, err)
 		}
-		
+
 		if err := fillType(component, flattenedComponent); err != nil {
 			err = ErrResolveReference(err)
 			errs = append(errs, err)
@@ -74,8 +75,13 @@ func fill(p *v1beta1.PatternFile, flattenedComponent map[string]interface{}) err
 	return mergeErrors(errs)
 }
 
-func fillDependsOn(component *v1beta1.ComponentDefinition, flattenedPattern map[string]interface{}) error {
-	dependsOn, err := mutils.Cast[[]string](component.Metadata.AdditionalProperties["dependsOn"])
+func fillDependsOn(component *model.ComponentDefinition, flattenedPattern map[string]interface{}) error {
+	_dependsOn, ok := component.Metadata.AdditionalProperties["dependsOn"]
+	if !ok || mutils.IsInterfaceNil(_dependsOn) {
+		return nil
+	}
+
+	dependsOn, err := mutils.Cast[[]string](_dependsOn)
 	if err != nil {
 		return err
 	}
@@ -87,7 +93,7 @@ func fillDependsOn(component *v1beta1.ComponentDefinition, flattenedPattern map[
 		}
 
 		val, found := flattenedPattern[k]
-		if !found {
+		if !found || mutils.IsInterfaceNil(val) {
 			return fmt.Errorf("failed to resolve reference \"%s\": %s", "dependsOn", k)
 		}
 
@@ -102,7 +108,7 @@ func fillDependsOn(component *v1beta1.ComponentDefinition, flattenedPattern map[
 	return nil
 }
 
-func fillVersion(component *v1beta1.ComponentDefinition, flattenedPattern map[string]interface{}) error {
+func fillVersion(component *model.ComponentDefinition, flattenedPattern map[string]interface{}) error {
 	// Refernce to a version?
 	// So that if user chooses a comp def of other comps but all other comps in design refer to some other version,
 	// So instead of choosing new comp of correct version, user can quickly point to particular version?
@@ -113,7 +119,7 @@ func fillVersion(component *v1beta1.ComponentDefinition, flattenedPattern map[st
 	}
 
 	val, found := flattenedPattern[versionKey]
-	if !found {
+	if !found || mutils.IsInterfaceNil(val) {
 		return fmt.Errorf("failed to resolve reference \"%s\": %s", "version", versionKey)
 	}
 
@@ -126,13 +132,24 @@ func fillVersion(component *v1beta1.ComponentDefinition, flattenedPattern map[st
 	return nil
 }
 
-func fillNamespace(component *v1beta1.ComponentDefinition, flattenedPattern map[string]interface{}) error {
-	configurationMetadata, err := mutils.Cast[map[string]interface{}](component.Configuration["metadata"])
+func fillNamespace(component *model.ComponentDefinition, flattenedPattern map[string]interface{}) error {
+	_metadata, ok := component.Configuration["metadata"]
+	if !ok || mutils.IsInterfaceNil(_metadata) {
+		return nil
+	}
+
+	configurationMetadata, err := mutils.Cast[map[string]interface{}](_metadata)
+	fmt.Println("configurationMetadata: ", configurationMetadata, err)
 	if err != nil {
 		return errors.Wrapf(err, "failed to resolve namespace reference for \"%s: %s\"", component.DisplayName, component.Component.Kind)
 	}
-	
-	namespaceKey, err := mutils.Cast[string](configurationMetadata["namespace"])
+
+	_namespace, ok := configurationMetadata["namespace"]
+	if !ok || mutils.IsInterfaceNil(_namespace) {
+		return nil
+	}
+
+	namespaceKey, err := mutils.Cast[string](_namespace)
 	if err != nil {
 		return errors.Wrapf(err, "failed to resolve namespace reference for \"%s: %s\"", component.DisplayName, component.Component.Kind)
 	}
@@ -143,7 +160,7 @@ func fillNamespace(component *v1beta1.ComponentDefinition, flattenedPattern map[
 	}
 
 	val, found := flattenedPattern[nsKey]
-	if !found {
+	if !found || mutils.IsInterfaceNil(val) {
 		return fmt.Errorf("invalid reference query: %s", nsKey)
 	}
 
@@ -157,15 +174,15 @@ func fillNamespace(component *v1beta1.ComponentDefinition, flattenedPattern map[
 	return nil
 }
 
-func fillType(component *v1beta1.ComponentDefinition, flattenedPattern map[string]interface{}) error {
+func fillType(component *model.ComponentDefinition, flattenedPattern map[string]interface{}) error {
 	kindKey, ok := matchPattern(component.Kind)
 	if !ok {
 		return nil
 	}
 
 	val, found := flattenedPattern[kindKey]
-	if !found {
-		return  errors.Wrapf(fmt.Errorf("failed to resolve reference"), "failed to resolve \"kind\" reference for \"%s: %s\"", kindKey, component.Component.Kind)
+	if !found || mutils.IsInterfaceNil(val) {
+		return errors.Wrapf(fmt.Errorf("failed to resolve reference"), "failed to resolve \"kind\" reference for \"%s: %s\"", kindKey, component.Component.Kind)
 	}
 
 	kindVal, err := mutils.Cast[string](val)
@@ -177,7 +194,7 @@ func fillType(component *v1beta1.ComponentDefinition, flattenedPattern map[strin
 	return nil
 }
 
-func fillConfiguration(component *v1beta1.ComponentDefinition, flattenedPattern map[string]interface{}) (err error) {
+func fillConfiguration(component *model.ComponentDefinition, flattenedPattern map[string]interface{}) (err error) {
 	component.Configuration, err = fillMap(component.Configuration, flattenedPattern)
 	return
 }
@@ -244,12 +261,12 @@ func fillMapString(str string, flattenedPattern map[string]interface{}) (string,
 	}
 
 	val, found := flattenedPattern[res]
-	if !found {
+	if !found || mutils.IsInterfaceNil(val) {
 		return "", false, fmt.Errorf("invalid reference query: %s", res)
 	}
 
-	cval, ok := val.(string)
-	if !ok {
+	cval, err := mutils.Cast[string](val)
+	if err != nil {
 		return "", false, fmt.Errorf("resolved reference query [%s] does not return string", res)
 	}
 

@@ -7,5 +7,5 @@ const (
 )
 
 func ErrResolveReference(err error) error {
-	return errors.New(ErrResolveReferenceCode, errors.Alert, []string{}, []string{}, []string{}, []string{})
+	return errors.New(ErrResolveReferenceCode, errors.Alert, []string{}, []string{err.Error()}, []string{}, []string{})
 }

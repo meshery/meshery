@@ -12,7 +12,8 @@ import (
 	"github.com/layer5io/meshkit/generators/artifacthub"
 
 	meshkitmodels "github.com/layer5io/meshkit/generators/models"
-	"github.com/meshery/schemas/models/v1beta1"
+	"github.com/meshery/schemas/models/v1beta1/connection"
+	"github.com/meshery/schemas/models/v1beta1/model"
 )
 
 type generationPayloadItem struct {
@@ -25,9 +26,9 @@ type componentGenerationPayload struct {
 }
 
 type componentGenerationResponseDataItem struct {
-	Name       string                        `json:"name"`
-	Components []v1beta1.ComponentDefinition `json:"components"`
-	Errors     []string                      `json:"errors"`
+	Name       string                      `json:"name"`
+	Components []model.ComponentDefinition `json:"components"`
+	Errors     []string                    `json:"errors"`
 }
 
 // swagger:route POST /api/meshmodel/generate MeshmodelComponentGenerate idPostMeshModelComponentGenerate
@@ -76,13 +77,13 @@ func (h *Handler) MeshModelGenerationHandler(rw http.ResponseWriter, r *http.Req
 				var isRegistranError bool
 				utils.WriteSVGsOnFileSystem(&comp)
 				host := fmt.Sprintf("%s.artifacthub.meshery", gpi.Name)
-				isRegistranError, isModelError, err = h.registryManager.RegisterEntity(v1beta1.Connection{
+				isRegistranError, isModelError, err = h.registryManager.RegisterEntity(connection.Connection{
 					Kind: artifacthub.ArtifactHub,
 					Metadata: map[string]interface{}{
 						"name": host,
 					},
 				}, &comp)
-				helpers.HandleError(v1beta1.Connection{
+				helpers.HandleError(connection.Connection{
 					Kind: artifacthub.ArtifactHub,
 				}, &comp, err, isModelError, isRegistranError)
 				if err != nil {
@@ -110,8 +111,8 @@ func (h *Handler) MeshModelGenerationHandler(rw http.ResponseWriter, r *http.Req
 	}
 }
 
-func generateComponents(pm meshkitmodels.PackageManager) ([]v1beta1.ComponentDefinition, error) {
-	components := make([]v1beta1.ComponentDefinition, 0)
+func generateComponents(pm meshkitmodels.PackageManager) ([]model.ComponentDefinition, error) {
+	components := make([]model.ComponentDefinition, 0)
 	pkg, err := pm.GetPackage()
 	if err != nil {
 		return components, ErrGenerateComponents(err)

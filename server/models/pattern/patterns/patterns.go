@@ -6,12 +6,12 @@ import (
 	"sync"
 
 	"github.com/layer5io/meshery/server/models"
-		model "github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
+	_models "github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 
 	"github.com/layer5io/meshery/server/models/pattern/patterns/k8s"
 	"github.com/layer5io/meshkit/utils/kubernetes"
-	"github.com/meshery/schemas/models/v1beta1"
-
+	"github.com/meshery/schemas/models/v1beta1/model"
+	"github.com/meshery/schemas/models/v1beta1/connection"
 )
 
 type DeploymentMessagePerComp struct {
@@ -31,11 +31,16 @@ type DeploymentMessagePerContext struct {
 	Location   string
 }
 
-func Process(kconfigs []string, componets []v1beta1.ComponentDefinition, isDel bool, patternName string, ec *models.Broadcast, userID string, provider models.Provider, hostname model.IHost, skipCrdAndOperator, upgradeExistingRelease bool) ([]DeploymentMessagePerContext, error) {
-	var comps []v1beta1.ComponentDefinition
+func Process(kconfigs []string, componets []model.ComponentDefinition, isDel bool, patternName string, ec *models.Broadcast, userID string, provider models.Provider, connection connection.Connection, skipCrdAndOperator, upgradeExistingRelease bool) ([]DeploymentMessagePerContext, error) {
+	var comps []model.ComponentDefinition
 	action := "deploy"
 	if isDel {
 		action = "undeploy"
+	}
+
+	depHandler, err := _models.NewDependencyHandler(connection.Kind)
+	if err != nil {
+		return nil, err
 	}
 
 	msgs := make([]DeploymentMessagePerContext, 0)
@@ -61,7 +66,7 @@ func Process(kconfigs []string, componets []v1beta1.ComponentDefinition, isDel b
 			msgsPerComp := make([]DeploymentMessagePerComp, 0)
 			for _, comp := range comps {
 
-				if !skipCrdAndOperator && hostname != nil && comp.Model.Name != (model.Kubernetes{}).String() {
+				if !skipCrdAndOperator && depHandler != nil && comp.Model.Name != (_models.Kubernetes{}).String() {
 					deploymentMsg := DeploymentMessagePerComp{
 						Kind:       comp.Kind,
 						Model:      comp.Model.Name,
@@ -71,7 +76,7 @@ func Process(kconfigs []string, componets []v1beta1.ComponentDefinition, isDel b
 					}
 
 					// Deploys resources that are required inside cluster for successful deployment of the design.
-					result, err := hostname.HandleDependents(comp, kcli, !isDel, upgradeExistingRelease)
+					result, err := depHandler.HandleDependents(comp, kcli, !isDel, upgradeExistingRelease)
 					// If dependencies were not resolved fail forward, there can be case that dependency already exist in the cluster.
 					deploymentMsg.Message = result
 					if err != nil {
