@@ -3206,6 +3206,15 @@
         "short_description": "No session found in the request",
         "probable_cause": "User is not authenticated with the selected Provider.\nBrowser might be restricting use of cookies.",
         "suggested_remediation": "Choose a Provider and login to establish an active session (receive a new token and cookie). Optionally, try using a private/incognito browser window.\nVerify that your browser settings allow cookies."
+      },
+      "1357": {
+        "name": "ErrInvalidEventDataCode",
+        "code": "1357",
+        "severity": "Alert",
+        "long_description": "ActedUpon, Action, Category and Severity are required fields of an event",
+        "short_description": "The event provided is not valid",
+        "probable_cause": "",
+        "suggested_remediation": "Ensure that ActedUpon, Action, Category and Severity are present in the event"
       }
     }
   }
