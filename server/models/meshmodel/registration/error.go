@@ -12,8 +12,13 @@ const (
 	ErrRegisterEntityCode = "replace_me"
 	ErrInvalidModelDefinitionCode = "replace_me"
 	ErrImportFailureCode = "replace_me"
+	ErrMissingRegistrantCode = "replace_me"
 )
 
+
+func ErrMissingRegistrant() error {
+	return errors.New(ErrMissingRegistrantCode, errors.Alert, []string{"Cannot register model without a registrant."}, []string{"Model does not contain registrant information. Models are always registered in the context of registrants."}, []string{}, []string{})
+}
 
 func ErrRegisterEntity(err error, name, entity string) error {
 	return errors.New(ErrRegisterEntityCode, errors.Alert, []string{fmt.Sprintf("failed to register %s %s", name, entity)}, []string{err.Error()}, []string{fmt.Sprintf("%s definition violates the definition schema", entity), fmt.Sprintf("%s might be missing model details", entity)}, []string{fmt.Sprintf("ensure the %s definition follows the correct schema", entity), fmt.Sprintf("ensure %s definition belongs to correct model", entity)})

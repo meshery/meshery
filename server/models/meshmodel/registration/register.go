@@ -56,14 +56,22 @@ func (rh *RegistrationHelper)register(pkg packagingUnit) {
 	// 1. Register the model
 	model := pkg.model
 	if(model.Status != entity.Enabled){return}
+
+	// Dont register anything else if registrant is not there
+	if(model.Registrant.Hostname == ""){
+		err := ErrMissingRegistrant()
+		RegLog.InsertEntityRegFailure(model.Registrant.Hostname, "",entity.Model, model.Name, err)
+		return
+	}
 	_, _, err := rh.regManager.RegisterEntity(
 		v1beta1.Host{Hostname: model.Registrant.Hostname,},
 		&model,
 		)
+
+	// If model cannot be registered, don't register anything else
 	if err != nil {
 		err = ErrRegisterEntity(err, string(model.Type()), model.DisplayName)
 		RegLog.InsertEntityRegFailure(model.Registrant.Hostname, "",entity.Model, model.Name, err)
-		// If model cannot be registered, don't register anything else
 		return
 	}
 
