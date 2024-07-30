@@ -154,7 +154,7 @@ func NewModelCSVHelper(sheetURL, spreadsheetName string, spreadsheetID int64) (*
 	}, nil
 }
 
-func (mch *ModelCSVHelper) ParseModelsSheet(parseForDocs bool) error {
+func (mch *ModelCSVHelper) ParseModelsSheet(parseForDocs bool, modelName string) error {
 	ch := make(chan ModelCSV, 1)
 	errorChan := make(chan error, 1)
 	csvReader, err := csv.NewCSVParser[ModelCSV](mch.CSVPath, rowIndex, nil, func(columns []string, currentRow []string) bool {
@@ -189,6 +189,9 @@ func (mch *ModelCSVHelper) ParseModelsSheet(parseForDocs bool) error {
 		select {
 
 		case data := <-ch:
+			if modelName != "" && data.Model != modelName {
+				continue
+			}
 			mch.Models = append(mch.Models, data)
 			Log.Info(fmt.Sprintf("Reading registrant [%s] model [%s]", data.Registrant, data.Model))
 		case err := <-errorChan:
