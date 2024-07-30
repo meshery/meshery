@@ -96,7 +96,7 @@ const (
 	ErrUnreachableRemoteProviderCode      = "meshery-server-1301"
 	ErrShareFilterCode                    = "meshery-server-1302"
 	ErrPersistEventCode                   = "meshery-server-1303"
-	ErrInvalidEventDataCode		          = "replace-me"
+	ErrInvalidEventDataCode               = "meshery-server-1357"
 	ErrUnreachableKubeAPICode             = "meshery-server-1304"
 	ErrFlushMeshSyncDataCode              = "meshery-server-1305"
 	ErrUpdateConnectionStatusCode         = "meshery-server-1306"
