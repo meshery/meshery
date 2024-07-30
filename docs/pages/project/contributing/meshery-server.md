@@ -82,3 +82,26 @@ The server log levels can be configured at runtime by changing the env variable 
 ```
 
 The default setting for the `LOG_LEVEL` is `4` (Info). However, if the `DEBUG` environmental variable is configured as `TRUE`, it supersedes the value set in the `LOG_LEVEL` environmental variable, and the logging level is then adjusted to `5`(Debug).
+
+### Using custom Meshkit code for Meshery server development
+
+<ol>
+  <li>
+    <p>Checkout <strong>meshery</strong> and <strong>meshkit</strong> repository in adjacent directories.</p>
+    {% capture code_content %}
+mkdir meshery
+cd meshery
+git clone https://github.com/meshery/meshery.git
+git clone https://github.com/meshery/meshkit.git
+    {% endcapture %}
+    {% include code.html code=code_content %}
+  </li>
+  <li>
+    <p>In your <strong>meshery</strong> go.mod, update the meshkit package.</p>
+    {% capture code_content %}
+github.com/layer5io/meshkit => ../meshkit
+    {% endcapture %}
+    {% include code.html code=code_content %}
+  </li>
+</ol>
+
