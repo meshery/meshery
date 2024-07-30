@@ -47,9 +47,13 @@ import { getMeshModels } from '../api/meshmodel';
 import _ from 'lodash';
 import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
-import SearchBar from '../utils/custom-search';
-import CustomColumnVisibilityControl from '../utils/custom-column';
-import { CustomTooltip, ResponsiveDataTable } from '@layer5/sistent';
+import {
+  CustomColumnVisibilityControl,
+  CustomTooltip,
+  ResponsiveDataTable,
+  SearchBar,
+  UniversalFilter,
+} from '@layer5/sistent';
 import useStyles from '../assets/styles/general/tool.styles';
 import { updateVisibleColumns } from '../utils/responsive-column';
 import { useWindowDimensions } from '../utils/dimension';
@@ -60,9 +64,19 @@ import { SortableTableCell } from './connections/common/index.js';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import DefaultError from './General/error-404/index';
-import UniversalFilter from '../utils/custom-filter';
 import { UsesSistent } from './SistentWrapper';
 import { Modal as SistentModal } from '@layer5/sistent';
+import {
+  useGetFiltersQuery,
+  useCloneFilterMutation,
+  usePublishFilterMutation,
+  useUnpublishFilterMutation,
+  useDeleteFilterMutation,
+  useUpdateFilterFileMutation,
+  useUploadFilterFileMutation,
+} from '@/rtk-query/filter';
+import LoadingScreen from './LoadingComponents/LoadingComponent';
+import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
 
 const styles = (theme) => ({
   grid: {
@@ -258,7 +272,6 @@ function MesheryFilters({
   );
   const FILTER_URL = '/api/filter';
   const DEPLOY_URL = FILTER_URL + '/deploy';
-  const CLONE_URL = '/clone';
 
   //hooks
   const { notify } = useNotification();
@@ -291,6 +304,44 @@ function MesheryFilters({
   const catalogContentRef = useRef();
   const catalogVisibilityRef = useRef();
   const disposeConfSubscriptionRef = useRef(null);
+
+  const [visibilityFilter, setVisibilityFilter] = useState(null);
+
+  const {
+    data: filtersData,
+    isLoading: isFiltersLoading,
+    refetch: getFilters,
+  } = useGetFiltersQuery({
+    page: page,
+    pagesize: pageSize,
+    search: search,
+    order: sortOrder,
+    visibility: JSON.stringify([visibilityFilter]),
+  });
+
+  const { data: capabilitiesData } = useGetProviderCapabilitiesQuery();
+
+  const [cloneFilter] = useCloneFilterMutation();
+  const [publishFilter] = usePublishFilterMutation();
+  const [unpublishFilter] = useUnpublishFilterMutation();
+  const [deleteFilterFile] = useDeleteFilterMutation();
+  const [updateFilterFile] = useUpdateFilterFileMutation();
+  const [uploadFilterFile] = useUploadFilterFileMutation();
+
+  useEffect(() => {
+    if (filtersData) {
+      const filteredWasmFilters = filtersData.filters.filter((content) => {
+        if (visibilityFilter === null || content.visibility === visibilityFilter) {
+          return true;
+        }
+        return false;
+      });
+      setCount(filtersData.total_count || 0);
+      handleSetFilters(filteredWasmFilters);
+      setVisibilityFilter(visibilityFilter);
+      setFilters(filtersData.filters || []);
+    }
+  }, [filtersData]);
 
   const ACTION_TYPES = {
     FETCH_FILTERS: {
@@ -374,24 +425,15 @@ function MesheryFilters({
       },
       handleError(ACTION_TYPES.SCHEMA_FETCH),
     );
-    dataFetch(
-      '/api/provider/capabilities',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      (result) => {
-        if (result) {
-          const capabilitiesRegistry = result;
-          const filtersCatalogueCapability = capabilitiesRegistry?.capabilities.filter(
-            (val) => val.feature === MesheryFiltersCatalog,
-          );
-          if (filtersCatalogueCapability?.length > 0) setCanPublishFilter(true);
-        }
-      },
-      (err) => console.error(err),
-    );
-  }, []);
+
+    if (capabilitiesData) {
+      const capabilitiesRegistry = capabilitiesData;
+      const filtersCatalogCapability = capabilitiesRegistry?.capabilities.filter(
+        (val) => val.feature === MesheryFiltersCatalog,
+      );
+      if (filtersCatalogCapability?.length > 0) setCanPublishFilter(true);
+    }
+  }, [capabilitiesData]);
 
   const searchTimeout = useRef(null);
 
@@ -442,18 +484,19 @@ function MesheryFilters({
         });
         if (response === 'Yes') {
           updateProgress({ showProgress: true });
-          dataFetch(
-            `/api/filter/catalog/unpublish`,
-            { credentials: 'include', method: 'DELETE', body: JSON.stringify({ id: filter?.id }) },
-            () => {
+          unpublishFilter({ unpublishBody: JSON.stringify({ id: filter?.id }) })
+            .unwrap()
+            .then(() => {
               updateProgress({ showProgress: false });
               notify({
                 message: `"${filter?.name}" filter unpublished`,
                 event_type: EVENT_TYPES.SUCCESS,
               });
-            },
-            handleError(ACTION_TYPES.UNPUBLISH_CATALOG),
-          );
+            })
+            .catch(() => {
+              updateProgress({ showProgress: false });
+              handleError(ACTION_TYPES.UNPUBLISH_CATALOG);
+            });
         }
       };
     }
@@ -466,10 +509,6 @@ function MesheryFilters({
       name: '',
     });
   };
-
-  useEffect(() => {
-    fetchFilters(page, pageSize, search, sortOrder, visibilityFilter);
-  }, [page, pageSize, search, sortOrder, visibilityFilter]);
 
   useEffect(() => {
     if (viewType === 'grid') setSearch('');
@@ -546,55 +585,6 @@ function MesheryFilters({
     };
   }, []);
 
-  /**
-   * fetchFilters constructs the queries based on the parameters given
-   * and fetches the filters
-   * @param {number} page current page
-   * @param {number} pageSize items per page
-   * @param {string} search search string
-   * @param {string} sortOrder order of sort
-   */
-
-  const [visibilityFilter, setVisibilityFilter] = useState(null);
-  function fetchFilters(page = 0, pageSize = 10, search, sortOrder, visibilityFilter) {
-    if (!search) search = '';
-    if (!sortOrder) sortOrder = '';
-
-    const query =
-      `?page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(
-        search,
-      )}&order=${encodeURIComponent(sortOrder)}` +
-      (visibilityFilter
-        ? `&visibility=${encodeURIComponent(JSON.stringify([visibilityFilter]))}`
-        : '');
-
-    updateProgress({ showProgress: true });
-
-    dataFetch(
-      `/api/filter${query}`,
-      { credentials: 'include' },
-      (result) => {
-        console.log('FilterFile API', `/api/filter${query}`);
-        updateProgress({ showProgress: false });
-        if (result) {
-          const filteredFilters = result.filters.filter((content) => {
-            if (visibilityFilter === null || content.visibility === visibilityFilter) {
-              return true;
-            }
-            return false;
-          });
-          handleSetFilters(filteredFilters);
-          // setPage(result.page || 0);
-          setPageSize(result.page_size || 0);
-          setCount(result.total_count || 0);
-          setVisibilityFilter(visibilityFilter);
-        }
-      },
-      // handleError
-      handleError(ACTION_TYPES.FETCH_FILTERS),
-    );
-  }
-
   const handleDeploy = (filter_file, name) => {
     dataFetch(
       ctxUrl(DEPLOY_URL, selectedK8sContexts),
@@ -636,10 +626,9 @@ function MesheryFilters({
       },
     };
     updateProgress({ showProgress: true });
-    dataFetch(
-      `/api/filter/catalog/publish`,
-      { credentials: 'include', method: 'POST', body: JSON.stringify(payload) },
-      () => {
+    publishFilter({ publishBody: JSON.stringify(payload) })
+      .unwrap()
+      .then(() => {
         updateProgress({ showProgress: false });
         if (user.role_names.includes('admin')) {
           notify({
@@ -653,26 +642,28 @@ function MesheryFilters({
             event_type: EVENT_TYPES.SUCCESS,
           });
         }
-      },
-      handleError(ACTION_TYPES.PUBLISH_CATALOG),
-    );
+      })
+      .catch(() => {
+        updateProgress({ showProgress: false });
+        handleError(ACTION_TYPES.PUBLISH_CATALOG);
+      });
   };
 
   function handleClone(filterID, name) {
     updateProgress({ showProgress: true });
-    dataFetch(
-      FILTER_URL.concat(CLONE_URL, '/', filterID),
-      {
-        credentials: 'include',
-        method: 'POST',
-        body: JSON.stringify({ name: name + ' (Copy)' }),
-      },
-      () => {
+    cloneFilter({
+      body: JSON.stringify({ name: name + ' (Copy)' }),
+      filterID: filterID,
+    })
+      .unwrap()
+      .then(() => {
         updateProgress({ showProgress: false });
         notify({ message: `"${name}" filter cloned`, event_type: EVENT_TYPES.SUCCESS });
-      },
-      handleError(ACTION_TYPES.CLONE_FILTERS),
-    );
+      })
+      .catch(() => {
+        updateProgress({ showProgress: false });
+        handleError(ACTION_TYPES.CLONE_FILTERS);
+      });
   }
 
   // function handleError(error) {
@@ -762,17 +753,17 @@ function MesheryFilters({
         updateProgress({ showProgress: false });
         return;
       }
-      dataFetch(
-        `/api/filter/${id}`,
-        { credentials: 'include', method: 'DELETE' },
-        () => {
+      deleteFilterFile({ id: id })
+        .unwrap()
+        .then(() => {
           updateProgress({ showProgress: false });
           notify({ message: `"${name}" filter deleted`, event_type: EVENT_TYPES.SUCCESS });
           resetSelectedRowData()();
-        },
-        // handleError
-        handleError(ACTION_TYPES.DELETE_FILTERS),
-      );
+        })
+        .catch(() => {
+          updateProgress({ showProgress: false });
+          handleError(ACTION_TYPES.DELETE_FILTERS);
+        });
     }
 
     if (type === FILE_OPS.FILE_UPLOAD || type === FILE_OPS.URL_UPLOAD) {
@@ -788,41 +779,33 @@ function MesheryFilters({
       if (type === FILE_OPS.URL_UPLOAD) {
         body = JSON.stringify({ ...body, url: data, name: metadata.name, config: metadata.config });
       }
-      dataFetch(
-        `/api/filter`,
-        {
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/octet-stream', // Set appropriate content type for binary data
-          },
-          method: 'POST',
-          body,
-        },
-        () => {
+      uploadFilterFile({ uploadBody: body })
+        .unwrap()
+        .then(() => {
           updateProgress({ showProgress: false });
-        },
-        // handleError
-        handleError(ACTION_TYPES.UPLOAD_FILTERS),
-      );
+        })
+        .catch(() => {
+          updateProgress({ showProgress: false });
+          handleError(ACTION_TYPES.UPLOAD_FILTERS);
+        });
     }
 
     if (type === FILE_OPS.UPDATE) {
-      dataFetch(
-        `/api/filter`,
-        {
-          credentials: 'include',
-          method: 'POST',
-          body: JSON.stringify({
-            filter_data: { id, name: name, catalog_data },
-            config: data,
-            save: true,
-          }),
-        },
-        () => {
+      updateFilterFile({
+        updateBody: JSON.stringify({
+          filter_data: { id, name: name, catalog_data },
+          config: data,
+          save: true,
+        }),
+      })
+        .unwrap()
+        .then(() => {
           updateProgress({ showProgress: false });
-        },
-        handleError(ACTION_TYPES.UPLOAD_FILTERS),
-      );
+        })
+        .catch(() => {
+          updateProgress({ showProgress: false });
+          handleError(ACTION_TYPES.UPLOAD_FILTERS);
+        });
     }
   }
 
@@ -1065,18 +1048,16 @@ function MesheryFilters({
   }
 
   function deleteFilter(id) {
-    dataFetch(
-      `/api/filter/${id}`,
-      {
-        method: 'DELETE',
-        credentials: 'include',
-      },
-      () => {
+    deleteFilterFile({ id: id })
+      .unwrap()
+      .then(() => {
         updateProgress({ showProgress: false });
         notify({ message: `Filter deleted`, event_type: EVENT_TYPES.SUCCESS });
-      },
-      handleError('Failed To Delete Filter'),
-    );
+      })
+      .catch(() => {
+        updateProgress({ showProgress: false });
+        handleError(ACTION_TYPES.DELETE_FILTERS);
+      });
   }
 
   const options = {
@@ -1146,13 +1127,6 @@ function MesheryFilters({
           }
           searchTimeout.current = setTimeout(() => {
             if (search !== tableState.searchText) {
-              fetchFilters(
-                page,
-                pageSize,
-                tableState.searchText !== null ? tableState.searchText : '',
-                sortOrder,
-                visibilityFilter,
-              );
               setSearch(tableState.searchText);
             }
           }, 500);
@@ -1222,18 +1196,20 @@ function MesheryFilters({
         break;
     }
 
-    dataFetch(
-      '/api/filter',
-      { credentials: 'include', method: 'POST', body: requestBody },
-      () => {
+    updateFilterFile({ updateBody: requestBody })
+      .unwrap()
+      .then(() => {
         updateProgress({ showProgress: false });
         notify({
           message: `"${name}" filter uploaded`,
           event_type: EVENT_TYPES.SUCCESS,
         });
-      },
-      handleError(ACTION_TYPES.UPLOAD_FILTERS),
-    );
+        getFilters();
+      })
+      .catch(() => {
+        updateProgress({ showProgress: false });
+        handleError(ACTION_TYPES.UPLOAD_FILTERS);
+      });
   }
 
   const [tableCols, updateCols] = useState(columns);
@@ -1270,8 +1246,13 @@ function MesheryFilters({
   const handleApplyFilter = () => {
     const visibilityFilter =
       selectedFilters.visibility === 'All' ? null : selectedFilters.visibility;
-    fetchFilters(page, pageSize, search, sortOrder, visibilityFilter);
+    // fetchFilters(page, pageSize, search, sortOrder, visibilityFilter);
+    setVisibilityFilter(visibilityFilter);
   };
+
+  if (isFiltersLoading) {
+    return <LoadingScreen animatedIcon="AnimatedFilter" message={`Loading Filters...`} />;
+  }
 
   return (
     <>
@@ -1322,29 +1303,36 @@ function MesheryFilters({
                 </div>
               )}
               <div className={classes.searchWrapper} style={{ display: 'flex' }}>
-                <SearchBar
-                  onSearch={(value) => {
-                    setSearch(value);
-                    initFiltersSubscription(page.toString(), pageSize.toString(), value, sortOrder);
-                  }}
-                  expanded={isSearchExpanded}
-                  setExpanded={setIsSearchExpanded}
-                  placeholder="Search"
-                />
-                <UniversalFilter
-                  id="ref"
-                  filters={filter}
-                  selectedFilters={selectedFilters}
-                  setSelectedFilters={setSelectedFilters}
-                  handleApplyFilter={handleApplyFilter}
-                />
-                {viewType === 'table' && (
-                  <CustomColumnVisibilityControl
-                    id="ref"
-                    columns={columns}
-                    customToolsProps={{ columnVisibility, setColumnVisibility }}
+                <UsesSistent>
+                  <SearchBar
+                    onSearch={(value) => {
+                      setSearch(value);
+                      initFiltersSubscription(
+                        page.toString(),
+                        pageSize.toString(),
+                        value,
+                        sortOrder,
+                      );
+                    }}
+                    expanded={isSearchExpanded}
+                    setExpanded={setIsSearchExpanded}
+                    placeholder="Search"
                   />
-                )}
+                  <UniversalFilter
+                    id="ref"
+                    filters={filter}
+                    selectedFilters={selectedFilters}
+                    setSelectedFilters={setSelectedFilters}
+                    handleApplyFilter={handleApplyFilter}
+                  />
+                  {viewType === 'table' && (
+                    <CustomColumnVisibilityControl
+                      id="ref"
+                      columns={columns}
+                      customToolsProps={{ columnVisibility, setColumnVisibility }}
+                    />
+                  )}
+                </UsesSistent>
 
                 {!selectedFilter.show && (
                   <ViewSwitch data-cy="table-view" view={viewType} changeView={setViewType} />
@@ -1388,7 +1376,7 @@ function MesheryFilters({
                 publishModal={publishModal}
                 setPublishModal={setPublishModal}
                 publishSchema={publishSchema}
-                fetch={() => fetchFilters(page, pageSize, search, sortOrder, visibilityFilter)}
+                fetch={() => getFilters()}
                 handleInfoModal={handleInfoModal}
               />
             )}
@@ -1432,6 +1420,7 @@ function MesheryFilters({
                   currentUserID={user?.id}
                   formSchema={publishSchema}
                   meshModels={meshModels}
+                  patternFetcher={() => getFilters()}
                 />
               )}
             <PromptComponent ref={modalRef} />

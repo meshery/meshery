@@ -1259,9 +1259,9 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 	}
 	message := ""
 	if entityType == entity.ComponentDefinition {
-		message = "Successfully registered Component"
+		message = "Registered Component"
 	} else {
-		message = "Successfully registered Relationship"
+		message = "Registered Relationship"
 	}
 	h.log.Info(message)
 	rw.WriteHeader(http.StatusOK)
