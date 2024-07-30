@@ -39,6 +39,7 @@ import (
 )
 
 var (
+	modelCSVFilterName			   string
 	componentSpredsheetGID         int64
 	outputLocation                 string
 	pathToRegistrantConnDefinition string
@@ -66,6 +67,8 @@ var generateCmd = &cobra.Command{
 	Example: `
 // Generate Meshery Models from a Google Spreadsheet (i.e. "Meshery Integrations" spreadsheet).
 mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred
+// Generate only a single model with the given name from the given spreadsheet
+mesheryctl registry generate --name "azure" --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred
 // Directly generate models from one of the supported registrants by using Registrant Connection Definition and (optional) Registrant Credential Definition
 mesheryctl registry generate --registrant-def [path to connection definition] --registrant-cred [path to credential definition]
     `,
@@ -123,7 +126,10 @@ mesheryctl registry generate --registrant-def [path to connection definition] --
 		// Collect list of corresponding Components by name from spreadsheet
 		componentSpredsheetGID = GetSheetIDFromTitle(resp, "Components")
 
-		err = InvokeGenerationFromSheet(&wg)
+		modelCSVFilter := utils.ModelCSVFilter{}
+		modelCSVFilter.Model = modelCSVFilterName
+
+		err = InvokeGenerationFromSheet(&wg, modelCSVFilter)
 		if err != nil {
 			// meshkit
 			utils.LogError.Error(err)
@@ -141,7 +147,7 @@ type compGenerateTracker struct {
 
 var modelToCompGenerateTracker = store.NewGenericThreadSafeStore[compGenerateTracker]()
 
-func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
+func InvokeGenerationFromSheet(wg *sync.WaitGroup, modelCSVFilter utils.ModelCSVFilter) error {
 
 	weightedSem := semaphore.NewWeighted(20)
 	url := GoogleSpreadSheetURL + spreadsheeetID
@@ -163,7 +169,7 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 		totalAggregateComponents = 0
 	}()
 
-	modelCSVHelper, err := parseModelSheet(url)
+	modelCSVHelper, err := parseModelSheet(url, modelCSVFilter)
 	if err != nil {
 		return err
 	}
@@ -358,13 +364,13 @@ func GenerateDefsForCoreRegistrant(model utils.ModelCSV) error {
 	return nil
 }
 
-func parseModelSheet(url string) (*utils.ModelCSVHelper, error) {
+func parseModelSheet(url string, modelCSVFilter utils.ModelCSVFilter) (*utils.ModelCSVHelper, error) {
 	modelCSVHelper, err := utils.NewModelCSVHelper(url, "Models", sheetGID)
 	if err != nil {
 		return nil, err
 	}
 
-	err = modelCSVHelper.ParseModelsSheet(false)
+	err = modelCSVHelper.ParseModelsSheet(false, modelCSVFilter)
 	if err != nil {
 		return nil, ErrGenerateModel(err, "unable to start model generation")
 	}
@@ -440,5 +446,6 @@ func init() {
 	generateCmd.MarkFlagsMutuallyExclusive("spreadsheet-id", "registrant-def")
 	generateCmd.MarkFlagsMutuallyExclusive("spreadsheet-cred", "registrant-cred")
 
+	generateCmd.PersistentFlags().StringVarP(&modelCSVFilterName, "name", "n", "", "generate only the models with the given name")
 	generateCmd.PersistentFlags().StringVarP(&outputLocation, "output", "o", "../server/meshmodel", "location to output generated models, defaults to ../server/meshmodels")
 }

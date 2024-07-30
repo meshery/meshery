@@ -55,6 +55,30 @@ type ModelCSV struct {
 	PublishToSites     string `json:"publishToSites" csv:"-"`
 }
 
+// ModelCSVFilter has the same representation of ModelCSV
+type ModelCSVFilter ModelCSV
+
+func (mf *ModelCSVFilter) Compare(columns, row []string) (bool, error) {
+	filter, err := utils.MarshalAndUnmarshal[ModelCSVFilter, map[string]interface{}](*mf)
+	if(err != nil) {
+		// We know that this error is caused only by marhsalling or unmarshalling failures, so we could send
+		// that directly, but we are wrapping it in ErrComparingModelCSV for stacktrace information.
+		// Therefore the ErrComparingModelCSV error right now does not contain much info.
+		return false, ErrComparingModelCSV(err)
+	}
+	for name, filterVal := range filter {
+		for idx, colName := range columns {
+			if(colName == name){
+				if(filterVal != "") && (filterVal != row[idx]){
+					return false, nil
+				}
+			}
+
+		}
+	}
+	return true, nil
+}
+
 var modelMetadataValues = []string{
 	"primaryColor", "secondaryColor", "svgColor", "svgWhite", "svgComplete", "styleOverrides", "styles", "shapePolygonPoints", "defaultData", "capabilities", "isAnnotation", "shape",
 }
@@ -131,6 +155,8 @@ type ModelCSVHelper struct {
 	Models         []ModelCSV
 }
 
+// NewModelCSVHelper downloads the contents of the spreadsheet with the given url, name and Id and stores it in meshery
+// content folder as models.csv
 func NewModelCSVHelper(sheetURL, spreadsheetName string, spreadsheetID int64) (*ModelCSVHelper, error) {
 	sheetURL = sheetURL + "/pub?output=csv" + "&gid=" + strconv.FormatInt(spreadsheetID, 10)
 	Log.Info("Downloading CSV from: ", sheetURL)
@@ -154,11 +180,16 @@ func NewModelCSVHelper(sheetURL, spreadsheetName string, spreadsheetID int64) (*
 	}, nil
 }
 
-func (mch *ModelCSVHelper) ParseModelsSheet(parseForDocs bool) error {
+func (mch *ModelCSVHelper) ParseModelsSheet(parseForDocs bool, modelFilter ModelCSVFilter) error {
 	ch := make(chan ModelCSV, 1)
 	errorChan := make(chan error, 1)
 	csvReader, err := csv.NewCSVParser[ModelCSV](mch.CSVPath, rowIndex, nil, func(columns []string, currentRow []string) bool {
 		index := 0
+
+		isValid, _ := modelFilter.Compare(columns, currentRow)
+		if(!isValid){
+			return false
+		}
 
 		if parseForDocs {
 			index = GetIndexForRegisterCol(columns, shouldRegisterMod)

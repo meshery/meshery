@@ -115,7 +115,8 @@ mesheryctl registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwiz
 					utils.Log.Error(err)
 					return nil
 				}
-				err := modelCSVHelper.ParseModelsSheet(true)
+				modelCSVFilter := utils.ModelCSVFilter{}
+				err := modelCSVHelper.ParseModelsSheet(true, modelCSVFilter)
 				if err != nil {
 					utils.Log.Error(err)
 					return nil

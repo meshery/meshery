@@ -42,6 +42,7 @@ var (
 	ErrInvalidArgumentCode    = "mesheryctl-1118"
 	ErrGeneratingIconsCode    = "mesheryctl-1119"
 	ErrClearLineCode          = "mesheryctl-1120"
+	ErrComparingModelCSVCode  = "replace_me"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -612,6 +613,17 @@ func ErrGeneratingIcons(err error, path string) error {
 		[]string{"Model SVG data is missing", "Model name formatting issue"},
 		[]string{"Ensure model SVG data is provided in model definition", "Ensure model name formatting is correct"},
 	)
+}
+
+func ErrComparingModelCSV(err error) error {
+return errors.New(
+	ErrComparingModelCSVCode,
+	errors.Alert,
+	[]string{"Error comparing the csv entry with the given model filter"},
+	[]string{err.Error()},
+	[]string{},
+	[]string{},
+)
 }
 
 func ErrClearLine(err error) error {
