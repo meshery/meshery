@@ -37,12 +37,12 @@ func (wp *WorkspacePersister) GetWorkspaces(orgID, search, order, page, pageSize
 	}
 
 	query := wp.DB.Model(&v1beta1.Workspace{})
-	
+
 	// Filter by organization ID
 	if orgID != "" {
 		query = query.Where("organization_id = ?", orgID)
 	}
-	
+
 	if search != "" {
 		like := "%" + strings.ToLower(search) + "%"
 		query = query.Where("lower(name) like ?", like)
@@ -70,17 +70,17 @@ func (wp *WorkspacePersister) GetWorkspaces(orgID, search, order, page, pageSize
 		if err != nil {
 			return nil, err
 		}
-		
+
 		// Fetch workspaces with pagination
 		Paginate(uint(pageUint), uint(pageSizeUint))(query).Find(&workspacesFetched)
 	}
 
 	// Prepare the response
 	workspacesPage := &v1beta1.WorkspacePage{
-		Page:         int(pageUint),
-		PageSize:     len(workspacesFetched),
-		TotalCount:   int(count),
-		Workspaces:   workspacesFetched,
+		Page:       int(pageUint),
+		PageSize:   len(workspacesFetched),
+		TotalCount: int(count),
+		Workspaces: workspacesFetched,
 	}
 
 	// Marshal the response to JSON
@@ -180,7 +180,7 @@ func (wp *WorkspacePersister) UpdateWorkspace(workspaceID uuid.UUID, payload *v1
 
 	ws.Name = payload.Name
 	ws.Description = payload.Description
-	ws.OrganizationId = uuid.FromStringOrNil(payload.OrgId)
+	ws.OrganizationId = uuid.FromStringOrNil(payload.OrganizationID)
 
 	return wp.UpdateWorkspaceByID(ws)
 }
@@ -197,7 +197,7 @@ func (wp *WorkspacePersister) DeleteWorkspaceByID(workspaceID uuid.UUID) ([]byte
 
 // AddEnvironmentToWorkspace adds an environment to a workspace
 func (wp *WorkspacePersister) AddEnvironmentToWorkspace(workspaceID, environmentID uuid.UUID) ([]byte, error) {
-	wsEnvMapping := v1beta1.WorkspaceEnvironmentMapping{
+	wsEnvMapping := v1beta1.WorkspacesEnvironmentsMapping{
 		EnvironmentId: environmentID,
 		WorkspaceId:   workspaceID,
 		CreatedAt:     time.Now(),
@@ -234,7 +234,7 @@ func (wp *WorkspacePersister) GetWorkspaceEnvironments(workspaceID uuid.UUID, se
 	// Build the query to find environments associated with the given workspace ID
 	query := wp.DB.Table("workspace_environment_mappings").
 		Select("environments.*").
-		Joins("JOIN environments ON workspace_environment_mappings.environment_id = environments.id").
+		Joins("JOIN environments ON workspaces_environments_mappings.environment_id = environments.id").
 		Where("workspace_environment_mappings.workspace_id = ?", workspaceID)
 
 	// Apply search filter
@@ -251,7 +251,7 @@ func (wp *WorkspacePersister) GetWorkspaceEnvironments(workspaceID uuid.UUID, se
 	count := int64(0)
 	query.Count(&count)
 
-	var environmentsFetched []*v1beta1.Environment
+	var environmentsFetched []v1beta1.Environment
 	pageUint, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
 		return nil, err
@@ -287,7 +287,7 @@ func (wp *WorkspacePersister) GetWorkspaceEnvironments(workspaceID uuid.UUID, se
 
 // DeleteEnvironmentFromWorkspace deletes an environment from a workspace
 func (wp *WorkspacePersister) DeleteEnvironmentFromWorkspace(workspaceID, environmentID uuid.UUID) ([]byte, error) {
-	var wsEnvMapping v1beta1.WorkspaceEnvironmentMapping
+	var wsEnvMapping v1beta1.WorkspacesEnvironmentsMapping
 
 	// Find the specific environment mapping
 	if err := wp.DB.Where("workspace_id = ? AND environment_id = ?", workspaceID, environmentID).First(&wsEnvMapping).Error; err != nil {
@@ -308,4 +308,114 @@ func (wp *WorkspacePersister) DeleteEnvironmentFromWorkspace(workspaceID, enviro
 	}
 
 	return wsJSON, nil
+}
+
+func (wp *WorkspacePersister) AddDesignToWorkspace(workspaceID, designID uuid.UUID) ([]byte, error) {
+	wsDesignMapping := v1beta1.WorkspacesDesignsMapping{
+		DesignId:    designID,
+		WorkspaceId: workspaceID,
+		CreatedAt:   time.Now(),
+		UpdatedAt:   time.Now(),
+	}
+
+	id, err := uuid.NewV4()
+	if err != nil {
+		return nil, ErrGenerateUUID(err)
+	}
+	wsDesignMapping.ID = id
+
+	// Add design to workspace
+	if err := wp.DB.Create(wsDesignMapping).Error; err != nil {
+		return nil, ErrDBCreate(err)
+	}
+
+	wsJSON, err := json.Marshal(wsDesignMapping)
+	if err != nil {
+		return nil, err
+	}
+
+	return wsJSON, nil
+}
+
+func (wp *WorkspacePersister) DeleteDesignFromWorkspace(workspaceID, designID uuid.UUID) ([]byte, error) {
+	var wsDesignMapping v1beta1.WorkspacesDesignsMapping
+
+	// Find the specific design mapping
+	if err := wp.DB.Where("workspace_id = ? AND design_id = ?", workspaceID, designID).First(&wsDesignMapping).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, ErrResultNotFound(err)
+		}
+		return nil, ErrDBRead(err)
+	}
+
+	// Delete the design mapping
+	if err := wp.DB.Delete(&wsDesignMapping).Error; err != nil {
+		return nil, ErrDBDelete(err, wp.fetchUserDetails().UserID)
+	}
+
+	wsJSON, err := json.Marshal(wsDesignMapping)
+	if err != nil {
+		return nil, err
+	}
+
+	return wsJSON, nil
+}
+
+func (wp *WorkspacePersister) GetWorkspaceDesigns(workspaceID uuid.UUID, search, order, page, pageSize, filter string) ([]byte, error) {
+	// Sanitize the order input
+	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
+	if order == "" {
+		order = "updated_at desc"
+	}
+
+	// Build the query to find designs associated with the given workspace ID
+	query := wp.DB.Table("workspace_design_mappings").
+		Select("designs.*").
+		Joins("JOIN designs ON workspaces_designs_mappings.design_id = designs.id").
+		Where("workspace_design_mappings.workspace_id = ?", workspaceID)
+
+	if search != "" {
+		like := "%" + strings.ToLower(search) + "%"
+		query = query.Where("lower(designs.name) LIKE ?", like)
+	}
+
+	dynamicKeys := []string{"owner", "organization_id"}
+	query = utils.ApplyFilters(query, filter, dynamicKeys)
+	query = query.Order(order)
+
+	count := int64(0)
+	query.Count(&count)
+
+	var designsFetched []v1beta1.MesheryPattern
+	pageUint, err := strconv.ParseUint(page, 10, 32)
+	if err != nil {
+		return nil, err
+	}
+	// Fetch all designs if pageSize is "all"
+	if pageSize == "all" {
+		query.Find(&designsFetched)
+	} else {
+		// Convert page and pageSize from string to uint
+		pageSizeUint, err := strconv.ParseUint(pageSize, 10, 32)
+		if err != nil {
+			return nil, err
+		}
+
+		// Fetch designs with pagination
+		Paginate(uint(pageUint), uint(pageSizeUint))(query).Find(&designsFetched)
+	}
+
+	designsPage := &v1beta1.MesheryPatternPage{
+		Page:       int(pageUint),
+		PageSize:   len(designsFetched),
+		TotalCount: int(count),
+		Patterns:   &designsFetched,
+	}
+
+	designsJSON, err := json.Marshal(designsPage)
+	if err != nil {
+		return nil, err
+	}
+
+	return designsJSON, nil
 }
