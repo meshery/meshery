@@ -5,7 +5,7 @@ import (
 	"github.com/layer5io/meshkit/broker"
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
+	"github.com/meshery/schemas/models/v1beta1"
 	"github.com/layer5io/meshkit/utils"
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 	"gorm.io/gorm"

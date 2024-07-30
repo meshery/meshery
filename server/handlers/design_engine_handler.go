@@ -20,9 +20,11 @@ import (
 	"github.com/layer5io/meshery/server/models/pattern/stages"
 	"github.com/layer5io/meshkit/logger"
 	events "github.com/layer5io/meshkit/models/events"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
+	"github.com/layer5io/meshkit/utils"
 	meshkube "github.com/layer5io/meshkit/utils/kubernetes"
+	v1beta1 "github.com/meshery/schemas/models/v1beta1"
+	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -93,7 +95,7 @@ func (h *Handler) PatternFileHandler(
 	}
 
 	patternFile, err := core.NewPatternFile(patternFileByte)
-	patternFile.PatternID = payload.PatternID
+	patternFile.Id = payload.PatternID
 	// Generate the pattern file object
 	description := fmt.Sprintf("%sed design '%s'", action, patternFile.Name)
 	if isDryRun {
@@ -126,7 +128,7 @@ func (h *Handler) PatternFileHandler(
 		h.log,
 	)
 
-	patternID := uuid.FromStringOrNil(patternFile.PatternID)
+	patternID := patternFile.Id
 	eventBuilder := events.NewEvent().ActedUpon(patternID).FromUser(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction(action)
 
 	if err != nil {
@@ -239,19 +241,20 @@ func _processPattern(
 		chain.
 			// Add(stages.Import(sip, sap)).
 			Add(stages.Format()).
-			Add(stages.Filler(skipPrintLogs)).
+			Add(stages.Filler(skipPrintLogs))
 			// Calling this stage `The Validation stage` is a bit deceiving considering
 			// that the validation stage also formats the `data` (chain function parameter) that the
 			// subsequent stages depend on.
 			// We are skipping the `Validation` based on "verify" query paramerter
-			Add(stages.Validator(sip, sap, validate))
+			// Add(stages.Validator(sip, sap, validate)) // not required as client side RJSF validation is enough, but for mesheryctl client it's required
 		if dryRun {
 			chain.Add(stages.DryRun(sip, sap))
 		}
 		if !dryRun {
 			chain.
-				Add(stages.Provision(sip, sap, sap.log)).
-				Add(stages.Persist(sip, sap, sap.log))
+				Add(stages.Provision(sip, sap, sap.log))
+				// Removed Persist stage
+				// Add(stages.Persist(sip, sap, sap.log))
 		}
 		chain.
 			Add(func(data *stages.Data, err error, next stages.ChainStageNextFunction) {
@@ -350,11 +353,18 @@ func (sap *serviceActionProvider) Terminate(err error) {
 func (sap *serviceActionProvider) Mutate(p *v1beta1.PatternFile) {
 	//TODO: externalize these mutation rules with policies.
 	//1. Enforce the deployment of CRDs before other resources
-	for name, svc := range p.Services {
-		if svc.Type == "CustomResourceDefinition" {
-			for _, svc := range p.Services {
-				if svc.Type != "CustomResourceDefinition" {
-					svc.DependsOn = append(svc.DependsOn, name)
+	for _, component := range p.Components {
+		if component.Kind == "CustomResourceDefinition" {
+			for _, comp := range p.Components {
+				if comp.Kind != "CustomResourceDefinition" {
+					dependsOnSlice, err := utils.Cast[[]string](comp.Metadata.AdditionalProperties["dependsOn"])
+					if err != nil {
+						err = errors.Wrapf(err, "Failed to cast 'dependsOn' to []string for component %s", comp.DisplayName)
+						sap.log.Error(err)
+						sap.Terminate(err)
+					}
+					dependsOnSlice = append(dependsOnSlice, comp.Id.String())
+					comp.Metadata.AdditionalProperties["dependsOn"] = dependsOnSlice
 				}
 			}
 		}
@@ -364,7 +374,7 @@ func (sap *serviceActionProvider) Mutate(p *v1beta1.PatternFile) {
 // v1.StatusApplyConfiguration has deprecated, needed to find a different option to do this
 // NOTE: Currently tied to kubernetes
 // Returns ComponentName->ContextID->Response
-func (sap *serviceActionProvider) DryRun(comps []v1beta1.Component) (resp map[string]map[string]core.DryRunResponseWrapper, err error) {
+func (sap *serviceActionProvider) DryRun(comps []v1beta1.ComponentDefinition) (resp map[string]map[string]core.DryRunResponseWrapper, err error) {
 	for _, cmp := range comps {
 		for ctxID, kc := range sap.ctxTokubeconfig {
 			cl, err := meshkube.New([]byte(kc))
@@ -378,45 +388,36 @@ func (sap *serviceActionProvider) DryRun(comps []v1beta1.Component) (resp map[st
 			if resp == nil {
 				resp = make(map[string]map[string]core.DryRunResponseWrapper)
 			}
-			if resp[cmp.Name] == nil {
-				resp[cmp.Name] = make(map[string]core.DryRunResponseWrapper)
+			if resp[cmp.DisplayName] == nil {
+				resp[cmp.DisplayName] = make(map[string]core.DryRunResponseWrapper)
 			}
-			resp[cmp.Name][ctxID] = dResp
+			resp[cmp.DisplayName][ctxID] = dResp
 		}
 	}
 	return
 }
 
-func dryRunComponent(cl *meshkube.Client, cmp v1beta1.Component) (core.DryRunResponseWrapper, error) {
-	st, ok, err := k8s.DryRunHelper(cl, cmp)
-	dResp := core.DryRunResponseWrapper{Success: ok, Component: &core.Service{
-		Name:        cmp.Name,
-		Type:        cmp.Spec.Type,
-		Namespace:   cmp.Namespace,
-		APIVersion:  cmp.Spec.APIVersion,
-		Version:     cmp.Spec.Version,
-		Model:       cmp.Spec.Model,
-		Labels:      cmp.Labels,
-		Annotations: cmp.Annotations,
-	}}
+func dryRunComponent(cl *meshkube.Client, cmd v1beta1.ComponentDefinition) (core.DryRunResponseWrapper, error) {
+	st, ok, err := k8s.DryRunHelper(cl, cmd)
+	dResp := core.DryRunResponseWrapper{Success: ok, Component: &cmd}
 	if ok {
-		dResp.Component.Settings = filterSettings(st)
+		dResp.Component.Configuration = filterConfiguration(st)
 	} else if err != nil {
 		dResp.Error = &core.DryRunResponse{Status: err.Error()}
 	} else {
-		dResp.Error = parseDryRunFailure(st, cmp.Name)
+		dResp.Error = parseDryRunFailure(st, cmd.DisplayName)
 	}
 	return dResp, nil
 }
 
-func filterSettings(settings map[string]interface{}) map[string]interface{} {
-	filteredSettings := make(map[string]interface{})
-	for k, v := range settings {
+func filterConfiguration(configuration map[string]interface{}) map[string]interface{} {
+	filteredConfiguration := make(map[string]interface{})
+	for k, v := range configuration {
 		if k != "apiVersion" && k != "kind" && k != "metadata" {
-			filteredSettings[k] = v
+			filteredConfiguration[k] = v
 		}
 	}
-	return filteredSettings
+	return filteredConfiguration
 }
 
 func parseDryRunFailure(settings map[string]interface{}, name string) *core.DryRunResponse {
@@ -470,16 +471,17 @@ func getComponentFieldPathFromK8sFieldPath(path string) (newpath string) {
 }
 
 func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) ([]patterns.DeploymentMessagePerContext, error) { // Marshal the component
-	jsonComp, err := json.Marshal(ccp.Component)
-	if err != nil {
-		return nil, fmt.Errorf("failed to serialize the data: %s", err)
-	}
+	// jsonComp, err := json.Marshal(ccp.Component)
+	// if err != nil {
+	// 	return nil, fmt.Errorf("failed to serialize the data: %s", err)
+	// }
 
 	// Marshal the configuration
-	jsonConfig, err := json.Marshal(ccp.Configuration)
-	if err != nil {
-		return nil, fmt.Errorf("failed to serialize the data: %s", err)
-	}
+	// configuration attribute removed.
+	// jsonConfig, err := json.Marshal(ccp.Configuration)
+	// if err != nil {
+	// 	return nil, fmt.Errorf("failed to serialize the data: %s", err)
+	// }
 
 	for host := range ccp.Hosts {
 		// Hack until adapters fix the concurrent client
@@ -497,8 +499,7 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) ([]patter
 			}
 			resp, err := patterns.Process(
 				kconfigs,
-				[]string{string(jsonComp)},
-				string(jsonConfig),
+				[]v1beta1.ComponentDefinition{ccp.Component},
 				sap.opIsDelete,
 				sap.patternName,
 				sap.eventsChannel,
@@ -548,8 +549,8 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) ([]patter
 		resp, err := mClient.MClient.ProcessOAM(context.TODO(), &meshes.ProcessOAMRequest{
 			Username:    sap.userID,
 			DeleteOp:    sap.opIsDelete,
-			OamComps:    []string{string(jsonComp)},
-			OamConfig:   string(jsonConfig),
+			// OamComps:    []string{string(jsonComp)},
+			// OamConfig:   string(jsonConfig),
 			KubeConfigs: kconfigs,
 		})
 		sucess := err == nil
@@ -560,8 +561,8 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) ([]patter
 				Summary: []patterns.DeploymentMessagePerComp{
 					{
 						Kind:       ccp.Component.Kind,
-						Model:      ccp.Component.Spec.Model,
-						CompName:   ccp.Component.Name,
+						Model:      ccp.Component.Model.Name,
+						CompName:   ccp.Component.DisplayName,
 						DesignName: sap.patternName,
 						Success:    sucess,
 						Message:    resp.GetMessage(),

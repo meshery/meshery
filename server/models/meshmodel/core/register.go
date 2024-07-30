@@ -12,17 +12,16 @@ import (
 	cueJson "cuelang.org/go/encoding/json"
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/helpers"
-	mutil "github.com/layer5io/meshery/server/helpers/utils"
 
 	"github.com/layer5io/meshery/server/models"
 	oamcore "github.com/layer5io/meshkit/models/oam/core/v1alpha1"
-	"github.com/layer5io/meshkit/utils"
 
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshkit/models/events"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	"github.com/layer5io/meshkit/models/meshmodel/registry"
-	regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
+	"github.com/meshery/schemas/models/v1beta1"
+
+	// regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
 
 	"github.com/layer5io/meshkit/utils/component"
 	"github.com/layer5io/meshkit/utils/kubernetes"
@@ -60,12 +59,14 @@ func RegisterK8sMeshModelComponents(provider *models.Provider, _ context.Context
 		var isRegistranError bool
 		var isModelError bool
 		writeK8sMetadata(&c, reg)
-		isRegistranError, isModelError, err = reg.RegisterEntity(v1beta1.Host{
-			Hostname: "kubernetes",
-			Metadata: ctxID,
+		isRegistranError, isModelError, err = reg.RegisterEntity(v1beta1.Connection{
+			Kind: "kubernetes",
+			Metadata: map[string]interface{}{
+				"context_id": ctxID,
+			},
 		}, &c)
-		helpers.HandleError(v1beta1.Host{
-			Hostname: "kubernetes"}, &c, err, isModelError, isRegistranError)
+		helpers.HandleError(v1beta1.Connection{
+			Kind: "kubernetes"}, &c, err, isModelError, isRegistranError)
 		count++
 	}
 	err = helpers.WriteLogsToFiles()
@@ -87,26 +88,27 @@ func RegisterK8sMeshModelComponents(provider *models.Provider, _ context.Context
 }
 
 func writeK8sMetadata(comp *v1beta1.ComponentDefinition, reg *registry.RegistryManager) {
-	ent, _, _, _ := reg.GetEntities(&regv1beta1.ComponentFilter{
-		Name:       comp.Component.Kind,
-		APIVersion: comp.Component.Version,
-	})
+	// ent, _, _, _ := reg.GetEntities(&regv1beta1.ComponentFilter{
+	// 	Name:       comp.Component.Kind,
+	// 	APIVersion: comp.Component.Version,
+	// })
 	//If component was not available in the registry, then use the generic model level metadata
-	if len(ent) == 0 {
-		comp.Metadata = utils.MergeMaps(comp.Metadata, models.K8sMeshModelMetadata)
-		mutil.WriteSVGsOnFileSystem(comp)
-	} else {
-		existingComp, ok := ent[0].(*v1beta1.ComponentDefinition)
-		if !ok {
-			comp.Metadata = utils.MergeMaps(comp.Metadata, models.K8sMeshModelMetadata)
-			return
-		}
-		comp.Metadata = utils.MergeMaps(comp.Metadata, existingComp.Metadata)
-		comp.Model = existingComp.Model
-	}
+	// if len(ent) == 0 {
+	// 	comp.Metadata = utils.MergeMaps(comp.Metadata, models.K8sMeshModelMetadata)
+	// 	mutil.WriteSVGsOnFileSystem(comp)
+	// } else {
+	// 	existingComp, ok := ent[0].(*v1beta1.ComponentDefinition)
+	// 	if !ok {
+	// 		comp.Metadata = utils.MergeMaps(comp.Metadata, models.K8sMeshModelMetadata)
+	// 		return
+	// 	}
+	// 	comp.Metadata = utils.MergeMaps(comp.Metadata, existingComp.Metadata)
+	// 	comp.Model = existingComp.Model
+	// }
 }
 
 func RegisterMeshmodelComponentsForCRDS(reg registry.RegistryManager, k8sYaml []byte, contextID string, version string) {
+	return
 	//TODO: Replace GenerateComponents in meshkit to natively produce MeshModel components to avoid any interconversion
 	comp, err := manifests.GenerateComponents(context.Background(), string(k8sYaml), manifests.K8s, manifests.Config{
 		CrdFilter: manifests.NewCueCrdFilter(manifests.ExtractorPaths{
@@ -132,45 +134,47 @@ func RegisterMeshmodelComponentsForCRDS(reg registry.RegistryManager, k8sYaml []
 			fmt.Println("err here: ", err.Error())
 			return
 		}
-		kind := def.Spec.Metadata["k8sKind"]
+		// kind := def.Spec.Metadata["k8sKind"]
 		comp := &v1beta1.ComponentDefinition{
-			VersionMeta: v1beta1.VersionMeta{
-				SchemaVersion: v1beta1.ComponentSchemaVersion,
-				Version:       "v1.0.0",
-			},
-			Format: v1beta1.JSON,
-			Component: v1beta1.ComponentEntity{
-				TypeMeta: v1beta1.TypeMeta{
-					Kind:    kind,
-					Version: def.Spec.Metadata["k8sAPIVersion"],
-				},
-				Schema: schema,
-			},
-			DisplayName: manifests.FormatToReadableString(kind),
-			Model: v1beta1.Model{
-				VersionMeta: v1beta1.VersionMeta{
-					SchemaVersion: v1beta1.ModelSchemaVersion,
-					Version:       "v1.0.0",
-				},
-				Model: v1beta1.ModelEntity{
-					Version: version,
-				},
-				Name:        "kubernetes",
-				DisplayName: "Kubernetes",
-				Category: v1beta1.Category{
-					Name: "Orchestration & Management",
-				},
-			},
+			// VersionMeta: v1beta1.VersionMeta{
+			// 	SchemaVersion: v1beta1.ComponentSchemaVersion,
+			// 	Version:       "v1.0.0",
+			// },
+			// Format: v1beta1.JSON,
+			// Component: v1beta1.ComponentEntity{
+			// 	TypeMeta: v1beta1.TypeMeta{
+			// 		Kind:    kind,
+			// 		Version: def.Spec.Metadata["k8sAPIVersion"],
+			// 	},
+			// 	Schema: schema,
+			// },
+			// DisplayName: manifests.FormatToReadableString(kind),
+			// Model: v1beta1.Model{
+			// 	VersionMeta: v1beta1.VersionMeta{
+			// 		SchemaVersion: v1beta1.ModelSchemaVersion,
+			// 		Version:       "v1.0.0",
+			// 	},
+			// 	Model: v1beta1.ModelEntity{
+			// 		Version: version,
+			// 	},
+			// 	Name:        "kubernetes",
+			// 	DisplayName: "Kubernetes",
+			// 	Category: v1beta1.Category{
+			// 		Name: "Orchestration & Management",
+			// 	},
+			// },
 		}
 		var isRegistranError bool
 		var isModelError bool
 		writeK8sMetadata(comp, &reg)
-		isRegistranError, isModelError, err = reg.RegisterEntity(v1beta1.Host{
-			Hostname: v1beta1.Kubernetes{}.String(),
-			Metadata: contextID,
+		isRegistranError, isModelError, err = reg.RegisterEntity(v1beta1.Connection{
+			Kind: "kubernetes",
+			Metadata: map[string]interface{}{
+				"context_id": contextID,
+			},
 		}, comp)
-		helpers.HandleError(v1beta1.Host{
-			Hostname: "kubernetes"}, comp, err, isModelError, isRegistranError)
+		helpers.HandleError(v1beta1.Connection{
+			Kind: "kubernetes"}, comp, err, isModelError, isRegistranError)
 
 	}
 	_ = helpers.WriteLogsToFiles()
@@ -210,7 +214,7 @@ func GetK8sMeshModelComponents(kubeconfig []byte) ([]v1beta1.ComponentDefinition
 		return nil, core.ErrGetK8sComponents(err)
 	}
 	req := cli.KubeClient.RESTClient().Get().RequestURI("/openapi/v3")
-	k8sversion, err := cli.KubeClient.ServerVersion()
+	// k8sversion, err := cli.KubeClient.ServerVersion()
 	if err != nil {
 		return nil, core.ErrGetK8sComponents(err)
 	}
@@ -254,36 +258,36 @@ func GetK8sMeshModelComponents(kubeconfig []byte) ([]v1beta1.ComponentDefinition
 		m := make(map[string]interface{})
 		m[customResourceKey] = customResources[crd.kind]
 		m[namespacedKey] = kindToNamespace[crd.kind]
-		apiVersion := crd.apiVersion
+		// apiVersion := crd.apiVersion
 		c := v1beta1.ComponentDefinition{
-			VersionMeta: v1beta1.VersionMeta{
-				SchemaVersion: v1beta1.ComponentSchemaVersion,
-				Version:       "v1.0.0",
-			},
-			Format: v1beta1.JSON,
-			Component: v1beta1.ComponentEntity{
-				TypeMeta: v1beta1.TypeMeta{
-					Kind:    crd.kind,
-					Version: apiVersion,
-				},
-				Schema: crd.schema,
-			},
-			Metadata:    m,
-			DisplayName: manifests.FormatToReadableString(crd.kind),
-			Model: v1beta1.Model{
-				VersionMeta: v1beta1.VersionMeta{
-					SchemaVersion: v1beta1.ModelSchemaVersion,
-					Version:       "v1.0.0",
-				},
-				Model: v1beta1.ModelEntity{
-					Version: k8sversion.String(),
-				},
-				Name:        "kubernetes",
-				DisplayName: "Kubernetes",
-				Category: v1beta1.Category{
-					Name: "Orchestration & Management",
-				},
-			},
+			// VersionMeta: v1beta1.VersionMeta{
+			// 	SchemaVersion: v1beta1.ComponentSchemaVersion,
+			// 	Version:       "v1.0.0",
+			// },
+			// Format: v1beta1.JSON,
+			// Component: v1beta1.ComponentEntity{
+			// 	TypeMeta: v1beta1.TypeMeta{
+			// 		Kind:    crd.kind,
+			// 		Version: apiVersion,
+			// 	},
+			// 	Schema: crd.schema,
+			// },
+			// Metadata:    m,
+			// DisplayName: manifests.FormatToReadableString(crd.kind),
+			// Model: v1beta1.Model{
+			// 	VersionMeta: v1beta1.VersionMeta{
+			// 		SchemaVersion: v1beta1.ModelSchemaVersion,
+			// 		Version:       "v1.0.0",
+			// 	},
+			// 	Model: v1beta1.ModelEntity{
+			// 		Version: k8sversion.String(),
+			// 	},
+			// 	Name:        "kubernetes",
+			// 	DisplayName: "Kubernetes",
+			// 	Category: v1beta1.Category{
+			// 		Name: "Orchestration & Management",
+			// 	},
+			// },
 		}
 		components = append(components, c)
 	}

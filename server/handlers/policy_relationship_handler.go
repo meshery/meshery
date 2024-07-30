@@ -74,8 +74,8 @@ func (h *Handler) EvaluateRelationshipPolicy(
 
 	evaluationQueries := relationshipPolicyEvalPayload.EvaluationQueries
 
-	for _, svc := range patternFile.Services {
-		svc.Settings = core.Format.DePrettify(svc.Settings, false)
+	for _, component := range patternFile.Components {
+		component.Configuration = core.Format.DePrettify(component.Configuration, false)
 	}
 
 	data, err := yaml.Marshal(patternFile)
@@ -84,7 +84,7 @@ func (h *Handler) EvaluateRelationshipPolicy(
 		return
 	}
 
-	patternUUID := uuid.FromStringOrNil(patternFile.PatternID)
+	patternUUID := patternFile.Id
 	eventBuilder.ActedUpon(patternUUID)
 
 	var evalResults interface{}

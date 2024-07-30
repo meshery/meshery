@@ -15,7 +15,7 @@ import (
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/models/events"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
+	"github.com/meshery/schemas/models/v1beta1"
 	regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
 	"github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshsync/pkg/model"
@@ -80,7 +80,7 @@ func (arh *AutoRegistrationHelper) processRegistration() {
 				connectionDefs := arh.getConnectionDefinitions(connType)
 				connectionName := helpers.FormatToTitleCase(connType)
 				for _, connectionDef := range connectionDefs {
-					connCapabilities, err := utils.Cast[string](connectionDef.Metadata["capabilities"])
+					connCapabilities, err := utils.Cast[string](connectionDef.Metadata.AdditionalProperties["capabilities"])
 
 					if err != nil {
 						arh.log.Error(err)
@@ -154,7 +154,7 @@ func getConnectionPayload(connType, objName, objID string, identifier interface{
 		"identifier": identifier,
 	})
 
-	subCategory, _ := connectionDef.Metadata["subCategory"].(string)
+	subCategory := connectionDef.Model.SubCategory
 	return models.ConnectionPayload{
 		Kind:                       connType,
 		Name:                       objName,

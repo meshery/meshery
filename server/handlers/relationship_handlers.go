@@ -180,8 +180,8 @@ func (h *Handler) RegisterMeshmodelRelationships(rw http.ResponseWriter, r *http
 			http.Error(rw, err.Error(), http.StatusBadRequest)
 			return
 		}
-		isRegistranError, isModelError, err = h.registryManager.RegisterEntity(cc.Host, &r)
-		helpers.HandleError(cc.Host, &r, err, isModelError, isRegistranError)
+		isRegistranError, isModelError, err = h.registryManager.RegisterEntity(cc.Connection, &r)
+		helpers.HandleError(cc.Connection, &r, err, isModelError, isRegistranError)
 	}
 	err = helpers.WriteLogsToFiles()
 	if err != nil {

@@ -1,16 +1,17 @@
 package models
 
 import (
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
+	model "github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	"github.com/layer5io/meshkit/models/meshmodel/entity"
+	"github.com/meshery/schemas/models/v1beta1"
 )
 
 // API response model for meshmodel models API
 type MeshmodelsAPIResponse struct {
-	Page     int             `json:"page"`
-	PageSize int             `json:"page_size"`
-	Count    int64           `json:"total_count"`
-	Models   []v1beta1.Model `json:"models"`
+	Page     int                       `json:"page"`
+	PageSize int                       `json:"page_size"`
+	Count    int64                     `json:"total_count"`
+	Models   []v1beta1.ModelDefinition `json:"models"`
 }
 
 // API response model for meshmodel models API that contains the number of duplicates for each model
@@ -67,15 +68,15 @@ type DuplicateResponseComponent struct {
 }
 
 type DuplicateResponseModels struct {
-	v1beta1.Model
+	v1beta1.ModelDefinition
 	Duplicates int `json:"duplicates"`
 }
 
 type MeshmodelRegistrantsAPIResponse struct {
-	Page        int                                       `json:"page"`
-	PageSize    int                                       `json:"page_size"`
-	Count       int64                                     `json:"total_count"`
-	Registrants []v1beta1.MeshModelHostsWithEntitySummary `json:"registrants"`
+	Page        int                                     `json:"page"`
+	PageSize    int                                     `json:"page_size"`
+	Count       int64                                   `json:"total_count"`
+	Registrants []model.MeshModelHostsWithEntitySummary `json:"registrants"`
 }
 
 func FindDuplicateComponents(components []v1beta1.ComponentDefinition) []DuplicateResponseComponent {
@@ -100,7 +101,7 @@ func FindDuplicateComponents(components []v1beta1.ComponentDefinition) []Duplica
 	return comps
 }
 
-func FindDuplicateModels(models []v1beta1.Model) []DuplicateResponseModels {
+func FindDuplicateModels(models []v1beta1.ModelDefinition) []DuplicateResponseModels {
 	set := make(map[string]int)
 
 	for _, model := range models {
@@ -114,7 +115,7 @@ func FindDuplicateModels(models []v1beta1.Model) []DuplicateResponseModels {
 		key := model.Name + "@" + model.Version
 
 		mods = append(mods, DuplicateResponseModels{
-			Model:      model,
+			ModelDefinition:      model,
 			Duplicates: set[key] - 1,
 		})
 	}

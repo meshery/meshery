@@ -9,8 +9,10 @@ import (
 	"github.com/layer5io/meshery/server/helpers"
 	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshkit/generators/artifacthub"
+
 	meshkitmodels "github.com/layer5io/meshkit/generators/models"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
+	"github.com/meshery/schemas/models/v1beta1"
 )
 
 type generationPayloadItem struct {
@@ -74,13 +76,15 @@ func (h *Handler) MeshModelGenerationHandler(rw http.ResponseWriter, r *http.Req
 				var isRegistranError bool
 				utils.WriteSVGsOnFileSystem(&comp)
 				host := fmt.Sprintf("%s.artifacthub.meshery", gpi.Name)
-				isRegistranError, isModelError, err = h.registryManager.RegisterEntity(v1beta1.Host{
-					IHost:    v1beta1.ArtifactHub{},
-					Hostname: v1beta1.ArtifactHub{}.String(),
-					Metadata: host,
+				isRegistranError, isModelError, err = h.registryManager.RegisterEntity(v1beta1.Connection{
+					Kind: artifacthub.ArtifactHub,
+					Metadata: map[string]interface{}{
+						"name": host,
+					},
 				}, &comp)
-				helpers.HandleError(v1beta1.Host{
-					IHost: v1beta1.ArtifactHub{}}, &comp, err, isModelError, isRegistranError)
+				helpers.HandleError(v1beta1.Connection{
+					Kind: artifacthub.ArtifactHub,
+				}, &comp, err, isModelError, isRegistranError)
 				if err != nil {
 					h.log.Error(ErrGenerateComponents(err))
 				}

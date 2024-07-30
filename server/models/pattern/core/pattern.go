@@ -13,15 +13,14 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/models/pattern/utils"
 	"github.com/layer5io/meshkit/logger"
-	modelv1beta1 "github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
+	
 	registry "github.com/layer5io/meshkit/models/meshmodel/registry"
 	regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
-	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
 	mutils "github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshkit/utils/manifests"
+	"github.com/meshery/schemas/models/v1beta1"
 	cytoscapejs "gonum.org/v1/gonum/graph/formats/cytoscapejs"
 	"gopkg.in/yaml.v2"
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 type prettifier bool
@@ -133,7 +132,7 @@ type DryRunResponseWrapper struct {
 	//When success is false, error will contain the errors. And Component will be set to Nil
 	Success   bool            `json:"success"`
 	Error     *DryRunResponse `json:"error"`
-	Component *Service        `json:"component"` //Service is synonymous with Component. Later Service is to be changed to "Component"
+	Component *v1beta1.ComponentDefinition        `json:"component"` //Service is synonymous with Component. Later Service is to be changed to "Component"
 }
 type DryRunResponse struct {
 	Status string
@@ -186,26 +185,22 @@ type Service struct {
 }
 
 // NewPatternFile takes in raw yaml and encodes it into a construct
-func NewPatternFile(yml []byte) (af Pattern, err error) {
-	err = yaml.Unmarshal(yml, &af)
+func NewPatternFile(yml []byte) (patternFile v1beta1.PatternFile, err error) {
+	err = yaml.Unmarshal(yml, &patternFile)
 	if err != nil {
-		return af, err
+		return patternFile, err
 	}
-	for svcName, svc := range af.Services {
+	for _, component := range patternFile.Components {
 		// If an explicit name is not given to the service then use
 		// the service identifier as its name
-		if svc.Name == "" {
-			svc.Name = svcName
+		if component.DisplayName == "" {
+			component.DisplayName = component.Id.String()
 		}
 
-		svc.Settings = utils.RecursiveCastMapStringInterfaceToMapStringInterface(svc.Settings)
-		svc.Traits = utils.RecursiveCastMapStringInterfaceToMapStringInterface(svc.Traits)
+		component.Configuration = utils.RecursiveCastMapStringInterfaceToMapStringInterface(component.Configuration)
 
-		if svc.Settings == nil {
-			svc.Settings = map[string]interface{}{}
-		}
-		if svc.Traits == nil {
-			svc.Traits = map[string]interface{}{}
+		if component.Configuration == nil {
+			component.Configuration = map[string]interface{}{}
 		}
 	}
 
@@ -232,55 +227,72 @@ func IsValidPattern(stringifiedFile string) (err error) {
 	return
 }
 
+// AssignAdditionalLabels adds labels to identify resources deployed by meshery.
+func AssignAdditionalLabels(comp *v1beta1.ComponentDefinition) error {
+
+	if comp.Metadata.AdditionalProperties["labels"] == nil {
+		comp.Metadata.AdditionalProperties["labels"] = make(map[string]interface{})
+	}
+	
+	existingLabels, err := mutils.Cast[map[string]interface{}](comp.Metadata.AdditionalProperties["labels"])
+	if err != nil {
+		return err
+	}
+
+	existingLabels["resource.pattern.meshery.io/id"] = comp.Id.String() //set the patternID to track back the object
+	comp.Metadata.AdditionalProperties["labels"] = existingLabels
+	return nil
+}
+
 // GetApplicationComponent generates OAM Application Components from the
 // the given Pattern file
-func (p *Pattern) GetApplicationComponent(name string) (modelv1beta1.Component, error) {
-	
-	if comp.ObjectMeta.Labels == nil {
-		comp.ObjectMeta.Labels = make(map[string]string)
-	}
-	comp.ObjectMeta.Labels["resource.pattern.meshery.io/id"] = svc.ID.String() //set the patternID to track back the object
-	return comp, nil
-}
+// func (p *Pattern) GetApplicationComponent(name string) (modelv1beta1.Component, error) {
+
+// 	if comp.ObjectMeta.Labels == nil {
+// 		comp.ObjectMeta.Labels = make(map[string]string)
+// 	}
+// 	comp.ObjectMeta.Labels["resource.pattern.meshery.io/id"] = svc.ID.String() //set the patternID to track back the object
+// 	return comp, nil
+// }
 
 // GenerateApplicationConfiguration generates OAM Application Configuration from the
 // the given Pattern file for a particular deploymnet
-func (p *Pattern) GenerateApplicationConfiguration() (v1alpha1.Configuration, error) {
-	config := v1alpha1.Configuration{
-		TypeMeta:   v1.TypeMeta{Kind: "ApplicationConfiguration", APIVersion: "core.oam.dev/v1alpha2"},
-		ObjectMeta: v1.ObjectMeta{Name: p.Name},
-	}
+// func (p *Pattern) GenerateApplicationConfiguration() (v1alpha1.Configuration, error) {
+// 	config := v1alpha1.Configuration{
+// 		TypeMeta:   v1.TypeMeta{Kind: "ApplicationConfiguration", APIVersion: "core.oam.dev/v1alpha2"},
+// 		ObjectMeta: v1.ObjectMeta{Name: p.Name},
+// 	}
 
-	// Create configs for each component
-	for k, v := range p.Services {
-		// Indicates that map for properties is not empty
-		if len(v.Traits) > 0 {
-			specComp := v1alpha1.ConfigurationSpecComponent{
-				ComponentName: k,
-			}
+// 	// Create configs for each component
+// 	for k, v := range p.Services {
+// 		// Indicates that map for properties is not empty
+// 		if len(v.Traits) > 0 {
+// 			specComp := v1alpha1.ConfigurationSpecComponent{
+// 				ComponentName: k,
+// 			}
 
-			for k2, v2 := range v.Traits {
-				castToMap, ok := v2.(map[string]interface{})
+// 			for k2, v2 := range v.Traits {
+// 				castToMap, ok := v2.(map[string]interface{})
 
-				trait := v1alpha1.ConfigurationSpecComponentTrait{
-					Name: k2,
-				}
+// 				trait := v1alpha1.ConfigurationSpecComponentTrait{
+// 					Name: k2,
+// 				}
 
-				if !ok {
-					castToMap = map[string]interface{}{}
-				}
+// 				if !ok {
+// 					castToMap = map[string]interface{}{}
+// 				}
 
-				trait.Properties = castToMap
+// 				trait.Properties = castToMap
 
-				specComp.Traits = append(specComp.Traits, trait)
-			}
+// 				specComp.Traits = append(specComp.Traits, trait)
+// 			}
 
-			config.Spec.Components = append(config.Spec.Components, specComp)
-		}
-	}
+// 			config.Spec.Components = append(config.Spec.Components, specComp)
+// 		}
+// 	}
 
-	return config, nil
-}
+// 	return config, nil
+// }
 
 // GetServiceType returns the type of the service
 func (p *Pattern) GetServiceType(name string) string {
@@ -288,7 +300,7 @@ func (p *Pattern) GetServiceType(name string) string {
 }
 
 // ToCytoscapeJS converts pattern file into cytoscape object
-func (p *Pattern) ToCytoscapeJS(log logger.Handler) (cytoscapejs.GraphElem, error) {
+func ToCytoscapeJS(patternFile *v1beta1.PatternFile, log logger.Handler) (cytoscapejs.GraphElem, error) {
 	var cy cytoscapejs.GraphElem
 
 	// Not specifying any cytoscapejs layout
@@ -298,12 +310,12 @@ func (p *Pattern) ToCytoscapeJS(log logger.Handler) (cytoscapejs.GraphElem, erro
 	// client side
 
 	// Set up the nodes
-	for name, svc := range p.Services {
+	for _, component := range patternFile.Components {
 		elemData := cytoscapejs.ElemData{
-			ID: getCytoscapeElementID(name, svc, log),
+			ID: getCytoscapeElementID(component.Id.String(), component, log),
 		}
 
-		elemPosition, err := getCytoscapeJSPosition(svc, log)
+		elemPosition, err := getCytoscapeJSPosition(component, log)
 		if err != nil {
 			return cy, err
 		}
@@ -313,8 +325,8 @@ func (p *Pattern) ToCytoscapeJS(log logger.Handler) (cytoscapejs.GraphElem, erro
 			Position:   &elemPosition,
 			Selectable: true,
 			Grabbable:  true,
-			Scratch: map[string]Service{
-				"_data": *svc,
+			Scratch: map[string]v1beta1.ComponentDefinition{
+				"_data": *component,
 			},
 		}
 
@@ -460,8 +472,8 @@ func NewPatternFileFromK8sManifest(data string, fileName string, ignoreErrors bo
 	if fileName == "" {
 		fileName = "Autogenerated"
 	}
-	
-	pattern := Pattern {
+
+	pattern := Pattern{
 		Name:     fileName,
 		Services: map[string]*Service{},
 	}
@@ -544,7 +556,7 @@ func createPatternServiceFromK8s(manifest map[string]interface{}, regManager *re
 		return "", Service{}, ErrCreatePatternService(fmt.Errorf("no resources found for APIVersion: %s Kind: %s", apiVersion, kind))
 	}
 	// just needs the first entry to grab meshmodel-metadata and other model requirements
-	comp, ok := componentList[0].(*modelv1beta1.ComponentDefinition)
+	comp, ok := componentList[0].(*v1beta1.ComponentDefinition)
 	if !ok {
 		return "", Service{}, ErrCreatePatternService(fmt.Errorf("cannot cast to the component-definition for APIVersion: %s Kind: %s", apiVersion, kind))
 	}
@@ -587,7 +599,7 @@ func createPatternServiceFromK8s(manifest map[string]interface{}, regManager *re
 	return id, svc, nil
 }
 
-func assignNamespaceForNamespacedScopedComp(svc *Service, metadata map[string]interface{}, compDef *modelv1beta1.ComponentDefinition) *Service {
+func assignNamespaceForNamespacedScopedComp(svc *Service, metadata map[string]interface{}, compDef *v1beta1.ComponentDefinition) *Service {
 	if isNamespacedComponent(compDef) {
 		namespace, _ := mutils.Cast[string](metadata["namespace"])
 		if namespace == "" {
@@ -601,38 +613,21 @@ func assignNamespaceForNamespacedScopedComp(svc *Service, metadata map[string]in
 
 // Checks whether the component is namespaced scope or not.
 // While determining if an error occurs, the conversion process skips assigning a namespace value. If comp is originally namespaced scope, then k8s automatically assign a "default" namespace.
-func isNamespacedComponent(comp *modelv1beta1.ComponentDefinition) bool {
-	isNamespaced, _ := mutils.Cast[bool](comp.Metadata["isNamespaced"])
+func isNamespacedComponent(comp *v1beta1.ComponentDefinition) bool {
+	isNamespaced, _ := mutils.Cast[bool](comp.Metadata.AdditionalProperties["isNamespaced"])
 	return isNamespaced
 }
 
 // getCytoscapeElementID returns the element id for a given service
-func getCytoscapeElementID(name string, svc *Service, log logger.Handler) string {
-	mpi, ok := svc.Traits["meshmap"] // check if service has meshmap as trait
-	if !ok {
-		return name // Assuming that the service names are unique
-	}
-
-	mpStrInterface, ok := mpi.(map[string]interface{})
-	if !ok {
-		log.Debug(fmt.Sprintf("failed to cast meshmap trait (MPI): %+#v", mpi))
-		return name // Assuming that the service names are unique
-	}
-
-	mpID, ok := mpStrInterface["id"].(string)
-	if !ok {
-		log.Debug("Meshmap id not present in Meshmap interface")
-		return name // Assuming that the service names are unique
-	}
-
-	return mpID
+func getCytoscapeElementID(name string, component *v1beta1.ComponentDefinition, log logger.Handler) string {
+	return component.Id.String()
 }
 
-func getCytoscapeJSPosition(svc *Service, log logger.Handler) (cytoscapejs.Position, error) {
+func getCytoscapeJSPosition(component *v1beta1.ComponentDefinition, log logger.Handler) (cytoscapejs.Position, error) {
 	pos := cytoscapejs.Position{}
 
 	// Check if the service has "meshmap" as a trait
-	mpi, ok := svc.Traits["meshmap"]
+	positionInterface, ok := component.Metadata.AdditionalProperties["position"]
 
 	if !ok {
 		randX, err := rand.Int(rand.Reader, big.NewInt(100))
@@ -651,44 +646,33 @@ func getCytoscapeJSPosition(svc *Service, log logger.Handler) (cytoscapejs.Posit
 		return pos, nil
 	}
 
-	mpStrInterface, ok := mpi.(map[string]interface{})
-	if !ok {
-		log.Debug(fmt.Sprintf("failed to cast meshmap trait (MPI): %+#v", mpi))
+
+	posMap, err := mutils.Cast[map[string]interface{}](positionInterface)
+	if err != nil {
+		log.Debug(fmt.Sprintf("failed to cast meshmap trait (posMap): %+#v\n%v", positionInterface, err))
 		return pos, nil
 	}
 
-	posInterface, ok := mpStrInterface["position"]
-	if !ok {
-		log.Debug(fmt.Sprintf("failed to cast meshmap trait (posInterface): %+#v", mpStrInterface))
-		return pos, nil
-	}
-
-	posMap, ok := posInterface.(map[string]interface{})
-	if !ok {
-		log.Debug(fmt.Sprintf("failed to cast meshmap trait (posMap): %+#v", posInterface))
-		return pos, nil
-	}
-
-	pos.X, ok = posMap["posX"].(float64)
-	if !ok {
-		log.Debug(fmt.Sprintf("failed to cast meshmap trait (posMap): %T\n", posMap["posX"]))
+	pos.X, err = mutils.Cast[float64](posMap["posX"])
+	if err != nil {
+		log.Debug(fmt.Sprintf("failed to cast meshmap trait (posMap): %T\n%v", posMap["posX"], err))
 
 		// Attempt to cast as int
-		intX, ok := posMap["posX"].(int)
-		if !ok {
-			log.Debug(fmt.Sprintf("failed to cast meshmap trait (posMap): %T\n", posMap["posX"]))
+		intX, err := mutils.Cast[int](posMap["posX"])
+		if err != nil {
+			log.Debug(fmt.Sprintf("failed to cast meshmap trait (posMap): %T\n%v", posMap["posX"], err))
 		}
 
 		pos.X = float64(intX)
 	}
-	pos.Y, ok = posMap["posY"].(float64)
-	if !ok {
-		log.Debug(fmt.Sprintf("failed to cast meshmap trait (posMap): %T\n", posMap["posY"]))
+	pos.Y, err = mutils.Cast[float64](posMap["posY"])
+	if err != nil {
+		log.Debug(fmt.Sprintf("failed to cast meshmap trait (posMap): %T\n%v", posMap["posY"], err))
 
 		// Attempt to cast as int
-		intY, ok := posMap["posY"].(int)
-		if !ok {
-			log.Debug(fmt.Sprintf("failed to cast meshmap trait (posMap): %T\n", posMap["posY"]))
+		intY, err := mutils.Cast[int](posMap["posY"])
+		if err != nil {
+			log.Debug(fmt.Sprintf("failed to cast meshmap trait (posMap): %T\n %v", posMap["posY"], err))
 		}
 
 		pos.Y = float64(intY)

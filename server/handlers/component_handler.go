@@ -18,7 +18,9 @@ import (
 
 	"github.com/layer5io/meshkit/models/events"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha2"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
+	model "github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
+	"github.com/meshery/schemas/models/v1beta1"
+
 	"github.com/layer5io/meshkit/models/meshmodel/entity"
 	"github.com/layer5io/meshkit/models/meshmodel/registry"
 	meshkitutils "github.com/layer5io/meshkit/utils"
@@ -71,9 +73,9 @@ func (h *Handler) GetMeshmodelModelsByCategories(rw http.ResponseWriter, r *http
 		filter.DisplayName = search
 	}
 	entities, count, _, _ := h.registryManager.GetEntities(filter)
-	var modelDefs []v1beta1.Model
+	var modelDefs []v1beta1.ModelDefinition
 	for _, model := range entities {
-		model, ok := model.(*v1beta1.Model)
+		model, ok := model.(*v1beta1.ModelDefinition)
 		if ok {
 			modelDefs = append(modelDefs, *model)
 		}
@@ -143,9 +145,9 @@ func (h *Handler) GetMeshmodelModelsByCategoriesByModel(rw http.ResponseWriter, 
 		Annotations: returnAnnotationComp,
 	})
 
-	var modelDefs []v1beta1.Model
+	var modelDefs []v1beta1.ModelDefinition
 	for _, model := range entities {
-		model, ok := model.(*v1beta1.Model)
+		model, ok := model.(*v1beta1.ModelDefinition)
 		if ok {
 			modelDefs = append(modelDefs, *model)
 		}
@@ -218,9 +220,9 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 	}
 
 	entities, count, _, _ := h.registryManager.GetEntities(filter)
-	var modelDefs []v1beta1.Model
+	var modelDefs []v1beta1.ModelDefinition
 	for _, model := range entities {
-		model, ok := model.(*v1beta1.Model)
+		model, ok := model.(*v1beta1.ModelDefinition)
 		if ok {
 			modelDefs = append(modelDefs, *model)
 		}
@@ -291,9 +293,9 @@ func (h *Handler) GetMeshmodelModelsByName(rw http.ResponseWriter, r *http.Reque
 		Relationships: queryParams.Get("relationships") == "true",
 	})
 
-	var modelDefs []v1beta1.Model
+	var modelDefs []v1beta1.ModelDefinition
 	for _, model := range entities {
-		model, ok := model.(*v1beta1.Model)
+		model, ok := model.(*v1beta1.ModelDefinition)
 		if ok {
 			modelDefs = append(modelDefs, *model)
 		}
@@ -1039,8 +1041,8 @@ func (h *Handler) RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Re
 			return
 		}
 		utils.WriteSVGsOnFileSystem(&c)
-		isRegistranError, isModelError, err = h.registryManager.RegisterEntity(cc.Host, &c)
-		helpers.HandleError(cc.Host, &c, err, isModelError, isRegistranError)
+		isRegistranError, isModelError, err = h.registryManager.RegisterEntity(cc.Connection, &c)
+		helpers.HandleError(cc.Connection, &c, err, isModelError, isRegistranError)
 	}
 	err = helpers.WriteLogsToFiles()
 	if err != nil {
@@ -1076,7 +1078,7 @@ func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Reques
 	enc := json.NewEncoder(rw)
 	page, offset, limit, search, order, sort, _ := getPaginationParams(r)
 
-	filter := &v1beta1.HostFilter{
+	filter := &model.HostFilter{
 		Limit:   limit,
 		Offset:  offset,
 		Sort:    sort,
@@ -1337,11 +1339,11 @@ func RegisterEntity(content []byte, entityType entity.EntityType, h *Handler) er
 		if err != nil {
 			return meshkitutils.ErrUnmarshal(err)
 		}
-		isRegistrantError, isModelError, err := h.registryManager.RegisterEntity(v1beta1.Host{
-			Hostname: c.Model.Registrant.Hostname,
+		isRegistrantError, isModelError, err := h.registryManager.RegisterEntity(v1beta1.Connection{
+			Kind: c.Model.Registrant.Kind,
 		}, &c)
-		helpers.HandleError(v1beta1.Host{
-			Hostname: c.Model.Registrant.Hostname,
+		helpers.HandleError(v1beta1.Connection{
+			Kind: c.Model.Registrant.Kind,
 		}, &c, err, isModelError, isRegistrantError)
 		return nil
 	case entity.RelationshipDefinition:
@@ -1350,11 +1352,11 @@ func RegisterEntity(content []byte, entityType entity.EntityType, h *Handler) er
 		if err != nil {
 			return meshkitutils.ErrUnmarshal(err)
 		}
-		isRegistrantError, isModelError, err := h.registryManager.RegisterEntity(v1beta1.Host{
-			Hostname: r.Model.Registrant.Hostname,
+		isRegistrantError, isModelError, err := h.registryManager.RegisterEntity(v1beta1.Connection{
+			Kind: r.Model.Registrant.Kind,
 		}, &r)
-		helpers.HandleError(v1beta1.Host{
-			Hostname: r.Model.Registrant.Hostname,
+		helpers.HandleError(v1beta1.Connection{
+			Kind: r.Model.Registrant.Kind,
 		}, &r, err, isModelError, isRegistrantError)
 		return nil
 	}

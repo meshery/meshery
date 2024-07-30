@@ -23,6 +23,7 @@ import (
 	isql "github.com/layer5io/meshery/server/internal/sql"
 	"github.com/layer5io/meshery/server/meshes"
 	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshery/server/models/pattern/core"
 	pCore "github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshery/server/models/pattern/stages"
 	"github.com/layer5io/meshkit/errors"
@@ -36,6 +37,7 @@ import (
 	"github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/layer5io/meshkit/utils/kubernetes/kompose"
 	"github.com/layer5io/meshkit/utils/walker"
+	v1beta1 "github.com/meshery/schemas/models/v1beta1"
 	"gopkg.in/yaml.v2"
 )
 
@@ -1707,7 +1709,7 @@ func (h *Handler) formatPatternOutput(rw http.ResponseWriter, content []byte, fo
 			//TODO: The below line has to go away once the client fully supports referencing variables  and pattern imports inside design
 			newpatternfile := evalImportAndReferenceStage(&patternFile)
 
-			cyjs, _ := newpatternfile.ToCytoscapeJS(h.log)
+			cyjs, _ := core.ToCytoscapeJS(&newpatternfile, h.log)
 
 			bytes, err := json.Marshal(&cyjs)
 			if err != nil {
@@ -1749,12 +1751,10 @@ func (h *Handler) formatPatternOutput(rw http.ResponseWriter, content []byte, fo
 
 // Since the client currently does not support pattern imports and externalized variables, the first(import) stage of pattern engine
 // is evaluated here to simplify the pattern file such that it is valid when a deploy takes place
-func evalImportAndReferenceStage(p *pCore.Pattern) (newp pCore.Pattern) {
-	sap := &serviceActionProvider{}
-	sip := &serviceInfoProvider{}
+func evalImportAndReferenceStage(p *v1beta1.PatternFile) (newp v1beta1.PatternFile) {
 	chain := stages.CreateChain()
 	chain.
-		Add(stages.Import(sip, sap)).
+		// Add(stages.Import(sip, sap)). enable this
 		Add(stages.Filler(false)).
 		Add(func(data *stages.Data, err error, next stages.ChainStageNextFunction) {
 			data.Lock.Lock()

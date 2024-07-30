@@ -8,16 +8,15 @@ import (
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshery/server/models/pattern/planner"
 	"github.com/layer5io/meshkit/logger"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
-	pattern "github.com/meshery/schemas/models/v1beta1"
+	model "github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
-	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
+	"github.com/layer5io/meshkit/utils"
+	"github.com/meshery/schemas/models/v1beta1"
 )
 
 type CompConfigPair struct {
-	Component     v1beta1.Component
-	Configuration v1alpha1.Configuration
-	Hosts         map[v1beta1.Host]bool
+	Component v1beta1.ComponentDefinition
+	Hosts     map[v1beta1.Connection]bool
 }
 
 const ProvisionSuffixKey = ".isProvisioned"
@@ -44,41 +43,44 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider, log logger.H
 			return
 		}
 
-		config, err := data.Pattern.GenerateApplicationConfiguration()
-		if err != nil {
-			act.Terminate(fmt.Errorf("failed to generate application configuration: %s", err))
-			return
-		}
+		// config, err := data.Pattern.GenerateApplicationConfiguration()
+		// if err != nil {
+		// 	act.Terminate(fmt.Errorf("failed to generate application configuration: %s", err))
+		// 	return
+		// }
 		errs := []error{}
 
 		// Execute the plan
-		_ = plan.Execute(func(name string, svc core.Service) bool {
+		_ = plan.Execute(func(name string, component v1beta1.ComponentDefinition) bool {
 			ccp := CompConfigPair{}
 
-			// Create application component
-			comp, err := data.Pattern.GetApplicationComponent(name)
-			if err != nil {
-				return false
-			}
+			core.AssignAdditionalLabels(&component)
+
+			// Create component definition
+			// // Create application component
+			// comp, err := data.Pattern.GetApplicationComponent(name)
+			// if err != nil {
+			// 	return false
+			// }
 
 			// Generate hosts list
 			ccp.Hosts = generateHosts(
-				data.PatternSvcWorkloadCapabilities[name],
+				component,
 				act.GetRegistry(),
 			)
 
+			annotations, err := utils.Cast[map[string]string](component.Configuration["annotations"])
 			// Get annotations for the component and merge with existing, if any
-			comp.ObjectMeta.SetAnnotations(helpers.MergeStringMaps(
-				v1beta1.GetAnnotationsForWorkload(data.PatternSvcWorkloadCapabilities[name]),
-				comp.GetAnnotations(),
+			component.Configuration["annotations"] = helpers.MergeStringMaps(
+				annotations,
 				getAdditionalAnnotations(data.Pattern),
-			))
-			
-			ccp.Component = comp
-			// Add configuration only if traits are applied to the component
-			if len(svc.Traits) > 0 {
-				ccp.Configuration = config
-			}
+			)
+
+			ccp.Component = component
+			// // Add configuration only if traits are applied to the component
+			// if len(svc.Traits) > 0 {
+			// 	ccp.Configuration = config
+			// }
 
 			msg, err := act.Provision(ccp)
 			if err != nil {
@@ -99,32 +101,19 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider, log logger.H
 	}
 }
 
-func processAnnotations(pattern *pattern.PatternFile) {
-	for name, svc := range pattern.Services {
-		if svc.IsAnnotation {
-			// this particular block is present so that designs with previous filters don't break
-			// also UI is dependent but not exactly sure how?
-			delete(pattern.Services, name)
-		}
-		data, ok := svc.Traits["meshmap"]
-		if ok {
-			metadata, ok2 := data.(map[string]interface{})
-			if ok2 {
-				compMetadata, ok3 := metadata["meshmodel-metadata"].(map[string]interface{})
-				if ok3 {
-					isAnnotation, ok4 := compMetadata["isAnnotation"].(bool)
-					if ok4 && isAnnotation {
-						delete(pattern.Services, name)
-					}
-				}
-			}
+func processAnnotations(pattern *v1beta1.PatternFile) {
+	components := []*v1beta1.ComponentDefinition{}
+	for _, component := range pattern.Components {
+		if !component.Metadata.IsAnnotation {
+			components = append(components, component)
 		}
 	}
+	pattern.Components = components
 }
 
-func generateHosts(wc v1beta1.ComponentDefinition, reg *meshmodel.RegistryManager) map[v1beta1.Host]bool {
-	res := map[v1beta1.Host]bool{}
-	host := reg.GetRegistrant(&wc)
+func generateHosts(cd v1beta1.ComponentDefinition, reg *meshmodel.RegistryManager) map[v1beta1.Connection]bool {
+	res := map[v1beta1.Connection]bool{}
+	host := reg.GetRegistrant(&cd)
 	res[host] = true
 	// for _, tc := range tcs {
 	// 	res[tc.Host] = true
@@ -148,9 +137,9 @@ func mergeErrors(errs []error) error {
 
 // move into meshkit and change annotations prefix name
 
-func getAdditionalAnnotations(pattern *core.Pattern) map[string]string {
+func getAdditionalAnnotations(pattern *v1beta1.PatternFile) map[string]string {
 	annotations := make(map[string]string, 2)
-	annotations[fmt.Sprintf("%s.name", v1beta1.MesheryAnnotationPrefix)] = pattern.Name
-	annotations[fmt.Sprintf("%s.id", v1beta1.MesheryAnnotationPrefix)] = pattern.PatternID
+	annotations[fmt.Sprintf("%s.name", model.MesheryAnnotationPrefix)] = pattern.Name
+	annotations[fmt.Sprintf("%s.id", model.MesheryAnnotationPrefix)] = pattern.Id.String()
 	return annotations
 }

@@ -337,3 +337,5 @@ require (
 )
 
 replace github.com/meshery/schemas => ../schemas
+
+replace github.com/layer5io/meshkit => ../meshkit

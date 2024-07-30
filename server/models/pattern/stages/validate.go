@@ -5,10 +5,9 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshery/server/models/pattern/jsonschema"
-	"github.com/layer5io/meshery/server/models/pattern/resource/selector"
-	meshmodel "github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
+	"github.com/meshery/schemas/models/v1beta1"
+
 	"gopkg.in/yaml.v2"
 )
 
@@ -60,77 +59,74 @@ func formatValue(path string, val map[string]interface{}) error {
 	return nil
 }
 
-func Validator(prov ServiceInfoProvider, act ServiceActionProvider, validate bool) ChainStageFunction {
-	s := selector.New(act.GetRegistry(), prov)
+// func Validator(prov ServiceInfoProvider, act ServiceActionProvider, validate bool) ChainStageFunction {
+// 	s := selector.New(act.GetRegistry(), prov)
 
-	return func(data *Data, err error, next ChainStageNextFunction) {
-		if err != nil {
-			act.Terminate(err)
-			return
-		}
+// 	return func(data *Data, err error, next ChainStageNextFunction) {
+// 		if err != nil {
+// 			act.Terminate(err)
+// 			return
+// 		}
 
-		data.PatternSvcWorkloadCapabilities = map[string]meshmodel.ComponentDefinition{}
-		data.PatternSvcTraitCapabilities = map[string][]core.TraitCapability{}
+// 		for svcName, svc := range data.Pattern.Services {
+// 			wc, err := s.Workload(svc.Type, svc.Version, svc.Model, svc.APIVersion)
+// 			if err != nil {
+// 				act.Terminate(err)
+// 				return
+// 			}
+// 			act.Log(fmt.Sprintf("%s version for %s: %s", svc.Model, svc.Name, wc.Model.Model.Version)) //Eg: kubernetes version for Namespace: v1.25.0
+// 			if core.Format {
+// 				svc.Settings = core.Format.DePrettify(svc.Settings, false)
+// 			}
+// 			//Validate component definition
+// 			if validate {
+// 				if err := validateWorkload(svc.Settings, wc); err != nil {
+// 					act.Terminate(fmt.Errorf("invalid component configuration for %s: %s", svc.Name, err.Error()))
+// 					return
+// 				}
+// 			}
 
-		for svcName, svc := range data.Pattern.Services {
-			wc, err := s.Workload(svc.Type, svc.Version, svc.Model, svc.APIVersion)
-			if err != nil {
-				act.Terminate(err)
-				return
-			}
-			act.Log(fmt.Sprintf("%s version for %s: %s", svc.Model, svc.Name, wc.Model.Model.Version)) //Eg: kubernetes version for Namespace: v1.25.0
-			if core.Format {
-				svc.Settings = core.Format.DePrettify(svc.Settings, false)
-			}
-			//Validate component definition
-			if validate {
-				if err := validateWorkload(svc.Settings, wc); err != nil {
-					act.Terminate(fmt.Errorf("invalid component configuration for %s: %s", svc.Name, err.Error()))
-					return
-				}
-			}
+// 			if _, ok := specialComps[svc.Type]; ok {
+// 				err := hydrateComponentWithOriginalType(svc.Type, svc.Settings["spec"])
+// 				if err != nil {
+// 					act.Terminate(err)
+// 					return
+// 				}
+// 			}
 
-			if _, ok := specialComps[svc.Type]; ok {
-				err := hydrateComponentWithOriginalType(svc.Type, svc.Settings["spec"])
-				if err != nil {
-					act.Terminate(err)
-					return
-				}
-			}
+// 			// Store the workload capability in the metadata
+// 			data.PatternSvcWorkloadCapabilities[svcName] = wc
 
-			// Store the workload capability in the metadata
-			data.PatternSvcWorkloadCapabilities[svcName] = wc
+// 			data.PatternSvcTraitCapabilities[svcName] = []core.TraitCapability{}
 
-			data.PatternSvcTraitCapabilities[svcName] = []core.TraitCapability{}
+// 			//DEPRECATED: `traits` will be no-op for pattern engine
+// 			// Validate traits applied to this workload
+// 			// for trName, tr := range svc.Traits {
+// 			// 	tc, ok := s.Trait(trName)
+// 			// 	if !ok {
+// 			// 		act.Terminate(fmt.Errorf("invalid trait of type: %s", svc.Type))
+// 			// 		return
+// 			// 	}
 
-			//DEPRECATED: `traits` will be no-op for pattern engine
-			// Validate traits applied to this workload
-			// for trName, tr := range svc.Traits {
-			// 	tc, ok := s.Trait(trName)
-			// 	if !ok {
-			// 		act.Terminate(fmt.Errorf("invalid trait of type: %s", svc.Type))
-			// 		return
-			// 	}
+// 			// 	if err := validateTrait(tr, tc, svc.Type); err != nil {
+// 			// 		act.Terminate(err)
+// 			// 		return
+// 			// 	}
 
-			// 	if err := validateTrait(tr, tc, svc.Type); err != nil {
-			// 		act.Terminate(err)
-			// 		return
-			// 	}
+// 			// 	// Store the trait capability in the metadata
+// 			// 	data.PatternSvcTraitCapabilities[svcName] = append(data.PatternSvcTraitCapabilities[svcName], tc)
+// 			// }
+// 		}
 
-			// 	// Store the trait capability in the metadata
-			// 	data.PatternSvcTraitCapabilities[svcName] = append(data.PatternSvcTraitCapabilities[svcName], tc)
-			// }
-		}
+// 		if next != nil {
+// 			next(data, nil)
+// 		}
+// 	}
+// }
 
-		if next != nil {
-			next(data, nil)
-		}
-	}
-}
-
-func validateWorkload(comp map[string]interface{}, wc meshmodel.ComponentDefinition) error {
+func validateWorkload(comp map[string]interface{}, wc v1beta1.ComponentDefinition) error {
 	// skip the validation if the component does not have a schema and has isAnnotation set to true.
-	isAnnotation, _ := wc.Metadata["isAnnotation"].(bool)
+	isAnnotation := wc.Metadata.IsAnnotation
 	if wc.Component.Schema == "" && isAnnotation {
 		return nil
 	}
