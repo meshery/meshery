@@ -9,8 +9,8 @@ import (
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/utils"
 	meshkube "github.com/layer5io/meshkit/utils/kubernetes"
+	"github.com/meshery/schemas/models/v1beta1/model"
 	_errors "github.com/pkg/errors"
-		"github.com/meshery/schemas/models/v1beta1/model"
 
 	"gopkg.in/yaml.v2"
 	"k8s.io/apimachinery/pkg/api/errors"
@@ -18,6 +18,8 @@ import (
 )
 
 func Deploy(kubeClient *meshkube.Client, comp model.ComponentDefinition, isDel bool) error {
+	var namespace string
+
 	resource := createK8sResourceStructure(comp)
 	manifest, err := yaml.Marshal(resource)
 	if err != nil {
@@ -25,16 +27,20 @@ func Deploy(kubeClient *meshkube.Client, comp model.ComponentDefinition, isDel b
 	}
 
 	// Define a function to extract namesapce, labels and annotations in the componetn definiotn
-	confMetadata, err := utils.Cast[map[string]interface{}](comp.Configuration["metadata"])
-	if err != nil {
-		err = _errors.Wrapf(err, "unable to extract namespace from component configuration")
-		return err
-	}
+	var confMetadata map[string]interface{}
+	_confMetadata, ok := comp.Configuration["metadata"]
+	if ok && !utils.IsInterfaceNil(_confMetadata) {
+		confMetadata, err = utils.Cast[map[string]interface{}](_confMetadata)
+		if err != nil {
+			err = _errors.Wrapf(err, "unable to extract namespace from component configuration")
+			fmt.Println("line 36 ;;;;;;;;;;;;;;;;;;;", err)
+			return err
+		}
 
-	namespace, errr := utils.Cast[string](confMetadata["namespace"])
-	if errr != nil {
-		err = _errors.Wrapf(errr, "unable to extract namespace from component configuration")
-		return err
+		_namespace, ok := confMetadata["namespace"]
+		if ok && !utils.IsInterfaceNil(_namespace) {
+			namespace, _ = utils.Cast[string](_namespace)
+		}
 	}
 
 	err = kubeClient.ApplyManifest(manifest, meshkube.ApplyOptions{
@@ -42,7 +48,10 @@ func Deploy(kubeClient *meshkube.Client, comp model.ComponentDefinition, isDel b
 		Update:    true,
 		Delete:    isDel,
 	})
+
+	fmt.Println("line 51 ;;;;;;;;;;;;;;;;;;;", err)
 	if err != nil {
+		fmt.Println("line 54 ;;;;;;;;;;;;;;;;;;;", err)
 		if isErrKubeStatusErr(err) {
 			status, _ := json.Marshal(err)
 			return formatKubeStatusErrToMeshkitErr(&status, comp.DisplayName)
@@ -50,6 +59,7 @@ func Deploy(kubeClient *meshkube.Client, comp model.ComponentDefinition, isDel b
 			return meshkube.ErrApplyManifest(err)
 		}
 	}
+	fmt.Println("line 61 ;;;;;;;;;;;;;;;;;;;", err)
 	return nil
 }
 
@@ -119,14 +129,34 @@ func kindToResource(kind string) string {
 }
 
 func createK8sResourceStructure(comp model.ComponentDefinition) map[string]interface{} {
+	annotations := map[string]interface{}{}
+	labels := map[string]interface{}{}
+
+	_confMetadata, ok := comp.Configuration["metadata"]
+	if ok {
+		confMetadata, err := utils.Cast[map[string]interface{}](_confMetadata)
+		if err == nil {
+
+			_annotations, ok := confMetadata["annotations"]
+			if ok {
+				annotations, _ = utils.Cast[map[string]interface{}](_annotations)
+			}
+
+			_label, ok := confMetadata["labels"]
+
+			if ok {
+				labels, _ = utils.Cast[map[string]interface{}](_label)
+			}
+		}
+	}
 
 	component := map[string]interface{}{
 		"apiVersion": comp.Component.Version,
 		"kind":       comp.Component.Kind,
 		"metadata": map[string]interface{}{
 			"name":        comp.DisplayName,
-			"annotations": comp.Metadata.AdditionalProperties["annotations"],
-			"labels":      comp.Metadata.AdditionalProperties["labels"],
+			"annotations": annotations,
+			"labels":      labels,
 		},
 	}
 

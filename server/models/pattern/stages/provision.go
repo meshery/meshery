@@ -71,7 +71,7 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider, log logger.H
 
 			// Generate hosts list
 			ccp.Hosts = generateHosts(
-				component,
+				data.DeclartionToDefinitionMapping[component.Id],
 				act.GetRegistry(),
 			)
 
@@ -96,8 +96,8 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider, log logger.H
 				getAdditionalAnnotations(data.Pattern),
 			)
 
-			fmt.Println("ccp.Component-----------: ", ccp.Component)
 			ccp.Component = component
+			fmt.Println("ccp.Component-----------: ", ccp.Component)
 			// // Add configuration only if traits are applied to the component
 			// if len(svc.Traits) > 0 {
 			// 	ccp.Configuration = config

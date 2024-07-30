@@ -5,7 +5,9 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshery/server/models/pattern/jsonschema"
+	"github.com/layer5io/meshery/server/models/pattern/resource/selector"
 	"github.com/meshery/schemas/models/v1beta1/model"
 
 	"gopkg.in/yaml.v2"
@@ -59,70 +61,50 @@ func formatValue(path string, val map[string]interface{}) error {
 	return nil
 }
 
-// func Validator(prov ServiceInfoProvider, act ServiceActionProvider, validate bool) ChainStageFunction {
-// 	s := selector.New(act.GetRegistry(), prov)
+func Validator(prov ServiceInfoProvider, act ServiceActionProvider, validate bool) ChainStageFunction {
+	s := selector.New(act.GetRegistry(), prov)
 
-// 	return func(data *Data, err error, next ChainStageNextFunction) {
-// 		if err != nil {
-// 			act.Terminate(err)
-// 			return
-// 		}
+	return func(data *Data, err error, next ChainStageNextFunction) {
+		if err != nil {
+			act.Terminate(err)
+			return
+		}
 
-// 		for svcName, svc := range data.Pattern.Services {
-// 			wc, err := s.Workload(svc.Type, svc.Version, svc.Model, svc.APIVersion)
-// 			if err != nil {
-// 				act.Terminate(err)
-// 				return
-// 			}
-// 			act.Log(fmt.Sprintf("%s version for %s: %s", svc.Model, svc.Name, wc.Model.Model.Version)) //Eg: kubernetes version for Namespace: v1.25.0
-// 			if core.Format {
-// 				svc.Settings = core.Format.DePrettify(svc.Settings, false)
-// 			}
-// 			//Validate component definition
-// 			if validate {
-// 				if err := validateWorkload(svc.Settings, wc); err != nil {
-// 					act.Terminate(fmt.Errorf("invalid component configuration for %s: %s", svc.Name, err.Error()))
-// 					return
-// 				}
-// 			}
+		for _, component := range data.Pattern.Components {
+			wc, err := s.Workload(component.Component.Kind, component.Model.Model.Version, component.Model.Name, component.Component.Version)
+			if err != nil {
+				act.Terminate(err)
+				return
+			}
+			act.Log(fmt.Sprintf("%s version for %s: %s", component.Model.Name, component.DisplayName, wc.Model.Model.Version)) //Eg: kubernetes version for Namespace: v1.25.0
+			if core.Format {
+				component.Configuration = core.Format.DePrettify(component.Configuration, false)
+			}
+			//Validate component definition
+			if validate {
+				if err := validateWorkload(component.Configuration, wc); err != nil {
+					act.Terminate(fmt.Errorf("invalid component configuration for %s: %s", component.DisplayName, err.Error()))
+					return
+				}
+			}
 
-// 			if _, ok := specialComps[svc.Type]; ok {
-// 				err := hydrateComponentWithOriginalType(svc.Type, svc.Settings["spec"])
-// 				if err != nil {
-// 					act.Terminate(err)
-// 					return
-// 				}
-// 			}
+			if _, ok := specialComps[component.Component.Kind]; ok {
+				err := hydrateComponentWithOriginalType(component.Component.Kind, component.Configuration["spec"])
+				if err != nil {
+					act.Terminate(err)
+					return
+				}
+			}
 
-// 			// Store the workload capability in the metadata
-// 			data.PatternSvcWorkloadCapabilities[svcName] = wc
+			// Store the corresponding definition
+			data.DeclartionToDefinitionMapping[component.Id] = wc
+		}
 
-// 			data.PatternSvcTraitCapabilities[svcName] = []core.TraitCapability{}
-
-// 			//DEPRECATED: `traits` will be no-op for pattern engine
-// 			// Validate traits applied to this workload
-// 			// for trName, tr := range svc.Traits {
-// 			// 	tc, ok := s.Trait(trName)
-// 			// 	if !ok {
-// 			// 		act.Terminate(fmt.Errorf("invalid trait of type: %s", svc.Type))
-// 			// 		return
-// 			// 	}
-
-// 			// 	if err := validateTrait(tr, tc, svc.Type); err != nil {
-// 			// 		act.Terminate(err)
-// 			// 		return
-// 			// 	}
-
-// 			// 	// Store the trait capability in the metadata
-// 			// 	data.PatternSvcTraitCapabilities[svcName] = append(data.PatternSvcTraitCapabilities[svcName], tc)
-// 			// }
-// 		}
-
-// 		if next != nil {
-// 			next(data, nil)
-// 		}
-// 	}
-// }
+		if next != nil {
+			next(data, nil)
+		}
+	}
+}
 
 func validateWorkload(comp map[string]interface{}, wc model.ComponentDefinition) error {
 	// skip the validation if the component does not have a schema and has isAnnotation set to true.

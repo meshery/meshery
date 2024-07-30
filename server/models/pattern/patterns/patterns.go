@@ -32,7 +32,6 @@ type DeploymentMessagePerContext struct {
 }
 
 func Process(kconfigs []string, componets []model.ComponentDefinition, isDel bool, patternName string, ec *models.Broadcast, userID string, provider models.Provider, connection connection.Connection, skipCrdAndOperator, upgradeExistingRelease bool) ([]DeploymentMessagePerContext, error) {
-	var comps []model.ComponentDefinition
 	action := "deploy"
 	if isDel {
 		action = "undeploy"
@@ -42,6 +41,8 @@ func Process(kconfigs []string, componets []model.ComponentDefinition, isDel boo
 	if err != nil {
 		return nil, err
 	}
+
+	fmt.Println("\n\n\nTEST DEPHANDLER : ", depHandler)
 
 	msgs := make([]DeploymentMessagePerContext, 0)
 	var msgsMx sync.Mutex
@@ -64,11 +65,12 @@ func Process(kconfigs []string, componets []model.ComponentDefinition, isDel boo
 			defer wg.Done()
 
 			msgsPerComp := make([]DeploymentMessagePerComp, 0)
-			for _, comp := range comps {
-
+			for _, comp := range componets {
+				fmt.Println("TEST INSIDE line 70 : ", comp.Component.Kind)
 				if !skipCrdAndOperator && depHandler != nil && comp.Model.Name != (_models.Kubernetes{}).String() {
+					fmt.Println("TEST INSIDE line 72 : ")
 					deploymentMsg := DeploymentMessagePerComp{
-						Kind:       comp.Kind,
+						Kind:       comp.Component.Kind,
 						Model:      comp.Model.Name,
 						CompName:   comp.DisplayName,
 						Success:    true,
@@ -90,7 +92,7 @@ func Process(kconfigs []string, componets []model.ComponentDefinition, isDel boo
 				//TODO: Add a Mapper utility function which carries the logic for X hosts can handle Y components under Z circumstances.
 
 				_msg := DeploymentMessagePerComp{
-					Kind:       comp.Kind,
+					Kind:       comp.Component.Kind,
 					Model:      comp.Model.Name,
 					CompName:   comp.DisplayName,
 					Success:    true,
@@ -102,8 +104,8 @@ func Process(kconfigs []string, componets []model.ComponentDefinition, isDel boo
 					_msg.Message = fmt.Sprintf("Error %sing %s/%s", action, patternName, comp.DisplayName)
 					_msg.Error = err
 					_msg.Success = false
-
 				}
+				fmt.Println("TEST INSIDE line 108 after deploying : ", err)
 				msgsPerComp = append(msgsPerComp, _msg)
 			}
 

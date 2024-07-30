@@ -247,12 +247,12 @@ func _processPattern(
 		chain.
 			// Add(stages.Import(sip, sap)).
 			Add(stages.Format()).
-			Add(stages.Filler(skipPrintLogs))
+			Add(stages.Filler(skipPrintLogs)).
 			// Calling this stage `The Validation stage` is a bit deceiving considering
 			// that the validation stage also formats the `data` (chain function parameter) that the
 			// subsequent stages depend on.
 			// We are skipping the `Validation` based on "verify" query paramerter
-			// Add(stages.Validator(sip, sap, validate)) // not required as client side RJSF validation is enough, but for mesheryctl client it's required
+			Add(stages.Validator(sip, sap, validate)) // not required as client side RJSF validation is enough, but for mesheryctl client it's required
 		if dryRun {
 			chain.Add(stages.DryRun(sip, sap))
 		}
@@ -281,6 +281,7 @@ func _processPattern(
 			Process(&stages.Data{
 				Pattern: &pattern,
 				Other:   map[string]interface{}{},
+				DeclartionToDefinitionMapping: make(map[uuid.UUID]model.ComponentDefinition),
 			})
 		return resp, sap.err
 	}
@@ -360,9 +361,9 @@ func (sap *serviceActionProvider) Mutate(p *pattern.PatternFile) {
 	//TODO: externalize these mutation rules with policies.
 	//1. Enforce the deployment of CRDs before other resources
 	for _, component := range p.Components {
-		if component.Kind == "CustomResourceDefinition" {
+		if component.Component.Kind == "CustomResourceDefinition" {
 			for _, comp := range p.Components {
-				if comp.Kind != "CustomResourceDefinition" {
+				if comp.Component.Kind != "CustomResourceDefinition" {
 					dependsOnSlice, err := utils.Cast[[]string](comp.Metadata.AdditionalProperties["dependsOn"])
 					if err != nil {
 						err = errors.Wrapf(err, "Failed to cast 'dependsOn' to []string for component %s", comp.DisplayName)
@@ -577,7 +578,7 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) ([]patter
 				Location:   fmt.Sprintf("%s:%s", hostName, strconv.Itoa(hostPort)),
 				Summary: []patterns.DeploymentMessagePerComp{
 					{
-						Kind:       ccp.Component.Kind,
+						Kind:       ccp.Component.Component.Kind,
 						Model:      ccp.Component.Model.Name,
 						CompName:   ccp.Component.DisplayName,
 						DesignName: sap.patternName,

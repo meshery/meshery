@@ -175,7 +175,7 @@ func fillNamespace(component *model.ComponentDefinition, flattenedPattern map[st
 }
 
 func fillType(component *model.ComponentDefinition, flattenedPattern map[string]interface{}) error {
-	kindKey, ok := matchPattern(component.Kind)
+	kindKey, ok := matchPattern(component.Component.Kind)
 	if !ok {
 		return nil
 	}
@@ -190,7 +190,7 @@ func fillType(component *model.ComponentDefinition, flattenedPattern map[string]
 		return errors.Wrapf(err, "failed to resolved \"kind\" reference: %s", kindKey)
 	}
 
-	component.Kind = kindVal
+	component.Component.Kind = kindVal
 	return nil
 }
 
