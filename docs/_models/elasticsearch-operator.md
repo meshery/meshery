@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Elastic Search
-subtitle: Collaborative and visual infrastructure as code for Elastic Search
+subtitle: Collaborative and visual infrastructure as design for Elastic Search
 image: /assets/img/integrations/elasticsearch-operator/icons/color/elasticsearch-operator-color.svg
 permalink: extensibility/integrations/elasticsearch-operator
 docURL: https://docs.meshery.io/extensibility/integrations/elasticsearch-operator
@@ -23,12 +23,12 @@ components:
   whiteIcon: assets/img/integrations/elasticsearch-operator/components/kibana/icons/white/kibana-white.svg
   description: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Scalable search and analytics",
+  "Full-text search and indexing",
+  "Real-time data analysis"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Integrates Elastic Search"
+howItWorksDetails: "Powerful search and analytics capabilities for Kubernetes data"
 language: en
 list: include
 type: extensibility

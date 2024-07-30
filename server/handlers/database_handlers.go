@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"os"
 	"path"
-	"strconv"
 	"time"
 
 	"github.com/layer5io/meshery/server/meshmodel"
@@ -40,26 +39,7 @@ func (h *Handler) GetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *m
 	var tables []*models.SqliteSchema
 	var recordCount int
 	var totalTables int64
-
-	limitstr := r.URL.Query().Get("pagesize")
-	var limit int
-	if limitstr != "all" {
-		limit, _ = strconv.Atoi(limitstr)
-		if limit <= 0 {
-			limit = defaultPageSize
-		}
-	}
-	pagestr := r.URL.Query().Get("page")
-	page, _ := strconv.Atoi(pagestr)
-
-	if page <= 0 {
-		page = 1
-	}
-
-	offset := (page - 1) * limit
-	order := r.URL.Query().Get("order")
-	sort := r.URL.Query().Get("sort")
-	search := r.URL.Query().Get("search")
+	page, offset, limit, search, order, sort, _ := getPaginationParams(r)
 
 	tableFinder := h.dbHandler.DB.Table("sqlite_schema").
 		Where("type = ?", "table")

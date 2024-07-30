@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: MySQL Operator
-subtitle: Collaborative and visual infrastructure as code for Mongodb Operator
+subtitle: Collaborative and visual infrastructure as design for MySQL Operator
 image: /assets/img/integrations/mysql-operator/icons/color/mysql-operator-color.svg
 permalink: extensibility/integrations/mysql-operator
 docURL: https://docs.meshery.io/extensibility/integrations/mysql-operator
@@ -43,12 +43,12 @@ components:
   whiteIcon: assets/img/integrations/mysql-operator/components/mysql-user/icons/white/mysql-user-white.svg
   description: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Automates MySQL deployment and scaling",
+  "Manages backups, restores, and upgrades",
+  "Provides monitoring and alerting"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Deploys and manages MySQL"
+howItWorksDetails: "Streamlined MySQL management within Kubernetes"
 language: en
 list: include
 type: extensibility

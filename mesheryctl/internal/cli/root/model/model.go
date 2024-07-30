@@ -6,7 +6,7 @@
 //
 //     http://www.apache.org/licenses/LICENSE-2.0
 //
-// Unless required by applicable law or agreed to in writing, software
+// Unless required by a, filepath.Dir(${1:}modelDefPathpplicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
@@ -17,12 +17,18 @@ package model
 import (
 	"encoding/json"
 	"fmt"
+	"io"
+	"net/http"
 	"os"
+	"path/filepath"
 
 	"github.com/fatih/color"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/layer5io/meshery/server/handlers"
+	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
+	"github.com/layer5io/meshkit/models/oci"
 	"github.com/manifoldco/promptui"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
@@ -36,13 +42,24 @@ var (
 	// flag used to specify format of output of view {model-name} command
 	outFormatFlag string
 
+	// flag used to specify output location of export {model-name} command
+	outLocationFlag string
+	// flag used to specify format of output of export {model-name} command
+	outTypeFlag string
+	// flag used to specify whether to include components in the model
+	includeCompsFlag bool
+	// flag used to specify whether to include relationships in the model
+	includeRelsFlag bool
+
 	// Maximum number of rows to be displayed in a page
 	maxRowsPerPage = 25
 
 	// Color for the whiteboard printer
 	whiteBoardPrinter = color.New(color.FgHiBlack, color.BgWhite, color.Bold)
 
-	availableSubcommands = []*cobra.Command{listModelCmd, viewModelCmd, searchModelCmd}
+	availableSubcommands = []*cobra.Command{listModelCmd, viewModelCmd, searchModelCmd, importModelCmd, exportModal}
+
+	countFlag bool
 )
 
 // represents the mesheryctl model view [model-name] subcommand.
@@ -55,11 +72,17 @@ var ModelCmd = &cobra.Command{
 	Short: "View list of models and detail of models",
 	Long:  "View list of models and detailed information of a specific model",
 	Example: `
-// To view list of components
+// To view total of available models
+mesheryctl model --count
+
+// To view list of models
 mesheryctl model list
 
 // To view a specific model
 mesheryctl model view [model-name]
+
+// To search for a specific model
+mesheryctl model search [model-name]
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
@@ -83,7 +106,7 @@ mesheryctl model view [model-name]
 		return nil
 	},
 	Args: func(cmd *cobra.Command, args []string) error {
-		if len(args) == 0 {
+		if len(args) == 0 && !countFlag {
 			if err := cmd.Usage(); err != nil {
 				return err
 			}
@@ -92,6 +115,17 @@ mesheryctl model view [model-name]
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if countFlag {
+			mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+			if err != nil {
+				log.Fatalln(err, "error processing config")
+			}
+
+			baseUrl := mctlCfg.GetBaseMesheryURL()
+			url := fmt.Sprintf("%s/api/meshmodels/models?page=1", baseUrl)
+			return listModel(cmd, url, countFlag)
+		}
+
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
 			return errors.New(utils.SystemModelSubError(fmt.Sprintf("'%s' is an invalid subcommand. Please provide required options from [view]. Use 'mesheryctl model --help' to display usage guide.\n", args[0]), "model"))
 		}
@@ -99,6 +133,7 @@ mesheryctl model view [model-name]
 		if err != nil {
 			log.Fatalln(err, "error processing config")
 		}
+
 		err = cmd.Usage()
 		if err != nil {
 			return err
@@ -109,9 +144,15 @@ mesheryctl model view [model-name]
 
 func init() {
 	listModelCmd.Flags().IntVarP(&pageNumberFlag, "page", "p", 1, "(optional) List next set of models with --page (default = 1)")
-	listModelCmd.Flags().BoolP("count", "", false, "(optional) Get the number of models in total")
 	viewModelCmd.Flags().StringVarP(&outFormatFlag, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
+
+	exportModal.Flags().StringVarP(&outLocationFlag, "output-location", "l", "./", "(optional) output location (default = current directory)")
+	exportModal.Flags().StringVarP(&outTypeFlag, "output-type", "o", "yaml", "(optional) format to display in [json|yaml] (default = yaml)")
+	exportModal.Flags().BoolVarP(&includeCompsFlag, "include-components", "c", false, "whether to include components in the model definition (default = false)")
+	exportModal.Flags().BoolVarP(&includeRelsFlag, "include-relationships", "r", false, "whether to include components in the model definition (default = false)")
+
 	ModelCmd.AddCommand(availableSubcommands...)
+	ModelCmd.Flags().BoolVarP(&countFlag, "count", "", false, "(optional) Get the number of models in total")
 }
 
 // selectModelPrompt lets user to select a model if models are more than one
@@ -167,4 +208,128 @@ func prettifyJson(model v1beta1.Model) error {
 
 	// Any errors during the encoding process will be returned as an error.
 	return enc.Encode(model)
+}
+
+func listModel(cmd *cobra.Command, url string, displayCountOnly bool) error {
+	req, err := utils.NewRequest(http.MethodGet, url, nil)
+	if err != nil {
+		utils.Log.Error(err)
+		return err
+	}
+
+	resp, err := utils.MakeRequest(req)
+	if err != nil {
+		utils.Log.Error(err)
+		return err
+	}
+
+	// defers the closing of the response body after its use, ensuring that the resources are properly released.
+	defer resp.Body.Close()
+
+	data, err := io.ReadAll(resp.Body)
+	if err != nil {
+		utils.Log.Error(err)
+		return err
+	}
+
+	modelsResponse := &models.MeshmodelsAPIResponse{}
+	err = json.Unmarshal(data, modelsResponse)
+	if err != nil {
+		utils.Log.Error(err)
+		return err
+	}
+
+	header := []string{"Model", "Category", "Version"}
+	rows := [][]string{}
+
+	for _, model := range modelsResponse.Models {
+		if len(model.DisplayName) > 0 {
+			rows = append(rows, []string{model.Name, model.Category.Name, model.Version})
+		}
+	}
+
+	if len(rows) == 0 {
+		// if no model is found
+		// fmt.Println("No model(s) found")
+		whiteBoardPrinter.Println("No model(s) found")
+		return nil
+	}
+
+	utils.DisplayCount("models", modelsResponse.Count)
+
+	if displayCountOnly {
+		return nil
+	}
+
+	if cmd.Flags().Changed("page") {
+		utils.PrintToTable(header, rows)
+	} else {
+		err := utils.HandlePagination(maxRowsPerPage, "models", rows, header)
+		if err != nil {
+			utils.Log.Error(err)
+			return err
+		}
+	}
+
+	return nil
+}
+
+func exportModel(modelName string, cmd *cobra.Command, url string, displayCountOnly bool) error {
+	// Find the entity with the model name
+	req, err := utils.NewRequest(http.MethodGet, url, nil)
+	if err != nil {
+		utils.Log.Error(err)
+		return err
+	}
+
+	resp, err := utils.MakeRequest(req)
+	if err != nil {
+		utils.Log.Error(err)
+		return err
+	}
+
+	// ensure proper cleaning of resources
+	defer resp.Body.Close()
+
+	data, err := io.ReadAll(resp.Body)
+	if err != nil {
+		utils.Log.Error(err)
+		return err
+	}
+
+	modelsResponse := &models.MeshmodelsAPIResponse{}
+	err = json.Unmarshal(data, modelsResponse)
+	if err != nil {
+		utils.Log.Error(err)
+		return err
+	}
+	model := modelsResponse.Models[0]
+	// Convert it to the required output type and write it
+	if outTypeFlag == "yaml" {
+		err = model.WriteModelDefinition(filepath.Join(outLocationFlag, modelName, "model.yaml"), "yaml")
+	}
+	if outTypeFlag == "json" {
+		err = model.WriteModelDefinition(filepath.Join(outLocationFlag, modelName, "model.json"), "json")
+	}
+	if outTypeFlag == "oci" {
+		// write model as yaml temporarily
+		modelDir := filepath.Join(outLocationFlag, modelName)
+		err = model.WriteModelDefinition(filepath.Join(modelDir, "model.yaml"), "yaml")
+		// build oci image for the model
+		img, err := oci.BuildImage(modelDir)
+		if err != nil {
+			utils.Log.Error(err)
+			return err
+		}
+		err = oci.SaveOCIArtifact(img, outLocationFlag+modelName+".tar", modelName)
+		if err != nil {
+			utils.Log.Error(handlers.ErrSaveOCIArtifact(err))
+		}
+		os.RemoveAll(modelDir)
+	}
+	if err != nil {
+		utils.Log.Error(err)
+		return err
+	}
+	return nil
 }

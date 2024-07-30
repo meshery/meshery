@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: K3s
-subtitle: Collaborative and visual infrastructure as code for K3s
+subtitle: Collaborative and visual infrastructure as design for K3s
 image: /assets/img/integrations/k3s/icons/color/k3s-color.svg
 permalink: extensibility/integrations/k3s
 docURL: https://docs.meshery.io/extensibility/integrations/k3s
@@ -11,12 +11,12 @@ integrations-subcategory: Kubernetes
 registrant: Artifact Hub
 components: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Single binary distribution",
+  "Low resource footprint",
+  "Easy to install and manage"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Integrates with K3s clusters"
+howItWorksDetails: "Simplified K3s management and integration with other Kubernetes tools"
 language: en
 list: include
 type: extensibility

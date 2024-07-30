@@ -2,20 +2,20 @@ import React from 'react';
 import {
   withStyles,
   Typography,
-  Button,
-  Dialog,
-  DialogActions,
   DialogContentText,
-  DialogContent,
-  DialogTitle,
   FormControlLabel,
   Checkbox,
-  styled,
-  IconButton,
 } from '@material-ui/core';
 import theme from '../themes/app';
-import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomTextTooltip';
-import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
+import {
+  Box,
+  Modal,
+  ModalBody,
+  ModalButtonPrimary,
+  ModalButtonSecondary,
+  ModalFooter,
+} from '@layer5/sistent';
+import { UsesSistent } from './SistentWrapper';
 
 const styles = (theme) => ({
   title: {
@@ -67,24 +67,6 @@ const styles = (theme) => ({
     },
   },
 });
-
-const PromptActionButton = styled(Button)(({ theme }) => ({
-  margin: theme.spacing(0.5),
-  padding: theme.spacing(1),
-  borderRadius: 5,
-  color: '#fff',
-  '&:hover': {
-    boxShadow:
-      '0px 2px 4px -1px rgb(0 0 0 / 20%), 0px 4px 5px 0px rgb(0 0 0 / 14%), 0px 1px 10px 0px rgb(0 0 0 / 12%)',
-  },
-  minWidth: 100,
-}));
-
-const IconButtonWrapper = styled(IconButton)(({ theme }) => ({
-  position: 'absolute',
-  right: 10,
-  color: theme.palette.secondary.focused,
-}));
 
 export const PROMPT_VARIANTS = {
   WARNING: 'warning',
@@ -144,79 +126,64 @@ class PromptComponent extends React.Component {
     const { resolve } = this.promiseInfo;
     return (
       <div className={classes.root}>
-        <Dialog
-          open={show}
-          onClose={this.hide}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
-          className={classes.dialogBox}
-        >
-          {title !== '' && (
-            <DialogTitle id="alert-dialog-title" className={classes.title}>
-              <b>{title}</b>
-            </DialogTitle>
-          )}
-          {subtitle !== '' && (
-            <DialogContent>
-              <DialogContentText id="alert-dialog-description" className={classes.subtitle}>
-                <Typography variant="body1">{subtitle}</Typography>
-              </DialogContentText>
-              {showCheckbox && (
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={isChecked}
-                      onChange={this.handleCheckboxChange}
-                      className={classes.checkbox}
-                      color="primary"
-                    />
-                  }
-                  label={<span className={classes.checkboxLabelStyle}>Do not show again</span>}
-                />
-              )}
-            </DialogContent>
-          )}
-          <DialogActions className={classes.actions}>
-            {options.length > 1 && (
-              <Button
-                onClick={() => {
-                  this.hide();
-                  resolve(options[1]);
-                }}
-                key={options[1]}
-                className={classes.button1}
-              >
-                <Typography variant body2>
-                  {' '}
-                  {options[1]}{' '}
-                </Typography>
-              </Button>
+        <UsesSistent>
+          <Modal open={show} closeModal={this.hide} title={title}>
+            {subtitle !== '' && (
+              <ModalBody>
+                <DialogContentText id="alert-dialog-description" className={classes.subtitle}>
+                  <Typography variant="body1">{subtitle}</Typography>
+                </DialogContentText>
+                {showCheckbox && (
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={isChecked}
+                        onChange={this.handleCheckboxChange}
+                        className={classes.checkbox}
+                        color="primary"
+                      />
+                    }
+                    label={<span className={classes.checkboxLabelStyle}>Do not show again</span>}
+                  />
+                )}
+              </ModalBody>
             )}
-            <PromptActionButton
-              color="primary"
-              onClick={() => {
-                this.hide();
-                resolve(options[0]);
-              }}
-              key={options[0]}
-              promptVariant={this.variant}
-              style={this.variant && { backgroundColor: theme.palette.secondary[this.variant] }}
-              type="submit"
-              variant="contained"
-            >
-              <Typography variant body2>
-                {options[0]}{' '}
-              </Typography>
-            </PromptActionButton>
-            {showInfoIcon && (
-              <CustomTextTooltip placement="top" interactive={true} title={showInfoIcon}>
-                <IconButtonWrapper color="primary">
-                  <InfoOutlinedIcon />
-                </IconButtonWrapper>
-              </CustomTextTooltip>
-            )}
-          </DialogActions>
-        </Dialog>
+            <ModalFooter variant="filled" helpText={showInfoIcon}>
+              <Box style={{ width: '100%', display: 'flex', gap: '1rem', justifyContent: 'end' }}>
+                {options.length > 1 && (
+                  <ModalButtonSecondary
+                    onClick={() => {
+                      this.hide();
+                      resolve(options[1]);
+                    }}
+                    key={options[1]}
+                  >
+                    <Typography variant body2>
+                      {' '}
+                      {options[1]}{' '}
+                    </Typography>
+                  </ModalButtonSecondary>
+                )}
+                <ModalButtonPrimary
+                  color="primary"
+                  onClick={() => {
+                    this.hide();
+                    resolve(options[0]);
+                  }}
+                  key={options[0]}
+                  promptVariant={this.variant}
+                  style={this.variant && { backgroundColor: theme.palette.secondary[this.variant] }}
+                  type="submit"
+                  variant="contained"
+                >
+                  <Typography variant body2>
+                    {options[0]}{' '}
+                  </Typography>
+                </ModalButtonPrimary>
+              </Box>
+            </ModalFooter>
+          </Modal>
+        </UsesSistent>
       </div>
     );
   }

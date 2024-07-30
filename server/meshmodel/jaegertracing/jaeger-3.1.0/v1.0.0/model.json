@@ -1,0 +1,37 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "models.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "name": "jaegertracing",
+  "displayName": "Jaeger",
+  "description": "",
+  "status": "ignored",
+  "hostID": "00000000-0000-0000-0000-000000000000",
+  "registrant": {
+   "hostname": "github"
+  },
+  "category": {
+   "name": "Observability and Analysis",
+   "metadata": null
+  },
+  "subCategory": "Tracing",
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "isAnnotation": false,
+   "primaryColor": "#67cfe3",
+   "secondaryColor": "#ACFFFF",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "model": {
+   "version": "jaeger-3.1.0"
+  },
+  "components": null,
+  "relationships": null
+ }

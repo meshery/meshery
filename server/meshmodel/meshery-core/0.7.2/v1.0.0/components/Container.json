@@ -1,13 +1,13 @@
 {
   "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "core.meshery.io/v1beta1",
+  "schemaVersion": "components.meshery.io/v1beta1",
   "version": "v1.0.0",
   "displayName": "Container",
   "description": "",
   "format": "JSON",
   "model": {
    "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "core.meshery.io/v1beta1",
+   "schemaVersion": "models.meshery.io/v1beta1",
    "version": "v1.0.0",
    "name": "meshery-core",
    "displayName": "Meshery Core",
@@ -36,7 +36,7 @@
    "relationships": null
   },
   "metadata": {
-   "capabilities": "",
+   "capabilities": "{\n  \"designer\": {\n    \"capabilities\": {\n      \"config\": true,\n      \"label\": false,\n      \"policy\": false,\n      \"relationships\": true,\n      \"json-schema\": false,\n      \"permissions\": false,\n      \"workflow\": false,\n      \"gitops\": false,\n      \"history\": false\n    },\n    \"supportsCompoundDragAndDrop\": false,\n    \"edit\": {\n      \"config\": true,\n      \"copy\": false,\n      \"delete\": true,\n      \"duplicate\": false,\n      \"reset-styles\": false,\n      \"resolve\": false,\n      \"lock\": false,\n      \"shape\": {\n        \"convert-shape\": true\n      },\n      \"style\": true\n    },\n    \"label\": {\n      \"edit\": false,\n      \"show\": true,\n      \"sync-with-config-property\": \"name\"\n    }\n  }\n}",
    "defaultData": "",
    "genealogy": "",
    "isAnnotation": true,

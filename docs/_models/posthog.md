@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Posthog
-subtitle: Collaborative and visual infrastructure as code for Posthog
+subtitle: Collaborative and visual infrastructure as design for Posthog
 image: /assets/img/integrations/posthog/icons/color/posthog-color.svg
 permalink: extensibility/integrations/posthog
 docURL: https://docs.meshery.io/extensibility/integrations/posthog
@@ -23,12 +23,12 @@ components:
   whiteIcon: assets/img/integrations/posthog/components/click-house-operator-configuration/icons/white/click-house-operator-configuration-white.svg
   description: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Event tracking and analysis",
+  "User behavior insights",
+  "Experimentation and A/B testing"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Integrates PostHog analytics"
+howItWorksDetails: "Data-driven insights for improving Kubernetes applications and services"
 language: en
 list: include
 type: extensibility

@@ -75,10 +75,10 @@ func Process(kconfigs []string, oamComps []string, oamConfig string, isDel bool,
 
 				if !skipCrdAndOperator && hostname != nil && comp.Spec.Model != (v1beta1.Kubernetes{}).String() {
 					deploymentMsg := DeploymentMessagePerComp{
-						Kind: comp.Kind,
-						Model: comp.Spec.Model,
-						CompName: comp.Name,
-						Success: true,
+						Kind:       comp.Kind,
+						Model:      comp.Spec.Model,
+						CompName:   comp.Name,
+						Success:    true,
 						DesignName: patternName,
 					}
 

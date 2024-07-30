@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Envoy
-subtitle: Collaborative and visual infrastructure as code for Envoy
+subtitle: Collaborative and visual infrastructure as design for Envoy
 image: /assets/img/integrations/envoy/icons/color/envoy-color.svg
 permalink: extensibility/integrations/envoy
 docURL: https://docs.meshery.io/extensibility/integrations/envoy
@@ -11,12 +11,12 @@ integrations-subcategory: Service Proxy
 registrant: Artifact Hub
 components: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "High-performance proxy and load balancer",
+  "Extensible with filters and plugins",
+  "Supports various protocols"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Integrates Envoy configurations"
+howItWorksDetails: "Enhanced traffic management and observability in Kubernetes"
 language: en
 list: include
 type: extensibility

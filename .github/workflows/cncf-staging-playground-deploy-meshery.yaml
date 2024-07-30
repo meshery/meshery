@@ -15,4 +15,5 @@ jobs:
               username: root
               key: ${{ secrets.METAL_SSH_KEY }}
               script: |
-                mesheryctl system update
+                mesheryctl system channel set edge
+                PROVIDER_BASE_URLS="https://staging-meshery.layer5.io" mesheryctl system update

@@ -1,18 +1,18 @@
 {
   "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "core.meshery.io/v1beta1",
+  "schemaVersion": "components.meshery.io/v1beta1",
   "version": "v1.0.0",
   "displayName": "Project Controller",
   "description": "",
   "format": "JSON",
   "model": {
    "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "core.meshery.io/v1beta1",
+   "schemaVersion": "models.meshery.io/v1beta1",
    "version": "v1.0.0",
    "name": "azureorkestra",
    "displayName": "Azure Orkestra",
    "description": "",
-   "status": "ignored",
+   "status": "enabled",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "registrant": {
     "hostname": "artifacthub"
@@ -52,7 +52,7 @@
    "secondaryColor": "#00D3A9",
    "shape": "circle",
    "shapePolygonPoints": "",
-   "status": "ignored",
+   "status": "enabled",
    "styleOverrides": "",
    "styles": "",
    "subCategory": "",

@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Parsec
-subtitle: Collaborative and visual infrastructure as code for Parsec
+subtitle: Collaborative and visual infrastructure as design for Parsec
 image: /assets/img/integrations/parsec/icons/color/parsec-color.svg
 permalink: extensibility/integrations/parsec
 docURL: https://docs.meshery.io/extensibility/integrations/parsec
@@ -11,11 +11,11 @@ integrations-subcategory: Security & Compliance
 registrant: Artifact Hub
 components: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Low-latency remote desktop access",
+  "High-quality video and audio streaming",
+  "Cross-platform compatibility"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "N/A (not directly integrated)"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

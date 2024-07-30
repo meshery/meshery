@@ -11,6 +11,7 @@ import (
 	"cuelang.org/go/cue/cuecontext"
 	cueJson "cuelang.org/go/encoding/json"
 	"github.com/gofrs/uuid"
+	"github.com/layer5io/meshery/server/helpers"
 	mutil "github.com/layer5io/meshery/server/helpers/utils"
 
 	"github.com/layer5io/meshery/server/models"
@@ -56,16 +57,29 @@ func RegisterK8sMeshModelComponents(provider *models.Provider, _ context.Context
 	}
 	count := 0
 	for _, c := range man {
+		var isRegistranError bool
+		var isModelError bool
 		writeK8sMetadata(&c, reg)
-		err = reg.RegisterEntity(v1beta1.Host{
+		isRegistranError, isModelError, err = reg.RegisterEntity(v1beta1.Host{
 			Hostname: "kubernetes",
 			Metadata: ctxID,
 		}, &c)
+		helpers.HandleError(v1beta1.Host{
+			Hostname: "kubernetes"}, &c, err, isModelError, isRegistranError)
 		count++
+	}
+	err = helpers.WriteLogsToFiles()
+	if err != nil {
+		return err
 	}
 	event := events.NewEvent().ActedUpon(connectionUUID).WithCategory("kubernetes_components").WithAction("registration").FromSystem(mesheryInstanceID).FromUser(userUUID).WithSeverity(events.Informational).WithDescription(fmt.Sprintf("%d Kubernetes components registered for %s", count, ctxName)).WithMetadata(map[string]interface{}{
 		"doc": "https://docs.meshery.io/tasks/lifecycle-management",
 	}).Build()
+	_, err = helpers.FailedEventCompute("Kubernetes", mesheryInstanceID, provider, userID, ec)
+	if err != nil {
+		return err
+	}
+	//if want to log we can use the above function in future to log the error in terminal.
 
 	_ = (*provider).PersistEvent(event)
 	ec.Publish(userUUID, event)
@@ -121,7 +135,7 @@ func RegisterMeshmodelComponentsForCRDS(reg registry.RegistryManager, k8sYaml []
 		kind := def.Spec.Metadata["k8sKind"]
 		comp := &v1beta1.ComponentDefinition{
 			VersionMeta: v1beta1.VersionMeta{
-				SchemaVersion: v1beta1.SchemaVersion,
+				SchemaVersion: v1beta1.ComponentSchemaVersion,
 				Version:       "v1.0.0",
 			},
 			Format: v1beta1.JSON,
@@ -135,7 +149,7 @@ func RegisterMeshmodelComponentsForCRDS(reg registry.RegistryManager, k8sYaml []
 			DisplayName: manifests.FormatToReadableString(kind),
 			Model: v1beta1.Model{
 				VersionMeta: v1beta1.VersionMeta{
-					SchemaVersion: v1beta1.SchemaVersion,
+					SchemaVersion: v1beta1.ModelSchemaVersion,
 					Version:       "v1.0.0",
 				},
 				Model: v1beta1.ModelEntity{
@@ -148,12 +162,18 @@ func RegisterMeshmodelComponentsForCRDS(reg registry.RegistryManager, k8sYaml []
 				},
 			},
 		}
+		var isRegistranError bool
+		var isModelError bool
 		writeK8sMetadata(comp, &reg)
-		_ = reg.RegisterEntity(v1beta1.Host{
+		isRegistranError, isModelError, err = reg.RegisterEntity(v1beta1.Host{
 			Hostname: v1beta1.Kubernetes{}.String(),
 			Metadata: contextID,
 		}, comp)
+		helpers.HandleError(v1beta1.Host{
+			Hostname: "kubernetes"}, comp, err, isModelError, isRegistranError)
+
 	}
+	_ = helpers.WriteLogsToFiles()
 }
 
 type OpenAPIV3Response struct {
@@ -237,7 +257,7 @@ func GetK8sMeshModelComponents(kubeconfig []byte) ([]v1beta1.ComponentDefinition
 		apiVersion := crd.apiVersion
 		c := v1beta1.ComponentDefinition{
 			VersionMeta: v1beta1.VersionMeta{
-				SchemaVersion: v1beta1.SchemaVersion,
+				SchemaVersion: v1beta1.ComponentSchemaVersion,
 				Version:       "v1.0.0",
 			},
 			Format: v1beta1.JSON,
@@ -252,7 +272,7 @@ func GetK8sMeshModelComponents(kubeconfig []byte) ([]v1beta1.ComponentDefinition
 			DisplayName: manifests.FormatToReadableString(crd.kind),
 			Model: v1beta1.Model{
 				VersionMeta: v1beta1.VersionMeta{
-					SchemaVersion: v1beta1.SchemaVersion,
+					SchemaVersion: v1beta1.ModelSchemaVersion,
 					Version:       "v1.0.0",
 				},
 				Model: v1beta1.ModelEntity{

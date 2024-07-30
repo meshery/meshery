@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Google Cloud Platform
-subtitle: Collaborative and visual infrastructure as code for Google Cloud Platform
+subtitle: Collaborative and visual infrastructure as design for Google Cloud Platform
 image: /assets/img/integrations/k8s-config-connector/icons/color/k8s-config-connector-color.svg
 permalink: extensibility/integrations/k8s-config-connector
 docURL: https://docs.meshery.io/extensibility/integrations/k8s-config-connector
@@ -1378,13 +1378,21 @@ components:
   colorIcon: assets/img/integrations/k8s-config-connector/components/workstations-workstation-cluster/icons/color/workstations-workstation-cluster-color.svg
   whiteIcon: assets/img/integrations/k8s-config-connector/components/workstations-workstation-cluster/icons/white/workstations-workstation-cluster-white.svg
   description: 
+- name: cloud-build-worker-pool
+  colorIcon: assets/img/integrations/k8s-config-connector/components/cloud-build-worker-pool/icons/color/cloud-build-worker-pool-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/cloud-build-worker-pool/icons/white/cloud-build-worker-pool-white.svg
+  description: 
+- name: secure-source-manager-instance
+  colorIcon: assets/img/integrations/k8s-config-connector/components/secure-source-manager-instance/icons/color/secure-source-manager-instance-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/secure-source-manager-instance/icons/white/secure-source-manager-instance-white.svg
+  description: 
 featureList: [
-  "Config Connector is a Kubernetes add-on that allows customers to manage GCP resources, such as Cloud Spanner or Cloud Storage, through your cluster's API.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Provides a wide range of cloud services",
+  "Integrates with Kubernetes",
+  "Offers various Kubernetes solutions"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Integrates GCP services"
+howItWorksDetails: "Seamless integration of Kubernetes with GCP services"
 language: en
 list: include
 type: extensibility

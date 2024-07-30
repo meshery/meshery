@@ -20,13 +20,13 @@ import { getK8sClusterIdsFromCtxId } from '../utils/multi-ctx';
 import ConfirmationModal, { SelectDeploymentTarget } from './ConfirmationModal';
 import { getComponentsinFile, generateValidatePayload } from '../utils/utils';
 import UploadImport from './UploadImport';
-import PublishModal from '../components/Modals/PublishModal';
+import InfoModal from '../components/Modals/Information/InfoModal';
 import ConfigurationSubscription from '../components/graphql/subscriptions/ConfigurationSubscription';
 import PromptComponent from './PromptComponent';
 import { CapabilitiesRegistry } from '../utils/disabledComponents';
 import TroubleshootingComponent from './TroubleshootingComponent';
 import { useNotification } from '../utils/hooks/useNotification';
-import Modal from './Modal';
+import Modal, { RJSFModalWrapper } from './Modal';
 import ExportModal from './ExportModal';
 import { MDEditor } from './Markdown';
 import { FormatStructuredData } from './DataFormatter';
@@ -113,9 +113,10 @@ function NavigatorExtension({
         SelectDeploymentTarget: SelectDeploymentTarget,
         getComponentsinFile,
         UploadImport,
-        PublishModal,
+        InfoModal,
         ExportModal,
         GenericRJSFModal: Modal,
+        RJSFModalWrapper: RJSFModalWrapper,
         PromptComponent,
         generateValidatePayload,
         capabilitiesRegistry,

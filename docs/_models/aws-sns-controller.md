@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: AWS Simple Notification Service
-subtitle: Collaborative and visual infrastructure as code for AWS Simple Notification Service
+subtitle: Collaborative and visual infrastructure as design for AWS Simple Notification Service
 image: /assets/img/integrations/aws-sns-controller/icons/color/aws-sns-controller-color.svg
 permalink: extensibility/integrations/aws-sns-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-sns-controller
@@ -39,7 +39,7 @@ featureList: [
   "Amazon SNS supports VPC Endpoints (VPCE) via AWS PrivateLink.",
   "Amazon SNS mobile notifications make it simple and cost effective to fan out mobile push notifications to iOS, Android, Fire, Windows, and Baidu devices."
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

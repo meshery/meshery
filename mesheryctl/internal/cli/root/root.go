@@ -200,5 +200,6 @@ func setVerbose() {
 }
 
 func setupLogger() {
-	utils.SetupMeshkitLogger(verbose, nil)
+	utils.Log = utils.SetupMeshkitLogger("mesheryctl", verbose, os.Stdout)
+	utils.LogError = utils.SetupMeshkitLogger("mesheryctl-error", verbose, os.Stderr)
 }

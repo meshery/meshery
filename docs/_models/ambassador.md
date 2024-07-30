@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Ambassador
-subtitle: Collaborative and visual infrastructure as code for Ambassador
+subtitle: Collaborative and visual infrastructure as design for Ambassador
 image: /assets/img/integrations/ambassador/icons/color/ambassador-color.svg
 permalink: extensibility/integrations/ambassador
 docURL: https://docs.meshery.io/extensibility/integrations/ambassador
@@ -87,12 +87,12 @@ components:
   whiteIcon: assets/img/integrations/ambassador/components/rate-limit/icons/white/rate-limit-white.svg
   description: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Kubernetes-native API gateway",
+  "Supports various protocols",
+  "Extensible with filters and plugins"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Manages Ambassador configurations"
+howItWorksDetails: "Simplified API gateway management and enhanced traffic routing in Kubernetes"
 language: en
 list: include
 type: extensibility

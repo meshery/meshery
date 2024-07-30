@@ -33,14 +33,14 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-// represents the mesheryctl exp components view [component-name] subcommand.
+// represents the mesheryctl components view [component-name] subcommand.
 var viewComponentCmd = &cobra.Command{
 	Use:   "view",
 	Short: "view registered components",
 	Long:  "view a component registered in Meshery Server",
 	Example: `
 // View details of a specific component
-mesheryctl exp components view [component-name]
+mesheryctl components view [component-name]
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
@@ -172,7 +172,7 @@ mesheryctl exp components view [component-name]
 }
 
 func init() {
-	// Add the new exp components commands to the ComponentsCmd
+	// Add the new components commands to the ComponentsCmd
 	viewComponentCmd.Flags().StringVarP(&outFormatFlag, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
 	viewComponentCmd.Flags().BoolVarP(&saveFlag, "save", "s", false, "(optional) save output as a JSON/YAML file")
 }

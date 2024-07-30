@@ -123,7 +123,7 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 				ch.SeedComponents()
 				krh.SeedKeys(viper.GetString("KEYS_PATH"))
 			}()
-			r.Log.Info("Hard reset successfully completed")
+			r.Log.Info("Hard reset complete.")
 		} else { //Delete meshsync objects coming from a particular cluster
 			k8sctxs, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
 			if !ok || len(k8sctxs) == 0 {

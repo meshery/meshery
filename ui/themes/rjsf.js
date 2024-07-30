@@ -245,7 +245,7 @@ const darkRjsfTheme = createTheme({
   overrides: {
     MuiOutlinedInput: {
       root: {
-        backgroundColor: '#303030',
+        // backgroundColor: '#303030',
       },
     },
     MuiButton: {
@@ -389,6 +389,7 @@ const darkRjsfTheme = createTheme({
         '&:hover': {
           overflow: 'visible',
         },
+        background: 'none',
         // To scale the grid items on a particular screen size
         [breakpoints.up('lg')]: {
           '& > *:nth-child(2)': {

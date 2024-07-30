@@ -74,13 +74,11 @@ const styles = (theme) => ({
   appBarOnDrawerOpen: {
     backgroundColor: theme.palette.secondary.mainBackground,
     shadowColor: ' #808080',
-    zIndex: theme.zIndex.drawer + 1,
     [theme.breakpoints.between(635, 732)]: { padding: theme.spacing(0.75, 1.4) },
     [theme.breakpoints.between(600, 635)]: { padding: theme.spacing(0.4, 1.4) },
   },
   appBarOnDrawerClosed: {
     backgroundColor: theme.palette.secondary.mainBackground,
-    zIndex: theme.zIndex.drawer + 1,
   },
   toolbarOnDrawerClosed: {
     minHeight: 59,
@@ -528,6 +526,7 @@ class Header extends React.PureComponent {
       abilityUpdated,
     } = this.props;
     const loaderType = 'circular';
+
     return (
       <NoSsr>
         <React.Fragment>

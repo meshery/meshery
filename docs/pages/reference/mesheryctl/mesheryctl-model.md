@@ -26,7 +26,15 @@ mesheryctl model [flags]
 
 ## Examples
 
-To view list of components
+To view total of available models
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl model --count
+
+</div>
+</pre> 
+
+To view list of models
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl model list
@@ -42,11 +50,20 @@ mesheryctl model view [model-name]
 </div>
 </pre> 
 
+To search for a specific model
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl model search [model-name]
+
+</div>
+</pre> 
+
 ## Options
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -h, --help   help for model
+      --count   (optional) Get the number of models in total
+  -h, --help    help for model
 
 </div>
 </pre>

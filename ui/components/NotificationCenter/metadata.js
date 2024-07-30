@@ -111,6 +111,14 @@ export const FormattedMetadata = ({ event }) => {
     ShortDescription: (value) => <SectionBody body={value} style={{ marginBlock: '0.5rem' }} />,
     error: (value) => <ErrorMetadataFormatter metadata={value} event={event} />,
     dryRunResponse: (value) => <DryRunResponse response={value} />,
+    DownloadLink: (value) => (
+      <TitleLink href={'/api/system/fileDownload?file=' + encodeURIComponent(value)}>
+        Download
+      </TitleLink>
+    ),
+    ViewLink: (value) => (
+      <TitleLink href={'/api/system/fileView?file=' + encodeURIComponent(value)}>View</TitleLink>
+    ),
   };
 
   const EventTypeFormatters = {
@@ -135,8 +143,15 @@ export const FormattedMetadata = ({ event }) => {
         : event.description,
   };
 
-  const order = ['doc', 'ShortDescription', 'LongDescription', 'Summary'];
-
+  const order = [
+    'doc',
+    'ShortDescription',
+    'LongDescription',
+    'Summary',
+    'SuggestedRemediation',
+    'DownloadLink',
+    'ViewLink',
+  ];
   const orderdMetadata = reorderObjectProperties(metadata, order);
   return (
     <FormatStructuredData
