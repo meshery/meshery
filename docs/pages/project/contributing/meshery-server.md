@@ -89,10 +89,8 @@ The default setting for the `LOG_LEVEL` is `4` (Info). However, if the `DEBUG` e
   <li>
     <p>Checkout <strong>meshery</strong> and <strong>meshkit</strong> repository in adjacent directories.</p>
     {% capture code_content %}
-mkdir meshery
-cd meshery
-git clone https://github.com/meshery/meshery.git
-git clone https://github.com/meshery/meshkit.git
+$ git clone https://github.com/meshery/meshery.git
+$ git clone https://github.com/meshery/meshkit.git
     {% endcapture %}
     {% include code.html code=code_content %}
   </li>
