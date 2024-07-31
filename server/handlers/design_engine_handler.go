@@ -595,29 +595,29 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) ([]patter
 	return nil, nil
 }
 
-func (sap *serviceActionProvider) Persist(name string, svc core.Service, isUpdate bool) error {
-	if !sap.opIsDelete {
-		if isUpdate {
-			// Do nothing
-			return nil
-		}
+// func (sap *serviceActionProvider) Persist(name string, svc core.Service, isUpdate bool) error {
+// 	if !sap.opIsDelete {
+// 		if isUpdate {
+// 			// Do nothing
+// 			return nil
+// 		}
 
-		_, err := sap.provider.SaveMesheryPatternResource(
-			sap.token,
-			&models.PatternResource{
-				ID:        svc.ID,
-				Name:      name,
-				Namespace: svc.Namespace,
-				Type:      svc.Type,
-				OAMType:   "workload",
-			},
-		)
+// 		_, err := sap.provider.SaveMesheryPatternResource(
+// 			sap.token,
+// 			&models.PatternResource{
+// 				ID:        svc.ID,
+// 				Name:      name,
+// 				Namespace: svc.Namespace,
+// 				Type:      svc.Type,
+// 				OAMType:   "workload",
+// 			},
+// 		)
 
-		return err
-	}
+// 		return err
+// 	}
 
-	return sap.provider.DeleteMesheryPatternResource(
-		sap.token,
-		svc.ID.String(),
-	)
-}
+// 	return sap.provider.DeleteMesheryPatternResource(
+// 		sap.token,
+// 		svc.ID.String(),
+// 	)
+// }
