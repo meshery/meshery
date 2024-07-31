@@ -421,16 +421,16 @@ func (wp *WorkspacePersister) GetWorkspaceDesigns(workspaceID uuid.UUID, search,
 	}
 
 	// Build the query to find designs associated with the given workspace ID
-	query := wp.DB.Table("designs AS d").Select("*")
+	query := wp.DB.Table("meshery_patterns AS d").Select("*")
 
 	// Build the query to find designs associated with the given workspace ID
 	if workspaceFilter.Assigned {
 		// Designs assigned to the workspace
-		query = query.Where("EXISTS (SELECT 1 FROM workspace_design_mappings AS wdm WHERE e.id = wdm.design_id AND wdm.workspace_id = ? AND wdm.deleted_at IS NULL)", workspaceID)
+		query = query.Where("EXISTS (SELECT 1 FROM workspaces_designs_mappings AS wdm WHERE d.id = wdm.design_id AND wdm.workspace_id = ? AND wdm.deleted_at IS NULL)", workspaceID)
 	} else {
 		// Designs not assigned to the workspace
-		query = query.Joins("LEFT JOIN workspace_design_mappings AS wdm ON e.id = wdm.design_id AND wem.workspace_id = ?", workspaceID).
-			Where("wem.workspace_id IS NULL")
+		query = query.Joins("LEFT JOIN workspaces_designs_mappings AS wdm ON d.id = wdm.design_id AND wdm.workspace_id = ?", workspaceID).
+			Where("wdm.workspace_id IS NULL")
 	}
 
 	if search != "" {
@@ -454,8 +454,8 @@ func (wp *WorkspacePersister) GetWorkspaceDesigns(workspaceID uuid.UUID, search,
 		pageSize = "10"
 	}
 
-	var designsFetched []v1beta1.MesheryPattern
-	pageUint, err := strconv.ParseUint(page, 10, 32)
+	designsFetched := []*MesheryPattern{}
+	pageUint, err := strconv.ParseUint(page, 10, 64)
 	if err != nil {
 		return nil, err
 	}
@@ -463,7 +463,7 @@ func (wp *WorkspacePersister) GetWorkspaceDesigns(workspaceID uuid.UUID, search,
 	if pageSize == "all" {
 		query.Find(&designsFetched)
 	} else {
-		pageSizeUint, err := strconv.ParseUint(pageSize, 10, 32)
+		pageSizeUint, err := strconv.ParseUint(pageSize, 10, 64)
 		if err != nil {
 			return nil, err
 		}
@@ -471,11 +471,11 @@ func (wp *WorkspacePersister) GetWorkspaceDesigns(workspaceID uuid.UUID, search,
 		Paginate(uint(pageUint), uint(pageSizeUint))(query).Find(&designsFetched)
 	}
 
-	designsPage := &v1beta1.MesheryPatternPage{
+	designsPage := &MesheryDesignPage{
 		Page:       int(pageUint),
 		PageSize:   len(designsFetched),
 		TotalCount: int(count),
-		Patterns:   &designsFetched,
+		Designs:    designsFetched,
 	}
 
 	designsJSON, err := json.Marshal(designsPage)
