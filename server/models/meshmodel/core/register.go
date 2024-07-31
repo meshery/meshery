@@ -19,12 +19,12 @@ import (
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshkit/models/events"
 	"github.com/layer5io/meshkit/models/meshmodel/registry"
-	"github.com/meshery/schemas/models/v1beta1/model"
+	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/connection"
 
 	// regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
 
-	"github.com/layer5io/meshkit/utils/component"
+	_component "github.com/layer5io/meshkit/utils/component"
 	"github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/layer5io/meshkit/utils/manifests"
 
@@ -88,7 +88,7 @@ func RegisterK8sMeshModelComponents(provider *models.Provider, _ context.Context
 	return
 }
 
-func writeK8sMetadata(comp *model.ComponentDefinition, reg *registry.RegistryManager) {
+func writeK8sMetadata(comp *component.ComponentDefinition, reg *registry.RegistryManager) {
 	// ent, _, _, _ := reg.GetEntities(&regv1beta1.ComponentFilter{
 	// 	Name:       comp.Component.Kind,
 	// 	APIVersion: comp.Component.Version,
@@ -98,7 +98,7 @@ func writeK8sMetadata(comp *model.ComponentDefinition, reg *registry.RegistryMan
 	// 	comp.Metadata = utils.MergeMaps(comp.Metadata, models.K8sMeshModelMetadata)
 	// 	mutil.WriteSVGsOnFileSystem(comp)
 	// } else {
-	// 	existingComp, ok := ent[0].(*model.ComponentDefinition)
+	// 	existingComp, ok := ent[0].(*component.ComponentDefinition)
 	// 	if !ok {
 	// 		comp.Metadata = utils.MergeMaps(comp.Metadata, models.K8sMeshModelMetadata)
 	// 		return
@@ -136,7 +136,7 @@ func RegisterMeshmodelComponentsForCRDS(reg registry.RegistryManager, k8sYaml []
 			return
 		}
 		// kind := def.Spec.Metadata["k8sKind"]
-		comp := &model.ComponentDefinition{
+		comp := &component.ComponentDefinition{
 			// VersionMeta: v1beta1.VersionMeta{
 			// 	SchemaVersion: v1beta1.ComponentSchemaVersion,
 			// 	Version:       "v1.0.0",
@@ -209,7 +209,7 @@ func mergeAllAPIResults(content []byte, cli *kubernetes.Client) [][]byte {
 }
 
 // move to meshmodel
-func GetK8sMeshModelComponents(kubeconfig []byte) ([]model.ComponentDefinition, error) {
+func GetK8sMeshModelComponents(kubeconfig []byte) ([]component.ComponentDefinition, error) {
 	cli, err := kubernetes.New(kubeconfig)
 	if err != nil {
 		return nil, core.ErrGetK8sComponents(err)
@@ -254,13 +254,13 @@ func GetK8sMeshModelComponents(kubeconfig []byte) ([]model.ComponentDefinition, 
 	for _, content := range contents {
 		crds = append(crds, getCRDsFromManifest(string(content), arrAPIResources)...)
 	}
-	components := make([]model.ComponentDefinition, 0)
+	components := make([]component.ComponentDefinition, 0)
 	for _, crd := range crds {
 		m := make(map[string]interface{})
 		m[customResourceKey] = customResources[crd.kind]
 		m[namespacedKey] = kindToNamespace[crd.kind]
 		// apiVersion := crd.apiVersion
-		c := model.ComponentDefinition{
+		c := component.ComponentDefinition{
 			// VersionMeta: v1beta1.VersionMeta{
 			// 	SchemaVersion: v1beta1.ComponentSchemaVersion,
 			// 	Version:       "v1.0.0",
@@ -376,12 +376,12 @@ func getCRDsFromManifest(manifest string, arrAPIResources []string) []crdRespons
 					continue
 				}
 
-				modifiedProps, err := component.UpdateProperties(fieldVal, cue.ParsePath("properties.spec"), apiVersion)
+				modifiedProps, err := _component.UpdateProperties(fieldVal, cue.ParsePath("properties.spec"), apiVersion)
 				if err == nil {
 					modified = modifiedProps
 				}
 
-				component.DeleteFields(modified)
+				_component.DeleteFields(modified)
 				crd, err = json.Marshal(modified)
 				if err != nil {
 					fmt.Printf("%v", err)

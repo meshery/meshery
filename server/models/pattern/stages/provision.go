@@ -13,12 +13,12 @@ import (
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 	"github.com/layer5io/meshkit/utils"
 	"github.com/meshery/schemas/models/v1beta1/connection"
-	"github.com/meshery/schemas/models/v1beta1/model"
+	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 )
 
 type CompConfigPair struct {
-	Component model.ComponentDefinition
+	Component component.ComponentDefinition
 	Hosts     []connection.Connection
 }
 
@@ -37,7 +37,7 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider, log logger.H
 
 		// Create provision plan
 		plan, err := planner.CreatePlan(*data.Pattern, prov.IsDelete())
-		fmt.Println("plan-----------: 40 ",data.Pattern.Components, err)
+		fmt.Println("plan-----------: 40 ", data.Pattern.Components, err)
 		if err != nil {
 			act.Terminate(err)
 			return
@@ -57,7 +57,7 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider, log logger.H
 		errs := []error{}
 
 		// Execute the plan
-		_ = plan.Execute(func(name string, component model.ComponentDefinition) bool {
+		_ = plan.Execute(func(name string, component component.ComponentDefinition) bool {
 			ccp := CompConfigPair{}
 
 			core.AssignAdditionalLabels(&component)
@@ -88,7 +88,6 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider, log logger.H
 					return false
 				}
 			}
-
 
 			// Get annotations for the component and merge with existing, if any
 			component.Configuration["annotations"] = helpers.MergeStringMaps(
@@ -123,7 +122,7 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider, log logger.H
 }
 
 func processAnnotations(pattern *pattern.PatternFile) {
-	components := []*model.ComponentDefinition{}
+	components := []*component.ComponentDefinition{}
 	for _, component := range pattern.Components {
 		if !component.Metadata.IsAnnotation {
 			components = append(components, component)
@@ -132,7 +131,7 @@ func processAnnotations(pattern *pattern.PatternFile) {
 	pattern.Components = components
 }
 
-func generateHosts(cd model.ComponentDefinition, reg *meshmodel.RegistryManager) []connection.Connection {
+func generateHosts(cd component.ComponentDefinition, reg *meshmodel.RegistryManager) []connection.Connection {
 	// res := map[connection.Connection]bool{}
 	_connection := reg.GetRegistrant(&cd)
 	fmt.Println("id :::::::::::", cd.Id.String())

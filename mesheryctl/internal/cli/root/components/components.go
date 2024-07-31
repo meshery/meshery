@@ -17,14 +17,14 @@ package components
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/layer5io/meshery/server/models"
 	"io"
 	"net/http"
 	"os"
 
+	"github.com/layer5io/meshery/server/models"
+
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	"github.com/manifoldco/promptui"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
@@ -96,9 +96,9 @@ mesheryctl components search [component-name]
 }
 
 // selectComponentPrompt lets user to select a model if models are more than one
-func selectComponentPrompt(components []v1beta1.ComponentDefinition) v1beta1.ComponentDefinition {
+func selectComponentPrompt(components []component.ComponentDefinition) component.ComponentDefinition {
 	componentNames := []string{}
-	componentArray := []v1beta1.ComponentDefinition{}
+	componentArray := []component.ComponentDefinition{}
 
 	componentArray = append(componentArray, components...)
 

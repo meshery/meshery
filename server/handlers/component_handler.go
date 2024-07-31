@@ -20,6 +20,7 @@ import (
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha2"
 	_models "github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	_model "github.com/meshery/schemas/models/v1beta1/model"
+	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/connection"
 
 	"github.com/layer5io/meshkit/models/meshmodel/entity"
@@ -1032,7 +1033,7 @@ func (h *Handler) RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Re
 		http.Error(rw, err.Error(), http.StatusBadRequest)
 		return
 	}
-	var c _model.ComponentDefinition
+	var c component.ComponentDefinition
 	switch cc.EntityType {
 	case entity.ComponentDefinition:
 		var isModelError bool
@@ -1166,10 +1167,10 @@ func (h *Handler) UpdateEntityStatus(rw http.ResponseWriter, r *http.Request, _ 
 	rw.WriteHeader(http.StatusNoContent)
 }
 
-func prettifyCompDefSchema(entities []entity.Entity) []_model.ComponentDefinition {
-	var comps []_model.ComponentDefinition
+func prettifyCompDefSchema(entities []entity.Entity) []component.ComponentDefinition {
+	var comps []component.ComponentDefinition
 	for _, r := range entities {
-		comp, ok := r.(*_model.ComponentDefinition)
+		comp, ok := r.(*component.ComponentDefinition)
 		if ok {
 			m := make(map[string]interface{})
 			_ = json.Unmarshal([]byte(comp.Component.Schema), &m)
@@ -1336,7 +1337,7 @@ func processUploadedFile(filePath string, h *Handler, compCount *int, relCount *
 func RegisterEntity(content []byte, entityType entity.EntityType, h *Handler) error {
 	switch entityType {
 	case entity.ComponentDefinition:
-		var c _model.ComponentDefinition
+		var c component.ComponentDefinition
 		err := json.Unmarshal(content, &c)
 		if err != nil {
 			return meshkitutils.ErrUnmarshal(err)

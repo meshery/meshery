@@ -13,11 +13,11 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/models/pattern/utils"
 	"github.com/layer5io/meshkit/logger"
-"github.com/meshery/schemas/models/v1beta1/model"
 	registry "github.com/layer5io/meshkit/models/meshmodel/registry"
 	regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
 	mutils "github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshkit/utils/manifests"
+	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 	cytoscapejs "gonum.org/v1/gonum/graph/formats/cytoscapejs"
 	"gopkg.in/yaml.v2"
@@ -130,9 +130,9 @@ const Format prettifier = true
 type DryRunResponseWrapper struct {
 	//When success is true, error will be nil and Component will contain the structure of the component as it will look after deployment
 	//When success is false, error will contain the errors. And Component will be set to Nil
-	Success   bool                       `json:"success"`
-	Error     *DryRunResponse            `json:"error"`
-	Component *model.ComponentDefinition `json:"component"` //Service is synonymous with Component. Later Service is to be changed to "Component"
+	Success   bool                           `json:"success"`
+	Error     *DryRunResponse                `json:"error"`
+	Component *component.ComponentDefinition `json:"component"` //Service is synonymous with Component. Later Service is to be changed to "Component"
 }
 type DryRunResponse struct {
 	Status string
@@ -228,7 +228,7 @@ func IsValidPattern(stringifiedFile string) (err error) {
 }
 
 // AssignAdditionalLabels adds labels to identify resources deployed by meshery.
-func AssignAdditionalLabels(comp *model.ComponentDefinition) error {
+func AssignAdditionalLabels(comp *component.ComponentDefinition) error {
 
 	if comp.Metadata.AdditionalProperties == nil {
 		comp.Metadata.AdditionalProperties = make(map[string]interface{})
@@ -317,12 +317,12 @@ func ToCytoscapeJS(patternFile *pattern.PatternFile, log logger.Handler) (cytosc
 	// client side
 
 	// Set up the nodes
-	for _, component := range patternFile.Components {
+	for _, cmp := range patternFile.Components {
 		elemData := cytoscapejs.ElemData{
-			ID: getCytoscapeElementID(component.Id.String(), component, log),
+			ID: getCytoscapeElementID(cmp.Id.String(), cmp, log),
 		}
 
-		elemPosition, err := getCytoscapeJSPosition(component, log)
+		elemPosition, err := getCytoscapeJSPosition(cmp, log)
 		if err != nil {
 			return cy, err
 		}
@@ -332,8 +332,8 @@ func ToCytoscapeJS(patternFile *pattern.PatternFile, log logger.Handler) (cytosc
 			Position:   &elemPosition,
 			Selectable: true,
 			Grabbable:  true,
-			Scratch: map[string]model.ComponentDefinition{
-				"_data": *component,
+			Scratch: map[string]component.ComponentDefinition{
+				"_data": *cmp,
 			},
 		}
 
@@ -563,7 +563,7 @@ func createPatternServiceFromK8s(manifest map[string]interface{}, regManager *re
 		return "", Service{}, ErrCreatePatternService(fmt.Errorf("no resources found for APIVersion: %s Kind: %s", apiVersion, kind))
 	}
 	// just needs the first entry to grab meshmodel-metadata and other model requirements
-	comp, ok := componentList[0].(*model.ComponentDefinition)
+	comp, ok := componentList[0].(*component.ComponentDefinition)
 	if !ok {
 		return "", Service{}, ErrCreatePatternService(fmt.Errorf("cannot cast to the component-definition for APIVersion: %s Kind: %s", apiVersion, kind))
 	}
@@ -606,7 +606,7 @@ func createPatternServiceFromK8s(manifest map[string]interface{}, regManager *re
 	return id, svc, nil
 }
 
-func assignNamespaceForNamespacedScopedComp(svc *Service, metadata map[string]interface{}, compDef *model.ComponentDefinition) *Service {
+func assignNamespaceForNamespacedScopedComp(svc *Service, metadata map[string]interface{}, compDef *component.ComponentDefinition) *Service {
 	if isNamespacedComponent(compDef) {
 		namespace, _ := mutils.Cast[string](metadata["namespace"])
 		if namespace == "" {
@@ -620,17 +620,17 @@ func assignNamespaceForNamespacedScopedComp(svc *Service, metadata map[string]in
 
 // Checks whether the component is namespaced scope or not.
 // While determining if an error occurs, the conversion process skips assigning a namespace value. If comp is originally namespaced scope, then k8s automatically assign a "default" namespace.
-func isNamespacedComponent(comp *model.ComponentDefinition) bool {
+func isNamespacedComponent(comp *component.ComponentDefinition) bool {
 	isNamespaced, _ := mutils.Cast[bool](comp.Metadata.AdditionalProperties["isNamespaced"])
 	return isNamespaced
 }
 
 // getCytoscapeElementID returns the element id for a given service
-func getCytoscapeElementID(name string, component *model.ComponentDefinition, log logger.Handler) string {
+func getCytoscapeElementID(name string, component *component.ComponentDefinition, log logger.Handler) string {
 	return component.Id.String()
 }
 
-func getCytoscapeJSPosition(component *model.ComponentDefinition, log logger.Handler) (cytoscapejs.Position, error) {
+func getCytoscapeJSPosition(component *component.ComponentDefinition, log logger.Handler) (cytoscapejs.Position, error) {
 	pos := cytoscapejs.Position{}
 
 	// Check if the service has "meshmap" as a trait

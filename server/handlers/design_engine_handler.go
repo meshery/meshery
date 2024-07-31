@@ -24,7 +24,7 @@ import (
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 	"github.com/layer5io/meshkit/utils"
 	meshkube "github.com/layer5io/meshkit/utils/kubernetes"
-	"github.com/meshery/schemas/models/v1beta1/model"
+	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
@@ -281,7 +281,7 @@ func _processPattern(
 			Process(&stages.Data{
 				Pattern: &pattern,
 				Other:   map[string]interface{}{},
-				DeclartionToDefinitionMapping: make(map[uuid.UUID]model.ComponentDefinition),
+				DeclartionToDefinitionMapping: make(map[uuid.UUID]component.ComponentDefinition),
 			})
 		return resp, sap.err
 	}
@@ -381,7 +381,7 @@ func (sap *serviceActionProvider) Mutate(p *pattern.PatternFile) {
 // v1.StatusApplyConfiguration has deprecated, needed to find a different option to do this
 // NOTE: Currently tied to kubernetes
 // Returns ComponentName->ContextID->Response
-func (sap *serviceActionProvider) DryRun(comps []model.ComponentDefinition) (resp map[string]map[string]core.DryRunResponseWrapper, err error) {
+func (sap *serviceActionProvider) DryRun(comps []component.ComponentDefinition) (resp map[string]map[string]core.DryRunResponseWrapper, err error) {
 	for _, cmp := range comps {
 		for ctxID, kc := range sap.ctxTokubeconfig {
 			cl, err := meshkube.New([]byte(kc))
@@ -404,7 +404,7 @@ func (sap *serviceActionProvider) DryRun(comps []model.ComponentDefinition) (res
 	return
 }
 
-func dryRunComponent(cl *meshkube.Client, cmd model.ComponentDefinition) (core.DryRunResponseWrapper, error) {
+func dryRunComponent(cl *meshkube.Client, cmd component.ComponentDefinition) (core.DryRunResponseWrapper, error) {
 	st, ok, err := k8s.DryRunHelper(cl, cmd)
 	dResp := core.DryRunResponseWrapper{Success: ok, Component: &cmd}
 	if ok {
@@ -509,7 +509,7 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) ([]patter
 			}
 			resp, err := patterns.Process(
 				kconfigs,
-				[]model.ComponentDefinition{ccp.Component},
+				[]component.ComponentDefinition{ccp.Component},
 				sap.opIsDelete,
 				sap.patternName,
 				sap.eventsChannel,

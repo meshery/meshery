@@ -4,13 +4,13 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/meshery/schemas/models/v1beta1/model"
+	"github.com/meshery/schemas/models/v1beta1/component"
 
 	regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
 )
 
-func (s *Selector) Workload(name string, version string, modelName string, apiVersion string) (model.ComponentDefinition, error) {
-	var comp *model.ComponentDefinition
+func (s *Selector) Workload(name string, version string, modelName string, apiVersion string) (component.ComponentDefinition, error) {
+	var comp *component.ComponentDefinition
 	name = strings.Split(name, ".")[0]
 	fmt.Println(name, modelName, version)
 	if modelName == "" && name == "Application" { //If model is not passed, default to core
@@ -28,7 +28,7 @@ func (s *Selector) Workload(name string, version string, modelName string, apiVe
 	for _, en := range entities {
 		if en != nil {
 			var ok bool
-			comp, ok = en.(*model.ComponentDefinition)
+			comp, ok = en.(*component.ComponentDefinition)
 			if ok {
 				found = true
 			}
@@ -38,7 +38,7 @@ func (s *Selector) Workload(name string, version string, modelName string, apiVe
 		}
 	}
 	if !found || comp == nil {
-		component := model.ComponentDefinition{}
+		component := component.ComponentDefinition{}
 		return component, fmt.Errorf(fmt.Sprintf("could not find component with name: %s, model: %s, apiVersion: %s", name, modelName, apiVersion))
 	}
 	return *comp, nil

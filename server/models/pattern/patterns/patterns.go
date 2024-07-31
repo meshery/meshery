@@ -10,7 +10,7 @@ import (
 
 	"github.com/layer5io/meshery/server/models/pattern/patterns/k8s"
 	"github.com/layer5io/meshkit/utils/kubernetes"
-	"github.com/meshery/schemas/models/v1beta1/model"
+	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/connection"
 )
 
@@ -31,7 +31,7 @@ type DeploymentMessagePerContext struct {
 	Location   string
 }
 
-func Process(kconfigs []string, componets []model.ComponentDefinition, isDel bool, patternName string, ec *models.Broadcast, userID string, provider models.Provider, connection connection.Connection, skipCrdAndOperator, upgradeExistingRelease bool) ([]DeploymentMessagePerContext, error) {
+func Process(kconfigs []string, componets []component.ComponentDefinition, isDel bool, patternName string, ec *models.Broadcast, userID string, provider models.Provider, connection connection.Connection, skipCrdAndOperator, upgradeExistingRelease bool) ([]DeploymentMessagePerContext, error) {
 	action := "deploy"
 	if isDel {
 		action = "undeploy"

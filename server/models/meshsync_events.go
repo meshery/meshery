@@ -5,9 +5,9 @@ import (
 	"github.com/layer5io/meshkit/broker"
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"
-	"github.com/meshery/schemas/models/v1beta1/model"
 	"github.com/layer5io/meshkit/utils"
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
+	"github.com/meshery/schemas/models/v1beta1/component"
 	"gorm.io/gorm"
 )
 
@@ -261,7 +261,7 @@ func (mh *MeshsyncDataHandler) getComponentMetadata(apiVersion string, kind stri
 	var data map[string]interface{}
 	metadata := make(map[string]interface{})
 
-	result := mh.dbHandler.Model(model.ComponentDefinition{}).Select("metadata").
+	result := mh.dbHandler.Model(component.ComponentDefinition{}).Select("metadata").
 		Where("component->>'version' = ? and component->>'kind' = ?", apiVersion, kind).Scan(&data)
 	if result.Error != nil {
 		if result.Error == gorm.ErrRecordNotFound {

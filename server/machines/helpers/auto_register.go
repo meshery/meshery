@@ -15,7 +15,7 @@ import (
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/models/events"
-	model "github.com/meshery/schemas/models/v1beta1/model"
+	"github.com/meshery/schemas/models/v1beta1/component"
 	regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
 	"github.com/layer5io/meshkit/utils"
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
@@ -146,7 +146,7 @@ func (arh *AutoRegistrationHelper) processRegistration() {
 	}
 }
 
-func getConnectionPayload(connType, objName, objID string, identifier interface{}, userID uuid.UUID, connectionDef *model.ComponentDefinition, connMetadata map[string]interface{}) (models.ConnectionPayload, uuid.UUID) {
+func getConnectionPayload(connType, objName, objID string, identifier interface{}, userID uuid.UUID, connectionDef *component.ComponentDefinition, connMetadata map[string]interface{}) (models.ConnectionPayload, uuid.UUID) {
 
 	id, _ := generateUUID(map[string]interface{}{
 		"name":       objName,
@@ -166,7 +166,7 @@ func getConnectionPayload(connType, objName, objID string, identifier interface{
 	}, id
 }
 
-func (arh *AutoRegistrationHelper) getConnectionDefinitions(connType string) []model.ComponentDefinition {
+func (arh *AutoRegistrationHelper) getConnectionDefinitions(connType string) []component.ComponentDefinition {
 	connectionCompFilter := &regv1beta1.ComponentFilter{
 		Name:       fmt.Sprintf("%sConnection", connType),
 		APIVersion: "meshery.layer5.io/v1beta1",
@@ -174,9 +174,9 @@ func (arh *AutoRegistrationHelper) getConnectionDefinitions(connType string) []m
 	}
 
 	connectionEntities, _, _, _ := connectionCompFilter.Get(arh.dbHandler)
-	connectionDefs := make([]model.ComponentDefinition, len(connectionEntities))
+	connectionDefs := make([]component.ComponentDefinition, len(connectionEntities))
 	for _, connectionEntity := range connectionEntities {
-		def, ok := connectionEntity.(*model.ComponentDefinition)
+		def, ok := connectionEntity.(*component.ComponentDefinition)
 		if ok {
 			connectionDefs = append(connectionDefs, *def)
 		}

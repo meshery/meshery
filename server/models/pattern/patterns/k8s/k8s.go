@@ -8,8 +8,9 @@ import (
 
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/utils"
+	"github.com/meshery/schemas/models/v1beta1/component"
+
 	meshkube "github.com/layer5io/meshkit/utils/kubernetes"
-	"github.com/meshery/schemas/models/v1beta1/model"
 	_errors "github.com/pkg/errors"
 
 	"gopkg.in/yaml.v2"
@@ -17,7 +18,7 @@ import (
 	"k8s.io/client-go/rest"
 )
 
-func Deploy(kubeClient *meshkube.Client, comp model.ComponentDefinition, isDel bool) error {
+func Deploy(kubeClient *meshkube.Client, comp component.ComponentDefinition, isDel bool) error {
 	var namespace string
 
 	resource := createK8sResourceStructure(comp)
@@ -63,7 +64,7 @@ func Deploy(kubeClient *meshkube.Client, comp model.ComponentDefinition, isDel b
 	return nil
 }
 
-func DryRunHelper(client *meshkube.Client, comp model.ComponentDefinition) (st map[string]interface{}, success bool, err error) {
+func DryRunHelper(client *meshkube.Client, comp component.ComponentDefinition) (st map[string]interface{}, success bool, err error) {
 	resource := createK8sResourceStructure(comp)
 	// Define a function to extract namesapce, labels and annotations in the componetn definiotn
 	_namespace, ok := comp.Configuration["namespace"]
@@ -128,7 +129,7 @@ func kindToResource(kind string) string {
 	return strings.ToLower(kind) + "s"
 }
 
-func createK8sResourceStructure(comp model.ComponentDefinition) map[string]interface{} {
+func createK8sResourceStructure(comp component.ComponentDefinition) map[string]interface{} {
 	annotations := map[string]interface{}{}
 	labels := map[string]interface{}{}
 

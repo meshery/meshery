@@ -10,9 +10,10 @@ import (
 	gofrs "github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/models"
 	mutils "github.com/layer5io/meshkit/utils"
+	"github.com/meshery/schemas/models/v1beta1/connection"
+	"github.com/meshery/schemas/models/v1beta1/component"
+
 	"github.com/spf13/viper"
-		"github.com/meshery/schemas/models/v1beta1/connection"
-		"github.com/meshery/schemas/models/v1beta1/model"
 
 	"github.com/layer5io/meshkit/models/events"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha2"
@@ -65,7 +66,7 @@ func HandleError(c connection.Connection, en entity.Entity, err error, isModelEr
 	}
 
 	switch entity := en.(type) {
-	case *model.ComponentDefinition:
+	case *component.ComponentDefinition:
 		entityName := "[ " + entity.Model.Name + " " + entity.Model.Model.Version + " ]" + "( " + entity.DisplayName + " )"
 		isAnnotation := entity.Metadata.IsAnnotation
 		if entity.Component.Schema == "" && !isAnnotation && err == nil {

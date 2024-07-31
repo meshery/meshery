@@ -8,7 +8,7 @@ import (
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshery/server/models/pattern/jsonschema"
 	"github.com/layer5io/meshery/server/models/pattern/resource/selector"
-	"github.com/meshery/schemas/models/v1beta1/model"
+	"github.com/meshery/schemas/models/v1beta1/component"
 
 	"gopkg.in/yaml.v2"
 )
@@ -106,7 +106,7 @@ func Validator(prov ServiceInfoProvider, act ServiceActionProvider, validate boo
 	}
 }
 
-func validateWorkload(comp map[string]interface{}, wc model.ComponentDefinition) error {
+func validateWorkload(comp map[string]interface{}, wc component.ComponentDefinition) error {
 	// skip the validation if the component does not have a schema and has isAnnotation set to true.
 	isAnnotation := wc.Metadata.IsAnnotation
 	if wc.Component.Schema == "" && isAnnotation {

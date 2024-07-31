@@ -12,8 +12,8 @@ import (
 	"github.com/layer5io/meshkit/generators/artifacthub"
 
 	meshkitmodels "github.com/layer5io/meshkit/generators/models"
+	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/connection"
-	"github.com/meshery/schemas/models/v1beta1/model"
 )
 
 type generationPayloadItem struct {
@@ -26,9 +26,9 @@ type componentGenerationPayload struct {
 }
 
 type componentGenerationResponseDataItem struct {
-	Name       string                      `json:"name"`
-	Components []model.ComponentDefinition `json:"components"`
-	Errors     []string                    `json:"errors"`
+	Name       string                          `json:"name"`
+	Components []component.ComponentDefinition `json:"components"`
+	Errors     []string                        `json:"errors"`
 }
 
 // swagger:route POST /api/meshmodel/generate MeshmodelComponentGenerate idPostMeshModelComponentGenerate
@@ -111,8 +111,8 @@ func (h *Handler) MeshModelGenerationHandler(rw http.ResponseWriter, r *http.Req
 	}
 }
 
-func generateComponents(pm meshkitmodels.PackageManager) ([]model.ComponentDefinition, error) {
-	components := make([]model.ComponentDefinition, 0)
+func generateComponents(pm meshkitmodels.PackageManager) ([]component.ComponentDefinition, error) {
+	components := make([]component.ComponentDefinition, 0)
 	pkg, err := pm.GetPackage()
 	if err != nil {
 		return components, ErrGenerateComponents(err)

@@ -4,14 +4,14 @@ import (
 	"sync"
 
 	"github.com/gofrs/uuid"
-	"github.com/meshery/schemas/models/v1beta1/model"
+	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 )
 
 // Data is the struct that will be passed on each stage
 type Data struct {
 	Pattern                       *pattern.PatternFile
-	DeclartionToDefinitionMapping map[uuid.UUID]model.ComponentDefinition
+	DeclartionToDefinitionMapping map[uuid.UUID]component.ComponentDefinition
 	// Other is for passing metadata across different stages
 	Lock  sync.Mutex
 	Other map[string]interface{}

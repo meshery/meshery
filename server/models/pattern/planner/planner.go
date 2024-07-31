@@ -3,7 +3,7 @@ package planner
 import (
 	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/utils"
-	"github.com/meshery/schemas/models/v1beta1/model"
+	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 	"github.com/pkg/errors"
 )
@@ -21,7 +21,7 @@ func (p *Plan) IsFeasible() bool {
 
 // Execute traverses the plan and calls the callback function
 // on each of the node
-func (p *Plan) Execute(cb func(string, model.ComponentDefinition) bool, log logger.Handler) error {
+func (p *Plan) Execute(cb func(string, component.ComponentDefinition) bool, log logger.Handler) error {
 	parallelGraph := NewParallelProcessGraph(p.Graph)
 	parallelGraph.Traverse(cb, log)
 	return nil

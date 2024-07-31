@@ -5,7 +5,7 @@ import (
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshery/server/models/pattern/patterns"
 	"github.com/layer5io/meshkit/models/meshmodel/registry"
-	"github.com/meshery/schemas/models/v1beta1/model"
+	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 )
 
@@ -27,6 +27,6 @@ type ServiceActionProvider interface {
 	Provision(CompConfigPair) ([]patterns.DeploymentMessagePerContext, error)
 	GetRegistry() *registry.RegistryManager
 	Persist(string, core.Service, bool) error
-	DryRun([]model.ComponentDefinition) (map[string]map[string]core.DryRunResponseWrapper, error)
+	DryRun([]component.ComponentDefinition) (map[string]map[string]core.DryRunResponseWrapper, error)
 	Mutate(*pattern.PatternFile) //Uses pre-defined policies/configuration to mutate the pattern
 }

@@ -8,7 +8,7 @@ import (
 
 	"github.com/layer5io/meshery/server/models/pattern/utils"
 	mutils "github.com/layer5io/meshkit/utils"
-	"github.com/meshery/schemas/models/v1beta1/model"
+	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 	"github.com/pkg/errors"
 )
@@ -75,7 +75,7 @@ func fill(p *pattern.PatternFile, flattenedComponent map[string]interface{}) err
 	return mergeErrors(errs)
 }
 
-func fillDependsOn(component *model.ComponentDefinition, flattenedPattern map[string]interface{}) error {
+func fillDependsOn(component *component.ComponentDefinition, flattenedPattern map[string]interface{}) error {
 	_dependsOn, ok := component.Metadata.AdditionalProperties["dependsOn"]
 	if !ok || mutils.IsInterfaceNil(_dependsOn) {
 		return nil
@@ -108,7 +108,7 @@ func fillDependsOn(component *model.ComponentDefinition, flattenedPattern map[st
 	return nil
 }
 
-func fillVersion(component *model.ComponentDefinition, flattenedPattern map[string]interface{}) error {
+func fillVersion(component *component.ComponentDefinition, flattenedPattern map[string]interface{}) error {
 	// Refernce to a version?
 	// So that if user chooses a comp def of other comps but all other comps in design refer to some other version,
 	// So instead of choosing new comp of correct version, user can quickly point to particular version?
@@ -132,7 +132,7 @@ func fillVersion(component *model.ComponentDefinition, flattenedPattern map[stri
 	return nil
 }
 
-func fillNamespace(component *model.ComponentDefinition, flattenedPattern map[string]interface{}) error {
+func fillNamespace(component *component.ComponentDefinition, flattenedPattern map[string]interface{}) error {
 	_metadata, ok := component.Configuration["metadata"]
 	if !ok || mutils.IsInterfaceNil(_metadata) {
 		return nil
@@ -174,7 +174,7 @@ func fillNamespace(component *model.ComponentDefinition, flattenedPattern map[st
 	return nil
 }
 
-func fillType(component *model.ComponentDefinition, flattenedPattern map[string]interface{}) error {
+func fillType(component *component.ComponentDefinition, flattenedPattern map[string]interface{}) error {
 	kindKey, ok := matchPattern(component.Component.Kind)
 	if !ok {
 		return nil
@@ -194,7 +194,7 @@ func fillType(component *model.ComponentDefinition, flattenedPattern map[string]
 	return nil
 }
 
-func fillConfiguration(component *model.ComponentDefinition, flattenedPattern map[string]interface{}) (err error) {
+func fillConfiguration(component *component.ComponentDefinition, flattenedPattern map[string]interface{}) (err error) {
 	component.Configuration, err = fillMap(component.Configuration, flattenedPattern)
 	return
 }

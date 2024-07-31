@@ -15,7 +15,7 @@ import (
 	"sync"
 
 	"github.com/layer5io/meshkit/utils"
-	"github.com/meshery/schemas/models/v1beta1/model"
+	"github.com/meshery/schemas/models/v1beta1/component"
 
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
@@ -244,14 +244,16 @@ Complete:
 	}
 	return
 }
-func WriteSVGsOnFileSystem(comp *model.ComponentDefinition) {
+func WriteSVGsOnFileSystem(comp *component.ComponentDefinition) {
 
-	writeSVGHelper(
-		comp.Metadata.SvgColor,
-		comp.Metadata.SvgWhite,
-		comp.Metadata.SvgComplete,
-		comp.Model.Name,
-		comp.Component.Kind) //Write SVG on components
+	if comp.Styles != nil {
+		writeSVGHelper(
+			comp.Styles.SvgColor,
+			comp.Styles.SvgWhite,
+			comp.Styles.SvgComplete,
+			comp.Model.Name,
+			comp.Component.Kind) //Write SVG on components
+	}
 
 	writeSVGHelper(
 		comp.Model.Metadata.SvgColor,
