@@ -38,7 +38,7 @@ Display the details of a specific connection based on id provided`,
 
 	Example: `
 // View a connection detail
-mesheryctl exp connections view [connection-id]
+mesheryctl exp connections view [connection_id]
 `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
