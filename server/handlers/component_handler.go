@@ -1251,7 +1251,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		if isYaml {
 			processFileToRegistry(&response, decodedBytes, &mu, importRequest.ImportBody.FileName, h)
 			if response.EntityCount.TotalErrCount > 0 {
-				response.ErrMsg = ErrMsgContruct(response.EntityCount.TotalErrCount, response.EntityCount.ErrCompCount, response.EntityCount.ErrRelCount)
+				response.ErrMsg = ErrMsgContruct(&response)
 			}
 			break
 		}
@@ -1296,7 +1296,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 			}
 
 			if response.EntityCount.TotalErrCount > 0 {
-				response.ErrMsg = ErrMsgContruct(response.EntityCount.TotalErrCount, response.EntityCount.ErrCompCount, response.EntityCount.ErrRelCount)
+				response.ErrMsg = ErrMsgContruct(&response)
 			}
 		} else {
 			if tempFile, err := createTempFile(string(decodedBytes)); err != nil {
@@ -1319,7 +1319,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 				}
 
 				if response.EntityCount.TotalErrCount > 0 {
-					response.ErrMsg = ErrMsgContruct(response.EntityCount.TotalErrCount, response.EntityCount.ErrCompCount, response.EntityCount.ErrRelCount)
+					response.ErrMsg = ErrMsgContruct(&response)
 				}
 			}
 		}

@@ -572,7 +572,7 @@ func PrintToTable(header []string, data [][]string) {
 	table.SetHeaderLine(false)
 	table.SetBorder(false)
 	table.SetTablePadding("\t")
-	table.SetNoWhiteSpace(true)
+	table.SetNoWhiteSpace(false)
 
 	boldHeader := make([]tablewriter.Colors, len(header))
 	for i := range header {

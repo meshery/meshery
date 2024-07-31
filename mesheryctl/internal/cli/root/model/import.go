@@ -17,6 +17,7 @@ import (
 	"github.com/layer5io/meshery/server/models"
 	meshkitutils "github.com/layer5io/meshkit/utils"
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 )
 
@@ -29,16 +30,17 @@ type ImportRequestBody struct {
 	UploadType string `json:"uploadType"`
 }
 
+var location string
+
 var importModelCmd = &cobra.Command{
 	Use:   "import",
-	Short: "import models from mesheryctl command",
-	Long:  "import model by specifying the directory, file. Use 'import model [filepath]' or 'import model  [directory]'.",
+	Short: "Import models from mesheryctl command",
+	Long:  "Import models by specifying the directory or file. Use 'import model [filepath]' or 'import model [directory]'.",
 	Example: `
-	import model  /path/to/[file.yaml|file.json]
-	import model  /path/to/models
+	import model -f /path/to/[file.yaml|file.json]
+	import model --file /path/to/models
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		// Check prerequisites
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return err
@@ -59,7 +61,7 @@ var importModelCmd = &cobra.Command{
 	},
 	Args: func(_ *cobra.Command, args []string) error {
 		const errMsg = "Usage: mesheryctl model import [ file | filePath ]\nRun 'mesheryctl model import --help' to see detailed help message"
-		if len(args) == 0 {
+		if location == "" && len(args) == 0 {
 			return fmt.Errorf("[ file | filepath ] isn't specified\n\n%v", errMsg)
 		} else if len(args) > 1 {
 			return fmt.Errorf("too many arguments\n\n%v", errMsg)
@@ -67,7 +69,12 @@ var importModelCmd = &cobra.Command{
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		path := args[0]
+		var path string
+		if location != "" {
+			path = location
+		} else {
+			path = args[0]
+		}
 
 		info, err := os.Stat(path)
 		if err != nil {
@@ -78,14 +85,12 @@ var importModelCmd = &cobra.Command{
 		var fileName string
 
 		if info.IsDir() {
-			// If the input is a directory, compress it
 			tarData, err = compressDirectory(path)
 			if err != nil {
 				return err
 			}
 			fileName = filepath.Base(path) + ".tar.gz"
 		} else {
-			// If the input is a file, read its contents
 			fileData, err := os.ReadFile(path)
 			if err != nil {
 				return fmt.Errorf("could not read the specified file: %v", err)
@@ -155,6 +160,7 @@ func compressDirectory(dirpath string) ([]byte, error) {
 
 	return buf.Bytes(), nil
 }
+
 func registerModel(data []byte, name string, dataType string) error {
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
@@ -169,20 +175,17 @@ func registerModel(data []byte, name string, dataType string) error {
 	importRequest.ImportBody.ModelFile = data
 	importRequest.ImportBody.FileName = name
 
-	// Marshal the request body to JSON
 	requestBody, err := json.Marshal(importRequest)
 	if err != nil {
 		return err
 	}
 
-	// Create the HTTP request
 	req, err := utils.NewRequest(http.MethodPost, url, bytes.NewReader(requestBody))
 	if err != nil {
 		return err
 	}
 	req.Header.Set("Content-Type", "application/json")
 
-	// Make the HTTP request
 	resp, err := utils.MakeRequest(req)
 	if err != nil {
 		return err
@@ -190,7 +193,6 @@ func registerModel(data []byte, name string, dataType string) error {
 
 	defer resp.Body.Close()
 	if resp.StatusCode != http.StatusOK {
-
 		err = models.ErrDoRequest(err, resp.Request.Method, url)
 		return err
 	}
@@ -205,51 +207,100 @@ func registerModel(data []byte, name string, dataType string) error {
 		err = models.ErrUnmarshal(err, "response body")
 		return err
 	}
-	utils.Log.Info(response.ErrMsg)
+	displayEntities(&response)
+	return nil
+}
 
+func displayEntities(response *models.RegistryAPIResponse) {
+	ok := displayEmtpyModel(response)
+	if !ok {
+		return
+	}
+	displaySummary(response)
+	displayEntitisIfModel(response)
+	displayUnsuccessfulEntities(response, "")
+}
+func displayEmtpyModel(response *models.RegistryAPIResponse) bool {
+	if len(response.ModelName) != 0 && response.EntityCount.CompCount == 0 && response.EntityCount.RelCount == 0 {
+		if response.EntityCount.TotalErrCount == 0 {
+			return false
+		}
+	}
+	return true
+}
+
+func displayEntitisIfModel(response *models.RegistryAPIResponse) {
+	for _, model := range response.ModelName {
+		if model != "" {
+			boldModel := utils.BoldString("MODEL")
+			utils.Log.Infof("\n%s: %s", boldModel, model)
+		}
+		displaySuccessfulComponents(response, model)
+		displaySuccessfulRelationships(response, model)
+		displayUnsuccessfulEntities(response, model)
+
+	}
+}
+func displaySuccessfulComponents(response *models.RegistryAPIResponse, modelName string) {
 	if len(response.EntityTypeSummary.SuccessfulComponents) > 0 {
-		header := []string{"Component Name", "Model Name", "Version"}
+		header := []string{"Component", "Category", "Version"}
 		rows := [][]string{}
-		utils.Log.Info("\n", utils.BoldString("Imported Component(s)"), "\n")
 
 		for _, comp := range response.EntityTypeSummary.SuccessfulComponents {
 			displayName, _ := comp["DisplayName"].(string)
 			modelData, _ := comp["Model"].(map[string]interface{})
-			modelDisplayName, _ := modelData["displayName"].(string)
+			modelDisplayName, _ := modelData["name"].(string)
+			category, _ := modelData["category"].(map[string]interface{})["name"].(string)
 			modelVersion, _ := modelData["model"].(map[string]interface{})["version"].(string)
+			if modelDisplayName == modelName {
+				rows = append(rows, []string{displayName, category, modelVersion})
 
-			rows = append(rows, []string{displayName, modelDisplayName, modelVersion})
+			}
 		}
-		utils.PrintToTable(header, rows)
-
+		if len(rows) > 0 {
+			fmt.Println("")
+			utils.PrintToTable(header, rows)
+		}
 	}
+}
 
+func displaySuccessfulRelationships(response *models.RegistryAPIResponse, model string) {
 	if len(response.EntityTypeSummary.SuccessfulRelationships) > 0 {
-		header := []string{"From(CompoentName/ModelName)", "To(ComponentName/ModelNAme)", "Kind", "SubType"}
+		header := []string{"From", "To"}
 		rows := [][]string{}
-		utils.Log.Info("\n", utils.BoldString("Imported Relationship(s)"), "\n")
 		for _, rel := range response.EntityTypeSummary.SuccessfulRelationships {
 			kind := rel["Kind"].(string)
 			subtype := rel["Subtype"].(string)
+			modelName := rel["Model"].(map[string]interface{})["name"].(string)
+			if modelName != model {
+				continue
+			}
 			selectors := rel["Selectors"].([]interface{})
 			for _, selector := range selectors {
 				selectorMap := selector.(map[string]interface{})
 				allow := selectorMap["allow"].(map[string]interface{})
 				from := allow["from"].([]interface{})
 				to := allow["to"].([]interface{})
-
-				fromComponent := fmt.Sprintf("%s/%s", from[0].(map[string]interface{})["kind"], from[0].(map[string]interface{})["model"])
-				toComponent := fmt.Sprintf("%s/%s", to[0].(map[string]interface{})["kind"], to[0].(map[string]interface{})["model"])
-				rows = append(rows, []string{fromComponent, toComponent, kind, subtype})
+				fromComponent := fmt.Sprintf("%s", from[0].(map[string]interface{})["kind"])
+				toComponent := fmt.Sprintf("%s", to[0].(map[string]interface{})["kind"])
+				rows = append(rows, []string{fromComponent, toComponent})
 			}
-
+			if len(rows) > 0 {
+				fmt.Println("")
+				boldRelationships := utils.BoldString("RELATIONSHIP:")
+				if len(rows) > 1 {
+					boldRelationships = utils.BoldString("RELATIONSHIPS:")
+				}
+				utils.Log.Infof("  %s Kind of %s and sub type %s", boldRelationships, kind, subtype)
+				utils.PrintToTable(header, rows)
+			}
 		}
-		utils.PrintToTable(header, rows)
-	}
 
-	modelNames := ModelNames(&response)
+	}
+}
+
+func displayUnsuccessfulEntities(response *models.RegistryAPIResponse, modelName string) {
 	if len(response.EntityTypeSummary.UnsuccessfulEntityNameWithError) > 0 {
-		utils.Log.Info("\n", utils.BoldString("Import failed for these Entity(s): "), "\n")
 		for _, entity := range response.EntityTypeSummary.UnsuccessfulEntityNameWithError {
 			entityMap, err := meshkitutils.Cast[map[string]interface{}](entity)
 			if err != nil {
@@ -275,57 +326,72 @@ func registerModel(data []byte, name string, dataType string) error {
 				continue
 			}
 
-			longDescriptionInterface := errorDetails["LongDescription"]
-			longDescriptionSlice, ok := longDescriptionInterface.([]interface{})
-			if !ok {
-				utils.Log.Infof("Type assertion to []interface{} failed for LongDescription: %v (type %T)", longDescriptionInterface, longDescriptionInterface)
-				continue
-			}
+			longDescription := buildLongDescription(errorDetails["LongDescription"])
 
-			var longDescription string
-			for _, item := range longDescriptionSlice {
-				str, ok := item.(string)
-				if !ok {
-					utils.Log.Infof("Item in LongDescription is not a string: %v (type %T)", item, item)
-					continue
-				}
-				longDescription += str + " "
-			}
-
-			longDescription = strings.TrimSpace(longDescription)
-			EntityTypeLine := ""
-			for i, name := range names {
-				entityType := ""
-				if i < len(entityTypes) {
-					entityType = entityTypes[i].(string)
-				}
-
-				if entityType == "" {
-					// If entityType is not present, log normal message
-					utils.Log.Infof("Entity Filename: %s and error: \n%s", name, longDescription)
-				} else {
-					if EntityTypeLine != "" {
-						EntityTypeLine += ", "
-					}
-					EntityTypeLine = fmt.Sprintf("%s entity of type %s with model name %s", EntityTypeLine, utils.BoldString(entityType), utils.BoldString(name.(string)))
-				}
-			}
+			EntityTypeLine := buildEntityTypeLine(names, entityTypes, longDescription, modelName)
 			if EntityTypeLine != "" {
-				utils.Log.Infof("Import did not occur for%s and error: \n%s\n", EntityTypeLine, longDescription)
+				fmt.Println("")
+				utils.Log.Infof("  %s: Import did not occur for%s and error: \n  %s", utils.BoldString("ERROR"), EntityTypeLine, longDescription)
 			}
-
 		}
 	}
-	totalEntityCount := response.EntityCount.CompCount + response.EntityCount.RelCount
-	if totalEntityCount != 0 {
-		utils.Log.Infof("\n%s model(s) imported", utils.BoldString(modelNames))
+}
 
+func buildLongDescription(longDescriptionInterface interface{}) string {
+	longDescriptionSlice, ok := longDescriptionInterface.([]interface{})
+	if !ok {
+		utils.Log.Infof("Type assertion to []interface{} failed for LongDescription: %v (type %T)", longDescriptionInterface, longDescriptionInterface)
+		return ""
 	}
-	return nil
+
+	var longDescription string
+	for _, item := range longDescriptionSlice {
+		str, ok := item.(string)
+		if !ok {
+			utils.Log.Infof("Item in LongDescription is not a string: %v (type %T)", item, item)
+			continue
+		}
+		longDescription += str + " "
+	}
+
+	return strings.TrimSpace(longDescription)
+}
+
+func buildEntityTypeLine(names, entityTypes []interface{}, longDescription, modelName string) string {
+	EntityTypeLine := ""
+	for i, name := range names {
+		entityType := ""
+		if i < len(entityTypes) {
+			entityType = entityTypes[i].(string)
+		}
+		if modelName != "" {
+			if modelName != name.(string) {
+				continue
+			}
+		} else if modelName == "" {
+			if entityType != "Unknown" {
+				continue
+			}
+		}
+		if entityType == "Unknown" {
+			utils.Log.Infof("\n%s: Entity Filename: %s and error: \n  %s", utils.BoldString("ERROR"), utils.BoldString(name.(string)), longDescription)
+		} else {
+			if EntityTypeLine != "" {
+				EntityTypeLine += ", "
+			}
+			EntityTypeLine = fmt.Sprintf("%s entity of type %s with model name %s", EntityTypeLine, utils.BoldString(entityType), utils.BoldString(name.(string)))
+		}
+	}
+	return EntityTypeLine
+}
+
+func displaySummary(response *models.RegistryAPIResponse) {
+	boldSummary := utils.BoldString("SUMMARY")
+	utils.Log.Infof("%s: %s", boldSummary, response.ErrMsg)
 }
 func ModelNames(response *models.RegistryAPIResponse) string {
 	var builder strings.Builder
-	seen := make(map[string]bool) // map to track seen model names
+	seen := make(map[string]bool)
 
 	for _, model := range response.ModelName {
 		if model != "" {
@@ -339,4 +405,11 @@ func ModelNames(response *models.RegistryAPIResponse) string {
 		}
 	}
 	return builder.String()
+}
+func init() {
+	importModelCmd.Flags().SetNormalizeFunc(func(f *pflag.FlagSet, name string) pflag.NormalizedName {
+		return pflag.NormalizedName(strings.ToLower(name))
+	})
+
+	importModelCmd.Flags().StringVarP(&location, "file", "f", "", "Specify path to the file or directory")
 }

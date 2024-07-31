@@ -140,6 +140,16 @@ func processFileToRegistry(response *models.RegistryAPIResponse, content []byte,
 	}
 }
 func addSuccessfulEntry(content []byte, entityType entity.EntityType, response *models.RegistryAPIResponse) {
+	// Helper function to check if a display name is already present
+	isDisplayNamePresent := func(displayName string) bool {
+		for _, name := range response.ModelName {
+			if name == displayName {
+				return true
+			}
+		}
+		return false
+	}
+
 	switch entityType {
 	case entity.ComponentDefinition:
 		var c v1beta1.ComponentDefinition
@@ -151,7 +161,9 @@ func addSuccessfulEntry(content []byte, entityType entity.EntityType, response *
 				"Version":     c.Model.Version,
 			}
 			response.EntityTypeSummary.SuccessfulComponents = append(response.EntityTypeSummary.SuccessfulComponents, entry)
-			response.ModelName = append(response.ModelName, c.Model.DisplayName)
+			if !isDisplayNamePresent(c.Model.Name) {
+				response.ModelName = append(response.ModelName, c.Model.Name)
+			}
 		}
 	case entity.RelationshipDefinition:
 		var r v1alpha2.RelationshipDefinition
@@ -164,7 +176,9 @@ func addSuccessfulEntry(content []byte, entityType entity.EntityType, response *
 				// "RelationshipType": r.RelationshipType, //future when we support type
 			}
 			response.EntityTypeSummary.SuccessfulRelationships = append(response.EntityTypeSummary.SuccessfulRelationships, entry)
-			response.ModelName = append(response.ModelName, r.Model.DisplayName)
+			if !isDisplayNamePresent(r.Model.Name) {
+				response.ModelName = append(response.ModelName, r.Model.Name)
+			}
 		}
 	case entity.Model:
 		var m v1beta1.Model
@@ -176,7 +190,9 @@ func addSuccessfulEntry(content []byte, entityType entity.EntityType, response *
 				"Version":     m.Model.Version,
 			}
 			response.EntityTypeSummary.SuccessfulModels = append(response.EntityTypeSummary.SuccessfulModels, entry)
-			response.ModelName = append(response.ModelName, m.DisplayName)
+			if !isDisplayNamePresent(m.Name) {
+				response.ModelName = append(response.ModelName, m.Name)
+			}
 		}
 	}
 }
@@ -184,7 +200,9 @@ func addSuccessfulEntry(content []byte, entityType entity.EntityType, response *
 func addUnsuccessfulEntry(path string, response *models.RegistryAPIResponse, err error, entityType string) {
 	filename := filepath.Base(path)
 	entryFound := false
-
+	if entityType == "" {
+		entityType = "Unknown"
+	}
 	// Loop through existing entries to check if the error already exists
 	for i, entry := range response.EntityTypeSummary.UnsuccessfulEntityNameWithError {
 		if entryMap, ok := entry.(map[string]interface{}); ok {
@@ -363,16 +381,16 @@ func RegisterEntity(content []byte, entityType entity.EntityType, h *Handler, re
 			_, err := meshkitutils.FindEntityType([]byte(compBytes))
 			if err != nil {
 				incrementCountersOnErr(mu, entity.ComponentDefinition, response)
-				addUnsuccessfulEntry(m.DisplayName, response, err, string(entity.ComponentDefinition))
+				addUnsuccessfulEntry(m.Name, response, err, string(entity.ComponentDefinition))
 				continue
 			}
 			utils.WriteSVGsOnFileSystem(&comp)
 			isRegistrantError, isModelError, err := h.registryManager.RegisterEntity(v1beta1.Host{Hostname: comp.Model.Registrant.Hostname}, &comp)
 			helpers.HandleError(v1beta1.Host{Hostname: comp.Model.Registrant.Hostname}, &comp, err, isModelError, isRegistrantError)
 			if err != nil {
-				componetName := m.DisplayName + " of component name " + comp.DisplayName
+
 				incrementCountersOnErr(mu, entity.ComponentDefinition, response)
-				addUnsuccessfulEntry(componetName, response, err, string(entity.ComponentDefinition))
+				addUnsuccessfulEntry(m.Name, response, err, string(entity.ComponentDefinition))
 				continue
 			}
 			incrementCountersOnSuccess(mu, entity.ComponentDefinition, &response.EntityCount.CompCount, &response.EntityCount.RelCount, &response.EntityCount.ModelCount)
@@ -385,15 +403,14 @@ func RegisterEntity(content []byte, entityType entity.EntityType, h *Handler, re
 			_, err := meshkitutils.FindEntityType([]byte(relBytes))
 			if err != nil {
 				incrementCountersOnErr(mu, entity.RelationshipDefinition, response)
-				addUnsuccessfulEntry(m.DisplayName, response, err, string(entity.RelationshipDefinition))
+				addUnsuccessfulEntry(m.Name, response, err, string(entity.RelationshipDefinition))
 				continue
 			}
 			isRegistrantError, isModelError, err := h.registryManager.RegisterEntity(v1beta1.Host{Hostname: r.Model.Registrant.Hostname}, &r)
 			helpers.HandleError(v1beta1.Host{Hostname: r.Model.Registrant.Hostname}, &r, err, isModelError, isRegistrantError)
 			if err != nil {
-				relName := m.DisplayName + " of Kind :" + r.Kind
 				incrementCountersOnErr(mu, entity.RelationshipDefinition, response)
-				addUnsuccessfulEntry(relName, response, err, string(entity.RelationshipDefinition))
+				addUnsuccessfulEntry(m.Name, response, err, string(entity.RelationshipDefinition))
 				continue
 			}
 			incrementCountersOnSuccess(mu, entity.RelationshipDefinition, &response.EntityCount.CompCount, &response.EntityCount.RelCount, &response.EntityCount.ModelCount)
@@ -416,39 +433,92 @@ func RegisterEntity(content []byte, entityType entity.EntityType, h *Handler, re
 func writeMessageString(response *models.RegistryAPIResponse) strings.Builder {
 	var message strings.Builder
 	if response.EntityCount.ModelCount > 0 {
-		if response.EntityCount.CompCount == 0 && response.EntityCount.RelCount == 0 {
-			message.WriteString("Model(s) won't be registered because there was no Component(s) or Relationship(s)")
+		if response.EntityCount.CompCount == 0 && response.EntityCount.RelCount == 0 && response.EntityCount.TotalErrCount == 0 {
+			message.WriteString("Model won't be registered because there was no Component(s) or Relationship(s)")
 			return message
 		}
 		modelName := ModelNames(response)
-		message.WriteString(fmt.Sprintf("Model(s) imported: %s. ", modelName))
+		model := "model"
+		if response.EntityCount.ModelCount > 1 {
+			model = "models"
+		}
+		message.WriteString(fmt.Sprintf("Imported %s: %s. ", model, modelName))
 	}
 	if response.EntityCount.CompCount > 0 || response.EntityCount.RelCount > 0 {
-		message.WriteString("Total ")
+		message.WriteString("Imported ")
 	}
 	if response.EntityCount.CompCount > 0 {
-		message.WriteString(fmt.Sprintf("Component(s) imported: %d", response.EntityCount.CompCount))
+		component := "component"
+		if response.EntityCount.CompCount > 1 {
+			component = "components"
+		}
+		message.WriteString(fmt.Sprintf("%d %s", response.EntityCount.CompCount, component))
 	}
 	if response.EntityCount.RelCount > 0 && response.EntityCount.CompCount > 0 {
 		if message.Len() > 0 {
 			message.WriteString(" and ")
 		}
-		message.WriteString(fmt.Sprintf("Relationship(s) imported: %d", response.EntityCount.RelCount))
+		relationship := "relationship"
+		if response.EntityCount.RelCount > 1 {
+			relationship = "relationships"
+		}
+		message.WriteString(fmt.Sprintf("%d %s", response.EntityCount.RelCount, relationship))
 	}
 	return message
 }
 
-func ErrMsgContruct(totalErrCount int, errCompCount int, errRelCount int) string {
-	msg := fmt.Sprintf("Failed to import %d entity(s) that is", totalErrCount)
-	if errCompCount > 0 && errRelCount > 0 {
-		msg = fmt.Sprintf("%s %d Component(s) and %d Relationship(s)", msg, errCompCount, errRelCount)
-	} else if errCompCount > 0 {
-		msg = fmt.Sprintf("%s %d Component(s)", msg, errCompCount)
-	} else if errRelCount > 0 {
-		msg = fmt.Sprintf("%s %d Relationship(s)", msg, errRelCount)
+func ErrMsgContruct(response *models.RegistryAPIResponse) string {
+	component := "component"
+	if response.EntityCount.ErrCompCount > 1 {
+		component = "components"
 	}
+	relationship := "relationship"
+	if response.EntityCount.ErrRelCount > 1 {
+		relationship = "relationships"
+	}
+	model := "model"
+	if response.EntityCount.ErrModelCount > 1 {
+		model = "models"
+	}
+	entity := "entity"
+	if response.EntityCount.TotalErrCount > 1 {
+		entity = "entities"
+	}
+
+	msg := fmt.Sprintf("Import occurred error for %d %s (", response.EntityCount.TotalErrCount, entity)
+	componentsPresent := response.EntityCount.ErrCompCount > 0
+	relationshipsPresent := response.EntityCount.ErrRelCount > 0
+	modelsPresent := response.EntityCount.ErrModelCount > 0
+	knownErrors := response.EntityCount.ErrCompCount + response.EntityCount.ErrRelCount + response.EntityCount.ErrModelCount
+	unknownErrors := response.EntityCount.TotalErrCount - knownErrors
+
+	// Collect errors in a slice for dynamic message construction
+	errors := []string{}
+	if modelsPresent {
+		errors = append(errors, fmt.Sprintf("%d %s", response.EntityCount.ErrModelCount, model))
+	}
+	if componentsPresent {
+		errors = append(errors, fmt.Sprintf("%d %s", response.EntityCount.ErrCompCount, component))
+	}
+	if relationshipsPresent {
+		errors = append(errors, fmt.Sprintf("%d %s", response.EntityCount.ErrRelCount, relationship))
+	}
+	if unknownErrors > 0 {
+		unknownEntity := "entity"
+		if unknownErrors > 1 {
+			unknownEntity = "entities"
+		}
+		errors = append(errors, fmt.Sprintf("%d unknown %s", unknownErrors, unknownEntity))
+	}
+	if len(errors) > 1 {
+		msg += fmt.Sprintf("%s and %s", strings.Join(errors[:len(errors)-1], ", "), errors[len(errors)-1])
+	} else if len(errors) == 1 {
+		msg += errors[0]
+	}
+	msg += ")"
 	return msg
 }
+
 func findTarFile(directory string) (string, error) {
 	var tarFilePath string
 	err := filepath.Walk(directory, func(path string, info os.FileInfo, err error) error {
