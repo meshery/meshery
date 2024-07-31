@@ -14,6 +14,7 @@ import { useWindowDimensions } from '../../../utils/dimension';
 import { camelcaseToSnakecase } from '../../../utils/utils';
 import { useSelector } from 'react-redux';
 import { UsesSistent } from '@/components/SistentWrapper';
+import { Slide } from '@material-ui/core';
 
 const ACTION_TYPES = {
   FETCH_MESHSYNC_RESOURCES: {
@@ -132,6 +133,7 @@ const ResourcesTable = (props) => {
         meta.columnName !== 'cluster_id' &&
         switchView(SINGLE_VIEW, meshSyncResources[meta.rowIndex]),
 
+      expandableRowsOnClick: true,
       onTableChange: (action, tableState) => {
         const sortInfo = tableState.announceText ? tableState.announceText.split(' : ') : [];
         const columnName = camelcaseToSnakecase(tableConfig.columns[tableState.activeColumn]?.name);
@@ -176,14 +178,24 @@ const ResourcesTable = (props) => {
   return (
     <>
       {view !== ALL_VIEW ? (
-        <div>
-          <View
-            type={`${tableConfig.name}`}
-            setView={setView}
-            resource={selectedResource}
-            classes={classes}
-          />
-        </div>
+        <Slide
+          in={view !== ALL_VIEW}
+          timeout={400}
+          direction={'left'}
+          exit={true}
+          enter={true}
+          mountOnEnter
+          unmountOnExit
+        >
+          <div>
+            <View
+              type={`${tableConfig.name}`}
+              setView={setView}
+              resource={selectedResource}
+              classes={classes}
+            />
+          </div>
+        </Slide>
       ) : (
         <div>
           <div
