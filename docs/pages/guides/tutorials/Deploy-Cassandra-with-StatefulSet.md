@@ -17,7 +17,7 @@ This tutorial demonstrates how to run Apache Cassandra on Kubernetes. Cassandra 
 
 In this example, a custom Cassandra seed provider is used to enable the database to discover new Cassandra instances as they join the cluster, ensuring seamless scalability and integration.
 
-StatefulSets in Kubernetes facilitate the deployment and management of stateful applications by maintaining a unique identity for each pod and stable storage. This tutorial leverages the StatefulSet feature to simplify the deployment of Cassandra. For more detailed information about StatefulSets and their benefits, please refer to the [StatefulSet documentation](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/).
+StatefulSets in Kubernetes facilitates the deployment and management of stateful applications by maintaining a unique identity for each pod and stable storage. This tutorial leverages the StatefulSet feature to simplify the deployment of Cassandra. For more detailed information about StatefulSets and their benefits, please refer to the [StatefulSet documentation](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/).
 
 ### Prerequisites:
 - Basic understanding of containerization , Kubernetes concepts and basic knowledge of Apache Cassandra.
