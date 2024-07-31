@@ -12,8 +12,7 @@ Policies offer an evaluation algorithm to ensure desired behavior enforcement. P
 
 ## Policy Evaluation
 
-The relationships are a powerful way to design your infrastructure and each of them are backed by one or more policies. Policies evaluate the designs for potential relationships and the decide whether to create/delete/update the relationships.
-
+The relationships are a powerful way to design your infrastructure and each of them are backed by one or more policies. Policies evaluate the designs for potential relationships and decide whether to create/delete/update the relationships.
 
 [![Meshery Models Policy Evaluation]({{ site.baseurl }}/assets/img/concepts/meshery-models-policy-evaluation.svg
 )]({{ site.baseurl }}/assets/img/concepts/meshery-models-policy-evaluation.svg)
@@ -22,7 +21,7 @@ Meshery Server has a built-in policy engine, based on Open Policy Agent (OPA). C
 
 In any given Meshery deployment, you can reference and search the full set of registered policies (in Meshery's internal registry) in using either of Meshery's client interfaces.
 
-{% include alert.html type="info" title="Viewing All Registered Relationships" content='<p>You can view all registered relationships using either Meshery UI or Meshery CLI.</p><dl><dt>Using Meshery UI...</dt><dd>Navigate to <i>Settings</i>, then to <i>Registry</i></dd>.<dt>Using Meshery CLI...</dt><dd><code>mesheryctl policy list</code></dd></dl>' %}
+{% include alert.html type="info" title="Viewing All Registered Relationships" content='<p>You can view all registered relationships using either Meshery UI or Meshery CLI.</p><dl><dt>Using Meshery UI...</dt><dd>Navigate to <i>Settings</i>, then to <i>Registry</i></dd>.<dt>Using Meshery CLI...</dt><dd><code>mesheryctl policy list or mesheryctl exp relationship</code></dd></dl>' %}
 
 <!-- There are different points in time in which policy evaluations are invoked
 

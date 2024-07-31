@@ -19,12 +19,11 @@ Models are units of packaging for Meshery's logical object representation. Model
 * **Components:** Components within a Model represent the capabilities of the underlying platform and are used by operators to build applications.
 * **Relationships:** Relationships define interactions and dependencies between components within a model.
 * **Policies:** Policies govern the behavior and constraints of components and relationships, ensuring adherence to desired operational practices.
-* **Extensibility:** Models are highly extensible, allowing you to define custom components, relationships, and policies. 
+* **Extensibility:** Models are highly extensible, allowing you to define custom components, relationships, and policies.
 
-{% include alert.html title="Creating your own models" content="If you would like to create your own, augment existing models, or contribute new models, please refer to the [Contributing to Models](/project/contributing/contributing-models) guide." %}
+{% include alert.html title="Creating your own models" type="info" content="If you would like to create your own, augment existing models, or contribute new models, please refer to the [Contributing to Models](/project/contributing/contributing-models) guide." %}
 
-
-See [Contributing to Models](/project/contributing/contributing-models).
+See [Contributing to Models][def].
 
 As a cloud native manager that provides a comprehensive set of tools for managing multi-cloud and cloud native applications and infrastructure, Meshery needs object models that can granularly characterize a wide range of systems under management from simple applications to complex microservices architectures and their infrastructure. This document describes the Meshery Model and its constituent set of entities  used to represent and manage cloud and cloud native systems.
 
@@ -103,3 +102,6 @@ Meshery provides a relationship evaluation algorithm to ensure desired behavior 
 ## Summary
 
 A Model serves as a unit of packaging for Meshery's logical object representation. Models encompass a structured framework that defines the components, relationships, policies, and other elements that constitute a system or application under Meshery's management. Models offer a way to encapsulate the complexities of diverse systems and provide a standardized representation for management and interaction.
+
+
+[def]: /project/contributing/contributing-models

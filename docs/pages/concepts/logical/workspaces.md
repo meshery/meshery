@@ -14,7 +14,7 @@ Like a Google Drive, Meshery Workspaces serve as a virtual space for your team-b
 
 You may create Workspaces to organize project-based work or to create domains of responsibility for your teams or segregate Designs and Environments and track team activity.
 
-{% include alert.html type="dark" title="Your team collaboration point" content="Workspaces facilitate collaboration between you and your teams, allow you to control access to resources, and track activity and report on related events." %}
+{% include alert.html type="info" title="Your team collaboration point" content="Workspaces facilitate collaboration between you and your teams, allow you to control access to resources, and track activity and report on related events." %}
 
 ## Key Features
 
@@ -29,7 +29,7 @@ You may create Workspaces to organize project-based work or to create domains of
 - Access to Workspaces may be granted to one or more teams.
 - As a point of collaboration to facilitate work, Workspaces may have zero or more Environments associated.
 
-After creating a Workspace, of your next steps is to resource that Workspace. Like a shared drive (or or shared collection of files). Workspaces are your Google Drive, while Meshery Designs are your Google Docs.
+After creating a Workspace, your next steps will be to resource that Workspace. Like a shared drive (or shared collection of files). Workspaces are your Google Drive, while Meshery Designs are your Google Docs.
 
 ## Key Components
 
@@ -44,7 +44,7 @@ See "[Environments](/concepts/logical/environments)" section for more informatio
 ### Designs
 
 - Infrastructure Designs are essential for creating reusable deployment templates. Users belonging to teams with access to a workspace can utilize these designs to deploy resources in the Kubernetes clusters associated with that workspace.
-- Like a shared drive (or or shared collection of files), Workspaces are your Google Drive, while Meshery Designs are your Google Docs.
+- Like a shared storage drive (or shared collection of files), Workspaces are your Google Drive, while Meshery Designs are your Google Docs.
 - One ore more designs can be assigned to a workspace.
 - Same design can be assigned to multiple workspaces.
 
@@ -52,7 +52,7 @@ See "[Meshery Designs](/concepts/logical/designs)" section for more information.
 
 ### Organizations
 
-- Organizationa are the unit of tenancy in Meshery. Organizations group users together.
+- Organizations are the unit of tenancy in Meshery. Organizations group users together.
 - Organizations own all resources created by users, like Workspaces, Designs, Environments, and so on.
 - Remote Providers can extend Meshery to include additional identity and user management features like heirarchical organizations, or teams (as user groups), and so on.
 - Remote Providers can extend Meshery to offer fine-grained permissions and access control to resources like Workspaces, Designs, Environments, and so on.

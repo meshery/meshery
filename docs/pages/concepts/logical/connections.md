@@ -17,9 +17,9 @@ Meshery Connections are managed and unmanaged resources that either through disc
 
 ## States and the Lifecycle of Connections
 
-Meshery tracks the status of each connections throughout the connection's lifecycle. Meshery is intentional about the currently assigned state and which state a connection may or may not transition to and from. To better understand connection states and their meaning, let's consider an example in which you a `Kubernetes` cluster with `Prometheus` installed.
+Meshery tracks the status of each connections throughout the connection's lifecycle. Meshery is intentional about the currently assigned state and which state a connection may or may not transition to and from. To better understand connection states and their meaning, let's consider an example in which you use `Kubernetes` cluster with `Prometheus` installed.
 
-![]({{site.baseurl}}/assets/img/lifecycle-management/states-for-kubernetes-cluster-connections.svg)
+![meshery Pic]({{site.baseurl}}/assets/img/lifecycle-management/states-for-kubernetes-cluster-connections.svg)
 
 ### State: Discovered
 
@@ -37,8 +37,8 @@ The connection in this state have been verified for its use and reachability but
 
 ### State: Connected
 
-The connection in this state is administratively processed and being actively managed by Meshery. User can interface and invoke set of actions with the connection.</br>
-From this state the transition can happen to either [Maintenance](#state-maintenance) or [Ignore](#state-ignored) state. </br> Auto transition to [Disconnected](#state-disconnected) state will occur if Meshery can no longer communicate with the connection, which can occur due to connectivity issue/AuthN-AuthZ/connection was deleted outside Meshery or any other issue.
+The connection in this state is administratively processed and being actively managed by Meshery. User can interface and invoke set of actions with the connection. 
+From this state the transition can happen to either [Maintenance](#state-maintenance) or [Ignore](#state-ignored) state. Auto transition to [Disconnected](#state-disconnected) state will occur if Meshery can no longer communicate with the connection, which can occur due to connectivity issue/AuthN-AuthZ/connection was deleted outside Meshery or any other issue.
 
 > Example: Meshery is communicating with Prometheus APIs to scrape metrics and present it in the UI.
 
@@ -62,7 +62,7 @@ The connection was previously [discovered](#state-discovered)/[registered](#stat
 
 > Example: Prometheus crashed/API token provided at time of registration is revoked.
 
-{% include alert.html type="info" title="Disconnected vs Deleted" content="The connection was previously connected but is unreachable due to connectivity issue/AuthN-AuthZ/connection was **deleted outside Meshery** i.e. Connection was deleted beyond the Meshery's view of management." %}
+{% include alert.html type="info" title="Disconnected vs Deleted" content="The connection was previously connected but is unreachable due to connectivity issue/AuthN-AuthZ/connection was <strong>deleted outside Meshery</strong>  i.e. Connection was deleted beyond the Meshery's view of management." %}
 
 ### State: Deleted
 
@@ -72,9 +72,9 @@ The connection is administratively processed to be deleted and removed from Mesh
 
 ### State: Not Found
 
-User tried registering the connection **manually** but Meshery could not connect to it or if the connection is unavailable now. User can delete the connection or try re-registering.
+User tried registering the connection ***manually*** but Meshery could not connect to it or if the connection is unavailable now. User can delete the connection or try re-registering.
 
-{% include alert.html type="info" title="Not Found vs Disconnected" content="You might attempt to transition to Connected state but the connection is unavaialble now due to being deleted/some other reason. This is distinctly different than a cluster with Prometheuses installed for `application monitoring` which was connected previously but is now unreachable from Meshery's view of management due to change in API token/similar issue." %}
+{% include alert.html type="info" title="Not Found vs Disconnected" content="You might attempt to transition to Connected state but the connection is unavaialble now due to being deleted/some other reason. This is distinctly different than a cluster with Prometheuses installed for <strong>application monitoring</strong> which was connected previously but is now unreachable from Meshery's view of management due to change in API token/similar issue." %}
 
 _Connections like **Registration of Meshery server with remote provider** (and few other connection types) can self transtion to the valid states._
 
@@ -90,8 +90,8 @@ To register a connection with a remote provider, you need to follow these steps:
 
 Once the connection is registered, Meshery will verify its reachability and usability. If successful, the connection will transition to the "Registered" state. From there, you can choose to administratively process the connection and transition it to the "Connected" state.
 
-Note that some connections, such as the registration of Meshery server with remote providers, can self-transition to valid states.
+**Note that some connections, such as the registration of Meshery server with remote providers, can self-transition to valid states.**
 
 For more information on the different states and the lifecycle of connections, refer to the documentation above.
 
-![]({{site.baseurl}}/assets/img/architecture/meshery-server-registration-with-remote-providers.svg)
+![meshery-diagram]({{site.baseurl}}/assets/img/architecture/meshery-server-registration-with-remote-providers.svg)

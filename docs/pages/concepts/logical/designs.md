@@ -67,7 +67,7 @@ Meshery Models represent the fundamental building blocks of your infrastructure.
 
 On the other hand, Meshery Designs are the practical implementations based on Meshery Models. They represent declarations of your infrastructure deployments, customized according to specific use cases, environments, and requirements. Meshery Designs allow you to create, manage, and deploy complex architectures seamlessly, leveraging the power and flexibility of Meshery Models as their foundation.
 
-Designs are the blueprints for your deployments, while Meshery Models are the internal components that provide the building blocks and knowledge to fulfill those blueprints.
+***Designs are the blueprints for your deployments, while Meshery Models are the internal components that provide the building blocks and knowledge to fulfill those blueprints.***
 
 ### Using Designs
 
