@@ -95,11 +95,12 @@ $ git clone https://github.com/meshery/meshkit.git
     {% include code.html code=code_content %}
   </li>
   <li>
-    <p>In your <strong>meshery</strong> go.mod, update the meshkit package.</p>
+    <p>In your <code>meshery</code> go.mod, update the meshkit package.</p>
     {% capture code_content %}
 github.com/layer5io/meshkit => ../meshkit
     {% endcapture %}
     {% include code.html code=code_content %}
+    <p>Remember to remove this go.mod change when creating pull requests.</p>
   </li>
 </ol>
 
