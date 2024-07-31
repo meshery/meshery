@@ -1,4 +1,4 @@
-package mesh
+package adapter
 
 import (
 	"flag"
@@ -111,7 +111,7 @@ func TestDeployMesh(t *testing.T) {
 			testdataDir := filepath.Join(currDir, "testdata")
 			golden := utils.NewGoldenFile(t, tc.ExpectedResponse, testdataDir)
 			buff := utils.SetupMeshkitLoggerTesting(t, false)
-			cmd := MeshCmd
+			cmd := AdapterCmd
 			cmd.SetArgs(tc.Args)
 			cmd.SetOutput(buff)
 			err := cmd.Execute()
