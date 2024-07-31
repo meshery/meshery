@@ -5071,7 +5071,7 @@ func (l *RemoteProvider) GetWorkspaceByID(req *http.Request, workspaceID, orgID 
 	return nil, ErrFetch(fmt.Errorf("failed to get workspace by ID"), "Workspace", resp.StatusCode)
 }
 
-func (l *RemoteProvider) SaveWorkspace(req *http.Request, env *WorkspacePayload, token string, skipTokenCheck bool) ([]byte, error) {
+func (l *RemoteProvider) SaveWorkspace(req *http.Request, env *v1beta1.WorkspacePayload, token string, skipTokenCheck bool) ([]byte, error) {
 
 	if !l.Capabilities.IsSupported(PersistWorkspaces) {
 		l.Log.Warn(ErrOperationNotAvaibale)
@@ -5159,11 +5159,11 @@ func (l *RemoteProvider) DeleteWorkspace(req *http.Request, workspaceID string) 
 	return nil, ErrFetch(fmt.Errorf("failed to delete workspace"), "Workspace", resp.StatusCode)
 }
 
-func (l *RemoteProvider) UpdateWorkspace(req *http.Request, env *WorkspacePayload, workspaceID string) (*Workspace, error) {
+func (l *RemoteProvider) UpdateWorkspace(req *http.Request, env *v1beta1.WorkspacePayload, workspaceID string) (*v1beta1.Workspace, error) {
 	if !l.Capabilities.IsSupported(PersistWorkspaces) {
 		l.Log.Warn(ErrOperationNotAvaibale)
 
-		return &Workspace{}, ErrInvalidCapability("Workspace", l.ProviderName)
+		return &v1beta1.Workspace{}, ErrInvalidCapability("Workspace", l.ProviderName)
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistWorkspaces)
@@ -5198,7 +5198,7 @@ func (l *RemoteProvider) UpdateWorkspace(req *http.Request, env *WorkspacePayloa
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		var workspace Workspace
+		var workspace v1beta1.Workspace
 		if err = json.Unmarshal(bdr, &workspace); err != nil {
 			return nil, err
 		}
