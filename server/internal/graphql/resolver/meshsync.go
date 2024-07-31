@@ -7,7 +7,7 @@ import (
 	"path"
 
 	"github.com/layer5io/meshery/server/internal/graphql/model"
-	"github.com/layer5io/meshery/server/meshmodel"
+	modelregistration "github.com/layer5io/meshery/server/models/registration"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/broker"
 	"github.com/layer5io/meshkit/models/meshmodel/registry"
@@ -119,7 +119,7 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 			}
 
 			go func() {
-				meshmodel.SeedComponents(r.Log, r.Config, rm)
+				modelregistration.SeedComponents(r.Log, r.Config, rm)
 				krh.SeedKeys(viper.GetString("KEYS_PATH"))
 			}()
 			r.Log.Info("Hard reset complete.")

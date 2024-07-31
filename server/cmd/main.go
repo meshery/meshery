@@ -20,7 +20,7 @@ import (
 	"github.com/layer5io/meshery/server/internal/store"
 	"github.com/layer5io/meshery/server/machines"
 	mhelpers "github.com/layer5io/meshery/server/machines/helpers"
-	meshmodelhelper "github.com/layer5io/meshery/server/meshmodel"
+	modelregistration "github.com/layer5io/meshery/server/models/registration"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/connections"
 	mesherymeshmodel "github.com/layer5io/meshery/server/models/meshmodel"
@@ -278,7 +278,7 @@ func main() {
 	//seed the local meshmodel components
 	rego := policies.Rego{}
 	go func() {
-		meshmodelhelper.SeedComponents(log, hc, regManager)
+		modelregistration.SeedComponents(log, hc, regManager)
 		r, err := policies.NewRegoInstance(PoliciesPath, regManager)
 		rego = *r
 		if err != nil {

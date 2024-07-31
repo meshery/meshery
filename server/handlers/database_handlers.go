@@ -9,7 +9,7 @@ import (
 	"path"
 	"time"
 
-	"github.com/layer5io/meshery/server/meshmodel"
+	registration "github.com/layer5io/meshery/server/models/registration"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/models/meshmodel/registry"
 	"github.com/layer5io/meshkit/utils"
@@ -193,7 +193,7 @@ func (h *Handler) ResetSystemDatabase(w http.ResponseWriter, r *http.Request, _ 
 			return
 		}
 		go func() {
-			meshmodel.SeedComponents( h.log, h.config, h.registryManager)
+			registration.SeedComponents( h.log, h.config, h.registryManager)
 			krh.SeedKeys(viper.GetString("KEYS_PATH"))
 		}()
 		w.Header().Set("Content-Type", "application/json")
