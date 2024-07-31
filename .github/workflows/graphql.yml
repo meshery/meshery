@@ -27,6 +27,10 @@ jobs:
           cd docs
           bundle install
           bundle exec rake graphql:compile_docs
+
+      - name: Pull changes from remote
+        run: git pull origin master
+
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
@@ -37,4 +41,3 @@ jobs:
           commit_options: "--signoff"
           commit_message: "[Docs] Generated documentation for GraphQL API"
           branch: master
-

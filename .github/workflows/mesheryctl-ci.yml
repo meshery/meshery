@@ -91,6 +91,10 @@ jobs:
         run: |
           cd mesheryctl
           make docs
+
+      - name: Pull changes from remote
+        run: git pull origin master
+
       - name: Commit ✅
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
