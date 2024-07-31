@@ -55,7 +55,6 @@ func (rh *RegistrationHelper) Register(entity RegisterableEntity) {
 func (rh *RegistrationHelper)register(pkg packagingUnit) {
 	// 1. Register the model
 	model := pkg.model
-	if(model.Status != entity.Enabled){return}
 
 	// Dont register anything else if registrant is not there
 	if(model.Registrant.Hostname == ""){
@@ -80,9 +79,6 @@ func (rh *RegistrationHelper)register(pkg packagingUnit) {
 	// 2. Register components
 	for _, comp := range pkg.components {
 		comp.Model = model
-		if(comp.Model.Status != entity.Enabled){
-			continue
-		}
 		_, _, err := rh.regManager.RegisterEntity(
 		v1beta1.Host{Hostname: hostname,},
 		&comp,
