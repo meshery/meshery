@@ -1,11 +1,21 @@
 /* eslint-disable no-unused-vars */
 
+import React, { useState, useEffect } from 'react';
+import { Box, CircularProgress, NoSsr } from '@material-ui/core';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { withRouter } from 'next/router';
+import Head from 'next/head';
+import _ from 'lodash';
+
 import NavigatorExtension from '../../components/NavigatorExtension';
 import ExtensionSandbox, {
   getComponentTitleFromPath,
   getComponentIsBetaFromPath,
 } from '../../components/ExtensionSandbox';
-import { Box, CircularProgress, NoSsr } from '@material-ui/core';
+import RemoteComponent from '../../components/RemoteComponent';
+import { MeshMapEarlyAccessCard } from '../../components/Popup';
+
 import {
   updatepagepath,
   updatepagetitle,
@@ -13,16 +23,8 @@ import {
   updateCapabilities,
   updatebetabadge,
 } from '../../lib/store';
-import { connect } from 'react-redux';
-import Head from 'next/head';
-import { bindActionCreators } from 'redux';
-import React from 'react';
-import RemoteComponent from '../../components/RemoteComponent';
-import _ from 'lodash';
-import { MeshMapEarlyAccessCard } from '../../components/Popup';
 import dataFetch from '../../lib/data-fetch';
 import ExtensionPointSchemaValidator from '../../utils/ExtensionPointSchemaValidator';
-import { withRouter } from 'next/router';
 
 /**
  * getPath returns the current pathname
@@ -54,57 +56,56 @@ function matchComponentURI(extensionURI, currentURI) {
   return currentURI.includes(extensionURI);
 }
 
-class RemoteExtension extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      componentTitle: '',
-      isLoading: true,
-      capabilitiesRegistryObj: null,
+const RemoteExtension = ({
+  updateExtensionType,
+  updatepagepath,
+  updateCapabilities,
+  extensionType,
+  router,
+  capabilitiesRegistry,
+  updatepagetitle,
+  updatebetabadge,
+}) => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [componentTitle, setComponentTitle] = useState('');
+  const [capabilitiesRegistryObj, setCapabilitiesRegistryObj] = useState(null);
+
+  useEffect(() => {
+    const fetchCapabilities = () => {
+      dataFetch(
+        '/api/provider/capabilities',
+        {
+          method: 'GET',
+          credentials: 'include',
+        },
+        (result) => {
+          updatepagepath({ path: getPath() });
+          if (result) {
+            setCapabilitiesRegistryObj(result);
+            updateCapabilities({ capabilitiesRegistry: result });
+            renderExtension(result);
+          }
+        },
+        (err) => console.error(err),
+      );
     };
-  }
 
-  componentWillUnmount() {
-    this.props.updateExtensionType({ extensionType: null });
-    this.setState({
-      componentTitle: '',
-      isLoading: true,
-      capabilitiesRegistryObj: null,
-    });
-  }
+    fetchCapabilities();
 
-  componentDidMount() {
-    dataFetch(
-      '/api/provider/capabilities',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      (result) => {
-        this.props.updatepagepath({ path: getPath() });
-        if (result) {
-          this.setState({
-            capabilitiesRegistryObj: result,
-          });
-          this.props.updateCapabilities({ capabilitiesRegistry: result });
-          this.renderExtension();
-        }
-      },
-      (err) => console.error(err),
-    );
-  }
+    return () => {
+      updateExtensionType({ extensionType: null });
+      setComponentTitle('');
+      setIsLoading(true);
+      setCapabilitiesRegistryObj(null);
+    };
+  }, [updateExtensionType, updatepagepath, updateCapabilities]);
 
-  componentDidUpdate(prevProps, prevState) {
-    if (
-      this.props.extensionType !== prevProps.extensionType ||
-      this.props.router.query.component != prevProps.router.query.component
-    ) {
-      this.renderExtension();
-    }
-  }
+  useEffect(() => {
+    renderExtension(capabilitiesRegistryObj);
+  }, [extensionType, router.query.component, capabilitiesRegistryObj]);
 
-  renderExtension = () => {
-    let cap = this.props.capabilitiesRegistry;
+  const renderExtension = (capabilitiesRegistry) => {
+    let cap = capabilitiesRegistry;
     // load extension if capabilities are available
     if (cap !== null) {
       let extNames = [];
@@ -124,55 +125,45 @@ class RemoteExtension extends React.Component {
 
       extNames.forEach((ext) => {
         if (matchComponentURI(ext?.uri, getPath())) {
-          this.props.updateExtensionType({ extensionType: ext.name });
+          updateExtensionType({ extensionType: ext.name });
           let extensions = ExtensionPointSchemaValidator(ext.name)(cap?.extensions[ext.name]);
-          this.setState({
-            componentTitle: getComponentTitleFromPath(extensions, getPath()),
-            isLoading: false,
-          });
-          this.props.updatepagetitle({ title: getComponentTitleFromPath(extensions, getPath()) });
-          this.props.updatebetabadge({ isBeta: getComponentIsBetaFromPath(extensions, getPath()) });
+          const componentTitle = getComponentTitleFromPath(extensions, getPath());
+          setComponentTitle(componentTitle);
+          setIsLoading(false);
+          updatepagetitle({ title: getComponentTitleFromPath(extensions, getPath()) });
+          updatebetabadge({ isBeta: getComponentIsBetaFromPath(extensions, getPath()) });
         }
       });
+    } else {
+      setIsLoading(false);
     }
-    // else, show signup card
-    this.setState({ isLoading: false });
   };
-
-  render() {
-    const { extensionType, capabilitiesRegistry } = this.props;
-    const { componentTitle, isLoading } = this.state;
-
-    return (
-      <NoSsr>
-        <Head>
-          <title>{`${componentTitle} | Meshery` || ''}</title>
-        </Head>
-        {this.props.capabilitiesRegistry !== null && extensionType ? (
-          <NoSsr>
-            {extensionType === 'navigator' ? (
-              <ExtensionSandbox type={extensionType} Extension={NavigatorExtension} />
-            ) : (
-              <ExtensionSandbox
-                type={extensionType}
-                Extension={(url) => RemoteComponent({ url })}
-              />
-            )}
-          </NoSsr>
-        ) : !isLoading ? (
-          <Box display="flex" justifyContent="center">
-            <MeshMapEarlyAccessCard
-              rootStyle={{ position: 'relative' }}
-              capabilitiesRegistry={capabilitiesRegistry}
-            />
-          </Box>
-        ) : (
-          <CircularProgress />
-        )}
-      </NoSsr>
-    );
-  }
-}
+  return (
+    <NoSsr>
+      <Head>
+        <title>{`${componentTitle} | Meshery` || ''}</title>
+      </Head>
+      {capabilitiesRegistry !== null && extensionType ? (
+        <NoSsr>
+          {extensionType === 'navigator' ? (
+            <ExtensionSandbox type={extensionType} Extension={NavigatorExtension} />
+          ) : (
+            <ExtensionSandbox type={extensionType} Extension={(url) => RemoteComponent({ url })} />
+          )}
+        </NoSsr>
+      ) : !isLoading ? (
+        <Box display="flex" justifyContent="center">
+          <MeshMapEarlyAccessCard
+            rootStyle={{ position: 'relative' }}
+            capabilitiesRegistry={capabilitiesRegistry}
+          />
+        </Box>
+      ) : (
+        <CircularProgress />
+      )}
+    </NoSsr>
+  );
+};
 
 const mapStateToProps = (state) => ({
   extensionType: state.get('extensionType'),
