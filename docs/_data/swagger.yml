@@ -1946,6 +1946,16 @@ paths:
                 - EventsAPI
             summary: Handle GET request for events.
             operationId: idGetEventStreamer
+        post:
+            responses:
+                "200":
+                    description: ""
+            description: |-
+                Receives client-generated events bound for the Notification Center.
+            tags:
+                - EventsAPI
+            summary: Handle POST request for client generated events.
+            operationId: idClientEventHandler
     /api/integrations/connections/{connectionKind}:
         get:
             description: |-

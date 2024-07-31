@@ -97,6 +97,8 @@ func ToMapStringInterface(mp interface{}) map[string]interface{} {
 	return res
 }
 
+// GetRandomAlphabetsOfDigit generates a random string of a given length
+// using lowercase alphabets.
 func GetRandomAlphabetsOfDigit(length int) (s string) {
 	charSet := "abcdedfghijklmnopqrstuvwxyz"
 	for i := 0; i < length; i++ {
