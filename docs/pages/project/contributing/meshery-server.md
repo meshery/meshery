@@ -104,3 +104,141 @@ github.com/layer5io/meshkit => ../meshkit
   </li>
 </ol>
 
+### Generating `golang` code from the OpenAPI schema.
+The guide for generating Go code from OpenAPI specifications using `oapi-codegen` provides best practices and detailed instructions to ensure that your generated code meets your requirements and follows the conventions of your project.
+
+## Overview
+
+`oapi-codegen` is a tool that generates Go code from OpenAPI specifications. This guide covers the how to generate code from an OpenAPI specification, best practices and how to customize the generated code, and necessary pre/post requisites.
+
+1. Installation of the tools
+1. `oapi-codegen`: https://github.com/oapi-codegen/oapi-codegen?tab=readme-ov-file#install
+2. `redocly`: `npm i -g @redocly/cli`
+
+Ensure you have forked the [meshery/schemas](github.com/meshery/schemas) and working directory is `schemas` repository.
+
+The tool supports passing the configuration via flags or via `config.yaml`. The supported options are described [here](https://github.com/oapi-codegen/oapi-codegen/blob/main/
+configuration-schema.json).
+Reference config.yml, with mostly used options:
+
+```yaml
+package: v1beta1 # package name under which the genreate code should reside.
+
+generate:
+  models: true # only generate models i.e. golang structs, skips the genenration server code i.e. API Handlers, middleware etc.
+
+# A schema can refer to other schema/sub-schema, and the golang code might have already been generated, so to ensure code is not repeated but uses the already exisitng package, define the pacakge name and location.
+# For eg: For most of the commonly used data-types (uuid, email, URL) the schema is defined in the `core.yml` file (inside schemas repo) and the corresponding golang code is already generated in the `meshery/schemas/models/core` package. Hence at the time of generation, in order to prevent code duplication, we need to map the schema to the already generated package. "./common/core.yml" it informs the tool to replace any usages with the existing golang package, also adding necessary imports in the code to be generated.
+
+__NOTE__: Import mappings cannot be used for references within the same file, for eg: "#/components/schemas/dummy-schema": "github.com/../../dummay-schema", such mappings are not handled by the tool.
+
+import-mapping:
+  "./core.yml": ""
+  "./common/core.yml": "github.com/meshery/schemas/models/core"
+  "../core.json": "github.com/meshery/schemas/models/core"
+  "./common/parameters.yml": "github.com/meshery/schemas/models/core"
+  "../v1beta1/model.json": "github.com/meshery/schemas/models/v1beta1"
+  "../v1beta1/component.json": "github.com/meshery/schemas/models/v1beta1"
+
+# Location of the generated code, this can be overriden by passing the `-o` flag in the CLI command.
+output: models/v1beta1/patterns.go 
+
+output-options:
+  # name-normalizer: ["ToCamelCase" | "ToCamelCaseWithDigits" | "ToCamelCaseWithInitialisms" ] 
+  skip-prune: false # Remove structs/model which are not referenced from any part of the generated code.
+  
+  # An OpenAPI spec may contain schema for many resources, and grouped together using tags, to generate code only for schemas with specific tags, use the `include-tags` flag, `exclude-tags` to excude.
+  include-tags: 
+  - patterns
+```
+
+## Prerequisite
+Resolving References in JSON Schemas.
+If your OpenAPI spec references other JSON schemas, which in turn has references to other schemas, the `oapi-codegen` tool fails to resolve such nested references, hence you might need to resolve these references before generating the code. Use the `ref-resolver.js` script provided in the `schemas` (scripts/ref-resover.js) repository to handle the resolution:
+
+_If the openapi spec points to a ref, eg: ../a.json and the schema inside a.json doesn't have any other references then the `oapi-codegen` works fine, the task of the `ref-resovler.js` is to just ensure the nested external references are resolved to the point `oapi-codegen` can work.
+
+`Run: make resolve-ref path=<directory containing the schemas whose refernces needs to be resolved (the path should be relative from the root of the repository)>` 
+```bash
+node ref-resolver.js
+```
+
+After resolving the references, invoke `oapi-codegen` to generate the code.
+
+## Best Practices for Schema Design
+
+### 1. Specifying Additional Tags
+
+To include additional tags in the generated Go structs, use the `x-oapi-codegen-extra-tags` extension in your OpenAPI specification. For example, to add a `yaml` or `gorm` tag to a struct field, update your schema as follows:
+
+The tool adds the json tags automatically.
+```yaml
+pattern:
+  properties:
+    Id:
+      $ref: '#/components/id'
+      x-oapi-codegen-extra-tags:
+        gorm: id
+```
+
+### 2. Casing Conventions
+
+Ensure that the casing/naming schema of your Go structs matches your requirements. 
+Use `x-go-name`
+
+```yaml
+properties:
+  name:
+    type: string
+    x-go-name: PatternName
+```
+
+```gotype Pattern struct {
+   // Unique identifier
+   PatternName string `json:"name,omitempty"`
+}
+```
+### 3. Skip pointer type for optional fields in structs	
+
+Add `x-go-type-skip-optional-pointer: true` tag in the schema to prevent pointer fields from being generated for fields which are not marked as required in the schema.
+
+
+### 4. Overriding/Specifying specific data type and package to be used.
+
+To use specific imports for certain fields, use `x-go-type` and `x-go-type-import`. This helps in managing dependencies and ensures that your generated code uses the correct imports.
+
+Specify the Go types to be used for defined attributes in your OpenAPI schema. For example:
+
+```yaml
+components:
+  schemas:
+    SomeSchema:
+      properties:
+        id:
+          type: string
+          format: uuid
+            x-go-type: gofrsuuid.UUID
+            x-go-type-import:
+              path: github.com/gofrs/uuid
+              name: gofrsuuid
+```
+
+## Example Command
+
+Here's an example command to generate Go code with the specified configurations:
+
+```bash
+oapi-codegen -config config.yml schemas/constructs/openapi/patterns.yml
+```
+
+In this command:
+- `-config config.yml`: Specifies the configuration file.
+- `schemas/constructs/openapi/patterns.yml`: Location of the OpenAPI specification file.
+
+## Further Reading
+
+- [oapi-codegen Documentation](https://github.com/deepmap/oapi-codegen)
+- [Meshery Schemas](https://github.com/meshery/schemas)
+- [Reference Resolver Script](https://github.com/meshery/schemas/blob/cba1c8d13a4eb801b4c0642cf7af4fc4c1fe617c/scripts/ref-resolver.js)
+
+Thank you for contributing to the project! For any questions or issues, please open an issue or pull request on the respective GitHub repository.
