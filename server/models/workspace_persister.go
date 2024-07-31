@@ -2,6 +2,7 @@ package models
 
 import (
 	"encoding/json"
+	"fmt"
 	"strconv"
 	"strings"
 	"time"
@@ -46,6 +47,14 @@ func (wp *WorkspacePersister) GetWorkspaces(orgID, search, order, page, pageSize
 	if search != "" {
 		like := "%" + strings.ToLower(search) + "%"
 		query = query.Where("lower(name) like ?", like)
+	}
+
+	if page == "" {
+		page = "0"
+	}
+
+	if pageSize == "" {
+		pageSize = "10"
 	}
 
 	dynamicKeys := []string{"owner", "organization_id"}
@@ -223,6 +232,11 @@ func (wp *WorkspacePersister) AddEnvironmentToWorkspace(workspaceID, environment
 	return wsJSON, nil
 }
 
+type WorkspaceFilter struct {
+	Assigned  bool `json:"assigned"`
+	DeletedAt bool `json:"deletedAt"`
+}
+
 // GetWorkspaceEnvironments returns environments for a workspace
 func (wp *WorkspacePersister) GetWorkspaceEnvironments(workspaceID uuid.UUID, search, order, page, pageSize, filter string) ([]byte, error) {
 	// Sanitize the order input
@@ -230,17 +244,38 @@ func (wp *WorkspacePersister) GetWorkspaceEnvironments(workspaceID uuid.UUID, se
 	if order == "" {
 		order = "updated_at desc"
 	}
+	fmt.Println("got here")
+	// Parse the filter parameter
+	var workspaceFilter WorkspaceFilter
+	workspaceFilter.Assigned = true // Default to true
+	if filter != "" {
+		err := json.Unmarshal([]byte(filter), &workspaceFilter)
+		if err != nil {
+			return nil, err
+		}
+	}
 
-	// Build the query to find environments associated with the given workspace ID
-	query := wp.DB.Table("workspace_environment_mappings").
-		Select("environments.*").
-		Joins("JOIN environments ON workspaces_environments_mappings.environment_id = environments.id").
-		Where("workspace_environment_mappings.workspace_id = ?", workspaceID)
+	query := wp.DB.Table("environments AS e").Select("*")
 
-	// Apply search filter
+	// Handle filter for whether environments are assigned or not
+	if workspaceFilter.Assigned {
+		// Environments assigned to the workspace
+		query = query.Where("EXISTS (SELECT 1 FROM workspaces_environments_mappings AS wem WHERE e.id = wem.environment_id AND wem.workspace_id = ? AND wem.deleted_at IS NULL)", workspaceID)
+	} else {
+		// Environments not assigned to the workspace
+		query = query.Joins("LEFT JOIN workspaces_environments_mappings AS wem ON e.id = wem.environment_id AND wem.workspace_id = ?", workspaceID).
+			Where("wem.workspace_id IS NULL")
+	}
+
+	if workspaceFilter.DeletedAt {
+		query = query.Where("e.deleted_at IS NOT NULL")
+	} else {
+		query = query.Where("e.deleted_at IS NULL")
+	}
+
 	if search != "" {
 		like := "%" + strings.ToLower(search) + "%"
-		query = query.Where("lower(environments.name) LIKE ?", like)
+		query = query.Where("lower(e.name) LIKE ? OR lower(e.description) LIKE ?", like, like)
 	}
 
 	// Apply additional filters
@@ -250,23 +285,30 @@ func (wp *WorkspacePersister) GetWorkspaceEnvironments(workspaceID uuid.UUID, se
 
 	count := int64(0)
 	query.Count(&count)
+	fmt.Println("count done")
 
-	var environmentsFetched []v1beta1.Environment
+	if page == "" {
+		page = "0"
+	}
+
+	if pageSize == "" {
+		pageSize = "10"
+	}
+
+	environmentsFetched := []v1beta1.Environment{}
 	pageUint, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
 		return nil, err
 	}
-	// Fetch all environments if pageSize is "all"
+
 	if pageSize == "all" {
 		query.Find(&environmentsFetched)
 	} else {
-		// Convert page and pageSize from string to uint
 		pageSizeUint, err := strconv.ParseUint(pageSize, 10, 32)
 		if err != nil {
 			return nil, err
 		}
 
-		// Fetch environments with pagination
 		Paginate(uint(pageUint), uint(pageSizeUint))(query).Find(&environmentsFetched)
 	}
 
@@ -368,15 +410,32 @@ func (wp *WorkspacePersister) GetWorkspaceDesigns(workspaceID uuid.UUID, search,
 		order = "updated_at desc"
 	}
 
+	// Parse the filter parameter
+	var workspaceFilter WorkspaceFilter
+	workspaceFilter.Assigned = true // Default to true
+	if filter != "" {
+		err := json.Unmarshal([]byte(filter), &workspaceFilter)
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	// Build the query to find designs associated with the given workspace ID
-	query := wp.DB.Table("workspace_design_mappings").
-		Select("designs.*").
-		Joins("JOIN designs ON workspaces_designs_mappings.design_id = designs.id").
-		Where("workspace_design_mappings.workspace_id = ?", workspaceID)
+	query := wp.DB.Table("designs AS d").Select("*")
+
+	// Build the query to find designs associated with the given workspace ID
+	if workspaceFilter.Assigned {
+		// Designs assigned to the workspace
+		query = query.Where("EXISTS (SELECT 1 FROM workspace_design_mappings AS wdm WHERE e.id = wdm.design_id AND wdm.workspace_id = ? AND wdm.deleted_at IS NULL)", workspaceID)
+	} else {
+		// Designs not assigned to the workspace
+		query = query.Joins("LEFT JOIN workspace_design_mappings AS wdm ON e.id = wdm.design_id AND wem.workspace_id = ?", workspaceID).
+			Where("wem.workspace_id IS NULL")
+	}
 
 	if search != "" {
 		like := "%" + strings.ToLower(search) + "%"
-		query = query.Where("lower(designs.name) LIKE ?", like)
+		query = query.Where("lower(d.name) LIKE ?", like)
 	}
 
 	dynamicKeys := []string{"owner", "organization_id"}
@@ -386,22 +445,29 @@ func (wp *WorkspacePersister) GetWorkspaceDesigns(workspaceID uuid.UUID, search,
 	count := int64(0)
 	query.Count(&count)
 
+	// Handle pagination
+	if page == "" {
+		page = "0"
+	}
+
+	if pageSize == "" {
+		pageSize = "10"
+	}
+
 	var designsFetched []v1beta1.MesheryPattern
 	pageUint, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
 		return nil, err
 	}
-	// Fetch all designs if pageSize is "all"
+
 	if pageSize == "all" {
 		query.Find(&designsFetched)
 	} else {
-		// Convert page and pageSize from string to uint
 		pageSizeUint, err := strconv.ParseUint(pageSize, 10, 32)
 		if err != nil {
 			return nil, err
 		}
 
-		// Fetch designs with pagination
 		Paginate(uint(pageUint), uint(pageSizeUint))(query).Find(&designsFetched)
 	}
 
