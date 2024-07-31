@@ -1,11 +1,10 @@
-package meshmodel
+package registration
 
 import (
 	"os"
 	"path/filepath"
 
 	"github.com/layer5io/meshery/server/models"
-	reg "github.com/layer5io/meshery/server/models/meshmodel/registration"
 	"github.com/layer5io/meshkit/logger"
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 )
@@ -49,13 +48,13 @@ func GetModelDirectoryPaths() ([]string, error) {
 }
 
 func SeedComponents(log logger.Handler, hc *models.HandlerConfig, regm *meshmodel.RegistryManager) {
-	regHelper := reg.NewRegistrationHelper(log, hc, regm)
+	regHelper := NewRegistrationHelper(log, hc, regm)
 	modelDirPaths, err := GetModelDirectoryPaths()
 	if(err != nil){
 		log.Error(ErrSeedingComponents(err))
 	}
 	for _, dirPath := range modelDirPaths {
-		dir := 	reg.NewDir(dirPath)
+		dir := 	NewDir(dirPath)
 		regHelper.Register(dir)
 	}
 	regHelper.RegistryLog()

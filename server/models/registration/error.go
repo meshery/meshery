@@ -13,8 +13,12 @@ const (
 	ErrInvalidModelDefinitionCode = "replace_me"
 	ErrImportFailureCode = "replace_me"
 	ErrMissingRegistrantCode = "replace_me"
+	ErrSeedingComponentsCode = "replace-me"
 )
 
+func ErrSeedingComponents(err error) error {
+	return errors.New(ErrSeedingComponentsCode, errors.Alert, []string{"Failed to seed meshery components."}, []string{err.Error()}, []string{}, []string{"Make sure the models being seeded are valid."})
+}
 
 func ErrMissingRegistrant() error {
 	return errors.New(ErrMissingRegistrantCode, errors.Alert, []string{"Cannot register model without a registrant."}, []string{"Model does not contain registrant information. Models are always registered in the context of registrants."}, []string{}, []string{})
