@@ -1,15 +1,22 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { components } from 'react-select';
 import CreatableSelect from 'react-select/creatable';
-import theme, { Colors } from '../themes/app';
-import { MenuItem } from '@material-ui/core';
+import { Colors } from '../themes/app';
+import { FormControlLabel, MenuItem } from '@material-ui/core';
 import { Paper } from '@material-ui/core';
 import { Checkbox } from '@material-ui/core';
-import { FormControlLabel } from '@material-ui/core';
+import { useTheme } from '@layer5/sistent';
+import { UsesSistent } from './SistentWrapper';
 
 const MultiSelectWrapper = (props) => {
+  useEffect(() => {
+    console.log(theme.palette.mode);
+  }, [theme]);
+
   const [selectInput, setSelectInput] = useState('');
   const allOption = { value: '*' };
+
+  const theme = useTheme();
 
   const filterOptions = (options, input) =>
     options?.filter(({ label }) => label?.toLowerCase().includes(input.toLowerCase()));
@@ -179,41 +186,46 @@ const MultiSelectWrapper = (props) => {
       ...base,
       backgroundColor: base.backgroundColor2,
     }),
+    input: (base) => ({
+      ...base,
+      color: theme.palette.text.primary,
+    }),
   };
 
   return (
-    <CreatableSelect
-      {...props}
-      inputValue={selectInput}
-      onInputChange={onInputChange}
-      onKeyDown={onKeyDown}
-      options={filterOptions(props.options, selectInput)}
-      onChange={handleChange}
-      components={{
-        Option: Option,
-        Input: CustomInput,
-        Menu: Menu,
-        ...props.components,
-      }}
-      filterOption={customFilterOption}
-      menuPlacement={props.menuPlacement ?? 'auto'}
-      styles={customStyles}
-      theme={(selectTheme) => ({
-        ...selectTheme,
-        colors: {
-          ...selectTheme.colors,
-          backgroundColor2:
-            theme.palette.type === 'dark' ? theme.palette.secondary.mainBackground : '#fff',
-        },
-      })}
-      isMulti
-      closeMenuOnSelect={false}
-      tabSelectsValue={false}
-      backspaceRemovesValue={false}
-      hideSelectedOptions={false}
-      isDisabled={props.updating}
-      blurInputOnSelect={false}
-    />
+    <UsesSistent>
+      <CreatableSelect
+        {...props}
+        inputValue={selectInput}
+        onInputChange={onInputChange}
+        onKeyDown={onKeyDown}
+        options={filterOptions(props.options, selectInput)}
+        onChange={handleChange}
+        components={{
+          Option: Option,
+          Input: CustomInput,
+          Menu: Menu,
+          ...props.components,
+        }}
+        filterOption={customFilterOption}
+        menuPlacement={props.menuPlacement ?? 'auto'}
+        styles={customStyles}
+        theme={(selectTheme) => ({
+          ...selectTheme,
+          colors: {
+            ...selectTheme.colors,
+            backgroundColor2: theme.palette.background.backgroundColor2,
+          },
+        })}
+        isMulti
+        closeMenuOnSelect={false}
+        tabSelectsValue={false}
+        backspaceRemovesValue={false}
+        hideSelectedOptions={false}
+        isDisabled={props.updating}
+        blurInputOnSelect={false}
+      />
+    </UsesSistent>
   );
 };
 
