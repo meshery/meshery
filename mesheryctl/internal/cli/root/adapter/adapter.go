@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package mesh
+package adapter
 
 import (
 	"errors"
@@ -36,15 +36,15 @@ var (
 	availableSubcommands []*cobra.Command
 )
 
-// MeshCmd represents the Performance Management CLI command
+// AdapterCmd represents the Performance Management CLI command
 var (
 	adapterURL string
 	err        error
 	mctlCfg    *config.MesheryCtlConfig
 	namespace  string
 	watch      bool
-	MeshCmd    = &cobra.Command{
-		Use:   "mesh",
+	AdapterCmd = &cobra.Command{
+		Use:   "adapter",
 		Short: "Cloud Native Lifecycle Management",
 		Long: `Provisioning, configuration, and on-going operational management of cloud and cloud native infrastructure.
 	Find more information at: https://docs.meshery.io/reference/mesheryctl#command-reference`,
@@ -95,8 +95,8 @@ var (
 
 func init() {
 	availableSubcommands = []*cobra.Command{validateCmd, deployCmd, removeCmd}
-	MeshCmd.AddCommand(availableSubcommands...)
-	MeshCmd.PersistentFlags().StringVarP(
+	AdapterCmd.AddCommand(availableSubcommands...)
+	AdapterCmd.PersistentFlags().StringVarP(
 		&utils.TokenFlag, "token", "t", "",
 		"Path to token for authenticating to Meshery API",
 	)

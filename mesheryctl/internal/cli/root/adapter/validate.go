@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package mesh
+package adapter
 
 import (
 	"fmt"
@@ -39,7 +39,7 @@ var spec string
 
 var linkDocMeshValidate = map[string]string{
 	"link":    "![mesh-validate-usage](/assets/img/mesheryctl/mesh-validate.png)",
-	"caption": "Usage of mesheryctl mesh validate",
+	"caption": "Usage of mesheryctl adapter validate",
 }
 
 // validateCmd represents the infrastructure validation command
@@ -48,10 +48,10 @@ var validateCmd = &cobra.Command{
 	Short: "Validate conformance to predefined standards",
 	Example: `
 // Validate conformance to predefined standards
-mesheryctl mesh validate [mesh name] --adapter [name of the adapter] --tokenPath [path to token for authentication] --spec [specification to be used for conformance test] --namespace [namespace to be used]
+mesheryctl adapter validate [mesh name] --adapter [name of the adapter] --tokenPath [path to token for authentication] --spec [specification to be used for conformance test] --namespace [namespace to be used]
 
 // Validate Istio to predefined standards
-mesheryctl mesh validate istio --adapter meshery-istio --spec smi
+mesheryctl adapter validate istio --adapter meshery-istio --spec smi
 	`,
 	Annotations: linkDocMeshValidate,
 	Long:        `Validate predefined conformance to different standard specifications`,
