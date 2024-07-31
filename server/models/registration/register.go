@@ -58,7 +58,7 @@ func (rh *RegistrationHelper)register(pkg packagingUnit) {
 
 	// Dont register anything else if registrant is not there
 	if(model.Registrant.Hostname == ""){
-		err := ErrMissingRegistrant()
+		err := ErrMissingRegistrant(model.Name)
 		RegLog.InsertEntityRegFailure(model.Registrant.Hostname, "",entity.Model, model.Name, err)
 		return
 	}

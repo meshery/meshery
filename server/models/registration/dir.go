@@ -9,6 +9,7 @@ import (
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha2"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	"github.com/layer5io/meshkit/models/meshmodel/entity"
+	"github.com/layer5io/meshkit/utils"
 )
 
 type Dir struct {
@@ -48,6 +49,7 @@ func (d Dir) PkgUnit() (_ packagingUnit, err error){
 		var e entity.Entity
 		e, err = getEntity(byt)
 		if err != nil {
+			RegLog.AddInvalidDefinition(path, err)
 			return nil
 		}
 		// set it to pkgunit
@@ -57,13 +59,22 @@ func (d Dir) PkgUnit() (_ packagingUnit, err error){
 					// currently models inside models are not handled
 					return nil
 				}
-				model, _ := e.(*v1beta1.Model)
+				model, err := utils.Cast[*v1beta1.Model](e)
+				if(err != nil){
+					RegLog.AddInvalidDefinition(path, ErrGetEntity(err))
+				}
 				pkg.model = *model
 			case entity.ComponentDefinition:
-				comp, _ := e.(*v1beta1.ComponentDefinition)
+				comp , err := utils.Cast[*v1beta1.ComponentDefinition](e)
+				if(err != nil){
+					RegLog.AddInvalidDefinition(path, ErrGetEntity(err))
+				}
 				pkg.components = append(pkg.components, *comp)
 			case entity.RelationshipDefinition:
-				rel, _ := e.(*v1alpha2.RelationshipDefinition)
+				rel, err := utils.Cast[*v1alpha2.RelationshipDefinition](e)
+				if(err != nil){
+					RegLog.AddInvalidDefinition(path, ErrGetEntity(err))
+				}
 				pkg.relationships = append(pkg.relationships, *rel)
 		}
 		return nil

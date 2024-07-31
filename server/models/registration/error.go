@@ -15,6 +15,8 @@ const (
 	ErrSeedingComponentsCode = "replace-me"
 )
 
+
+
 func ErrSeedingComponents(err error) error {
 	return errors.New(
 		ErrSeedingComponentsCode,
@@ -26,13 +28,14 @@ func ErrSeedingComponents(err error) error {
 	)
 }
 
-func ErrMissingRegistrant() error {
+func ErrMissingRegistrant(modelName string) error {
 	return errors.New(
 		ErrMissingRegistrantCode,
 		errors.Alert,
-		[]string{"Meshery models are always registered in context of a registrant"},
+		[]string{fmt.Sprintf("Model with name: %s does not have registrant information", modelName)},
+		[]string{"Meshery models are always registered in context of a registrant."},
+		// there is only one cause for this error
 		[]string{""},
-		[]string{"Given model might not contain information about the registrant"},
 		[]string{"Make sure that the registrant information is present in the model definition"},
 	)
 }
@@ -74,9 +77,9 @@ func ErrImportFailure(hostname string, failedMsg string) error {
 	return errors.New(
 		ErrImportFailureCode,
 		errors.Alert,
-		[]string{},
-		[]string{fmt.Sprintf("The import process for a registrant %s encountered difficulties,due to which %s. Specific issues during the import process resulted in certain entities not being successfully registered in the table.", hostname, failedMsg)},
-		[]string{},
+		[]string{fmt.Sprintf("Errors while registering entities for registrant: %s", hostname)},
+		[]string{failedMsg},
+		[]string{"Entity definition might not be valid in accordance with schema", "Entity version might not be supported by Meshery"},
 		[]string{fmt.Sprintf("Visit docs with the error code %s", "https://docs.meshery.io/reference/error-codes"),
 	})
 }

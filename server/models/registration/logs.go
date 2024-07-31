@@ -37,6 +37,10 @@ func init() {
 	}
 }
 
+func (rfl *registrationFailureLog) AddInvalidDefinition(path string, err error){
+	rfl.invalidDefinitions[path] = err
+}
+
 func (rfl *registrationFailureLog) InsertEntityRegFailure(hostname string, modelName string,entityType entity.EntityType, name string, err error){
 	if(rfl.failureData[hostname] == nil ) {
 		rfl.failureData[hostname] = make(map[string]map[string]map[string]error)
