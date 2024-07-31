@@ -38,12 +38,12 @@ func (ep *EnvironmentPersister) GetEnvironments(orgID, search, order, page, page
 	}
 
 	query := ep.DB.Model(&v1beta1.Environment{})
-	
+
 	// Filter by organization ID
 	if orgID != "" {
 		query = query.Where("organization_id = ?", orgID)
 	}
-	
+
 	if search != "" {
 		like := "%" + strings.ToLower(search) + "%"
 		query = query.Where("lower(name) like ?", like)
@@ -58,6 +58,15 @@ func (ep *EnvironmentPersister) GetEnvironments(orgID, search, order, page, page
 	query.Table("environments").Count(&count)
 
 	environmentsFetched := []v1beta1.Environment{}
+
+	if page == "" {
+		page = "0"
+	}
+
+	if pageSize == "" {
+		pageSize = "10"
+	}
+
 	pageUint, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
 		return nil, err
@@ -71,7 +80,7 @@ func (ep *EnvironmentPersister) GetEnvironments(orgID, search, order, page, page
 		if err != nil {
 			return nil, err
 		}
-		
+
 		// Fetch environments with pagination
 		Paginate(uint(pageUint), uint(pageSizeUint))(query).Find(&environmentsFetched)
 	}
@@ -199,10 +208,10 @@ func (ep *EnvironmentPersister) DeleteEnvironmentByID(environmentID uuid.UUID) (
 // AddConnectionToEnvironment adds a connection to an environment
 func (ep *EnvironmentPersister) AddConnectionToEnvironment(environmentID, connectionID uuid.UUID) ([]byte, error) {
 	envConMapping := v1beta1.EnvironmentConnectionMapping{
-		ConnectionId: connectionID,
+		ConnectionId:  connectionID,
 		EnvironmentId: environmentID,
-		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
+		CreatedAt:     time.Now(),
+		UpdatedAt:     time.Now(),
 	}
 
 	id, err := uuid.NewV4()
@@ -226,66 +235,65 @@ func (ep *EnvironmentPersister) AddConnectionToEnvironment(environmentID, connec
 
 // GetEnvironmentConnections returns connections for an environment
 func (ep *EnvironmentPersister) GetEnvironmentConnections(environmentID uuid.UUID, search, order, page, pageSize, filter string) ([]byte, error) {
-    // Sanitize the order input
-    order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
-    if order == "" {
-        order = "updated_at desc"
-    }
+	// Sanitize the order input
+	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
+	if order == "" {
+		order = "updated_at desc"
+	}
 
-    // Build the query to find connections associated with the given environment ID
-    query := ep.DB.Table("environment_connection_mappings").
-        Select("connections.*").
-        Joins("JOIN connections ON environment_connection_mappings.connection_id = connections.id").
-        Where("environment_connection_mappings.environment_id = ?", environmentID)
+	// Build the query to find connections associated with the given environment ID
+	query := ep.DB.Table("environment_connection_mappings").
+		Select("connections.*").
+		Joins("JOIN connections ON environment_connection_mappings.connection_id = connections.id").
+		Where("environment_connection_mappings.environment_id = ?", environmentID)
 
-    // Apply search filter
-    if search != "" {
-        like := "%" + strings.ToLower(search) + "%"
-        query = query.Where("lower(connections.name) LIKE ?", like)
-    }
+	// Apply search filter
+	if search != "" {
+		like := "%" + strings.ToLower(search) + "%"
+		query = query.Where("lower(connections.name) LIKE ?", like)
+	}
 
-    // Apply additional filters
-    dynamicKeys := []string{"owner", "organization_id"}
-    query = utils.ApplyFilters(query, filter, dynamicKeys)
-    query = query.Order(order)
+	// Apply additional filters
+	dynamicKeys := []string{"owner", "organization_id"}
+	query = utils.ApplyFilters(query, filter, dynamicKeys)
+	query = query.Order(order)
 
-    count := int64(0)
-    query.Count(&count)
+	count := int64(0)
+	query.Count(&count)
 
-    var connectionsFetched []*connections.Connection
+	var connectionsFetched []*connections.Connection
 	pageUint, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
 		return nil, err
 	}
-    // Fetch all connections if pageSize is "all"
-    if pageSize == "all" {
-        query.Find(&connectionsFetched)
-    } else {
-        // Convert page and pageSize from string to uint
-        pageSizeUint, err := strconv.ParseUint(pageSize, 10, 32)
-        if err != nil {
-            return nil, err
-        }
+	// Fetch all connections if pageSize is "all"
+	if pageSize == "all" {
+		query.Find(&connectionsFetched)
+	} else {
+		// Convert page and pageSize from string to uint
+		pageSizeUint, err := strconv.ParseUint(pageSize, 10, 32)
+		if err != nil {
+			return nil, err
+		}
 
-        // Fetch connections with pagination
-        Paginate(uint(pageUint), uint(pageSizeUint))(query).Find(&connectionsFetched)
-    }
+		// Fetch connections with pagination
+		Paginate(uint(pageUint), uint(pageSizeUint))(query).Find(&connectionsFetched)
+	}
 
-    connectionsPage := &connections.ConnectionPage{
-        Page:        int(pageUint),
-        PageSize:    len(connectionsFetched),
-        TotalCount:  int(count),
-        Connections: connectionsFetched,
-    }
+	connectionsPage := &connections.ConnectionPage{
+		Page:        int(pageUint),
+		PageSize:    len(connectionsFetched),
+		TotalCount:  int(count),
+		Connections: connectionsFetched,
+	}
 
-    connsJSON, err := json.Marshal(connectionsPage)
-    if err != nil {
-        return nil, err
-    }
+	connsJSON, err := json.Marshal(connectionsPage)
+	if err != nil {
+		return nil, err
+	}
 
-    return connsJSON, nil
+	return connsJSON, nil
 }
-
 
 // DeleteConnectionFromEnvironment deletes a connection from an environment
 func (ep *EnvironmentPersister) DeleteConnectionFromEnvironment(environmentID, connectionID uuid.UUID) ([]byte, error) {
