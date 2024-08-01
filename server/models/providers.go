@@ -502,9 +502,9 @@ type Provider interface {
 
 	GetWorkspaces(token, page, pagesize, search, order, filter, orgID string) ([]byte, error)
 	GetWorkspaceByID(req *http.Request, workspaceID, orgID string) ([]byte, error)
-	SaveWorkspace(req *http.Request, workspace *WorkspacePayload, token string, skipTokenCheck bool) ([]byte, error)
+	SaveWorkspace(req *http.Request, workspace *v1beta1.WorkspacePayload, token string, skipTokenCheck bool) ([]byte, error)
 	DeleteWorkspace(req *http.Request, workspaceID string) ([]byte, error)
-	UpdateWorkspace(req *http.Request, workspace *WorkspacePayload, workspaceID string) (*Workspace, error)
+	UpdateWorkspace(req *http.Request, workspace *v1beta1.WorkspacePayload, workspaceID string) (*v1beta1.Workspace, error)
 	GetEnvironmentsOfWorkspace(req *http.Request, workspaceID, page, pagesize, search, order, filter string) ([]byte, error)
 	AddEnvironmentToWorkspace(req *http.Request, workspaceID string, environmentID string) ([]byte, error)
 	RemoveEnvironmentFromWorkspace(req *http.Request, workspaceID string, environmentID string) ([]byte, error)

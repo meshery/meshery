@@ -85,23 +85,6 @@ export const ConfigurationTableConfig = (
             customHeadRender: function CustomHead({ ...column }) {
               return <DefaultTableCell columnData={column} />;
             },
-            customBodyRender: function CustomBody(value, tableMeta) {
-              return (
-                <>
-                  <div
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                    onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  >
-                    {value}
-                  </div>
-                </>
-              );
-            },
           },
         },
         {
@@ -237,23 +220,6 @@ export const ConfigurationTableConfig = (
             customHeadRender: function CustomHead({ ...column }) {
               return <DefaultTableCell columnData={column} />;
             },
-            customBodyRender: function CustomBody(value, tableMeta) {
-              return (
-                <>
-                  <div
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                    onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  >
-                    {value}
-                  </div>
-                </>
-              );
-            },
           },
         },
         {
@@ -371,23 +337,6 @@ export const ConfigurationTableConfig = (
             customHeadRender: function CustomHead({ ...column }) {
               return <DefaultTableCell columnData={column} />;
             },
-            customBodyRender: function CustomBody(value, tableMeta) {
-              return (
-                <>
-                  <div
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                    onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  >
-                    {value}
-                  </div>
-                </>
-              );
-            },
           },
         },
         {
@@ -504,23 +453,6 @@ export const ConfigurationTableConfig = (
             sort: false,
             customHeadRender: function CustomHead({ ...column }) {
               return <DefaultTableCell columnData={column} />;
-            },
-            customBodyRender: function CustomBody(value, tableMeta) {
-              return (
-                <>
-                  <div
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                    onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  >
-                    {value}
-                  </div>
-                </>
-              );
             },
           },
         },
@@ -687,23 +619,6 @@ export const ConfigurationTableConfig = (
               return <DefaultTableCell columnData={column} />;
             },
             sortThirdClickReset: true,
-            customBodyRender: function CustomBody(value, tableMeta) {
-              return (
-                <>
-                  <div
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                    onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  >
-                    {value}
-                  </div>
-                </>
-              );
-            },
           },
         },
         {
@@ -820,23 +735,6 @@ export const ConfigurationTableConfig = (
             sort: false,
             customHeadRender: function CustomHead({ ...column }) {
               return <DefaultTableCell columnData={column} />;
-            },
-            customBodyRender: function CustomBody(value, tableMeta) {
-              return (
-                <>
-                  <div
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                    onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  >
-                    {value}
-                  </div>
-                </>
-              );
             },
           },
         },
@@ -1017,23 +915,6 @@ export const ConfigurationTableConfig = (
             customHeadRender: function CustomHead({ ...column }) {
               return <DefaultTableCell columnData={column} />;
             },
-            customBodyRender: function CustomBody(value, tableMeta) {
-              return (
-                <>
-                  <div
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                    onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  >
-                    {value}
-                  </div>
-                </>
-              );
-            },
           },
         },
         {
@@ -1151,23 +1032,6 @@ export const ConfigurationTableConfig = (
             customHeadRender: function CustomHead({ ...column }) {
               return <DefaultTableCell columnData={column} />;
             },
-            customBodyRender: function CustomBody(value, tableMeta) {
-              return (
-                <>
-                  <div
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                    onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  >
-                    {value}
-                  </div>
-                </>
-              );
-            },
           },
         },
         {
@@ -1284,23 +1148,6 @@ export const ConfigurationTableConfig = (
             sort: false,
             customHeadRender: function CustomHead({ ...column }) {
               return <DefaultTableCell columnData={column} />;
-            },
-            customBodyRender: function CustomBody(value, tableMeta) {
-              return (
-                <>
-                  <div
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                    onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  >
-                    {value}
-                  </div>
-                </>
-              );
             },
           },
         },
@@ -1435,23 +1282,6 @@ export const ConfigurationTableConfig = (
             sort: false,
             customHeadRender: function CustomHead({ ...column }) {
               return <DefaultTableCell columnData={column} />;
-            },
-            customBodyRender: function CustomBody(value, tableMeta) {
-              return (
-                <>
-                  <div
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                    onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  >
-                    {value}
-                  </div>
-                </>
-              );
             },
           },
         },

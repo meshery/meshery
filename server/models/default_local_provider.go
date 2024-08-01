@@ -51,6 +51,7 @@ type DefaultLocalProvider struct {
 	KeyPersister                    *KeyPersister
 	ConnectionPersister             *ConnectionPersister
 	EnvironmentPersister            *EnvironmentPersister
+	WorkspacePersister              *WorkspacePersister
 
 	GenericPersister *database.Handler
 	KubeClient       *mesherykube.Client
@@ -154,42 +155,42 @@ func (l *DefaultLocalProvider) DeleteEnvironment(_ *http.Request, environmentID 
 }
 
 func (l *DefaultLocalProvider) SaveEnvironment(_ *http.Request, environmentPayload *v1beta1.EnvironmentPayload, _ string, _ bool) ([]byte, error) {
-	orgId, _ :=  uuid.FromString(environmentPayload.OrgId)
+	orgId, _ := uuid.FromString(environmentPayload.OrgId)
 	environment := &v1beta1.Environment{
-		CreatedAt: time.Now(),
-		Description: environmentPayload.Description,
-		Name: environmentPayload.Name,
+		CreatedAt:      time.Now(),
+		Description:    environmentPayload.Description,
+		Name:           environmentPayload.Name,
 		OrganizationId: orgId,
-		Owner: "Meshery",
-		UpdatedAt:time.Now(),
+		Owner:          "Meshery",
+		UpdatedAt:      time.Now(),
 	}
 	return l.EnvironmentPersister.SaveEnvironment(environment)
 }
 
 func (l *DefaultLocalProvider) UpdateEnvironment(_ *http.Request, environmentPayload *v1beta1.EnvironmentPayload, environmentID string) (*v1beta1.Environment, error) {
 	id, _ := uuid.FromString(environmentID)
-	orgId, _ :=  uuid.FromString(environmentPayload.OrgId)
+	orgId, _ := uuid.FromString(environmentPayload.OrgId)
 	environment := &v1beta1.Environment{
-		ID:        id,
-		CreatedAt: time.Now(),
-		Description: environmentPayload.Description,
-		Name: environmentPayload.Name,
+		ID:             id,
+		CreatedAt:      time.Now(),
+		Description:    environmentPayload.Description,
+		Name:           environmentPayload.Name,
 		OrganizationId: orgId,
-		Owner: "Meshery",
-		UpdatedAt:time.Now(),
+		Owner:          "Meshery",
+		UpdatedAt:      time.Now(),
 	}
 	return l.EnvironmentPersister.UpdateEnvironmentByID(environment)
 }
 
 func (l *DefaultLocalProvider) AddConnectionToEnvironment(_ *http.Request, environmentID string, connectionID string) ([]byte, error) {
 	envId, _ := uuid.FromString(environmentID)
-	conId, _ :=  uuid.FromString(connectionID)
+	conId, _ := uuid.FromString(connectionID)
 	return l.EnvironmentPersister.AddConnectionToEnvironment(envId, conId)
 }
 
 func (l *DefaultLocalProvider) RemoveConnectionFromEnvironment(_ *http.Request, environmentID string, connectionID string) ([]byte, error) {
 	envId, _ := uuid.FromString(environmentID)
-	conId, _ :=  uuid.FromString(connectionID)
+	conId, _ := uuid.FromString(connectionID)
 	return l.EnvironmentPersister.DeleteConnectionFromEnvironment(envId, conId)
 }
 
@@ -1424,48 +1425,80 @@ func (l *DefaultLocalProvider) SaveUsersKey(_ string, keys []*Key) ([]*Key, erro
 	return l.KeyPersister.SaveUsersKeys(keys)
 }
 
-func (l *DefaultLocalProvider) GetWorkspaces(_, _, _, _, _, _, _ string) ([]byte, error) {
-	return []byte(""), ErrLocalProviderSupport
+func (l *DefaultLocalProvider) GetWorkspaces(_, page, pageSize, search, order, filter string, orgID string) ([]byte, error) {
+	return l.WorkspacePersister.GetWorkspaces(orgID, search, order, page, pageSize, filter)
 }
 
-func (l *DefaultLocalProvider) GetWorkspaceByID(_ *http.Request, _, _ string) ([]byte, error) {
-	return []byte(""), ErrLocalProviderSupport
+func (l *DefaultLocalProvider) GetWorkspaceByID(_ *http.Request, workspaceID string, _ string) ([]byte, error) {
+	id := uuid.FromStringOrNil(workspaceID)
+	return l.WorkspacePersister.GetWorkspaceByID(id)
 }
 
-func (l *DefaultLocalProvider) DeleteWorkspace(_ *http.Request, _ string) ([]byte, error) {
-	return []byte(""), ErrLocalProviderSupport
+func (l *DefaultLocalProvider) DeleteWorkspace(_ *http.Request, workspaceID string) ([]byte, error) {
+	id := uuid.FromStringOrNil(workspaceID)
+	return l.WorkspacePersister.DeleteWorkspaceByID(id)
 }
 
-func (l *DefaultLocalProvider) SaveWorkspace(_ *http.Request, _ *WorkspacePayload, _ string, _ bool) ([]byte, error) {
-	return []byte(""), ErrLocalProviderSupport
+func (l *DefaultLocalProvider) SaveWorkspace(_ *http.Request, workspacePayload *v1beta1.WorkspacePayload, _ string, _ bool) ([]byte, error) {
+	orgId, _ := uuid.FromString(workspacePayload.OrganizationID)
+	workspace := &v1beta1.Workspace{
+		CreatedAt:      time.Now(),
+		Description:    workspacePayload.Description,
+		Name:           workspacePayload.Name,
+		OrganizationId: orgId,
+		Owner:          "Meshery",
+		UpdatedAt:      time.Now(),
+	}
+	return l.WorkspacePersister.SaveWorkspace(workspace)
 }
 
-func (l *DefaultLocalProvider) UpdateWorkspace(_ *http.Request, _ *WorkspacePayload, _ string) (*Workspace, error) {
-	return nil, ErrLocalProviderSupport
+func (l *DefaultLocalProvider) UpdateWorkspace(_ *http.Request, workspacePayload *v1beta1.WorkspacePayload, workspaceID string) (*v1beta1.Workspace, error) {
+	id, _ := uuid.FromString(workspaceID)
+	orgId, _ := uuid.FromString(workspacePayload.OrganizationID)
+	workspace := &v1beta1.Workspace{
+		ID:             id,
+		CreatedAt:      time.Now(),
+		Description:    workspacePayload.Description,
+		Name:           workspacePayload.Name,
+		OrganizationId: orgId,
+		Owner:          "Meshery",
+		UpdatedAt:      time.Now(),
+	}
+	return l.WorkspacePersister.UpdateWorkspaceByID(workspace)
 }
 
-func (l *DefaultLocalProvider) GetEnvironmentsOfWorkspace(_ *http.Request, _, _, _, _, _, _ string) ([]byte, error) {
-	return []byte(""), ErrLocalProviderSupport
+func (l *DefaultLocalProvider) AddEnvironmentToWorkspace(_ *http.Request, workspaceID string, environmentID string) ([]byte, error) {
+	workspaceId, _ := uuid.FromString(workspaceID)
+	envId, _ := uuid.FromString(environmentID)
+	return l.WorkspacePersister.AddEnvironmentToWorkspace(workspaceId, envId)
 }
 
-func (l *DefaultLocalProvider) AddEnvironmentToWorkspace(_ *http.Request, _, _ string) ([]byte, error) {
-	return []byte(""), ErrLocalProviderSupport
+func (l *DefaultLocalProvider) RemoveEnvironmentFromWorkspace(_ *http.Request, workspaceID string, environmentID string) ([]byte, error) {
+	workspaceId, _ := uuid.FromString(workspaceID)
+	envId, _ := uuid.FromString(environmentID)
+	return l.WorkspacePersister.DeleteEnvironmentFromWorkspace(workspaceId, envId)
 }
 
-func (l *DefaultLocalProvider) RemoveEnvironmentFromWorkspace(_ *http.Request, _ string, _ string) ([]byte, error) {
-	return []byte(""), ErrLocalProviderSupport
+func (l *DefaultLocalProvider) GetEnvironmentsOfWorkspace(_ *http.Request, workspaceID, page, pageSize, search, order, filter string) ([]byte, error) {
+	workspaceId, _ := uuid.FromString(workspaceID)
+	return l.WorkspacePersister.GetWorkspaceEnvironments(workspaceId, search, order, page, pageSize, filter)
 }
 
-func (l *DefaultLocalProvider) GetDesignsOfWorkspace(_ *http.Request, _, _, _, _, _, _ string) ([]byte, error) {
-	return []byte(""), ErrLocalProviderSupport
+func (l *DefaultLocalProvider) AddDesignToWorkspace(_ *http.Request, workspaceID string, designID string) ([]byte, error) {
+	workspaceId, _ := uuid.FromString(workspaceID)
+	designId, _ := uuid.FromString(designID)
+	return l.WorkspacePersister.AddDesignToWorkspace(workspaceId, designId)
 }
 
-func (l *DefaultLocalProvider) AddDesignToWorkspace(_ *http.Request, _, _ string) ([]byte, error) {
-	return []byte(""), ErrLocalProviderSupport
+func (l *DefaultLocalProvider) RemoveDesignFromWorkspace(_ *http.Request, workspaceID string, designID string) ([]byte, error) {
+	workspaceId, _ := uuid.FromString(workspaceID)
+	designId, _ := uuid.FromString(designID)
+	return l.WorkspacePersister.DeleteDesignFromWorkspace(workspaceId, designId)
 }
 
-func (l *DefaultLocalProvider) RemoveDesignFromWorkspace(_ *http.Request, _ string, _ string) ([]byte, error) {
-	return []byte(""), ErrLocalProviderSupport
+func (l *DefaultLocalProvider) GetDesignsOfWorkspace(_ *http.Request, workspaceID, page, pageSize, search, order, filter string) ([]byte, error) {
+	workspaceId, _ := uuid.FromString(workspaceID)
+	return l.WorkspacePersister.GetWorkspaceDesigns(workspaceId, search, order, page, pageSize, filter)
 }
 
 // GetOrganization returns the organization for the given organizationID

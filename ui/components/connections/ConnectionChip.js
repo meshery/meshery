@@ -40,7 +40,10 @@ export const _ConnectionChip = ({ handlePing, onDelete, iconSrc, status, title, 
     // <Tooltip title={tooltip || title} placement="bottom">
     <Chip
       label={title}
-      onClick={handlePing}
+      onClick={(e) => {
+        e.stopPropagation(); // Prevent event propagation
+        handlePing(); // Call your custom handler
+      }}
       onDelete={onDelete}
       avatar={
         status ? (
