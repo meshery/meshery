@@ -218,7 +218,6 @@ func displayEntities(response *models.RegistryAPIResponse) {
 	}
 	displaySummary(response)
 	displayEntitisIfModel(response)
-	displayUnsuccessfulEntities(response, "")
 }
 func displayEmtpyModel(response *models.RegistryAPIResponse) bool {
 	if len(response.ModelName) != 0 && response.EntityCount.CompCount == 0 && response.EntityCount.RelCount == 0 {
@@ -229,18 +228,46 @@ func displayEmtpyModel(response *models.RegistryAPIResponse) bool {
 	return true
 }
 
+// TO check the case if we were never able to read the file at first palce
+func hasExtension(name string) bool {
+	extension := filepath.Ext(name)
+	return extension == ".json" || extension == ".yaml" || extension == ".yml" || extension == ".tar.gz" || extension == ".tar" || extension == ".zip" || extension == ".tgz"
+}
+
 func displayEntitisIfModel(response *models.RegistryAPIResponse) {
+	var modelsWithoutExtension []string
+	var modelsWithExtension []string
+
+	// Separate models into those with and without extensions
 	for _, model := range response.ModelName {
 		if model != "" {
+			if hasExtension(model) {
+				modelsWithExtension = append(modelsWithExtension, model)
+			} else {
+				modelsWithoutExtension = append(modelsWithoutExtension, model)
+			}
+		}
+	}
+
+	// Function to display models and their components, relationships, and entities
+	displayModelInfo := func(model string, hasExtension bool) {
+		if !hasExtension {
 			boldModel := utils.BoldString("MODEL")
 			utils.Log.Infof("\n%s: %s", boldModel, model)
 		}
 		displaySuccessfulComponents(response, model)
 		displaySuccessfulRelationships(response, model)
 		displayUnsuccessfulEntities(response, model)
+	}
 
+	for _, model := range modelsWithoutExtension {
+		displayModelInfo(model, false)
+	}
+	for _, model := range modelsWithExtension {
+		displayModelInfo(model, true)
 	}
 }
+
 func displaySuccessfulComponents(response *models.RegistryAPIResponse, modelName string) {
 	if len(response.EntityTypeSummary.SuccessfulComponents) > 0 {
 		header := []string{"Component", "Category", "Version"}
@@ -331,7 +358,7 @@ func displayUnsuccessfulEntities(response *models.RegistryAPIResponse, modelName
 			EntityTypeLine := buildEntityTypeLine(names, entityTypes, longDescription, modelName)
 			if EntityTypeLine != "" {
 				fmt.Println("")
-				utils.Log.Infof("  %s: Import did not occur for%s and error: \n  %s", utils.BoldString("ERROR"), EntityTypeLine, longDescription)
+				utils.Log.Infof("  %s: Import did not occur for%s error: \n  %s", utils.BoldString("ERROR"), EntityTypeLine, longDescription)
 			}
 		}
 	}
@@ -358,6 +385,7 @@ func buildLongDescription(longDescriptionInterface interface{}) string {
 }
 
 func buildEntityTypeLine(names, entityTypes []interface{}, longDescription, modelName string) string {
+	compCount, relCount := 0, 0
 	EntityTypeLine := ""
 	for i, name := range names {
 		entityType := ""
@@ -374,13 +402,32 @@ func buildEntityTypeLine(names, entityTypes []interface{}, longDescription, mode
 			}
 		}
 		if entityType == "Unknown" {
-			utils.Log.Infof("\n%s: Entity Filename: %s and error: \n  %s", utils.BoldString("ERROR"), utils.BoldString(name.(string)), longDescription)
-		} else {
-			if EntityTypeLine != "" {
-				EntityTypeLine += ", "
-			}
-			EntityTypeLine = fmt.Sprintf("%s entity of type %s with model name %s", EntityTypeLine, utils.BoldString(entityType), utils.BoldString(name.(string)))
+			utils.Log.Infof("\n%s: Import process for file %s encountered error: \n    %s", utils.BoldString("ERROR"), name.(string), longDescription)
+		} else if entityType == "component" {
+			compCount++
+		} else if entityType == "relationship" {
+			relCount++
 		}
+
+	}
+	if compCount > 0 {
+		word := "entity"
+		if compCount > 1 {
+			word = "entities"
+		}
+		msg := fmt.Sprintf(" %d %s of type component", compCount, word)
+		EntityTypeLine = msg
+	}
+	if compCount > 0 && relCount > 0 {
+		EntityTypeLine = fmt.Sprintf("%s and", EntityTypeLine)
+	}
+	if relCount > 0 {
+		word := "entity"
+		if relCount > 1 {
+			word = "entities"
+		}
+		msg := fmt.Sprintf(" %d %s of type relationship", relCount, word)
+		EntityTypeLine = fmt.Sprintf("%s%s", EntityTypeLine, msg)
 	}
 	return EntityTypeLine
 }

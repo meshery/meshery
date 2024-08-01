@@ -223,7 +223,7 @@ export const SectionHeading = ({ children, ...props }) => {
 
   return (
     <Typography
-      variant="h5"
+      variant="h7"
       style={{
         fontWeight: 'bold !important',
         textTransform: 'capitalize',
