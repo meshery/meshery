@@ -67,7 +67,7 @@ func ErrDirPkgUnitParseFail(dirpath string, err error) error {
 		ErrDirPkgUnitParseFailCode,
 		errors.Alert,
 		[]string{fmt.Sprintf("Directory at path: %s cannot be registered into Meshery", dirpath)},
-		[]string{fmt.Sprintf(err.Error())},
+		[]string{fmt.Sprint(err.Error())},
 		[]string{"The directory might not have a valid model definition", "Might be some internal issues while walking the file tree"},
 		[]string{"Make sure that there is a valid model definition present in the directory. Meshery's registration pipeline currently does not support nested models, therefore the behaviour might be unexpected if it contains nested models.", "If there is an internal error, please try again after some time"},
 	)
@@ -79,7 +79,7 @@ func ErrImportFailure(hostname string, failedMsg string) error {
 		errors.Alert,
 		[]string{fmt.Sprintf("Errors while registering entities for registrant: %s", hostname)},
 		[]string{failedMsg},
-		[]string{"Entity definition might not be valid in accordance with schema", "Entity version might not be supported by Meshery"},
-		[]string{fmt.Sprintf("Visit docs with the error code %s", "https://docs.meshery.io/reference/error-codes"),
-	})
+		[]string{"Entity definition might not be in accordance with schema", "Entity version might not be supported by Meshery"},
+		[]string{"See the registration logs (found at $HOME/.meshery/logs/registry/registry-logs.log) to find out which Entity failed to be imported with more specific error information."},
+	)
 }
