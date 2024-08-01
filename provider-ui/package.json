@@ -22,7 +22,7 @@
   "dependencies": {
     "@babel/eslint-parser": "^7.24.7",
     "@emotion/cache": "^11.10.5",
-    "@emotion/react": "^11.11.3",
+    "@emotion/react": "^11.13.0",
     "@emotion/server": "^11.11.0",
     "@emotion/styled": "^11.11.5",
     "@mui/icons-material": "^5.15.16",
