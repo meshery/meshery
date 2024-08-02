@@ -112,12 +112,12 @@ The guide covers instructions on how to generate Go code from OpenAPI specificat
 2. `redocly`: `npm i -g @redocly/cli`
 
 ## Prerequisite
-1. Ensure you have forked the [meshery/schemas](github.com/meshery/schemas) and working directory is `schemas` repository.__
+1. Ensure you have forked the [meshery/schemas](github.com/meshery/schemas) and working directory is `schemas` repository.
 2. Resolving References in JSON Schemas:
     The OpenAPI spec references other JSON schemas, which in turn has references to other schemas, the `oapi-codegen` tool fails to resolve such nested references, hence the references needs to be resolved before generating the code.
     Use the `ref-resolver.js` script provided in the `schemas` (scripts/ref-resover.js) repository to perform the resolution:
 
-_If the openapi spec points to a ref, eg: ../a.json and the schema inside a.json doesn't have any other references then the `oapi-codegen` works fine, the task of the `ref-resovler.js` is to just ensure the nested external references are resolved to the point `oapi-codegen` can work.
+_If the openapi spec points to a ref, eg: ../a.json and the schema inside a.json doesn't have any other references then the `oapi-codegen` works fine, the task of the `ref-resovler.js` is to just ensure the nested external references are resolved to the point `oapi-codegen` can work._
 
 `Run: make resolve-ref path=<file/directory containing the schemas whose references needs to be resolved (the path should be relative from the root of the repository)> eg: make resolve-ref path=schemas/constructs/v1beta1.`
 
@@ -144,7 +144,7 @@ generate:
 # A schema can refer to other schema/sub-schema, and the golang code might have already been generated, so to ensure code is not repeated but uses the already exisitng package, define the pacakge name and location.
 # For eg: For most of the commonly used data-types (uuid, email, URL) the schema is defined in the `core.yml` file (inside schemas repo) and the corresponding golang code is already generated in the `meshery/schemas/models/core` package. Hence at the time of generation, in order to prevent code duplication, we need to map the schema to the already generated package. "./common/core.yml" it informs the tool to replace any usages with the existing golang package, also adding necessary imports in the code to be generated.
 
-__NOTE__: Import mappings cannot be used for references within the same file, for eg: "#/components/schemas/dummy-schema": "github.com/../../dummay-schema", such mappings are not handled by the tool.
+_NOTE: Import mappings cannot be used for references within the same file, for eg: "#/components/schemas/dummy-schema": "github.com/../../dummay-schema", such mappings are not handled by the tool._
 
 import-mapping:
   "./core.yml": ""
