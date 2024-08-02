@@ -285,7 +285,7 @@ const Workspaces = ({ organization, classes }) => {
       schema: createAndEditWorkspaceSchema,
       uiSchema: createAndEditWorkspaceUiSchema,
     };
-    updatedSchema.rjsfSchema?.properties?.organization &&
+    updatedSchema.schema?.properties?.organization &&
       ((updatedSchema.schema = {
         ...updatedSchema.schema,
         properties: {
