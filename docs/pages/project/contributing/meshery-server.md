@@ -208,7 +208,7 @@ properties:
 Add `x-go-type-skip-optional-pointer: true` tag in the schema to prevent pointer fields from being generated for fields which are not marked as required in the schema.
 
 
-### 4. Overriding/Specifying specific data type and package to be used.
+### 4. Overriding/Specifying data type and package to use.
 
 To use specific imports for certain fields, use `x-go-type` and `x-go-type-import`. This helps in managing dependencies and ensures that your generated code uses the correct imports.
 
