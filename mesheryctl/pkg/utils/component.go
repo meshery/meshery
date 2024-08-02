@@ -80,7 +80,7 @@ func (c *ComponentCSV) UpdateCompDefinition(compDef *v1beta1.ComponentDefinition
 		if key == "svgColor" || key == "svgWhite" {
 			svg, err := utils.Cast[string](compMetadata[key])
 			if err == nil {
-				metadata[key], err = utils.UpdateSVGString(svg, SVG_WIDTH, SVG_HEIGHT)
+				metadata[key], err = utils.UpdateSVGString(svg, SVG_WIDTH, SVG_HEIGHT, false)
 				if err != nil {
 					// If svg cannot be updated, assign the svg value as it is
 					metadata[key] = compMetadata[key]
