@@ -104,23 +104,37 @@ github.com/layer5io/meshkit => ../meshkit
   </li>
 </ol>
 
-### Generating code from the OpenAPI schema.
-The guide for generating Go code from OpenAPI specifications using `oapi-codegen` provides best practices and detailed instructions to ensure that your generated code meets your requirements and follows the conventions of your project.
+### Practicing Schema driven development for Meshery server.
+The guide covers instructions on how to generate Go code from OpenAPI specifications, best practices to ensure the generated code meets the requirements, follows the conventions of the project and necessary pre/post-requisites.
 
-## Overview
-
-`oapi-codegen` is a tool that generates Go code from OpenAPI specifications. This guide covers the how to generate code from an OpenAPI specification, best practices and how to customize the generated code, and necessary pre/post requisites.
-
-1. Installation of the tools
+### Installating required tools
 1. `oapi-codegen`: https://github.com/oapi-codegen/oapi-codegen?tab=readme-ov-file#install
 2. `redocly`: `npm i -g @redocly/cli`
 
-Ensure you have forked the [meshery/schemas](github.com/meshery/schemas) and working directory is `schemas` repository.
+## Prerequisite
+1. Ensure you have forked the [meshery/schemas](github.com/meshery/schemas) and working directory is `schemas` repository.__
+2. Resolving References in JSON Schemas:
+    The OpenAPI spec references other JSON schemas, which in turn has references to other schemas, the `oapi-codegen` tool fails to resolve such nested references, hence the references needs to be resolved before generating the code.
+    Use the `ref-resolver.js` script provided in the `schemas` (scripts/ref-resover.js) repository to perform the resolution:
+
+_If the openapi spec points to a ref, eg: ../a.json and the schema inside a.json doesn't have any other references then the `oapi-codegen` works fine, the task of the `ref-resovler.js` is to just ensure the nested external references are resolved to the point `oapi-codegen` can work.
+
+`Run: make resolve-ref path=<file/directory containing the schemas whose references needs to be resolved (the path should be relative from the root of the repository)> eg: make resolve-ref path=schemas/constructs/v1beta1.`
+
+## Generating constructs
+```bash
+oapi-codegen -config config.yml schemas/constructs/openapi/patterns.yml
+```
+
+In this command:
+- `-config config.yml`: Specifies the configuration file.
+- `schemas/constructs/openapi/patterns.yml`: Location of the OpenAPI specification file.
 
 The tool supports passing the configuration via flags or via `config.yaml`. The supported options are described [here](https://github.com/oapi-codegen/oapi-codegen/blob/main/
 configuration-schema.json).
-Reference config.yml, with mostly used options:
+Refer [scripts/config.yml](github.com/meshery/schemas) , for mostly used options:
 
+Below is an example for `config.yml` file.
 ```yaml
 package: v1beta1 # package name under which the genreate code should reside.
 
@@ -152,18 +166,9 @@ output-options:
   - patterns
 ```
 
-## Prerequisite
-Resolving References in JSON Schemas.
-If your OpenAPI spec references other JSON schemas, which in turn has references to other schemas, the `oapi-codegen` tool fails to resolve such nested references, hence you might need to resolve these references before generating the code. Use the `ref-resolver.js` script provided in the `schemas` (scripts/ref-resover.js) repository to handle the resolution:
-
-_If the openapi spec points to a ref, eg: ../a.json and the schema inside a.json doesn't have any other references then the `oapi-codegen` works fine, the task of the `ref-resovler.js` is to just ensure the nested external references are resolved to the point `oapi-codegen` can work.
-
-`Run: make resolve-ref path=<directory containing the schemas whose refernces needs to be resolved (the path should be relative from the root of the repository)>` 
-```bash
-node ref-resolver.js
-```
-
-After resolving the references, invoke `oapi-codegen` to generate the code.
+## Generating REST API docs
+Run `make docs-build` to generate statid REST API docs.
+Run `make preview-docs` to see live changes for the REST API docs.
 
 ## Best Practices for Schema Design
 
@@ -222,18 +227,6 @@ components:
               path: github.com/gofrs/uuid
               name: gofrsuuid
 ```
-
-## Example Command
-
-Here's an example command to generate Go code with the specified configurations:
-
-```bash
-oapi-codegen -config config.yml schemas/constructs/openapi/patterns.yml
-```
-
-In this command:
-- `-config config.yml`: Specifies the configuration file.
-- `schemas/constructs/openapi/patterns.yml`: Location of the OpenAPI specification file.
 
 ## Further Reading
 
