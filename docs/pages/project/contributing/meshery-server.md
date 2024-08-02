@@ -104,7 +104,7 @@ github.com/layer5io/meshkit => ../meshkit
   </li>
 </ol>
 
-### Generating `golang` code from the OpenAPI schema.
+### Generating code from the OpenAPI schema.
 The guide for generating Go code from OpenAPI specifications using `oapi-codegen` provides best practices and detailed instructions to ensure that your generated code meets your requirements and follows the conventions of your project.
 
 ## Overview
