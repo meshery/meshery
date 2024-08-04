@@ -1110,8 +1110,8 @@ class MesheryAdapterPlayComponent extends React.Component {
         content = 'Manage Service Mesh Lifecycle';
         description = 'Deploy a service mesh or SMI adapter on your cluster.';
         permission = {
-          action: keys.MANAGE_SERVICE_MESH_LIFE_CYCLE.action,
-          subject: keys.MANAGE_SERVICE_MESH_LIFE_CYCLE.subject,
+          action: keys.MANAGE_CLOUD_NATIVE_INFRASTRUCTURE_LIFE_CYCLE.action,
+          subject: keys.MANAGE_CLOUD_NATIVE_INFRASTRUCTURE_LIFE_CYCLE.subject,
         };
         break;
 
@@ -1119,8 +1119,8 @@ class MesheryAdapterPlayComponent extends React.Component {
         content = 'Manage Sample Application Lifecycle';
         description = 'Deploy sample applications on/off the service mesh.';
         permission = {
-          action: keys.MANAGE_SERVICE_MESH_LIFE_CYCLE.action,
-          subject: keys.MANAGE_SERVICE_MESH_LIFE_CYCLE.subject,
+          action: keys.MANAGE_CLOUD_NATIVE_INFRASTRUCTURE_LIFE_CYCLE.action,
+          subject: keys.MANAGE_CLOUD_NATIVE_INFRASTRUCTURE_LIFE_CYCLE.subject,
         };
         break;
 
@@ -1129,8 +1129,8 @@ class MesheryAdapterPlayComponent extends React.Component {
         description = 'Configure your service mesh using some pre-defined options.';
         selectedAdapterOps = selectedAdapterOps.filter((ops) => !ops.value.startsWith('Add-on:'));
         permission = {
-          action: keys.APPLY_SERVICE_MESH_CONFIGURATION.action,
-          subject: keys.APPLY_SERVICE_MESH_CONFIGURATION.subject,
+          action: keys.APPLY_CLOUD_NATIVE_INFRASTRUCTURE_CONFIGURATION.action,
+          subject: keys.APPLY_CLOUD_NATIVE_INFRASTRUCTURE_CONFIGURATION.subject,
         };
         break;
 
@@ -1138,8 +1138,8 @@ class MesheryAdapterPlayComponent extends React.Component {
         content = 'Validate Service Mesh Configuration';
         description = 'Validate your service mesh configuration against best practices.';
         permission = {
-          action: keys.VALIDATE_SERVICE_MESH_CONFIGURATION.action,
-          subject: keys.VALIDATE_SERVICE_MESH_CONFIGURATION.subject,
+          action: keys.VALIDATE_CLOUD_NATIVE_INFRASTRUCTURE_CONFIGURATION.action,
+          subject: keys.VALIDATE_CLOUD_NATIVE_INFRASTRUCTURE_CONFIGURATION.subject,
         };
         break;
 
@@ -1147,8 +1147,8 @@ class MesheryAdapterPlayComponent extends React.Component {
         content = 'Apply Custom Configuration';
         description = 'Customize the configuration of your service mesh.';
         permission = {
-          action: keys.APPLY_CUSTOM_SERVICE_MESH_CONFIGURATION.action,
-          subject: keys.APPLY_CUSTOM_SERVICE_MESH_CONFIGURATION.subject,
+          action: keys.APPLY_CUSTOM_CLOUD_NATIVE_INFRASTRUCTURE_CONFIGURATION.action,
+          subject: keys.APPLY_CUSTOM_CLOUD_NATIVE_INFRASTRUCTURE_CONFIGURATION.subject,
         };
         break;
     }
