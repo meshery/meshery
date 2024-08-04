@@ -45,7 +45,7 @@ mesheryctl exp connections list --page 2
 		if cmd.Flags().Changed("page") {
 			url = fmt.Sprintf("%s/api/integrations/connections?page=%d", baseUrl, pageNumberFlag)
 		} else {
-			url = fmt.Sprintf("%s/api/integrations/connections", baseUrl)
+			url = fmt.Sprintf("%s/api/integrations/connections?pagesize=all", baseUrl)
 		}
 		req, err := utils.NewRequest(http.MethodGet, url, nil)
 		if err != nil {

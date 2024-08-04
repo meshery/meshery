@@ -994,7 +994,7 @@ exp:
             description: (optional) Get the number of exp connections in total
       view:
         name: view
-        description: View a specific connection details by id
+        description: View a specific connection details by ID
         usage: mesheryctl exp connections view [connection_id]
   environment:
     name: environment
