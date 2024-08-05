@@ -399,7 +399,7 @@ GEM
       psych (>= 4.0.0)
     reline (0.5.8)
       io-console (~> 0.5)
-    rexml (3.3.3)
+    rexml (3.3.2)
       strscan
     rouge (3.26.0)
     ruby2_keywords (0.0.5)
