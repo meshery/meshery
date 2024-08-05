@@ -14,7 +14,7 @@ import { NotificationDrawerButton } from './NotificationCenter';
 import User from './User';
 import Slide from '@material-ui/core/Slide';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
-import { Checkbox, Button } from '@material-ui/core';
+import { Button } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import { Search } from '@material-ui/icons';
 import { TextField } from '@material-ui/core';
@@ -38,12 +38,13 @@ import { useNotification, withNotify } from '../utils/hooks/useNotification';
 import useKubernetesHook, { useControllerStatus } from './hooks/useKubernetesHook';
 import { formatToTitleCase } from '../utils/utils';
 import { CONNECTION_KINDS } from '../utils/Enum';
-import { OutlinedSettingsIcon } from '@layer5/sistent';
+import { Checkbox, OutlinedSettingsIcon } from '@layer5/sistent';
 import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomTextTooltip';
 import { Colors } from '@/themes/app';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import SpaceSwitcher from './SpacesSwitcher/SpaceSwitcher';
+import { UsesSistent } from './SistentWrapper';
 
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 const styles = (theme) => ({
@@ -258,7 +259,9 @@ const K8sContextConnectionChip_ = ({
           }}
         >
           {selectable && (
-            <Checkbox checked={selected} onChange={() => onSelectChange(ctx.id)} color="primary" />
+            <UsesSistent>
+              <Checkbox checked={selected} onChange={() => onSelectChange(ctx.id)} />
+            </UsesSistent>
           )}
           <_ConnectionChip
             title={ctx?.name}
@@ -430,11 +433,13 @@ function K8sContextMenu({
               <div>
                 {contexts?.total_count ? (
                   <>
-                    <Checkbox
-                      checked={activeContexts.includes('all')}
-                      onChange={() => setActiveContexts('all')}
-                      color="primary"
-                    />
+                    <UsesSistent>
+                      <Checkbox
+                        checked={activeContexts.includes('all')}
+                        onChange={() => setActiveContexts('all')}
+                        color="primary"
+                      />
+                    </UsesSistent>
                     <span style={{ fontWeight: 'bolder' }}>select all</span>
                   </>
                 ) : (
