@@ -148,28 +148,19 @@ const MeshModelComponent_ = ({
   const hasMoreRegistrants =
     registrantsData?.total_count > registrantsData?.page_size * registrantsData?.page;
 
-  const loadNextModelsPage = () => {
+  const loadNextModelsPage = useCallback(() => {
     if (modelsRes.isLoading || modelsRes.isFetching || !hasMoreModels) {
       return;
     }
-    setModelsFilters((prev) => {
-      return {
-        ...prev,
-        page: prev.page + 1,
-      };
-    });
-  };
-  const loadNextRegistrantsPage = () => {
+    setModelsFilters((prev) => ({ ...prev, page: prev.page + 1 }));
+  }, [modelsRes, hasMoreModels]);
+
+  const loadNextRegistrantsPage = useCallback(() => {
     if (registrantsRes.isLoading || registrantsRes.isFetching || !hasMoreRegistrants) {
       return;
     }
-    setRegistrantsFilters((prev) => {
-      return {
-        ...prev,
-        page: prev.page + 1,
-      };
-    });
-  };
+    setRegistrantsFilters((prev) => ({ ...prev, page: prev.page + 1 }));
+  }, [registrantsRes, hasMoreRegistrants]);
 
   /**
    * IntersectionObservers
@@ -238,7 +229,7 @@ const MeshModelComponent_ = ({
         let newData = [];
         if (response.data[view.toLowerCase()]) {
           newData =
-            searchText || checked || view === RELATIONSHIPS
+            searchText || view === RELATIONSHIPS
               ? [...response.data[view.toLowerCase()]]
               : [...resourcesDetail, ...response.data[view.toLowerCase()]];
         }

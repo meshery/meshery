@@ -188,7 +188,9 @@ func (erh *EntityRegistrationHelper) watchComponents(ctx context.Context) {
 	var err error
 	var isModelError bool
 	var isRegistrantError bool
+	
 	for {
+		relationshipHostname := "Meshery Server"
 		select {
 		case comp := <-erh.componentChan:
 			isRegistrantError, isModelError, err = erh.regManager.RegisterEntity(v1beta1.Host{
@@ -201,11 +203,14 @@ func (erh *EntityRegistrationHelper) watchComponents(ctx context.Context) {
 				Hostname: comp.Model.Registrant.Hostname,
 			}, &comp, err, isModelError, isRegistrantError)
 		case rel := <-erh.relationshipChan:
+			if rel.Model.Registrant.Hostname != "" {
+				relationshipHostname = rel.Model.Registrant.Hostname
+			}
 			isRegistrantError, isModelError, err = erh.regManager.RegisterEntity(v1beta1.Host{
-				Hostname: rel.Model.Registrant.Hostname,
+				Hostname: relationshipHostname,
 			}, &rel)
 			helpers.HandleError(v1beta1.Host{
-				Hostname: rel.Model.Registrant.Hostname,
+				Hostname: relationshipHostname,
 			}, &rel, err, isModelError, isRegistrantError)
 			if err != nil {
 				err = core.ErrRegisterEntity(err, string(rel.Type()), rel.Kind)
