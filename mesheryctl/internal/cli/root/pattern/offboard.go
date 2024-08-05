@@ -29,6 +29,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"gopkg.in/yaml.v2"
 )
 
 var offboardCmd = &cobra.Command{
@@ -126,11 +127,20 @@ mesheryctl pattern offboard -f [filepath]
 			return nil
 		}
 
+		if len(response) == 0 {
+			return ErrPatternNotFound()
+		}
+
 		utils.Log.Debug("pattern file converted to pattern file")
 
 		patternFile := response[0].PatternFile
+		patternFileByt, err := yaml.Marshal(patternFile)
+		
+		if err != nil {
+			return models.ErrMarshallingDesignIntoYAML(err)
+		}
 
-		req, err = utils.NewRequest("DELETE", deployURL, bytes.NewBuffer([]byte(patternFile)))
+		req, err = utils.NewRequest("DELETE", deployURL, bytes.NewBuffer(patternFileByt))
 		if err != nil {
 			utils.Log.Error(err)
 			return nil

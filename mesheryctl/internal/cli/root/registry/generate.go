@@ -28,10 +28,11 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshkit/generators"
 	"github.com/layer5io/meshkit/generators/github"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	mutils "github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshkit/utils/store"
 	"github.com/layer5io/meshkit/utils/walker"
+	"github.com/meshery/schemas/models/v1beta1/component"
+	"github.com/meshery/schemas/models/v1beta1/model"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"golang.org/x/sync/semaphore"
@@ -279,7 +280,7 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 	return nil
 }
 
-func assignDefaultsForCompDefs(componentDef *v1beta1.ComponentDefinition, modelDef *v1beta1.Model) {
+func assignDefaultsForCompDefs(componentDef *component.ComponentDefinition, modelDef *model.ModelDefinition) {
 	componentDef.Metadata["status"] = modelDef.Status
 	for k, v := range modelDef.Metadata {
 		componentDef.Metadata[k] = v
@@ -330,7 +331,7 @@ func GenerateDefsForCoreRegistrant(model utils.ModelCSV) error {
 					return nil
 				}
 				contentBytes := []byte(f.Content)
-				var componentDef v1beta1.ComponentDefinition
+				var componentDef component.ComponentDefinition
 				if err := json.Unmarshal(contentBytes, &componentDef); err != nil {
 					return err
 				}
@@ -409,7 +410,7 @@ func createVersionedDirectoryForModelAndComp(version, modelName string) (string,
 	return modelDirPath, compDirPath, err
 }
 
-func writeModelDefToFileSystem(model *utils.ModelCSV, version, modelDefPath string) (*v1beta1.Model, error) {
+func writeModelDefToFileSystem(model *utils.ModelCSV, version, modelDefPath string) (*model.ModelDefinition, error) {
 	modelDef := model.CreateModelDefinition(version, defVersion)
 	err := modelDef.WriteModelDefinition(modelDefPath+"/model.json", "json")
 	if err != nil {

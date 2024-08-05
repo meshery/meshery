@@ -11,6 +11,7 @@ import (
 	"github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshkit/utils/csv"
 	"github.com/layer5io/meshkit/utils/manifests"
+	"github.com/meshery/schemas/models/v1beta1/component"
 )
 
 const (
@@ -46,8 +47,8 @@ type ComponentCSV struct {
 }
 
 // The Component Definition generated assumes or is only for components which have registrant as "meshery"
-func (c *ComponentCSV) CreateComponentDefinition(isModelPublished bool, defVersion string) (v1beta1.ComponentDefinition, error) {
-	componentDefinition := &v1beta1.ComponentDefinition{
+func (c *ComponentCSV) CreateComponentDefinition(isModelPublished bool, defVersion string) (component.ComponentDefinition, error) {
+	componentDefinition := &component.ComponentDefinition{
 		VersionMeta: v1beta1.VersionMeta{
 			SchemaVersion: v1beta1.ComponentSchemaVersion,
 			Version:       defVersion,
@@ -67,7 +68,7 @@ var compMetadataValues = []string{
 	"primaryColor", "secondaryColor", "svgColor", "svgWhite", "svgComplete", "styleOverrides", "styles", "shapePolygonPoints", "defaultData", "capabilities", "genealogy", "isAnnotation", "shape", "subCategory",
 }
 
-func (c *ComponentCSV) UpdateCompDefinition(compDef *v1beta1.ComponentDefinition) error {
+func (c *ComponentCSV) UpdateCompDefinition(compDef *component.ComponentDefinition) error {
 
 	metadata := map[string]interface{}{}
 	compMetadata, err := utils.MarshalAndUnmarshal[ComponentCSV, map[string]interface{}](*c)
@@ -291,7 +292,7 @@ func (m ComponentCSVHelper) Cleanup() error {
 	return nil
 }
 
-func ConvertCompDefToCompCSV(modelcsv *ModelCSV, compDef v1beta1.ComponentDefinition) *ComponentCSV {
+func ConvertCompDefToCompCSV(modelcsv *ModelCSV, compDef component.ComponentDefinition) *ComponentCSV {
 	compCSV, _ := utils.MarshalAndUnmarshal[map[string]interface{}, ComponentCSV](compDef.Metadata)
 	compCSV.Registrant = modelcsv.Registrant
 	compCSV.Model = modelcsv.Model

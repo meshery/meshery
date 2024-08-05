@@ -28,9 +28,11 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
+	"github.com/meshery/schemas/models/v1beta1/pattern"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"gopkg.in/yaml.v2"
 )
 
 var (
@@ -65,7 +67,7 @@ mesheryctl pattern onboard -f ./pattern.yml -s "Kubernetes Manifest"
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var req *http.Request
 		var err error
-
+		var patternFile pattern.PatternFile
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			utils.Log.Error(err)
@@ -133,8 +135,9 @@ mesheryctl pattern onboard -f ./pattern.yml -s "Kubernetes Manifest"
 			patternFile = pattern.PatternFile
 		}
 
+		patternFileByt, _ := yaml.Marshal(patternFile)
 		payload := models.MesheryPatternFileDeployPayload{
-			PatternFile: patternFile,
+			PatternFile: string(patternFileByt),
 		}
 
 		payloadBytes, err := json.Marshal(payload)
@@ -173,12 +176,14 @@ mesheryctl pattern onboard -f ./pattern.yml -s "Kubernetes Manifest"
 func multiplepatternsConfirmation(profiles []models.MesheryPattern) int {
 	reader := bufio.NewReader(os.Stdin)
 
+	patternFileByt, _ := yaml.Marshal(patternFile)
+
 	for index, a := range profiles {
 		fmt.Printf("Index: %v\n", index)
 		fmt.Printf("Name: %v\n", a.Name)
 		fmt.Printf("ID: %s\n", a.ID.String())
 		fmt.Printf("patternFile:\n")
-		fmt.Printf(a.PatternFile)
+		fmt.Printf(string(patternFileByt))
 		fmt.Println("---------------------")
 	}
 

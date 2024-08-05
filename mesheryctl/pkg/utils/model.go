@@ -59,7 +59,7 @@ var modelMetadataValues = []string{
 	"primaryColor", "secondaryColor", "svgColor", "svgWhite", "svgComplete", "styleOverrides", "styles", "shapePolygonPoints", "defaultData", "capabilities", "isAnnotation", "shape",
 }
 
-func (m *ModelCSV) UpdateModelDefinition(modelDef *v1beta1.Model) error {
+func (m *ModelCSV) UpdateModelDefinition(modelDef *model.ModelDefinition) error {
 
 	metadata := map[string]interface{}{}
 	modelMetadata, err := utils.MarshalAndUnmarshal[ModelCSV, map[string]interface{}](*m)
@@ -91,16 +91,16 @@ func (m *ModelCSV) UpdateModelDefinition(modelDef *v1beta1.Model) error {
 	return nil
 }
 
-func (mcv *ModelCSV) CreateModelDefinition(version, defVersion string) v1beta1.Model {
+func (mcv *ModelCSV) CreateModelDefinition(version, defVersion string) model.ModelDefinition {
 	status := entity.Ignored
 	if strings.ToLower(mcv.PublishToRegistry) == "true" {
 		status = entity.Enabled
 	}
 
-	model := v1beta1.Model{
+	model := model.ModelDefinition{
 		VersionMeta: v1beta1.VersionMeta{
 			Version:       defVersion,
-			SchemaVersion: v1beta1.ModelSchemaVersion,
+			SchemaVersion: model.ModelDefinitionSchemaVersion,
 		},
 		Name:        mcv.Model,
 		DisplayName: mcv.ModelDisplayName,
@@ -112,7 +112,7 @@ func (mcv *ModelCSV) CreateModelDefinition(version, defVersion string) v1beta1.M
 			Name: mcv.Category,
 		},
 		SubCategory: mcv.SubCategory,
-		Model: v1beta1.ModelEntity{
+		Model: model.ModelDefinitionEntity{
 			Version: version,
 		},
 	}

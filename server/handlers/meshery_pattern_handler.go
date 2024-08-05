@@ -293,7 +293,7 @@ func (h *Handler) handlePatternPOST(
 				err = ErrParsePattern(err)
 				h.log.Error(err)
 				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-					"error": ErrMarshallingDesignIntoYAML(err),
+					"error": models.ErrMarshallingDesignIntoYAML(err),
 				}).WithDescription(fmt.Sprintf("Failed to decode \"%s\" design file .", mesheryPattern.Name)).Build()
 				_ = provider.PersistEvent(event)
 				go h.config.EventBroadcaster.Publish(userID, event)

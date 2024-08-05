@@ -22,6 +22,7 @@ import (
 	"os"
 
 	"github.com/layer5io/meshery/server/models"
+	"github.com/meshery/schemas/models/v1beta1/component"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
@@ -136,7 +137,7 @@ func OutputJson(component interface{}) error {
 	return nil
 }
 
-// prettifyJson takes a v1beta1.Model struct as input, marshals it into a nicely formatted JSON representation,
+// prettifyJson takes a model.ModelDefinition struct as input, marshals it into a nicely formatted JSON representation,
 // and prints it to standard output with proper indentation and without escaping HTML entities.
 func prettifyJson(component interface{}) error {
 	// Create a new JSON encoder that writes to the standard output (os.Stdout).

@@ -7,13 +7,13 @@ import (
 
 	cuecsv "cuelang.org/go/pkg/encoding/csv"
 	"github.com/gocarina/gocsv"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
+	"github.com/meshery/schemas/models/v1beta1/component"
 	"google.golang.org/api/sheets/v4"
 )
 
 type SpreadsheetData struct {
 	Model      *ModelCSV
-	Components []v1beta1.ComponentDefinition
+	Components []component.ComponentDefinition
 }
 
 var (
@@ -50,7 +50,7 @@ func ProcessModelToComponentsMap(existingComponents map[string]map[string][]Comp
 	}
 }
 
-func addEntriesInCompUpdateList(modelEntry *ModelCSV, compEntries []v1beta1.ComponentDefinition, compList []*ComponentCSV) []*ComponentCSV {
+func addEntriesInCompUpdateList(modelEntry *ModelCSV, compEntries []component.ComponentDefinition, compList []*ComponentCSV) []*ComponentCSV {
 	registrant := modelEntry.Registrant
 	model := modelEntry.Model
 
