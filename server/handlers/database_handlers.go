@@ -9,7 +9,7 @@ import (
 	"path"
 	"time"
 
-	registration "github.com/layer5io/meshery/server/models/registration"
+	registration "github.com/layer5io/meshkit/models/registration"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/models/meshmodel/registry"
 	"github.com/layer5io/meshkit/utils"

@@ -7,7 +7,7 @@ import (
 	"path"
 
 	"github.com/layer5io/meshery/server/internal/graphql/model"
-	modelregistration "github.com/layer5io/meshery/server/models/registration"
+	modelregistration "github.com/layer5io/meshkit/models/registration"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/broker"
 	"github.com/layer5io/meshkit/models/meshmodel/registry"

@@ -20,7 +20,7 @@ import (
 	"github.com/layer5io/meshery/server/internal/store"
 	"github.com/layer5io/meshery/server/machines"
 	mhelpers "github.com/layer5io/meshery/server/machines/helpers"
-	modelregistration "github.com/layer5io/meshery/server/models/registration"
+	modelregistration "github.com/layer5io/meshkit/models/registration"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/connections"
 	mesherymeshmodel "github.com/layer5io/meshery/server/models/meshmodel"
