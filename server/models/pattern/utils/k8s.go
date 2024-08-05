@@ -119,7 +119,9 @@ func CreateK8sResource(
 				}
 			}
 
-			return fmt.Errorf("failed to create resource: %s - resource already exists and is not maintained by \"meshery\"", obj.GetName())
+			err = models.ErrCreateResourceEntry(fmt.Errorf("failed to create resource: %s - resource already exists and is not maintained by \"meshery\"", obj.GetName()))
+			log.Error(err)
+			return err
 		}
 
 		if _, err := client.
@@ -156,6 +158,8 @@ func DeleteK8sResource(
 		Delete(context.TODO(), name, metav1.DeleteOptions{})
 }
 
+// CreateNamespace creates a new Kubernetes namespace with the given name.
+// It uses the dynamic client to create the namespace and returns an error if the creation fails.
 func CreateNamespace(client dynamic.Interface, namespace string) error {
 	ns := v1.Namespace{
 		TypeMeta: metav1.TypeMeta{
