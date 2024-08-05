@@ -27,8 +27,10 @@ import (
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/layer5io/meshkit/utils/walker"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
-	"github.com/meshery/schemas/models/v1beta1"
+	"github.com/meshery/schemas/models/v1beta1/pattern"
+	"github.com/pkg/errors"
 	"github.com/spf13/viper"
+	"gopkg.in/yaml.v2"
 	"gorm.io/gorm"
 )
 
@@ -1179,8 +1181,15 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 				case "Pattern":
 					for i, name := range names {
 						id, _ := uuid.NewV4()
+						var patternFile pattern.PatternFile
+
+						err = yaml.Unmarshal([]byte(content[i]), &patternFile)
+						if err != nil {
+							err = errors.Wrapf(err, "error decoding design file")
+							log.Error(err)
+						}
 						var pattern = &MesheryPattern{
-							PatternFile: content[i],
+							PatternFile: patternFile,
 							Name:        name,
 							ID:          &id,
 							UserID:      &nilUserID,
@@ -1539,9 +1548,17 @@ func githubRepoPatternScan(
 					return err
 				}
 
+				var patternFile pattern.PatternFile
+
+				err = yaml.Unmarshal([]byte(f.Content), &patternFile)
+				if err != nil {
+					err = errors.Wrapf(err, "error decoding design file")
+					return utils.ErrDecodeYaml(err)
+				}
+
 				pf := MesheryPattern{
 					Name:        name,
-					PatternFile: string(f.Content),
+					PatternFile: patternFile,
 					Location: map[string]interface{}{
 						"type":   "github",
 						"host":   fmt.Sprintf("github.com/%s/%s", owner, repo),
@@ -1621,16 +1638,17 @@ func genericHTTPPatternFile(fileURL string, log logger.Handler) ([]MesheryPatter
 	if err != nil {
 		return nil, err
 	}
-	result := string(body)
 
-	name, err := GetPatternName(result)
+	var patternFile pattern.PatternFile
+	err = yaml.Unmarshal(body, &patternFile)
 	if err != nil {
-		return nil, err
+		err = errors.Wrapf(err, "error decoding design file")
+		return nil, utils.ErrDecodeYaml(err)
 	}
 
 	pf := MesheryPattern{
-		Name:        name,
-		PatternFile: result,
+		Name:        patternFile.Name,
+		PatternFile: patternFile,
 		Location: map[string]interface{}{
 			"type":   "http",
 			"host":   fileURL,

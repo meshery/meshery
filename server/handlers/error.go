@@ -144,6 +144,7 @@ const (
 	ErrReadSessionPersistorCode            = "meshery-server-1329"
 	ErrFailToGetK8SContextCode             = "meshery-server-1330"
 	ErrFailToLoadK8sContextCode            = "meshery-server-1331"
+	ErrEmptyOCIImageCode                   = ""
 )
 
 var (
@@ -627,4 +628,8 @@ func ErrInvalidUUID(err error) error {
 
 func ErrPersistEventToRemoteProvider(err error) error {
 	return errors.New(ErrPersistEventToRemoteProviderCode, errors.Alert, []string{"failed to persist event to remote provider"}, []string{err.Error()}, []string{"token is expired/revoked", "Remote Provider is not reachable or unavailable"}, []string{"Try re-authenticating with the remote provider", "Verify remote provider for its reachability or availability."})
+}
+
+func ErrEmptyOCIImage(err error) error {
+	return errors.New(ErrEmptyOCIImageCode, errors.Alert, []string{}, []string{}, []string{}, []string{})
 }

@@ -8,6 +8,7 @@ import (
 	"github.com/gofrs/uuid"
 	isql "github.com/layer5io/meshery/server/internal/sql"
 	"github.com/layer5io/meshkit/models/catalog/v1alpha1"
+	"github.com/meshery/schemas/models/v1beta1/pattern"
 	"gopkg.in/yaml.v2"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	types "k8s.io/apimachinery/pkg/types"
@@ -86,7 +87,7 @@ type MesheryPattern struct {
 	ID *uuid.UUID `json:"id,omitempty"`
 
 	Name        string `json:"name,omitempty"`
-	PatternFile string `json:"pattern_file"`
+	PatternFile pattern.PatternFile `json:"pattern_file"`
 	// Meshery doesn't have the user id fields
 	// but the remote provider is allowed to provide one
 	UserID *string `json:"user_id"`

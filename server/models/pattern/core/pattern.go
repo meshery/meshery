@@ -4,11 +4,9 @@ import (
 	"bytes"
 	"crypto/rand"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"math/big"
-	"strings"
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/models/pattern/utils"
@@ -132,7 +130,7 @@ type DryRunResponseWrapper struct {
 	//When success is false, error will contain the errors. And Component will be set to Nil
 	Success   bool                           `json:"success"`
 	Error     *DryRunResponse                `json:"error"`
-	Component *component.ComponentDefinition `json:"component"` //Service is synonymous with Component. Later Service is to be changed to "Component"
+	Component *component.ComponentDefinition `json:"component"` //component.ComponentDefinition is synonymous with Component. Later component.ComponentDefinition is to be changed to "Component"
 }
 type DryRunResponse struct {
 	Status string
@@ -143,45 +141,6 @@ type DryRunFailureCause struct {
 	Type      string //Type of error
 	Message   string //Error message
 	FieldPath string //Dot separated field path inside service. (For eg: <name>.settings.spec.containers (for pod) or <name>.annotations ) where <name> is the name of service/component
-}
-
-// Pattern is the golang representation of the Pattern
-// config file model
-type Pattern struct {
-	// Name is the human-readable, display-friendly descriptor of the pattern
-	Name    string `yaml:"name,omitempty" json:"name,omitempty"`
-	Version string `yaml:"version,omitempty" json:"version,omitempty"`
-	//Vars will be used to configure the pattern when it is imported from other patterns.
-	Vars map[string]interface{} `yaml:"vars,omitempty" json:"vars,omitempty"`
-	// PatternID is the moniker use to uniquely identify any given pattern
-	// Convention: SMP-###-v#.#.#
-	PatternID string              `yaml:"patternID,omitempty" json:"patternID,omitempty"`
-	Services  map[string]*Service `yaml:"services" json:"services"`
-}
-
-// Service represents the services defined within the appfile
-type Service struct {
-	// ID is the id of the service and is completely internal to
-	// Meshery Server and meshery providers
-	ID *uuid.UUID `yaml:"id,omitempty" json:"id,omitempty"`
-	// Name is the name of the service and is an optional parameter
-	// If given then this supercedes the name of the service inherited
-	// from the parent
-	Name         string            `yaml:"name,omitempty" json:"name,omitempty"`
-	Type         string            `yaml:"type,omitempty" json:"type,omitempty"`
-	APIVersion   string            `yaml:"apiVersion,omitempty" json:"apiVersion,omitempty"`
-	Namespace    string            `yaml:"namespace,omitempty" json:"namespace,omitempty"`
-	Version      string            `yaml:"version,omitempty" json:"version,omitempty"`
-	Model        string            `yaml:"model,omitempty" json:"model,omitempty"`
-	IsAnnotation bool              `yaml:"isAnnotation,omitempty" json:"isAnnotation,omitempty"`
-	Labels       map[string]string `yaml:"labels,omitempty" json:"labels,omitempty"`
-	Annotations  map[string]string `yaml:"annotations,omitempty" json:"annotations,omitempty"`
-	// DependsOn correlates one or more objects as a required dependency of this service
-	// DependsOn is used to determine sequence of operations
-	DependsOn []string `yaml:"dependsOn,omitempty" json:"dependsOn,omitempty"`
-
-	Settings map[string]interface{} `yaml:"settings,omitempty" json:"settings,omitempty"`
-	Traits   map[string]interface{} `yaml:"traits,omitempty" json:"traits,omitempty"`
 }
 
 // NewPatternFile takes in raw yaml and encodes it into a construct
@@ -204,26 +163,6 @@ func NewPatternFile(yml []byte) (patternFile pattern.PatternFile, err error) {
 		}
 	}
 
-	return
-}
-
-// isValidPattern checks if the pattern file is valid or not
-func IsValidPattern(stringifiedFile string) (err error) {
-	pattern := Pattern{}
-
-	if err = yaml.Unmarshal([]byte(stringifiedFile), &pattern); err != nil {
-		return err
-	}
-
-	if pattern.Services == nil {
-		return errors.New("invalid design-file format: missing services field")
-	}
-
-	// for serviceName, service := range pattern.Services {
-	// 	if service.Traits == nil {
-	// 		return errors.New("missing traits field for:" + serviceName)
-	// 	}
-	// }
 	return
 }
 
@@ -302,9 +241,9 @@ func AssignAdditionalLabels(comp *component.ComponentDefinition) error {
 // }
 
 // GetServiceType returns the type of the service
-func (p *Pattern) GetServiceType(name string) string {
-	return p.Services[name].Type
-}
+// func (p *Pattern) GetServiceType(name string) string {
+// 	return p.Services[name].Type
+// }
 
 // ToCytoscapeJS converts pattern file into cytoscape object
 func ToCytoscapeJS(patternFile *pattern.PatternFile, log logger.Handler) (cytoscapejs.GraphElem, error) {
@@ -343,88 +282,90 @@ func ToCytoscapeJS(patternFile *pattern.PatternFile, log logger.Handler) (cytosc
 	return cy, nil
 }
 
-// ToYAML converts a patternfile to yaml
-func (p *Pattern) ToYAML() ([]byte, error) {
-	return yaml.Marshal(p)
-}
-
 // NewPatternFileFromCytoscapeJSJSON takes in CytoscapeJS JSON
 // and creates a PatternFile from it.
 // This function always returns meshkit error
-func NewPatternFileFromCytoscapeJSJSON(name string, byt []byte) (Pattern, error) {
+func NewPatternFileFromCytoscapeJSJSON(name string, byt []byte) (pattern.PatternFile, error) {
 	// Unmarshal data into cytoscape struct
 	var cy cytoscapejs.GraphElem
 	if err := json.Unmarshal(byt, &cy); err != nil {
-		return Pattern{}, ErrPatternFromCytoscape(err)
+		return pattern.PatternFile{}, ErrPatternFromCytoscape(err)
 	}
+
 	if name == "" {
 		name = "MesheryGeneratedPattern"
 	}
+
+	id, _ := uuid.NewV4()
 	// Convert cytoscape struct to patternfile
-	pf := Pattern{
-		Name:     name,
-		Services: make(map[string]*Service),
+	pf := pattern.PatternFile{
+		Id:         id,
+		Name:       name,
+		Components: []*component.ComponentDefinition{},
 	}
-	dependsOnMap := make(map[string][]string, 0) //used to figure out dependencies from traits.meshmap.parent
-	eleToSvc := make(map[string]string)          //used to map cyto element ID uniquely to the name of the service created.
+
+	// dependsOnMap := make(map[string][]string, 0) //used to figure out dependencies from componentmetadata.additionalProperties["dependsOn"]
+	// eleToSvc := make(map[string]string)          //used to map cyto element ID uniquely to the name of the service created.
 	countDuplicates := make(map[string]int)
 	//store the names of services and their count
-	err := processCytoElementsWithPattern(cy.Elements, func(svc Service, ele cytoscapejs.Element) error {
-		name := svc.Name
+	err := processCytoElementsWithPattern(cy.Elements, func(comp component.ComponentDefinition, ele cytoscapejs.Element) error {
+		name := comp.DisplayName
 		countDuplicates[name]++
 		return nil
 	})
+
 	if err != nil {
 		return pf, ErrPatternFromCytoscape(err)
 	}
 
 	//Populate the dependsOn field with appropriate unique service names
-	err = processCytoElementsWithPattern(cy.Elements, func(svc Service, ele cytoscapejs.Element) error {
-		//Extract parents, if present
-		m, ok := svc.Traits["meshmap"].(map[string]interface{})
-		if ok {
-			parentID, ok := m["parent"].(string)
-			if ok { //If it does not have a parent then we can skip and we dont make it depend on anything
-				elementID, ok := m["id"].(string)
-				if !ok {
-					return fmt.Errorf("required meshmap trait field: \"id\" missing")
-				}
-				dependsOnMap[elementID] = append(dependsOnMap[elementID], parentID)
-			}
-		}
+	// err = processCytoElementsWithPattern(cy.Elements, func(declaration component.ComponentDefinition, ele cytoscapejs.Element) error {
+	//Extract dependsOn, if present
 
-		//Only make the name unique when duplicates are encountered. This allows clients to preserve and propagate the unique name they want to give to their workload
-		uniqueName := svc.Name
-		if countDuplicates[uniqueName] > 1 {
-			//set appropriate unique service name
-			uniqueName = strings.ToLower(svc.Name)
-			uniqueName += "-" + utils.GetRandomAlphabetsOfDigit(5)
-		}
-		eleToSvc[ele.Data.ID] = uniqueName //will be used while adding depends-on
-		pf.Services[uniqueName] = &svc
-		return nil
-	})
-	if err != nil {
-		return pf, ErrPatternFromCytoscape(err)
-	}
-	//add depends-on field
-	for child, parents := range dependsOnMap {
-		childSvc := eleToSvc[child]
-		if childSvc != "" {
-			for _, parent := range parents {
-				if eleToSvc[parent] != "" {
-					pf.Services[childSvc].DependsOn = append(pf.Services[childSvc].DependsOn, eleToSvc[parent])
-				}
-			}
-		}
-	}
+	// dependencies, err := mutils.Cast[[]string](declaration.Metadata.AdditionalProperties["dependsOn"])
+
+	// if err == nil {
+	// 	declId := declaration.Id.String()
+	// 	dependsOnMap[declId] = append(dependsOnMap[declId], dependencies...)
+	// }
+
+	// As client and server both depends on Id for determining uniqueness.
+	// It isn't a problem if declaration have the same name.
+
+	// Only make the name unique when duplicates are encountered. This allows clients to preserve and propagate the unique name they want to give to their workload
+	// uniqueName := declaration.DisplayName
+	// if countDuplicates[uniqueName] > 1 {
+	// 	//set appropriate unique service name
+	// 	uniqueName = strings.ToLower(uniqueName)
+	// 	uniqueName += "-" + utils.GetRandomAlphabetsOfDigit(5)
+	// }
+	// eleToSvc[ele.Data.ID] = uniqueName //will be used while adding depends-on
+	// pf.Services[uniqueName] = &svc
+	// 	return nil
+	// })
+
+	// if err != nil {
+	// 	return pf, ErrPatternFromCytoscape(err)
+	// }
+
+	// // add depends-on field
+	// for child, parents := range dependsOnMap {
+	// 	childSvc := eleToSvc[child]
+	// 	if childSvc != "" {
+	// 		for _, parent := range parents {
+	// 			if eleToSvc[parent] != "" {
+	// 				pf.Services[childSvc].DependsOn = append(pf.Services[childSvc].DependsOn, eleToSvc[parent])
+	// 			}
+	// 		}
+	// 	}
+	// }
 	return pf, nil
 }
 
 // processCytoElementsWithPattern iterates over all the cyto elements, convert each into a patternfile service and exposes a callback to handle that service
-func processCytoElementsWithPattern(eles []cytoscapejs.Element, callback func(svc Service, ele cytoscapejs.Element) error) error {
+func processCytoElementsWithPattern(eles []cytoscapejs.Element, callback func(svc component.ComponentDefinition, ele cytoscapejs.Element) error) error {
 	for _, elem := range eles {
-		// Try to create Service object from the elem.scratch's _data field
+		// Try to create component.ComponentDefinition object from the elem.scratch's _data field
 		// if this fails then immediately fail the process and return an error
 		castedScratch, ok := elem.Scratch.(map[string]interface{})
 		if !ok {
@@ -437,32 +378,27 @@ func processCytoElementsWithPattern(eles []cytoscapejs.Element, callback func(sv
 		}
 
 		// Convert data to JSON for easy serialization
-		svcByt, err := json.Marshal(&data)
+		declarationByt, err := json.Marshal(&data)
 		if err != nil {
-			return fmt.Errorf("failed to serialize service from the metadata in the scratch")
+			return fmt.Errorf("failed to serialize component declaration from the metadata in the scratch")
 		}
 
-		// Unmarshal the JSON into a service
-		svc := Service{
-			Settings: map[string]interface{}{},
-			Traits:   map[string]interface{}{},
+		// Unmarshal the JSON into a component declaration
+		declaration := component.ComponentDefinition{
+			Configuration: map[string]interface{}{},
 		}
 
-		// Add meshmap position
-		svc.Traits["meshmap"] = map[string]interface{}{
-			"position": map[string]float64{
-				"posX": elem.Position.X,
-				"posY": elem.Position.Y,
-			},
-		}
+		// Add position
+		declaration.Styles.Position.X = float32(elem.Position.X)
+		declaration.Styles.Position.Y = float32(elem.Position.Y)
 
-		if err := json.Unmarshal(svcByt, &svc); err != nil {
-			return fmt.Errorf("failed to create service from the metadata in the scratch")
+		if err := json.Unmarshal(declarationByt, &declaration); err != nil {
+			return fmt.Errorf("failed to create component declaration from the metadata in the scratch")
 		}
-		if svc.Name == "" {
-			return fmt.Errorf("cannot save service with empty name")
+		if declaration.DisplayName == "" {
+			return fmt.Errorf("cannot save design with empty name")
 		}
-		err = callback(svc, elem)
+		err = callback(declaration, elem)
 		if err != nil {
 			return err
 		}
@@ -470,19 +406,15 @@ func processCytoElementsWithPattern(eles []cytoscapejs.Element, callback func(sv
 	return nil
 }
 
-func manifestIsEmpty[K any](manifest map[string]K) bool {
-	return len(manifest) == 0
-}
-
 // Note: If modified, make sure this function always returns a meshkit error
-func NewPatternFileFromK8sManifest(data string, fileName string, ignoreErrors bool, reg *registry.RegistryManager) (Pattern, error) {
+func NewPatternFileFromK8sManifest(data string, fileName string, ignoreErrors bool, reg *registry.RegistryManager) (pattern.PatternFile, error) {
 	if fileName == "" {
 		fileName = "Autogenerated"
 	}
 
-	pattern := Pattern{
-		Name:     fileName,
-		Services: map[string]*Service{},
+	pattern := pattern.PatternFile{
+		Name:       fileName,
+		Components: []*component.ComponentDefinition{},
 	}
 
 	buffer := bytes.NewBufferString(data)
@@ -493,7 +425,7 @@ func NewPatternFileFromK8sManifest(data string, fileName string, ignoreErrors bo
 		err := decoder.Decode(manifest)
 		if err != nil {
 			if err == io.EOF {
-				if manifestIsEmpty(pattern.Services) {
+				if len(pattern.Components) == 0 {
 					return pattern, ErrParseK8sManifest(fmt.Errorf("kubernetes manifest is empty"))
 				}
 				return pattern, nil
@@ -501,7 +433,7 @@ func NewPatternFileFromK8sManifest(data string, fileName string, ignoreErrors bo
 				return pattern, ErrParseK8sManifest(fmt.Errorf("kubernetes manifest is empty"))
 			}
 		}
-		if manifestIsEmpty(manifest) {
+		if len(manifest) == 0 {
 			continue
 		}
 		// Recursive casting
@@ -513,7 +445,7 @@ func NewPatternFileFromK8sManifest(data string, fileName string, ignoreErrors bo
 			return pattern, ErrParseK8sManifest(fmt.Errorf("failed to parse manifest into an internal representation"))
 		}
 
-		name, svc, err := createPatternServiceFromK8s(manifest, reg)
+		declaration, err := createPatternDeclarationFromK8s(manifest, reg)
 		if err != nil {
 			if ignoreErrors {
 				continue
@@ -521,37 +453,38 @@ func NewPatternFileFromK8sManifest(data string, fileName string, ignoreErrors bo
 			return pattern, ErrCreatePatternService(fmt.Errorf("failed to create design service from kubernetes component: %s", err))
 		}
 
-		pattern.Services[name] = &svc
+		pattern.Components = append(pattern.Components, &declaration)
 	}
 
 }
 
-func createPatternServiceFromK8s(manifest map[string]interface{}, regManager *registry.RegistryManager) (string, Service, error) {
-	apiVersion, _ := manifest["apiVersion"].(string)
-	kind, _ := manifest["kind"].(string)
+func createPatternDeclarationFromK8s(manifest map[string]interface{}, regManager *registry.RegistryManager) (component.ComponentDefinition, error) {
+	fmt.Printf("%+#v\n", manifest)
+
+	apiVersion, err := mutils.Cast[string](manifest["apiVersion"])
+	if err != nil {
+		return component.ComponentDefinition{}, ErrCreatePatternService(fmt.Errorf("invalid or empty apiVersion in manifest"))
+	}
+
+	kind, err := mutils.Cast[string](manifest["kind"])
+	if err != nil {
+		return component.ComponentDefinition{}, ErrCreatePatternService(fmt.Errorf("invalid or empty kind in manifest"))
+	}
+
 	metadata, _ := manifest["metadata"].(map[string]interface{})
 	name, _ := metadata["name"].(string)
-	labels, _ := metadata["labels"].(map[string]interface{})
-	annotations, _ := metadata["annotations"].(map[string]interface{})
-	fmt.Printf("%+#v\n", manifest)
-	// rest will store a map of everything other than the above mentioned fields
+
 	rest := map[string]interface{}{}
+	// rest will store a map of everything other than the above mentioned fields
+
+	// Labels and annotations are stored inside the "component.Coonfiguration" hence not skipped while assiging manifest properties.
 	for k, v := range manifest {
 		// Ignore a few fields
-		if k == "apiVersion" || k == "kind" || k == "metadata" || k == "status" {
+		if k == "apiVersion" || k == "kind" || k == "status" {
 			continue
 		}
 
 		rest[k] = v
-	}
-
-	id := name
-	uid, err := uuid.NewV4()
-	if err == nil {
-		id = uid.String()
-	}
-	if apiVersion == "" || kind == "" {
-		return "", Service{}, ErrCreatePatternService(fmt.Errorf("empty apiVersion or kind in manifest"))
 	}
 
 	// Get MeshModel entity with the selectors
@@ -559,63 +492,50 @@ func createPatternServiceFromK8s(manifest map[string]interface{}, regManager *re
 		Name:       kind,
 		APIVersion: apiVersion,
 	})
+
 	if len(componentList) == 0 {
-		return "", Service{}, ErrCreatePatternService(fmt.Errorf("no resources found for APIVersion: %s Kind: %s", apiVersion, kind))
+		return component.ComponentDefinition{}, ErrCreatePatternService(fmt.Errorf("no resources found for APIVersion: %s Kind: %s", apiVersion, kind))
 	}
+
 	// just needs the first entry to grab meshmodel-metadata and other model requirements
 	comp, ok := componentList[0].(*component.ComponentDefinition)
 	if !ok {
-		return "", Service{}, ErrCreatePatternService(fmt.Errorf("cannot cast to the component-definition for APIVersion: %s Kind: %s", apiVersion, kind))
-	}
-	// Setup labels
-	castedLabel := map[string]string{}
-	for k, v := range labels {
-		cv, ok := v.(string)
-		if ok {
-			castedLabel[k] = cv
-		}
+		return component.ComponentDefinition{}, ErrCreatePatternService(fmt.Errorf("cannot cast to the component-definition for APIVersion: %s Kind: %s", apiVersion, kind))
 	}
 
-	// Setup annotations
-	castedAnnotation := map[string]string{}
-	for k, v := range annotations {
-		cv, ok := v.(string)
-		if ok {
-			castedAnnotation[k] = cv
-		}
-	}
 	rest = Format.Prettify(rest, false)
 	uuidV4, _ := uuid.NewV4()
-	svc := Service{
-		Name:        name,
-		Type:        comp.Component.Kind,
-		APIVersion:  comp.Component.Version,
-		Model:       comp.Model.Name,
-		Labels:      castedLabel,
-		Annotations: castedAnnotation,
-		Settings:    rest,
-		Traits: map[string]interface{}{
-			"meshmap": map[string]interface{}{
-				"id":                 uuidV4,
-				"meshmodel-metadata": comp.Metadata,
-			},
+	declaration := component.ComponentDefinition{
+		Id:            uuidV4,
+		SchemaVersion: comp.SchemaVersion,
+		Version:       comp.Version,
+		DisplayName:   name,
+		Component: component.Component{
+			Version: comp.Component.Version,
+			Kind:    comp.Component.Kind,
 		},
+		Model:         comp.Model,
+		Configuration: rest,
+		Metadata:      comp.Metadata,
+		Capabilities:  comp.Capabilities,
+		Styles:        comp.Styles,
+		Status:        comp.Status,
 	}
 
-	assignNamespaceForNamespacedScopedComp(&svc, metadata, comp)
-	return id, svc, nil
+	assignNamespaceForNamespacedScopedComp(&declaration, metadata, comp)
+	return declaration, nil
 }
 
-func assignNamespaceForNamespacedScopedComp(svc *Service, metadata map[string]interface{}, compDef *component.ComponentDefinition) *Service {
+func assignNamespaceForNamespacedScopedComp(declaration *component.ComponentDefinition, metadata map[string]interface{}, compDef *component.ComponentDefinition) *component.ComponentDefinition {
 	if isNamespacedComponent(compDef) {
 		namespace, _ := mutils.Cast[string](metadata["namespace"])
 		if namespace == "" {
-			svc.Namespace = "default"
-		} else {
-			svc.Namespace = namespace
+			metadata["namespace"] = "default"
 		}
 	}
-	return svc
+
+	declaration.Configuration["metadata"] = metadata
+	return declaration
 }
 
 // Checks whether the component is namespaced scope or not.
