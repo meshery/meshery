@@ -22,10 +22,9 @@ type Selector struct {
 	helpers  Helpers
 }
 
-func New(reg *meshmodel.RegistryManager, helpers Helpers) *Selector {
+func New(reg *meshmodel.RegistryManager) *Selector {
 	return &Selector{
 		registry: reg,
-		helpers:  helpers,
 	}
 }
 

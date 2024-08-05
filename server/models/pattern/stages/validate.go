@@ -62,7 +62,7 @@ func formatValue(path string, val map[string]interface{}) error {
 }
 
 func Validator(prov ServiceInfoProvider, act ServiceActionProvider, validate bool) ChainStageFunction {
-	s := selector.New(act.GetRegistry(), prov)
+	s := selector.New(act.GetRegistry())
 
 	return func(data *Data, err error, next ChainStageNextFunction) {
 		if err != nil {

@@ -295,13 +295,6 @@ func (sip *serviceInfoProvider) GetMesheryPatternResource(name, namespace, typ, 
 	return nil, fmt.Errorf("resource not found")
 }
 
-func (sip *serviceInfoProvider) GetServiceMesh() (string, string) {
-	return "", ""
-}
-
-func (sip *serviceInfoProvider) GetAPIVersionForKind(string) string {
-	return ""
-}
 
 func (sip *serviceInfoProvider) IsDelete() bool {
 	return sip.opIsDelete
