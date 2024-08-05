@@ -10,12 +10,13 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ghodss/yaml"
+	yaml "github.com/ghodss/yaml"
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/meshes"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshery/server/models/pattern/patterns"
+	"github.com/spf13/viper"
 
 	"github.com/layer5io/meshery/server/models/pattern/patterns/k8s"
 	"github.com/layer5io/meshery/server/models/pattern/stages"
@@ -27,7 +28,6 @@ import (
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 	"github.com/pkg/errors"
-	"github.com/spf13/viper"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -91,10 +91,15 @@ func (h *Handler) PatternFileHandler(
 		}
 	}
 
-	isDel := r.Method == http.MethodDelete
-	isDryRun := r.URL.Query().Get("dryRun") == "true"
+	queryParams, _ := extractBoolQueryParams(r, "dryRun", "skipCRD", "verify", "upgrade")
+	isDryRun := queryParams["dryRun"]
+	skipCRDAndOperator := queryParams["skipCRD"]
+	validate := queryParams["verify"]
+	upgradeExistingRelease := queryParams["upgrade"]
+
+	isDelete := r.Method == http.MethodDelete
 	action := "deploy"
-	if isDel {
+	if isDelete {
 		action = "undeploy"
 	}
 
@@ -113,24 +118,23 @@ func (h *Handler) PatternFileHandler(
 		return
 	}
 
-	queryParams := r.URL.Query()
-
-	response, err := _processPattern(
-		r.Context(),
-		provider,
-		patternFile,
-		prefObj,
-		user.ID,
-		isDel,
-		queryParams.Get("verify") == "true",
-		isDryRun,
-		queryParams.Get("skipCRD") == "true",
-		queryParams.Get("upgrade") == "true",
-		viper.GetBool("DEBUG"),
-		h.registryManager,
-		h.config.EventBroadcaster,
-		h.log,
-	)
+	opts := &core.ProcessPatternOptions{
+		Context:                r.Context(),
+		Provider:               provider,
+		Pattern:                patternFile,
+		PrefObj:                prefObj,
+		UserID:                 user.ID,
+		IsDelete:               isDelete,
+		Validate:               validate,
+		DryRun:                 isDryRun,
+		SkipCRDAndOperator:     skipCRDAndOperator,
+		UpgradeExistingRelease: upgradeExistingRelease,
+		SkipPrintLogs:          viper.GetBool("DEBUG"),
+		Registry:               h.registryManager,
+		EventBroadcaster:       h.config.EventBroadcaster,
+		Log:                    h.log,
+	}
+	response, err := _processPattern(opts)
 
 	patternID := patternFile.Id
 	eventBuilder := events.NewEvent().ActedUpon(patternID).FromUser(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction(action)
@@ -176,33 +180,19 @@ func (h *Handler) PatternFileHandler(
 	_ = ec.Encode(response)
 }
 
-func _processPattern(
-	ctx context.Context,
-	provider models.Provider,
-	pattern pattern.PatternFile,
-	prefObj *models.Preference,
-	userID string,
-	isDelete,
-	validate,
-	dryRun,
-	skipCrdAndOperator,
-	upgradeExistingRelease,
-	skipPrintLogs bool,
-	registry *meshmodel.RegistryManager,
-	ec *models.Broadcast,
-	l logger.Handler,
-) (map[string]interface{}, error) {
+func _processPattern(opts *core.ProcessPatternOptions) (map[string]interface{}, error) {
 	resp := make(map[string]interface{})
 
 	// Get the token from the context
-	token, ok := ctx.Value(models.TokenCtxKey).(string)
+	token, ok := opts.Context.Value(models.TokenCtxKey).(string)
 	if !ok {
 		return nil, ErrRetrieveUserToken(fmt.Errorf("token not found in the context"))
 	}
-	// // Get the kubehandler from the context
-	k8scontexts, ok := ctx.Value(models.KubeClustersKey).([]models.K8sContext)
+
+	// Get the kubehandler from the context
+	k8scontexts, ok := opts.Context.Value(models.KubeClustersKey).([]models.K8sContext)
 	if !ok || len(k8scontexts) == 0 {
-		return nil, ErrInvalidKubeHandler(fmt.Errorf("failed to find k8s handler for \"%s\"", pattern.Name), "_processPattern couldn't find a valid k8s handler")
+		return nil, ErrInvalidKubeHandler(fmt.Errorf("failed to find k8s handler for \"%s\"", opts.Pattern.Name), "_processPattern couldn't find a valid k8s handler")
 	}
 
 	var ctxToconfig = make(map[string]string)
@@ -212,34 +202,29 @@ func _processPattern(
 			return nil, ErrInvalidKubeConfig(fmt.Errorf("failed to find Kubernetes config"), "_processPattern couldn't find a valid Kubernetes config")
 		}
 		ctxToconfig[ctx.ID] = string(cfg)
-		// configs = append(configs, string(cfg))
 	}
 
 	internal := func(mk8scontext []models.K8sContext) (map[string]interface{}, error) {
 		sip := &serviceInfoProvider{
 			token:      token,
-			provider:   provider,
-			opIsDelete: isDelete,
+			provider:   opts.Provider,
+			opIsDelete: opts.IsDelete,
 		}
 		sap := &serviceActionProvider{
-			token:    token,
-			log:      l,
-			provider: provider,
-			prefObj:  prefObj,
-			// kubeClient:    kubeClient,
-			opIsDelete: isDelete,
-			userID:     userID,
-			registry:   registry,
-			// kubeconfig:    kubecfg,
-			// kubecontext:   mk8scontext,
-			skipPrintLogs:          skipPrintLogs,
-			skipCrdAndOperator:     skipCrdAndOperator,
-			upgradeExistingRelease: upgradeExistingRelease,
+			token:                  token,
+			log:                    opts.Log,
+			provider:               opts.Provider,
+			prefObj:                opts.PrefObj,
+			userID:                 opts.UserID,
+			registry:               opts.Registry,
+			skipPrintLogs:          opts.SkipPrintLogs,
+			skipCrdAndOperator:     opts.SkipCRDAndOperator,
+			upgradeExistingRelease: opts.UpgradeExistingRelease,
 			ctxTokubeconfig:        ctxToconfig,
 			accumulatedMsgs:        []string{},
 			err:                    nil,
-			eventsChannel:          ec,
-			patternName:            strings.ToLower(pattern.Name),
+			eventsChannel:          opts.EventBroadcaster, // not sure what this should be
+			patternName:            strings.ToLower(opts.Pattern.Name),
 		}
 		fmt.Println("line 244 reached")
 
@@ -247,16 +232,17 @@ func _processPattern(
 		chain.
 			// Add(stages.Import(sip, sap)).
 			Add(stages.Format()).
-			Add(stages.Filler(skipPrintLogs)).
+			// Add(stages.ServiceIdentifierAndMutator(sip, sap)).
+			Add(stages.Filler(opts.SkipPrintLogs)).
 			// Calling this stage `The Validation stage` is a bit deceiving considering
 			// that the validation stage also formats the `data` (chain function parameter) that the
 			// subsequent stages depend on.
 			// We are skipping the `Validation` based on "verify" query paramerter
-			Add(stages.Validator(sip, sap, validate)) // not required as client side RJSF validation is enough, but for mesheryctl client it's required
-		if dryRun {
+			Add(stages.Validator(sip, sap, opts.Validate)) // not required as client side RJSF validation is enough, but for mesheryctl client it's required
+		if opts.DryRun {
 			chain.Add(stages.DryRun(sip, sap))
 		}
-		if !dryRun {
+		if !opts.DryRun {
 			chain.
 				Add(stages.Provision(sip, sap, sap.log))
 			// Removed Persist stage
@@ -279,8 +265,8 @@ func _processPattern(
 				sap.err = err
 			}).
 			Process(&stages.Data{
-				Pattern: &pattern,
-				Other:   map[string]interface{}{},
+				Pattern:                       &opts.Pattern,
+				Other:                         map[string]interface{}{},
 				DeclartionToDefinitionMapping: make(map[uuid.UUID]component.ComponentDefinition),
 			})
 		return resp, sap.err

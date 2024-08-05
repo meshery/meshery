@@ -6,6 +6,7 @@ import (
 	"sync"
 
 	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 )
 
@@ -78,22 +79,19 @@ func (mc *ContentModifier) AddMetadataForPatterns(ctx context.Context, contentBy
 
 // isPatternSupported takes a patternfile and returns the status of its current support by using dry run
 func (mc *ContentModifier) isPatternSupported(ctx context.Context, patternFile pattern.PatternFile) (msg string, ok bool) {
-	resp, err := _processPattern(
-		ctx,
-		mc.provider,
-		patternFile,
-		mc.prefObj,
-		mc.userID,
-		false,
-		true,
-		false,
-		true,
-		false,
-		true,
-		nil,
-		nil,
-		nil,
-	)
+	resp, err := _processPattern(&core.ProcessPatternOptions{
+		Context:                ctx,
+		Provider:               mc.provider,
+		Pattern:                patternFile,
+		PrefObj:                mc.prefObj,
+		UserID:                 mc.userID,
+		IsDelete:               false,
+		Validate:               true,
+		DryRun:                 true,
+		SkipCRDAndOperator:     true,
+		UpgradeExistingRelease: false,
+		SkipPrintLogs:          true,
+	})
 	if err != nil {
 		return err.Error(), false
 	}
