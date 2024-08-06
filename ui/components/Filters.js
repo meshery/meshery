@@ -74,7 +74,7 @@ import {
   useUploadFilterFileMutation,
 } from '@/rtk-query/filter';
 import LoadingScreen from './LoadingComponents/LoadingComponent';
-import { useGetProviderCapabilitiesQuery, useGetUserPrefQuery } from '@/rtk-query/user';
+import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
 import { ctxUrl } from '../utils/multi-ctx';
 import dataFetch from '../lib/data-fetch';
 
@@ -260,7 +260,6 @@ function MesheryFilters({
   const [filters, setFilters] = useState([]);
   const [selectedFilter, setSelectedFilter] = useState(resetSelectedFilter());
   const [selectedRowData, setSelectedRowData] = useState(null);
-  const [, setExtensionPreferences] = useState({});
   const [canPublishFilter, setCanPublishFilter] = useState(false);
   const [importSchema, setImportSchema] = useState({});
   const [publishSchema, setPublishSchema] = useState({});
@@ -320,13 +319,6 @@ function MesheryFilters({
   });
 
   const { data: capabilitiesData } = useGetProviderCapabilitiesQuery();
-
-  const {
-    data: userData,
-    isSuccess: isUserDataFetched,
-    isError: isUserError,
-    error: userDataError,
-  } = useGetUserPrefQuery();
 
   const [cloneFilter] = useCloneFilterMutation();
   const [publishFilter] = usePublishFilterMutation();
@@ -548,13 +540,8 @@ function MesheryFilters({
   // };
 
   useEffect(() => {
-    if (isUserDataFetched && userData) {
-      setExtensionPreferences(userData?.usersExtensionPreferences);
-    } else if (isUserError) {
-      console.log(userDataError);
-    }
     handleSetFilters(filters);
-  }, [catalogVisibility, isUserDataFetched, userData]);
+  }, [catalogVisibility]);
 
   useEffect(() => {
     catalogVisibilityRef.current = catalogVisibility;
