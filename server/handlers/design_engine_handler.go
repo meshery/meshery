@@ -135,7 +135,7 @@ func (h *Handler) PatternFileHandler(
 			"error": err,
 		}
 
-		event := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("%s error for design '%s': Kubernetes cluster is not reachable.", action, patternFile.Name)).WithMetadata(metadata).Build()
+		event := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to %s design '%s'.", action, patternFile.Name)).WithMetadata(metadata).Build()
 		_ = provider.PersistEvent(event)
 		go h.config.EventBroadcaster.Publish(userID, event)
 
@@ -196,7 +196,7 @@ func _processPattern(
 	// // Get the kubehandler from the context
 	k8scontexts, ok := ctx.Value(models.KubeClustersKey).([]models.K8sContext)
 	if !ok || len(k8scontexts) == 0 {
-		return nil, ErrInvalidKubeHandler(fmt.Errorf("failed to find Kubernetes cluster for \"%s\"", pattern.Name), userID)
+		return nil, ErrInvalidKubeHandler(fmt.Errorf("Kubernetes cluster for \"%s\", is unavailable.", pattern.Name), userID)
 	}
 
 	// // Get the kubernetes config from the context
