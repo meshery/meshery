@@ -11,35 +11,35 @@ list: include
 
 ## List of Announced Vulnerabilities
 
+<div style="overflow-x: auto;">
 
-<table>
-<tr>
-  <th> DATE ANNOUNCED </th>
-  <th> CVE ID </th>
-  <th> DESCRIPTION </th>
-  <th> AFFECTED COMPONENT </th>
-  <th> VULNERABLE VERSION </th>
-  <th> PATCHED VERSION </th>
-  <th> FIX DETAILS </th>
-  <th> LINKS </th>
-</tr>
-{% assign vulns = site.data.vulnerabilities.announce | sort: "Date-Announced" | reverse %}
-
-{% for vuln in vulns %}
-
-<tr>
-  <td> {{vuln.DateAnnounced}} </td>
-  <td> {{vuln.CVE}} </td>
-  <td> {{vuln.Description}} </td>
-  <td> {{vuln.AffectedComponent}} </td>
-  <td> {{vuln.VulnerableVersion}} </td>
-  <td> {{vuln.PatchedVersion}} </td>
-  <td> {{vuln.FixDetails}} </td>
-  <td> {{vuln.Links}} </td>
-</tr>
-
-{% endfor %}
+<table style="width:100%; border-collapse: collapse;">
+  <tr style="background-color:#f2f2f2;">
+    <th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">DATE ANNOUNCED</th>
+    <th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">CVE ID</th>
+    <th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">DESCRIPTION</th>
+    <th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">AFFECTED COMPONENT</th>
+    <th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">VULNERABLE VERSION</th>
+    <th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">PATCHED VERSION</th>
+    <th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">FIX DETAILS</th>
+    <th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">LINKS</th>
+  </tr>
+  {% assign vulns = site.data.vulnerabilities.announce | sort: "Date-Announced" | reverse %}
+  {% for vuln in vulns %}
+  <tr>
+    <td style="border: 1px solid #dddddd; padding: 8px;">{{vuln.DateAnnounced}}</td>
+    <td style="border: 1px solid #dddddd; padding: 8px;">{{vuln.CVE}}</td>
+    <td style="border: 1px solid #dddddd; padding: 8px;">{{vuln.Description}}</td>
+    <td style="border: 1px solid #dddddd; padding: 8px;">{{vuln.AffectedComponent}}</td>
+    <td style="border: 1px solid #dddddd; padding: 8px;">{{vuln.VulnerableVersion}}</td>
+    <td style="border: 1px solid #dddddd; padding: 8px;">{{vuln.PatchedVersion}}</td>
+    <td style="border: 1px solid #dddddd; padding: 8px;">{{vuln.FixDetails}}</td>
+    <td style="border: 1px solid #dddddd; padding: 8px;">{{vuln.Links}}</td>
+  </tr>
+  {% endfor %}
 </table>
+
+</div>
 
 ## Reporting a vulnerability
 
