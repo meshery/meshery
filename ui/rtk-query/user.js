@@ -1,3 +1,4 @@
+import { ctxUrl } from '@/utils/multi-ctx';
 import { api } from './index';
 
 const userApi = api.injectEndpoints({
@@ -19,11 +20,21 @@ const userApi = api.injectEndpoints({
       method: 'GET',
     }),
     updateUserPref: builder.mutation({
-      query: (queryArgs) => ({
+      query: (queryArg) => ({
         url: 'user/prefs',
         method: 'POST',
-        body: queryArgs,
+        body: queryArg,
         credentials: 'include',
+      }),
+    }),
+    updateUserPrefWithContext: builder.mutation({
+      query: (queryArg) => ({
+        url: ctxUrl('/user/prefs', queryArg.selectedK8sContexts),
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json;charset=UTF-8',
+        },
+        body: queryArg,
       }),
     }),
     getProviderCapabilities: builder.query({
@@ -39,5 +50,6 @@ export const {
   useLazyGetTokenQuery,
   useGetUserPrefQuery,
   useUpdateUserPrefMutation,
+  useUpdateUserPrefWithContextMutation,
   useGetProviderCapabilitiesQuery,
 } = userApi;
