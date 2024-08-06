@@ -68,22 +68,6 @@ const filters = api
           body: queryArg.uploadBody,
         }),
       }),
-      deployFilter: builder.mutation({
-        query: (queryArg) => ({
-          url: `${ctxUrl('filter/deploy', queryArg.selectedK8sContexts)}`,
-          method: 'POST',
-          body: queryArg.filter_file,
-          credentials: 'include',
-        }),
-      }),
-      unDeployfilter: builder.mutation({
-        query: (queryArg) => ({
-          url: ctxUrl('filter/deploy', queryArg.selectedK8sContexts),
-          method: 'DELETE',
-          body: queryArg.filter_file,
-          credentials: 'include',
-        }),
-      }),
     }),
   });
 
@@ -95,6 +79,4 @@ export const {
   useDeleteFilterMutation,
   useUpdateFilterFileMutation,
   useUploadFilterFileMutation,
-  useDeployFilterMutation,
-  useUnDeployfilterMutation,
 } = filters;

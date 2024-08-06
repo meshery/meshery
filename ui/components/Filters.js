@@ -72,12 +72,12 @@ import {
   useDeleteFilterMutation,
   useUpdateFilterFileMutation,
   useUploadFilterFileMutation,
-  useDeployFilterMutation,
-  useUnDeployfilterMutation,
 } from '@/rtk-query/filter';
 import LoadingScreen from './LoadingComponents/LoadingComponent';
 import { useGetProviderCapabilitiesQuery, useGetUserPrefQuery } from '@/rtk-query/user';
 import { useGetSchemaQuery } from '@/rtk-query/schema';
+import { ctxUrl } from '../utils/multi-ctx';
+import dataFetch from '../lib/data-fetch';
 
 const styles = (theme) => ({
   grid: {
@@ -271,6 +271,8 @@ function MesheryFilters({
     /**  @type {TypeView} */
     ('grid'),
   );
+  const FILTER_URL = '/api/filter';
+  const DEPLOY_URL = FILTER_URL + '/deploy';
 
   //hooks
   const { notify } = useNotification();
@@ -350,8 +352,6 @@ function MesheryFilters({
   const [deleteFilterFile] = useDeleteFilterMutation();
   const [updateFilterFile] = useUpdateFilterFileMutation();
   const [uploadFilterFile] = useUploadFilterFileMutation();
-  const [deployFilter] = useDeployFilterMutation();
-  const [unDeployFilter] = useUnDeployfilterMutation();
   /**
    * Checking whether users are signed in under a provider that doesn't have
    * publish filter capability and setting the canPublishFilter state accordingly
@@ -601,35 +601,28 @@ function MesheryFilters({
   }, []);
 
   const handleDeploy = (filter_file, name) => {
-    deployFilter({
-      filter_file,
-      selectedK8sContexts,
-    })
-      .unwrap()
-      .then(() => {
-        updateProgress({ showProgress: false });
+    dataFetch(
+      ctxUrl(DEPLOY_URL, selectedK8sContexts),
+      { credentials: 'include', method: 'POST', body: filter_file },
+      () => {
+        console.log('FilterFile Deploy API', `/api/filter/deploy`);
         notify({ message: `"${name}" filter deployed`, event_type: EVENT_TYPES.SUCCESS });
-      })
-      .catch(() => {
         updateProgress({ showProgress: false });
-        handleError(ACTION_TYPES.DEPLOY_FILTERS);
-      });
+      },
+      handleError(ACTION_TYPES.DEPLOY_FILTERS),
+    );
   };
 
   const handleUndeploy = (filter_file, name) => {
-    unDeployFilter({
-      filter_file,
-      selectedK8sContexts,
-    })
-      .unwrap()
-      .then(() => {
+    dataFetch(
+      ctxUrl(DEPLOY_URL, selectedK8sContexts),
+      { credentials: 'include', method: 'DELETE', body: filter_file },
+      () => {
         updateProgress({ showProgress: false });
         notify({ message: `"${name}" filter undeployed`, event_type: EVENT_TYPES.SUCCESS });
-      })
-      .catch(() => {
-        updateProgress({ showProgress: false });
-        handleError(ACTION_TYPES.UNDEPLOY_FILTERS);
-      });
+      },
+      handleError(ACTION_TYPES.UNDEPLOY_FILTERS),
+    );
   };
 
   const handlePublish = (formData) => {
