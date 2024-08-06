@@ -21,7 +21,6 @@ import Moment from 'react-moment';
 import CloseIcon from '@material-ui/icons/Close';
 import EditIcon from '@material-ui/icons/Edit';
 import { toggleCatalogContent, updateProgress } from '../lib/store';
-import dataFetch from '../lib/data-fetch';
 import PromptComponent from './PromptComponent';
 import FullscreenIcon from '@material-ui/icons/Fullscreen';
 import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
@@ -31,7 +30,6 @@ import FiltersGrid from './MesheryFilters/FiltersGrid';
 import { trueRandom } from '../lib/trueRandom';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import PublicIcon from '@material-ui/icons/Public';
-import { ctxUrl } from '../utils/multi-ctx';
 import ConfirmationMsg from './ConfirmationModal';
 import PublishIcon from '@material-ui/icons/Publish';
 import downloadContent from '../utils/fileDownloader';
@@ -74,9 +72,12 @@ import {
   useDeleteFilterMutation,
   useUpdateFilterFileMutation,
   useUploadFilterFileMutation,
+  useDeployFilterMutation,
+  useUnDeployfilterMutation,
 } from '@/rtk-query/filter';
 import LoadingScreen from './LoadingComponents/LoadingComponent';
-import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
+import { useGetProviderCapabilitiesQuery, useGetUserPrefQuery } from '@/rtk-query/user';
+import { useGetSchemaQuery } from '@/rtk-query/schema';
 
 const styles = (theme) => ({
   grid: {
@@ -260,7 +261,7 @@ function MesheryFilters({
   const [filters, setFilters] = useState([]);
   const [selectedFilter, setSelectedFilter] = useState(resetSelectedFilter());
   const [selectedRowData, setSelectedRowData] = useState(null);
-  const [setExtensionPreferences] = useState({});
+  const [, setExtensionPreferences] = useState({});
   const [canPublishFilter, setCanPublishFilter] = useState(false);
   const [importSchema, setImportSchema] = useState({});
   const [publishSchema, setPublishSchema] = useState({});
@@ -270,8 +271,6 @@ function MesheryFilters({
     /**  @type {TypeView} */
     ('grid'),
   );
-  const FILTER_URL = '/api/filter';
-  const DEPLOY_URL = FILTER_URL + '/deploy';
 
   //hooks
   const { notify } = useNotification();
@@ -320,6 +319,30 @@ function MesheryFilters({
   });
 
   const { data: capabilitiesData } = useGetProviderCapabilitiesQuery();
+  const {
+    data: filterSchema,
+    isSuccess: isFilterSchemaFetched,
+    isError: isFilterError,
+    error: filterError,
+  } = useGetSchemaQuery({
+    schemaName: 'filter',
+  });
+
+  const {
+    data: publishSchemaData,
+    isSuccess: isPublishSchemaFetched,
+    isError: isPublishError,
+    error: publishError,
+  } = useGetSchemaQuery({
+    schemaName: 'publish',
+  });
+
+  const {
+    data: userData,
+    isSuccess: isUserDataFetched,
+    isError: isUserError,
+    error: userDataError,
+  } = useGetUserPrefQuery();
 
   const [cloneFilter] = useCloneFilterMutation();
   const [publishFilter] = usePublishFilterMutation();
@@ -327,6 +350,63 @@ function MesheryFilters({
   const [deleteFilterFile] = useDeleteFilterMutation();
   const [updateFilterFile] = useUpdateFilterFileMutation();
   const [uploadFilterFile] = useUploadFilterFileMutation();
+  const [deployFilter] = useDeployFilterMutation();
+  const [unDeployFilter] = useUnDeployfilterMutation();
+  /**
+   * Checking whether users are signed in under a provider that doesn't have
+   * publish filter capability and setting the canPublishFilter state accordingly
+   */
+
+  useEffect(() => {
+    const updatePublishSchema = async (result) => {
+      try {
+        const { models } = await getMeshModels();
+        const modelNames = _.uniq(models?.map((model) => model.displayName));
+        modelNames.sort();
+
+        // Modify the schema using the utility function
+        const modifiedSchema = modifyRJSFSchema(
+          result.rjsfSchema,
+          'properties.compatibility.items.enum',
+          modelNames,
+        );
+        setPublishSchema({ rjsfSchema: modifiedSchema, uiSchema: result.uiSchema });
+        setMeshModels(models);
+      } catch (err) {
+        console.error(err);
+        setPublishSchema(result);
+      }
+    };
+
+    if (isFilterSchemaFetched && filterSchema) {
+      setImportSchema(filterSchema);
+    }
+    if (isPublishSchemaFetched && publishSchemaData) {
+      updatePublishSchema(publishSchemaData);
+    }
+
+    if (isFilterError || isPublishError) {
+      handleError(filterError || publishError);
+    }
+
+    if (capabilitiesData) {
+      const capabilitiesRegistry = capabilitiesData;
+      const filtersCatalogCapability = capabilitiesRegistry?.capabilities.filter(
+        (val) => val.feature === MesheryFiltersCatalog,
+      );
+      if (filtersCatalogCapability?.length > 0) setCanPublishFilter(true);
+    }
+  }, [
+    isFilterSchemaFetched,
+    filterSchema,
+    isPublishSchemaFetched,
+    publishSchemaData,
+    isFilterError,
+    filterError,
+    isPublishError,
+    publishError,
+    capabilitiesData,
+  ]);
 
   useEffect(() => {
     if (filtersData) {
@@ -381,59 +461,6 @@ function MesheryFilters({
       error_msg: 'failed to fetch import schema',
     },
   };
-
-  /**
-   * Checking whether users are signed in under a provider that doesn't have
-   * publish filter capability and setting the canPublishFilter state accordingly
-   */
-  useEffect(() => {
-    dataFetch(
-      '/api/schema/resource/filter',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      (result) => {
-        setImportSchema(result);
-      },
-      handleError(ACTION_TYPES.SCHEMA_FETCH),
-    );
-    dataFetch(
-      '/api/schema/resource/publish',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      async (result) => {
-        try {
-          const { models } = await getMeshModels();
-          const modelNames = _.uniq(models?.map((model) => model.displayName));
-          modelNames.sort();
-
-          // Modify the schema using the utility function
-          const modifiedSchema = modifyRJSFSchema(
-            result.rjsfSchema,
-            'properties.compatibility.items.enum',
-            modelNames,
-          );
-          setPublishSchema({ rjsfSchema: modifiedSchema, uiSchema: result.uiSchema });
-          setMeshModels(models);
-        } catch (err) {
-          console.error(err);
-          setPublishSchema(result);
-        }
-      },
-      handleError(ACTION_TYPES.SCHEMA_FETCH),
-    );
-
-    if (capabilitiesData) {
-      const capabilitiesRegistry = capabilitiesData;
-      const filtersCatalogCapability = capabilitiesRegistry?.capabilities.filter(
-        (val) => val.feature === MesheryFiltersCatalog,
-      );
-      if (filtersCatalogCapability?.length > 0) setCanPublishFilter(true);
-    }
-  }, [capabilitiesData]);
 
   const searchTimeout = useRef(null);
 
@@ -535,22 +562,6 @@ function MesheryFilters({
   //   );
   // };
 
-  const fetchUserPrefs = () => {
-    dataFetch(
-      '/api/user/prefs',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      (result) => {
-        if (result) {
-          setExtensionPreferences(result?.usersExtensionPreferences);
-        }
-      },
-      (err) => console.error(err),
-    );
-  };
-
   // const handleCatalogVisibility = () => {
   //   handleCatalogPreference(!catalogVisibilityRef.current);
   //   catalogVisibilityRef.current = !catalogVisibility;
@@ -558,9 +569,13 @@ function MesheryFilters({
   // };
 
   useEffect(() => {
-    fetchUserPrefs();
+    if (isUserDataFetched && userData) {
+      setExtensionPreferences(userData?.usersExtensionPreferences);
+    } else if (isUserError) {
+      console.log(userDataError);
+    }
     handleSetFilters(filters);
-  }, [catalogVisibility]);
+  }, [catalogVisibility, isUserDataFetched, userData]);
 
   useEffect(() => {
     catalogVisibilityRef.current = catalogVisibility;
@@ -586,28 +601,35 @@ function MesheryFilters({
   }, []);
 
   const handleDeploy = (filter_file, name) => {
-    dataFetch(
-      ctxUrl(DEPLOY_URL, selectedK8sContexts),
-      { credentials: 'include', method: 'POST', body: filter_file },
-      () => {
-        console.log('FilterFile Deploy API', `/api/filter/deploy`);
-        notify({ message: `"${name}" filter deployed`, event_type: EVENT_TYPES.SUCCESS });
+    deployFilter({
+      filter_file,
+      selectedK8sContexts,
+    })
+      .unwrap()
+      .then(() => {
         updateProgress({ showProgress: false });
-      },
-      handleError(ACTION_TYPES.DEPLOY_FILTERS),
-    );
+        notify({ message: `"${name}" filter deployed`, event_type: EVENT_TYPES.SUCCESS });
+      })
+      .catch(() => {
+        updateProgress({ showProgress: false });
+        handleError(ACTION_TYPES.DEPLOY_FILTERS);
+      });
   };
 
   const handleUndeploy = (filter_file, name) => {
-    dataFetch(
-      ctxUrl(DEPLOY_URL, selectedK8sContexts),
-      { credentials: 'include', method: 'DELETE', body: filter_file },
-      () => {
+    unDeployFilter({
+      filter_file,
+      selectedK8sContexts,
+    })
+      .unwrap()
+      .then(() => {
         updateProgress({ showProgress: false });
         notify({ message: `"${name}" filter undeployed`, event_type: EVENT_TYPES.SUCCESS });
-      },
-      handleError(ACTION_TYPES.UNDEPLOY_FILTERS),
-    );
+      })
+      .catch(() => {
+        updateProgress({ showProgress: false });
+        handleError(ACTION_TYPES.UNDEPLOY_FILTERS);
+      });
   };
 
   const handlePublish = (formData) => {
