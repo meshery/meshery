@@ -1,4 +1,3 @@
-import { ctxUrl } from '@/utils/multi-ctx';
 import { api } from './index';
 
 const TAGS = {

@@ -75,7 +75,6 @@ import {
 } from '@/rtk-query/filter';
 import LoadingScreen from './LoadingComponents/LoadingComponent';
 import { useGetProviderCapabilitiesQuery, useGetUserPrefQuery } from '@/rtk-query/user';
-import { useGetSchemaQuery } from '@/rtk-query/schema';
 import { ctxUrl } from '../utils/multi-ctx';
 import dataFetch from '../lib/data-fetch';
 
@@ -321,23 +320,6 @@ function MesheryFilters({
   });
 
   const { data: capabilitiesData } = useGetProviderCapabilitiesQuery();
-  const {
-    data: filterSchema,
-    isSuccess: isFilterSchemaFetched,
-    isError: isFilterError,
-    error: filterError,
-  } = useGetSchemaQuery({
-    schemaName: 'filter',
-  });
-
-  const {
-    data: publishSchemaData,
-    isSuccess: isPublishSchemaFetched,
-    isError: isPublishError,
-    error: publishError,
-  } = useGetSchemaQuery({
-    schemaName: 'publish',
-  });
 
   const {
     data: userData,
@@ -356,38 +338,45 @@ function MesheryFilters({
    * Checking whether users are signed in under a provider that doesn't have
    * publish filter capability and setting the canPublishFilter state accordingly
    */
-
   useEffect(() => {
-    const updatePublishSchema = async (result) => {
-      try {
-        const { models } = await getMeshModels();
-        const modelNames = _.uniq(models?.map((model) => model.displayName));
-        modelNames.sort();
+    dataFetch(
+      '/api/schema/resource/filter',
+      {
+        method: 'GET',
+        credentials: 'include',
+      },
+      (result) => {
+        setImportSchema(result);
+      },
+      handleError(ACTION_TYPES.SCHEMA_FETCH),
+    );
+    dataFetch(
+      '/api/schema/resource/publish',
+      {
+        method: 'GET',
+        credentials: 'include',
+      },
+      async (result) => {
+        try {
+          const { models } = await getMeshModels();
+          const modelNames = _.uniq(models?.map((model) => model.displayName));
+          modelNames.sort();
 
-        // Modify the schema using the utility function
-        const modifiedSchema = modifyRJSFSchema(
-          result.rjsfSchema,
-          'properties.compatibility.items.enum',
-          modelNames,
-        );
-        setPublishSchema({ rjsfSchema: modifiedSchema, uiSchema: result.uiSchema });
-        setMeshModels(models);
-      } catch (err) {
-        console.error(err);
-        setPublishSchema(result);
-      }
-    };
-
-    if (isFilterSchemaFetched && filterSchema) {
-      setImportSchema(filterSchema);
-    }
-    if (isPublishSchemaFetched && publishSchemaData) {
-      updatePublishSchema(publishSchemaData);
-    }
-
-    if (isFilterError || isPublishError) {
-      handleError(filterError || publishError);
-    }
+          // Modify the schema using the utility function
+          const modifiedSchema = modifyRJSFSchema(
+            result.rjsfSchema,
+            'properties.compatibility.items.enum',
+            modelNames,
+          );
+          setPublishSchema({ rjsfSchema: modifiedSchema, uiSchema: result.uiSchema });
+          setMeshModels(models);
+        } catch (err) {
+          console.error(err);
+          setPublishSchema(result);
+        }
+      },
+      handleError(ACTION_TYPES.SCHEMA_FETCH),
+    );
 
     if (capabilitiesData) {
       const capabilitiesRegistry = capabilitiesData;
@@ -396,17 +385,7 @@ function MesheryFilters({
       );
       if (filtersCatalogCapability?.length > 0) setCanPublishFilter(true);
     }
-  }, [
-    isFilterSchemaFetched,
-    filterSchema,
-    isPublishSchemaFetched,
-    publishSchemaData,
-    isFilterError,
-    filterError,
-    isPublishError,
-    publishError,
-    capabilitiesData,
-  ]);
+  }, [capabilitiesData]);
 
   useEffect(() => {
     if (filtersData) {
