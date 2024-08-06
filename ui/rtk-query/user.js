@@ -18,6 +18,14 @@ const userApi = api.injectEndpoints({
       query: () => 'user/prefs',
       method: 'GET',
     }),
+    updateUserPref: builder.mutation({
+      query: (queryArgs) => ({
+        url: 'user/prefs',
+        method: 'POST',
+        body: queryArgs,
+        credentials: 'include',
+      }),
+    }),
     getProviderCapabilities: builder.query({
       query: () => 'provider/capabilities',
       method: 'GET',
@@ -30,5 +38,6 @@ export const {
   useGetUserByIdQuery,
   useLazyGetTokenQuery,
   useGetUserPrefQuery,
+  useUpdateUserPrefMutation,
   useGetProviderCapabilitiesQuery,
 } = userApi;

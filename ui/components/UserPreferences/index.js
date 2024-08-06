@@ -41,7 +41,11 @@ import { isExtensionOpen } from '../../pages/_app';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { useWindowDimensions } from '@/utils/dimension';
-import { useGetProviderCapabilitiesQuery, useGetUserPrefQuery } from '@/rtk-query/user';
+import {
+  useGetProviderCapabilitiesQuery,
+  useGetUserPrefQuery,
+  useUpdateUserPrefMutation,
+} from '@/rtk-query/user';
 
 const styles = (theme) => ({
   statsWrapper: {
@@ -237,8 +241,11 @@ const UserPreference = (props) => {
     isError: isUserDataError,
     error: userDataError,
   } = useGetUserPrefQuery();
+
   const { data: capabilitiesData, isSuccess: isCapabilitiesDataFetched } =
     useGetProviderCapabilitiesQuery();
+
+  const [updateUserPref] = useUpdateUserPrefMutation();
   const { notify } = useNotification();
 
   const handleValChange = (event, newVal) => {
@@ -255,21 +262,32 @@ const UserPreference = (props) => {
   const handleCatalogPreference = (catalogContent) => {
     let body = Object.assign({}, extensionPreferences);
     body['catalogContent'] = catalogContent;
-    dataFetch(
-      '/api/user/prefs',
-      {
-        credentials: 'include',
-        method: 'POST',
-        body: JSON.stringify({ usersExtensionPreferences: body }),
-      },
-      () => {
+    updateUserPref({ usersExtensionPreferences: body })
+      .unwrap()
+      .then(() => {
         notify({
           message: `Catalog Content was ${catalogContent ? 'enab' : 'disab'}led`,
           event_type: EVENT_TYPES.SUCCESS,
         });
-      },
-      handleError('There was an error sending your preference'),
-    );
+      })
+      .catch(() => {
+        handleError('There was an error sending your preference');
+      });
+    // dataFetch(
+    //   '/api/user/prefs',
+    //   {
+    //     credentials: 'include',
+    //     method: 'POST',
+    //     body: JSON.stringify({ usersExtensionPreferences: body }),
+    //   },
+    //   () => {
+    //     notify({
+    //       message: `Catalog Content was ${catalogContent ? 'enab' : 'disab'}led`,
+    //       event_type: EVENT_TYPES.SUCCESS,
+    //     });
+    //   },
+    //   handleError('There was an error sending your preference'),
+    // );
   };
 
   const handleToggle = (name) => () => {
