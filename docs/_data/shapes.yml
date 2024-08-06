@@ -1,0 +1,254 @@
+- Shape: Barrel
+  Description: A shape resembling a 3D barrel, with both the top and bottom edges appearing rounded. This shape can be used to represent data storage, such as databases or repositories.
+  CommonUsecase: 
+    - Representing databases in system architectures
+    - Indicating storage components in data flow diagrams
+  DependOn: Often used in conjunction with other shapes to highlight data storage elements.
+  SVG: |
+    <svg viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M38.7212 6.1944V33.8058C38.7212 38.9463 30.5523 38.7427 20.5002 38.7427C10.4482 38.7427 2.2793 38.9463 2.2793 33.8058V6.1944C2.2793 1.05386 10.4227 1.25744 20.5002 1.25744C30.5778 1.25744 38.7212 1.05386 38.7212 6.1944Z" fill="#00B39F" fill-opacity="0.1" stroke="#00B39F" stroke-miterlimit="10"/>
+    </svg>
+- Shape: BottomRoundRectangle
+  Description: A unique shape where only the bottom corners are rounded. This can be useful to indicate hierarchical relationships or to create a visual distinction from other rounded shapes.
+  CommonUsecase: 
+    - Representing partial processes or incomplete states
+    - Indicating dropdowns or expandable elements in UI diagrams
+  DependOn: Often used to show a distinction from fully rounded rectangles.
+  SVG: |
+    <svg viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M1.5 1H39.5V32.0236C39.5 35.8817 36.3817 39 32.5236 39H8.47635C4.61822 39 1.5 35.8817 1.5 32.0236V1Z" fill="#00B39F" fill-opacity="0.1" stroke="#00B39F" stroke-width="1" stroke-miterlimit="10"/>
+    </svg>
+- Shape: Star
+  Description: A shape with multiple points radiating outwards, typically used for highlighting special or notable nodes. It draws immediate attention, making it ideal for critical data points or focal nodes.
+  CommonUsecase: 
+    - Highlighting key nodes or central elements in a network
+    - Representing exceptional cases or high-priority items
+  DependOn: Usually stands out from other nodes, often central to the diagram's focus.
+  SVG: |
+    <svg viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M20.4716 2.13574L27.1532 12.9296L38.5094 15.8442L30.5529 25.4771L31.6154 38L20.4716 34.0727L9.35152 38L10.1306 25.5759L2.45752 15.8442L14.0026 13.0531L20.4716 2.13574Z" fill="#00B39F" fill-opacity="0.1" stroke="#00B39F" stroke-width="1" stroke-miterlimit="10"/>
+    </svg>
+- Shape: Vee
+  Description: A shape resembling the letter "V", often used to show directionality or a splitting point in flowcharts.
+  CommonUsecase: 
+    - Indicating merge points in version control diagrams
+    - Representing converging processes or data streams
+  DependOn: Often used in pairs or as part of directed flows.
+  SVG: |
+    <svg viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M37.4998 3L20.5118 36.9998L3.5 3L20.5118 14.3175L37.4998 3Z" fill="#00B39F" fill-opacity="0.1" stroke="#00B39F" stroke-width="1" stroke-miterlimit="10"/>
+    </svg>
+- Shape: RoundDiamond
+  Description: A diamond shape with rounded corners, used to indicate special conditions or decision points while maintaining a softer visual appeal.
+  CommonUsecase: 
+    - Softened decision points in flowcharts
+    - Representing stages in project management diagrams
+    - Indicating key milestones in timelines
+  DependOn: Often used as a less rigid alternative to sharp diamonds in decision-making processes
+  SVG: |
+    <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="20.3101" y="0.331543" width="27.8166" height="27.8166" rx="4.45066" transform="rotate(44.4462 20.3101 0.331543)" fill="#00B39F" fill-opacity="0.1" stroke="#00B39F" stroke-miterlimit="10"/>
+    </svg>
+- Shape: Right Rhomboid
+  Description: A rhomboid where one angle is a right angle, offering a distinctive look for special types of data connections or relationships.
+  CommonUsecase: 
+    - Representing skewed data or biased processes
+    - Indicating input/output in data flow diagrams
+    - Showing perspective or depth in 2D diagrams
+  DependOn: Used when directionality or bias needs to be emphasized
+  SVG: |
+    <svg viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M13.9786 0.999905H39.6475L26.9956 39H1.35279L13.9786 0.999905Z" fill="#00B39F" fill-opacity="0.1" stroke="#00B39F" stroke-miterlimit="10"/>
+    </svg>
+- Shape: Triangle
+  Description: A simple three-sided shape, often used to represent hierarchical data or directional flows. It is useful for indicating movement, direction, or hierarchical relationships within a network.
+  CommonUsecase: 
+    - Representing directional flow or hierarchy
+    - Indicating warning or caution points in a process
+    - Denoting transformation or conversion steps
+  DependOn: Often used in conjunction with other shapes to show direction or change.
+  SVG: |
+    <svg viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M20.5126 2L30.3177 20.0127L38.932 38.0001H20.5126H2.06787L10.7075 20.0127L20.5126 2Z" fill="#00B39F" fill-opacity="0.1" stroke="#00B39F" stroke-width="1" stroke-miterlimit="10"/>
+    </svg>
+- Shape: Round Triangle
+  Description: A triangular shape with rounded corners, providing a softer look while still indicating hierarchy or direction.
+  CommonUsecase: 
+    - Softened directional indicators in user interfaces
+    - Representing processes with smooth transitions
+    - Highlighting key points in infographics
+  DependOn: Often used where a standard triangle might seem too harsh or abrupt
+  SVG: |
+    <svg viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M17.4963 7.00738C18.9399 4.12018 23.0601 4.12019 24.5037 7.00739L37.1655 32.3309C38.4677 34.9355 36.5738 38 33.6618 38H8.33824C5.42623 38 3.53226 34.9355 4.83455 32.3309L17.4963 7.00738Z" fill="#00B39F" fill-opacity="0.1" stroke="#00B39F" stroke-miterlimit="10"/>
+    </svg>
+- Shape: Diamond
+  Description: A four-sided shape oriented at 45 degrees, resembling a diamond. It is typically used for decision points in flowcharts or to represent special conditions or states.
+  CommonUsecase: 
+    - Representing decision points in flowcharts
+    - Indicating branching logic in algorithms
+    - Key decision makers in organizational charts
+  DependOn: Often connected to multiple other nodes, representing different outcomes or paths.
+  SVG: |
+    <svg viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M20.5104 2.16931L38.6356 20.1693L20.5104 38.1707L2.36527 20.1693L20.5104 2.16931Z" fill="#00B39F" fill-opacity="0.1" stroke="#00B39F" stroke-miterlimit="10"/>
+    </svg>
+- Shape: Crescent
+  Description: A shape resembling a crescent moon, which can be used to represent phases, growth, or transition nodes within a graph.
+  CommonUsecase: 
+    - Representing partial or incomplete processes
+    - Indicating phases in cyclical processes
+    - Showing satellite or peripheral components in network diagrams
+  DependOn: Often used in conjunction with circular nodes to show relationships or phases
+  SVG: |
+    <svg viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M8.58192 7.90585C10.1208 5.93621 11.9673 4.40122 14.0188 3.34985C12.1971 9.82411 14.2885 17.0898 19.916 21.4866C25.423 25.789 32.7012 26.1674 38.5375 23.0885C37.9156 25.1274 36.927 27.1385 35.5137 28.9473C29.7037 36.3837 18.9635 37.7024 11.5272 31.8924C4.09071 26.0825 2.77197 15.3423 8.58192 7.90585Z" fill="#00B39F" fill-opacity="0.1" stroke="#00B39F" stroke-width="1" stroke-miterlimit="10"/>
+    </svg>
+
+- Shape: Parallelogram
+  Description: A four-sided shape with opposite sides parallel, used to represent data processing steps or functions with directional flow.
+  CommonUsecase:
+    - Representing input/output in data flow diagrams
+    - Indicating data storage or documents in process flows
+    - Showing transitional states in state diagrams
+  DependOn: Often connected to processing nodes or decision points
+  SVG: |
+    <svg viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M1.77734 39L39.2232 29.7375V1L1.77734 10.5V39Z" fill="#00B39F" fill-opacity="0.1" stroke="#00B39F" stroke-width="1" stroke-miterlimit="10"/>
+    </svg>
+
+- Shape: Rectangle
+  Description: A four-sided shape with straight edges and right-angle corners. It is a versatile shape often used to represent data types like documents, processes, or simple entities.
+  CommonUsecase:
+    - Representing processes in flowcharts
+    - Depicting containers or groupings
+    - Showing data storage in system diagrams
+  DependOn: Frequently contains or groups other nodes.
+  Note: 
+  SVG: |
+    <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M39 1H1V39H39V1Z" fill="#00B39F" fill-opacity="0.1" stroke="#00B39F" stroke-miterlimit="10"/>
+    </svg>
+
+- Shape: Rhomboid
+  Description: A quadrilateral with opposite sides parallel but not perpendicular, creating a skewed rectangle look. Useful for depicting relationships that aren't straightforward or direct.
+  CommonUsecase:
+    - Representing decision points in flowcharts
+    - Indicating data input/output in process diagrams
+  DependOn: Frequently used to show points of divergence or data transformation in flows.
+  Note: 
+  SVG: |
+    <svg viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M13.9785 38.9999H39.6475L26.9956 0.999756H1.35274L13.9785 38.9999Z" fill="#00B39F" fill-opacity="0.1" stroke="#00B39F" stroke-width="1" stroke-miterlimit="10"/>
+    </svg>
+
+- Shape: SlantedParallelogram
+  Description: A four-sided shape with opposite sides parallel but slanted, creating a dynamic appearance often used to indicate processes or flows that have a directional aspect.
+  CommonUsecase:
+    - Representing data transformation processes
+    - Indicating skewed or biased data flows
+    - Showing directional processes in data pipelines
+  DependOn: Often used in data flow diagrams to show transformation or direction
+  Note: 
+  SVG: |
+    <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="30.33,39.5 0.5,39.5 10.53,10.73 39.5,0.5" fill="#00B39F" fill-opacity="0.1" stroke="#00B39F" stroke-miterlimit="10"/>
+    </svg>
+- Shape: XWing
+  Description: This shape resembles the Star Wars X-Wing fighter, potentially useful for visually representing nodes that have multiple connections or interactions, symbolizing complexity and centrality.
+  CommonUsecase: 
+    - Representing complex intersections in network diagrams
+    - Showing multi-directional data flows
+    - Indicating pivot points in decision trees
+  DependOn: Used when multiple connections or paths need to be emphasized from a single point
+  SVG: |
+    <svg viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path stroke-miterlimit="10" d="M30.8738 19.6872C30.6794 19.9805 30.6794 19.9805 30.8738 20.0782C32.0402 21.251 33.2065 22.3261 34.3729 23.4989C36.0252 25.1604 37.6776 26.7242 39.3299 28.3857C39.3557 28.3857 39.3804 28.396 39.3986 28.4143C39.4169 28.4326 39.4271 28.4575 39.4271 28.4834C39.3299 28.5811 39.1355 28.6789 39.0383 28.7766L34.9561 31.7087C33.9841 32.3928 32.915 33.1747 31.943 33.9566C31.8458 34.0543 31.8458 33.9566 31.7486 33.9566C30.7766 32.7837 29.8047 31.7087 28.8327 30.5358C27.472 28.9721 26.1112 27.4083 24.7505 25.7468C23.6813 24.4763 22.6121 23.3034 21.6402 22.0329L19.9879 20.0782H19.9393L14.5935 26.3332L9.24766 32.6274C8.85888 33.0183 8.56729 33.507 8.1785 33.8979C8.08131 33.9957 8.08131 33.9957 7.98411 33.8979C6.33178 32.7251 4.77664 31.5523 3.1243 30.2817C2.34673 29.793 1.56916 29.2066 0.694393 28.6202C0.694393 28.5225 0.694393 28.5225 0.597196 28.5225L0.888785 28.2293C2.54112 26.6655 4.09626 25.1018 5.7486 23.538C6.91495 22.4629 8.08131 21.2901 9.15047 20.215C9.34486 20.0195 9.34486 20.0195 9.15047 19.9218C7.98411 18.749 6.81776 17.6739 5.6514 16.5011C3.99907 14.8005 2.24953 13.2758 0.597196 11.6143L0.5 11.5166C0.597196 11.4189 0.694393 11.3211 0.791589 11.3211C2.73551 9.8551 4.67944 8.48681 6.62336 7.02079C7.10935 6.72758 7.49813 6.33664 7.98411 6.04344C8.08131 5.9457 8.08131 6.04344 8.1785 6.04344L11.5804 10.0506L16.343 15.7192L19.9393 19.9218L19.9976 19.9805L20.085 19.8827C21.4458 18.319 22.8065 16.6575 24.1673 15.0937L27.7636 10.8911L31.1654 6.88396C31.3676 6.60266 31.5954 6.3409 31.8458 6.10208C31.943 6.00434 31.943 6.00434 32.0402 6.10208C33.4981 7.17716 34.9561 8.25225 36.5112 9.32733C37.4832 10.0115 38.4551 10.6956 39.3299 11.3798H39.4271C39.5243 11.3798 39.5243 11.4775 39.4271 11.4775C39.0383 11.7707 38.7467 12.1617 38.3579 12.4549C36.0252 14.7028 33.6925 16.9507 31.457 19.1986C31.2877 19.3895 31.0912 19.5542 30.8738 19.6872Z" fill="#00B39F" fill-opacity="0.1" stroke="#00B39F"/>
+    </svg>
+
+- Shape: Trapezoid
+  Description: A four-sided shape with one pair of parallel sides, used to indicate hierarchical relationships or steps in a process.
+  CommonUsecase: 
+    - Representing funnels in process flows (e.g., sales funnels)
+    - Indicating converging or diverging processes
+    - Showing hierarchical structures with varying levels of detail
+  DependOn: Often used to show narrowing or widening of scope in processes
+  SVG: |
+    <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M8.5 3H32.5L39.5 37H1.5L8.5 3Z" fill="#00B39F" fill-opacity="0.1" stroke="#00B39F" stroke-miterlimit="10" stroke-width="1"/>
+    </svg>
+
+# - Shape: SqlJob
+#   Description: ""
+#   CommonUsecase: ""
+#   DependOn: ""
+#   SVG: |
+#     <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+#       <circle cx="20" cy="20" r="19" fill="#00B39F" fill-opacity="0.1" stroke="#00B39F" stroke-width="2"/>
+#       <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#00B39F">SQL</text>
+#     </svg>
+
+# - Shape: User
+#   Description: This node represents an individual user, often depicted with an icon or simple human silhouette.
+#   CommonUsecase: 
+#     - Representing end-users or user roles in system diagrams
+#     - Indicating user interaction points in process flows
+#     - Showing stakeholders in organizational network diagrams
+#   DependOn: Often the start or end point of process flows, connected to interface or service nodes
+#   SVG: |
+#     <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+#       <circle cx="20" cy="20" r="19" fill="#00B39F" fill-opacity="0.1" stroke="#00B39F" stroke-width="2"/>
+#       <path d="M20 10C22.2091 10 24 11.7909 24 14C24 16.2091 22.2091 18 20 18C17.7909 18 16 16.2091 16 14C16 11.7909 17.7909 10 20 10Z" fill="#00B39F"/>
+#       <path d="M26 28C26 24.6863 23.3137 22 20 22C16.6863 22 14 24.6863 14 28" stroke="#00B39F" stroke-width="2"/>
+#     </svg>
+
+- Shape: TextBox
+  Description: A rectangular shape representing a text entry or display area, useful in diagrams to show nodes that contain text information or comments.
+  CommonUsecase: 
+    - Representing textual data or descriptions in diagrams
+    - Indicating text entry points in user interfaces
+    - Displaying comments or notes in flowcharts or wireframes
+  DependOn: Often used for nodes that need to convey specific textual information
+  SVG: |
+    <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="4" y="10" width="32" height="20" fill="#00B39F" fill-opacity="0.1" stroke="#00B39F" stroke-width="2"/>
+      <text x="50%" y="25" dominant-baseline="middle" text-anchor="middle" font-family="Arial, sans-serif" font-size="8" fill="#00B39F">Text Box</text>
+    </svg>
+- Shape: Section
+  Description: Typically represented as a rectangular or rounded rectangle, this
+    shape is used to demarcate different sections or categories within a graph.
+  CommonUsecase: 
+    - Grouping related nodes in large network diagrams
+    - Representing subnetworks or modules in system architectures
+    - Indicating logical divisions in organizational charts
+  DependOn: Contains or groups other nodes, often used to simplify complex diagrams
+  SVG: >
+    <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="1.5" y="1" width="38" height="38" fill="#00B39F" fill-opacity="0.1" stroke="#00B39F" stroke-width="1" stroke-miterlimit="10" stroke-dasharray="4 4"/>
+    </svg>
+- Shape: GenericNode
+  Description: A simple, often circular or rectangular shape used as a placeholder
+    for unspecified or generic data points.
+  CommonUsecase: 
+    - Representing undefined or flexible entities in early-stage diagrams
+    - Showing placeholder nodes in template diagrams
+    - Indicating generic components in adaptable system designs
+  DependOn: Can be connected to various other node types, often used as a base
+    for more specific node definitions
+  SVG: >
+    <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="20" cy="20" r="19" fill="#00B39F" fill-opacity="0.1" stroke="#00B39F" stroke-width="1"/>
+    </svg>
+- Shape: Octagon
+  Description: An eight-sided polygon, providing another option for representing
+    complex data types. The additional sides make it stand out more compared to
+    hexagons or pentagons.
+  CommonUsecase: 
+    - Representing stop points or critical junctures in processes
+    - Indicating regulatory or compliance elements in system diagrams
+  DependOn: Often used sparingly to highlight very specific or important nodes.
+  SVG: >
+    <svg width="100%" height="75px" viewBox="0 0 141 155" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M60.6025 8.2735C66.7906 4.70085 74.4145 4.70085 80.6025 8.2735L125.554 34.2265C131.742 37.7992 135.554 44.4017 135.554 51.547V103.453C135.554 110.598 131.742 117.201 125.554 120.774L80.6025 146.727C74.4145 150.299 66.7906 150.299 60.6025 146.727L15.6506 120.773C9.46261 117.201 5.65063 110.598 5.65063 103.453V51.547C5.65063 44.4017 9.46261 37.7992 15.6506 34.2265L60.6025 8.2735Z" fill="#00B39F"/>
+        <path d="M81.8525 6.10844C74.891 2.0892 66.3141 2.0892 59.3525 6.10844L14.4006 32.0614C7.43911 36.0807 3.15063 43.5085 3.15063 51.547V103.453C3.15063 111.491 7.43911 118.919 14.4006 122.939L59.3525 148.892C66.3141 152.911 74.891 152.911 81.8525 148.892L126.804 122.939C133.766 118.919 138.054 111.491 138.054 103.453V51.547C138.054 43.5085 133.766 36.0807 126.804 32.0614L81.8525 6.10844Z" stroke="#00B39F" stroke-opacity="0.5" stroke-width="5"/>
+    </svg>
