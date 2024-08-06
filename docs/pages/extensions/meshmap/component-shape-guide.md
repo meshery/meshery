@@ -21,48 +21,7 @@ Below are all the shapes with their current usage in a general context.
 
 <div class="svg-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin: 40px;">
 
-<figure style="display: flex; flex-direction: column; align-items: center;"><svg width="100%" height="68" viewBox="0 0 150 136" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M98.0102 15.75C87.8104 -1.91667 62.3107 -1.91668 52.1109 15.75L7.07755 93.75C-3.1223 111.417 9.62751 133.5 30.0272 133.5H120.094C140.494 133.5 153.243 111.417 143.044 93.75L98.0102 15.75Z" fill="white" fill-opacity="0.5" stroke="#666666" stroke-width="5"/>
-</svg><figcaption style="margin-top: 10px; font-size: 14px;">Triangle</figcaption></figure>
-
-<figure style="display: flex; flex-direction: column; align-items: center;">
-<svg width="100%" height="75" viewBox="0 0 151 150" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect x="2.56055" y="2.5" width="145" height="145" rx="22.5" fill="white" fill-opacity="0.5" stroke="#666666" stroke-width="5"/>
-</svg><figcaption style="margin-top: 10px; font-size: 14px;">Square (rounded edges)</figcaption></figure>
-
-<figure style="display: flex; flex-direction: column; align-items: center;"><svg width="100%" height="75" viewBox="0 0 151 150" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M43.763 140.376C7.65635 123.089 -7.60209 79.8012 9.68328 43.6899C17.9841 26.3486 32.8327 13.0155 50.9628 6.62363C69.0928 0.231726 89.0191 1.30463 106.358 9.6062C142.465 26.8934 157.723 70.1814 140.438 106.293C123.152 142.404 79.8698 157.664 43.763 140.376Z" fill="white" fill-opacity="0.5" stroke="#666666" stroke-width="5"/>
-</svg><figcaption style="margin-top: 10px; font-size: 14px;">Circle</figcaption></figure>
-
-<figure style="display: flex; flex-direction: column; align-items: center;"><svg width="100%" height="56" viewBox="0 0 151 113" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect x="2.56055" y="2.5" width="145" height="107.5" fill="white" fill-opacity="0.3" stroke="#666666" stroke-width="5" stroke-dasharray="10 10"/>
-</svg><figcaption style="margin-top: 10px; font-size: 14px;">Rectangle (dashed lines)</figcaption></figure>
-
-<figure style="display: flex; flex-direction: column; align-items: center;"><svg width="100%" height="75" viewBox="0 0 114 151" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect x="3.31055" y="3" width="107.5" height="145" fill="white" fill-opacity="0.5" stroke="#666666" stroke-width="5"/>
-</svg><figcaption style="margin-top: 10px; font-size: 14px;">Rectangle</figcaption></figure>
-
-<figure style="display: flex; flex-direction: column; align-items: center;"><svg width="100%" height="75" viewBox="0 0 151 151" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect x="2.56055" y="3" width="145" height="145" stroke="#666666" stroke-width="5"/>
-</svg><figcaption style="margin-top: 10px; font-size: 14px;">Square (sharp edges) </figcaption></figure>
-
-<figure style="display: flex; flex-direction: column; align-items: center;"><svg width="100%" height="72" viewBox="0 0 160 155" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M95.6369 7.72668C86.349 0.978614 73.7722 0.978623 64.4843 7.72669L13.8383 44.5231C4.55039 51.2712 0.663959 63.2325 4.21163 74.1511L23.5567 133.689C27.1043 144.608 37.2792 152 48.7597 152H111.362C122.842 152 133.017 144.608 136.565 133.689L155.91 74.151C159.457 63.2324 155.571 51.2712 146.283 44.5231L95.6369 7.72668Z" fill="white" fill-opacity="0.5" stroke="#666666" stroke-width="5"/>
-</svg><figcaption style="margin-top: 10px; font-size: 14px;">Pentagon</figcaption></figure>
-
-<figure style="display: flex; flex-direction: column; align-items: center;"><svg width="100%" height="61" viewBox="0 0 153 123" fill="white" fill-opacity="0.5" xmlns="http://www.w3.org/2000/svg">
-<path d="M144.25 46.2377L112.401 10.7933C107.944 5.8331 101.59 3 94.9215 3H26.0605C13.0819 3 2.56055 13.5213 2.56055 26.5V97C2.56055 109.979 13.0818 120.5 26.0605 120.5H94.9791C101.61 120.5 107.932 117.699 112.387 112.787L144.178 77.731C152.273 68.8045 152.304 55.2013 144.25 46.2377Z" stroke="#666666" stroke-width="5"/>
-</svg><figcaption style="margin-top: 10px; font-size: 14px;">ConfigMap</figcaption></figure>
-
-<figure style="display: flex; flex-direction: column; align-items: center;"><svg width="100%" height="78" viewBox="0 0 132 156" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M128.766 32.7442C128.751 30.2268 127.557 28.3686 125.291 27.3159C123.649 26.5561 121.966 25.8909 120.291 25.18L98.4409 16.026C88.553 11.8885 78.6681 7.74784 68.7863 3.60416C67 2.85049 65.271 2.76811 63.4575 3.54924C59.0899 5.42579 54.692 7.23522 50.3092 9.07211L29.7103 17.6982C22.2546 20.8227 14.808 23.9452 7.37042 27.0657C4.69543 28.1855 3.35642 30.1505 3.3534 33.0676C3.3534 39.8812 3.37758 46.6947 3.3534 53.5113C3.30806 62.0031 3.31108 70.4888 4.86469 78.8891C5.64182 83.2089 6.69179 87.4742 8.00818 91.6588C12.3122 105.21 19.4835 117.655 29.0252 128.131C38.5668 138.607 50.2507 146.863 63.2671 152.328C64.8781 153.011 66.5042 153.292 68.1757 152.6C76.6233 149.142 84.5435 144.494 91.7005 138.795C99.4826 132.603 106.283 125.248 111.867 116.985C119.741 105.359 125.028 92.1506 127.364 78.2666C128.116 74.0118 128.56 69.7071 128.691 65.387C128.806 60.1785 128.718 54.9638 128.718 49.7521H128.766C128.766 44.0828 128.797 38.4135 128.766 32.7442Z" fill="white" fill-opacity="0.5" stroke="#666666" stroke-width="5" stroke-miterlimit="10"/>
-</svg><figcaption style="margin-top: 10px; font-size: 14px;">Shield</figcaption></figure>
-
-<figure style="display: flex; flex-direction: column; align-items: center;"><svg width="100%" height="75" viewBox="0 0 124 150" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M3.3606 45.4019C6.77162 49.7691 11.733 53.5667 17.6307 56.6388C29.1298 62.6288 44.8421 66.2589 62.0606 66.2589C79.279 66.2589 94.9914 62.6288 106.49 56.6388C112.388 53.5667 117.35 49.7691 120.761 45.4019V118.12C120.761 125.52 114.953 132.834 104.181 138.445C93.5296 143.994 78.642 147.5 62.0606 147.5C45.4792 147.5 30.5916 143.994 19.9406 138.445C9.16774 132.834 3.3606 125.52 3.3606 118.12V45.4019Z" fill="white" fill-opacity="0.5" stroke="#666666" stroke-width="5"/>
-<path d="M3.3606 31.8795C3.3606 24.4796 9.16774 17.1662 19.9406 11.5545C30.5916 6.00635 45.4792 2.5 62.0606 2.5C78.642 2.5 93.5296 6.00635 104.181 11.5545C114.953 17.1662 120.761 24.4796 120.761 31.8795C120.761 39.2794 114.953 46.5928 104.181 52.2045C93.5296 57.7527 78.642 61.259 62.0606 61.259C45.4792 61.259 30.5916 57.7527 19.9406 52.2045C9.16774 46.5928 3.3606 39.2794 3.3606 31.8795Z" fill="white" fill-opacity="0.5" stroke="#666666" stroke-width="5"/>
-</svg><figcaption style="margin-top: 10px; font-size: 14px;">Cylinder</figcaption></figure>
-
+ 
 <figure style="display: flex; flex-direction: column; align-items: center;">
   <svg width="100%" height="75" viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M38.7212 6.1944V33.8058C38.7212 38.9463 30.5523 38.7427 20.5002 38.7427C10.4482 38.7427 2.2793 38.9463 2.2793 33.8058V6.1944C2.2793 1.05386 10.4227 1.25744 20.5002 1.25744C30.5778 1.25744 38.7212 1.05386 38.7212 6.1944Z" fill="#00B39F" fill-opacity="0.1" stroke="#00B39F" stroke-miterlimit="10"/>
@@ -341,19 +300,63 @@ Below are all the shapes with their current usage in a general context.
 
 <figure style="display: flex; flex-direction: column; align-items: center;">
 <svg width="100%" height="75" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect x="2" y="10" width="36" height="20" rx="2" fill="#00B39F" fill-opacity="0.1" stroke="#00B39F" stroke-width="2" stroke-dasharray="4 4"/>
-<line x1="6" y1="15" x2="34" y2="15" stroke="#00B39F" stroke-width="2"/>
-<line x1="6" y1="20" x2="28" y2="20" stroke="#00B39F" stroke-width="2"/>
-<line x1="6" y1="25" x2="22" y2="25" stroke="#00B39F" stroke-width="2"/>
+  <rect x="1.5" y="1" width="38" height="38" fill="#00B39F" fill-opacity="0.1" stroke="#00B39F" stroke-miterlimit="10"/>
 </svg>
-<figcaption style="margin-top: 10px; font-size: 14px;">TextBox</figcaption>
+<figcaption style="margin-top: 10px; font-size: 14px;">Section</figcaption>
 </figure>
 
 <figure style="display: flex; flex-direction: column; align-items: center;">
 <svg width="100%" height="75" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect x="1.5" y="1" width="38" height="38" fill="#00B39F" fill-opacity="0.1" stroke="#00B39F" stroke-width="1" stroke-miterlimit="10" stroke-dasharray="4 4"/>
+  <rect x="1.5" y="1" width="38" height="38" fill="white" fill-opacity="0.1" stroke="#00B39F" stroke-miterlimit="10"/>
 </svg>
-<figcaption style="margin-top: 10px; font-size: 14px;">Section</figcaption>
+<figcaption style="margin-top: 10px; font-size: 14px;">Text Box</figcaption>
+</figure>
+
+<figure style="display: flex; flex-direction: column; align-items: center;">
+<svg width="100%" height="75" viewBox="0 0 161 161" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect x="3.10254" y="3" width="155" height="155" fill="#00B39F" fill-opacity="0.1" stroke="#00B39F" stroke-width="5"/>
+</svg>
+<figcaption style="margin-top: 10px; font-size: 14px;">Square</figcaption>
+</figure>
+
+<figure style="display: flex; flex-direction: column; align-items: center;">
+<svg width="100%" height="75" viewBox="0 0 123 161" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect x="2.85254" y="3" width="117.5" height="155" fill="#00B39F" fill-opacity="0.1" stroke="#00B39F" stroke-width="5"/>
+</svg>
+<figcaption style="margin-top: 10px; font-size: 14px;">Rectangle</figcaption>
+</figure>
+
+<figure style="display: flex; flex-direction: column; align-items: center;">
+<svg width="100%" height="75" viewBox="0 0 161 123" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect x="5.60254" y="5" width="150" height="112.5" fill="#00B39F"/>
+<rect x="3.10254" y="2.5" width="155" height="117.5" stroke="#00B39F" stroke-opacity="0.5" stroke-width="5" stroke-dasharray="10 10"/>
+</svg>
+<figcaption style="margin-top: 10px; font-size: 14px;">Namespace</figcaption>
+</figure>
+
+<figure style="display: flex; flex-direction: column; align-items: center;">
+<svg width="100%" height="75" viewBox="0 0 141 155" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M60.6025 8.2735C66.7906 4.70085 74.4145 4.70085 80.6025 8.2735L125.554 34.2265C131.742 37.7992 135.554 44.4017 135.554 51.547V103.453C135.554 110.598 131.742 117.201 125.554 120.774L80.6025 146.727C74.4145 150.299 66.7906 150.299 60.6025 146.727L15.6506 120.773C9.46261 117.201 5.65063 110.598 5.65063 103.453V51.547C5.65063 44.4017 9.46261 37.7992 15.6506 34.2265L60.6025 8.2735Z" fill="#00B39F"/>
+<path d="M81.8525 6.10844C74.891 2.0892 66.3141 2.0892 59.3525 6.10844L14.4006 32.0614C7.43911 36.0807 3.15063 43.5085 3.15063 51.547V103.453C3.15063 111.491 7.43911 118.919 14.4006 122.939L59.3525 148.892C66.3141 152.911 74.891 152.911 81.8525 148.892L126.804 122.939C133.766 118.919 138.054 111.491 138.054 103.453V51.547C138.054 43.5085 133.766 36.0807 126.804 32.0614L81.8525 6.10844Z" stroke="#00B39F" stroke-opacity="0.5" stroke-width="5"/>
+</svg>
+<figcaption style="margin-top: 10px; font-size: 14px;">Octagon</figcaption>
+</figure>
+
+<figure style="display: flex; flex-direction: column; align-items: center;">
+<svg width="100%" height="75" viewBox="0 0 125 152" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M1.90234 38.7379C4.21768 45.4282 10.4193 51.3451 19.0964 55.8651C30.2562 61.6783 45.6387 65.2589 62.6023 65.2589C79.566 65.2589 94.9484 61.6783 106.108 55.8651C114.785 51.3451 120.987 45.4282 123.302 38.7379V119.12C123.302 127.643 116.661 135.482 105.646 141.219C94.6561 146.944 79.4386 150.5 62.6023 150.5C45.7661 150.5 30.5486 146.944 19.5584 141.219C8.54381 135.482 1.90234 127.643 1.90234 119.12V38.7379Z" fill="#00B39F" stroke="white"/>
+<path d="M1.90234 32.8795C1.90234 24.3569 8.54381 16.5183 19.5584 10.7807C30.5486 5.05586 45.7661 1.5 62.6023 1.5C79.4386 1.5 94.6561 5.05586 105.646 10.7807C116.661 16.5183 123.302 24.3569 123.302 32.8795C123.302 41.4021 116.661 49.2407 105.646 54.9783C94.6561 60.7032 79.4386 64.259 62.6023 64.259C45.7661 64.259 30.5486 60.7032 19.5584 54.9783C8.54381 49.2407 1.90234 41.4021 1.90234 32.8795Z" fill="#00B39F" stroke="white"/>
+<path d="M123.802 32.8795C123.802 50.4861 96.4022 64.759 62.6023 64.759C28.8025 64.759 1.40234 50.4861 1.40234 32.8795M123.802 32.8795C123.802 15.273 96.4022 1 62.6023 1C28.8025 1 1.40234 15.273 1.40234 32.8795M123.802 32.8795V119.121C123.802 136.727 96.4022 151 62.6023 151C28.8025 151 1.40234 136.727 1.40234 119.121V32.8795" stroke="white" stroke-miterlimit="10" stroke-linejoin="round"/>
+</svg>
+<figcaption style="margin-top: 10px; font-size: 14px;">Cylinder</figcaption>
+</figure>
+
+<figure style="display: flex; flex-direction: column; align-items: center;">
+<svg width="100%" height="75" viewBox="0 0 137 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M131.308 34.7442C131.293 32.2268 130.099 30.3686 127.832 29.3159C126.191 28.5561 124.508 27.8909 122.833 27.18L100.983 18.026C91.095 13.8885 81.2101 9.74784 71.3283 5.60416C69.542 4.85049 67.813 4.76811 65.9995 5.54924C61.6318 7.42579 57.234 9.23522 52.8512 11.0721L32.2523 19.6982C24.7966 22.8227 17.35 25.9452 9.91241 29.0657C7.23742 30.1855 5.89842 32.1505 5.89539 35.0676C5.89539 41.8812 5.91957 48.6947 5.89539 55.5113C5.85005 64.0031 5.85308 72.4888 7.40669 80.8891C8.18381 85.2089 9.23378 89.4742 10.5502 93.6588C14.8542 107.21 22.0255 119.655 31.5672 130.131C41.1088 140.607 52.7926 148.863 65.8091 154.328C67.4201 155.011 69.0462 155.292 70.7177 154.6C79.1653 151.142 87.0855 146.494 94.2425 140.795C102.025 134.603 108.825 127.248 114.409 118.985C122.283 107.359 127.569 94.1506 129.906 80.2666C130.658 76.0118 131.102 71.7071 131.233 67.387C131.348 62.1785 131.26 56.9638 131.26 51.7521H131.308C131.308 46.0828 131.339 40.4135 131.308 34.7442Z" fill="#00B39F"/>
+<path d="M133.808 34.7291L133.808 34.7308C133.829 38.5189 133.822 42.3145 133.815 46.0996C133.812 47.9871 133.808 49.872 133.808 51.7521V54.2521H133.766C133.769 54.9743 133.772 55.6985 133.776 56.4243C133.794 60.078 133.813 63.7717 133.732 67.4422L133.732 67.4525L133.732 67.4629C133.597 71.9 133.142 76.3213 132.37 80.6916C129.973 94.9244 124.552 108.466 116.479 120.387C110.753 128.859 103.78 136.401 95.7991 142.752C88.4577 148.597 80.3329 153.365 71.6662 156.913L133.808 34.7291ZM133.808 34.7291C133.798 33.0697 133.395 31.4977 132.52 30.1318C131.644 28.7655 130.386 27.745 128.885 27.0484L128.883 27.0472M133.808 34.7291L128.883 27.0472M128.883 27.0472C127.698 26.4985 126.462 25.9851 125.279 25.4934C124.777 25.2849 124.285 25.0804 123.81 24.8788L123.799 24.8741M128.883 27.0472L123.799 24.8741M123.799 24.8741L101.949 15.7202L101.948 15.7198M123.799 24.8741L101.948 15.7198M101.948 15.7198C92.0617 11.5829 82.1784 7.44297 72.2982 3.29998C69.9653 2.31617 67.5251 2.17074 65.0126 3.25228C61.9573 4.56498 58.8943 5.84174 55.8174 7.12423C54.5095 7.66943 53.199 8.21566 51.8856 8.76613C51.8853 8.76623 51.8851 8.76633 51.8849 8.76643L31.2867 17.3922L31.286 17.3924M101.948 15.7198L31.286 17.3924M31.286 17.3924C23.8306 20.5169 16.3843 23.6392 8.94701 26.7596L31.286 17.3924ZM3.40077 41.892C3.40614 46.4303 3.41151 50.9622 3.39542 55.5003L8.9468 26.7597C7.26081 27.4655 5.8253 28.5132 4.82718 29.9979C3.82747 31.4849 3.39731 33.2159 3.39539 35.065V35.0676C3.39539 37.3451 3.39808 39.6194 3.40077 41.892Z" stroke="#00B39F" stroke-opacity="0.5" stroke-width="5" stroke-miterlimit="10"/>
+</svg>
+<figcaption style="margin-top: 10px; font-size: 14px;">Shield</figcaption>
 </figure>
 
 <figure style="display: flex; flex-direction: column; align-items: center;">
