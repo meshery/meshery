@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -79,7 +80,21 @@ func (m *ModelCSV) UpdateModelDefinition(modelDef *model.ModelDefinition) error 
 				}
 			}
 		}
-		metadata[key] = modelMetadata[key]
+		if key == "capabilities" {
+			val, err := utils.Cast[string](modelMetadata[key])
+			if err != nil {
+				return err
+			}
+			var capabilitiesMap map[string]interface{}
+			err = json.Unmarshal([]byte(val), &capabilitiesMap)
+			if err != nil {
+				return err
+			}
+			metadata[key] = capabilitiesMap
+		} else {
+			metadata[key] = modelMetadata[key]
+
+		}
 	}
 
 	isAnnotation := false
