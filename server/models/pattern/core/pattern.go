@@ -2,11 +2,9 @@ package core
 
 import (
 	"bytes"
-	"crypto/rand"
 	"encoding/json"
 	"fmt"
 	"io"
-	"math/big"
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/models/pattern/utils"
@@ -189,61 +187,6 @@ func AssignAdditionalLabels(comp *component.ComponentDefinition) error {
 	comp.Metadata.AdditionalProperties["labels"] = existingLabels
 	return nil
 }
-
-// GetApplicationComponent generates OAM Application Components from the
-// the given Pattern file
-// func (p *Pattern) GetApplicationComponent(name string) (modelv1beta1.Component, error) {
-
-// 	if comp.ObjectMeta.Labels == nil {
-// 		comp.ObjectMeta.Labels = make(map[string]string)
-// 	}
-// 	comp.ObjectMeta.Labels["resource.pattern.meshery.io/id"] = svc.ID.String() //set the patternID to track back the object
-// 	return comp, nil
-// }
-
-// GenerateApplicationConfiguration generates OAM Application Configuration from the
-// the given Pattern file for a particular deploymnet
-// func (p *Pattern) GenerateApplicationConfiguration() (v1alpha1.Configuration, error) {
-// 	config := v1alpha1.Configuration{
-// 		TypeMeta:   v1.TypeMeta{Kind: "ApplicationConfiguration", APIVersion: "core.oam.dev/v1alpha2"},
-// 		ObjectMeta: v1.ObjectMeta{Name: p.Name},
-// 	}
-
-// 	// Create configs for each component
-// 	for k, v := range p.Services {
-// 		// Indicates that map for properties is not empty
-// 		if len(v.Traits) > 0 {
-// 			specComp := v1alpha1.ConfigurationSpecComponent{
-// 				ComponentName: k,
-// 			}
-
-// 			for k2, v2 := range v.Traits {
-// 				castToMap, ok := v2.(map[string]interface{})
-
-// 				trait := v1alpha1.ConfigurationSpecComponentTrait{
-// 					Name: k2,
-// 				}
-
-// 				if !ok {
-// 					castToMap = map[string]interface{}{}
-// 				}
-
-// 				trait.Properties = castToMap
-
-// 				specComp.Traits = append(specComp.Traits, trait)
-// 			}
-
-// 			config.Spec.Components = append(config.Spec.Components, specComp)
-// 		}
-// 	}
-
-// 	return config, nil
-// }
-
-// GetServiceType returns the type of the service
-// func (p *Pattern) GetServiceType(name string) string {
-// 	return p.Services[name].Type
-// }
 
 // ToCytoscapeJS converts pattern file into cytoscape object
 func ToCytoscapeJS(patternFile *pattern.PatternFile, log logger.Handler) (cytoscapejs.GraphElem, error) {
@@ -551,57 +494,15 @@ func getCytoscapeElementID(name string, component *component.ComponentDefinition
 }
 
 func getCytoscapeJSPosition(component *component.ComponentDefinition, log logger.Handler) (cytoscapejs.Position, error) {
-	pos := cytoscapejs.Position{}
 
-	// Check if the service has "meshmap" as a trait
-	positionInterface, ok := component.Metadata.AdditionalProperties["position"]
+	x, y := component.Styles.Position.X, component.Styles.Position.Y
 
-	if !ok {
-		randX, err := rand.Int(rand.Reader, big.NewInt(100))
-		if err != nil {
-			return pos, err
-		}
-		randY, err := rand.Int(rand.Reader, big.NewInt(100))
-		if err != nil {
-			return pos, err
-		}
+	X := float64(x)
+	Y := float64(y)
 
-		pos := cytoscapejs.Position{}
-		pos.X, _ = big.NewFloat(0).SetInt(randX).Float64()
-		pos.Y, _ = big.NewFloat(0).SetInt(randY).Float64()
-
-		return pos, nil
-	}
-
-	posMap, err := mutils.Cast[map[string]interface{}](positionInterface)
-	if err != nil {
-		log.Debug(fmt.Sprintf("failed to cast meshmap trait (posMap): %+#v\n%v", positionInterface, err))
-		return pos, nil
-	}
-
-	pos.X, err = mutils.Cast[float64](posMap["posX"])
-	if err != nil {
-		log.Debug(fmt.Sprintf("failed to cast meshmap trait (posMap): %T\n%v", posMap["posX"], err))
-
-		// Attempt to cast as int
-		intX, err := mutils.Cast[int](posMap["posX"])
-		if err != nil {
-			log.Debug(fmt.Sprintf("failed to cast meshmap trait (posMap): %T\n%v", posMap["posX"], err))
-		}
-
-		pos.X = float64(intX)
-	}
-	pos.Y, err = mutils.Cast[float64](posMap["posY"])
-	if err != nil {
-		log.Debug(fmt.Sprintf("failed to cast meshmap trait (posMap): %T\n%v", posMap["posY"], err))
-
-		// Attempt to cast as int
-		intY, err := mutils.Cast[int](posMap["posY"])
-		if err != nil {
-			log.Debug(fmt.Sprintf("failed to cast meshmap trait (posMap): %T\n %v", posMap["posY"], err))
-		}
-
-		pos.Y = float64(intY)
+	pos := cytoscapejs.Position{
+		X: X,
+		Y: Y,
 	}
 
 	return pos, nil
