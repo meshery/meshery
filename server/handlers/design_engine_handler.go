@@ -109,7 +109,7 @@ func (h *Handler) PatternFileHandler(
 	description := fmt.Sprintf("%sed design '%s'", action, patternFile.Name)
 	if isDryRun {
 		action = "verify"
-		description = fmt.Sprintf("%s design '%s'", action, patternFile.Name)
+		description = fmt.Sprintf("%sed design '%s'", action, patternFile.Name)
 	}
 
 	if err != nil {
@@ -223,7 +223,8 @@ func _processPattern(opts *core.ProcessPatternOptions) (map[string]interface{}, 
 			ctxTokubeconfig:        ctxToconfig,
 			accumulatedMsgs:        []string{},
 			err:                    nil,
-			eventsChannel:          opts.EventBroadcaster, // not sure what this should be
+			eventsChannel:          opts.EventBroadcaster,
+			opIsDelete:             opts.IsDelete,
 			patternName:            strings.ToLower(opts.Pattern.Name),
 		}
 		fmt.Println("line 244 reached")
@@ -359,7 +360,7 @@ func (sap *serviceActionProvider) Mutate(p *pattern.PatternFile) {
 // v1.StatusApplyConfiguration has deprecated, needed to find a different option to do this
 // NOTE: Currently tied to kubernetes
 // Returns ComponentName->ContextID->Response
-func (sap *serviceActionProvider) DryRun(comps []component.ComponentDefinition) (resp map[string]map[string]core.DryRunResponseWrapper, err error) {
+func (sap *serviceActionProvider) DryRun(comps []*component.ComponentDefinition) (resp map[string]map[string]core.DryRunResponseWrapper, err error) {
 	for _, cmp := range comps {
 		for ctxID, kc := range sap.ctxTokubeconfig {
 			cl, err := meshkube.New([]byte(kc))
@@ -382,9 +383,9 @@ func (sap *serviceActionProvider) DryRun(comps []component.ComponentDefinition) 
 	return
 }
 
-func dryRunComponent(cl *meshkube.Client, cmd component.ComponentDefinition) (core.DryRunResponseWrapper, error) {
-	st, ok, err := k8s.DryRunHelper(cl, cmd)
-	dResp := core.DryRunResponseWrapper{Success: ok, Component: &cmd}
+func dryRunComponent(cl *meshkube.Client, cmd *component.ComponentDefinition) (core.DryRunResponseWrapper, error) {
+	st, ok, err := k8s.DryRunHelper(cl, *cmd)
+	dResp := core.DryRunResponseWrapper{Success: ok, Component: cmd}
 	if ok {
 		dResp.Component.Configuration = filterConfiguration(st)
 	} else if err != nil {

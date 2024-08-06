@@ -14,7 +14,6 @@ import (
 	_errors "github.com/pkg/errors"
 
 	"gopkg.in/yaml.v2"
-	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/client-go/rest"
 )
 
@@ -67,14 +66,31 @@ func Deploy(kubeClient *meshkube.Client, comp component.ComponentDefinition, isD
 func DryRunHelper(client *meshkube.Client, comp component.ComponentDefinition) (st map[string]interface{}, success bool, err error) {
 	resource := createK8sResourceStructure(comp)
 	// Define a function to extract namesapce, labels and annotations in the componetn definiotn
-	_namespace, ok := comp.Configuration["namespace"]
+	_metadata, ok := comp.Configuration["metadata"]
 	var namespace string
-	if ok {
-		namespace, err = utils.Cast[string](_namespace)
-		if err != nil {
-			err = _errors.Wrapf(err, "unable to extract namespace from component configuration")
-			return nil, false, err
-		}
+	if !ok {
+		err = ErrDryRun(fmt.Errorf("unable to extract namespace from component configuration"), comp.Component.Kind)
+		return
+	}
+
+	metadata, err := utils.Cast[map[string]interface{}](_metadata)
+	if err != nil {
+		err = _errors.Wrapf(err, "unable to extract namespace from component configuration")
+		err = ErrDryRun(err, comp.Component.Kind)
+		return nil, false, err
+	}
+
+	_namespace, ok := metadata["namespace"]
+	if !ok {
+		err = ErrDryRun(fmt.Errorf("unable to extract namespace from component configuration"), comp.Component.Kind)
+		return
+	}
+
+	namespace, err = utils.Cast[string](_namespace)
+	if err != nil {
+		err = _errors.Wrapf(err, "unable to extract namespace from component configuration")
+		err = ErrDryRun(err, comp.Component.Kind)
+		return nil, false, err
 	}
 
 	return dryRun(client.KubeClient.RESTClient(), resource, namespace)
@@ -114,14 +130,9 @@ func dryRun(rClient rest.Interface, k8sResource map[string]interface{}, namespac
 
 	// ignoring the error since this client-go treats failure of dryRun as an error
 	resp, err := res.Raw()
-	switch err.(type) {
-	case *errors.StatusError:
-		st, success, err = formatDryRunResponse(resp, err)
-	case *errors.UnexpectedObjectError:
-		st, success, err = formatDryRunResponse(resp, err)
-	default:
-		return
-	}
+
+	st, success, err = formatDryRunResponse(resp, err)
+
 	return
 }
 

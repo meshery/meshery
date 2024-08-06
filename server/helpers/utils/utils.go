@@ -255,12 +255,14 @@ func WriteSVGsOnFileSystem(comp *component.ComponentDefinition) {
 			comp.Component.Kind) //Write SVG on components
 	}
 
-	writeSVGHelper(
-		comp.Model.Metadata.SvgColor,
-		comp.Model.Metadata.SvgWhite,
-		comp.Model.Metadata.SvgComplete,
-		comp.Model.Name,
-		comp.Model.Name) //Write SVG on models
+	if comp.Model.Metadata != nil {
+		writeSVGHelper(
+			comp.Model.Metadata.SvgColor,
+			comp.Model.Metadata.SvgWhite,
+			comp.Model.Metadata.SvgComplete,
+			comp.Model.Name,
+			comp.Model.Name) //Write SVG on models
+	}
 }
 
 func DeleteSVGsFromFileSystem() {

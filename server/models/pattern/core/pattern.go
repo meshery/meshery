@@ -13,6 +13,7 @@ import (
 	regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
 	mutils "github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshkit/utils/manifests"
+	"github.com/meshery/schemas/models/v1beta1"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 	cytoscapejs "gonum.org/v1/gonum/graph/formats/cytoscapejs"
@@ -356,6 +357,7 @@ func NewPatternFileFromK8sManifest(data string, fileName string, ignoreErrors bo
 	}
 
 	pattern := pattern.PatternFile{
+		SchemaVersion: v1beta1.DesignSchemaVersion,
 		Name:       fileName,
 		Components: []*component.ComponentDefinition{},
 	}

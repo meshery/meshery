@@ -1,9 +1,5 @@
 package stages
 
-import (
-	"github.com/meshery/schemas/models/v1beta1/component"
-)
-
 // import "github.com/layer5io/meshery/server/models/pattern/patterns"
 
 const DryRunResponseKey = "dryRunResponse"
@@ -21,10 +17,9 @@ func DryRun(_ ServiceInfoProvider, act ServiceActionProvider) ChainStageFunction
 			act.Terminate(err)
 			return
 		}
-		var comps []component.ComponentDefinition
 		processAnnotations(data.Pattern)
 
-		resp, err := act.DryRun(comps)
+		resp, err := act.DryRun(data.Pattern.Components)
 		if err != nil {
 			act.Terminate(err)
 			return

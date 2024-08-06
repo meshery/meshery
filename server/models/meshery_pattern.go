@@ -87,7 +87,7 @@ type MesheryPattern struct {
 	ID *uuid.UUID `json:"id,omitempty"`
 
 	Name        string `json:"name,omitempty"`
-	PatternFile pattern.PatternFile `json:"pattern_file"`
+	PatternFile pattern.PatternFile `json:"pattern_file" gorm:"type:string;serializer:json"`
 	// Meshery doesn't have the user id fields
 	// but the remote provider is allowed to provide one
 	UserID *string `json:"user_id"`
