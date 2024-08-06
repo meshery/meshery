@@ -93,6 +93,196 @@
     <svg viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M20.5104 2.16931L38.6356 20.1693L20.5104 38.1707L2.36527 20.1693L20.5104 2.16931Z" fill="#00B39F" fill-opacity="0.1" stroke="#00B39F" stroke-miterlimit="10"/>
     </svg>
+- Shape: Cut Rectangle
+  Description: A rectangle with corners that are cut off or beveled. This shape gives a more modern and distinct appearance, often used to highlight important nodes or different types of data.
+  CommonUsecase:
+    - Representing documents or files in system diagrams
+    - Indicating partial or modified processes
+  DependOn: Used to differentiate from standard rectangles, often implying a special state or property.
+  SVG: |
+    <svg viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M31.8762 2H9.09886L2.22314 8.6296V31.3704L8.59881 38H32.3763L38.7769 31.1452V8.85475L31.8762 2Z" fill="#00B39F" fill-opacity="0.1" stroke="#00B39F" stroke-width="1" stroke-miterlimit="10"/>
+    </svg>
+
+- Shape: Round Hexagon
+  Description: A six-sided polygon with rounded corners, providing a less angular look for complex data types.
+  CommonUsecase:
+    - Nodes in chemical or molecular structure diagrams
+    - Representing interconnected modules in software architecture
+    - Visualizing cellular structures in biology diagrams
+  DependOn: Used in contexts where interconnectivity and modularity are key themes
+  SVG: |
+    <svg viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M27.1192 2H13.8808C12.2577 2 10.7867 2.90503 10.0512 4.33799L2.97552 18.0642C2.34149 19.2709 2.34149 20.729 2.97552 21.9358L10.0512 35.662C10.7867 37.095 12.2577 38 13.8808 38H27.1192C28.7423 38 30.2133 37.095 30.9488 35.662L38.0245 21.9358C38.6585 20.729 38.6585 19.2709 38.0245 18.0642L30.9488 4.33799C30.2133 2.90503 28.7423 2 27.1192 2Z" fill="#00B39F" fill-opacity="0.1" stroke="#00B39F" stroke-miterlimit="10"/>
+    </svg>
+
+- Shape: Hexagon
+  Description: A six-sided polygon, often used to represent complex data types or multi-faceted entities. This shape is popular in visualizations that require a compact, yet distinct, representation.
+  CommonUsecase:
+    - Representing nodes in honeycomb-like network structures
+    - Indicating interconnected components in modular systems
+  DependOn: Often used in tightly packed arrangements or to represent highly connected nodes.
+  SVG: |
+    <svg viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M30 1H11L1.5 20L11 39H30L39.5 20L30 1Z" fill="#00B39F" fill-opacity="0.1" stroke="#00B39F" stroke-width="1" stroke-miterlimit="10"/>
+    </svg>
+
+- Shape: Round Heptagon
+  Description: A seven-sided polygon with rounded corners, less common but useful for unique data representations that require distinction.
+  CommonUsecase:
+    - Representing complex systems with seven components
+    - Visualizing weekly cycles or processes
+    - Specialized nodes in intricate network diagrams
+  DependOn: Used in contexts where seven distinct but interconnected elements are significant
+  SVG: |
+    <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M18.7217 2.39519L7.1149 7.9655C6.03826 8.46733 5.27673 9.42081 5.01413 10.5499L2.09931 23.2713C1.83671 24.3753 2.09931 25.5044 2.83458 26.3826L10.9488 36.5196C11.7103 37.448 12.8658 38 14.1 38H26.9147C28.1489 38 29.3043 37.448 30.0658 36.5196L38.1801 26.3826C38.8891 25.5044 39.1517 24.3502 38.9153 23.2713L36.0005 10.5248C35.7379 9.39571 34.9764 8.46733 33.8997 7.94041L22.2667 2.39519C21.1375 1.86827 19.8246 1.86827 18.6954 2.39519H18.7217Z" fill="#00B39F" fill-opacity="0.1" stroke="#00B39F" stroke-miterlimit="10"/>
+    </svg>
+
+- Shape: Heptagon
+  Description: A polygon with seven straight sides and angles. This shape is less common but can be used to represent specific or unique data types that require distinction from other polygonal shapes.
+  CommonUsecase:
+    - Specialized nodes in complex systems
+    - Representing multi-faceted concepts or entities
+  DependOn: Less common, used for specific representations where standard shapes are insufficient.
+  SVG: |
+    <svg viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M20.5 1L5.26817 8.53202L1.5 25.4529L12.0349 39.0001H28.9651L39.5001 25.4529L35.7319 8.53202L20.5 1Z" fill="#00B39F" fill-opacity="0.1" stroke="#00B39F" stroke-width="1" stroke-miterlimit="10"/>
+    </svg>
+
+- Shape: Round Octagon
+  Description: An eight-sided polygon with rounded corners, offering another distinct and less angular representation for complex data.
+  CommonUsecase:
+    - Representing multi-faceted concepts or systems
+    - Visualizing eight-step processes or cycles
+    - Softer alternative to traditional stop signs in process flows
+  DependOn: Often used when eight distinct aspects need to be highlighted in a less rigid format
+  SVG: |
+    <svg viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M26.6242 2H14.3248C13.3572 2 12.4405 2.3719 11.7529 3.04132L3.06951 11.4959C2.38197 12.1653 2 13.0579 2 14V25.9752C2 26.9174 2.38197 27.8099 3.06951 28.4793L11.7784 36.9587C12.4659 37.6281 13.3827 38 14.3503 38H26.6497C27.6173 38 28.5341 37.6281 29.2216 36.9587L37.9305 28.4793C38.618 27.8099 39 26.9174 39 25.9752V14C39 13.0579 38.618 12.1653 37.9305 11.4959L29.1961 3.04132C28.5086 2.3719 27.5919 2 26.6242 2Z" fill="#00B39F" fill-opacity="0.1" stroke="#00B39F" stroke-miterlimit="10"/>
+    </svg>
+
+- Shape: Round Rectangle
+  Description: Similar to a rectangle but with rounded corners, providing a softer, more approachable look. This shape is often used to visually distinguish nodes from standard rectangular nodes, indicating a special status or different type of data.
+  CommonUsecase:
+    - Softening the appearance of process steps
+    - Representing user interface elements
+    - Indicating start/end points in flowcharts
+  DependOn: Similar to rectangles but often used for a more aesthetic or user-friendly appearance.
+  SVG: |
+    <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="1.5" y="1" width="38" height="38" rx="7" fill="#00B39F" fill-opacity="0.1" stroke="#00B39F" stroke-width="1" stroke-miterlimit="10"/>
+    </svg>
+- Shape: Polygon
+  Description: 
+  CommonUsecase: 
+  DependOn: 
+  SVG: |
+    <svg xmlns="http://www.w3.org/2000/svg" id="Layer_1" data-name="Layer 1" viewBox="0 0 134.95 135.02">
+      <polygon points="69.49 31.82 69.49 64.07 97.44 47.89 69.49 31.82" fill="#00d3a9"/>
+      <polygon points="69.49 70.81 69.49 103.22 97.7 87.09 69.49 70.81" fill="#00d3a9"/>
+      <polygon points="65.47 63.85 65.47 32.09 37.87 47.92 65.47 63.85" fill="#00b39f"/>
+      <path d="M10.1,103.1a67.79,67.79,0,0,0,21.41,21.55V90.71Z" fill="#00b39f"/>
+      <polygon points="65.47 103.06 65.47 71.05 37.8 87.07 65.47 103.06" fill="#00b39f"/>
+      <polygon points="35.54 122.63 63.56 106.61 35.54 90.41 35.54 122.63" fill="#00d3a9"/>
+      <polygon points="99.61 122.8 99.61 90.63 71.63 106.63 99.61 122.8" fill="#00b39f"/>
+      <path d="M127,99.37a67.22,67.22,0,0,0,7.91-28.94L105.78,87.11Z" fill="#00b39f"/>
+      <polygon points="103.64 83.69 131.76 67.61 103.64 51.45 103.64 83.69" fill="#00d3a9"/>
+      <polygon points="99.61 44.5 99.61 12.52 71.76 28.49 99.61 44.5" fill="#00b39f"/>
+      <polygon points="99.61 83.55 99.61 51.28 71.7 67.44 99.61 83.55" fill="#00b39f"/>
+      <polygon points="67.48 135.02 67.49 135.02 67.48 135.02 67.48 135.02" fill="#00b39f"/>
+      <polygon points="35.54 51.22 35.54 83.73 63.66 67.45 35.54 51.22" fill="#00d3a9"/>
+      <path d="M65.47,0A67.2,67.2,0,0,0,35.83,7.83l29.64,17Z" fill="#00b39f"/>
+      <polygon points="35.54 12.3 35.54 44.62 63.68 28.48 35.54 12.3" fill="#00d3a9"/>
+      <path d="M31.51,10.34A67.89,67.89,0,0,0,10.1,31.89L31.51,44.25Z" fill="#00b39f"/>
+      <path d="M99.43,8A67.23,67.23,0,0,0,69.49,0V25.15Z" fill="#00d3a9"/>
+      <path d="M0,69.87A67.27,67.27,0,0,0,8.07,99.63L29.76,87.07Z" fill="#00d3a9"/>
+      <path d="M8.07,35.37A67.16,67.16,0,0,0,0,65L29.79,47.91Z" fill="#00d3a9"/>
+      <path d="M35.78,127.13A67.13,67.13,0,0,0,65.47,135V110.15Z" fill="#00b39f"/>
+      <path d="M124.92,32a67.9,67.9,0,0,0-21.28-21.52V44.3Z" fill="#00d3a9"/>
+      <path d="M103.64,124.54A68,68,0,0,0,125,102.86L103.64,90.52Z" fill="#00d3a9"/>
+      <path d="M135,64.81a67.06,67.06,0,0,0-8-29.35L105.49,47.88Z" fill="#00b39f"/>
+      <path d="M69.49,135a67.12,67.12,0,0,0,29.63-7.83L69.49,110Z" fill="#00d3a9"/>
+      <polygon points="31.51 83.44 31.51 51.56 3.83 67.43 31.51 83.44" fill="#00b39f"/>
+    </svg>
+- Shape: Pentagon
+  Description: A five-sided polygon often used for specific classifications of data. Its unique shape helps to quickly distinguish it from other polygonal shapes.
+  CommonUsecase: 
+    - Representing specialized nodes in complex networks
+    - Indicating high-priority elements in a system
+  DependOn: Less common, often used to highlight unique or important elements.
+  SVG: |
+    <svg viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M20.4711 1.78955L2.37842 15.614L9.28517 37.9999H31.657L38.5888 15.614L20.4711 1.78955Z" fill="#00B39F" fill-opacity="0.1" stroke="#00B39F" stroke-width="1" stroke-miterlimit="10"/>
+    </svg>
+- Shape: Plus(Polygon)
+  Description: A polygonal shape with any number of points, allowing for highly customizable node representations to fit specific data needs.
+  CommonUsecase: 
+    - Customizable nodes for specific diagram requirements
+    - Representing complex entities with varying numbers of attributes or connections
+    - Creating unique shapes for specialized domain visualizations
+  DependOn: The number of points often corresponds to the number of attributes, connections, or steps in the represented concept  
+  SVG: |
+    <svg viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M27.2792 13.5545V1H13.9569V13.5545H1.5V26.5232H13.9569V39H27.2792V26.5232H39.5V13.5545H27.2792Z" fill="#00B39F" fill-opacity="0.1" stroke="#00B39F" stroke-miterlimit="10" stroke-width="1"/>
+    </svg>
+- Shape: ConcaveHexagon
+  Description: A six-sided shape with one or more inward curves, creating a star-like appearance, useful for special types of nodes that need to stand out distinctly.
+  CommonUsecase: 
+    - Specialized representations in biochemical or molecular diagrams
+    - Unique nodes in abstract network visualizations
+  DependOn: Used in specific domains or for aesthetic variety in complex diagrams.  
+  SVG: |
+    <svg viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M34.4009 20L38.5575 37H2.44189L6.62344 20L2.44189 3H38.5575L34.4009 20Z" fill="#00B39F" fill-opacity="0.1" stroke="#00B39F" stroke-width="1" stroke-miterlimit="10"/>
+    </svg>
+- Shape: Tag
+  Description: A shape resembling a label or tag, useful for categorized or labeled data nodes.
+  CommonUsecase: 
+    - Labeling or annotating elements in diagrams
+    - Representing metadata or categories in information architecture
+    - Indicating attachments or additional information in flowcharts
+  DependOn: Typically connected to or associated with other elements to provide additional context  
+  SVG: |
+    <svg viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M39.5 20.0876L26.6367 1H1.5V39H26.6367L39.5 20.0876Z" fill="#00B39F" fill-opacity="0.1" stroke="#00B39F" stroke-width="1" stroke-miterlimit="10"/>
+    </svg>
+- Shape: Round Tag
+  Description: A tag shape with rounded edges, offering a softer visual cue for categorized nodes.
+  CommonUsecase:
+    - Softer labeling in user-friendly diagrams
+    - Representing clickable tags in UI mockups
+    - Indicating removable or filterable attributes in data visualizations
+  DependOn: Used in contexts where a more approachable or modern aesthetic is desired  
+  SVG: |
+    <svg viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M37.3812 16.9435L28.3015 3.47042C27.2607 1.92594 25.5201 1 23.6576 1H7.1C4.00721 1 1.5 3.50721 1.5 6.6V33.4C1.5 36.4928 4.00721 39 7.1 39H23.673C25.527 39 27.2608 38.0825 28.3034 36.5495L37.3678 23.2225C38.6556 21.3291 38.6609 18.8424 37.3812 16.9435Z" fill="#00B39F" fill-opacity="0.1" stroke="#00B39F" stroke-width="1" stroke-miterlimit="10"/>
+    </svg>
+
+- Shape: Left Triangle
+  Description: A triangular shape pointing to the left, often used to indicate directional flow or hierarchical steps in processes or data sequences.
+  CommonUsecase:
+    - Indicating backward steps or previous states in process flows
+    - Representing 'undo' or 'back' actions in user interface diagrams
+    - Showing regression or reverse processes in analytical diagrams
+  DependOn: Often used in pairs with right-pointing triangles to show bidirectional flows  
+  SVG: |
+    <svg viewBox="0 0 41 41" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <polygon fill="#00B39F" fill-opacity="0.1" stroke="#00B39F" stroke-miterlimit="10" points="39.76,40.5 0.5,40.5 0.5,1.24 19.64,20.38"/>
+    </svg>
+
+- Shape: Circle
+  Description: The default shape for nodes, displayed as an oval. This shape is useful for general-purpose nodes where no special distinction is required.
+  CommonUsecase:
+    - Representing entities in entity-relationship diagrams
+    - Highlighting key concepts in mind maps
+    - Nodes in flowcharts
+  DependOn: Often used to differentiate from standard circular nodes.
+  SVG: |
+    <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12.5136 36.6823C3.30016 32.2711 -0.593367 21.2252 3.81738 12.0105C5.93552 7.58552 9.72449 4.18328 14.3508 2.55224C18.9771 0.921198 24.0617 1.19497 28.4862 3.31331C37.6997 7.72454 41.5931 18.7705 37.1824 27.9851C32.7717 37.1997 21.7271 41.0935 12.5136 36.6823Z" fill="#00B39F" fill-opacity="0.1" stroke="#00B39F" stroke-miterlimit="10"/>
+    </svg>
+
 - Shape: Crescent
   Description: A shape resembling a crescent moon, which can be used to represent phases, growth, or transition nodes within a graph.
   CommonUsecase: 
@@ -124,7 +314,6 @@
     - Depicting containers or groupings
     - Showing data storage in system diagrams
   DependOn: Frequently contains or groups other nodes.
-  Note: 
   SVG: |
     <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M39 1H1V39H39V1Z" fill="#00B39F" fill-opacity="0.1" stroke="#00B39F" stroke-miterlimit="10"/>
@@ -136,7 +325,6 @@
     - Representing decision points in flowcharts
     - Indicating data input/output in process diagrams
   DependOn: Frequently used to show points of divergence or data transformation in flows.
-  Note: 
   SVG: |
     <svg viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M13.9785 38.9999H39.6475L26.9956 0.999756H1.35274L13.9785 38.9999Z" fill="#00B39F" fill-opacity="0.1" stroke="#00B39F" stroke-width="1" stroke-miterlimit="10"/>
@@ -149,7 +337,6 @@
     - Indicating skewed or biased data flows
     - Showing directional processes in data pipelines
   DependOn: Often used in data flow diagrams to show transformation or direction
-  Note: 
   SVG: |
     <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
       <polygon points="30.33,39.5 0.5,39.5 10.53,10.73 39.5,0.5" fill="#00B39F" fill-opacity="0.1" stroke="#00B39F" stroke-miterlimit="10"/>
@@ -204,15 +391,14 @@
 
 - Shape: TextBox
   Description: A rectangular shape representing a text entry or display area, useful in diagrams to show nodes that contain text information or comments.
-  CommonUsecase: 
+  CommonUsecase:
     - Representing textual data or descriptions in diagrams
     - Indicating text entry points in user interfaces
     - Displaying comments or notes in flowcharts or wireframes
   DependOn: Often used for nodes that need to convey specific textual information
   SVG: |
-    <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect x="4" y="10" width="32" height="20" fill="#00B39F" fill-opacity="0.1" stroke="#00B39F" stroke-width="2"/>
-      <text x="50%" y="25" dominant-baseline="middle" text-anchor="middle" font-family="Arial, sans-serif" font-size="8" fill="#00B39F">Text Box</text>
+    <svg width="100%" height="75" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="1.5" y="1" width="38" height="38" fill="white" fill-opacity="0.1" stroke="#00B39F" stroke-miterlimit="10"/>
     </svg>
 - Shape: Section
   Description: Typically represented as a rectangular or rounded rectangle, this
