@@ -51,15 +51,15 @@ func (cp *ConnectionPersister) GetConnections(search, order string, page, pageSi
 
 	connectionsFetched := []*connections.Connection{}
 	query.Table("connections").Count(&count)
-	envFetched := []environments.EnvironmentData{}
+	environmentsFetched := []environments.EnvironmentData{}
 	Paginate(uint(page), uint(pageSize))(query).Find(&connectionsFetched)
 
 	for _, connectionFetched := range connectionsFetched {
 		cp.DB.Table("environment_connection_mappings").Joins("LEFT JOIN environments ON environments.id = environment_connection_mappings.environment_id").Select("environments.*").
 			Where("connection_id = ?", connectionFetched.ID).
-			Find(&envFetched)
+			Find(&environmentsFetched)
 
-		connectionFetched.Environments = envFetched
+		connectionFetched.Environments = environmentsFetched
 	}
 	connectionsPage := &connections.ConnectionPage{
 		Page:        page,
