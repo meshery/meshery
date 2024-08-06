@@ -295,7 +295,6 @@ func (sip *serviceInfoProvider) GetMesheryPatternResource(name, namespace, typ, 
 	return nil, fmt.Errorf("resource not found")
 }
 
-
 func (sip *serviceInfoProvider) IsDelete() bool {
 	return sip.opIsDelete
 }
@@ -470,7 +469,7 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) ([]patter
 	// }
 
 	fmt.Println("ccp.Hosts-----------: 491 ", ccp.Hosts)
-
+	msgs := []patterns.DeploymentMessagePerContext{}
 	for _, host := range ccp.Hosts {
 		// Hack until adapters fix the concurrent client
 		// creation issue: https://github.com/layer5io/meshery-adapter-library/issues/32
@@ -500,6 +499,7 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) ([]patter
 			)
 			return resp, err
 		}
+
 		hostName, err := utils.Cast[string](host.Metadata["host_name"])
 		if err != nil {
 			return nil, fmt.Errorf("error execute operation on %v: %v", host, err)
@@ -526,52 +526,42 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) ([]patter
 			_ = mClient.Close()
 		}()
 
-		// Execute operation on the adapter with raw data
-		// if strings.HasPrefix(adapter, string(rawAdapter)) {
-		// 	resp, err := mClient.MClient.ApplyOperation(context.TODO(), &meshes.ApplyRuleRequest{
-		// 		Username:    sap.userID,
-		// 		DeleteOp:    sap.opIsDelete,
-		// 		OpName:      "custom",
-		// 		Namespace:   "",
-		// 		KubeConfigs: sap.kubeconfigs,
-		// 	})
-
-		// 	return resp.String(), err
-		// }
-
-		// Else it is an OAM adapter call
+		// Else it is an  adapter call
 		//TODO: Accommodate gRPC calls to use context mapping with kubeconfig
 		var kconfigs []string
 		for _, v := range sap.ctxTokubeconfig {
 			kconfigs = append(kconfigs, v)
 		}
-		resp, err := mClient.MClient.ProcessOAM(context.TODO(), &meshes.ProcessOAMRequest{
-			Username:    sap.userID,
-			DeleteOp:    sap.opIsDelete,
-			KubeConfigs: kconfigs,
+		compStr, err := utils.Marshal(ccp.Component)
+		if err != nil {
+			err = errors.Wrapf(err, "error marshalling component \"%s\" of type : %s", ccp.Component.DisplayName, ccp.Component.Component.Kind)
+			return nil, err
+		}
+		resp, err := mClient.MClient.Provision(context.TODO(), &meshes.ProvisionRequest{
+			Username:     sap.userID,
+			DeleteOp:     sap.opIsDelete,
+			KubeConfigs:  kconfigs,
+			Declarations: []string{compStr},
 		})
 		sucess := err == nil
-		return []patterns.DeploymentMessagePerContext{
-			{
-				SystemName: hostName,
-				Location:   fmt.Sprintf("%s:%s", hostName, strconv.Itoa(hostPort)),
-				Summary: []patterns.DeploymentMessagePerComp{
-					{
-						Kind:       ccp.Component.Component.Kind,
-						Model:      ccp.Component.Model.Name,
-						CompName:   ccp.Component.DisplayName,
-						DesignName: sap.patternName,
-						Success:    sucess,
-						Message:    resp.GetMessage(),
-						Error:      err,
-					},
+		msgs = append(msgs, patterns.DeploymentMessagePerContext{
+			SystemName: hostName,
+			Location:   fmt.Sprintf("%s:%s", hostName, strconv.Itoa(hostPort)),
+			Summary: []patterns.DeploymentMessagePerComp{
+				{
+					Kind:       ccp.Component.Component.Kind,
+					Model:      ccp.Component.Model.Name,
+					CompName:   ccp.Component.DisplayName,
+					DesignName: sap.patternName,
+					Success:    sucess,
+					Message:    resp.GetMessage(),
+					Error:      err,
 				},
 			},
-		}, err
+		})
 	}
 
-	// send error for no hosts found for the component
-	return nil, nil
+	return msgs, nil
 }
 
 // func (sap *serviceActionProvider) Persist(name string, svc core.Service, isUpdate bool) error {

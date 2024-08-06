@@ -8,10 +8,6 @@ import (
 
 const DryRunResponseKey = "dryRunResponse"
 
-var mesheryDefinedAPIVersions = map[string]bool{
-	"core.oam.dev/v1alpha1": true,
-}
-
 // There are two types of errors here:
 // 1. Error while performing the Dry Run (when the DryRun request could not be sent)
 // 2. Errors in Dry Run (when the Dry Run request was performed successfully but there are errors in the Object sent for DryRun)
