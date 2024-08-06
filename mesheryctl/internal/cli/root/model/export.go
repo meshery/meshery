@@ -17,10 +17,9 @@ var exportModal = &cobra.Command{
 	Long:  "export the registered model to the specified output type",
 	Example: `
 // Export a model by name
-mesheryctl model export <modelname> -o json
-mesheryctl model export <modelname> -o yaml
-mesheryctl model export <modelname> -l /home/meshery/
-mesheryctl model export <modelname> --include-components true --include-relationships true
+mesheryctl model export [model-name] -o [oci/json/yaml] (default is oci)
+mesheryctl model export [model-name] -l /home/meshery/
+mesheryctl model export [model-name] --discard-components --discard-relationships
     `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
@@ -56,7 +55,7 @@ mesheryctl model export <modelname> --include-components true --include-relation
 		}
 		baseUrl := mctlCfg.GetBaseMesheryURL()
 		modelName := args[0]
-		url := fmt.Sprintf("%s/api/meshmodels/models/%s?components=%t&relationships=%t&%s", baseUrl, modelName, includeCompsFlag, includeRelsFlag, utils.GetPageQueryParameter(cmd, pageNumberFlag))
+		url := fmt.Sprintf("%s/api/meshmodels/models/%s?components=%t&relationships=%t&%s", baseUrl, modelName, !discardComponentsFlag, !discardRelationshipsFlag, utils.GetPageQueryParameter(cmd, pageNumberFlag))
 		return exportModel(args[0], cmd, url, false)
 	},
 }

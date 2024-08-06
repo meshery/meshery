@@ -46,10 +46,10 @@ var (
 	outLocationFlag string
 	// flag used to specify format of output of export {model-name} command
 	outTypeFlag string
-	// flag used to specify whether to include components in the model
-	includeCompsFlag bool
-	// flag used to specify whether to include relationships in the model
-	includeRelsFlag bool
+	// flag used to specify whether to discard components in the model
+	discardComponentsFlag bool
+	// flag used to specify whether to discard relationships in the model
+	discardRelationshipsFlag bool
 
 	// Maximum number of rows to be displayed in a page
 	maxRowsPerPage = 25
@@ -147,9 +147,9 @@ func init() {
 	viewModelCmd.Flags().StringVarP(&outFormatFlag, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
 
 	exportModal.Flags().StringVarP(&outLocationFlag, "output-location", "l", "./", "(optional) output location (default = current directory)")
-	exportModal.Flags().StringVarP(&outTypeFlag, "output-type", "o", "yaml", "(optional) format to display in [json|yaml] (default = yaml)")
-	exportModal.Flags().BoolVarP(&includeCompsFlag, "include-components", "c", false, "whether to include components in the model definition (default = false)")
-	exportModal.Flags().BoolVarP(&includeRelsFlag, "include-relationships", "r", false, "whether to include components in the model definition (default = false)")
+	exportModal.Flags().StringVarP(&outTypeFlag, "output-type", "o", "oci", "(optional) format to display in [oci|json|yaml] (default = oci)")
+	exportModal.Flags().BoolVarP(&discardComponentsFlag, "discard-components", "c", false, "(optional) whether to discard components in the exported model definition (default = false)")
+	exportModal.Flags().BoolVarP(&discardRelationshipsFlag, "discard-relationships", "r", false, "(optional) whether to discard relationships in the exported model definition (default = false)")
 
 	ModelCmd.AddCommand(availableSubcommands...)
 	ModelCmd.Flags().BoolVarP(&countFlag, "count", "", false, "(optional) Get the number of models in total")
@@ -303,24 +303,31 @@ func exportModel(modelName string, cmd *cobra.Command, url string, displayCountO
 		utils.Log.Error(err)
 		return err
 	}
+	if(len(modelsResponse.Models) < 1) {
+		return ErrExportModel(fmt.Errorf("Model with the given name could not be found in the registry"), modelName)
+	}
 	model := modelsResponse.Models[0]
+	var exportedModelPath string
 	// Convert it to the required output type and write it
 	if outTypeFlag == "yaml" {
-		err = model.WriteModelDefinition(filepath.Join(outLocationFlag, modelName, "model.yaml"), "yaml")
+		exportedModelPath = filepath.Join(outLocationFlag, modelName, "model.yaml")
+		err = model.WriteModelDefinition( exportedModelPath, "yaml")
 	}
 	if outTypeFlag == "json" {
-		err = model.WriteModelDefinition(filepath.Join(outLocationFlag, modelName, "model.json"), "json")
+		exportedModelPath = filepath.Join(outLocationFlag, modelName, "model.json")
+		err = model.WriteModelDefinition(exportedModelPath, "json")
 	}
 	if outTypeFlag == "oci" {
 		// write model as yaml temporarily
 		modelDir := filepath.Join(outLocationFlag, modelName)
-		err = model.WriteModelDefinition(filepath.Join(modelDir, "model.yaml"), "yaml")
+		err = model.WriteModelDefinition(filepath.Join(modelDir, "model.json"), "json")
 		// build oci image for the model
 		img, err := oci.BuildImage(modelDir)
 		if err != nil {
 			utils.Log.Error(err)
 			return err
 		}
+		exportedModelPath = outLocationFlag+modelName+".tar"
 		err = oci.SaveOCIArtifact(img, outLocationFlag+modelName+".tar", modelName)
 		if err != nil {
 			utils.Log.Error(handlers.ErrSaveOCIArtifact(err))
@@ -331,5 +338,6 @@ func exportModel(modelName string, cmd *cobra.Command, url string, displayCountO
 		utils.Log.Error(err)
 		return err
 	}
+	utils.Log.Infof("Exported model to %s", exportedModelPath)
 	return nil
 }
