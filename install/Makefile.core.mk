@@ -25,7 +25,7 @@ GOPATH = $(shell go env GOPATH)
 GOBIN  = $(GOPATH)/bin
 KEYS_PATH="../../server/permissions/keys.csv"
 
-SHELL := /usr/bin/env bash -o pipefail
+SHELL := /usr/bin/env bash -o pipefail -e
 
 #-----------------------------------------------------------------------------
 # Components
