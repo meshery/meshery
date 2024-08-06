@@ -30,7 +30,6 @@ import FiltersGrid from './MesheryFilters/FiltersGrid';
 import { trueRandom } from '../lib/trueRandom';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import PublicIcon from '@material-ui/icons/Public';
-import ConfirmationMsg from './ConfirmationModal';
 import PublishIcon from '@material-ui/icons/Publish';
 import downloadContent from '../utils/fileDownloader';
 import CloneIcon from '../public/static/img/CloneIcon';
@@ -75,7 +74,6 @@ import {
 } from '@/rtk-query/filter';
 import LoadingScreen from './LoadingComponents/LoadingComponent';
 import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
-import { ctxUrl } from '../utils/multi-ctx';
 import dataFetch from '../lib/data-fetch';
 
 const styles = (theme) => ({
@@ -247,7 +245,6 @@ function MesheryFilters({
   updateProgress,
   user,
   classes,
-  selectedK8sContexts,
   catalogVisibility,
   // toggleCatalogContent,
 }) {
@@ -269,8 +266,6 @@ function MesheryFilters({
     /**  @type {TypeView} */
     ('grid'),
   );
-  const FILTER_URL = '/api/filter';
-  const DEPLOY_URL = FILTER_URL + '/deploy';
 
   //hooks
   const { notify } = useNotification();
@@ -281,14 +276,6 @@ function MesheryFilters({
     open: false,
     ownerID: '',
     selectedResource: {},
-  });
-
-  const [modalOpen, setModalOpen] = useState({
-    open: false,
-    filter_file: null,
-    deploy: false,
-    name: '',
-    count: 0,
   });
 
   const [importModal, setImportModal] = useState({
@@ -566,31 +553,6 @@ function MesheryFilters({
     };
   }, []);
 
-  const handleDeploy = (filter_file, name) => {
-    dataFetch(
-      ctxUrl(DEPLOY_URL, selectedK8sContexts),
-      { credentials: 'include', method: 'POST', body: filter_file },
-      () => {
-        console.log('FilterFile Deploy API', `/api/filter/deploy`);
-        notify({ message: `"${name}" filter deployed`, event_type: EVENT_TYPES.SUCCESS });
-        updateProgress({ showProgress: false });
-      },
-      handleError(ACTION_TYPES.DEPLOY_FILTERS),
-    );
-  };
-
-  const handleUndeploy = (filter_file, name) => {
-    dataFetch(
-      ctxUrl(DEPLOY_URL, selectedK8sContexts),
-      { credentials: 'include', method: 'DELETE', body: filter_file },
-      () => {
-        updateProgress({ showProgress: false });
-        notify({ message: `"${name}" filter undeployed`, event_type: EVENT_TYPES.SUCCESS });
-      },
-      handleError(ACTION_TYPES.UNDEPLOY_FILTERS),
-    );
-  };
-
   const handlePublish = (formData) => {
     const compatibilityStore = _.uniqBy(meshModels, (model) => _.toLower(model.displayName))
       ?.filter((model) =>
@@ -708,15 +670,6 @@ function MesheryFilters({
       },
     );
     disposeConfSubscriptionRef.current = configurationSubscription;
-  };
-
-  const handleModalClose = () => {
-    setModalOpen({
-      open: false,
-      filter_file: null,
-      name: '',
-      count: 0,
-    });
   };
 
   function resetSelectedRowData() {
@@ -1338,8 +1291,6 @@ function MesheryFilters({
               // grid view
               <FiltersGrid
                 filters={filters}
-                handleDeploy={handleDeploy}
-                handleUndeploy={handleUndeploy}
                 handleSubmit={handleSubmit}
                 canPublishFilter={canPublishFilter}
                 handlePublish={handlePublish}
@@ -1361,18 +1312,6 @@ function MesheryFilters({
                 handleInfoModal={handleInfoModal}
               />
             )}
-            <ConfirmationMsg
-              open={modalOpen.open}
-              handleClose={handleModalClose}
-              submit={{
-                deploy: () => handleDeploy(modalOpen.filter_file, modalOpen.name),
-                unDeploy: () => handleUndeploy(modalOpen.filter_file, modalOpen.name),
-              }}
-              isDelete={!modalOpen.deploy}
-              title={modalOpen.name}
-              componentCount={modalOpen.count}
-              tab={modalOpen.deploy ? 2 : 1}
-            />
             {canPublishFilter &&
               publishModal.open &&
               CAN(keys.PUBLISH_WASM_FILTER.action, keys.PUBLISH_WASM_FILTER.subject) && (
