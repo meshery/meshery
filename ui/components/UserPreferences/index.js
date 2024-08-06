@@ -41,6 +41,7 @@ import { isExtensionOpen } from '../../pages/_app';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { useWindowDimensions } from '@/utils/dimension';
+import { useGetProviderCapabilitiesQuery, useGetUserPrefQuery } from '@/rtk-query/user';
 
 const styles = (theme) => ({
   statsWrapper: {
@@ -230,6 +231,14 @@ const UserPreference = (props) => {
   const [value, setValue] = useState(0);
   const [providerInfo, setProviderInfo] = useState({});
 
+  const {
+    data: userData,
+    isSuccess: isUserDataFetched,
+    isError: isUserDataError,
+    error: userDataError,
+  } = useGetUserPrefQuery();
+  const { data: capabilitiesData, isSuccess: isCapabilitiesDataFetched } =
+    useGetProviderCapabilitiesQuery();
   const { notify } = useNotification();
 
   const handleValChange = (event, newVal) => {
@@ -333,37 +342,19 @@ const UserPreference = (props) => {
   }, [props.capabilitiesRegistry]);
 
   useEffect(() => {
-    dataFetch(
-      '/api/user/prefs',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      (result) => {
-        if (result) {
-          setExtensionPreferences(result?.usersExtensionPreferences);
-          setCatalogContent(result?.usersExtensionPreferences?.catalogContent);
-        }
-      },
-      (err) => console.error(err),
-    );
-  }, []);
+    if (isUserDataFetched && userData) {
+      setExtensionPreferences(userData?.usersExtensionPreferences);
+      setCatalogContent(userData?.usersExtensionPreferences?.catalogContent);
+    } else if (isUserDataError) {
+      console.error(userDataError);
+    }
+  }, [isUserDataFetched, userData]);
 
   useEffect(() => {
-    dataFetch(
-      '/api/provider/capabilities',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      (result) => {
-        if (result) {
-          setProviderInfo(result);
-        }
-      },
-      (err) => console.error(err),
-    );
-  }, []);
+    if (isCapabilitiesDataFetched && capabilitiesData) {
+      setProviderInfo(capabilitiesData);
+    }
+  }, [isCapabilitiesDataFetched, capabilitiesData]);
 
   function convertToTitleCase(str) {
     const words = str.split('_');
