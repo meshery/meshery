@@ -14,7 +14,6 @@ import (
 	"github.com/layer5io/meshery/server/helpers"
 
 	"github.com/layer5io/meshery/server/models"
-	oamcore "github.com/layer5io/meshkit/models/oam/core/v1alpha1"
 
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshkit/models/events"
@@ -106,79 +105,6 @@ func writeK8sMetadata(comp *component.ComponentDefinition, reg *registry.Registr
 	// 	comp.Metadata = utils.MergeMaps(comp.Metadata, existingComp.Metadata)
 	// 	comp.Model = existingComp.Model
 	// }
-}
-
-func RegisterMeshmodelComponentsForCRDS(reg registry.RegistryManager, k8sYaml []byte, contextID string, version string) {
-	return
-	//TODO: Replace GenerateComponents in meshkit to natively produce MeshModel components to avoid any interconversion
-	comp, err := manifests.GenerateComponents(context.Background(), string(k8sYaml), manifests.K8s, manifests.Config{
-		CrdFilter: manifests.NewCueCrdFilter(manifests.ExtractorPaths{
-			NamePath:    "spec.names.kind",
-			IdPath:      "spec.names.kind",
-			VersionPath: "spec.versions[0].name",
-			GroupPath:   "spec.group",
-			SpecPath:    "spec.versions[0].schema.openAPIV3Schema.properties.spec"}, false),
-		ExtractCrds: func(manifest string) []string {
-			crds := strings.Split(manifest, "---")
-			return crds
-		},
-	})
-	if err != nil {
-		fmt.Println("err: ", err.Error())
-		return
-	}
-	for i, schema := range comp.Schemas {
-		fmt.Println(schema)
-		var def oamcore.WorkloadDefinition
-		err := json.Unmarshal([]byte(comp.Definitions[i]), &def)
-		if err != nil {
-			fmt.Println("err here: ", err.Error())
-			return
-		}
-		// kind := def.Spec.Metadata["k8sKind"]
-		comp := &component.ComponentDefinition{
-			// VersionMeta: v1beta1.VersionMeta{
-			// 	SchemaVersion: v1beta1.ComponentSchemaVersion,
-			// 	Version:       "v1.0.0",
-			// },
-			// Format: v1beta1.JSON,
-			// Component: v1beta1.ComponentEntity{
-			// 	TypeMeta: v1beta1.TypeMeta{
-			// 		Kind:    kind,
-			// 		Version: def.Spec.Metadata["k8sAPIVersion"],
-			// 	},
-			// 	Schema: schema,
-			// },
-			// DisplayName: manifests.FormatToReadableString(kind),
-			// Model: v1beta1.Model{
-			// 	VersionMeta: v1beta1.VersionMeta{
-			// 		SchemaVersion: v1beta1.ModelSchemaVersion,
-			// 		Version:       "v1.0.0",
-			// 	},
-			// 	Model: v1beta1.ModelEntity{
-			// 		Version: version,
-			// 	},
-			// 	Name:        "kubernetes",
-			// 	DisplayName: "Kubernetes",
-			// 	Category: v1beta1.Category{
-			// 		Name: "Orchestration & Management",
-			// 	},
-			// },
-		}
-		var isRegistranError bool
-		var isModelError bool
-		writeK8sMetadata(comp, &reg)
-		isRegistranError, isModelError, err = reg.RegisterEntity(connection.Connection{
-			Kind: "kubernetes",
-			Metadata: map[string]interface{}{
-				"context_id": contextID,
-			},
-		}, comp)
-		helpers.HandleError(connection.Connection{
-			Kind: "kubernetes"}, comp, err, isModelError, isRegistranError)
-
-	}
-	_ = helpers.WriteLogsToFiles()
 }
 
 type OpenAPIV3Response struct {
