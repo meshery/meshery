@@ -256,10 +256,14 @@ func WriteSVGsOnFileSystem(comp *component.ComponentDefinition) {
 	}
 
 	if comp.Model.Metadata != nil {
+		svgComplete := ""
+		if comp.Model.Metadata.SvgComplete != nil {
+			svgComplete = *comp.Model.Metadata.SvgComplete
+		}
 		writeSVGHelper(
 			comp.Model.Metadata.SvgColor,
 			comp.Model.Metadata.SvgWhite,
-			comp.Model.Metadata.SvgComplete,
+			svgComplete,
 			comp.Model.Name,
 			comp.Model.Name) //Write SVG on models
 	}

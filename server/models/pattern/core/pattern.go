@@ -168,24 +168,24 @@ func NewPatternFile(yml []byte) (patternFile pattern.PatternFile, err error) {
 // AssignAdditionalLabels adds labels to identify resources deployed by meshery.
 func AssignAdditionalLabels(comp *component.ComponentDefinition) error {
 
-	if comp.Metadata.AdditionalProperties == nil {
-		comp.Metadata.AdditionalProperties = make(map[string]interface{})
+	if comp.Configuration == nil {
+		comp.Configuration = make(map[string]interface{})
 	}
 
 	existingLabels := map[string]interface{}{}
 	var err error
 
-	if comp.Metadata.AdditionalProperties["labels"] == nil {
-		comp.Metadata.AdditionalProperties["labels"] = make(map[string]interface{})
+	if comp.Configuration["labels"] == nil {
+		comp.Configuration["labels"] = make(map[string]interface{})
 	} else {
-		existingLabels, err = mutils.Cast[map[string]interface{}](comp.Metadata.AdditionalProperties["labels"])
+		existingLabels, err = mutils.Cast[map[string]interface{}](comp.Configuration["labels"])
 		if err != nil {
 			return err
 		}
 	}
 
 	existingLabels["resource.pattern.meshery.io/id"] = comp.Id.String() //set the patternID to track back the object
-	comp.Metadata.AdditionalProperties["labels"] = existingLabels
+	comp.Configuration["labels"] = existingLabels
 	return nil
 }
 

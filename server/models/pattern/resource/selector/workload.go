@@ -12,13 +12,13 @@ import (
 func (s *Selector) GetDefinition(name string, version string, modelName string, apiVersion string) (component.ComponentDefinition, error) {
 	var comp *component.ComponentDefinition
 	name = strings.Split(name, ".")[0]
-	fmt.Println(name, modelName, version)
+	fmt.Println(name, modelName, version, apiVersion)
 	if modelName == ""  {
-		return *comp, fmt.Errorf("model name is required")
+		return component.ComponentDefinition{}, fmt.Errorf("model name is required")
 	}
 	
 	if apiVersion == "" {
-		return *comp, fmt.Errorf("apiVersion is required")
+		return component.ComponentDefinition{}, fmt.Errorf("apiVersion is required")
 	}
 
 	entities, _, _, _ := s.registry.GetEntities(&regv1beta1.ComponentFilter{

@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/gofrs/uuid"
+	"gopkg.in/yaml.v2"
 
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/models/patterns"
@@ -172,6 +173,11 @@ func (mpp *MesheryPatternPersister) DeleteMesheryPatterns(patterns MesheryPatter
 }
 
 func (mpp *MesheryPatternPersister) SaveMesheryPattern(pattern *MesheryPattern) ([]byte, error) {
+	pf, err := patterns.GetPatternFormat(pattern.PatternFile)
+	if err != nil {
+		return nil, err
+	}
+
 	if pattern.Visibility == "" {
 		pattern.Visibility = Private
 	}
@@ -180,15 +186,21 @@ func (mpp *MesheryPatternPersister) SaveMesheryPattern(pattern *MesheryPattern) 
 		if err != nil {
 			return nil, ErrGenerateUUID(err)
 		}
-		patterns.AssignVersion(&pattern.PatternFile)
+
+		patterns.AssignVersion(pf)
 
 		pattern.ID = &id
 	} else {
-		nextVersion, err := patterns.GetNextVersion(&pattern.PatternFile)
+		nextVersion, err := patterns.GetNextVersion(pf)
 		if err != nil {
 			return nil, err
 		}
-		pattern.PatternFile.Version = nextVersion
+		pf.Version = nextVersion
+		byt, err := yaml.Marshal(pf)
+		if err != nil {
+			return nil, err
+		}
+		pattern.PatternFile = string(byt)
 	}
 
 	return marshalMesheryPatterns([]MesheryPattern{*pattern}), mpp.DB.Save(pattern).Error
@@ -200,6 +212,11 @@ func (mpp *MesheryPatternPersister) SaveMesheryPatterns(mesheryPatterns []Mesher
 	nilUserID := ""
 	for _, pattern := range mesheryPatterns {
 
+		pf, err := patterns.GetPatternFormat(pattern.PatternFile)
+		if err != nil {
+			return nil, err
+		}
+
 		if pattern.Visibility == "" {
 			pattern.Visibility = Private
 		}
@@ -209,14 +226,14 @@ func (mpp *MesheryPatternPersister) SaveMesheryPatterns(mesheryPatterns []Mesher
 			if err != nil {
 				return nil, ErrGenerateUUID(err)
 			}
-			patterns.AssignVersion(&pattern.PatternFile)
+			patterns.AssignVersion(pf)
 			pattern.ID = &id
 		} else {
-			nextVersion, err := patterns.GetNextVersion(&pattern.PatternFile)
+			nextVersion, err := patterns.GetNextVersion(pf)
 			if err != nil {
 				return nil, err
 			}
-			pattern.PatternFile.Version = nextVersion
+			pf.Version = nextVersion
 		}
 
 		finalPatterns = append(finalPatterns, pattern)

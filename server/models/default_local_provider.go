@@ -1181,15 +1181,9 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 				case "Pattern":
 					for i, name := range names {
 						id, _ := uuid.NewV4()
-						var patternFile pattern.PatternFile
 
-						err = yaml.Unmarshal([]byte(content[i]), &patternFile)
-						if err != nil {
-							err = errors.Wrapf(err, "error decoding design file")
-							log.Error(err)
-						}
 						var pattern = &MesheryPattern{
-							PatternFile: patternFile,
+							PatternFile: content[i],
 							Name:        name,
 							ID:          &id,
 							UserID:      &nilUserID,
@@ -1548,17 +1542,9 @@ func githubRepoPatternScan(
 					return err
 				}
 
-				var patternFile pattern.PatternFile
-
-				err = yaml.Unmarshal([]byte(f.Content), &patternFile)
-				if err != nil {
-					err = errors.Wrapf(err, "error decoding design file")
-					return utils.ErrDecodeYaml(err)
-				}
-
 				pf := MesheryPattern{
 					Name:        name,
-					PatternFile: patternFile,
+					PatternFile: f.Content,
 					Location: map[string]interface{}{
 						"type":   "github",
 						"host":   fmt.Sprintf("github.com/%s/%s", owner, repo),
@@ -1648,7 +1634,7 @@ func genericHTTPPatternFile(fileURL string, log logger.Handler) ([]MesheryPatter
 
 	pf := MesheryPattern{
 		Name:        patternFile.Name,
-		PatternFile: patternFile,
+		PatternFile: string(body),
 		Location: map[string]interface{}{
 			"type":   "http",
 			"host":   fileURL,

@@ -8,7 +8,6 @@ import (
 	"github.com/gofrs/uuid"
 	isql "github.com/layer5io/meshery/server/internal/sql"
 	"github.com/layer5io/meshkit/models/catalog/v1alpha1"
-	"github.com/meshery/schemas/models/v1beta1/pattern"
 	"gopkg.in/yaml.v2"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	types "k8s.io/apimachinery/pkg/types"
@@ -87,7 +86,7 @@ type MesheryPattern struct {
 	ID *uuid.UUID `json:"id,omitempty"`
 
 	Name        string `json:"name,omitempty"`
-	PatternFile pattern.PatternFile `json:"pattern_file" gorm:"type:string;serializer:json"`
+	PatternFile string `json:"pattern_file"`
 	// Meshery doesn't have the user id fields
 	// but the remote provider is allowed to provide one
 	UserID *string `json:"user_id"`
@@ -139,6 +138,6 @@ func GetPatternName(stringifiedFile string) (string, error) {
 }
 
 type MesheryPatternFileDeployPayload struct {
-	PatternFile string `json:"pattern_file"`
+	PatternFile string    `json:"pattern_file"`
 	PatternID   uuid.UUID `json:"pattern_id"`
 }
