@@ -1,5 +1,5 @@
-import * as React from 'react';
-import { Typography, Grid, Box, styled } from '@layer5/sistent';
+import React, { useEffect, useState } from 'react';
+import { Typography, Grid, Box, styled, List, ListItem } from '@layer5/sistent';
 import { Launch as LaunchIcon } from '@material-ui/icons';
 import { alpha } from '@mui/material';
 import { SEVERITY_STYLE, SEVERITY } from '../NotificationCenter/constants';
@@ -88,8 +88,48 @@ const UnsuccessfulEntityWithError = ({ modelName, error }) => {
 };
 const ComponentWithIcon = ({ component }) => {
   const { DisplayName, Metadata, Model } = component;
+  const modelname = Model.name;
+  const kind = Metadata.toLowerCase();
 
-  let svgColor = Metadata.svgWhite || Metadata.color;
+  const path = `ui/public/static/img/meshmodels/${modelname}/color/${modelname}-color.svg`;
+  const whitepath = `ui/public/static/img/meshmodels/${modelname}/white/${modelname}-white.svg`;
+  const componentpath = `ui/public/static/img/meshmodels/${modelname}/color/${kind}-color.svg`;
+  const componentwhitepath = `ui/public/static/img/meshmodels/${modelname}/white/${kind}-white.svg`;
+
+  const checkImageExists = async (url) => {
+    try {
+      const response = await fetch(url);
+      return response.ok;
+    } catch (error) {
+      console.error('Error checking image:', error);
+      return false;
+    }
+  };
+
+  const [finalPath, setFinalPath] = useState('ui/public/static/img/istio.svg');
+
+  useEffect(() => {
+    const loadImages = async () => {
+      const doesPathExist = await checkImageExists(path);
+      const doesWhitePathExist = await checkImageExists(whitepath);
+      const doesComponentPathExist = await checkImageExists(componentpath);
+      const doesComponentWhitePathExist = await checkImageExists(componentwhitepath);
+
+      const newPath = doesComponentPathExist
+        ? componentpath
+        : doesComponentWhitePathExist
+        ? componentwhitepath
+        : doesPathExist
+        ? path
+        : doesWhitePathExist
+        ? whitepath
+        : 'ui/public/static/img/istio.svg';
+
+      setFinalPath(newPath);
+    };
+
+    loadImages();
+  }, [path, whitepath, componentpath, componentwhitepath]);
 
   const version = Model.model
     ? Model.model.version.startsWith('v')
@@ -113,8 +153,9 @@ const ComponentWithIcon = ({ component }) => {
             alignItems: 'center',
             justifyContent: 'center',
           }}
-          dangerouslySetInnerHTML={{ __html: svgColor }}
-        />
+        >
+          <img src={finalPath} style={{ width: '30px', height: '30px' }} alt={DisplayName} />
+        </div>
       </Grid>
       <Grid item>
         <Typography variant="body1" component="span">
@@ -178,10 +219,23 @@ export const ErrorMetadataFormatter = ({ metadata, event }) => {
   const code = metadata?.Code || '';
   const formattedErrorCode = errorCode ? `${errorCode}-${code}` : code;
   const errorLink = `https://docs.meshery.io/reference/error-codes#${formattedErrorCode}`;
-  const uiSchema = {
-    'Probable Cause': { style: { fontSize: '10px' } },
-    'Suggested Remediation': { style: { fontSize: '16px' } },
-    Details: { style: { fontSize: '16px' } },
+  const ErrorDetailsObjectFormatter = ({ heading, value }) => {
+    return (
+      <Box>
+        <Typography variant="body1">
+          <strong>{heading}</strong>
+        </Typography>
+        <List sx={{}}>
+          {value.map((error, idx) => (
+            <ListItem key={idx}>
+              <Box>
+                <Typography variant="body1">{error}</Typography>
+              </Box>
+            </ListItem>
+          ))}
+        </List>
+      </Box>
+    );
   };
   return (
     <Grid container>
@@ -193,7 +247,9 @@ export const ErrorMetadataFormatter = ({ metadata, event }) => {
             data={{
               Details: longDescription,
             }}
-            uiSchema={uiSchema}
+            propertyFormatters={{
+              Details: (value) => <ErrorDetailsObjectFormatter heading="Details" value={value} />,
+            }}
           />
         </div>
       </div>
@@ -203,7 +259,11 @@ export const ErrorMetadataFormatter = ({ metadata, event }) => {
             data={{
               'Probable Cause': probableCause,
             }}
-            uiSchema={uiSchema}
+            propertyFormatters={{
+              'Probable Cause': (value) => (
+                <ErrorDetailsObjectFormatter heading="Probable Cause" value={value} />
+              ),
+            }}
           />
         </Grid>
         <Grid item sm={suggestedRemediation?.length > 0 ? 6 : 12}>
@@ -211,7 +271,11 @@ export const ErrorMetadataFormatter = ({ metadata, event }) => {
             data={{
               'Suggested Remediation': suggestedRemediation,
             }}
-            uiSchema={uiSchema}
+            propertyFormatters={{
+              'Suggested Remediation': (value) => (
+                <ErrorDetailsObjectFormatter heading="Suggested Remediation" value={value} />
+              ),
+            }}
           />
         </Grid>
       </Grid>

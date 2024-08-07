@@ -29,11 +29,11 @@ func (h *Handler) handleError(rw http.ResponseWriter, err error, logMsg string) 
 func (h *Handler) sendSuccessResponse(rw http.ResponseWriter, userID uuid.UUID, provider models.Provider, message string, errMsg string, response *models.RegistryAPIResponse) {
 	if errMsg != "" {
 		if message != "" {
-			response.ErrMsg = message + ". " + errMsg
+			response.ErrMsg = message + ", " + errMsg
 			h.log.Info(response.ErrMsg)
 		} else {
 			h.log.Info(errMsg)
-			response.ErrMsg = errMsg + "."
+			response.ErrMsg = "Import" + errMsg + "."
 		}
 	} else {
 		response.ErrMsg = message
@@ -152,7 +152,7 @@ func addSuccessfulEntry(content []byte, entityType entity.EntityType, response *
 		if err := meshkitutils.Unmarshal(string(content), &c); err == nil {
 			entry := map[string]interface{}{
 				"Model":       c.Model,
-				"Metadata":    c.Metadata,
+				"Metadata":    c.Component.Kind,
 				"DisplayName": c.DisplayName,
 				"Version":     c.Model.Version,
 			}
@@ -342,22 +342,23 @@ func (h *Handler) sendFileEvent(userID uuid.UUID, provider models.Provider, resp
 		metadata["ModelDetails"].(map[string]interface{})[modelName] = modelData
 	}
 
-	desciption := "Model"
-	if response.EntityCount.ModelCount > 1 {
-		desciption = "Models"
-	}
-	desciption = fmt.Sprintf("%s generated", desciption)
 	eventType := events.Informational
 	if response.EntityCount.CompCount == 0 && response.EntityCount.RelCount == 0 && response.EntityCount.ModelCount == 0 {
 		eventType = events.Error
-		desciption = "No model generated"
+	} else if response.EntityCount.TotalErrCount > 0 && (response.EntityCount.CompCount > 0 || response.EntityCount.RelCount > 0 || response.EntityCount.ModelCount > 0) {
+		eventType = events.Warning
+	}
+	description := getFirst42Chars(response.ErrMsg)
+	description = description + "..."
+	if response.EntityCount.TotalErrCount == 0 {
+		eventType = events.Success
 	}
 	event := events.NewEvent().
 		ActedUpon(userID).
 		FromUser(userID).
 		FromSystem(*h.SystemID).
 		WithAction("register").
-		WithDescription(desciption).
+		WithDescription(description).
 		WithSeverity(eventType).
 		WithMetadata(metadata).
 		Build()
@@ -365,17 +366,12 @@ func (h *Handler) sendFileEvent(userID uuid.UUID, provider models.Provider, resp
 	_ = provider.PersistEvent(event)
 	go h.config.EventBroadcaster.Publish(userID, event)
 }
-
-// Helper function to check if a slice contains a specific string
-func contains(slice []string, item string) bool {
-	for _, s := range slice {
-		if s == item {
-			return true
-		}
+func getFirst42Chars(s string) string {
+	if len(s) > 42 {
+		return s[:42]
 	}
-	return false
+	return s
 }
-
 func RegisterEntity(content []byte, entityType entity.EntityType, h *Handler, response *models.RegistryAPIResponse, mu *sync.Mutex) (string, error) {
 	switch entityType {
 	case entity.ComponentDefinition:
@@ -496,10 +492,10 @@ func writeMessageString(response *models.RegistryAPIResponse) strings.Builder {
 		if response.EntityCount.ModelCount > 1 {
 			model = "models"
 		}
-		message.WriteString(fmt.Sprintf("Imported %s: %s. ", model, modelName))
+		message.WriteString(fmt.Sprintf("Imported %s %s ", model, modelName))
 	}
 	if response.EntityCount.CompCount > 0 || response.EntityCount.RelCount > 0 {
-		message.WriteString("Imported ")
+		message.WriteString("(")
 	}
 	if response.EntityCount.CompCount > 0 {
 		component := "component"
@@ -517,6 +513,9 @@ func writeMessageString(response *models.RegistryAPIResponse) strings.Builder {
 			relationship = "relationships"
 		}
 		message.WriteString(fmt.Sprintf("%d %s", response.EntityCount.RelCount, relationship))
+	}
+	if response.EntityCount.CompCount > 0 || response.EntityCount.RelCount > 0 {
+		message.WriteString(")")
 	}
 	return message
 }
@@ -539,7 +538,7 @@ func ErrMsgContruct(response *models.RegistryAPIResponse) string {
 		entity = "entities"
 	}
 
-	msg := fmt.Sprintf("Import encountered error for %d %s (", response.EntityCount.TotalErrCount, entity)
+	msg := fmt.Sprintf("encountered error for %d %s (", response.EntityCount.TotalErrCount, entity)
 	componentsPresent := response.EntityCount.ErrCompCount > 0
 	relationshipsPresent := response.EntityCount.ErrRelCount > 0
 	modelsPresent := response.EntityCount.ErrModelCount > 0

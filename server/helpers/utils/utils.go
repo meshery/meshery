@@ -16,9 +16,9 @@ import (
 
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	"github.com/layer5io/meshkit/utils"
-	"gorm.io/gorm"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
+	"gorm.io/gorm"
 )
 
 const (
