@@ -31,7 +31,7 @@ export const AdapterDiv = styled("div")(({ theme, inactiveAdapter }) => ({
 
 
 export const ExtensionWrapper = styled('div')(({ theme }) => ({
-  margin: theme.spacing(2),
+  margin: theme.spacing(5),
   display: "flex",
   justifyContent: 'center',
   alignItems: 'center',
@@ -58,7 +58,7 @@ export const LoadingDiv = styled('div')(({ theme }) => ({
   position: "absolute",
 
   zIndex: 10,
-}))  
+}))
 
 export const VersionDiv = styled('div')(({theme}) => ({
   position: "relative",
@@ -112,6 +112,7 @@ export const MeshModels = styled('div')(({ theme }) => ({
   display: "flex",
   alignItems: 'center',
   flexWrap: "wrap",
+  marginTop: "0",
   [theme.breakpoints.down("md")]: {
     display: "flex",
   },

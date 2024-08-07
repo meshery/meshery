@@ -25,9 +25,10 @@ function CatalogCard({ pattern, patternType, catalog }) {
   const handleCopyClick = async event => {
     event.preventDefault();
 
+    let name = pattern?.name?.toLowerCase().split(' ').join('-')
     try {
       await navigator.clipboard.writeText(
-        `${mesheryCloudUrl}/catalog/${pattern.id}`
+        `${mesheryCloudUrl}/catalog/content/${name}-${pattern.id}?source=%257B%257D`
       );
       setCopied(true);
       setTimeout(() => {
@@ -39,8 +40,10 @@ function CatalogCard({ pattern, patternType, catalog }) {
     }
   };
 
-  return pattern?.visibility === "published" ? (
-      <DesignCard>
+  return pattern?.visibility === "published" && (
+      <DesignCard onClick={() => {window.ddClient.host.openExternal(
+                      `${mesheryCloudUrl}/catalog/content/catalog/${pattern?.name?.toLowerCase().split(' ').join('-')}-${pattern.id}`,
+                    )}}>
         <DesignInnerCard>
           <CardFront>
             <DesignVisibility>{pattern.visibility}</DesignVisibility>
@@ -87,50 +90,7 @@ function CatalogCard({ pattern, patternType, catalog }) {
             </DesignId>
           </CardBack>
         </DesignInnerCard>
-      </DesignCard>
-  ) : (
-    <DesignCard>
-      <DesignInnerCard>
-        <CardFront>
-          <DesignVisibility>{pattern.visibility}</DesignVisibility>
-          <DesignType>{patternType}</DesignType>
-          <DesignName>{pattern.name}</DesignName>
-          <ServiceMeshIcon width={120} height={100} />
-          <DesignId>
-            <DesignIcon width={20} height={20} />
-            {`MESHERY${pattern.id.split("-")[2]}`}
-          </DesignId>
-        </CardFront>
-        <CardBack>
-          <DesignVisibility
-            style={{
-              color: "white",
-              border: `1px solid #00d3a9`
-            }}
-          >
-            {pattern.visibility}
-          </DesignVisibility>
-          <DesignType>{patternType}</DesignType>
-          <DesignName style={{ color: "white" }}>{pattern.name}</DesignName>
-          <DesignDetailsDiv>
-            {catalog && <DesignDetails> Created By : {pattern.first_name}</DesignDetails>}
-            <DesignDetails>Created At : {pattern.created_at.slice(0, 10)}</DesignDetails>
-            <DesignDetails>Updated At : {pattern.updated_at.slice(0, 10)}</DesignDetails>
-            <DesignDetails>Version : v1</DesignDetails>
-          </DesignDetailsDiv>
-          <DesignId style={{ color: "white" }}>
-            <WhiteDesignIcon width={20} height={20} />
-            {` MESHERY${pattern.id.split("-")[2]}`}
-            <Tooltip title={copied ? "Copied" : "Copy"}>
-              <CopyButton onClick={handleCopyClick}>
-                <CopyIcon width={20} height={20} />
-              </CopyButton>
-            </Tooltip>
-          </DesignId>
-        </CardBack>
-      </DesignInnerCard>
-    </DesignCard>
-  );
+      </DesignCard>)
 }
 
 export default CatalogCard;

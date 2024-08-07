@@ -1,7 +1,11 @@
 import BBChart from "../Chart/BBChart";
-import { CHART_COLORS, topicsList } from "../utils/constants";
+import { CHART_COLORS} from "../utils/constants";
 import { bar } from "billboard.js";
 import { ChartDiv } from "./style";
+
+const capitalize = (str) => {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+}
 
 const groupItemsByTypeCount = data => {
   const dataByTypeCount = {};
@@ -39,7 +43,12 @@ const CatalogChart = ({filter, pattern, isTheme: isDarkTheme }) => {
   };
 
   const filtersByType = groupItemsByTypeCount(filter ? filter.filters : []);
-  const patternsByType = groupItemsByTypeCount(pattern ? pattern.patterns : []);
+  const patternsByType = {}
+  pattern?.category_count?.forEach(e => {
+    patternsByType[capitalize(e.type)] = e.count
+  })
+
+  const topicsList = pattern?.category_count?.map(e => ({label: capitalize(e.type), value: e.type }))
 
   let topics = new Set([
     ...topicsList.map(({ label }) => label),

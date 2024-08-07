@@ -1,17 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { Typography, Button, Tooltip, Grid } from '@mui/material'
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
-// import ConsulIcon from '../../img/SVGs/consulIcon'
-// import IstioIcon from '../../img/SVGs/IstioIcon'
-// import KumaIcon from '../../img/SVGs/kumaIcon'
-// import LinkerdIcon from '../../img/SVGs/linkerdIcon'
 import Tour from '../Walkthrough/Tour'
 import PublishIcon from '../../assets/design'
 import { Avatar } from '@mui/material'
-// import NginxIcon from '../../img/SVGs/nginxIcon'
-// import AppmeshIcon from '../../img/SVGs/appmeshIcon'
-// import CiliumIcon from '../../img/SVGs/ciliumIcon'
-// import TraefikIcon from '../../img/SVGs/traefikIcon'
 import Meshery from '../../img/SVGs/meshery'
 import MesheryIcon from '../../img/meshery-logo/CustomMesheryLogo'
 import { DockerMuiThemeProvider } from '@docker/docker-mui-theme'
@@ -42,49 +34,6 @@ const UnauthenticatedMsg = 'Unauthenticated'
 const proxyUrl = 'http://127.0.0.1:7877'
 const httpDelete = 'DELETE'
 
-// const adapters = {
-//   APP_MESH: {
-//     displayName: 'App Mesh',
-//     icon: <AppmeshIcon width={40} height={40} />,
-//     name: 'APP_MESH',
-//   },
-//   CILIUM_SERVICE_MESH: {
-//     displayName: 'Cilium',
-//     icon: <CiliumIcon width={40} height={40} />,
-//     name: 'CILIUM_SERVICE_MESH',
-//   },
-//   CONSUL: {
-//     displayName: 'Consul',
-//     icon: <ConsulIcon width={40} height={40} />,
-//     name: 'CONSUL',
-//   },
-//   ISTIO: {
-//     displayName: 'Istio',
-//     icon: <IstioIcon width={40} height={40} />,
-//     name: 'ISTIO',
-//   },
-//   KUMA: {
-//     displayName: 'Kuma',
-//     icon: <KumaIcon width={40} height={40} />,
-//     name: 'KUMA',
-//   },
-//   LINKERD: {
-//     displayName: 'Linkerd',
-//     icon: <LinkerdIcon width={40} height={40} />,
-//     name: 'LINKERD',
-//   },
-//   NGINX_SERVICE_MESH: {
-//     displayName: 'NGINX',
-//     icon: <NginxIcon width={38} height={40} />,
-//     name: 'NGINX_SERVICE_MESH',
-//   },
-//   TRAEFIK_MESH: {
-//     displayName: 'Traefix Mesh',
-//     icon: <TraefikIcon width={40} height={40} />,
-//     name: 'TRAEFIK_MESH',
-//   },
-// }
-
 const useThemeDetector = () => {
   const getCurrentTheme = () =>
     window.matchMedia('(prefers-color-scheme: dark)').matches
@@ -102,28 +51,15 @@ const useThemeDetector = () => {
 }
 
 const ExtensionsComponent = () => {
-  // const [switchesState, setSwitchesState] = useState(null)
   const [isHovered, setIsHovered] = useState(false)
   const isDarkTheme = useThemeDetector()
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [user, setUser] = useState('')
   const [token, setToken] = useState()
   const [changing, isChanging] = useState(false)
-  // const [emptystate, isEmptystate] = useState(true)
-  // const [meshAdapters, setMeshAdapters] = useState(null)
-  const [pattern, setPattern] = useState(null)
   const [filter, setFilter] = useState(null)
-  const [userDesigns, setUserDesigns] = useState(null)
+  const [catalogDesigns, setCatalogDesigns] = useState(null)
 
-  // useEffect(() => {
-  //   if (meshAdapters && meshAdapters.length !== 0) {
-  //     setSwitchesState(
-  //       meshAdapters.map((adapter) => ({
-  //         [adapter.name]: false,
-  //       })),
-  //     )
-  //   }
-  // }, [meshAdapters])
   const [mesheryVersion, setMesheryVersion] = useState(null)
 
   const logout = () => {
@@ -150,29 +86,15 @@ const ExtensionsComponent = () => {
         setToken(res)
         if (res !== 'null') {
           setIsLoggedIn(true)
-
           fetch(proxyUrl + '/api/user')
             .then((res) => res.text())
             .then((res) => {
               setUser(JSON.parse(res))
             })
             .catch(console.error)
-          // fetch(proxyUrl + '/api/system/sync')
-          //   .then((res) => res.json())
-          //   .then((data) => {
-          //     setMeshAdapters(data.meshAdapters)
-          //     isEmptystate(false)
-          //   })
-          //   .catch(console.err)
           fetch(proxyUrl + '/api/system/version')
             .then((result) => result.text())
             .then((result) => setMesheryVersion(JSON.parse(result)?.build))
-            .catch(console.error)
-          fetch(`${mesheryCloudUrl}/api/catalog/content/pattern`)
-            .then((result) => result.text())
-            .then((result) => {
-              setPattern(JSON.parse(result))
-            })
             .catch(console.error)
           fetch(`${mesheryCloudUrl}/api/catalog/content/filter`)
             .then((result) => result.text())
@@ -187,10 +109,10 @@ const ExtensionsComponent = () => {
 
   useEffect(() => {
     if (user?.id) {
-      fetch(`${mesheryCloudUrl}/api/content/patterns?user_id=${user?.id}`)
+      fetch(`${mesheryCloudUrl}/api/catalog/content/pattern?page=1&pagesize=2`)
         .then((result) => result.text())
         .then((result) => {
-          setUserDesigns(JSON.parse(result))
+          setCatalogDesigns(JSON.parse(result))
         })
         .catch(console.error)
     }
@@ -214,46 +136,6 @@ const ExtensionsComponent = () => {
     isChanging(true)
     setIsHovered(true)
   }
-  // const submitConfig = (mesh, deprovision = false, meshAdapters) => {
-  //   const targetMesh = meshAdapters.find((msh) => msh.name === mesh)
-  //   const deployQuery = targetMesh.ops.find((op) => !op.category).key
-  //   const data = {
-  //     adapter: targetMesh.adapter_location,
-  //     query: deployQuery,
-  //     namespace: 'default',
-  //     customBody: '',
-  //     deleteOp: deprovision ? 'on' : '',
-  //   }
-
-  //   const params = Object.keys(data)
-  //     .map(
-  //       (key) => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`,
-  //     )
-  //     .join('&')
-  //   fetch(proxyUrl + '/api/system/adapter/operation', {
-  //     credentials: 'same-origin',
-  //     method: 'POST',
-  //     credentials: 'include',
-  //     headers: {
-  //       'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-  //     },
-  //     mode: 'no-cors',
-  //     body: params,
-  //   })
-  //     .then(() => {
-  //       window.ddClient.desktopUI.toast.success(
-  //         `Request received. ${deprovision ? 'Deprovisioning' : 'Provisioning'
-  //         } Service Mesh...`,
-  //       )
-  //     })
-  //     .catch(() => {
-  //       window.ddClient.desktopUI.toast.error(
-  //         `Could not ${deprovision ? 'Deprovision' : 'Provision'
-  //         } the Service Mesh due to some error.`,
-  //       )
-  //     })
-  // }
-
   const handleImport = () => {
     const file = document.getElementById('upload-button').files[0]
     // Create a reader
@@ -312,7 +194,6 @@ const ExtensionsComponent = () => {
         >
           <div>
             <MesheryIcon CustomColor={isDarkTheme ? 'white' : '#3C494F'} />
-
             <Typography sx={{ margin: 'auto', paddingTop: '1rem' }}>
               Design and operate your cloud native deployments with the
               extensible management plane, Meshery.
@@ -482,8 +363,8 @@ const ExtensionsComponent = () => {
         </SectionWrapper>
         {isLoggedIn &&
           (<SectionWrapper>
-            <CatalogChart filter={filter} pattern={pattern} isTheme={isDarkTheme} />
-            <Grid sx={{ backgroundColor: isDarkTheme ? '#666A75' : '#D7DADE', borderRadius: "15px", height: "23rem", display: "flex", justifyContent: "center" }}>
+            <CatalogChart filter={filter} pattern={catalogDesigns} isTheme={isDarkTheme} />
+            <Grid sx={{ backgroundColor: isDarkTheme ? '#666A75' : '#D7DADE', borderRadius: "15px", height: "26rem", display: "flex", justifyContent: "center" }}>
 
               <div style={{ paddingTop: isLoggedIn ? '1.2rem' : null, margin: "10px 0" }}>
                 <ExtensionWrapper
@@ -492,14 +373,14 @@ const ExtensionsComponent = () => {
                     height: ['22rem', '17rem', '14rem'],
                   }}
                 >
-                  {userDesigns?.patterns.length > 0 ? (
+                  {catalogDesigns?.patterns.length > 0 ? (
                     <div>
                       <Typography variant="h5" sx={{ padding: '3rem 0 1rem 0', fontWeight: "bold" }}>
                         Designs
                       </Typography>
                       <MeshModels>
                         {
-                          userDesigns?.patterns?.slice(0, 2).map((pattern, index) => {
+                          catalogDesigns?.patterns?.map((pattern, index) => {
                             let patternType =
                               pattern.catalog_data && pattern.catalog_data.type && pattern.catalog_data.type !== ""
                                 ? pattern.catalog_data.type
@@ -515,6 +396,19 @@ const ExtensionsComponent = () => {
                           })
                         }
                       </MeshModels>
+                    <StyledButton
+                      variant="contained"
+                      color="primary"
+                      disabled={!isLoggedIn}
+                      aria-label="Browse Catalog"
+                      component="span"
+                      sx={{marginBottom: "1rem"}}
+                      onClick = {() => window.ddClient.host.openExternal(
+                      `${mesheryCloudUrl}/catalog`,
+                    )}
+                    >
+                      Browse Catalog
+                    </StyledButton>
                     </div>
                   ) : (
                     <div>
