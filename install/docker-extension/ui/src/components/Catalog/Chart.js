@@ -48,7 +48,10 @@ const CatalogChart = ({filter, pattern, isTheme: isDarkTheme }) => {
     patternsByType[capitalize(e.type)] = e.count
   })
 
-  const topicsList = pattern?.category_count?.map(e => ({label: capitalize(e.type), value: e.type }))
+  let topicsList = []
+  if(pattern?.category_count){
+    topicsList = pattern?.category_count?.map(e => ({label: capitalize(e.type), value: e.type }))
+  }
 
   let topics = new Set([
     ...topicsList.map(({ label }) => label),
@@ -80,4 +83,3 @@ const CatalogChart = ({filter, pattern, isTheme: isDarkTheme }) => {
   return <ChartDiv style={{ background:  isDarkTheme ? '#666A75' : '#D7DADE' }}>{<BBChart options={options} />}</ChartDiv>
 }
 
-export default CatalogChart;

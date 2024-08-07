@@ -5,17 +5,6 @@ export const CHART_COLORS = [
   "#CBDEE6"
 ];
 
-export const topicsList = [
-  { label: "Deployment", value: "deployment" },
-  { label: "Traffic-management", value: "traffic-management" },
-  { label: "Security", value: "security" },
-  { label: "Workloads", value: "workloads" },
-  { label: "Observability", value: "observability" },
-  { label: "Troubleshooting", value: "troubleshooting" },
-  { label: "Scaling", value: "scaling" },
-  { label: "Resiliency", value: "resiliency" },
-];
-
 export const mesheryCloudUrl = 'https://meshery.layer5.io'
 
 export const MESHMAP = 'meshmap'
