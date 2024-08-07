@@ -106,7 +106,7 @@ const ComponentWithIcon = ({ component }) => {
     }
   };
 
-  const [finalPath, setFinalPath] = useState('ui/public/static/img/istio.svg');
+  const [finalPath, setFinalPath] = useState('ui/public/static/img/meshery-logo.png');
 
   useEffect(() => {
     const loadImages = async () => {
@@ -123,7 +123,7 @@ const ComponentWithIcon = ({ component }) => {
         ? path
         : doesWhitePathExist
         ? whitepath
-        : 'ui/public/static/img/istio.svg';
+        : 'ui/public/static/img/meshery-logo.png';
 
       setFinalPath(newPath);
     };
