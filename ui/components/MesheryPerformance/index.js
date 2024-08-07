@@ -53,6 +53,7 @@ import { keys } from '@/utils/permission_constants';
 import DefaultError from '@/components/General/error-404/index';
 import { CustomTextTooltip } from '../MesheryMeshInterface/PatternService/CustomTextTooltip';
 import { useGetUserPrefWithContextQuery } from '@/rtk-query/user';
+import { useSavePerformanceProfileMutation } from '@/rtk-query/performance-profile';
 
 // =============================== HELPER FUNCTIONS ===========================
 
@@ -281,6 +282,8 @@ const MesheryPerformanceComponent = (props) => {
     props?.selectedK8sContexts,
   );
 
+  const [savePerformanceProfile] = useSavePerformanceProfileMutation();
+
   const handleChange = (name) => (event) => {
     const { value } = event.target;
     if (name === 'caCertificate') {
@@ -473,12 +476,10 @@ const MesheryPerformanceComponent = (props) => {
 
   const handleProfileUpload = (body, generateNotif, cb) => {
     if (generateNotif) props.updateProgress({ showProgress: true });
-
-    dataFetch(
-      '/api/user/performance/profiles',
-      { method: 'POST', credentials: 'include', body: JSON.stringify(body) },
-      (result) => {
-        if (typeof result !== 'undefined') {
+    savePerformanceProfile({ body })
+      .unwrap()
+      .then((result) => {
+        if (result) {
           props.updateProgress({ showProgress: false });
           setPerformanceProfileID(result.id);
           if (cb) cb(result);
@@ -490,8 +491,8 @@ const MesheryPerformanceComponent = (props) => {
             });
           }
         }
-      },
-      (err) => {
+      })
+      .catch((err) => {
         console.error(err);
         props.updateProgress({ showProgress: false });
         const notify = props.notify;
@@ -500,8 +501,7 @@ const MesheryPerformanceComponent = (props) => {
           event_type: EVENT_TYPES.ERROR,
           details: err.toString(),
         });
-      },
-    );
+      });
   };
 
   const submitLoadTest = (id) => {
