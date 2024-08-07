@@ -62,7 +62,7 @@ involved in rendering the Results page of Meshery UI are named as 'MesheryResult
 
 npm install
 
-npm playwright install --with-deps
+npx playwright install --with-deps
 
 ```
 
