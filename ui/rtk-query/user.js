@@ -14,7 +14,21 @@ const userApi = api.injectEndpoints({
       query: () => `token`,
       method: 'GET',
     }),
+    getUserPref: builder.query({
+      query: () => 'user/prefs',
+      method: 'GET',
+    }),
+    getProviderCapabilities: builder.query({
+      query: () => 'provider/capabilities',
+      method: 'GET',
+    }),
   }),
 });
 
-export const { useGetLoggedInUserQuery, useGetUserByIdQuery, useLazyGetTokenQuery } = userApi;
+export const {
+  useGetLoggedInUserQuery,
+  useGetUserByIdQuery,
+  useLazyGetTokenQuery,
+  useGetUserPrefQuery,
+  useGetProviderCapabilitiesQuery,
+} = userApi;

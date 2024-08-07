@@ -20,8 +20,8 @@ import (
 	"github.com/layer5io/meshery/server/internal/store"
 	"github.com/layer5io/meshery/server/machines"
 	mhelpers "github.com/layer5io/meshery/server/machines/helpers"
-	meshmodelhelper "github.com/layer5io/meshery/server/meshmodel"
 	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshery/server/models/connections"
 	mesherymeshmodel "github.com/layer5io/meshery/server/models/meshmodel"
 	"github.com/layer5io/meshery/server/router"
 	"github.com/layer5io/meshkit/broker/nats"
@@ -34,6 +34,7 @@ import (
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 	"github.com/spf13/viper"
 
+	"github.com/meshery/schemas/models/v1beta1"
 	"github.com/sirupsen/logrus"
 )
 
@@ -206,6 +207,12 @@ func main() {
 		models.K8sContext{},
 		models.Organization{},
 		models.Key{},
+		connections.Connection{},
+		v1beta1.Environment{},
+		v1beta1.EnvironmentConnectionMapping{},
+		v1beta1.Workspace{},
+		v1beta1.WorkspacesEnvironmentsMapping{},
+		v1beta1.WorkspacesDesignsMapping{},
 		_events.Event{},
 	)
 	if err != nil {
@@ -226,6 +233,9 @@ func main() {
 		MesheryPatternResourcePersister: &models.PatternResourcePersister{DB: dbHandler},
 		MesheryK8sContextPersister:      &models.MesheryK8sContextPersister{DB: dbHandler},
 		OrganizationPersister:           &models.OrganizationPersister{DB: dbHandler},
+		ConnectionPersister:             &models.ConnectionPersister{DB: dbHandler},
+		EnvironmentPersister:            &models.EnvironmentPersister{DB: dbHandler},
+		WorkspacePersister:              &models.WorkspacePersister{DB: dbHandler},
 		KeyPersister:                    &models.KeyPersister{DB: dbHandler},
 		EventsPersister:                 &models.EventsPersister{DB: dbHandler},
 		GenericPersister:                dbHandler,
@@ -265,10 +275,9 @@ func main() {
 		os.Exit(1)
 	}
 	//seed the local meshmodel components
-	ch := meshmodelhelper.NewEntityRegistrationHelper(hc, regManager, log)
 	rego := policies.Rego{}
 	go func() {
-		ch.SeedComponents()
+		models.SeedComponents(log, hc, regManager)
 		r, err := policies.NewRegoInstance(PoliciesPath, regManager)
 		rego = *r
 		if err != nil {

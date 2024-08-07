@@ -16,6 +16,8 @@ import {
   ModalBody,
   ModalFooter,
   PrimaryActionButtons,
+  createAndEditWorkspaceSchema,
+  createAndEditWorkspaceUiSchema,
 } from '@layer5/sistent';
 import useStyles from '../../../assets/styles/general/tool.styles';
 import styles from '../Environments/styles';
@@ -47,7 +49,6 @@ import theme from '../../../themes/app';
 import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
 import DefaultError from '@/components/General/error-404/index';
-import { useGetSchemaQuery } from '@/rtk-query/schema';
 import { UsesSistent } from '@/components/SistentWrapper';
 
 const ACTION_TYPES = {
@@ -182,10 +183,6 @@ const Workspaces = ({ organization, classes }) => {
     },
   );
 
-  const { data: schemaWorkspace } = useGetSchemaQuery({
-    schemaName: 'workspace',
-  });
-
   const [assignDesignToWorkspace] = useAssignDesignToWorkspaceMutation();
 
   const [unassignDesignFromWorkspace] = useUnassignDesignFromWorkspaceMutation();
@@ -284,14 +281,17 @@ const Workspaces = ({ organization, classes }) => {
   }, [organization]);
 
   const fetchSchema = () => {
-    const updatedSchema = { ...schemaWorkspace };
-    updatedSchema.rjsfSchema?.properties?.organization &&
-      ((updatedSchema.rjsfSchema = {
-        ...updatedSchema.rjsfSchema,
+    const updatedSchema = {
+      schema: createAndEditWorkspaceSchema,
+      uiSchema: createAndEditWorkspaceUiSchema,
+    };
+    updatedSchema.schema?.properties?.organization &&
+      ((updatedSchema.schema = {
+        ...updatedSchema.schema,
         properties: {
-          ...updatedSchema.rjsfSchema.properties,
+          ...updatedSchema.schema.properties,
           organization: {
-            ...updatedSchema.rjsfSchema.properties.organization,
+            ...updatedSchema.schema.properties.organization,
             enum: [organization?.id],
             enumNames: [organization?.name],
           },
@@ -605,7 +605,7 @@ const Workspaces = ({ organization, classes }) => {
               onSearch={(value) => {
                 setSearch(value);
               }}
-              placeholder="Search connections..."
+              placeholder="Search Workspaces..."
               expanded={isSearchExpanded}
               setExpanded={setIsSearchExpanded}
             />
@@ -694,7 +694,7 @@ const Workspaces = ({ organization, classes }) => {
                   title={actionType === ACTION_TYPES.CREATE ? 'Create Workspace' : 'Edit Workspace'}
                 >
                   <RJSFModalWrapper
-                    schema={workspaceModal.schema.rjsfSchema}
+                    schema={workspaceModal.schema.schema}
                     uiSchema={workspaceModal.schema.uiSchema}
                     handleSubmit={
                       actionType === ACTION_TYPES.CREATE
