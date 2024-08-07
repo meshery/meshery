@@ -209,6 +209,8 @@ func TestPatternFileConversionFromV1Alpha1ToV1Beta1(t *testing.T) {
 			return
 		}
 
+		// b, _ := json.Marshal(v1beta1PatternFile)
+		// _ = os.WriteFile("test-beta1.json", b, 0655)
 		// _ = os.WriteFile("test-beta1.yml", []byte(beta1PatternFileStr), 0655)
 
 	})
