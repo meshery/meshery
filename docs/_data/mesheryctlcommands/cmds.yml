@@ -725,7 +725,7 @@ pattern:
           description: Specify the output directory to save the design
           usage: mesheryctl pattern export --output [directory-path]
           example: mesheryctl pattern export --output ./exports
-          
+
     offboard:
       name: offboard
       description: Offboard application
@@ -914,6 +914,14 @@ model:
       examples:
          - import model /path/to/[file.yaml|file.json]
          - import model /path/to/models
+    export:
+      name: export
+      description: Export a model by name to the given output type (default is oci).
+      usage: mesheryctl model export [ model-name ]
+      examples:
+         - model export [model-name] -l /home/meshery
+         - model export [model-name] --discard-components
+         - model export [model-name] -o yaml
 
 components:
   name: components
@@ -960,7 +968,7 @@ exp:
     name: components
     description: View list of components and detail of components
     usage: mesheryctl exp components [command] [flags]
-    flags: 
+    flags:
       count:
         name: --count
         description: (optional) Get the number of exp components in total
@@ -996,7 +1004,7 @@ exp:
     name: connections
     description: Manage connections
     usage: mesheryctl exp connections [command] [flags]
-    flags: 
+    flags:
       help:
         name: --help, -h
         description: help for exp connections
@@ -1024,12 +1032,12 @@ exp:
     name: environment
     description: View list of environments and detail of environments
     usage: mesheryctl exp environment [command] [flags]
-    flags: 
+    flags:
     subcommands:
       create:
         name: create
         description: create a new environments by providing the name and description of the environment
-        usage: mesheryctl exp environment create [flags] 
+        usage: mesheryctl exp environment create [flags]
         example: mesheryctl
         flags:
           description:
@@ -1058,7 +1066,7 @@ exp:
       view:
         name: view
         description: view a environments registered in Meshery Server
-        usage: mesheryctl exp environment view [flags] 
+        usage: mesheryctl exp environment view [flags]
         flags:
           output-format:
             name: -o, --output-format
@@ -1072,7 +1080,7 @@ exp:
     name: relationship
     description: View list of relationships and details of relationship
     usage: mesheryctl exp relationship [command] [flags]
-    flags: 
+    flags:
     subcommands:
       generate:
         name: generate
@@ -1093,7 +1101,7 @@ exp:
             usage: mesheryctl exp relationship list --page [page number]
             example: mesheryctl exp relationship list --page 2
       view:
-        name: view 
+        name: view
         description: view a relationship queried by the model name
         usage: mesheryctl exp relationship view [flags]
         flags:
@@ -1104,7 +1112,7 @@ exp:
     name: workspace
     description: View list of workspaces and detail of workspaces
     usage: mesheryctl exp workspace [command] [flags]
-    flags: 
+    flags:
     subcommands:
       create:
         name: create

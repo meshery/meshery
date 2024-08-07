@@ -10,7 +10,7 @@ import DotSquare from '../../assets/icons/DotSquare';
 import { useWindowDimensions } from '../../utils/dimension';
 import StyledTreeItem from './StyledTreeItem';
 import { useRouter } from 'next/router';
-import { getFilteredDataForDetailsComponent } from './helper';
+import { getFilteredDataForDetailsComponent, groupRelationshipsByKind } from './helper';
 import { CustomTextTooltip } from '../MesheryMeshInterface/PatternService/CustomTextTooltip';
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import _ from 'lodash';
@@ -139,7 +139,7 @@ const VersionedModelRelationshipTree = ({
             versionedModelDef.id
           }.2`}
           labelText={`Relationships (${
-            versionedModelDef.relationships ? versionedModelDef.relationships.length : 0
+            relationshipsData.relationships ? relationshipsData.relationships.length : 0
           })`}
         >
           {relationshipsData.relationships.length > 0 && (
@@ -148,7 +148,7 @@ const VersionedModelRelationshipTree = ({
               handleSelect={handleSelect}
               expanded={expanded}
               selected={selected}
-              data={relationshipsData.relationships}
+              data={groupRelationshipsByKind(relationshipsData.relationships)}
               view={MODELS}
               setShowDetailsData={setShowDetailsData}
               idForKindAsProp={`${registrantID ? `${registrantID}.1.` : ''}${modelDef.id}.${
