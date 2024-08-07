@@ -15,7 +15,7 @@ export const metricsApi = api
         providesTags: () => [{ type: TAGS.METRICS, id: 'GRAFANA' }],
       }),
       pingPrometheus: builder.query({
-        query: () => 'telemetry/metrics/pin',
+        query: () => 'telemetry/metrics/ping', // compare the endpoint with swagger
         providesTags: () => [{ type: TAGS.METRICS, id: 'PROMETHEUS' }],
       }),
       configureGrafana: builder.mutation({
@@ -30,7 +30,7 @@ export const metricsApi = api
       }),
       configurePrometheus: builder.mutation({
         query: (queryArg) => ({
-          url: '/api/telemetry/metrics/config',
+          url: '/telemetry/metrics/config',
           method: 'POST',
           credentials: 'include',
           headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
