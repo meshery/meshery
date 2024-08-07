@@ -372,12 +372,10 @@ export const ResizableCell = ({ value }) => (
 );
 
 export const processDesign = (design) => {
-  const designJson = jsyaml.load(design.pattern_file);
 
-  const isAnnotation = (component) =>
-    component?.traits?.meshmap?.['meshmodel-metadata']?.isAnnotation;
+  const isAnnotation = (component) =>component?.metadata?.isAnnotation
 
-  const components = Object.values(designJson.services);
+  const components = design.components
   const configurableComponents = components.filter(_.negate(isAnnotation));
   const annotationComponents = components.filter(isAnnotation);
 
@@ -385,7 +383,7 @@ export const processDesign = (design) => {
     configurableComponents,
     annotationComponents,
     components,
-    designJson,
+    designJson:design,
   };
 };
 

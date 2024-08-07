@@ -25,50 +25,9 @@ const validateSchema = (schema, data, id) => {
   };
 };
 
-// const AjvValidatorActor = createMachine({
-//   id: 'AjvValidatorActor',
-//   initial: 'idle',
-//   context: {
-//     ajv,
-//   },
-//   states: {
-//     idle: {
-//       entry: DeferEvents.recall,
-//       on: {
-//         VALIDATE: 'validating',
-//       },
-//     },
-//     validating: {
-//       entry: [
-//         assign({
-//           validationResults: ({ event, context }) => {
-//             const schema = JSON.parse(event.data.schema);
-//             const results = validateSchema(context.ajv, schema, event.data.data, event.data.id);
-//             return results;
-//           },
-//         }),
-//         sendTo(
-//           ({ event }) => event.returnAddress,
-//           ({ context }) => ({
-//             type: 'VALIDATION_DONE',
-//             data: context.validationResults,
-//           }),
-//         ),
-//       ],
-
-//       on: {
-//         VALIDATE: DeferEvents.defer,
-//       },
-//     },
-//   },
-// });
 
 const validateComponent = (component, validateAnnotations = false, componentDef) => {
-  // const componentDef = await getComponentDefinition(component.type, component.model, {
-  //   apiVersion: component.apiVersion,
-  //   annotations: 'include',
-  // });
-
+  console.log("validating component", component)
   if (!componentDef || (componentDef?.metadata?.isAnnotation && !validateAnnotations)) {
     // skip validation for annotations
     return {
@@ -78,64 +37,25 @@ const validateComponent = (component, validateAnnotations = false, componentDef)
     };
   }
   const schema = JSON.parse(componentDef.component.schema);
-  const results = validateSchema(schema, component.settings || {}, componentDef.id);
+  const results = validateSchema(schema, component.configuration || {}, componentDef.id);
 
   const validationResults = {
     ...results,
     componentDefinition: componentDef,
     component,
   };
+  console.log("component results", validationResults)
 
   return validationResults;
 };
 
-// const componentSchemaValidationMachine = createMachine({
-//   id: 'componentSchemaValidationMachine',
-//   initial: 'validating',
-//   context: ({ input }) => ({
-//     component: input.component,
-//     validateAnnotations: input.validateAnnotations,
-//   }),
 
-//   states: {
-//     getDefinition: {
-//       entry: sendToActors([ACTOR_SYSTEM.RTK_QUERY], ({ context }) =>
-//         rtkQueryActorCommands.initiateQuery({
-//           endpointName: 'getComponentDefinition',
-//           params: {
-//             type: context.component.type,
-//             model: context.component.model,
-//             params: {
-//               apiVersion: context.component.apiVersion,
-//               annotations: 'include',
-//             },
-//           },
-//         }),
-//       ),
-
-//       on: {
-//         [RTK_EVENTS.QUERY_RESULT]: {
-//           actions: ({ event }) => console.log('Query result wooo', event),
-//           target: 'done',
-//         },
-//       },
-//     },
-//     done: {
-//       type: 'final',
-//       output: () => {
-//         console.log('done');
-//         return {
-//           errors: [],
-//         };
-//       },
-//     },
-//   },
-// });
-
-export const componentKey = ({ type, model, apiVersion }) => `${type}-${model}-${apiVersion}`;
+export const componentKey = (component) => `${component.component.kind}-${component.model.name}-${component.component.version}`;
 
 const validateDesign = (design, componentDefsStore) => {
-  const { configurableComponents } = processDesign(design);
+  console.log("validating design in worker", design)
+
+  const configurableComponents = design.components
 
   const validationResults = {};
 
@@ -147,11 +67,13 @@ const validateDesign = (design, componentDefsStore) => {
         false,
         componentDef,
       );
-      validationResults[configurableComponent.name] = componentValidationResults;
+      validationResults[configurableComponent.id] = componentValidationResults;
     } catch (error) {
       console.error('Error validating component', error);
     }
   }
+
+  console.log("validationResults", validationResults)
   return validationResults;
 };
 
