@@ -1279,18 +1279,12 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 				return
 			}
 			defer os.RemoveAll(extractedDir)
-
 			if err := meshkitoci.UnCompressOCIArtifact(tempFile.Name(), extractedDir); err != nil {
 				h.handleError(rw, err, err.Error())
 				return
 			}
 
-			tarFilePath, err := findTarFile(extractedDir)
-			if err != nil {
-				h.handleError(rw, err, err.Error())
-				return
-			}
-			if err := processUploadedFile(tarFilePath, extractedDir, h, &response, provider); err != nil {
+			if err := processUploadedFile(tempFile.Name(), extractedDir, h, &response, provider, true); err != nil {
 				h.handleError(rw, err, err.Error())
 				return
 			}
@@ -1313,7 +1307,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 					return
 				}
 				defer os.RemoveAll(tempDir)
-				if err := processUploadedFile(tempFile.Name(), tempDir, h, &response, provider); err != nil {
+				if err := processUploadedFile(tempFile.Name(), tempDir, h, &response, provider, false); err != nil {
 					h.handleError(rw, err, err.Error())
 					return
 				}

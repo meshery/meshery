@@ -59,11 +59,13 @@ func createTempFile(dirPath string) (*os.File, error) {
 	return tempFile, nil
 }
 
-func processUploadedFile(filePath string, tempDir string, h *Handler, response *models.RegistryAPIResponse, provider models.Provider) error {
+func processUploadedFile(filePath string, tempDir string, h *Handler, response *models.RegistryAPIResponse, provider models.Provider, checkOCI bool) error {
 
-	if err := utils.ExtractFile(filePath, tempDir); err != nil {
-		h.sendErrorEvent(uuid.Nil, provider, "Error creating temp directory", err)
-		return err
+	if !checkOCI {
+		if err := utils.ExtractFile(filePath, tempDir); err != nil {
+			h.sendErrorEvent(uuid.Nil, provider, "Error creating temp directory", err)
+			return err
+		}
 	}
 	var wg sync.WaitGroup
 	var mu sync.Mutex
@@ -71,6 +73,7 @@ func processUploadedFile(filePath string, tempDir string, h *Handler, response *
 		if err != nil {
 			return meshkitutils.ErrFileWalkDir(err, path)
 		}
+		fmt.Println("Processing file: ", path)
 		if !info.IsDir() {
 			wg.Add(1)
 			go func(path string) {
@@ -96,7 +99,7 @@ func processFile(path string, h *Handler, mu *sync.Mutex, response *models.Regis
 			return
 		}
 		defer os.RemoveAll(newTempDir)
-		if err := processUploadedFile(path, newTempDir, h, response, provider); err != nil {
+		if err := processUploadedFile(path, newTempDir, h, response, provider, false); err != nil {
 			incrementCounter(mu, &response.EntityCount.TotalErrCount)
 			h.log.Error(err)
 			addUnsuccessfulEntry(path, response, err, "")
@@ -570,25 +573,4 @@ func ErrMsgContruct(response *models.RegistryAPIResponse) string {
 	}
 	msg += ")"
 	return msg
-}
-
-func findTarFile(directory string) (string, error) {
-	var tarFilePath string
-	err := filepath.Walk(directory, func(path string, info os.FileInfo, err error) error {
-		if err != nil {
-			return meshkitutils.ErrFileWalkDir(err, path)
-		}
-		if !info.IsDir() && strings.HasSuffix(info.Name(), ".tar.gz") {
-			tarFilePath = path
-			return filepath.SkipDir
-		}
-		return nil
-	})
-	if err != nil {
-		return "", err
-	}
-	if tarFilePath == "" {
-		return "", ErrNoTarInsideOCi(err)
-	}
-	return tarFilePath, nil
 }
