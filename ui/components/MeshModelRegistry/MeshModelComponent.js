@@ -36,6 +36,7 @@ import _ from 'lodash';
 import { Modal as SistentModal } from '@layer5/sistent';
 import { UsesSistent } from '../SistentWrapper';
 import { RJSFModalWrapper } from '../Modal';
+import { useRef } from 'react';
 
 const meshmodelStyles = (theme) => ({
   wrapperClss: {
@@ -77,6 +78,36 @@ const useMeshModelComponentRouter = () => {
 
   return { searchQuery, selectedTab, selectedPageSize };
 };
+
+
+const useInfiniteScrollRef = (callback) => {
+  const observerRef = useRef(null);
+  const triggerRef = useRef(null);
+
+  useEffect(() => {
+    if (!triggerRef.current) {
+      return () => observerRef.current && observerRef.current.disconnect();
+    }
+
+    observerRef.current = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            callback();
+          }
+        });
+      },
+      { threshold: 0.01 },
+    );
+    observerRef.current.observe(triggerRef.current);
+    return () => {
+      observerRef.current && observerRef.current.disconnect();
+    };
+  }, [callback, triggerRef.current]);
+
+  return triggerRef;
+};
+
 const MeshModelComponent_ = ({
   modelsCount,
   componentsCount,
@@ -87,7 +118,6 @@ const MeshModelComponent_ = ({
   const router = useRouter();
   const { handleChangeSelectedTab } = settingsRouter(router);
   const [resourcesDetail, setResourcesDetail] = useState([]);
-  const [, setCount] = useState();
   const { selectedTab, searchQuery, selectedPageSize } = useMeshModelComponentRouter();
   const [page, setPage] = useState({
     Models: 0,
@@ -170,14 +200,45 @@ const MeshModelComponent_ = ({
     }
     importModelReq({ importBody: requestBody }).unwrap();
   };
+  const [modelFilters, setModelsFilters] = useState({ page: 0 });
+  const [registrantFilters, setRegistrantsFilters] = useState({ page: 0 });
 
   /**
    * RTK Lazy Queries
    */
-  const [getMeshModelsData] = useLazyGetMeshModelsQuery();
+  const [getMeshModelsData, modelsRes] = useLazyGetMeshModelsQuery();
   const [getComponentsData] = useLazyGetComponentsQuery();
   const [getRelationshipsData] = useLazyGetRelationshipsQuery();
-  const [getRegistrantsData] = useLazyGetRegistrantsQuery();
+  const [getRegistrantsData, registrantsRes] = useLazyGetRegistrantsQuery();
+
+  const modelsData = modelsRes.data;
+  const registrantsData = registrantsRes.data;
+
+  const hasMoreModels = modelsData?.total_count > modelsData?.page_size * modelsData?.page;
+  const hasMoreRegistrants =
+    registrantsData?.total_count > registrantsData?.page_size * registrantsData?.page;
+
+  const loadNextModelsPage = useCallback(() => {
+    if (modelsRes.isLoading || modelsRes.isFetching || !hasMoreModels) {
+      return;
+    }
+    setModelsFilters((prev) => ({ ...prev, page: prev.page + 1 }));
+  }, [modelsRes, hasMoreModels]);
+
+  const loadNextRegistrantsPage = useCallback(() => {
+    if (registrantsRes.isLoading || registrantsRes.isFetching || !hasMoreRegistrants) {
+      return;
+    }
+    setRegistrantsFilters((prev) => ({ ...prev, page: prev.page + 1 }));
+  }, [registrantsRes, hasMoreRegistrants]);
+
+  /**
+   * IntersectionObservers
+   */
+  const lastModelRef = useInfiniteScrollRef(loadNextModelsPage);
+  // const lastComponentRef = useInfiniteScrollRef();
+  // const lastRelationshipRef = useInfiniteScrollRef();
+  const lastRegistrantRef = useInfiniteScrollRef(loadNextRegistrantsPage);
 
   const fetchData = useCallback(async () => {
     try {
@@ -187,10 +248,10 @@ const MeshModelComponent_ = ({
           response = await getMeshModelsData(
             {
               params: {
-                page: searchText ? 0 : page.Models,
-                pagesize: 'all',
-                components: true,
-                relationships: true,
+                page: searchText ? 0 : modelFilters.page,
+                pagesize: searchText ? 'all' : 25,
+                components: false,
+                relationships: false,
                 search: searchText || '',
               },
             },
@@ -209,7 +270,6 @@ const MeshModelComponent_ = ({
             },
             true,
           );
-          setCount(response.total_count);
           break;
         case RELATIONSHIPS:
           response = await getRelationshipsData(
@@ -223,7 +283,6 @@ const MeshModelComponent_ = ({
             },
             true,
           );
-          setCount(response?.total_count);
           break;
         case REGISTRANTS:
           response = await getRegistrants();
@@ -232,7 +291,7 @@ const MeshModelComponent_ = ({
           break;
       }
 
-      if (response.data) {
+      if (response.data && response.data[view.toLowerCase()]) {
         // When search or "show duplicates" functionality is active:
         // Avoid appending data to the previous dataset.
         // preventing duplicate entries and ensuring the UI reflects the API's response accurately.
@@ -240,7 +299,7 @@ const MeshModelComponent_ = ({
         let newData = [];
         if (response.data[view.toLowerCase()]) {
           newData =
-            searchText || checked || view === RELATIONSHIPS
+            searchText || view === RELATIONSHIPS
               ? [...response.data[view.toLowerCase()]]
               : [...resourcesDetail, ...response.data[view.toLowerCase()]];
         }
@@ -263,6 +322,8 @@ const MeshModelComponent_ = ({
     getComponentsData,
     getRelationshipsData,
     getRegistrantsData,
+    modelFilters,
+    registrantFilters,
     view,
     page,
     rowsPerPage,
@@ -277,8 +338,8 @@ const MeshModelComponent_ = ({
     registrantResponse = await getRegistrantsData(
       {
         params: {
-          page: searchText ? 0 : page.Registrants,
-          pagesize: searchText ? 'all' : rowsPerPage,
+          page: searchText ? 0 : registrantFilters.page,
+          pagesize: searchText ? 'all' : 25,
           search: searchText || '',
         },
       },
@@ -296,8 +357,8 @@ const MeshModelComponent_ = ({
               page: page?.Models,
               pagesize: 'all',
               registrant: hostname,
-              components: true,
-              relationships: true,
+              components: false,
+              relationships: false,
             },
           },
           true,
@@ -314,7 +375,6 @@ const MeshModelComponent_ = ({
         },
       };
     }
-    setCount(response.total_count);
     setRowsPerPage(25);
     return response;
   };
@@ -325,6 +385,8 @@ const MeshModelComponent_ = ({
       setSearchText(null);
       setResourcesDetail([]);
     }
+    setModelsFilters({ page: 0 });
+    setRegistrantsFilters({ page: 0 });
     setPage({
       Models: 0,
       Components: 0,
@@ -374,7 +436,7 @@ const MeshModelComponent_ = ({
 
   useEffect(() => {
     fetchData();
-  }, [view, page, rowsPerPage, checked, searchText]);
+  }, [view, page, rowsPerPage, checked, searchText, modelFilters, registrantFilters]);
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -391,6 +453,7 @@ const MeshModelComponent_ = ({
 
     fetchData();
   }, []);
+
 
   return (
     <div data-test="workloads">
@@ -464,6 +527,11 @@ const MeshModelComponent_ = ({
                 setShowDetailsData={setShowDetailsData}
                 showDetailsData={showDetailsData}
                 setResourcesDetail={setResourcesDetail}
+                lastItemRef={{ [MODELS]: lastModelRef, [REGISTRANTS]: lastRegistrantRef }}
+                isFetching={{
+                  [MODELS]: modelsRes.isFetching,
+                  [REGISTRANTS]: registrantsRes.isFetching,
+                }}
               />
             </Paper>
             <MeshModelDetails

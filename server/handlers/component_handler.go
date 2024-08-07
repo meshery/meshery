@@ -1226,6 +1226,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		http.Error(rw, "Invalid base64 data", http.StatusBadRequest)
 		return
 	}
+
 	switch importRequest.UploadType {
 	case "url":
 		//future implementation
@@ -1235,7 +1236,6 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		if err != nil {
 			err = meshkitutils.ErrCreateFile(err, "Error creating temp file")
 			h.handleError(rw, err, err.Error())
-
 			return
 		}
 		defer os.Remove(tempFile.Name())
