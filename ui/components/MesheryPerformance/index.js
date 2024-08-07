@@ -54,6 +54,7 @@ import DefaultError from '@/components/General/error-404/index';
 import { CustomTextTooltip } from '../MesheryMeshInterface/PatternService/CustomTextTooltip';
 import { useGetUserPrefWithContextQuery } from '@/rtk-query/user';
 import { useSavePerformanceProfileMutation } from '@/rtk-query/performance-profile';
+import { useGetMeshQuery } from '@/rtk-query/mesh';
 
 // =============================== HELPER FUNCTIONS ===========================
 
@@ -283,6 +284,11 @@ const MesheryPerformanceComponent = (props) => {
   );
 
   const [savePerformanceProfile] = useSavePerformanceProfileMutation();
+  const {
+    data: smpMeshes,
+    isSuccess: isSMPMeshesFetched,
+    isError: isSMPMeshError,
+  } = useGetMeshQuery();
 
   const handleChange = (name) => (event) => {
     const { value } = event.target;
@@ -615,7 +621,7 @@ const MesheryPerformanceComponent = (props) => {
     getLoadTestPrefs();
     getSMPMeshes();
     if (props.runTestOnMount) handleSubmit();
-  }, [userData, isUserDataFetched]);
+  }, [userData, isUserDataFetched, smpMeshes]);
 
   const getLoadTestPrefs = () => {
     if (isUserDataFetched && userData && userData.loadTestPref) {
@@ -706,16 +712,11 @@ const MesheryPerformanceComponent = (props) => {
   };
 
   const getSMPMeshes = () => {
-    dataFetch(
-      '/api/mesh',
-      { credentials: 'include' },
-      (result) => {
-        if (result && Array.isArray(result.available_meshes)) {
-          setAvailableSMPMeshes(result.available_meshes.sort((m1, m2) => m1.localeCompare(m2)));
-        }
-      },
-      handleError('unable to fetch SMP meshes'),
-    );
+    if (isSMPMeshesFetched && smpMeshes) {
+      setAvailableSMPMeshes([...smpMeshes.available_meshes].sort((m1, m2) => m1.localeCompare(m2))); // shallow copy of the array to sort it
+    } else if (isSMPMeshError) {
+      handleError('unable to fetch SMP meshes');
+    }
   };
 
   function handleError(msg) {
