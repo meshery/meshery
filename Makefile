@@ -32,6 +32,12 @@ docker-playground-build:
 	# This method does NOT require that you have Go, NPM, etc. installed locally.
 	DOCKER_BUILDKIT=1 docker build -f install/docker/Dockerfile -t layer5/meshery --build-arg TOKEN=$(GLOBAL_TOKEN) --build-arg GIT_COMMITSHA=$(GIT_COMMITSHA) --build-arg GIT_VERSION=$(GIT_VERSION) --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} --build-arg PROVIDER=$(LOCAL_PROVIDER) --build-arg PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) .
 
+## Build Meshery Server and UI container for testing.
+docker-build-testing-env:
+	# `make docker-build` builds Meshery inside of a multi-stage Docker container.
+	# This method does NOT require that you have Go, NPM, etc. installed locally.
+	DOCKER_BUILDKIT=1 docker build -f install/docker/testing/Dockerfile -t layer5/meshery-testing-env --build-arg PROVIDER=$(LOCAL_PROVIDER) --build-arg PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) .
+
 ## Meshery Cloud for user authentication.
 ## Runs Meshery in a container locally and points to locally-running
 docker-local-cloud:
@@ -58,6 +64,17 @@ docker-cloud:
   -v $(HOME)/.kube:/home/appuser/.kube:ro \
 	-p 9081:8080 \
 	layer5/meshery ./meshery
+
+docker-testing-env:
+	docker run --rm --name mesherytesting  -d \
+	-e PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
+	-e DEBUG=true \
+	-e ADAPTER_URLS=$(ADAPTER_URLS) \
+	-e KEYS_PATH=$(KEYS_PATH) \
+	-v meshery-config:/home/appuser/.meshery/config \
+  -v $(HOME)/.kube:/home/appuser/.kube:ro \
+	-p 9081:8080 \
+	layer5/meshery-testing ./meshery
 
 #-----------------------------------------------------------------------------
 # Meshery Server Native Builds

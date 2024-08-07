@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const removeImports = require('next-remove-imports')();
 const nextConfig = removeImports({
+  output: 'export',
   reactStrictMode: false,
   compiler: {
     relay: require("./relay.config"),
