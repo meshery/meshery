@@ -1,3 +1,4 @@
+import { ctxUrl } from '@/utils/multi-ctx';
 import { api } from './index';
 
 const userApi = api.injectEndpoints({
@@ -18,6 +19,13 @@ const userApi = api.injectEndpoints({
       query: () => 'user/prefs',
       method: 'GET',
     }),
+    getUserPrefWithContext: builder.query({
+      query: (selectedK8sContexts) => ({
+        url: ctxUrl('user/prefs', selectedK8sContexts),
+        method: 'GET',
+        credentials: 'same-origin',
+      }),
+    }),
     getProviderCapabilities: builder.query({
       query: () => 'provider/capabilities',
       method: 'GET',
@@ -30,5 +38,6 @@ export const {
   useGetUserByIdQuery,
   useLazyGetTokenQuery,
   useGetUserPrefQuery,
+  useGetUserPrefWithContextQuery,
   useGetProviderCapabilitiesQuery,
 } = userApi;

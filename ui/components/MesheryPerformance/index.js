@@ -52,6 +52,7 @@ import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import DefaultError from '@/components/General/error-404/index';
 import { CustomTextTooltip } from '../MesheryMeshInterface/PatternService/CustomTextTooltip';
+import { useGetUserPrefWithContextQuery } from '@/rtk-query/user';
 
 // =============================== HELPER FUNCTIONS ===========================
 
@@ -275,6 +276,11 @@ const MesheryPerformanceComponent = (props) => {
   const [staticPrometheusBoardConfigState, setStaticPrometheusBoardConfig] = useState(
     staticPrometheusBoardConfig,
   );
+
+  const { data: userData, isSuccess: isUserDataFetched } = useGetUserPrefWithContextQuery(
+    props?.selectedK8sContexts,
+  );
+
   const handleChange = (name) => (event) => {
     const { value } = event.target;
     if (name === 'caCertificate') {
@@ -609,22 +615,15 @@ const MesheryPerformanceComponent = (props) => {
     getLoadTestPrefs();
     getSMPMeshes();
     if (props.runTestOnMount) handleSubmit();
-  }, []);
+  }, [userData, isUserDataFetched]);
 
   const getLoadTestPrefs = () => {
-    dataFetch(
-      ctxUrl('/api/user/prefs', props?.selectedK8sContexts),
-      { credentials: 'same-origin', method: 'GET' },
-      (result) => {
-        if (typeof result !== 'undefined') {
-          setQps(result.loadTestPrefs.qps);
-          setC(result.loadTestPrefs.c);
-          setT(result.loadTestPrefs.t);
-          setLoadGenerator(result.loadTestPrefs.gen);
-        }
-      },
-      () => {},
-    ); //error is already captured from the handler, also we have a redux-store for same & hence it's not needed here.
+    if (isUserDataFetched && userData && userData.loadTestPref) {
+      setQps(userData.loadTestPrefs.qps);
+      setC(userData.loadTestPrefs.c);
+      setT(userData.loadTestPrefs.t);
+      setLoadGenerator(userData.loadTestPrefs.gen);
+    }
   };
 
   const getStaticPrometheusBoardConfig = () => {
