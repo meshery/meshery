@@ -106,7 +106,9 @@ const ComponentWithIcon = ({ component }) => {
     }
   };
 
-  const [finalPath, setFinalPath] = useState('ui/public/static/img/meshery-logo.png');
+  const [finalPath, setFinalPath] = useState(
+    'ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg',
+  );
 
   useEffect(() => {
     const loadImages = async () => {
@@ -123,11 +125,11 @@ const ComponentWithIcon = ({ component }) => {
         ? path
         : doesWhitePathExist
         ? whitepath
-        : 'ui/public/static/img/meshery-logo.png';
+        : 'ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg';
+      console.log(newPath);
 
       setFinalPath(newPath);
     };
-
     loadImages();
   }, [path, whitepath, componentpath, componentwhitepath]);
 
