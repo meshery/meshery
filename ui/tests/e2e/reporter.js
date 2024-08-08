@@ -14,18 +14,16 @@ class MyReporter {
 
         const context = github.context;
 
-        if (context.payload.pull_request) {
-          const pr_number = context.payload.pull_request.number;
+        const pr_number = context.payload.pull_request.number;
 
-          const octokit = github.getOctokit(github_token);
+        const octokit = github.getOctokit(github_token);
 
-          await octokit.rest.pulls.createReviewComment({
-            owner: 'Meshery[bot]',
-            repo: context.repo,
-            pull_number: pr_number,
-            body: `Starting the run with ${suite.allTests().length} tests`,
-          });
-        }
+        await octokit.rest.issues.createComment({
+          owner: 'Meshery[bot]',
+          repo: context.repo,
+          pull_number: pr_number,
+          body: `Starting the run with ${suite.allTests().length} tests`,
+        });
       } catch (error) {
         core.setFailed(error.message);
       }
@@ -54,18 +52,16 @@ class MyReporter {
 
         const context = github.context;
 
-        if (context.payload.pull_request) {
-          const pr_number = context.payload.pull_request.number;
+        const pr_number = context.payload.pull_request.number;
 
-          const octokit = github.getOctokit(github_token);
+        const octokit = github.getOctokit(github_token);
 
-          await octokit.rest.pulls.createReviewComment({
-            owner: 'Meshery[bot]',
-            repo: context.repo,
-            pull_number: pr_number,
-            body: `Finished the run: ${result}`,
-          });
-        }
+        await octokit.rest.issues.createComment({
+          owner: 'Meshery[bot]',
+          repo: context.repo,
+          pull_number: pr_number,
+          body: `Finished the run: ${result}`,
+        });
       } catch (error) {
         core.setFailed(error.message);
       }
