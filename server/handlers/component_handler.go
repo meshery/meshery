@@ -1359,32 +1359,27 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 	modelDir := filepath.Join(temp, model.Name)
 	os.Mkdir(modelDir, 0700)
 	defer os.RemoveAll(modelDir)
+	_ = utils.ReplaceSVGData(model)
 
-	err = utils.ReplaceSVGData(model)
-	if err != nil {
-		h.log.Error(ErrGetMeshModels(err))
-		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
-		return
-	}
 	err = model.WriteModelDefinition(filepath.Join(modelDir, "model.json"), "json")
 	if err != nil {
-		h.log.Error(ErrGetMeshModels(err))
-		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+		h.log.Error(err)
+		http.Error(rw, err.Error(), http.StatusInternalServerError)
 		return // Ensure the function returns after handling the error
 	}
 
 	// build oci image for the model
 	img, err := oci.BuildImage(modelDir)
 	if err != nil {
-		h.log.Error(ErrGetMeshModels(err)) // TODO: Add appropriate meshkit error
-		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+		h.log.Error(err) // TODO: Add appropriate meshkit error
+		http.Error(rw, err.Error(), http.StatusInternalServerError)
 		return // Ensure the function returns after handling the error
 	}
 	tarfileName := filepath.Join(modelDir, "model.tar")
 	err = oci.SaveOCIArtifact(img, tarfileName, model.Name)
 	if err != nil {
-		h.log.Error(ErrGetMeshModels(err)) // TODO: Add appropriate meshkit error
-		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+		h.log.Error(err)
+		http.Error(rw, err.Error(), http.StatusInternalServerError)
 		return // Ensure the function returns after handling the error
 	}
 	// 3. Send response
