@@ -34,7 +34,7 @@ const userApi = api.injectEndpoints({
         headers: {
           'Content-Type': 'application/json;charset=UTF-8',
         },
-        body: queryArg,
+        body: queryArg.body,
       }),
     }),
     getProviderCapabilities: builder.query({

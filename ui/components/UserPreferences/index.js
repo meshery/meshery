@@ -311,7 +311,7 @@ const UserPreference = (props) => {
     });
 
     props.updateProgress({ showProgress: true });
-    updateUserPrefWithContext(requestBody)
+    updateUserPrefWithContext({ body: requestBody })
       .unwrap()
       .then((result) => {
         props.updateProgress({ showProgress: false });
