@@ -9,6 +9,7 @@ has_key(x, k) if {
 declaration_with_id(design_file, id) := result if {
 	declarations := design_file.components
 	some declaration in declarations
+
 	# print(":: line 12 c: ", declaration)
 	declaration.id == id
 	result = declaration
