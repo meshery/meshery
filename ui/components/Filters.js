@@ -1466,7 +1466,7 @@ const ImportModal = React.memo((props) => {
 });
 
 const PublishModal = React.memo((props) => {
-  const { publishFormSchema, handleClose, handlePublish, title } = props;
+  const { publishFormSchema, handleClose, handleSubmit, title } = props;
 
   return (
     <UsesSistent>
@@ -1488,7 +1488,7 @@ const PublishModal = React.memo((props) => {
           schema={publishFormSchema.rjsfSchema}
           uiSchema={publishFormSchema.uiSchema}
           submitBtnText="Submit for Approval"
-          handleSubmit={handlePublish}
+          handleSubmit={handleSubmit}
           helpText="Upon submitting your catalog item, an approval flow will be initiated.[Learn more](https://docs.meshery.io/concepts/catalog)"
           handleClose={handleClose}
         />
