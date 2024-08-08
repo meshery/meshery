@@ -1,11 +1,12 @@
 package meshmodel_policy
 
+import rego.v1
 
 # gets unique tag keys for a given tag type
 # example:
 #   get_tag_keys("labels") := {"app", "env" "version"} for input  {"labels": {"app": "redis","env": "stg", "version": "edge"}}
 #   get_tag_keys("annotations") := {"meshery.io/namespace", "meshery.io/service"} for input {"annotations": {"meshery.io/namespace": "default", "meshery.io/service": "redis"}}
-get_tag_keys(tag_type) := tag_keys {
+get_tag_keys(tag_type) := tag_keys if {
 	tag_keys := {tag_key |
 		some tag_key
 		svc := input.services[_]
@@ -14,12 +15,10 @@ get_tag_keys(tag_type) := tag_keys {
 	}
 }
 
-
-
 # groups nodes based on a given tag type and tag key
 # example:
 #   group_nodes("labels", "app") := {
-#       "redis": [{"id": "1", "name": "prod-ns"}}, {"id": "2", "name": "prod-pod"}], 
+#       "redis": [{"id": "1", "name": "prod-ns"}}, {"id": "2", "name": "prod-pod"}],
 #       "sql": [{"id": "3", "name": "stg-ns"}}]
 #   }
 #
@@ -65,7 +64,7 @@ get_tag_keys(tag_type) := tag_keys {
 #     }
 # }
 
-group_nodes(tag_type, tag_key) := key {
+group_nodes(tag_type, tag_key) := key if {
 	key := {value: group |
 		svc := input.services[_]
 		tags := svc[tag_type]
@@ -84,23 +83,22 @@ group_nodes(tag_type, tag_key) := key {
 	}
 }
 
-
 # Rego query
-sibling_matchlabels_relationship = result {
-    # group nodes based on labels
+sibling_matchlabels_relationship := result if {
+	# group nodes based on labels
 	labels_result := {tag_labels: key |
 		tag_labels_array := get_tag_keys("labels")
 		tag_labels_array[tag_labels]
 		key := group_nodes("labels", tag_labels)
 	}
 
-    # group nodes based on annotations
+	# group nodes based on annotations
 	annotations_result := {tag_annotations: key |
 		tag_annotations_array := get_tag_keys("annotations")
 		tag_annotations_array[tag_annotations]
 		key := group_nodes("annotations", tag_annotations)
 	}
 
-    # final evaluation result
+	# final evaluation result
 	result := {"annotations": annotations_result, "labels": labels_result}
 }

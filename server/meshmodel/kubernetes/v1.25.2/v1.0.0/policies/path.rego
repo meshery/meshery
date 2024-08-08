@@ -1,8 +1,8 @@
 package path_builder
 
-import future.keywords.in
+import rego.v1
 
-ensureParentPathsExist(patches, object) = result {
+ensureParentPathsExist(patches, object) := result if {
 	# Extract paths from the patches to a set of paths
 	paths := {p.path | p := patches[_]}
 
@@ -13,7 +13,6 @@ ensureParentPathsExist(patches, object) = result {
 	missingPaths := {sprintf("/%s", [concat("/", prefixPath)]) |
 		paths[path]
 		path[i] # walk over path
-
 
 		# If a path is missing, all its subpaths will be added.
 		# Eg: a/b/c: If path b is missing all its subpaths will be added.
@@ -35,26 +34,26 @@ ensureParentPathsExist(patches, object) = result {
 }
 
 # If next path exists and is a number, add an empty array.
-add_path(currentPathIndex, currentPath, allPaths) := value {
+add_path(currentPathIndex, currentPath, allPaths) := value if {
 	count(allPaths) > currentPathIndex + 1
 	nextPath := allPaths[currentPathIndex + 1]
-	re_match("[0-9]+$", nextPath)
+	regex.match("[0-9]+$", nextPath)
 	value = []
 }
 
 # If next path exists and is not a number, add an empty object.
-add_path(currentPathIndex, currentPath, allPaths) := value {
+add_path(currentPathIndex, currentPath, allPaths) := value if {
 	count(allPaths) > currentPathIndex + 1
 	nextPath := allPaths[currentPathIndex + 1]
-	not re_match("[0-9]+$", nextPath)
+	not regex.match("[0-9]+$", nextPath)
 	value = {}
 }
 
 # Check that the given @path exists as part of the input object.
-inputPathExists(object, path) {
+inputPathExists(object, path) if {
 	walk(object, [path, _])
 }
 
-toWalkElement(str) = str {
-	not re_match("^[0-9]+$", str)
+toWalkElement(str) := str if {
+	not regex.match("^[0-9]+$", str)
 }

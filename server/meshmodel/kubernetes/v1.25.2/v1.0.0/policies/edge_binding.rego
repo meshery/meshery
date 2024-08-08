@@ -1,11 +1,10 @@
 package meshmodel_policy
 
-import data.common.contains
-import data.common.extract_components
-import data.common.get_array_pos
-import future.keywords.in
+import rego.v1
 
-edge_binding_relationship[results] {
+import data.helper
+
+edge_binding_relationship contains results if {
 	relationship := data.relationships[_]
 	relationship.subType in {"Mount", "Permission"}
 
@@ -70,7 +69,7 @@ edge_binding_relationship[results] {
 	}}
 }
 
-evaluate[results] {
+evaluate contains results if {
 	services_map := {service.traits.meshmap.id: service |
 		service := input.services[_]
 	}
@@ -93,7 +92,7 @@ evaluate[results] {
 	}
 }
 
-is_related(resource1, resource2, from_selectors) {
+is_related(resource1, resource2, from_selectors) if {
 	# print(resource1, resource2, from_selectors)
 	match_results := [result |
 		some i
@@ -109,24 +108,24 @@ is_related(resource1, resource2, from_selectors) {
 }
 
 # If none of the match paths ("from" and "to") doesn't contain array field in between, then it is a normal lookup.
-is_feasible(from, to, resource1, resource2) {
-	not contains(to, "_")
+is_feasible(from, to, resource1, resource2) if {
+	not arr_contains(to, "_")
 	object.get(resource1, from, "") == object.get(resource2, to, "")
 }
 
 # If any of the match paths contains array field in between then the path needs to be resolved before checking for their equality.
-# "from" or "to" any of them can contain array in their path hence "is_feasible" is overrided. 
-is_feasible(from, to, resource1, resource2) {
+# "from" or "to" any of them can contain array in their path hence "is_feasible" is overrided.
+is_feasible(from, to, resource1, resource2) if {
 	match(from, to, resource1, resource2)
 }
 
-is_feasible(from, to, resource1, resource2) {
+is_feasible(from, to, resource1, resource2) if {
 	match(to, from, resource2, resource1)
 }
 
-match(from, to, resource1, resource2) {
-	contains(to, "_")
-	index := get_array_pos(to)
+match(from, to, resource1, resource2) if {
+	arr_contains(to, "_")
+	index := array_path_position(to)
 	prefix_path := array.slice(to, 0, index)
 	suffix_path := array.slice(to, index + 1, count(to))
 
