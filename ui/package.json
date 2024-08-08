@@ -28,6 +28,7 @@
     "repository": "https://github.com/meshery/meshery",
     "license": "Apache-2.0",
     "dependencies": {
+        "@actions/core": "^1.10.1",
         "@casl/ability": "^6.5.0",
         "@casl/react": "^3.1.0",
         "@date-io/moment": "^2.17.0",

@@ -1,7 +1,6 @@
 FROM golang:1.21 as meshery-server
 ARG GIT_VERSION
 ARG GIT_COMMITSHA
-ARG RELEASE_CHANNEL
 
 RUN adduser --disabled-login appuser
 WORKDIR /github.com/meshery/meshery
@@ -9,7 +8,7 @@ COPY go.sum go.mod ./
 COPY server/ server/
 COPY mesheryctl/ mesheryctl/
 RUN go mod download
-RUN cd server && cd cmd && GOPROXY=https://proxy.golang.org GOSUMDB=off go build -tags draft -a -o /meshery .
+RUN cd server && cd cmd && GOPROXY=https://proxy.golang.org GOSUMDB=off go build -ldflags="-w -s -X main.version=$GIT_VERSION -X main.commitsha=$GIT_COMMITSHA" -tags draft -a -o /meshery .
 
 # Build UI
 FROM node:18.13.0-alpine3.17 as base-node
