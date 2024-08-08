@@ -12,8 +12,8 @@ import (
 
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 	"github.com/layer5io/meshkit/utils"
-	"github.com/meshery/schemas/models/v1beta1/connection"
 	"github.com/meshery/schemas/models/v1beta1/component"
+	"github.com/meshery/schemas/models/v1beta1/connection"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 )
 
@@ -37,7 +37,6 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider, log logger.H
 
 		// Create provision plan
 		plan, err := planner.CreatePlan(*data.Pattern, prov.IsDelete())
-		fmt.Println("plan-----------: 40 ", data.Pattern.Components, err)
 		if err != nil {
 			act.Terminate(err)
 			return
@@ -49,11 +48,6 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider, log logger.H
 			return
 		}
 
-		// config, err := data.Pattern.GenerateApplicationConfiguration()
-		// if err != nil {
-		// 	act.Terminate(fmt.Errorf("failed to generate application configuration: %s", err))
-		// 	return
-		// }
 		errs := []error{}
 
 		// Execute the plan
@@ -61,13 +55,6 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider, log logger.H
 			ccp := CompConfigPair{}
 
 			core.AssignAdditionalLabels(&component)
-
-			// Create component definition
-			// // Create application component
-			// comp, err := data.Pattern.GetApplicationComponent(name)
-			// if err != nil {
-			// 	return false
-			// }
 
 			// Generate hosts list
 			ccp.Hosts = generateHosts(
@@ -77,7 +64,6 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider, log logger.H
 
 			var annotations map[string]string
 
-			fmt.Println("ccp.Hosts-----------: ", ccp.Hosts)
 			_annotations, ok := component.Configuration["annotations"]
 			if !ok {
 				_annotations = map[string]string{}
@@ -96,11 +82,6 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider, log logger.H
 			)
 
 			ccp.Component = component
-			fmt.Println("ccp.Component-----------: ", ccp.Component)
-			// // Add configuration only if traits are applied to the component
-			// if len(svc.Traits) > 0 {
-			// 	ccp.Configuration = config
-			// }
 
 			msg, err := act.Provision(ccp)
 			if err != nil {
