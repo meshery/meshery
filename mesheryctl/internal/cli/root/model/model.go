@@ -303,7 +303,7 @@ func exportModel(modelName string, cmd *cobra.Command, url string, displayCountO
 		utils.Log.Error(err)
 		return err
 	}
-	if(len(modelsResponse.Models) < 1) {
+	if len(modelsResponse.Models) < 1 {
 		return ErrExportModel(fmt.Errorf("Model with the given name could not be found in the registry"), modelName)
 	}
 	model := modelsResponse.Models[0]
@@ -311,7 +311,7 @@ func exportModel(modelName string, cmd *cobra.Command, url string, displayCountO
 	// Convert it to the required output type and write it
 	if outTypeFlag == "yaml" {
 		exportedModelPath = filepath.Join(outLocationFlag, modelName, "model.yaml")
-		err = model.WriteModelDefinition( exportedModelPath, "yaml")
+		err = model.WriteModelDefinition(exportedModelPath, "yaml")
 	}
 	if outTypeFlag == "json" {
 		exportedModelPath = filepath.Join(outLocationFlag, modelName, "model.json")
@@ -327,7 +327,7 @@ func exportModel(modelName string, cmd *cobra.Command, url string, displayCountO
 			utils.Log.Error(err)
 			return err
 		}
-		exportedModelPath = outLocationFlag+modelName+".tar"
+		exportedModelPath = outLocationFlag + modelName + ".tar"
 		err = oci.SaveOCIArtifact(img, outLocationFlag+modelName+".tar", modelName)
 		if err != nil {
 			utils.Log.Error(handlers.ErrSaveOCIArtifact(err))
