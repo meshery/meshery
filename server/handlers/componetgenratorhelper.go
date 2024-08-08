@@ -18,7 +18,7 @@ import (
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	"github.com/layer5io/meshkit/models/meshmodel/entity"
 	meshkitutils "github.com/layer5io/meshkit/utils"
-	"github.com/mitchellh/mapstructure"
+	"gopkg.in/yaml.v2"
 )
 
 func (h *Handler) handleError(rw http.ResponseWriter, err error, logMsg string) {
@@ -33,7 +33,7 @@ func (h *Handler) sendSuccessResponse(rw http.ResponseWriter, userID uuid.UUID, 
 			h.log.Info(response.ErrMsg)
 		} else {
 			h.log.Info(errMsg)
-			response.ErrMsg = "Import" + errMsg + "."
+			response.ErrMsg = "Import " + errMsg + "."
 		}
 	} else {
 		response.ErrMsg = message
@@ -73,7 +73,6 @@ func processUploadedFile(filePath string, tempDir string, h *Handler, response *
 		if err != nil {
 			return meshkitutils.ErrFileWalkDir(err, path)
 		}
-		fmt.Println("Processing file: ", path)
 		if !info.IsDir() {
 			wg.Add(1)
 			go func(path string) {
@@ -117,7 +116,16 @@ func processFile(path string, h *Handler, mu *sync.Mutex, response *models.Regis
 	}
 	processFileToRegistry(response, content, mu, path, h)
 }
+
 func processFileToRegistry(response *models.RegistryAPIResponse, content []byte, mu *sync.Mutex, path string, h *Handler) {
+	var jsonData interface{}
+	if err := yaml.Unmarshal(content, &jsonData); err == nil {
+		jsonData = utils.ConvertToJSONCompatible(jsonData)
+		convertedContent, err := json.Marshal(jsonData)
+		if err == nil {
+			content = convertedContent
+		}
+	}
 	entityType, err := meshkitutils.FindEntityType(content)
 	if err != nil {
 		incrementCounter(mu, &response.EntityCount.TotalErrCount)
@@ -352,7 +360,9 @@ func (h *Handler) sendFileEvent(userID uuid.UUID, provider models.Provider, resp
 		eventType = events.Warning
 	}
 	description := getFirst42Chars(response.ErrMsg)
-	description = description + "..."
+	if len(description) == 42 {
+		description = description + "..."
+	}
 	if response.EntityCount.TotalErrCount == 0 {
 		eventType = events.Success
 	}
@@ -410,20 +420,18 @@ func RegisterEntity(content []byte, entityType entity.EntityType, h *Handler, re
 			if !ok {
 				return "", meshkitutils.ErrUnmarshal(meshkitutils.ErrInvalidSchemaVersion)
 			}
-			rels = make([]v1alpha2.RelationshipDefinition, 0, len(slice))
-			for _, v := range slice {
-				mapVal, ok := v.(map[string]interface{})
-				if !ok {
-					return "", meshkitutils.ErrUnmarshal(meshkitutils.ErrInvalidSchemaVersion)
+			rels = make([]v1alpha2.RelationshipDefinition, len(slice))
+			for i, v := range slice {
+				bytes, err := json.Marshal(v)
+				if err != nil {
+					continue
 				}
 				var rel v1alpha2.RelationshipDefinition
-				if err := mapstructure.Decode(mapVal, &rel); err != nil {
-					return "", fmt.Errorf("failed to decode relationship: %v", err)
+				err = json.Unmarshal(bytes, &rel)
+				if err != nil {
+					continue
 				}
-				if schemaVersion, ok := mapVal["schemaVersion"].(string); ok {
-					rel.SchemaVersion = schemaVersion
-				}
-				rels = append(rels, rel)
+				rels[i] = rel
 			}
 		}
 
@@ -431,6 +439,7 @@ func RegisterEntity(content []byte, entityType entity.EntityType, h *Handler, re
 			checkBool = true
 		}
 		for _, comp := range components {
+			comp.Model = m
 			compBytes, _ := json.Marshal(comp)
 			_, err := meshkitutils.FindEntityType([]byte(compBytes))
 			if err != nil {
@@ -452,6 +461,7 @@ func RegisterEntity(content []byte, entityType entity.EntityType, h *Handler, re
 
 		}
 		for _, r := range rels {
+			r.Model = m
 			relBytes, _ := json.Marshal(r)
 			_, err := meshkitutils.FindEntityType([]byte(relBytes))
 			if err != nil {
@@ -511,6 +521,13 @@ func writeMessageString(response *models.RegistryAPIResponse) strings.Builder {
 		if message.Len() > 0 {
 			message.WriteString(" and ")
 		}
+		relationship := "relationship"
+		if response.EntityCount.RelCount > 1 {
+			relationship = "relationships"
+		}
+		message.WriteString(fmt.Sprintf("%d %s", response.EntityCount.RelCount, relationship))
+	}
+	if response.EntityCount.CompCount == 0 && response.EntityCount.RelCount > 0 {
 		relationship := "relationship"
 		if response.EntityCount.RelCount > 1 {
 			relationship = "relationships"

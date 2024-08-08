@@ -105,6 +105,13 @@ const meshModelApi = api
           params: _.merge({}, defaultOptions, queryArg.params),
         }),
       }),
+      exportModel: builder.query({
+        query: (queryArg) => ({
+          url: `meshmodels/export`,
+          params: _.merge({}, defaultOptions, queryArg.params),
+          providesTags: () => [{ type: TAGS.MESH_MODELS }],
+        }),
+      }),
       importMeshModel: builder.mutation({
         query: (queryArgs) => {
           console.log('Query Arguments Body:', queryArgs);
@@ -130,6 +137,7 @@ export const {
   useGetComponentsFromModalQuery,
   useLazyGetComponentsFromModalQuery,
   useGetRelationshipsFromModalQuery,
+  useLazyExportModelQuery,
   useLazyGetRelationshipsFromModalQuery,
   useUpdateEntityStatusMutation,
   useGetModelCategoriesQuery,

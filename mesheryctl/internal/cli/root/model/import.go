@@ -290,11 +290,12 @@ func displaySuccessfulComponents(response *models.RegistryAPIResponse, modelName
 		}
 	}
 }
-
 func displaySuccessfulRelationships(response *models.RegistryAPIResponse, model string) {
 	if len(response.EntityTypeSummary.SuccessfulRelationships) > 0 {
 		header := []string{"From", "To"}
-		rows := [][]string{}
+		seen := make(map[string]bool)
+		relationshipMap := make(map[string][][]string)
+
 		for _, rel := range response.EntityTypeSummary.SuccessfulRelationships {
 			kind := rel["Kind"].(string)
 			subtype := rel["Subtype"].(string)
@@ -310,19 +311,27 @@ func displaySuccessfulRelationships(response *models.RegistryAPIResponse, model 
 				to := allow["to"].([]interface{})
 				fromComponent := fmt.Sprintf("%s", from[0].(map[string]interface{})["kind"])
 				toComponent := fmt.Sprintf("%s", to[0].(map[string]interface{})["kind"])
-				rows = append(rows, []string{fromComponent, toComponent})
+				key := fmt.Sprintf("%s-%s", kind, subtype)
+				if seen[key+fromComponent+toComponent] {
+					continue
+				}
+				seen[key+fromComponent+toComponent] = true
+				relationshipMap[key] = append(relationshipMap[key], []string{fromComponent, toComponent})
 			}
+		}
+
+		for key, rows := range relationshipMap {
 			if len(rows) > 0 {
 				fmt.Println("")
 				boldRelationships := utils.BoldString("RELATIONSHIP:")
 				if len(rows) > 1 {
 					boldRelationships = utils.BoldString("RELATIONSHIPS:")
 				}
-				utils.Log.Infof("  %s Kind of %s and sub type %s", boldRelationships, kind, subtype)
+				parts := strings.Split(key, "-")
+				utils.Log.Infof("  %s Kind of %s and sub type %s", boldRelationships, parts[0], parts[1])
 				utils.PrintToTable(header, rows)
 			}
 		}
-
 	}
 }
 

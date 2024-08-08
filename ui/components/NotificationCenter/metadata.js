@@ -54,6 +54,7 @@ const TitleLink = ({ href, children, ...props }) => {
     </a>
   );
 };
+
 const UnsuccessfulEntityWithError = ({ modelName, error }) => {
   const entityTypesAndQuantities = {};
   error.name.forEach((name, idx) => {
@@ -86,25 +87,29 @@ const UnsuccessfulEntityWithError = ({ modelName, error }) => {
     </>
   );
 };
+
+const imageCache = {};
+
+const checkImageExists = async (url) => {
+  try {
+    const response = await fetch(url);
+    return response.ok;
+  } catch (error) {
+    return false;
+  }
+};
+
 const ComponentWithIcon = ({ component }) => {
   const { DisplayName, Metadata, Model } = component;
   const modelname = Model.name;
   const kind = Metadata.toLowerCase();
 
-  const path = `ui/public/static/img/meshmodels/${modelname}/color/${modelname}-color.svg`;
-  const whitepath = `ui/public/static/img/meshmodels/${modelname}/white/${modelname}-white.svg`;
-  const componentpath = `ui/public/static/img/meshmodels/${modelname}/color/${kind}-color.svg`;
-  const componentwhitepath = `ui/public/static/img/meshmodels/${modelname}/white/${kind}-white.svg`;
-
-  const checkImageExists = async (url) => {
-    try {
-      const response = await fetch(url);
-      return response.ok;
-    } catch (error) {
-      console.error('Error checking image:', error);
-      return false;
-    }
-  };
+  const paths = [
+    `ui/public/static/img/meshmodels/${modelname}/color/${modelname}-color.svg`,
+    `ui/public/static/img/meshmodels/${modelname}/white/${modelname}-white.svg`,
+    `ui/public/static/img/meshmodels/${modelname}/color/${kind}-color.svg`,
+    `ui/public/static/img/meshmodels/${modelname}/white/${kind}-white.svg`,
+  ];
 
   const [finalPath, setFinalPath] = useState(
     'ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg',
@@ -112,26 +117,23 @@ const ComponentWithIcon = ({ component }) => {
 
   useEffect(() => {
     const loadImages = async () => {
-      const doesPathExist = await checkImageExists(path);
-      const doesWhitePathExist = await checkImageExists(whitepath);
-      const doesComponentPathExist = await checkImageExists(componentpath);
-      const doesComponentWhitePathExist = await checkImageExists(componentwhitepath);
+      if (imageCache[modelname]) {
+        setFinalPath(imageCache[modelname]);
+        return;
+      }
 
-      const newPath = doesComponentPathExist
-        ? componentpath
-        : doesComponentWhitePathExist
-        ? componentwhitepath
-        : doesPathExist
-        ? path
-        : doesWhitePathExist
-        ? whitepath
-        : 'ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg';
-      console.log(newPath);
-
-      setFinalPath(newPath);
+      for (const path of paths) {
+        const exists = await checkImageExists(path);
+        if (exists) {
+          imageCache[modelname] = path;
+          setFinalPath(path);
+          return;
+        }
+      }
     };
+
     loadImages();
-  }, [path, whitepath, componentpath, componentwhitepath]);
+  }, [modelname, paths]);
 
   const version = Model.model
     ? Model.model.version.startsWith('v')

@@ -10,7 +10,9 @@ import {
   CircularProgress,
   useTheme,
   Paper,
+  Button,
 } from '@material-ui/core';
+import DownloadIcon from '@mui/icons-material/Download';
 import { withStyles } from '@material-ui/core/styles';
 import styles from '../connections/styles';
 import { REGISTRY_ITEM_STATES, REGISTRY_ITEM_STATES_TO_TRANSITION_MAP } from '../../utils/Enum';
@@ -26,6 +28,7 @@ import _ from 'lodash';
 import { JustifyAndAlignCenter } from './MeshModel.style';
 import { withSuppressedErrorBoundary } from '../General/ErrorBoundary';
 
+const ExportAvailable = true;
 const KeyValue = ({ property, value }) => {
   let formattedValue = value;
 
@@ -152,15 +155,34 @@ const ModelContents = withSuppressedErrorBoundary(({ modelDef }) => {
     duplicates: modelDef?.duplicates?.toString(),
     relationships: getCompRelValue().relationships.toString(),
   };
-
+  const handleExport = () => {
+    const a = document.createElement('a');
+    a.href = '/api/meshmodels/export?id=' + modelDef.id;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  };
   const orderRight = ['category', 'duplicates', 'relationships'];
   const orderdMetadataRight = reorderObjectProperties(metaDataRight, orderRight);
   const isShowStatusSelector = !Array.isArray(modelDef?.model.version);
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <TitleWithImg displayName={modelDef.displayName} iconSrc={modelDef?.metadata?.svgColor} />
+        {ExportAvailable ? (
+          <Button
+            aria-label="Add Pattern"
+            variant="contained"
+            color="primary"
+            size="medium"
+            onClick={handleExport}
+            style={{ display: 'flex' }}
+          >
+            <DownloadIcon style={{ fontSize: '1.2rem' }} />
+            Export
+          </Button>
+        ) : null}
         {isShowStatusSelector && <StatusChip entityData={modelDef} entityType="models" />}
       </div>
       <RenderContents
@@ -342,7 +364,7 @@ const Description = ({ description }) => (
 );
 
 const TitleWithImg = ({ displayName, iconSrc }) => (
-  <div style={{ display: 'flex', alignItems: 'center' }}>
+  <div style={{ display: 'flex', alignItems: 'center', flexBasis: '60%' }}>
     {iconSrc && <img src={iconSrc} height="55px" width="55px" style={{ marginRight: '0.6rem' }} />}
     <Title title={displayName} />
   </div>

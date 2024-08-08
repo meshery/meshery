@@ -202,6 +202,8 @@ type HandlerInterface interface {
 	DeleteConnection(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	ProcessConnectionRegistration(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 
+	ExportModel(w http.ResponseWriter, req *http.Request)
+
 	GetEnvironments(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetEnvironmentByIDHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	SaveEnvironment(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)

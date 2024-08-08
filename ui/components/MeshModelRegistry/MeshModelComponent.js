@@ -79,7 +79,6 @@ const useMeshModelComponentRouter = () => {
   return { searchQuery, selectedTab, selectedPageSize };
 };
 
-
 const useInfiniteScrollRef = (callback) => {
   const observerRef = useRef(null);
   const triggerRef = useRef(null);
@@ -453,7 +452,6 @@ const MeshModelComponent_ = ({
 
     fetchData();
   }, []);
-
 
   return (
     <div data-test="workloads">

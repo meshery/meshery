@@ -307,6 +307,8 @@ func exportModel(modelName string, cmd *cobra.Command, url string, displayCountO
 		return ErrExportModel(fmt.Errorf("Model with the given name could not be found in the registry"), modelName)
 	}
 	model := modelsResponse.Models[0]
+	replaceSVGData(&model)
+
 	var exportedModelPath string
 	// Convert it to the required output type and write it
 	if outTypeFlag == "yaml" {
@@ -340,4 +342,55 @@ func exportModel(modelName string, cmd *cobra.Command, url string, displayCountO
 	}
 	utils.Log.Infof("Exported model to %s", exportedModelPath)
 	return nil
+}
+func replaceSVGData(model *v1beta1.Model) {
+	// Function to read SVG data from file
+	readSVGData := func(path string) (string, error) {
+		path = "../" + path // adjust path as needed
+		svgData, err := os.ReadFile(path)
+		if err != nil {
+			return "", err
+		}
+		return string(svgData), nil
+	}
+
+	// Replace SVG paths with actual data in metadata
+	metadata := model.Metadata
+	if svgColor, ok := metadata["svgColor"].(string); ok && svgColor != "" {
+		svgData, err := readSVGData(svgColor)
+		if err == nil {
+			metadata["svgColor"] = svgData
+		} else {
+			utils.Log.Warnf("Failed to read SVGColor data: %v", err)
+		}
+	}
+	if svgWhite, ok := metadata["svgWhite"].(string); ok && svgWhite != "" {
+		svgData, err := readSVGData(svgWhite)
+		if err == nil {
+			metadata["svgWhite"] = svgData
+		} else {
+			utils.Log.Warnf("Failed to read SVGWhite data: %v", err)
+		}
+	}
+
+	// Replace SVG paths with actual data in components
+	for i := range model.Components {
+		compMetadata := model.Components[i].Metadata
+		if svgColor, ok := compMetadata["svgColor"].(string); ok && svgColor != "" {
+			svgData, err := readSVGData(svgColor)
+			if err == nil {
+				compMetadata["svgColor"] = svgData
+			} else {
+				utils.Log.Warnf("Failed to read component SVGColor data: %v", err)
+			}
+		}
+		if svgWhite, ok := compMetadata["svgWhite"].(string); ok && svgWhite != "" {
+			svgData, err := readSVGData(svgWhite)
+			if err == nil {
+				compMetadata["svgWhite"] = svgData
+			} else {
+				utils.Log.Warnf("Failed to read component SVGWhite data: %v", err)
+			}
+		}
+	}
 }

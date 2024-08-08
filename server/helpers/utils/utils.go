@@ -417,3 +417,70 @@ func ExtractFile(filePath string, destDir string) error {
 	}
 	return utils.ErrExtractType
 }
+func ConvertToJSONCompatible(data interface{}) interface{} {
+	switch v := data.(type) {
+	case map[interface{}]interface{}:
+		m := make(map[string]interface{})
+		for key, value := range v {
+			m[key.(string)] = ConvertToJSONCompatible(value)
+		}
+		return m
+	case []interface{}:
+		for i, item := range v {
+			v[i] = ConvertToJSONCompatible(item)
+		}
+	}
+	return data
+}
+func ReplaceSVGData(model *v1beta1.Model) error {
+	// Function to read SVG data from file
+	readSVGData := func(path string) (string, error) {
+		path = "../../" + path // adjust path as needed
+		svgData, err := os.ReadFile(path)
+		if err != nil {
+			return "", err
+		}
+		return string(svgData), nil
+	}
+
+	// Replace SVG paths with actual data in metadata
+	metadata := model.Metadata
+	if svgColor, ok := metadata["svgColor"].(string); ok && svgColor != "" {
+		svgData, err := readSVGData(svgColor)
+		if err == nil {
+			metadata["svgColor"] = svgData
+		} else {
+			return err
+		}
+	}
+	if svgWhite, ok := metadata["svgWhite"].(string); ok && svgWhite != "" {
+		svgData, err := readSVGData(svgWhite)
+		if err == nil {
+			metadata["svgWhite"] = svgData
+		} else {
+			return err
+		}
+	}
+
+	// Replace SVG paths with actual data in components
+	for i := range model.Components {
+		compMetadata := model.Components[i].Metadata
+		if svgColor, ok := compMetadata["svgColor"].(string); ok && svgColor != "" {
+			svgData, err := readSVGData(svgColor)
+			if err == nil {
+				compMetadata["svgColor"] = svgData
+			} else {
+				return err
+			}
+		}
+		if svgWhite, ok := compMetadata["svgWhite"].(string); ok && svgWhite != "" {
+			svgData, err := readSVGData(svgWhite)
+			if err == nil {
+				compMetadata["svgWhite"] = svgData
+			} else {
+				return err
+			}
+		}
+	}
+	return nil
+}

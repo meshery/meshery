@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strings"
 	"sync"
 
@@ -16,6 +17,7 @@ import (
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshkit/models/events"
+	"github.com/layer5io/meshkit/models/oci"
 	meshkitoci "github.com/layer5io/meshkit/models/oci"
 	meshkitutils "github.com/layer5io/meshkit/utils"
 
@@ -1321,4 +1323,78 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 	}
 	message = writeMessageString(&response)
 	h.sendSuccessResponse(rw, userID, provider, message.String(), response.ErrMsg, &response)
+}
+
+// swagger:route POST /api/meshmodel/export ExportModel idExportModel
+// Handle GET request for exporting a model.
+//
+// # Export model with the given id in the output format specified
+//
+// ```?id={id}```
+// ```?output_format={output_format}``` Can be `json`, `yaml`, or `oci`. Default is `oci`
+//
+// responses:
+//
+//	200: []byte
+func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
+	modelId := r.URL.Query().Get("id")
+
+	// 1. Get the model data
+	modelFilter := &regv1beta1.ModelFilter{
+		Id:            modelId,
+		Components:    true,
+		Relationships: true,
+	}
+	e, err := h.registryManager.GetEntityById(modelFilter)
+	if err != nil {
+		h.log.Error(ErrGetMeshModels(err))
+		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+		return // Ensure the function returns after handling the error
+	}
+
+	model := e.(*v1beta1.Model)
+
+	// 2. Convert it to oci
+	temp := os.TempDir()
+	modelDir := filepath.Join(temp, model.Name)
+	os.Mkdir(modelDir, 0700)
+	defer os.RemoveAll(modelDir)
+
+	err = utils.ReplaceSVGData(model)
+	if err != nil {
+		h.log.Error(ErrGetMeshModels(err))
+		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+		return
+	}
+	err = model.WriteModelDefinition(filepath.Join(modelDir, "model.json"), "json")
+	if err != nil {
+		h.log.Error(ErrGetMeshModels(err))
+		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+		return // Ensure the function returns after handling the error
+	}
+
+	// build oci image for the model
+	img, err := oci.BuildImage(modelDir)
+	if err != nil {
+		h.log.Error(ErrGetMeshModels(err)) // TODO: Add appropriate meshkit error
+		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+		return // Ensure the function returns after handling the error
+	}
+	tarfileName := filepath.Join(modelDir, "model.tar")
+	err = oci.SaveOCIArtifact(img, tarfileName, model.Name)
+	if err != nil {
+		h.log.Error(ErrGetMeshModels(err)) // TODO: Add appropriate meshkit error
+		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+		return // Ensure the function returns after handling the error
+	}
+	// 3. Send response
+	byt, _ := os.ReadFile(tarfileName)
+	rw.Header().Add("Content-Type", "application/x-tar")
+	rw.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s.tar\"", model.Name))
+	rw.Header().Set("Content-Length", fmt.Sprintf("%d", len(byt))) // Correctly format the Content-Length header
+	_, err = rw.Write(byt)
+	if err != nil {
+		h.log.Error(ErrGetMeshModels(err)) // TODO: Add appropriate meshkit error
+		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+	}
 }
