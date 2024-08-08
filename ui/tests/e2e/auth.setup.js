@@ -28,7 +28,10 @@ setup('authenticate', async ({ page }) => {
     const redirect_urls = new Set([ENV.MESHERY_SERVER_URL + '/', ENV.REMOTE_PROVIDER_URL + '/']);
     const redirected = redirect_urls.has(url);
     return expect(redirected).toBeTruthy();
-  }).toPass();
+  }).toPass({
+    intervals: [1_000, 3_000, 6_000, 10_000],
+    timeout: 300_000,
+  });
 
   // End of authentication steps.
   await page.context().storageState({ path: authFile });
