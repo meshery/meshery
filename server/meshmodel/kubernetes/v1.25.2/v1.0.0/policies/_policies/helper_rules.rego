@@ -6,12 +6,12 @@ has_key(x, k) if {
 	x[k]
 }
 
-declaration_with_id(design_file, id) := declaration if {
+declaration_with_id(design_file, id) := result if {
 	declarations := design_file.components
-	some i in declarations
-
-	declaration[i].id == id
-	declaration = declarations[i].id
+	some declaration in declarations
+	# print(":: line 12 c: ", declaration)
+	declaration.id == id
+	result = declaration
 }
 
 resolve_path(arr, mutated) := path if {

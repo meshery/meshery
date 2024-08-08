@@ -52,20 +52,30 @@
             "kind": "Pod",
             "model": "kubernetes",
             "match": {
-              "self": [
-                [
-                  "settings",
-                  "spec",
-                  "volumes",
-                  "_",
-                  "persistentVolumeClaim",
-                  "claimName"
-                ]
+              "from": [
+                {
+                  "kind": "self",
+                  "mutatedRef": [
+                    [
+                      "settings",
+                      "spec",
+                      "volumes",
+                      "_",
+                      "persistentVolumeClaim",
+                      "claimName"
+                    ]
+                  ]
+                }
               ],
-              "PersistentVolumeClaim": [
-                [
-                  "name"
-                ]
+              "to": [
+                {
+                  "kind": "PersistentVolumeClaim",
+                  "mutatorRef": [
+                    [
+                      "name"
+                    ]
+                  ]
+                }
               ]
             }
           }
@@ -75,26 +85,36 @@
             "kind": "PersistentVolume",
             "model": "kubernetes",
             "match": {
-              "self": [
-                [
-                  "name"
-                ],
-                [
-                  "labels"
-                ]
+              "from": [
+                {
+                  "kind": "self",
+                  "mutatorRef": [
+                    [
+                      "name"
+                    ],
+                    [
+                      "labels"
+                    ]
+                  ]
+                }
               ],
-              "PersistentVolumeClaim": [
-                [
-                  "settings",
-                  "spec",
-                  "volumeName"
-                ],
-                [
-                  "settings",
-                  "spec",
-                  "selector",
-                  "matchLabels"
-                ]
+              "to": [
+                {
+                  "kind": "PersistentVolumeClaim",
+                  "mutatedRef": [
+                    [
+                      "settings",
+                      "spec",
+                      "volumeName"
+                    ],
+                    [
+                      "settings",
+                      "spec",
+                      "selector",
+                      "matchLabels"
+                    ]
+                  ]
+                }
               ]
             }
           }

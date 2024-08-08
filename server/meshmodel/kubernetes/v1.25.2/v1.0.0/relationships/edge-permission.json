@@ -76,52 +76,68 @@
             "kind": "ClusterRole",
             "model": "kubernetes",
             "match": {
-              "self": [
-                [
-                  "type"
-                ],
-                [
-                  "name"
-                ]
+              "from": [
+                {
+                  "kind": "self",
+                  "mutatorRef": [
+                    [
+                      "type"
+                    ],
+                    [
+                      "name"
+                    ]
+                  ]
+                }
               ],
-              "ClusterRoleBinding": [
-                [
-                  "settings",
-                  "roleRef",
-                  "kind"
-                ],
-                [
-                  "settings",
-                  "roleRef",
-                  "name"
+              "to": {
+                "kind": "ClusterRoleBinding",
+                "mutatedRef": [
+                  [
+                    "settings",
+                    "roleRef",
+                    "kind"
+                  ],
+                  [
+                    "settings",
+                    "roleRef",
+                    "name"
+                  ]
                 ]
-              ]
+              }
             }
           },
           {
             "kind": "Role",
             "model": "kubernetes",
             "match": {
-              "self": [
-                [
-                  "type"
-                ],
-                [
-                  "name"
-                ]
+              "from": [
+                {
+                  "kind": "self",
+                  "mutatorRef": [
+                    [
+                      "type"
+                    ],
+                    [
+                      "name"
+                    ]
+                  ]
+                }
               ],
-              "RoleBinding": [
-                [
-                  "settings",
-                  "roleRef",
-                  "kind"
-                ],
-                [
-                  "settings",
-                  "roleRef",
-                  "name"
+              "to": {
+                "kind": "RoleBinding",
+                "mutatedRef": [
+                  [
+                    "settings",
+                    "roleRef",
+                    "kind"
+                  ],
+                  [
+                    "settings",
+                    "roleRef",
+                    "name"
+                  ]
                 ]
-              ]
+              }
             }
           }
         ],
@@ -130,18 +146,28 @@
             "kind": "ServiceAccount",
             "model": "kubernetes",
             "match": {
-              "self": [
-                [
-                  "name"
-                ]
+              "from": [
+                {
+                  "kind": "self",
+                  "mutatorRef": [
+                    [
+                      "name"
+                    ]
+                  ]
+                }
               ],
-              "ClusterRoleBinding": [
-                [
-                  "settings",
-                  "subjects",
-                  "_",
-                  "name"
-                ]
+              "to": [
+                {
+                  "kind": "ClusterRoleBinding",
+                  "mutatedRef": [
+                    [
+                      "settings",
+                      "subjects",
+                      "_",
+                      "name"
+                    ]
+                  ]
+                }
               ]
             }
           },
@@ -149,18 +175,28 @@
             "kind": "ServiceAccount",
             "model": "kubernetes",
             "match": {
-              "self": [
-                [
-                  "name"
-                ]
+              "from": [
+                {
+                  "kind": "self",
+                  "mutatorRef": [
+                    [
+                      "name"
+                    ]
+                  ]
+                }
               ],
-              "RoleBinding": [
-                [
-                  "settings",
-                  "subjects",
-                  "_",
-                  "name"
-                ]
+              "to": [
+                {
+                  "kind": "RoleBinding",
+                  "mutatedRef": [
+                    [
+                      "settings",
+                      "subjects",
+                      "_",
+                      "name"
+                    ]
+                  ]
+                }
               ]
             }
           }

@@ -8,12 +8,11 @@ evalutate if {
 
 	# iterate relationships in the design file
 	some rel in rels_in_design_file
-	# In the design file relationships block,
-	# if relationship exist there should be only 1 selector set and one one component in from and to.
-	relationship_from := rel.selectors[0].allow.from[0]
-	relationship_to := rel.selectors[0].allow.to[0]
+	
+	# relationship := rel.selectors[0].allow
+	
 
-	resultant_patches := build_patch_object(input, relationship_from, relationship_to)
+	resultant_patches := perform_eval(input, rel)
 	# mutated_design_file = json.patch(, resultantPatchesToApply)
 }
 
