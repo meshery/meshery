@@ -412,8 +412,8 @@ func ErrInvalidKubeConfig(err error, content string) error {
 	return errors.New(ErrInvalidKubeConfigCode, errors.Alert, []string{"Invalid Kube Config ", content}, []string{err.Error()}, []string{"Meshery handler failed to find a valid Kubernetes config for the deployment"}, []string{"Try uploading a new kubeconfig and also ensure that Meshery can reach Kubernetes API server"})
 }
 
-func ErrInvalidKubeHandler(err error, content string) error {
-	return errors.New(ErrInvalidKubeHandlerCode, errors.Alert, []string{"Kubernetes cluster is unavailable for ", content}, []string{err.Error()}, []string{"Meshery server failed to interact with the Kubernetes cluster due to the cluster not being available.", "There might be a network disruption or the Meshery server does not have valid credentials."}, []string{"Try uploading a new kubeconfig.", "Check the network connection and Kubernetes cluster status.", "Verify that the Meshery server has valid and updated credentials to access the Kubernetes cluster."})
+func ErrInvalidKubeHandler(err error, userId string) error {
+	return errors.New(ErrInvalidKubeHandlerCode, errors.Alert, []string{"Kubernetes cluster is unavailable for ", userId}, []string{err.Error()}, []string{"There might be a network disruption or the Meshery server does not have valid credentials."}, []string{"Try uploading a new kubeconfig.", "Check the network connection and Kubernetes cluster status.", "Verify that the Meshery server has valid and updated credentials to access the Kubernetes cluster."})
 }
 
 func ErrInvalidKubeContext(err error, content string) error {

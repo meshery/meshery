@@ -196,7 +196,7 @@ func _processPattern(
 	// // Get the kubehandler from the context
 	k8scontexts, ok := ctx.Value(models.KubeClustersKey).([]models.K8sContext)
 	if !ok || len(k8scontexts) == 0 {
-		return nil, ErrInvalidKubeHandler(fmt.Errorf("Kubernetes cluster for \"%s\", is unavailable.", pattern.Name), userID)
+		return nil, ErrInvalidKubeHandler(fmt.Errorf("Meshery server failed to interact with the Kubernetes cluster due to the cluster not being available."), userID)
 	}
 
 	// // Get the kubernetes config from the context
