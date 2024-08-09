@@ -6,6 +6,8 @@ async function runGithub() {
     return;
   }
   try {
+    core.debug('Initialize GH action command');
+
     const gh_token = core.getInput('GITHUB_TOKEN');
     const octokit = github.getOctokit(gh_token);
 
@@ -14,7 +16,8 @@ async function runGithub() {
     const pr_number = context.payload.pull_request.number;
 
     const sendComment = (message) => {
-      octokit.issues.createComment({
+      core.debug('Send comment to an issue');
+      octokit.rest.issues.createComment({
         ...context.repo,
         issue_number: pr_number,
         body: message,
@@ -22,11 +25,9 @@ async function runGithub() {
     };
 
     return { sendComment };
-  } catch (error) {
-    core.setFailed(error.message);
+  } catch (err) {
+    core.setFailed(`GH Action api failed with error, ${err}`);
   }
-
-  return;
 }
 
 export default runGithub;

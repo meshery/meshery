@@ -1,4 +1,4 @@
-const core = require('@actions/core');
+import core from '@actions/core';
 
 const MESHERY_SERVER_URL = process.env.MESHERY_SERVER_URL || 'http://localhost:9081';
 const REMOTE_PROVIDER_URL = process.env.REMOTE_PROVIDER_URL || 'http://localhost:9876';
