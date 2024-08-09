@@ -1,7 +1,10 @@
-const github = require('@actions/github');
-const core = require('@actions/core');
+import github from '@actions/github';
+import core from '@actions/core';
 
 async function runGithub() {
+  if (!process.env.CI) {
+    return;
+  }
   try {
     const gh_token = core.getInput('GITHUB_TOKEN');
     const octokit = github.getOctokit(gh_token);

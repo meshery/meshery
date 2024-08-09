@@ -1,4 +1,4 @@
-import github from 'gh';
+import github from './ghComment';
 
 const { sendComment } = github();
 
@@ -11,8 +11,8 @@ class MyReporter {
     }
   }
 
-  onTestBegin(test, result) {
-    console.log(`Starting test ${test.title}, results: ${JSON.stringify(result)}`);
+  onTestBegin(test) {
+    console.log(`Starting test ${test.title}`);
   }
 
   onTestEnd(test, result) {
