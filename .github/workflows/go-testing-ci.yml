@@ -73,23 +73,24 @@ jobs:
         with:
           go-version: "1.21"
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3 
+        uses: docker/setup-buildx-action@v3
       - name: Create k8s Kind Cluster
         uses: helm/kind-action@v1.9.0
         with:
           cluster_name: "kind-cluster"
       - name: Run coverage
         run: |
+          docker-compose -v
           cd mesheryctl;
-          make; 
+          make;
           ./mesheryctl system start -p docker;
           ./mesheryctl system update -y;
           ./mesheryctl system status -y;
           ./mesheryctl system restart -y;
-          ./mesheryctl system check --preflight;  
+          ./mesheryctl system check --preflight;
           ./mesheryctl system stop -y;
           echo "Running Mesheryctl with Docker completed."
-        
+
           ./mesheryctl system start -p kubernetes;
           ./mesheryctl system update -y;
           ./mesheryctl system status -y;
@@ -97,10 +98,10 @@ jobs:
           ./mesheryctl system check --preflight;
           ./mesheryctl system stop -y;
           echo "Running Mesheryctl with Kubernetes completed."
-          
+
       - name: Upload coverage to Codecov
         if: github.repository == 'meshery/meshery'
         uses: codecov/codecov-action@v3
         with:
           files: ./coverage.txt
-          flags: gointegrationtests     
+          flags: gointegrationtests
