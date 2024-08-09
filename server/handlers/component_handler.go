@@ -1357,7 +1357,13 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 	// 2. Convert it to oci
 	temp := os.TempDir()
 	modelDir := filepath.Join(temp, model.Name)
-	os.Mkdir(modelDir, 0700)
+	err = os.Mkdir(modelDir, 0700)
+	if err != nil {
+		err = meshkitutils.ErrCreateDir(err, "Error creating temp directory")
+		h.log.Error(err)
+		http.Error(rw, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	defer os.RemoveAll(modelDir)
 	_ = utils.ReplaceSVGData(model)
 
