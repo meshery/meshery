@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Armory Spinnaker Operator
-subtitle: Collaborative and visual infrastructure as code for Armory Spinnaker Operator
+subtitle: Collaborative and visual infrastructure as design for Armory Spinnaker Operator
 image: /assets/img/integrations/armory-spinnaker-operator/icons/color/armory-spinnaker-operator-color.svg
 permalink: extensibility/integrations/armory-spinnaker-operator
 docURL: https://docs.meshery.io/extensibility/integrations/armory-spinnaker-operator
@@ -23,7 +23,7 @@ featureList: [
   "Expose Spinnaker to the outside world (via LoadBalancer).",
   "Keep secrets separate from your config."
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

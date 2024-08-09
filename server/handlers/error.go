@@ -70,7 +70,7 @@ const (
 	ErrPatternFileCode                     = "meshery-server-1070"
 	ErrExecutionPlanCode                   = "meshery-server-1071"
 	ErrInvalidPatternCode                  = "meshery-server-1072"
-	ErrCompConfigPairsCode                 = "meshery-server-1073"
+	ErrPatternDeployCode                   = "meshery-server-1073"
 	ErrCreateDirCode                       = "meshery-server-1074"
 	ErrInvalidRequestObjectCode            = "meshery-server-1075"
 	ErrChangeK8sContextCode                = "meshery-server-1076"
@@ -233,8 +233,8 @@ func ErrExecutionPlan(err error) error {
 	return errors.New(ErrExecutionPlanCode, errors.Alert, []string{"Failed to Create Execution Plan", err.Error()}, []string{err.Error()}, []string{"Trait Definition is invalid or unable to process"}, []string{"Check Trait Definition"})
 }
 
-func ErrCompConfigPairs(err error) error {
-	return errors.New(ErrCompConfigPairsCode, errors.Alert, []string{"unable to Create Comp Config.", err.Error()}, []string{err.Error()}, []string{}, []string{})
+func ErrPatternDeploy(err error, patternName string) error {
+	return errors.New(ErrPatternDeployCode, errors.Alert, []string{"Unable to deploy the selected design \"%s\"", patternName}, []string{err.Error()}, []string{"Connection Error: There was an error connecting to the selected target platform (i.e. Kubernetes cluster(s)).", "This connection might not be assigned to the selected environment."}, []string{"Verify that the Kubernetes connection status is 'Connected' or try uploading a new kubeconfig.", "Assign the current Kubernetes connection to the selected environment."})
 }
 
 func ErrRequestBody(err error) error {

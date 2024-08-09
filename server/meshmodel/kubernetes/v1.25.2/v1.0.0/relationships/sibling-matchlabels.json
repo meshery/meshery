@@ -6,7 +6,7 @@
     "description": "A relationship between two objects that are siblings."
   },
   "model": {
-    "schemaVersion": "core.meshery.io/v1beta1",
+    "schemaVersion": "models.meshery.io/v1beta1",
     "version": "v1.0.0",
     "name": "kubernetes",
     "model": {

@@ -4,6 +4,7 @@
   "kind": "Edge",
   "metadata": {
     "description": "A relationship that act as a firewall for ingress and egress traffic from Pods.",
+    "animation": "marching-ants",
     "capabilities": {
       "designer": {
         "edit": {
@@ -16,7 +17,7 @@
   },
   "model": {
     "name": "kubernetes",
-    "schemaVersion": "core.meshery.io/v1beta1",
+    "schemaVersion": "models.meshery.io/v1beta1",
     "version": "v1.0.0",
     "model": {
       "version": "v1.25.2"

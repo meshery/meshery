@@ -64,10 +64,13 @@ var generateCmd = &cobra.Command{
 	Short: "Generate Models",
 	Long:  "Prerequisite: Excecute this command from the root of a meshery/meshery repo fork.\n\nGiven a Google Sheet with a list of model names and source locations, generate models and components any Registrant (e.g. GitHub, Artifact Hub) repositories.\n\nGenerated Model files are written to local filesystem under `/server/models/<model-name>`.",
 	Example: `
-// Generate Meshery Models from a Google Spreadsheet (i.e. "Meshery Integrations" spreadsheet). 
+// Generate Meshery Models from a Google Spreadsheet (i.e. "Meshery Integrations" spreadsheet).
 mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred
 // Directly generate models from one of the supported registrants by using Registrant Connection Definition and (optional) Registrant Credential Definition
 mesheryctl registry generate --registrant-def [path to connection definition] --registrant-cred [path to credential definition]
+// Generate a specific Model from a Google Spreadsheet (i.e. "Meshery Integrations" spreadsheet).
+mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred --model "[model-name]"
+
     `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		// Prerequisite check is needed - https://github.com/meshery/meshery/issues/10369
@@ -96,7 +99,6 @@ mesheryctl registry generate --registrant-def [path to connection definition] --
 
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var wg sync.WaitGroup
-
 		cwd, _ = os.Getwd()
 		registryLocation = filepath.Join(cwd, outputLocation)
 
@@ -181,11 +183,12 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 		utils.ProcessModelToComponentsMap(componentCSVHelper.Components)
 		utils.VerifyandUpdateSpreadsheet(spreadsheeetCred, &wgForSpreadsheetUpdate, srv, spreadsheeetChan, spreadsheeetID)
 	}()
-
 	// Iterate models from the spreadsheet
 	for _, model := range modelCSVHelper.Models {
+		if modelName != "" && modelName != model.Model {
+			continue
+		}
 		totalAvailableModels++
-
 		ctx := context.Background()
 
 		err := weightedSem.Acquire(ctx, 1)
@@ -364,7 +367,7 @@ func parseModelSheet(url string) (*utils.ModelCSVHelper, error) {
 		return nil, err
 	}
 
-	err = modelCSVHelper.ParseModelsSheet(false)
+	err = modelCSVHelper.ParseModelsSheet(false, modelName)
 	if err != nil {
 		return nil, ErrGenerateModel(err, "unable to start model generation")
 	}
@@ -385,7 +388,7 @@ func parseComponentSheet(url string) (*utils.ComponentCSVHelper, error) {
 	if err != nil {
 		return nil, err
 	}
-	err = compCSVHelper.ParseComponentsSheet()
+	err = compCSVHelper.ParseComponentsSheet(modelName)
 	if err != nil {
 		return nil, ErrGenerateModel(err, "unable to start model generation")
 	}
@@ -408,7 +411,7 @@ func createVersionedDirectoryForModelAndComp(version, modelName string) (string,
 
 func writeModelDefToFileSystem(model *utils.ModelCSV, version, modelDefPath string) (*v1beta1.Model, error) {
 	modelDef := model.CreateModelDefinition(version, defVersion)
-	err := modelDef.WriteModelDefinition(modelDefPath)
+	err := modelDef.WriteModelDefinition(modelDefPath+"/model.json", "json")
 	if err != nil {
 		return nil, err
 	}
@@ -439,6 +442,6 @@ func init() {
 
 	generateCmd.MarkFlagsMutuallyExclusive("spreadsheet-id", "registrant-def")
 	generateCmd.MarkFlagsMutuallyExclusive("spreadsheet-cred", "registrant-cred")
-
+	generateCmd.PersistentFlags().StringVarP(&modelName, "model", "m", "", "specific model name to be generated")
 	generateCmd.PersistentFlags().StringVarP(&outputLocation, "output", "o", "../server/meshmodel", "location to output generated models, defaults to ../server/meshmodels")
 }

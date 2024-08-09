@@ -49,7 +49,7 @@ type ComponentCSV struct {
 func (c *ComponentCSV) CreateComponentDefinition(isModelPublished bool, defVersion string) (v1beta1.ComponentDefinition, error) {
 	componentDefinition := &v1beta1.ComponentDefinition{
 		VersionMeta: v1beta1.VersionMeta{
-			SchemaVersion: v1beta1.SchemaVersion,
+			SchemaVersion: v1beta1.ComponentSchemaVersion,
 			Version:       defVersion,
 		},
 		DisplayName: c.Component,
@@ -80,7 +80,7 @@ func (c *ComponentCSV) UpdateCompDefinition(compDef *v1beta1.ComponentDefinition
 		if key == "svgColor" || key == "svgWhite" {
 			svg, err := utils.Cast[string](compMetadata[key])
 			if err == nil {
-				metadata[key], err = utils.UpdateSVGString(svg, SVG_WIDTH, SVG_HEIGHT)
+				metadata[key], err = utils.UpdateSVGString(svg, SVG_WIDTH, SVG_HEIGHT, false)
 				if err != nil {
 					// If svg cannot be updated, assign the svg value as it is
 					metadata[key] = compMetadata[key]
@@ -138,7 +138,7 @@ func (mch *ComponentCSVHelper) GetColumns() ([]string, error) {
 	return csvReader.ExtractCols(rowIndex)
 }
 
-func (mch *ComponentCSVHelper) ParseComponentsSheet() error {
+func (mch *ComponentCSVHelper) ParseComponentsSheet(modelName string) error {
 	ch := make(chan ComponentCSV, 1)
 	errorChan := make(chan error, 1)
 	csvReader, err := csv.NewCSVParser[ComponentCSV](mch.CSVPath, rowIndex, nil, func(_ []string, _ []string) bool {
@@ -162,6 +162,9 @@ func (mch *ComponentCSVHelper) ParseComponentsSheet() error {
 		select {
 
 		case data := <-ch:
+			if modelName != "" && data.Model != modelName {
+				continue
+			}
 			if mch.Components[data.Registrant] == nil {
 				mch.Components[data.Registrant] = make(map[string][]ComponentCSV, 0)
 			}

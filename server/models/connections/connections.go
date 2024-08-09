@@ -8,6 +8,7 @@ import (
 	"github.com/layer5io/meshkit/models/events"
 
 	"github.com/gofrs/uuid"
+	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/models/environments"
 	"github.com/layer5io/meshkit/logger"
 )
@@ -71,13 +72,13 @@ type Connection struct {
 	Type         string                         `json:"type,omitempty" db:"type"`
 	SubType      string                         `json:"sub_type,omitempty" db:"sub_type"`
 	Kind         string                         `json:"kind,omitempty" db:"kind"`
-	Metadata     map[string]interface{}         `json:"metadata,omitempty" db:"metadata"`
+	Metadata     utils.JSONMap                  `json:"metadata,omitempty" db:"metadata" gorm:"type:JSONB"`
 	Status       ConnectionStatus               `json:"status,omitempty" db:"status"`
 	UserID       *uuid.UUID                     `json:"user_id,omitempty" db:"user_id"`
 	CreatedAt    time.Time                      `json:"created_at,omitempty" db:"created_at"`
 	UpdatedAt    time.Time                      `json:"updated_at,omitempty" db:"updated_at"`
 	DeletedAt    sql.NullTime                   `json:"deleted_at,omitempty" db:"deleted_at"`
-	Environments []environments.EnvironmentData `json:"environments,omitempty" db:"environments"`
+	Environments []environments.EnvironmentData `json:"environments,omitempty" db:"environments" gorm:"-"`
 }
 
 var validConnectionStatusToManage = []ConnectionStatus{

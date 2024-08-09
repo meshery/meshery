@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Consul
-subtitle: Collaborative and visual infrastructure as code for Consul
+subtitle: Collaborative and visual infrastructure as design for Consul
 image: /assets/img/integrations/consul/icons/color/consul-color.svg
 permalink: extensibility/integrations/consul
 docURL: https://docs.meshery.io/extensibility/adapters/consul
@@ -15,7 +15,7 @@ featureList: [
   "Analyze Consul Connects configuration",
   "Explore Consuls Service Splitter"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

@@ -17,16 +17,19 @@ import { iconMedium } from '../../css/icons.styles';
 import subscribePerformanceProfiles from '../graphql/subscriptions/PerformanceProfilesSubscription';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
-import { Modal, ResponsiveDataTable } from '@layer5/sistent';
+import {
+  CustomColumnVisibilityControl,
+  Modal,
+  ResponsiveDataTable,
+  SearchBar,
+} from '@layer5/sistent';
 import Moment from 'react-moment';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 import PerformanceResults from './PerformanceResults';
 import EditIcon from '@material-ui/icons/Edit';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import ReusableTooltip from '../reusable-tooltip';
-import CustomColumnVisibilityControl from '../../utils/custom-column';
 import ViewSwitch from '../ViewSwitch';
-import SearchBar from '@/utils/custom-search';
 import useStyles from '../../assets/styles/general/tool.styles';
 import { updateVisibleColumns } from '@/utils/responsive-column';
 import { useWindowDimensions } from '@/utils/dimension';
@@ -568,23 +571,25 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
             </>
           )}
           <div className={classes.viewSwitchButton}>
-            <SearchBar
-              onSearch={(value) => {
-                setSearch(value);
-                fetchTestProfiles(page, pageSize, value, sortOrder);
-              }}
-              expanded={isSearchExpanded}
-              setExpanded={setIsSearchExpanded}
-              placeholder="Search Profiles..."
-            />
-            {viewType === 'table' && (
-              <CustomColumnVisibilityControl
-                id="ref"
-                classes={classes}
-                columns={columns}
-                customToolsProps={{ columnVisibility, setColumnVisibility }}
+            <UsesSistent>
+              <SearchBar
+                onSearch={(value) => {
+                  setSearch(value);
+                  fetchTestProfiles(page, pageSize, value, sortOrder);
+                }}
+                expanded={isSearchExpanded}
+                setExpanded={setIsSearchExpanded}
+                placeholder="Search Profiles..."
               />
-            )}
+              {viewType === 'table' && (
+                <CustomColumnVisibilityControl
+                  id="ref"
+                  classes={classes}
+                  columns={columns}
+                  customToolsProps={{ columnVisibility, setColumnVisibility }}
+                />
+              )}
+            </UsesSistent>
             <ViewSwitch view={viewType} changeView={setViewType} />
           </div>
         </div>

@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Contrail Analytics
-subtitle: Collaborative and visual infrastructure as code for Contrail Analytics
+subtitle: Collaborative and visual infrastructure as design for Contrail Analytics
 image: /assets/img/integrations/contrail-analytics/icons/color/contrail-analytics-color.svg
 permalink: extensibility/integrations/contrail-analytics
 docURL: https://docs.meshery.io/extensibility/integrations/contrail-analytics

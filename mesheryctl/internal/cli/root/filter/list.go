@@ -176,8 +176,6 @@ func fetchFilters(baseURL, searchString string, pageSize, pageNumber int) (*mode
 		url = url + "&search=" + searchString
 	}
 
-	utils.Log.Debug(url)
-
 	req, err := utils.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, utils.ErrCreatingRequest(err)

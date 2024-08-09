@@ -523,7 +523,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters
   </tr>
   {% assign command7 = site.data.mesheryctlcommands.cmds.pattern %}
     <tr>
-      <td rowspan=22><a href="{{ site.baseurl }}/reference/mesheryctl/pattern">{{ command7.name }}</a></td>
+      <td rowspan=23><a href="{{ site.baseurl }}/reference/mesheryctl/pattern">{{ command7.name }}</a></td>
       <td></td>
       <td></td>
       <td>{{ command7.description }}</td>
@@ -554,7 +554,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters
       {% endfor %}
     {% assign subcommand3 = command7.subcommands.list %}
       <tr>
-        <td rowspan=2><a href="{{ site.baseurl }}/reference/mesheryctl/pattern/list">{{ subcommand3.name }}</a></td>
+        <td rowspan=3><a href="{{ site.baseurl }}/reference/mesheryctl/pattern/list">{{ subcommand3.name }}</a></td>
         <td></td>
         <td>{{ subcommand3.description }}</td>
       </tr>
@@ -769,7 +769,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters
   </tr>
   {% assign command12 = site.data.mesheryctlcommands.cmds.model %}
     <tr>
-      <td rowspan=8><a href="{{ site.baseurl }}/reference/mesheryctl/{{ command12.name }}">{{ command12.name }}</a></td>
+      <td rowspan=10><a href="{{ site.baseurl }}/reference/mesheryctl/{{ command12.name }}">{{ command12.name }}</a></td>
       <td></td>
       <td></td>
       <td>{{ command12.description }}</td>

@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Flux
-subtitle: Collaborative and visual infrastructure as code for Flux
+subtitle: Collaborative and visual infrastructure as design for Flux
 image: /assets/img/integrations/flux/icons/color/flux-color.svg
 permalink: extensibility/integrations/flux
 docURL: https://docs.meshery.io/extensibility/integrations/flux

@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Schemahero
-subtitle: Collaborative and visual infrastructure as code for Schemahero
+subtitle: Collaborative and visual infrastructure as design for Schemahero
 image: /assets/img/integrations/schemahero/icons/color/schemahero-color.svg
 permalink: extensibility/integrations/schemahero
 docURL: https://docs.meshery.io/extensibility/integrations/schemahero

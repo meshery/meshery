@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Kusk Gateway
-subtitle: Collaborative and visual infrastructure as code for Kusk Gateway
+subtitle: Collaborative and visual infrastructure as design for Kusk Gateway
 image: /assets/img/integrations/kusk-gateway/icons/color/kusk-gateway-color.svg
 permalink: extensibility/integrations/kusk-gateway
 docURL: https://docs.meshery.io/extensibility/integrations/kusk-gateway

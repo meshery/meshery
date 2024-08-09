@@ -1,20 +1,20 @@
 {
   "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "core.meshery.io/v1beta1",
+  "schemaVersion": "models.meshery.io/v1beta1",
   "version": "v1.0.0",
   "name": "altinity-clickhouse-operator",
   "displayName": "Altinity ClickHouse",
   "description": "",
-  "status": "ignored",
+  "status": "enabled",
   "hostID": "00000000-0000-0000-0000-000000000000",
   "registrant": {
    "hostname": "artifacthub"
   },
   "category": {
-   "name": "Uncategorized",
+   "name": "Database",
    "metadata": null
   },
-  "subCategory": "Uncategorized",
+  "subCategory": "Application Definition \u0026 Image Build",
   "metadata": {
    "capabilities": "",
    "defaultData": "",
