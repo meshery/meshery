@@ -55,4 +55,3 @@ func ErrGettingRequestContext(err error) error {
 func ErrUnmarshallingAPIData(err error) error {
 	return errors.New(ErrUnmarshallingAPIDataCode, errors.Fatal, []string{"Error processing json API data"}, []string{"Error processing json API data", err.Error()}, []string{}, []string{})
 }
-

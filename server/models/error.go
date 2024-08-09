@@ -133,6 +133,8 @@ const (
 	ErrRecreateResourceCode               = "meshery-server-1354"
 	ErrUpdateResourceCode                 = "meshery-server-1355"
 	ErrEmptySessionCode                   = "meshery-server-1356"
+	ErrSeedingComponentsCode              = "meshery-server-1358"
+	ErrImportFailureCode                  = "meshery-server-1359"
 )
 
 var (
@@ -561,4 +563,26 @@ func ErrUpdateResource(name, namespace string) error {
 		[]string{},
 		[]string{"Possible causes include invalid resource configuration, insufficient permissions, or network issues."},
 		[]string{"Verify the resource configuration and ensure it is correct. Ensure you have the necessary permissions to update the resource. Check network connectivity to the Kubernetes cluster."})
+}
+
+func ErrSeedingComponents(err error) error {
+	return errors.New(
+		ErrSeedingComponentsCode,
+		errors.Alert,
+		[]string{"Failed to register the given models into meshery's registry"},
+		[]string{err.Error()},
+		[]string{"Given models may not be in accordance with Meshery's schema", "Internal(OS level) error while reading files"},
+		[]string{"Make sure the models being seeded are valid in accordance with Meshery's schema", "If it is an internal error, please try again after some time"},
+	)
+}
+
+func ErrImportFailure(hostname string, failedMsg string) error {
+	return errors.New(
+		ErrImportFailureCode,
+		errors.Alert,
+		[]string{fmt.Sprintf("Errors while registering entities for registrant: %s", hostname)},
+		[]string{failedMsg},
+		[]string{"Entity definition might not be in accordance with schema", "Entity version might not be supported by Meshery"},
+		[]string{"See the registration logs (found at $HOME/.meshery/logs/registry/registry-logs.log) to find out which Entity failed to be imported with more specific error information."},
+	)
 }
