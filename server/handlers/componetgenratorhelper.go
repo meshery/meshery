@@ -17,6 +17,7 @@ import (
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha2"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	"github.com/layer5io/meshkit/models/meshmodel/entity"
+	"github.com/layer5io/meshkit/models/registration"
 	meshkitutils "github.com/layer5io/meshkit/utils"
 	"gopkg.in/yaml.v2"
 )
@@ -388,11 +389,15 @@ func getFirst42Chars(s string) string {
 func RegisterEntity(content []byte, entityType entity.EntityType, h *Handler, response *models.RegistryAPIResponse, mu *sync.Mutex) (string, error) {
 	switch entityType {
 	case entity.ComponentDefinition:
+		svgBaseDir := utils.UI
 		var c v1beta1.ComponentDefinition
 		if err := meshkitutils.Unmarshal(string(content), &c); err != nil {
 			return "", err
 		}
-		utils.WriteSVGsOnFileSystem(&c)
+
+		registration.WriteAndReplaceSVGWithFileSystemPath(c.Metadata, svgBaseDir, c.Model.Name, c.Component.Kind)
+		registration.WriteAndReplaceSVGWithFileSystemPath(c.Model.Metadata, svgBaseDir, c.Model.Name, c.Model.Name) //Write SVG for models
+
 		isRegistrantError, isModelError, err := h.registryManager.RegisterEntity(v1beta1.Host{Hostname: c.Model.Registrant.Hostname}, &c)
 		helpers.HandleError(v1beta1.Host{Hostname: c.Model.Registrant.Hostname}, &c, err, isModelError, isRegistrantError)
 
@@ -408,6 +413,7 @@ func RegisterEntity(content []byte, entityType entity.EntityType, h *Handler, re
 		return r.Kind, err
 	case entity.Model:
 		var m v1beta1.Model
+		svgBaseDir := utils.UI
 		checkBool := false
 		if err := meshkitutils.Unmarshal(string(content), &m); err != nil {
 			err = meshkitutils.ErrUnmarshal(err)
@@ -447,7 +453,7 @@ func RegisterEntity(content []byte, entityType entity.EntityType, h *Handler, re
 				addUnsuccessfulEntry(m.Name, response, err, string(entity.ComponentDefinition))
 				continue
 			}
-			utils.WriteSVGsOnFileSystem(&comp)
+			registration.WriteAndReplaceSVGWithFileSystemPath(comp.Metadata, svgBaseDir, comp.Model.Name, comp.Component.Kind)
 			isRegistrantError, isModelError, err := h.registryManager.RegisterEntity(v1beta1.Host{Hostname: comp.Model.Registrant.Hostname}, &comp)
 			helpers.HandleError(v1beta1.Host{Hostname: comp.Model.Registrant.Hostname}, &comp, err, isModelError, isRegistrantError)
 			if err != nil {
@@ -485,6 +491,8 @@ func RegisterEntity(content []byte, entityType entity.EntityType, h *Handler, re
 				return "", nil
 			}
 		}
+		registration.WriteAndReplaceSVGWithFileSystemPath(m.Metadata, svgBaseDir, m.Name, m.Name) //Write SVG for models
+
 		return m.DisplayName, nil
 	case entity.PolicyDefinition:
 		//future when we support policy
