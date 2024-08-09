@@ -184,6 +184,7 @@ jobs:
       - uses: daun/playwright-report-summary@v3
         if: always()
         with:
+          github-token: ${{ secrets.GH_ACCESS_TOKEN }}
           report-file: ui/results.json
   docker-build-test:
     name: Docker build
