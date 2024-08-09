@@ -98,7 +98,7 @@ Else, just run:
 {% include code.html code="npm run cy:dev:open" %}
 
 {%include alert.html content="Note the difference between local dependencies for Integration vs End-to-End Tests" %}
-keep in mind that if running integration tests (tests in [./integration/integration/](https://github.com/meshery/meshery/tree/master/ui/cypress/integration/integration) folder) the server doesn't need to be running but for full blown end-to-end tests (tests in [./integration/e2e/](https://github.com/meshery/meshery/tree/master/ui/cypress/integration/e2e) folder) its recommended to run `make server` OR make sure a Meshery user build (see [Getting Started](https://docs.meshery.io/installation/quick-start)) is installed and running locally before choosing one of those tests.
+keep in mind that if running integration tests (tests in [./integration/integration/](https://github.com/meshery/meshery/tree/master/ui/cypress/integration/integration) folder) the server doesn't need to be running but for full blown end-to-end tests (tests in [./integration/e2e/](https://github.com/meshery/meshery/tree/master/ui/cypress/integration/e2e) folder) its recommended to run `make server` OR make sure a Meshery user build (see [Getting Started](../../installation/quick-start.md)) is installed and running locally before choosing one of those tests.
 
 ## References
 
