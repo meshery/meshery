@@ -186,6 +186,7 @@ jobs:
         with:
           github-token: ${{ secrets.GH_ACCESS_TOKEN }}
           report-file: ui/results.json
+          comment-title: "Meshery E2E Test with Playwright"
   docker-build-test:
     name: Docker build
     if: github.repository == 'meshery/meshery'
