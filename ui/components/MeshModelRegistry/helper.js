@@ -68,7 +68,7 @@ export const removeDuplicateVersions = (data) => {
   const result = _.reduce(
     groupedModels,
     (acc, models, name) => {
-      const uniqueVersions = _.groupBy(models, (modelDef) => modelDef.model.version);
+      const uniqueVersions = _.groupBy(models, (modelDef) => modelDef?.model?.version);
       const arrayOfUniqueVersions = Object.values(uniqueVersions);
       const existingModelDef = acc.find((m) => m.name === name);
 
@@ -92,14 +92,14 @@ export const removeDuplicateVersions = (data) => {
       if (existingModelDef) {
         existingModelDef.model.version = _.union(
           existingModelDef.model.version,
-          mergedData.map((model) => model.model.version),
+          mergedData.map((model) => model?.model?.version),
         );
         existingModelDef.versionBasedData = existingModelDef.versionBasedData.concat(mergedData);
       } else {
         const selectedModelDef = models[0];
         acc.push({
           ...selectedModelDef,
-          version: mergedData.map((model) => model.model.version),
+          version: mergedData.map((model) => model?.model?.version),
           versionBasedData: mergedData,
         });
       }

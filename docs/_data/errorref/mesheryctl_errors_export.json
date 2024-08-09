@@ -3206,6 +3206,33 @@
         "short_description": "No session found in the request",
         "probable_cause": "User is not authenticated with the selected Provider.\nBrowser might be restricting use of cookies.",
         "suggested_remediation": "Choose a Provider and login to establish an active session (receive a new token and cookie). Optionally, try using a private/incognito browser window.\nVerify that your browser settings allow cookies."
+      },
+      "1357": {
+        "name": "ErrInvalidEventDataCode",
+        "code": "1357",
+        "severity": "Alert",
+        "long_description": "ActedUpon, Action, Category and Severity are required fields of an event",
+        "short_description": "The event provided is not valid",
+        "probable_cause": "",
+        "suggested_remediation": "Ensure that ActedUpon, Action, Category and Severity are present in the event"
+      },
+      "1358": {
+        "name": "ErrSeedingComponentsCode",
+        "code": "1358",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to register the given models into meshery's registry",
+        "probable_cause": "Given models may not be in accordance with Meshery's schema\nInternal(OS level) error while reading files",
+        "suggested_remediation": "Make sure the models being seeded are valid in accordance with Meshery's schema\nIf it is an internal error, please try again after some time"
+      },
+      "1359": {
+        "name": "ErrImportFailureCode",
+        "code": "1359",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "Entity definition might not be in accordance with schema\nEntity version might not be supported by Meshery",
+        "suggested_remediation": "See the registration logs (found at $HOME/.meshery/logs/registry/registry-logs.log) to find out which Entity failed to be imported with more specific error information."
       }
     }
   }

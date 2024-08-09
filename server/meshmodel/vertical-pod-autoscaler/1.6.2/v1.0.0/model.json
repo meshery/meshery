@@ -11,10 +11,10 @@
    "hostname": "artifacthub"
   },
   "category": {
-   "name": "Uncategorized",
+   "name": "Orchestration \u0026 Management",
    "metadata": null
   },
-  "subCategory": "Uncategorized",
+  "subCategory": "Automation \u0026 Configuration",
   "metadata": {
    "capabilities": "",
    "defaultData": "",

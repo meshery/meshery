@@ -453,8 +453,8 @@ function Connections(props) {
                     getColumnValue(tableMeta.rowData, 'kind', columns),
                   )
                 }
-                handlePing={(e) => {
-                  e.stopPropagation();
+                handlePing={() => {
+                  // e.stopPropagation();
                   if (getColumnValue(tableMeta.rowData, 'kind', columns) === 'kubernetes') {
                     ping(
                       getColumnValue(tableMeta.rowData, 'metadata.name', columns),
