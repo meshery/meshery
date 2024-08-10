@@ -116,6 +116,11 @@ ol {
 li:has(> a[href*="/installation/quick-start"]) {
   list-style-type: none;
   margin-left: -2rem;
+  
+  @media (max-width: 1200px) {
+    margin-left: 0rem;
+  }
+  
 }
 li:has(> a[href*="/guides/tutorials"]) {
   list-style-type: none;
