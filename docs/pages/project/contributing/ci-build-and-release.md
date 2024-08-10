@@ -58,6 +58,8 @@ Some portions of the workflow require secrets to accomplish their tasks. These s
 - `PROVIDER_TOKEN`: General provider authentication token
 - `RELEASEDRAFTER_PAT`: Personal access token for Release Drafter
 - `RELEASE_NOTES_PAT`: Personal access token for release notes generation
+- `REMOTE_PROVIDER_USER_EMAIL`: Email used for authentication in Playwright tests
+- `REMOTE_PROVIDER_USER_PASS`: Password used for authentication in Playwright tests
 
 The Docker Hub user, `mesheryci`, belongs to the "ciusers" team in Docker Hub and acts as the service account under which these automated builds are being pushed. Every time a new Docker Hub repository is created we have to grant “Admin” (in order to update the README in the Docker Hub repository) permissions to the ciusers team.
 
