@@ -102,6 +102,9 @@ jobs:
     name: UI end-to-end tests
     if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-22.04
+    permissions:
+      issues: write
+      pull-requests: write
     steps:
       - name: Check out code
         uses: actions/checkout@v4
