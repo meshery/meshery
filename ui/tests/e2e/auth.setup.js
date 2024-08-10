@@ -30,6 +30,7 @@ setup('authenticate', async ({ page }) => {
       ENV.REMOTE_PROVIDER_URL + '/',
       ENV.REMOTE_PROVIDER_URL + '/dashboard',
     ]);
+    console.log('here', url, ENV);
     const redirected = redirect_urls.has(url);
     return expect(redirected).toBeTruthy();
   }).toPass();

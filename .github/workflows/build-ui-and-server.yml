@@ -18,7 +18,6 @@ on:
 jobs:
   build-backend:
     name: Backend build
-    if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-22.04
     steps:
       - name: Check out code
@@ -38,7 +37,6 @@ jobs:
           make build-server
   ui-build:
     name: UI build
-    if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-22.04
     steps:
       - name: Check out code
@@ -99,7 +97,6 @@ jobs:
   tests-ui-e2e:
     needs: [build-backend, ui-build]
     name: UI end-to-end tests
-    if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-22.04
     steps:
       - name: Check out code
