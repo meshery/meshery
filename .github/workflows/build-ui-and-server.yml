@@ -26,7 +26,7 @@ jobs:
         with:
           fetch-depth: 1
       - name: Setup Go
-        uses: actions/setup-go@master
+        uses: actions/setup-go@v5
         with:
           go-version: "1.21"
       - name: Build Meshery Server
@@ -74,7 +74,7 @@ jobs:
           npm i
       # - name: Cache meshery-ui
       #   id: meshery-ui-cache
-      #   uses: actions/cache@v3
+      #   uses: actions/cache@v4
       #   with:
       #     path: |
       #       /home/runner/work/meshery/meshery/ui/out
@@ -121,7 +121,7 @@ jobs:
         with:
           cluster_name: "kind-cluster"
       - name: Setup Go
-        uses: actions/setup-go@master
+        uses: actions/setup-go@v5
         with:
           go-version: "1.21"
       - name: Run meshery-istio

@@ -22,27 +22,27 @@ jobs:
     #   output2: ${{ steps.step2.outputs.test }}
     steps:
       - name: Checkout Meshery repo
-        uses: actions/checkout@master
+        uses: actions/checkout@v4
         with:
           path: meshery
           token: ${{ secrets.GH_ACCESS_TOKEN }}
 
       - name: Checkout Layer5.io repo
-        uses: actions/checkout@master
+        uses: actions/checkout@v4
         with:
           repository: layer5io/layer5
           token: ${{ secrets.GH_ACCESS_TOKEN }}
           path: layer5
 
       - name: Checkout Meshery.io repo
-        uses: actions/checkout@master
+        uses: actions/checkout@v4
         with:
           repository: meshery/meshery.io
           token: ${{ secrets.GH_ACCESS_TOKEN }}
           path: meshery.io
 
       - name: Checkout cloud repo
-        uses: actions/checkout@master
+        uses: actions/checkout@v4
         with:
           repository: layer5io/meshery-cloud
           token: ${{ secrets.GH_ACCESS_TOKEN }}

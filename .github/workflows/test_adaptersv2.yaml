@@ -73,7 +73,7 @@ jobs:
           driver: docker
           start args: --cni "${{ inputs.k8s_cni }}"
       - name: Checkout Code
-        uses: actions/checkout@master
+        uses: actions/checkout@v4
 
       # Build the image by setting appropriate environmental variables in order to access the image from minikube
       - name: Build the tagged Docker image

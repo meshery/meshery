@@ -17,19 +17,19 @@ jobs:
     if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v4
         if: ${{ github.event_name == 'pull_request' }}
         with:
           ref: "master"
           fetch-depth: 1
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v4
         if: ${{ github.event_name == 'push' }}
         with:
           ref: "master"
           fetch-depth: 1
           token: ${{ secrets.GH_ACCESS_TOKEN }}
       - name: Setup Go
-        uses: actions/setup-go@master
+        uses: actions/setup-go@v5
         with:
           go-version: "1.21"
 
