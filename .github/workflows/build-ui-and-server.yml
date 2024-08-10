@@ -8,12 +8,12 @@ on:
       - "mesheryctl/**"
       - "*.md"
       - "*.github/**"
-  workflow_dispatch:
-    inputs:
-      logLevel:
-        description: "Log level"
-        required: true
-        default: "warning"
+  # workflow_dispatch:
+  #   inputs:
+  #     logLevel:
+  #       description: "Log level"
+  #       required: true
+  #       default: "warning"
 
 jobs:
   build-backend:
@@ -187,7 +187,7 @@ jobs:
       - uses: daun/playwright-report-summary@v3
         if: always()
         with:
-          github-token: ${{ secrets.GH_ACCESS_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           report-file: ui/results.json
           comment-title: "Meshery E2E Test with Playwright"
   docker-build-test:
