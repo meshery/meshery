@@ -197,8 +197,15 @@ func (h *Handler) GetConnections(w http.ResponseWriter, req *http.Request, prefO
 	page, _ := strconv.Atoi(q.Get("page"))
 	order := q.Get("order")
 	search := q.Get("search")
-	pageSize, _ := strconv.Atoi(q.Get("pagesize"))
+	pageSizeStr := q.Get("pagesize")
 	filter := q.Get("filter")
+
+	var pageSize int
+	if pageSizeStr == "all" {
+		pageSize = 100
+	} else {
+		pageSize, _ = strconv.Atoi(pageSizeStr)
+	}
 
 	if pageSize > 50 {
 		pageSize = 50
@@ -595,6 +602,6 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 	_ = provider.PersistEvent(event)
 	go h.config.EventBroadcaster.Publish(userID, event)
 
-	h.log.Info("connection deleted successfully")
+	h.log.Info("connection deleted.")
 	w.WriteHeader(http.StatusOK)
 }
