@@ -1,7 +1,7 @@
 name: Meshery UI and Server
 on:
   pull_request_target:
-    types: [opened, synchronize]
+    types: [opened, synchronize, reopened]
     branches:
       - "master"
     paths-ignore:
@@ -104,7 +104,6 @@ jobs:
     runs-on: ubuntu-22.04
     permissions:
       issues: write
-      pull-requests: write
     steps:
       - name: Check out code
         uses: actions/checkout@v4
