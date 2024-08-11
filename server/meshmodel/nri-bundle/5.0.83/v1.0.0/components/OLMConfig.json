@@ -1,0 +1,68 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "OLM Config",
+  "description": "",
+  "format": "JSON",
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "version": "v1.0.0",
+   "name": "nri-bundle",
+   "displayName": "NRI Bundle",
+   "description": "",
+   "status": "ignored",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "registrant": {
+    "hostname": "artifacthub"
+   },
+   "category": {
+    "name": "Uncategorized",
+    "metadata": null
+   },
+   "subCategory": "Uncategorized",
+   "metadata": {
+    "capabilities": "",
+    "defaultData": "",
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "model": {
+    "version": "5.0.83"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": false,
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "status": "ignored",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "component": {
+   "kind": "OLMConfig",
+   "version": "operators.coreos.com/v1",
+   "schema": "{\n \"description\": \"OLMConfig is a resource responsible for configuring OLM.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"OLMConfigSpec is the spec for an OLMConfig resource.\",\n   \"properties\": {\n    \"features\": {\n     \"description\": \"Features contains the list of configurable OLM features.\",\n     \"properties\": {\n      \"disableCopiedCSVs\": {\n       \"description\": \"DisableCopiedCSVs is used to disable OLM's \\\"Copied CSV\\\" feature for operators installed at the cluster scope, where a cluster scoped operator is one that has been installed in an OperatorGroup that targets all namespaces. When reenabled, OLM will recreate the \\\"Copied CSVs\\\" for each cluster scoped operator.\",\n       \"type\": \"boolean\"\n      },\n      \"packageServerSyncInterval\": {\n       \"description\": \"PackageServerSyncInterval is used to define the sync interval for packagerserver pods. Packageserver pods periodically check the status of CatalogSources; this specifies the period using duration format (e.g. \\\"60m\\\"). For this parameter, only hours (\\\"h\\\"), minutes (\\\"m\\\"), and seconds (\\\"s\\\") may be specified. When not specified, the period defaults to the value specified within the packageserver.\",\n       \"pattern\": \"^([0-9]+(\\\\.[0-9]+)?(s|m|h))+$\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"metadata\"\n ],\n \"title\": \"OLM Config\",\n \"type\": \"object\"\n}"
+  }
+ }

@@ -27,27 +27,27 @@ jobs:
     if: github.repository == 'meshery/meshery'
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/setup-go@master
+      - uses: actions/setup-go@v5
         with:
           go-version: ${{ matrix.go }}
       - uses: actions/checkout@v4
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v4
+        uses: golangci/golangci-lint-action@v6
         with:
-          version: v1.54
+          version: v1.59
           args: --config=.golangci.yml --timeout=10m
   unit-tests:
     name: Unit tests
     runs-on: ubuntu-22.04
     needs: golangci
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 2
       - name: Install lynx for xdg-open support
         run: sudo apt-get install lynx
       - name: Setup Go
-        uses: actions/setup-go@master
+        uses: actions/setup-go@v5
         with:
           go-version: "1.21"
       - name: Run coverage
@@ -63,15 +63,19 @@ jobs:
     runs-on: ubuntu-22.04
     needs: golangci
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 2
       - name: Install lynx for xdg-open support
         run: sudo apt-get install lynx
       - name: Setup Go
-        uses: actions/setup-go@master
+        uses: actions/setup-go@v5
         with:
           go-version: "1.21"
+      - name: Install Docker Compose
+        run: |
+          sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+          sudo chmod +x /usr/local/bin/docker-compose
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3 
       - name: Create k8s Kind Cluster

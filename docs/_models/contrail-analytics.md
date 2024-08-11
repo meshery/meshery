@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Contrail Analytics
-subtitle: Collaborative and visual infrastructure as code for Contrail Analytics
+subtitle: Collaborative and visual infrastructure as design for Contrail Analytics
 image: /assets/img/integrations/contrail-analytics/icons/color/contrail-analytics-color.svg
 permalink: extensibility/integrations/contrail-analytics
 docURL: https://docs.meshery.io/extensibility/integrations/contrail-analytics
@@ -171,12 +171,12 @@ components:
   whiteIcon: assets/img/integrations/contrail-analytics/components/thanos-ruler/icons/white/thanos-ruler-white.svg
   description: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Supports various network protocols",
+  ""
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Manages network connections with Connect"
+howItWorksDetails: "Simplified network connectivity management in Kubernetes"
 language: en
 list: include
 type: extensibility

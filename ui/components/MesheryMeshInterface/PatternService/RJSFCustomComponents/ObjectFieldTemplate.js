@@ -13,11 +13,11 @@ import { ERROR_COLOR } from '../../../../constants/colors';
 import { iconMedium, iconSmall } from '../../../../css/icons.styles';
 import { calculateGrid } from '../helper';
 
-const styles = (theme) => ({
+const styles = () => ({
   objectFieldGrid: {
     padding: '.5rem',
     paddingTop: '0.7rem',
-    backgroundColor: theme.palette.type === 'dark' ? '#363636' : '#ffffff',
+    // backgroundColor: theme.palette.type === 'dark' ? '#363636' : '#ffffff',
     width: '100%',
     margin: '0px',
   },
@@ -36,7 +36,7 @@ const getRawErrors = (errorSchema) => {
   if (!errorSchema) return [];
   const errors = [];
   Object.keys(errorSchema).forEach((key) => {
-    if (errorSchema[key]?.__errors) {
+    if (errorSchema?.[key]?.__errors) {
       errors.push(...errorSchema[key].__errors);
     }
   });

@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Chaos Mesh
-subtitle: Collaborative and visual infrastructure as code for Chaos Mesh
+subtitle: Collaborative and visual infrastructure as design for Chaos Mesh
 image: /assets/img/integrations/chaos-mesh/icons/color/chaos-mesh-color.svg
 permalink: extensibility/integrations/chaos-mesh
 docURL: https://docs.meshery.io/extensibility/integrations/chaos-mesh
@@ -103,12 +103,12 @@ components:
   whiteIcon: assets/img/integrations/chaos-mesh/components/workflow/icons/white/workflow-white.svg
   description: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Injects various types of failures into systems",
+  "Simulates real-world scenarios",
+  "Supports Kubernetes and other platforms"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Integrates ChaosBlade experiments"
+howItWorksDetails: "Improves system resilience and fault tolerance through chaos testing"
 language: en
 list: include
 type: extensibility

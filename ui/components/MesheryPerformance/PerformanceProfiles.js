@@ -1,7 +1,6 @@
 // @ts-nocheck
 import React, { useEffect, useState, useRef } from 'react';
 import PromptComponent, { PROMPT_VARIANTS } from '../PromptComponent';
-import CloseIcon from '@material-ui/icons/Close';
 import PerformanceProfileGrid from './PerformanceProfileGrid';
 import dataFetch from '../../lib/data-fetch';
 import IconButton from '@material-ui/core/IconButton';
@@ -9,32 +8,35 @@ import AddIcon from '@material-ui/icons/AddCircleOutline';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { updateProgress } from '../../lib/store';
-import GenericModal from '../GenericModal';
+// import GenericModal from '../GenericModal';
 import MesheryPerformanceComponent from './index';
-import { Paper, Typography, Button, DialogTitle, TableCell, TableRow } from '@material-ui/core';
+import { Paper, Typography, Button, TableCell, TableRow } from '@material-ui/core';
 import fetchPerformanceProfiles from '../graphql/queries/PerformanceProfilesQuery';
 import { withStyles } from '@material-ui/core/styles';
 import { iconMedium } from '../../css/icons.styles';
 import subscribePerformanceProfiles from '../graphql/subscriptions/PerformanceProfilesSubscription';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
-import { ResponsiveDataTable } from '@layer5/sistent';
+import {
+  CustomColumnVisibilityControl,
+  Modal,
+  ResponsiveDataTable,
+  SearchBar,
+} from '@layer5/sistent';
 import Moment from 'react-moment';
-import { withSnackbar } from 'notistack';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 import PerformanceResults from './PerformanceResults';
 import EditIcon from '@material-ui/icons/Edit';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import ReusableTooltip from '../reusable-tooltip';
-import CustomColumnVisibilityControl from '../../utils/custom-column';
 import ViewSwitch from '../ViewSwitch';
-import SearchBar from '@/utils/custom-search';
 import useStyles from '../../assets/styles/general/tool.styles';
 import { updateVisibleColumns } from '@/utils/responsive-column';
 import { useWindowDimensions } from '@/utils/dimension';
 import { ConditionalTooltip } from '@/utils/utils';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
+import { UsesSistent } from '../SistentWrapper';
 
 const MESHERY_PERFORMANCE_URL = '/api/user/performance/profiles';
 const styles = (theme) => ({
@@ -157,7 +159,7 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
           pageSize: `${pageSize}`,
           page: `${page}`,
           search: `${encodeURIComponent(search)}`,
-          order: `${encodeURIComponent(sortOrder)}`,
+          order: `${sortOrder}`,
         },
       },
     );
@@ -187,7 +189,7 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
         pageSize: `${pageSize}`,
         page: `${page}`,
         search: `${encodeURIComponent(search)}`,
-        order: `${encodeURIComponent(sortOrder)}`,
+        order: `${sortOrder}`,
       },
     }).subscribe({
       next: (res) => {
@@ -569,23 +571,25 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
             </>
           )}
           <div className={classes.viewSwitchButton}>
-            <SearchBar
-              onSearch={(value) => {
-                setSearch(value);
-                fetchTestProfiles(page, pageSize, value, sortOrder);
-              }}
-              expanded={isSearchExpanded}
-              setExpanded={setIsSearchExpanded}
-              placeholder="Search Profiles..."
-            />
-            {viewType === 'table' && (
-              <CustomColumnVisibilityControl
-                id="ref"
-                classes={classes}
-                columns={columns}
-                customToolsProps={{ columnVisibility, setColumnVisibility }}
+            <UsesSistent>
+              <SearchBar
+                onSearch={(value) => {
+                  setSearch(value);
+                  fetchTestProfiles(page, pageSize, value, sortOrder);
+                }}
+                expanded={isSearchExpanded}
+                setExpanded={setIsSearchExpanded}
+                placeholder="Search Profiles..."
               />
-            )}
+              {viewType === 'table' && (
+                <CustomColumnVisibilityControl
+                  id="ref"
+                  classes={classes}
+                  columns={columns}
+                  customToolsProps={{ columnVisibility, setColumnVisibility }}
+                />
+              )}
+            </UsesSistent>
             <ViewSwitch view={viewType} changeView={setViewType} />
           </div>
         </div>
@@ -598,15 +602,17 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
             setPage={setPage}
           />
         ) : (
-          <ResponsiveDataTable
-            data={testProfiles}
-            columns={columns}
-            // @ts-ignore
-            options={options}
-            tableCols={tableCols}
-            updateCols={updateCols}
-            columnVisibility={columnVisibility}
-          />
+          <UsesSistent>
+            <ResponsiveDataTable
+              data={testProfiles}
+              columns={columns}
+              // @ts-ignore
+              options={options}
+              tableCols={tableCols}
+              updateCols={updateCols}
+              columnVisibility={columnVisibility}
+            />
+          </UsesSistent>
         )}
         {testProfiles.length === 0 && viewType === 'grid' && (
           <Paper className={classes.noProfilePaper}>
@@ -629,44 +635,32 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
             </div>
           </Paper>
         )}
-        <GenericModal
-          open={!!profileForModal}
-          Content={
-            <Paper className={classes.addProfileModal}>
-              <div className={classes.dialogHeader}>
-                <DialogTitle className={classes.title}>Performance Profile Wizard</DialogTitle>
-                <IconButton
-                  aria-label="close"
-                  style={{ color: 'white' }}
-                  onClick={() => setProfileForModal(undefined)}
-                >
-                  <CloseIcon />
-                </IconButton>
-              </div>
-
-              <MesheryPerformanceComponent
-                loadAsPerformanceProfile
-                performanceProfileID={profileForModal?.id}
-                profileName={profileForModal?.name}
-                meshName={profileForModal?.service_mesh}
-                url={profileForModal?.endpoints?.[0]}
-                qps={profileForModal?.qps}
-                loadGenerator={profileForModal?.load_generators?.[0]}
-                t={profileForModal?.duration}
-                c={profileForModal?.concurrent_request}
-                reqBody={profileForModal?.request_body}
-                headers={profileForModal?.request_headers}
-                cookies={profileForModal?.request_cookies}
-                contentType={profileForModal?.content_type}
-                runTestOnMount={!!profileForModal?.runTest}
-                metadata={profileForModal?.metadata}
-              />
-            </Paper>
-          }
-          handleClose={() => {
-            setProfileForModal(undefined);
-          }}
-        />
+        <UsesSistent>
+          <Modal
+            open={!!profileForModal}
+            title="Performance Profile Wizard"
+            closeModal={() => setProfileForModal(undefined)}
+            maxWidth="md"
+          >
+            <MesheryPerformanceComponent
+              loadAsPerformanceProfile
+              performanceProfileID={profileForModal?.id}
+              profileName={profileForModal?.name}
+              meshName={profileForModal?.service_mesh}
+              url={profileForModal?.endpoints?.[0]}
+              qps={profileForModal?.qps}
+              loadGenerator={profileForModal?.load_generators?.[0]}
+              t={profileForModal?.duration}
+              c={profileForModal?.concurrent_request}
+              reqBody={profileForModal?.request_body}
+              headers={profileForModal?.request_headers}
+              cookies={profileForModal?.request_cookies}
+              contentType={profileForModal?.content_type}
+              runTestOnMount={!!profileForModal?.runTest}
+              metadata={profileForModal?.metadata}
+            />
+          </Modal>
+        </UsesSistent>
       </div>
 
       <PromptComponent ref={modalRef} />
@@ -680,6 +674,4 @@ const mapDispatchToProps = (dispatch) => ({
   updateProgress: bindActionCreators(updateProgress, dispatch),
 });
 
-export default withStyles(styles)(
-  connect(mapStateToProps, mapDispatchToProps)(withSnackbar(PerformanceProfile)),
-);
+export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(PerformanceProfile));

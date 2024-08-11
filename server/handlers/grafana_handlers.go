@@ -15,8 +15,6 @@ import (
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/connections"
 	"github.com/layer5io/meshkit/models/events"
-
-	"github.com/sirupsen/logrus"
 )
 
 func init() {
@@ -123,7 +121,7 @@ func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request,
 		_ = p.PersistEvent(event)
 		go h.config.EventBroadcaster.Publish(userUUID, event)
 
-		logrus.Debugf("connection to grafana @ %s succeeded", grafanaURL)
+		h.log.Debug(fmt.Sprintf("connection to grafana @ %s succeeded", grafanaURL))
 
 		_ = json.NewEncoder(w).Encode(connection)
 	} else if req.Method == http.MethodDelete {

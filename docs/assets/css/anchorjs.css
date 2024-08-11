@@ -34,7 +34,7 @@
 :target::before {
   content: "";
   display: block;
-  margin-top: -80px;
+  margin-top: 5rem;
   height: 80px;
   width: 1px;
 }

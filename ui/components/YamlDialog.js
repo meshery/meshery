@@ -22,6 +22,7 @@ const YAMLDialog = ({
   setYaml,
   deleteHandler,
   updateHandler,
+  isReadOnly = false,
 }) => {
   const classes = useStyles();
   return (
@@ -55,23 +56,26 @@ const YAMLDialog = ({
             // @ts-ignore
             lint: true,
             mode: 'text/x-yaml',
+            readOnly: isReadOnly,
           }}
           onChange={(_, data, val) => setYaml(val)}
         />
       </DialogContent>
       <Divider variant="fullWidth" light />
-      <DialogActions>
-        <Tooltip title="Update Pattern">
-          <IconButton aria-label="Update" color="primary" onClick={updateHandler}>
-            <Save />
-          </IconButton>
-        </Tooltip>
-        <Tooltip title="Delete Filter">
-          <IconButton aria-label="Delete" color="primary" onClick={deleteHandler}>
-            <DeleteIcon />
-          </IconButton>
-        </Tooltip>
-      </DialogActions>
+      {isReadOnly ? null : (
+        <DialogActions>
+          <Tooltip title="Update Pattern">
+            <IconButton aria-label="Update" color="primary" onClick={updateHandler}>
+              <Save />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Delete Filter">
+            <IconButton aria-label="Delete" color="primary" onClick={deleteHandler}>
+              <DeleteIcon />
+            </IconButton>
+          </Tooltip>
+        </DialogActions>
+      )}
     </Dialog>
   );
 };

@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Jitsi
-subtitle: Collaborative and visual infrastructure as code for Jitsi
+subtitle: Collaborative and visual infrastructure as design for Jitsi
 image: /assets/img/integrations/jitsi/icons/color/jitsi-color.svg
 permalink: extensibility/integrations/jitsi
 docURL: https://docs.meshery.io/extensibility/integrations/jitsi
@@ -91,12 +91,12 @@ components:
   whiteIcon: assets/img/integrations/jitsi/components/traefik-service/icons/white/traefik-service-white.svg
   description: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Provides secure and encrypted video meetings",
+  "Supports various communication channels (audio, video, chat)",
+  "Scalable architecture"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Integrates Jitsi"
+howItWorksDetails: "Secure and scalable video conferencing in Kubernetes"
 language: en
 list: include
 type: extensibility

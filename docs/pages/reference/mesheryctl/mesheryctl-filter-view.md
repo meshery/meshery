@@ -19,7 +19,7 @@ View filter(s)
 Displays the contents of a specific filter based on name or id
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl filter view [filter-name | ID] [flags]
+mesheryctl filter view [flags]
 
 </div>
 </pre> 
@@ -30,7 +30,7 @@ View the specified WASM filter
 A unique prefix of the name or ID can also be provided. If the prefix is not unique, the first match will be returned.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl filter view [filter-name | ID]	
+mesheryctl filter view "[filter-name | ID]"
 
 </div>
 </pre> 
@@ -39,6 +39,21 @@ View all filter files
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl filter view --all
+
+</div>
+</pre> 
+
+//View multi-word named filter files. Multi-word filter names should be enclosed in quotes
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl filter view "filter name"
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+        
 
 </div>
 </pre> 

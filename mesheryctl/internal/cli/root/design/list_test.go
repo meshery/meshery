@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"strings"
 	"testing"
 
 	"github.com/jarcoal/httpmock"
@@ -43,19 +44,19 @@ func TestDesignList(t *testing.T) {
 		ExpectError      bool
 	}{
 		{
-			Name:             "Fetch Design List",
-			Args:             []string{"list"},
-			ExpectedResponse: "list.design.output.golden",
-			Fixture:          "list.design.api.response.golden",
+			Name:             "Fetch Pattern List",
+			Args:             []string{"list", "--page", "2"},
+			ExpectedResponse: "list.pattern.output.golden",
+			Fixture:          "list.pattern.api.response.golden",
 			URL:              testContext.BaseURL + "/api/pattern",
 			Token:            filepath.Join(fixturesDir, "token.golden"),
 			ExpectError:      false,
 		},
 		{
-			Name:             "Fetch Design List with Local provider",
-			Args:             []string{"list"},
-			ExpectedResponse: "list.design.local.output.golden",
-			Fixture:          "list.design.local.api.response.golden",
+			Name:             "Fetch Pattern List with Local provider",
+			Args:             []string{"list", "--page", "1"},
+			ExpectedResponse: "list.pattern.local.output.golden",
+			Fixture:          "list.pattern.local.api.response.golden",
 			URL:              testContext.BaseURL + "/api/pattern",
 			Token:            filepath.Join(fixturesDir, "local.token.golden"),
 			ExpectError:      false,
@@ -114,6 +115,7 @@ func TestDesignList(t *testing.T) {
 				golden.Write(actualResponse)
 			}
 			expectedResponse := golden.Load()
+			expectedResponse = trimLastNLines(expectedResponse, 2)
 
 			utils.Equals(t, expectedResponse, actualResponse)
 		})
@@ -122,4 +124,12 @@ func TestDesignList(t *testing.T) {
 
 	// stop mock server
 	utils.StopMockery(t)
+}
+
+func trimLastNLines(s string, n int) string {
+	lines := strings.Split(s, "\n")
+	if len(lines) <= n {
+		return ""
+	}
+	return strings.Join(lines[:len(lines)-n], "\n")
 }

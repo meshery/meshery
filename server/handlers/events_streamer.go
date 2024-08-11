@@ -1,4 +1,4 @@
-// Package handlers :collection of handlers (aka "HTTP middleware")
+
 package handlers
 
 import (
@@ -17,9 +17,9 @@ import (
 	"github.com/layer5io/meshery/server/meshes"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/errors"
+	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/models/events"
 	_events "github.com/layer5io/meshkit/utils/events"
-	"github.com/sirupsen/logrus"
 )
 
 var (
@@ -58,7 +58,6 @@ func (h *Handler) GetAllEvents(w http.ResponseWriter, req *http.Request, prefObj
 	if err != nil {
 		h.log.Warn(err)
 	}
-
 	filter.Limit = limit
 	filter.Offset = offset
 	filter.Order = order
@@ -66,12 +65,13 @@ func (h *Handler) GetAllEvents(w http.ResponseWriter, req *http.Request, prefObj
 	filter.Search = search
 	filter.Status = events.EventStatus(status)
 
-	eventsResult, err := provider.GetAllEvents(filter, userID)
+	eventsResult, err := provider.GetAllEvents(filter, userID, *h.SystemID)
 	if err != nil {
 		h.log.Error(ErrGetEvents(err))
 		http.Error(w, ErrGetEvents(err).Error(), http.StatusInternalServerError)
 		return
 	}
+
 	eventsResult.Page = page
 	err = json.NewEncoder(w).Encode(eventsResult)
 	if err != nil {
@@ -87,8 +87,7 @@ func (h *Handler) GetAllEvents(w http.ResponseWriter, req *http.Request, prefObj
 // 200:
 func (h *Handler) GetEventTypes(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	userID := uuid.FromStringOrNil(user.ID)
-
-	eventTypes, err := provider.GetEventTypes(userID)
+	eventTypes, err := provider.GetEventTypes(userID, *h.SystemID)
 	if err != nil {
 		http.Error(w, fmt.Errorf("error retrieving event cagegories and actions").Error(), http.StatusInternalServerError)
 		return
@@ -272,7 +271,6 @@ func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request, p
 	// 	return
 	// }
 
-	log := logrus.WithField("file", "events_streamer")
 	client := "ui"
 	if req.URL.Query().Get("client") != "" {
 		client = req.URL.Query().Get("client")
@@ -286,7 +284,7 @@ func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request, p
 	flusherMap[client] = flusher
 
 	if !ok {
-		log.Error("Event streaming not supported.")
+		h.log.Error(ErrEventStreamingNotSupported)
 		http.Error(w, "Event streaming is not supported at the moment.", http.StatusInternalServerError)
 		return
 	}
@@ -309,33 +307,33 @@ func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request, p
 
 	go func() {
 		for mClient := range newAdaptersChan {
-			log.Debug("received a new mesh client, listening for events")
+			h.log.Debug("received a new mesh client, listening for events")
 			go func(mClient *meshes.MeshClient) {
-				listenForAdapterEvents(req.Context(), mClient, respChan, log, p, h.config.EventBroadcaster, *h.SystemID, user.ID)
+				listenForAdapterEvents(req.Context(), mClient, respChan, h.log, p, h.config.EventBroadcaster, *h.SystemID, user.ID)
 				_ = mClient.Close()
 			}(mClient)
 		}
 
-		log.Debug("new adapters channel closed")
+		h.log.Debug("new adapters channel closed")
 	}()
-	go listenForCoreEvents(req.Context(), h.EventsBuffer, respChan, log, p)
+	go listenForCoreEvents(req.Context(), h.EventsBuffer, respChan, h.log, p)
 	go func(flusher http.Flusher) {
 		for data := range respChan {
-			log.Debug("received new data on response channel")
+			h.log.Debug("received new data on response channel")
 			_, _ = fmt.Fprintf(w, "data: %s\n\n", data)
 			if flusher != nil {
 				flusher.Flush()
-				log.Debugf("Flushed the messages on the wire...")
+				h.log.Debug("Flushed the messages on the wire...")
 			}
 		}
-		log.Debug("response channel closed")
+		h.log.Debug("response channel closed")
 	}(flusherMap[client])
 
 STOP:
 	for {
 		select {
 		case <-notify.Done():
-			log.Debugf("received signal to close connection and channels")
+			h.log.Debug("received signal to close connection and channels")
 			close(newAdaptersChan)
 			break STOP
 		default:
@@ -376,9 +374,9 @@ STOP:
 		time.Sleep(5 * time.Second)
 	}
 	close(respChan)
-	defer log.Debug("events handler closed")
+	defer h.log.Debug("events handler closed")
 }
-func listenForCoreEvents(ctx context.Context, eb *_events.EventStreamer, resp chan []byte, log *logrus.Entry, _ models.Provider) {
+func listenForCoreEvents(ctx context.Context, eb *_events.EventStreamer, resp chan []byte, log logger.Handler, _ models.Provider) {
 	datach := make(chan interface{}, 10)
 	go eb.Subscribe(datach)
 	for {
@@ -400,8 +398,8 @@ func listenForCoreEvents(ctx context.Context, eb *_events.EventStreamer, resp ch
 		}
 	}
 }
-func listenForAdapterEvents(ctx context.Context, mClient *meshes.MeshClient, respChan chan []byte, log *logrus.Entry, p models.Provider, ec *models.Broadcast, systemID uuid.UUID, userID string) {
-	log.Debugf("Received a stream client...")
+func listenForAdapterEvents(ctx context.Context, mClient *meshes.MeshClient, respChan chan []byte, log logger.Handler, p models.Provider, ec *models.Broadcast, systemID uuid.UUID, userID string) {
+	log.Debug("Received a stream client...")
 	userUUID := uuid.FromStringOrNil(userID)
 	streamClient, err := mClient.MClient.StreamEvents(ctx, &meshes.EventsRequest{})
 	if err != nil {
@@ -412,7 +410,7 @@ func listenForAdapterEvents(ctx context.Context, mClient *meshes.MeshClient, res
 	}
 
 	for {
-		log.Debugf("Waiting to receive events.")
+		log.Debug("Waiting to receive events.")
 		event, err := streamClient.Recv()
 		if err != nil {
 			if err == io.EOF {
@@ -423,7 +421,7 @@ func listenForAdapterEvents(ctx context.Context, mClient *meshes.MeshClient, res
 			return
 		}
 		// log.Debugf("received an event: %+#v", event)
-		log.Debugf("Received an event.")
+		log.Debug("Received an event.")
 		eventType := event.EventType.String()
 		eventBuilder := events.NewEvent().FromSystem(uuid.FromStringOrNil(event.Component)).
 			WithSeverity(events.Informational).WithDescription(event.Summary).WithCategory(event.ComponentName).WithAction("deploy").FromUser(userUUID)
@@ -474,4 +472,60 @@ func closeAdapterConnections(localMeshAdaptersLock *sync.Mutex, localMeshAdapter
 	localMeshAdaptersLock.Unlock()
 
 	return map[string]*meshes.MeshClient{}
+}
+
+// swagger:route POST /api/events EventsAPI idClientEventHandler
+// Receives client-generated events bound for the Notification Center.
+// responses:
+// 200:
+
+func (h *Handler) ClientEventHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+	userID := uuid.FromStringOrNil(user.ID)
+
+	defer func() {
+		_ = req.Body.Close()
+	}()
+
+	var evt events.Event
+	body, err := io.ReadAll(req.Body)
+	if err != nil {
+		h.log.Error(ErrRequestBody(err))
+		http.Error(w, ErrRequestBody(err).Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = json.Unmarshal(body, &evt)
+	if err != nil {
+		h.log.Error(models.ErrUnmarshal(err, "event"))
+		http.Error(w, models.ErrUnmarshal(err, "event").Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if(evt.ActedUpon.IsNil() || evt.Action == "" || evt.Category == "" || evt.Severity == ""){
+		h.log.Error(models.ErrInvalidEventData())
+		http.Error(w, models.ErrInvalidEventData().Error(), http.StatusBadRequest)
+		return
+	}
+
+	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).
+		WithCategory(evt.Category).WithAction(evt.Action).WithSeverity(events.EventSeverity(evt.Severity)).
+		WithDescription(evt.Description).WithMetadata(evt.Metadata).ActedUpon(evt.ActedUpon)
+
+	event := eventBuilder.Build()
+	err = provider.PersistEvent(event)
+	if err != nil {
+		h.log.Error(models.ErrPersistEvent(err))
+		http.Error(w, models.ErrPersistEvent(err).Error(), http.StatusInternalServerError)
+		return
+
+	}
+	go h.config.EventBroadcaster.Publish(userID, event)
+
+	w.WriteHeader(http.StatusCreated)
+	err = json.NewEncoder(w).Encode(event)
+	if err != nil {
+		h.log.Error(models.ErrMarshal(err, "event response"))
+		http.Error(w, models.ErrMarshal(err, "event response").Error(), http.StatusInternalServerError)
+		return
+	}
 }

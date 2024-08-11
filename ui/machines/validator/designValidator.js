@@ -1,7 +1,5 @@
 import { createMachine, fromPromise, sendTo, assign, emit } from 'xstate';
 import { getComponentDefinition } from '@/rtk-query/meshModel';
-import Ajv from 'ajv';
-import _ from 'lodash';
 import {
   dataValidatorCommands,
   dataValidatorMachine,
@@ -13,25 +11,8 @@ import { processDesign } from '@/utils/utils';
 import { designsApi } from '@/rtk-query/design';
 import { initiateQuery } from '@/rtk-query/utils';
 
-const ajv = new Ajv({
-  allErrors: true,
-  strict: false, // allow additional properties like x-kubernetes-attributes ( this is safe the schema is sourced from the component definition and is not ours)
-});
-
-// dynamically add schemas to ajv to avoid recompiling the same schema and cache it
-const validateSchema = (schema, data, id) => {
-  let validate = ajv.getSchema(id);
-  if (!validate) {
-    ajv.addSchema(schema, id);
-    validate = ajv.getSchema(id);
-  }
-  const valid = validate(data);
-
-  return {
-    isValid: valid,
-    errors: validate.errors,
-  };
-};
+import { componentKey } from './schemaValidator';
+import { fromWorkerfiedActor } from '@layer5/sistent';
 
 const DESIGN_VALIDATOR_COMMANDS = {
   VALIDATE_DESIGN_SCHEMA: 'VALIDATE_DESIGN_SCHEMA',
@@ -64,15 +45,15 @@ export const designValidatorCommands = {
       validationPayloadType: 'component',
     },
   }),
-  dryRunDesignDeployment: ({ design, k8sContexts, returnAddress }) => ({
+  dryRunDesignDeployment: ({ design, k8sContexts, includeDependencies, returnAddress }) => ({
     type: DESIGN_VALIDATOR_COMMANDS.DRY_RUN_DESIGN,
     returnAddress,
-    data: { design, k8sContexts, dryRunType: DRY_RUN_TYPE.DEPLOY },
+    data: { design, k8sContexts, dryRunType: DRY_RUN_TYPE.DEPLOY, includeDependencies },
   }),
-  dryRunDesignUnDeployment: ({ design, k8sContexts, returnAddress }) => ({
+  dryRunDesignUnDeployment: ({ design, k8sContexts, includeDependencies, returnAddress }) => ({
     type: DESIGN_VALIDATOR_COMMANDS.DRY_RUN_DESIGN,
     returnAddress,
-    data: { design, k8sContexts, dryRunType: DRY_RUN_TYPE.UNDEPLOY },
+    data: { design, k8sContexts, dryRunType: DRY_RUN_TYPE.UNDEPLOY, includeDependencies },
   }),
 };
 
@@ -86,75 +67,6 @@ export const designValidatorEvents = {
     data: { error, type, component },
   }),
 };
-
-const validateComponent = async (component, validateAnnotations = false) => {
-  const componentDef = await getComponentDefinition(component.type, component.model, {
-    apiVersion: component.apiVersion,
-    annotations: 'include',
-  });
-
-  if (!componentDef || (componentDef?.metadata?.isAnnotation && !validateAnnotations)) {
-    // skip validation for annotations
-    return {
-      errors: [],
-      componentDefinition: componentDef,
-      component,
-    };
-  }
-  const schema = JSON.parse(componentDef.component.schema);
-  const results = validateSchema(schema, component.settings || {}, componentDef.id);
-
-  const validationResults = {
-    ...results,
-    componentDefinition: componentDef,
-    component,
-  };
-
-  return validationResults;
-};
-
-const validateDesign = async (design) => {
-  const { configurableComponents } = processDesign(design);
-
-  const validationResults = {};
-
-  for (const configurableComponent of configurableComponents) {
-    try {
-      const componentValidationResults = await validateComponent(configurableComponent);
-      validationResults[configurableComponent.name] = componentValidationResults;
-    } catch (error) {
-      console.error('Error validating component', error);
-    }
-  }
-  return validationResults;
-};
-
-const SchemaValidateDesignActor = fromPromise(async ({ input }) => {
-  const { validationPayload, prevValidationResults } = input;
-  const { validationPayloadType } = validationPayload;
-
-  if (validationPayloadType === 'design') {
-    const { design } = validationPayload;
-    const validationResults = await validateDesign(design);
-    return {
-      validationResults,
-    };
-  }
-
-  if (validationPayloadType === 'component') {
-    const { component } = validationPayload;
-    const validationResults = await validateComponent(
-      component,
-      validationPayload.validateAnnotations,
-    );
-
-    return {
-      validationResults: _.set(prevValidationResults || {}, component.name, validationResults),
-    };
-  }
-
-  throw new Error('Invalid validation payload type', validationPayloadType);
-});
 
 const DRY_RUN_TYPE = {
   DEPLOY: 'Deploy',
@@ -202,7 +114,7 @@ export const formatDryRunResponse = (dryRunResponse) => {
 };
 
 const DryRunDesignActor = fromPromise(async ({ input: { validationPayload } }) => {
-  const { design, k8sContexts, dryRunType } = validationPayload;
+  const { design, k8sContexts, dryRunType, includeDependencies } = validationPayload;
   const { pattern_file, pattern_id } = design;
   const dryRunEndpoint =
     dryRunType === DRY_RUN_TYPE.DEPLOY
@@ -212,6 +124,7 @@ const DryRunDesignActor = fromPromise(async ({ input: { validationPayload } }) =
   const dryRunResults = await initiateQuery(dryRunEndpoint, {
     pattern_file,
     pattern_id,
+    skipCRD: !includeDependencies,
     selectedK8sContexts: k8sContexts,
     dryRun: true,
     verify: false,
@@ -223,17 +136,40 @@ const DryRunDesignActor = fromPromise(async ({ input: { validationPayload } }) =
   };
 });
 
-const schemaValidatorMachine = dataValidatorMachine.provide({
-  actors: {
-    ValidateActor: SchemaValidateDesignActor,
-  },
-});
-
 const dryRunValidatorMachine = dataValidatorMachine.provide({
   actors: {
     ValidateActor: DryRunDesignActor,
   },
 });
+
+const getAllComponentsDefsInDesign = async (design) => {
+  const { components } = processDesign(design);
+
+  const componentDefs = (
+    await Promise.allSettled(
+      components.map(async (component) =>
+        getComponentDefinition(component.type, component.model, {
+          apiVersion: component.apiVersion,
+          annotations: 'include',
+        }),
+      ),
+    )
+  )
+    .filter((result) => result.status === 'fulfilled')
+    .map((result) => result.value);
+
+  const componentStore = componentDefs.reduce((acc, componentDef) => {
+    const key = componentKey({
+      type: componentDef.component.kind,
+      model: componentDef.model.name,
+      apiVersion: componentDef.component.version,
+    });
+    acc[key] = componentDef;
+    return acc;
+  }, {});
+
+  return componentStore;
+};
 
 export const designValidationMachine = createMachine({
   id: 'designValidationMachine',
@@ -244,11 +180,17 @@ export const designValidationMachine = createMachine({
     init: {
       entry: assign({
         schemaValidator: ({ spawn }) =>
-          spawn(schemaValidatorMachine, {
-            name: 'schemaValidator',
-            id: 'schemaValidator',
-            syncSnapshot: true,
-          }),
+          spawn(
+            fromWorkerfiedActor(
+              new Worker(new URL('./schemaValidatorWorker', import.meta.url), { type: 'module' }),
+            ),
+            {
+              name: 'schemaValidator',
+              id: 'schemaValidator',
+              syncSnapshot: true,
+            },
+          ),
+
         dryRunValidator: ({ spawn }) =>
           spawn(dryRunValidatorMachine, {
             name: 'dryRunValidator',
@@ -262,20 +204,10 @@ export const designValidationMachine = createMachine({
     idle: {
       on: {
         [DESIGN_VALIDATOR_COMMANDS.VALIDATE_DESIGN_SCHEMA]: {
-          actions: sendTo('schemaValidator', ({ event }) =>
-            dataValidatorCommands.validateData({
-              validationPayload: event.data,
-              returnAddress: event.returnAddress, // directly return the response event from schemaValidator
-            }),
-          ),
+          target: 'validateDesignSchema',
         },
         [DESIGN_VALIDATOR_COMMANDS.VALIDATE_DESING_COMPONENT]: {
-          actions: sendTo('schemaValidator', ({ event }) =>
-            dataValidatorCommands.validateData({
-              validationPayload: event.data,
-              returnAddress: event.returnAddress,
-            }),
-          ),
+          target: 'validateComponentSchema',
         },
         [DESIGN_VALIDATOR_COMMANDS.DRY_RUN_DESIGN]: {
           actions: sendTo('dryRunValidator', ({ event }) =>
@@ -288,6 +220,70 @@ export const designValidationMachine = createMachine({
 
         [DESIGN_VALIDATOR_EVENTS.TAP_ON_ERROR]: {
           actions: [emit(({ event }) => event)],
+        },
+      },
+    },
+
+    validateComponentSchema: {
+      invoke: {
+        input: ({ context, event }) => ({ context, event }),
+        src: fromPromise(async ({ input }) => {
+          const { component } = input.event.data;
+          const def = await getComponentDefinition(component.type, component.model, {
+            apiVersion: component.apiVersion,
+            annotations: 'include',
+          });
+          return {
+            validationPayload: {
+              ...input.event.data,
+              componentDef: def,
+              component: component,
+            },
+            returnAddress: input.event.returnAddress,
+          };
+        }),
+        onDone: {
+          actions: [
+            sendTo('schemaValidator', ({ event }) =>
+              dataValidatorCommands.validateData(event.output),
+            ),
+          ],
+          target: 'idle',
+        },
+        onError: {
+          target: 'idle',
+          actions: ({ event }) =>
+            console.log('error while relaying validateComponentSchema', event),
+        },
+      },
+    },
+
+    validateDesignSchema: {
+      invoke: {
+        input: ({ context, event }) => ({ context, event }),
+        src: fromPromise(async ({ input }) => {
+          const { event } = input;
+          const def = await getAllComponentsDefsInDesign(event.data.design);
+          return {
+            validationPayload: {
+              ...event.data,
+              componentDefs: def,
+            },
+            returnAddress: event.returnAddress,
+          };
+        }),
+
+        onDone: {
+          actions: [
+            sendTo('schemaValidator', ({ event }) =>
+              dataValidatorCommands.validateData(event.output),
+            ),
+          ],
+          target: 'idle',
+        },
+        onError: {
+          target: 'idle',
+          actions: ({ event }) => console.log('error while relaying validateDesignSchema', event),
         },
       },
     },

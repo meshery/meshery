@@ -116,15 +116,19 @@ export const {
   useGetRegistrantsQuery,
   useGetRelationshipsQuery,
   useLazyGetRegistrantsQuery,
+  useGetComponentsFromModalQuery,
   useLazyGetComponentsFromModalQuery,
+  useGetRelationshipsFromModalQuery,
   useLazyGetRelationshipsFromModalQuery,
   useUpdateEntityStatusMutation,
   useGetModelCategoriesQuery,
   useLazyGetModelFromCategoryQuery,
   useGetModelByNameQuery,
+  useLazyGetModelByNameQuery,
   useGetMeshModelsQuery,
   useGetComponentByNameQuery,
   useGetModelFromCategoryQuery,
+  useGetComponentsByModelAndKindQuery,
 } = meshModelApi;
 
 export const useGetCategoriesSummary = () => {
@@ -166,3 +170,9 @@ export const getComponentDefinition = async (component, model, params = {}) => {
   }
   return res?.data?.components?.[0];
 };
+
+export const modelUniqueKey = (model) => `${model.name}-${model.version}`;
+export const componentUniqueKey = (component) =>
+  `${component.component.kind}-${component.component.version}-${component.version}-${modelUniqueKey(
+    component.model,
+  )}`;

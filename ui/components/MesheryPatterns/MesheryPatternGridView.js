@@ -6,9 +6,7 @@ import DesignConfigurator from '../configuratorComponents/MeshModel';
 import { FILE_OPS } from '../../utils/Enum';
 import { EVENT_TYPES } from '../../lib/event-types';
 import useStyles from './Grid.styles';
-import Modal from '../Modal';
-import PublicIcon from '@material-ui/icons/Public';
-import { withSnackbar } from 'notistack';
+import { RJSFModalWrapper } from '../Modal';
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -16,6 +14,9 @@ import { updateProgress } from '../../lib/store';
 import ExportModal from '../ExportModal';
 import downloadContent from '@/utils/fileDownloader';
 import { useNotification } from '@/utils/hooks/useNotification';
+import { Modal as SistentModal } from '@layer5/sistent';
+import { UsesSistent } from '../SistentWrapper';
+import Pattern from '../../public/static/img/drawer-icons/pattern_svg';
 const INITIAL_GRID_SIZE = { xl: 4, md: 6, xs: 12 };
 
 function PatternCardGridItem({
@@ -33,6 +34,8 @@ function PatternCardGridItem({
   canPublishPattern = false,
   user,
   handleInfoModal,
+  hideVisibility = false,
+  isReadOnly = false,
 }) {
   const [gridProps, setGridProps] = useState(INITIAL_GRID_SIZE);
   const [yaml, setYaml] = useState(pattern.pattern_file);
@@ -81,6 +84,8 @@ function PatternCardGridItem({
         description={pattern.description}
         visibility={pattern.visibility}
         pattern={pattern}
+        hideVisibility={hideVisibility}
+        isReadOnly={isReadOnly}
       />
     </Grid>
   );
@@ -138,6 +143,8 @@ function MesheryPatternGrid({
   openValidationModal,
   openUndeployModal,
   openDryRunModal,
+  hideVisibility = false,
+  arePatternsReadOnly = false,
 }) {
   const classes = useStyles();
   const { notify } = useNotification();
@@ -226,6 +233,8 @@ function MesheryPatternGrid({
               handleSubmit={handleSubmit}
               handleDownload={(e) => handleDesignDownloadModal(e, pattern)}
               setSelectedPatterns={setSelectedPattern}
+              hideVisibility={hideVisibility}
+              isReadOnly={arePatternsReadOnly}
             />
           ))}
         </Grid>
@@ -265,21 +274,31 @@ function MesheryPatternGrid({
       ) : null}
 
       {canPublishPattern && publishModal.open && (
-        <Modal
-          open={true}
-          schema={publishSchema.rjsfSchema}
-          uiSchema={publishSchema.uiSchema}
-          handleClose={handlePublishModalClose}
-          aria-label="catalog publish"
-          title={publishModal.pattern?.name}
-          handleSubmit={handlePublish}
-          showInfoIcon={{
-            text: 'Upon submitting your catalog item, an approval flow will be initiated.',
-            link: 'https://docs.meshery.io/concepts/catalog',
-          }}
-          submitBtnText="Submit for Approval"
-          submitBtnIcon={<PublicIcon />}
-        />
+        <UsesSistent>
+          <SistentModal
+            open={true}
+            title={publishModal.pattern?.name}
+            closeModal={handlePublishModalClose}
+            aria-label="catalog publish"
+            maxWidth="sm"
+            headerIcon={
+              <Pattern
+                fill="#fff"
+                style={{ height: '24px', width: '24px', fonSize: '1.45rem' }}
+                className={undefined}
+              />
+            }
+          >
+            <RJSFModalWrapper
+              schema={publishSchema.rjsfSchema}
+              uiSchema={publishSchema.uiSchema}
+              submitBtnText="Submit for Approval"
+              handleSubmit={handlePublish}
+              helpText="Upon submitting your catalog item, an approval flow will be initiated.[Learn more](https://docs.meshery.io/concepts/catalog)"
+              handleClose={handlePublishModalClose}
+            />
+          </SistentModal>
+        </UsesSistent>
       )}
       <ExportModal
         downloadModal={downloadModal}
@@ -295,4 +314,4 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 // @ts-ignore
-export default connect(mapDispatchToProps)(withSnackbar(MesheryPatternGrid));
+export default connect(mapDispatchToProps)(MesheryPatternGrid);

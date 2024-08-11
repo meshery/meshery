@@ -32,15 +32,16 @@ import (
 var (
 	modelLocation            string
 	logFile                  *os.File
+	errorLogFile             *os.File
 	sheetGID                 int64
 	totalAggregateComponents int
-	logDirPath               = filepath.Join(mutils.GetHome(), ".meshery", "logs")
+	logDirPath               = filepath.Join(mutils.GetHome(), ".meshery", "logs", "registry")
 )
 
 var updateCmd = &cobra.Command{
 	Use:   "update",
 	Short: "Update the registry with latest data.",
-	Long:  "`Updates the component metadata (SVGs, shapes, styles and other) by referring from a Google Spreadsheet.`",
+	Long:  "Updates the component metadata (SVGs, shapes, styles and other) by referring from a Google Spreadsheet.",
 	Example: `
 // Update models from Meshery Integration Spreadsheet
 mesheryctl registry update --spreadsheet-id [id] --spreadsheet-cred [base64 encoded spreadsheet credential] -i [path to the directory containing models].
@@ -118,7 +119,7 @@ func InvokeCompUpdate() error {
 		return err
 	}
 
-	err = componentCSVHelper.ParseComponentsSheet()
+	err = componentCSVHelper.ParseComponentsSheet(modelName)
 	if err != nil {
 		err = ErrUpdateRegistry(err, modelLocation)
 		utils.Log.Error(err)

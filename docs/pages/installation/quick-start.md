@@ -29,7 +29,7 @@ If you are on macOS or Linux system, you can download, install, and run both `me
   </div>
 </div>
 </pre>-->
-<!-- <script src="/assets/js/terminal.js" data-termynal-container="#termynal0"></script> --> 
+<!-- <script src="/assets/js/terminal.js" data-termynal-container="#termynal0"></script> -->
 
 <pre class="codeblock-pre">
   <div class="codeblock">
@@ -59,7 +59,11 @@ Select from the list of [Providers]({{ site.baseurl }}/extensibility/providers) 
 
 ## 4. Configure Connections to your Kubernetes Clusters
 
-If you have deployed Meshery out-of-cluster, Meshery will automatically connect to any available Kubernetes clusters found in your kubeconfig (under `$HOME/.kube/config`). If you have deployed Meshery out-of-cluster, Meshery will automatically connect to the Kubernetes API Server availabe in the control plane. Ensure that Meshery is connected to one or more of your Kubernetes clusters.
+**Out-of-Cluster Deployments**
+If you have deployed Meshery out-of-cluster, Meshery Server will automatically attempt to connect to any available Kubernetes clusters found in your kubeconfig (under `$HOME/.kube/config`) and in kubeconfigs uploaded through Meshery UI. Meshery Server deploys [Meshery Operator](/concepts/architecture/operator), [MeshSync](/concepts/architecture/meshsync), and Broker into the `meshery` namespace (by default).
+
+**In-Cluster Deployments**
+If you have deployed Meshery in-cluster, Meshery Server will automatically connect to the Kubernetes API Server availabe in the control plane.
 
 Visit <i class="fas fa-cog"></i> Settings:
 
@@ -94,3 +98,4 @@ You may now proceed to managed any cloud native infrastructure supported by Mesh
         <li><a href="{{ site.baseurl }}/reference/mesheryctl/system/check">Mesheryctl system check</a></li> 
     </ul>
 </div>
+

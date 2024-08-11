@@ -8,6 +8,7 @@ on:
       - "docs/**"
       - ".github/**"
       - "install/**"
+
 jobs:
   update-rest-api-docs:
     name: Update REST API Documentation
@@ -35,6 +36,10 @@ jobs:
         if: steps.changes.outputs.modified == 'true'
         run: |
           make swagger-docs-build
+
+      - name: Pull changes from remote
+        run: git pull origin master
+
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
@@ -44,7 +49,7 @@ jobs:
           commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           commit_options: "--signoff"
           commit_message: "[Docs] Updated Swagger Docs for REST API"
-  
+
   update-graphql-docs:
     name: Update GraphQL API Documentation
     if: github.repository == 'meshery/meshery'
@@ -72,6 +77,10 @@ jobs:
         run: |
           cd docs; bundle install; cd ..; \
           make graphql-docs-build
+
+      - name: Pull changes from remote
+        run: git pull origin master
+
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
@@ -81,7 +90,7 @@ jobs:
           commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           commit_options: "--signoff"
           commit_message: "[Docs] Updated GraphQL API Documentation"
-  
+
   docker-build-push:
     name: Docker build and push
     if: github.repository == 'meshery/meshery' && github.event_name != 'pull_request' && success()
@@ -93,7 +102,7 @@ jobs:
         run: |
           echo "LATEST_TAG=$(curl --silent "https://api.github.com/repos/meshery/meshery/releases" | jq ' .[] | ."tag_name"' | sed -n 1p$'\n' | tr -d '"')" >> $GITHUB_ENV
       - name: Check out code
-        uses: actions/checkout@master
+        uses: actions/checkout@v4
         with:
           fetch-depth: 1
       - name: Docker login
@@ -112,3 +121,8 @@ jobs:
           docker push ${{ secrets.IMAGE_NAME }}:edge-${GITHUB_SHA::8}
           docker push ${{ secrets.IMAGE_NAME }}:edge-${{ env.LATEST_TAG }}
 
+  update-staging-playground:
+    needs:
+      - docker-build-push
+    uses: meshery/meshery/.github/workflows/cncf-staging-playground-deploy-meshery.yaml@master
+    secrets: inherit

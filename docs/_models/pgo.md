@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: PGO (CrunchyData)
-subtitle: Collaborative and visual infrastructure as code for PGO (CrunchyData)
+subtitle: Collaborative and visual infrastructure as design for PGO (CrunchyData)
 image: /assets/img/integrations/pgo/icons/color/pgo-color.svg
 permalink: extensibility/integrations/pgo
 docURL: https://docs.meshery.io/extensibility/integrations/pgo
@@ -18,12 +18,16 @@ components:
   colorIcon: assets/img/integrations/pgo/components/postgres-cluster/icons/color/postgres-cluster-color.svg
   whiteIcon: assets/img/integrations/pgo/components/postgres-cluster/icons/white/postgres-cluster-white.svg
   description: 
+- name: pg-admin
+  colorIcon: assets/img/integrations/pgo/components/pg-admin/icons/color/pg-admin-color.svg
+  whiteIcon: assets/img/integrations/pgo/components/pg-admin/icons/white/pg-admin-white.svg
+  description: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Automates PostgreSQL deployment and management",
+  "High availability and disaster recovery",
+  "Advanced PostgreSQL features (e.g., backups)"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Deploys and manages PostgreSQL"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

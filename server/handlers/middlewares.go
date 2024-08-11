@@ -3,6 +3,7 @@ package handlers
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -14,7 +15,6 @@ import (
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshsync/pkg/model"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
@@ -52,7 +52,7 @@ func (h *Handler) ProviderMiddleware(next http.Handler) http.Handler {
 		ctx = context.WithValue(ctx, models.MesheryServerCallbackURL, callbackURL)
 		_url, err := url.Parse(callbackURL)
 		if err != nil {
-			logrus.Errorf("Error parsing callback url: %v", err)
+			h.log.Error(ErrParsingCallBackUrl(err))
 		} else {
 			ctx = context.WithValue(ctx, models.MesheryServerURL, fmt.Sprintf("%s://%s", _url.Scheme, _url.Host))
 		}
@@ -65,6 +65,8 @@ func (h *Handler) ProviderMiddleware(next http.Handler) http.Handler {
 // AuthMiddleware is a middleware to validate if a user is authenticated
 func (h *Handler) AuthMiddleware(next http.Handler, auth models.AuthenticationMechanism) http.Handler {
 	fn := func(w http.ResponseWriter, req *http.Request) {
+		refURLB64 := GetRefURL(req)
+
 		providerH := h.Provider
 		if auth == models.NoAuth && providerH != "" {
 			auth = models.ProviderAuth //If a provider is enforced then use provider authentication even in case of NoAuth
@@ -76,37 +78,38 @@ func (h *Handler) AuthMiddleware(next http.Handler, auth models.AuthenticationMe
 		// 		return
 		// 	}
 		case models.ProviderAuth:
+			// Propagate existing request parameters, if present.
+			queryParams := req.URL.Query()
+			if refURLB64 != "" {
+				queryParams["ref"] = []string{refURLB64} 
+			}
 			providerI := req.Context().Value(models.ProviderCtxKey)
 			// logrus.Debugf("models.ProviderCtxKey %s", models.ProviderCtxKey)
 			provider, ok := providerI.(models.Provider)
 			if !ok {
-				http.Redirect(w, req, "/provider", http.StatusFound)
+				http.Redirect(w, req, fmt.Sprintf("/provider?%s", queryParams.Encode()), http.StatusFound)
 				return
 			}
 
 			// Because server verifies the value of the "PROVIDER" environemnt variable and doesn't allow unsupported provider value,
 			// the below situation cannot occur.
-			
+
 			// if providerH != "" && providerH != provider.Name() {
 			// 	w.WriteHeader(http.StatusUnauthorized)
 			// 	return
 			// }
 			// logrus.Debugf("provider %s", provider)
-			isValid := h.validateAuth(provider, req)
+			isValid, err := h.validateAuth(provider, req)
 			// logrus.Debugf("validate auth: %t", isValid)
 			if !isValid {
-				// if h.GetProviderType() == models.RemoteProviderType {
-				// 	http.Redirect(w, req, "/user/login", http.StatusFound)
-				// } else { // Local Provider
-				// 	h.LoginHandler(w, req)
-				// }
-				// return
-				if provider.GetProviderType() == models.RemoteProviderType {
+				if !errors.Is(models.ErrEmptySession, err) && provider.GetProviderType() == models.RemoteProviderType {
 					provider.HandleUnAuthenticated(w, req)
 					return
 				}
+
 				// Local Provider
 				h.LoginHandler(w, req, provider, true)
+				return
 			}
 		}
 		next.ServeHTTP(w, req)
@@ -114,13 +117,14 @@ func (h *Handler) AuthMiddleware(next http.Handler, auth models.AuthenticationMe
 	return http.HandlerFunc(fn)
 }
 
-func (h *Handler) validateAuth(provider models.Provider, req *http.Request) bool {
-	if err := provider.GetSession(req); err == nil {
+func (h *Handler) validateAuth(provider models.Provider, req *http.Request) (bool, error) {
+	err := provider.GetSession(req)
+	if err == nil {
 		// logrus.Debugf("session: %v", sess)
-		return true
+		return true, nil
 	}
 	// logrus.Errorf("session invalid, error: %v", err)
-	return false
+	return false, err
 }
 
 // KubernetesMiddleware is a middleware that is responsible for handling kubernetes related stuff such as
@@ -168,17 +172,17 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 		if err != nil {
 			err1 := provider.Logout(w, req)
 			if err1 != nil {
-				logrus.Errorf("Error performing logout: %v", err1.Error())
+				h.log.Error(models.ErrLogout(err1))
 				provider.HandleUnAuthenticated(w, req)
 				return
 			}
 			h.log.Error(ErrGetUserDetails(err))
-			http.Error(w, "unable to get user details", http.StatusUnauthorized)
+			http.Error(w, ErrGetUserDetails(err).Error(), http.StatusUnauthorized)
 			return
 		}
 		prefObj, err := provider.ReadFromPersister(user.UserID)
 		if err != nil {
-			logrus.Warn("unable to read session from the session persister, starting with a new one")
+			h.log.Warn(ErrReadSessionPersistor)
 		}
 
 		token := provider.UpdateToken(w, req)
@@ -205,7 +209,7 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 	token, ok := ctx.Value(models.TokenCtxKey).(string)
 	if !ok {
 		err := ErrRetrieveUserToken(fmt.Errorf("failed to retrieve user token"))
-		logrus.Error(err)
+		h.log.Error(err)
 		return nil, err
 	}
 	userUUID := uuid.FromStringOrNil(user.ID)
@@ -216,10 +220,10 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 	k8sContextsFromKubeConfig := []*models.K8sContext{}
 
 	if err != nil || len(connectedK8sContexts) == 0 {
-		logrus.Warn("failed to get kubernetes contexts")
+		h.log.Warn(ErrFailToGetK8SContext)
 		k8sContextsFromKubeConfig, err = h.DiscoverK8SContextFromKubeConfig(user.ID, token, provider)
 		if err != nil {
-			logrus.Warn("failed to load kubernetes contexts: ", err.Error())
+			h.log.Warn(ErrFailToLoadK8sContext(err))
 		}
 	}
 

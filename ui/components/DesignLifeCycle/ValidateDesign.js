@@ -25,6 +25,7 @@ const styles = (theme) => {
   const saffron = NOTIFICATIONCOLORS.WARNING;
   return {
     singleErrorRoot: {
+      gap: '0.5rem',
       backgroundColor: theme.palette.secondary.mainBackground2,
       cursor: 'pointer',
       '&:hover': {
@@ -36,8 +37,7 @@ const styles = (theme) => {
       paddingBlock: theme.spacing(1),
       marginInline: theme.spacing(0.5),
       overflow: 'hidden',
-      textOverflow: 'ellipsis',
-      whiteSpace: 'nowrap',
+      whiteSpace: 'wrap',
     },
 
     componentLabel: {
@@ -110,7 +110,7 @@ const ComponentErrorList = ({ component, classes, errors, validatorActor }) => {
           <ListItemText
             primary={message(error)}
             disableTypography
-            className={classes.singleError}
+            className={classes.nested}
           ></ListItemText>
         </ListItem>
       ))}
@@ -133,8 +133,6 @@ const ValidationResults_ = (props) => {
     (result) => result.errors?.length && !result?.componentDefinition?.metatadata?.isAnnotation,
   );
 
-  console.log('errors', componentsWithErrors, currentNodeId);
-
   const isCurrentComponent = (err) => err.component.traits.meshmap.id == currentNodeId;
   const [open, setOpen] = React.useState(componentsWithErrors.map(isCurrentComponent));
 
@@ -146,7 +144,6 @@ const ValidationResults_ = (props) => {
   };
 
   useEffect(() => {
-    console.log('currentComponentErrorRef', currentComponentErrorRef);
     // 👇 Will scroll smoothly to the top of component
     if (currentComponentErrorRef.current) {
       currentComponentErrorRef.current.scrollIntoView({ behavior: 'smooth' });

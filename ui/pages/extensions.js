@@ -15,6 +15,8 @@ import { EVENT_TYPES } from '../lib/event-types';
 import DefaultError from '@/components/General/error-404';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
+import { UsesSistent } from '@/components/SistentWrapper';
+import { CatalogIcon } from '@layer5/sistent';
 
 const INITIAL_GRID_SIZE = { lg: 6, md: 12, xs: 12 };
 
@@ -237,7 +239,9 @@ const Extensions = ({ classes, toggleCatalogContent, capabilitiesRegistry }) => 
               </Typography>
 
               <Typography className={classes.frontSideDescription} variant="body">
-                <img className={classes.img} src="/static/img/meshery_catalog.svg" />
+                <UsesSistent>
+                  <CatalogIcon className={classes.img} />
+                </UsesSistent>
                 <div
                   style={{
                     display: 'inline',

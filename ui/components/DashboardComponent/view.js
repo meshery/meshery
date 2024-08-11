@@ -7,6 +7,7 @@ import { ResponsiveDataTable } from '@layer5/sistent';
 import { ALL_VIEW } from './resources/config';
 import GetNodeIcon from '../configuratorComponents/MeshModel/NodeIcon';
 import { JsonParse } from '../../utils/utils';
+import { UsesSistent } from '../SistentWrapper';
 
 const View = (props) => {
   const {
@@ -84,16 +85,17 @@ const View = (props) => {
           <Typography style={{ fontSize: '1.2rem', marginBottom: '1rem' }} align="left">
             {key.toUpperCase()}
           </Typography>
-
-          <ResponsiveDataTable
-            classes={classes.muiRow}
-            data={value}
-            columns={columns}
-            options={options}
-            tableCols={columns}
-            updateCols={() => {}}
-            columnVisibility={{}}
-          />
+          <UsesSistent>
+            <ResponsiveDataTable
+              classes={classes.muiRow}
+              data={value}
+              columns={columns}
+              options={options}
+              tableCols={columns}
+              updateCols={() => {}}
+              columnVisibility={{}}
+            />
+          </UsesSistent>
         </div>
       </>
     );
@@ -206,8 +208,13 @@ const View = (props) => {
   const HeaderComponent = () => {
     return (
       <>
-        <TooltipButton title="Back" placement="left" style={{ padding: '10px' }}>
-          <ArrowBack onClick={() => setView(ALL_VIEW)} />
+        <TooltipButton
+          title="Back"
+          placement="left"
+          onClick={() => setView(ALL_VIEW)}
+          style={{ padding: '10px' }}
+        >
+          <ArrowBack />
         </TooltipButton>
       </>
     );
@@ -226,7 +233,7 @@ const View = (props) => {
       >
         <Paper>
           <HeaderComponent />
-          <div style={{ margin: '1rem 7rem', paddingBottom: '1rem' }}>
+          <div style={{ margin: '1rem clamp(0.2rem, 5%, 7rem)', paddingBottom: '1rem' }}>
             <ResourceMetrics />
             <RenderObject obj={resource} />
           </div>

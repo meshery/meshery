@@ -7,6 +7,7 @@ import (
 	"github.com/layer5io/meshery/server/helpers"
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshery/server/models/pattern/planner"
+	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
@@ -20,7 +21,7 @@ type CompConfigPair struct {
 
 const ProvisionSuffixKey = ".isProvisioned"
 
-func Provision(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFunction {
+func Provision(prov ServiceInfoProvider, act ServiceActionProvider, log logger.Handler) ChainStageFunction {
 	return func(data *Data, err error, next ChainStageNextFunction) {
 		if err != nil {
 			act.Terminate(err)
@@ -92,7 +93,7 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFu
 			data.Lock.Unlock()
 
 			return true
-		})
+		}, log)
 
 		if next != nil {
 			next(data, mergeErrors(errs))

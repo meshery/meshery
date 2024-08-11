@@ -11,7 +11,6 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/meshes"
 	"github.com/layer5io/meshery/server/models"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
@@ -54,7 +53,7 @@ func (h *Handler) AdaptersHandler(w http.ResponseWriter, req *http.Request, pref
 	// if adapter found in query user is trying to ping an adapter
 	adapterLoc := req.URL.Query().Get("adapter")
 	if adapterLoc != "" {
-		logrus.Debug("adapter pinging")
+		h.log.Debug("adapter pinging")
 		h.AdapterPingHandler(w, req, prefObj, user, provider)
 		return
 	}
@@ -83,7 +82,7 @@ func (h *Handler) AdapterPingHandler(w http.ResponseWriter, req *http.Request, p
 	// adapterLoc := req.PostFormValue("adapter")
 	adapterLoc := req.URL.Query().Get("adapter")
 	h.log.Debug("Adapter url to ping: ", adapterLoc)
-	logrus.Debug("Adapter url to ping: ", adapterLoc)
+	//logrus.Debug("Adapter url to ping: ", adapterLoc)
 
 	aID := -1
 	for i, ad := range meshAdapters {

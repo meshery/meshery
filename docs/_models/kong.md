@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Kong API Gateway
-subtitle: Collaborative and visual infrastructure as code for Kong API Gateway
+subtitle: Collaborative and visual infrastructure as design for Kong API Gateway
 image: /assets/img/integrations/kong/icons/color/kong-color.svg
 permalink: extensibility/integrations/kong
 docURL: https://docs.meshery.io/extensibility/integrations/kong
@@ -54,12 +54,16 @@ components:
   colorIcon: assets/img/integrations/kong/components/kong-vault/icons/color/kong-vault-color.svg
   whiteIcon: assets/img/integrations/kong/components/kong-vault/icons/white/kong-vault-white.svg
   description: 
+- name: kong-custom-entity
+  colorIcon: assets/img/integrations/kong/components/kong-custom-entity/icons/color/kong-custom-entity-color.svg
+  whiteIcon: assets/img/integrations/kong/components/kong-custom-entity/icons/white/kong-custom-entity-white.svg
+  description: 
 featureList: [
   "Advanced routing, load balancing, health checking - all configurable via a RESTful admin API or declarative configuration.",
   "Authentication and authorization for APIs using methods like JWT, basic auth, OAuth, ACLs and more.",
   "Sophisticated deployment models like Declarative Databaseless Deployment and Hybrid Deployment (control plane/data plane separation) without any vendor lock-in."
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

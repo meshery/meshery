@@ -2,8 +2,10 @@ package utils
 
 import (
 	"crypto/md5"
+	"database/sql/driver"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -14,6 +16,9 @@ import (
 
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	"github.com/layer5io/meshkit/utils"
+	"gorm.io/gorm"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 const (
@@ -352,4 +357,62 @@ func MarshalAndUnmarshal[k any, v any](val k) (unmarshalledvalue v, err error) {
 		return
 	}
 	return
+}
+
+type JSONMap map[string]interface{}
+
+// Value converts the JSON map to a database value.
+func (j JSONMap) Value() (driver.Value, error) {
+	return json.Marshal(j)
+}
+
+// Scan converts the database value to a JSON map.
+func (j *JSONMap) Scan(value interface{}) error {
+	bytes, ok := value.([]byte)
+	if !ok {
+		return errors.New("type assertion to []byte failed")
+	}
+	return json.Unmarshal(bytes, j)
+}
+
+// ApplyFilters applies dynamic filters to the GORM query
+func ApplyFilters(query *gorm.DB, filter string, dynamicKeys []string) *gorm.DB {
+	if filter != "" {
+		filterArr := strings.Split(filter, " ")
+		filterKey := filterArr[0]
+		filterVal := strings.Join(filterArr[1:], " ")
+
+		switch filterKey {
+		case "deleted_at":
+			// Handle deleted_at filter
+			if filterVal == "Deleted" {
+				query = query.Where("deleted_at IS NOT NULL")
+			} else {
+				query = query.Where("deleted_at IS NULL")
+			}
+		default:
+			// Handle dynamic keys
+			for _, key := range dynamicKeys {
+				if filterKey == key {
+					query = query.Where(fmt.Sprintf("%s = ?", filterKey), filterVal)
+					break
+				}
+			}
+		}
+	}
+
+	return query
+}
+
+func FormatToTitleCase(s string) string {
+	c := cases.Title(language.English)
+	return c.String(s)
+}
+func ExtractFile(filePath string, destDir string) error {
+	if utils.IsTarGz(filePath) {
+		return utils.ExtractTarGz(destDir, filePath)
+	} else if utils.IsZip(filePath) {
+		return utils.ExtractZip(destDir, filePath)
+	}
+	return utils.ErrExtractType
 }

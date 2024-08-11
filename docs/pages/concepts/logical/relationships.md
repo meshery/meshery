@@ -10,39 +10,43 @@ redirect_from:
   - concepts/relationships
 ---
 
-**Meshery uses relationships to map how interconnected components interact.** These relationships are defined by a combination of properties: kind, type, and subtype. This allows you to model various connections between components, including:
+Meshery Relationships characterize how [components](./components) are connected and interact with each other. Relationships are defined within [models](./models) to aid in structuring the interrelationships between one or more components in a [design](./design) to further in comprehending the overall structure and dependencies within managed systems. 
 
-- **Hierarchical structures:** Parent-child relationships show clear lineage, similar to a family tree (child, parent, grandparent, etc.).
-- **Interdependencies:** This captures how components rely on each other to function.
-- **Collateral connections:** These describe components that share a common origin but operate independently (siblings, cousins, etc.).
-- **Non-genealogical ties:** Relationships like "parent," "sibling," or "binding" can exist regardless of ancestry.
+Meshery recognizes that relationships exist in various forms and that the existence of a relationship might be interdependent upon the existence (or absence) of another relationship. To support this complexity, Meshery relationships are highly expressive, characterizing the nature of interaction of interconnected components no matter their genealogy.
 
-Relationships are further customized by:
+**Benefits of Using Meshery Relationships**
 
-- **Selectors:** These specify which components the relationship applies to.
-- **Selector sets:** Combine multiple selectors for more granular control.
-- **Metadata:** Provides additional descriptive information about the relationship.
-- **Optional parameters:** Allow for further tailoring of the relationship behavior.
-
-Relationships define the nature of interaction between interconnected components in Meshery. They represent various types of connections and dependencies between components no matter the genealogy of the relationship such as parent, siblings, binding. Relationships have selectors, metadata, and optional parameters.
+- **Improved Visibility:** Relationships provide a clear visual representation of the connections between components, making it easier to understand the system's architecture.
+- **Enhanced Design:** Relationships help you make informed decisions about component selection and placement, leading to better design choices.
+- **Automated Configuration:** Relationship-driven actions can automate the configuration of components, reducing manual effort and potential errors.
+- **Increased Flexibility:** The use of selectors, actions, and operators provides flexibility in defining and managing relationships.
 
 {% include/alert.html type="dark" title="Contributor Guide to Meshery Relationships" content="If you want to create a new relationship definition or modify existing relationship definitions, see the <a href='https://docs.meshery.io/project/contributing/contributing-relationships'>Contributing to Meshery Relationships</a> guide." %}
 
 ## Types of Relationships
 
-Meshery supports a variety of relationships between components. Relationships are are categorized into different kinds, types, and subtypes, so that can be expressive of the specific manner in which one or more components relate to one another. Each type of relationship can be interpretted by Meshery UI (or other [extensions](/extensibility/extensions)) and mapped to a specific visual paradigm for the given kind relationship. Let's look at some examples of these visual paradigms; let's explore examples of way in which relationships are represented in Meshery.
+Meshery supports different types of relationships to cater to various use cases:
 
-Here is a list of the different types of relationships that Meshery supports:
+- **Hierarchical Relationships:** These represent parent-child relationships between components, where one component is a dependency of another. arent-child relationships show clear lineage, similar to a family tree (child, parent, grandparent, etc.).
+- **Sibling Relationships:** These represent relationships between components that are not directly dependent on each other but may still interact or influence each other's behavior; they describe components that share a common origin but operate independently (siblings, cousins, etc.).
+- **Edge Relationships:** These represent relationships that are visually depicted as edges connecting components in MeshMap. Edge relationships are used to define how components interact with each other, such as network connections, bindings, or permissions. They are also used to identify interdependencies between components.
+ 
+Relationships are are categorized into different kinds, types, and subtypes, so that can be expressive of the specific manner in which one or more components relate to one another. Each type of relationship can be interpretted by Meshery UI (or other [extensions](/extensibility/extensions)) and mapped to a specific visual paradigm for the given kind relationship. Let's look at some examples of these visual paradigms; let's explore examples of way in which relationships are represented in Meshery.
+
+
+<!-- Broadly, here is a list of the different types of relationships that Meshery supports:
 
 1. Edge
    1. Network
-   1. Firewall
-   1. Binding
+      1. Firewall
+      2. Load Balancer
+      3. Ingress
+   2. Binding
       1. Mount
-      1. Permission
-1. Heirarchical
+      2. Permission
+2. Heirarchical
    1. Inventory
-   1. Parent
+   2. Parent -->
 
 {% include relationships.html %}
 
@@ -66,25 +70,27 @@ _[TODO: a visual example is needed here]_ -->
 
 The `isAnnotation` attribute of a Relationship or Component determines whether the given Relationship or Component represents a management concern for Meshery; whether the given Relationship or Component is sematically meaningful, and whose lifecycle is managed by Meshery.
 
-## Core Constructs of Relationships
+## Core Concepts of Relationships
 
 - Kinds
+- Types
 - Subtypes
 - Selectors
+- Selectors Sets
 
-## Kind and Subtypes of Relationships
+## Kind, Type, and Subtype of Relationships
 
-The combination of `kind` and `subType` uniquely determines the visual paradigm for a given relationship i.e., relationships with the same `kind` and `subType` will share an identical visual representation regardless of the specific components involved in the relationship.
+The combination of `kind`, `type`, and `subType` uniquely determines the visual paradigm for a given relationship; i.e., relationships with the same `kind`, `type`, and `subType` will share an identical visual representation regardless of the specific components involved in the relationship.
 
 ### 1. Edge - Network
 
 This Relationship type configures the networking between one or more components.
 
-**Examples**: Relationships between a Service and a Deployment, or between a Service and a Pod, or between an Ingress and a Service.
+**Examples**: An edge-network relationship between a Service and a Deployment or an edge-binding relationship between an Ingress and a Service.
 
 - Example 1) Service --> Deployment
-- Example 2) Service --> Pod
 - Example 3) IngressController --> Ingress --> Service
+
 <details close><summary>Visual Representation of Edge-Network Relationships</summary>
            <br>
            <figure><figcaption>1. Edge - Network: Ingress to Service<a target="_blank" href="https://playground.meshery.io/extension/meshmap?mode=design&design=1f79b0c6-2efe-4ee9-b08c-e1bd07a3926b"> (open in playground)</a></figcaption>
@@ -109,6 +115,7 @@ This Relationship type configures the networking between one or more components.
 **Example**: Assignment of PersistentVolumes to Pods via PersistenVolumeClaim.
 
 - Example 1) Pod --> PersistenVolumeClaim --> PersistentVolume
+
 <details close><summary>Visual Representation of Edge-Mount Relationship</summary>
            <br>
            <p>1. Edge - Mount: Pod and Persistent volume via Persistent volume claim<a target="_blank" href="https://playground.meshery.io/extension/meshmap?mode=design&design=43d5fdfe-25f8-4c2c-be9d-30861bbc2a08"> (open in playground)</a> </p>
@@ -123,6 +130,7 @@ This Relationship type configures the networking between one or more components.
 
 - Example 1) ClusterRole --> CluserRoleBinding --> ServiceAccount
 - Example 2) Role --> RoleBinding --> ServiceAccount
+
 <details close><summary>Visual Representation of Edge-Permission Relationship</summary>
            <br>
            <figure><figcaption>1. Edge - Permission: Cluster Role to Service Account <a target="_blank" href="https://playground.meshery.io/extension/meshmap?mode=design&design=7dd39d30-7b14-4f9f-a66c-06ba3e5000fa"> (open in playground)</a></figcaption>
@@ -135,6 +143,7 @@ This Relationship type configures the networking between one or more components.
 Kubernetes Network Policy for controlling ingress and egress traffic from Pod-to-Pod
 
 - Example 1) Pod --> NetworkPolicy --> Pod
+
 <details close><summary>Visual Representation of Edge-Firewall Relationship</summary>
            <br>
            <figure><figcaption>1. Edge - Firewall: Pod to Pod<a target="_blank" href="https://playground.meshery.io/extension/meshmap?mode=design&design=58fda714-eaa4-490f-b228-b8bcfe3a1e47s"> (open in playground)</a></figcaption>
@@ -148,6 +157,7 @@ Kubernetes Network Policy for controlling ingress and egress traffic from Pod-to
 
 - Example 1) (binary and configuration) --> IstioWASMPlugin
 - Example 2) WASMFilter (binary and configuration) --> IstioEnvoyFilter
+
 <details close><summary>Visual Representation of Hierarchical-Inventory Relationship</summary>
            <figure><br><figcaption>1. Hierarchical - Inventory: Namespace and ConfigMap<a target="_blank" href="https://playground.meshery.io/extension/meshmap?design=21d40e36-8ab7-4f9f-9fed-f6a818510446"> (open in playground)</a></figcaption>
            <img alt="Hierarchical Inventory Relationship" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/hierarchical_inventory_relationship.svg"/>
@@ -159,6 +169,7 @@ Kubernetes Network Policy for controlling ingress and egress traffic from Pod-to
 **Example**:
 
 - Example 1) Any namespaced Kubernetes component --> Kubernetes Namespace
+
 <details close><summary>Visual Representation of Hierarchical-Parent Relationship</summary>
            <figure><br><figcaption>1. Hierarchical - Parent: Namespace (Parent) and ConfigMap (child), Role (Child) <a target="_blank" href="https://playground.meshery.io/extension/meshmap?mode=design&design=6370ffcd-13a6-4a65-b426-30f1e63dc381"> (open in playground)</a></figcaption>
            <img alt="Hierarchical Parent Relationship" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/hierarchical_parent_relationship.svg"/>
@@ -253,6 +264,13 @@ The above snippet defines a selector configuration for allowing relationships be
 
 ## Relationship Evaluation
 
+Meshery employs a policy-driven approach to evaluate relationships between components. This evaluation helps in:
+
+- Determining compatible components for establishing relationships
+- Suggesting potential relationships based on the current design
+- Validating existing relationships and identifying potential conflicts
+- Automating the configuration of components based on established relationships
+
 ![Meshery Relationship](/assets/img/concepts/logical/relationship-evaluation-flow.svg)
 
 ### How Relationships are formed?
@@ -261,7 +279,7 @@ The above snippet defines a selector configuration for allowing relationships be
 
 2. Relationships are automatically created when a component's configuration is modified in a way that relationship criteria is satisfied.
 
-{% include/alert.html type="info" title="Explore an example relationship" content="To explore an example of this behavior, see the <a href='https://meshery.io/catalog/deployment/7dd39d30-7b14-4f9f-a66c-06ba3e5000fa.html'>Example Edge-Permission Relationship</a> and follow the steps written in its description." %}
+{% include/alert.html type="info" title="Explore an example relationship" content="To explore an example of this behavior, see the <a href='https://meshery.io/catalog/deployment/example-edge-permission-relationship-7dd39d30-7b14-4f9f-a66c-06ba3e5000fa.html'>Example Edge-Permission Relationship</a> and follow the steps written in its description." %}
 
 When the relationships are created by the user, almost in all cases the config of the involved components are patched. To see the specific of patching refer [Patch Strategies](#patch-strategies).
 
@@ -277,7 +295,8 @@ Designs are evaluated by the [Policy Engine]({{site.baseurl}}/concepts/logical/p
 Patches in Meshery relationships utilize strategies and references (mutatorRef/mutatedRef) for the from and to fields. These convey the property path that will be updated as the relationship is created.
 
 ### Cavets and Considerations
-1. If the user creates a `Hierarchical Inventory` relationship between `Pod`, `Job`, and any other high-level Kubernetes resources like `Deployment`, `StatefulSet`, or `CronJobs`, after the relationship has been established unfortunately, there’s no system to remove the extra pod configuration automatically. 
+
+1. If the user creates a `Hierarchical Inventory` relationship between `Pod`, `Job`, and any other high-level Kubernetes resources like `Deployment`, `StatefulSet`, or `CronJobs`, after the relationship has been established unfortunately, there’s no system to remove the extra pod configuration automatically.
 If the design is not configured with `labels` `selectors` and `replicas` appropriately, there's a possibility of additional resources getting provisioned when deployed. eg: The relationship between a Pod and deployment can result in 2 Pods (1 pod coming as part of deployment resource) and 1 Deployment.  It’s important to be aware of this possibility and manage configurations carefully to avoid unexpected issues during deployment
 
 # Itemizing your Relationship Definitions in your Meshery deployment

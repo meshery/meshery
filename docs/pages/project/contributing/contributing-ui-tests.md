@@ -21,7 +21,7 @@ Install the dependencies by running the following command:
 
 npm install
 
-npm playwright install --with-deps
+npx playwright install --with-deps
 
 ```
 

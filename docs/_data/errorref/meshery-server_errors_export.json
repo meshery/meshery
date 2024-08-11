@@ -125,9 +125,9 @@
         "code": "1014",
         "severity": "Alert",
         "long_description": "Kubernetes config is not initialized with Meshery",
-        "short_description": "No valid kubernetes config found. Make sure to pass contextIDs in query parameters.",
-        "probable_cause": "Kubernetes config is not accessible to meshery or not valid",
-        "suggested_remediation": "Upload your kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"
+        "short_description": "No valid Kubernetes config found. Make sure to pass contextIDs in query parameters.",
+        "probable_cause": "Kubernetes config is not accessible to Meshery or not valid",
+        "suggested_remediation": "Upload your Kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"
       },
       "1015": {
         "name": "ErrNilClientCode",
@@ -135,8 +135,8 @@
         "severity": "Alert",
         "long_description": "Kubernetes config is not initialized with Meshery",
         "short_description": "Kubernetes client not initialized",
-        "probable_cause": "Kubernetes config is not accessible to meshery or not valid",
-        "suggested_remediation": "Upload your kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"
+        "probable_cause": "Kubernetes config is not accessible to Meshery or not valid",
+        "suggested_remediation": "Upload your Kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"
       },
       "1016": {
         "name": "ErrRecordPreferencesCode",
@@ -153,7 +153,7 @@
         "severity": "Alert",
         "long_description": "Cannot find valid grafana endpoint in user pref",
         "short_description": "Grafana endpoint not configured",
-        "probable_cause": "Grafana endpoint might not be reachable from meshery",
+        "probable_cause": "Grafana endpoint might not be reachable from Meshery",
         "suggested_remediation": "Setup your Grafana Endpoint via the settings dashboard"
       },
       "1018": {
@@ -162,7 +162,7 @@
         "severity": "Alert",
         "long_description": "Cannot find valid Prometheus endpoint in user pref",
         "short_description": "Prometheus endpoint not configured",
-        "probable_cause": "Prometheus endpoint might not be reachable from meshery",
+        "probable_cause": "Prometheus endpoint might not be reachable from Meshery",
         "suggested_remediation": "Setup your Prometheus Endpoint via the settings dashboard"
       },
       "1019": {
@@ -170,8 +170,8 @@
         "code": "1019",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "Unable to query grafana",
-        "probable_cause": "Grafana query did not get executed from meshery\nGrafana query is invalid",
+        "short_description": "Unable to query Grafana",
+        "probable_cause": "Grafana query did not get executed from Meshery\nGrafana query is invalid",
         "suggested_remediation": "Check if your Grafana query is correct\nConnect to Grafana from the settings page in the UI"
       },
       "1020": {
@@ -180,7 +180,7 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Unable to query prometheus",
-        "probable_cause": "Prometheus query did not get executed from meshery\nPrometheus query is invalid",
+        "probable_cause": "Prometheus query did not get executed from Meshery\nPrometheus query is invalid",
         "suggested_remediation": "Check if your Prometheus query is correct\nConnect to Prometheus and Grafana from the settings page in the UI"
       },
       "1021": {
@@ -189,7 +189,7 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "unable to get Prometheus boards",
-        "probable_cause": "Prometheus endpoint might not be reachable from meshery\nPrometheus endpoint is incorrect",
+        "probable_cause": "Prometheus endpoint might not be reachable from Meshery\nPrometheus endpoint is incorrect",
         "suggested_remediation": "Check if your Prometheus endpoint is correct\nConnect to Prometheus from the settings page in the UI"
       },
       "1022": {
@@ -244,7 +244,7 @@
         "long_description": "",
         "short_description": "Error publishing SMI results",
         "probable_cause": "Meshery Cloud is not functional or reachable",
-        "suggested_remediation": "Make sure meshery cloud is up and reachable"
+        "suggested_remediation": "Make sure Meshery cloud is up and reachable"
       },
       "1028": {
         "name": "ErrPluginOpenCode",
@@ -252,7 +252,7 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Error opening the plugin",
-        "probable_cause": "Plugin is not available in the location\nplugin does not match with meshery version",
+        "probable_cause": "Plugin is not available in the location\nplugin does not match with Meshery version",
         "suggested_remediation": "Make sure the plugin is compatible with Meshery server"
       },
       "1029": {
@@ -269,8 +269,8 @@
         "code": "1030",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "Error running meshery plugin",
-        "probable_cause": "plugin does not match with meshery version",
+        "short_description": "Error running Meshery plugin",
+        "probable_cause": "plugin does not match with Meshery version",
         "suggested_remediation": "Make sure the plugin is compatible with Meshery server"
       },
       "1031": {
@@ -341,7 +341,7 @@
         "code": "1038",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "unable to load kubernetes config",
+        "short_description": "unable to load Kubernetes config",
         "probable_cause": "The kubeconfig file is empty or not valid",
         "suggested_remediation": "Make sure to upload the correct kubeconfig file"
       },
@@ -359,9 +359,9 @@
         "code": "1040",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "unable to get kubernetes version",
-        "probable_cause": "Kubernetes might not be reachable from meshery",
-        "suggested_remediation": "Make sure meshery has connectivity to kubernetes"
+        "short_description": "unable to get Kubernetes version",
+        "probable_cause": "Kubernetes might not be reachable from Meshery",
+        "suggested_remediation": "Make sure Meshery has connectivity to Kubernetes"
       },
       "1041": {
         "name": "ErrAddAdapterCode",
@@ -504,7 +504,7 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Failed to Load Extensions from Package",
-        "probable_cause": "Plugin is not available in the location\nplugin does not match with meshery version",
+        "probable_cause": "Plugin is not available in the location\nplugin does not match with Meshery version",
         "suggested_remediation": "Make sure the plugin is compatible with Meshery server"
       },
       "1057": {
@@ -539,9 +539,9 @@
         "code": "1060",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "unable to ping kubernetes\nunable to scan",
-        "probable_cause": "Kubernetes might not be reachable from meshery",
-        "suggested_remediation": "Make sure meshery has connectivity to kubernetes"
+        "short_description": "unable to ping Kubernetes\nunable to scan",
+        "probable_cause": "Kubernetes might not be reachable from Meshery",
+        "suggested_remediation": "Make sure Meshery has connectivity to Kubernetes"
       },
       "1061": {
         "name": "ErrPanicRecoveryCode",
@@ -595,7 +595,7 @@
         "long_description": "",
         "short_description": "Failed to Create Kube Client",
         "probable_cause": "Check Kubernetes",
-        "suggested_remediation": "Check your kubeconfig if valid\nEnsure meshery is able to reach the kubernetes cluster"
+        "suggested_remediation": "Check your kubeconfig if valid\nEnsure Meshery is able to reach the Kubernetes cluster"
       },
       "1067": {
         "name": "ErrWorkloadDefinitionCode",
@@ -652,13 +652,13 @@
         "suggested_remediation": "Check Trait Definition"
       },
       "1073": {
-        "name": "ErrCompConfigPairsCode",
+        "name": "ErrPatternDeployCode",
         "code": "1073",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "unable to Create Comp Config.",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "short_description": "Unable to deploy the selected design \\\"%s\\",
+        "probable_cause": "Connection Error: There was an error connecting to the selected target platform (i.e. Kubernetes cluster(s)).\nThis connection might not be assigned to the selected environment.",
+        "suggested_remediation": "Verify that the Kubernetes connection status is 'Connected' or try uploading a new kubeconfig.\nAssign the current Kubernetes connection to the selected environment."
       },
       "1074": {
         "name": "ErrCreateDirCode",
@@ -855,8 +855,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Invalid Kube Config ",
-        "probable_cause": "Meshery handler failed to find a valid kubernetes config for the deployment",
-        "suggested_remediation": "Try uploading a new kubeconfig and also ensure that meshery can reach kubernetes API server"
+        "probable_cause": "Meshery handler failed to find a valid Kubernetes config for the deployment",
+        "suggested_remediation": "Try uploading a new kubeconfig and also ensure that Meshery can reach Kubernetes API server"
       },
       "1096": {
         "name": "ErrInvalidKubeHandlerCode",
@@ -864,8 +864,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Invalid Kube Handler",
-        "probable_cause": "Meshery handler failed to find a valid kubernetes handler for the deployment",
-        "suggested_remediation": "Try uploading a new kubeconfig and also ensure that meshery can reach kubernetes API server"
+        "probable_cause": "Meshery handler failed to find a valid Kubernetes handler for the deployment",
+        "suggested_remediation": "Try uploading a new kubeconfig and also ensure that Meshery can reach Kubernetes API server"
       },
       "1097": {
         "name": "ErrInvalidKubeContextCode",
@@ -873,8 +873,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Invalid Kube Context",
-        "probable_cause": "Meshery handler failed to find a valid kubernetes context for the deployment",
-        "suggested_remediation": "Try uploading a new kubeconfig and also ensure that meshery can reach kubernetes API server"
+        "probable_cause": "Meshery handler failed to find a valid Kubernetes context for the deployment",
+        "suggested_remediation": "Try uploading a new kubeconfig and also ensure that Meshery can reach Kubernetes API server"
       },
       "1098": {
         "name": "ErrValidateCode",
@@ -1116,8 +1116,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Error fetching MeshSync resources\nDB might be corrupted",
-        "probable_cause": "MeshSync might not be reachable from meshery",
-        "suggested_remediation": "Make sure meshery has connectivity to MeshSync\nTry restarting Meshery server"
+        "probable_cause": "MeshSync might not be reachable from Meshery",
+        "suggested_remediation": "Make sure Meshery has connectivity to MeshSync\nTry restarting Meshery server"
       },
       "1125": {
         "name": "ErrDesignSourceContentCode",
@@ -1530,8 +1530,8 @@
         "severity": "Alert",
         "long_description": "Kubernetes config is not initialized with Meshery",
         "short_description": "Kubernetes client not initialized",
-        "probable_cause": "Kubernetes config is not accessible to meshery or not valid",
-        "suggested_remediation": "Upload your kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"
+        "probable_cause": "Kubernetes config is not accessible to Meshery or not valid",
+        "suggested_remediation": "Upload your Kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"
       },
       "1171": {
         "name": "ErrCreateDataCode",
@@ -2070,7 +2070,7 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Unable to get Grafana Boards",
-        "probable_cause": "Grafana endpoint might not be reachable from meshery\nGrafana endpoint is incorrect",
+        "probable_cause": "Grafana endpoint might not be reachable from Meshery\nGrafana endpoint is incorrect",
         "suggested_remediation": "Check if your Grafana endpoint is correct\nConnect to Grafana from the settings page in the UI"
       },
       "1231": {
@@ -2790,7 +2790,7 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Unable to connect to prometheus",
-        "probable_cause": "Prometheus endpoint might not be reachable from meshery\nPrometheus endpoint is incorrect",
+        "probable_cause": "Prometheus endpoint might not be reachable from Meshery\nPrometheus endpoint is incorrect",
         "suggested_remediation": "Check if your Prometheus endpoint are correct\nConnect to Prometheus from the settings page in the UI"
       },
       "1311": {
@@ -2799,7 +2799,7 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Unable to connect to grafana",
-        "probable_cause": "Grafana endpoint might not be reachable from meshery\nGrafana endpoint is incorrect",
+        "probable_cause": "Grafana endpoint might not be reachable from Meshery\nGrafana endpoint is incorrect",
         "suggested_remediation": "Check if your Grafana Endpoint is correct\nConnect to Grafana from the settings page in the UI"
       },
       "1312": {
@@ -2891,6 +2891,348 @@
         "short_description": "",
         "probable_cause": "Requested resource is not reachable.\nUnable to instantiate TCP connection",
         "suggested_remediation": "Ensure correct URL is specified\nEnsure network connectivity to the resource from your network"
+      },
+      "1322": {
+        "name": "ErrMarshalYAMLCode",
+        "code": "1322",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "unable to marshal yaml \\\"%s\\",
+        "probable_cause": "Object has invalid yaml format",
+        "suggested_remediation": "Make sure to input a valid yaml object"
+      },
+      "1323": {
+        "name": "ErrCreatingOPAInstanceCode",
+        "code": "1323",
+        "severity": "Alert",
+        "long_description": "Unable to create OPA instance, policies will not be evaluated.",
+        "short_description": "Error creating OPA Instance.",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1324": {
+        "name": "ErrEventStreamingNotSupportedCode",
+        "code": "1324",
+        "severity": "Alert",
+        "long_description": "Our server cannot provide live events streaming at the moment. This might be due to a technical issue with our system.",
+        "short_description": "Live events stream not supported.",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1325": {
+        "name": "ErrGenerateClusterContextCode",
+        "code": "1325",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to generate in cluster context.",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1326": {
+        "name": "ErrNilClusterContextCode",
+        "code": "1326",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Nil context generated from in cluster config",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1327": {
+        "name": "ErrFailToSaveContextCode",
+        "code": "1327",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to save the context",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1328": {
+        "name": "ErrParsingCallBackUrlCode",
+        "code": "1328",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to parse the callback URL",
+        "probable_cause": "callback URL might be empty",
+        "suggested_remediation": "Make sure the callback URL is not empty"
+      },
+      "1329": {
+        "name": "ErrReadSessionPersistorCode",
+        "code": "1329",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to read session from the session persister, starting with a new one",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1330": {
+        "name": "ErrFailToGetK8SContextCode",
+        "code": "1330",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to get Kubernetes context",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1331": {
+        "name": "ErrFailToLoadK8sContextCode",
+        "code": "1331",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to load Kubernetes context",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1332": {
+        "name": "ErrSessionNotReadIntactCode",
+        "code": "1332",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "The session data might be corrupted or not properly saved.",
+        "suggested_remediation": ""
+      },
+      "1333": {
+        "name": "ErrSessionNotFoundCode",
+        "code": "1333",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "The session might not exist or could have been deleted.",
+        "suggested_remediation": "Check if the session data was correctly saved."
+      },
+      "1334": {
+        "name": "ErrTokenRetryCode",
+        "code": "1334",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error occurred, retrying after refresh to fetch token",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1335": {
+        "name": "ErrUrlParseCode",
+        "code": "1335",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error parsing the URL",
+        "probable_cause": "",
+        "suggested_remediation": "Make sure the URL is correct"
+      },
+      "1336": {
+        "name": "ErrCloseIoReaderCode",
+        "code": "1336",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error closing response body reader.",
+        "probable_cause": "An error occurred while attempting to close response body reader.",
+        "suggested_remediation": "Ensure the response body reader is in a state that allows it to be closed."
+      },
+      "1337": {
+        "name": "ErrDownloadPackageCode",
+        "code": "1337",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1338": {
+        "name": "ErrOperationNotAvaibaleCode",
+        "code": "1338",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Operation not available",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1339": {
+        "name": "ErrTokenVerifyCode",
+        "code": "1339",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Validation of refreshed token failed.",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1340": {
+        "name": "ErrLogoutCode",
+        "code": "1340",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to perform logout",
+        "probable_cause": "Session might already been revoked\nRemote provider is not able to complete the request",
+        "suggested_remediation": "Close the tabs and open Meshery UI again. Optionally, try using a private/incognito browser window."
+      },
+      "1341": {
+        "name": "ErrGetSessionCookieCode",
+        "code": "1341",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error occurred while getting session cookie",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1342": {
+        "name": "ErrCloneCode",
+        "code": "1342",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1343": {
+        "name": "ErrPublishCode",
+        "code": "1343",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1344": {
+        "name": "ErrUnPublishCode",
+        "code": "1344",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1345": {
+        "name": "ErrSaveConnectionCode",
+        "code": "1345",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to save Meshery connection",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1346": {
+        "name": "ErrGenerateK8sHandlerCode",
+        "code": "1346",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "Possible causes include invalid Kubernetes context, missing configuration, or network issues.",
+        "suggested_remediation": "Verify the Kubernetes context configuration. Ensure the Kubernetes cluster is reachable and the configuration is correct."
+      },
+      "1347": {
+        "name": "ErrRetrieveK8sClusterIDCode",
+        "code": "1347",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "Possible causes include invalid Kubernetes context, missing or incorrect configuration, or network issues.",
+        "suggested_remediation": "Verify the Kubernetes context configuration. Ensure the Kubernetes cluster is reachable and the configuration is correct."
+      },
+      "1348": {
+        "name": "ErrCreateResourceEntryCode",
+        "code": "1348",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to create resource entry",
+        "probable_cause": "Possible causes include invalid input data, database issues, or network problems.",
+        "suggested_remediation": "Verify the input data is correct. Ensure the database is reachable and properly configured."
+      },
+      "1349": {
+        "name": "ErrInitializeDBHandlerCode",
+        "code": "1349",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to initialize database handler",
+        "probable_cause": "Possible causes include incorrect database file path, invalid database engine configuration, or insufficient permissions.",
+        "suggested_remediation": "Verify the database file path and ensure it is correct. Check the database engine configuration and ensure the application has the necessary permissions to access the database file."
+      },
+      "1350": {
+        "name": "ErrDeleteK8sResourceCode",
+        "code": "1350",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "Possible causes include invalid resource name or namespace, insufficient permissions, or network issues.",
+        "suggested_remediation": "Verify the resource name and namespace are correct. Ensure you have the necessary permissions to delete the resource. Check network connectivity to the Kubernetes cluster."
+      },
+      "1351": {
+        "name": "ErrCreateK8sResourceCode",
+        "code": "1351",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "Possible causes include invalid resource name or namespace, insufficient permissions, or network issues.",
+        "suggested_remediation": "Verify the resource name and namespace are correct. Ensure you have the necessary permissions to create the resource. Check network connectivity to the Kubernetes cluster."
+      },
+      "1352": {
+        "name": "ErrGetResourceCode",
+        "code": "1352",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "Possible causes include invalid resource name or namespace, insufficient permissions, or resource not found.",
+        "suggested_remediation": "Verify the resource name and namespace are correct. Ensure you have the necessary permissions to access the resource."
+      },
+      "1353": {
+        "name": "ErrDeleteResourceCode",
+        "code": "1353",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "Possible causes include invalid resource name or namespace, insufficient permissions, or network issues.",
+        "suggested_remediation": "Verify the resource name and namespace are correct. Ensure you have the necessary permissions to delete the resource. Check network connectivity to the Kubernetes cluster."
+      },
+      "1354": {
+        "name": "ErrRecreateResourceCode",
+        "code": "1354",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "Possible causes include invalid resource configuration, insufficient permissions, or network issues.",
+        "suggested_remediation": "Verify the resource configuration and ensure it is correct. Ensure you have the necessary permissions to recreate the resource. Check network connectivity to the Kubernetes cluster."
+      },
+      "1355": {
+        "name": "ErrUpdateResourceCode",
+        "code": "1355",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "Possible causes include invalid resource configuration, insufficient permissions, or network issues.",
+        "suggested_remediation": "Verify the resource configuration and ensure it is correct. Ensure you have the necessary permissions to update the resource. Check network connectivity to the Kubernetes cluster."
+      },
+      "1356": {
+        "name": "ErrEmptySessionCode",
+        "code": "1356",
+        "severity": "Alert",
+        "long_description": "Unable to find \\\"token\\\" cookie in the request.",
+        "short_description": "No session found in the request",
+        "probable_cause": "User is not authenticated with the selected Provider.\nBrowser might be restricting use of cookies.",
+        "suggested_remediation": "Choose a Provider and login to establish an active session (receive a new token and cookie). Optionally, try using a private/incognito browser window.\nVerify that your browser settings allow cookies."
+      },
+      "1357": {
+        "name": "ErrInvalidEventDataCode",
+        "code": "1357",
+        "severity": "Alert",
+        "long_description": "ActedUpon, Action, Category and Severity are required fields of an event",
+        "short_description": "The event provided is not valid",
+        "probable_cause": "",
+        "suggested_remediation": "Ensure that ActedUpon, Action, Category and Severity are present in the event"
+      },
+      "1358": {
+        "name": "ErrSeedingComponentsCode",
+        "code": "1358",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to register the given models into meshery's registry",
+        "probable_cause": "Given models may not be in accordance with Meshery's schema\nInternal(OS level) error while reading files",
+        "suggested_remediation": "Make sure the models being seeded are valid in accordance with Meshery's schema\nIf it is an internal error, please try again after some time"
+      },
+      "1359": {
+        "name": "ErrImportFailureCode",
+        "code": "1359",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "Entity definition might not be in accordance with schema\nEntity version might not be supported by Meshery",
+        "suggested_remediation": "See the registration logs (found at $HOME/.meshery/logs/registry/registry-logs.log) to find out which Entity failed to be imported with more specific error information."
       }
     }
   }

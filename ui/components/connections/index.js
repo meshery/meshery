@@ -11,7 +11,6 @@ import {
   TableRow,
   IconButton,
   Typography,
-  Switch,
   Popover,
   AppBar,
   Tabs,
@@ -20,26 +19,28 @@ import {
   Box,
   Chip,
 } from '@material-ui/core';
-import { CustomTooltip } from '@layer5/sistent';
+import {
+  CustomColumnVisibilityControl,
+  CustomTooltip,
+  SearchBar,
+  UniversalFilter,
+} from '@layer5/sistent';
 import { withStyles } from '@material-ui/core/styles';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import Moment from 'react-moment';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { updateProgress } from '../../lib/store';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
-import CustomColumnVisibilityControl from '../../utils/custom-column';
-import SearchBar from '../../utils/custom-search';
+// import CustomColumnVisibilityControl from '../../utils/custom-column';
+// import SearchBar from '../../utils/custom-search';
 import { ResponsiveDataTable } from '@layer5/sistent';
 import useStyles from '../../assets/styles/general/tool.styles';
 import Modal from '../Modal';
 import { iconMedium } from '../../css/icons.styles';
 import PromptComponent, { PROMPT_VARIANTS } from '../PromptComponent';
 import resetDatabase from '../graphql/queries/ResetDatabaseQuery';
-import changeOperatorState from '../graphql/mutations/OperatorStatusMutation';
-import fetchMesheryOperatorStatus from '../graphql/queries/OperatorStatusQuery';
 import MesherySettingsEnvButtons from '../MesherySettingsEnvButtons';
 import styles from './styles';
 import MeshSyncTable from './meshSync';
@@ -54,8 +55,6 @@ import ExploreIcon from '@mui/icons-material/Explore';
 import {
   CONNECTION_KINDS,
   CONNECTION_STATES,
-  CONTROLLERS,
-  CONTROLLER_STATES,
   CONNECTION_STATE_TO_TRANSITION_MAP,
 } from '../../utils/Enum';
 import FormatConnectionMetadata from './metadata';
@@ -69,7 +68,7 @@ import NotInterestedRoundedIcon from '@mui/icons-material/NotInterestedRounded';
 import DisconnectIcon from '../../assets/icons/disconnect';
 import { updateVisibleColumns } from '../../utils/responsive-column';
 import { useWindowDimensions } from '../../utils/dimension';
-import UniversalFilter from '../../utils/custom-filter';
+// import UniversalFilter from '../../utils/custom-filter';
 import MultiSelectWrapper from '../multi-select-wrapper';
 import {
   useGetEnvironmentsQuery,
@@ -87,6 +86,8 @@ import { CustomTextTooltip } from '../MesheryMeshInterface/PatternService/Custom
 import InfoOutlinedIcon from '@/assets/icons/InfoOutlined';
 import { DeleteIcon } from '@layer5/sistent';
 import { withRouter } from 'next/router';
+import { UsesSistent } from '../SistentWrapper';
+import { formatDate } from '../DataFormatter';
 
 const ACTION_TYPES = {
   FETCH_CONNECTIONS: {
@@ -184,7 +185,7 @@ function Connections(props) {
   const [rowsExpanded, setRowsExpanded] = useState([]);
   const [rowData, setSelectedRowData] = useState({});
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const [_operatorState, _setOperatorState] = useState(operatorState || []);
+  const [_operatorState] = useState(operatorState || []);
   const [tab, setTab] = useState(0);
   const ping = useKubernetesHook();
   const { width } = useWindowDimensions();
@@ -212,7 +213,7 @@ function Connections(props) {
     page: page,
     pagesize: pageSize,
     search: search,
-    sortOrder: sortOrder,
+    order: sortOrder,
     status: statusFilter ? JSON.stringify([statusFilter]) : '',
     kind: kindFilter ? JSON.stringify([kindFilter]) : '',
   });
@@ -452,8 +453,8 @@ function Connections(props) {
                     getColumnValue(tableMeta.rowData, 'kind', columns),
                   )
                 }
-                handlePing={(e) => {
-                  e.stopPropagation();
+                handlePing={() => {
+                  // e.stopPropagation();
                   if (getColumnValue(tableMeta.rowData, 'kind', columns) === 'kubernetes') {
                     ping(
                       getColumnValue(tableMeta.rowData, 'metadata.name', columns),
@@ -466,15 +467,17 @@ function Connections(props) {
                 width="12rem"
               />
               {kind == 'kubernetes' && (
-                <CustomTextTooltip
-                  placement="top"
-                  interactive={true}
-                  title="Learn more about connection status and how to [troubleshoot Kubernetes connections](https://docs.meshery.io/guides/troubleshooting/meshery-operator-meshsync)"
-                >
-                  <IconButton className={classes.infoIconButton} color="primary">
-                    <InfoOutlinedIcon height={20} width={20} className={classes.infoIcon} />
-                  </IconButton>
-                </CustomTextTooltip>
+                <UsesSistent>
+                  <CustomTextTooltip
+                    placement="top"
+                    interactive={true}
+                    title="Learn more about connection status and how to [troubleshoot Kubernetes connections](https://docs.meshery.io/guides/troubleshooting/meshery-operator-meshsync)"
+                  >
+                    <IconButton className={classes.infoIconButton} color="primary">
+                      <InfoOutlinedIcon height={20} width={20} className={classes.infoIcon} />
+                    </IconButton>
+                  </CustomTextTooltip>
+                </UsesSistent>
               )}
             </>
           );
@@ -624,21 +627,6 @@ function Connections(props) {
             />
           );
         },
-        customBodyRender: function CustomBody(value) {
-          return (
-            <CustomTooltip
-              title={
-                <Moment startOf="day" format="LLL">
-                  {value}
-                </Moment>
-              }
-              placement="top"
-              interactive
-            >
-              <Moment format="LL">{value}</Moment>
-            </CustomTooltip>
-          );
-        },
       },
     },
     {
@@ -658,19 +646,13 @@ function Connections(props) {
           );
         },
         customBodyRender: function CustomBody(value) {
+          const renderValue = formatDate(value);
           return (
-            <CustomTooltip
-              title={
-                <Moment startOf="day" format="LLL">
-                  {value}
-                </Moment>
-              }
-              placement="top"
-              arrow
-              interactive
-            >
-              <Moment format="LL">{value}</Moment>
-            </CustomTooltip>
+            <UsesSistent>
+              <CustomTooltip title={renderValue} placement="top" arrow interactive>
+                {renderValue}
+              </CustomTooltip>
+            </UsesSistent>
           );
         },
       },
@@ -1003,9 +985,9 @@ function Connections(props) {
     let response = await modalRef.current.show({
       title: `Connection Status Transition`,
       subtitle: `Are you sure that you want to transition the connection status to ${e.target.value.toUpperCase()}?`,
-      options: ['Confirm', 'No'],
+      options: ['Confirm', 'Cancel'],
       showInfoIcon: `Learn more about the [lifecycle of connections and the behavior of state transitions](https://docs.meshery.io/concepts/logical/connections) in Meshery Docs.`,
-      variant: PROMPT_VARIANTS.CONFIRMATION,
+      // variant: PROMPT_VARIANTS.CONFIRMATION,
     });
     if (response === 'Confirm') {
       const requestBody = JSON.stringify({
@@ -1020,7 +1002,7 @@ function Connections(props) {
       let response = await modalRef.current.show({
         title: `Delete Connection`,
         subtitle: `Are you sure that you want to delete the connection?`,
-        options: ['Delete', 'No'],
+        options: ['Delete', 'Cancel'],
         showInfoIcon: `Learn more about the [lifecycle of connections and the behavior of state transitions](https://docs.meshery.io/concepts/logical/connections) in Meshery Docs.`,
         variant: PROMPT_VARIANTS.DANGER,
       });
@@ -1038,7 +1020,7 @@ function Connections(props) {
       let response = await modalRef.current.show({
         title: `Delete Connections`,
         subtitle: `Are you sure that you want to delete the connections?`,
-        options: ['Delete', 'No'],
+        options: ['Delete', 'Cancel'],
         showInfoIcon: `Learn more about the [lifecycle of connections and the behavior of state transitions](https://docs.meshery.io/concepts/logical/connections) in Meshery Docs.`,
         variant: PROMPT_VARIANTS.DANGER,
       });
@@ -1101,73 +1083,6 @@ function Connections(props) {
         });
       }
     };
-  };
-
-  function getOperatorStatus() {
-    const ctxId = connections?.metadata?.id;
-    const operator = meshsyncControllerState?.find(
-      (op) => op.contextId === ctxId && op.controller === CONTROLLERS.OPERATOR,
-    );
-    if (!operator) {
-      return {};
-    }
-    return {
-      operatorState: operator.status === CONTROLLER_STATES.DEPLOYED,
-      operatorVersion: operator?.version,
-    };
-  }
-
-  const handleOperatorSwitch = (index, checked) => {
-    const contextId = connections[index].metadata?.id;
-    const connectionID = connections[index]?.id;
-    const variables = {
-      status: `${checked ? CONTROLLER_STATES.DEPLOYED : CONTROLLER_STATES.DISABLED}`,
-      contextID: contextId,
-    };
-
-    updateProgress({ showProgress: true });
-
-    changeOperatorState((response, errors) => {
-      updateProgress({ showProgress: false });
-
-      if (errors !== undefined) {
-        handleError(`Unable to ${!checked ? 'Uni' : 'I'}nstall operator`);
-      }
-      notify({
-        message: `Operator ${response.operatorStatus?.toLowerCase()}`,
-        event_type: EVENT_TYPES.SUCCESS,
-      });
-      // react-realy fetchQuery function returns a "Observable". To start a request subscribe needs to be called.
-      // The data is stored into the react-relay store, the data is retrieved by subscribing to the relay store.
-      // This subscription only subscribes to the fetching of the query and not to any subsequent changes to data in the relay store.
-      const tempSubscription = fetchMesheryOperatorStatus({ connectionID: connectionID }).subscribe(
-        {
-          next: (res) => {
-            _setOperatorState(updateCtxInfo(contextId, res));
-            tempSubscription.unsubscribe();
-          },
-          error: (err) => console.log('error at operator scan: ' + err),
-        },
-      );
-    }, variables);
-  };
-
-  const updateCtxInfo = (ctxId, newInfo) => {
-    if (newInfo.operator.error) {
-      handleError('There is problem With operator')(newInfo.operator.error.description);
-      return;
-    }
-
-    const state = _operatorStateRef.current;
-    const op = state?.find((ctx) => ctx.contextID === ctxId);
-    if (!op) {
-      return [...state, { contextID: ctxId, operatorStatus: newInfo.operator }];
-    }
-
-    let ctx = { ...op };
-    const removeCtx = state?.filter((ctx) => ctx.contextID !== ctxId);
-    ctx.operatorStatus = newInfo.operator;
-    return removeCtx ? [...removeCtx, ctx] : [ctx];
   };
 
   const filters = {
@@ -1259,48 +1174,52 @@ function Connections(props) {
             </div> */}
                 <MesherySettingsEnvButtons />
               </div>
-              <div
-                className={classes.searchAndView}
-                style={{
-                  display: 'flex',
-                  borderRadius: '0.5rem 0.5rem 0 0',
-                }}
-              >
-                <SearchBar
-                  onSearch={(value) => {
-                    setSearch(value);
+              <UsesSistent>
+                <div
+                  className={classes.searchAndView}
+                  style={{
+                    display: 'flex',
+                    borderRadius: '0.5rem 0.5rem 0 0',
                   }}
-                  placeholder="Search connections..."
-                  expanded={isSearchExpanded}
-                  setExpanded={setIsSearchExpanded}
-                />
+                >
+                  <SearchBar
+                    onSearch={(value) => {
+                      setSearch(value);
+                    }}
+                    placeholder="Search Connections..."
+                    expanded={isSearchExpanded}
+                    setExpanded={setIsSearchExpanded}
+                  />
 
-                <UniversalFilter
-                  id="ref"
-                  filters={filters}
-                  selectedFilters={selectedFilters}
-                  setSelectedFilters={setSelectedFilters}
-                  handleApplyFilter={handleApplyFilter}
-                />
+                  <UniversalFilter
+                    id="ref"
+                    filters={filters}
+                    selectedFilters={selectedFilters}
+                    setSelectedFilters={setSelectedFilters}
+                    handleApplyFilter={handleApplyFilter}
+                  />
 
-                <CustomColumnVisibilityControl
-                  id="ref"
-                  columns={getVisibilityColums(columns)}
-                  customToolsProps={{ columnVisibility, setColumnVisibility }}
-                />
-              </div>
+                  <CustomColumnVisibilityControl
+                    id="ref"
+                    columns={getVisibilityColums(columns)}
+                    customToolsProps={{ columnVisibility, setColumnVisibility }}
+                  />
+                </div>
+              </UsesSistent>
             </div>
           )}
           {tab === 0 && CAN(keys.VIEW_CONNECTIONS.action, keys.VIEW_CONNECTIONS.subject) && (
-            <ResponsiveDataTable
-              data={connections}
-              columns={columns}
-              options={options}
-              className={classes.muiRow}
-              tableCols={tableCols}
-              updateCols={updateCols}
-              columnVisibility={columnVisibility}
-            />
+            <UsesSistent>
+              <ResponsiveDataTable
+                data={connections}
+                columns={columns}
+                options={options}
+                className={classes.muiRow}
+                tableCols={tableCols}
+                updateCols={updateCols}
+                columnVisibility={columnVisibility}
+              />
+            </UsesSistent>
           )}
           {tab === 1 && (
             <MeshSyncTable
@@ -1338,24 +1257,6 @@ function Connections(props) {
                       Flush MeshSync
                     </Typography>
                   </Button>
-                </Box>
-              </div>
-              <div className={classes.list}>
-                <Box className={classes.listItem} sx={{ width: '100%' }}>
-                  <div className={classes.listContainer}>
-                    <Switch
-                      defaultChecked={getOperatorStatus(rowData.rowIndex)?.operatorState}
-                      onClick={(e) => handleOperatorSwitch(rowData.rowIndex, e.target.checked)}
-                      name="OperatorSwitch"
-                      color="primary"
-                      className={classes.OperatorSwitch}
-                      disabled={
-                        // TODO: update keys here for operator action
-                        !CAN(keys.FLUSH_MESHSYNC_DATA.action, keys.FLUSH_MESHSYNC_DATA.subject)
-                      }
-                    />
-                    <Typography variant="body1">Operator</Typography>
-                  </div>
                 </Box>
               </div>
             </Grid>
