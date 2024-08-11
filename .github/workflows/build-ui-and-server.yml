@@ -1,13 +1,8 @@
 name: Meshery UI and Server
 on:
-  pull_request:
-    branches:
-      - "master"
-    paths-ignore:
-      - "docs/**"
-      - "mesheryctl/**"
-      - "*.md"
-      - "*.github/**"
+  pull_request_target:
+    paths: 
+    - "ui/**"
   workflow_dispatch:
     inputs:
       logLevel:
