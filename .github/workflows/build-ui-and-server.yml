@@ -7,7 +7,6 @@ on:
       - "docs/**"
       - "mesheryctl/**"
       - "*.md"
-      - "*.github/**"
   workflow_dispatch:
     inputs:
       logLevel:
