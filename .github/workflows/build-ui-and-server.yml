@@ -104,6 +104,7 @@ jobs:
           chmod +x ./main
           BUILD=${{env.tag}} ./main &
       - name: Run Playwright End-to-End Tests
+        working-directory: meshery
         env:
           MESHERY_SERVER_URL: "http://localhost:9081"
           REMOTE_PROVIDER_URL: "https://meshery.layer5.io"
