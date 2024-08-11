@@ -1,41 +1,46 @@
+import React, { useState, useCallback } from 'react';
 import { Button } from '@material-ui/core';
-import React from 'react';
+import { ErrorBoundary as SistentErrorBoundary } from 'sistent';
 
 /**
- * ErrorBoundary is a React component that catches JavaScript errors in its child components and renders a fallback UI when an error occurs.
- * It should be used as a wrapper around components that might throw errors.
+ * Custom ErrorBoundary component to catch errors and render fallback UI.
  * @deprecated use error boundary from sistent instead
  */
-class ErrorBoundary extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { hasError: false, error: null };
-  }
+const ErrorBoundary = ({ children }) => {
+  const [hasError, setHasError] = useState(false);
+  const [error, setError] = useState(null);
 
-  /** Update state so the next render will show the fallback UI. */
-  static getDerivedStateFromError(error) {
-    return { hasError: true, error: error };
-  }
+  // Handle error and update state
+  const handleError = useCallback((error) => {
+    setHasError(true);
+    setError(error);
+  }, []);
 
-  resetErrorBoundary = () => {
-    this.setState({ hasError: false, error: null });
+  // Reset error boundary state
+  const resetErrorBoundary = () => {
+    setHasError(false);
+    setError(null);
   };
 
-  /** You can render any custom fallback UI */
-  render() {
-    if (this.state.hasError) {
-      return (
-        <div className="alert alert-danger">
-          <p>Couldn&apos;t open form. Encountered the following error:</p>
-          <pre>{this.state.error.message}</pre>
-          <Button color="primary" variant="contained" onClick={this.resetErrorBoundary}>
-            Refresh Form
-          </Button>
-        </div>
-      );
-    }
-    return this.props.children;
+  // Render fallback UI if an error is present
+  if (hasError) {
+    return (
+      <div className="alert alert-danger">
+        <p>Couldn&apos;t open form. Encountered the following error:</p>
+        <pre>{error.message}</pre>
+        <Button color="primary" variant="contained" onClick={resetErrorBoundary}>
+          Refresh Form
+        </Button>
+      </div>
+    );
   }
-}
+
+  // Use Sistent's ErrorBoundary to handle errors in children
+  return (
+    <SistentErrorBoundary onError={handleError}>
+      {children}
+    </SistentErrorBoundary>
+  );
+};
 
 export default ErrorBoundary;
