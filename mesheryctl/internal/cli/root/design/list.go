@@ -95,8 +95,8 @@ mesheryctl design list
 
 		provider := tokenObj["meshery-provider"]
 		var data [][]string
-		provider_header := []string{"PATTERN ID", "USER ID", "NAME", "CREATED", "UPDATED"}
-		non_provider_header := []string{"PATTERN ID", "NAME", "CREATED", "UPDATED"}
+		provider_header := []string{"DESIGN ID", "USER ID", "NAME", "CREATED", "UPDATED"}
+		non_provider_header := []string{"DESIGN ID", "NAME", "CREATED", "UPDATED"}
 
 		if verbose {
 			if provider == "None" {
@@ -162,8 +162,8 @@ mesheryctl design list
 }
 
 func init() {
-	listCmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "Display full length user and pattern file identifiers")
-	listCmd.Flags().IntVarP(&pageNumber, "page", "p", 1, "(optional) List next set of patterns with --page (default = 1)")
+	listCmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "Display full length user and design file identifiers")
+	listCmd.Flags().IntVarP(&pageNumber, "page", "p", 1, "(optional) List next set of designs with --page (default = 1)")
 }
 
 func processData(cmd *cobra.Command, data [][]string, header []string, totalCount int64) {

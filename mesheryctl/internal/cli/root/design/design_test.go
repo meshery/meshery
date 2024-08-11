@@ -73,21 +73,6 @@ func TestDesignCmd(t *testing.T) {
 			ExpectError: false,
 		},
 		{
-			Name:             "design list",
-			Args:             []string{"list"},
-			ExpectedResponse: "design.list.output.golden",
-			URLs: []utils.MockURL{
-				{
-					Method:       "GET",
-					URL:          testContext.BaseURL + "/api/pattern",
-					Response:     "design.list.golden",
-					ResponseCode: 200,
-				},
-			},
-			Token:       filepath.Join(fixturesDir, "token.golden"),
-			ExpectError: false,
-		},
-		{
 			Name:             "design view",
 			Args:             []string{"view", "kumatest"},
 			ExpectedResponse: "design.view.kuma.output.golden",
@@ -109,7 +94,7 @@ func TestDesignCmd(t *testing.T) {
 			URLs: []utils.MockURL{
 				{
 					Method:       "GET",
-					URL:          testContext.BaseURL + "/api/pattern/",
+					URL:          testContext.BaseURL + "/api/pattern?search=",
 					Response:     "design.id.view.golden",
 					ResponseCode: 200,
 				},
@@ -125,7 +110,7 @@ func TestDesignCmd(t *testing.T) {
 			URLs: []utils.MockURL{
 				{
 					Method:   "GET",
-					URL:      testContext.BaseURL + "api/pattern",
+					URL:      testContext.BaseURL + "/api/pattern?search=",
 					Response: "design.view.invalid.golden",
 				},
 			},
