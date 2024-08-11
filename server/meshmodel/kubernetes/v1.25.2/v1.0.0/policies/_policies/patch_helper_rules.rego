@@ -3,6 +3,10 @@ package relationship_evaluation_policy
 import rego.v1
 
 apply_patch(design_file, mutator_object, to_mutate_object) := result if {
+	# both mutator_object.paths and to_mutate_object.paths are paths to the config which gets manipulated.
+	# Both should be of same length.
+	# In case it is not, it is a bug in relationship_definition.
+
 	range := numbers.range(0, min([count(mutator_object.paths), count(to_mutate_object.paths)]) - 1)
 
 	# declaration that gets mutated

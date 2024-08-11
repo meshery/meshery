@@ -90,6 +90,17 @@ format_path(s) := result if {
 	result := to_number(s)
 } else := s
 
+group_by_id(objects) := {obj |
+	some val in objects
+	grouped_objects := [temp_obj |
+		some o in objects
+		o.declaration_id == val.declaration_id
+		temp_obj := o.mutated_declaration
+	]
+
+	obj := grouped_objects
+}
+
 # extract_components(services, selectors) := {component.traits.meshmap.id: component |
 # 	selector := selectors[_]
 # 	service := services[_]
