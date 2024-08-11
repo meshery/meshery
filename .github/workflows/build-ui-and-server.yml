@@ -1,6 +1,7 @@
 name: Meshery UI and Server
 on:
   pull_request_target:
+    types: [opened, synchronize, reopened]
     paths: 
     - "ui/**"
   workflow_dispatch:
