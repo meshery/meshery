@@ -25,6 +25,13 @@ jobs:
     name: UI end-to-end tests
     runs-on: ubuntu-latest
     steps:
+      - name: Debug Environment Variables
+        run: |
+          echo "NODE_VERSION: ${{ secrets.NODE_VERSION }}"
+          echo "GO_VERSION: ${{ secrets.GO_VERSION }}"
+          echo "REMOTE_PROVIDER_USER_EMAIL: ${{ secrets.REMOTE_PROVIDER_USER_EMAIL }}"
+          echo "REMOTE_PROVIDER_USER_PASSWORD: ${{ secrets.REMOTE_PROVIDER_USER_PASS }}"
+          echo "PROVIDER_TOKEN: ${{ secrets.PROVIDER_TOKEN }}"
       - name: Check out Meshery code
         uses: actions/checkout@v4
         with:
