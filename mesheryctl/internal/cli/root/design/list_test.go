@@ -46,8 +46,8 @@ func TestDesignList(t *testing.T) {
 		{
 			Name:             "Fetch Pattern List",
 			Args:             []string{"list", "--page", "2"},
-			ExpectedResponse: "list.pattern.output.golden",
-			Fixture:          "list.pattern.api.response.golden",
+			ExpectedResponse: "list.design.output.golden",
+			Fixture:          "list.design.api.response.golden",
 			URL:              testContext.BaseURL + "/api/pattern",
 			Token:            filepath.Join(fixturesDir, "token.golden"),
 			ExpectError:      false,
@@ -55,8 +55,8 @@ func TestDesignList(t *testing.T) {
 		{
 			Name:             "Fetch Pattern List with Local provider",
 			Args:             []string{"list", "--page", "1"},
-			ExpectedResponse: "list.pattern.local.output.golden",
-			Fixture:          "list.pattern.local.api.response.golden",
+			ExpectedResponse: "list.design.local.output.golden",
+			Fixture:          "list.design.local.api.response.golden",
 			URL:              testContext.BaseURL + "/api/pattern",
 			Token:            filepath.Join(fixturesDir, "local.token.golden"),
 			ExpectError:      false,

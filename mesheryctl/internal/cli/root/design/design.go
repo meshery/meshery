@@ -60,9 +60,9 @@ mesheryctl design list
 				}
 			}
 			if len(suggestions) > 0 {
-				return errors.New(utils.PatternError(fmt.Sprintf("'%s' is an invalid command. \nDid you mean %v? \nUse 'mesheryctl pattern --help' to display usage guide.\n", args[0], suggestions)))
+				return errors.New(utils.DesignError(fmt.Sprintf("'%s' is an invalid command. \nDid you mean %v? \nUse 'mesheryctl design --help' to display usage guide.\n", args[0], suggestions)))
 			}
-			return errors.New(utils.PatternError(fmt.Sprintf("'%s' is an invalid command. Use 'mesheryctl pattern --help' to display usage guide.\n", args[0])))
+			return errors.New(utils.DesignError(fmt.Sprintf("'%s' is an invalid command. Use 'mesheryctl design --help' to display usage guide.\n", args[0])))
 		}
 		return nil
 	},

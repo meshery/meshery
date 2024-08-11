@@ -1,4 +1,4 @@
-package pattern
+package design
 
 import (
 	"testing"

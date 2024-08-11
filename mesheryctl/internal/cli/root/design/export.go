@@ -54,16 +54,16 @@ By default, the exported design will be saved in the current directory. The diff
 type allowed are oci, original, and current. The default design type is current.`,
 	Example: `
 	# Export a design with a specific ID
-	mesheryctl pattern export [pattern-name | ID]
+	mesheryctl design export [pattern-name | ID]
 	
 	# Export a design with a specific ID and type
-	mesheryctl pattern export [pattern-name | ID] --type [design-type]
+	mesheryctl design export [pattern-name | ID] --type [design-type]
 	
 	# Export a design and save it to a specific directory
-	mesheryctl pattern export [pattern-name | ID] --output ./designs
+	mesheryctl design export [pattern-name | ID] --output ./designs
 	
 	# Export a design with a specific type and save it to a directory
-	mesheryctl pattern export [pattern-name | ID] --type [design-type] --output ./exports
+	mesheryctl design export [pattern-name | ID] --type [design-type] --output ./exports
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
@@ -286,7 +286,7 @@ func getOwnerName(ownerID string, baseURL string) (string, error) {
 }
 
 func selectPatternPrompt(patterns []models.MesheryPattern, baseURL string) models.MesheryPattern {
-	columns := []string{"Pattern Name", "Created At", "Updated At", "Type", "Owner", "Pattern ID"}
+	columns := []string{"Design Name", "Created At", "Updated At", "Type", "Owner", "Pattern ID"}
 	widths := []int{20, 20, 20, 20, 20, 10}
 
 	headingParts := make([]string, len(columns))
@@ -329,7 +329,7 @@ func selectPatternPrompt(patterns []models.MesheryPattern, baseURL string) model
 	}
 
 	prompt := promptui.Select{
-		Label: "Select a pattern",
+		Label: "Select a design",
 		Items: patternInfos,
 		Templates: &promptui.SelectTemplates{
 			Label:    "{{ . }}",

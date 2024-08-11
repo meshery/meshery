@@ -137,7 +137,7 @@ const (
 	cmdFilterView               cmdType = "filter view"
 	cmdDesign                   cmdType = "design"
 	cmdDesignView               cmdType = "design view"
-	cmdPatternExport            cmdType = "pattern export"
+	cmdDesignExport             cmdType = "pattern export"
 	cmdContext                  cmdType = "context"
 	cmdContextDelete            cmdType = "delete"
 	cmdContextCreate            cmdType = "create"

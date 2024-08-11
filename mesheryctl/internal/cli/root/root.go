@@ -26,7 +26,6 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/filter"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/mesh"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/model"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/pattern"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/perf"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/registry"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system"
