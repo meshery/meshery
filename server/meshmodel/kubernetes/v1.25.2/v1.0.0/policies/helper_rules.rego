@@ -1,6 +1,19 @@
-package helper
+package relationship_evaluation_policy
 
 import rego.v1
+
+has_key(x, k) if {
+	x[k]
+}
+
+declaration_with_id(design_file, id) := result if {
+	declarations := design_file.components
+	some declaration in declarations
+
+	# print(":: line 12 c: ", declaration)
+	declaration.id == id
+	result = declaration
+}
 
 resolve_path(arr, mutated) := path if {
 	arr_contains(arr, "_")
@@ -51,40 +64,12 @@ array_path_position(arr_path) := index if {
 	arr_path[index] == "_"
 }
 
-extract_components(services, selectors) := {component.traits.meshmap.id: component |
-	selector := selectors[_]
-	service := services[_]
-
-	is_relationship_feasible(selector, service.type)
-	component := service
-}
-
-extract_components_by_type(services, selector) := {component.traits.meshmap.id: component |
-	service := services[_]
-	is_relationship_feasible(selector, service.type)
-	component := service
-}
-
-
-
-is_relationship_feasible(selector, compType) if {
-	selector.kind == "*"
-}
-
-is_relationship_feasible(selector, compType) if {
-	selector.kind == compType
-}
-
-has_key(x, k) if {
-	x[k]
-}
-
 match_object(o1, o2) if {
-	o1_values := { val |
+	o1_values := {val |
 		some val in o1
 	}
 
-	o2_values := { val |
+	o2_values := {val |
 		some val in o2
 	}
 
@@ -104,3 +89,41 @@ format_path(s) := result if {
 	is_string(s)
 	result := to_number(s)
 } else := s
+
+group_by_id(objects) := {obj |
+	some val in objects
+	grouped_objects := [temp_obj |
+		some o in objects
+		o.declaration_id == val.declaration_id
+		temp_obj := o.mutated_declaration
+	]
+
+	obj := grouped_objects
+}
+
+extract_components(declarations, selectors) := {declaration.id: declaration |
+
+	selector := selectors[_]
+	declaration := declarations[_]
+	is_relationship_feasible(selector, declaration.component.kind)
+	component := declaration
+}
+
+extract_components_by_type(declarations, selector) := {declaration.id: declaration |
+	declaration := declarations[_]
+	
+	is_relationship_feasible(selector, declaration.component.kind)
+	component := declaration
+}
+
+# TODO: Add checks for
+# 1. when operators/regex are used in the version fields
+# 2. deny selctor
+
+is_relationship_feasible(selector, compType) if {
+	selector.kind == "*"
+}
+
+is_relationship_feasible(selector, compType) if {
+	selector.kind == compType
+}
