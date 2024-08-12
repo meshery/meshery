@@ -91,6 +91,11 @@ export const metricsApi = api
         }),
         invalidatesTags: [{ type: TAGS.METRICS, id: 'GRAFANA' }],
       }),
+      getGrafanaQueries: builder.query({
+        query: (queryArg) => `telemetry/metrics/grafana/${queryArg.connectionID}`,
+        method: 'GET',
+        providesTags: [{ type: TAGS.METRICS, id: 'GRAFANA' }],
+      }),
     }),
   });
 
@@ -102,6 +107,7 @@ export const {
   useGetPrometheusStaticBoardQuery,
   useDeleteGrafanaConfiugrationMutation,
   useGetGrafanBoardQuery,
+  useGetGrafanaQueriesQuery,
   useGetGrafanaConfigurationQuery,
   useGetPrometheusConfigurationQuery,
   useGetPrometheusQueryQuery,
