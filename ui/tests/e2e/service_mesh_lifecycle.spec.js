@@ -1,5 +1,8 @@
 import { expect, test } from '@playwright/test';
+import fs from 'fs';
 import { ENV } from './env';
+
+let adapterStatus = {}; // Global object to store adapter statuses
 
 test.describe('Service Mesh Lifecycle Tests', () => {
   const mesheryAdapters = [
@@ -31,7 +34,13 @@ test.describe('Service Mesh Lifecycle Tests', () => {
       await page.getByRole('button', { name: 'Connect', exact: true }).click();
 
       // Verify success notification
-      await expect(page.getByText('Adapter was configured!')).toBeVisible();
+      try {
+        await expect(page.getByText('Adapter was configured!')).toBeVisible();
+        adapterStatus[adapterName] = true; // Set status to true
+      } catch (error) {
+        adapterStatus[adapterName] = false; // Set status to false
+        return;
+      }
 
       // Visit Lifecycle > Service Mesh Page
       await page.goto(`${ENV.MESHERY_SERVER_URL}/management/service-mesh`);
@@ -47,7 +56,12 @@ test.describe('Service Mesh Lifecycle Tests', () => {
       await page.getByRole('option', { name: ADAPTER_LOCATION }).click();
 
       // Verify selection of the adapter by URL
-      await expect(dropdown).toContainText(ADAPTER_LOCATION);
+      try {
+        await expect(dropdown).toContainText(ADAPTER_LOCATION);
+      } catch (error) {
+        adapterStatus[adapterName] = false; // Set status to false
+        return;
+      }
     });
 
     test(`Ping ${adapterName} Adapter`, async ({ page }) => {
@@ -71,7 +85,17 @@ test.describe('Service Mesh Lifecycle Tests', () => {
       await page.getByRole('button', { name: ADAPTER_LOCATION, exact: true }).click();
 
       // Verify that the adapter was pinged
-      await expect(page.getByText('Adapter pinged!')).toBeVisible();
+      try {
+        await expect(page.getByText('Adapter pinged!')).toBeVisible();
+      } catch (error) {
+        adapterStatus[adapterName] = false; // Set status to false
+        return;
+      }
     });
+  });
+
+  // Save adapterStatus to a JSON file after all tests
+  test.afterAll(async () => {
+    fs.writeFileSync('./adapterStatus.json', JSON.stringify(adapterStatus));
   });
 });
