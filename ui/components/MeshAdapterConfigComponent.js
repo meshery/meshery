@@ -140,15 +140,10 @@ const MeshAdapterConfigComponent = (props) => {
     fetchSetAdapterURLs();
     fetchAvailableAdapters();
     setAdapterStatesFunction();
-  }, [isAdaptersUrlFetched, adaptersUrlData]);
+  }, [adaptersUrlData, adapterData]);
 
   const fetchSetAdapterURLs = () => {
     updateProgress({ showProgress: true });
-
-    if (isErrorInFetchingAdaptersUrl) {
-      handleError('Unable to fetch available adapters');
-      return;
-    }
 
     if (isAdaptersUrlFetched && adaptersUrlData) {
       updateProgress({ showProgress: false });
@@ -157,6 +152,9 @@ const MeshAdapterConfigComponent = (props) => {
         label: res.adapter_location,
       }));
       setSetAdapterURLs(options);
+    } else if (isErrorInFetchingAdaptersUrl) {
+      handleError('Unable to fetch available adapters');
+      return;
     }
   };
 
@@ -174,7 +172,6 @@ const MeshAdapterConfigComponent = (props) => {
         value: res.adapter_location,
         label: res.name,
       }));
-
       setAvailableAdapters(options);
     }
   };
