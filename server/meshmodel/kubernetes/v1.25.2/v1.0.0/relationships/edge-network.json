@@ -19,6 +19,9 @@
     "schemaVersion": "models.meshery.io/v1beta1",
     "version": "v1.0.0",
     "name": "kubernetes",
+    "registrant": {
+      "kind": "artifacthub"
+    },
     "model": {
       "version": "v1.25.2"
     },
@@ -38,14 +41,24 @@
         "from": [
           {
             "kind": "Service",
-            "model": "kubernetes",
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
             "patchRefs": [
               []
             ]
           },
           {
             "kind": "Ingress",
-            "model": "kubernetes",
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
             "patchRefs": [
               []
             ]

@@ -31,12 +31,17 @@
         "from": [
           {
             "kind": "HTTPScaledObject",
-            "model": "keda-http-scaler",
+            "model": {
+              "name": "keda-http-scaler",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
             "patch": {
               "patchStrategy": "replace",
               "mutatedRef": [
                 [
-                  "settings",
+                  "configuration",
                   "spec",
                   "scaleTargetRef",
                   "service"
@@ -49,12 +54,17 @@
         "to": [
           {
             "kind": "Service",
-            "model": "kubernetes",
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
             "patch": {
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "name"
+                  "displayName"
                 ]
               ],
               "description": "Autoscale any Kubernetes Deployments and StatefulSets that expose HTTP-based applications (and handles incoming HTTP traffic)."

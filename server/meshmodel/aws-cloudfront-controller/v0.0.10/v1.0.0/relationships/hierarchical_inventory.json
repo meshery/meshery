@@ -34,18 +34,26 @@
         "from": [
           {
             "kind": "*",
-            "model": "Kubernetes",
+            "model": {
+              "name": "argo-cd",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
             "patch": {
               "mutatorRef": [
-                [
-                  "name"
-                ],
-                [
-                  "namespace"
-                ],
-                [
-                  "type"
-                ]
+                    [
+                      "displayName"
+                    ],
+                    [
+                      "configuration",
+                      "metadata",
+                      "namespace"
+                    ],
+                    [
+                      "component",
+                      "kind"
+                    ]
               ],
               "description": "Kubernetes components manage containerized applications, while AWS Field Export exports data from AWS CloudFront. Kubernetes can run applications that generate data ingested by CloudFront, facilitating efficient content delivery and scaling in AWS environments."
             }
@@ -54,25 +62,30 @@
         "to": [
           {
             "kind": "FieldExport",
-            "model": "aws-cloudfront-controller",
+            "model": {
+              "name": "aws-cloudfront-controller",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
             "patch": {
               "mutatorRef": [
                 [
-                  "settings",
+                  "configuration",
                   "spec",
                   "from",
                   "resource",
                   "name"
                 ],
                 [
-                  "settings",
+                  "configuration",
                   "spec",
                   "from",
                   "resource",
                   "namespace"
                 ],
                 [
-                  "settings",
+                  "configuration",
                   "spec",
                   "from",
                   "resource",

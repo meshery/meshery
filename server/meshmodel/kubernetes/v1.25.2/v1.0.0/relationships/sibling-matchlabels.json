@@ -9,6 +9,9 @@
     "schemaVersion": "models.meshery.io/v1beta1",
     "version": "v1.0.0",
     "name": "kubernetes",
+    "registrant": {
+      "kind": "artifacthub"
+    },
     "model": {
       "version": "v1.25.2"
     },

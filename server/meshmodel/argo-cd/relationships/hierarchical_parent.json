@@ -22,17 +22,32 @@
         "from": [
           {
             "kind": "AppProject",
-            "model": "argo-cd"
+            "model": {
+              "name": "argo-cd",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            }
           }
         ],
         "to": [
           {
             "kind": "Application",
-            "model": "argo-cd"
+            "model": {
+              "name": "argo-cd",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            }
           },
           {
             "kind": "ApplicationSet",
-            "model": "argo-cd"
+            "model": {
+              "name": "argo-cd",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            }
           }
         ]
       },

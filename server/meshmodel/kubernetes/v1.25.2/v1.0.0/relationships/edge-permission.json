@@ -2,6 +2,7 @@
   "schemaVersion": "relationships.meshery.io/v1alpha2",
   "version": "v1.0.0",
   "kind": "Edge",
+  "type": "Binding",
   "metadata": {
     "description": "A relationship that represents a set of bindings.",
     "capabilities": {
@@ -18,6 +19,9 @@
     "schemaVersion": "models.meshery.io/v1beta1",
     "version": "v1.0.0",
     "name": "kubernetes",
+    "registrant": {
+      "kind": "artifacthub"
+    },
     "model": {
       "version": "v1.25.2"
     },
@@ -74,84 +78,23 @@
         "from": [
           {
             "kind": "ClusterRole",
-            "model": "kubernetes",
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
             "match": {
               "from": [
                 {
                   "kind": "self",
                   "mutatorRef": [
                     [
-                      "type"
+                      "component",
+                      "kind"
                     ],
                     [
-                      "name"
-                    ]
-                  ]
-                }
-              ],
-              "to": {
-                "kind": "ClusterRoleBinding",
-                "mutatedRef": [
-                  [
-                    "settings",
-                    "roleRef",
-                    "kind"
-                  ],
-                  [
-                    "settings",
-                    "roleRef",
-                    "name"
-                  ]
-                ]
-              }
-            }
-          },
-          {
-            "kind": "Role",
-            "model": "kubernetes",
-            "match": {
-              "from": [
-                {
-                  "kind": "self",
-                  "mutatorRef": [
-                    [
-                      "type"
-                    ],
-                    [
-                      "name"
-                    ]
-                  ]
-                }
-              ],
-              "to": {
-                "kind": "RoleBinding",
-                "mutatedRef": [
-                  [
-                    "settings",
-                    "roleRef",
-                    "kind"
-                  ],
-                  [
-                    "settings",
-                    "roleRef",
-                    "name"
-                  ]
-                ]
-              }
-            }
-          }
-        ],
-        "to": [
-          {
-            "kind": "ServiceAccount",
-            "model": "kubernetes",
-            "match": {
-              "from": [
-                {
-                  "kind": "self",
-                  "mutatorRef": [
-                    [
-                      "name"
+                      "displayName"
                     ]
                   ]
                 }
@@ -161,9 +104,13 @@
                   "kind": "ClusterRoleBinding",
                   "mutatedRef": [
                     [
-                      "settings",
-                      "subjects",
-                      "_",
+                      "configuration",
+                      "roleRef",
+                      "kind"
+                    ],
+                    [
+                      "configuration",
+                      "roleRef",
                       "name"
                     ]
                   ]
@@ -172,15 +119,24 @@
             }
           },
           {
-            "kind": "ServiceAccount",
-            "model": "kubernetes",
+            "kind": "Role",
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
             "match": {
               "from": [
                 {
                   "kind": "self",
                   "mutatorRef": [
                     [
-                      "name"
+                      "component",
+                      "kind"
+                    ],
+                    [
+                      "displayName"
                     ]
                   ]
                 }
@@ -190,10 +146,84 @@
                   "kind": "RoleBinding",
                   "mutatedRef": [
                     [
-                      "settings",
+                      "configuration",
+                      "roleRef",
+                      "kind"
+                    ],
+                    [
+                      "configuration",
+                      "roleRef",
+                      "name"
+                    ]
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "ServiceAccount",
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
+            "match": {
+              "from": [
+                {
+                  "kind": "ClusterRoleBinding",
+                  "mutatorRef": [
+                    [
+                      "configuration",
                       "subjects",
                       "_",
                       "name"
+                    ]
+                  ]
+                }
+              ],
+              "to": [
+                {
+                  "kind": "self",
+                  "mutatedRef": [
+                    [
+                      "displayName"
+                    ]
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "kind": "ServiceAccount",
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
+            "match": {
+              "from": [
+                {
+                  "kind": "RoleBinding",
+                  "mutatorRef": [
+                    [
+                      "configuration",
+                      "subjects",
+                      "_",
+                      "name"
+                    ]
+                  ]
+                }
+              ],
+              "to": [
+                {
+                  "kind": "self",
+                  "mutatedRef": [
+                    [
+                      "displayName"
                     ]
                   ]
                 }

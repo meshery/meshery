@@ -28,11 +28,17 @@
         "from": [
           {
             "kind": "HTTPEndpoint",
-            "model": "dapr",
+            "model": {
+              "name": "dapr",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
             "patch": {
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
+                  "configuration",
                   "spec",
                   "routes"
                 ]
@@ -42,11 +48,17 @@
           },
           {
             "kind": "Resiliency",
-            "model": "dapr",
+            "model": {
+              "name": "dapr",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
             "patch": {
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
+                  "configuration",
                   "spec",
                   "policies"
                 ]
@@ -56,11 +68,17 @@
           },
           {
             "kind": "Configuration",
-            "model": "dapr",
+            "model": {
+              "name": "dapr",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
             "patch": {
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
+                  "configuration",
                   "spec"
                 ]
               ],
@@ -69,15 +87,22 @@
           },
           {
             "kind": "Subscription",
-            "model": "dapr",
+            "model": {
+              "name": "dapr",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
             "patch": {
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
+                  "configuration",
                   "spec",
                   "topic"
                 ],
                 [
+                  "configuration",
                   "spec",
                   "routes"
                 ]
@@ -89,11 +114,17 @@
         "to": [
           {
             "kind": "Container",
-            "model": "meshery-core",
+            "model": {
+              "name": "meshery-core",
+              "registrant": {
+                "kind": "meshery"
+              }
+            },
             "patch": {
               "patchStrategy": "replace",
               "mutatedRef": [
                 [
+                  "configuration",
                   "args"
                 ]
               ],

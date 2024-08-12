@@ -9,6 +9,9 @@
     "schemaVersion": "models.meshery.io/v1beta1",
     "version": "v1.0.0",
     "name": "kubernetes",
+    "registrant": {
+      "kind": "artifacthub"
+    },
     "model": {
       "version": "v1.25.2"
     },
@@ -27,18 +30,25 @@
         "from": [
           {
             "kind": "ReplicaSet",
-            "model": "kubernetes",
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
             "patch": {
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "name"
+                  "displayName"
                 ],
                 [
+                  "component",
                   "kind"
                 ],
                 [
-                  "apiVersion"
+                  "component",
+                  "version"
                 ]
               ],
               "description": "ReplicaSets in Kubernetes ensure a specified number of pod replicas are running at any given time. By incorporating leases within ReplicaSets, Kubernetes ensures fault tolerance and scalability by automatically replacing failed or terminated pods, maintaining the desired replica count and preserving the availability and performance of your application."
@@ -48,7 +58,12 @@
         "to": [
           {
             "kind": "Lease",
-            "model": "kubernetes",
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
             "patch": {
               "patchStrategy": "replace",
               "mutatedRef": [

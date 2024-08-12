@@ -28,12 +28,23 @@
         "from": [
           {
             "kind": "WASMFilter",
-            "model": "meshery-core",
+            "model": {
+              "name": "meshery-core",
+              "registrant": {
+                "kind": "meshery"
+              }
+            },
             "patch": {
               "patchStrategy": "replace",
               "mutatorRef": [
-                ["settings", "config"],
-                ["settings", "wasm-filter"]
+                [
+                  "configuration",
+                  "config"
+                ],
+                [
+                  "configuration",
+                  "wasm-filter"
+                ]
               ],
               "description": "WASM filter configuration to be applied to Envoy Filter."
             }
@@ -42,10 +53,23 @@
         "to": [
           {
             "kind": "EnvoyFilter",
-            "model": "istio-base",
+            "model": {
+              "name": "istio-base",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
             "patch": {
               "patchStrategy": "replace",
-              "mutatedRef": [["settings", "configPatches", "_", "patch", "value"]],
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "configPatches",
+                  "_",
+                  "patch",
+                  "value"
+                ]
+              ],
               "description": "Receive the WASM filter configuration."
             }
           }

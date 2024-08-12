@@ -28,13 +28,23 @@
       "from": [
         {
           "kind": "VirtualService",
-          "model": "istio-base"
+          "model": {
+            "name": "istio-base",
+            "registrant": {
+              "kind": "artifacthub"
+            }
+          }
         }
       ],
       "to": [
         {
           "kind": "Service",
-          "model": "kubernetes"
+          "model": {
+            "name": "kubernetes",
+            "registrant": {
+              "kind": "artifacthub"
+            }
+          }
         }
       ]
     },

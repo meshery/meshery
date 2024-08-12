@@ -2,6 +2,7 @@
   "schemaVersion": "relationships.meshery.io/v1alpha2",
   "version": "v1.0.0",
   "kind": "Edge",
+  "type": "Binding",
   "metadata": {
     "description": "A relationship that represents volume mounts between components",
     "capabilities": {
@@ -18,6 +19,9 @@
     "schemaVersion": "models.meshery.io/v1beta1",
     "version": "v1.0.0",
     "name": "kubernetes",
+    "registrant": {
+      "kind": "artifacthub"
+    },
     "model": {
       "version": "v1.25.2"
     },
@@ -36,13 +40,23 @@
         "from": [
           {
             "kind": "Pod",
-            "model": "kubernetes"
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            }
           }
         ],
         "to": [
           {
             "kind": "Pod",
-            "model": "kubernetes"
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            }
           }
         ]
       },
@@ -50,14 +64,19 @@
         "from": [
           {
             "kind": "Pod",
-            "model": "kubernetes",
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
             "match": {
               "from": [
                 {
                   "kind": "self",
                   "mutatedRef": [
                     [
-                      "settings",
+                      "configuration",
                       "spec",
                       "volumes",
                       "_",
@@ -72,7 +91,7 @@
                   "kind": "PersistentVolumeClaim",
                   "mutatorRef": [
                     [
-                      "name"
+                      "displayName"
                     ]
                   ]
                 }
@@ -83,35 +102,42 @@
         "to": [
           {
             "kind": "PersistentVolume",
-            "model": "kubernetes",
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
             "match": {
               "from": [
                 {
-                  "kind": "self",
-                  "mutatorRef": [
+                  "kind": "PersistentVolumeClaim",
+                  "mutatedRef": [
                     [
-                      "name"
+                      "configuration",
+                      "spec",
+                      "volumeName"
                     ],
                     [
-                      "labels"
+                      "configuration",
+                      "spec",
+                      "selector",
+                      "matchLabels"
                     ]
                   ]
                 }
               ],
               "to": [
                 {
-                  "kind": "PersistentVolumeClaim",
-                  "mutatedRef": [
+                  "kind": "self",
+                  "mutatorRef": [
                     [
-                      "settings",
-                      "spec",
-                      "volumeName"
+                      "displayName"
                     ],
                     [
-                      "settings",
-                      "spec",
-                      "selector",
-                      "matchLabels"
+                      "configuration",
+                      "metadata",
+                      "labels"
                     ]
                   ]
                 }

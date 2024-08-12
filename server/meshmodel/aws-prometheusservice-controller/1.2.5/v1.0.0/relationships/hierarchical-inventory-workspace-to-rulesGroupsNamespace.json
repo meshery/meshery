@@ -27,12 +27,17 @@
         "from": [
           {
             "kind": "Workspace",
-            "model": "aws-prometheusservice-controller",
+            "model": {
+              "name": "aws-prometheusservice-controller",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
             "patch": {
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "name"
+                  "displayName"
                 ]
               ],
               "description": "The Workspace component's configuration is updated based on specifications from other components, like AlertManagerDefinition, ensuring alignment with connected systems."
@@ -42,12 +47,17 @@
         "to": [
           {
             "kind": "RuleGroupsNamespace",
-            "model": "aws-prometheusservice-controller",
+            "model": {
+              "name": "aws-prometheusservice-controller",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
-                  "settings",
+                  "configuration",
                   "spec",
                   "workspaceRef",
                   "from",

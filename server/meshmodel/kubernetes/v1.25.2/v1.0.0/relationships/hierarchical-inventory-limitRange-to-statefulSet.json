@@ -9,6 +9,9 @@
     "schemaVersion": "models.meshery.io/v1beta1",
     "version": "v1.0.0",
     "name": "kubernetes",
+    "registrant": {
+      "kind": "artifacthub"
+    },
     "model": {
       "version": "v1.25.2"
     },
@@ -27,7 +30,12 @@
         "from": [
           {
             "kind": "LimitRange",
-            "model": "kubernetes",
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
             "patch": {
               "patchStrategy": "replace",
               "mutatedRef": [
@@ -65,12 +73,17 @@
         "to": [
           {
             "kind": "StatefulSet",
-            "model": "kubernetes",
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
             "patch": {
               "patchStrategy": "replace",
               "mutatedRef": [
                 [
-                  "settings",
+                  "configuration",
                   "spec",
                   "template",
                   "spec",
@@ -81,7 +94,7 @@
                   "memory"
                 ],
                 [
-                  "settings",
+                  "configuration",
                   "spec",
                   "template",
                   "spec",
@@ -92,7 +105,7 @@
                   "cpu"
                 ],
                 [
-                  "settings",
+                  "configuration",
                   "spec",
                   "template",
                   "spec",
@@ -103,7 +116,7 @@
                   "memory"
                 ],
                 [
-                  "settings",
+                  "configuration",
                   "spec",
                   "template",
                   "spec",

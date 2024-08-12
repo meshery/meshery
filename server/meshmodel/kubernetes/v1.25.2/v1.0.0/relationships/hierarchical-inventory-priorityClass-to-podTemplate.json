@@ -9,6 +9,9 @@
     "schemaVersion": "models.meshery.io/v1beta1",
     "version": "v1.0.0",
     "name": "kubernetes",
+    "registrant": {
+      "kind": "artifacthub"
+    },
     "model": {
       "version": "v1.25.2"
     },
@@ -27,12 +30,17 @@
         "from": [
           {
             "kind": "PriorityClass",
-            "model": "kubernetes",
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
             "patch": {
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "name"
+                  "displayName"
                 ]
               ],
               "description": "PriorityClass in Kubernetes assigns importance levels to Pods, influencing scheduling decisions. The name of the PriorityClass is referenced by other Kubernetes components for scheduling preference."
@@ -42,12 +50,17 @@
         "to": [
           {
             "kind": "PodTemplate",
-            "model": "kubernetes",
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
             "patch": {
               "patchStrategy": "replace",
               "mutatedRef": [
                 [
-                  "settings",
+                  "configuration",
                   "spec",
                   "spec",
                   "priorityClassName"

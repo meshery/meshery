@@ -27,12 +27,17 @@
         "from": [
           {
             "kind": "Policy",
-            "model": "nginx-ingress",
+            "model": {
+              "name": "nginx-ingress",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
             "patch": {
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "name"
+                  "displayName"
                 ]
               ],
               "description": "The Policy resource allows you to configure features like access control and rate-limiting, which you can add to your VirtualServer and VirtualServerRoute resources."
@@ -42,12 +47,17 @@
         "to": [
           {
             "kind": "VirtualServer",
-            "model": "nginx-ingress",
+            "model": {
+              "name": "nginx-ingress",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
             "patch": {
               "patchStrategy": "replace",
               "mutatedRef": [
                 [
-                  "settings",
+                  "configuration",
                   "spec",
                   "policies",
                   "name"
@@ -58,12 +68,17 @@
           },
           {
             "kind": "VirtualServerRoute",
-            "model": "nginx-ingress",
+            "model": {
+              "name": "nginx-ingress",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
             "patch": {
               "patchStrategy": "replace",
               "mutatedRef": [
                 [
-                  "settings",
+                  "configuration",
                   "spec",
                   "policies",
                   "name"

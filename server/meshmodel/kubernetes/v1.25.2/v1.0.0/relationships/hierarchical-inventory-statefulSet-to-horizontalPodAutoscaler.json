@@ -9,6 +9,9 @@
     "schemaVersion": "models.meshery.io/v1beta1",
     "version": "v1.0.0",
     "name": "kubernetes",
+    "registrant": {
+      "kind": "artifacthub"
+    },
     "model": {
       "version": "v1.25.2"
     },
@@ -27,18 +30,23 @@
         "from": [
           {
             "kind": "StatefulSet",
-            "model": "kubernetes",
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
             "patch": {
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "apiVersion"
+                  "component", "version"
                 ],
                 [
-                  "name"
+                  "displayName"
                 ],
                 [
-                  "type"
+                  "component", "kind"
                 ]
               ],
               "description": "Allow Horizontal Pod Autoscaler to scale based on observed metrics for StatefulSet."
@@ -48,24 +56,29 @@
         "to": [
           {
             "kind": "HorizontalPodAutoscaler",
-            "model": "kubernetes",
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
             "patch": {
               "patchStrategy": "replace",
               "mutatedRef": [
                 [
-                  "settings",
+                  "configuration",
                   "spec",
                   "scaleTargetRef",
                   "apiVersion"
                 ],
                 [
-                  "settings",
+                  "configuration",
                   "spec",
                   "scaleTargetRef",
                   "name"
                 ],
                 [
-                  "settings",
+                  "configuration",
                   "spec",
                   "scaleTargetRef",
                   "kind"

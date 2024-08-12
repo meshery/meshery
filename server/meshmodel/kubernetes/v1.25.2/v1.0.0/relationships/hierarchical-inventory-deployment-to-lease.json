@@ -9,6 +9,9 @@
     "schemaVersion": "models.meshery.io/v1beta1",
     "version": "v1.0.0",
     "name": "kubernetes",
+    "registrant": {
+      "kind": "artifacthub"
+    },
     "model": {
       "version": "v1.25.2"
     },
@@ -27,18 +30,25 @@
         "from": [
           {
             "kind": "Deployment",
-            "model": "kubernetes",
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
             "patch": {
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "name"
+                  "displayName"
                 ],
                 [
+                  "component",
                   "kind"
                 ],
                 [
-                  "apiVersion"
+                  "component",
+                  "version"
                 ]
               ],
               "description": "A Deployment in Kubernetes orchestrates the rollout and management of application replicas. By integrating leases into Deployment strategies, Kubernetes maintains control over the deployment process, orchestrating rolling updates or rollbacks with precision and reliability, thus ensuring seamless transitions and high availability of your application."
@@ -48,7 +58,12 @@
         "to": [
           {
             "kind": "Lease",
-            "model": "kubernetes",
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
             "patch": {
               "patchStrategy": "replace",
               "mutatedRef": [

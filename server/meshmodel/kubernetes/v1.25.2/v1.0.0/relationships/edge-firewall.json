@@ -2,6 +2,7 @@
   "schemaVersion": "relationships.meshery.io/v1alpha2",
   "version": "v1.0.0",
   "kind": "Edge",
+  "type": "Binding",
   "metadata": {
     "description": "A relationship that act as a firewall for ingress and egress traffic from Pods.",
     "animation": "marching-ants",
@@ -17,6 +18,9 @@
   },
   "model": {
     "name": "kubernetes",
+    "registrant": {
+      "kind": "artifacthub"
+    },
     "schemaVersion": "models.meshery.io/v1beta1",
     "version": "v1.0.0",
     "model": {
@@ -37,20 +41,30 @@
         "from": [
           {
             "kind": "Pod",
-            "model": "kubernetes",
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
             "match": {
-              "self": [],
-              "NetworkPolicy": []
+              "from": [],
+              "to": []
             }
           }
         ],
         "to": [
           {
             "kind": "Pod",
-            "model": "kubernetes",
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
             "match": {
-              "self": [],
-              "NetworkPolicy": []
+              "from": [],
+              "to": []
             }
           }
         ]
