@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/http"
 
@@ -10,8 +9,8 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/pattern/core"
-	"github.com/meshery/schemas/models/v1beta1/pattern"
 	"github.com/meshery/schemas/models/v1alpha3/relationship"
+	"github.com/meshery/schemas/models/v1beta1/pattern"
 	"gopkg.in/yaml.v2"
 
 	"github.com/layer5io/meshkit/models/events"
@@ -22,7 +21,7 @@ import (
 )
 
 const (
-	relationshipPolicyPackageName = "data.meshmodel_policy"
+	relationshipPolicyPackageName = "data.relationship_evaluation_policy"
 	suffix                        = "_relationship"
 )
 
@@ -79,16 +78,8 @@ func (h *Handler) EvaluateRelationshipPolicy(
 		component.Configuration = core.Format.DePrettify(component.Configuration, false)
 	}
 
-	data, err := yaml.Marshal(patternFile)
-	if err != nil {
-		http.Error(rw, models.ErrEncoding(err, "design file").Error(), http.StatusInternalServerError)
-		return
-	}
-
 	patternUUID := patternFile.Id
 	eventBuilder.ActedUpon(patternUUID)
-
-	var evalResults interface{}
 
 	// evaluate specified relationship policies
 	// on successful eval the event containing details like comps evaulated, relationships indeitified should be emitted and peristed.
@@ -100,23 +91,27 @@ func (h *Handler) EvaluateRelationshipPolicy(
 		return
 	}
 
-	evalresults := make(map[string]interface{}, 0)
-	for _, query := range verifiedEvaluationQueries {
-		result, err := h.Rego.RegoPolicyHandler(fmt.Sprintf("%s.%s", relationshipPolicyPackageName, query), data)
-		if err != nil {
-			h.log.Debug(err)
-			continue
-		}
-		evalresults[query] = result
+	result, err := h.Rego.RegoPolicyHandler(patternFile,
+		relationshipPolicyPackageName,
+		verifiedEvaluationQueries...
+	)
+	if err != nil {
+		h.log.Debug(err)
+		// log an event
+		http.Error(rw, err.Error(), http.StatusInternalServerError)
+		return
+
 	}
+
 	// Before starting the eval the design is de-prettified, so that we can use the relationships def correctly.
 	// The results contain the updated config.
 	// Prettify the results before sending it to client.
-	evalResults = core.Format.Prettify(evalresults, false)
+	// TODO:
+	// evalResults = core.Format.Prettify(result, false)
 
 	// write the response
 	ec := json.NewEncoder(rw)
-	err = ec.Encode(evalResults)
+	err = ec.Encode(result)
 	if err != nil {
 		h.log.Error(models.ErrEncoding(err, "policy evaluation response"))
 		http.Error(rw, models.ErrEncoding(err, "failed to generate policy evaluation results").Error(), http.StatusInternalServerError)
