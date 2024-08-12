@@ -419,6 +419,8 @@ func RegisterEntity(content []byte, entityType entity.EntityType, h *Handler, re
 			err = meshkitutils.ErrUnmarshal(err)
 			return "", err
 		}
+		registration.WriteAndReplaceSVGWithFileSystemPath(m.Metadata, svgBaseDir, m.Name, m.Name) //Write SVG for models
+
 		var rels []v1alpha2.RelationshipDefinition
 		components := m.Components
 		if m.Relationships != nil {
@@ -491,7 +493,6 @@ func RegisterEntity(content []byte, entityType entity.EntityType, h *Handler, re
 				return "", nil
 			}
 		}
-		registration.WriteAndReplaceSVGWithFileSystemPath(m.Metadata, svgBaseDir, m.Name, m.Name) //Write SVG for models
 
 		return m.DisplayName, nil
 	case entity.PolicyDefinition:
