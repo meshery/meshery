@@ -1,23 +1,31 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
-
-import Grid from '@material-ui/core/Grid';
-import { NoSsr, Chip, Button, TextField, Tooltip, Avatar, makeStyles } from '@material-ui/core';
-import blue from '@material-ui/core/colors/blue';
-import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 import { withRouter } from 'next/router';
-import ReactSelectWrapper from './ReactSelectWrapper';
-import { updateAdaptersInfo, updateProgress } from '../lib/store';
-import dataFetch from '../lib/data-fetch';
-import changeAdapterState from './graphql/mutations/AdapterStatusMutation';
+import {
+  Avatar,
+  Button,
+  Chip,
+  Grid,
+  makeStyles,
+  NoSsr,
+  TextField,
+  Tooltip,
+} from '@material-ui/core';
+import blue from '@material-ui/core/colors/blue';
+
 import { useNotification } from '../utils/hooks/useNotification';
+import { updateAdaptersInfo, updateProgress } from '../lib/store';
 import { EVENT_TYPES } from '../lib/event-types';
+import changeAdapterState from './graphql/mutations/AdapterStatusMutation';
+import ReactSelectWrapper from './ReactSelectWrapper';
 import BadgeAvatars from './CustomAvatar';
-import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
+import { keys } from '@/utils/permission_constants';
 import {
   useConnectAdapterMutation,
+  useDeleteAdapterMutation,
   useGetAdaptersUrlQuery,
   useGetAvailableAdaptersQuery,
   usePingAdapterQuery,
@@ -119,6 +127,7 @@ const MeshAdapterConfigComponent = (props) => {
   } = usePingAdapterQuery({ adapterLoc: adapterLocation });
 
   const [connectAdapter] = useConnectAdapterMutation();
+  const [deleteAdapter] = useDeleteAdapterMutation();
 
   useEffect(() => {
     if (props.meshAdapterStates > ts) {
@@ -264,26 +273,22 @@ const MeshAdapterConfigComponent = (props) => {
         handleError('Adapter was not configured due to an error');
       });
   };
-  
+
   const handleDelete = (adapterLoc) => () => {
     updateProgress({ showProgress: true });
-
-    dataFetch(
-      `/api/system/adapter/manage?adapter=${encodeURIComponent(adapterLoc)}`,
-      {
-        method: 'DELETE',
-        credentials: 'include',
-      },
-      (result) => {
+    deleteAdapter({ adapterLoc })
+      .unwrap()
+      .then((result) => {
         updateProgress({ showProgress: false });
-        if (typeof result !== 'undefined') {
+        if (result) {
           setMeshAdapters(result);
           notify({ message: 'Adapter was removed!', event_type: EVENT_TYPES.SUCCESS });
           updateAdaptersInfo({ meshAdapters: result });
         }
-      },
-      handleError('Adapter was not removed due to an error'),
-    );
+      })
+      .catch(() => {
+        handleError('Adapter was not removed due to an error');
+      });
   };
 
   const handleClick = (adapterLoc) => () => {
