@@ -77,7 +77,12 @@ export const metricsApi = api
       getGrafanBoard: builder.query({
         query: (queryArg) => `/telemetry/metrics/grafana/${queryArg.connectionID}`,
         method: 'GET',
-        providesTags: [{ TAGS: METRICS.TAGS, id: 'GRAFANA' }],
+        providesTags: [{ type: METRICS.TAGS, id: 'GRAFANA' }],
+      }),
+      getGrafanaConfiguration: builder.query({
+        query: () => 'telemetry/metrics/grafana/config',
+        method: 'GET',
+        providesTags: [{ type: TAGS.METRICS, id: 'GRAFANA' }],
       }),
     }),
   });
@@ -89,6 +94,7 @@ export const {
   useConfigureGrafanaMutation,
   useGetPrometheusStaticBoardQuery,
   useGetGrafanBoardQuery,
+  useGetGrafanaConfigurationQuery,
   useGetPrometheusConfigurationQuery,
   useGetPrometheusQueryQuery,
   useConfigurePrometheusMutation,
