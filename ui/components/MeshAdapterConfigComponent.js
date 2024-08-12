@@ -16,7 +16,7 @@ import { EVENT_TYPES } from '../lib/event-types';
 import BadgeAvatars from './CustomAvatar';
 import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
-import { usePingAdapterQuery } from '@/rtk-query/adapter';
+import { useGetAdaptersUrlQuery, usePingAdapterQuery } from '@/rtk-query/adapter';
 
 const useStyles = makeStyles((theme) => ({
   wrapperClass: {
@@ -96,6 +96,12 @@ const MeshAdapterConfigComponent = (props) => {
   const { notify } = useNotification();
 
   const {
+    data: adaptersUrlData,
+    isSuccess: isAdaptersUrlFetched,
+    isError: isErrorInFetchingAdaptersUrl,
+  } = useGetAdaptersUrlQuery();
+
+  const {
     data: adapterData,
     isSuccess: isAdapterPinged,
     isError: isErrorInPingingAdapter,
@@ -112,29 +118,24 @@ const MeshAdapterConfigComponent = (props) => {
     fetchSetAdapterURLs();
     fetchAvailableAdapters();
     setAdapterStatesFunction();
-  }, []);
+  }, [isAdaptersUrlFetched, adaptersUrlData]);
 
   const fetchSetAdapterURLs = () => {
     updateProgress({ showProgress: true });
 
-    dataFetch(
-      '/api/system/adapters',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      (result) => {
-        updateProgress({ showProgress: false });
-        if (typeof result !== 'undefined') {
-          const options = result.map((res) => ({
-            value: res.adapter_location,
-            label: res.adapter_location,
-          }));
-          setSetAdapterURLs(options);
-        }
-      },
-      handleError('Unable to fetch available adapters'),
-    );
+    if (isErrorInFetchingAdaptersUrl) {
+      handleError('Unable to fetch available adapters');
+      return;
+    }
+
+    if (isAdaptersUrlFetched && adaptersUrlData) {
+      updateProgress({ showProgress: false });
+      const options = adaptersUrlData.map((res) => ({
+        value: res.adapter_location,
+        label: res.adapter_location,
+      }));
+      setSetAdapterURLs(options);
+    }
   };
 
   const fetchAvailableAdapters = () => {
