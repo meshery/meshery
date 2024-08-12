@@ -2,9 +2,11 @@ package relationship_evaluation_policy
 
 import rego.v1
 
-evalutate := result if {
-	rels_in_design_file := input.relationships
+rels_in_design_file := input.relationships if {
+	count(input.relationships) > 0
+} else := []
 
+evalutate := updated_design_file if {
 	# iterate relationships in the design file and resolve the patches.
 	resultant_patches := {patched_declaration |
 		some rel in rels_in_design_file
@@ -31,11 +33,33 @@ evalutate := result if {
 		}
 	}
 
-	updated_relationships := [result |
+	design_file_with_updated_declarations := [declaration |
+		some val in input.components
+
+		declaration := filter_updated_declaration(val, result)
+	]
+
+	updated_relationships := {result |
 		# relationships from registry
 		some relationship in data.relationships
 		result := identify_relationship(input, relationship)
-	]
+	}
 
-	print("updated relationships", updated_relationships)
+	updated_design_file := json.patch(input, [
+		{
+			"op": "replace",
+			"path": "/components",
+			"value": design_file_with_updated_declarations,
+		},
+		{
+			"op": "add", # include those relationships, which do not exist or should be removed.
+			"path": "/relationships",
+			"value": union(updated_relationships),
+		},
+	])
 }
+
+filter_updated_declaration(declaration, updated_declarations) := obj.declaration if {
+	some obj in updated_declarations
+	obj.declaration_id == declaration.id
+} else := declaration

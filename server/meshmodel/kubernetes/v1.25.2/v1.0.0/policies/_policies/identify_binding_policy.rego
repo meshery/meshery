@@ -43,7 +43,7 @@ identify_relationship(
 	}
 
 	# This is a set of set as it contains results for a particular binding_type and each binding_type can be binded by different type of nodes.
-	evaluation_results := {result |
+	evaluation_results := union({result |
 		some comp in binding_comps
 		binding_declarations := extract_components(input.components, [{"kind": comp}])
 
@@ -55,7 +55,7 @@ identify_relationship(
 			with data.to as to
 			with data.from_selectors as from_selectors
 			with data.to_selectors as to_selectors
-	}
+	})
 }
 
 evaluate_bindings contains result if {
@@ -106,7 +106,6 @@ evaluate_bindings contains result if {
 		"to": [_match_selector_for_to],
 	}}]}
 
-	print("CC", cloned_selectors)
 	result := object.union(data.relationship, cloned_selectors)
 }
 

@@ -23,7 +23,6 @@ identify_relationship(
 	from := extract_components(input.components, from_selectors)
 	to := extract_components(input.components, to_selectors)
 
-	results := {}
 	evaluation_results := evaluate_hierarchy with data.relationship as relationship
 		with data.from as from
 		with data.to as to
