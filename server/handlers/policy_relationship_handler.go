@@ -2,11 +2,13 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
+	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/meshery/schemas/models/v1alpha3/relationship"
@@ -17,7 +19,7 @@ import (
 
 	regv1alpha3 "github.com/layer5io/meshkit/models/meshmodel/registry/v1alpha3"
 	regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
-	"github.com/layer5io/meshkit/utils"
+	mutils "github.com/layer5io/meshkit/utils"
 )
 
 const (
@@ -78,6 +80,23 @@ func (h *Handler) EvaluateRelationshipPolicy(
 		component.Configuration = core.Format.DePrettify(component.Configuration, false)
 	}
 
+	// rmeove this
+	for _, rel := range patternFile.Relationships {
+		if rel.Selectors == nil {
+			continue
+		}
+
+		for _, selector := range *rel.Selectors {
+				for _, f := range selector.Allow.From {
+					f.Match = utils.RecursiveCastMapStringInterfaceToMapStringInterface(f.Match)
+				}
+				for _, d := range selector.Allow.To {
+					d.Match = utils.RecursiveCastMapStringInterfaceToMapStringInterface(d.Match)
+				}
+		}
+		// matchSelector := rel.Selectors.
+	}
+
 	patternUUID := patternFile.Id
 	eventBuilder.ActedUpon(patternUUID)
 
@@ -93,7 +112,7 @@ func (h *Handler) EvaluateRelationshipPolicy(
 
 	result, err := h.Rego.RegoPolicyHandler(patternFile,
 		relationshipPolicyPackageName,
-		verifiedEvaluationQueries...
+		verifiedEvaluationQueries...,
 	)
 	if err != nil {
 		h.log.Debug(err)
@@ -124,7 +143,7 @@ func (h *Handler) verifyEvaluationQueries(evaluationQueries []string) (verifiedE
 
 	var relationships []relationship.RelationshipDefinition
 	for _, entity := range registeredRelationships {
-		relationship, err := utils.Cast[*relationship.RelationshipDefinition](entity)
+		relationship, err := mutils.Cast[*relationship.RelationshipDefinition](entity)
 
 		if err != nil {
 			return
