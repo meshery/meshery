@@ -56,6 +56,18 @@ export const metricsApi = api
         }),
         invalidatesTags: [{ type: TAGS.METRICS, id: 'PROMETHEUS' }],
       }),
+      deletePrometheusConfig: builder.mutation({
+        query: (queryArg) => ({
+          url: 'telemetry/metrics/grafana',
+          method: 'DELETE',
+        }),
+        invalidatesTags: [{ type: TAGS.METRICS, id: 'PROMETHEUS' }],
+      }),
+      getPrometheusQuery: builder.query({
+        query: (queryArg) => `telemetry/metrics/query/${queryArg.connectionId}`,
+        method: 'GET',
+        providesTags: [{ type: TAGS.METRICS, id: 'PROMETHEUS' }],
+      }),
     }),
   });
 
@@ -65,5 +77,6 @@ export const {
   useUpdatePrometheusBoardMutation,
   useConfigureGrafanaMutation,
   useGetPrometheusConfigurationQuery,
+  useGetPrometheusQueryQuery,
   useConfigurePrometheusMutation,
 } = metricsApi;
