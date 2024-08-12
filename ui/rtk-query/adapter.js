@@ -19,6 +19,14 @@ export const adapterApi = api.injectEndpoints({
     pingAdapter: builder.query({
       query: (queryArg) => `system/adapters?adapter=${encodeURIComponent(queryArg.adapterLoc)}`,
     }),
+    connectAdapter: builder.mutation({
+      query: (queryArg) => ({
+        url: `system/adapter/manage`,
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
+        body: queryArg.params,
+      }),
+    }),
   }),
 });
 
@@ -27,4 +35,5 @@ export const {
   useGetAvailableAdaptersQuery,
   useDeleteAdaptersMutation,
   usePingAdapterQuery,
+  useConnectAdapterMutation,
 } = adapterApi;
