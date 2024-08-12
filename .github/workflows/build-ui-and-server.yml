@@ -102,9 +102,9 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Set PR number
-          run: |
-            export pull_number=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
-            echo "PULL_NO=$pull_number" >> $GITHUB_ENV
+        run: |
+          export pull_number=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
+          echo "PULL_NO=$pull_number" >> $GITHUB_ENV
       - name: set branch name
         if: github.event_name == 'pull_request' || github.event_name == 'pull_request_target'
         run: |
