@@ -1,3 +1,4 @@
+import { METRICS } from '@/constants/navigator';
 import { api } from './index';
 
 const TAGS = {
@@ -68,6 +69,16 @@ export const metricsApi = api
         method: 'GET',
         providesTags: [{ type: TAGS.METRICS, id: 'PROMETHEUS' }],
       }),
+      getPrometheusStaticBoard: builder.query({
+        query: () => 'telemetry/metrics/static-board',
+        method: 'GET',
+        providesTags: [{ type: TAGS.METRICS, id: 'PROMETHEUS' }],
+      }),
+      getGrafanBoard: builder.query({
+        query: (queryArg) => `/telemetry/metrics/grafana/${queryArg.connectionID}`,
+        method: 'GET',
+        providesTags: [{ TAGS: METRICS.TAGS, id: 'GRAFANA' }],
+      }),
     }),
   });
 
@@ -76,6 +87,8 @@ export const {
   usePingPrometheusQuery,
   useUpdatePrometheusBoardMutation,
   useConfigureGrafanaMutation,
+  useGetPrometheusStaticBoardQuery,
+  useGetGrafanBoardQuery,
   useGetPrometheusConfigurationQuery,
   useGetPrometheusQueryQuery,
   useConfigurePrometheusMutation,
