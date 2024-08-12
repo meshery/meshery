@@ -11,11 +11,12 @@ import (
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
+	"github.com/meshery/schemas/models/v1alpha3/relationship"
 	"gopkg.in/yaml.v2"
 
 	"github.com/layer5io/meshkit/models/events"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha2"
-	regv1alpha2 "github.com/layer5io/meshkit/models/meshmodel/registry/v1alpha2"
+
+	regv1alpha3 "github.com/layer5io/meshkit/models/meshmodel/registry/v1alpha3"
 	regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
 	"github.com/layer5io/meshkit/utils"
 )
@@ -124,11 +125,11 @@ func (h *Handler) EvaluateRelationshipPolicy(
 }
 
 func (h *Handler) verifyEvaluationQueries(evaluationQueries []string) (verifiedEvaluationQueries []string) {
-	registeredRelationships, _, _, _ := h.registryManager.GetEntities(&regv1alpha2.RelationshipFilter{})
+	registeredRelationships, _, _, _ := h.registryManager.GetEntities(&regv1alpha3.RelationshipFilter{})
 
-	var relationships []v1alpha2.RelationshipDefinition
+	var relationships []relationship.RelationshipDefinition
 	for _, entity := range registeredRelationships {
-		relationship, err := utils.Cast[*v1alpha2.RelationshipDefinition](entity)
+		relationship, err := utils.Cast[*relationship.RelationshipDefinition](entity)
 
 		if err != nil {
 			return
@@ -138,8 +139,8 @@ func (h *Handler) verifyEvaluationQueries(evaluationQueries []string) (verifiedE
 
 	if len(evaluationQueries) == 0 || (len(evaluationQueries) == 1 && evaluationQueries[0] == "all") {
 		for _, relationship := range relationships {
-			if relationship.EvaluationQuery != "" {
-				verifiedEvaluationQueries = append(verifiedEvaluationQueries, relationship.EvaluationQuery)
+			if relationship.EvaluationQuery != nil {
+				verifiedEvaluationQueries = append(verifiedEvaluationQueries, *relationship.EvaluationQuery)
 			} else {
 				verifiedEvaluationQueries = append(verifiedEvaluationQueries, relationship.GetDefaultEvaluationQuery())
 			}
@@ -147,8 +148,8 @@ func (h *Handler) verifyEvaluationQueries(evaluationQueries []string) (verifiedE
 	} else {
 		for _, regoQuery := range evaluationQueries {
 			for _, relationship := range relationships {
-				if (relationship.EvaluationQuery != "" && regoQuery == relationship.EvaluationQuery) || regoQuery == relationship.GetDefaultEvaluationQuery() {
-					verifiedEvaluationQueries = append(verifiedEvaluationQueries, relationship.EvaluationQuery)
+				if (relationship.EvaluationQuery != nil && regoQuery == *relationship.EvaluationQuery) || regoQuery == relationship.GetDefaultEvaluationQuery() {
+					verifiedEvaluationQueries = append(verifiedEvaluationQueries, *relationship.EvaluationQuery)
 					break
 				}
 			}

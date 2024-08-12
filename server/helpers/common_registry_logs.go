@@ -10,13 +10,13 @@ import (
 	gofrs "github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/models"
 	mutils "github.com/layer5io/meshkit/utils"
-	"github.com/meshery/schemas/models/v1beta1/connection"
 	"github.com/meshery/schemas/models/v1beta1/component"
+	"github.com/meshery/schemas/models/v1alpha3/relationship"
+	"github.com/meshery/schemas/models/v1beta1/connection"
 
 	"github.com/spf13/viper"
 
 	"github.com/layer5io/meshkit/models/events"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha2"
 	_models "github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	entity "github.com/layer5io/meshkit/models/meshmodel/entity"
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
@@ -91,20 +91,20 @@ func HandleError(c connection.Connection, en entity.Entity, err error, isModelEr
 			}
 		}
 
-	case *v1alpha2.RelationshipDefinition:
+	case *relationship.RelationshipDefinition:
 		if err != nil {
 			handleModelOrRegistrantError(c, entity.Model.Name, err, isModelError, isRegistrantError)
 
 			LogHandler.RegisterAttempts[meshmodel.HostnameToPascalCase(c.Kind)].mu.Lock()
 			if entityCount, ok := LogHandler.RegisterAttempts[meshmodel.HostnameToPascalCase(c.Kind)].Relationship[entity.GetID()]; ok {
 				entityCount.Attempt++
-				LogHandler.RegisterAttempts[meshmodel.HostnameToPascalCase(c.Kind)].Relationship[entity.ID] = entityCount
+				LogHandler.RegisterAttempts[meshmodel.HostnameToPascalCase(c.Kind)].Relationship[entity.Id] = entityCount
 			} else {
-				LogHandler.RegisterAttempts[meshmodel.HostnameToPascalCase(c.Kind)].Relationship[entity.ID] = EntityErrorCount{Attempt: 1, Error: err}
+				LogHandler.RegisterAttempts[meshmodel.HostnameToPascalCase(c.Kind)].Relationship[entity.Id] = EntityErrorCount{Attempt: 1, Error: err}
 			}
 			LogHandler.RegisterAttempts[meshmodel.HostnameToPascalCase(c.Kind)].mu.Unlock()
 
-			if LogHandler.RegisterAttempts[meshmodel.HostnameToPascalCase(c.Kind)].Relationship[entity.ID].Attempt == 1 {
+			if LogHandler.RegisterAttempts[meshmodel.HostnameToPascalCase(c.Kind)].Relationship[entity.Id].Attempt == 1 {
 				currentValue := LogHandler.NonImportModel[meshmodel.HostnameToPascalCase(c.Kind)]
 				currentValue.Relationships++
 				LogHandler.NonImportModel[meshmodel.HostnameToPascalCase(c.Kind)] = currentValue

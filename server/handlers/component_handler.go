@@ -17,11 +17,11 @@ import (
 	"github.com/layer5io/meshery/server/models/pattern/core"
 
 	"github.com/layer5io/meshkit/models/events"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha2"
 	_models "github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
-	_model "github.com/meshery/schemas/models/v1beta1/model"
 	"github.com/meshery/schemas/models/v1beta1/component"
+	"github.com/meshery/schemas/models/v1alpha3/relationship"
 	"github.com/meshery/schemas/models/v1beta1/connection"
+	_model "github.com/meshery/schemas/models/v1beta1/model"
 
 	"github.com/layer5io/meshkit/models/meshmodel/entity"
 	"github.com/layer5io/meshkit/models/meshmodel/registry"
@@ -1350,7 +1350,7 @@ func RegisterEntity(content []byte, entityType entity.EntityType, h *Handler) er
 		}, &c, err, isModelError, isRegistrantError)
 		return nil
 	case entity.RelationshipDefinition:
-		var r v1alpha2.RelationshipDefinition
+		var r relationship.RelationshipDefinition
 		err := json.Unmarshal(content, &r)
 		if err != nil {
 			return meshkitutils.ErrUnmarshal(err)
