@@ -6,9 +6,9 @@ identify_relationship(
 	design_file,
 	relationship,
 ) := evaluation_results if {
-	lower(relationship.kind) == "edge"
-	selector_set := relationship.selectors[_]
+	lower(relationship.kind) == "hierarchical"
 
+	selector_set := relationship.selectors[_]
 	from_selectors := {kind: selectors |
 		some selectors in selector_set.allow.from
 		kind := selectors.kind
@@ -16,146 +16,66 @@ identify_relationship(
 
 	to_selectors := {kind: selectors |
 		some selectors in selector_set.allow.to
-
-		some val in selectors.match
-
-		# why this logic, i guess to ensure conflict doesn't occur.
-		# Then also add it for from, as for now "from" might not be having conflicts but can happen,
-		# also add in comments about this.
-
-		# The relationship schema, can be used to allow more than one bindings b/w the edge, but implementation considers only one binding component between the edge.
-		val[0].kind != "self"
-
-		kind := concat("#", {selectors.kind, val[0].kind})
+		kind := selectors.kind
 	}
 
 	# contains "selectors.from" components only, eg: Role/ClusterRole(s) comps only
 	from := extract_components(input.components, from_selectors)
 	to := extract_components(input.components, to_selectors)
 
-	# should consider model and versions (regex/operator/normal string)
-	binding_comps := {type |
-		some match_selector in selector_set.allow.from[_].match
-
-		match_selector[0].kind != "self"
-		type = match_selector[0].kind
-	}
-
-	# This is a set of set as it contains results for a particular binding_type and each binding_type can be binded by different type of nodes.
-	evaluation_results := {result |
-		some comp in binding_comps
-		binding_declarations := extract_components(input.components, [{"kind": comp}])
-
-		count(binding_declarations) > 0
-
-		result := evaluate with data.binding_declarations as binding_declarations
-			with data.relationship as relationship
-			with data.from as from
-			with data.to as to
-			with data.from_selectors as from_selectors
-			with data.to_selectors as to_selectors
-	}
+	results := {}
+	evaluation_results := evaluate_hierarchy with data.relationship as relationship
+		with data.from as from
+		with data.to as to
+		with data.from_selectors as from_selectors
+		with data.to_selectors as to_selectors
 }
 
-evaluate contains result if {
-	some i, j, k
+evaluate_hierarchy contains result if {
+	some i, j
 
 	from_declaration := data.from[i]
-	binding_declaration := data.binding_declarations[j]
+	from_selector := data.from_selectors[from_declaration.component.kind]
 
-	selector := data.from_selectors[from_declaration.component.kind]
+	to_declaration := data.to[j]
+	to_selector := data.to_selectors[to_declaration.component.kind]
 
-	r := is_related(from_declaration, binding_declaration, selector)
+	is_valid_hierarchy(from_declaration, to_declaration, from_selector, to_selector)
 
-	r == true
+	# Th criteria for relationship is met hence add the relationship if not exists already.
 
-	to_declaration := data.to[k]
-	to_selector := data.to_selectors[concat("#", {to_declaration.component.kind, binding_declaration.component.kind})]
-
-	q := is_related(to_declaration, binding_declaration, to_selector)
-	q == true
-
-	match_selector_for_from := json.patch(selector, [{
+	match_selector_for_from := json.patch(from_selector, [{
 		"op": "add",
-		"path": "/match/from/0/id",
+		"path": "/id",
 		"value": from_declaration.id,
-	}])
-
-	_match_selector_for_from := json.patch(match_selector_for_from, [{
-		"op": "add",
-		"path": "/match/to/0/id",
-		"value": binding_declaration.id,
 	}])
 
 	match_selector_for_to := json.patch(to_selector, [{
 		"op": "add",
-		"path": "/match/from/0/id",
-		"value": binding_declaration.id,
-	}])
-
-	_match_selector_for_to := json.patch(match_selector_for_to, [{
-		"op": "add",
-		"path": "/match/to/0/id",
+		"path": "/id",
 		"value": to_declaration.id,
 	}])
 
 	cloned_selectors := {"selectors": [{"allow": {
-		"from": [_match_selector_for_from],
-		"to": [_match_selector_for_to],
+		"from": [match_selector_for_from],
+		"to": [match_selector_for_to],
 	}}]}
 
-	print("CC", cloned_selectors)
 	result := object.union(data.relationship, cloned_selectors)
 }
 
-is_related(resource1, resource2, from_selectors) if {
-	match_from := extract_mutator_path(from_selectors.match)
-	match_to := extract_tomutate_path(from_selectors.match)
+is_valid_hierarchy(from_declaration, to_declaration, from_selector, to_selector) if {
+	mutator_selector := identify_mutator(from_selector, to_selector, from_declaration, to_declaration)
+
+	mutated_selector := identify_mutated(from_selector, to_selector, from_declaration, to_declaration)
 
 	match_results := [result |
 		some i
+		is_feasible(mutator_selector.paths[i], mutated_selector.paths[i], mutator_selector.declaration, mutated_selector.declaration)
 
-		ans := is_feasible(match_from[i], match_to[i], resource1, resource2)
-		ans == true
 		result := true
 	]
 
-	# ensure all the atribute present in the match field are equal
-	count(match_results) == count(match_from)
-
-	# the second check isn't required. No of match selectors and patch should be same for "from" and "to" otherwise it's a bug in relationship definition.
-	count(match_results) == count(match_to)
-}
-
-# If none of the match paths ("from" and "to") doesn't contain array field in between, then it is a normal lookup.
-is_feasible(from, to, resource1, resource2) if {
-	# not arr_contains(to, "_")
-
-	from_path := resolve_path(from, resource1)
-	formatted_from_path = format_json_path(from_path)
-
-	to_path := resolve_path(to, resource2)
-	formatted_to_path = format_json_path(to_path)
-
-	object.get(resource1, formatted_from_path, "") == object.get(resource2, formatted_to_path, null)
-}
-
-extract_mutator_path(match) := value if {
-	has_key(match.from[0], "mutatorRef")
-	value := match.from[0].mutatorRef
-}
-
-extract_mutator_path(match) := value if {
-	has_key(match.to[0], "mutatorRef")
-	value := match.to[0].mutatorRef
-}
-
-extract_tomutate_path(match) := value if {
-	has_key(match.from[0], "mutatedRef")
-	value := match.from[0].mutatedRef
-}
-
-extract_tomutate_path(match) := value if {
-	has_key(match.to[0], "mutatedRef")
-	value := match.to[0].mutatedRef
+	count(match_results) == count(mutator_selector.paths)
+	count(match_results) == count(mutated_selector.paths)
 }

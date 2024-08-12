@@ -41,3 +41,35 @@ apply_patch(design_file, mutator_object, to_mutate_object) := result if {
 		"mutated_declaration": mutated_declaration,
 	}
 }
+
+identify_mutator(from_selector, to_selector, from_declaration, to_declaration) := mutator_obj if {
+	has_key(to_selector.patch, "mutatorRef")
+	mutator_obj = {
+		"declaration": to_declaration,
+		"paths": to_selector.patch.mutatorRef,
+	}
+}
+
+identify_mutator(from_selector, to_selector, from_declaration, to_declaration) := mutator_obj if {
+	has_key(from_selector.patch, "mutatorRef")
+	mutator_obj = {
+		"declaration": from_declaration,
+		"paths": from_selector.patch.mutatorRef,
+	}
+}
+
+identify_mutated(from_selector, to_selector, from_declaration, to_declaration) := mutated_obj if {
+	has_key(from_selector.patch, "mutatedRef")
+	mutated_obj = {
+		"declaration": from_declaration,
+		"paths": from_selector.patch.mutatedRef,
+	}
+}
+
+identify_mutated(from_selector, to_selector, from_declaration, to_declaration) := mutated_obj if {
+	has_key(to_selector.patch, "mutatedRef")
+	mutated_obj = {
+		"declaration": to_declaration,
+		"paths": to_selector.patch.mutatedRef,
+	}
+}
