@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/http"
 
@@ -87,12 +86,12 @@ func (h *Handler) EvaluateRelationshipPolicy(
 		}
 
 		for _, selector := range *rel.Selectors {
-				for _, f := range selector.Allow.From {
-					f.Match = utils.RecursiveCastMapStringInterfaceToMapStringInterface(f.Match)
-				}
-				for _, d := range selector.Allow.To {
-					d.Match = utils.RecursiveCastMapStringInterfaceToMapStringInterface(d.Match)
-				}
+			for _, f := range selector.Allow.From {
+				f.Match = utils.RecursiveCastMapStringInterfaceToMapStringInterface(f.Match)
+			}
+			for _, d := range selector.Allow.To {
+				d.Match = utils.RecursiveCastMapStringInterfaceToMapStringInterface(d.Match)
+			}
 		}
 		// matchSelector := rel.Selectors.
 	}
