@@ -2,8 +2,6 @@ name: Meshery UI and Server
 on:
   pull_request_target:
     types: [opened, synchronize]
-    branches:
-      - "master"
     paths-ignore:
       - "docs/**"
       - "mesheryctl/**"
@@ -103,10 +101,10 @@ jobs:
     # if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-22.04
     steps:
-    - name: Set PR number
-        run: |
-          export pull_number=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
-          echo "PULL_NO=$pull_number" >> $GITHUB_ENV
+      - name: Set PR number
+          run: |
+            export pull_number=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
+            echo "PULL_NO=$pull_number" >> $GITHUB_ENV
       - name: set branch name
         if: github.event_name == 'pull_request' || github.event_name == 'pull_request_target'
         run: |
@@ -231,7 +229,7 @@ jobs:
           id: meshery-ui-test
           message: ":x: One or more tests have failed."
           append: true
-      -- name: Comment Final Status
+      - name: Comment Final Status
         if: always()
         uses: hasura/comment-progress@v2.3.0
         with:
