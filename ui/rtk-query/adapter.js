@@ -10,7 +10,14 @@ export const adapterApi = api.injectEndpoints({
       query: () => 'system/availableAdapters',
       method: 'GET',
     }),
+    deleteAdapters: builder.mutation({
+      query: (queryArg) => ({
+        url: `/api/system/adapter/manage?adapter=${encodeURIComponent(queryArg.adapterLoc)}`,
+        method: 'DELETE',
+      }),
+    }),
   }),
 });
 
-export const { useGetAdaptersUrlQuery, useGetAvailableAdaptersQuery } = adapterApi;
+export const { useGetAdaptersUrlQuery, useGetAvailableAdaptersQuery, useDeleteAdaptersMutation } =
+  adapterApi;
