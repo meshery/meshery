@@ -1313,7 +1313,7 @@ class MesheryAdapterPlayComponent extends React.Component {
               <Grid item xs={12}>
                 <div className={classes.paneSection}>
                   <Typography align="left" variant="h6" style={{ margin: '0 0 2.5rem 0' }}>
-                    Manage Service Mesh
+                    Manage Meshery Adapter
                   </Typography>
                   <Grid container spacing={4}>
                     <Grid
