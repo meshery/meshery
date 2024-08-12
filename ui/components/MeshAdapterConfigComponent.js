@@ -17,6 +17,7 @@ import BadgeAvatars from './CustomAvatar';
 import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
 import {
+  useConnectAdapterMutation,
   useGetAdaptersUrlQuery,
   useGetAvailableAdaptersQuery,
   usePingAdapterQuery,
@@ -116,6 +117,8 @@ const MeshAdapterConfigComponent = (props) => {
     isSuccess: isAdapterPinged,
     isError: isErrorInPingingAdapter,
   } = usePingAdapterQuery({ adapterLoc: adapterLocation });
+
+  const [connectAdapter] = useConnectAdapterMutation();
 
   useEffect(() => {
     if (props.meshAdapterStates > ts) {
@@ -244,18 +247,11 @@ const MeshAdapterConfigComponent = (props) => {
 
     updateProgress({ showProgress: true });
 
-    dataFetch(
-      '/api/system/adapter/manage',
-      {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
-        body: params,
-      },
-      (result) => {
+    connectAdapter({ params })
+      .unwrap()
+      .then((result) => {
         updateProgress({ showProgress: false });
-        if (typeof result !== 'undefined') {
-          // self.setState({ meshAdapters : result, meshLocationURL : "" });
+        if (result) {
           setMeshAdapters(result);
           setMeshLocationURL('');
 
@@ -263,10 +259,12 @@ const MeshAdapterConfigComponent = (props) => {
           updateAdaptersInfo({ meshAdapters: result });
           fetchSetAdapterURLs();
         }
-      },
-      handleError('Adapter was not configured due to an error'),
-    );
+      })
+      .catch(() => {
+        handleError('Adapter was not configured due to an error');
+      });
   };
+  
   const handleDelete = (adapterLoc) => () => {
     updateProgress({ showProgress: true });
 
