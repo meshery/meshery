@@ -33,8 +33,11 @@
    "components": null,
    "relationships": null
   },
+  "capabilities": [{
+
+  }],
   "metadata": {
-   "capabilities": "",
+
    "defaultData": "",
    "genealogy": "",
    "isAnnotation": false,

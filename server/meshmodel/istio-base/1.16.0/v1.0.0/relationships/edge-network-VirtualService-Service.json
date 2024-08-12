@@ -1,9 +1,10 @@
 {
-  "schemaVersion": "relationships.meshery.io/v1alpha2",
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
   "version": "*",
   "kind": "edge",
   "metadata": {
-    "description": "A relationship that defines network edges between components"},
+    "description": "A relationship that defines network edges between components"
+  },
   "model": {
     "schemaVersion": "core.meshery.io/v1alpha2",
     "version": "*",
@@ -23,31 +24,33 @@
   "type": "Network",
   "subType": "Network",
   "evaluationQuery": "edge_network_relationship",
-  "selectors": [{
-    "allow": {
-      "from": [
-        {
-          "kind": "VirtualService",
-          "model": {
-            "name": "istio-base",
-            "registrant": {
-              "kind": "artifacthub"
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "VirtualService",
+            "model": {
+              "name": "istio-base",
+              "registrant": {
+                "kind": "artifacthub"
+              }
             }
           }
-        }
-      ],
-      "to": [
-        {
-          "kind": "Service",
-          "model": {
-            "name": "kubernetes",
-            "registrant": {
-              "kind": "artifacthub"
+        ],
+        "to": [
+          {
+            "kind": "Service",
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
             }
           }
-        }
-      ]
-    },
-    "deny": {}
-  }]
+        ]
+      },
+      "deny": {}
+    }
+  ]
 }

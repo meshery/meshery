@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "relationships.meshery.io/v1alpha2",
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
   "version": "v1.0.0",
   "kind": "Hierarchical",
   "metadata": {
@@ -40,13 +40,15 @@
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "component", "version"
+                  "component",
+                  "version"
                 ],
                 [
                   "displayName"
                 ],
                 [
-                  "component", "kind"
+                  "component",
+                  "kind"
                 ]
               ],
               "description": "Allow Horizontal Pod Autoscaler to scale based on observed metrics for StatefulSet."

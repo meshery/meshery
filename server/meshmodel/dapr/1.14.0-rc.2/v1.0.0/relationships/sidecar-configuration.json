@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "relationships.meshery.io/v1alpha2",
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
   "version": "v1.0.0",
   "kind": "Hierarchical",
   "metadata": {
@@ -36,7 +36,13 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [["configuration", "spec", "routes"]],
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "routes"
+                ]
+              ],
               "description": "Specifies the Dapr HTTPEndpoint configuration, particularly the routes, that will be applied to the Dapr sidecar container. This configuration determines how incoming HTTP requests are handled and routed within the Dapr runtime."
             }
           },
@@ -50,7 +56,13 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [["configuration", "spec", "policies"]],
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "policies"
+                ]
+              ],
               "description": "Defines the Dapr Resiliency policies to be applied to the Dapr sidecar. These policies control retry, circuit breaking, and timeout behaviors for various Dapr operations."
             }
           },
@@ -64,7 +76,12 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [["configuration", "spec"]],
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "spec"
+                ]
+              ],
               "description": "Specifies the Dapr Configuration to be applied to the Dapr sidecar. This includes settings for features like tracing, metrics, and middleware that affect the behavior of the Dapr runtime."
             }
           },
@@ -79,8 +96,16 @@
             "patch": {
               "patchStrategy": "replace",
               "mutatorRef": [
-                ["configuration", "spec", "topic"],
-                ["configuration", "spec", "routes"]
+                [
+                  "configuration",
+                  "spec",
+                  "topic"
+                ],
+                [
+                  "configuration",
+                  "spec",
+                  "routes"
+                ]
               ],
               "description": "Defines the Dapr Subscription configuration to be applied to the Dapr sidecar. This determines which pub/sub topics the application subscribes to and how messages are routed to the application."
             }
@@ -92,7 +117,12 @@
             "model": "meshery-core",
             "patch": {
               "patchStrategy": "replace",
-              "mutatedRef": [["configuration", "args"]],
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "args"
+                ]
+              ],
               "description": "Identifies the sidecar container running daprd that will receive the Dapr component configurations. The container's arguments are updated to reflect the new configurations for HTTPEndpoint, Resiliency, Configuration, and Subscription, enabling the Dapr sidecar to operate with the specified behaviors."
             }
           }

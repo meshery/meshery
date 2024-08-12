@@ -8,7 +8,7 @@
   "status": "enabled",
   "hostID": "00000000-0000-0000-0000-000000000000",
   "registrant": {
-   "hostname": "artifacthub"
+   "kind": "artifacthub"
   },
   "category": {
    "name": "Orchestration \u0026 Management",
@@ -16,7 +16,7 @@
   },
   "subCategory": "Orchestration \u0026 Management",
   "metadata": {
-   "capabilities": "",
+
    "defaultData": "",
    "isAnnotation": false,
    "primaryColor": "#326CE5",

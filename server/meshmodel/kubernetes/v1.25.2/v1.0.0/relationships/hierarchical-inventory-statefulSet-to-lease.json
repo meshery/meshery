@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "relationships.meshery.io/v1alpha2",
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
   "version": "v1.0.0",
   "kind": "Hierarchical",
   "metadata": {
@@ -43,10 +43,12 @@
                   "displayName"
                 ],
                 [
-                  "component", "kind"
+                  "component",
+                  "kind"
                 ],
                 [
-                  "component", "version"
+                  "component",
+                  "version"
                 ]
               ],
               "description": "A StatefulSet in Kubernetes is designed for managing stateful applications, providing stable, unique network identifiers, and persistent storage. By integrating leases within StatefulSets, Kubernetes guarantees precise ordering during updates or scaling events, maintaining the integrity of the application's state across pods and ensuring data consistency and reliability throughout the cluster."

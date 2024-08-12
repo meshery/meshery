@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "relationships.meshery.io/v1alpha2",
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
   "version": "v1.0.0",
   "kind": "Hierarchical",
   "metadata": {
@@ -42,18 +42,18 @@
             },
             "patch": {
               "mutatorRef": [
-                    [
-                      "displayName"
-                    ],
-                    [
-                      "configuration",
-                      "metadata",
-                      "namespace"
-                    ],
-                    [
-                      "component",
-                      "kind"
-                    ]
+                [
+                  "displayName"
+                ],
+                [
+                  "configuration",
+                  "metadata",
+                  "namespace"
+                ],
+                [
+                  "component",
+                  "kind"
+                ]
               ],
               "description": "Kubernetes components manage containerized applications, while AWS Field Export exports data from AWS CloudFront. Kubernetes can run applications that generate data ingested by CloudFront, facilitating efficient content delivery and scaling in AWS environments."
             }
