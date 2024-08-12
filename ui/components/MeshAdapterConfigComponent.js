@@ -16,6 +16,7 @@ import { EVENT_TYPES } from '../lib/event-types';
 import BadgeAvatars from './CustomAvatar';
 import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
+import { usePingAdapterQuery } from '@/rtk-query/adapter';
 
 const useStyles = makeStyles((theme) => ({
   wrapperClass: {
@@ -89,8 +90,16 @@ const MeshAdapterConfigComponent = (props) => {
   const [meshDeployURL, setMeshDeployURL] = useState();
   const [meshDeployURLError, setMeshDeployURLError] = useState();
   const [selectedAvailableAdapter, setSelectedAvailableAdapter] = useState();
+  const [adapterLocation, setAdapterLocation] = useState('');
+
   const classes = useStyles();
   const { notify } = useNotification();
+
+  const {
+    data: adapterData,
+    isSuccess: isAdapterPinged,
+    isError: isErrorInPingingAdapter,
+  } = usePingAdapterQuery({ adapterLoc: adapterLocation });
 
   useEffect(() => {
     if (props.meshAdapterStates > ts) {
@@ -274,20 +283,15 @@ const MeshAdapterConfigComponent = (props) => {
 
   const handleClick = (adapterLoc) => () => {
     updateProgress({ showProgress: true });
-
-    dataFetch(
-      `/api/system/adapters?adapter=${encodeURIComponent(adapterLoc)}`,
-      {
-        credentials: 'include',
-      },
-      (result) => {
-        updateProgress({ showProgress: false });
-        if (typeof result !== 'undefined') {
-          notify({ message: 'Adapter was pinged!', event_type: EVENT_TYPES.SUCCESS });
-        }
-      },
-      handleError('error'),
-    );
+    setAdapterLocation(adapterLoc);
+    if (isAdapterPinged) {
+      updateProgress({ showProgress: false });
+      if (typeof adapterData !== 'undefined') {
+        notify({ message: 'Adapter was pinged!', event_type: EVENT_TYPES.SUCCESS });
+      }
+    } else if (isErrorInPingingAdapter) {
+      handleError('error');
+    }
   };
 
   const handleAdapterDeploy = () => {

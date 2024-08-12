@@ -12,12 +12,19 @@ export const adapterApi = api.injectEndpoints({
     }),
     deleteAdapters: builder.mutation({
       query: (queryArg) => ({
-        url: `/api/system/adapter/manage?adapter=${encodeURIComponent(queryArg.adapterLoc)}`,
+        url: `system/adapter/manage?adapter=${encodeURIComponent(queryArg.adapterLoc)}`,
         method: 'DELETE',
       }),
+    }),
+    pingAdapter: builder.query({
+      query: (queryArg) => `system/adapters?adapter=${encodeURIComponent(queryArg.adapterLoc)}`,
     }),
   }),
 });
 
-export const { useGetAdaptersUrlQuery, useGetAvailableAdaptersQuery, useDeleteAdaptersMutation } =
-  adapterApi;
+export const {
+  useGetAdaptersUrlQuery,
+  useGetAvailableAdaptersQuery,
+  useDeleteAdaptersMutation,
+  usePingAdapterQuery,
+} = adapterApi;
