@@ -16,7 +16,11 @@ import { EVENT_TYPES } from '../lib/event-types';
 import BadgeAvatars from './CustomAvatar';
 import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
-import { useGetAdaptersUrlQuery, usePingAdapterQuery } from '@/rtk-query/adapter';
+import {
+  useGetAdaptersUrlQuery,
+  useGetAvailableAdaptersQuery,
+  usePingAdapterQuery,
+} from '@/rtk-query/adapter';
 
 const useStyles = makeStyles((theme) => ({
   wrapperClass: {
@@ -102,6 +106,12 @@ const MeshAdapterConfigComponent = (props) => {
   } = useGetAdaptersUrlQuery();
 
   const {
+    data: availableAdaptersData,
+    isSuccess: isAvailableAdaptersFetched,
+    isError: isErrorInFetchingAvailableAdapters,
+  } = useGetAvailableAdaptersQuery();
+
+  const {
     data: adapterData,
     isSuccess: isAdapterPinged,
     isError: isErrorInPingingAdapter,
@@ -141,24 +151,20 @@ const MeshAdapterConfigComponent = (props) => {
   const fetchAvailableAdapters = () => {
     updateProgress({ showProgress: true });
 
-    dataFetch(
-      '/api/system/availableAdapters',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      (result) => {
-        updateProgress({ showProgress: false });
-        if (typeof result !== 'undefined') {
-          const options = result.map((res) => ({
-            value: res.adapter_location,
-            label: res.name,
-          }));
-          setAvailableAdapters(options);
-        }
-      },
-      handleError('Unable to fetch available adapters'),
-    );
+    if (isErrorInFetchingAvailableAdapters) {
+      handleError('Unable to fetch available adapters');
+      return;
+    }
+
+    if (isAvailableAdaptersFetched && availableAdaptersData) {
+      updateProgress({ showProgress: false });
+      const options = availableAdaptersData.map((res) => ({
+        value: res.adapter_location,
+        label: res.name,
+      }));
+
+      setAvailableAdapters(options);
+    }
   };
 
   const setAdapterStatesFunction = () => {
