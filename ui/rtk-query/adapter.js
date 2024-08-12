@@ -2,11 +2,15 @@ import { api } from './index';
 
 export const adapterApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    getAdapters: builder.query({
+    getAdaptersUrl: builder.query({
       query: () => 'system/adapters',
+      method: 'GET',
+    }),
+    getAvailableAdapters: builder.query({
+      query: () => 'system/availableAdapters',
       method: 'GET',
     }),
   }),
 });
 
-export const { useGetAdaptersQuery } = adapterApi;
+export const { useGetAdaptersUrlQuery, useGetAvailableAdaptersQuery } = adapterApi;
