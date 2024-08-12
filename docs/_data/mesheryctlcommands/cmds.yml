@@ -964,42 +964,6 @@ components:
           example: mesheryctl components view --save "bookInfo.yaml" --output-format yaml
 
 exp:
-  components:
-    name: components
-    description: View list of components and detail of components
-    usage: mesheryctl exp components [command] [flags]
-    flags:
-      count:
-        name: --count
-        description: (optional) Get the number of exp components in total
-      help:
-        name: --help, -h
-        description: help for exp components
-        usage: mesheryctl exp components --help
-        example: mesheryctl exp components --help
-    subcommands:
-      list:
-        name: list
-        description: list all components registered in Meshery Server
-        usage: mesheryctl exp components list [flags]
-        flags:
-          page:
-            name: -p, --page
-            description: "(optional) List next set of exp components list with --page (default = 1) (default 1)."
-            usage: mesheryctl exp components list --page [page number]
-            example: mesheryctl exp components list --page 2
-      search:
-        name: search
-        description: search components registered in Meshery Server
-        usage: mesheryctl exp components search [query-text]
-      view:
-        name: view
-        description: view a component registered in Meshery Server
-        usage: mesheryctl exp components view [component-name]
-        flags:
-          output-format:
-            name: -o, --output-format
-            description: (optional) format to display in [json|yaml] (default "yaml")
   connections:
     name: connections
     description: Manage connections
