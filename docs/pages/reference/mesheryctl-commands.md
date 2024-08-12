@@ -466,15 +466,21 @@ Installation, troubleshooting and debugging of Meshery and its adapters
     <th>Function</th>
   </tr>
   {% assign command7 = site.data.mesheryctlcommands.cmds.adapter %}
+    {% assign subcommand_flag_count = 0 %}
+    {% for subcommand_hash in command7.subcommands %}
+      {% assign subcommand = subcommand_hash[1] %}
+      {% assign subcommand_flag_count = subcommand_flag_count | plus: subcommand.flags.size %}
+    {% endfor %}
+    {% assign total_rowspan = command7.subcommands.size | plus: subcommand_flag_count | plus: command7.flags.size | plus: 1 %}
     <tr>
-      <td rowspan=12><a href="{{ site.baseurl }}/reference/mesheryctl/{{ command7.name }}">{{ command7.name }}</a></td>
+      <td rowspan={{ total_rowspan }}><a href="{{ site.baseurl }}/reference/mesheryctl/{{ command7.name }}">{{ command7.name }}</a></td>
       <td></td>
       <td></td>
       <td>{{ command7.description }}</td>
     </tr>
     {% for subcommand_hash in command7.subcommands %}{% assign subcommand = subcommand_hash[1] %}
       <tr>
-        <td rowspan={{ subcommand.flags.size | plus:1 }} ><a href="{{ site.baseurl }}/reference/mesheryctl/{{ command7.name }}/{{ subcommand.name }}">{{ subcommand.name }}</a></td>
+        <td rowspan={{ subcommand.flags.size | plus: 1 }} ><a href="{{ site.baseurl }}/reference/mesheryctl/{{ command7.name }}/{{ subcommand.name }}">{{ subcommand.name }}</a></td>
         <td></td>
         <td>{{ subcommand.description }}</td>
       </tr>
@@ -487,6 +493,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters
     {% endfor %}
 </thead>
 </table>
+
 
 ## Cloud Native Pattern Configuration and Management
 
