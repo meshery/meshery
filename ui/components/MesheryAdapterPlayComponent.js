@@ -23,7 +23,6 @@ import {
   TableHead,
   TableRow,
   Tooltip,
-  Typography,
   withStyles,
 } from '@material-ui/core';
 import { blue } from '@material-ui/core/colors';
@@ -1312,9 +1311,6 @@ class MesheryAdapterPlayComponent extends React.Component {
               {/* SECTION 1 */}
               <Grid item xs={12}>
                 <div className={classes.paneSection}>
-                  <Typography align="left" variant="h6" style={{ margin: '0 0 2.5rem 0' }}>
-                    Manage Meshery Adapter
-                  </Typography>
                   <Grid container spacing={4}>
                     <Grid
                       container
