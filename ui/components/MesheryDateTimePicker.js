@@ -1,69 +1,55 @@
 import { DateTimePicker } from '@material-ui/pickers';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
+import { useState, useCallback } from 'react';
 import { TextField } from '@material-ui/core';
 import moment from 'moment';
 
-class MesheryDateTimePicker extends Component {
-  constructor(props) {
-    super(props);
-    this.dateFormat = 'YYYY-MM-DD, hh:mm:ss a';
-    this.state = { hasError: false };
-  }
+const MesheryDateTimePicker = ({ selectedDate, onChange, label, className, disabled }) => {
+  const [hasError, setHasError] = useState(false); 
+  const dateFormat = 'YYYY-MM-DD, hh:mm:ss a';
 
-  static getDerivedStateFromError() {
-    return { hasError: true };
-  }
-
-  componentDidCatch(error, info) {
-    console.log(`error: ${error}, info: ${info}`);
-  }
-
-  dateChange() {
-    const self = this;
-    return (event) => {
-      self.props.onChange(moment(event.target.value));
-    };
-  }
-
-  render() {
-    const { selectedDate, onChange, label, className, disabled } = this.props;
-    const { hasError } = this.state;
-
-    if (hasError) {
-      const dateVal = moment(selectedDate).format(moment.HTML5_FMT.DATETIME_LOCAL_SECONDS);
-      return (
-        <div className={className}>
-          <TextField
-            disabled={disabled}
-            label={label}
-            type="datetime-local"
-            // defaultValue="2017-05-24T10:30"
-            value={dateVal}
-            onChange={this.dateChange()}
-            variant="outlined"
-            fullWidth
-            // className={classes.textField}
-            InputLabelProps={{ shrink: true }}
-          />
-        </div>
-      );
+  const dateChange = useCallback((event) => {
+    try {
+      onChange(moment(event.target.value));
+    } catch (error) {
+      console.error(error);
+      setHasError(true); 
     }
+  }, [onChange]);
+
+  if (hasError) {
+    const dateVal = moment(selectedDate).format(moment.HTML5_FMT.DATETIME_LOCAL_SECONDS);
     return (
       <div className={className}>
-        <DateTimePicker
+        <TextField
           disabled={disabled}
-          value={selectedDate}
-          onChange={onChange}
           label={label}
+          type="datetime-local"
+          // defaultValue="2017-05-24T10:30"
+          value={dateVal}
+          onChange={dateChange}
           variant="outlined"
           fullWidth
-          format={this.dateFormat}
+          InputLabelProps={{ shrink: true }}
         />
       </div>
     );
   }
-}
+
+  return (
+    <div className={className}>
+      <DateTimePicker
+        disabled={disabled}
+        value={selectedDate}
+        onChange={onChange}
+        label={label}
+        variant="outlined"
+        fullWidth
+        format={dateFormat}
+      />
+    </div>
+  );
+};
 
 MesheryDateTimePicker.propTypes = {
   label: PropTypes.string.isRequired,
