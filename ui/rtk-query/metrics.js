@@ -29,6 +29,12 @@ export const metricsApi = api
           headers: { 'Content-Type': 'application/json' },
           body: queryArg.body,
         }),
+        invalidatesTags: [{ type: TAGS.METRICS, id: 'PROMETHEUS' }],
+      }),
+      getPrometheusConfiguration: builder.query({
+        query: () => '/telemetry/metrics/config',
+        method: 'GET',
+        providesTags: [{ type: TAGS.METRICS, id: 'PROMETHEUS' }],
       }),
       configureGrafana: builder.mutation({
         query: (queryArg) => ({
@@ -58,5 +64,6 @@ export const {
   usePingPrometheusQuery,
   useUpdatePrometheusBoardMutation,
   useConfigureGrafanaMutation,
+  useGetPrometheusConfigurationQuery,
   useConfigurePrometheusMutation,
 } = metricsApi;
