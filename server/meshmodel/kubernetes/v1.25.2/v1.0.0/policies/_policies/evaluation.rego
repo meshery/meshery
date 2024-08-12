@@ -9,32 +9,33 @@ evalutate := result if {
 	resultant_patches := {patched_declaration |
 		some rel in rels_in_design_file
 		patched_declaration := perform_eval(input, rel)
-
 	}
 
-	# print("\n\n ----------- ", resultant_patches, "\n\n")
 	# merge the patches made to the same declaration as part of relationships.
-
 	# separate out same declarations by id.
-
-	intermediate_result := { x |
+	intermediate_result := {x |
 		some val in resultant_patches
-		
+
 		some nval in val
 		x := nval
 	}
 
 	ans := group_by_id(intermediate_result)
-	
-	result := { mutated |
-	some  val in ans
-	print("Aẞ,", val)
+
+	result := {mutated |
+		some val in ans
 		merged := object.union_n(val)
-		print("MERGED : ", merged)
 		mutated := {
-			"declaration_id" : "merged.declaration_id",
-			"declaration": "merged"
+			"declaration_id": merged.id,
+			"declaration": merged,
 		}
 	}
-	
+
+	updated_relationships := [result |
+		# relationships from registry
+		some relationship in data.relationships
+		result := identify_relationship(input, relationship)
+	]
+
+	print("updated relationships", updated_relationships)
 }

@@ -101,20 +101,29 @@ group_by_id(objects) := {obj |
 	obj := grouped_objects
 }
 
-# extract_components(services, selectors) := {component.traits.meshmap.id: component |
-# 	selector := selectors[_]
-# 	service := services[_]
-# 	is_relationship_feasible(selector, service.type)
-# 	component := service
-# }
-# extract_components_by_type(services, selector) := {component.traits.meshmap.id: component |
-# 	service := services[_]
-# 	is_relationship_feasible(selector, service.type)
-# 	component := service
-# }
-# is_relationship_feasible(selector, compType) if {
-# 	selector.kind == "*"
-# }
-# is_relationship_feasible(selector, compType) if {
-# 	selector.kind == compType
-# }
+extract_components(declarations, selectors) := {declaration.id: declaration |
+
+	selector := selectors[_]
+	declaration := declarations[_]
+	is_relationship_feasible(selector, declaration.component.kind)
+	component := declaration
+}
+
+extract_components_by_type(declarations, selector) := {declaration.id: declaration |
+	declaration := declarations[_]
+	
+	is_relationship_feasible(selector, declaration.component.kind)
+	component := declaration
+}
+
+# TODO: Add checks for
+# 1. when operators/regex are used in the version fields
+# 2. deny selctor
+
+is_relationship_feasible(selector, compType) if {
+	selector.kind == "*"
+}
+
+is_relationship_feasible(selector, compType) if {
+	selector.kind == compType
+}

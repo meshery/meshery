@@ -21,6 +21,9 @@ perform_eval(
 	# hence merge all those updates.
 }
 
+# use the below rules, when dealing with relationships block in the design file.
+# In the design file's relationships block, only one array item is present inside the selectors.
+
 extract_mutator_config_from_patch(selector) := value if {
 	has_key(selector.from[0].patch, "mutatorRef")
 	value = {
