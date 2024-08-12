@@ -59,7 +59,7 @@ export const metricsApi = api
       }),
       deletePrometheusConfig: builder.mutation({
         query: (queryArg) => ({
-          url: 'telemetry/metrics/grafana',
+          url: 'telemetry/metrics/config',
           method: 'DELETE',
         }),
         invalidatesTags: [{ type: TAGS.METRICS, id: 'PROMETHEUS' }],
@@ -84,6 +84,13 @@ export const metricsApi = api
         method: 'GET',
         providesTags: [{ type: TAGS.METRICS, id: 'GRAFANA' }],
       }),
+      deleteGrafanaConfiugration: builder.mutation({
+        query: () => ({
+          url: 'telemetry/metrics/grafana/config',
+          method: 'DELETE',
+        }),
+        invalidatesTags: [{ type: TAGS.METRICS, id: 'GRAFANA' }],
+      }),
     }),
   });
 
@@ -93,6 +100,7 @@ export const {
   useUpdatePrometheusBoardMutation,
   useConfigureGrafanaMutation,
   useGetPrometheusStaticBoardQuery,
+  useDeleteGrafanaConfiugrationMutation,
   useGetGrafanBoardQuery,
   useGetGrafanaConfigurationQuery,
   useGetPrometheusConfigurationQuery,
