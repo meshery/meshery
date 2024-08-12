@@ -11,12 +11,16 @@ export const metricsApi = api
   .injectEndpoints({
     endpoints: (builder) => ({
       pingGrafana: builder.query({
-        query: () => 'telemetry/metrics/grafana/ping',
-        providesTags: () => [{ type: TAGS.METRICS, id: 'GRAFANA' }],
+        query: (queryArg) => ({
+          url: `telemetry/metrics/grafana/ping/${queryArg.connectionId}`,
+          providesTags: () => [{ type: TAGS.METRICS, id: 'GRAFANA' }],
+        }),
       }),
       pingPrometheus: builder.query({
-        query: () => 'telemetry/metrics/ping', // compare the endpoint with swagger
-        providesTags: () => [{ type: TAGS.METRICS, id: 'PROMETHEUS' }],
+        query: (queryArg) => ({
+          url: `telemetry/metrics/ping/${queryArg.connectionId}`,
+          providesTags: () => [{ type: TAGS.METRICS, id: 'PROMETHEUS' }],
+        }),
       }),
       configureGrafana: builder.mutation({
         query: (queryArg) => ({
