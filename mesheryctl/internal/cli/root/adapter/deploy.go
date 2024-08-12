@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package mesh
+package adapter
 
 import (
 	"fmt"
@@ -27,7 +27,7 @@ import (
 
 var linkDocMeshDeploy = map[string]string{
 	"link":    "![mesh-deploy-usage](/assets/img/mesheryctl/deploy-mesh.png)",
-	"caption": "Usage of mesheryctl mesh deploy",
+	"caption": "Usage of mesheryctl adapter deploy",
 }
 
 var (
@@ -38,16 +38,16 @@ var (
 		Long:  `Deploy infrastructure to the connected Kubernetes cluster`,
 		Example: `
 // Deploy a infrastructure from an interactive on the default namespace
-mesheryctl mesh deploy
+mesheryctl adapter deploy
 
 // Deploy infrastructure
-mesheryctl mesh deploy linkerd
+mesheryctl adapter deploy linkerd
 
 // Deploy Linkerd mesh on a specific namespace
-mesheryctl mesh deploy linkerd --namespace linkerd-ns
+mesheryctl adapter deploy linkerd --namespace linkerd-ns
 
 // Deploy Linkerd mesh and wait for it to be deployed
-mesheryctl mesh deploy linkerd --watch
+mesheryctl adapter deploy linkerd --watch
 		`,
 		Annotations: linkDocMeshDeploy,
 		PreRunE: func(cmd *cobra.Command, args []string) error {

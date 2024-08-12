@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package mesh
+package adapter
 
 import (
 	"fmt"
@@ -32,10 +32,10 @@ var (
 		Long:  `remove cloud and cloud native infrastructure`,
 		Example: `
 // Remove Linkerd deployment
-mesheryctl mesh remove linkerd
+mesheryctl adapter remove linkerd
 
 // Remove a Linkerd control plane found under a specific namespace (linkerd-ns)
-mesheryctl mesh remove linkerd --namespace linkerd-ns
+mesheryctl adapter remove linkerd --namespace linkerd-ns
 		`,
 		PreRunE: func(cmd *cobra.Command, args []string) error {
 			utils.Log.Info("Verifying prerequisites...")

@@ -548,10 +548,9 @@ perf:
           usage: mesheryctl perf result --view
           example: mesheryctl perf result --view
 
-mesh:
-  name: mesh
+adapter:
+  name: adapter
   description: Lifecycle management of cloud native infrastructure
-
   subcommands:
     validate:
       name: validate
@@ -560,58 +559,58 @@ mesh:
         adapter:
           name: --adapter, -a
           description: (required) adapter to use for validation. Defaults to "meshery-osm:10010"
-          usage: mesheryctl mesh validate --adapter [name of the adapter]
-          example: mesheryctl mesh validate --adapter meshery-istio:10000 -t "~/Download/auth.json"
+          usage: mesheryctl adapter validate --adapter [name of the adapter]
+          example: mesheryctl adapter validate --adapter meshery-istio:10000 -t "~/Download/auth.json"
         namespace:
           name: --namespace, -n
           description: Kubernetes namespace to be used for deploying the validation tests and sample workload
-          usage: mesheryctl mesh validate --namespace [namespace to be used]
-          example: mesheryctl mesh validate --namespace test-x1 -t "~/Download/auth.json"
+          usage: mesheryctl adapter validate --namespace [namespace to be used]
+          example: mesheryctl adapter validate --namespace test-x1 -t "~/Download/auth.json"
         spec:
           name: --spec, -s
           description: (required) specification to be used for conformance test. Defaults to "smi"
-          usage: mesheryctl mesh validate --spec [specification to be used for conformance test]
-          example: mesheryctl mesh validate --spec smi -t "~/Download/auth.json"
+          usage: mesheryctl adapter validate --spec [specification to be used for conformance test]
+          example: mesheryctl adapter validate --spec smi -t "~/Download/auth.json"
         tokenpath:
           name: --tokenpath, -t
           description: (required) path to token for authenticating to Meshery API
-          usage: mesheryctl mesh validate --tokenPath [path to token for authentication]
-          example: mesheryctl mesh validate --tokenPath "~/Downloads/auth.json"
+          usage: mesheryctl adapter validate --tokenPath [path to token for authentication]
+          example: mesheryctl adapter validate --tokenPath "~/Downloads/auth.json"
 
     remove:
       name: remove
       description: Remove service mesh in the connected Kubernetes cluster
-      usage: mesheryctl mesh remove [args] [flags] [args]
+      usage: mesheryctl adapter remove [args] [flags] [args]
       flags:
         namespace:
           name: --namespace, -n
           description: Kubernetes namespace to be used for removing a service mesh under a specific namespace
-          usage: mesheryctl mesh remove [args] --namespace [namespace to be used]
-          example: mesheryctl mesh remove linkerd --namespace linkerd-ns -t "~/Download/auth.json"
+          usage: mesheryctl adapter remove [args] --namespace [namespace to be used]
+          example: mesheryctl adapter remove linkerd --namespace linkerd-ns -t "~/Download/auth.json"
 
     deploy:
       name: deploy
       description: Deploy a service mesh into the cluster
-      usage: mesheryctl mesh deploy [flags]
-      example: mesheryctl mesh deploy -t "~/Downloads/auth.json"
+      usage: mesheryctl adapter deploy [flags]
+      example: mesheryctl adapter deploy -t "~/Downloads/auth.json"
       flags:
         adapter:
           name: --adapter, -a
           description: (required) adapter to use for validation. Defaults to "meshery-osm:10010"
-          usage: mesheryctl mesh deploy --adapter [name of the adapter]
-          example: mesheryctl mesh deploy --adapter meshery-istio:10000
+          usage: mesheryctl adapter deploy --adapter [name of the adapter]
+          example: mesheryctl adapter deploy --adapter meshery-istio:10000
         namespace:
           name: --namespace, -n
           description: Kubernetes namespace to be used for deploying the validation tests and sample workload
-          usage: mesheryctl mesh deploy --namespace [namespace to be used]
+          usage: mesheryctl adapter deploy --namespace [namespace to be used]
           example: |
-            mesheryctl mesh deploy --namespace docker-desktop
-              mesheryctl mesh deploy --namespace minikube
+            mesheryctl adapter deploy --namespace docker-desktop
+              mesheryctl adapter deploy --namespace minikube
         token:
           name: --tokenpath, -t
           description: (required) path to token for authenticating to Meshery API
-          usage: mesheryctl mesh deploy --tokenPath [path to token for authentication]
-          example: mesheryctl mesh deploy --tokenPath "~/Downloads/auth.json"
+          usage: mesheryctl adapter deploy --tokenPath [path to token for authentication]
+          example: mesheryctl adapter deploy --tokenPath "~/Downloads/auth.json"
 
 pattern:
   name: pattern

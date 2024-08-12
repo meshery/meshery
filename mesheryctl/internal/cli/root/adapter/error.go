@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package mesh
+package adapter
 
 import "github.com/layer5io/meshkit/errors"
 
