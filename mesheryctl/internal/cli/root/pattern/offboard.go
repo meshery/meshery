@@ -135,7 +135,7 @@ mesheryctl pattern offboard -f [filepath]
 
 		patternFile := response[0].PatternFile
 		patternFileByt, err := yaml.Marshal(patternFile)
-		
+
 		if err != nil {
 			return models.ErrMarshallingDesignIntoYAML(err)
 		}

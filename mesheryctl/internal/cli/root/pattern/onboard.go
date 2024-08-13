@@ -28,6 +28,7 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshkit/models/patterns"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -67,7 +68,7 @@ mesheryctl pattern onboard -f ./pattern.yml -s "Kubernetes Manifest"
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var req *http.Request
 		var err error
-		var patternFile pattern.PatternFile
+		var patternFile *pattern.PatternFile
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			utils.Log.Error(err)
@@ -115,11 +116,12 @@ mesheryctl pattern onboard -f ./pattern.yml -s "Kubernetes Manifest"
 				utils.Log.Error(utils.ErrNotFound(errors.New("no pattern found with the given name")))
 				return nil
 			} else if len(response.Patterns) == 1 {
-				patternFile = response.Patterns[0].PatternFile
+
+				patternFile, _ = patterns.GetPatternFormat(response.Patterns[0].PatternFile)
 			} else {
 				// Multiple patterns with same name
 				index = multiplepatternsConfirmation(response.Patterns)
-				patternFile = response.Patterns[index].PatternFile
+				patternFile, _ = patterns.GetPatternFormat(response.Patterns[index].PatternFile)
 			}
 		} else {
 			// Check if a valid source type is set
@@ -132,7 +134,7 @@ mesheryctl pattern onboard -f ./pattern.yml -s "Kubernetes Manifest"
 				return nil
 			}
 
-			patternFile = pattern.PatternFile
+			patternFile, _ = patterns.GetPatternFormat(pattern.PatternFile)
 		}
 
 		patternFileByt, _ := yaml.Marshal(patternFile)

@@ -20,9 +20,6 @@ func getModelDirectoryPaths() ([]string, error) {
 		return dirEntries, err
 	}
 	for _, modelDir := range modelsDirs {
-		if modelDir.Name() != "kubernetes" {
-			continue
-		}
 
 		if !modelDir.IsDir() {
 			continue

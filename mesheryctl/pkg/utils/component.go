@@ -8,10 +8,10 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	"github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshkit/utils/csv"
 	"github.com/layer5io/meshkit/utils/manifests"
+	"github.com/meshery/schemas/models/v1beta1"
 	"github.com/meshery/schemas/models/v1beta1/component"
 )
 
@@ -50,16 +50,16 @@ type ComponentCSV struct {
 // The Component Definition generated assumes or is only for components which have registrant as "meshery"
 func (c *ComponentCSV) CreateComponentDefinition(isModelPublished bool, defVersion string) (component.ComponentDefinition, error) {
 	componentDefinition := &component.ComponentDefinition{
-		VersionMeta: v1beta1.VersionMeta{
-			SchemaVersion: v1beta1.ComponentSchemaVersion,
-			Version:       defVersion,
-		},
+
+		SchemaVersion: v1beta1.ComponentSchemaVersion,
+		Version:       defVersion,
+
 		DisplayName: c.Component,
 		Format:      "JSON",
-		Metadata: map[string]interface{}{
-			"published": isModelPublished,
+		Metadata: component.ComponentDefinition_Metadata{
+			Published: isModelPublished,
 		},
-		Component: v1beta1.ComponentEntity{},
+		Component: component.Component{},
 	}
 	err := c.UpdateCompDefinition(componentDefinition)
 	return *componentDefinition, err
@@ -76,7 +76,7 @@ func (c *ComponentCSV) UpdateCompDefinition(compDef *component.ComponentDefiniti
 	if err != nil {
 		return err
 	}
-	metadata = utils.MergeMaps(metadata, compDef.Metadata)
+	// metadata = utils.MergeMaps(metadata, compDef.Metadata)
 
 	for _, key := range compMetadataValues {
 		if key == "svgColor" || key == "svgWhite" {
@@ -111,7 +111,8 @@ func (c *ComponentCSV) UpdateCompDefinition(compDef *component.ComponentDefiniti
 		isAnnotation = true
 	}
 	metadata["isAnnotation"] = isAnnotation
-	compDef.Metadata = metadata
+	// compMetadata, err = utils.MarshalAndUnmarshal[component.ComponentDefinition_Metadata, map[string]interface{}](metadata)
+	// compDef.Metadata = metadata
 	return nil
 }
 
@@ -308,7 +309,7 @@ func (m ComponentCSVHelper) Cleanup() error {
 }
 
 func ConvertCompDefToCompCSV(modelcsv *ModelCSV, compDef component.ComponentDefinition) *ComponentCSV {
-	compCSV, _ := utils.MarshalAndUnmarshal[map[string]interface{}, ComponentCSV](compDef.Metadata)
+	compCSV, _ := utils.MarshalAndUnmarshal[component.ComponentDefinition_Metadata, ComponentCSV](compDef.Metadata)
 	compCSV.Registrant = modelcsv.Registrant
 	compCSV.Model = modelcsv.Model
 	compCSV.Component = compDef.Component.Kind

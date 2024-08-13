@@ -8,8 +8,12 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	"github.com/layer5io/meshkit/models/meshmodel/entity"
+	"github.com/meshery/schemas/models/v1beta1"
+	"github.com/meshery/schemas/models/v1beta1/category"
+	"github.com/meshery/schemas/models/v1beta1/connection"
+	"github.com/meshery/schemas/models/v1beta1/model"
+
 	"github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshkit/utils/csv"
 )
@@ -67,7 +71,7 @@ func (m *ModelCSV) UpdateModelDefinition(modelDef *model.ModelDefinition) error 
 	if err != nil {
 		return err
 	}
-	metadata = utils.MergeMaps(metadata, modelDef.Metadata)
+	// metadata = utils.MergeMaps(metadata, modelDef.Metadata)
 
 	for _, key := range modelMetadataValues {
 		if key == "svgColor" || key == "svgWhite" {
@@ -102,7 +106,7 @@ func (m *ModelCSV) UpdateModelDefinition(modelDef *model.ModelDefinition) error 
 		isAnnotation = true
 	}
 	metadata["isAnnotation"] = isAnnotation
-	modelDef.Metadata = metadata
+	// modelDef.Metadata = metadata
 	return nil
 }
 
@@ -113,21 +117,22 @@ func (mcv *ModelCSV) CreateModelDefinition(version, defVersion string) model.Mod
 	}
 
 	model := model.ModelDefinition{
-		VersionMeta: v1beta1.VersionMeta{
-			Version:       defVersion,
-			SchemaVersion: model.ModelDefinitionSchemaVersion,
-		},
+		Version:       defVersion,
+		SchemaVersion: v1beta1.ModelSchemaVersion,
+
 		Name:        mcv.Model,
 		DisplayName: mcv.ModelDisplayName,
-		Status:      status,
-		Registrant: v1beta1.Host{
-			Hostname: utils.ReplaceSpacesAndConvertToLowercase(mcv.Registrant),
+		Status:      model.ModelDefinitionStatus(status),
+		Registrant: connection.Connection{
+			Kind: utils.ReplaceSpacesAndConvertToLowercase(mcv.Registrant),
+			Type: "registry",
+			Name: mcv.Registrant,
 		},
-		Category: v1beta1.Category{
+		Category: category.CategoryDefinition{
 			Name: mcv.Category,
 		},
 		SubCategory: mcv.SubCategory,
-		Model: model.ModelDefinitionEntity{
+		Model: model.Model{
 			Version: version,
 		},
 	}
