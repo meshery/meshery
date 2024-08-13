@@ -1107,8 +1107,8 @@ class MesheryAdapterPlayComponent extends React.Component {
     let permission;
     switch (cat) {
       case 0:
-        content = 'Manage Service Mesh Lifecycle';
-        description = 'Deploy a service mesh or SMI adapter on your cluster.';
+        content = 'Manage Cloud Native Infrastructure Lifecycle';
+        description = 'Deploy cloud native infrastructure or SMI adapter on your cluster.';
         permission = {
           action: keys.MANAGE_CLOUD_NATIVE_INFRASTRUCTURE_LIFE_CYCLE.action,
           subject: keys.MANAGE_CLOUD_NATIVE_INFRASTRUCTURE_LIFE_CYCLE.subject,
@@ -1125,8 +1125,8 @@ class MesheryAdapterPlayComponent extends React.Component {
         break;
 
       case 2:
-        content = 'Apply Service Mesh Configuration';
-        description = 'Configure your service mesh using some pre-defined options.';
+        content = 'Apply Cloud Native Infrastructure Configuration';
+        description = 'Configure your cloud native infrastructure using some pre-defined options.';
         selectedAdapterOps = selectedAdapterOps.filter((ops) => !ops.value.startsWith('Add-on:'));
         permission = {
           action: keys.APPLY_CLOUD_NATIVE_INFRASTRUCTURE_CONFIGURATION.action,
@@ -1135,8 +1135,9 @@ class MesheryAdapterPlayComponent extends React.Component {
         break;
 
       case 3:
-        content = 'Validate Service Mesh Configuration';
-        description = 'Validate your service mesh configuration against best practices.';
+        content = 'Validate Cloud Native Infrastructure Configuration';
+        description =
+          'Validate your cloud native infrastructure configuration against best practices.';
         permission = {
           action: keys.VALIDATE_CLOUD_NATIVE_INFRASTRUCTURE_CONFIGURATION.action,
           subject: keys.VALIDATE_CLOUD_NATIVE_INFRASTRUCTURE_CONFIGURATION.subject,
@@ -1145,7 +1146,7 @@ class MesheryAdapterPlayComponent extends React.Component {
 
       case 4:
         content = 'Apply Custom Configuration';
-        description = 'Customize the configuration of your service mesh.';
+        description = 'Customize the configuration of your cloud native infrastructure.';
         permission = {
           action: keys.APPLY_CUSTOM_CLOUD_NATIVE_CONFIGURATION.action,
           subject: keys.APPLY_CUSTOM_CLOUD_NATIVE_CONFIGURATION.subject,
