@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
@@ -545,47 +545,48 @@ const externlinks = [
   },
 ];
 
-class Navigator extends React.Component {
-  constructor(props) {
-    super(props);
-    const { meshAdapters } = props;
-    this.state = {
-      path: '',
-      meshAdapters,
-      mts: new Date(),
+const Navigator = ({
+  meshAdapters,
+  updateCapabilities,
+  classes,
+  isDrawerCollapsed,
+  updateExtensionType,
+  catalogVisibility,
+  meshAdaptersts,
+  updatepagetitle,
+  updatebetabadge,
+  router,
+  setAdapter,
+  toggleDrawer,
+  capabilitiesRegistry,
+}) => {
+  const path = window.location.pathname;
+  const navigatorSchema = ExtensionPointSchemaValidator('navigator');
+  const [navigator, setNavigator] = useState(navigatorSchema);
+  const [capabilitiesRegistryObj, setCapabilitiesRegistryObj] = useState(null);
+  const [navigatorComponents, setNavigatorComponents] = useState([]);
+  const [versionDetail, setversionDetail] = useState({
+    build: '',
+    latest: '',
+    outdated: false,
+    commitsha: '',
+    release_channel: 'NA',
+  });
+  const [showHelperButton, setShowHelperButton] = useState(false);
+  const [openItems, setOpenItems] = useState([]);
+  const [hoveredId, setHoveredId] = useState(null);
+  const [mts, setMts] = useState(new Date());
 
-      // ExtensionPointSchemaValidator will return a navigator schema
-      // decoder which in turn will return an empty array when there is no content
-      // passed into it
-      navigator: ExtensionPointSchemaValidator('navigator')(),
-      showHelperButton: false,
-      openItems: [],
-      hoveredId: null,
-      /** @type {CapabilitiesRegistry} */
-      capabilitiesRegistryObj: null,
-      versionDetail: {
-        build: '',
-        latest: '',
-        outdated: false,
-        commitsha: '',
-        release_channel: 'NA',
-      },
-      navigatorComponents: [],
-    };
-  }
+  useEffect(() => {
+    fetchCapabilities();
+    fetchVersionDetails();
+  }, []);
 
-  isServiceMeshActive() {
-    return this.state.meshAdapters.length > 0;
-  }
+  useEffect(() => {
+    updatenavigatorComponentsMenus();
+  }, [navigatorComponents]);
 
-  componentId = 'navigator';
-
-  componentDidMount() {
-    this.fetchCapabilities();
-    this.fetchVersionDetails();
-  }
-
-  fetchCapabilities() {
+  const fetchCapabilities = () => {
     dataFetch(
       '/api/provider/capabilities',
       {
@@ -595,21 +596,18 @@ class Navigator extends React.Component {
       (result) => {
         if (result) {
           const capabilitiesRegistryObj = new CapabilitiesRegistry(result);
-          const navigatorComponents = this.createNavigatorComponents(capabilitiesRegistryObj);
-
-          this.setState({
-            navigator: ExtensionPointSchemaValidator('navigator')(result?.extensions?.navigator),
-            capabilitiesRegistryObj,
-            navigatorComponents,
-          });
-          this.props.updateCapabilities({ capabilitiesRegistry: result });
+          const navigatorComponents = createNavigatorComponents(capabilitiesRegistryObj);
+          setNavigator(ExtensionPointSchemaValidator('navigator')(result?.extensions?.navigator));
+          setCapabilitiesRegistryObj(capabilitiesRegistryObj);
+          setNavigatorComponents(navigatorComponents);
+          updateCapabilities({ capabilitiesRegistry: result });
         }
       },
       (err) => console.error(err),
     );
-  }
+  };
 
-  fetchVersionDetails() {
+  const fetchVersionDetails = () => {
     dataFetch(
       '/api/system/version',
       {
@@ -618,33 +616,29 @@ class Navigator extends React.Component {
       },
       (result) => {
         if (typeof result !== 'undefined') {
-          this.setState({ versionDetail: result });
+          setversionDetail(result);
         } else {
-          this.setState({
-            versionDetail: {
-              build: 'Unknown',
-              latest: 'Unknown',
-              outdated: false,
-              commitsha: 'Unknown',
-            },
+          setversionDetail({
+            build: 'Unknown',
+            latest: 'Unknown',
+            outdated: false,
+            commitsha: 'Unknown',
           });
         }
       },
       (err) => console.error(err),
     );
-  }
+  };
 
-  createNavigatorComponents(capabilityRegistryObj) {
+  const createNavigatorComponents = (capabilityRegistryObj) => {
     return getNavigatorComponents(capabilityRegistryObj);
-  }
+  };
 
   /**
    * @param {import("../utils/ExtensionPointSchemaValidator").NavigatorSchema[]} children
    * @param {number} depth
    */
-  renderNavigatorExtensions(children, depth) {
-    const { classes, isDrawerCollapsed } = this.props;
-    const { path } = this.state;
+  const renderNavigatorExtensions = (children, depth) => {
     if (children && children.length > 0) {
       return (
         <List disablePadding>
@@ -665,20 +659,18 @@ class Navigator extends React.Component {
                     isDrawerCollapsed && classes.noPadding,
                   )}
                 >
-                  {this.extensionPointContent(icon, href, title, isDrawerCollapsed)}
+                  {extensionPointContent(icon, href, title, isDrawerCollapsed)}
                 </ListItem>
-                {this.renderNavigatorExtensions(children, depth + 1)}
+                {renderNavigatorExtensions(children, depth + 1)}
               </React.Fragment>
             );
           })}
         </List>
       );
     }
-  }
+  };
 
-  extensionPointContent(icon, href, name, drawerCollapsed) {
-    const { classes } = this.props;
-
+  const extensionPointContent = (icon, href, name, drawerCollapsed) => {
     let content = (
       <div className={classNames(classes.link)} data-cy={name}>
         <CustomTooltip
@@ -718,7 +710,7 @@ class Navigator extends React.Component {
         <Link href={href}>
           <span
             className={classNames(classes.link)}
-            onClick={() => this.props.updateExtensionType('navigator')}
+            onClick={() => updateExtensionType('navigator')}
           >
             {content}
           </span>
@@ -727,20 +719,19 @@ class Navigator extends React.Component {
     }
 
     return content;
-  }
-  updatenavigatorComponentsMenus() {
-    const self = this;
-    const { navigatorComponents } = this.state;
+  };
+
+  const updatenavigatorComponentsMenus = () => {
     navigatorComponents.forEach((cat, ind) => {
       if (cat.id === LIFECYCLE) {
         cat.children.forEach((catc, ind1) => {
           if (catc.id == SERVICE_MESH) {
             return;
           }
-          const icon = self.pickIcon(catc.id, catc.href);
+          const icon = pickIcon(catc.id, catc.href);
           navigatorComponents[ind].children[ind1].icon = icon;
 
-          const cr = self.fetchChildren(catc.id);
+          const cr = fetchChildren(catc.id);
           navigatorComponents[ind].children[ind1].children = cr;
         });
       }
@@ -749,7 +740,7 @@ class Navigator extends React.Component {
         let show = false;
         cat.children?.forEach((ch) => {
           if (ch.id === 'Designs') {
-            const idx = self.props.capabilitiesRegistry?.capabilities?.findIndex(
+            const idx = capabilitiesRegistry?.capabilities?.findIndex(
               (cap) => cap.feature === 'persist-meshery-patterns',
             );
             if (idx != -1) {
@@ -758,7 +749,6 @@ class Navigator extends React.Component {
             }
           }
         });
-
         cat.show = show;
       }
 
@@ -766,59 +756,57 @@ class Navigator extends React.Component {
       if (cat.id === CONFIGURATION) {
         cat.children?.forEach((ch) => {
           if (ch.id === CATALOG) {
-            ch.show = this.props.catalogVisibility;
+            ch.show = catalogVisibility;
           }
         });
       }
     });
-  }
-  updateAdaptersLink() {
-    const { navigatorComponents } = this.state;
-    navigatorComponents.forEach((cat, ind) => {
+  };
+
+  const updateAdaptersLink = () => {
+    const updatedNavigatorComponents = [...navigatorComponents];
+    updatedNavigatorComponents.forEach((cat, ind) => {
       if (cat.id === LIFECYCLE) {
         cat.children.forEach((catc, ind1) => {
           if (
-            typeof navigatorComponents[ind].children[ind1].children[0] !== 'undefined' &&
-            typeof navigatorComponents[ind].children[ind1].children[0].href !== 'undefined'
+            typeof updatedNavigatorComponents[ind].children[ind1].children[0] !== 'undefined' &&
+            typeof updatedNavigatorComponents[ind].children[ind1].children[0].href !== 'undefined'
           ) {
             const val = true;
-            const newhref = `${navigatorComponents[ind].children[ind1].children[0].href}`;
-            navigatorComponents[ind].children[ind1].link = val;
-            navigatorComponents[ind].children[ind1].href = newhref;
+            const newhref = `${updatedNavigatorComponents[ind].children[ind1].children[0].href}`;
+            updatedNavigatorComponents[ind].children[ind1].link = val;
+            updatedNavigatorComponents[ind].children[ind1].href = newhref;
           }
         });
       }
     });
-  }
+    setNavigatorComponents(updatedNavigatorComponents);
+  };
 
-  static getDerivedStateFromProps(props, state) {
-    const { meshAdapters, meshAdaptersts } = props;
+  useEffect(() => {
     const path = window.location.pathname;
-    const st = {};
-    if (meshAdaptersts > state.mts) {
-      st.meshAdapters = meshAdapters;
-      st.mts = meshAdaptersts;
+
+    if (meshAdaptersts > mts) {
+      setMts(meshAdaptersts);
     }
 
-    const fetchNestedPathAndTitle = (path, title, href, children, isBeta) => {
-      if (href === path) {
-        props.updatepagetitle({ title });
-        props.updatebetabadge({ isBeta });
+    const fetchNestedPathAndTitle = (currentPath, title, href, children, isBeta) => {
+      if (href === currentPath) {
+        updatepagetitle({ title });
+        updatebetabadge({ isBeta });
         return;
       }
       if (children && children.length > 0) {
         children.forEach(({ title, href, children, isBeta }) => {
-          fetchNestedPathAndTitle(path, title, href, children, isBeta);
+          fetchNestedPathAndTitle(currentPath, title, href, children, isBeta);
         });
       }
     };
 
-    state.navigatorComponents.forEach(({ title, href, children, isBeta }) => {
+    navigatorComponents.forEach(({ title, href, children, isBeta }) => {
       fetchNestedPathAndTitle(path, title, href, children, isBeta);
     });
-    st.path = path;
-    return st;
-  }
+  }, [navigatorComponents, mts]);
 
   /**
    * @param {String} category
@@ -827,8 +815,7 @@ class Navigator extends React.Component {
    *
    * @returns {Array<{id : Number, icon : JSX.Element, href : String, title : String, link : Boolean, show : Boolean}>} children
    */
-  fetchChildren(category) {
-    const { meshAdapters } = this.state;
+  const fetchChildren = (category) => {
     const children = [];
     category = category.toLowerCase();
     meshAdapters.forEach((adapter) => {
@@ -846,16 +833,15 @@ class Navigator extends React.Component {
       });
     });
     return children;
-  }
+  };
 
   /**
    * @param {String} aName
    *
    * @returns {JSX.Element} image to display
    */
-  pickIcon(aName, href) {
+  const pickIcon = (aName, href) => {
     aName = aName.toLowerCase();
-    const { classes } = this.props;
     let image = '/static/img/meshery-logo.png';
     let filter =
       window.location.pathname === href
@@ -867,13 +853,13 @@ class Navigator extends React.Component {
       logoIcon = <img src={image} className={classes.icon} style={{ filter: filter }} />;
     }
     return logoIcon;
-  }
+  };
 
   /**
    * Changes the route to "/"
    */
-  handleTitleClick = () => {
-    this.props.router.push('/');
+  const handleTitleClick = () => {
+    router.push('/');
   };
 
   /**
@@ -882,22 +868,19 @@ class Navigator extends React.Component {
    *
    * Changes the route to "/management"
    */
-  handleAdapterClick(id, link) {
-    const { setAdapter } = this.props;
-    setAdapter({ selectedAdapter: id });
+  const handleAdapterClick = (id, link) => {
+    setAdapter(id);
     if (id != -1 && !link) {
-      this.props.router.push('/management');
+      router.push('/management');
     }
-  }
+  };
 
-  toggleMiniDrawer = () => {
-    const { toggleDrawer, isDrawerCollapsed } = this.props;
+  const toggleMiniDrawer = () => {
     toggleDrawer({ isDrawerCollapsed: !isDrawerCollapsed });
   };
 
-  toggleSpacing = () => {
-    const { showHelperButton } = this.state;
-    this.setState({ showHelperButton: !showHelperButton });
+  const toggleSpacing = () => {
+    setShowHelperButton((p) => !p);
   };
 
   /**
@@ -906,14 +889,15 @@ class Navigator extends React.Component {
    * Removes id from openitems if present
    * Adds id in openitems if not present already
    */
-  toggleItemCollapse = (itemId) => {
-    const isItemOpen = this.state.openItems.includes(itemId);
-    const activeItems = [...this.state.openItems];
+  const toggleItemCollapse = (itemId) => {
+    const isItemOpen = openItems.includes(itemId);
+    const activeItems = [...openItems];
     if (isItemOpen) {
-      this.setState({ openItems: activeItems.filter((item) => item !== itemId) });
+      const filteredItems = activeItems.filter((item) => item !== itemId);
+      setOpenItems(filteredItems);
     } else {
       activeItems.push(itemId);
-      this.setState({ openItems: [itemId] });
+      setOpenItems([itemId]);
     }
   };
 
@@ -926,10 +910,7 @@ class Navigator extends React.Component {
    *
    * @returns {JSX.Element}
    */
-  renderChildren(idname, children, depth) {
-    const { classes, isDrawerCollapsed } = this.props;
-    const { path } = this.state;
-
+  const renderChildren = (idname, children, depth) => {
     if (idname != LIFECYCLE && children && children.length > 0) {
       return (
         <List disablePadding>
@@ -961,9 +942,9 @@ class Navigator extends React.Component {
                     )}
                     disabled={permissionc ? !CAN(permissionc.action, permissionc.subject) : false}
                   >
-                    {this.linkContent(iconc, titlec, hrefc, linkc, isDrawerCollapsed)}
+                    {linkContent(iconc, titlec, hrefc, linkc, isDrawerCollapsed)}
                   </ListItem>
-                  {this.renderChildren(idname, childrenc, depth + 1)}
+                  {renderChildren(idname, childrenc, depth + 1)}
                 </div>
               );
             },
@@ -1003,12 +984,12 @@ class Navigator extends React.Component {
                         isDrawerCollapsed && classes.noPadding,
                         !showc && classes.disabled,
                       )}
-                      onClick={() => this.handleAdapterClick(idc, linkc)}
+                      onClick={() => handleAdapterClick(idc, linkc)}
                       disabled={permissionc ? !CAN(permissionc.action, permissionc.subject) : false}
                     >
-                      {this.linkContent(iconc, titlec, hrefc, linkc, isDrawerCollapsed)}
+                      {linkContent(iconc, titlec, hrefc, linkc, isDrawerCollapsed)}
                     </ListItem>
-                    {this.renderChildren(idname, childrenc, depth + 1)}
+                    {renderChildren(idname, childrenc, depth + 1)}
                   </div>
                 );
               },
@@ -1017,11 +998,11 @@ class Navigator extends React.Component {
         );
       }
       if (children && children.length === 1) {
-        this.updateAdaptersLink();
+        updateAdaptersLink();
       }
     }
     return '';
-  }
+  };
 
   /**
    * @param {JSX.Element} iconc
@@ -1032,8 +1013,7 @@ class Navigator extends React.Component {
    *
    * @return {JSX.Element} content
    */
-  linkContent(iconc, titlec, hrefc, linkc, drawerCollapsed) {
-    const { classes } = this.props;
+  const linkContent = (iconc, titlec, hrefc, linkc, drawerCollapsed) => {
     let linkContent = (
       <div className={classNames(classes.link)}>
         <CustomTooltip
@@ -1057,7 +1037,7 @@ class Navigator extends React.Component {
       linkContent = <Link href={hrefc}>{linkContent}</Link>;
     }
     return linkContent;
-  }
+  };
 
   /**
    * getMesheryVersionText returs a well formatted version text
@@ -1068,8 +1048,8 @@ class Navigator extends React.Component {
    *
    * If on stable channel, then it will always show "stable-$version"
    */
-  getMesheryVersionText() {
-    const { build, outdated, release_channel } = this.state.versionDetail;
+  const getMesheryVersionText = () => {
+    const { build, outdated, release_channel } = versionDetail;
 
     // If the version is outdated then no matter what the
     // release channel is, specify the build which gets covered in the default case
@@ -1082,7 +1062,7 @@ class Navigator extends React.Component {
     if (release_channel === 'stable') return `${release_channel}-${build}`;
 
     return `${build}`;
-  }
+  };
 
   /**
    * versionUpdateMsg returns the appropriate message
@@ -1091,8 +1071,8 @@ class Navigator extends React.Component {
    *
    * @returns {React.ReactNode} react component to display
    */
-  versionUpdateMsg() {
-    const { outdated, latest } = this.state.versionDetail;
+  const versionUpdateMsg = () => {
+    const { outdated, latest } = versionDetail;
 
     if (outdated)
       return (
@@ -1115,7 +1095,7 @@ class Navigator extends React.Component {
       );
 
     return <span style={{ marginLeft: '15px' }}>Running latest</span>;
-  }
+  };
 
   /**
    * openReleaseNotesInNew returns the appropriate link to the release note
@@ -1123,8 +1103,8 @@ class Navigator extends React.Component {
    *
    * @returns {React.ReactNode} react component to display
    */
-  openReleaseNotesInNew() {
-    const { release_channel, build } = this.state.versionDetail;
+  const openReleaseNotesInNew = () => {
+    const { release_channel, build } = versionDetail;
 
     if (release_channel === 'edge')
       return (
@@ -1148,291 +1128,261 @@ class Navigator extends React.Component {
         <OpenInNewIcon style={{ width: '0.85rem', verticalAlign: 'middle' }} />
       </a>
     );
-  }
+  };
 
-  render() {
-    const { classes, isDrawerCollapsed, ...other } = this.props;
-    const { path, showHelperButton, navigatorComponents } = this.state;
-    this.updatenavigatorComponentsMenus();
-
-    const Title = (
-      <div
-        style={
-          !this.state.capabilitiesRegistryObj?.isNavigatorComponentEnabled([DASHBOARD])
-            ? cursorNotAllowed
-            : {}
-        }
-      >
-        <ListItem
-          component="a"
-          onClick={this.handleTitleClick}
-          className={classNames(
-            classes.firebase,
-            classes.item,
-            classes.itemCategory,
-            classes.cursorPointer,
-            !this.state.capabilitiesRegistryObj?.isNavigatorComponentEnabled([DASHBOARD]) &&
-              classes.disableLogo,
-          )}
-        >
-          <img
-            className={isDrawerCollapsed ? classes.mainLogoCollapsed : classes.mainLogo}
-            src="/static/img/meshery-logo.png"
-            onClick={this.handleTitleClick}
-          />
-          <img
-            className={isDrawerCollapsed ? classes.mainLogoTextCollapsed : classes.mainLogoText}
-            src="/static/img/meshery-logo-text.png"
-            onClick={this.handleTitleClick}
-          />
-
-          {/* <span className={isDrawerCollapsed ? classes.isHidden : classes.isDisplayed}>Meshery</span> */}
-        </ListItem>
-      </div>
-    );
-    const Menu = (
-      <List disablePadding className={classes.hideScrollbar}>
-        {navigatorComponents.map(
-          ({
-            id: childId,
-            title,
-            icon,
-            href,
-            show,
-            link,
-            children,
-            hovericon,
-            submenu,
-            permission,
-          }) => {
-            // if (typeof show !== "undefined" && !show) {
-            //   return "";
-            // }
-            return (
-              <div key={childId} style={!show ? cursorNotAllowed : {}} className={classes.root}>
-                <ListItem
-                  button={!!link}
-                  dense
-                  key={childId}
-                  className={classNames(
-                    classes.item,
-                    link ? classes.itemActionable : '',
-                    path === href && classes.itemActiveItem,
-                    !show && classes.disabled,
-                  )}
-                  onClick={() => this.toggleItemCollapse(childId)}
-                  onMouseOver={() =>
-                    isDrawerCollapsed ? this.setState({ hoveredId: childId }) : null
-                  }
-                  onMouseLeave={() =>
-                    !submenu || !this.state.openItems.includes(childId)
-                      ? this.setState({ hoveredId: false })
-                      : null
-                  }
-                  disabled={permission ? !CAN(permission.action, permission.subject) : false}
-                >
-                  <Link href={link ? href : ''}>
-                    <div data-cy={childId} className={classNames(classes.link)}>
-                      <CustomTooltip
-                        title={childId}
-                        placement="right"
-                        disableFocusListener={!isDrawerCollapsed}
-                        disableHoverListener={true}
-                        disableTouchListener={!isDrawerCollapsed}
-                        TransitionComponent={Zoom}
-                      >
-                        {isDrawerCollapsed &&
-                        (this.state.hoveredId === childId ||
-                          (this.state.openItems.includes(childId) && submenu)) ? (
-                          <div>
-                            <CustomTooltip
-                              title={title}
-                              placement="right"
-                              TransitionComponent={Zoom}
-                            >
-                              <ListItemIcon
-                                onClick={() => this.toggleItemCollapse(childId)}
-                                style={{ marginLeft: '20%', marginBottom: '0.4rem' }}
-                              >
-                                {hovericon}
-                              </ListItemIcon>
-                            </CustomTooltip>
-                          </div>
-                        ) : (
-                          <ListItemIcon className={classes.listIcon}>{icon}</ListItemIcon>
-                        )}
-                      </CustomTooltip>
-                      <ListItemText
-                        className={isDrawerCollapsed ? classes.isHidden : classes.isDisplayed}
-                        classes={{ primary: classes.itemPrimary }}
-                      >
-                        {title}
-                      </ListItemText>
-                    </div>
-                  </Link>
-                  <FontAwesomeIcon
-                    icon={faCaretDown}
-                    onClick={() => this.toggleItemCollapse(childId)}
-                    className={classNames(classes.expandMoreIcon, {
-                      [classes.collapsed]: this.state.openItems.includes(childId),
-                    })}
-                    style={isDrawerCollapsed || !children ? { opacity: 0 } : {}}
-                  />
-                </ListItem>
-                <Collapse
-                  in={this.state.openItems.includes(childId)}
-                  style={{ backgroundColor: '#396679', opacity: '100%' }}
-                >
-                  {this.renderChildren(childId, children, 1)}
-                </Collapse>
-              </div>
-            );
-          },
-        )}
-        {this.state.navigator && this.state.navigator.length ? (
-          <React.Fragment>
-            <Divider className={classes.divider} />
-            {this.renderNavigatorExtensions(this.state.navigator, 1)}
-          </React.Fragment>
-        ) : null}
-        <Divider className={classes.divider} />
-      </List>
-    );
-    const HelpIcons = (
-      <ButtonGroup
-        size="large"
-        className={!isDrawerCollapsed ? classes.marginLeft : classes.btnGrpMarginRight}
-        orientation={isDrawerCollapsed ? 'vertical' : 'horizontal'}
-      >
-        {externlinks.map(({ id, icon, title, href }, index) => {
-          return (
-            <ListItem
-              key={id}
-              className={classes.item}
-              style={isDrawerCollapsed && !showHelperButton ? { display: 'none' } : {}}
-            >
-              <Grow
-                in={showHelperButton || !isDrawerCollapsed}
-                timeout={{ enter: 600 - index * 200, exit: 100 * index }}
-              >
-                <a
-                  href={href}
-                  target="_blank"
-                  rel="noreferrer"
-                  className={classNames(
-                    classes.link,
-                    isDrawerCollapsed ? classes.extraPadding : '',
-                  )}
-                >
-                  <CustomTextTooltip title={title} placement={isDrawerCollapsed ? 'right' : 'top'}>
-                    <ListItemIcon className={classNames(classes.listIcon, classes.helpIcon)}>
-                      {icon}
-                    </ListItemIcon>
-                  </CustomTextTooltip>
-                </a>
-              </Grow>
-            </ListItem>
-          );
-        })}
-        <ListItem
-          className={classes.rightMargin}
-          style={!isDrawerCollapsed ? { display: 'none' } : { marginLeft: '4px' }}
-        >
-          <CustomTextTooltip title="Help" placement={isDrawerCollapsed ? 'right' : 'top'}>
-            <IconButton
-              className={isDrawerCollapsed ? classes.collapsedHelpButton : classes.rightTranslate}
-              onClick={this.toggleSpacing}
-            >
-              <HelpIcon
-                className={classes.helpIcon}
-                style={{ fontSize: '1.45rem', ...iconSmall }}
-              />
-            </IconButton>
-          </CustomTextTooltip>
-        </ListItem>
-      </ButtonGroup>
-    );
-    const Version = (
+  const Title = (
+    <div
+      style={
+        !capabilitiesRegistryObj?.isNavigatorComponentEnabled([DASHBOARD]) ? cursorNotAllowed : {}
+      }
+    >
       <ListItem
-        style={{
-          position: 'sticky',
-          paddingLeft: 0,
-          paddingRight: 0,
-          color: '#eeeeee',
-          fontSize: '0.75rem',
-        }}
-      >
-        {isDrawerCollapsed ? (
-          <div style={{ textAlign: 'center', width: '100%' }}>{this.state.versionDetail.build}</div>
-        ) : (
-          <Grow
-            in={!isDrawerCollapsed}
-            timeout={{ enter: 800, exit: 100 }}
-            style={{ textAlign: 'center', width: '100%' }}
-          >
-            <span>
-              {this.getMesheryVersionText()} {'  '}
-              <span style={{ cursor: 'pointer' }}>{this.openReleaseNotesInNew()}</span>
-              {this.versionUpdateMsg()}
-            </span>
-          </Grow>
-        )}
-      </ListItem>
-    );
-
-    const Chevron = (
-      <div
+        component="a"
+        onClick={handleTitleClick}
         className={classNames(
-          isDrawerCollapsed ? classes.collapseButtonWrapperRotated : classes.collapseButtonWrapper,
+          classes.firebase,
+          classes.item,
+          classes.itemCategory,
+          classes.cursorPointer,
+          !capabilitiesRegistryObj?.isNavigatorComponentEnabled([DASHBOARD]) && classes.disableLogo,
         )}
-        style={
-          this.state?.capabilitiesRegistryObj?.isNavigatorComponentEnabled?.([TOGGLER])
-            ? {}
-            : cursorNotAllowed
-        }
       >
-        <div
-          style={
-            this.state?.capabilitiesRegistryObj?.isNavigatorComponentEnabled?.([TOGGLER])
-              ? {}
-              : disabledStyle
-          }
-          onClick={this.toggleMiniDrawer}
-        >
-          <FontAwesomeIcon
-            icon={faAngleLeft}
-            fixedWidth
-            size="2x"
-            style={{ margin: '0.75rem 0.2rem ', width: '0.8rem', verticalAlign: 'middle' }}
-            alt="Sidebar collapse toggle icon"
-          />
-        </div>
-      </div>
-    );
+        <img
+          className={isDrawerCollapsed ? classes.mainLogoCollapsed : classes.mainLogo}
+          src="/static/img/meshery-logo.png"
+          onClick={handleTitleClick}
+        />
+        <img
+          className={isDrawerCollapsed ? classes.mainLogoTextCollapsed : classes.mainLogoText}
+          src="/static/img/meshery-logo-text.png"
+          onClick={handleTitleClick}
+        />
+      </ListItem>
+    </div>
+  );
 
-    return (
-      <NoSsr>
-        <Drawer
-          variant="permanent"
-          {...other}
-          className={isDrawerCollapsed ? classes.sidebarCollapsed : classes.sidebarExpanded}
-          classes={{
-            paper: isDrawerCollapsed ? classes.sidebarCollapsed : classes.sidebarExpanded,
-          }}
-          style={{ height: '100%' }}
+  const Menu = (
+    <List disablePadding className={classes.hideScrollbar}>
+      {navigatorComponents.map(
+        ({
+          id: childId,
+          title,
+          icon,
+          href,
+          show,
+          link,
+          children,
+          hovericon,
+          submenu,
+          permission,
+        }) => {
+          return (
+            <div key={childId} style={!show ? cursorNotAllowed : {}} className={classes.root}>
+              <ListItem
+                button={!!link}
+                dense
+                key={childId}
+                className={classNames(
+                  classes.item,
+                  link ? classes.itemActionable : '',
+                  path === href && classes.itemActiveItem,
+                  !show && classes.disabled,
+                )}
+                onClick={() => toggleItemCollapse(childId)}
+                onMouseOver={() => (isDrawerCollapsed ? setHoveredId(childId) : null)}
+                onMouseLeave={() =>
+                  !submenu || !openItems.includes(childId) ? setHoveredId(null) : null
+                }
+                disabled={permission ? !CAN(permission.action, permission.subject) : false}
+              >
+                <Link href={link ? href : ''}>
+                  <div data-cy={childId} className={classNames(classes.link)}>
+                    <CustomTooltip
+                      title={childId}
+                      placement="right"
+                      disableFocusListener={!isDrawerCollapsed}
+                      disableHoverListener={true}
+                      disableTouchListener={!isDrawerCollapsed}
+                      TransitionComponent={Zoom}
+                    >
+                      {isDrawerCollapsed &&
+                      (hoveredId === childId || (openItems.includes(childId) && submenu)) ? (
+                        <div>
+                          <CustomTooltip title={title} placement="right" TransitionComponent={Zoom}>
+                            <ListItemIcon
+                              onClick={() => toggleItemCollapse(childId)}
+                              style={{ marginLeft: '20%', marginBottom: '0.4rem' }}
+                            >
+                              {hovericon}
+                            </ListItemIcon>
+                          </CustomTooltip>
+                        </div>
+                      ) : (
+                        <ListItemIcon className={classes.listIcon}>{icon}</ListItemIcon>
+                      )}
+                    </CustomTooltip>
+                    <ListItemText
+                      className={isDrawerCollapsed ? classes.isHidden : classes.isDisplayed}
+                      classes={{ primary: classes.itemPrimary }}
+                    >
+                      {title}
+                    </ListItemText>
+                  </div>
+                </Link>
+                <FontAwesomeIcon
+                  icon={faCaretDown}
+                  onClick={() => toggleItemCollapse(childId)}
+                  className={classNames(classes.expandMoreIcon, {
+                    [classes.collapsed]: openItems.includes(childId),
+                  })}
+                  style={isDrawerCollapsed || !children ? { opacity: 0 } : {}}
+                />
+              </ListItem>
+              <Collapse
+                in={openItems.includes(childId)}
+                style={{ backgroundColor: '#396679', opacity: '100%' }}
+              >
+                {renderChildren(childId, children, 1)}
+              </Collapse>
+            </div>
+          );
+        },
+      )}
+      {navigator && navigator.length ? (
+        <React.Fragment>
+          <Divider className={classes.divider} />
+          {renderNavigatorExtensions(navigator, 1)}
+        </React.Fragment>
+      ) : null}
+      <Divider className={classes.divider} />
+    </List>
+  );
+
+  const HelpIcons = (
+    <ButtonGroup
+      size="large"
+      className={!isDrawerCollapsed ? classes.marginLeft : classes.btnGrpMarginRight}
+      orientation={isDrawerCollapsed ? 'vertical' : 'horizontal'}
+    >
+      {externlinks.map(({ id, icon, title, href }, index) => {
+        return (
+          <ListItem
+            key={id}
+            className={classes.item}
+            style={isDrawerCollapsed && !showHelperButton ? { display: 'none' } : {}}
+          >
+            <Grow
+              in={showHelperButton || !isDrawerCollapsed}
+              timeout={{ enter: 600 - index * 200, exit: 100 * index }}
+            >
+              <a
+                href={href}
+                target="_blank"
+                rel="noreferrer"
+                className={classNames(classes.link, isDrawerCollapsed ? classes.extraPadding : '')}
+              >
+                <CustomTextTooltip title={title} placement={isDrawerCollapsed ? 'right' : 'top'}>
+                  <ListItemIcon className={classNames(classes.listIcon, classes.helpIcon)}>
+                    {icon}
+                  </ListItemIcon>
+                </CustomTextTooltip>
+              </a>
+            </Grow>
+          </ListItem>
+        );
+      })}
+      <ListItem
+        className={classes.rightMargin}
+        style={!isDrawerCollapsed ? { display: 'none' } : { marginLeft: '4px' }}
+      >
+        <CustomTextTooltip title="Help" placement={isDrawerCollapsed ? 'right' : 'top'}>
+          <IconButton
+            className={isDrawerCollapsed ? classes.collapsedHelpButton : classes.rightTranslate}
+            onClick={toggleSpacing}
+          >
+            <HelpIcon className={classes.helpIcon} style={{ fontSize: '1.45rem', ...iconSmall }} />
+          </IconButton>
+        </CustomTextTooltip>
+      </ListItem>
+    </ButtonGroup>
+  );
+
+  const Version = (
+    <ListItem
+      style={{
+        position: 'sticky',
+        paddingLeft: 0,
+        paddingRight: 0,
+        color: '#eeeeee',
+        fontSize: '0.75rem',
+      }}
+    >
+      {isDrawerCollapsed ? (
+        <div style={{ textAlign: 'center', width: '100%' }}>{versionDetail.build}</div>
+      ) : (
+        <Grow
+          in={!isDrawerCollapsed}
+          timeout={{ enter: 800, exit: 100 }}
+          style={{ textAlign: 'center', width: '100%' }}
         >
-          {Title}
-          {Menu}
-          <div className={classes.fixedSidebarFooter}>
-            {Chevron}
-            {HelpIcons}
-            {Version}
-          </div>
-        </Drawer>
-      </NoSsr>
-    );
-  }
-}
+          <span>
+            {getMesheryVersionText()} {'  '}
+            <span style={{ cursor: 'pointer' }}>{openReleaseNotesInNew()}</span>
+            {versionUpdateMsg()}
+          </span>
+        </Grow>
+      )}
+    </ListItem>
+  );
+
+  const Chevron = (
+    <div
+      className={classNames(
+        isDrawerCollapsed ? classes.collapseButtonWrapperRotated : classes.collapseButtonWrapper,
+      )}
+      style={
+        capabilitiesRegistryObj?.isNavigatorComponentEnabled?.([TOGGLER]) ? {} : cursorNotAllowed
+      }
+    >
+      <div
+        style={
+          capabilitiesRegistryObj?.isNavigatorComponentEnabled?.([TOGGLER]) ? {} : disabledStyle
+        }
+        onClick={toggleMiniDrawer}
+      >
+        <FontAwesomeIcon
+          icon={faAngleLeft}
+          fixedWidth
+          size="2x"
+          style={{ margin: '0.75rem 0.2rem ', width: '0.8rem', verticalAlign: 'middle' }}
+          alt="Sidebar collapse toggle icon"
+        />
+      </div>
+    </div>
+  );
+
+  return (
+    <NoSsr>
+      <Drawer
+        variant="permanent"
+        // {...other} //TODO
+        className={isDrawerCollapsed ? classes.sidebarCollapsed : classes.sidebarExpanded}
+        classes={{
+          paper: isDrawerCollapsed ? classes.sidebarCollapsed : classes.sidebarExpanded,
+        }}
+        style={{ height: '100%' }}
+      >
+        {Title}
+        {Menu}
+        <div className={classes.fixedSidebarFooter}>
+          {Chevron}
+          {HelpIcons}
+          {Version}
+        </div>
+      </Drawer>
+    </NoSsr>
+  );
+};
 
 Navigator.propTypes = {
   classes: PropTypes.object.isRequired,
