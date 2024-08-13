@@ -51,7 +51,6 @@ import { ButtonGroup, IconButton } from '@material-ui/core';
 import { CatalogIcon, CustomTooltip } from '@layer5/sistent';
 import { UsesSistent } from './SistentWrapper';
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
-import dataFetch from '../lib/data-fetch';
 import { Collapse } from '@material-ui/core';
 import {
   cursorNotAllowed,
@@ -79,6 +78,7 @@ import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomTextTooltip';
 import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
+import { useGetVersionDetailsQuery } from '@/rtk-query/system';
 
 const styles = (theme) => ({
   root: {
@@ -577,6 +577,7 @@ const Navigator = ({
   const [openItems, setOpenItems] = useState([]);
   const [hoveredId, setHoveredId] = useState(null);
   const [mts, setMts] = useState(new Date());
+
   const {
     data: capabilitiesData,
     isSuccess: fetchedCapabilities,
@@ -584,10 +585,17 @@ const Navigator = ({
     error: capabilitiesError,
   } = useGetProviderCapabilitiesQuery();
 
+  const {
+    data: versionDetailsData,
+    isSuccess: fetchedVersionDetails,
+    isError: isVersionDetailsError,
+    error: versionDetailsError,
+  } = useGetVersionDetailsQuery();
+
   useEffect(() => {
     fetchCapabilities();
     fetchVersionDetails();
-  }, [capabilitiesData]);
+  }, [capabilitiesData, versionDetailsData]);
 
   useEffect(() => {
     updatenavigatorComponentsMenus();
@@ -609,26 +617,18 @@ const Navigator = ({
   };
 
   const fetchVersionDetails = () => {
-    dataFetch(
-      '/api/system/version',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      (result) => {
-        if (typeof result !== 'undefined') {
-          setversionDetail(result);
-        } else {
-          setversionDetail({
-            build: 'Unknown',
-            latest: 'Unknown',
-            outdated: false,
-            commitsha: 'Unknown',
-          });
-        }
-      },
-      (err) => console.error(err),
-    );
+    if (fetchedVersionDetails && versionDetailsData) {
+      setversionDetail(
+        versionDetailsData || {
+          build: 'Unknown',
+          latest: 'Unknown',
+          outdated: false,
+          commitsha: 'Unknown',
+        },
+      );
+    } else if (isVersionDetailsError) {
+      console.log(versionDetailsError);
+    }
   };
 
   const createNavigatorComponents = (capabilityRegistryObj) => {
