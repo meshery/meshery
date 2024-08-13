@@ -2,7 +2,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import PromptComponent, { PROMPT_VARIANTS } from '../PromptComponent';
 import PerformanceProfileGrid from './PerformanceProfileGrid';
-import dataFetch from '../../lib/data-fetch';
 import IconButton from '@material-ui/core/IconButton';
 import AddIcon from '@material-ui/icons/AddCircleOutline';
 import { bindActionCreators } from 'redux';
@@ -37,8 +36,8 @@ import { ConditionalTooltip } from '@/utils/utils';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { UsesSistent } from '../SistentWrapper';
+import { useDeletePerformanceProfileMutation } from '@/rtk-query/performance-profile';
 
-const MESHERY_PERFORMANCE_URL = '/api/user/performance/profiles';
 const styles = (theme) => ({
   title: {
     textAlign: 'center',
@@ -136,6 +135,8 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
   const { notify } = useNotification();
   const { width } = useWindowDimensions();
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+
+  const [deletePerformanceProfile] = useDeletePerformanceProfileMutation();
   // const [loading, setLoading] = useState(false);
   /**
    * fetch performance profiles when the page loads
@@ -221,19 +222,14 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
   }
 
   function deleteProfile(id) {
-    dataFetch(
-      `${MESHERY_PERFORMANCE_URL}/${id}`,
-      {
-        method: 'DELETE',
-        credentials: 'include',
-      },
-      () => {
+    deletePerformanceProfile({ id })
+      .unwrap()
+      .then(() => {
         updateProgress({ showProgress: false });
         notify({ message: 'Performance Profile Deleted!', event_type: EVENT_TYPES.SUCCESS });
         fetchTestProfiles(page, pageSize, search, sortOrder);
-      },
-      handleError('Failed To Delete Profile'),
-    );
+      })
+      .catch(() => handleError('Failed To Delete Profile'));
   }
 
   function handleError(msg) {
