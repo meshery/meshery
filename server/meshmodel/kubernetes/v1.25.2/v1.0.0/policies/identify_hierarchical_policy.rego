@@ -31,28 +31,30 @@ identify_relationship(
 }
 
 evaluate_hierarchy contains result if {
-	some i, j
+	some from_selector in data.from_selectors
+	some to_selector in data.to_selectors
 
-	from_declaration := data.from[i]
-	from_selector := data.from_selectors[from_declaration.component.kind]
+	filtered_from_decls := extract_components_by_type(data.from, from_selector)
 
-	to_declaration := data.to[j]
-	to_selector := data.to_selectors[to_declaration.component.kind]
+	filtered_to_decls := extract_components_by_type(data.to, to_selector)
 
-	is_valid_hierarchy(from_declaration, to_declaration, from_selector, to_selector)
+	some from_decl in filtered_from_decls
+	some to_decl in filtered_to_decls
+	
+	is_valid_hierarchy(from_decl, to_decl, from_selector, to_selector)
 
 	# Th criteria for relationship is met hence add the relationship if not exists already.
 
 	match_selector_for_from := json.patch(from_selector, [{
 		"op": "add",
 		"path": "/id",
-		"value": from_declaration.id,
+		"value": from_decl.id,
 	}])
 
 	match_selector_for_to := json.patch(to_selector, [{
 		"op": "add",
 		"path": "/id",
-		"value": to_declaration.id,
+		"value": to_decl.id,
 	}])
 
 	cloned_selectors := {"selectors": [{"allow": {

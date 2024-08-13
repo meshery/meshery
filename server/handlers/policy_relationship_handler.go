@@ -7,7 +7,6 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
-	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/meshery/schemas/models/v1alpha3/relationship"
@@ -77,23 +76,6 @@ func (h *Handler) EvaluateRelationshipPolicy(
 
 	for _, component := range patternFile.Components {
 		component.Configuration = core.Format.DePrettify(component.Configuration, false)
-	}
-
-	// rmeove this
-	for _, rel := range patternFile.Relationships {
-		if rel.Selectors == nil {
-			continue
-		}
-
-		for _, selector := range *rel.Selectors {
-			for _, f := range selector.Allow.From {
-				f.Match = utils.RecursiveCastMapStringInterfaceToMapStringInterface(f.Match)
-			}
-			for _, d := range selector.Allow.To {
-				d.Match = utils.RecursiveCastMapStringInterfaceToMapStringInterface(d.Match)
-			}
-		}
-		// matchSelector := rel.Selectors.
 	}
 
 	patternUUID := patternFile.Id
