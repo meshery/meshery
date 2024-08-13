@@ -1147,8 +1147,8 @@ class MesheryAdapterPlayComponent extends React.Component {
         content = 'Apply Custom Configuration';
         description = 'Customize the configuration of your service mesh.';
         permission = {
-          action: keys.APPLY_CUSTOM_CLOUD_NATIVE_INFRASTRUCTURE_CONFIGURATION.action,
-          subject: keys.APPLY_CUSTOM_CLOUD_NATIVE_INFRASTRUCTURE_CONFIGURATION.subject,
+          action: keys.APPLY_CUSTOM_CLOUD_NATIVE_CONFIGURATION.action,
+          subject: keys.APPLY_CUSTOM_CLOUD_NATIVE_CONFIGURATION.subject,
         };
         break;
     }

@@ -382,8 +382,8 @@ export const keys = {
     subject: 'Validate cloud native infrastructure configuration',
     action: '8bb93f97-fcfb-4827-9fed-f931fdca7b95',
   },
-  APPLY_CUSTOM_CLOUD_NATIVE_INFRASTRUCTURE_CONFIGURATION: {
-    subject: 'Apply custom cloud native infrastructure configuration',
+  APPLY_CUSTOM_CLOUD_NATIVE_CONFIGURATION: {
+    subject: 'Apply custom cloud native configuration',
     action: '2f4e2300-4c7e-4d48-95aa-74614a4826fe',
   },
   DEPLOY_CLOUD_NATIVE_INFRASTRUCTURE: {
