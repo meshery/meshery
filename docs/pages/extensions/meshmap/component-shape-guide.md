@@ -21,69 +21,75 @@ Below are all the shapes with their current usage in a general context.
 
 
 <style>
-  table {
-    width: 100%;
-    border-collapse: collapse;
-  }
 
-  th, td {
-    text-align: center;
-    padding: 10px;
-    border: 1px solid #ddd;
-  }
+  .shapes-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: space-between;
+    margin-top: 2rem;
 
-  @media (min-width: 1024px) {
-    td:first-child, th:first-child {
-      width: 10%; 
-    }
   }
-
+  .shapes-card {
+	 display: flex;
+   flex-direction: column;
+	 max-width: 20rem;
+	 max-height: 30rem;
+	 gap: 1rem;
+	 border: 2px solid red;
+}
+  .shapes-svg-container {
+	 height: auto;
+	 display: flex;
+	 flex-direction: column;
+	 align-items: center;
+	 gap: 0.455rem;
+   flex-basis: 30%;
+}
+  .shapes-svg-container img {
+   width: 50%;
+   height: auto;
+}
+  .shapes-details {
+	 display: flex;
+	 flex-direction: column;
+	 flex-basis: 77%;
+	 gap: 10px;
+   text-align: center;
+}
   @media (max-width: 767px) {
-    .table-container {
-      overflow-x: auto;
+    .shapes-container {
+      flex-direction: column;
     }
-
-    table {
-      min-width: 600px; 
+    .shapes-svg-container {
+      gap: 0.3rem;
     }
-
-    td img {
-      width: 50px;
-      height: 50px;
+    .shapes-svg-container img {
+      width: 40%;
     }
-  }
+    .shapes-card{
+      max-width: 30rem;
+      flex-direction: column;
+    }
+   }
 </style>
 
-<div class="table-container">
-<table style="width: 100%; border-collapse: collapse;">
-  <thead>
-    <tr>
-      <th>Shape</th>
-      <th>Description</th>
-      <th>Common Usecase</th>
-    </tr>
-  </thead>
-  <tbody>
+
+<div class="shapes-container">
     {% for shape in site.data.shapes %}
-      <tr>
-        <td style="text-align: center">
-            <img src="{{ site.baseurl }}/assets/shapes/{{shape.SVG}}" width="100%" height="75px" alt="Shape"/>
-            <div>{{ shape.Shape }}</div>
-        </td>
-        <td>{{ shape.Description }}</td>
-        <td style="text-align: left">
-          <ul>
-            {% if shape.CommonUsecase %}
-              {% for use in shape.CommonUsecase %}
-                <li>{{ use }}</li>
-              {% endfor %}
-            {% else %}
-              <li>No common use cases listed.</li>
-            {% endif %}
-          </ul>
-        </td>
-      </tr>
+
+      <div class="shapes-card">
+      <div class="shapes-svg-container">
+      {% if shape.SVG %}
+        <img src="{{ site.baseurl }}/assets/shapes/{{shape.SVG}}" alt="Shape" class="shapes-svg">
+      {% endif %}
+       <div style="text-align:center;">{{ shape.Shape }}</div>
+      </div>
+      <div class="shapes-details">
+      <div class="shapes-description">{{ shape.Description }}</div>
+      <div class="shape-usage">{{ shape.CommonUseCase }}</div>
+      </div>
+      </div>
+
     {% endfor %}
-  </tbody>
-</table>
-</div>
+ </div>
