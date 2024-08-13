@@ -81,13 +81,13 @@ Below are all the shapes with their current usage in a general context.
       <div class="shapes-card">
       <div class="shapes-svg-container">
       {% if shape.SVG %}
-        <img src="{{ site.baseurl }}/assets/shapes/{{shape.SVG}}" alt="Shape" class="shapes-svg">
+        <img src="{{ site.baseurl }}/assets/shapes/{{shape.SVG}}" alt="Shape">
       {% endif %}
        <div style="text-align:center;">{{ shape.Shape }}</div>
       </div>
       <div class="shapes-details">
-      <div class="shapes-description">{{ shape.Description }}</div>
-      <div class="shape-usage">{{ shape.CommonUseCase }}</div>
+      <div>{{ shape.Description }}</div>
+      <div>{{ shape.CommonUseCase }}</div>
       </div>
       </div>
 
