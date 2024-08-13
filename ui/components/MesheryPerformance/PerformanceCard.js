@@ -1,5 +1,5 @@
 //@ts-check
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   Avatar,
   Button,
@@ -67,11 +67,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const avatarHandler = (function AvatarHandler() {
-  const idToAvatarMap = {};
+const useAvatarHandler = () => {
+  const [idToAvatarMap, setIdToAvatarMap] = useState({});
 
   function fetchUserAvatarLink(userId, setterCallbackFunction) {
     if (!userId) return null;
+
     dataFetch(
       `/api/user/profile/${userId}`,
       {
@@ -79,26 +80,32 @@ const avatarHandler = (function AvatarHandler() {
       },
       function assignAvatarLinkToId(result) {
         if (result.avatar_url) {
-          idToAvatarMap[userId] = result.avatar_url;
+          setIdToAvatarMap((prevMap) => ({
+            ...prevMap,
+            [userId]: result.avatar_url,
+          }));
           setterCallbackFunction(result.avatar_url);
         }
       },
+
       function handleProfileFetchError(error) {
         console.error('failed to fetch user profile with ID', userId, error);
       },
     );
   }
 
-  return {
-    getAvatar: async function _getAvatar(userId, setterFn) {
+  const getAvatar = useCallback(
+    (userId, setterFn) => {
       if (idToAvatarMap[userId]) {
         return setterFn(idToAvatarMap[userId]);
       }
-
       fetchUserAvatarLink(userId, setterFn);
     },
-  };
-})();
+    [idToAvatarMap, fetchUserAvatarLink],
+  );
+
+  return { getAvatar };
+};
 
 function PerformanceCard({
   profile,
@@ -111,9 +118,10 @@ function PerformanceCard({
   const classes = useStyles();
   const theme = useTheme();
   const [userAvatar, setUserAvatar] = useState(null);
+  const { getAvatar } = useAvatarHandler();
 
   useEffect(() => {
-    avatarHandler.getAvatar(profile.user_id, setUserAvatar);
+    getAvatar(profile.user_id, setUserAvatar);
   }, []);
 
   const {
