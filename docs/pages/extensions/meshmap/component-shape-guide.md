@@ -32,21 +32,19 @@ Below are all the shapes with their current usage in a general context.
     border: 1px solid #ddd;
   }
 
-  /* Adjust SVG column width on large screens */
   @media (min-width: 1024px) {
     td:first-child, th:first-child {
-      width: 10%; /* Adjust this value as needed */
+      width: 10%; 
     }
   }
 
-  /* Responsive table for mobile screens */
   @media (max-width: 767px) {
     .table-container {
       overflow-x: auto;
     }
 
     table {
-      min-width: 600px; /* Adjust this value based on your content */
+      min-width: 600px; 
     }
 
     td img {
@@ -56,66 +54,13 @@ Below are all the shapes with their current usage in a general context.
   }
 </style>
 
-<!-- <style>
-  table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-
-  th, td {
-    text-align: left;
-    padding: 10px;
-  }
-
-  /* Responsive table */
-  @media (max-width: 600px) {
-    table, thead, tbody, th, td, tr {
-      display: block;
-    }
-
-    thead tr {
-      display: none; /* Hide table header */
-    }
-
-    tr {
-      margin-bottom: 10px;
-      border-bottom: 1px solid #ddd;
-    }
-
-    td {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      text-align: left;
-      padding-left: 50%;
-      position: relative;
-    }
-
-    td:before {
-      content: attr(data-label);
-      position: absolute;
-      left: 10px;
-      width: calc(50% - 20px);
-      font-weight: bold;
-      white-space: nowrap;
-    }
-
-    td img {
-      width: 50px;
-      height: 50px;
-    }
-  }
-</style> -->
-
 <div class="table-container">
 <table style="width: 100%; border-collapse: collapse;">
   <thead>
     <tr>
       <th>Shape</th>
-      <!-- <th>Shape</th> -->
       <th>Description</th>
       <th>Common Usecase</th>
-      <!-- <th>Dependency</th> -->
     </tr>
   </thead>
   <tbody>
@@ -125,7 +70,6 @@ Below are all the shapes with their current usage in a general context.
             <img src="{{ site.baseurl }}/assets/shapes/{{shape.SVG}}" width="100%" height="75px" alt="Shape"/>
             <div>{{ shape.Shape }}</div>
         </td>
-        <!-- <td style="text-align: center">{{ shape.Shape }}</td> -->
         <td>{{ shape.Description }}</td>
         <td style="text-align: left">
           <ul>
@@ -138,7 +82,6 @@ Below are all the shapes with their current usage in a general context.
             {% endif %}
           </ul>
         </td>
-        <!-- <td>{{ shape.DependOn | default: "No dependencies listed." }}</td> -->
       </tr>
     {% endfor %}
   </tbody>
