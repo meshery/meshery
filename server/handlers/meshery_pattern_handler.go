@@ -15,6 +15,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/gofrs/uuid"
 	guid "github.com/google/uuid"
@@ -1185,7 +1186,7 @@ func (h *Handler) DownloadMesheryPatternHandler(
 		}
 		defer os.RemoveAll(tmpDir)
 
-		tmpDesignFile := filepath.Join(tmpDir, pattern.Name+".yaml")
+		tmpDesignFile := filepath.Join(tmpDir, "design.yml")
 		file, err := os.Create(tmpDesignFile)
 		if err != nil {
 			h.log.Error(ErrCreateFile(err, tmpDesignFile))
@@ -2069,7 +2070,7 @@ func createArtifactHubPkg(pattern *models.MesheryPattern, user string) ([]byte, 
 	if isCatalogItem {
 		version = pattern.CatalogData.PublishedVersion
 	}
-	artifactHubPkg := catalog.BuildArtifactHubPkg(pattern.Name, "", user, version, pattern.CreatedAt.String(), &pattern.CatalogData)
+	artifactHubPkg := catalog.BuildArtifactHubPkg(pattern.Name, "", user, version, pattern.CreatedAt.Format(time.RFC3339), &pattern.CatalogData)
 
 	data, err := yaml.Marshal(artifactHubPkg)
 	if err != nil {
