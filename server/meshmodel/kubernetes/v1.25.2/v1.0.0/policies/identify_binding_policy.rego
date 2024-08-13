@@ -66,44 +66,43 @@ evaluate_bindings contains result if {
 
 	selector := data.from_selectors[from_declaration.component.kind]
 
-	r := is_valid_binding(from_declaration, binding_declaration, selector)
-
-	r == true
+	is_valid_binding(from_declaration, binding_declaration, selector)
 
 	to_declaration := data.to[k]
 
 	to_selector := data.to_selectors[concat("#", {to_declaration.component.kind, binding_declaration.component.kind})]
 
-	q := is_valid_binding(binding_declaration, to_declaration, to_selector)
-	q == true
+	is_valid_binding(binding_declaration, to_declaration, to_selector)
 
-	match_selector_for_from := json.patch(selector, [{
-		"op": "add",
-		"path": "/match/from/0/id",
-		"value": from_declaration.id,
-	}])
+	match_selector_for_from := json.patch(selector, [
+		{
+			"op": "add",
+			"path": "/match/from/0/id",
+			"value": from_declaration.id,
+		},
+		{
+			"op": "add",
+			"path": "/match/to/0/id",
+			"value": binding_declaration.id,
+		},
+	])
 
-	_match_selector_for_from := json.patch(match_selector_for_from, [{
-		"op": "add",
-		"path": "/match/to/0/id",
-		"value": binding_declaration.id,
-	}])
-
-	match_selector_for_to := json.patch(to_selector, [{
-		"op": "add",
-		"path": "/match/from/0/id",
-		"value": binding_declaration.id,
-	}])
-
-	_match_selector_for_to := json.patch(match_selector_for_to, [{
-		"op": "add",
-		"path": "/match/to/0/id",
-		"value": to_declaration.id,
-	}])
+	match_selector_for_to := json.patch(to_selector, [
+		{
+			"op": "add",
+			"path": "/match/from/0/id",
+			"value": binding_declaration.id,
+		},
+		{
+			"op": "add",
+			"path": "/match/to/0/id",
+			"value": to_declaration.id,
+		},
+	])
 
 	cloned_selectors := {"selectors": [{"allow": {
-		"from": [_match_selector_for_from],
-		"to": [_match_selector_for_to],
+		"from": [match_selector_for_from],
+		"to": [match_selector_for_to],
 	}}]}
 
 	result := object.union(data.relationship, cloned_selectors)
