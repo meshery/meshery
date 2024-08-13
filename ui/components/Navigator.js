@@ -617,7 +617,6 @@ const Navigator = ({
       },
       (result) => {
         if (typeof result !== 'undefined') {
-          console.log('/api/system/version : ', result);
           setversionDetail(result);
         } else {
           setversionDetail({
