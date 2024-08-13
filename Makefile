@@ -81,7 +81,7 @@ docker-testing-env:
 #-----------------------------------------------------------------------------
 # Meshery Server Native Builds
 #-----------------------------------------------------------------------------
-.PHONY: server wrk2-setup nighthawk-setup server-local server-skip-compgen server-no-content golangci proto-build error
+.PHONY: server wrk2-setup nighthawk-setup server-local server-skip-compgen server-no-content golangci proto-build error build-server server-binary
 ## Setup wrk2 for local development.
 wrk2-setup:
 	echo "setup-wrk does not work on Mac Catalina at the moment"
@@ -117,8 +117,12 @@ build-server: dep-check
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	KEYS_PATH=$(KEYS_PATH) \
-	GOPROXY=https://proxy.golang.org,direct GOSUMDB=off GO111MODULE=on go build ./server/cmd/main.go ./server/cmd/error.go
+	GOPROXY=https://proxy.golang.org,direct GO111MODULE=on go build ./server/cmd/main.go ./server/cmd/error.go
 	chmod +x ./main
+
+## Running the meshery server using binary.
+server-binary:
+	cd server/cmd; BUILD="$(GIT_VERSION)" PROVIDER_BASE_URLS=$(MESHERY_CLOUD_STAGING) ../../main; cd ../../
 
 ## Build and run Meshery Server on your local machine
 ## and point to Remote Provider in staging environment

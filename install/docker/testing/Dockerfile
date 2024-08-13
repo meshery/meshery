@@ -1,4 +1,4 @@
-FROM golang:1.21 as meshery-server
+FROM golang:1.21.0 as meshery-server
 ARG GIT_VERSION
 
 RUN adduser --disabled-login appuser
@@ -7,7 +7,7 @@ COPY go.sum go.mod ./
 COPY server/ server/
 COPY mesheryctl/ mesheryctl/
 RUN go mod download
-RUN cd server && cd cmd && GOPROXY=https://proxy.golang.org GOSUMDB=off go build -ldflags="-w -s -X main.version=$GIT_VERSION" -tags draft -a -o /meshery .
+RUN cd server && cd cmd && GOPROXY=https://proxy.golang.org go build -ldflags="-w -s -X main.version=$GIT_VERSION" -tags draft -a -o /meshery .
 
 # This image will be reuse for both UI & UI Provider
 FROM node:18.13.0-alpine3.17 as base-node
@@ -124,6 +124,7 @@ COPY --from=meshery-server /meshery /app/server/cmd/
 COPY --from=meshery-server /etc/passwd /etc/passwd
 COPY --from=meshery-server /github.com/meshery/meshery/server/helpers/swagger.yaml /app/server/helpers/swagger.yaml
 COPY --from=ui-builder /app/out /app/ui/out
+COPY --from=ui-builder /app/public /app/ui/public
 COPY --from=ui-provider-builder /app/out /app/provider-ui/out
 COPY --from=wrk2 /wrk2 /app/server/cmd/wrk2
 COPY --from=wrk2 /wrk2/wrk /usr/local/bin
@@ -133,7 +134,7 @@ COPY --from=layer5/getnighthawk:v1.0.1 /usr/local/bin/nighthawk_output_transform
 
 RUN addgroup docker
 RUN mkdir -p /var/run; chown -R appuser:docker /var/run/
-RUN mkdir -p /home/appuser/.meshery/config; chown -R appuser /home/appuser/
+RUN mkdir -p /home/appuser/.meshery/config; chown -R appuser /home/appuser/; chown -R appuser /app/ui/public
 USER appuser
 WORKDIR /app/server/cmd
 CMD ./meshery
