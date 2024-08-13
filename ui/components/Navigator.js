@@ -78,6 +78,7 @@ import { iconSmall } from '../css/icons.styles';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomTextTooltip';
+import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
 
 const styles = (theme) => ({
   root: {
@@ -576,35 +577,35 @@ const Navigator = ({
   const [openItems, setOpenItems] = useState([]);
   const [hoveredId, setHoveredId] = useState(null);
   const [mts, setMts] = useState(new Date());
+  const {
+    data: capabilitiesData,
+    isSuccess: fetchedCapabilities,
+    isError: isCapabilitiesError,
+    error: capabilitiesError,
+  } = useGetProviderCapabilitiesQuery();
 
   useEffect(() => {
     fetchCapabilities();
     fetchVersionDetails();
-  }, []);
+  }, [capabilitiesData]);
 
   useEffect(() => {
     updatenavigatorComponentsMenus();
   }, [navigatorComponents]);
 
   const fetchCapabilities = () => {
-    dataFetch(
-      '/api/provider/capabilities',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      (result) => {
-        if (result) {
-          const capabilitiesRegistryObj = new CapabilitiesRegistry(result);
-          const navigatorComponents = createNavigatorComponents(capabilitiesRegistryObj);
-          setNavigator(ExtensionPointSchemaValidator('navigator')(result?.extensions?.navigator));
-          setCapabilitiesRegistryObj(capabilitiesRegistryObj);
-          setNavigatorComponents(navigatorComponents);
-          updateCapabilities({ capabilitiesRegistry: result });
-        }
-      },
-      (err) => console.error(err),
-    );
+    if (fetchedCapabilities && capabilitiesData) {
+      const capabilitiesRegistryObj = new CapabilitiesRegistry(capabilitiesData);
+      const navigatorComponents = createNavigatorComponents(capabilitiesRegistryObj);
+      setNavigator(
+        ExtensionPointSchemaValidator('navigator')(capabilitiesData?.extensions?.navigator),
+      );
+      setCapabilitiesRegistryObj(capabilitiesRegistryObj);
+      setNavigatorComponents(navigatorComponents);
+      updateCapabilities({ capabilitiesRegistry: capabilitiesData });
+    } else if (isCapabilitiesError) {
+      console.log(capabilitiesError);
+    }
   };
 
   const fetchVersionDetails = () => {
@@ -616,6 +617,7 @@ const Navigator = ({
       },
       (result) => {
         if (typeof result !== 'undefined') {
+          console.log('/api/system/version : ', result);
           setversionDetail(result);
         } else {
           setversionDetail({
