@@ -10,6 +10,7 @@ import (
 	"sync"
 
 	"github.com/gofrs/uuid"
+	"github.com/meshery/schemas/models/v1beta1/component"
 
 	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/models/events"
@@ -27,7 +28,7 @@ const (
 	Registering
 )
 
-var K8sMeshModelMetadata = make(map[string]interface{})
+var K8sMeshModelMetadata = component.Styles{}
 
 // INstead define a set of actions
 func (rs RegistrationStatus) String() string {
@@ -150,10 +151,10 @@ func init() {
 	if err != nil {
 		return
 	}
-	m := make(map[string]interface{})
-	err = json.Unmarshal(byt, &m)
+	componentStyles := component.Styles{}
+	err = json.Unmarshal(byt, &componentStyles)
 	if err != nil {
 		return
 	}
-	K8sMeshModelMetadata = m
+	K8sMeshModelMetadata = componentStyles
 }
