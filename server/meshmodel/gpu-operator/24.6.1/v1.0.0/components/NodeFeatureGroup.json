@@ -1,0 +1,68 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Node Feature Group",
+  "description": "",
+  "format": "JSON",
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "version": "v1.0.0",
+   "name": "gpu-operator",
+   "displayName": "Gpu Operator",
+   "description": "",
+   "status": "ignored",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "registrant": {
+    "hostname": "artifacthub"
+   },
+   "category": {
+    "name": "Uncategorized",
+    "metadata": null
+   },
+   "subCategory": "Uncategorized",
+   "metadata": {
+    "capabilities": "",
+    "defaultData": "",
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "model": {
+    "version": "24.6.1"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "status": "ignored",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "component": {
+   "kind": "NodeFeatureGroup",
+   "version": "nfd.k8s-sigs.io/v1alpha1",
+   "schema": "{\n \"description\": \"NodeFeatureGroup resource holds Node pools by featureGroup\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Spec defines the rules to be evaluated.\",\n   \"properties\": {\n    \"featureGroupRules\": {\n     \"description\": \"List of rules to evaluate to determine nodes that belong in this group.\",\n     \"items\": {\n      \"description\": \"GroupRule defines a rule for nodegroup filtering.\",\n      \"properties\": {\n       \"matchAny\": {\n        \"description\": \"MatchAny specifies a list of matchers one of which must match.\",\n        \"items\": {\n         \"description\": \"MatchAnyElem specifies one sub-matcher of MatchAny.\",\n         \"properties\": {\n          \"matchFeatures\": {\n           \"description\": \"MatchFeatures specifies a set of matcher terms all of which must match.\",\n           \"items\": {\n            \"description\": \"FeatureMatcherTerm defines requirements against one feature set. All\\nrequirements (specified as MatchExpressions) are evaluated against each\\nelement in the feature set.\",\n            \"properties\": {\n             \"feature\": {\n              \"description\": \"Feature is the name of the feature set to match against.\",\n              \"type\": \"string\"\n             },\n             \"matchExpressions\": {\n              \"additionalProperties\": {\n               \"description\": \"MatchExpression specifies an expression to evaluate against a set of input\\nvalues. It contains an operator that is applied when matching the input and\\nan array of values that the operator evaluates the input against.\",\n               \"properties\": {\n                \"op\": {\n                 \"description\": \"Op is the operator to be applied.\",\n                 \"enum\": [\n                  \"In\",\n                  \"NotIn\",\n                  \"InRegexp\",\n                  \"Exists\",\n                  \"DoesNotExist\",\n                  \"Gt\",\n                  \"Lt\",\n                  \"GtLt\",\n                  \"IsTrue\",\n                  \"IsFalse\"\n                 ],\n                 \"type\": \"string\"\n                },\n                \"value\": {\n                 \"description\": \"Value is the list of values that the operand evaluates the input\\nagainst. Value should be empty if the operator is Exists, DoesNotExist,\\nIsTrue or IsFalse. Value should contain exactly one element if the\\noperator is Gt or Lt and exactly two elements if the operator is GtLt.\\nIn other cases Value should contain at least one element.\",\n                 \"items\": {\n                  \"type\": \"string\"\n                 },\n                 \"type\": \"array\"\n                }\n               },\n               \"required\": [\n                \"op\"\n               ],\n               \"type\": \"object\"\n              },\n              \"description\": \"MatchExpressions is the set of per-element expressions evaluated. These\\nmatch against the value of the specified elements.\",\n              \"type\": \"object\"\n             },\n             \"matchName\": {\n              \"description\": \"MatchName in an expression that is matched against the name of each\\nelement in the feature set.\",\n              \"properties\": {\n               \"op\": {\n                \"description\": \"Op is the operator to be applied.\",\n                \"enum\": [\n                 \"In\",\n                 \"NotIn\",\n                 \"InRegexp\",\n                 \"Exists\",\n                 \"DoesNotExist\",\n                 \"Gt\",\n                 \"Lt\",\n                 \"GtLt\",\n                 \"IsTrue\",\n                 \"IsFalse\"\n                ],\n                \"type\": \"string\"\n               },\n               \"value\": {\n                \"description\": \"Value is the list of values that the operand evaluates the input\\nagainst. Value should be empty if the operator is Exists, DoesNotExist,\\nIsTrue or IsFalse. Value should contain exactly one element if the\\noperator is Gt or Lt and exactly two elements if the operator is GtLt.\\nIn other cases Value should contain at least one element.\",\n                \"items\": {\n                 \"type\": \"string\"\n                },\n                \"type\": \"array\"\n               }\n              },\n              \"required\": [\n               \"op\"\n              ],\n              \"type\": \"object\"\n             }\n            },\n            \"required\": [\n             \"feature\"\n            ],\n            \"type\": \"object\"\n           },\n           \"type\": \"array\"\n          }\n         },\n         \"required\": [\n          \"matchFeatures\"\n         ],\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       },\n       \"matchFeatures\": {\n        \"description\": \"MatchFeatures specifies a set of matcher terms all of which must match.\",\n        \"items\": {\n         \"description\": \"FeatureMatcherTerm defines requirements against one feature set. All\\nrequirements (specified as MatchExpressions) are evaluated against each\\nelement in the feature set.\",\n         \"properties\": {\n          \"feature\": {\n           \"description\": \"Feature is the name of the feature set to match against.\",\n           \"type\": \"string\"\n          },\n          \"matchExpressions\": {\n           \"additionalProperties\": {\n            \"description\": \"MatchExpression specifies an expression to evaluate against a set of input\\nvalues. It contains an operator that is applied when matching the input and\\nan array of values that the operator evaluates the input against.\",\n            \"properties\": {\n             \"op\": {\n              \"description\": \"Op is the operator to be applied.\",\n              \"enum\": [\n               \"In\",\n               \"NotIn\",\n               \"InRegexp\",\n               \"Exists\",\n               \"DoesNotExist\",\n               \"Gt\",\n               \"Lt\",\n               \"GtLt\",\n               \"IsTrue\",\n               \"IsFalse\"\n              ],\n              \"type\": \"string\"\n             },\n             \"value\": {\n              \"description\": \"Value is the list of values that the operand evaluates the input\\nagainst. Value should be empty if the operator is Exists, DoesNotExist,\\nIsTrue or IsFalse. Value should contain exactly one element if the\\noperator is Gt or Lt and exactly two elements if the operator is GtLt.\\nIn other cases Value should contain at least one element.\",\n              \"items\": {\n               \"type\": \"string\"\n              },\n              \"type\": \"array\"\n             }\n            },\n            \"required\": [\n             \"op\"\n            ],\n            \"type\": \"object\"\n           },\n           \"description\": \"MatchExpressions is the set of per-element expressions evaluated. These\\nmatch against the value of the specified elements.\",\n           \"type\": \"object\"\n          },\n          \"matchName\": {\n           \"description\": \"MatchName in an expression that is matched against the name of each\\nelement in the feature set.\",\n           \"properties\": {\n            \"op\": {\n             \"description\": \"Op is the operator to be applied.\",\n             \"enum\": [\n              \"In\",\n              \"NotIn\",\n              \"InRegexp\",\n              \"Exists\",\n              \"DoesNotExist\",\n              \"Gt\",\n              \"Lt\",\n              \"GtLt\",\n              \"IsTrue\",\n              \"IsFalse\"\n             ],\n             \"type\": \"string\"\n            },\n            \"value\": {\n             \"description\": \"Value is the list of values that the operand evaluates the input\\nagainst. Value should be empty if the operator is Exists, DoesNotExist,\\nIsTrue or IsFalse. Value should contain exactly one element if the\\noperator is Gt or Lt and exactly two elements if the operator is GtLt.\\nIn other cases Value should contain at least one element.\",\n             \"items\": {\n              \"type\": \"string\"\n             },\n             \"type\": \"array\"\n            }\n           },\n           \"required\": [\n            \"op\"\n           ],\n           \"type\": \"object\"\n          }\n         },\n         \"required\": [\n          \"feature\"\n         ],\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       },\n       \"name\": {\n        \"description\": \"Name of the rule.\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"name\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"featureGroupRules\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Node Feature Group\",\n \"type\": \"object\"\n}"
+  }
+ }
