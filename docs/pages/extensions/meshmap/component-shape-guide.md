@@ -36,7 +36,6 @@ Below are all the shapes with their current usage in a general context.
 	 max-width: 20rem;
 	 max-height: 30rem;
 	 gap: 1rem;
-	 border: 2px solid red;
 }
   .shapes-svg-container {
 	 height: auto;
@@ -76,7 +75,8 @@ Below are all the shapes with their current usage in a general context.
 
 
 <div class="shapes-container">
-    {% for shape in site.data.shapes %}
+{% assign sorted_shapes = site.data.shapes | sort: 'Shape' %}
+    {% for shape in sorted_shapes %}
 
       <div class="shapes-card">
       <div class="shapes-svg-container">
