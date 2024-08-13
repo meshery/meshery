@@ -1,0 +1,68 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Azure Application Gateway Rewrite",
+  "description": "",
+  "format": "JSON",
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "version": "v1.0.0",
+   "name": "Azure Kubernetes Service",
+   "displayName": "Azure Kubernetes Service",
+   "description": "",
+   "status": "ignored",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "registrant": {
+    "hostname": "artifacthub"
+   },
+   "category": {
+    "name": "Orchestration \u0026 Management",
+    "metadata": null
+   },
+   "subCategory": "Scheduling \u0026 Orchestration",
+   "metadata": {
+    "capabilities": "",
+    "defaultData": "",
+    "isAnnotation": false,
+    "primaryColor": "#804998",
+    "secondaryColor": "#804998",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "model": {
+    "version": "1.7.5"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "primaryColor": "#804998",
+   "secondaryColor": "#804998",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "status": "ignored",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "component": {
+   "kind": "AzureApplicationGatewayRewrite",
+   "version": "appgw.ingress.azure.io/v1beta1",
+   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"rewriteRules\": {\n     \"description\": \"A list of Application Gateway rewrite rules\",\n     \"items\": {\n      \"properties\": {\n       \"actions\": {\n        \"description\": \"A list of Application Gateway rewrite rule actions\",\n        \"properties\": {\n         \"requestHeaderConfigurations\": {\n          \"items\": {\n           \"properties\": {\n            \"actionType\": {\n             \"description\": \"actionType can be set or delete only\",\n             \"pattern\": \"^set$|^delete$\",\n             \"type\": \"string\"\n            },\n            \"headerName\": {\n             \"description\": \"Name of the header to be set or delete\",\n             \"type\": \"string\"\n            },\n            \"headerValue\": {\n             \"description\": \"Value of header to change to if a header is being set. Not needed if actionType is delete\",\n             \"type\": \"string\"\n            }\n           },\n           \"type\": \"object\"\n          },\n          \"type\": \"array\"\n         },\n         \"responseHeaderConfigurations\": {\n          \"items\": {\n           \"properties\": {\n            \"actionType\": {\n             \"description\": \"actionType can be set or delete only\",\n             \"pattern\": \"^set$|^delete$\",\n             \"type\": \"string\"\n            },\n            \"headerName\": {\n             \"description\": \"Name of the header to be set or delete\",\n             \"type\": \"string\"\n            },\n            \"headerValue\": {\n             \"description\": \"Value of header to change to if a header is being set. Not needed if actionType is delete\",\n             \"type\": \"string\"\n            }\n           },\n           \"type\": \"object\"\n          },\n          \"type\": \"array\"\n         },\n         \"urlConfiguration\": {\n          \"properties\": {\n           \"modifiedPath\": {\n            \"description\": \"Resultant path\",\n            \"type\": \"string\"\n           },\n           \"modifiedQueryString\": {\n            \"description\": \"Resultant query string\",\n            \"type\": \"string\"\n           },\n           \"reroute\": {\n            \"description\": \"Should App Gw reroute the request based on modified path\",\n            \"type\": \"boolean\"\n           }\n          },\n          \"type\": \"object\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"conditions\": {\n        \"description\": \"A list of Application Gateway rewrite rule conditions\",\n        \"items\": {\n         \"properties\": {\n          \"ignoreCase\": {\n           \"description\": \"Case sensitivity of comparison\",\n           \"type\": \"boolean\"\n          },\n          \"negate\": {\n           \"description\": \"Negate the outcome of comparison\",\n           \"type\": \"boolean\"\n          },\n          \"pattern\": {\n           \"description\": \"pattern to compare to\",\n           \"type\": \"string\"\n          },\n          \"variable\": {\n           \"description\": \"Variable to compare\",\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       },\n       \"name\": {\n        \"description\": \"Name of the Application Gateway rewrite rule\",\n        \"type\": \"string\"\n       },\n       \"ruleSequence\": {\n        \"description\": \"Sequence number (priority) of the Application Gateway rewrite rule\",\n        \"type\": \"integer\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"minItems\": 1,\n     \"type\": \"array\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Azure Application Gateway Rewrite\",\n \"type\": \"object\"\n}"
+  }
+ }
