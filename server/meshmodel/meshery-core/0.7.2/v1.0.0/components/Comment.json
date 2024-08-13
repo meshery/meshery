@@ -36,7 +36,7 @@
    "relationships": null
   },
   "metadata": {
-   "capabilities": "{\"designer\":{\"edit\":{\"config\":true}}}",
+   "capabilities": "{\"designer\":{\"edit\":{\"config\":true, \"resolve\":true}}}",
    "defaultData": "",
    "genealogy": "",
    "isAnnotation": true,

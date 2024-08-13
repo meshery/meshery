@@ -1,0 +1,68 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Perf Data Source Jenkins",
+  "description": "",
+  "format": "JSON",
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "version": "v1.0.0",
+   "name": "perf-operator",
+   "displayName": "Perf Operator",
+   "description": "",
+   "status": "ignored",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "registrant": {
+    "hostname": "artifacthub"
+   },
+   "category": {
+    "name": "Observability and Analysis",
+    "metadata": null
+   },
+   "subCategory": "Monitoring",
+   "metadata": {
+    "capabilities": "",
+    "defaultData": "",
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "model": {
+    "version": "2.13.0"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "status": "ignored",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "component": {
+   "kind": "PerfDataSourceJenkins",
+   "version": "v2.edp.epam.com/v1",
+   "schema": "{\n \"description\": \"PerfDataSourceJenkins is the Schema for the PerfDataSourceJenkinses API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"PerfDataSourceJenkinsSpec defines the desired state of PerfDataSource.\",\n   \"properties\": {\n    \"codebaseName\": {\n     \"type\": \"string\"\n    },\n    \"config\": {\n     \"properties\": {\n      \"jobNames\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"url\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"jobNames\",\n      \"url\"\n     ],\n     \"type\": \"object\"\n    },\n    \"name\": {\n     \"type\": \"string\"\n    },\n    \"perfServerName\": {\n     \"type\": \"string\"\n    },\n    \"type\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"codebaseName\",\n    \"config\",\n    \"name\",\n    \"perfServerName\",\n    \"type\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Perf Data Source Jenkins\",\n \"type\": \"object\"\n}"
+  }
+ }
