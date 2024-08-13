@@ -1,22 +1,22 @@
-import { Grid, Typography, Button, Switch } from '@material-ui/core';
-import { withStyles } from '@material-ui/core/styles';
 import React, { useEffect, useState } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { toggleCatalogContent } from '../lib/store';
 import Head from 'next/head';
-import { EXTENSIONS } from '../utils/Enum';
-import { extensionStyles as styles } from '../css/icons.styles';
-import { Adapters } from '../components/extensions';
-import { LARGE_6_MED_12_GRID_STYLE } from '../css/grid.style';
-import { useNotification } from '../utils/hooks/useNotification';
-import { EVENT_TYPES } from '../lib/event-types';
-import DefaultError from '@/components/General/error-404';
-import CAN from '@/utils/can';
-import { keys } from '@/utils/permission_constants';
-import { UsesSistent } from '@/components/SistentWrapper';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import { Button, Grid, Switch, Typography } from '@material-ui/core';
+import { withStyles } from '@material-ui/core/styles';
 import { CatalogIcon } from '@layer5/sistent';
 import { useGetUserPrefQuery, useUpdateUserPrefMutation } from '@/rtk-query/user';
+import { UsesSistent } from '@/components/SistentWrapper';
+import { Adapters } from '../components/extensions';
+import DefaultError from '@/components/General/error-404';
+import { toggleCatalogContent } from '../lib/store';
+import { EVENT_TYPES } from '../lib/event-types';
+import { EXTENSIONS } from '../utils/Enum';
+import { useNotification } from '../utils/hooks/useNotification';
+import CAN from '@/utils/can';
+import { keys } from '@/utils/permission_constants';
+import { LARGE_6_MED_12_GRID_STYLE } from '../css/grid.style';
+import { extensionStyles as styles } from '../css/icons.styles';
 
 const INITIAL_GRID_SIZE = { lg: 6, md: 12, xs: 12 };
 
