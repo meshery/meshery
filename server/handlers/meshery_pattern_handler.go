@@ -27,6 +27,7 @@ import (
 	pCore "github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshery/server/models/pattern/resource/selector"
 	"github.com/layer5io/meshery/server/models/pattern/stages"
+	"github.com/layer5io/meshkit/encoding"
 	"github.com/layer5io/meshkit/errors"
 	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/models/catalog/v1alpha1"
@@ -1167,7 +1168,6 @@ func (h *Handler) DownloadMesheryPatternHandler(
 		pattern.PatternFile = patternFileStr
 	}
 
-
 	if ociFormat {
 		tmpDir, err := oci.CreateTempOCIContentDir()
 		if err != nil {
@@ -1677,7 +1677,7 @@ func (h *Handler) GetMesheryPatternHandler(
 		http.Error(rw, ErrGetPattern(err).Error(), http.StatusInternalServerError)
 		return
 	}
-	
+
 	err = h.VerifyAndConvertToDesign(r.Context(), pattern, provider)
 	if err != nil {
 		event := events.NewEvent().ActedUpon(*pattern.ID).FromSystem(*h.SystemID).FromUser(userID).WithCategory("pattern").WithAction("convert").WithDescription(fmt.Sprintf("The \"%s\" is not in the design format, failed to convert and persist the original source content from \"%s\" to design file format", pattern.Name, pattern.Type.String)).WithMetadata(map[string]interface{}{"error": err}).Build()
@@ -2114,7 +2114,7 @@ func createArtifactHubPkg(pattern *models.MesheryPattern, user string) ([]byte, 
 
 func isDesignInAlpha2Format(patternFile string) (bool, error) {
 	design := map[string]interface{}{}
-	err := json.Unmarshal([]byte(patternFile), &design)
+	err := encoding.Unmarshal([]byte(patternFile), &design)
 	if err != nil {
 		return true, ErrDecodePattern(err)
 	}
@@ -2192,7 +2192,7 @@ func mapModelRelatedData(reg *meshmodel.RegistryManager, patternFile *pattern.Pa
 		comp.Metadata.Genealogy = "wc.Metadata.Genealogy"
 		comp.Metadata.IsAnnotation = wc.Metadata.IsAnnotation
 		comp.Metadata.Published = wc.Metadata.Published
-		if wc.Styles != nil  {
+		if wc.Styles != nil {
 			comp.Styles = wc.Styles
 		}
 	}
