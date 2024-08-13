@@ -18,7 +18,7 @@ const systemApi = api.injectEndpoints({
       }),
       providesTags: () => [{ type: TAGS.SYSTEM }],
     }),
-    getVersion: builder.query({
+    getVersionDetails: builder.query({
       query: () => 'system/version',
       method: 'GET',
       providesTags: () => [{ type: TAGS.SYSTEM }],
@@ -26,4 +26,4 @@ const systemApi = api.injectEndpoints({
   }),
 });
 
-export const { useGetDatabaseSummaryQuery, useGetVersionQuery } = systemApi;
+export const { useGetDatabaseSummaryQuery, useGetVersionDetailsQuery } = systemApi;
