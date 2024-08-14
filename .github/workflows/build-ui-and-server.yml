@@ -14,6 +14,9 @@ on:
         required: true
         default: "warning"
 
+permissions:
+  pull-requests: write
+
 jobs:
   build-backend:
     name: Backend build
@@ -108,11 +111,11 @@ jobs:
       - name: set branch name
         if: github.event_name == 'pull_request' || github.event_name == 'pull_request_target'
         run: |
-          echo "BRANCH_NAME=$GITHUB_HEAD_REF" >> $GITHUB_ENV 
+          echo "BRANCH_NAME=$GITHUB_HEAD_REF" >> $GITHUB_ENV
       - name: comment starting point
         uses: hasura/comment-progress@v2.3.0
         with:
-          github-token: ${{ secrets.GH_ACCESS_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           number: ${{ inputs.pr_number }}
           id: extension-test
           message: "Starting [Meshery UI tests](https://github.com/meshery/meshery/actions/runs/${{ github.run_id }})..."
@@ -192,7 +195,7 @@ jobs:
       - name: comment progress start
         uses: hasura/comment-progress@v2.3.0
         with:
-          github-token: ${{ secrets.GH_ACCESS_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           number: ${{ inputs.pr_number }}
           id: meshery-ui-test
           message: ":heavy_check_mark: Test environment ready. Starting tests..."
@@ -216,7 +219,7 @@ jobs:
           message: |
             ${{join(steps.run_tests.outputs.*, '\n')}}
 
-          github-token: ${{ secrets.GH_ACCESS_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           number: ${{ inputs.pr_number }}
           id: meshery-ui-test
           append: true
@@ -224,7 +227,7 @@ jobs:
         uses: hasura/comment-progress@v2.3.0
         if: ${{ failure()  }}
         with:
-          github-token: ${{ secrets.GH_ACCESS_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN  }}
           number: ${{ inputs.pr_number }}
           id: meshery-ui-test
           message: ":x: One or more tests have failed."
@@ -233,7 +236,7 @@ jobs:
         if: always()
         uses: hasura/comment-progress@v2.3.0
         with:
-          github-token: ${{ secrets.GH_ACCESS_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN  }}
           number: ${{ inputs.pr_number }}
           id: meshery-ui-test
           message: ":heavy_check_mark: Extension [test results](https://github.com/meshery/meshery/actions/runs/${{ github.run_id }})."
