@@ -1,7 +1,6 @@
 package models
 
 import (
-	"fmt"
 	"os"
 	"path/filepath"
 
@@ -56,7 +55,6 @@ func SeedComponents(log logger.Handler, hc *HandlerConfig, regm *meshmodel.Regis
 	if err != nil {
 		log.Error(ErrSeedingComponents(err))
 	}
-	fmt.Println("MODEL DIR PATHS : ", modelDirPaths)
 	for _, dirPath := range modelDirPaths {
 		dir := registration.NewDir(dirPath)
 		regHelper.Register(dir)
