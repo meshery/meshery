@@ -20,7 +20,6 @@ func getModelDirectoryPaths() ([]string, error) {
 		return dirEntries, err
 	}
 	for _, modelDir := range modelsDirs {
-
 		if !modelDir.IsDir() {
 			continue
 		}

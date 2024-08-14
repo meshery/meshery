@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 
@@ -91,7 +92,7 @@ func (h *Handler) EvaluateRelationshipPolicy(
 		return
 	}
 
-	result, err := h.Rego.RegoPolicyHandler(patternFile,
+	evaluationResponse, err := h.Rego.RegoPolicyHandler(patternFile,
 		relationshipPolicyPackageName,
 		verifiedEvaluationQueries...,
 	)
@@ -100,18 +101,23 @@ func (h *Handler) EvaluateRelationshipPolicy(
 		// log an event
 		http.Error(rw, err.Error(), http.StatusInternalServerError)
 		return
-
 	}
+
+	event := eventBuilder.WithDescription(fmt.Sprintf("Relationship evaluation completed for \"%s\" at version \"%s\"", evaluationResponse.Design.Name, evaluationResponse.Design.Version)).WithSeverity(events.Error).WithMetadata(map[string]interface{}{"evaluation_resut": evaluationResponse.Design}).Build()
+	_ = provider.PersistEvent(event)
+	go h.config.EventBroadcaster.Publish(userUUID, event)
 
 	// Before starting the eval the design is de-prettified, so that we can use the relationships def correctly.
 	// The results contain the updated config.
-	// Prettify the results before sending it to client.
-	// TODO:
-	// evalResults = core.Format.Prettify(result, false)
+	// Prettify the design before sending it to client.
+
+	for _, component := range evaluationResponse.Design.Components {
+		component.Configuration = core.Format.DePrettify(component.Configuration, false)
+	}
 
 	// write the response
 	ec := json.NewEncoder(rw)
-	err = ec.Encode(result)
+	err = ec.Encode(evaluationResponse)
 	if err != nil {
 		h.log.Error(models.ErrEncoding(err, "policy evaluation response"))
 		http.Error(rw, models.ErrEncoding(err, "failed to generate policy evaluation results").Error(), http.StatusInternalServerError)
