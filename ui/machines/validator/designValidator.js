@@ -7,7 +7,7 @@ import {
   selectValidationResults,
 } from '@layer5/sistent';
 import { useSelector } from '@xstate/react';
-import { processDesign } from '@/utils/utils';
+import { encodeDesignFile, processDesign } from '@/utils/utils';
 import { designsApi } from '@/rtk-query/design';
 import { initiateQuery } from '@/rtk-query/utils';
 
@@ -115,15 +115,15 @@ export const formatDryRunResponse = (dryRunResponse) => {
 
 const DryRunDesignActor = fromPromise(async ({ input: { validationPayload } }) => {
   const { design, k8sContexts, dryRunType, includeDependencies } = validationPayload;
-  const { pattern_file, pattern_id } = design;
+  // const { pattern_file, pattern_id } = design;
   const dryRunEndpoint =
     dryRunType === DRY_RUN_TYPE.DEPLOY
       ? designsApi.endpoints.deployPattern
       : designsApi.endpoints.undeployPattern;
 
   const dryRunResults = await initiateQuery(dryRunEndpoint, {
-    pattern_file,
-    pattern_id,
+    pattern_file: encodeDesignFile(design),
+    pattern_id: design.id,
     skipCRD: !includeDependencies,
     selectedK8sContexts: k8sContexts,
     dryRun: true,
@@ -143,10 +143,10 @@ const dryRunValidatorMachine = dataValidatorMachine.provide({
 });
 
 const getAllComponentsDefsInDesign = async (design) => {
-  console.log("getting", design)
+  console.log('getting', design);
   const { components } = processDesign(design);
 
-  console.log("get All Components", components)
+  console.log('get All Components', components);
 
   const componentDefs = (
     await Promise.allSettled(
@@ -161,7 +161,7 @@ const getAllComponentsDefsInDesign = async (design) => {
     .filter((result) => result.status === 'fulfilled')
     .map((result) => result.value);
 
-  console.log("Component Defs", componentDefs)
+  console.log('Component Defs', componentDefs);
 
   const componentStore = componentDefs.reduce((acc, componentDef) => {
     const key = componentKey(componentDef);
@@ -169,7 +169,7 @@ const getAllComponentsDefsInDesign = async (design) => {
     return acc;
   }, {});
 
-  console.log("component store", componentStore)
+  console.log('component store', componentStore);
 
   return componentStore;
 };
@@ -181,26 +181,29 @@ export const designValidationMachine = createMachine({
 
   states: {
     init: {
-      entry: [() => console.log("spawning design validation actor wooo"), assign({
-        schemaValidator: ({ spawn }) =>
-          spawn(
-            fromWorkerfiedActor(
-              new Worker(new URL('./schemaValidatorWorker', import.meta.url), { type: 'module' }),
+      entry: [
+        () => console.log('spawning design validation actor wooo'),
+        assign({
+          schemaValidator: ({ spawn }) =>
+            spawn(
+              fromWorkerfiedActor(
+                new Worker(new URL('./schemaValidatorWorker', import.meta.url), { type: 'module' }),
+              ),
+              {
+                name: 'schemaValidator',
+                id: 'schemaValidator',
+                syncSnapshot: true,
+              },
             ),
-            {
-              name: 'schemaValidator',
-              id: 'schemaValidator',
-              syncSnapshot: true,
-            },
-          ),
 
-        dryRunValidator: ({ spawn }) =>
-          spawn(dryRunValidatorMachine, {
-            name: 'dryRunValidator',
-            id: 'dryRunValidator',
-            syncSnapshot: true,
-          }),
-      })],
+          dryRunValidator: ({ spawn }) =>
+            spawn(dryRunValidatorMachine, {
+              name: 'dryRunValidator',
+              id: 'dryRunValidator',
+              syncSnapshot: true,
+            }),
+        }),
+      ],
       always: 'idle',
     },
 
@@ -238,7 +241,7 @@ export const designValidationMachine = createMachine({
             annotations: 'include',
           });
 
-          console.log("bundle component for validation", component, def)
+          console.log('bundle component for validation', component, def);
           return {
             validationPayload: {
               ...input.event.data,
@@ -268,7 +271,7 @@ export const designValidationMachine = createMachine({
       invoke: {
         input: ({ context, event }) => ({ context, event }),
         src: fromPromise(async ({ input }) => {
-          console.log("validate design schema wooo", input)
+          console.log('validate design schema wooo', input);
           const { event } = input;
           const def = await getAllComponentsDefsInDesign(event.data.design);
           return {
