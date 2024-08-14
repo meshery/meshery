@@ -112,7 +112,7 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	// Prettify the design before sending it to client.
 
 	for _, component := range evaluationResponse.Design.Components {
-		component.Configuration = core.Format.DePrettify(component.Configuration, false)
+		component.Configuration = core.Format.Prettify(component.Configuration, false)
 	}
 
 	// write the response

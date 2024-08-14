@@ -10,7 +10,6 @@ import (
 	"strings"
 	"time"
 
-	yaml "github.com/ghodss/yaml"
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/meshes"
 	"github.com/layer5io/meshery/server/models"
@@ -58,10 +57,8 @@ func (h *Handler) PatternFileHandler(
 	var payload models.MesheryPatternFileDeployPayload
 	var patternFileByte []byte
 
-	fmt.Println("line 61 reached")
 	// Read the PatternFile
 	body, err := io.ReadAll(r.Body)
-	fmt.Println("line 64 reached", string(body), err)
 	if err != nil {
 		h.log.Error(ErrRequestBody(err))
 		http.Error(rw, ErrRequestBody(err).Error(), http.StatusInternalServerError)
@@ -81,15 +78,6 @@ func (h *Handler) PatternFileHandler(
 	}
 
 	patternFileByte = []byte(payload.PatternFile)
-
-	if r.Header.Get("Content-Type") == "application/json" {
-		patternFileByte, err = yaml.JSONToYAML(patternFileByte)
-		if err != nil {
-			h.log.Error(ErrPatternFile(err))
-			http.Error(rw, ErrPatternFile(err).Error(), http.StatusInternalServerError)
-			return
-		}
-	}
 
 	queryParams, _ := extractBoolQueryParams(r, "dryRun", "skipCRD", "verify", "upgrade")
 	isDryRun := queryParams["dryRun"]
@@ -111,7 +99,6 @@ func (h *Handler) PatternFileHandler(
 		action = "verify"
 		description = fmt.Sprintf("%sed design '%s'", action, patternFile.Name)
 	}
-
 	if err != nil {
 		h.log.Error(ErrPatternFile(err))
 		http.Error(rw, ErrPatternFile(err).Error(), http.StatusInternalServerError)
@@ -469,7 +456,6 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) ([]patter
 	// 	return nil, fmt.Errorf("failed to serialize the data: %s", err)
 	// }
 
-	fmt.Println("ccp.Hosts-----------: 491 ", ccp.Hosts)
 	msgs := []patterns.DeploymentMessagePerContext{}
 	for _, host := range ccp.Hosts {
 		// Hack until adapters fix the concurrent client

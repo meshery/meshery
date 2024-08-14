@@ -9,6 +9,7 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/models/pattern/utils"
 	"github.com/layer5io/meshkit/logger"
+	"github.com/layer5io/meshkit/encoding"
 	registry "github.com/layer5io/meshkit/models/meshmodel/registry"
 	regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
 	mutils "github.com/layer5io/meshkit/utils"
@@ -144,7 +145,7 @@ type DryRunFailureCause struct {
 
 // NewPatternFile takes in raw yaml and encodes it into a construct
 func NewPatternFile(yml []byte) (patternFile pattern.PatternFile, err error) {
-	err = yaml.Unmarshal(yml, &patternFile)
+	err = encoding.Unmarshal(yml, &patternFile)
 	if err != nil {
 		return patternFile, err
 	}
