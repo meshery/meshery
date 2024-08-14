@@ -133,7 +133,9 @@ const ValidationResults_ = (props) => {
     (result) => result.errors?.length && !result?.componentDefinition?.metatadata?.isAnnotation,
   );
 
-  const isCurrentComponent = (err) => err.component.traits.meshmap.id == currentNodeId;
+  console.log('componentsWithErrors', componentsWithErrors);
+
+  const isCurrentComponent = (err) => err.component.id == currentNodeId;
   const [open, setOpen] = React.useState(componentsWithErrors.map(isCurrentComponent));
 
   const currentComponentErrorRef = useRef();
@@ -202,7 +204,7 @@ const ValidationResults_ = (props) => {
               <ComponentIcon
                 iconSrc={getSvgWhiteForComponent(componentResult.componentDefinition)}
               />
-              <ListItemText primary={componentResult.component.name} disableTypography />(
+              <ListItemText primary={componentResult.component.displayName} disableTypography />(
               {componentResult?.errors?.length}){open[index] ? <ExpandLess /> : <ExpandMore />}
             </ListItem>
             <Collapse in={open[index]} timeout="auto" unmountOnExit className={classes.errorList}>
@@ -222,6 +224,11 @@ const ValidationResults_ = (props) => {
 
 const ValidationResults = withStyles(styles)(ValidationResults_);
 
+/**
+ *
+ * @param {Design} design is the design file to be validated
+ * @returns
+ */
 export const ValidateDesign = ({ design, currentNodeId, validationMachine }) => {
   const validationResults = useDesignSchemaValidationResults(validationMachine);
   const isValidating = useIsValidatingDesignSchema(validationMachine);
