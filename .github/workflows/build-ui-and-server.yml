@@ -100,6 +100,8 @@ jobs:
     name: UI end-to-end tests
     # if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-22.04
+    permissions:
+      contents: read
     steps:
       - name: Set PR number
         run: |
@@ -113,7 +115,7 @@ jobs:
         uses: hasura/comment-progress@v2.3.0
         with:
           github-token: ${{ secrets.GH_ACCESS_TOKEN }}
-          repository: "meshery/meshery"
+          repository: ${{ github.repository }}
           number: ${{ inputs.pr_number }}
           id: extension-test
           message: "Starting [Meshery UI tests](https://github.com/meshery/meshery/actions/runs/${{ github.run_id }})..."
@@ -194,7 +196,7 @@ jobs:
         uses: hasura/comment-progress@v2.3.0
         with:
           github-token: ${{ secrets.GH_ACCESS_TOKEN }}
-          repository: "meshery/meshery"
+          repository: ${{ github.repository }}
           number: ${{ inputs.pr_number }}
           id: meshery-ui-test
           message: ":heavy_check_mark: Test environment ready. Starting tests..."
@@ -219,7 +221,7 @@ jobs:
             ${{join(steps.run_tests.outputs.*, '\n')}}
 
           github-token: ${{ secrets.GH_ACCESS_TOKEN }}
-          repository: "meshery/meshery"
+          repository: ${{ github.repository }}
           number: ${{ inputs.pr_number }}
           id: meshery-ui-test
           append: true
@@ -228,7 +230,7 @@ jobs:
         if: ${{ failure()  }}
         with:
           github-token: ${{ secrets.GH_ACCESS_TOKEN }}
-          repository: "meshery/meshery"
+          repository: ${{ github.repository }}
           number: ${{ inputs.pr_number }}
           id: meshery-ui-test
           message: ":x: One or more tests have failed."
@@ -238,7 +240,7 @@ jobs:
         uses: hasura/comment-progress@v2.3.0
         with:
           github-token: ${{ secrets.GH_ACCESS_TOKEN }}
-          repository: "meshery/meshery"
+          repository: ${{ github.repository }}
           number: ${{ inputs.pr_number }}
           id: meshery-ui-test
           message: ":heavy_check_mark: Extension [test results](https://github.com/meshery/meshery/actions/runs/${{ github.run_id }})."
