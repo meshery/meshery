@@ -6,7 +6,7 @@
     "description": "A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. E.g Secret->Pod, ConfigMaps->Deployment, etc..."
   },
   "model": {
-    "schemaVersion": "relationships.meshery.io/v1alpha3",
+    "schemaVersion": "models.meshery.io/v1beta1",
     "version": "v1.0.0",
     "name": "nginx-ingress",
     "model": {

@@ -41,13 +41,17 @@
                 "from": [
                     {
                         "kind": "*",
-                        "model": "*"
+                        "model": {
+                            "name": "*"
+                        }
                     }
                 ],
                 "to": [
                     {
                         "kind": "*",
-                        "model": "*"
+                        "model": {
+                            "name": "*"
+                        }
                     }
                 ]
             },

@@ -30,13 +30,17 @@
         "from": [
           {
             "kind": "Service",
-            "model": "kubernetes"
+            "model": {
+              "name": "kubernetes"
+            }
           }
         ],
         "to": [
           {
             "kind": "Pod",
-            "model": "kubernetes"
+            "model": {
+              "name": "kubernetes"
+            }
           }
         ]
       },

@@ -28,13 +28,17 @@
             "allow": {
                 "from": [
                     {
-                        "model": "*"
+                        "model": {
+                            "name": "*"
+                        }
                     }
                 ],
                 "to": [
                     {
                         "kind": "Environment",
-                        "model": "meshery-core"
+                        "model": {
+                            "name": "meshery-core"
+                        }
                     }
                 ]
             },

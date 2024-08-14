@@ -26,12 +26,16 @@
                 "to": [
                     {
                         "kind": "Section",
-                        "model": "meshery-shapes"
+                        "model": {
+                            "name": "meshery-shapes"
+                        }
                     }
                 ],
                 "from": [
                     {
-                        "model": "*"
+                        "model": {
+                            "name": "*"
+                        }
                     }
                 ]
             },
