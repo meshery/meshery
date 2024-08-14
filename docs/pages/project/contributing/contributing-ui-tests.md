@@ -17,9 +17,9 @@ Before diving into Meshery's testing environment, certain prerequisites are nece
 
 - A verified Layer5 cloud account.
 - A compatible browser such as Chromium, Chrome, or Firefox.
-- Installations of Golang, NodeJS, and Makefiles for local OS setups (Optional).
-- Kubernetes clusters (Optional)
-- Already setting up Meshery adapters for several test cases (Optional)
+- Installations of Golang, NodeJS, and Makefiles for local OS setups (Optional for docker based build).
+- Kubernetes clusters (Optional but several test cases will fail)
+- Already setting up Meshery adapters for several test cases (Optional but several test cases will fail)
 
 ## Setting up environment variable
 
@@ -27,17 +27,20 @@ To run the tests successfully, three environment variables must be configured:
 • `REMOTE_PROVIDER_USER_EMAIL`: The email associated with your Layer5 cloud account.
 • `REMOTE_PROVIDER_USER_PASSWORD` : The password for your Layer5 cloud account.
 • `PROVIDER_TOKEN`: You're provider token, that can be generated from [Layer5 cloud account](https://meshery.layer5.io/security/tokens)
+
 During the setup phase, Playwright utilizes these environment variables to log in and store credentials securely in the `playwright/.auth` directory. To protect sensitive data, the `.gitignore` file is configured to exclude the `.env` file and any JSON files within the `/playwright/.auth` directory from the GitHub repository.
 
-There are several tools to help you to working with environment variables locally for each project such as [direnv]([direnv/direnv: unclutter your .profile (github.com)](https://github.com/direnv/direnv)), it can work across multiple shell such as Bash, Powershell, Oh my zsh, Fish, etc
+There are several tools to help you to working with environment variables locally for each project such as [direnv](https://github.com/direnv/direnv), it can work across multiple shell such as Bash, Powershell, Oh my zsh, Fish, etc` dev dependencies
 
 ## Starting up Meshery UI and Server
 
-There are two methods to set up the Meshery UI and server:
+There are several methods to set up the Meshery UI and server, but for e2e testing scenario we aim for environment which close to production as possible and also we aware there some minimum changes developer also need to make sometimes. So rebuilding the entire project will take time and we are not supporting hot reload because it's optimizing for development not e2e testing
 
-> Some test cases required you to have kubernetes cluster and build meshery adapter as well, be aware of that. Which is out of scope for this documentation
+{% include alert.html type="warning" content="Some test cases required you to have kubernetes cluster and build meshery adapter as well, be aware of that. Which is out of scope for this documentation" %}
 
-### Local OS
+### Native OS
+
+This approach is very quick to build, but also dependent on your operating system, so you need to have all dependencies necessary to be able compile and running the server.
 
 - Install & Build the NextJS static site generator application for both the UI and UI Provider
 
@@ -75,7 +78,7 @@ make docker-testing-env
 
 ## Setup playwright & Run the test cases
 
-### Local OS
+### Native OS
 
 Setup playwright:
 
@@ -97,7 +100,7 @@ The first step is to pull the docker image from [Azure Container Registry](http
 docker pull mcr.microsoft.com/playwright:<version>-<base-image>
 ```
 
-> Make sure the version you are using matches the version of `@playwright/test` in the `package.json` dev dependencies
+{% include alert.html type="warning" content="Make sure the version you are using matches the version of `@playwright/test` in the `package.json` dev dependencies" %}
 
 Here is the example of pulling playwright v1.44.0 with Ubuntu 22.04 LTS
 
