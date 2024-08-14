@@ -11,14 +11,12 @@ import (
 	"github.com/meshery/schemas/models/v1beta1/component"
 
 	meshkube "github.com/layer5io/meshkit/utils/kubernetes"
-	_errors "github.com/pkg/errors"
 
 	"gopkg.in/yaml.v2"
 	"k8s.io/client-go/rest"
 )
 
 func Deploy(kubeClient *meshkube.Client, comp component.ComponentDefinition, isDel bool) error {
-	var namespace string
 
 	resource := createK8sResourceStructure(comp)
 	manifest, err := yaml.Marshal(resource)
@@ -27,21 +25,7 @@ func Deploy(kubeClient *meshkube.Client, comp component.ComponentDefinition, isD
 	}
 
 	// Define a function to extract namesapce, labels and annotations in the componetn definiotn
-	var confMetadata map[string]interface{}
-	_confMetadata, ok := comp.Configuration["metadata"]
-	if ok && !utils.IsInterfaceNil(_confMetadata) {
-		confMetadata, err = utils.Cast[map[string]interface{}](_confMetadata)
-		if err != nil {
-			err = _errors.Wrapf(err, "unable to extract namespace from component configuration")
-			fmt.Println("line 36 ;;;;;;;;;;;;;;;;;;;", err)
-			return err
-		}
-
-		_namespace, ok := confMetadata["namespace"]
-		if ok && !utils.IsInterfaceNil(_namespace) {
-			namespace, _ = utils.Cast[string](_namespace)
-		}
-	}
+	namespace := getNamespaceForComponent(&comp)
 
 	err = kubeClient.ApplyManifest(manifest, meshkube.ApplyOptions{
 		Namespace: namespace,
@@ -49,9 +33,7 @@ func Deploy(kubeClient *meshkube.Client, comp component.ComponentDefinition, isD
 		Delete:    isDel,
 	})
 
-	fmt.Println("line 51 ;;;;;;;;;;;;;;;;;;;", err)
 	if err != nil {
-		fmt.Println("line 54 ;;;;;;;;;;;;;;;;;;;", err)
 		if isErrKubeStatusErr(err) {
 			status, _ := json.Marshal(err)
 			return formatKubeStatusErrToMeshkitErr(&status, comp.DisplayName)
@@ -59,40 +41,13 @@ func Deploy(kubeClient *meshkube.Client, comp component.ComponentDefinition, isD
 			return meshkube.ErrApplyManifest(err)
 		}
 	}
-	fmt.Println("line 61 ;;;;;;;;;;;;;;;;;;;", err)
 	return nil
 }
 
 func DryRunHelper(client *meshkube.Client, comp component.ComponentDefinition) (st map[string]interface{}, success bool, err error) {
 	resource := createK8sResourceStructure(comp)
 	// Define a function to extract namesapce, labels and annotations in the componetn definiotn
-	_metadata, ok := comp.Configuration["metadata"]
-	var namespace string
-	if !ok {
-		err = ErrDryRun(fmt.Errorf("unable to extract namespace from component configuration"), comp.Component.Kind)
-		return
-	}
-
-	metadata, err := utils.Cast[map[string]interface{}](_metadata)
-	if err != nil {
-		err = _errors.Wrapf(err, "unable to extract namespace from component configuration")
-		err = ErrDryRun(err, comp.Component.Kind)
-		return nil, false, err
-	}
-
-	_namespace, ok := metadata["namespace"]
-	if !ok {
-		err = ErrDryRun(fmt.Errorf("unable to extract namespace from component configuration"), comp.Component.Kind)
-		return
-	}
-
-	namespace, err = utils.Cast[string](_namespace)
-	if err != nil {
-		err = _errors.Wrapf(err, "unable to extract namespace from component configuration")
-		err = ErrDryRun(err, comp.Component.Kind)
-		return nil, false, err
-	}
-
+	namespace := getNamespaceForComponent(&comp)
 	return dryRun(client.KubeClient.RESTClient(), resource, namespace)
 }
 
@@ -191,6 +146,7 @@ func formatDryRunResponse(resp []byte, err error) (status map[string]interface{}
 		meshkiterr = models.ErrMarshal(err, fmt.Sprintf("cannot serialize Status object from the server: %s", e.Error()))
 		return
 	}
+
 	if status == nil || status["kind"] == nil {
 		meshkiterr = ErrDryRun(fmt.Errorf("nil response to dry run request to Kubernetes"), "")
 	}
@@ -200,4 +156,28 @@ func formatDryRunResponse(resp []byte, err error) (status map[string]interface{}
 	}
 	success = true
 	return
+}
+
+func getNamespaceForComponent(comp *component.ComponentDefinition) string {
+	namespace := ""
+	isNamespaced, ok := comp.Metadata.AdditionalProperties["isNamespaced"].(bool)
+	if ok && isNamespaced {
+		namespace = "default"
+	}
+
+	_metadata, ok := comp.Configuration["metadata"]
+	if ok {
+		metadata, err := utils.Cast[map[string]interface{}](_metadata)
+		if err == nil {
+			_namespace, ok := metadata["namespace"]
+			if ok {
+				ns, _ := utils.Cast[string](_namespace)
+				if ns != "" {
+					namespace = ns
+				}
+			}
+
+		}
+	}
+	return namespace
 }
