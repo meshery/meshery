@@ -2189,7 +2189,7 @@ func mapModelRelatedData(reg *meshmodel.RegistryManager, patternFile *pattern.Pa
 			comp.Model.Metadata.SvgComplete = nil
 		}
 
-		comp.Metadata.Genealogy = "wc.Metadata.Genealogy"
+		comp.Metadata.Genealogy = wc.Metadata.Genealogy
 		comp.Metadata.IsAnnotation = wc.Metadata.IsAnnotation
 		comp.Metadata.Published = wc.Metadata.Published
 		if wc.Styles != nil {
