@@ -26,8 +26,6 @@ const ProvisionSuffixKey = ".isProvisioned"
 
 func Provision(prov ServiceInfoProvider, act ServiceActionProvider, log logger.Handler) ChainStageFunction {
 	return func(data *Data, err error, next ChainStageNextFunction) {
-		fmt.Println("line 29 reached", err)
-
 		if err != nil {
 			act.Terminate(err)
 			return
@@ -113,14 +111,7 @@ func processAnnotations(pattern *pattern.PatternFile) {
 }
 
 func generateHosts(cd component.ComponentDefinition, reg *meshmodel.RegistryManager) []connection.Connection {
-	// res := map[connection.Connection]bool{}
 	_connection := reg.GetRegistrant(&cd)
-	fmt.Println("id :::::::::::", cd.Id.String())
-	// tcs, _ := reg.GetRegistrants(&cd)
-	// for _, tc := range tcs {
-	// 	res[tc.Host] = true
-	// }
-
 	return []connection.Connection{_connection}
 }
 

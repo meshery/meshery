@@ -102,18 +102,17 @@ group_by_id(objects) := {obj |
 }
 
 extract_components(declarations, selectors) := {declaration.id: declaration |
-
 	selector := selectors[_]
 	declaration := declarations[_]
 	is_relationship_feasible(selector, declaration.component.kind)
 	component := declaration
 }
 
-extract_components_by_type(declarations, selector) := {declaration.id: declaration |
+extract_components_by_type(declarations, selector) := {result |
 	declaration := declarations[_]
-	
+
 	is_relationship_feasible(selector, declaration.component.kind)
-	component := declaration
+	result := declaration
 }
 
 # TODO: Add checks for

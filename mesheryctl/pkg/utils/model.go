@@ -9,6 +9,11 @@ import (
 	"strings"
 
 	"github.com/layer5io/meshkit/models/meshmodel/entity"
+	"github.com/meshery/schemas/models/v1beta1"
+	"github.com/meshery/schemas/models/v1beta1/category"
+	"github.com/meshery/schemas/models/v1beta1/connection"
+	"github.com/meshery/schemas/models/v1beta1/model"
+
 	"github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshkit/utils/csv"
 	"github.com/meshery/schemas/models/v1alpha1/capability"
@@ -76,6 +81,11 @@ func (m *ModelCSV) UpdateModelDefinition(modelDef *model.ModelDefinition) error 
 	if err != nil {
 		return err
 	}
+<<<<<<< HEAD
+=======
+	// metadata = utils.MergeMaps(metadata, modelDef.Metadata)
+
+>>>>>>> 7c5b7194dd0aa694ab575eaf989d500f3b26c4a8
 	for _, key := range modelMetadataValues {
 		switch key {
 		case "primaryColor":
@@ -129,7 +139,17 @@ func (m *ModelCSV) UpdateModelDefinition(modelDef *model.ModelDefinition) error 
 			metadata.AdditionalProperties[key] = modelMetadata[key]
 		}
 	}
+<<<<<<< HEAD
 	modelDef.Metadata = metadata
+=======
+
+	isAnnotation := false
+	if strings.ToLower(m.IsAnnotation) == "true" {
+		isAnnotation = true
+	}
+	metadata["isAnnotation"] = isAnnotation
+	// modelDef.Metadata = metadata
+>>>>>>> 7c5b7194dd0aa694ab575eaf989d500f3b26c4a8
 	return nil
 }
 func (mcv *ModelCSV) CreateModelDefinition(version, defVersion string) model.ModelDefinition {
@@ -142,6 +162,7 @@ func (mcv *ModelCSV) CreateModelDefinition(version, defVersion string) model.Mod
 	registrant := createNewRegistrant(mcv.Registrant)
 
 	model := model.ModelDefinition{
+<<<<<<< HEAD
 		Category:    catname,
 		Description: mcv.Description,
 		DisplayName: mcv.ModelDisplayName,
@@ -151,6 +172,23 @@ func (mcv *ModelCSV) CreateModelDefinition(version, defVersion string) model.Mod
 		Status:        model.ModelDefinitionStatus(status),
 		Registrant:    registrant,
 		SubCategory:   mcv.SubCategory,
+=======
+		Version:       defVersion,
+		SchemaVersion: v1beta1.ModelSchemaVersion,
+
+		Name:        mcv.Model,
+		DisplayName: mcv.ModelDisplayName,
+		Status:      model.ModelDefinitionStatus(status),
+		Registrant: connection.Connection{
+			Kind: utils.ReplaceSpacesAndConvertToLowercase(mcv.Registrant),
+			Type: "registry",
+			Name: mcv.Registrant,
+		},
+		Category: category.CategoryDefinition{
+			Name: mcv.Category,
+		},
+		SubCategory: mcv.SubCategory,
+>>>>>>> 7c5b7194dd0aa694ab575eaf989d500f3b26c4a8
 		Model: model.Model{
 			Version: version,
 		},

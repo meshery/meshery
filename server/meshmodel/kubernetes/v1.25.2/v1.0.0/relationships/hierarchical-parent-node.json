@@ -29,7 +29,9 @@
             "allow": {
                 "from": [
                     {
-                        "model": "*",
+                        "model": {
+                            "name": "*"
+                        },
                         "kind": "*",
                         "patch": {
                             "patchStrategy": "replace",

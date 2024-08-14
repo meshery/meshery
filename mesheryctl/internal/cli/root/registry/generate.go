@@ -250,6 +250,10 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 			utils.Log.Info(" extracted ", len(comps), " components for ", model.ModelDisplayName, " (", model.Model, ")")
 			for _, comp := range comps {
 				comp.Version = defVersion
+<<<<<<< HEAD
+=======
+
+>>>>>>> 7c5b7194dd0aa694ab575eaf989d500f3b26c4a8
 				// Assign the component status corresponding to model status.
 				// i.e. If model is enabled comps are also "enabled". Ultimately all individual comps itself will have ability to control their status.
 				// The status "enabled" indicates that the component will be registered inside the registry.
@@ -280,6 +284,7 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 }
 
 func assignDefaultsForCompDefs(componentDef *component.ComponentDefinition, modelDef *model.ModelDefinition) {
+<<<<<<< HEAD
 	// Assign the status from the model to the component
 	compStatus := component.ComponentDefinitionStatus(modelDef.Status)
 	componentDef.Status = &compStatus
@@ -353,6 +358,12 @@ func assignDefaultsForCompDefs(componentDef *component.ComponentDefinition, mode
 			}
 		}
 	}
+=======
+// 	componentDef.Status = (*component.ComponentDefinitionStatus)(&modelDef.Status)
+// 	for k, v := range modelDef.Metadata {
+// 		componentDef.Metadata[k] = v
+// 	}
+>>>>>>> 7c5b7194dd0aa694ab575eaf989d500f3b26c4a8
 }
 
 // For registrants eg: meshery, whose components needs to be directly created by referencing meshery/schemas repo.

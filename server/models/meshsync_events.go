@@ -257,11 +257,12 @@ func (mh *MeshsyncDataHandler) requestMeshsyncStore() error {
 
 // Returns metadata for the component identified by apiVersion and kind.
 // If the component does not exist in the registry, default metadata for k8s component is returned.
-func (mh *MeshsyncDataHandler) getComponentMetadata(apiVersion string, kind string) map[string]interface{} {
-	var data map[string]interface{}
-	metadata := make(map[string]interface{})
-
-	result := mh.dbHandler.Model(component.ComponentDefinition{}).Select("metadata").
+func (mh *MeshsyncDataHandler) getComponentMetadata(apiVersion string, kind string) (data map[string]interface{}) {
+	compStyles := component.Styles{}
+	defer func() {
+		data, _ = utils.MarshalAndUnmarshal[component.Styles, map[string]interface{}](compStyles)
+	}()
+	result := mh.dbHandler.Model(component.ComponentDefinition{}).Select("styles").
 		Where("component->>'version' = ? and component->>'kind' = ?", apiVersion, kind).Scan(&data)
 	if result.Error != nil {
 		if result.Error == gorm.ErrRecordNotFound {
@@ -269,16 +270,18 @@ func (mh *MeshsyncDataHandler) getComponentMetadata(apiVersion string, kind stri
 		} else {
 			mh.log.Error(ErrDBRead(result.Error))
 		}
-		metadata = K8sMeshModelMetadata
-		return metadata
+		compStyles = K8sMeshModelMetadata
+		return
 	}
 	strMetadata, err := utils.Cast[string](data["metadata"])
 	if err != nil {
-		return K8sMeshModelMetadata
+		compStyles = K8sMeshModelMetadata
+		return
 	}
-	err = utils.Unmarshal(strMetadata, &metadata)
+	err = utils.Unmarshal(strMetadata, &compStyles)
 	if err != nil {
-		return K8sMeshModelMetadata
+		compStyles = K8sMeshModelMetadata
+		return
 	}
-	return metadata
+	return
 }

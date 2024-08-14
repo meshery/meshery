@@ -28,6 +28,7 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshkit/models/patterns"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -67,7 +68,7 @@ mesheryctl pattern onboard -f ./pattern.yml -s "Kubernetes Manifest"
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var req *http.Request
 		var err error
-		var patternFile pattern.PatternFile
+		var patternFile *pattern.PatternFile
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			utils.Log.Error(err)
@@ -115,6 +116,7 @@ mesheryctl pattern onboard -f ./pattern.yml -s "Kubernetes Manifest"
 				utils.Log.Error(utils.ErrNotFound(errors.New("no pattern found with the given name")))
 				return nil
 			} else if len(response.Patterns) == 1 {
+<<<<<<< HEAD
 				err := json.Unmarshal([]byte(response.Patterns[0].PatternFile), &patternFile)
 				if err != nil {
 					utils.Log.Error(utils.ErrUnmarshal(err))
@@ -127,6 +129,14 @@ mesheryctl pattern onboard -f ./pattern.yml -s "Kubernetes Manifest"
 				if err != nil {
 					utils.Log.Error(utils.ErrUnmarshal(err))
 				}
+=======
+
+				patternFile, _ = patterns.GetPatternFormat(response.Patterns[0].PatternFile)
+			} else {
+				// Multiple patterns with same name
+				index = multiplepatternsConfirmation(response.Patterns)
+				patternFile, _ = patterns.GetPatternFormat(response.Patterns[index].PatternFile)
+>>>>>>> 7c5b7194dd0aa694ab575eaf989d500f3b26c4a8
 			}
 		} else {
 			// Check if a valid source type is set
@@ -138,10 +148,15 @@ mesheryctl pattern onboard -f ./pattern.yml -s "Kubernetes Manifest"
 				utils.Log.Error(err)
 				return nil
 			}
+<<<<<<< HEAD
 			err = json.Unmarshal([]byte(pattern.PatternFile), &patternFile)
 			if err != nil {
 				utils.Log.Error(utils.ErrUnmarshal(err))
 			}
+=======
+
+			patternFile, _ = patterns.GetPatternFormat(pattern.PatternFile)
+>>>>>>> 7c5b7194dd0aa694ab575eaf989d500f3b26c4a8
 		}
 
 		patternFileByt, _ := yaml.Marshal(patternFile)

@@ -4,9 +4,9 @@ import rego.v1
 
 rels_in_design_file := input.relationships if {
 	count(input.relationships) > 0
-} else := []
+}
 
-evalutate := updated_design_file if {
+evaluate := updated_design_file if {
 	# iterate relationships in the design file and resolve the patches.
 	resultant_patches := {patched_declaration |
 		some rel in rels_in_design_file

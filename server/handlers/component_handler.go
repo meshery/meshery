@@ -221,8 +221,7 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 		filter.Greedy = true
 	}
 
-	entities, count, a, err := h.registryManager.GetEntities(filter)
-	fmt.Println("line 224 : =+++++++++++++++", entities, count, a, err)
+	entities, count, _, _ := h.registryManager.GetEntities(filter)
 	var modelDefs []_model.ModelDefinition
 	for _, model := range entities {
 		model, ok := model.(*_model.ModelDefinition)
