@@ -135,7 +135,7 @@ mesheryctl exp relationship search --[flag] [query-text]`,
 
 		for _, relationship := range relationshipResponse.Relationships {
 			if len(relationship.Type()) > 0 {
-				rows = append(rows, []string{relationship.Kind, relationship.SchemaVersion, relationship.Model.DisplayName, relationship.SubType, relationship.EvaluationQuery})
+				rows = append(rows, []string{string(relationship.Kind), relationship.SchemaVersion, relationship.Model.DisplayName, relationship.SubType, *relationship.EvaluationQuery})
 			}
 		}
 

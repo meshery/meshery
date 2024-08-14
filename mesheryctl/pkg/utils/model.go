@@ -8,10 +8,14 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	"github.com/layer5io/meshkit/models/meshmodel/entity"
 	"github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshkit/utils/csv"
+	"github.com/meshery/schemas/models/v1alpha1/capability"
+	"github.com/meshery/schemas/models/v1beta1"
+	"github.com/meshery/schemas/models/v1beta1/category"
+	"github.com/meshery/schemas/models/v1beta1/connection"
+	"github.com/meshery/schemas/models/v1beta1/model"
 )
 
 var (
@@ -61,75 +65,96 @@ var modelMetadataValues = []string{
 }
 
 func (m *ModelCSV) UpdateModelDefinition(modelDef *model.ModelDefinition) error {
-
-	metadata := map[string]interface{}{}
+	metadata := modelDef.Metadata
+	if metadata == nil {
+		metadata = &model.ModelDefinition_Metadata{}
+	}
+	if metadata.AdditionalProperties == nil {
+		metadata.AdditionalProperties = make(map[string]interface{})
+	}
 	modelMetadata, err := utils.MarshalAndUnmarshal[ModelCSV, map[string]interface{}](*m)
 	if err != nil {
 		return err
 	}
-	metadata = utils.MergeMaps(metadata, modelDef.Metadata)
-
 	for _, key := range modelMetadataValues {
-		if key == "svgColor" || key == "svgWhite" {
-			svg, err := utils.Cast[string](modelMetadata[key])
+		switch key {
+		case "primaryColor":
+			if m.PrimaryColor != "" {
+				metadata.PrimaryColor = &m.PrimaryColor
+			}
+		case "secondaryColor":
+			if m.SecondaryColor != "" {
+				metadata.SecondaryColor = &m.SecondaryColor
+			}
+		case "svgColor", "svgWhite", "svgComplete":
+			var svg string
+			if key == "svgColor" {
+				svg = m.SVGColor
+			} else if key == "svgWhite" {
+				svg = m.SVGWhite
+			} else {
+				svg = m.SVGComplete
+			}
+			// Attempt to update the SVG string
+			updatedSvg, err := utils.UpdateSVGString(svg, SVG_WIDTH, SVG_HEIGHT, false)
 			if err == nil {
-				metadata[key], err = utils.UpdateSVGString(svg, SVG_WIDTH, SVG_HEIGHT, false)
+				if key == "svgColor" {
+					metadata.SvgColor = updatedSvg
+				} else if key == "svgWhite" {
+					metadata.SvgWhite = updatedSvg
+				} else {
+					metadata.SvgComplete = &updatedSvg
+				}
+			} else {
+				// If SVG update fails, use the original SVG value
+				metadata.AdditionalProperties[key] = svg
+			}
+		case "capabilities":
+			var capabilities []capability.Capability
+			if m.Capabilities != "" {
+				err := json.Unmarshal([]byte(m.Capabilities), &capabilities)
 				if err != nil {
-					// If svg cannot be updated, assign the svg value as it is
-					metadata[key] = modelMetadata[key]
+					return err
 				}
 			}
-		}
-		if key == "capabilities" {
-			val, err := utils.Cast[string](modelMetadata[key])
-			if err != nil {
-				return err
+			metadata.Capabilities = &capabilities
+		case "isAnnotation":
+			isAnnotation := false
+			if strings.ToLower(m.IsAnnotation) == "true" {
+				isAnnotation = true
 			}
-			var capabilitiesMap map[string]interface{}
-			err = json.Unmarshal([]byte(val), &capabilitiesMap)
-			if err != nil {
-				return err
-			}
-			metadata[key] = capabilitiesMap
-		} else {
-			metadata[key] = modelMetadata[key]
-
+			metadata.IsAnnotation = &isAnnotation
+		default:
+			// For keys that do not have a direct mapping, store them in AdditionalProperties
+			metadata.AdditionalProperties[key] = modelMetadata[key]
 		}
 	}
-
-	isAnnotation := false
-	if strings.ToLower(m.IsAnnotation) == "true" {
-		isAnnotation = true
-	}
-	metadata["isAnnotation"] = isAnnotation
 	modelDef.Metadata = metadata
 	return nil
 }
-
 func (mcv *ModelCSV) CreateModelDefinition(version, defVersion string) model.ModelDefinition {
 	status := entity.Ignored
 	if strings.ToLower(mcv.PublishToRegistry) == "true" {
 		status = entity.Enabled
 	}
+	var catname category.CategoryDefinition
+	catname.Name = mcv.Category
+	registrant := createNewRegistrant(mcv.Registrant)
 
 	model := model.ModelDefinition{
-		VersionMeta: v1beta1.VersionMeta{
-			Version:       defVersion,
-			SchemaVersion: model.ModelDefinitionSchemaVersion,
-		},
-		Name:        mcv.Model,
+		Category:    catname,
+		Description: mcv.Description,
 		DisplayName: mcv.ModelDisplayName,
-		Status:      status,
-		Registrant: v1beta1.Host{
-			Hostname: utils.ReplaceSpacesAndConvertToLowercase(mcv.Registrant),
-		},
-		Category: v1beta1.Category{
-			Name: mcv.Category,
-		},
-		SubCategory: mcv.SubCategory,
-		Model: model.ModelDefinitionEntity{
+
+		SchemaVersion: v1beta1.ModelSchemaVersion,
+		Name:          mcv.Model,
+		Status:        model.ModelDefinitionStatus(status),
+		Registrant:    registrant,
+		SubCategory:   mcv.SubCategory,
+		Model: model.Model{
 			Version: version,
 		},
+		Version: defVersion,
 	}
 	err := mcv.UpdateModelDefinition(&model)
 	if err != nil {
@@ -301,6 +326,26 @@ published: %s
 	)
 	markdown = strings.ReplaceAll(markdown, "\r", "\n")
 	return markdown
+}
+func createNewRegistrant(registrantName string) connection.Connection {
+	newRegistrant := connection.Connection{
+		Name:   registrantName,
+		Status: connection.Registered,
+		Type:   "registry",
+	}
+
+	switch newRegistrant.Name {
+	case "Artifact Hub":
+		newRegistrant.Kind = "artifacthub"
+	case "Github":
+		newRegistrant.Kind = "gitHub"
+	case "Kubernetes":
+		newRegistrant.Kind = "kubernetes"
+	default:
+		newRegistrant.Kind = "Unknown"
+	}
+
+	return newRegistrant
 }
 
 // Creates JSON formatted meshmodel attribute item for JSON Style docs

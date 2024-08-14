@@ -8,7 +8,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
+	"github.com/meshery/schemas/models/v1alpha1/capability"
+	schmeaVersion "github.com/meshery/schemas/models/v1beta1"
+
 	"github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshkit/utils/csv"
 	"github.com/layer5io/meshkit/utils/manifests"
@@ -49,69 +51,93 @@ type ComponentCSV struct {
 
 // The Component Definition generated assumes or is only for components which have registrant as "meshery"
 func (c *ComponentCSV) CreateComponentDefinition(isModelPublished bool, defVersion string) (component.ComponentDefinition, error) {
+	var capabilities []capability.Capability
+	if c.Capabilities != "" {
+		err := json.Unmarshal([]byte(c.Capabilities), &capabilities)
+		if err != nil {
+			Log.Error(err)
+		}
+	}
 	componentDefinition := &component.ComponentDefinition{
-		VersionMeta: v1beta1.VersionMeta{
-			SchemaVersion: v1beta1.ComponentSchemaVersion,
-			Version:       defVersion,
+		SchemaVersion: schmeaVersion.ComponentSchemaVersion,
+		Capabilities:  &capabilities,
+		DisplayName:   c.Component,
+		Format:        "JSON",
+		Version:       defVersion,
+		Metadata: component.ComponentDefinition_Metadata{
+			Published: isModelPublished,
 		},
-		DisplayName: c.Component,
-		Format:      "JSON",
-		Metadata: map[string]interface{}{
-			"published": isModelPublished,
-		},
-		Component: v1beta1.ComponentEntity{},
+		Component: component.Component{},
 	}
 	err := c.UpdateCompDefinition(componentDefinition)
 	return *componentDefinition, err
 }
 
 var compMetadataValues = []string{
-	"primaryColor", "secondaryColor", "svgColor", "svgWhite", "svgComplete", "styleOverrides", "styles", "shapePolygonPoints", "defaultData", "capabilities", "genealogy", "isAnnotation", "shape", "subCategory",
+	"styleOverrides", "styles", "shapePolygonPoints", "defaultData", "genealogy", "isAnnotation", "subCategory",
+}
+var compStyleValues = []string{
+	"primaryColor", "secondaryColor", "svgColor", "svgWhite", "svgComplete", "shape",
 }
 
 func (c *ComponentCSV) UpdateCompDefinition(compDef *component.ComponentDefinition) error {
-
 	metadata := map[string]interface{}{}
 	compMetadata, err := utils.MarshalAndUnmarshal[ComponentCSV, map[string]interface{}](*c)
 	if err != nil {
 		return err
 	}
-	metadata = utils.MergeMaps(metadata, compDef.Metadata)
-
-	for _, key := range compMetadataValues {
-		if key == "svgColor" || key == "svgWhite" {
-			svg, err := utils.Cast[string](compMetadata[key])
-			if err == nil {
-				metadata[key], err = utils.UpdateSVGString(svg, SVG_WIDTH, SVG_HEIGHT, false)
+	var capabilities []capability.Capability
+	if c.Capabilities != "" {
+		err := json.Unmarshal([]byte(c.Capabilities), &capabilities)
+		if err != nil {
+			Log.Error(err)
+		}
+	}
+	compDef.Capabilities = &capabilities
+	compDefStyles := &component.Styles{}
+	compDef.Styles.Shape = (*component.ComponentDefinitionStylesShape)(&c.Shape)
+	compDef.Styles.PrimaryColor = c.PrimaryColor
+	compDef.Styles.SecondaryColor = &c.SecondaryColor
+	for _, key := range compStyleValues {
+		if key == "svgColor" {
+			compDefStyles.SvgColor, err = utils.Cast[string](compMetadata[key])
+			if err != nil {
+				compDefStyles.SvgColor = c.SVGColor
+			}
+			if key == "svgWhite" {
+				compDefStyles.SvgWhite, err = utils.Cast[string](compMetadata[key])
 				if err != nil {
-					// If svg cannot be updated, assign the svg value as it is
-					metadata[key] = compMetadata[key]
+					compDefStyles.SvgWhite = c.SVGWhite
 				}
 			}
+			if key == "svgComplete" {
+				compDefStyles.SvgComplete, err = utils.Cast[string](compMetadata[key])
+				if err != nil {
+					compDefStyles.SvgComplete = c.SVGComplete
+				}
+			}
+
 		}
-		if key == "capabilities" {
-			val, err := utils.Cast[string](compMetadata[key])
-			if err != nil {
-				return (err)
+	}
+	compDef.Styles = compDefStyles
+
+	for _, key := range compMetadataValues {
+		if key == "genealogy" {
+			genealogy, err := utils.Cast[string](compMetadata[key])
+			if err == nil {
+				compDef.Metadata.Genealogy = genealogy
 			}
-			var capabilitiesMap map[string]interface{}
-			err = json.Unmarshal([]byte(val), &capabilitiesMap)
-			if err != nil {
-				return err
+		} else if key == "isAnnotation" {
+			if strings.ToLower(c.IsAnnotation) == "true" {
+				compDef.Metadata.IsAnnotation = true
+			} else {
+				compDef.Metadata.IsAnnotation = false
 			}
-			metadata[key] = capabilitiesMap
 		} else {
 			metadata[key] = compMetadata[key]
-
 		}
 	}
-
-	isAnnotation := false
-	if strings.ToLower(c.IsAnnotation) == "true" {
-		isAnnotation = true
-	}
-	metadata["isAnnotation"] = isAnnotation
-	compDef.Metadata = metadata
+	compDef.Metadata.AdditionalProperties = metadata
 	return nil
 }
 
@@ -308,7 +334,7 @@ func (m ComponentCSVHelper) Cleanup() error {
 }
 
 func ConvertCompDefToCompCSV(modelcsv *ModelCSV, compDef component.ComponentDefinition) *ComponentCSV {
-	compCSV, _ := utils.MarshalAndUnmarshal[map[string]interface{}, ComponentCSV](compDef.Metadata)
+	compCSV, _ := utils.MarshalAndUnmarshal[map[string]interface{}, ComponentCSV](compDef.Metadata.AdditionalProperties)
 	compCSV.Registrant = modelcsv.Registrant
 	compCSV.Model = modelcsv.Model
 	compCSV.Component = compDef.Component.Kind
@@ -316,7 +342,14 @@ func ConvertCompDefToCompCSV(modelcsv *ModelCSV, compDef component.ComponentDefi
 	compCSV.Category = modelcsv.Category
 	compCSV.SubCategory = modelcsv.SubCategory
 	compCSV.Capabilities = modelcsv.Capabilities
-
+	compCSV.Shape = modelcsv.Shape
+	compCSV.PrimaryColor = modelcsv.PrimaryColor
+	compCSV.SecondaryColor = modelcsv.SecondaryColor
+	compCSV.SVGColor = modelcsv.SVGColor
+	compCSV.SVGWhite = modelcsv.SVGWhite
+	compCSV.SVGComplete = modelcsv.SVGComplete
+	compCSV.Genealogy = compDef.Metadata.Genealogy
+	compCSV.IsAnnotation = strconv.FormatBool(compDef.Metadata.IsAnnotation)
 	return &compCSV
 }
 

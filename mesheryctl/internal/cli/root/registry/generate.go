@@ -21,7 +21,9 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"reflect"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 
@@ -66,7 +68,7 @@ var generateCmd = &cobra.Command{
 	Long:  "Prerequisite: Excecute this command from the root of a meshery/meshery repo fork.\n\nGiven a Google Sheet with a list of model names and source locations, generate models and components any Registrant (e.g. GitHub, Artifact Hub) repositories.\n\nGenerated Model files are written to local filesystem under `/server/models/<model-name>`.",
 	Example: `
 // Generate Meshery Models from a Google Spreadsheet (i.e. "Meshery Integrations" spreadsheet).
-mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred
+./mesheryctl registry generate --spreadsheet-id "11msGGeLX97knVpIPF4WDbz9V4OxqTLuhMFDlzx9ki1E" --spreadsheet-cred $CRED
 // Directly generate models from one of the supported registrants by using Registrant Connection Definition and (optional) Registrant Credential Definition
 mesheryctl registry generate --registrant-def [path to connection definition] --registrant-cred [path to credential definition]
 // Generate a specific Model from a Google Spreadsheet (i.e. "Meshery Integrations" spreadsheet).
@@ -239,7 +241,7 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 				return
 			}
 
-			comps, err := pkg.GenerateComponents()
+			comps, err := pkg.GenerateComponents(*modelDef)
 			if err != nil {
 				utils.LogError.Error(ErrGenerateModel(err, model.Model))
 				return
@@ -248,9 +250,6 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 			utils.Log.Info(" extracted ", len(comps), " components for ", model.ModelDisplayName, " (", model.Model, ")")
 			for _, comp := range comps {
 				comp.Version = defVersion
-				if comp.Metadata == nil {
-					comp.Metadata = make(map[string]interface{})
-				}
 				// Assign the component status corresponding to model status.
 				// i.e. If model is enabled comps are also "enabled". Ultimately all individual comps itself will have ability to control their status.
 				// The status "enabled" indicates that the component will be registered inside the registry.
@@ -281,9 +280,78 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 }
 
 func assignDefaultsForCompDefs(componentDef *component.ComponentDefinition, modelDef *model.ModelDefinition) {
-	componentDef.Metadata["status"] = modelDef.Status
-	for k, v := range modelDef.Metadata {
-		componentDef.Metadata[k] = v
+	// Assign the status from the model to the component
+	compStatus := component.ComponentDefinitionStatus(modelDef.Status)
+	componentDef.Status = &compStatus
+
+	// Initialize AdditionalProperties and Styles if nil
+	if componentDef.Metadata.AdditionalProperties == nil {
+		componentDef.Metadata.AdditionalProperties = make(map[string]interface{})
+	}
+	if componentDef.Styles == nil {
+		componentDef.Styles = &component.Styles{}
+	}
+	if (modelDef.Metadata.Capabilities) != nil {
+		componentDef.Capabilities = modelDef.Metadata.Capabilities
+
+	}
+
+	// Use reflection to map model metadata to component styles
+	stylesValue := reflect.ValueOf(componentDef.Styles).Elem()
+
+	// Iterate through modelDef.Metadata
+	if modelDef.Metadata != nil {
+		if modelDef.Metadata.PrimaryColor != nil {
+			componentDef.Styles.PrimaryColor = *modelDef.Metadata.PrimaryColor
+		}
+		if modelDef.Metadata.SecondaryColor != nil {
+			componentDef.Styles.SecondaryColor = modelDef.Metadata.SecondaryColor
+		}
+		if modelDef.Metadata.SvgColor != "" {
+			componentDef.Styles.SvgColor = modelDef.Metadata.SvgColor
+		}
+		if modelDef.Metadata.SvgComplete != nil {
+			componentDef.Styles.SvgComplete = *modelDef.Metadata.SvgComplete
+		}
+		if modelDef.Metadata.SvgWhite != "" {
+			componentDef.Styles.SvgWhite = modelDef.Metadata.SvgWhite
+		}
+
+		// Iterate through AdditionalProperties and assign appropriately
+		for k, v := range modelDef.Metadata.AdditionalProperties {
+			// Check if the field exists in Styles
+			if field := stylesValue.FieldByNameFunc(func(name string) bool {
+				return strings.EqualFold(k, name)
+			}); field.IsValid() && field.CanSet() {
+				switch field.Kind() {
+				case reflect.Ptr:
+					ptrType := field.Type().Elem()
+					val := reflect.New(ptrType).Elem()
+
+					if val.Kind() == reflect.String {
+						val.SetString(v.(string))
+					} else if val.Kind() == reflect.Float32 {
+						val.SetFloat(v.(float64))
+					} else if val.Kind() == reflect.Int {
+						val.SetInt(int64(v.(int)))
+					} else {
+						val.Set(reflect.ValueOf(v))
+					}
+
+					field.Set(val.Addr())
+				case reflect.String:
+					field.SetString(v.(string))
+				case reflect.Float32:
+					field.SetFloat(v.(float64))
+				case reflect.Int:
+					field.SetInt(int64(v.(int)))
+				default:
+					field.Set(reflect.ValueOf(v))
+				}
+			} else {
+				componentDef.Metadata.AdditionalProperties[k] = v
+			}
+		}
 	}
 }
 

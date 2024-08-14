@@ -23,6 +23,7 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	mutils "github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshkit/utils/store"
+	comp "github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/sirupsen/logrus"
 
 	"github.com/spf13/cobra"
@@ -177,7 +178,7 @@ func InvokeCompUpdate() error {
 							utils.Log.Error(ErrUpdateComponent(err, modelName, component.Component))
 							continue
 						}
-						componentDef := component.ComponentDefinition{}
+						componentDef := comp.ComponentDefinition{}
 						err = json.Unmarshal(componentByte, &componentDef)
 						if err != nil {
 							utils.Log.Error(ErrUpdateComponent(err, modelName, component.Component))
@@ -189,7 +190,7 @@ func InvokeCompUpdate() error {
 							utils.Log.Error(ErrUpdateComponent(err, modelName, component.Component))
 							continue
 						}
-						err = mutils.WriteJSONToFile[component.ComponentDefinition](compPath, componentDef)
+						err = mutils.WriteJSONToFile[comp.ComponentDefinition](compPath, componentDef)
 						if err != nil {
 							utils.Log.Error(err)
 							continue

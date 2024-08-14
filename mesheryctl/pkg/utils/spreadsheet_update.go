@@ -187,7 +187,7 @@ func appendSheet(srv *sheets.Service, cred, sheetId, appendRange string, values 
 		MajorDimension: "ROWS",
 		Range:          appendRange,
 		Values:         values,
-	}).InsertDataOption("INSERT_ROWS").ValueInputOption("USER_ENTERED").Context(context.Background()).Do()
+	}).InsertDataOption("INSERT_ROWS").ValueInputOption("RAW").Context(context.Background()).Do()
 
 	if err != nil {
 		return ErrAppendToSheet(err, sheetId)

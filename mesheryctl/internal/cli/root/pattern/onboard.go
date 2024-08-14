@@ -115,11 +115,18 @@ mesheryctl pattern onboard -f ./pattern.yml -s "Kubernetes Manifest"
 				utils.Log.Error(utils.ErrNotFound(errors.New("no pattern found with the given name")))
 				return nil
 			} else if len(response.Patterns) == 1 {
-				patternFile = response.Patterns[0].PatternFile
+				err := json.Unmarshal([]byte(response.Patterns[0].PatternFile), &patternFile)
+				if err != nil {
+					utils.Log.Error(utils.ErrUnmarshal(err))
+				}
+
 			} else {
 				// Multiple patterns with same name
 				index = multiplepatternsConfirmation(response.Patterns)
-				patternFile = response.Patterns[index].PatternFile
+				err := json.Unmarshal([]byte(response.Patterns[index].PatternFile), &patternFile)
+				if err != nil {
+					utils.Log.Error(utils.ErrUnmarshal(err))
+				}
 			}
 		} else {
 			// Check if a valid source type is set
@@ -131,8 +138,10 @@ mesheryctl pattern onboard -f ./pattern.yml -s "Kubernetes Manifest"
 				utils.Log.Error(err)
 				return nil
 			}
-
-			patternFile = pattern.PatternFile
+			err = json.Unmarshal([]byte(pattern.PatternFile), &patternFile)
+			if err != nil {
+				utils.Log.Error(utils.ErrUnmarshal(err))
+			}
 		}
 
 		patternFileByt, _ := yaml.Marshal(patternFile)
