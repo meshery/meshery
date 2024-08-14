@@ -1,24 +1,36 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { withStyles } from '@material-ui/core/styles';
-import Divider from '@material-ui/core/Divider';
-import Drawer from '@material-ui/core/Drawer';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import Grow from '@material-ui/core/Grow';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import NoSsr from '@material-ui/core/NoSsr';
-import RemoveIcon from '@material-ui/icons/Remove';
-import Zoom from '@material-ui/core/Zoom';
 import Link from 'next/link';
+import { withRouter } from 'next/router';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { withRouter } from 'next/router';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  withStyles,
+  ButtonGroup,
+  IconButton,
+  Collapse,
+  Divider,
+  Drawer,
+  List,
+  ListItem,
+  Grow,
+  ListItemIcon,
+  ListItemText,
+  NoSsr,
+  Zoom,
+} from '@material-ui/core';
+import RemoveIcon from '@material-ui/icons/Remove';
 import HelpIcon from '@material-ui/icons/Help';
 import DashboardIcon from '@material-ui/icons/Dashboard';
+import OpenInNewIcon from '@material-ui/icons/OpenInNew';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faAngleLeft,
+  faCaretDown,
+  faExternalLinkAlt,
+  faDigitalTachograph,
+} from '@fortawesome/free-solid-svg-icons';
 import LifecycleIcon from '../public/static/img/drawer-icons/lifecycle_mgmt_svg';
 import PerformanceIcon from '../public/static/img/drawer-icons/performance_svg';
 import ExtensionIcon from '../public/static/img/drawer-icons/extensions_svg';
@@ -33,13 +45,9 @@ import SlackIcon from '../assets/icons/SlackIcon';
 import GithubIcon from '../assets/icons/GithubIcon';
 import ChatIcon from '../assets/icons/ChatIcon';
 import ServiceMeshIcon from '../assets/icons/ServiceMeshIcon';
-import OpenInNewIcon from '@material-ui/icons/OpenInNew';
-import {
-  faAngleLeft,
-  faCaretDown,
-  faExternalLinkAlt,
-  faDigitalTachograph,
-} from '@fortawesome/free-solid-svg-icons';
+import { CatalogIcon, CustomTooltip } from '@layer5/sistent';
+import { UsesSistent } from './SistentWrapper';
+import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
 import {
   updatepagetitle,
   updatebetabadge,
@@ -47,11 +55,6 @@ import {
   setAdapter,
   updateCapabilities,
 } from '../lib/store';
-import { ButtonGroup, IconButton } from '@material-ui/core';
-import { CatalogIcon, CustomTooltip } from '@layer5/sistent';
-import { UsesSistent } from './SistentWrapper';
-import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
-import { Collapse } from '@material-ui/core';
 import {
   cursorNotAllowed,
   disabledStyle,
