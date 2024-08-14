@@ -116,7 +116,7 @@ jobs:
         with:
           github-token: ${{ secrets.GH_ACCESS_TOKEN }}
           repository: ${{ github.repository }}
-          number: ${{ inputs.pr_number }}
+          number: ${{ github.event.number }}
           id: extension-test
           message: "Starting [Meshery UI tests](https://github.com/meshery/meshery/actions/runs/${{ github.run_id }})..."
           recreate: true
@@ -197,7 +197,7 @@ jobs:
         with:
           github-token: ${{ secrets.GH_ACCESS_TOKEN }}
           repository: ${{ github.repository }}
-          number: ${{ inputs.pr_number }}
+          number: ${{ github.event.number }}
           id: meshery-ui-test
           message: ":heavy_check_mark: Test environment ready. Starting tests..."
           append: true
@@ -222,7 +222,7 @@ jobs:
 
           github-token: ${{ secrets.GH_ACCESS_TOKEN }}
           repository: ${{ github.repository }}
-          number: ${{ inputs.pr_number }}
+          number: ${{ github.event.number }}
           id: meshery-ui-test
           append: true
       - name: Comment Test failure
@@ -231,7 +231,7 @@ jobs:
         with:
           github-token: ${{ secrets.GH_ACCESS_TOKEN }}
           repository: ${{ github.repository }}
-          number: ${{ inputs.pr_number }}
+          number: ${{ github.event.number }}
           id: meshery-ui-test
           message: ":x: One or more tests have failed."
           append: true
@@ -241,7 +241,7 @@ jobs:
         with:
           github-token: ${{ secrets.GH_ACCESS_TOKEN }}
           repository: ${{ github.repository }}
-          number: ${{ inputs.pr_number }}
+          number: ${{ github.event.number }}
           id: meshery-ui-test
           message: ":heavy_check_mark: Extension [test results](https://github.com/meshery/meshery/actions/runs/${{ github.run_id }})."
           append: true
