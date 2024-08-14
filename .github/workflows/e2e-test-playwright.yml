@@ -1,7 +1,5 @@
 name: Run E2E Test on Meshery
 
-# read-write repo token
-# access to secrets
 on:
   workflow_run:
     workflows: ["Meshery UI and Server"]
@@ -96,13 +94,14 @@ jobs:
           REMOTE_PROVIDER_USER_EMAIL: ${{ secrets.REMOTE_PROVIDER_USER_EMAIL }}
           REMOTE_PROVIDER_USER_PASSWORD: ${{ secrets.REMOTE_PROVIDER_USER_PASS }}
           PROVIDER_TOKEN: ${{ secrets.PROVIDER_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
         run: |
           make test-setup-ui
           make test-ui
       - uses: daun/playwright-report-summary@v3
         if: always()
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.GH_ACCESS_TOKEN }}
           report-file: ui/results.json
           comment-title: "Meshery E2E Test with Playwright"
+
