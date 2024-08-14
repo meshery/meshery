@@ -74,7 +74,7 @@ func (c *ComponentCSV) CreateComponentDefinition(isModelPublished bool, defVersi
 }
 
 var compMetadataValues = []string{
-	"styleOverrides", "styles", "shapePolygonPoints", "defaultData", "genealogy", "isAnnotation", "subCategory",
+	"styleOverrides", "styles", "shapePolygonPoints", "defaultData", "genealogy", "isAnnotation",
 }
 var compStyleValues = []string{
 	"primaryColor", "secondaryColor", "svgColor", "svgWhite", "svgComplete", "shape",
@@ -88,37 +88,48 @@ func (c *ComponentCSV) UpdateCompDefinition(compDef *component.ComponentDefiniti
 	}
 	var capabilities []capability.Capability
 	if c.Capabilities != "" {
+
 		err := json.Unmarshal([]byte(c.Capabilities), &capabilities)
 		if err != nil {
 			Log.Error(err)
 		}
 	}
+
 	compDef.Capabilities = &capabilities
 	compDefStyles := &component.Styles{}
-	compDef.Styles.Shape = (*component.ComponentDefinitionStylesShape)(&c.Shape)
-	compDef.Styles.PrimaryColor = c.PrimaryColor
-	compDef.Styles.SecondaryColor = &c.SecondaryColor
+	if c.Shape != "" {
+		shape := c.Shape
+		compDefStyles.Shape = (*component.ComponentDefinitionStylesShape)(&shape)
+	}
+	if c.PrimaryColor != "" {
+
+		compDefStyles.PrimaryColor = c.PrimaryColor
+	}
+	if c.SecondaryColor != "" {
+		compDefStyles.SecondaryColor = &c.SecondaryColor
+	}
 	for _, key := range compStyleValues {
 		if key == "svgColor" {
 			compDefStyles.SvgColor, err = utils.Cast[string](compMetadata[key])
 			if err != nil {
 				compDefStyles.SvgColor = c.SVGColor
 			}
-			if key == "svgWhite" {
-				compDefStyles.SvgWhite, err = utils.Cast[string](compMetadata[key])
-				if err != nil {
-					compDefStyles.SvgWhite = c.SVGWhite
-				}
-			}
-			if key == "svgComplete" {
-				compDefStyles.SvgComplete, err = utils.Cast[string](compMetadata[key])
-				if err != nil {
-					compDefStyles.SvgComplete = c.SVGComplete
-				}
-			}
-
 		}
+		if key == "svgWhite" {
+			compDefStyles.SvgWhite, err = utils.Cast[string](compMetadata[key])
+			if err != nil {
+				compDefStyles.SvgWhite = c.SVGWhite
+			}
+		}
+		if key == "svgComplete" {
+			compDefStyles.SvgComplete, err = utils.Cast[string](compMetadata[key])
+			if err != nil {
+				compDefStyles.SvgComplete = c.SVGComplete
+			}
+		}
+
 	}
+
 	compDef.Styles = compDefStyles
 
 	for _, key := range compMetadataValues {

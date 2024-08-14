@@ -240,7 +240,6 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 				utils.LogError.Error(err)
 				return
 			}
-
 			comps, err := pkg.GenerateComponents()
 			if err != nil {
 				utils.LogError.Error(ErrGenerateModel(err, model.Model))
@@ -291,16 +290,16 @@ func assignDefaultsForCompDefs(componentDef *component.ComponentDefinition, mode
 	if componentDef.Styles == nil {
 		componentDef.Styles = &component.Styles{}
 	}
-	if (modelDef.Metadata.Capabilities) != nil {
-		componentDef.Capabilities = modelDef.Metadata.Capabilities
-
-	}
 
 	// Use reflection to map model metadata to component styles
 	stylesValue := reflect.ValueOf(componentDef.Styles).Elem()
 
 	// Iterate through modelDef.Metadata
 	if modelDef.Metadata != nil {
+		if (modelDef.Metadata.Capabilities) != nil {
+			componentDef.Capabilities = modelDef.Metadata.Capabilities
+
+		}
 		if modelDef.Metadata.PrimaryColor != nil {
 			componentDef.Styles.PrimaryColor = *modelDef.Metadata.PrimaryColor
 		}
@@ -409,11 +408,11 @@ func GenerateDefsForCoreRegistrant(model utils.ModelCSV) error {
 					err = ErrGenerateModel(err, model.Model)
 					return err
 				}
-				_, err = writeModelDefToFileSystem(&model, version, modelDirPath) // how to infer this? @Beginner86 any idea? new column?
+				modelDef, err := writeModelDefToFileSystem(&model, version, modelDirPath) // how to infer this? @Beginner86 any idea? new column?
 				if err != nil {
 					return ErrGenerateModel(err, model.Model)
 				}
-
+				componentDef.Model = *modelDef
 				err = componentDef.WriteComponentDefinition(compDirPath)
 				if err != nil {
 					err = ErrGenerateComponent(err, model.Model, componentDef.DisplayName)
@@ -484,7 +483,6 @@ func writeModelDefToFileSystem(model *utils.ModelCSV, version, modelDefPath stri
 	if err != nil {
 		return nil, err
 	}
-
 	return &modelDef, nil
 }
 

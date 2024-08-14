@@ -328,6 +328,9 @@ published: %s
 	return markdown
 }
 func createNewRegistrant(registrantName string) connection.Connection {
+	if registrantName == "meshery" {
+		registrantName = "Meshery"
+	}
 	newRegistrant := connection.Connection{
 		Name:   registrantName,
 		Status: connection.Registered,
@@ -341,6 +344,8 @@ func createNewRegistrant(registrantName string) connection.Connection {
 		newRegistrant.Kind = "gitHub"
 	case "Kubernetes":
 		newRegistrant.Kind = "kubernetes"
+	case "Meshery":
+		newRegistrant.Kind = "meshery"
 	default:
 		newRegistrant.Kind = "Unknown"
 	}
