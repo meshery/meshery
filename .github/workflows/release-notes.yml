@@ -9,7 +9,7 @@ jobs:
       runs-on: ubuntu-22.04
       steps:
         - name: Checkout
-          uses: actions/checkout@master
+          uses: actions/checkout@v4
           with:
             token: ${{ secrets.RELEASEDRAFTER_PAT }}
             ref: 'master'

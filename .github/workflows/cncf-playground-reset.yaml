@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Cluster cleanup by running the cleanup script inside VM
-      uses: appleboy/ssh-action@master
+      uses: appleboy/ssh-action@v1.0.3
       with:
           host: secrets.METAL_SERVER1
           username: root

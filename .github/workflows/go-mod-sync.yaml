@@ -13,19 +13,19 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
     - name: check out code for meshery
-      uses: actions/checkout@master
+      uses: actions/checkout@v4
       with:
         repository: meshery/meshery
         token: ${{ secrets.RELEASEDRAFTER_PAT }}
         path: meshery
     - name: Check out code for meshery-extensions
-      uses: actions/checkout@master
+      uses: actions/checkout@v4
       with:
         repository: layer5labs/meshery-extensions
         token: ${{ secrets.RELEASEDRAFTER_PAT }}
         path: meshery-extensions
     - name: Setup Go
-      uses: actions/setup-go@master
+      uses: actions/setup-go@v5
       with:
         go-version: "1.21"
     - name: Go mod sync utility

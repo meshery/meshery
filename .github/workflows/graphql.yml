@@ -12,7 +12,7 @@ jobs:
     if: github.repository == 'meshery/meshery'
     steps:
       - name: Checkout repo 🛎️
-        uses: actions/checkout@master
+        uses: actions/checkout@v4
         with:
           token: ${{ secrets.GH_ACCESS_TOKEN }}
 

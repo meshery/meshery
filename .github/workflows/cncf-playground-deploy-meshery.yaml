@@ -9,7 +9,7 @@ jobs:
         runs-on: ubuntu-latest 
         steps:
         - name: Pull latest images and restart containers
-          uses: appleboy/ssh-action@master
+          uses: appleboy/ssh-action@v1.0.3
           with:
               host: ${{ secrets.METAL_SERVER1 }}
               username: root

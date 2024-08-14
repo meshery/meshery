@@ -11,7 +11,7 @@ jobs:
     
         steps:
         - name: Update Script in VM
-          uses: appleboy/ssh-action@master
+          uses: appleboy/ssh-action@v1.0.3
           with:
             host: 147.75.47.9
             username: root
