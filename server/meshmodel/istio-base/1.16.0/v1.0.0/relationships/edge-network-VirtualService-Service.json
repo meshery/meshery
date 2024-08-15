@@ -1,7 +1,7 @@
 {
   "schemaVersion": "relationships.meshery.io/v1alpha3",
   "version": "*",
-  "kind": "edge",
+  "kind": "Edge",
   "metadata": {
     "description": "A relationship that defines network edges between components"
   },

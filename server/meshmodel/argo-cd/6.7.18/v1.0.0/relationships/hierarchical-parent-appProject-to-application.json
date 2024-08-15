@@ -5,6 +5,7 @@
   "metadata": {
     "description": "A parent-child relationship implies the requirement of the parent component before the child component can be created. For example, a Namespace in Kubernetes can be a parent of Pods within that Namespace. Similarly, in Argo CD, an AppProject represents a logical grouping of Applications. Applications and ApplicationSets reference their AppProject by name."
   },
+  "type": "Parent",
   "model": {
     "name": "argo-cd",
     "model": {
@@ -17,7 +18,6 @@
     },
     "metadata": {}
   },
-  "subType": "Parent",
   "evaluationQuery": "hierarchical_parent_relationship",
   "selectors": [
     {

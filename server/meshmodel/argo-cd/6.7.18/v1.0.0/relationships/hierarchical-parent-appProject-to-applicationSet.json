@@ -17,7 +17,7 @@
     },
     "metadata": {}
   },
-  "subType": "Parent",
+  "type": "Parent",
   "evaluationQuery": "hierarchical_parent_relationship",
   "selectors": [
     {

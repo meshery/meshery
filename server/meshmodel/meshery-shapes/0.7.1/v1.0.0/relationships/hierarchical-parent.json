@@ -19,7 +19,7 @@
         },
         "metadata": {}
     },
-    "subType": "Parent",
+    "type": "Parent",
     "selectors": [
         {
             "allow": {

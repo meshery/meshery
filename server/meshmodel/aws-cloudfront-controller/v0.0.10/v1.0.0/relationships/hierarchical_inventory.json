@@ -26,7 +26,7 @@
       "svgWhite": ""
     }
   },
-  "subType": "Inventory",
+  "type": "Inventory",
   "evaluationQuery": "hierarchical_inventory_relationship",
   "selectors": [
     {

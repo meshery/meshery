@@ -23,7 +23,7 @@
         "metadata": {}
     },
     "evaluationQuery": "hierarchical_parent_relationship",
-    "subType": "Parent",
+    "type": "Parent",
     "selectors": [
         {
             "allow": {
