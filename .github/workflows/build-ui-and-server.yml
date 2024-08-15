@@ -1,6 +1,7 @@
 name: Meshery UI and Server
 on:
   pull_request:
+    types: [opened, synchronize, reopened]
     branches:
       - "master"
     paths-ignore:
