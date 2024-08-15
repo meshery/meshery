@@ -328,28 +328,12 @@ published: %s
 	return markdown
 }
 func createNewRegistrant(registrantName string) connection.Connection {
-	if registrantName == "meshery" {
-		registrantName = "Meshery"
-	}
 	newRegistrant := connection.Connection{
 		Name:   registrantName,
-		Status: connection.Registered,
+		Status: connection.Discovered,
 		Type:   "registry",
+		Kind:   utils.ReplaceSpacesAndConvertToLowercase(registrantName),
 	}
-
-	switch newRegistrant.Name {
-	case "Artifact Hub":
-		newRegistrant.Kind = "artifacthub"
-	case "Github":
-		newRegistrant.Kind = "gitHub"
-	case "Kubernetes":
-		newRegistrant.Kind = "kubernetes"
-	case "Meshery":
-		newRegistrant.Kind = "meshery"
-	default:
-		newRegistrant.Kind = "Unknown"
-	}
-
 	return newRegistrant
 }
 
