@@ -6,6 +6,7 @@
 **Attendees**: 
 - Aribisala Adetomiwa
 - Vivek Vishal
+- Asmae ELAZRAK
 - Subhendu Mondal
 - Denish Tomar
 - Subhendu Mondal
@@ -14,7 +15,6 @@
 - Anuj Kumar Sharma
 - Ayush Sharma
 - Deep Trivedi
-
 
 
 Notes:
