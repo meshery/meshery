@@ -36,6 +36,7 @@ spec:
             description: BrokerSpec defines the desired state of Broker
             properties:
               size:
+                description: Desired size of the Broker
                 format: int32
                 type: integer
             type: object
@@ -73,8 +74,10 @@ spec:
               endpoint:
                 properties:
                   external:
+                    description: The external endpoint address that applications can use to connect to the Broker
                     type: string
                   internal:
+                    description: The internal endpoint address that applications can use to connect to the Broker
                     type: string
                 type: object
             type: object
@@ -131,30 +134,38 @@ spec:
                   custom:
                     properties:
                       url:
+                        description: URL of the custom Broker to connect to
                         type: string
                     type: object
                   native:
                     properties:
                       name:
+                        description: Name of the native Broker to connect to
                         type: string
                       namespace:
+                        description: Namespace where the native Broker is deployed
                         type: string
                     type: object
                 type: object
               version:  
+                description: Version of the Broker to connect to
                 type: string
               size:
+                description: Desired size of the Broker
                 format: int32
                 type: integer
               watch-list:
                 type: object
                 properties:
                   data:
+                    description: Specifies the resource types and their associated whitelist and blacklist for watching
                     type: object
                     properties:
                       whitelist:
+                        description: Whitelist of resources to watch for changes
                         type: string
                       blacklist:
+                        description: Blacklist of resources to watch for changes
                         type: string
 
             type: object
