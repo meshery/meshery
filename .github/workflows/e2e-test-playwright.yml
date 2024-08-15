@@ -92,7 +92,7 @@ jobs:
           make server &
           sleep 60
       - name: Install dependencies
-        run: cd ui && --omit=dev --legacy-peer-deps && cd ..
+        run: cd ui && npm ci --omit=dev --legacy-peer-deps && cd ..
       - name: Install Playwright Browsers
         run: cd ui && npx playwright install --with-deps && cd ..
       - name: Run Playwright End-to-End Tests
