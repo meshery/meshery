@@ -245,7 +245,7 @@ const darkRjsfTheme = createTheme({
   overrides: {
     MuiOutlinedInput: {
       root: {
-        // backgroundColor: '#303030',
+        backgroundColor: '#303030',
       },
     },
     MuiButton: {
