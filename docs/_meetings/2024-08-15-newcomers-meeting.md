@@ -6,6 +6,16 @@
 **Attendees**: 
 - Aribisala Adetomiwa
 - Vivek Vishal
+- Ankur Tiwari
+- Ashparsh Pandey
+- Akshansh Modi
+- Victor Akoh
+- Chinmay Tripurwar
+- Aryan Tomar
+- Gift Asor
+- Moaz Farrukh
+- Shivanshu Gupta
+- Aman Mishra 
 - Asmae ELAZRAK
 - Subhendu Mondal
 - Denish Tomar
