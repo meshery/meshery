@@ -6,6 +6,7 @@
 **Attendees**: 
 - Aribisala Adetomiwa
 - Vivek Vishal
+- Aryan Tomar
 - Gift Asor
 - Moaz Farrukh
 - Shivanshu Gupta
@@ -19,6 +20,5 @@
 - Anuj Kumar Sharma
 - Ayush Sharma
 - Deep Trivedi
-
 
 Notes:
