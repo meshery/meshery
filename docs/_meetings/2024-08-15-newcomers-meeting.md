@@ -6,7 +6,7 @@
 **Attendees**: 
 - Aribisala Adetomiwa
 - Vivek Vishal
-- 
+- Ankit Yadav
 
 
 
