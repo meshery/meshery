@@ -8,7 +8,7 @@
 - Vivek Vishal
 - Rohit Sharma
 - Divij Sharma
-- Anuj Kumar Sharma 
-
+- Anuj Kumar Sharma
+- Deep Trivedi
 
 Notes:
