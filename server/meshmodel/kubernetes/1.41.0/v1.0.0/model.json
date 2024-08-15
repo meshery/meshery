@@ -8,7 +8,7 @@
   "status": "enabled",
   "hostID": "00000000-0000-0000-0000-000000000000",
   "registrant": {
-   "kind": "artifacthub"
+   "hostname": "artifacthub"
   },
   "category": {
    "name": "Orchestration \u0026 Management",
