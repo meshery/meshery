@@ -9,11 +9,11 @@ on:
 jobs:
   tests-ui-e2e:
     name: UI end-to-end tests
-    if: github.repository == 'meshery/meshery'
+    if: >
+      github.repository == 'meshery/meshery' &&
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-22.04
-    permissions:
-      issues: write
-      pull-requests: write
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -74,11 +74,13 @@ jobs:
         with:
           name: meshery-ui
           path: /home/runner/work/meshery/meshery/ui/out
+          github-token: ${{ github.GH_ACCESS_TOKEN }}
       - name: Download provider-ui artifacts
         uses: actions/download-artifact@v4
         with:
           name: provider-ui
           path: /home/runner/work/meshery/meshery/provider-ui/out
+          github-token: ${{ github.GH_ACCESS_TOKEN }}
       - name: Run Meshery UI and Server
         env:
           PROVIDER_BASE_URLS: http://localhost:9876
@@ -87,6 +89,10 @@ jobs:
         run: |
           make server &
           sleep 60
+      - name: Install dependencies
+        run: cd ui && --omit=dev --legacy-peer-deps
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
       - name: Run Playwright End-to-End Tests
         env:
           MESHERY_SERVER_URL: "http://localhost:9081"
@@ -96,12 +102,11 @@ jobs:
           PROVIDER_TOKEN: ${{ secrets.PROVIDER_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
         run: |
-          make test-setup-ui
-          make test-ui
+          PLAYWRIGHT_JSON_OUTPUT_NAME=results.json npx playwright test --reporter json
       - uses: daun/playwright-report-summary@v3
         if: always()
         with:
           github-token: ${{ secrets.GH_ACCESS_TOKEN }}
-          report-file: ui/results.json
+          report-file: results.json
           comment-title: "Meshery E2E Test with Playwright"
 

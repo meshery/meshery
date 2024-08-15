@@ -1,7 +1,6 @@
 name: Meshery UI and Server
 on:
   pull_request:
-    types: [opened, synchronize, reopened]
     branches:
       - "master"
     paths-ignore:
@@ -91,13 +90,13 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: meshery-ui
+          retention-days: 30
           path: /home/runner/work/meshery/meshery/ui/out
       - name: Upload provider-ui artifacts
         uses: actions/upload-artifact@v4
         with:
           name: provider-ui
           path: /home/runner/work/meshery/meshery/provider-ui/out
-  # Should be migrated to other yaml
   # docker-build-test:
   #   name: Docker build
   #   if: github.repository == 'meshery/meshery'
