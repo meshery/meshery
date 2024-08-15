@@ -34,7 +34,7 @@ import {
 import { MesheryAnimation } from '../MesheryAnimation/MesheryAnimation'
 import { randomApplicationNameGenerator } from '../../utils'
 import CatalogChart from '../Catalog/Chart'
-import CatalogCard from '../Catalog/CatalogCard';
+import {CatalogCard} from '@layer5/sistent';
 import { MESHMAP, mesheryCloudUrl } from '../utils/constants';
 
 const AuthenticatedMsg = 'Authenticated'
