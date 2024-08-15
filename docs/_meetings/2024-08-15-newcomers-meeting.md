@@ -6,6 +6,7 @@
 **Attendees**: 
 - Aribisala Adetomiwa
 - Vivek Vishal
+- Ankur Tiwari
 - Ashparsh Pandey
 - Akshansh Modi
 - Victor Akoh
