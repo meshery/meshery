@@ -6,6 +6,7 @@
 **Attendees**: 
 - Aribisala Adetomiwa
 - Vivek Vishal
+- Akshansh Modi
 - Victor Akoh
 - Chinmay Tripurwar
 - Aryan Tomar
@@ -22,5 +23,6 @@
 - Anuj Kumar Sharma
 - Ayush Sharma
 - Deep Trivedi
+
 
 Notes:
