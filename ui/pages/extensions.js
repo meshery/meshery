@@ -180,7 +180,7 @@ const MesheryDockerExtension = ({ classes }) => {
         <Typography className={classes.frontSideDescription} variant="body">
           <MesheryDockerExtensionLogo />
           Connect Meshery to your Kubernetes cluster via Docker Desktop and let MeshSync discover
-          your clusters. Use MeshMap&apos; no-code designer to collaboratively design and manage
+          your clusters. Use MeshMap&apos;s no-code designer to collaboratively design and manage
           your infrastructure with ready-made patterns from Meshery Catalog.
         </Typography>
         {
