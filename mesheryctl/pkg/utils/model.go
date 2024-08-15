@@ -328,11 +328,22 @@ published: %s
 	return markdown
 }
 func createNewRegistrant(registrantName string) connection.Connection {
+	kind := utils.ReplaceSpacesAndConvertToLowercase(registrantName)
+	switch kind {
+	case "artifacthub":
+		registrantName = "Artifact Hub"
+	case "github":
+		registrantName = "Github"
+	case "meshery":
+		registrantName = "meshery"
+	case "kubernetes":
+		registrantName = "Kubernetes"
+	}
 	newRegistrant := connection.Connection{
 		Name:   registrantName,
 		Status: connection.Discovered,
 		Type:   "registry",
-		Kind:   utils.ReplaceSpacesAndConvertToLowercase(registrantName),
+		Kind:   kind,
 	}
 	return newRegistrant
 }
