@@ -2,7 +2,7 @@
   "schemaVersion": "relationships.meshery.io/v1alpha3",
   "version": "v1.0.0",
   "kind": "Hierarchical",
-  "type": "Siblings",
+  "type": "Sibling",
   "metadata": {
     "description": "A relationship between two objects that are siblings."
   },
@@ -30,7 +30,10 @@
           {
             "kind": "Service",
             "model": {
-              "name": "kubernetes"
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
             }
           }
         ],
@@ -38,7 +41,10 @@
           {
             "kind": "Pod",
             "model": {
-              "name": "kubernetes"
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
             }
           }
         ]

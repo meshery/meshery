@@ -1,12 +1,12 @@
 {
-  "schemaVersion": "models.meshery.io/v1alpha2",
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
   "version": "*",
   "kind": "Sibling",
   "metadata": {
     "description": "Sibling relationships represent connections between components that are at the same hierarchical level or share a common parent. An example of this relationship is a Service and a Pod in Kubernetes. With the components target defined in Resiliency resource, you can apply retry, timeout and circuitBreaker policies to Component operations."
   },
   "model": {
-    "schemaVersion": "models.meshery.io/v1alpha2",
+    "schemaVersion": "models.meshery.io/v1beta1",
     "version": "*",
     "name": "dapr",
     "model": {
@@ -26,21 +26,41 @@
         "from": [
           {
             "kind": "Resiliency",
-            "model": "dapr"
+            "model": {
+              "name": "dapr",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            }
           },
           {
             "kind": "Subscription",
-            "model": "dapr"
+            "model": {
+              "name": "dapr",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            }
           },
           {
             "kind": "Configuration",
-            "model": "dapr"
+            "model": {
+              "name": "dapr",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            }
           }
         ],
         "to": [
           {
             "kind": "Component",
-            "model": "dapr"
+            "model": {
+              "name": "dapr",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            }
           }
         ]
       },
