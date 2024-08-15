@@ -22,7 +22,7 @@ const INITIAL_GRID_SIZE = { lg: 6, md: 12, xs: 12 };
 
 const MeshMapSignUpcard = ({ classes, hasAccessToMeshMap = false }) => {
   const handleSignUp = (e) => {
-    window.open('https://layer5.io/meshmap', '_blank');
+    window.open('https://docs.layer5.io/meshmap', '_blank');
     e.stopPropagation();
   };
 
@@ -36,7 +36,7 @@ const MeshMapSignUpcard = ({ classes, hasAccessToMeshMap = false }) => {
         <Typography className={classes.frontSideDescription} variant="body">
           <img className={classes.img} src="/static/img/meshmap.svg" />
           Collaboratively design and manage your Kubernetes clusters, service mesh deployments, and
-          cloud native apps. MeshMap is now in private beta.{' '}
+          cloud native apps. MeshMap is now in public beta.{' '}
           {!hasAccessToMeshMap && 'Sign-up today to for early access!'}
         </Typography>
         {

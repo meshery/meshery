@@ -1,0 +1,68 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Webhook Authenticator",
+  "description": "",
+  "format": "JSON",
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "version": "v1.0.0",
+   "name": "pinniped",
+   "displayName": "Pinniped",
+   "description": "",
+   "status": "ignored",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "registrant": {
+    "hostname": "artifacthub"
+   },
+   "category": {
+    "name": "Security \u0026 Compliance",
+    "metadata": null
+   },
+   "subCategory": "Key Management",
+   "metadata": {
+    "capabilities": "",
+    "defaultData": "",
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "model": {
+    "version": "2.3.0"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": false,
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "status": "ignored",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "component": {
+   "kind": "WebhookAuthenticator",
+   "version": "authentication.concierge.pinniped.dev/v1alpha1",
+   "schema": "{\n \"description\": \"WebhookAuthenticator describes the configuration of a webhook authenticator.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Spec for configuring the authenticator.\",\n   \"properties\": {\n    \"endpoint\": {\n     \"description\": \"Webhook server endpoint URL.\",\n     \"minLength\": 1,\n     \"pattern\": \"^https://\",\n     \"type\": \"string\"\n    },\n    \"tls\": {\n     \"description\": \"TLS configuration.\",\n     \"properties\": {\n      \"certificateAuthorityData\": {\n       \"description\": \"X.509 Certificate Authority (base64-encoded PEM bundle). If omitted, a default set of system roots will be trusted.\",\n       \"type\": \"string\"\n      },\n      \"certificateAuthorityDataSource\": {\n       \"description\": \"Reference to a CA bundle in a secret or a configmap.\\nAny changes to the CA bundle in the secret or configmap will be dynamically reloaded.\",\n       \"properties\": {\n        \"key\": {\n         \"description\": \"Key is the key name within the secret or configmap from which to read the CA bundle.\\nThe value found at this key in the secret or configmap must not be empty, and must be a valid PEM-encoded\\ncertificate bundle.\",\n         \"minLength\": 1,\n         \"type\": \"string\"\n        },\n        \"kind\": {\n         \"description\": \"Kind configures whether the CA bundle is being sourced from a Kubernetes secret or a configmap.\\nAllowed values are \\\"Secret\\\" or \\\"ConfigMap\\\".\\n\\\"ConfigMap\\\" uses a Kubernetes configmap to source CA Bundles.\\n\\\"Secret\\\" uses Kubernetes secrets of type kubernetes.io/tls or Opaque to source CA Bundles.\",\n         \"enum\": [\n          \"Secret\",\n          \"ConfigMap\"\n         ],\n         \"type\": \"string\"\n        },\n        \"name\": {\n         \"description\": \"Name is the resource name of the secret or configmap from which to read the CA bundle.\\nThe referenced secret or configmap must be created in the same namespace where Pinniped Concierge is installed.\",\n         \"minLength\": 1,\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"key\",\n        \"kind\",\n        \"name\"\n       ],\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"endpoint\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Webhook Authenticator\",\n \"type\": \"object\"\n}"
+  }
+ }
