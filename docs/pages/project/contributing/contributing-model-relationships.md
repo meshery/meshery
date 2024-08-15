@@ -144,7 +144,7 @@ Once selected, note the relationship's `kind`, `type`, and `subtype` of your sel
 
 ### 3. Create a Relationship Definition as a JSON file
 
-Create a relationship definition as a JSON file, placing this new definition file into its respective model folder (see [Contributing to Models](./models)). Relationship definition files are commonly named  `relationships.yaml` as a convention, however, this name is not required. A model may include any number of relationship definitions. Include the following attributes in your relationship definition:
+Create a relationship definition as a JSON file, placing this new definition file into its respective model folder (see [Contributing to Models](./contributing-models)). Relationship definition files are commonly named  `relationships.yaml` as a convention, however, this name is not required. A model may include any number of relationship definitions. Include the following attributes in your relationship definition:
 
 - `kind`: The genre of relationship (e.g., hierarchical, edge, sibling).
 - `type`: The augmentative category of the relationship (e.g., binding, non-binding, inventory).

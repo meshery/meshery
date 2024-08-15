@@ -9,7 +9,6 @@ import (
 	"path"
 	"time"
 
-	"github.com/layer5io/meshery/server/meshmodel"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/models/meshmodel/registry"
 	"github.com/layer5io/meshkit/utils"
@@ -192,10 +191,8 @@ func (h *Handler) ResetSystemDatabase(w http.ResponseWriter, r *http.Request, _ 
 			http.Error(w, "Can not migrate tables to database", http.StatusInternalServerError)
 			return
 		}
-		ch := meshmodel.NewEntityRegistrationHelper(h.config, h.registryManager, h.log)
-
 		go func() {
-			ch.SeedComponents()
+			models.SeedComponents( h.log, h.config, h.registryManager)
 			krh.SeedKeys(viper.GetString("KEYS_PATH"))
 		}()
 		w.Header().Set("Content-Type", "application/json")

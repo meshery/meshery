@@ -12,7 +12,13 @@ import {
   TableCell,
   Typography,
 } from '@material-ui/core';
-import { CustomTooltip, OutlinedPatternIcon } from '@layer5/sistent';
+import {
+  CustomColumnVisibilityControl,
+  CustomTooltip,
+  OutlinedPatternIcon,
+  SearchBar,
+  UniversalFilter,
+} from '@layer5/sistent';
 import { withStyles } from '@material-ui/core/styles';
 import CloseIcon from '@material-ui/icons/Close';
 import DeleteIcon from '@material-ui/icons/Delete';
@@ -55,8 +61,6 @@ import { EVENT_TYPES } from '../lib/event-types';
 import _ from 'lodash';
 import { getMeshModels } from '../api/meshmodel';
 import { modifyRJSFSchema } from '../utils/utils';
-import SearchBar from '../utils/custom-search';
-import CustomColumnVisibilityControl from '../utils/custom-column';
 import { ResponsiveDataTable } from '@layer5/sistent';
 import useStyles from '../assets/styles/general/tool.styles';
 import { Edit as EditIcon } from '@material-ui/icons';
@@ -69,7 +73,6 @@ import DefaultError from './General/error-404/index';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import ExportModal from './ExportModal';
-import UniversalFilter from '../utils/custom-filter';
 import { useModal, Modal as SistentModal, ModalBody } from '@layer5/sistent';
 import PatternIcon from '@/assets/icons/Pattern';
 import { UsesSistent } from './SistentWrapper';
@@ -1593,31 +1596,38 @@ function MesheryPatterns({
               </div>
             )}
             <div className={classes.searchWrapper} style={{ display: 'flex' }}>
-              <SearchBar
-                onSearch={(value) => {
-                  setSearch(value);
-                  initPatternsSubscription(page.toString(), pageSize.toString(), value, sortOrder);
-                }}
-                expanded={isSearchExpanded}
-                setExpanded={setIsSearchExpanded}
-                placeholder={`Search ${pageTitle.toLowerCase()}...`}
-              />
-              {disableUniversalFilter ? null : (
-                <UniversalFilter
-                  id="ref"
-                  filters={filter}
-                  selectedFilters={selectedFilters}
-                  setSelectedFilters={setSelectedFilters}
-                  handleApplyFilter={handleApplyFilter}
+              <UsesSistent>
+                <SearchBar
+                  onSearch={(value) => {
+                    setSearch(value);
+                    initPatternsSubscription(
+                      page.toString(),
+                      pageSize.toString(),
+                      value,
+                      sortOrder,
+                    );
+                  }}
+                  expanded={isSearchExpanded}
+                  setExpanded={setIsSearchExpanded}
+                  placeholder={`Search ${pageTitle.toLowerCase()}...`}
                 />
-              )}
-              {viewType === 'table' && (
-                <CustomColumnVisibilityControl
-                  id="ref"
-                  columns={columns}
-                  customToolsProps={{ columnVisibility, setColumnVisibility }}
-                />
-              )}
+                {disableUniversalFilter ? null : (
+                  <UniversalFilter
+                    id="ref"
+                    filters={filter}
+                    selectedFilters={selectedFilters}
+                    setSelectedFilters={setSelectedFilters}
+                    handleApplyFilter={handleApplyFilter}
+                  />
+                )}
+                {viewType === 'table' && (
+                  <CustomColumnVisibilityControl
+                    id="ref"
+                    columns={columns}
+                    customToolsProps={{ columnVisibility, setColumnVisibility }}
+                  />
+                )}
+              </UsesSistent>
 
               {!selectedPattern.show && (
                 <ViewSwitch view={viewType} changeView={setViewType} hideCatalog={true} />

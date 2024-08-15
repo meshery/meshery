@@ -1,0 +1,68 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Perf Server",
+  "description": "",
+  "format": "JSON",
+  "model": {
+   "id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "version": "v1.0.0",
+   "name": "perf-operator",
+   "displayName": "Perf Operator",
+   "description": "",
+   "status": "ignored",
+   "hostID": "00000000-0000-0000-0000-000000000000",
+   "registrant": {
+    "hostname": "artifacthub"
+   },
+   "category": {
+    "name": "Observability and Analysis",
+    "metadata": null
+   },
+   "subCategory": "Monitoring",
+   "metadata": {
+    "capabilities": "",
+    "defaultData": "",
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "model": {
+    "version": "2.13.0"
+   },
+   "components": null,
+   "relationships": null
+  },
+  "metadata": {
+   "capabilities": "",
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "shapePolygonPoints": "",
+   "status": "ignored",
+   "styleOverrides": "",
+   "styles": "",
+   "subCategory": "",
+   "svgColor": "",
+   "svgComplete": "",
+   "svgWhite": ""
+  },
+  "component": {
+   "kind": "PerfServer",
+   "version": "v2.edp.epam.com/v1",
+   "schema": "{\n \"description\": \"PerfServer is the Schema for the PerfServers API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"PerfServerSpec defines the desired state of PerfServer.\",\n   \"properties\": {\n    \"apiUrl\": {\n     \"type\": \"string\"\n    },\n    \"credentialName\": {\n     \"type\": \"string\"\n    },\n    \"projectName\": {\n     \"type\": \"string\"\n    },\n    \"rootUrl\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"apiUrl\",\n    \"credentialName\",\n    \"projectName\",\n    \"rootUrl\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Perf Server\",\n \"type\": \"object\"\n}"
+  }
+ }

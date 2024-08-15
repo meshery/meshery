@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Card, Grid, Typography, Box, Checkbox } from '@material-ui/core';
+import { Button, Card, Grid, Typography, Box } from '@material-ui/core';
 import SyncAltIcon from '@mui/icons-material/SyncAlt';
 import { Delete, Edit } from '@material-ui/icons';
 
@@ -8,6 +8,8 @@ import { useGetEnvironmentConnectionsQuery } from '../../../rtk-query/environmen
 import classNames from 'classnames';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
+import { Checkbox } from '@layer5/sistent';
+import { UsesSistent } from '@/components/SistentWrapper';
 
 export const formattoLongDate = (date) => {
   return new Date(date).toLocaleDateString('en-US', {
@@ -168,12 +170,14 @@ const EnvironmentCard = ({
         >
           <Grid xs={12} style={{ display: 'flex', flexDirection: 'row', height: '40px' }}>
             <Grid xs={6} style={{ display: 'flex', alignItems: 'flex-start' }}>
-              <Checkbox
-                className={classes.bulkSelectCheckbox}
-                onClick={(e) => e.stopPropagation()}
-                onChange={onSelect}
-                disabled={deleted ? true : false}
-              />
+              <UsesSistent>
+                <Checkbox
+                  className={classes.bulkSelectCheckbox}
+                  onClick={(e) => e.stopPropagation()}
+                  onChange={onSelect}
+                  disabled={deleted ? true : false}
+                />
+              </UsesSistent>
               <Typography
                 className={classes.cardTitle}
                 style={{ color: 'white' }}
