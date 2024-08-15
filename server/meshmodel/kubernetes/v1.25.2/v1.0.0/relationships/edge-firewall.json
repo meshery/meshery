@@ -3,6 +3,7 @@
   "version": "v1.0.0",
   "kind": "Edge",
   "type": "Binding",
+  "subType": "Firewall",
   "metadata": {
     "description": "A relationship that act as a firewall for ingress and egress traffic from Pods.",
     "animation": "marching-ants",
@@ -33,8 +34,7 @@
     },
     "metadata": {}
   },
-  "subType": "Firewall",
-  "evaluationQuery": "edge_binding_relationship",
+  ,
   "selectors": [
     {
       "allow": {
@@ -48,8 +48,22 @@
               }
             },
             "match": {
-              "from": [],
-              "to": []
+              "from": [
+                {
+                  "kind": "self",
+                  "mutatedRef": [
+                    []
+                  ]
+                }
+              ],
+              "to": [
+                {
+                  "kind": "NetworkPolicy",
+                  "mutatorRef": [
+                    []
+                  ]
+                }
+              ]
             }
           }
         ],
@@ -63,8 +77,22 @@
               }
             },
             "match": {
-              "from": [],
-              "to": []
+              "from": [
+                {
+                  "kind": "NetworkPolicy",
+                  "mutatedRef": [
+                    []
+                  ]
+                }
+              ],
+              "to": [
+                {
+                  "kind": "seld",
+                  "mutatorRef": [
+                    []
+                  ]
+                }
+              ]
             }
           }
         ]

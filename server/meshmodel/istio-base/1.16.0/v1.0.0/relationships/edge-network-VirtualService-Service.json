@@ -1,6 +1,6 @@
 {
   "schemaVersion": "relationships.meshery.io/v1alpha3",
-  "version": "*",
+  "version": "v1.0.0",
   "kind": "Edge",
   "metadata": {
     "description": "A relationship that defines network edges between components"
@@ -22,8 +22,7 @@
     }
   },
   "type": "Network",
-  "subType": "Network",
-  "evaluationQuery": "edge_network_relationship",
+  ,
   "selectors": [
     {
       "allow": {

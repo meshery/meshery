@@ -18,20 +18,29 @@
     "metadata": {}
   },
   "type": "Parent",
-  "evaluationQuery": "hierarchical_parent_relationship",
   "selectors": [
     {
       "allow": {
         "from": [
           {
             "kind": "AppProject",
-            "model": "argo-cd"
+            "model": {
+              "name": "argo-cd",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            }
           }
         ],
         "to": [
           {
             "kind": "ApplicationSet",
-            "model": "argo-cd"
+            "model": {
+              "name": "argo-cd",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            }
           }
         ]
       },

@@ -2,6 +2,8 @@
     "schemaVersion": "relationships.meshery.io/v1alpha3",
     "version": "v1.0.0",
     "kind": "Hierarchical",
+    "type": "Parent",
+    "subType": "Inventory",
     "metadata": {
         "description": "A relationship that defines whether a component can be a parent of other components. It is read like: `from` can be a child of `to`, where from and to are any components that match the from and to selectors respectively"
     },
@@ -22,8 +24,6 @@
         },
         "metadata": {}
     },
-    "evaluationQuery": "hierarchical_parent_relationship",
-    "type": "Parent",
     "selectors": [
         {
             "allow": {

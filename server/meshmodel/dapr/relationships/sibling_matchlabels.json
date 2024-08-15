@@ -20,7 +20,6 @@
     "metadata": {}
   },
   "subType": "MatchLabels",
-  "evaluationQuery": "sibling_matchlabels_relationship",
   "selectors": [
     {
       "allow": {

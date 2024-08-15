@@ -3,6 +3,7 @@
   "version": "v1.0.0",
   "kind": "Edge",
   "type": "Binding",
+  "subType": "Permission",
   "metadata": {
     "description": "A relationship that represents a set of bindings.",
     "capabilities": {
@@ -32,45 +33,83 @@
     },
     "metadata": {}
   },
-  "subType": "Permission",
-  "evaluationQuery": "edge_binding_relationship",
   "selectors": [
     {
       "deny": {
         "from": [
           {
             "kind": "ClusterRole",
-            "model": "kubernetes"
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            }
           },
           {
             "kind": "Role",
-            "model": "kubernetes"
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            }
           },
           {
             "kind": "ClusterRoleBinding",
-            "model": "kubernetes"
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            }
           },
           {
             "kind": "RoleBinding",
-            "model": "kubernetes"
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            }
           }
         ],
         "to": [
           {
             "kind": "ClusterRole",
-            "model": "kubernetes"
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            }
           },
           {
             "kind": "Role",
-            "model": "kubernetes"
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            }
           },
           {
             "kind": "ClusterRoleBinding",
-            "model": "kubernetes"
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            }
           },
           {
             "kind": "RoleBinding",
-            "model": "kubernetes"
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            }
           }
         ]
       },

@@ -2,6 +2,7 @@
   "schemaVersion": "relationships.meshery.io/v1alpha3",
   "version": "v1.0.0",
   "kind": "Edge",
+  "type": "Network",
   "metadata": {
     "description": "A relationship that defines network edges between components",
     "animation": "marching-ants",
@@ -32,8 +33,6 @@
     },
     "metadata": {}
   },
-  "type": "Network",
-  "evaluationQuery": "edge_network_relationship",
   "selectors": [
     {
       "allow": {
@@ -66,19 +65,39 @@
         "to": [
           {
             "kind": "Endpoints",
-            "model": "kubernetes"
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            }
           },
           {
             "kind": "Pod",
-            "model": "kubernetes"
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            }
           },
           {
             "kind": "Deployment",
-            "model": "kubernetes"
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            }
           },
           {
             "kind": "Service",
-            "model": "kubernetes"
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            }
           }
         ]
       },
@@ -86,21 +105,41 @@
         "from": [
           {
             "kind": "Ingress",
-            "model": "kubernetes"
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            }
           }
         ],
         "to": [
           {
             "kind": "Endpoints",
-            "model": "kubernetes"
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            }
           },
           {
             "kind": "Pod",
-            "model": "kubernetes"
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            }
           },
           {
             "kind": "Deployment",
-            "model": "kubernetes"
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            }
           }
         ]
       }

@@ -2,6 +2,8 @@
   "schemaVersion": "relationships.meshery.io/v1alpha3",
   "version": "v1.0.0",
   "kind": "Hierarchical",
+  "type": "Parent",
+  "subType": "Inventory",
   "metadata": {
     "description": "A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. E.g Secret->Pod, ConfigMaps->Deployment, etc..."
   },
@@ -19,8 +21,6 @@
     },
     "metadata": {}
   },
-  "type": "Inventory",
-  "evaluationQuery": "hierarchical_inventory_relationship",
   "selectors": [
     {
       "allow": {

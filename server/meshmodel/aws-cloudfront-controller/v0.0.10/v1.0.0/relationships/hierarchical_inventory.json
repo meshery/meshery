@@ -2,6 +2,8 @@
   "schemaVersion": "relationships.meshery.io/v1alpha3",
   "version": "v1.0.0",
   "kind": "Hierarchical",
+  "type": "Parent",
+  "subType": "Inventory",
   "metadata": {
     "name": "A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the FieldExport (parent) component is patched with the configuration as received from Pod (child) component."
   },
@@ -26,8 +28,6 @@
       "svgWhite": ""
     }
   },
-  "type": "Inventory",
-  "evaluationQuery": "hierarchical_inventory_relationship",
   "selectors": [
     {
       "allow": {

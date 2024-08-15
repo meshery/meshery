@@ -18,7 +18,6 @@
     },
     "metadata": {}
   },
-  "evaluationQuery": "hierarchical_parent_relationship",
   "selectors": [
     {
       "allow": {

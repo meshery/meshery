@@ -3,6 +3,7 @@
   "version": "v1.0.0",
   "kind": "Edge",
   "type": "Binding",
+  "subType": "Mount",
   "metadata": {
     "description": "A relationship that represents volume mounts between components",
     "capabilities": {
@@ -32,8 +33,6 @@
     },
     "metadata": {}
   },
-  "subType": "Mount",
-  "evaluationQuery": "edge_binding_relationship",
   "selectors": [
     {
       "deny": {
