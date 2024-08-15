@@ -6,6 +6,7 @@
 **Attendees**: 
 - Aribisala Adetomiwa
 - Vivek Vishal
+- Moaz Farrukh
 - Shivanshu Gupta
 - Aman Mishra 
 - Asmae ELAZRAK
