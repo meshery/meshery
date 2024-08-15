@@ -6,6 +6,7 @@
 **Attendees**: 
 - Aribisala Adetomiwa
 - Vivek Vishal
+- Subhendu Mondal
 - Rohit Sharma
 - Divij Sharma
 - Anuj Kumar Sharma
