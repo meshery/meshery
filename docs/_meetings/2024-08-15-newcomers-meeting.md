@@ -6,6 +6,7 @@
 **Attendees**: 
 - Aribisala Adetomiwa
 - Vivek Vishal
+- Victor Akoh
 - Chinmay Tripurwar
 - Aryan Tomar
 - Gift Asor
