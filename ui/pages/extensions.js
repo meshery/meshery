@@ -166,7 +166,7 @@ const MesheryDockerExtensionLogo = withStyles(MesheryPerformacneLogoStyles)(({ c
 
 const MesheryDockerExtension = ({ classes }) => {
   const handleDownload = (e) => {
-    window.open('https://layer5.io/docker-extension-meshery', '_blank');
+    window.open('https://hub.docker.com/extensions/meshery/docker-extension-meshery', '_blank');
     e.stopPropagation();
   };
 
