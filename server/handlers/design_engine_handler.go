@@ -132,7 +132,7 @@ func (h *Handler) PatternFileHandler(
 			"error": err,
 		}
 
-		event := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("%s error for design '%s'", action, patternFile.Name)).WithMetadata(metadata).Build()
+		event := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to %s design '%s'.", action, patternFile.Name)).WithMetadata(metadata).Build()
 		_ = provider.PersistEvent(event)
 		go h.config.EventBroadcaster.Publish(userID, event)
 
@@ -179,7 +179,7 @@ func _processPattern(opts *core.ProcessPatternOptions) (map[string]interface{}, 
 	// Get the kubehandler from the context
 	k8scontexts, ok := opts.Context.Value(models.KubeClustersKey).([]models.K8sContext)
 	if !ok || len(k8scontexts) == 0 {
-		return nil, ErrInvalidKubeHandler(fmt.Errorf("failed to find k8s handler for \"%s\"", opts.Pattern.Name), "_processPattern couldn't find a valid k8s handler")
+		return nil, ErrInvalidKubeHandler(fmt.Errorf("Meshery server failed to interact with the Kubernetes cluster due to the cluster not being available."), opts.Pattern.Name)
 	}
 
 	var ctxToconfig = make(map[string]string)

@@ -1,11 +1,26 @@
 import React from 'react';
-import { IconButton, InputAdornment, TextField, useTheme, InputLabel } from '@material-ui/core';
+import {
+  IconButton,
+  InputAdornment,
+  TextField,
+  useTheme,
+  InputLabel,
+  styled,
+} from '@material-ui/core';
 import HelpOutlineIcon from '../../../../assets/icons/HelpOutlineIcon';
 import { CustomTextTooltip } from '../CustomTextTooltip';
 import ErrorOutlineIcon from '../../../../assets/icons/ErrorOutlineIcon';
 import { ERROR_COLOR } from '../../../../constants/colors';
 import { iconSmall } from '../../../../css/icons.styles';
 import { makeStyles } from '@material-ui/styles';
+
+const CustomTextField = styled(TextField)(({ theme, overrideFlag }) => {
+  return {
+    '& div': {
+      backgroundColor: overrideFlag ? (theme.palette.type === 'dark' ? '#303030' : '#fff') : '',
+    },
+  };
+});
 
 const BaseInput = (props) => {
   const additional = props.schema?.__additional_property; // check if the field is additional
@@ -29,7 +44,6 @@ const BaseInput = (props) => {
       borderRadius: '3px',
     },
   }));
-
   const theme = useTheme();
   const classes = styles();
   return (
@@ -40,10 +54,11 @@ const BaseInput = (props) => {
             {prettifiedName}
           </InputLabel>
         )}
-        <TextField
+        <CustomTextField
           variant={additional ? 'standard' : 'outlined'}
           size="small"
           focused={focused}
+          overrideFlag={props.formContext.overrideFlag}
           type={props.options?.inputType}
           key={props.id}
           disabled={props?.disabled || props?.readonly}
