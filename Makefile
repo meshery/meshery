@@ -408,6 +408,7 @@ graphql-build: dep-check
 	cd server; cd internal/graphql; go run -mod=mod github.com/99designs/gqlgen generate
 
 
+
 ## testing
 test-setup-ui:
 	cd ui && npm ci && npx playwright install --with-deps && cd ..
