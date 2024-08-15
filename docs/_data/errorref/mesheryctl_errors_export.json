@@ -863,9 +863,9 @@
         "code": "1096",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "Invalid Kube Handler",
-        "probable_cause": "Meshery handler failed to find a valid Kubernetes handler for the deployment",
-        "suggested_remediation": "Try uploading a new kubeconfig and also ensure that Meshery can reach Kubernetes API server"
+        "short_description": "Kubernetes cluster is unavailable for ",
+        "probable_cause": "There might be a network disruption or the Meshery server does not have valid credentials.",
+        "suggested_remediation": "Try uploading a new kubeconfig.\nCheck the network connection and Kubernetes cluster status.\nVerify that the Meshery server has valid and updated credentials to access the Kubernetes cluster."
       },
       "1097": {
         "name": "ErrInvalidKubeContextCode",
