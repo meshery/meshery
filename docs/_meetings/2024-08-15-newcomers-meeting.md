@@ -7,9 +7,8 @@
 - Aribisala Adetomiwa
 - Vivek Vishal
 - Divij Sharma
-- Anuj Kumar Sharma 
-
-
+- Anuj Kumar Sharma
+- Deep Trivedi
 
 
 Notes:
