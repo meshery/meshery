@@ -15,6 +15,20 @@ jobs:
       github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-22.04
     steps:
+      - name: Download meshery-ui artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: meshery-ui
+          path: /home/runner/work/meshery/meshery/ui/out
+          github-token: ${{ github.GH_ACCESS_TOKEN }}
+          run-id: ${{ github.event.workflow_run.run_number }}
+      - name: Download provider-ui artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: provider-ui
+          path: /home/runner/work/meshery/meshery/provider-ui/out
+          github-token: ${{ github.GH_ACCESS_TOKEN }}
+          run-id: ${{ github.event.workflow_run.run_number }}
       - name: Check out code
         uses: actions/checkout@v4
         with:
@@ -69,18 +83,6 @@ jobs:
           key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
           restore-keys: |
             ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
-      - name: Download meshery-ui artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: meshery-ui
-          path: /home/runner/work/meshery/meshery/ui/out
-          github-token: ${{ github.GH_ACCESS_TOKEN }}
-      - name: Download provider-ui artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: provider-ui
-          path: /home/runner/work/meshery/meshery/provider-ui/out
-          github-token: ${{ github.GH_ACCESS_TOKEN }}
       - name: Run Meshery UI and Server
         env:
           PROVIDER_BASE_URLS: http://localhost:9876
