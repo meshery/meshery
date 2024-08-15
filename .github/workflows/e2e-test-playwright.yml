@@ -21,14 +21,14 @@ jobs:
           name: meshery-ui
           path: /home/runner/work/meshery/meshery/ui/out
           github-token: ${{ github.GH_ACCESS_TOKEN }}
-          run-id: ${{ github.event.workflow_run.run_number }}
+          run-id: ${{ github.event.workflow_run.id }}
       - name: Download provider-ui artifacts
         uses: actions/download-artifact@v4
         with:
           name: provider-ui
           path: /home/runner/work/meshery/meshery/provider-ui/out
           github-token: ${{ github.GH_ACCESS_TOKEN }}
-          run-id: ${{ github.event.workflow_run.run_number }}
+          run-id: ${{ github.event.workflow_run.id }}
       - name: Check out code
         uses: actions/checkout@v4
         with:
@@ -92,9 +92,9 @@ jobs:
           make server &
           sleep 60
       - name: Install dependencies
-        run: cd ui && --omit=dev --legacy-peer-deps
+        run: cd ui && --omit=dev --legacy-peer-deps && cd ..
       - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
+        run: cd ui && npx playwright install --with-deps && cd ..
       - name: Run Playwright End-to-End Tests
         env:
           MESHERY_SERVER_URL: "http://localhost:9081"
@@ -109,6 +109,6 @@ jobs:
         if: always()
         with:
           github-token: ${{ secrets.GH_ACCESS_TOKEN }}
-          report-file: results.json
+          report-file: ui/results.json
           comment-title: "Meshery E2E Test with Playwright"
 
