@@ -1,6 +1,6 @@
 ### Aug 15th, 2024
 
-**Today’s Facilitators**: Vivek Vishal, Hargun Kaur, Sudhanshu Dasgupta
+**Today’s Facilitators**: Vivek Vishal, Hargun Kaur, Sudhanshu Dasgupta, Saurabh Singh
 
 
 **Attendees**: 
