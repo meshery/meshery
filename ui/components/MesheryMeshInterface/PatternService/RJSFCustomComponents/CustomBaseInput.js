@@ -1,12 +1,18 @@
 import React from 'react';
-import { IconButton, InputAdornment, TextField, InputLabel, styled } from '@material-ui/core';
+import {
+  IconButton,
+  InputAdornment,
+  TextField,
+  useTheme,
+  InputLabel,
+  styled,
+} from '@material-ui/core';
 import HelpOutlineIcon from '../../../../assets/icons/HelpOutlineIcon';
 import { CustomTextTooltip } from '../CustomTextTooltip';
 import ErrorOutlineIcon from '../../../../assets/icons/ErrorOutlineIcon';
 import { ERROR_COLOR } from '../../../../constants/colors';
 import { iconSmall } from '../../../../css/icons.styles';
 import { makeStyles } from '@material-ui/styles';
-import theme from '@/themes/app';
 
 const CustomTextField = styled(TextField)(({ theme, overrideFlag }) => {
   return {
@@ -38,7 +44,7 @@ const BaseInput = (props) => {
       borderRadius: '3px',
     },
   }));
-  console.log('here', props.formContext.overrideFlag);
+  const theme = useTheme();
   const classes = styles();
   return (
     <>
