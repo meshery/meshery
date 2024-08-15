@@ -35,7 +35,12 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import dataFetch from '../lib/data-fetch';
 import { toggleCatalogContent, updateProgress } from '../lib/store';
-import { getUnit8ArrayDecodedFile, getUnit8ArrayForDesign } from '../utils/utils';
+import {
+  encodeDesignFile,
+  getUnit8ArrayDecodedFile,
+  getUnit8ArrayForDesign,
+  parseDesignFile,
+} from '../utils/utils';
 import ViewSwitch from './ViewSwitch';
 import MesheryPatternGrid from './MesheryPatterns/MesheryPatternGridView';
 import UndeployIcon from '../public/static/img/UndeployIcon';
@@ -436,9 +441,10 @@ function MesheryPatterns({
     headerIcon: OutlinedPatternIcon,
   });
   const handleDeploy = async ({ design, selectedK8sContexts }) => {
+    console.log('Deploying pattern', design);
     updateProgress({ showProgress: true });
     await deployPatternMutation({
-      pattern_file: design.pattern_file,
+      pattern_file: encodeDesignFile(design),
       pattern_id: design.id,
       selectedK8sContexts,
     });
@@ -448,7 +454,7 @@ function MesheryPatterns({
   const handleUndeploy = async ({ design, selectedK8sContexts }) => {
     updateProgress({ showProgress: true });
     await undeployPatternMutation({
-      pattern_file: design.pattern_file,
+      pattern_file: encodeDesignFile(design),
       pattern_id: design.id,
       selectedK8sContexts,
     });
@@ -696,7 +702,8 @@ function MesheryPatterns({
     setPatterns(patterns?.filter((content) => content.visibility !== VISIBILITY.PUBLISHED) || []);
   };
 
-  const openDeployModal = (e, pattern_file, name, pattern_id) => {
+  const openDeployModal = (e, pattern_file, name) => {
+    const design = parseDesignFile(pattern_file);
     e.stopPropagation();
     designLifecycleModal.openModal({
       title: name,
@@ -704,11 +711,7 @@ function MesheryPatterns({
         <DeployStepper
           handleClose={designLifecycleModal.closeModal}
           validationMachine={designValidationActorRef}
-          design={{
-            name,
-            pattern_file,
-            id: pattern_id,
-          }}
+          design={design}
           handleDeploy={handleDeploy}
           deployment_type={DEPLOYMENT_TYPE.DEPLOY}
           selectedK8sContexts={selectedK8sContexts}
@@ -717,19 +720,16 @@ function MesheryPatterns({
     });
   };
 
-  const openUndeployModal = (e, pattern_file, name, pattern_id) => {
+  const openUndeployModal = (e, pattern_file, name) => {
     e.stopPropagation();
+    const design = parseDesignFile(pattern_file);
     designLifecycleModal.openModal({
       title: name,
       reactNode: (
         <UnDeployStepper
           handleClose={designLifecycleModal.closeModal}
           validationMachine={designValidationActorRef}
-          design={{
-            name,
-            pattern_file,
-            id: pattern_id,
-          }}
+          design={design}
           handleUndeploy={handleUndeploy}
           deployment_type={DEPLOYMENT_TYPE.UNDEPLOY}
           selectedK8sContexts={selectedK8sContexts}
@@ -738,8 +738,10 @@ function MesheryPatterns({
     });
   };
 
-  const openDryRunModal = (e, pattern_file, name, pattern_id) => {
+  const openDryRunModal = (e, pattern_file, name) => {
     e.stopPropagation();
+
+    const design = parseDesignFile(pattern_file);
     designLifecycleModal.openModal({
       title: name,
       reactNode: (
@@ -747,11 +749,7 @@ function MesheryPatterns({
           <DryRunDesign
             handleClose={designLifecycleModal.closeModal}
             validationMachine={designValidationActorRef}
-            design={{
-              name,
-              pattern_file,
-              id: pattern_id,
-            }}
+            design={design}
             deployment_type={DEPLOYMENT_TYPE.DEPLOY}
             selectedK8sContexts={selectedK8sContexts}
           />
@@ -760,8 +758,10 @@ function MesheryPatterns({
     });
   };
 
-  const openValidateModal = (e, pattern_file, name, pattern_id) => {
+  const openValidateModal = (e, pattern_file, name) => {
     e.stopPropagation();
+
+    const design = parseDesignFile(pattern_file);
     designLifecycleModal.openModal({
       title: name,
       reactNode: (
@@ -769,11 +769,7 @@ function MesheryPatterns({
           <ValidateDesign
             handleClose={designLifecycleModal.closeModal}
             validationMachine={designValidationActorRef}
-            design={{
-              name,
-              pattern_file,
-              id: pattern_id,
-            }}
+            design={design}
             deployment_type={DEPLOYMENT_TYPE.DEPLOY}
             selectedK8sContexts={selectedK8sContexts}
           />

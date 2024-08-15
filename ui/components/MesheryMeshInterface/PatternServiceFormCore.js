@@ -5,6 +5,7 @@ import PatternService from './PatternService';
 import { getPatternAttributeName, createPatternFromConfig } from './helpers';
 import React, { useEffect, useState } from 'react';
 import { scrollToTop } from '../../utils/utils';
+import { generateUUID } from '../MesheryPerformance/helper';
 
 /**
  * usePatternServiceForm seperates the form logic from its UI representation
@@ -38,7 +39,7 @@ function PatternServiceFormCore({
   );
   const [update, forceUpdate] = useState(0);
   // eslint-disable-next-line no-unused-vars
-  const [rjsfReferenceKey, _] = useState((Math.random() + 1).toString(32).substring(2));
+  const [rjsfReferenceKey, _] = useState(generateUUID());
 
   useEffect(() => {
     if (schemaSet.type !== 'addon') {
