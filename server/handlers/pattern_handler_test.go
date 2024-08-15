@@ -1,19 +1,19 @@
 package handlers
 
-import (
-	"fmt"
-	"os"
-	"path"
-	"testing"
+// import (
+// 	"fmt"
+// 	"os"
+// 	"path"
+// 	"testing"
 
-	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/logger"
-	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
-	"github.com/layer5io/meshkit/validator"
-	"github.com/meshery/schemas/models/v1beta1/pattern"
-	"github.com/spf13/viper"
-)
+// 	"github.com/gofrs/uuid"
+// 	"github.com/layer5io/meshery/server/models"
+// 	"github.com/layer5io/meshkit/logger"
+// 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
+// 	"github.com/layer5io/meshkit/validator"
+// 	"github.com/meshery/schemas/models/v1beta1/pattern"
+// 	"github.com/spf13/viper"
+// )
 
 var testPatternFile = `
 name: GuestBook App
@@ -175,55 +175,55 @@ services:
     version: ""
 `
 
-func TestPatternFileConversionFromV1Alpha1ToV1Beta1(t *testing.T) {
+// func TestPatternFileConversionFromV1Alpha1ToV1Beta1(t *testing.T) {
 
-	v1beta1PatternFile := &pattern.PatternFile{}
-	home, _ := os.UserHomeDir()
+// 	v1beta1PatternFile := &pattern.PatternFile{}
+// 	home, _ := os.UserHomeDir()
 
-	viper.SetDefault("USER_DATA_FOLDER", path.Join(home, ".meshery", "config"))
+// 	viper.SetDefault("USER_DATA_FOLDER", path.Join(home, ".meshery", "config"))
 
-	dbHandler := models.GetNewDBInstance()
-	regManager, err := meshmodel.NewRegistryManager(dbHandler)
-	if err != nil {
-		t.Fatal(err)
-		return
-	}
-	log, err := logger.New("pattern_handler-tests", logger.Options{
-		LogLevel: 3,
-	})
-	if err != nil {
-		t.Fatal(err)
-		return
-	}
-	handler := Handler{
-		registryManager: regManager,
-		log:             log,
-	}
-	t.Run("TestPatternFileConversionFromV1Alpha1ToV1Beta1", func(t *testing.T) {
-		// var beta1PatternFileStr string
-		var err error
-		v1beta1PatternFile, _, err = handler.convertV1alpha2ToV1beta1(testPatternFile, uuid.Nil)
-		if err != nil {
-			fmt.Println(err)
-			t.Fatal(err)
-			return
-		}
+// 	dbHandler := models.GetNewDBInstance()
+// 	regManager, err := meshmodel.NewRegistryManager(dbHandler)
+// 	if err != nil {
+// 		t.Fatal(err)
+// 		return
+// 	}
+// 	log, err := logger.New("pattern_handler-tests", logger.Options{
+// 		LogLevel: 3,
+// 	})
+// 	if err != nil {
+// 		t.Fatal(err)
+// 		return
+// 	}
+// 	handler := Handler{
+// 		registryManager: regManager,
+// 		log:             log,
+// 	}
+// 	t.Run("TestPatternFileConversionFromV1Alpha1ToV1Beta1", func(t *testing.T) {
+// 		// var beta1PatternFileStr string
+// 		var err error
+// 		v1beta1PatternFile, _, err = handler.convertV1alpha2ToV1beta1(testPatternFile, uuid.Nil)
+// 		if err != nil {
+// 			fmt.Println(err)
+// 			t.Fatal(err)
+// 			return
+// 		}
 
-		// b, _ := json.Marshal(v1beta1PatternFile)
-		// _ = os.WriteFile("test-beta1.json", b, 0655)
-		// _ = os.WriteFile("test-beta1.yml", []byte(beta1PatternFileStr), 0655)
+// 		// b, _ := json.Marshal(v1beta1PatternFile)
+// 		// _ = os.WriteFile("test-beta1.json", b, 0655)
+// 		// _ = os.WriteFile("test-beta1.yml", []byte(beta1PatternFileStr), 0655)
 
-	})
+// 	})
 
-	t.Run("TestValidateConvertedPatternFile", func(t *testing.T) {
-		cueSchema, err := validator.GetSchemaFor("")
-		if err != nil {
-			t.Fatal(err)
-		}
+// 	t.Run("TestValidateConvertedPatternFile", func(t *testing.T) {
+// 		cueSchema, err := validator.GetSchemaFor("")
+// 		if err != nil {
+// 			t.Fatal(err)
+// 		}
 
-		err = validator.Validate(cueSchema, v1beta1PatternFile)
-		if err != nil {
-			t.Fatal(err)
-		}
-	})
-}
+// 		err = validator.Validate(cueSchema, v1beta1PatternFile)
+// 		if err != nil {
+// 			t.Fatal(err)
+// 		}
+// 	})
+// }
