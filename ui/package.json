@@ -59,7 +59,7 @@
         "@uiw/react-md-editor": "^3.14.4",
         "@xstate/react": "^4.1.1",
         "autoprefixer": "^10.4.14",
-        "axios": "^1.6.2",
+        "axios": "^1.7.4",
         "babel-plugin-istanbul": "^6.0.0",
         "babel-plugin-relay": "^13.2.0",
         "billboard.js": "^3.10.2",
@@ -152,7 +152,7 @@
         "nyc": "^15.1.0",
         "prettier": "^3.0.3",
         "relay-compiler": "^17.0.0",
-        "start-server-and-test": "^1.13.1",
+        "start-server-and-test": "^2.0.5",
         "webpack": "^5.76.0",
         "webpack-cli": "^5.1.4"
     }
