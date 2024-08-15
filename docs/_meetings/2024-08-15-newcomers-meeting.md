@@ -6,9 +6,9 @@
 **Attendees**: 
 - Aribisala Adetomiwa
 - Vivek Vishal
+- Rohit Sharma
 - Divij Sharma
 - Anuj Kumar Sharma
 - Deep Trivedi
-
 
 Notes:
