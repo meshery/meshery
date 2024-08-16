@@ -1,68 +1,76 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "displayName": "Proxy Config",
+  "capabilities": null,
+  "component": {
+    "kind": "ProxyConfig",
+    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Provides configuration for individual workloads. See more details at: https://istio.io/docs/reference/config/networking/proxy-config.html\",\n   \"properties\": {\n    \"concurrency\": {\n     \"description\": \"The number of worker threads to run.\",\n     \"format\": \"int32\",\n     \"minimum\": 0,\n     \"nullable\": true,\n     \"type\": \"integer\"\n    },\n    \"environmentVariables\": {\n     \"additionalProperties\": {\n      \"maxLength\": 2048,\n      \"type\": \"string\"\n     },\n     \"description\": \"Additional environment variables for the proxy.\",\n     \"type\": \"object\"\n    },\n    \"image\": {\n     \"description\": \"Specifies the details of the proxy image.\",\n     \"properties\": {\n      \"imageType\": {\n       \"description\": \"The image type of the image.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"selector\": {\n     \"description\": \"Optional.\",\n     \"properties\": {\n      \"matchLabels\": {\n       \"additionalProperties\": {\n        \"maxLength\": 63,\n        \"type\": \"string\",\n        \"x-kubernetes-validations\": [\n         {\n          \"message\": \"wildcard not allowed in label value match\",\n          \"rule\": \"!self.contains('*')\"\n         }\n        ]\n       },\n       \"description\": \"One or more labels that indicate a specific set of pods/VMs on which a policy should be applied.\",\n       \"maxProperties\": 4096,\n       \"type\": \"object\",\n       \"x-kubernetes-validations\": [\n        {\n         \"message\": \"wildcard not allowed in label key match\",\n         \"rule\": \"self.all(key, !key.contains('*'))\"\n        },\n        {\n         \"message\": \"key must not be empty\",\n         \"rule\": \"self.all(key, key.size() != 0)\"\n        }\n       ]\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Proxy Config\",\n \"type\": \"object\"\n}",
+    "version": "networking.istio.io/v1beta1"
+  },
+  "configuration": null,
   "description": "",
+  "displayName": "Proxy Config",
   "format": "JSON",
-  "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "version": "v1.0.0",
-   "name": "base",
-   "displayName": "base",
-   "description": "",
-   "status": "ignored",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "registrant": {
-    "hostname": "artifacthub"
-   },
-   "category": {
-    "name": "Uncategorized",
-    "metadata": null
-   },
-   "subCategory": "Uncategorized",
-   "metadata": {
-    "capabilities": "",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
     "defaultData": "",
+    "genealogy": "",
     "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false,
+    "shapePolygonPoints": ""
+  },
+  "model": {
+    "category": {
+      "name": "Uncategorized"
+    },
+    "displayName": "base",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "metadata": {
+      "capabilities": null,
+      "defaultData": "",
+      "isAnnotation": false,
+      "primaryColor": "#00B39F",
+      "secondaryColor": "#00D3A9",
+      "shape": "circle",
+      "shapePolygonPoints": "",
+      "styleOverrides": "",
+      "styles": "",
+      "svgColor": "\u003csvg width=\"160\" height=\"240\" viewBox=\"0 0 160 240\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M0 210H160L60 240L0 210Z\" fill=\"#466BB0\"/\u003e\n\u003cpath d=\"M0 200L60 190V80L0 200Z\" fill=\"#466BB0\"/\u003e\n\u003cpath d=\"M70 190L160 200L70 0V190Z\" fill=\"#466BB0\"/\u003e\n\u003c/svg\u003e\n",
+      "svgComplete": "",
+      "svgWhite": "\u003csvg viewBox=\"6.386270046234131 3.7419400215148926 18.227430820465088 25.258059978485107\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cpath d=\"M6.38627 24.7904L13.2215 23.738V12.1613L6.38627 24.7904Z\" fill=\"white\"/\u003e\u003cpath d=\"M6.38627 25.8427H24.6137L13.2215 29L6.38627 25.8427Z\" fill=\"white\"/\u003e\u003cpath d=\"M14.3608 23.7379L24.6137 24.7904L14.3608 3.74194V23.7379Z\" fill=\"white\"/\u003e\u003c/svg\u003e"
+    },
+    "model": {
+      "version": "1.23.0-rc.0"
+    },
+    "name": "base",
+    "registrant": {
+      "created_at": "0001-01-01T00:00:00Z",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "deleted_at": "0001-01-01T00:00:00Z",
+      "id": "00000000-0000-0000-0000-000000000000",
+      "kind": "artifacthub",
+      "name": "Artifact Hub",
+      "status": "discovered",
+      "sub_type": "",
+      "type": "registry",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "user_id": "00000000-0000-0000-0000-000000000000"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "status": "ignored",
+    "subCategory": "Uncategorized",
+    "version": "v1.0.0",
+    "components": null,
+    "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "ignored",
+  "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
-    "shapePolygonPoints": "",
-    "styleOverrides": "",
-    "styles": "",
     "svgColor": "\u003csvg width=\"160\" height=\"240\" viewBox=\"0 0 160 240\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M0 210H160L60 240L0 210Z\" fill=\"#466BB0\"/\u003e\n\u003cpath d=\"M0 200L60 190V80L0 200Z\" fill=\"#466BB0\"/\u003e\n\u003cpath d=\"M70 190L160 200L70 0V190Z\" fill=\"#466BB0\"/\u003e\n\u003c/svg\u003e\n",
-    "svgComplete": "",
     "svgWhite": "\u003csvg viewBox=\"6.386270046234131 3.7419400215148926 18.227430820465088 25.258059978485107\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cpath d=\"M6.38627 24.7904L13.2215 23.738V12.1613L6.38627 24.7904Z\" fill=\"white\"/\u003e\u003cpath d=\"M6.38627 25.8427H24.6137L13.2215 29L6.38627 25.8427Z\" fill=\"white\"/\u003e\u003cpath d=\"M14.3608 23.7379L24.6137 24.7904L14.3608 3.74194V23.7379Z\" fill=\"white\"/\u003e\u003c/svg\u003e"
-   },
-   "model": {
-    "version": "1.23.0-rc.0"
-   },
-   "components": null,
-   "relationships": null
   },
-  "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
-   "primaryColor": "#00B39F",
-   "secondaryColor": "#00D3A9",
-   "shape": "circle",
-   "shapePolygonPoints": "",
-   "status": "ignored",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
-   "svgColor": "\u003csvg width=\"160\" height=\"240\" viewBox=\"0 0 160 240\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M0 210H160L60 240L0 210Z\" fill=\"#466BB0\"/\u003e\n\u003cpath d=\"M0 200L60 190V80L0 200Z\" fill=\"#466BB0\"/\u003e\n\u003cpath d=\"M70 190L160 200L70 0V190Z\" fill=\"#466BB0\"/\u003e\n\u003c/svg\u003e\n",
-   "svgComplete": "",
-   "svgWhite": "\u003csvg viewBox=\"6.386270046234131 3.7419400215148926 18.227430820465088 25.258059978485107\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cpath d=\"M6.38627 24.7904L13.2215 23.738V12.1613L6.38627 24.7904Z\" fill=\"white\"/\u003e\u003cpath d=\"M6.38627 25.8427H24.6137L13.2215 29L6.38627 25.8427Z\" fill=\"white\"/\u003e\u003cpath d=\"M14.3608 23.7379L24.6137 24.7904L14.3608 3.74194V23.7379Z\" fill=\"white\"/\u003e\u003c/svg\u003e"
-  },
-  "component": {
-   "kind": "ProxyConfig",
-   "version": "networking.istio.io/v1beta1",
-   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Provides configuration for individual workloads. See more details at: https://istio.io/docs/reference/config/networking/proxy-config.html\",\n   \"properties\": {\n    \"concurrency\": {\n     \"description\": \"The number of worker threads to run.\",\n     \"format\": \"int32\",\n     \"minimum\": 0,\n     \"nullable\": true,\n     \"type\": \"integer\"\n    },\n    \"environmentVariables\": {\n     \"additionalProperties\": {\n      \"maxLength\": 2048,\n      \"type\": \"string\"\n     },\n     \"description\": \"Additional environment variables for the proxy.\",\n     \"type\": \"object\"\n    },\n    \"image\": {\n     \"description\": \"Specifies the details of the proxy image.\",\n     \"properties\": {\n      \"imageType\": {\n       \"description\": \"The image type of the image.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"selector\": {\n     \"description\": \"Optional.\",\n     \"properties\": {\n      \"matchLabels\": {\n       \"additionalProperties\": {\n        \"maxLength\": 63,\n        \"type\": \"string\",\n        \"x-kubernetes-validations\": [\n         {\n          \"message\": \"wildcard not allowed in label value match\",\n          \"rule\": \"!self.contains('*')\"\n         }\n        ]\n       },\n       \"description\": \"One or more labels that indicate a specific set of pods/VMs on which a policy should be applied.\",\n       \"maxProperties\": 4096,\n       \"type\": \"object\",\n       \"x-kubernetes-validations\": [\n        {\n         \"message\": \"wildcard not allowed in label key match\",\n         \"rule\": \"self.all(key, !key.contains('*'))\"\n        },\n        {\n         \"message\": \"key must not be empty\",\n         \"rule\": \"self.all(key, key.size() != 0)\"\n        }\n       ]\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Proxy Config\",\n \"type\": \"object\"\n}"
-  }
- }
+  "version": "v1.0.0"
+}
