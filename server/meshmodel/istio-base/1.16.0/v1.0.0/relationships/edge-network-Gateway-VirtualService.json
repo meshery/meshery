@@ -3,7 +3,7 @@
   "version": "v1.0.0",
   "kind": "edge",
   "metadata": {
-    "description": "A relations hip that defines network edges between components"
+    "description": "A relationship that defines network edges between components"
   },
   "model": {
     "schemaVersion": "core.meshery.io/v1alpha2",
