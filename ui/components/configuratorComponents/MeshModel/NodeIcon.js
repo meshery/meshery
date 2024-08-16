@@ -171,13 +171,9 @@ export default function GetNodeIcon({ metadata, otherOverrides = {}, className }
         className={clsx(className, NODE_ICON_WRAPPER_CLASS)}
         xmlns="http://www.w3.org/2000/svg"
       >
-        <ShapeOfSVG
-          color={componentMetadata.primaryColor}
-          shape={componentMetadata.shape}
-          styles={customStyles}
-        />
+        <ShapeOfSVG color={metadata.primaryColor} shape={metadata.shape} styles={customStyles} />
         {styles['background-image'] !== 'none' && componentMetadata.svgColor && (
-          <image href={getSvgUrl(componentMetadata.svgWhite)} {...styles} />
+          <image href={getSvgUrl(metadata.svgWhite)} {...styles} />
         )}
       </svg>
     </>

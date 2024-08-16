@@ -84,7 +84,7 @@ export default function useDesignLifecycle() {
           currentJson.push(newInput);
         }
 
-        return { name: prev.name, components: [...currentJson] };
+        return { ...prev, components: [...currentJson] };
       });
     };
   }
