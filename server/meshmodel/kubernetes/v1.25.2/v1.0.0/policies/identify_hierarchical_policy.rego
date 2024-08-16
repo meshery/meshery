@@ -7,6 +7,7 @@ identify_relationship(
 	relationship,
 ) := evaluation_results if {
 	lower(relationship.kind) == "hierarchical"
+	lower(relationship.type) == "parent"
 
 	selector_set := relationship.selectors[_]
 	from_selectors := {kind: selectors |
@@ -40,7 +41,8 @@ evaluate_hierarchy contains result if {
 
 	some from_decl in filtered_from_decls
 	some to_decl in filtered_to_decls
-	
+
+	from_decl.id != to_decl.id
 	is_valid_hierarchy(from_decl, to_decl, from_selector, to_selector)
 
 	# Th criteria for relationship is met hence add the relationship if not exists already.

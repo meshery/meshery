@@ -34,6 +34,9 @@
               "registrant": {
                 "kind": "artifacthub"
               }
+            },
+            "match": {
+              "refs": [[]]
             }
           }
         ],
@@ -45,6 +48,11 @@
               "registrant": {
                 "kind": "artifacthub"
               }
+            },
+            "match": {
+              "refs": [
+                []
+              ]
             }
           }
         ]

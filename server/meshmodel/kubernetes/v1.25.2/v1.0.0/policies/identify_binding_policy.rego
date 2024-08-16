@@ -64,11 +64,15 @@ evaluate_bindings contains result if {
 	from_declaration := data.from[i]
 	binding_declaration := data.binding_declarations[j]
 
+	from_declaration.id != binding_declaration.id
+	
 	selector := data.from_selectors[from_declaration.component.kind]
 
 	is_valid_binding(from_declaration, binding_declaration, selector)
 
 	to_declaration := data.to[k]
+
+	to_declaration.id != binding_declaration.id	
 
 	to_selector := data.to_selectors[concat("#", {to_declaration.component.kind, binding_declaration.component.kind})]
 

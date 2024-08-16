@@ -7,6 +7,7 @@ perform_eval(
 	relationship,
 ) := patched_declarations if {
 	lower(relationship.kind) == "hierarchical"
+	lower(relationship.type) == "parent"
 
 	patched_declarations := [result |
 		mutator_object := extract_mutator_config_from_patch(relationship.selectors[0].allow)
