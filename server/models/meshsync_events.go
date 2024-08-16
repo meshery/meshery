@@ -264,6 +264,7 @@ func (mh *MeshsyncDataHandler) getComponentMetadata(apiVersion string, kind stri
 	}()
 	result := mh.dbHandler.Model(component.ComponentDefinition{}).Select("styles").
 		Where("component->>'version' = ? and component->>'kind' = ?", apiVersion, kind).Scan(&data)
+
 	if result.Error != nil {
 		if result.Error == gorm.ErrRecordNotFound {
 			mh.log.Error(ErrResultNotFound(result.Error))
@@ -273,7 +274,7 @@ func (mh *MeshsyncDataHandler) getComponentMetadata(apiVersion string, kind stri
 		compStyles = K8sMeshModelMetadata
 		return
 	}
-	strMetadata, err := utils.Cast[string](data["metadata"])
+	strMetadata, err := utils.Cast[string](data["styles"])
 	if err != nil {
 		compStyles = K8sMeshModelMetadata
 		return
