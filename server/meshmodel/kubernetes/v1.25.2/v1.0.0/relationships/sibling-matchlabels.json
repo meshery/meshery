@@ -1,8 +1,9 @@
 {
   "schemaVersion": "relationships.meshery.io/v1alpha3",
   "version": "v1.0.0",
-  "kind": "Hierarchical",
-  "type": "Sibling",
+  "kind": "hierarchical",
+  "type": "sibling",
+  "subType": "matchLabels", 
   "metadata": {
     "description": "A relationship between two objects that are siblings."
   },

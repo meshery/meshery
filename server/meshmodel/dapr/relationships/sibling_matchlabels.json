@@ -1,7 +1,7 @@
 {
   "schemaVersion": "relationships.meshery.io/v1alpha3",
   "version": "*",
-  "kind": "Sibling",
+  "kind": "hierarchical",
   "metadata": {
     "description": "Sibling relationships represent connections between components that are at the same hierarchical level or share a common parent. An example of this relationship is a Service and a Pod in Kubernetes. With the components target defined in Resiliency resource, you can apply retry, timeout and circuitBreaker policies to Component operations."
   },
@@ -19,7 +19,8 @@
     },
     "metadata": {}
   },
-  "subType": "MatchLabels",
+  "subType": "matchLabels",
+  "type":"sibling",
   "selectors": [
     {
       "allow": {

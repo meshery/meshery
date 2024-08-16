@@ -1,9 +1,9 @@
 {
   "schemaVersion": "relationships.meshery.io/v1alpha3",
   "version": "v1.0.0",
-  "kind": "Edge",
-  "type": "Binding",
-  "subType": "Permission",
+  "kind": "edge",
+  "type": "binding",
+  "subType": "permission",
   "metadata": {
     "description": "A relationship that represents a set of bindings.",
     "capabilities": {

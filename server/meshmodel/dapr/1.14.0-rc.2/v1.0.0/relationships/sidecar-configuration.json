@@ -1,9 +1,9 @@
 {
   "schemaVersion": "relationships.meshery.io/v1alpha3",
   "version": "v1.0.0",
-  "kind": "Hierarchical",
-  "type": "Parent",
-  "subType": "Inventory",
+  "kind": "hierarchical",
+  "type": "parent",
+  "subType": "inventory",
   "metadata": {
     "description": "This relationship defines how various Dapr components (HTTPEndpoint, Resiliency, Configuration, and Subscription) are applied to a sidecar container running daprd. It represents a hierarchical inventory relationship where the child components (Dapr resources) patch the configuration of the parent component (sidecar container).",
     "type": "SingularNodeInventoryWallet"
