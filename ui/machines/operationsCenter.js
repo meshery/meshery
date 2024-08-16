@@ -36,7 +36,7 @@ const subscriptionActor = fromCallback(({ sendBack }) => {
       created_at: result.event.createdAt,
       deleted_at: result.event.deletedAt,
       operation_id: result.event.operationID,
-    }
+    };
     sendBack(events.eventReceivedFromServer(event));
   });
 
