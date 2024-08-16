@@ -1,9 +1,10 @@
 {
-  "schemaVersion": "relationships.meshery.io/v1alpha2",
-  "version": "*",
-  "kind": "edge",
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "version": "v1.0.0",
+  "kind": "Edge",
   "metadata": {
-    "description": "A relationship that defines network edges between components"},
+    "description": "A relationship that defines network edges between components"
+  },
   "model": {
     "schemaVersion": "core.meshery.io/v1alpha2",
     "version": "*",
@@ -22,22 +23,33 @@
   },
   "type": "Network",
   "subType": "Network",
-  "evaluationQuery": "edge_network_relationship",
-  "selectors": [{
-    "allow": {
-      "from": [
-        {
-          "kind": "Gateway",
-          "model": "istio-base"
-        }
-      ],
-      "to": [
-        {
-          "kind": "VirtualService",
-          "model": "istio-base"
-        }
-      ]
-    },
-    "deny": {}
-  }]
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "Gateway",
+            "model": {
+              "name": "istio-base",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "VirtualService",
+            "model": {
+              "name": "istio-base",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            }
+          }
+        ]
+      },
+      "deny": {}
+    }
+  ]
 }

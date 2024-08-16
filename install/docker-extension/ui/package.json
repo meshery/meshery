@@ -20,7 +20,7 @@
     "@testing-library/react": "^12.1.4",
     "@testing-library/user-event": "^13.5.0",
     "assert": "^2.1.0",
-    "axios": "^1.6.0",
+    "axios": "^1.7.4",
     "billboard.js": "^3.10.3",
     "fs": "^0.0.1-security",
     "https-browserify": "^1.0.0",

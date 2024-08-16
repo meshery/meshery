@@ -3,18 +3,19 @@ package model
 import (
 	"encoding/json"
 	"fmt"
+	"io"
+	"net/http"
+	"strings"
+
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
+	"github.com/meshery/schemas/models/v1beta1/model"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"gopkg.in/yaml.v2"
-	"io"
-	"net/http"
-	"strings"
 )
 
 var viewModelCmd = &cobra.Command{
@@ -62,9 +63,9 @@ mesheryctl model view [model-name]
 		}
 
 		baseUrl := mctlCfg.GetBaseMesheryURL()
-		model := args[0]
+		modelDefinition := args[0]
 
-		url := fmt.Sprintf("%s/api/meshmodels/models/%s?pagesize=all", baseUrl, model)
+		url := fmt.Sprintf("%s/api/meshmodels/models/%s?pagesize=all", baseUrl, modelDefinition)
 		req, err := utils.NewRequest(http.MethodGet, url, nil)
 		if err != nil {
 			utils.Log.Error(err)
@@ -93,10 +94,10 @@ mesheryctl model view [model-name]
 			return err
 		}
 
-		var selectedModel v1beta1.Model
+		var selectedModel model.ModelDefinition
 
 		if modelsResponse.Count == 0 {
-			fmt.Println("No model(s) found for the given name ", model)
+			fmt.Println("No model(s) found for the given name ", modelDefinition)
 			return nil
 		} else if modelsResponse.Count == 1 {
 			selectedModel = modelsResponse.Models[0]

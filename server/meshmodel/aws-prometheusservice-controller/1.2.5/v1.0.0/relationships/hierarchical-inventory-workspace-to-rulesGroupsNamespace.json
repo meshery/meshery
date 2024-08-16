@@ -1,7 +1,9 @@
 {
-  "schemaVersion": "relationships.meshery.io/v1alpha2",
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
   "version": "v1.0.0",
   "kind": "Hierarchical",
+  "type": "Parent",
+  "subType": "Inventory",
   "metdata": {
     "description": "A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component."
   },
@@ -19,20 +21,23 @@
     },
     "metadata": {}
   },
-  "subType": "Inventory",
-  "evaluationQuery": "hierarchical_inventory_relationship",
   "selectors": [
     {
       "allow": {
         "from": [
           {
             "kind": "Workspace",
-            "model": "aws-prometheusservice-controller",
+            "model": {
+              "name": "aws-prometheusservice-controller",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
             "patch": {
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "name"
+                  "displayName"
                 ]
               ],
               "description": "The Workspace component's configuration is updated based on specifications from other components, like AlertManagerDefinition, ensuring alignment with connected systems."
@@ -42,12 +47,17 @@
         "to": [
           {
             "kind": "RuleGroupsNamespace",
-            "model": "aws-prometheusservice-controller",
+            "model": {
+              "name": "aws-prometheusservice-controller",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
-                  "settings",
+                  "configuration",
                   "spec",
                   "workspaceRef",
                   "from",

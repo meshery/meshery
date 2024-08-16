@@ -1,68 +1,76 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "displayName": "Azure Ingress Prohibited Target",
+  "capabilities": null,
+  "component": {
+    "kind": "AzureIngressProhibitedTarget",
+    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"hostname\": {\n     \"description\": \"(optional) Hostname of the prohibited target\",\n     \"type\": \"string\"\n    },\n    \"paths\": {\n     \"description\": \"(optional) A list of URL paths, for which the Ingress Controller is prohibited from mutating Application Gateway configuration; Must begin with a / and end with /*\",\n     \"items\": {\n      \"pattern\": \"^\\\\/(?:.+\\\\/)?\\\\*$\",\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Azure Ingress Prohibited Target\",\n \"type\": \"object\"\n}",
+    "version": "appgw.ingress.k8s.io/v1"
+  },
+  "configuration": null,
   "description": "",
+  "displayName": "Azure Ingress Prohibited Target",
   "format": "JSON",
-  "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "version": "v1.0.0",
-   "name": "Azure Kubernetes Service",
-   "displayName": "Azure Kubernetes Service",
-   "description": "",
-   "status": "ignored",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "registrant": {
-    "hostname": "artifacthub"
-   },
-   "category": {
-    "name": "Orchestration \u0026 Management",
-    "metadata": null
-   },
-   "subCategory": "Scheduling \u0026 Orchestration",
-   "metadata": {
-    "capabilities": "",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
     "defaultData": "",
+    "genealogy": "",
     "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false,
+    "shapePolygonPoints": ""
+  },
+  "model": {
+    "category": {
+      "name": "Orchestration \u0026 Management"
+    },
+    "displayName": "Azure Kubernetes Service",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "metadata": {
+      "capabilities": null,
+      "defaultData": "",
+      "isAnnotation": false,
+      "primaryColor": "#804998",
+      "secondaryColor": "#804998",
+      "shape": "circle",
+      "shapePolygonPoints": "",
+      "styleOverrides": "",
+      "styles": "",
+      "svgColor": "",
+      "svgComplete": "",
+      "svgWhite": ""
+    },
+    "model": {
+      "version": "1.7.5-rc1"
+    },
+    "name": "Azure Kubernetes Service",
+    "registrant": {
+      "created_at": "0001-01-01T00:00:00Z",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "deleted_at": "0001-01-01T00:00:00Z",
+      "id": "00000000-0000-0000-0000-000000000000",
+      "kind": "artifacthub",
+      "name": "Artifact Hub",
+      "status": "discovered",
+      "sub_type": "",
+      "type": "registry",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "user_id": "00000000-0000-0000-0000-000000000000"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "status": "ignored",
+    "subCategory": "Scheduling \u0026 Orchestration",
+    "version": "v1.0.0",
+    "components": null,
+    "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "ignored",
+  "styles": {
     "primaryColor": "#804998",
     "secondaryColor": "#804998",
     "shape": "circle",
-    "shapePolygonPoints": "",
-    "styleOverrides": "",
-    "styles": "",
     "svgColor": "",
-    "svgComplete": "",
     "svgWhite": ""
-   },
-   "model": {
-    "version": "1.7.5-rc1"
-   },
-   "components": null,
-   "relationships": null
   },
-  "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
-   "primaryColor": "#804998",
-   "secondaryColor": "#804998",
-   "shape": "circle",
-   "shapePolygonPoints": "",
-   "status": "ignored",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
-   "svgColor": "",
-   "svgComplete": "",
-   "svgWhite": ""
-  },
-  "component": {
-   "kind": "AzureIngressProhibitedTarget",
-   "version": "appgw.ingress.k8s.io/v1",
-   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"hostname\": {\n     \"description\": \"(optional) Hostname of the prohibited target\",\n     \"type\": \"string\"\n    },\n    \"paths\": {\n     \"description\": \"(optional) A list of URL paths, for which the Ingress Controller is prohibited from mutating Application Gateway configuration; Must begin with a / and end with /*\",\n     \"items\": {\n      \"pattern\": \"^\\\\/(?:.+\\\\/)?\\\\*$\",\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Azure Ingress Prohibited Target\",\n \"type\": \"object\"\n}"
-  }
- }
+  "version": "v1.0.0"
+}

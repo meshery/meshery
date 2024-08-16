@@ -5,6 +5,9 @@ import PatternService from './PatternService';
 import { getPatternAttributeName, createPatternFromConfig } from './helpers';
 import React, { useEffect, useState } from 'react';
 import { scrollToTop } from '../../utils/utils';
+import { generateUUID } from '../MesheryPerformance/helper';
+
+import { ErrorBoundary } from '@layer5/sistent';
 
 /**
  * usePatternServiceForm seperates the form logic from its UI representation
@@ -21,7 +24,7 @@ import { scrollToTop } from '../../utils/utils';
  *  scroll?: Boolean; // If the window should be scrolled to zero after re-rendering
  * }} param0 props for the component
  */
-function PatternServiceFormCore({
+function PatternServiceFormCore_({
   formData,
   schemaSet,
   onSubmit,
@@ -38,7 +41,7 @@ function PatternServiceFormCore({
   );
   const [update, forceUpdate] = useState(0);
   // eslint-disable-next-line no-unused-vars
-  const [rjsfReferenceKey, _] = useState((Math.random() + 1).toString(32).substring(2));
+  const [rjsfReferenceKey, _] = useState(generateUUID());
 
   useEffect(() => {
     if (schemaSet.type !== 'addon') {
@@ -116,5 +119,13 @@ function PatternServiceFormCore({
 
   return child.current;
 }
+
+const PatternServiceFormCore = (props) => {
+  return (
+    <ErrorBoundary>
+      <PatternServiceFormCore_ {...props} />
+    </ErrorBoundary>
+  );
+};
 
 export default PatternServiceFormCore;

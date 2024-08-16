@@ -1,7 +1,9 @@
 {
-    "schemaVersion": "relationships.meshery.io/v1alpha2",
+    "schemaVersion": "relationships.meshery.io/v1alpha3",
     "version": "v1.0.0",
     "kind": "Hierarchical",
+    "type": "Parent",
+    "subType": "Inventory",
     "metadata": {
         "description": "A relationship that defines whether a component can be a parent of other components. It is read like: `from` can be a child of `to`, where from and to are any components that match the from and to selectors respectively"
     },
@@ -9,6 +11,9 @@
         "schemaVersion": "models.meshery.io/v1beta1",
         "version": "v1.0.0",
         "name": "kubernetes",
+        "registrant": {
+            "kind": "artifacthub"
+        },
         "model": {
             "version": "v1.25.2"
         },
@@ -19,14 +24,14 @@
         },
         "metadata": {}
     },
-    "evaluationQuery": "hierarchical_parent_relationship",
-    "subType": "Parent",
     "selectors": [
         {
             "allow": {
                 "from": [
                     {
-                        "model": "*",
+                        "model": {
+                            "name": "*"
+                        },
                         "kind": "*",
                         "patch": {
                             "patchStrategy": "replace",
@@ -42,12 +47,17 @@
                 "to": [
                     {
                         "kind": "Namespace",
-                        "model": "kubernetes",
+                        "model": {
+                            "name": "kubernetes",
+                            "registrant": {
+                                "kind": "artifacthub"
+                            }
+                        },
                         "patch": {
                             "patchStrategy": "replace",
                             "mutatorRef": [
                                 [
-                                    "name"
+                                    "displayName"
                                 ]
                             ],
                             "description": "Namespace configuration to be applied to all namespaced resources."

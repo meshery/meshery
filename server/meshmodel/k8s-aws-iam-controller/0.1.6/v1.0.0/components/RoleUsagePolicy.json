@@ -1,61 +1,70 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "displayName": "Role Usage Policy",
-  "description": "",
-  "format": "JSON",
-  "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "version": "v1.0.0",
-   "name": "k8s-aws-iam-controller",
-   "displayName": "K8s AWS IAM Controller",
-   "description": "",
-   "status": "ignored",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "registrant": {
-    "hostname": "artifacthub"
-   },
-   "category": {
-    "name": "Uncategorized",
-    "metadata": null
-   },
-   "subCategory": "",
-   "metadata": {
-    "source_uri": "https://github.com/rustrial/k8s-aws-iam-controller/releases/download/k8s-aws-iam-controller-0.1.7/k8s-aws-iam-controller-0.1.7.tgz"
-   },
-   "model": {
-    "version": "0.1.6"
-   },
-   "components": null,
-   "relationships": null
-  },
-  "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isModelAnnotation": "FALSE",
-   "isNamespaced": true,
-   "logoURL": "",
-   "model": "k8s-aws-iam-controller",
-   "modelDisplayName": "K8s AWS IAM Controller",
-   "primaryColor": "#00B39F",
-   "secondaryColor": "#00D3A9",
-   "shape": "circle",
-   "shapePolygonPoints": "",
-   "status": "ignored",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
-   "svgColor": "",
-   "svgComplete": "",
-   "svgWhite": ""
-  },
+  "capabilities": null,
   "component": {
-   "kind": "RoleUsagePolicy",
-   "version": "iam.aws.rustrial.org/v1alpha1",
-   "schema": "{\n \"description\": \"Auto-generated derived type for RoleUsagePolicySpec via `CustomResource`\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"`RoleUsagePolicy` objects are managed by Cluster Administrator to authorize namespaces to use (assume) certain AWS IAM Roles. The controller will not add any TrustPolicy Statements to AWS IAM Roles if there is no valid authorization for the corresponding `TrustPolicyStatement` object.\",\n   \"properties\": {\n    \"namespaces\": {\n     \"description\": \"Set of Kubernetes namespaces, which are authorized to use that AWS IAM Role. Can contain `*` to authorize all namespaces.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"permissionBoundary\": {\n     \"description\": \"ARN or ARN-Pattern of the AWS PermissionBoundary Policy.\",\n     \"nullable\": true,\n     \"type\": \"string\"\n    },\n    \"roleArn\": {\n     \"description\": \"AWS IAM Role ARN of the role for which to grant permission. Either a full ARN, am ARN-PATTERN or the wildcard `*` to match all ARNs. - `arn:aws:iam::000000000000:role/path/role-name` - `arn:aws:iam::*:role/path/role-name` - `arn:aws:iam::*:role/path/*` - `*`\",\n     \"type\": \"string\"\n    },\n    \"roleTags\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"Role tags, which must match for the policy to apply.\",\n     \"nullable\": true,\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"namespaces\",\n    \"roleArn\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Role Usage Policy\",\n \"type\": \"object\"\n}"
-  }
- }
+    "kind": "RoleUsagePolicy",
+    "schema": "{\n \"description\": \"Auto-generated derived type for RoleUsagePolicySpec via `CustomResource`\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"`RoleUsagePolicy` objects are managed by Cluster Administrator to authorize namespaces to use (assume) certain AWS IAM Roles. The controller will not add any TrustPolicy Statements to AWS IAM Roles if there is no valid authorization for the corresponding `TrustPolicyStatement` object.\",\n   \"properties\": {\n    \"namespaces\": {\n     \"description\": \"Set of Kubernetes namespaces, which are authorized to use that AWS IAM Role. Can contain `*` to authorize all namespaces.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"permissionBoundary\": {\n     \"description\": \"ARN or ARN-Pattern of the AWS PermissionBoundary Policy.\",\n     \"nullable\": true,\n     \"type\": \"string\"\n    },\n    \"roleArn\": {\n     \"description\": \"AWS IAM Role ARN of the role for which to grant permission. Either a full ARN, am ARN-PATTERN or the wildcard `*` to match all ARNs. - `arn:aws:iam::000000000000:role/path/role-name` - `arn:aws:iam::*:role/path/role-name` - `arn:aws:iam::*:role/path/*` - `*`\",\n     \"type\": \"string\"\n    },\n    \"roleTags\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"Role tags, which must match for the policy to apply.\",\n     \"nullable\": true,\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"namespaces\",\n    \"roleArn\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Role Usage Policy\",\n \"type\": \"object\"\n}",
+    "version": "iam.aws.rustrial.org/v1alpha1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "Role Usage Policy",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+    "defaultData": "",
+    "genealogy": "",
+    "isAnnotation": false,
+    "isModelAnnotation": "FALSE",
+    "isNamespaced": true,
+    "logoURL": "",
+    "model": "k8s-aws-iam-controller",
+    "modelDisplayName": "K8s AWS IAM Controller",
+    "published": false,
+    "shapePolygonPoints": ""
+  },
+  "model": {
+    "category": {
+      "name": "Uncategorized"
+    },
+    "displayName": "K8s AWS IAM Controller",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "metadata": {
+      "source_uri": "https://github.com/rustrial/k8s-aws-iam-controller/releases/download/k8s-aws-iam-controller-0.1.7/k8s-aws-iam-controller-0.1.7.tgz",
+      "svgColor": "",
+      "svgWhite": ""
+    },
+    "model": {
+      "version": "0.1.6"
+    },
+    "name": "k8s-aws-iam-controller",
+    "registrant": {
+      "created_at": "0001-01-01T00:00:00Z",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "deleted_at": "0001-01-01T00:00:00Z",
+      "id": "00000000-0000-0000-0000-000000000000",
+      "kind": "artifacthub",
+      "name": "Artifact Hub",
+      "status": "discovered",
+      "sub_type": "",
+      "type": "registry",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "user_id": "00000000-0000-0000-0000-000000000000"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "status": "ignored",
+    "version": "v1.0.0",
+    "components": null,
+    "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "ignored",
+  "styles": {
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "svgColor": "",
+    "svgWhite": ""
+  },
+  "version": "v1.0.0"
+}
