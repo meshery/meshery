@@ -394,6 +394,7 @@ export const encodeDesignFile = (designJson) => {
  * @param {object} design - The design file of format design schema v1beta1
  */
 export const processDesign = (design) => {
+  console.log('Design to process', design);
   if (design.schemaVersion != 'designs.meshery.io/v1beta1') {
     console.error('Invalid design schema version', design);
     return {

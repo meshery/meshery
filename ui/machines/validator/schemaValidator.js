@@ -2,7 +2,6 @@ import { fromPromise } from 'xstate';
 import Ajv from 'ajv';
 import _ from 'lodash';
 
-import { processDesign } from '@/utils/utils';
 import { dataValidatorMachine } from '@layer5/sistent';
 
 const ajv = new Ajv({
