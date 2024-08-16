@@ -30,6 +30,7 @@ import (
 	patternutils "github.com/layer5io/meshery/server/models/pattern/utils"
 	"github.com/layer5io/meshkit/errors"
 	"github.com/layer5io/meshkit/logger"
+	"github.com/layer5io/meshkit/encoding"
 	"github.com/layer5io/meshkit/models/catalog/v1alpha1"
 	"github.com/layer5io/meshkit/models/events"
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
@@ -308,7 +309,7 @@ func (h *Handler) handlePatternPOST(
 			mesheryPattern.PatternFile = string(pfByt)
 		} else {
 			patternFile := pattern.PatternFile{}
-			err := yaml.Unmarshal(bytPattern, &patternFile)
+			err := encoding.Unmarshal(bytPattern, &patternFile)
 			if err != nil {
 				err = ErrParsePattern(err)
 				h.log.Error(err)
@@ -786,7 +787,7 @@ func unCompressOCIArtifactIntoDesign(artifact []byte) (*models.MesheryPattern, e
 
 	var patternFile pattern.PatternFile
 
-	err = yaml.Unmarshal([]byte(design.Content), &patternFile)
+	err = encoding.Unmarshal([]byte(design.Content), &patternFile)
 	if err != nil {
 		return nil, ErrDecodePattern(err)
 	}
@@ -895,7 +896,7 @@ func genericHTTPDesignFile(fileURL, patternName, sourceType string, reg *meshmod
 			return nil, err //This error is already a meshkit error
 		}
 	} else {
-		err := yaml.Unmarshal([]byte(res), &pattern)
+		err := encoding.Unmarshal([]byte(res), &pattern)
 		if err != nil {
 			return nil, ErrDecodePattern(err)
 		}
@@ -2120,7 +2121,7 @@ func (h *Handler) convertV1alpha2ToV1beta1(patternFile string, patternId uuid.UU
 
 	v1beta1PatternFile := pattern.PatternFile{}
 
-	err := yaml.Unmarshal([]byte(patternFile), &v1alpha1PatternFile)
+	err := encoding.Unmarshal([]byte(patternFile), &v1alpha1PatternFile)
 	if err != nil {
 		return nil, "", ErrParsePattern(err)
 	}

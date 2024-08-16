@@ -12,8 +12,8 @@ import (
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/meshery/schemas/models/v1alpha3/relationship"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
-	"gopkg.in/yaml.v2"
 
+	"github.com/layer5io/meshkit/encoding"
 	"github.com/layer5io/meshkit/models/events"
 
 	regv1alpha3 "github.com/layer5io/meshkit/models/meshmodel/registry/v1alpha3"
@@ -67,7 +67,7 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	}
 	var patternFile pattern.PatternFile
 
-	err = yaml.Unmarshal([]byte(relationshipPolicyEvalPayload.PatternFile), &patternFile)
+	err = encoding.Unmarshal([]byte(relationshipPolicyEvalPayload.PatternFile), &patternFile)
 	if err != nil {
 		http.Error(rw, ErrDecoding(err, "design file").Error(), http.StatusInternalServerError)
 		return
