@@ -2,7 +2,6 @@ import { fromPromise } from 'xstate';
 import Ajv from 'ajv';
 import _ from 'lodash';
 
-import { processDesign } from '@/utils/utils';
 import { dataValidatorMachine } from '@layer5/sistent';
 
 const ajv = new Ajv({
@@ -25,9 +24,7 @@ const validateSchema = (schema, data, id) => {
   };
 };
 
-
 const validateComponent = (component, validateAnnotations = false, componentDef) => {
-  console.log("validating component", component)
   if (!componentDef || (componentDef?.metadata?.isAnnotation && !validateAnnotations)) {
     // skip validation for annotations
     return {
@@ -44,18 +41,15 @@ const validateComponent = (component, validateAnnotations = false, componentDef)
     componentDefinition: componentDef,
     component,
   };
-  console.log("component results", validationResults)
 
   return validationResults;
 };
 
-
-export const componentKey = (component) => `${component.component.kind}-${component.model.name}-${component.component.version}`;
+export const componentKey = (component) =>
+  `${component.component.kind}-${component.model.name}-${component.component.version}`;
 
 const validateDesign = (design, componentDefsStore) => {
-  console.log("validating design in worker", design)
-
-  const configurableComponents = design.components
+  const configurableComponents = design.components;
 
   const validationResults = {};
 
@@ -73,7 +67,6 @@ const validateDesign = (design, componentDefsStore) => {
     }
   }
 
-  console.log("validationResults", validationResults)
   return validationResults;
 };
 

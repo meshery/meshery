@@ -702,7 +702,7 @@ function MesheryPatterns({
     setPatterns(patterns?.filter((content) => content.visibility !== VISIBILITY.PUBLISHED) || []);
   };
 
-  const openDeployModal = (e, pattern_file, name, pattern_id) => {
+  const openDeployModal = (e, pattern_file, name) => {
     const design = parseDesignFile(pattern_file);
     e.stopPropagation();
     designLifecycleModal.openModal({
@@ -720,7 +720,7 @@ function MesheryPatterns({
     });
   };
 
-  const openUndeployModal = (e, pattern_file, name, pattern_id) => {
+  const openUndeployModal = (e, pattern_file, name) => {
     e.stopPropagation();
     const design = parseDesignFile(pattern_file);
     designLifecycleModal.openModal({
@@ -738,7 +738,7 @@ function MesheryPatterns({
     });
   };
 
-  const openDryRunModal = (e, pattern_file, name, pattern_id) => {
+  const openDryRunModal = (e, pattern_file, name) => {
     e.stopPropagation();
 
     const design = parseDesignFile(pattern_file);
@@ -758,7 +758,7 @@ function MesheryPatterns({
     });
   };
 
-  const openValidateModal = (e, pattern_file, name, pattern_id) => {
+  const openValidateModal = (e, pattern_file, name) => {
     e.stopPropagation();
 
     const design = parseDesignFile(pattern_file);
