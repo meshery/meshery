@@ -15,7 +15,7 @@ To automate functional integration and end-to-end testing Meshery uses [Playwri
 
 Before diving into Meshery's testing environment, certain prerequisites are necessary:
 
-- A verified account in your provider which integrate with Meshery.
+- A verified account in your choosen provider which integrate with Meshery.
 - A compatible browser such as Chromium, Chrome, or Firefox.
 - Installations of Golang, NodeJS, and Makefiles for Native OS build (Optional for docker based build).
 - Kubernetes clusters (Required for several test cases)
@@ -23,10 +23,10 @@ Before diving into Meshery's testing environment, certain prerequisites are nece
 
 ## Setting up environment variable
 
-To run the tests successfully, three environment variables must be configured:
-• `REMOTE_PROVIDER_USER_EMAIL`: The email associated with your provider account.
-• `REMOTE_PROVIDER_USER_PASSWORD` : The password for your provider account.
-• `PROVIDER_TOKEN`: You're provider token, that can be generated from your provider account
+To run the tests successfully, three environment variables must be configured:  
+• `REMOTE_PROVIDER_USER_EMAIL`: The email associated with your account within your provider.  
+• `REMOTE_PROVIDER_USER_PASSWORD` : The password associated with your account within your provider.  
+• `PROVIDER_TOKEN`: You're provider token, that can be generated from your provider account  
 
 In the case you are using Layer5 Cloud as provider, you can generate your token on [Layer5 cloud account token](https://meshery.layer5.io/security/tokens)
 
@@ -122,7 +122,7 @@ Starting up playwright docker server:
 docker run --rm --network host --init -it mcr.microsoft.com/playwright:v1.44.0-jammy /bin/sh -c "cd /home/pwuser && npx -y playwright@1.44.0 run-server --port 8080"
 ```
 
-{% include alert.html type="warning" content="Keep in mind this is just for development purposes inside your local system and don’t try to expose your container network to the host system using --rm --network on production or CI" %}
+{% include alert.html type="warning" content="Keep in mind this is just for development purposes inside your local system and don’t try to expose your container network to the host system using --network host on production or CI" %}
 
 In the last step, run this command to run the test cases:
 
