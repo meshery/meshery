@@ -1,68 +1,76 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "displayName": "Predictor",
+  "capabilities": null,
+  "component": {
+    "kind": "Predictor",
+    "schema": "{\n \"description\": \"Predictor is the Schema for the predictors API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"PredictorSpec defines the desired state of Predictor\",\n   \"properties\": {\n    \"gpu\": {\n     \"description\": \"May be absent, \\\"preferred\\\" or \\\"required\\\"\",\n     \"enum\": [\n      \"required\",\n      \"preferred\"\n     ],\n     \"type\": \"string\"\n    },\n    \"modelType\": {\n     \"properties\": {\n      \"name\": {\n       \"type\": \"string\"\n      },\n      \"version\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"path\": {\n     \"description\": \"(DEPRECATED) The path to the model files within the storage\",\n     \"type\": \"string\"\n    },\n    \"runtime\": {\n     \"description\": \"If omitted a compatible runtime is selected based on the model type (if available)\",\n     \"properties\": {\n      \"name\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"schemaPath\": {\n     \"description\": \"(DEPRECATED) The path to the schema file within the storage\",\n     \"type\": \"string\"\n    },\n    \"serviceAccountName\": {\n     \"description\": \"NOT YET SUPPORTED\",\n     \"type\": \"string\"\n    },\n    \"storage\": {\n     \"properties\": {\n      \"key\": {\n       \"description\": \"The Storage Key in the secret for this model.\",\n       \"type\": \"string\"\n      },\n      \"parameters\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"Parameters to override the default storage credentials and config.\",\n       \"type\": \"object\"\n      },\n      \"path\": {\n       \"description\": \"The path to the model object in the storage. It cannot co-exist with the storageURI.\",\n       \"type\": \"string\"\n      },\n      \"persistentVolumeClaim\": {\n       \"description\": \"(DEPRECATED) PersistentVolmueClaim was never supported this way and will be removed\",\n       \"properties\": {\n        \"claimName\": {\n         \"description\": \"ClaimName is the name of a PersistentVolumeClaim in the same namespace as the pod using this volume. More info: https://kubernetes.io/docs/concepts/storage/persistent-volumes#persistentvolumeclaims\",\n         \"type\": \"string\"\n        },\n        \"readOnly\": {\n         \"description\": \"Will force the ReadOnly setting in VolumeMounts. Default false.\",\n         \"type\": \"boolean\"\n        }\n       },\n       \"required\": [\n        \"claimName\"\n       ],\n       \"type\": \"object\"\n      },\n      \"s3\": {\n       \"description\": \"(DEPRECATED) S3 has configuration to connect to an S3 instance. It is now deprecated, use fields from Spec.Storage instead.\",\n       \"properties\": {\n        \"bucket\": {\n         \"type\": \"string\"\n        },\n        \"secretKey\": {\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"secretKey\"\n       ],\n       \"type\": \"object\"\n      },\n      \"schemaPath\": {\n       \"description\": \"The path to the model schema file in the storage.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"modelType\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Predictor\",\n \"type\": \"object\"\n}",
+    "version": "serving.kserve.io/v1alpha1"
+  },
+  "configuration": null,
   "description": "",
+  "displayName": "Predictor",
   "format": "JSON",
-  "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "version": "v1.0.0",
-   "name": "kserve",
-   "displayName": "Kserve",
-   "description": "",
-   "status": "ignored",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "registrant": {
-    "hostname": "artifacthub"
-   },
-   "category": {
-    "name": "Uncategorized",
-    "metadata": null
-   },
-   "subCategory": "Uncategorized",
-   "metadata": {
-    "capabilities": "",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
     "defaultData": "",
+    "genealogy": "",
     "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false,
+    "shapePolygonPoints": ""
+  },
+  "model": {
+    "category": {
+      "name": "Uncategorized"
+    },
+    "displayName": "Kserve",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "metadata": {
+      "capabilities": null,
+      "defaultData": "",
+      "isAnnotation": false,
+      "primaryColor": "#00B39F",
+      "secondaryColor": "#00D3A9",
+      "shape": "circle",
+      "shapePolygonPoints": "",
+      "styleOverrides": "",
+      "styles": "",
+      "svgColor": "",
+      "svgComplete": "",
+      "svgWhite": ""
+    },
+    "model": {
+      "version": "1.0.1"
+    },
+    "name": "kserve",
+    "registrant": {
+      "created_at": "0001-01-01T00:00:00Z",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "deleted_at": "0001-01-01T00:00:00Z",
+      "id": "00000000-0000-0000-0000-000000000000",
+      "kind": "artifacthub",
+      "name": "Artifact Hub",
+      "status": "discovered",
+      "sub_type": "",
+      "type": "registry",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "user_id": "00000000-0000-0000-0000-000000000000"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "status": "ignored",
+    "subCategory": "Uncategorized",
+    "version": "v1.0.0",
+    "components": null,
+    "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "ignored",
+  "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
-    "shapePolygonPoints": "",
-    "styleOverrides": "",
-    "styles": "",
     "svgColor": "",
-    "svgComplete": "",
     "svgWhite": ""
-   },
-   "model": {
-    "version": "1.0.1"
-   },
-   "components": null,
-   "relationships": null
   },
-  "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
-   "primaryColor": "#00B39F",
-   "secondaryColor": "#00D3A9",
-   "shape": "circle",
-   "shapePolygonPoints": "",
-   "status": "ignored",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
-   "svgColor": "",
-   "svgComplete": "",
-   "svgWhite": ""
-  },
-  "component": {
-   "kind": "Predictor",
-   "version": "serving.kserve.io/v1alpha1",
-   "schema": "{\n \"description\": \"Predictor is the Schema for the predictors API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"PredictorSpec defines the desired state of Predictor\",\n   \"properties\": {\n    \"gpu\": {\n     \"description\": \"May be absent, \\\"preferred\\\" or \\\"required\\\"\",\n     \"enum\": [\n      \"required\",\n      \"preferred\"\n     ],\n     \"type\": \"string\"\n    },\n    \"modelType\": {\n     \"properties\": {\n      \"name\": {\n       \"type\": \"string\"\n      },\n      \"version\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"path\": {\n     \"description\": \"(DEPRECATED) The path to the model files within the storage\",\n     \"type\": \"string\"\n    },\n    \"runtime\": {\n     \"description\": \"If omitted a compatible runtime is selected based on the model type (if available)\",\n     \"properties\": {\n      \"name\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"schemaPath\": {\n     \"description\": \"(DEPRECATED) The path to the schema file within the storage\",\n     \"type\": \"string\"\n    },\n    \"serviceAccountName\": {\n     \"description\": \"NOT YET SUPPORTED\",\n     \"type\": \"string\"\n    },\n    \"storage\": {\n     \"properties\": {\n      \"key\": {\n       \"description\": \"The Storage Key in the secret for this model.\",\n       \"type\": \"string\"\n      },\n      \"parameters\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"Parameters to override the default storage credentials and config.\",\n       \"type\": \"object\"\n      },\n      \"path\": {\n       \"description\": \"The path to the model object in the storage. It cannot co-exist with the storageURI.\",\n       \"type\": \"string\"\n      },\n      \"persistentVolumeClaim\": {\n       \"description\": \"(DEPRECATED) PersistentVolmueClaim was never supported this way and will be removed\",\n       \"properties\": {\n        \"claimName\": {\n         \"description\": \"ClaimName is the name of a PersistentVolumeClaim in the same namespace as the pod using this volume. More info: https://kubernetes.io/docs/concepts/storage/persistent-volumes#persistentvolumeclaims\",\n         \"type\": \"string\"\n        },\n        \"readOnly\": {\n         \"description\": \"Will force the ReadOnly setting in VolumeMounts. Default false.\",\n         \"type\": \"boolean\"\n        }\n       },\n       \"required\": [\n        \"claimName\"\n       ],\n       \"type\": \"object\"\n      },\n      \"s3\": {\n       \"description\": \"(DEPRECATED) S3 has configuration to connect to an S3 instance. It is now deprecated, use fields from Spec.Storage instead.\",\n       \"properties\": {\n        \"bucket\": {\n         \"type\": \"string\"\n        },\n        \"secretKey\": {\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"secretKey\"\n       ],\n       \"type\": \"object\"\n      },\n      \"schemaPath\": {\n       \"description\": \"The path to the model schema file in the storage.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"modelType\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Predictor\",\n \"type\": \"object\"\n}"
-  }
- }
+  "version": "v1.0.0"
+}

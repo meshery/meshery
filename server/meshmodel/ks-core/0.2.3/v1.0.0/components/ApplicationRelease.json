@@ -1,57 +1,65 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "displayName": "Application Release",
-  "description": "",
-  "format": "JSON",
-  "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "version": "v1.0.0",
-   "name": "ks-core",
-   "displayName": "ks-core",
-   "description": "",
-   "status": "ignored",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "registrant": {
-    "hostname": "artifacthub"
-   },
-   "category": {
-    "name": "",
-    "metadata": null
-   },
-   "subCategory": "",
-   "metadata": {
-    "source_uri": "https://charts.kubesphere.io/test/ks-core-0.5.3.tgz"
-   },
-   "model": {
-    "version": "0.2.3"
-   },
-   "components": null,
-   "relationships": null
-  },
-  "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": false,
-   "primaryColor": "",
-   "secondaryColor": "",
-   "shape": "",
-   "shapePolygonPoints": "",
-   "status": "ignored",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
-   "svgColor": "",
-   "svgComplete": "",
-   "svgWhite": ""
-  },
+  "capabilities": null,
   "component": {
-   "kind": "ApplicationRelease",
-   "version": "application.kubesphere.io/v2",
-   "schema": "{\n \"description\": \"ApplicationRelease is the Schema for the applicationreleases API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ApplicationReleaseSpec defines the desired state of ApplicationRelease\",\n   \"properties\": {\n    \"appID\": {\n     \"type\": \"string\"\n    },\n    \"appType\": {\n     \"type\": \"string\"\n    },\n    \"appVersionID\": {\n     \"type\": \"string\"\n    },\n    \"values\": {\n     \"format\": \"byte\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"appID\",\n    \"appVersionID\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Application Release\",\n \"type\": \"object\"\n}"
-  }
- }
+    "kind": "ApplicationRelease",
+    "schema": "{\n \"description\": \"ApplicationRelease is the Schema for the applicationreleases API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ApplicationReleaseSpec defines the desired state of ApplicationRelease\",\n   \"properties\": {\n    \"appID\": {\n     \"type\": \"string\"\n    },\n    \"appType\": {\n     \"type\": \"string\"\n    },\n    \"appVersionID\": {\n     \"type\": \"string\"\n    },\n    \"values\": {\n     \"format\": \"byte\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"appID\",\n    \"appVersionID\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Application Release\",\n \"type\": \"object\"\n}",
+    "version": "application.kubesphere.io/v2"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "Application Release",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+    "defaultData": "",
+    "genealogy": "",
+    "isAnnotation": false,
+    "isNamespaced": false,
+    "published": false,
+    "shapePolygonPoints": ""
+  },
+  "model": {
+    "category": {
+      "name": ""
+    },
+    "displayName": "ks-core",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "metadata": {
+      "source_uri": "https://charts.kubesphere.io/test/ks-core-0.5.3.tgz",
+      "svgColor": "",
+      "svgWhite": ""
+    },
+    "model": {
+      "version": "0.2.3"
+    },
+    "name": "ks-core",
+    "registrant": {
+      "created_at": "0001-01-01T00:00:00Z",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "deleted_at": "0001-01-01T00:00:00Z",
+      "id": "00000000-0000-0000-0000-000000000000",
+      "kind": "artifacthub",
+      "name": "Artifact Hub",
+      "status": "discovered",
+      "sub_type": "",
+      "type": "registry",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "user_id": "00000000-0000-0000-0000-000000000000"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "status": "ignored",
+    "version": "v1.0.0",
+    "components": null,
+    "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "ignored",
+  "styles": {
+    "primaryColor": "",
+    "secondaryColor": "",
+    "svgColor": "",
+    "svgWhite": ""
+  },
+  "version": "v1.0.0"
+}
