@@ -18,6 +18,8 @@ import (
 	"github.com/spf13/viper"
 
 	"github.com/layer5io/meshery/server/models/pattern/patterns/k8s"
+		patternutils "github.com/layer5io/meshery/server/models/pattern/utils"
+
 	"github.com/layer5io/meshery/server/models/pattern/stages"
 	"github.com/layer5io/meshkit/logger"
 	events "github.com/layer5io/meshkit/models/events"
@@ -89,6 +91,29 @@ func (h *Handler) PatternFileHandler(
 	action := "deploy"
 	if isDelete {
 		action = "undeploy"
+	}
+	isDesignInAlpha2Format, err := patternutils.IsDesignInAlpha2Format(payload.PatternFile)
+	if err != nil {
+		err = ErrPatternFile(err)
+		event := events.NewEvent().ActedUpon(payload.PatternID).FromSystem(*h.SystemID).FromUser(userID).WithCategory("pattern").WithAction("view").WithDescription("Failed to parse design").WithMetadata(map[string]interface{}{"error": err, "id": payload.PatternID}).Build()
+		_ = provider.PersistEvent(event)
+		go h.config.EventBroadcaster.Publish(userID, event)
+		h.log.Error(err)
+		http.Error(rw, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if isDesignInAlpha2Format {
+		_, patternFileStr, err := h.convertV1alpha2ToV1beta1(payload.PatternFile, payload.PatternID)
+		if err != nil {
+			event := events.NewEvent().ActedUpon(payload.PatternID).FromSystem(*h.SystemID).FromUser(userID).WithCategory("pattern").WithAction("convert").WithDescription("Failed to convert design to v1beta1 design format").WithMetadata(map[string]interface{}{"error": err, "id": payload.PatternID}).Build()
+			_ = provider.PersistEvent(event)
+			go h.config.EventBroadcaster.Publish(userID, event)
+			h.log.Error(err)
+			http.Error(rw, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		patternFileByte = []byte(patternFileStr)
 	}
 
 	patternFile, err := core.NewPatternFile(patternFileByte)

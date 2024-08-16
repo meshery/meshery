@@ -27,7 +27,7 @@ import (
 	pCore "github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshery/server/models/pattern/resource/selector"
 	"github.com/layer5io/meshery/server/models/pattern/stages"
-	"github.com/layer5io/meshkit/encoding"
+	patternutils "github.com/layer5io/meshery/server/models/pattern/utils"
 	"github.com/layer5io/meshkit/errors"
 	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/models/catalog/v1alpha1"
@@ -39,8 +39,8 @@ import (
 	"github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/layer5io/meshkit/utils/kubernetes/kompose"
 	"github.com/layer5io/meshkit/utils/walker"
+
 	"github.com/meshery/schemas/models/v1alpha2"
-	"github.com/meshery/schemas/models/v1beta1"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/connection"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
@@ -1145,8 +1145,9 @@ func (h *Handler) DownloadMesheryPatternHandler(
 	}
 
 	// v1beta1
-	isOldFormat, err := isDesignInAlpha2Format(pattern.PatternFile)
+	isOldFormat, err := patternutils.IsDesignInAlpha2Format(pattern.PatternFile)
 	if err != nil {
+		err = ErrPatternFile(err)
 		event := events.NewEvent().ActedUpon(*pattern.ID).FromSystem(*h.SystemID).FromUser(userID).WithCategory("pattern").WithAction("download").WithDescription(fmt.Sprintf("Failed to parse design \"%s\".", pattern.Name)).WithMetadata(map[string]interface{}{"error": err, "id": pattern.ID}).Build()
 		_ = provider.PersistEvent(event)
 		go h.config.EventBroadcaster.Publish(userID, event)
@@ -1688,8 +1689,9 @@ func (h *Handler) GetMesheryPatternHandler(
 		return
 	}
 
-	isOldFormat, err := isDesignInAlpha2Format(pattern.PatternFile)
+	isOldFormat, err := patternutils.IsDesignInAlpha2Format(pattern.PatternFile)
 	if err != nil {
+		err = ErrPatternFile(err)
 		event := events.NewEvent().ActedUpon(*pattern.ID).FromSystem(*h.SystemID).FromUser(userID).WithCategory("pattern").WithAction("view").WithDescription(fmt.Sprintf("Failed to parse design \"%s\".", pattern.Name)).WithMetadata(map[string]interface{}{"error": err, "id": pattern.ID}).Build()
 		_ = provider.PersistEvent(event)
 		go h.config.EventBroadcaster.Publish(userID, event)
@@ -2110,20 +2112,6 @@ func createArtifactHubPkg(pattern *models.MesheryPattern, user string) ([]byte, 
 	}
 
 	return data, nil
-}
-
-func isDesignInAlpha2Format(patternFile string) (bool, error) {
-	design := map[string]interface{}{}
-	err := encoding.Unmarshal([]byte(patternFile), &design)
-	if err != nil {
-		return true, ErrDecodePattern(err)
-	}
-
-	val, ok := design["schemaVersion"]
-	if ok && val == v1beta1.DesignSchemaVersion {
-		return false, nil
-	}
-	return true, nil
 }
 
 func (h *Handler) convertV1alpha2ToV1beta1(patternFile string, patternId uuid.UUID) (*pattern.PatternFile, string, error) {
