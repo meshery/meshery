@@ -40,6 +40,25 @@ It also supports a collaborative environment, where DevOps engineers can share t
 5. [Importing](https://docs.meshery.io/reference/mesheryctl#cloud-native-pattern-configuration-and-management) a design. `mesheryctl design import -f [file-path] -s [manifest | compose | helm]`
 6. Applying [WASM Filter](https://docs.meshery.io/guides/configuration-management#wasm-filters). `mesheryctl filter import [file | URL] --wasm-config [filepath|string]`
 
+
+### Publishing a Design to Meshery Catalog
+
+1. **Request to Publish**: The author submits a request to publish their design to the Meshery Catalog, including a description and any relevant considerations.
+2. **Review by Admin**: The workspace owner or admin reviews the design. They have the option to approve, deny, or request changes by commenting on the design.
+3. **Approval Process**:
+    - If the admin **approves** the design, a validation is performed to ensure the design data is accurate. Once validated, the design is published to the catalog.
+    - If the admin **denies** the design, feedback is provided for necessary changes. After the changes are made, the design is automatically published with appropriate versioning.
+4. **Ongoing Management**:
+    - The author or workspace owner retains permission to edit, delete, or unpublish their designs from the catalog at any time.
+5. **Notification for Changes**: If the design no longer adds value to the Meshery Catalog, a prior notification is sent to the author, and the design may be unpublished.
+6. **GitHub Workflow Integration**: Once approved, a GitHub workflow is triggered to publish the design to the Meshery.io Catalog.
+
+<a href="{{ site.baseurl }}/assets/img/architecture/Catalog-Publishing-Workflow.svg" class="lightbox-image">
+<img src="{{ site.baseurl }}/assets/img/architecture/Catalog-Publishing-Workflow.svg" width="70%" /></a>
+<figure>
+  <figcaption>Figure: Workflow to publish a design in catalog</figcaption>
+</figure>
+
 ### FAQ
 <details>
     <summary>
