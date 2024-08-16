@@ -25,6 +25,8 @@ const validateSchema = (schema, data, id) => {
 };
 
 const validateComponent = (component, validateAnnotations = false, componentDef) => {
+  console.log('validating component', component);
+
   if (!componentDef || (componentDef?.metadata?.isAnnotation && !validateAnnotations)) {
     // skip validation for annotations
     return {
@@ -41,6 +43,7 @@ const validateComponent = (component, validateAnnotations = false, componentDef)
     componentDefinition: componentDef,
     component,
   };
+  console.log('component results', validationResults);
 
   return validationResults;
 };
@@ -49,6 +52,8 @@ export const componentKey = (component) =>
   `${component.component.kind}-${component.model.name}-${component.component.version}`;
 
 const validateDesign = (design, componentDefsStore) => {
+  console.log('validating design in worker', design);
+
   const configurableComponents = design.components;
 
   const validationResults = {};
@@ -67,6 +72,7 @@ const validateDesign = (design, componentDefsStore) => {
     }
   }
 
+  console.log('validationResults', validationResults);
   return validationResults;
 };
 

@@ -1,61 +1,70 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "displayName": "Load Test",
-  "description": "",
-  "format": "JSON",
-  "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "version": "v1.0.0",
-   "name": "kangal",
-   "displayName": "Kangal",
-   "description": "",
-   "status": "ignored",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "registrant": {
-    "hostname": "artifacthub"
-   },
-   "category": {
-    "name": "Uncategorized",
-    "metadata": null
-   },
-   "subCategory": "",
-   "metadata": {
-    "source_uri": "https://github.com/hellofresh/kangal/releases/download/kangal-2.3.0/kangal-2.3.0.tgz"
-   },
-   "model": {
-    "version": "2.2.4"
-   },
-   "components": null,
-   "relationships": null
-  },
-  "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isModelAnnotation": "FALSE",
-   "isNamespaced": false,
-   "logoURL": "",
-   "model": "kangal",
-   "modelDisplayName": "Kangal",
-   "primaryColor": "#00B39F",
-   "secondaryColor": "#00D3A9",
-   "shape": "circle",
-   "shapePolygonPoints": "",
-   "status": "ignored",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
-   "svgColor": "",
-   "svgComplete": "",
-   "svgWhite": ""
-  },
+  "capabilities": null,
   "component": {
-   "kind": "LoadTest",
-   "version": "kangal.hellofresh.com/v1",
-   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"distributedPods\": {\n     \"minimum\": 1,\n     \"type\": \"integer\"\n    },\n    \"duration\": {\n     \"type\": \"integer\"\n    },\n    \"envVars\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"nullable\": true,\n     \"type\": \"object\"\n    },\n    \"masterConfig\": {\n     \"properties\": {\n      \"image\": {\n       \"type\": \"string\"\n      },\n      \"tag\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"tags\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"nullable\": true,\n     \"type\": \"object\"\n    },\n    \"targetURL\": {\n     \"type\": \"string\"\n    },\n    \"testData\": {\n     \"type\": \"string\"\n    },\n    \"testFile\": {\n     \"type\": \"string\"\n    },\n    \"type\": {\n     \"enum\": [\n      \"JMeter\",\n      \"Fake\",\n      \"Locust\",\n      \"Ghz\",\n      \"K6\"\n     ],\n     \"type\": \"string\"\n    },\n    \"workerConfig\": {\n     \"properties\": {\n      \"image\": {\n       \"type\": \"string\"\n      },\n      \"tag\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"distributedPods\",\n    \"testFile\",\n    \"type\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Load Test\",\n \"type\": \"object\"\n}"
-  }
- }
+    "kind": "LoadTest",
+    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"distributedPods\": {\n     \"minimum\": 1,\n     \"type\": \"integer\"\n    },\n    \"duration\": {\n     \"type\": \"integer\"\n    },\n    \"envVars\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"nullable\": true,\n     \"type\": \"object\"\n    },\n    \"masterConfig\": {\n     \"properties\": {\n      \"image\": {\n       \"type\": \"string\"\n      },\n      \"tag\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"tags\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"nullable\": true,\n     \"type\": \"object\"\n    },\n    \"targetURL\": {\n     \"type\": \"string\"\n    },\n    \"testData\": {\n     \"type\": \"string\"\n    },\n    \"testFile\": {\n     \"type\": \"string\"\n    },\n    \"type\": {\n     \"enum\": [\n      \"JMeter\",\n      \"Fake\",\n      \"Locust\",\n      \"Ghz\",\n      \"K6\"\n     ],\n     \"type\": \"string\"\n    },\n    \"workerConfig\": {\n     \"properties\": {\n      \"image\": {\n       \"type\": \"string\"\n      },\n      \"tag\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"distributedPods\",\n    \"testFile\",\n    \"type\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Load Test\",\n \"type\": \"object\"\n}",
+    "version": "kangal.hellofresh.com/v1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "Load Test",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+    "defaultData": "",
+    "genealogy": "",
+    "isAnnotation": false,
+    "isModelAnnotation": "FALSE",
+    "isNamespaced": false,
+    "logoURL": "",
+    "model": "kangal",
+    "modelDisplayName": "Kangal",
+    "published": false,
+    "shapePolygonPoints": ""
+  },
+  "model": {
+    "category": {
+      "name": "Uncategorized"
+    },
+    "displayName": "Kangal",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "metadata": {
+      "source_uri": "https://github.com/hellofresh/kangal/releases/download/kangal-2.3.0/kangal-2.3.0.tgz",
+      "svgColor": "",
+      "svgWhite": ""
+    },
+    "model": {
+      "version": "2.2.4"
+    },
+    "name": "kangal",
+    "registrant": {
+      "created_at": "0001-01-01T00:00:00Z",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "deleted_at": "0001-01-01T00:00:00Z",
+      "id": "00000000-0000-0000-0000-000000000000",
+      "kind": "artifacthub",
+      "name": "Artifact Hub",
+      "status": "discovered",
+      "sub_type": "",
+      "type": "registry",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "user_id": "00000000-0000-0000-0000-000000000000"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "status": "ignored",
+    "version": "v1.0.0",
+    "components": null,
+    "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "ignored",
+  "styles": {
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "svgColor": "",
+    "svgWhite": ""
+  },
+  "version": "v1.0.0"
+}

@@ -1,5 +1,5 @@
 {
-    "schemaVersion": "relationships.meshery.io/v1alpha2",
+    "schemaVersion": "relationships.meshery.io/v1alpha3",
     "version": "v1.0.0",
     "kind": "Hierarchical",
     "metadata": {
@@ -19,19 +19,23 @@
         },
         "metadata": {}
     },
-    "subType": "Parent",
+    "type": "Parent",
     "selectors": [
         {
             "allow": {
                 "to": [
                     {
                         "kind": "Section",
-                        "model": "meshery-shapes"
+                        "model": {
+                            "name": "meshery-shapes"
+                        }
                     }
                 ],
                 "from": [
                     {
-                        "model": "*"
+                        "model": {
+                            "name": "*"
+                        }
                     }
                 ]
             },

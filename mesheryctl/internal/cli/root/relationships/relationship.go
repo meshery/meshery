@@ -20,8 +20,8 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha2"
 	"github.com/manifoldco/promptui"
+	"github.com/meshery/schemas/models/v1alpha3/relationship"
 
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -36,10 +36,10 @@ var (
 )
 
 type MeshmodelRelationshipsAPIResponse struct {
-	Page          int                               `json:"page"`
-	PageSize      int                               `json:"page_size"`
-	Count         int64                             `json:"total_count"`
-	Relationships []v1alpha2.RelationshipDefinition `json:"relationships"`
+	Page          int                                   `json:"page"`
+	PageSize      int                                   `json:"page_size"`
+	Count         int64                                 `json:"total_count"`
+	Relationships []relationship.RelationshipDefinition `json:"relationships"`
 }
 
 var RelationshipCmd = &cobra.Command{
@@ -108,7 +108,7 @@ func init() {
 }
 
 // selectModelPrompt lets user to select a relation if relations are more than one
-func selectRelationshipPrompt(relationship []v1alpha2.RelationshipDefinition) *v1alpha2.RelationshipDefinition {
+func selectRelationshipPrompt(relationship []relationship.RelationshipDefinition) *relationship.RelationshipDefinition {
 	relationshipNames := []string{}
 
 	for _, _rel := range relationship {

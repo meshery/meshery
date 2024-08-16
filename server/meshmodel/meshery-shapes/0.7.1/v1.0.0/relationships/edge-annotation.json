@@ -1,7 +1,8 @@
 {
-    "schemaVersion": "relationships.meshery.io/v1alpha2",
+    "schemaVersion": "relationships.meshery.io/v1alpha3",
     "version": "v1.0.0",
     "kind": "Edge",
+    "type": "Annotation",
     "metadata": {
         "description": "A relationship that defines annotation edges between components",
         "styles": {
@@ -34,20 +35,23 @@
         },
         "metadata": {}
     },
-    "subType": "Annotation",
     "selectors": [
         {
             "allow": {
                 "from": [
                     {
                         "kind": "*",
-                        "model": "*"
+                        "model": {
+                            "name": "*"
+                        }
                     }
                 ],
                 "to": [
                     {
                         "kind": "*",
-                        "model": "*"
+                        "model": {
+                            "name": "*"
+                        }
                     }
                 ]
             },

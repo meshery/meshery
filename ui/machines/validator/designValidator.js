@@ -143,7 +143,10 @@ const dryRunValidatorMachine = dataValidatorMachine.provide({
 });
 
 const getAllComponentsDefsInDesign = async (design) => {
+  console.log('getting', design);
   const { components } = processDesign(design);
+
+  console.log('get All Components', components);
 
   const componentDefs = (
     await Promise.allSettled(
@@ -158,11 +161,15 @@ const getAllComponentsDefsInDesign = async (design) => {
     .filter((result) => result.status === 'fulfilled')
     .map((result) => result.value);
 
+  console.log('Component Defs', componentDefs);
+
   const componentStore = componentDefs.reduce((acc, componentDef) => {
     const key = componentKey(componentDef);
     acc[key] = componentDef;
     return acc;
   }, {});
+
+  console.log('component store', componentStore);
 
   return componentStore;
 };
