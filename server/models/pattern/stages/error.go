@@ -3,7 +3,7 @@ package stages
 import "github.com/layer5io/meshkit/errors"
 
 const (
-	ErrResolveReferenceCode = ""
+	ErrResolveReferenceCode = "meshery-server-1361"
 )
 
 func ErrResolveReference(err error) error {

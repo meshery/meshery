@@ -3233,6 +3233,24 @@
         "short_description": "",
         "probable_cause": "Entity definition might not be in accordance with schema\nEntity version might not be supported by Meshery",
         "suggested_remediation": "See the registration logs (found at $HOME/.meshery/logs/registry/registry-logs.log) to find out which Entity failed to be imported with more specific error information."
+      },
+      "1360": {
+        "name": "ErrEmptyOCIImageCode",
+        "code": "1360",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1361": {
+        "name": "ErrResolveReferenceCode",
+        "code": "1361",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
       }
     }
   }
