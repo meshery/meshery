@@ -409,6 +409,7 @@ export const processDesign = (design) => {
   }
 
   const isAnnotation = (component) => component?.metadata?.isAnnotation;
+
   const components = design.components;
   const configurableComponents = components.filter(_.negate(isAnnotation));
   const annotationComponents = components.filter(isAnnotation);

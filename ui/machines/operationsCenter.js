@@ -27,6 +27,7 @@ const subscriptionActor = fromCallback(({ sendBack }) => {
       console.error('Invalid event received', result);
       return;
     }
+
     const event = {
       ...result.event,
       user_id: result.event.userID,
@@ -35,7 +36,7 @@ const subscriptionActor = fromCallback(({ sendBack }) => {
       created_at: result.event.createdAt,
       deleted_at: result.event.deletedAt,
       operation_id: result.event.operationID,
-    };
+    }
     sendBack(events.eventReceivedFromServer(event));
   });
 

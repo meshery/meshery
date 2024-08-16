@@ -143,7 +143,7 @@ const (
 	ErrReadSessionPersistorCode            = "meshery-server-1329"
 	ErrFailToGetK8SContextCode             = "meshery-server-1330"
 	ErrFailToLoadK8sContextCode            = "meshery-server-1331"
-	ErrEmptyOCIImageCode                   = ""
+	ErrEmptyOCIImageCode                   = "meshery-server-1360"
 )
 
 var (

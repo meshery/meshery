@@ -26,6 +26,7 @@ const validateSchema = (schema, data, id) => {
 
 const validateComponent = (component, validateAnnotations = false, componentDef) => {
   console.log('validating component', component);
+
   if (!componentDef || (componentDef?.metadata?.isAnnotation && !validateAnnotations)) {
     // skip validation for annotations
     return {
