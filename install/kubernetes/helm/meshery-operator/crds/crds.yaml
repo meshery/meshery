@@ -36,7 +36,7 @@ spec:
             description: BrokerSpec defines the desired state of Broker
             properties:
               size:
-                description: Desired size of the Broker
+                description: Desired size of the Broker, will be an integer value denoting the number of Broker instances that should be in one cluster, currently it is adviced to have one Broker instance in a cluster but that can be scaled vertically up or down depending on load
                 format: int32
                 type: integer
             type: object
@@ -74,10 +74,10 @@ spec:
               endpoint:
                 properties:
                   external:
-                    description: The external endpoint address that applications can use to connect to the Broker
+                    description: The endpoint external to the cluster within which the Broker is running, which the Meshery Server will connect to
                     type: string
                   internal:
-                    description: The internal endpoint address that applications can use to connect to the Broker
+                    description: The endpoint internal to the cluster within which the Broker is running, will be a locally addressable IP address or DNS hostname (e.g.`broker.busybox.svc.cluster-domain.example`, `10.96.168.204:4222`)
                     type: string
                 type: object
             type: object
@@ -134,38 +134,38 @@ spec:
                   custom:
                     properties:
                       url:
-                        description: URL of the custom Broker to connect to
+                        description: URL of an already running external Broker instance
                         type: string
                     type: object
                   native:
                     properties:
                       name:
-                        description: Name of the native Broker to connect to
+                        description: Name of the Broker instance to be deployed
                         type: string
                       namespace:
-                        description: Namespace where the native Broker is deployed
+                        description: Namespace that the Broker instance to be deployed would run in
                         type: string
                     type: object
                 type: object
               version:  
-                description: Version of the Broker to connect to
+                description: The current version of the meshery application as from its release
                 type: string
               size:
-                description: Desired size of the Broker
+                description: Desired size of the MeshSync instance, will be an integer value denoting the number of MeshSync instances that that should be in one cluster, currently only one instance of MeshSync is supported
                 format: int32
                 type: integer
               watch-list:
+                description: A ConfigMap that sets the resources e.g. pods,deployments and event types e.g. ADDED, MODIFIED… that the MeshSync instance tracks or ignores in the Kubernetes cluster
                 type: object
                 properties:
                   data:
-                    description: Specifies the resource types and their associated whitelist and blacklist for watching
                     type: object
                     properties:
                       whitelist:
-                        description: Whitelist of resources to watch for changes
+                        description: 'Whitelist resources are resources that the MeshSync should track its changes, More info: https://docs.meshery.io/reference/meshery-operator-crds#meshsync-crd-properties'
                         type: string
                       blacklist:
-                        description: Blacklist of resources to watch for changes
+                        description: 'Blacklist resources are resources that the MeshSync should ignore its changes, More info: https://docs.meshery.io/reference/meshery-operator-crds#meshsync-crd-properties'
                         type: string
 
             type: object
