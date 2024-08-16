@@ -6,6 +6,7 @@ import { getPatternAttributeName, createPatternFromConfig } from './helpers';
 import React, { useEffect, useState } from 'react';
 import { scrollToTop } from '../../utils/utils';
 import { generateUUID } from '../MesheryPerformance/helper';
+
 import { ErrorBoundary } from '@layer5/sistent';
 
 /**
