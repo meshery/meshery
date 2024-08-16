@@ -10,17 +10,19 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/pattern/core"
-	"gopkg.in/yaml.v2"
+	"github.com/meshery/schemas/models/v1alpha3/relationship"
+	"github.com/meshery/schemas/models/v1beta1/pattern"
 
+	"github.com/layer5io/meshkit/encoding"
 	"github.com/layer5io/meshkit/models/events"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha2"
-	regv1alpha2 "github.com/layer5io/meshkit/models/meshmodel/registry/v1alpha2"
+
+	regv1alpha3 "github.com/layer5io/meshkit/models/meshmodel/registry/v1alpha3"
 	regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
-	"github.com/layer5io/meshkit/utils"
+	mutils "github.com/layer5io/meshkit/utils"
 )
 
 const (
-	relationshipPolicyPackageName = "data.meshmodel_policy"
+	relationshipPolicyPackageName = "data.relationship_evaluation_policy"
 	suffix                        = "_relationship"
 )
 
@@ -63,9 +65,9 @@ func (h *Handler) EvaluateRelationshipPolicy(
 		http.Error(rw, ErrDecoding(err, "design file").Error(), http.StatusInternalServerError)
 		return
 	}
-	var patternFile core.Pattern
+	var patternFile pattern.PatternFile
 
-	err = yaml.Unmarshal([]byte(relationshipPolicyEvalPayload.PatternFile), &patternFile)
+	err = encoding.Unmarshal([]byte(relationshipPolicyEvalPayload.PatternFile), &patternFile)
 	if err != nil {
 		http.Error(rw, ErrDecoding(err, "design file").Error(), http.StatusInternalServerError)
 		return
@@ -73,20 +75,12 @@ func (h *Handler) EvaluateRelationshipPolicy(
 
 	evaluationQueries := relationshipPolicyEvalPayload.EvaluationQueries
 
-	for _, svc := range patternFile.Services {
-		svc.Settings = core.Format.DePrettify(svc.Settings, false)
+	for _, component := range patternFile.Components {
+		component.Configuration = core.Format.DePrettify(component.Configuration, false)
 	}
 
-	data, err := yaml.Marshal(patternFile)
-	if err != nil {
-		http.Error(rw, models.ErrEncoding(err, "design file").Error(), http.StatusInternalServerError)
-		return
-	}
-
-	patternUUID := uuid.FromStringOrNil(patternFile.PatternID)
+	patternUUID := patternFile.Id
 	eventBuilder.ActedUpon(patternUUID)
-
-	var evalResults interface{}
 
 	// evaluate specified relationship policies
 	// on successful eval the event containing details like comps evaulated, relationships indeitified should be emitted and peristed.
@@ -98,23 +92,32 @@ func (h *Handler) EvaluateRelationshipPolicy(
 		return
 	}
 
-	evalresults := make(map[string]interface{}, 0)
-	for _, query := range verifiedEvaluationQueries {
-		result, err := h.Rego.RegoPolicyHandler(fmt.Sprintf("%s.%s", relationshipPolicyPackageName, query), data)
-		if err != nil {
-			h.log.Debug(err)
-			continue
-		}
-		evalresults[query] = result
+	evaluationResponse, err := h.Rego.RegoPolicyHandler(patternFile,
+		relationshipPolicyPackageName,
+		verifiedEvaluationQueries...,
+	)
+	if err != nil {
+		h.log.Debug(err)
+		// log an event
+		http.Error(rw, err.Error(), http.StatusInternalServerError)
+		return
 	}
+
+	event := eventBuilder.WithDescription(fmt.Sprintf("Relationship evaluation completed for \"%s\" at version \"%s\"", evaluationResponse.Design.Name, evaluationResponse.Design.Version)).WithSeverity(events.Error).WithMetadata(map[string]interface{}{"evaluation_resut": evaluationResponse.Design}).Build()
+	_ = provider.PersistEvent(event)
+	go h.config.EventBroadcaster.Publish(userUUID, event)
+
 	// Before starting the eval the design is de-prettified, so that we can use the relationships def correctly.
 	// The results contain the updated config.
-	// Prettify the results before sending it to client.
-	evalResults = core.Format.Prettify(evalresults, false)
+	// Prettify the design before sending it to client.
+
+	for _, component := range evaluationResponse.Design.Components {
+		component.Configuration = core.Format.Prettify(component.Configuration, false)
+	}
 
 	// write the response
 	ec := json.NewEncoder(rw)
-	err = ec.Encode(evalResults)
+	err = ec.Encode(evaluationResponse)
 	if err != nil {
 		h.log.Error(models.ErrEncoding(err, "policy evaluation response"))
 		http.Error(rw, models.ErrEncoding(err, "failed to generate policy evaluation results").Error(), http.StatusInternalServerError)
@@ -123,11 +126,11 @@ func (h *Handler) EvaluateRelationshipPolicy(
 }
 
 func (h *Handler) verifyEvaluationQueries(evaluationQueries []string) (verifiedEvaluationQueries []string) {
-	registeredRelationships, _, _, _ := h.registryManager.GetEntities(&regv1alpha2.RelationshipFilter{})
+	registeredRelationships, _, _, _ := h.registryManager.GetEntities(&regv1alpha3.RelationshipFilter{})
 
-	var relationships []v1alpha2.RelationshipDefinition
+	var relationships []relationship.RelationshipDefinition
 	for _, entity := range registeredRelationships {
-		relationship, err := utils.Cast[*v1alpha2.RelationshipDefinition](entity)
+		relationship, err := mutils.Cast[*relationship.RelationshipDefinition](entity)
 
 		if err != nil {
 			return
@@ -137,8 +140,8 @@ func (h *Handler) verifyEvaluationQueries(evaluationQueries []string) (verifiedE
 
 	if len(evaluationQueries) == 0 || (len(evaluationQueries) == 1 && evaluationQueries[0] == "all") {
 		for _, relationship := range relationships {
-			if relationship.EvaluationQuery != "" {
-				verifiedEvaluationQueries = append(verifiedEvaluationQueries, relationship.EvaluationQuery)
+			if relationship.EvaluationQuery != nil {
+				verifiedEvaluationQueries = append(verifiedEvaluationQueries, *relationship.EvaluationQuery)
 			} else {
 				verifiedEvaluationQueries = append(verifiedEvaluationQueries, relationship.GetDefaultEvaluationQuery())
 			}
@@ -146,8 +149,8 @@ func (h *Handler) verifyEvaluationQueries(evaluationQueries []string) (verifiedE
 	} else {
 		for _, regoQuery := range evaluationQueries {
 			for _, relationship := range relationships {
-				if (relationship.EvaluationQuery != "" && regoQuery == relationship.EvaluationQuery) || regoQuery == relationship.GetDefaultEvaluationQuery() {
-					verifiedEvaluationQueries = append(verifiedEvaluationQueries, relationship.EvaluationQuery)
+				if (relationship.EvaluationQuery != nil && regoQuery == *relationship.EvaluationQuery) || regoQuery == relationship.GetDefaultEvaluationQuery() {
+					verifiedEvaluationQueries = append(verifiedEvaluationQueries, *relationship.EvaluationQuery)
 					break
 				}
 			}
@@ -240,7 +243,7 @@ func (h *Handler) GetAllMeshmodelPolicies(rw http.ResponseWriter, r *http.Reques
 	if search == "true" {
 		greedy = true
 	}
-	
+
 	entities, _, _, _ := h.registryManager.GetEntities(&regv1beta1.PolicyFilter{
 		ModelName: typ,
 		Greedy:    greedy,

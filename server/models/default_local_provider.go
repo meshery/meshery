@@ -28,7 +28,10 @@ import (
 	"github.com/layer5io/meshkit/utils/walker"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/meshery/schemas/models/v1beta1"
+	"github.com/meshery/schemas/models/v1beta1/pattern"
+	"github.com/pkg/errors"
 	"github.com/spf13/viper"
+	"gopkg.in/yaml.v2"
 	"gorm.io/gorm"
 )
 
@@ -1179,6 +1182,7 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 				case "Pattern":
 					for i, name := range names {
 						id, _ := uuid.NewV4()
+
 						var pattern = &MesheryPattern{
 							PatternFile: content[i],
 							Name:        name,
@@ -1541,7 +1545,7 @@ func githubRepoPatternScan(
 
 				pf := MesheryPattern{
 					Name:        name,
-					PatternFile: string(f.Content),
+					PatternFile: f.Content,
 					Location: map[string]interface{}{
 						"type":   "github",
 						"host":   fmt.Sprintf("github.com/%s/%s", owner, repo),
@@ -1621,16 +1625,17 @@ func genericHTTPPatternFile(fileURL string, log logger.Handler) ([]MesheryPatter
 	if err != nil {
 		return nil, err
 	}
-	result := string(body)
 
-	name, err := GetPatternName(result)
+	var patternFile pattern.PatternFile
+	err = yaml.Unmarshal(body, &patternFile)
 	if err != nil {
-		return nil, err
+		err = errors.Wrapf(err, "error decoding design file")
+		return nil, utils.ErrDecodeYaml(err)
 	}
 
 	pf := MesheryPattern{
-		Name:        name,
-		PatternFile: result,
+		Name:        patternFile.Name,
+		PatternFile: string(body),
 		Location: map[string]interface{}{
 			"type":   "http",
 			"host":   fileURL,

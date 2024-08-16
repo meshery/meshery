@@ -132,7 +132,6 @@ const (
 	ErrWaklingLocalDirectoryCode           = "meshery-server-1132"
 	ErrConvertingK8sManifestToDesignCode   = "meshery-server-1133"
 	ErrConvertingDockerComposeToDesignCode = "meshery-server-1134"
-	ErrMarshallingDesignIntoYAMLCode       = "meshery-server-1135"
 	ErrConvertingHelmChartToDesignCode     = "meshery-server-1136"
 	ErrInvalidUUIDCode                     = "meshery-server-1137"
 	ErrPersistEventToRemoteProviderCode    = "meshery-server-1320"
@@ -144,6 +143,7 @@ const (
 	ErrReadSessionPersistorCode            = "meshery-server-1329"
 	ErrFailToGetK8SContextCode             = "meshery-server-1330"
 	ErrFailToLoadK8sContextCode            = "meshery-server-1331"
+	ErrEmptyOCIImageCode                   = "meshery-server-1360"
 )
 
 var (
@@ -613,10 +613,6 @@ func ErrConvertingDockerComposeToDesign(err error) error {
 	return errors.New(ErrConvertingDockerComposeToDesignCode, errors.Alert, []string{"Failed to convert docker compose to design"}, []string{err.Error()}, []string{"unable to convert docker compose to design", "docker compose may be corrupted", "incorrect source type selected"}, []string{"check if the docker compose is valid and not corrupted", "check if the source type selected is Docker Compose"})
 }
 
-func ErrMarshallingDesignIntoYAML(err error) error {
-	return errors.New(ErrMarshallingDesignIntoYAMLCode, errors.Alert, []string{"Failed to marshal design into YAML"}, []string{err.Error()}, []string{"unable to marshal design into YAML", "design may be corrupted"}, []string{"check if the design is valid and not corrupted"})
-}
-
 func ErrConvertingHelmChartToDesign(err error) error {
 	return errors.New(ErrConvertingHelmChartToDesignCode, errors.Alert, []string{"Failed to convert helm chart to design"}, []string{err.Error()}, []string{"unable to convert helm chart to design", "helm chart may be corrupted", "incorrect source type selected"}, []string{"check if the helm chart is valid and not corrupted", "check if the source type selected is Helm Chart"})
 }
@@ -627,4 +623,8 @@ func ErrInvalidUUID(err error) error {
 
 func ErrPersistEventToRemoteProvider(err error) error {
 	return errors.New(ErrPersistEventToRemoteProviderCode, errors.Alert, []string{"failed to persist event to remote provider"}, []string{err.Error()}, []string{"token is expired/revoked", "Remote Provider is not reachable or unavailable"}, []string{"Try re-authenticating with the remote provider", "Verify remote provider for its reachability or availability."})
+}
+
+func ErrEmptyOCIImage(err error) error {
+	return errors.New(ErrEmptyOCIImageCode, errors.Alert, []string{}, []string{}, []string{}, []string{})
 }

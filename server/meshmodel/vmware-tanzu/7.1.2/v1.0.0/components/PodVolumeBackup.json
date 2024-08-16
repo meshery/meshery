@@ -1,68 +1,76 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "displayName": "Pod Volume Backup",
+  "capabilities": null,
+  "component": {
+    "kind": "PodVolumeBackup",
+    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"PodVolumeBackupSpec is the specification for a PodVolumeBackup.\",\n   \"properties\": {\n    \"backupStorageLocation\": {\n     \"description\": \"BackupStorageLocation is the name of the backup storage location\\nwhere the backup repository is stored.\",\n     \"type\": \"string\"\n    },\n    \"node\": {\n     \"description\": \"Node is the name of the node that the Pod is running on.\",\n     \"type\": \"string\"\n    },\n    \"pod\": {\n     \"description\": \"Pod is a reference to the pod containing the volume to be backed up.\",\n     \"properties\": {\n      \"apiVersion\": {\n       \"description\": \"API version of the referent.\",\n       \"type\": \"string\"\n      },\n      \"fieldPath\": {\n       \"description\": \"If referring to a piece of an object instead of an entire object, this string\\nshould contain a valid JSON/Go field access statement, such as desiredState.manifest.containers[2].\\nFor example, if the object reference is to a container within a pod, this would take on a value like:\\n\\\"spec.containers{name}\\\" (where \\\"name\\\" refers to the name of the container that triggered\\nthe event) or if no container name is specified \\\"spec.containers[2]\\\" (container with\\nindex 2 in this pod). This syntax is chosen only to have some well-defined way of\\nreferencing a part of an object.\\nTODO: this design is not final and this field is subject to change in the future.\",\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"description\": \"Kind of the referent.\\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      },\n      \"resourceVersion\": {\n       \"description\": \"Specific resourceVersion to which this reference is made, if any.\\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#concurrency-control-and-consistency\",\n       \"type\": \"string\"\n      },\n      \"uid\": {\n       \"description\": \"UID of the referent.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#uids\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    },\n    \"repoIdentifier\": {\n     \"description\": \"RepoIdentifier is the backup repository identifier.\",\n     \"type\": \"string\"\n    },\n    \"tags\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"Tags are a map of key-value pairs that should be applied to the\\nvolume backup as tags.\",\n     \"type\": \"object\"\n    },\n    \"uploaderSettings\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"UploaderSettings are a map of key-value pairs that should be applied to the\\nuploader configuration.\",\n     \"nullable\": true,\n     \"type\": \"object\"\n    },\n    \"uploaderType\": {\n     \"description\": \"UploaderType is the type of the uploader to handle the data transfer.\",\n     \"enum\": [\n      \"kopia\",\n      \"restic\",\n      \"\"\n     ],\n     \"type\": \"string\"\n    },\n    \"volume\": {\n     \"description\": \"Volume is the name of the volume within the Pod to be backed\\nup.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"backupStorageLocation\",\n    \"node\",\n    \"pod\",\n    \"repoIdentifier\",\n    \"volume\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Pod Volume Backup\",\n \"type\": \"object\"\n}",
+    "version": "velero.io/v1"
+  },
+  "configuration": null,
   "description": "",
+  "displayName": "Pod Volume Backup",
   "format": "JSON",
-  "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "version": "v1.0.0",
-   "name": "vmware-tanzu",
-   "displayName": "Vmware Tanzu",
-   "description": "",
-   "status": "ignored",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "registrant": {
-    "hostname": "artifacthub"
-   },
-   "category": {
-    "name": "Uncategorized",
-    "metadata": null
-   },
-   "subCategory": "Uncategorized",
-   "metadata": {
-    "capabilities": "",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
     "defaultData": "",
+    "genealogy": "",
     "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false,
+    "shapePolygonPoints": ""
+  },
+  "model": {
+    "category": {
+      "name": "Uncategorized"
+    },
+    "displayName": "Vmware Tanzu",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "metadata": {
+      "capabilities": null,
+      "defaultData": "",
+      "isAnnotation": false,
+      "primaryColor": "#00B39F",
+      "secondaryColor": "#00D3A9",
+      "shape": "circle",
+      "shapePolygonPoints": "",
+      "styleOverrides": "",
+      "styles": "",
+      "svgColor": "",
+      "svgComplete": "",
+      "svgWhite": ""
+    },
+    "model": {
+      "version": "7.1.2"
+    },
+    "name": "vmware-tanzu",
+    "registrant": {
+      "created_at": "0001-01-01T00:00:00Z",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "deleted_at": "0001-01-01T00:00:00Z",
+      "id": "00000000-0000-0000-0000-000000000000",
+      "kind": "artifacthub",
+      "name": "Artifact Hub",
+      "status": "discovered",
+      "sub_type": "",
+      "type": "registry",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "user_id": "00000000-0000-0000-0000-000000000000"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "status": "ignored",
+    "subCategory": "Uncategorized",
+    "version": "v1.0.0",
+    "components": null,
+    "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "ignored",
+  "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
-    "shapePolygonPoints": "",
-    "styleOverrides": "",
-    "styles": "",
     "svgColor": "",
-    "svgComplete": "",
     "svgWhite": ""
-   },
-   "model": {
-    "version": "7.1.2"
-   },
-   "components": null,
-   "relationships": null
   },
-  "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
-   "primaryColor": "#00B39F",
-   "secondaryColor": "#00D3A9",
-   "shape": "circle",
-   "shapePolygonPoints": "",
-   "status": "ignored",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
-   "svgColor": "",
-   "svgComplete": "",
-   "svgWhite": ""
-  },
-  "component": {
-   "kind": "PodVolumeBackup",
-   "version": "velero.io/v1",
-   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"PodVolumeBackupSpec is the specification for a PodVolumeBackup.\",\n   \"properties\": {\n    \"backupStorageLocation\": {\n     \"description\": \"BackupStorageLocation is the name of the backup storage location\\nwhere the backup repository is stored.\",\n     \"type\": \"string\"\n    },\n    \"node\": {\n     \"description\": \"Node is the name of the node that the Pod is running on.\",\n     \"type\": \"string\"\n    },\n    \"pod\": {\n     \"description\": \"Pod is a reference to the pod containing the volume to be backed up.\",\n     \"properties\": {\n      \"apiVersion\": {\n       \"description\": \"API version of the referent.\",\n       \"type\": \"string\"\n      },\n      \"fieldPath\": {\n       \"description\": \"If referring to a piece of an object instead of an entire object, this string\\nshould contain a valid JSON/Go field access statement, such as desiredState.manifest.containers[2].\\nFor example, if the object reference is to a container within a pod, this would take on a value like:\\n\\\"spec.containers{name}\\\" (where \\\"name\\\" refers to the name of the container that triggered\\nthe event) or if no container name is specified \\\"spec.containers[2]\\\" (container with\\nindex 2 in this pod). This syntax is chosen only to have some well-defined way of\\nreferencing a part of an object.\\nTODO: this design is not final and this field is subject to change in the future.\",\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"description\": \"Kind of the referent.\\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      },\n      \"resourceVersion\": {\n       \"description\": \"Specific resourceVersion to which this reference is made, if any.\\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#concurrency-control-and-consistency\",\n       \"type\": \"string\"\n      },\n      \"uid\": {\n       \"description\": \"UID of the referent.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#uids\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    },\n    \"repoIdentifier\": {\n     \"description\": \"RepoIdentifier is the backup repository identifier.\",\n     \"type\": \"string\"\n    },\n    \"tags\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"Tags are a map of key-value pairs that should be applied to the\\nvolume backup as tags.\",\n     \"type\": \"object\"\n    },\n    \"uploaderSettings\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"UploaderSettings are a map of key-value pairs that should be applied to the\\nuploader configuration.\",\n     \"nullable\": true,\n     \"type\": \"object\"\n    },\n    \"uploaderType\": {\n     \"description\": \"UploaderType is the type of the uploader to handle the data transfer.\",\n     \"enum\": [\n      \"kopia\",\n      \"restic\",\n      \"\"\n     ],\n     \"type\": \"string\"\n    },\n    \"volume\": {\n     \"description\": \"Volume is the name of the volume within the Pod to be backed\\nup.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"backupStorageLocation\",\n    \"node\",\n    \"pod\",\n    \"repoIdentifier\",\n    \"volume\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Pod Volume Backup\",\n \"type\": \"object\"\n}"
-  }
- }
+  "version": "v1.0.0"
+}

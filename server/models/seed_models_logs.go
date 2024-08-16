@@ -169,7 +169,7 @@ func RegistryLog(log logger.Handler, handlerConfig *HandlerConfig, regManager *m
 
 	for _, host := range hosts {
 		eventBuilder := events.NewEvent().FromSystem(sysID).FromUser(sysID).WithCategory("entity").WithAction("get_summary")
-		successMessage := fmt.Sprintf("For registrant %s successfully imported", host.Hostname)
+		successMessage := fmt.Sprintf("For registrant %s successfully imported", host.Kind)
 		appendIfNonZero := func(value int64, label string) {
 			if value != 0 {
 				successMessage += fmt.Sprintf(" %d %s", value, label)
@@ -182,18 +182,18 @@ func RegistryLog(log logger.Handler, handlerConfig *HandlerConfig, regManager *m
 
 		log.Info(successMessage)
 		eventBuilder.WithMetadata(map[string]interface{}{
-			"Hostname": host.Hostname,
+			"kind": host.Kind,
 		})
 		eventBuilder.WithSeverity(events.Informational).WithDescription(successMessage)
 		successEvent := eventBuilder.Build()
 		_ = provider.PersistEvent(successEvent)
 
-		failLog, err := FailedEventCompute(host.Hostname, sysID, &provider, "", handlerConfig.EventBroadcaster, regErrorStore)
+		failLog, err := FailedEventCompute(host.Kind, sysID, &provider, "", handlerConfig.EventBroadcaster, regErrorStore)
 		if err != nil {
 			log.Error(err)
 		}
 		if failLog != "" {
-			log.Error(meshmodel.ErrRegisteringEntity(failLog, host.Hostname))
+			log.Error(meshmodel.ErrRegisteringEntity(failLog, host.Kind))
 		}
 
 	}
