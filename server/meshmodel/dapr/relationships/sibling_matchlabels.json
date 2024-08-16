@@ -19,7 +19,7 @@
     },
     "metadata": {}
   },
-  "subType": "MatchLabels",
+  "subType": "matchLabels",
   "type":"sibling",
   "selectors": [
     {
