@@ -114,9 +114,12 @@ var listRelationshipsCmd = &cobra.Command{
 		var rows [][]string
 
 		for _, rel := range relationshipsResponse.Relationships {
-
+			evaluationQuery := ""
+			if rel.EvaluationQuery != nil {
+				evaluationQuery = *rel.EvaluationQuery
+			}
 			if len(rel.GetEntityDetail()) > 0 {
-				rows = append(rows, []string{rel.Kind, rel.Version, rel.Model.Name, rel.SubType, rel.EvaluationQuery})
+				rows = append(rows, []string{string(rel.Kind), rel.Version, rel.Model.Name, rel.SubType, evaluationQuery})
 			}
 		}
 

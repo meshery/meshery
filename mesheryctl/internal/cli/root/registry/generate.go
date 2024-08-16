@@ -21,17 +21,20 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"reflect"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshkit/generators"
 	"github.com/layer5io/meshkit/generators/github"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	mutils "github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshkit/utils/store"
 	"github.com/layer5io/meshkit/utils/walker"
+	"github.com/meshery/schemas/models/v1beta1/component"
+	"github.com/meshery/schemas/models/v1beta1/model"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"golang.org/x/sync/semaphore"
@@ -65,7 +68,7 @@ var generateCmd = &cobra.Command{
 	Long:  "Prerequisite: Excecute this command from the root of a meshery/meshery repo fork.\n\nGiven a Google Sheet with a list of model names and source locations, generate models and components any Registrant (e.g. GitHub, Artifact Hub) repositories.\n\nGenerated Model files are written to local filesystem under `/server/models/<model-name>`.",
 	Example: `
 // Generate Meshery Models from a Google Spreadsheet (i.e. "Meshery Integrations" spreadsheet).
-mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred
+mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred 
 // Directly generate models from one of the supported registrants by using Registrant Connection Definition and (optional) Registrant Credential Definition
 mesheryctl registry generate --registrant-def [path to connection definition] --registrant-cred [path to credential definition]
 // Generate a specific Model from a Google Spreadsheet (i.e. "Meshery Integrations" spreadsheet).
@@ -237,7 +240,6 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 				utils.LogError.Error(err)
 				return
 			}
-
 			comps, err := pkg.GenerateComponents()
 			if err != nil {
 				utils.LogError.Error(ErrGenerateModel(err, model.Model))
@@ -247,9 +249,6 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 			utils.Log.Info(" extracted ", len(comps), " components for ", model.ModelDisplayName, " (", model.Model, ")")
 			for _, comp := range comps {
 				comp.Version = defVersion
-				if comp.Metadata == nil {
-					comp.Metadata = make(map[string]interface{})
-				}
 				// Assign the component status corresponding to model status.
 				// i.e. If model is enabled comps are also "enabled". Ultimately all individual comps itself will have ability to control their status.
 				// The status "enabled" indicates that the component will be registered inside the registry.
@@ -279,10 +278,79 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 	return nil
 }
 
-func assignDefaultsForCompDefs(componentDef *v1beta1.ComponentDefinition, modelDef *v1beta1.Model) {
-	componentDef.Metadata["status"] = modelDef.Status
-	for k, v := range modelDef.Metadata {
-		componentDef.Metadata[k] = v
+func assignDefaultsForCompDefs(componentDef *component.ComponentDefinition, modelDef *model.ModelDefinition) {
+	// Assign the status from the model to the component
+	compStatus := component.ComponentDefinitionStatus(modelDef.Status)
+	componentDef.Status = &compStatus
+
+	// Initialize AdditionalProperties and Styles if nil
+	if componentDef.Metadata.AdditionalProperties == nil {
+		componentDef.Metadata.AdditionalProperties = make(map[string]interface{})
+	}
+	if componentDef.Styles == nil {
+		componentDef.Styles = &component.Styles{}
+	}
+
+	// Use reflection to map model metadata to component styles
+	stylesValue := reflect.ValueOf(componentDef.Styles).Elem()
+
+	// Iterate through modelDef.Metadata
+	if modelDef.Metadata != nil {
+		if (modelDef.Metadata.Capabilities) != nil {
+			componentDef.Capabilities = modelDef.Metadata.Capabilities
+
+		}
+		if modelDef.Metadata.PrimaryColor != nil {
+			componentDef.Styles.PrimaryColor = *modelDef.Metadata.PrimaryColor
+		}
+		if modelDef.Metadata.SecondaryColor != nil {
+			componentDef.Styles.SecondaryColor = modelDef.Metadata.SecondaryColor
+		}
+		if modelDef.Metadata.SvgColor != "" {
+			componentDef.Styles.SvgColor = modelDef.Metadata.SvgColor
+		}
+		if modelDef.Metadata.SvgComplete != nil {
+			componentDef.Styles.SvgComplete = *modelDef.Metadata.SvgComplete
+		}
+		if modelDef.Metadata.SvgWhite != "" {
+			componentDef.Styles.SvgWhite = modelDef.Metadata.SvgWhite
+		}
+
+		// Iterate through AdditionalProperties and assign appropriately
+		for k, v := range modelDef.Metadata.AdditionalProperties {
+			// Check if the field exists in Styles
+			if field := stylesValue.FieldByNameFunc(func(name string) bool {
+				return strings.EqualFold(k, name)
+			}); field.IsValid() && field.CanSet() {
+				switch field.Kind() {
+				case reflect.Ptr:
+					ptrType := field.Type().Elem()
+					val := reflect.New(ptrType).Elem()
+
+					if val.Kind() == reflect.String {
+						val.SetString(v.(string))
+					} else if val.Kind() == reflect.Float32 {
+						val.SetFloat(v.(float64))
+					} else if val.Kind() == reflect.Int {
+						val.SetInt(int64(v.(int)))
+					} else {
+						val.Set(reflect.ValueOf(v))
+					}
+
+					field.Set(val.Addr())
+				case reflect.String:
+					field.SetString(v.(string))
+				case reflect.Float32:
+					field.SetFloat(v.(float64))
+				case reflect.Int:
+					field.SetInt(int64(v.(int)))
+				default:
+					field.Set(reflect.ValueOf(v))
+				}
+			} else {
+				componentDef.Metadata.AdditionalProperties[k] = v
+			}
+		}
 	}
 }
 
@@ -330,7 +398,7 @@ func GenerateDefsForCoreRegistrant(model utils.ModelCSV) error {
 					return nil
 				}
 				contentBytes := []byte(f.Content)
-				var componentDef v1beta1.ComponentDefinition
+				var componentDef component.ComponentDefinition
 				if err := json.Unmarshal(contentBytes, &componentDef); err != nil {
 					return err
 				}
@@ -340,11 +408,11 @@ func GenerateDefsForCoreRegistrant(model utils.ModelCSV) error {
 					err = ErrGenerateModel(err, model.Model)
 					return err
 				}
-				_, err = writeModelDefToFileSystem(&model, version, modelDirPath) // how to infer this? @Beginner86 any idea? new column?
+				modelDef, err := writeModelDefToFileSystem(&model, version, modelDirPath) // how to infer this? @Beginner86 any idea? new column?
 				if err != nil {
 					return ErrGenerateModel(err, model.Model)
 				}
-
+				componentDef.Model = *modelDef
 				err = componentDef.WriteComponentDefinition(compDirPath)
 				if err != nil {
 					err = ErrGenerateComponent(err, model.Model, componentDef.DisplayName)
@@ -409,13 +477,12 @@ func createVersionedDirectoryForModelAndComp(version, modelName string) (string,
 	return modelDirPath, compDirPath, err
 }
 
-func writeModelDefToFileSystem(model *utils.ModelCSV, version, modelDefPath string) (*v1beta1.Model, error) {
+func writeModelDefToFileSystem(model *utils.ModelCSV, version, modelDefPath string) (*model.ModelDefinition, error) {
 	modelDef := model.CreateModelDefinition(version, defVersion)
 	err := modelDef.WriteModelDefinition(modelDefPath+"/model.json", "json")
 	if err != nil {
 		return nil, err
 	}
-
 	return &modelDef, nil
 }
 

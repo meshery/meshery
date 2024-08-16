@@ -15,7 +15,7 @@
    "status": "enabled",
    "hostID": "00000000-0000-0000-0000-000000000000",
    "registrant": {
-    "hostname": "artifacthub"
+    "kind": "artifacthub"
    },
    "category": {
     "name": "Orchestration \u0026 Management",
@@ -34,7 +34,6 @@
    "relationships": null
   },
   "metadata": {
-   "capabilities": "{\n  \"fieldRefs\": [\n    {\n      \"fieldPath\": \"spec.template.spec.containers\",\n      \"jsonSchemaPath\": \"properties.spec.allOf[0].properties.template.allOf[0].properties.spec.allOf[0].properties.containers.items.allOf[0]\",\n      \"component\": {\n        \"kind\": \"Container\",\n        \"model\": \"meshery-core\"\n      },\n      \"renderChildren\": true\n    },\n    {\n      \"fieldPath\": \"spec.template.spec.init Containers\",\n      \"jsonSchemaPath\": \"properties.spec.allOf[0].properties.template.allOf[0].properties.spec.allOf[0].properties.init Containers.items.allOf[0]\",\n      \"component\": {\n        \"kind\": \"Container\",\n        \"model\": \"meshery-core\"\n      },\n      \"renderChildren\": true\n    }\n  ],\n  \"designer\": {\n    \"edit\": {\n      \"shape\": {\n        \"convert-shape\": false\n      }\n    }\n  }\n}",
    "defaultData": "",
    "genealogy": "parent",
    "isAnnotation": false,

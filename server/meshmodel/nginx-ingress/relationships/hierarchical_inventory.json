@@ -1,12 +1,14 @@
 {
-  "schemaVersion": "relationships.meshery.io/v1alpha2",
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
   "version": "v1.0.0",
   "kind": "Hierarchical",
+  "type": "Parent",
+  "subType": "Inventory",
   "metadata": {
     "description": "A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. E.g Secret->Pod, ConfigMaps->Deployment, etc..."
   },
   "model": {
-    "schemaVersion": "relationships.meshery.io/v1alpha2",
+    "schemaVersion": "models.meshery.io/v1beta1",
     "version": "v1.0.0",
     "name": "nginx-ingress",
     "model": {
@@ -19,20 +21,23 @@
     },
     "metadata": {}
   },
-  "subType": "Inventory",
-  "evaluationQuery": "hierarchical_inventory_relationship",
   "selectors": [
     {
       "allow": {
         "from": [
           {
             "kind": "Policy",
-            "model": "nginx-ingress",
+            "model": {
+              "name": "nginx-ingress",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
             "patch": {
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "name"
+                  "displayName"
                 ]
               ],
               "description": "The Policy resource allows you to configure features like access control and rate-limiting, which you can add to your VirtualServer and VirtualServerRoute resources."
@@ -42,12 +47,17 @@
         "to": [
           {
             "kind": "VirtualServer",
-            "model": "nginx-ingress",
+            "model": {
+              "name": "nginx-ingress",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
             "patch": {
               "patchStrategy": "replace",
               "mutatedRef": [
                 [
-                  "settings",
+                  "configuration",
                   "spec",
                   "policies",
                   "name"
@@ -58,12 +68,17 @@
           },
           {
             "kind": "VirtualServerRoute",
-            "model": "nginx-ingress",
+            "model": {
+              "name": "nginx-ingress",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
             "patch": {
               "patchStrategy": "replace",
               "mutatedRef": [
                 [
-                  "settings",
+                  "configuration",
                   "spec",
                   "policies",
                   "name"

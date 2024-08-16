@@ -216,7 +216,7 @@ export default function DesignConfigurator() {
                 const hasInvalidSchema = !!trimmedComponent.metadata?.hasInvalidSchema;
                 return (
                   <LazyComponentForm
-                    key={`${trimmedComponent.kind}-${idx}`}
+                    key={`${trimmedComponent.component.kind}-${idx}`}
                     component={trimmedComponent}
                     onSettingsChange={onSettingsChange(trimmedComponent, formReference)}
                     reference={formReference}
