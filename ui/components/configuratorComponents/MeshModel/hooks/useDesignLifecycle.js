@@ -6,6 +6,7 @@ import { promisifiedDataFetch } from '../../../../lib/data-fetch';
 import { useNotification } from '../../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../../lib/event-types';
 import { getUnit8ArrayForDesign } from '@/utils/utils';
+import debounce from '@/utils/debounce';
 
 export default function useDesignLifecycle() {
   const [designName, setDesignName] = useState('Unitled Design');
@@ -173,7 +174,7 @@ export default function useDesignLifecycle() {
     }
   };
 
-  const updateDesignData = ({ yamlData }) => {
+  const updateDesignData = debounce(({ yamlData }) => {
     try {
       const designData = jsYaml.load(yamlData);
       setDesignJson(designData);
@@ -184,7 +185,7 @@ export default function useDesignLifecycle() {
         details: err.toString(),
       });
     }
-  };
+  }, 1000);
 
   return {
     designJson,
