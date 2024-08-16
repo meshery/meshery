@@ -1,9 +1,9 @@
 {
   "schemaVersion": "relationships.meshery.io/v1alpha3",
   "version": "v1.0.0",
-  "kind": "Edge",
+  "kind": "edge",
   "metadata": {
-    "description": "A relationship that defines network edges between components"
+    "description": "A relations hip that defines network edges between components"
   },
   "model": {
     "schemaVersion": "core.meshery.io/v1alpha2",
@@ -21,8 +21,8 @@
       "description": "A VirtualService defines a set of traffic routing rules to apply when a host is addressed and the Gateway describes a load balancer operating at the edge of the mesh receiving incoming or outgoing HTTP/TCP connections. For North-South traffic targeting a particular service, the Gateway is referenced by the VirtualService"
     }
   },
-  "type": "Network",
-  "subType": "Network",
+  "type": "non-binding",
+  "subType": "network",
   "selectors": [
     {
       "allow": {

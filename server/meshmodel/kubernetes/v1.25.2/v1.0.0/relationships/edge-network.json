@@ -1,8 +1,9 @@
 {
   "schemaVersion": "relationships.meshery.io/v1alpha3",
   "version": "v1.0.0",
-  "kind": "Edge",
-  "type": "Network",
+  "kind": "edge",
+  "subType": "network",
+  "type":"non-binding",
   "metadata": {
     "description": "A relationship that defines network edges between components",
     "animation": "marching-ants",

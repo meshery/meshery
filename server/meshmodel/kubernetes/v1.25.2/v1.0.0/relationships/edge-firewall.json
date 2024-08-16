@@ -1,9 +1,9 @@
 {
   "schemaVersion": "relationships.meshery.io/v1alpha3",
   "version": "v1.0.0",
-  "kind": "Edge",
-  "type": "Binding",
-  "subType": "Firewall",
+  "kind": "edge",
+  "type": "binding",
+  "subType": "firewall",
   "metadata": {
     "description": "A relationship that act as a firewall for ingress and egress traffic from Pods.",
     "animation": "marching-ants",
@@ -34,7 +34,6 @@
     },
     "metadata": {}
   },
-  ,
   "selectors": [
     {
       "allow": {

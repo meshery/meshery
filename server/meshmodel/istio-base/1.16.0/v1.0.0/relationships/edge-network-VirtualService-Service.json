@@ -1,7 +1,8 @@
 {
   "schemaVersion": "relationships.meshery.io/v1alpha3",
   "version": "v1.0.0",
-  "kind": "Edge",
+  "kind": "edge",
+  "subType":"network",
   "metadata": {
     "description": "A relationship that defines network edges between components"
   },
@@ -21,8 +22,7 @@
       "description": "A VirtualService defines a set of traffic routing rules to apply when a host is addressed and a Service is a method for exposing a network application that is running as one or more Pods in your cluster. For the traffic to be forwarded properly, The Service is referenced by the VirtualService"
     }
   },
-  "type": "Network",
-  ,
+  "type": "non-binding",
   "selectors": [
     {
       "allow": {

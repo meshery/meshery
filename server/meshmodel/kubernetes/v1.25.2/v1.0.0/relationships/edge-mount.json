@@ -1,9 +1,9 @@
 {
   "schemaVersion": "relationships.meshery.io/v1alpha3",
   "version": "v1.0.0",
-  "kind": "Edge",
-  "type": "Binding",
-  "subType": "Mount",
+  "kind": "edge",
+  "type": "binding",
+  "subType": "mount",
   "metadata": {
     "description": "A relationship that represents volume mounts between components",
     "capabilities": {
