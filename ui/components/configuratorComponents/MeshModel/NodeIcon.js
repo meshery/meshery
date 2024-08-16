@@ -129,6 +129,17 @@ function styleProps(metadata) {
 }
 
 export default function GetNodeIcon({ metadata, otherOverrides = {}, className }) {
+  if (!metadata?.svgColor || !metadata?.svgWhite || !metadata?.svgColor) {
+    return (
+      <img
+        className={clsx(className, NODE_ICON_WRAPPER_CLASS)}
+        width={40}
+        height={40}
+        src="/static/img/kubernetes.svg"
+        {...otherOverrides}
+      />
+    );
+  }
   if (metadata?.svgComplete) {
     return (
       // wrapping in svg important for onDragStart function
