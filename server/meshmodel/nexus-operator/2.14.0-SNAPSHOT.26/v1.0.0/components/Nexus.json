@@ -1,61 +1,70 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "displayName": "Nexus",
-  "description": "",
-  "format": "JSON",
-  "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "version": "v1.0.0",
-   "name": "nexus-operator",
-   "displayName": "Nexus Operator",
-   "description": "",
-   "status": "ignored",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "registrant": {
-    "hostname": "artifacthub"
-   },
-   "category": {
-    "name": "Uncategorized",
-    "metadata": null
-   },
-   "subCategory": "",
-   "metadata": {
-    "source_uri": "https://epam.github.io/edp-helm-charts/snapshot/packages/nexus-operator-3.2.0-SNAPSHOT.2.tgz"
-   },
-   "model": {
-    "version": "2.14.0-SNAPSHOT.26"
-   },
-   "components": null,
-   "relationships": null
-  },
-  "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isModelAnnotation": "FALSE",
-   "isNamespaced": true,
-   "logoURL": "",
-   "model": "nexus-operator",
-   "modelDisplayName": "Nexus Operator",
-   "primaryColor": "#00B39F",
-   "secondaryColor": "#00D3A9",
-   "shape": "circle",
-   "shapePolygonPoints": "",
-   "status": "ignored",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
-   "svgColor": "",
-   "svgComplete": "",
-   "svgWhite": ""
-  },
+  "capabilities": null,
   "component": {
-   "kind": "Nexus",
-   "version": "edp.epam.com/v1alpha1",
-   "schema": "{\n \"description\": \"Nexus is the Schema for the nexus API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"NexusSpec defines the desired state of Nexus.\",\n   \"properties\": {\n    \"secret\": {\n     \"description\": \"Secret is the name of the k8s object Secret related to nexus. Secret should contain a user field with a nexus username and a password field with a nexus password.\",\n     \"type\": \"string\"\n    },\n    \"url\": {\n     \"description\": \"Url is the url of nexus instance.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"secret\",\n    \"url\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Nexus\",\n \"type\": \"object\"\n}"
-  }
- }
+    "kind": "Nexus",
+    "schema": "{\n \"description\": \"Nexus is the Schema for the nexus API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"NexusSpec defines the desired state of Nexus.\",\n   \"properties\": {\n    \"secret\": {\n     \"description\": \"Secret is the name of the k8s object Secret related to nexus. Secret should contain a user field with a nexus username and a password field with a nexus password.\",\n     \"type\": \"string\"\n    },\n    \"url\": {\n     \"description\": \"Url is the url of nexus instance.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"secret\",\n    \"url\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Nexus\",\n \"type\": \"object\"\n}",
+    "version": "edp.epam.com/v1alpha1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "Nexus",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+    "defaultData": "",
+    "genealogy": "",
+    "isAnnotation": false,
+    "isModelAnnotation": "FALSE",
+    "isNamespaced": true,
+    "logoURL": "",
+    "model": "nexus-operator",
+    "modelDisplayName": "Nexus Operator",
+    "published": false,
+    "shapePolygonPoints": ""
+  },
+  "model": {
+    "category": {
+      "name": "Uncategorized"
+    },
+    "displayName": "Nexus Operator",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "metadata": {
+      "source_uri": "https://epam.github.io/edp-helm-charts/snapshot/packages/nexus-operator-3.2.0-SNAPSHOT.2.tgz",
+      "svgColor": "",
+      "svgWhite": ""
+    },
+    "model": {
+      "version": "2.14.0-SNAPSHOT.26"
+    },
+    "name": "nexus-operator",
+    "registrant": {
+      "created_at": "0001-01-01T00:00:00Z",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "deleted_at": "0001-01-01T00:00:00Z",
+      "id": "00000000-0000-0000-0000-000000000000",
+      "kind": "artifacthub",
+      "name": "Artifact Hub",
+      "status": "discovered",
+      "sub_type": "",
+      "type": "registry",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "user_id": "00000000-0000-0000-0000-000000000000"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "status": "ignored",
+    "version": "v1.0.0",
+    "components": null,
+    "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "ignored",
+  "styles": {
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "svgColor": "",
+    "svgWhite": ""
+  },
+  "version": "v1.0.0"
+}

@@ -1,61 +1,70 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "displayName": "Provider",
-  "description": "",
-  "format": "JSON",
-  "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "version": "v1.0.0",
-   "name": "uffizzi-controller",
-   "displayName": "uffizzi-controller",
-   "description": "",
-   "status": "ignored",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "registrant": {
-    "hostname": "artifacthub"
-   },
-   "category": {
-    "name": "Uncategorized",
-    "metadata": null
-   },
-   "subCategory": "",
-   "metadata": {
-    "source_uri": "https://github.com/UffizziCloud/uffizzi_controller/releases/download/uffizzi-controller-2.3.8/uffizzi-controller-2.3.8.tgz"
-   },
-   "model": {
-    "version": "1.0.0"
-   },
-   "components": null,
-   "relationships": null
-  },
-  "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isModelAnnotation": "FALSE",
-   "isNamespaced": true,
-   "logoURL": "https://layer5.io/company/brand",
-   "model": "uffizzi-controller",
-   "modelDisplayName": "uffizzi-controller",
-   "primaryColor": "#00B39F",
-   "secondaryColor": "#00D3A9",
-   "shape": "circle",
-   "shapePolygonPoints": "",
-   "status": "ignored",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
-   "svgColor": "",
-   "svgComplete": "",
-   "svgWhite": ""
-  },
+  "capabilities": null,
   "component": {
-   "kind": "Provider",
-   "version": "notification.toolkit.fluxcd.io/v1beta1",
-   "schema": "{\n \"description\": \"Provider is the Schema for the providers API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ProviderSpec defines the desired state of Provider\",\n   \"properties\": {\n    \"address\": {\n     \"description\": \"HTTP/S webhook address of this provider\",\n     \"pattern\": \"^(http|https)://\",\n     \"type\": \"string\"\n    },\n    \"certSecretRef\": {\n     \"description\": \"CertSecretRef can be given the name of a secret containing a PEM-encoded CA certificate (`caFile`)\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of the referent.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"channel\": {\n     \"description\": \"Alert channel for this provider\",\n     \"type\": \"string\"\n    },\n    \"proxy\": {\n     \"description\": \"HTTP/S address of the proxy\",\n     \"pattern\": \"^(http|https)://\",\n     \"type\": \"string\"\n    },\n    \"secretRef\": {\n     \"description\": \"Secret reference containing the provider webhook URL using \\\"address\\\" as data key\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of the referent.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"suspend\": {\n     \"description\": \"This flag tells the controller to suspend subsequent events handling. Defaults to false.\",\n     \"type\": \"boolean\"\n    },\n    \"timeout\": {\n     \"description\": \"Timeout for sending alerts to the provider.\",\n     \"pattern\": \"^([0-9]+(\\\\.[0-9]+)?(ms|s|m))+$\",\n     \"type\": \"string\"\n    },\n    \"type\": {\n     \"description\": \"Type of provider\",\n     \"enum\": [\n      \"slack\",\n      \"discord\",\n      \"msteams\",\n      \"rocket\",\n      \"generic\",\n      \"generic-hmac\",\n      \"github\",\n      \"gitlab\",\n      \"bitbucket\",\n      \"azuredevops\",\n      \"googlechat\",\n      \"webex\",\n      \"sentry\",\n      \"azureeventhub\",\n      \"telegram\",\n      \"lark\",\n      \"matrix\",\n      \"opsgenie\",\n      \"alertmanager\",\n      \"grafana\",\n      \"githubdispatch\"\n     ],\n     \"type\": \"string\"\n    },\n    \"username\": {\n     \"description\": \"Bot username for this provider\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"type\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Provider\",\n \"type\": \"object\"\n}"
-  }
- }
+    "kind": "Provider",
+    "schema": "{\n \"description\": \"Provider is the Schema for the providers API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ProviderSpec defines the desired state of Provider\",\n   \"properties\": {\n    \"address\": {\n     \"description\": \"HTTP/S webhook address of this provider\",\n     \"pattern\": \"^(http|https)://\",\n     \"type\": \"string\"\n    },\n    \"certSecretRef\": {\n     \"description\": \"CertSecretRef can be given the name of a secret containing a PEM-encoded CA certificate (`caFile`)\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of the referent.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"channel\": {\n     \"description\": \"Alert channel for this provider\",\n     \"type\": \"string\"\n    },\n    \"proxy\": {\n     \"description\": \"HTTP/S address of the proxy\",\n     \"pattern\": \"^(http|https)://\",\n     \"type\": \"string\"\n    },\n    \"secretRef\": {\n     \"description\": \"Secret reference containing the provider webhook URL using \\\"address\\\" as data key\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of the referent.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"suspend\": {\n     \"description\": \"This flag tells the controller to suspend subsequent events handling. Defaults to false.\",\n     \"type\": \"boolean\"\n    },\n    \"timeout\": {\n     \"description\": \"Timeout for sending alerts to the provider.\",\n     \"pattern\": \"^([0-9]+(\\\\.[0-9]+)?(ms|s|m))+$\",\n     \"type\": \"string\"\n    },\n    \"type\": {\n     \"description\": \"Type of provider\",\n     \"enum\": [\n      \"slack\",\n      \"discord\",\n      \"msteams\",\n      \"rocket\",\n      \"generic\",\n      \"generic-hmac\",\n      \"github\",\n      \"gitlab\",\n      \"bitbucket\",\n      \"azuredevops\",\n      \"googlechat\",\n      \"webex\",\n      \"sentry\",\n      \"azureeventhub\",\n      \"telegram\",\n      \"lark\",\n      \"matrix\",\n      \"opsgenie\",\n      \"alertmanager\",\n      \"grafana\",\n      \"githubdispatch\"\n     ],\n     \"type\": \"string\"\n    },\n    \"username\": {\n     \"description\": \"Bot username for this provider\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"type\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Provider\",\n \"type\": \"object\"\n}",
+    "version": "notification.toolkit.fluxcd.io/v1beta1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "Provider",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+    "defaultData": "",
+    "genealogy": "",
+    "isAnnotation": false,
+    "isModelAnnotation": "FALSE",
+    "isNamespaced": true,
+    "logoURL": "https://layer5.io/company/brand",
+    "model": "uffizzi-controller",
+    "modelDisplayName": "uffizzi-controller",
+    "published": false,
+    "shapePolygonPoints": ""
+  },
+  "model": {
+    "category": {
+      "name": "Uncategorized"
+    },
+    "displayName": "uffizzi-controller",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "metadata": {
+      "source_uri": "https://github.com/UffizziCloud/uffizzi_controller/releases/download/uffizzi-controller-2.3.8/uffizzi-controller-2.3.8.tgz",
+      "svgColor": "",
+      "svgWhite": ""
+    },
+    "model": {
+      "version": "1.0.0"
+    },
+    "name": "uffizzi-controller",
+    "registrant": {
+      "created_at": "0001-01-01T00:00:00Z",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "deleted_at": "0001-01-01T00:00:00Z",
+      "id": "00000000-0000-0000-0000-000000000000",
+      "kind": "artifacthub",
+      "name": "Artifact Hub",
+      "status": "discovered",
+      "sub_type": "",
+      "type": "registry",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "user_id": "00000000-0000-0000-0000-000000000000"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "status": "ignored",
+    "version": "v1.0.0",
+    "components": null,
+    "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "ignored",
+  "styles": {
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "svgColor": "",
+    "svgWhite": ""
+  },
+  "version": "v1.0.0"
+}

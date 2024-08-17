@@ -1,61 +1,70 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "displayName": "Data Upload",
-  "description": "",
-  "format": "JSON",
-  "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "version": "v1.0.0",
-   "name": "velero",
-   "displayName": "Velero",
-   "description": "",
-   "status": "ignored",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "registrant": {
-    "hostname": "artifacthub"
-   },
-   "category": {
-    "name": "Runtime",
-    "metadata": null
-   },
-   "subCategory": "",
-   "metadata": {
-    "source_uri": "https://github.com/vmware-tanzu/helm-charts/releases/download/velero-5.2.0/velero-5.2.0.tgz"
-   },
-   "model": {
-    "version": "3.1.4"
-   },
-   "components": null,
-   "relationships": null
-  },
-  "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isModelAnnotation": "FALSE",
-   "isNamespaced": true,
-   "logoURL": "",
-   "model": "velero",
-   "modelDisplayName": "Velero",
-   "primaryColor": "#00B39F",
-   "secondaryColor": "#00D3A9",
-   "shape": "circle",
-   "shapePolygonPoints": "",
-   "status": "ignored",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
-   "svgColor": "",
-   "svgComplete": "",
-   "svgWhite": ""
-  },
+  "capabilities": null,
   "component": {
-   "kind": "DataUpload",
-   "version": "velero.io/v2alpha1",
-   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"DataUploadSpec is the specification for a DataUpload.\",\n   \"properties\": {\n    \"backupStorageLocation\": {\n     \"description\": \"BackupStorageLocation is the name of the backup storage location where the backup repository is stored.\",\n     \"type\": \"string\"\n    },\n    \"cancel\": {\n     \"description\": \"Cancel indicates request to cancel the ongoing DataUpload. It can be set when the DataUpload is in InProgress phase\",\n     \"type\": \"boolean\"\n    },\n    \"csiSnapshot\": {\n     \"description\": \"If SnapshotType is CSI, CSISnapshot provides the information of the CSI snapshot.\",\n     \"nullable\": true,\n     \"properties\": {\n      \"snapshotClass\": {\n       \"description\": \"SnapshotClass is the name of the snapshot class that the volume snapshot is created with\",\n       \"type\": \"string\"\n      },\n      \"storageClass\": {\n       \"description\": \"StorageClass is the name of the storage class of the PVC that the volume snapshot is created from\",\n       \"type\": \"string\"\n      },\n      \"volumeSnapshot\": {\n       \"description\": \"VolumeSnapshot is the name of the volume snapshot to be backed up\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"storageClass\",\n      \"volumeSnapshot\"\n     ],\n     \"type\": \"object\"\n    },\n    \"dataMoverConfig\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"DataMoverConfig is for data-mover-specific configuration fields.\",\n     \"nullable\": true,\n     \"type\": \"object\"\n    },\n    \"datamover\": {\n     \"description\": \"DataMover specifies the data mover to be used by the backup. If DataMover is \\\"\\\" or \\\"velero\\\", the built-in data mover will be used.\",\n     \"type\": \"string\"\n    },\n    \"operationTimeout\": {\n     \"description\": \"OperationTimeout specifies the time used to wait internal operations, before returning error as timeout.\",\n     \"type\": \"string\"\n    },\n    \"snapshotType\": {\n     \"description\": \"SnapshotType is the type of the snapshot to be backed up.\",\n     \"type\": \"string\"\n    },\n    \"sourceNamespace\": {\n     \"description\": \"SourceNamespace is the original namespace where the volume is backed up from. It is the same namespace for SourcePVC and CSI namespaced objects.\",\n     \"type\": \"string\"\n    },\n    \"sourcePVC\": {\n     \"description\": \"SourcePVC is the name of the PVC which the snapshot is taken for.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"backupStorageLocation\",\n    \"operationTimeout\",\n    \"snapshotType\",\n    \"sourceNamespace\",\n    \"sourcePVC\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Data Upload\",\n \"type\": \"object\"\n}"
-  }
- }
+    "kind": "DataUpload",
+    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"DataUploadSpec is the specification for a DataUpload.\",\n   \"properties\": {\n    \"backupStorageLocation\": {\n     \"description\": \"BackupStorageLocation is the name of the backup storage location where the backup repository is stored.\",\n     \"type\": \"string\"\n    },\n    \"cancel\": {\n     \"description\": \"Cancel indicates request to cancel the ongoing DataUpload. It can be set when the DataUpload is in InProgress phase\",\n     \"type\": \"boolean\"\n    },\n    \"csiSnapshot\": {\n     \"description\": \"If SnapshotType is CSI, CSISnapshot provides the information of the CSI snapshot.\",\n     \"nullable\": true,\n     \"properties\": {\n      \"snapshotClass\": {\n       \"description\": \"SnapshotClass is the name of the snapshot class that the volume snapshot is created with\",\n       \"type\": \"string\"\n      },\n      \"storageClass\": {\n       \"description\": \"StorageClass is the name of the storage class of the PVC that the volume snapshot is created from\",\n       \"type\": \"string\"\n      },\n      \"volumeSnapshot\": {\n       \"description\": \"VolumeSnapshot is the name of the volume snapshot to be backed up\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"storageClass\",\n      \"volumeSnapshot\"\n     ],\n     \"type\": \"object\"\n    },\n    \"dataMoverConfig\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"DataMoverConfig is for data-mover-specific configuration fields.\",\n     \"nullable\": true,\n     \"type\": \"object\"\n    },\n    \"datamover\": {\n     \"description\": \"DataMover specifies the data mover to be used by the backup. If DataMover is \\\"\\\" or \\\"velero\\\", the built-in data mover will be used.\",\n     \"type\": \"string\"\n    },\n    \"operationTimeout\": {\n     \"description\": \"OperationTimeout specifies the time used to wait internal operations, before returning error as timeout.\",\n     \"type\": \"string\"\n    },\n    \"snapshotType\": {\n     \"description\": \"SnapshotType is the type of the snapshot to be backed up.\",\n     \"type\": \"string\"\n    },\n    \"sourceNamespace\": {\n     \"description\": \"SourceNamespace is the original namespace where the volume is backed up from. It is the same namespace for SourcePVC and CSI namespaced objects.\",\n     \"type\": \"string\"\n    },\n    \"sourcePVC\": {\n     \"description\": \"SourcePVC is the name of the PVC which the snapshot is taken for.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"backupStorageLocation\",\n    \"operationTimeout\",\n    \"snapshotType\",\n    \"sourceNamespace\",\n    \"sourcePVC\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Data Upload\",\n \"type\": \"object\"\n}",
+    "version": "velero.io/v2alpha1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "Data Upload",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+    "defaultData": "",
+    "genealogy": "",
+    "isAnnotation": false,
+    "isModelAnnotation": "FALSE",
+    "isNamespaced": true,
+    "logoURL": "",
+    "model": "velero",
+    "modelDisplayName": "Velero",
+    "published": false,
+    "shapePolygonPoints": ""
+  },
+  "model": {
+    "category": {
+      "name": "Runtime"
+    },
+    "displayName": "Velero",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "metadata": {
+      "source_uri": "https://github.com/vmware-tanzu/helm-charts/releases/download/velero-5.2.0/velero-5.2.0.tgz",
+      "svgColor": "",
+      "svgWhite": ""
+    },
+    "model": {
+      "version": "3.1.4"
+    },
+    "name": "velero",
+    "registrant": {
+      "created_at": "0001-01-01T00:00:00Z",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "deleted_at": "0001-01-01T00:00:00Z",
+      "id": "00000000-0000-0000-0000-000000000000",
+      "kind": "artifacthub",
+      "name": "Artifact Hub",
+      "status": "discovered",
+      "sub_type": "",
+      "type": "registry",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "user_id": "00000000-0000-0000-0000-000000000000"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "status": "ignored",
+    "version": "v1.0.0",
+    "components": null,
+    "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "ignored",
+  "styles": {
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "svgColor": "",
+    "svgWhite": ""
+  },
+  "version": "v1.0.0"
+}

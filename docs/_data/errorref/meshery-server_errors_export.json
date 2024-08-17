@@ -863,9 +863,9 @@
         "code": "1096",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "Invalid Kube Handler",
-        "probable_cause": "Meshery handler failed to find a valid Kubernetes handler for the deployment",
-        "suggested_remediation": "Try uploading a new kubeconfig and also ensure that Meshery can reach Kubernetes API server"
+        "short_description": "Kubernetes cluster is unavailable for ",
+        "probable_cause": "There might be a network disruption or the Meshery server does not have valid credentials.",
+        "suggested_remediation": "Try uploading a new kubeconfig.\nCheck the network connection and Kubernetes cluster status.\nVerify that the Meshery server has valid and updated credentials to access the Kubernetes cluster."
       },
       "1097": {
         "name": "ErrInvalidKubeContextCode",
@@ -3233,6 +3233,24 @@
         "short_description": "",
         "probable_cause": "Entity definition might not be in accordance with schema\nEntity version might not be supported by Meshery",
         "suggested_remediation": "See the registration logs (found at $HOME/.meshery/logs/registry/registry-logs.log) to find out which Entity failed to be imported with more specific error information."
+      },
+      "1360": {
+        "name": "ErrEmptyOCIImageCode",
+        "code": "1360",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1361": {
+        "name": "ErrResolveReferenceCode",
+        "code": "1361",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
       }
     }
   }

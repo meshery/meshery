@@ -21,14 +21,13 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha2"
-
 	"gopkg.in/yaml.v2"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/components"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/schemas/models/v1alpha3/relationship"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -107,7 +106,7 @@ mesheryctl exp relationship view [model-name]
 			return err
 		}
 
-		var selectedModel *v1alpha2.RelationshipDefinition
+		var selectedModel *relationship.RelationshipDefinition
 
 		if relationshipsResponse.Count == 0 {
 			utils.Log.Info("No relationship(s) found for the given name ", model)

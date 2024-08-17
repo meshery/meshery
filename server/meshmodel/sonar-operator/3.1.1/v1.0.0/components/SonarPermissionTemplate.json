@@ -1,68 +1,76 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "displayName": "Sonar Permission Template",
+  "capabilities": null,
+  "component": {
+    "kind": "SonarPermissionTemplate",
+    "schema": "{\n \"description\": \"SonarPermissionTemplate is the Schema for the sonar permission template API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"SonarPermissionTemplateSpec defines the desired state of SonarPermissionTemplate.\",\n   \"properties\": {\n    \"default\": {\n     \"description\": \"Default is a flag to set permission template as default. Only one permission template can be default. If several permission templates have default flag, the random one will be chosen. Default permission template can't be deleted. You need to set another permission template as default before.\",\n     \"example\": \"true\",\n     \"type\": \"boolean\"\n    },\n    \"description\": {\n     \"description\": \"Description of sonar permission template.\",\n     \"example\": \"Default permission template for new users\",\n     \"type\": \"string\"\n    },\n    \"groupsPermissions\": {\n     \"additionalProperties\": {\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"type\": \"array\"\n     },\n     \"description\": \"GroupsPermissions is a map of groups and permissions assigned to them.\",\n     \"example\": {\n      \"sonar-users\": [\n       \"codeviewer\",\n       \"scan\"\n      ]\n     },\n     \"nullable\": true,\n     \"type\": \"object\"\n    },\n    \"name\": {\n     \"description\": \"Name is a name of permission template. Name should be unique across all permission templates. Do not edit this field after creation. Otherwise, the permission template will be recreated.\",\n     \"example\": \"sonar-users-tmpl\",\n     \"maxLength\": 100,\n     \"type\": \"string\"\n    },\n    \"projectKeyPattern\": {\n     \"description\": \"ProjectKeyPattern is key pattern. Must be a valid Java regular expression.\",\n     \"example\": \"finance.*\",\n     \"type\": \"string\"\n    },\n    \"sonarRef\": {\n     \"description\": \"SonarRef is a reference to Sonar custom resource.\",\n     \"properties\": {\n      \"kind\": {\n       \"default\": \"Sonar\",\n       \"description\": \"Kind specifies the kind of the Sonar resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name specifies the name of the Sonar resource.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"name\",\n    \"sonarRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Sonar Permission Template\",\n \"type\": \"object\"\n}",
+    "version": "edp.epam.com/v1alpha1"
+  },
+  "configuration": null,
   "description": "",
+  "displayName": "Sonar Permission Template",
   "format": "JSON",
-  "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "version": "v1.0.0",
-   "name": "sonar-operator",
-   "displayName": "Sonar Operator",
-   "description": "",
-   "status": "ignored",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "registrant": {
-    "hostname": "artifacthub"
-   },
-   "category": {
-    "name": "Uncategorized",
-    "metadata": null
-   },
-   "subCategory": "Uncategorized",
-   "metadata": {
-    "capabilities": "",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
     "defaultData": "",
+    "genealogy": "",
     "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false,
+    "shapePolygonPoints": ""
+  },
+  "model": {
+    "category": {
+      "name": "Uncategorized"
+    },
+    "displayName": "Sonar Operator",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "metadata": {
+      "capabilities": null,
+      "defaultData": "",
+      "isAnnotation": false,
+      "primaryColor": "#00B39F",
+      "secondaryColor": "#00D3A9",
+      "shape": "circle",
+      "shapePolygonPoints": "",
+      "styleOverrides": "",
+      "styles": "",
+      "svgColor": "",
+      "svgComplete": "",
+      "svgWhite": ""
+    },
+    "model": {
+      "version": "3.1.1"
+    },
+    "name": "sonar-operator",
+    "registrant": {
+      "created_at": "0001-01-01T00:00:00Z",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "deleted_at": "0001-01-01T00:00:00Z",
+      "id": "00000000-0000-0000-0000-000000000000",
+      "kind": "artifacthub",
+      "name": "Artifact Hub",
+      "status": "discovered",
+      "sub_type": "",
+      "type": "registry",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "user_id": "00000000-0000-0000-0000-000000000000"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "status": "ignored",
+    "subCategory": "Uncategorized",
+    "version": "v1.0.0",
+    "components": null,
+    "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "ignored",
+  "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
-    "shapePolygonPoints": "",
-    "styleOverrides": "",
-    "styles": "",
     "svgColor": "",
-    "svgComplete": "",
     "svgWhite": ""
-   },
-   "model": {
-    "version": "3.1.1"
-   },
-   "components": null,
-   "relationships": null
   },
-  "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
-   "primaryColor": "#00B39F",
-   "secondaryColor": "#00D3A9",
-   "shape": "circle",
-   "shapePolygonPoints": "",
-   "status": "ignored",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
-   "svgColor": "",
-   "svgComplete": "",
-   "svgWhite": ""
-  },
-  "component": {
-   "kind": "SonarPermissionTemplate",
-   "version": "edp.epam.com/v1alpha1",
-   "schema": "{\n \"description\": \"SonarPermissionTemplate is the Schema for the sonar permission template API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"SonarPermissionTemplateSpec defines the desired state of SonarPermissionTemplate.\",\n   \"properties\": {\n    \"default\": {\n     \"description\": \"Default is a flag to set permission template as default. Only one permission template can be default. If several permission templates have default flag, the random one will be chosen. Default permission template can't be deleted. You need to set another permission template as default before.\",\n     \"example\": \"true\",\n     \"type\": \"boolean\"\n    },\n    \"description\": {\n     \"description\": \"Description of sonar permission template.\",\n     \"example\": \"Default permission template for new users\",\n     \"type\": \"string\"\n    },\n    \"groupsPermissions\": {\n     \"additionalProperties\": {\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"type\": \"array\"\n     },\n     \"description\": \"GroupsPermissions is a map of groups and permissions assigned to them.\",\n     \"example\": {\n      \"sonar-users\": [\n       \"codeviewer\",\n       \"scan\"\n      ]\n     },\n     \"nullable\": true,\n     \"type\": \"object\"\n    },\n    \"name\": {\n     \"description\": \"Name is a name of permission template. Name should be unique across all permission templates. Do not edit this field after creation. Otherwise, the permission template will be recreated.\",\n     \"example\": \"sonar-users-tmpl\",\n     \"maxLength\": 100,\n     \"type\": \"string\"\n    },\n    \"projectKeyPattern\": {\n     \"description\": \"ProjectKeyPattern is key pattern. Must be a valid Java regular expression.\",\n     \"example\": \"finance.*\",\n     \"type\": \"string\"\n    },\n    \"sonarRef\": {\n     \"description\": \"SonarRef is a reference to Sonar custom resource.\",\n     \"properties\": {\n      \"kind\": {\n       \"default\": \"Sonar\",\n       \"description\": \"Kind specifies the kind of the Sonar resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name specifies the name of the Sonar resource.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"name\",\n    \"sonarRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Sonar Permission Template\",\n \"type\": \"object\"\n}"
-  }
- }
+  "version": "v1.0.0"
+}

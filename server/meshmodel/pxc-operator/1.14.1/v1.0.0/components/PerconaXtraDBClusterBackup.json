@@ -1,68 +1,76 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "displayName": "Percona Xtra DB Cluster Backup",
+  "capabilities": null,
+  "component": {
+    "kind": "PerconaXtraDBClusterBackup",
+    "schema": "{\n \"properties\": {\n  \"priorityClassName\": {\n   \"type\": \"string\"\n  },\n  \"schedulerName\": {\n   \"type\": \"string\"\n  },\n  \"spec\": {\n   \"properties\": {\n    \"containerOptions\": {\n     \"properties\": {\n      \"args\": {\n       \"properties\": {\n        \"xbcloud\": {\n         \"items\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"array\"\n        },\n        \"xbstream\": {\n         \"items\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"array\"\n        },\n        \"xtrabackup\": {\n         \"items\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"array\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"env\": {\n       \"items\": {\n        \"properties\": {\n         \"name\": {\n          \"type\": \"string\"\n         },\n         \"value\": {\n          \"type\": \"string\"\n         },\n         \"valueFrom\": {\n          \"properties\": {\n           \"configMapKeyRef\": {\n            \"properties\": {\n             \"key\": {\n              \"type\": \"string\"\n             },\n             \"name\": {\n              \"type\": \"string\"\n             },\n             \"optional\": {\n              \"type\": \"boolean\"\n             }\n            },\n            \"required\": [\n             \"key\"\n            ],\n            \"type\": \"object\"\n           },\n           \"fieldRef\": {\n            \"properties\": {\n             \"apiVersion\": {\n              \"type\": \"string\"\n             },\n             \"fieldPath\": {\n              \"type\": \"string\"\n             }\n            },\n            \"required\": [\n             \"fieldPath\"\n            ],\n            \"type\": \"object\"\n           },\n           \"resourceFieldRef\": {\n            \"properties\": {\n             \"containerName\": {\n              \"type\": \"string\"\n             },\n             \"divisor\": {\n              \"anyOf\": [\n               {\n                \"type\": \"integer\"\n               },\n               {\n                \"type\": \"string\"\n               }\n              ],\n              \"pattern\": \"^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$\",\n              \"x-kubernetes-int-or-string\": true\n             },\n             \"resource\": {\n              \"type\": \"string\"\n             }\n            },\n            \"required\": [\n             \"resource\"\n            ],\n            \"type\": \"object\"\n           },\n           \"secretKeyRef\": {\n            \"properties\": {\n             \"key\": {\n              \"type\": \"string\"\n             },\n             \"name\": {\n              \"type\": \"string\"\n             },\n             \"optional\": {\n              \"type\": \"boolean\"\n             }\n            },\n            \"required\": [\n             \"key\"\n            ],\n            \"type\": \"object\"\n           }\n          },\n          \"type\": \"object\"\n         }\n        },\n        \"required\": [\n         \"name\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"pxcCluster\": {\n     \"type\": \"string\"\n    },\n    \"storageName\": {\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Percona Xtra DB Cluster Backup\",\n \"type\": \"object\"\n}",
+    "version": "pxc.percona.com/v1"
+  },
+  "configuration": null,
   "description": "",
+  "displayName": "Percona Xtra DB Cluster Backup",
   "format": "JSON",
-  "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "version": "v1.0.0",
-   "name": "pxc-operator",
-   "displayName": "Pxc Operator",
-   "description": "",
-   "status": "ignored",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "registrant": {
-    "hostname": "artifacthub"
-   },
-   "category": {
-    "name": "Uncategorized",
-    "metadata": null
-   },
-   "subCategory": "Uncategorized",
-   "metadata": {
-    "capabilities": "",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
     "defaultData": "",
+    "genealogy": "",
     "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false,
+    "shapePolygonPoints": ""
+  },
+  "model": {
+    "category": {
+      "name": "Uncategorized"
+    },
+    "displayName": "Pxc Operator",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "metadata": {
+      "capabilities": null,
+      "defaultData": "",
+      "isAnnotation": false,
+      "primaryColor": "#00B39F",
+      "secondaryColor": "#00D3A9",
+      "shape": "circle",
+      "shapePolygonPoints": "",
+      "styleOverrides": "",
+      "styles": "",
+      "svgColor": "",
+      "svgComplete": "",
+      "svgWhite": ""
+    },
+    "model": {
+      "version": "1.14.1"
+    },
+    "name": "pxc-operator",
+    "registrant": {
+      "created_at": "0001-01-01T00:00:00Z",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "deleted_at": "0001-01-01T00:00:00Z",
+      "id": "00000000-0000-0000-0000-000000000000",
+      "kind": "artifacthub",
+      "name": "Artifact Hub",
+      "status": "discovered",
+      "sub_type": "",
+      "type": "registry",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "user_id": "00000000-0000-0000-0000-000000000000"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "status": "ignored",
+    "subCategory": "Uncategorized",
+    "version": "v1.0.0",
+    "components": null,
+    "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "ignored",
+  "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
-    "shapePolygonPoints": "",
-    "styleOverrides": "",
-    "styles": "",
     "svgColor": "",
-    "svgComplete": "",
     "svgWhite": ""
-   },
-   "model": {
-    "version": "1.14.1"
-   },
-   "components": null,
-   "relationships": null
   },
-  "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
-   "primaryColor": "#00B39F",
-   "secondaryColor": "#00D3A9",
-   "shape": "circle",
-   "shapePolygonPoints": "",
-   "status": "ignored",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
-   "svgColor": "",
-   "svgComplete": "",
-   "svgWhite": ""
-  },
-  "component": {
-   "kind": "PerconaXtraDBClusterBackup",
-   "version": "pxc.percona.com/v1",
-   "schema": "{\n \"properties\": {\n  \"priorityClassName\": {\n   \"type\": \"string\"\n  },\n  \"schedulerName\": {\n   \"type\": \"string\"\n  },\n  \"spec\": {\n   \"properties\": {\n    \"containerOptions\": {\n     \"properties\": {\n      \"args\": {\n       \"properties\": {\n        \"xbcloud\": {\n         \"items\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"array\"\n        },\n        \"xbstream\": {\n         \"items\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"array\"\n        },\n        \"xtrabackup\": {\n         \"items\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"array\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"env\": {\n       \"items\": {\n        \"properties\": {\n         \"name\": {\n          \"type\": \"string\"\n         },\n         \"value\": {\n          \"type\": \"string\"\n         },\n         \"valueFrom\": {\n          \"properties\": {\n           \"configMapKeyRef\": {\n            \"properties\": {\n             \"key\": {\n              \"type\": \"string\"\n             },\n             \"name\": {\n              \"type\": \"string\"\n             },\n             \"optional\": {\n              \"type\": \"boolean\"\n             }\n            },\n            \"required\": [\n             \"key\"\n            ],\n            \"type\": \"object\"\n           },\n           \"fieldRef\": {\n            \"properties\": {\n             \"apiVersion\": {\n              \"type\": \"string\"\n             },\n             \"fieldPath\": {\n              \"type\": \"string\"\n             }\n            },\n            \"required\": [\n             \"fieldPath\"\n            ],\n            \"type\": \"object\"\n           },\n           \"resourceFieldRef\": {\n            \"properties\": {\n             \"containerName\": {\n              \"type\": \"string\"\n             },\n             \"divisor\": {\n              \"anyOf\": [\n               {\n                \"type\": \"integer\"\n               },\n               {\n                \"type\": \"string\"\n               }\n              ],\n              \"pattern\": \"^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$\",\n              \"x-kubernetes-int-or-string\": true\n             },\n             \"resource\": {\n              \"type\": \"string\"\n             }\n            },\n            \"required\": [\n             \"resource\"\n            ],\n            \"type\": \"object\"\n           },\n           \"secretKeyRef\": {\n            \"properties\": {\n             \"key\": {\n              \"type\": \"string\"\n             },\n             \"name\": {\n              \"type\": \"string\"\n             },\n             \"optional\": {\n              \"type\": \"boolean\"\n             }\n            },\n            \"required\": [\n             \"key\"\n            ],\n            \"type\": \"object\"\n           }\n          },\n          \"type\": \"object\"\n         }\n        },\n        \"required\": [\n         \"name\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"pxcCluster\": {\n     \"type\": \"string\"\n    },\n    \"storageName\": {\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Percona Xtra DB Cluster Backup\",\n \"type\": \"object\"\n}"
-  }
- }
+  "version": "v1.0.0"
+}

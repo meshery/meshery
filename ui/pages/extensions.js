@@ -22,7 +22,7 @@ const INITIAL_GRID_SIZE = { lg: 6, md: 12, xs: 12 };
 
 const MeshMapSignUpcard = ({ classes, hasAccessToMeshMap = false }) => {
   const handleSignUp = (e) => {
-    window.open('https://layer5.io/meshmap', '_blank');
+    window.open('https://docs.layer5.io/meshmap', '_blank');
     e.stopPropagation();
   };
 
@@ -36,7 +36,7 @@ const MeshMapSignUpcard = ({ classes, hasAccessToMeshMap = false }) => {
         <Typography className={classes.frontSideDescription} variant="body">
           <img className={classes.img} src="/static/img/meshmap.svg" />
           Collaboratively design and manage your Kubernetes clusters, service mesh deployments, and
-          cloud native apps. MeshMap is now in private beta.{' '}
+          cloud native apps. MeshMap is now in public beta.{' '}
           {!hasAccessToMeshMap && 'Sign-up today to for early access!'}
         </Typography>
         {
@@ -160,10 +160,50 @@ const MesheryPerformanceAction = ({ classes, githubActionEnabled = false }) => {
   );
 };
 
+const MesheryDockerExtensionLogo = withStyles(MesheryPerformacneLogoStyles)(({ classes }) => {
+  return <img className={classes.img} src="/static/img/docker.svg" />;
+});
+
+const MesheryDockerExtension = ({ classes }) => {
+  const handleDownload = (e) => {
+    window.open('https://hub.docker.com/extensions/meshery/docker-extension-meshery', '_blank');
+    e.stopPropagation();
+  };
+
+  return (
+    <Grid item {...LARGE_6_MED_12_GRID_STYLE}>
+      <div className={classes.card}>
+        <Typography className={classes.frontContent} variant="h5" component="div">
+          Meshery Docker Extension
+        </Typography>
+
+        <Typography className={classes.frontSideDescription} variant="body">
+          <MesheryDockerExtensionLogo />
+          Connect Meshery to your Kubernetes cluster via Docker Desktop and let MeshSync discover
+          your clusters. Use MeshMap&apos;s no-code designer to collaboratively design and manage
+          your infrastructure with ready-made patterns from Meshery Catalog.
+        </Typography>
+        {
+          <div style={{ textAlign: 'right' }}>
+            <Button
+              variant="contained"
+              color="primary"
+              className={classes.button}
+              onClick={(e) => handleDownload(e)}
+            >
+              Download
+            </Button>
+          </div>
+        }
+      </div>
+    </Grid>
+  );
+};
+
 export const WrappedMeshMapSignupCard = withStyles(styles)(MeshMapSignUpcard);
 export const WrappedMeshMapSnapShopCard = withStyles(styles)(MeshMapSnapShotCard);
 export const WrappedMesheryPerformanceAction = withStyles(styles)(MesheryPerformanceAction);
-
+export const WrappedMesheryDockerExtension = withStyles(styles)(MesheryDockerExtension);
 const Extensions = ({ classes, toggleCatalogContent, capabilitiesRegistry }) => {
   const [catalogContent, setCatalogContent] = useState(true);
   const [extensionPreferences, setExtensionPreferences] = useState({});
@@ -232,6 +272,7 @@ const Extensions = ({ classes, toggleCatalogContent, capabilitiesRegistry }) => 
           <WrappedMeshMapSnapShopCard githubActionEnabled={false} />
           <WrappedMesheryPerformanceAction githubActionEnabled={false} />
           <WrappedMeshMapSignupCard hasAccessToMeshMap={hasAccessToMeshMap} />
+          <WrappedMesheryDockerExtension />
           <Grid item {...INITIAL_GRID_SIZE}>
             <div className={classes.card}>
               <Typography className={classes.frontContent} variant="h5" component="div">

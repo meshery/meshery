@@ -28,9 +28,12 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshkit/models/patterns"
+	"github.com/meshery/schemas/models/v1beta1/pattern"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"gopkg.in/yaml.v2"
 )
 
 var (
@@ -65,7 +68,7 @@ mesheryctl design onboard -f ./pattern.yml -s "Kubernetes Manifest"
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var req *http.Request
 		var err error
-
+		var patternFile *pattern.PatternFile
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			utils.Log.Error(err)
@@ -113,11 +116,12 @@ mesheryctl design onboard -f ./pattern.yml -s "Kubernetes Manifest"
 				utils.Log.Error(utils.ErrNotFound(errors.New("no design found with the given name")))
 				return nil
 			} else if len(response.Patterns) == 1 {
-				patternFile = response.Patterns[0].PatternFile
+
+				patternFile, _ = patterns.GetPatternFormat(response.Patterns[0].PatternFile)
 			} else {
 				// Multiple patterns with same name
 				index = multiplepatternsConfirmation(response.Patterns)
-				patternFile = response.Patterns[index].PatternFile
+				patternFile, _ = patterns.GetPatternFormat(response.Patterns[index].PatternFile)
 			}
 		} else {
 			// Check if a valid source type is set
@@ -130,11 +134,12 @@ mesheryctl design onboard -f ./pattern.yml -s "Kubernetes Manifest"
 				return nil
 			}
 
-			patternFile = pattern.PatternFile
+			patternFile, _ = patterns.GetPatternFormat(pattern.PatternFile)
 		}
 
+		patternFileByt, _ := yaml.Marshal(patternFile)
 		payload := models.MesheryPatternFileDeployPayload{
-			PatternFile: patternFile,
+			PatternFile: string(patternFileByt),
 		}
 
 		payloadBytes, err := json.Marshal(payload)
@@ -173,12 +178,14 @@ mesheryctl design onboard -f ./pattern.yml -s "Kubernetes Manifest"
 func multiplepatternsConfirmation(profiles []models.MesheryPattern) int {
 	reader := bufio.NewReader(os.Stdin)
 
+	patternFileByt, _ := yaml.Marshal(patternFile)
+
 	for index, a := range profiles {
 		fmt.Printf("Index: %v\n", index)
 		fmt.Printf("Name: %v\n", a.Name)
 		fmt.Printf("ID: %s\n", a.ID.String())
-		fmt.Printf("designFile:\n")
-		fmt.Printf(a.PatternFile)
+		fmt.Printf("patternFile:\n")
+		fmt.Printf(string(patternFileByt))
 		fmt.Println("---------------------")
 	}
 
