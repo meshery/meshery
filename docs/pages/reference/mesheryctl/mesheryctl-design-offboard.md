@@ -1,43 +1,35 @@
 ---
 layout: default
-title: mesheryctl-exp-environment-list
-permalink: reference/mesheryctl/exp/environment/list
-redirect_from: reference/mesheryctl/exp/environment/list/
+title: mesheryctl-design-offboard
+permalink: reference/mesheryctl/design/offboard
+redirect_from: reference/mesheryctl/design/offboard/
 type: reference
 display-title: "false"
 language: en
-command: exp
-subcommand: environment
+command: design
+subcommand: offboard
 ---
 
-# mesheryctl exp environment list
+# mesheryctl design offboard
 
-List registered environments
+Offboard design
 
 ## Synopsis
 
-List name of all registered environments
+Offboard design will trigger undeploy of design
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp environment list [flags]
+mesheryctl design offboard [flags]
 
 </div>
 </pre> 
 
 ## Examples
 
-List all registered environment
+Offboard design by providing file path
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp environment list --orgID [orgId]
-
-</div>
-</pre> 
-
-Documentation for environment can be found at:
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-https://docs.layer5.io/cloud/spaces/environments/
+mesheryctl design offboard -f [filepath]
 
 </div>
 </pre> 
@@ -46,8 +38,8 @@ https://docs.layer5.io/cloud/spaces/environments/
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -h, --help           help for list
-  -o, --orgId string   Organization ID
+  -f, --file string   Path to design file
+  -h, --help          help for offboard
 
 </div>
 </pre>
@@ -57,6 +49,7 @@ https://docs.layer5.io/cloud/spaces/environments/
 <pre class='codeblock-pre'>
 <div class='codeblock'>
       --config string   path to config file (default "/home/aadhitya/.meshery/config.yaml")
+  -t, --token string    Path to token file default from current context
   -v, --verbose         verbose output
 
 </div>

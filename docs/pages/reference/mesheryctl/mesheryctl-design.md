@@ -1,43 +1,60 @@
 ---
 layout: default
-title: mesheryctl-exp-environment-list
-permalink: reference/mesheryctl/exp/environment/list
-redirect_from: reference/mesheryctl/exp/environment/list/
+title: mesheryctl-design
+permalink: reference/mesheryctl/design
+redirect_from: reference/mesheryctl/design/
 type: reference
 display-title: "false"
 language: en
-command: exp
-subcommand: environment
+command: design
+subcommand: nil
 ---
 
-# mesheryctl exp environment list
+# mesheryctl design
 
-List registered environments
+Cloud Native Designs Management
 
 ## Synopsis
 
-List name of all registered environments
+Manage cloud and cloud native infrastructure using predefined designs.
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp environment list [flags]
+mesheryctl design [flags]
 
 </div>
 </pre> 
 
 ## Examples
 
-List all registered environment
+Apply design file:
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp environment list --orgID [orgId]
+mesheryctl design apply --file [path to design file | URL of the file]
 
 </div>
 </pre> 
 
-Documentation for environment can be found at:
+Delete design file:
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-https://docs.layer5.io/cloud/spaces/environments/
+mesheryctl design delete --file [path to design file]
+
+</div>
+</pre> 
+
+View design file:
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl design view [design name | ID]
+
+</div>
+</pre> 
+
+List all designs:
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl design list
 
 </div>
 </pre> 
@@ -46,8 +63,8 @@ https://docs.layer5.io/cloud/spaces/environments/
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -h, --help           help for list
-  -o, --orgId string   Organization ID
+  -h, --help           help for design
+  -t, --token string   Path to token file default from current context
 
 </div>
 </pre>

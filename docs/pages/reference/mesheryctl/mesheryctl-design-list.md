@@ -1,43 +1,35 @@
 ---
 layout: default
-title: mesheryctl-exp-environment-list
-permalink: reference/mesheryctl/exp/environment/list
-redirect_from: reference/mesheryctl/exp/environment/list/
+title: mesheryctl-design-list
+permalink: reference/mesheryctl/design/list
+redirect_from: reference/mesheryctl/design/list/
 type: reference
 display-title: "false"
 language: en
-command: exp
-subcommand: environment
+command: design
+subcommand: list
 ---
 
-# mesheryctl exp environment list
+# mesheryctl design list
 
-List registered environments
+List designs
 
 ## Synopsis
 
-List name of all registered environments
+Display list of all available design files.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp environment list [flags]
+mesheryctl design list [flags]
 
 </div>
 </pre> 
 
 ## Examples
 
-List all registered environment
+list all available designs
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp environment list --orgID [orgId]
-
-</div>
-</pre> 
-
-Documentation for environment can be found at:
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-https://docs.layer5.io/cloud/spaces/environments/
+mesheryctl design list
 
 </div>
 </pre> 
@@ -46,8 +38,9 @@ https://docs.layer5.io/cloud/spaces/environments/
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -h, --help           help for list
-  -o, --orgId string   Organization ID
+  -h, --help       help for list
+  -p, --page int   (optional) List next set of designs with --page (default = 1) (default 1)
+  -v, --verbose    Display full length user and design file identifiers
 
 </div>
 </pre>
@@ -57,10 +50,15 @@ https://docs.layer5.io/cloud/spaces/environments/
 <pre class='codeblock-pre'>
 <div class='codeblock'>
       --config string   path to config file (default "/home/aadhitya/.meshery/config.yaml")
-  -v, --verbose         verbose output
+  -t, --token string    Path to token file default from current context
 
 </div>
 </pre>
+
+## Screenshots
+
+Usage of mesheryctl design list
+![pattern-list-usage](/assets/img/mesheryctl/patternList.png)
 
 ## See Also
 

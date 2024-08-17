@@ -48,7 +48,7 @@ mesheryctl exp relationship view [model-name]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "/home/aadhitya/.meshery/config.yaml")
   -v, --verbose         verbose output
 
 </div>

@@ -1,43 +1,35 @@
 ---
 layout: default
-title: mesheryctl-exp-environment-list
-permalink: reference/mesheryctl/exp/environment/list
-redirect_from: reference/mesheryctl/exp/environment/list/
+title: mesheryctl-design-delete
+permalink: reference/mesheryctl/design/delete
+redirect_from: reference/mesheryctl/design/delete/
 type: reference
 display-title: "false"
 language: en
-command: exp
-subcommand: environment
+command: design
+subcommand: delete
 ---
 
-# mesheryctl exp environment list
+# mesheryctl design delete
 
-List registered environments
+Delete design file
 
 ## Synopsis
 
-List name of all registered environments
+delete design file will trigger deletion of the design file
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp environment list [flags]
+mesheryctl design delete [flags]
 
 </div>
 </pre> 
 
 ## Examples
 
-List all registered environment
+delete a design file
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp environment list --orgID [orgId]
-
-</div>
-</pre> 
-
-Documentation for environment can be found at:
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-https://docs.layer5.io/cloud/spaces/environments/
+mesheryctl design delete [file | URL]
 
 </div>
 </pre> 
@@ -46,8 +38,8 @@ https://docs.layer5.io/cloud/spaces/environments/
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -h, --help           help for list
-  -o, --orgId string   Organization ID
+  -f, --file string   Path to design file
+  -h, --help          help for delete
 
 </div>
 </pre>
@@ -57,6 +49,7 @@ https://docs.layer5.io/cloud/spaces/environments/
 <pre class='codeblock-pre'>
 <div class='codeblock'>
       --config string   path to config file (default "/home/aadhitya/.meshery/config.yaml")
+  -t, --token string    Path to token file default from current context
   -v, --verbose         verbose output
 
 </div>

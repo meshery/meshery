@@ -1,43 +1,43 @@
 ---
 layout: default
-title: mesheryctl-exp-environment-list
-permalink: reference/mesheryctl/exp/environment/list
-redirect_from: reference/mesheryctl/exp/environment/list/
+title: mesheryctl-design-apply
+permalink: reference/mesheryctl/design/apply
+redirect_from: reference/mesheryctl/design/apply/
 type: reference
 display-title: "false"
 language: en
-command: exp
-subcommand: environment
+command: design
+subcommand: apply
 ---
 
-# mesheryctl exp environment list
+# mesheryctl design apply
 
-List registered environments
+Apply design file
 
 ## Synopsis
 
-List name of all registered environments
+Apply design will trigger deploy of the design file
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp environment list [flags]
+mesheryctl design apply [flags]
 
 </div>
 </pre> 
 
 ## Examples
 
-List all registered environment
+apply a design file
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp environment list --orgID [orgId]
+mesheryctl design apply -f [file | URL]
 
 </div>
 </pre> 
 
-Documentation for environment can be found at:
+deploy a saved design
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-https://docs.layer5.io/cloud/spaces/environments/
+mesheryctl design apply [design-name]
 
 </div>
 </pre> 
@@ -46,8 +46,9 @@ https://docs.layer5.io/cloud/spaces/environments/
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -h, --help           help for list
-  -o, --orgId string   Organization ID
+  -f, --file string   Path to design file
+  -h, --help          help for apply
+      --skip-save     Skip saving a design
 
 </div>
 </pre>
@@ -57,10 +58,16 @@ https://docs.layer5.io/cloud/spaces/environments/
 <pre class='codeblock-pre'>
 <div class='codeblock'>
       --config string   path to config file (default "/home/aadhitya/.meshery/config.yaml")
+  -t, --token string    Path to token file default from current context
   -v, --verbose         verbose output
 
 </div>
 </pre>
+
+## Screenshots
+
+Usage of mesheryctl design apply
+![pattern-apply-usage](/assets/img/mesheryctl/patternApply.png)
 
 ## See Also
 

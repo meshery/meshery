@@ -1,43 +1,35 @@
 ---
 layout: default
-title: mesheryctl-exp-environment-list
-permalink: reference/mesheryctl/exp/environment/list
-redirect_from: reference/mesheryctl/exp/environment/list/
+title: mesheryctl-design-view
+permalink: reference/mesheryctl/design/view
+redirect_from: reference/mesheryctl/design/view/
 type: reference
 display-title: "false"
 language: en
-command: exp
-subcommand: environment
+command: design
+subcommand: view
 ---
 
-# mesheryctl exp environment list
+# mesheryctl design view
 
-List registered environments
+Display design(s)
 
 ## Synopsis
 
-List name of all registered environments
+Displays the contents of a specific design based on name or id
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp environment list [flags]
+mesheryctl design view design name [flags]
 
 </div>
 </pre> 
 
 ## Examples
 
-List all registered environment
+view a design
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp environment list --orgID [orgId]
-
-</div>
-</pre> 
-
-Documentation for environment can be found at:
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-https://docs.layer5.io/cloud/spaces/environments/
+mesheryctl design view [design-name | ID]
 
 </div>
 </pre> 
@@ -46,8 +38,9 @@ https://docs.layer5.io/cloud/spaces/environments/
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -h, --help           help for list
-  -o, --orgId string   Organization ID
+  -a, --all                    (optional) view all designs available
+  -h, --help                   help for view
+  -o, --output-format string   (optional) format to display in [json|yaml] (default "yaml")
 
 </div>
 </pre>
@@ -57,10 +50,16 @@ https://docs.layer5.io/cloud/spaces/environments/
 <pre class='codeblock-pre'>
 <div class='codeblock'>
       --config string   path to config file (default "/home/aadhitya/.meshery/config.yaml")
+  -t, --token string    Path to token file default from current context
   -v, --verbose         verbose output
 
 </div>
 </pre>
+
+## Screenshots
+
+Usage of mesheryctl design view
+![pattern-view-usage](/assets/img/mesheryctl/patternView.png)
 
 ## See Also
 

@@ -1,43 +1,42 @@
 ---
 layout: default
-title: mesheryctl-exp-environment-list
-permalink: reference/mesheryctl/exp/environment/list
-redirect_from: reference/mesheryctl/exp/environment/list/
+title: mesheryctl-design-onboard
+permalink: reference/mesheryctl/design/onboard
+redirect_from: reference/mesheryctl/design/onboard/
 type: reference
 display-title: "false"
 language: en
-command: exp
-subcommand: environment
+command: design
+subcommand: onboard
 ---
 
-# mesheryctl exp environment list
+# mesheryctl design onboard
 
-List registered environments
+Onboard design
 
 ## Synopsis
 
-List name of all registered environments
+Command will trigger deploy of design
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp environment list [flags]
+mesheryctl design onboard [flags]
 
 </div>
 </pre> 
 
 ## Examples
 
-List all registered environment
+Onboard design by providing file path
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp environment list --orgID [orgId]
+mesheryctl design onboard -f [filepath] -s [source type]
 
 </div>
 </pre> 
 
-Documentation for environment can be found at:
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-https://docs.layer5.io/cloud/spaces/environments/
+mesheryctl design onboard -f ./pattern.yml -s "Kubernetes Manifest"
 
 </div>
 </pre> 
@@ -46,8 +45,10 @@ https://docs.layer5.io/cloud/spaces/environments/
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -h, --help           help for list
-  -o, --orgId string   Organization ID
+  -f, --file string          Path to design file
+  -h, --help                 help for onboard
+      --skip-save            Skip saving a design
+  -s, --source-type string   Type of source file (ex. manifest / compose / helm)
 
 </div>
 </pre>
@@ -57,10 +58,16 @@ https://docs.layer5.io/cloud/spaces/environments/
 <pre class='codeblock-pre'>
 <div class='codeblock'>
       --config string   path to config file (default "/home/aadhitya/.meshery/config.yaml")
+  -t, --token string    Path to token file default from current context
   -v, --verbose         verbose output
 
 </div>
 </pre>
+
+## Screenshots
+
+Usage of mesheryctl design onboard
+![pattern-onboard-usage](/assets/img/mesheryctl/pattern-onboard.png)
 
 ## See Also
 
