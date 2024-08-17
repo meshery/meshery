@@ -113,7 +113,7 @@ func selectRelationshipPrompt(relationship []relationship.RelationshipDefinition
 
 	for _, _rel := range relationship {
 		// here display Kind and EvaluationQuery as relationship name
-		relationshipName := fmt.Sprintf("kind: %s, EvaluationPolicy: %s, SubType: %s", _rel.Kind, _rel.EvaluationQuery, _rel.SubType)
+		relationshipName := fmt.Sprintf("kind: %s, EvaluationPolicy: %s, SubType: %s", _rel.Kind, *_rel.EvaluationQuery, _rel.SubType)
 		relationshipNames = append(relationshipNames, relationshipName)
 	}
 
