@@ -20,14 +20,14 @@ jobs:
         with:
           name: meshery-ui
           path: /home/runner/work/meshery/meshery/ui/out
-          github-token: ${{ github.GH_ACCESS_TOKEN }}
+          github-token: ${{ secrets.GH_ACCESS_TOKEN }}
           run-id: ${{ github.event.workflow_run.id }}
       - name: Download provider-ui artifacts
         uses: actions/download-artifact@v4
         with:
           name: provider-ui
           path: /home/runner/work/meshery/meshery/provider-ui/out
-          github-token: ${{ github.GH_ACCESS_TOKEN }}
+          github-token: ${{ secrets.GH_ACCESS_TOKEN }}
           run-id: ${{ github.event.workflow_run.id }}
       - name: Check out code
         uses: actions/checkout@v4
