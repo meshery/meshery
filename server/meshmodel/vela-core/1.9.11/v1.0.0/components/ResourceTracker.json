@@ -1,9 +1,9 @@
 {
   "capabilities": null,
   "component": {
-    "kind": "ResourceTracker",
-    "schema": "{\n \"description\": \"An ResourceTracker represents a tracker for track cross namespace resources\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ResourceTrackerSpec define the spec of resourceTracker\",\n   \"properties\": {\n    \"applicationGeneration\": {\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"compression\": {\n     \"description\": \"ResourceTrackerCompression represents the compressed components in ResourceTracker.\",\n     \"properties\": {\n      \"data\": {\n       \"type\": \"string\"\n      },\n      \"type\": {\n       \"description\": \"Type the compression type\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"managedResources\": {\n     \"items\": {\n      \"description\": \"ManagedResource define the resource to be managed by ResourceTracker\",\n      \"properties\": {\n       \"apiVersion\": {\n        \"description\": \"API version of the referent.\",\n        \"type\": \"string\"\n       },\n       \"cluster\": {\n        \"type\": \"string\"\n       },\n       \"component\": {\n        \"type\": \"string\"\n       },\n       \"creator\": {\n        \"type\": \"string\"\n       },\n       \"deleted\": {\n        \"description\": \"Deleted marks the resource to be deleted\",\n        \"type\": \"boolean\"\n       },\n       \"fieldPath\": {\n        \"description\": \"If referring to a piece of an object instead of an entire object, this string should contain a valid JSON/Go field access statement, such as desiredState.manifest.containers[2]. For example, if the object reference is to a container within a pod, this would take on a value like: \\\"spec.containers{name}\\\" (where \\\"name\\\" refers to the name of the container that triggered the event) or if no container name is specified \\\"spec.containers[2]\\\" (container with index 2 in this pod). This syntax is chosen only to have some well-defined way of referencing a part of an object. TODO: this design is not final and this field is subject to change in the future.\",\n        \"type\": \"string\"\n       },\n       \"kind\": {\n        \"description\": \"Kind of the referent. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds\",\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n        \"type\": \"string\"\n       },\n       \"namespace\": {\n        \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n        \"type\": \"string\"\n       },\n       \"raw\": {\n        \"format\": \"textarea\",\n        \"type\": \"string\"\n       },\n       \"resourceVersion\": {\n        \"description\": \"Specific resourceVersion to which this reference is made, if any. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#concurrency-control-and-consistency\",\n        \"type\": \"string\"\n       },\n       \"skipGC\": {\n        \"description\": \"SkipGC marks the resource to skip gc\",\n        \"type\": \"boolean\"\n       },\n       \"trait\": {\n        \"type\": \"string\"\n       },\n       \"uid\": {\n        \"description\": \"UID of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#uids\",\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\",\n      \"x-kubernetes-map-type\": \"atomic\"\n     },\n     \"type\": \"array\"\n    },\n    \"type\": {\n     \"description\": \"ResourceTrackerType defines the type of resourceTracker\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"applicationGeneration\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Resource Tracker\",\n \"type\": \"object\"\n}",
-    "version": "core.oam.dev/v1beta1"
+   "kind": "ResourceTracker",
+   "schema": "{\n \"description\": \"An ResourceTracker represents a tracker for track cross namespace resources\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ResourceTrackerSpec define the spec of resourceTracker\",\n   \"properties\": {\n    \"applicationGeneration\": {\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"compression\": {\n     \"description\": \"ResourceTrackerCompression represents the compressed components in ResourceTracker.\",\n     \"properties\": {\n      \"data\": {\n       \"type\": \"string\"\n      },\n      \"type\": {\n       \"description\": \"Type the compression type\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"managedResources\": {\n     \"items\": {\n      \"description\": \"ManagedResource define the resource to be managed by ResourceTracker\",\n      \"properties\": {\n       \"apiVersion\": {\n        \"description\": \"API version of the referent.\",\n        \"type\": \"string\"\n       },\n       \"cluster\": {\n        \"type\": \"string\"\n       },\n       \"component\": {\n        \"type\": \"string\"\n       },\n       \"creator\": {\n        \"type\": \"string\"\n       },\n       \"deleted\": {\n        \"description\": \"Deleted marks the resource to be deleted\",\n        \"type\": \"boolean\"\n       },\n       \"fieldPath\": {\n        \"description\": \"If referring to a piece of an object instead of an entire object, this string should contain a valid JSON/Go field access statement, such as desiredState.manifest.containers[2]. For example, if the object reference is to a container within a pod, this would take on a value like: \\\"spec.containers{name}\\\" (where \\\"name\\\" refers to the name of the container that triggered the event) or if no container name is specified \\\"spec.containers[2]\\\" (container with index 2 in this pod). This syntax is chosen only to have some well-defined way of referencing a part of an object. TODO: this design is not final and this field is subject to change in the future.\",\n        \"type\": \"string\"\n       },\n       \"kind\": {\n        \"description\": \"Kind of the referent. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds\",\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n        \"type\": \"string\"\n       },\n       \"namespace\": {\n        \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n        \"type\": \"string\"\n       },\n       \"raw\": {\n        \"format\": \"textarea\",\n        \"type\": \"string\"\n       },\n       \"resourceVersion\": {\n        \"description\": \"Specific resourceVersion to which this reference is made, if any. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#concurrency-control-and-consistency\",\n        \"type\": \"string\"\n       },\n       \"skipGC\": {\n        \"description\": \"SkipGC marks the resource to skip gc\",\n        \"type\": \"boolean\"\n       },\n       \"trait\": {\n        \"type\": \"string\"\n       },\n       \"uid\": {\n        \"description\": \"UID of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#uids\",\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\",\n      \"x-kubernetes-map-type\": \"atomic\"\n     },\n     \"type\": \"array\"\n    },\n    \"type\": {\n     \"description\": \"ResourceTrackerType defines the type of resourceTracker\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"applicationGeneration\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Resource Tracker\",\n \"type\": \"object\"\n}",
+   "version": "core.oam.dev/v1beta1"
   },
   "configuration": null,
   "description": "",
@@ -11,66 +11,66 @@
   "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
-    "defaultData": "",
-    "genealogy": "",
-    "isAnnotation": false,
-    "isNamespaced": false,
-    "published": false,
-    "shapePolygonPoints": ""
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "published": false,
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": ""
   },
   "model": {
-    "category": {
-      "name": "App Definition and Development"
-    },
-    "displayName": "Vela Core",
+   "category": {
+    "name": "App Definition and Development"
+   },
+   "displayName": "Vela Core",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "defaultData": "",
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "model": {
+    "version": "1.9.11"
+   },
+   "name": "vela-core",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
     "id": "00000000-0000-0000-0000-000000000000",
-    "metadata": {
-      "capabilities": null,
-      "defaultData": "",
-      "isAnnotation": false,
-      "primaryColor": "#00B39F",
-      "secondaryColor": "#00D3A9",
-      "shape": "circle",
-      "shapePolygonPoints": "",
-      "styleOverrides": "",
-      "styles": "",
-      "svgColor": "",
-      "svgComplete": "",
-      "svgWhite": ""
-    },
-    "model": {
-      "version": "1.9.11"
-    },
-    "name": "vela-core",
-    "registrant": {
-      "created_at": "0001-01-01T00:00:00Z",
-      "credential_id": "00000000-0000-0000-0000-000000000000",
-      "deleted_at": "0001-01-01T00:00:00Z",
-      "id": "00000000-0000-0000-0000-000000000000",
-      "kind": "artifacthub",
-      "name": "Artifact Hub",
-      "status": "discovered",
-      "sub_type": "",
-      "type": "registry",
-      "updated_at": "0001-01-01T00:00:00Z",
-      "user_id": "00000000-0000-0000-0000-000000000000"
-    },
-    "connection_id": "00000000-0000-0000-0000-000000000000",
-    "schemaVersion": "models.meshery.io/v1beta1",
-    "status": "ignored",
-    "subCategory": "Application Definition \u0026 Image Build",
-    "version": "v1.0.0",
-    "components": null,
-    "relationships": null
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "subCategory": "Application Definition \u0026 Image Build",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
   },
   "schemaVersion": "components.meshery.io/v1beta1",
   "status": "ignored",
   "styles": {
-    "primaryColor": "#00B39F",
-    "secondaryColor": "#00D3A9",
-    "shape": "circle",
-    "svgColor": "",
-    "svgWhite": ""
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "svgColor": "",
+   "svgWhite": ""
   },
   "version": "v1.0.0"
-}
+ }

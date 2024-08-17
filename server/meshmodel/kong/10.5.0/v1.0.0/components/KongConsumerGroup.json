@@ -1,9 +1,9 @@
 {
   "capabilities": null,
   "component": {
-    "kind": "KongConsumerGroup",
-    "schema": "{\n \"description\": \"KongConsumerGroup is the Schema for the kongconsumergroups API.\",\n \"properties\": {},\n \"title\": \"Kong Consumer Group\",\n \"type\": \"object\"\n}",
-    "version": "configuration.konghq.com/v1beta1"
+   "kind": "KongConsumerGroup",
+   "schema": "{\n \"description\": \"KongConsumerGroup is the Schema for the kongconsumergroups API.\",\n \"properties\": {},\n \"title\": \"Kong Consumer Group\",\n \"type\": \"object\"\n}",
+   "version": "configuration.konghq.com/v1beta1"
   },
   "configuration": null,
   "description": "",
@@ -11,55 +11,55 @@
   "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
-    "defaultData": "",
-    "genealogy": "",
-    "isAnnotation": false,
-    "isNamespaced": true,
-    "published": false,
-    "shapePolygonPoints": ""
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "published": false,
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": ""
   },
   "model": {
-    "category": {
-      "name": "Cloud Native Network"
-    },
-    "displayName": "kong",
+   "category": {
+    "name": "Cloud Native Network"
+   },
+   "displayName": "kong",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "source_uri": "https://charts.bitnami.com/bitnami/kong-10.5.0.tgz",
+    "svgColor": "",
+    "svgWhite": ""
+   },
+   "model": {
+    "version": "10.5.0"
+   },
+   "name": "kong",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
     "id": "00000000-0000-0000-0000-000000000000",
-    "metadata": {
-      "source_uri": "https://charts.bitnami.com/bitnami/kong-10.5.0.tgz",
-      "svgColor": "",
-      "svgWhite": ""
-    },
-    "model": {
-      "version": "10.5.0"
-    },
-    "name": "kong",
-    "registrant": {
-      "created_at": "0001-01-01T00:00:00Z",
-      "credential_id": "00000000-0000-0000-0000-000000000000",
-      "deleted_at": "0001-01-01T00:00:00Z",
-      "id": "00000000-0000-0000-0000-000000000000",
-      "kind": "artifacthub",
-      "name": "Artifact Hub",
-      "status": "discovered",
-      "sub_type": "",
-      "type": "registry",
-      "updated_at": "0001-01-01T00:00:00Z",
-      "user_id": "00000000-0000-0000-0000-000000000000"
-    },
-    "connection_id": "00000000-0000-0000-0000-000000000000",
-    "schemaVersion": "models.meshery.io/v1beta1",
-    "status": "ignored",
-    "version": "v1.0.0",
-    "components": null,
-    "relationships": null
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
   },
   "schemaVersion": "components.meshery.io/v1beta1",
   "status": "ignored",
   "styles": {
-    "primaryColor": "",
-    "secondaryColor": "",
-    "svgColor": "",
-    "svgWhite": ""
+   "primaryColor": "",
+   "svgColor": "",
+   "svgWhite": ""
   },
   "version": "v1.0.0"
-}
+ }

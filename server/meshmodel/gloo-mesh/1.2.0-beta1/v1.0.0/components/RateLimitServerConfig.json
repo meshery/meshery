@@ -1,9 +1,9 @@
 {
   "capabilities": null,
   "component": {
-    "kind": "RateLimitServerConfig",
-    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"A `RateLimitConfig` describes the ratelimit server policy.\",\n   \"oneOf\": [\n    {\n     \"not\": {\n      \"anyOf\": [\n       {\n        \"required\": [\n         \"raw\"\n        ]\n       }\n      ]\n     }\n    },\n    {\n     \"required\": [\n      \"raw\"\n     ]\n    }\n   ],\n   \"properties\": {\n    \"raw\": {\n     \"description\": \"Define a policy using the raw configuration format used by the server and the client (Envoy).\",\n     \"properties\": {\n      \"descriptors\": {\n       \"description\": \"The descriptors that will be applied to the server.\\n{{/* Note: validation of this field disabled because it slows down cue tremendously*/}}\",\n       \"items\": {\n        \"format\": \"textarea\",\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"setDescriptors\": {\n       \"description\": \"The set descriptors that will be applied to the server.\\n{{/* Note: validation of this field disabled because it slows down cue tremendously*/}}\",\n       \"items\": {\n        \"format\": \"textarea\",\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Rate Limit Server Config\",\n \"type\": \"object\"\n}",
-    "version": "networking.enterprise.mesh.gloo.solo.io/v1beta1"
+   "kind": "RateLimitServerConfig",
+   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"A `RateLimitConfig` describes the ratelimit server policy.\",\n   \"oneOf\": [\n    {\n     \"not\": {\n      \"anyOf\": [\n       {\n        \"required\": [\n         \"raw\"\n        ]\n       }\n      ]\n     }\n    },\n    {\n     \"required\": [\n      \"raw\"\n     ]\n    }\n   ],\n   \"properties\": {\n    \"raw\": {\n     \"description\": \"Define a policy using the raw configuration format used by the server and the client (Envoy).\",\n     \"properties\": {\n      \"descriptors\": {\n       \"description\": \"The descriptors that will be applied to the server.\\n{{/* Note: validation of this field disabled because it slows down cue tremendously*/}}\",\n       \"items\": {\n        \"format\": \"textarea\",\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"setDescriptors\": {\n       \"description\": \"The set descriptors that will be applied to the server.\\n{{/* Note: validation of this field disabled because it slows down cue tremendously*/}}\",\n       \"items\": {\n        \"format\": \"textarea\",\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Rate Limit Server Config\",\n \"type\": \"object\"\n}",
+   "version": "networking.enterprise.mesh.gloo.solo.io/v1beta1"
   },
   "configuration": null,
   "description": "",
@@ -11,66 +11,66 @@
   "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
-    "defaultData": "",
-    "genealogy": "",
-    "isAnnotation": false,
-    "isNamespaced": true,
-    "published": false,
-    "shapePolygonPoints": ""
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "published": false,
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": ""
   },
   "model": {
-    "category": {
-      "name": "Cloud Native Network"
-    },
-    "displayName": "Gloo Mesh",
+   "category": {
+    "name": "Cloud Native Network"
+   },
+   "displayName": "Gloo Mesh",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "defaultData": "",
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "model": {
+    "version": "1.2.0-beta1"
+   },
+   "name": "gloo-mesh",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
     "id": "00000000-0000-0000-0000-000000000000",
-    "metadata": {
-      "capabilities": null,
-      "defaultData": "",
-      "isAnnotation": false,
-      "primaryColor": "#00B39F",
-      "secondaryColor": "#00D3A9",
-      "shape": "circle",
-      "shapePolygonPoints": "",
-      "styleOverrides": "",
-      "styles": "",
-      "svgColor": "",
-      "svgComplete": "",
-      "svgWhite": ""
-    },
-    "model": {
-      "version": "1.2.0-beta1"
-    },
-    "name": "gloo-mesh",
-    "registrant": {
-      "created_at": "0001-01-01T00:00:00Z",
-      "credential_id": "00000000-0000-0000-0000-000000000000",
-      "deleted_at": "0001-01-01T00:00:00Z",
-      "id": "00000000-0000-0000-0000-000000000000",
-      "kind": "artifacthub",
-      "name": "Artifact Hub",
-      "status": "discovered",
-      "sub_type": "",
-      "type": "registry",
-      "updated_at": "0001-01-01T00:00:00Z",
-      "user_id": "00000000-0000-0000-0000-000000000000"
-    },
-    "connection_id": "00000000-0000-0000-0000-000000000000",
-    "schemaVersion": "models.meshery.io/v1beta1",
-    "status": "ignored",
-    "subCategory": "Service Mesh",
-    "version": "v1.0.0",
-    "components": null,
-    "relationships": null
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "subCategory": "Service Mesh",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
   },
   "schemaVersion": "components.meshery.io/v1beta1",
   "status": "ignored",
   "styles": {
-    "primaryColor": "#00B39F",
-    "secondaryColor": "#00D3A9",
-    "shape": "circle",
-    "svgColor": "",
-    "svgWhite": ""
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "svgColor": "",
+   "svgWhite": ""
   },
   "version": "v1.0.0"
-}
+ }

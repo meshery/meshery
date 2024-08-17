@@ -1,9 +1,9 @@
 {
   "capabilities": null,
   "component": {
-    "kind": "TrustPolicyStatement",
-    "schema": "{\n \"description\": \"Auto-generated derived type for TrustPolicyStatementSpec via `CustomResource`\",\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"providers\": {\n     \"description\": \"AWS EKS Cluster's OpenID Connect Providers, at least one entry is required.\",\n     \"items\": {\n      \"properties\": {\n       \"providerArn\": {\n        \"description\": \"AWS IAM OpenID Connect Provider ARN of EKS Cluster OIDC Provider.\",\n        \"type\": \"string\"\n       },\n       \"statementSid\": {\n        \"description\": \"Trust Policy Statement ID (SID), must be unique.\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"providerArn\",\n       \"statementSid\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"roleArn\": {\n     \"description\": \"AWS IAM Role ARN this statement is applied to.\",\n     \"type\": \"string\"\n    },\n    \"serviceAccountName\": {\n     \"description\": \"ServiceAccount name for which this statement was created.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"providers\",\n    \"roleArn\",\n    \"serviceAccountName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Trust Policy Statement\",\n \"type\": \"object\"\n}",
-    "version": "iam.aws.rustrial.org/v1alpha1"
+   "kind": "TrustPolicyStatement",
+   "schema": "{\n \"description\": \"Auto-generated derived type for TrustPolicyStatementSpec via `CustomResource`\",\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"providers\": {\n     \"description\": \"AWS EKS Cluster's OpenID Connect Providers, at least one entry is required.\",\n     \"items\": {\n      \"properties\": {\n       \"providerArn\": {\n        \"description\": \"AWS IAM OpenID Connect Provider ARN of EKS Cluster OIDC Provider.\",\n        \"type\": \"string\"\n       },\n       \"statementSid\": {\n        \"description\": \"Trust Policy Statement ID (SID), must be unique.\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"providerArn\",\n       \"statementSid\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"roleArn\": {\n     \"description\": \"AWS IAM Role ARN this statement is applied to.\",\n     \"type\": \"string\"\n    },\n    \"serviceAccountName\": {\n     \"description\": \"ServiceAccount name for which this statement was created.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"providers\",\n    \"roleArn\",\n    \"serviceAccountName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Trust Policy Statement\",\n \"type\": \"object\"\n}",
+   "version": "iam.aws.rustrial.org/v1alpha1"
   },
   "configuration": null,
   "description": "",
@@ -11,66 +11,66 @@
   "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
-    "defaultData": "",
-    "genealogy": "",
-    "isAnnotation": false,
-    "isNamespaced": true,
-    "published": false,
-    "shapePolygonPoints": ""
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "published": false,
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": ""
   },
   "model": {
-    "category": {
-      "name": "Uncategorized"
-    },
-    "displayName": "K8s AWS IAM Controller",
+   "category": {
+    "name": "Uncategorized"
+   },
+   "displayName": "K8s AWS IAM Controller",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "defaultData": "",
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "model": {
+    "version": "0.1.8"
+   },
+   "name": "k8s-aws-iam-controller",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
     "id": "00000000-0000-0000-0000-000000000000",
-    "metadata": {
-      "capabilities": null,
-      "defaultData": "",
-      "isAnnotation": false,
-      "primaryColor": "#00B39F",
-      "secondaryColor": "#00D3A9",
-      "shape": "circle",
-      "shapePolygonPoints": "",
-      "styleOverrides": "",
-      "styles": "",
-      "svgColor": "",
-      "svgComplete": "",
-      "svgWhite": ""
-    },
-    "model": {
-      "version": "0.1.8"
-    },
-    "name": "k8s-aws-iam-controller",
-    "registrant": {
-      "created_at": "0001-01-01T00:00:00Z",
-      "credential_id": "00000000-0000-0000-0000-000000000000",
-      "deleted_at": "0001-01-01T00:00:00Z",
-      "id": "00000000-0000-0000-0000-000000000000",
-      "kind": "artifacthub",
-      "name": "Artifact Hub",
-      "status": "discovered",
-      "sub_type": "",
-      "type": "registry",
-      "updated_at": "0001-01-01T00:00:00Z",
-      "user_id": "00000000-0000-0000-0000-000000000000"
-    },
-    "connection_id": "00000000-0000-0000-0000-000000000000",
-    "schemaVersion": "models.meshery.io/v1beta1",
-    "status": "ignored",
-    "subCategory": "Uncategorized",
-    "version": "v1.0.0",
-    "components": null,
-    "relationships": null
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "subCategory": "Uncategorized",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
   },
   "schemaVersion": "components.meshery.io/v1beta1",
   "status": "ignored",
   "styles": {
-    "primaryColor": "#00B39F",
-    "secondaryColor": "#00D3A9",
-    "shape": "circle",
-    "svgColor": "",
-    "svgWhite": ""
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "svgColor": "",
+   "svgWhite": ""
   },
   "version": "v1.0.0"
-}
+ }

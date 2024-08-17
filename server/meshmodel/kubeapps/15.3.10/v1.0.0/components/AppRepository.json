@@ -1,9 +1,9 @@
 {
   "capabilities": null,
   "component": {
-    "kind": "AppRepository",
-    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"auth\": {\n     \"properties\": {\n      \"customCA\": {\n       \"properties\": {\n        \"secretKeyRef\": {\n         \"properties\": {\n          \"key\": {\n           \"type\": \"string\"\n          },\n          \"name\": {\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"key\",\n          \"name\"\n         ],\n         \"type\": \"object\"\n        }\n       },\n       \"required\": [\n        \"secretKeyRef\"\n       ],\n       \"type\": \"object\"\n      },\n      \"header\": {\n       \"properties\": {\n        \"secretKeyRef\": {\n         \"properties\": {\n          \"key\": {\n           \"type\": \"string\"\n          },\n          \"name\": {\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"key\",\n          \"name\"\n         ],\n         \"type\": \"object\"\n        }\n       },\n       \"required\": [\n        \"secretKeyRef\"\n       ],\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"description\": {\n     \"type\": \"string\"\n    },\n    \"dockerRegistrySecrets\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"filterRule\": {\n     \"properties\": {\n      \"jq\": {\n       \"type\": \"string\"\n      },\n      \"variables\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"interval\": {\n     \"type\": \"string\"\n    },\n    \"ociRepositories\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"passCredentials\": {\n     \"type\": \"boolean\"\n    },\n    \"resyncRequests\": {\n     \"type\": \"integer\"\n    },\n    \"syncJobPodTemplate\": {\n     \"properties\": {\n      \"metadata\": {\n       \"format\": \"textarea\",\n       \"type\": \"string\"\n      },\n      \"spec\": {\n       \"format\": \"textarea\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"tlsInsecureSkipVerify\": {\n     \"type\": \"boolean\"\n    },\n    \"type\": {\n     \"enum\": [\n      \"helm\",\n      \"oci\"\n     ],\n     \"type\": \"string\"\n    },\n    \"url\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"type\",\n    \"url\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"App Repository\",\n \"type\": \"object\"\n}",
-    "version": "kubeapps.com/v1alpha1"
+   "kind": "AppRepository",
+   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"auth\": {\n     \"properties\": {\n      \"customCA\": {\n       \"properties\": {\n        \"secretKeyRef\": {\n         \"properties\": {\n          \"key\": {\n           \"type\": \"string\"\n          },\n          \"name\": {\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"key\",\n          \"name\"\n         ],\n         \"type\": \"object\"\n        }\n       },\n       \"required\": [\n        \"secretKeyRef\"\n       ],\n       \"type\": \"object\"\n      },\n      \"header\": {\n       \"properties\": {\n        \"secretKeyRef\": {\n         \"properties\": {\n          \"key\": {\n           \"type\": \"string\"\n          },\n          \"name\": {\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"key\",\n          \"name\"\n         ],\n         \"type\": \"object\"\n        }\n       },\n       \"required\": [\n        \"secretKeyRef\"\n       ],\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"description\": {\n     \"type\": \"string\"\n    },\n    \"dockerRegistrySecrets\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"filterRule\": {\n     \"properties\": {\n      \"jq\": {\n       \"type\": \"string\"\n      },\n      \"variables\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"interval\": {\n     \"type\": \"string\"\n    },\n    \"ociRepositories\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"passCredentials\": {\n     \"type\": \"boolean\"\n    },\n    \"resyncRequests\": {\n     \"type\": \"integer\"\n    },\n    \"syncJobPodTemplate\": {\n     \"properties\": {\n      \"metadata\": {\n       \"format\": \"textarea\",\n       \"type\": \"string\"\n      },\n      \"spec\": {\n       \"format\": \"textarea\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"tlsInsecureSkipVerify\": {\n     \"type\": \"boolean\"\n    },\n    \"type\": {\n     \"enum\": [\n      \"helm\",\n      \"oci\"\n     ],\n     \"type\": \"string\"\n    },\n    \"url\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"type\",\n    \"url\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"App Repository\",\n \"type\": \"object\"\n}",
+   "version": "kubeapps.com/v1alpha1"
   },
   "configuration": null,
   "description": "",
@@ -11,66 +11,66 @@
   "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
-    "defaultData": "",
-    "genealogy": "",
-    "isAnnotation": false,
-    "isNamespaced": true,
-    "published": false,
-    "shapePolygonPoints": ""
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "published": false,
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": ""
   },
   "model": {
-    "category": {
-      "name": "Uncategorized"
-    },
-    "displayName": "Kubeapps",
+   "category": {
+    "name": "Uncategorized"
+   },
+   "displayName": "Kubeapps",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "defaultData": "",
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "model": {
+    "version": "15.3.10"
+   },
+   "name": "kubeapps",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
     "id": "00000000-0000-0000-0000-000000000000",
-    "metadata": {
-      "capabilities": null,
-      "defaultData": "",
-      "isAnnotation": false,
-      "primaryColor": "#00B39F",
-      "secondaryColor": "#00D3A9",
-      "shape": "circle",
-      "shapePolygonPoints": "",
-      "styleOverrides": "",
-      "styles": "",
-      "svgColor": "",
-      "svgComplete": "",
-      "svgWhite": ""
-    },
-    "model": {
-      "version": "15.3.10"
-    },
-    "name": "kubeapps",
-    "registrant": {
-      "created_at": "0001-01-01T00:00:00Z",
-      "credential_id": "00000000-0000-0000-0000-000000000000",
-      "deleted_at": "0001-01-01T00:00:00Z",
-      "id": "00000000-0000-0000-0000-000000000000",
-      "kind": "artifacthub",
-      "name": "Artifact Hub",
-      "status": "discovered",
-      "sub_type": "",
-      "type": "registry",
-      "updated_at": "0001-01-01T00:00:00Z",
-      "user_id": "00000000-0000-0000-0000-000000000000"
-    },
-    "connection_id": "00000000-0000-0000-0000-000000000000",
-    "schemaVersion": "models.meshery.io/v1beta1",
-    "status": "ignored",
-    "subCategory": "Uncategorized",
-    "version": "v1.0.0",
-    "components": null,
-    "relationships": null
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "subCategory": "Uncategorized",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
   },
   "schemaVersion": "components.meshery.io/v1beta1",
   "status": "ignored",
   "styles": {
-    "primaryColor": "#00B39F",
-    "secondaryColor": "#00D3A9",
-    "shape": "circle",
-    "svgColor": "",
-    "svgWhite": ""
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "svgColor": "",
+   "svgWhite": ""
   },
   "version": "v1.0.0"
-}
+ }

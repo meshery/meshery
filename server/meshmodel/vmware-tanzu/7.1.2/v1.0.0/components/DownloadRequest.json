@@ -1,9 +1,9 @@
 {
   "capabilities": null,
   "component": {
-    "kind": "DownloadRequest",
-    "schema": "{\n \"description\": \"DownloadRequest is a request to download an artifact from backup object storage, such as a backup\\nlog file.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"DownloadRequestSpec is the specification for a download request.\",\n   \"properties\": {\n    \"target\": {\n     \"description\": \"Target is what to download (e.g. logs for a backup).\",\n     \"properties\": {\n      \"kind\": {\n       \"description\": \"Kind is the type of file to download.\",\n       \"enum\": [\n        \"BackupLog\",\n        \"BackupContents\",\n        \"BackupVolumeSnapshots\",\n        \"BackupItemOperations\",\n        \"BackupResourceList\",\n        \"BackupResults\",\n        \"RestoreLog\",\n        \"RestoreResults\",\n        \"RestoreResourceList\",\n        \"RestoreItemOperations\",\n        \"CSIBackupVolumeSnapshots\",\n        \"CSIBackupVolumeSnapshotContents\",\n        \"BackupVolumeInfos\",\n        \"RestoreVolumeInfo\"\n       ],\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name is the name of the Kubernetes resource with which the file is associated.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"kind\",\n      \"name\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"target\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Download Request\",\n \"type\": \"object\"\n}",
-    "version": "velero.io/v1"
+   "kind": "DownloadRequest",
+   "schema": "{\n \"description\": \"DownloadRequest is a request to download an artifact from backup object storage, such as a backup\\nlog file.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"DownloadRequestSpec is the specification for a download request.\",\n   \"properties\": {\n    \"target\": {\n     \"description\": \"Target is what to download (e.g. logs for a backup).\",\n     \"properties\": {\n      \"kind\": {\n       \"description\": \"Kind is the type of file to download.\",\n       \"enum\": [\n        \"BackupLog\",\n        \"BackupContents\",\n        \"BackupVolumeSnapshots\",\n        \"BackupItemOperations\",\n        \"BackupResourceList\",\n        \"BackupResults\",\n        \"RestoreLog\",\n        \"RestoreResults\",\n        \"RestoreResourceList\",\n        \"RestoreItemOperations\",\n        \"CSIBackupVolumeSnapshots\",\n        \"CSIBackupVolumeSnapshotContents\",\n        \"BackupVolumeInfos\",\n        \"RestoreVolumeInfo\"\n       ],\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name is the name of the Kubernetes resource with which the file is associated.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"kind\",\n      \"name\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"target\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Download Request\",\n \"type\": \"object\"\n}",
+   "version": "velero.io/v1"
   },
   "configuration": null,
   "description": "",
@@ -11,66 +11,66 @@
   "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
-    "defaultData": "",
-    "genealogy": "",
-    "isAnnotation": false,
-    "isNamespaced": true,
-    "published": false,
-    "shapePolygonPoints": ""
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "published": false,
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": ""
   },
   "model": {
-    "category": {
-      "name": "Uncategorized"
-    },
-    "displayName": "Vmware Tanzu",
+   "category": {
+    "name": "Uncategorized"
+   },
+   "displayName": "Vmware Tanzu",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "defaultData": "",
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "model": {
+    "version": "7.1.2"
+   },
+   "name": "vmware-tanzu",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
     "id": "00000000-0000-0000-0000-000000000000",
-    "metadata": {
-      "capabilities": null,
-      "defaultData": "",
-      "isAnnotation": false,
-      "primaryColor": "#00B39F",
-      "secondaryColor": "#00D3A9",
-      "shape": "circle",
-      "shapePolygonPoints": "",
-      "styleOverrides": "",
-      "styles": "",
-      "svgColor": "",
-      "svgComplete": "",
-      "svgWhite": ""
-    },
-    "model": {
-      "version": "7.1.2"
-    },
-    "name": "vmware-tanzu",
-    "registrant": {
-      "created_at": "0001-01-01T00:00:00Z",
-      "credential_id": "00000000-0000-0000-0000-000000000000",
-      "deleted_at": "0001-01-01T00:00:00Z",
-      "id": "00000000-0000-0000-0000-000000000000",
-      "kind": "artifacthub",
-      "name": "Artifact Hub",
-      "status": "discovered",
-      "sub_type": "",
-      "type": "registry",
-      "updated_at": "0001-01-01T00:00:00Z",
-      "user_id": "00000000-0000-0000-0000-000000000000"
-    },
-    "connection_id": "00000000-0000-0000-0000-000000000000",
-    "schemaVersion": "models.meshery.io/v1beta1",
-    "status": "ignored",
-    "subCategory": "Uncategorized",
-    "version": "v1.0.0",
-    "components": null,
-    "relationships": null
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "subCategory": "Uncategorized",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
   },
   "schemaVersion": "components.meshery.io/v1beta1",
   "status": "ignored",
   "styles": {
-    "primaryColor": "#00B39F",
-    "secondaryColor": "#00D3A9",
-    "shape": "circle",
-    "svgColor": "",
-    "svgWhite": ""
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "svgColor": "",
+   "svgWhite": ""
   },
   "version": "v1.0.0"
-}
+ }

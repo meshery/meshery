@@ -1,9 +1,9 @@
 {
   "capabilities": null,
   "component": {
-    "kind": "SqlGrant",
-    "schema": "{\n \"description\": \"SqlGrant is the Schema for the sqlgrant API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"SqlGrantSpec defines the desired state of SqlGrant\",\n   \"properties\": {\n    \"cleanupPolicy\": {\n     \"description\": \"Specifies how to handle deletion of a SqlUser. Valid values are: - \\\"Retain\\\" (default): keeps the external resource when the object is deleted; - \\\"Delete\\\": deletes the external resource when the object is deleted;\",\n     \"enum\": [\n      \"Retain\",\n      \"Delete\"\n     ],\n     \"type\": \"string\"\n    },\n    \"databaseRef\": {\n     \"description\": \"Reference to the SqlUser\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of the SqlObject\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the SqlObject\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"grants\": {\n     \"description\": \"List of grants\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"userRef\": {\n     \"description\": \"Reference to the SqlUser\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of the SqlObject\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the SqlObject\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"databaseRef\",\n    \"grants\",\n    \"userRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Sql Grant\",\n \"type\": \"object\"\n}",
-    "version": "stenic.io/v1alpha1"
+   "kind": "SqlGrant",
+   "schema": "{\n \"description\": \"SqlGrant is the Schema for the sqlgrant API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"SqlGrantSpec defines the desired state of SqlGrant\",\n   \"properties\": {\n    \"cleanupPolicy\": {\n     \"description\": \"Specifies how to handle deletion of a SqlUser. Valid values are: - \\\"Retain\\\" (default): keeps the external resource when the object is deleted; - \\\"Delete\\\": deletes the external resource when the object is deleted;\",\n     \"enum\": [\n      \"Retain\",\n      \"Delete\"\n     ],\n     \"type\": \"string\"\n    },\n    \"databaseRef\": {\n     \"description\": \"Reference to the SqlUser\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of the SqlObject\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the SqlObject\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"grants\": {\n     \"description\": \"List of grants\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"userRef\": {\n     \"description\": \"Reference to the SqlUser\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of the SqlObject\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the SqlObject\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"databaseRef\",\n    \"grants\",\n    \"userRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Sql Grant\",\n \"type\": \"object\"\n}",
+   "version": "stenic.io/v1alpha1"
   },
   "configuration": null,
   "description": "",
@@ -11,66 +11,66 @@
   "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
-    "defaultData": "",
-    "genealogy": "",
-    "isAnnotation": false,
-    "isNamespaced": true,
-    "published": false,
-    "shapePolygonPoints": ""
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "published": false,
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": ""
   },
   "model": {
-    "category": {
-      "name": "App Definition and Development"
-    },
-    "displayName": "SQL Operator",
+   "category": {
+    "name": "App Definition and Development"
+   },
+   "displayName": "SQL Operator",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "defaultData": "",
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "model": {
+    "version": "0.11.2"
+   },
+   "name": "sql-operator",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
     "id": "00000000-0000-0000-0000-000000000000",
-    "metadata": {
-      "capabilities": null,
-      "defaultData": "",
-      "isAnnotation": false,
-      "primaryColor": "#00B39F",
-      "secondaryColor": "#00D3A9",
-      "shape": "circle",
-      "shapePolygonPoints": "",
-      "styleOverrides": "",
-      "styles": "",
-      "svgColor": "",
-      "svgComplete": "",
-      "svgWhite": ""
-    },
-    "model": {
-      "version": "0.11.2"
-    },
-    "name": "sql-operator",
-    "registrant": {
-      "created_at": "0001-01-01T00:00:00Z",
-      "credential_id": "00000000-0000-0000-0000-000000000000",
-      "deleted_at": "0001-01-01T00:00:00Z",
-      "id": "00000000-0000-0000-0000-000000000000",
-      "kind": "artifacthub",
-      "name": "Artifact Hub",
-      "status": "discovered",
-      "sub_type": "",
-      "type": "registry",
-      "updated_at": "0001-01-01T00:00:00Z",
-      "user_id": "00000000-0000-0000-0000-000000000000"
-    },
-    "connection_id": "00000000-0000-0000-0000-000000000000",
-    "schemaVersion": "models.meshery.io/v1beta1",
-    "status": "ignored",
-    "subCategory": "Database",
-    "version": "v1.0.0",
-    "components": null,
-    "relationships": null
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "subCategory": "Database",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
   },
   "schemaVersion": "components.meshery.io/v1beta1",
   "status": "ignored",
   "styles": {
-    "primaryColor": "#00B39F",
-    "secondaryColor": "#00D3A9",
-    "shape": "circle",
-    "svgColor": "",
-    "svgWhite": ""
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "svgColor": "",
+   "svgWhite": ""
   },
   "version": "v1.0.0"
-}
+ }

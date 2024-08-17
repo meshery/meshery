@@ -1,9 +1,9 @@
 {
   "capabilities": null,
   "component": {
-    "kind": "HealthScope",
-    "schema": "{\n \"description\": \"A HealthScope determines an aggregate health status based of the health of components.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"A HealthScopeSpec defines the desired state of a HealthScope.\",\n   \"properties\": {\n    \"probe-interval\": {\n     \"description\": \"ProbeInterval is the amount of time in seconds between probing tries.\",\n     \"format\": \"int32\",\n     \"type\": \"integer\"\n    },\n    \"probe-timeout\": {\n     \"description\": \"ProbeTimeout is the amount of time in seconds to wait when receiving a response before marked failure.\",\n     \"format\": \"int32\",\n     \"type\": \"integer\"\n    },\n    \"workloadRefs\": {\n     \"description\": \"WorkloadReferences to the workloads that are in this scope.\",\n     \"items\": {\n      \"description\": \"A TypedReference refers to an object by Name, Kind, and APIVersion. It is commonly used to reference cluster-scoped objects or objects where the namespace is already known.\",\n      \"properties\": {\n       \"apiVersion\": {\n        \"description\": \"APIVersion of the referenced object.\",\n        \"type\": \"string\"\n       },\n       \"kind\": {\n        \"description\": \"Kind of the referenced object.\",\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"description\": \"Name of the referenced object.\",\n        \"type\": \"string\"\n       },\n       \"uid\": {\n        \"description\": \"UID of the referenced object.\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"apiVersion\",\n       \"kind\",\n       \"name\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"workloadRefs\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Health Scope\",\n \"type\": \"object\"\n}",
-    "version": "core.oam.dev/v1alpha2"
+   "kind": "HealthScope",
+   "schema": "{\n \"description\": \"A HealthScope determines an aggregate health status based of the health of components.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"A HealthScopeSpec defines the desired state of a HealthScope.\",\n   \"properties\": {\n    \"probe-interval\": {\n     \"description\": \"ProbeInterval is the amount of time in seconds between probing tries.\",\n     \"format\": \"int32\",\n     \"type\": \"integer\"\n    },\n    \"probe-timeout\": {\n     \"description\": \"ProbeTimeout is the amount of time in seconds to wait when receiving a response before marked failure.\",\n     \"format\": \"int32\",\n     \"type\": \"integer\"\n    },\n    \"workloadRefs\": {\n     \"description\": \"WorkloadReferences to the workloads that are in this scope.\",\n     \"items\": {\n      \"description\": \"A TypedReference refers to an object by Name, Kind, and APIVersion. It is commonly used to reference cluster-scoped objects or objects where the namespace is already known.\",\n      \"properties\": {\n       \"apiVersion\": {\n        \"description\": \"APIVersion of the referenced object.\",\n        \"type\": \"string\"\n       },\n       \"kind\": {\n        \"description\": \"Kind of the referenced object.\",\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"description\": \"Name of the referenced object.\",\n        \"type\": \"string\"\n       },\n       \"uid\": {\n        \"description\": \"UID of the referenced object.\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"apiVersion\",\n       \"kind\",\n       \"name\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"workloadRefs\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Health Scope\",\n \"type\": \"object\"\n}",
+   "version": "core.oam.dev/v1alpha2"
   },
   "configuration": null,
   "description": "",
@@ -11,66 +11,66 @@
   "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
-    "defaultData": "",
-    "genealogy": "",
-    "isAnnotation": false,
-    "isNamespaced": true,
-    "published": false,
-    "shapePolygonPoints": ""
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "published": false,
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": ""
   },
   "model": {
-    "category": {
-      "name": "Uncategorized"
-    },
-    "displayName": "Oam Kubernetes Runtime",
+   "category": {
+    "name": "Uncategorized"
+   },
+   "displayName": "Oam Kubernetes Runtime",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "defaultData": "",
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "model": {
+    "version": "0.4.0-rc1.7.g91370c6"
+   },
+   "name": "oam-kubernetes-runtime",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
     "id": "00000000-0000-0000-0000-000000000000",
-    "metadata": {
-      "capabilities": null,
-      "defaultData": "",
-      "isAnnotation": false,
-      "primaryColor": "#00B39F",
-      "secondaryColor": "#00D3A9",
-      "shape": "circle",
-      "shapePolygonPoints": "",
-      "styleOverrides": "",
-      "styles": "",
-      "svgColor": "",
-      "svgComplete": "",
-      "svgWhite": ""
-    },
-    "model": {
-      "version": "0.4.0-rc1.7.g91370c6"
-    },
-    "name": "oam-kubernetes-runtime",
-    "registrant": {
-      "created_at": "0001-01-01T00:00:00Z",
-      "credential_id": "00000000-0000-0000-0000-000000000000",
-      "deleted_at": "0001-01-01T00:00:00Z",
-      "id": "00000000-0000-0000-0000-000000000000",
-      "kind": "artifacthub",
-      "name": "Artifact Hub",
-      "status": "discovered",
-      "sub_type": "",
-      "type": "registry",
-      "updated_at": "0001-01-01T00:00:00Z",
-      "user_id": "00000000-0000-0000-0000-000000000000"
-    },
-    "connection_id": "00000000-0000-0000-0000-000000000000",
-    "schemaVersion": "models.meshery.io/v1beta1",
-    "status": "ignored",
-    "subCategory": "Uncategorized",
-    "version": "v1.0.0",
-    "components": null,
-    "relationships": null
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "subCategory": "Uncategorized",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
   },
   "schemaVersion": "components.meshery.io/v1beta1",
   "status": "ignored",
   "styles": {
-    "primaryColor": "#00B39F",
-    "secondaryColor": "#00D3A9",
-    "shape": "circle",
-    "svgColor": "",
-    "svgWhite": ""
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "svgColor": "",
+   "svgWhite": ""
   },
   "version": "v1.0.0"
-}
+ }

@@ -1,9 +1,9 @@
 {
   "capabilities": null,
   "component": {
-    "kind": "VaultTransitKey",
-    "schema": "{\n \"description\": \"VaultTransitKey is the Schema for the vaulttransitengines API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"VaultTransitKeySpec defines the desired state of VaultTransitKey.\",\n   \"properties\": {\n    \"allowPlaintextBackup\": {\n     \"description\": \"AllowPlaintextBackup enables taking backups of named key in the plaintext format. Once set, this cannot be disabled.\",\n     \"type\": \"boolean\"\n    },\n    \"deleteProtection\": {\n     \"description\": \"DeleteProtection configures that the secret should not be able to be deleted. Defaults to false.\",\n     \"type\": \"boolean\"\n    },\n    \"engine\": {\n     \"description\": \"Engine configures the used transit engine.\",\n     \"type\": \"string\"\n    },\n    \"exportable\": {\n     \"description\": \"Exportable enables keys to be exportable. This allows for all the valid keys in the key ring to be exported. Once set, this cannot be disabled.\",\n     \"type\": \"boolean\"\n    },\n    \"minimumDecryptionVersion\": {\n     \"description\": \"MinimumDecryptionVersion specifies the minimum version of the key that can be used to decrypt the ciphertext. Adjusting this as part of a key rotation policy can prevent old copies of ciphertext from being decrypted, should they fall into the wrong hands. For signatures, this value controls the minimum version of signature that can be verified against. For HMACs, this controls the minimum version of a key allowed to be used as the key for verification.\",\n     \"type\": \"integer\"\n    },\n    \"minimumEncryptionVersion\": {\n     \"description\": \"MinimumEncryptionVersion Specifies the minimum version of the key that can be used to encrypt plaintext, sign payloads, or generate HMACs. Must be 0 (which will use the latest version) or a value greater or equal to min_decryption_version.\",\n     \"type\": \"integer\"\n    },\n    \"type\": {\n     \"description\": \"Type configures the transit key type. Must be a vault supported key type. Additional information: https://www.vaultproject.io/api/secret/transit#type.\",\n     \"enum\": [\n      \"aes128-gcm96\",\n      \"aes256-gcm96\",\n      \"chacha20-poly1305\",\n      \"ed25519\",\n      \"ecdsa-p256\",\n      \"ecdsa-p384\",\n      \"ecdsa-p521\",\n      \"rsa-2048\",\n      \"rsa-3072\",\n      \"rsa-4096\"\n     ],\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"engine\",\n    \"type\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Vault Transit Key\",\n \"type\": \"object\"\n}",
-    "version": "heist.youniqx.com/v1alpha1"
+   "kind": "VaultTransitKey",
+   "schema": "{\n \"description\": \"VaultTransitKey is the Schema for the vaulttransitengines API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"VaultTransitKeySpec defines the desired state of VaultTransitKey.\",\n   \"properties\": {\n    \"allowPlaintextBackup\": {\n     \"description\": \"AllowPlaintextBackup enables taking backups of named key in the plaintext format. Once set, this cannot be disabled.\",\n     \"type\": \"boolean\"\n    },\n    \"deleteProtection\": {\n     \"description\": \"DeleteProtection configures that the secret should not be able to be deleted. Defaults to false.\",\n     \"type\": \"boolean\"\n    },\n    \"engine\": {\n     \"description\": \"Engine configures the used transit engine.\",\n     \"type\": \"string\"\n    },\n    \"exportable\": {\n     \"description\": \"Exportable enables keys to be exportable. This allows for all the valid keys in the key ring to be exported. Once set, this cannot be disabled.\",\n     \"type\": \"boolean\"\n    },\n    \"minimumDecryptionVersion\": {\n     \"description\": \"MinimumDecryptionVersion specifies the minimum version of the key that can be used to decrypt the ciphertext. Adjusting this as part of a key rotation policy can prevent old copies of ciphertext from being decrypted, should they fall into the wrong hands. For signatures, this value controls the minimum version of signature that can be verified against. For HMACs, this controls the minimum version of a key allowed to be used as the key for verification.\",\n     \"type\": \"integer\"\n    },\n    \"minimumEncryptionVersion\": {\n     \"description\": \"MinimumEncryptionVersion Specifies the minimum version of the key that can be used to encrypt plaintext, sign payloads, or generate HMACs. Must be 0 (which will use the latest version) or a value greater or equal to min_decryption_version.\",\n     \"type\": \"integer\"\n    },\n    \"type\": {\n     \"description\": \"Type configures the transit key type. Must be a vault supported key type. Additional information: https://www.vaultproject.io/api/secret/transit#type.\",\n     \"enum\": [\n      \"aes128-gcm96\",\n      \"aes256-gcm96\",\n      \"chacha20-poly1305\",\n      \"ed25519\",\n      \"ecdsa-p256\",\n      \"ecdsa-p384\",\n      \"ecdsa-p521\",\n      \"rsa-2048\",\n      \"rsa-3072\",\n      \"rsa-4096\"\n     ],\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"engine\",\n    \"type\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Vault Transit Key\",\n \"type\": \"object\"\n}",
+   "version": "heist.youniqx.com/v1alpha1"
   },
   "configuration": null,
   "description": "",
@@ -11,66 +11,66 @@
   "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
-    "defaultData": "",
-    "genealogy": "",
-    "isAnnotation": false,
-    "isNamespaced": true,
-    "published": false,
-    "shapePolygonPoints": ""
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "published": false,
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": ""
   },
   "model": {
-    "category": {
-      "name": "Uncategorized"
-    },
-    "displayName": "Heist",
+   "category": {
+    "name": "Uncategorized"
+   },
+   "displayName": "Heist",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "defaultData": "",
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "model": {
+    "version": "1.1.190"
+   },
+   "name": "heist",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
     "id": "00000000-0000-0000-0000-000000000000",
-    "metadata": {
-      "capabilities": null,
-      "defaultData": "",
-      "isAnnotation": false,
-      "primaryColor": "#00B39F",
-      "secondaryColor": "#00D3A9",
-      "shape": "circle",
-      "shapePolygonPoints": "",
-      "styleOverrides": "",
-      "styles": "",
-      "svgColor": "",
-      "svgComplete": "",
-      "svgWhite": ""
-    },
-    "model": {
-      "version": "1.1.190"
-    },
-    "name": "heist",
-    "registrant": {
-      "created_at": "0001-01-01T00:00:00Z",
-      "credential_id": "00000000-0000-0000-0000-000000000000",
-      "deleted_at": "0001-01-01T00:00:00Z",
-      "id": "00000000-0000-0000-0000-000000000000",
-      "kind": "artifacthub",
-      "name": "Artifact Hub",
-      "status": "discovered",
-      "sub_type": "",
-      "type": "registry",
-      "updated_at": "0001-01-01T00:00:00Z",
-      "user_id": "00000000-0000-0000-0000-000000000000"
-    },
-    "connection_id": "00000000-0000-0000-0000-000000000000",
-    "schemaVersion": "models.meshery.io/v1beta1",
-    "status": "ignored",
-    "subCategory": "Uncategorized",
-    "version": "v1.0.0",
-    "components": null,
-    "relationships": null
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "subCategory": "Uncategorized",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
   },
   "schemaVersion": "components.meshery.io/v1beta1",
   "status": "ignored",
   "styles": {
-    "primaryColor": "#00B39F",
-    "secondaryColor": "#00D3A9",
-    "shape": "circle",
-    "svgColor": "",
-    "svgWhite": ""
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "svgColor": "",
+   "svgWhite": ""
   },
   "version": "v1.0.0"
-}
+ }

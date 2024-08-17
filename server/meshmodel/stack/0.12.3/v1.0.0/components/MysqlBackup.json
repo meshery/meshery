@@ -1,9 +1,9 @@
 {
   "capabilities": null,
   "component": {
-    "kind": "MysqlBackup",
-    "schema": "{\n \"description\": \"MysqlBackup is the Schema for the mysqlbackups API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"MysqlBackupSpec defines the desired state of MysqlBackup\",\n   \"properties\": {\n    \"backupSecretName\": {\n     \"description\": \"BackupSecretName the name of secrets that contains the credentials to access the bucket. Default is used the secret specified in cluster.\",\n     \"type\": \"string\"\n    },\n    \"backupURL\": {\n     \"description\": \"BackupURL represents the URL to the backup location, this can be partially specifyied. Default is used the one specified in the cluster.\",\n     \"type\": \"string\"\n    },\n    \"clusterName\": {\n     \"description\": \"ClustterName represents the cluster for which to take backup\",\n     \"type\": \"string\"\n    },\n    \"remoteDeletePolicy\": {\n     \"description\": \"RemoteDeletePolicy the deletion policy that specify how to treat the data from remote storage. By default it's used softDelete.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"clusterName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Mysql Backup\",\n \"type\": \"object\"\n}",
-    "version": "mysql.presslabs.org/v1alpha1"
+   "kind": "MysqlBackup",
+   "schema": "{\n \"description\": \"MysqlBackup is the Schema for the mysqlbackups API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"MysqlBackupSpec defines the desired state of MysqlBackup\",\n   \"properties\": {\n    \"backupSecretName\": {\n     \"description\": \"BackupSecretName the name of secrets that contains the credentials to access the bucket. Default is used the secret specified in cluster.\",\n     \"type\": \"string\"\n    },\n    \"backupURL\": {\n     \"description\": \"BackupURL represents the URL to the backup location, this can be partially specifyied. Default is used the one specified in the cluster.\",\n     \"type\": \"string\"\n    },\n    \"clusterName\": {\n     \"description\": \"ClustterName represents the cluster for which to take backup\",\n     \"type\": \"string\"\n    },\n    \"remoteDeletePolicy\": {\n     \"description\": \"RemoteDeletePolicy the deletion policy that specify how to treat the data from remote storage. By default it's used softDelete.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"clusterName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Mysql Backup\",\n \"type\": \"object\"\n}",
+   "version": "mysql.presslabs.org/v1alpha1"
   },
   "configuration": null,
   "description": "",
@@ -11,60 +11,57 @@
   "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
-    "defaultData": "",
-    "genealogy": "",
-    "isAnnotation": false,
-    "isModelAnnotation": "FALSE",
-    "isNamespaced": true,
-    "logoURL": "",
-    "model": "stack",
-    "modelDisplayName": "Stack",
-    "published": false,
-    "shapePolygonPoints": ""
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "published": false,
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": ""
   },
   "model": {
-    "category": {
-      "name": "Uncategorized"
-    },
-    "displayName": "Stack",
+   "category": {
+    "name": "Uncategorized"
+   },
+   "displayName": "Stack",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "source_uri": "https://helm-charts.bitpoke.io/stack-0.12.4.tgz",
+    "svgColor": "",
+    "svgWhite": ""
+   },
+   "model": {
+    "version": "0.12.3"
+   },
+   "name": "stack",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
     "id": "00000000-0000-0000-0000-000000000000",
-    "metadata": {
-      "source_uri": "https://helm-charts.bitpoke.io/stack-0.12.4.tgz",
-      "svgColor": "",
-      "svgWhite": ""
-    },
-    "model": {
-      "version": "0.12.3"
-    },
-    "name": "stack",
-    "registrant": {
-      "created_at": "0001-01-01T00:00:00Z",
-      "credential_id": "00000000-0000-0000-0000-000000000000",
-      "deleted_at": "0001-01-01T00:00:00Z",
-      "id": "00000000-0000-0000-0000-000000000000",
-      "kind": "artifacthub",
-      "name": "Artifact Hub",
-      "status": "discovered",
-      "sub_type": "",
-      "type": "registry",
-      "updated_at": "0001-01-01T00:00:00Z",
-      "user_id": "00000000-0000-0000-0000-000000000000"
-    },
-    "connection_id": "00000000-0000-0000-0000-000000000000",
-    "schemaVersion": "models.meshery.io/v1beta1",
-    "status": "ignored",
-    "version": "v1.0.0",
-    "components": null,
-    "relationships": null
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
   },
   "schemaVersion": "components.meshery.io/v1beta1",
   "status": "ignored",
   "styles": {
-    "primaryColor": "#00B39F",
-    "secondaryColor": "#00D3A9",
-    "shape": "circle",
-    "svgColor": "",
-    "svgWhite": ""
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "svgColor": "",
+   "svgWhite": ""
   },
   "version": "v1.0.0"
-}
+ }

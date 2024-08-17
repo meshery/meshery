@@ -1,9 +1,9 @@
 {
   "capabilities": null,
   "component": {
-    "kind": "Cluster",
-    "schema": "{\n \"description\": \"Cluster is the Schema for the clusters API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ClusterSpec defines the desired state of Cluster\",\n   \"properties\": {\n    \"kubeconfigSecretRef\": {\n     \"description\": \"KubeconfigSecretRef specifies the reference to the secret that contains the kubeconfig in field `config`.\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of a secret within the enclosing namespace.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Cluster\",\n \"type\": \"object\"\n}",
-    "version": "core.oam.dev/v1beta1"
+   "kind": "Cluster",
+   "schema": "{\n \"description\": \"Cluster is the Schema for the clusters API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ClusterSpec defines the desired state of Cluster\",\n   \"properties\": {\n    \"kubeconfigSecretRef\": {\n     \"description\": \"KubeconfigSecretRef specifies the reference to the secret that contains the kubeconfig in field `config`.\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of a secret within the enclosing namespace.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Cluster\",\n \"type\": \"object\"\n}",
+   "version": "core.oam.dev/v1beta1"
   },
   "configuration": null,
   "description": "",
@@ -11,60 +11,57 @@
   "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
-    "defaultData": "",
-    "genealogy": "",
-    "isAnnotation": false,
-    "isModelAnnotation": "FALSE",
-    "isNamespaced": true,
-    "logoURL": "",
-    "model": "vela-core-legacy",
-    "modelDisplayName": "Vela Core Legacy",
-    "published": false,
-    "shapePolygonPoints": ""
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "published": false,
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": ""
   },
   "model": {
-    "category": {
-      "name": "App Definition and Development"
-    },
-    "displayName": "Vela Core Legacy",
+   "category": {
+    "name": "App Definition and Development"
+   },
+   "displayName": "Vela Core Legacy",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "source_uri": "https://kubevelacharts.oss-cn-hangzhou.aliyuncs.com/core/vela-core-legacy-1.9.0-beta.1.tgz",
+    "svgColor": "",
+    "svgWhite": ""
+   },
+   "model": {
+    "version": "1.8.0-beta.1"
+   },
+   "name": "vela-core-legacy",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
     "id": "00000000-0000-0000-0000-000000000000",
-    "metadata": {
-      "source_uri": "https://kubevelacharts.oss-cn-hangzhou.aliyuncs.com/core/vela-core-legacy-1.9.0-beta.1.tgz",
-      "svgColor": "",
-      "svgWhite": ""
-    },
-    "model": {
-      "version": "1.8.0-beta.1"
-    },
-    "name": "vela-core-legacy",
-    "registrant": {
-      "created_at": "0001-01-01T00:00:00Z",
-      "credential_id": "00000000-0000-0000-0000-000000000000",
-      "deleted_at": "0001-01-01T00:00:00Z",
-      "id": "00000000-0000-0000-0000-000000000000",
-      "kind": "artifacthub",
-      "name": "Artifact Hub",
-      "status": "discovered",
-      "sub_type": "",
-      "type": "registry",
-      "updated_at": "0001-01-01T00:00:00Z",
-      "user_id": "00000000-0000-0000-0000-000000000000"
-    },
-    "connection_id": "00000000-0000-0000-0000-000000000000",
-    "schemaVersion": "models.meshery.io/v1beta1",
-    "status": "ignored",
-    "version": "v1.0.0",
-    "components": null,
-    "relationships": null
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
   },
   "schemaVersion": "components.meshery.io/v1beta1",
   "status": "ignored",
   "styles": {
-    "primaryColor": "#00B39F",
-    "secondaryColor": "#00D3A9",
-    "shape": "circle",
-    "svgColor": "",
-    "svgWhite": ""
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "svgColor": "",
+   "svgWhite": ""
   },
   "version": "v1.0.0"
-}
+ }

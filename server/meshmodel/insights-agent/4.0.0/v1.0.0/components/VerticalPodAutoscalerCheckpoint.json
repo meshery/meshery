@@ -1,9 +1,9 @@
 {
   "capabilities": null,
   "component": {
-    "kind": "VerticalPodAutoscalerCheckpoint",
-    "schema": "{\n \"description\": \"VerticalPodAutoscalerCheckpoint is the checkpoint of the internal state of VPA that is used for recovery after recommender's restart.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Specification of the checkpoint. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status.\",\n   \"properties\": {\n    \"containerName\": {\n     \"description\": \"Name of the checkpointed container.\",\n     \"type\": \"string\"\n    },\n    \"vpaObjectName\": {\n     \"description\": \"Name of the VPA object that stored VerticalPodAutoscalerCheckpoint object.\",\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Vertical Pod Autoscaler Checkpoint\",\n \"type\": \"object\"\n}",
-    "version": "autoscaling.k8s.io/v1"
+   "kind": "VerticalPodAutoscalerCheckpoint",
+   "schema": "{\n \"description\": \"VerticalPodAutoscalerCheckpoint is the checkpoint of the internal state of VPA that is used for recovery after recommender's restart.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Specification of the checkpoint. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status.\",\n   \"properties\": {\n    \"containerName\": {\n     \"description\": \"Name of the checkpointed container.\",\n     \"type\": \"string\"\n    },\n    \"vpaObjectName\": {\n     \"description\": \"Name of the VPA object that stored VerticalPodAutoscalerCheckpoint object.\",\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Vertical Pod Autoscaler Checkpoint\",\n \"type\": \"object\"\n}",
+   "version": "autoscaling.k8s.io/v1"
   },
   "configuration": null,
   "description": "",
@@ -11,58 +11,58 @@
   "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
-    "defaultData": "",
-    "genealogy": "",
-    "isAnnotation": false,
-    "isNamespaced": true,
-    "published": false,
-    "shapePolygonPoints": ""
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "published": false,
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": ""
   },
   "model": {
-    "category": {
-      "name": "Uncategorized"
-    },
-    "displayName": "Insights Agent",
-    "id": "00000000-0000-0000-0000-000000000000",
-    "metadata": {
-      "isAnnotation": false,
-      "subCategory": "Uncategorized",
-      "svgColor": "",
-      "svgComplete": "",
-      "svgWhite": ""
-    },
-    "model": {
-      "version": "4.0.0"
-    },
-    "name": "insights-agent",
-    "registrant": {
-      "created_at": "0001-01-01T00:00:00Z",
-      "credential_id": "00000000-0000-0000-0000-000000000000",
-      "deleted_at": "0001-01-01T00:00:00Z",
-      "id": "00000000-0000-0000-0000-000000000000",
-      "kind": "artifacthub",
-      "name": "Artifact Hub",
-      "status": "discovered",
-      "sub_type": "",
-      "type": "registry",
-      "updated_at": "0001-01-01T00:00:00Z",
-      "user_id": "00000000-0000-0000-0000-000000000000"
-    },
-    "connection_id": "00000000-0000-0000-0000-000000000000",
-    "schemaVersion": "models.meshery.io/v1beta1",
-    "status": "ignored",
+   "category": {
+    "name": "Uncategorized"
+   },
+   "displayName": "Insights Agent",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "isAnnotation": false,
     "subCategory": "Uncategorized",
-    "version": "v1.0.0",
-    "components": null,
-    "relationships": null
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "model": {
+    "version": "4.0.0"
+   },
+   "name": "insights-agent",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "subCategory": "Uncategorized",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
   },
   "schemaVersion": "components.meshery.io/v1beta1",
   "status": "ignored",
   "styles": {
-    "primaryColor": "",
-    "secondaryColor": "",
-    "svgColor": "",
-    "svgWhite": ""
+   "primaryColor": "",
+   "svgColor": "",
+   "svgWhite": ""
   },
   "version": "v1.0.0"
-}
+ }

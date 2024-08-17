@@ -1,9 +1,9 @@
 {
   "capabilities": null,
   "component": {
-    "kind": "LoadTest",
-    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"distributedPods\": {\n     \"minimum\": 1,\n     \"type\": \"integer\"\n    },\n    \"duration\": {\n     \"type\": \"integer\"\n    },\n    \"envVars\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"nullable\": true,\n     \"type\": \"object\"\n    },\n    \"masterConfig\": {\n     \"properties\": {\n      \"image\": {\n       \"type\": \"string\"\n      },\n      \"tag\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"tags\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"nullable\": true,\n     \"type\": \"object\"\n    },\n    \"targetURL\": {\n     \"type\": \"string\"\n    },\n    \"testData\": {\n     \"type\": \"string\"\n    },\n    \"testFile\": {\n     \"type\": \"string\"\n    },\n    \"type\": {\n     \"enum\": [\n      \"JMeter\",\n      \"Fake\",\n      \"Locust\",\n      \"Ghz\",\n      \"K6\"\n     ],\n     \"type\": \"string\"\n    },\n    \"workerConfig\": {\n     \"properties\": {\n      \"image\": {\n       \"type\": \"string\"\n      },\n      \"tag\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"distributedPods\",\n    \"testFile\",\n    \"type\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Load Test\",\n \"type\": \"object\"\n}",
-    "version": "kangal.hellofresh.com/v1"
+   "kind": "LoadTest",
+   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"distributedPods\": {\n     \"minimum\": 1,\n     \"type\": \"integer\"\n    },\n    \"duration\": {\n     \"type\": \"integer\"\n    },\n    \"envVars\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"nullable\": true,\n     \"type\": \"object\"\n    },\n    \"masterConfig\": {\n     \"properties\": {\n      \"image\": {\n       \"type\": \"string\"\n      },\n      \"tag\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"tags\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"nullable\": true,\n     \"type\": \"object\"\n    },\n    \"targetURL\": {\n     \"type\": \"string\"\n    },\n    \"testData\": {\n     \"type\": \"string\"\n    },\n    \"testFile\": {\n     \"type\": \"string\"\n    },\n    \"type\": {\n     \"enum\": [\n      \"JMeter\",\n      \"Fake\",\n      \"Locust\",\n      \"Ghz\",\n      \"K6\"\n     ],\n     \"type\": \"string\"\n    },\n    \"workerConfig\": {\n     \"properties\": {\n      \"image\": {\n       \"type\": \"string\"\n      },\n      \"tag\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"distributedPods\",\n    \"testFile\",\n    \"type\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Load Test\",\n \"type\": \"object\"\n}",
+   "version": "kangal.hellofresh.com/v1"
   },
   "configuration": null,
   "description": "",
@@ -11,66 +11,66 @@
   "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
-    "defaultData": "",
-    "genealogy": "",
-    "isAnnotation": false,
-    "isNamespaced": false,
-    "published": false,
-    "shapePolygonPoints": ""
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "published": false,
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": ""
   },
   "model": {
-    "category": {
-      "name": "Uncategorized"
-    },
-    "displayName": "Kangal",
+   "category": {
+    "name": "Uncategorized"
+   },
+   "displayName": "Kangal",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "defaultData": "",
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "model": {
+    "version": "2.3.0"
+   },
+   "name": "kangal",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
     "id": "00000000-0000-0000-0000-000000000000",
-    "metadata": {
-      "capabilities": null,
-      "defaultData": "",
-      "isAnnotation": false,
-      "primaryColor": "#00B39F",
-      "secondaryColor": "#00D3A9",
-      "shape": "circle",
-      "shapePolygonPoints": "",
-      "styleOverrides": "",
-      "styles": "",
-      "svgColor": "",
-      "svgComplete": "",
-      "svgWhite": ""
-    },
-    "model": {
-      "version": "2.3.0"
-    },
-    "name": "kangal",
-    "registrant": {
-      "created_at": "0001-01-01T00:00:00Z",
-      "credential_id": "00000000-0000-0000-0000-000000000000",
-      "deleted_at": "0001-01-01T00:00:00Z",
-      "id": "00000000-0000-0000-0000-000000000000",
-      "kind": "artifacthub",
-      "name": "Artifact Hub",
-      "status": "discovered",
-      "sub_type": "",
-      "type": "registry",
-      "updated_at": "0001-01-01T00:00:00Z",
-      "user_id": "00000000-0000-0000-0000-000000000000"
-    },
-    "connection_id": "00000000-0000-0000-0000-000000000000",
-    "schemaVersion": "models.meshery.io/v1beta1",
-    "status": "ignored",
-    "subCategory": "Uncategorized",
-    "version": "v1.0.0",
-    "components": null,
-    "relationships": null
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "subCategory": "Uncategorized",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
   },
   "schemaVersion": "components.meshery.io/v1beta1",
   "status": "ignored",
   "styles": {
-    "primaryColor": "#00B39F",
-    "secondaryColor": "#00D3A9",
-    "shape": "circle",
-    "svgColor": "",
-    "svgWhite": ""
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "svgColor": "",
+   "svgWhite": ""
   },
   "version": "v1.0.0"
-}
+ }

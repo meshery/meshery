@@ -1,9 +1,9 @@
 {
   "capabilities": null,
   "component": {
-    "kind": "DataBackup",
-    "schema": "{\n \"description\": \"DataBackup is the Schema for the backup API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"DataBackupSpec defines the desired state of DataBackup\",\n   \"properties\": {\n    \"backupPath\": {\n     \"description\": \"BackupPath defines the target path to save data of the DataBackup\",\n     \"type\": \"string\"\n    },\n    \"dataset\": {\n     \"description\": \"Dataset defines the target dataset of the DataBackup\",\n     \"type\": \"string\"\n    },\n    \"runAs\": {\n     \"description\": \"Manage the user to run Alluxio DataBackup\",\n     \"properties\": {\n      \"gid\": {\n       \"description\": \"The gid to run the alluxio runtime\",\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"group\": {\n       \"description\": \"The group name to run the alluxio runtime\",\n       \"type\": \"string\"\n      },\n      \"uid\": {\n       \"description\": \"The uid to run the alluxio runtime\",\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"user\": {\n       \"description\": \"The user name to run the alluxio runtime\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"gid\",\n      \"group\",\n      \"uid\",\n      \"user\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Data Backup\",\n \"type\": \"object\"\n}",
-    "version": "data.fluid.io/v1alpha1"
+   "kind": "DataBackup",
+   "schema": "{\n \"description\": \"DataBackup is the Schema for the backup API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"DataBackupSpec defines the desired state of DataBackup\",\n   \"properties\": {\n    \"backupPath\": {\n     \"description\": \"BackupPath defines the target path to save data of the DataBackup\",\n     \"type\": \"string\"\n    },\n    \"dataset\": {\n     \"description\": \"Dataset defines the target dataset of the DataBackup\",\n     \"type\": \"string\"\n    },\n    \"runAs\": {\n     \"description\": \"Manage the user to run Alluxio DataBackup\",\n     \"properties\": {\n      \"gid\": {\n       \"description\": \"The gid to run the alluxio runtime\",\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"group\": {\n       \"description\": \"The group name to run the alluxio runtime\",\n       \"type\": \"string\"\n      },\n      \"uid\": {\n       \"description\": \"The uid to run the alluxio runtime\",\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"user\": {\n       \"description\": \"The user name to run the alluxio runtime\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"gid\",\n      \"group\",\n      \"uid\",\n      \"user\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Data Backup\",\n \"type\": \"object\"\n}",
+   "version": "data.fluid.io/v1alpha1"
   },
   "configuration": null,
   "description": "",
@@ -11,66 +11,66 @@
   "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
-    "defaultData": "",
-    "genealogy": "",
-    "isAnnotation": false,
-    "isNamespaced": true,
-    "published": false,
-    "shapePolygonPoints": ""
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "published": false,
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": ""
   },
   "model": {
-    "category": {
-      "name": "Uncategorized"
-    },
-    "displayName": "Octopus",
+   "category": {
+    "name": "Uncategorized"
+   },
+   "displayName": "Octopus",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "defaultData": "",
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "model": {
+    "version": "4.3.14"
+   },
+   "name": "octopus",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
     "id": "00000000-0000-0000-0000-000000000000",
-    "metadata": {
-      "capabilities": null,
-      "defaultData": "",
-      "isAnnotation": false,
-      "primaryColor": "#00B39F",
-      "secondaryColor": "#00D3A9",
-      "shape": "circle",
-      "shapePolygonPoints": "",
-      "styleOverrides": "",
-      "styles": "",
-      "svgColor": "",
-      "svgComplete": "",
-      "svgWhite": ""
-    },
-    "model": {
-      "version": "4.3.14"
-    },
-    "name": "octopus",
-    "registrant": {
-      "created_at": "0001-01-01T00:00:00Z",
-      "credential_id": "00000000-0000-0000-0000-000000000000",
-      "deleted_at": "0001-01-01T00:00:00Z",
-      "id": "00000000-0000-0000-0000-000000000000",
-      "kind": "artifacthub",
-      "name": "Artifact Hub",
-      "status": "discovered",
-      "sub_type": "",
-      "type": "registry",
-      "updated_at": "0001-01-01T00:00:00Z",
-      "user_id": "00000000-0000-0000-0000-000000000000"
-    },
-    "connection_id": "00000000-0000-0000-0000-000000000000",
-    "schemaVersion": "models.meshery.io/v1beta1",
-    "status": "ignored",
-    "subCategory": "Uncategorized",
-    "version": "v1.0.0",
-    "components": null,
-    "relationships": null
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "subCategory": "Uncategorized",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
   },
   "schemaVersion": "components.meshery.io/v1beta1",
   "status": "ignored",
   "styles": {
-    "primaryColor": "#00B39F",
-    "secondaryColor": "#00D3A9",
-    "shape": "circle",
-    "svgColor": "",
-    "svgWhite": ""
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "svgColor": "",
+   "svgWhite": ""
   },
   "version": "v1.0.0"
-}
+ }

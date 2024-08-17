@@ -1,9 +1,9 @@
 {
   "capabilities": null,
   "component": {
-    "kind": "EdgeCluster",
-    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"register\": {\n     \"properties\": {\n      \"bootstrapToken\": {\n       \"type\": \"string\"\n      },\n      \"certs\": {\n       \"properties\": {\n        \"ca\": {\n         \"format\": \"byte\",\n         \"type\": \"string\"\n        },\n        \"cert\": {\n         \"format\": \"byte\",\n         \"type\": \"string\"\n        },\n        \"key\": {\n         \"format\": \"byte\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"expiresAt\": {\n       \"format\": \"date-time\",\n       \"type\": \"string\"\n      },\n      \"hubName\": {\n       \"type\": \"string\"\n      },\n      \"image\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Edge Cluster\",\n \"type\": \"object\"\n}",
-    "version": "edge.kubegems.io/v1beta1"
+   "kind": "EdgeCluster",
+   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"register\": {\n     \"properties\": {\n      \"bootstrapToken\": {\n       \"type\": \"string\"\n      },\n      \"certs\": {\n       \"properties\": {\n        \"ca\": {\n         \"format\": \"byte\",\n         \"type\": \"string\"\n        },\n        \"cert\": {\n         \"format\": \"byte\",\n         \"type\": \"string\"\n        },\n        \"key\": {\n         \"format\": \"byte\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"expiresAt\": {\n       \"format\": \"date-time\",\n       \"type\": \"string\"\n      },\n      \"hubName\": {\n       \"type\": \"string\"\n      },\n      \"image\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Edge Cluster\",\n \"type\": \"object\"\n}",
+   "version": "edge.kubegems.io/v1beta1"
   },
   "configuration": null,
   "description": "",
@@ -11,60 +11,57 @@
   "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
-    "defaultData": "",
-    "genealogy": "",
-    "isAnnotation": false,
-    "isModelAnnotation": "FALSE",
-    "isNamespaced": true,
-    "logoURL": "https://layer5.io/company/brand",
-    "model": "kubegems-edge",
-    "modelDisplayName": "Kubegems Edge",
-    "published": false,
-    "shapePolygonPoints": ""
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "published": false,
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": ""
   },
   "model": {
-    "category": {
-      "name": "Uncategorized"
-    },
-    "displayName": "Kubegems Edge",
+   "category": {
+    "name": "Uncategorized"
+   },
+   "displayName": "Kubegems Edge",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "source_uri": "https://charts.kubegems.io/kubegems/charts/kubegems-edge-1.24.2.tgz",
+    "svgColor": "",
+    "svgWhite": ""
+   },
+   "model": {
+    "version": "1.23.6"
+   },
+   "name": "kubegems-edge",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
     "id": "00000000-0000-0000-0000-000000000000",
-    "metadata": {
-      "source_uri": "https://charts.kubegems.io/kubegems/charts/kubegems-edge-1.24.2.tgz",
-      "svgColor": "",
-      "svgWhite": ""
-    },
-    "model": {
-      "version": "1.23.6"
-    },
-    "name": "kubegems-edge",
-    "registrant": {
-      "created_at": "0001-01-01T00:00:00Z",
-      "credential_id": "00000000-0000-0000-0000-000000000000",
-      "deleted_at": "0001-01-01T00:00:00Z",
-      "id": "00000000-0000-0000-0000-000000000000",
-      "kind": "artifacthub",
-      "name": "Artifact Hub",
-      "status": "discovered",
-      "sub_type": "",
-      "type": "registry",
-      "updated_at": "0001-01-01T00:00:00Z",
-      "user_id": "00000000-0000-0000-0000-000000000000"
-    },
-    "connection_id": "00000000-0000-0000-0000-000000000000",
-    "schemaVersion": "models.meshery.io/v1beta1",
-    "status": "ignored",
-    "version": "v1.0.0",
-    "components": null,
-    "relationships": null
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
   },
   "schemaVersion": "components.meshery.io/v1beta1",
   "status": "ignored",
   "styles": {
-    "primaryColor": "#00B39F",
-    "secondaryColor": "#00D3A9",
-    "shape": "circle",
-    "svgColor": "",
-    "svgWhite": ""
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "svgColor": "",
+   "svgWhite": ""
   },
   "version": "v1.0.0"
-}
+ }
