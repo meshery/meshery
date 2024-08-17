@@ -1,29 +1,31 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "displayName": "KMS Crypto Key",
+  "capabilities": null,
+  "component": {
+   "kind": "KMSCryptoKey",
+   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"destroyScheduledDuration\": {\n     \"description\": \"Immutable. The period of time that versions of this key spend in the DESTROY_SCHEDULED state before transitioning to DESTROYED.\\nIf not specified at creation time, the default duration is 24 hours.\",\n     \"type\": \"string\"\n    },\n    \"importOnly\": {\n     \"description\": \"Immutable. Whether this key may contain imported versions only.\",\n     \"type\": \"boolean\"\n    },\n    \"keyRingRef\": {\n     \"description\": \"The KMSKeyRing that this key belongs to.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `selfLink` field of a `KMSKeyRing` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"purpose\": {\n     \"description\": \"Immutable. The immutable purpose of this CryptoKey. See the\\n[purpose reference](https://cloud.google.com/kms/docs/reference/rest/v1/projects.locations.keyRings.cryptoKeys#CryptoKeyPurpose)\\nfor possible inputs.\\nDefault value is \\\"ENCRYPT_DECRYPT\\\".\",\n     \"type\": \"string\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    },\n    \"rotationPeriod\": {\n     \"description\": \"Every time this period passes, generate a new CryptoKeyVersion and set it as the primary.\\nThe first rotation will take place after the specified period. The rotation period has\\nthe format of a decimal number with up to 9 fractional digits, followed by the\\nletter 's' (seconds). It must be greater than a day (ie, 86400).\",\n     \"type\": \"string\"\n    },\n    \"skipInitialVersionCreation\": {\n     \"description\": \"Immutable. If set to true, the request will create a CryptoKey without any CryptoKeyVersions.\\nYou must use the 'google_kms_key_ring_import_job' resource to import the CryptoKeyVersion.\",\n     \"type\": \"boolean\"\n    },\n    \"versionTemplate\": {\n     \"description\": \"A template describing settings for new crypto key versions.\",\n     \"properties\": {\n      \"algorithm\": {\n       \"description\": \"The algorithm to use when creating a version based on this template.\\nSee the [algorithm reference](https://cloud.google.com/kms/docs/reference/rest/v1/CryptoKeyVersionAlgorithm) for possible inputs.\",\n       \"type\": \"string\"\n      },\n      \"protectionLevel\": {\n       \"description\": \"Immutable. The protection level to use when creating a version based on this template. Possible values include \\\"SOFTWARE\\\", \\\"HSM\\\", \\\"EXTERNAL\\\", \\\"EXTERNAL_VPC\\\". Defaults to \\\"SOFTWARE\\\".\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"algorithm\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"keyRingRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"KMS Crypto Key\",\n \"type\": \"object\"\n}",
+   "version": "kms.cnrm.cloud.google.com/v1beta1"
+  },
+  "configuration": null,
   "description": "",
+  "displayName": "KMS Crypto Key",
   "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "published": false,
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": ""
+  },
   "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "version": "v1.0.0",
-   "name": "k8s-config-connector",
-   "displayName": "Google Cloud Platform",
-   "description": "",
-   "status": "enabled",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "registrant": {
-    "hostname": "github"
-   },
    "category": {
-    "name": "Orchestration \u0026 Management",
-    "metadata": null
+    "name": "Orchestration \u0026 Management"
    },
-   "subCategory": "Google Cloud Platform",
+   "displayName": "Google Cloud Platform",
+   "id": "00000000-0000-0000-0000-000000000000",
    "metadata": {
-    "capabilities": "",
     "defaultData": "",
     "isAnnotation": false,
     "primaryColor": "#4285F4",
@@ -39,30 +41,35 @@
    "model": {
     "version": "v1.120.1"
    },
+   "name": "k8s-config-connector",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "github",
+    "name": "Github",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "enabled",
+   "subCategory": "Google Cloud Platform",
+   "version": "v1.0.0",
    "components": null,
    "relationships": null
   },
-  "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
    "primaryColor": "#4285F4",
-   "secondaryColor": "",
    "shape": "rectangle",
-   "shapePolygonPoints": "",
-   "status": "enabled",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
    "svgColor": "\u003csvg width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"\u003e\n    \u003cg stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e\n        \u003cpath d=\"M12.3008862,4.00003179 L18.9908678,7.90329279 L19,11.4442164 L14.973309,9.0680926 L14.973309,10.8562526 L16.9806355,12.0276231 L16.9918433,15.1064843 L14.973309,13.9136004 L14.973309,18.415105 L12.3008862,20 L12.3008862,4.00003179 Z M11.6991138,4 L11.6991138,19.9999682 L9.02669102,18.4150732 L9.02669102,9.06816678 L5,11.4441846 L5.00913223,7.903261 L11.6991138,4 Z\" fill=\"#4285F4\"\u003e\u003c/path\u003e\n    \u003c/g\u003e\n\u003c/svg\u003e",
-   "svgComplete": "",
    "svgWhite": "\u003csvg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M12.3009 4.00003L18.9909 7.90329L19 11.4442L14.9733 9.06809V10.8563L16.9806 12.0276L16.9918 15.1065L14.9733 13.9136V18.4151L12.3009 20V4.00003ZM11.6991 4V20L9.02669 18.4151V9.06817L5 11.4442L5.00913 7.90326L11.6991 4Z\" fill=\"white\"/\u003e\n\u003c/svg\u003e\n"
   },
-  "component": {
-   "kind": "KMSCryptoKey",
-   "version": "kms.cnrm.cloud.google.com/v1beta1",
-   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"destroyScheduledDuration\": {\n     \"description\": \"Immutable. The period of time that versions of this key spend in the DESTROY_SCHEDULED state before transitioning to DESTROYED.\\nIf not specified at creation time, the default duration is 24 hours.\",\n     \"type\": \"string\"\n    },\n    \"importOnly\": {\n     \"description\": \"Immutable. Whether this key may contain imported versions only.\",\n     \"type\": \"boolean\"\n    },\n    \"keyRingRef\": {\n     \"description\": \"The KMSKeyRing that this key belongs to.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `selfLink` field of a `KMSKeyRing` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"purpose\": {\n     \"description\": \"Immutable. The immutable purpose of this CryptoKey. See the\\n[purpose reference](https://cloud.google.com/kms/docs/reference/rest/v1/projects.locations.keyRings.cryptoKeys#CryptoKeyPurpose)\\nfor possible inputs.\\nDefault value is \\\"ENCRYPT_DECRYPT\\\".\",\n     \"type\": \"string\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    },\n    \"rotationPeriod\": {\n     \"description\": \"Every time this period passes, generate a new CryptoKeyVersion and set it as the primary.\\nThe first rotation will take place after the specified period. The rotation period has\\nthe format of a decimal number with up to 9 fractional digits, followed by the\\nletter 's' (seconds). It must be greater than a day (ie, 86400).\",\n     \"type\": \"string\"\n    },\n    \"skipInitialVersionCreation\": {\n     \"description\": \"Immutable. If set to true, the request will create a CryptoKey without any CryptoKeyVersions.\\nYou must use the 'google_kms_key_ring_import_job' resource to import the CryptoKeyVersion.\",\n     \"type\": \"boolean\"\n    },\n    \"versionTemplate\": {\n     \"description\": \"A template describing settings for new crypto key versions.\",\n     \"properties\": {\n      \"algorithm\": {\n       \"description\": \"The algorithm to use when creating a version based on this template.\\nSee the [algorithm reference](https://cloud.google.com/kms/docs/reference/rest/v1/CryptoKeyVersionAlgorithm) for possible inputs.\",\n       \"type\": \"string\"\n      },\n      \"protectionLevel\": {\n       \"description\": \"Immutable. The protection level to use when creating a version based on this template. Possible values include \\\"SOFTWARE\\\", \\\"HSM\\\", \\\"EXTERNAL\\\", \\\"EXTERNAL_VPC\\\". Defaults to \\\"SOFTWARE\\\".\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"algorithm\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"keyRingRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"KMS Crypto Key\",\n \"type\": \"object\"\n}"
-  }
+  "version": "v1.0.0"
  }

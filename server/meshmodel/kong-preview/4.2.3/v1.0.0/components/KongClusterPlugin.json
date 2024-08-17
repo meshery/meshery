@@ -1,29 +1,31 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "displayName": "Kong Cluster Plugin",
+  "capabilities": null,
+  "component": {
+   "kind": "KongClusterPlugin",
+   "schema": "{\n \"description\": \"KongClusterPlugin is the Schema for the kongclusterplugins API\",\n \"properties\": {\n  \"config\": {\n   \"description\": \"Config contains the plugin configuration.\",\n   \"format\": \"textarea\",\n   \"type\": \"string\"\n  },\n  \"configFrom\": {\n   \"description\": \"ConfigFrom references a secret containing the plugin configuration.\",\n   \"properties\": {\n    \"secretKeyRef\": {\n     \"description\": \"NamespacedSecretValueFromSource represents the source of a secret value specifying the secret namespace\",\n     \"properties\": {\n      \"key\": {\n       \"description\": \"the key containing the value\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"the secret containing the key\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"The namespace containing the secret\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"key\",\n      \"name\",\n      \"namespace\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  },\n  \"consumerRef\": {\n   \"description\": \"ConsumerRef is a reference to a particular consumer\",\n   \"type\": \"string\"\n  },\n  \"disabled\": {\n   \"description\": \"Disabled set if the plugin is disabled or not\",\n   \"type\": \"boolean\"\n  },\n  \"plugin\": {\n   \"description\": \"PluginName is the name of the plugin to which to apply the config\",\n   \"type\": \"string\"\n  },\n  \"protocols\": {\n   \"description\": \"Protocols configures plugin to run on requests received on specific protocols.\",\n   \"items\": {\n    \"enum\": [\n     \"http\",\n     \"https\",\n     \"grpc\",\n     \"grpcs\",\n     \"tcp\",\n     \"tls\",\n     \"udp\"\n    ],\n    \"type\": \"string\"\n   },\n   \"type\": \"array\"\n  },\n  \"run_on\": {\n   \"description\": \"RunOn configures the plugin to run on the first or the second or both nodes in case of a service mesh deployment.\",\n   \"enum\": [\n    \"first\",\n    \"second\",\n    \"all\"\n   ],\n   \"type\": \"string\"\n  }\n },\n \"required\": [\n  \"plugin\"\n ],\n \"title\": \"Kong Cluster Plugin\",\n \"type\": \"object\"\n}",
+   "version": "configuration.konghq.com/v1"
+  },
+  "configuration": null,
   "description": "",
+  "displayName": "Kong Cluster Plugin",
   "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "published": false,
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": ""
+  },
   "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "version": "v1.0.0",
-   "name": "kong-preview",
-   "displayName": "Kong Preview",
-   "description": "",
-   "status": "ignored",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "registrant": {
-    "hostname": "artifacthub"
-   },
    "category": {
-    "name": "Uncategorized",
-    "metadata": null
+    "name": "Uncategorized"
    },
-   "subCategory": "Uncategorized",
+   "displayName": "Kong Preview",
+   "id": "00000000-0000-0000-0000-000000000000",
    "metadata": {
-    "capabilities": "",
     "defaultData": "",
     "isAnnotation": false,
     "primaryColor": "#00B39F",
@@ -39,30 +41,34 @@
    "model": {
     "version": "4.2.3"
    },
+   "name": "kong-preview",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "subCategory": "Uncategorized",
+   "version": "v1.0.0",
    "components": null,
    "relationships": null
   },
-  "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": false,
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "ignored",
+  "styles": {
    "primaryColor": "",
-   "secondaryColor": "",
-   "shape": "",
-   "shapePolygonPoints": "",
-   "status": "ignored",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
    "svgColor": "",
-   "svgComplete": "",
    "svgWhite": ""
   },
-  "component": {
-   "kind": "KongClusterPlugin",
-   "version": "configuration.konghq.com/v1",
-   "schema": "{\n \"description\": \"KongClusterPlugin is the Schema for the kongclusterplugins API\",\n \"properties\": {\n  \"config\": {\n   \"description\": \"Config contains the plugin configuration.\",\n   \"format\": \"textarea\",\n   \"type\": \"string\"\n  },\n  \"configFrom\": {\n   \"description\": \"ConfigFrom references a secret containing the plugin configuration.\",\n   \"properties\": {\n    \"secretKeyRef\": {\n     \"description\": \"NamespacedSecretValueFromSource represents the source of a secret value specifying the secret namespace\",\n     \"properties\": {\n      \"key\": {\n       \"description\": \"the key containing the value\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"the secret containing the key\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"The namespace containing the secret\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"key\",\n      \"name\",\n      \"namespace\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  },\n  \"consumerRef\": {\n   \"description\": \"ConsumerRef is a reference to a particular consumer\",\n   \"type\": \"string\"\n  },\n  \"disabled\": {\n   \"description\": \"Disabled set if the plugin is disabled or not\",\n   \"type\": \"boolean\"\n  },\n  \"plugin\": {\n   \"description\": \"PluginName is the name of the plugin to which to apply the config\",\n   \"type\": \"string\"\n  },\n  \"protocols\": {\n   \"description\": \"Protocols configures plugin to run on requests received on specific protocols.\",\n   \"items\": {\n    \"enum\": [\n     \"http\",\n     \"https\",\n     \"grpc\",\n     \"grpcs\",\n     \"tcp\",\n     \"tls\",\n     \"udp\"\n    ],\n    \"type\": \"string\"\n   },\n   \"type\": \"array\"\n  },\n  \"run_on\": {\n   \"description\": \"RunOn configures the plugin to run on the first or the second or both nodes in case of a service mesh deployment.\",\n   \"enum\": [\n    \"first\",\n    \"second\",\n    \"all\"\n   ],\n   \"type\": \"string\"\n  }\n },\n \"required\": [\n  \"plugin\"\n ],\n \"title\": \"Kong Cluster Plugin\",\n \"type\": \"object\"\n}"
-  }
+  "version": "v1.0.0"
  }

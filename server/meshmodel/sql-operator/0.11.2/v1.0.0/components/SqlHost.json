@@ -1,29 +1,31 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "displayName": "Sql Host",
+  "capabilities": null,
+  "component": {
+   "kind": "SqlHost",
+   "schema": "{\n \"description\": \"SqlHost is the Schema for the sqlhosts API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"SqlHostSpec defines the desired state of SqlHost\",\n   \"properties\": {\n    \"dsn\": {\n     \"description\": \"Endpoint to manage\",\n     \"type\": \"string\"\n    },\n    \"engine\": {\n     \"description\": \"Engine of the external endpoint (like Mysql)\",\n     \"enum\": [\n      \"Mysql\"\n     ],\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"dsn\",\n    \"engine\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Sql Host\",\n \"type\": \"object\"\n}",
+   "version": "stenic.io/v1alpha1"
+  },
+  "configuration": null,
   "description": "",
+  "displayName": "Sql Host",
   "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "published": false,
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": ""
+  },
   "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "version": "v1.0.0",
-   "name": "sql-operator",
-   "displayName": "SQL Operator",
-   "description": "",
-   "status": "ignored",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "registrant": {
-    "hostname": "artifacthub"
-   },
    "category": {
-    "name": "App Definition and Development",
-    "metadata": null
+    "name": "App Definition and Development"
    },
-   "subCategory": "Database",
+   "displayName": "SQL Operator",
+   "id": "00000000-0000-0000-0000-000000000000",
    "metadata": {
-    "capabilities": "",
     "defaultData": "",
     "isAnnotation": false,
     "primaryColor": "#00B39F",
@@ -39,30 +41,36 @@
    "model": {
     "version": "0.11.2"
    },
+   "name": "sql-operator",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "subCategory": "Database",
+   "version": "v1.0.0",
    "components": null,
    "relationships": null
   },
-  "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "ignored",
+  "styles": {
    "primaryColor": "#00B39F",
    "secondaryColor": "#00D3A9",
    "shape": "circle",
-   "shapePolygonPoints": "",
-   "status": "ignored",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
    "svgColor": "",
-   "svgComplete": "",
    "svgWhite": ""
   },
-  "component": {
-   "kind": "SqlHost",
-   "version": "stenic.io/v1alpha1",
-   "schema": "{\n \"description\": \"SqlHost is the Schema for the sqlhosts API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"SqlHostSpec defines the desired state of SqlHost\",\n   \"properties\": {\n    \"dsn\": {\n     \"description\": \"Endpoint to manage\",\n     \"type\": \"string\"\n    },\n    \"engine\": {\n     \"description\": \"Engine of the external endpoint (like Mysql)\",\n     \"enum\": [\n      \"Mysql\"\n     ],\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"dsn\",\n    \"engine\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Sql Host\",\n \"type\": \"object\"\n}"
-  }
+  "version": "v1.0.0"
  }

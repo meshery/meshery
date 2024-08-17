@@ -1,29 +1,31 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "displayName": "Medusa Restore Job",
+  "capabilities": null,
+  "component": {
+   "kind": "MedusaRestoreJob",
+   "schema": "{\n \"description\": \"MedusaRestoreJob is the Schema for the medusarestorejobs API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"MedusaRestoreJobSpec defines the desired state of MedusaRestoreJob\",\n   \"properties\": {\n    \"backup\": {\n     \"description\": \"The name of the MedusaBackup to restore.\",\n     \"type\": \"string\"\n    },\n    \"cassandraDatacenter\": {\n     \"description\": \"Name of the Cassandra datacenter to perform the restore on.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"backup\",\n    \"cassandraDatacenter\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Medusa Restore Job\",\n \"type\": \"object\"\n}",
+   "version": "medusa.k8ssandra.io/v1alpha1"
+  },
+  "configuration": null,
   "description": "",
+  "displayName": "Medusa Restore Job",
   "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "published": false,
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": ""
+  },
   "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "version": "v1.0.0",
-   "name": "k8ssandra",
-   "displayName": "K8ssandra",
-   "description": "",
-   "status": "ignored",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "registrant": {
-    "hostname": "artifacthub"
-   },
    "category": {
-    "name": "App Definition and Development",
-    "metadata": null
+    "name": "App Definition and Development"
    },
-   "subCategory": "Database",
+   "displayName": "K8ssandra",
+   "id": "00000000-0000-0000-0000-000000000000",
    "metadata": {
-    "capabilities": "",
     "defaultData": "",
     "isAnnotation": false,
     "primaryColor": "#00B39F",
@@ -39,30 +41,34 @@
    "model": {
     "version": "1.19.0-20240729163448-5d5cea3e"
    },
+   "name": "k8ssandra",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "subCategory": "Database",
+   "version": "v1.0.0",
    "components": null,
    "relationships": null
   },
-  "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "ignored",
+  "styles": {
    "primaryColor": "",
-   "secondaryColor": "",
-   "shape": "",
-   "shapePolygonPoints": "",
-   "status": "ignored",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
    "svgColor": "",
-   "svgComplete": "",
    "svgWhite": ""
   },
-  "component": {
-   "kind": "MedusaRestoreJob",
-   "version": "medusa.k8ssandra.io/v1alpha1",
-   "schema": "{\n \"description\": \"MedusaRestoreJob is the Schema for the medusarestorejobs API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"MedusaRestoreJobSpec defines the desired state of MedusaRestoreJob\",\n   \"properties\": {\n    \"backup\": {\n     \"description\": \"The name of the MedusaBackup to restore.\",\n     \"type\": \"string\"\n    },\n    \"cassandraDatacenter\": {\n     \"description\": \"Name of the Cassandra datacenter to perform the restore on.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"backup\",\n    \"cassandraDatacenter\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Medusa Restore Job\",\n \"type\": \"object\"\n}"
-  }
+  "version": "v1.0.0"
  }

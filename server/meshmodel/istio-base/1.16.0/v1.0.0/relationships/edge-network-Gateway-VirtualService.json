@@ -1,9 +1,10 @@
 {
-  "schemaVersion": "relationships.meshery.io/v1alpha2",
-  "version": "*",
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "version": "v1.0.0",
   "kind": "edge",
   "metadata": {
-    "description": "A relationship that defines network edges between components"},
+    "description": "A relationship that defines network edges between components"
+  },
   "model": {
     "schemaVersion": "core.meshery.io/v1alpha2",
     "version": "*",
@@ -20,24 +21,35 @@
       "description": "A VirtualService defines a set of traffic routing rules to apply when a host is addressed and the Gateway describes a load balancer operating at the edge of the mesh receiving incoming or outgoing HTTP/TCP connections. For North-South traffic targeting a particular service, the Gateway is referenced by the VirtualService"
     }
   },
-  "type": "Network",
-  "subType": "Network",
-  "evaluationQuery": "edge_network_relationship",
-  "selectors": [{
-    "allow": {
-      "from": [
-        {
-          "kind": "Gateway",
-          "model": "istio-base"
-        }
-      ],
-      "to": [
-        {
-          "kind": "VirtualService",
-          "model": "istio-base"
-        }
-      ]
-    },
-    "deny": {}
-  }]
+  "type": "non-binding",
+  "subType": "network",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "Gateway",
+            "model": {
+              "name": "istio-base",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "VirtualService",
+            "model": {
+              "name": "istio-base",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            }
+          }
+        ]
+      },
+      "deny": {}
+    }
+  ]
 }

@@ -1,61 +1,67 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "displayName": "Tenant Configuration Template",
+  "capabilities": null,
+  "component": {
+   "kind": "TenantConfigurationTemplate",
+   "schema": "{\n \"description\": \"TenantConfigurationTemplate is the Schema for the tenantconfigurations API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"TenantConfigurationTemplateSpec defines the desired state of TenantConfigurationTemplate\",\n   \"properties\": {\n    \"description\": {\n     \"description\": \"Description is the name of the tenant configuration template\",\n     \"type\": \"string\"\n    },\n    \"name\": {\n     \"description\": \"Name is the name of the tenant configuration template\",\n     \"type\": \"string\"\n    },\n    \"tenantEngineTemplates\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"TenantEngineTemplates is the name of the tenant configuration template\",\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Tenant Configuration Template\",\n \"type\": \"object\"\n}",
+   "version": "templates.sitewhere.io/v1alpha4"
+  },
+  "configuration": null,
   "description": "",
+  "displayName": "Tenant Configuration Template",
   "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "published": false,
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": ""
+  },
   "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "version": "v1.0.0",
-   "name": "sitewhere-infrastructure",
-   "displayName": "Sitewhere Infrastructure",
-   "description": "",
-   "status": "ignored",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "registrant": {
-    "hostname": "artifacthub"
-   },
    "category": {
-    "name": "Uncategorized",
-    "metadata": null
+    "name": "Uncategorized"
    },
-   "subCategory": "",
+   "displayName": "Sitewhere Infrastructure",
+   "id": "00000000-0000-0000-0000-000000000000",
    "metadata": {
-    "source_uri": "https://sitewhere.io/helm-charts/sitewhere-infrastructure-0.1.13.tgz"
+    "source_uri": "https://sitewhere.io/helm-charts/sitewhere-infrastructure-0.1.13.tgz",
+    "svgColor": "",
+    "svgWhite": ""
    },
    "model": {
     "version": "0.1.13"
    },
+   "name": "sitewhere-infrastructure",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "version": "v1.0.0",
    "components": null,
    "relationships": null
   },
-  "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isModelAnnotation": "FALSE",
-   "isNamespaced": false,
-   "logoURL": "",
-   "model": "sitewhere-infrastructure",
-   "modelDisplayName": "Sitewhere Infrastructure",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "ignored",
+  "styles": {
    "primaryColor": "#00B39F",
    "secondaryColor": "#00D3A9",
    "shape": "circle",
-   "shapePolygonPoints": "",
-   "status": "ignored",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
    "svgColor": "",
-   "svgComplete": "",
    "svgWhite": ""
   },
-  "component": {
-   "kind": "TenantConfigurationTemplate",
-   "version": "templates.sitewhere.io/v1alpha4",
-   "schema": "{\n \"description\": \"TenantConfigurationTemplate is the Schema for the tenantconfigurations API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"TenantConfigurationTemplateSpec defines the desired state of TenantConfigurationTemplate\",\n   \"properties\": {\n    \"description\": {\n     \"description\": \"Description is the name of the tenant configuration template\",\n     \"type\": \"string\"\n    },\n    \"name\": {\n     \"description\": \"Name is the name of the tenant configuration template\",\n     \"type\": \"string\"\n    },\n    \"tenantEngineTemplates\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"TenantEngineTemplates is the name of the tenant configuration template\",\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Tenant Configuration Template\",\n \"type\": \"object\"\n}"
-  }
+  "version": "v1.0.0"
  }

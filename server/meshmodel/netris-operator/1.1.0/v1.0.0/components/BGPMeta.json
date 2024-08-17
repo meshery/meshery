@@ -1,61 +1,67 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "displayName": "BGP Meta",
+  "capabilities": null,
+  "component": {
+   "kind": "BGPMeta",
+   "schema": "{\n \"description\": \"BGPMeta is the Schema for the bgpmeta API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"BGPMetaSpec defines the desired state of BGPMeta\",\n   \"properties\": {\n    \"allowas_in\": {\n     \"type\": \"integer\"\n    },\n    \"bgpGeneration\": {\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"bgpName\": {\n     \"type\": \"string\"\n    },\n    \"bgp_password\": {\n     \"type\": \"string\"\n    },\n    \"community\": {\n     \"type\": \"string\"\n    },\n    \"description\": {\n     \"type\": \"string\"\n    },\n    \"hwid\": {\n     \"type\": \"integer\"\n    },\n    \"id\": {\n     \"type\": \"integer\"\n    },\n    \"imported\": {\n     \"description\": \"INSERT ADDITIONAL SPEC FIELDS - desired state of cluster Important: Run \\\"make\\\" to regenerate code after modifying this file\",\n     \"type\": \"boolean\"\n    },\n    \"inboundRouteMap\": {\n     \"type\": \"integer\"\n    },\n    \"internal\": {\n     \"type\": \"string\"\n    },\n    \"ip_version\": {\n     \"type\": \"string\"\n    },\n    \"local_ip\": {\n     \"type\": \"string\"\n    },\n    \"local_preference\": {\n     \"type\": \"integer\"\n    },\n    \"multihop\": {\n     \"type\": \"integer\"\n    },\n    \"name\": {\n     \"type\": \"string\"\n    },\n    \"neighbor_address\": {\n     \"type\": \"string\"\n    },\n    \"neighbor_as\": {\n     \"type\": \"integer\"\n    },\n    \"originate\": {\n     \"type\": \"string\"\n    },\n    \"outboundRouteMap\": {\n     \"type\": \"integer\"\n    },\n    \"port\": {\n     \"type\": \"integer\"\n    },\n    \"prefix_length\": {\n     \"type\": \"integer\"\n    },\n    \"prefix_limit\": {\n     \"type\": \"string\"\n    },\n    \"prefix_list_inbound\": {\n     \"type\": \"string\"\n    },\n    \"prefix_list_outbound\": {\n     \"type\": \"string\"\n    },\n    \"prepend_inbound\": {\n     \"type\": \"integer\"\n    },\n    \"prepend_outbound\": {\n     \"type\": \"integer\"\n    },\n    \"reclaimPolicy\": {\n     \"type\": \"boolean\"\n    },\n    \"remote_ip\": {\n     \"type\": \"string\"\n    },\n    \"site\": {\n     \"type\": \"string\"\n    },\n    \"status\": {\n     \"type\": \"string\"\n    },\n    \"update_source\": {\n     \"type\": \"string\"\n    },\n    \"vlan\": {\n     \"type\": \"integer\"\n    },\n    \"vnet\": {\n     \"type\": \"integer\"\n    },\n    \"weight\": {\n     \"type\": \"integer\"\n    }\n   },\n   \"required\": [\n    \"allowas_in\",\n    \"bgpGeneration\",\n    \"bgpName\",\n    \"bgp_password\",\n    \"community\",\n    \"description\",\n    \"hwid\",\n    \"id\",\n    \"imported\",\n    \"inboundRouteMap\",\n    \"internal\",\n    \"ip_version\",\n    \"local_ip\",\n    \"local_preference\",\n    \"multihop\",\n    \"name\",\n    \"neighbor_as\",\n    \"originate\",\n    \"outboundRouteMap\",\n    \"port\",\n    \"prefix_length\",\n    \"prefix_limit\",\n    \"prefix_list_inbound\",\n    \"prefix_list_outbound\",\n    \"prepend_inbound\",\n    \"prepend_outbound\",\n    \"reclaimPolicy\",\n    \"remote_ip\",\n    \"site\",\n    \"status\",\n    \"update_source\",\n    \"vlan\",\n    \"vnet\",\n    \"weight\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"BGP Meta\",\n \"type\": \"object\"\n}",
+   "version": "k8s.netris.ai/v1alpha1"
+  },
+  "configuration": null,
   "description": "",
+  "displayName": "BGP Meta",
   "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "published": false,
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": ""
+  },
   "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "version": "v1.0.0",
-   "name": "netris-operator",
-   "displayName": "Netris Operator",
-   "description": "",
-   "status": "ignored",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "registrant": {
-    "hostname": "artifacthub"
-   },
    "category": {
-    "name": "Uncategorized",
-    "metadata": null
+    "name": "Uncategorized"
    },
-   "subCategory": "",
+   "displayName": "Netris Operator",
+   "id": "00000000-0000-0000-0000-000000000000",
    "metadata": {
-    "source_uri": "https://github.com/netrisai/charts/releases/download/netris-operator-1.1.2/netris-operator-1.1.2.tgz"
+    "source_uri": "https://github.com/netrisai/charts/releases/download/netris-operator-1.1.2/netris-operator-1.1.2.tgz",
+    "svgColor": "",
+    "svgWhite": ""
    },
    "model": {
     "version": "1.1.0"
    },
+   "name": "netris-operator",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "version": "v1.0.0",
    "components": null,
    "relationships": null
   },
-  "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isModelAnnotation": "FALSE",
-   "isNamespaced": true,
-   "logoURL": "",
-   "model": "netris-operator",
-   "modelDisplayName": "Netris Operator",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "ignored",
+  "styles": {
    "primaryColor": "#00B39F",
    "secondaryColor": "#00D3A9",
    "shape": "circle",
-   "shapePolygonPoints": "",
-   "status": "ignored",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
    "svgColor": "",
-   "svgComplete": "",
    "svgWhite": ""
   },
-  "component": {
-   "kind": "BGPMeta",
-   "version": "k8s.netris.ai/v1alpha1",
-   "schema": "{\n \"description\": \"BGPMeta is the Schema for the bgpmeta API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"BGPMetaSpec defines the desired state of BGPMeta\",\n   \"properties\": {\n    \"allowas_in\": {\n     \"type\": \"integer\"\n    },\n    \"bgpGeneration\": {\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"bgpName\": {\n     \"type\": \"string\"\n    },\n    \"bgp_password\": {\n     \"type\": \"string\"\n    },\n    \"community\": {\n     \"type\": \"string\"\n    },\n    \"description\": {\n     \"type\": \"string\"\n    },\n    \"hwid\": {\n     \"type\": \"integer\"\n    },\n    \"id\": {\n     \"type\": \"integer\"\n    },\n    \"imported\": {\n     \"description\": \"INSERT ADDITIONAL SPEC FIELDS - desired state of cluster Important: Run \\\"make\\\" to regenerate code after modifying this file\",\n     \"type\": \"boolean\"\n    },\n    \"inboundRouteMap\": {\n     \"type\": \"integer\"\n    },\n    \"internal\": {\n     \"type\": \"string\"\n    },\n    \"ip_version\": {\n     \"type\": \"string\"\n    },\n    \"local_ip\": {\n     \"type\": \"string\"\n    },\n    \"local_preference\": {\n     \"type\": \"integer\"\n    },\n    \"multihop\": {\n     \"type\": \"integer\"\n    },\n    \"name\": {\n     \"type\": \"string\"\n    },\n    \"neighbor_address\": {\n     \"type\": \"string\"\n    },\n    \"neighbor_as\": {\n     \"type\": \"integer\"\n    },\n    \"originate\": {\n     \"type\": \"string\"\n    },\n    \"outboundRouteMap\": {\n     \"type\": \"integer\"\n    },\n    \"port\": {\n     \"type\": \"integer\"\n    },\n    \"prefix_length\": {\n     \"type\": \"integer\"\n    },\n    \"prefix_limit\": {\n     \"type\": \"string\"\n    },\n    \"prefix_list_inbound\": {\n     \"type\": \"string\"\n    },\n    \"prefix_list_outbound\": {\n     \"type\": \"string\"\n    },\n    \"prepend_inbound\": {\n     \"type\": \"integer\"\n    },\n    \"prepend_outbound\": {\n     \"type\": \"integer\"\n    },\n    \"reclaimPolicy\": {\n     \"type\": \"boolean\"\n    },\n    \"remote_ip\": {\n     \"type\": \"string\"\n    },\n    \"site\": {\n     \"type\": \"string\"\n    },\n    \"status\": {\n     \"type\": \"string\"\n    },\n    \"update_source\": {\n     \"type\": \"string\"\n    },\n    \"vlan\": {\n     \"type\": \"integer\"\n    },\n    \"vnet\": {\n     \"type\": \"integer\"\n    },\n    \"weight\": {\n     \"type\": \"integer\"\n    }\n   },\n   \"required\": [\n    \"allowas_in\",\n    \"bgpGeneration\",\n    \"bgpName\",\n    \"bgp_password\",\n    \"community\",\n    \"description\",\n    \"hwid\",\n    \"id\",\n    \"imported\",\n    \"inboundRouteMap\",\n    \"internal\",\n    \"ip_version\",\n    \"local_ip\",\n    \"local_preference\",\n    \"multihop\",\n    \"name\",\n    \"neighbor_as\",\n    \"originate\",\n    \"outboundRouteMap\",\n    \"port\",\n    \"prefix_length\",\n    \"prefix_limit\",\n    \"prefix_list_inbound\",\n    \"prefix_list_outbound\",\n    \"prepend_inbound\",\n    \"prepend_outbound\",\n    \"reclaimPolicy\",\n    \"remote_ip\",\n    \"site\",\n    \"status\",\n    \"update_source\",\n    \"vlan\",\n    \"vnet\",\n    \"weight\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"BGP Meta\",\n \"type\": \"object\"\n}"
-  }
+  "version": "v1.0.0"
  }

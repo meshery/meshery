@@ -1,29 +1,31 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "displayName": "Dialogflow CX Agent",
+  "capabilities": null,
+  "component": {
+   "kind": "DialogflowCXAgent",
+   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"avatarUri\": {\n     \"description\": \"The URI of the agent's avatar. Avatars are used throughout the Dialogflow console and in the self-hosted Web Demo integration.\",\n     \"type\": \"string\"\n    },\n    \"defaultLanguageCode\": {\n     \"description\": \"Immutable. The default language of the agent as a language tag. [See Language Support](https://cloud.google.com/dialogflow/cx/docs/reference/language)\\nfor a list of the currently supported language codes. This field cannot be updated after creation.\",\n     \"type\": \"string\"\n    },\n    \"description\": {\n     \"description\": \"The description of this agent. The maximum length is 500 characters. If exceeded, the request is rejected.\",\n     \"type\": \"string\"\n    },\n    \"displayName\": {\n     \"description\": \"The human-readable name of the agent, unique within the location.\",\n     \"type\": \"string\"\n    },\n    \"enableSpellCorrection\": {\n     \"description\": \"Indicates if automatic spell correction is enabled in detect intent requests.\",\n     \"type\": \"boolean\"\n    },\n    \"enableStackdriverLogging\": {\n     \"description\": \"Determines whether this agent should log conversation queries.\",\n     \"type\": \"boolean\"\n    },\n    \"location\": {\n     \"description\": \"Immutable. The name of the location this agent is located in.\\n\\n~\\u003e **Note:** The first time you are deploying an Agent in your project you must configure location settings.\\n This is a one time step but at the moment you can only [configure location settings](https://cloud.google.com/dialogflow/cx/docs/concept/region#location-settings) via the Dialogflow CX console.\\n Another options is to use global location so you don't need to manually configure location settings.\",\n     \"type\": \"string\"\n    },\n    \"projectRef\": {\n     \"description\": \"The project that this resource belongs to.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `name` field of a `Project` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The service-generated name of the resource. Used for acquisition only. Leave unset to create a new resource.\",\n     \"type\": \"string\"\n    },\n    \"securitySettings\": {\n     \"description\": \"Name of the SecuritySettings reference for the agent. Format: projects/\\u003cProject ID\\u003e/locations/\\u003cLocation ID\\u003e/securitySettings/\\u003cSecurity Settings ID\\u003e.\",\n     \"type\": \"string\"\n    },\n    \"speechToTextSettings\": {\n     \"description\": \"Settings related to speech recognition.\",\n     \"properties\": {\n      \"enableSpeechAdaptation\": {\n       \"description\": \"Whether to use speech adaptation for speech recognition.\",\n       \"type\": \"boolean\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"supportedLanguageCodes\": {\n     \"description\": \"The list of all languages supported by this agent (except for the default_language_code).\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"timeZone\": {\n     \"description\": \"The time zone of this agent from the [time zone database](https://www.iana.org/time-zones), e.g., America/New_York,\\nEurope/Paris.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"defaultLanguageCode\",\n    \"displayName\",\n    \"location\",\n    \"projectRef\",\n    \"timeZone\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Dialogflow CX Agent\",\n \"type\": \"object\"\n}",
+   "version": "dialogflowcx.cnrm.cloud.google.com/v1alpha1"
+  },
+  "configuration": null,
   "description": "",
+  "displayName": "Dialogflow CX Agent",
   "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "published": false,
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": ""
+  },
   "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "version": "v1.0.0",
-   "name": "k8s-config-connector",
-   "displayName": "Google Cloud Platform",
-   "description": "",
-   "status": "enabled",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "registrant": {
-    "hostname": "github"
-   },
    "category": {
-    "name": "Orchestration \u0026 Management",
-    "metadata": null
+    "name": "Orchestration \u0026 Management"
    },
-   "subCategory": "Google Cloud Platform",
+   "displayName": "Google Cloud Platform",
+   "id": "00000000-0000-0000-0000-000000000000",
    "metadata": {
-    "capabilities": "",
     "defaultData": "",
     "isAnnotation": false,
     "primaryColor": "#4285F4",
@@ -39,30 +41,35 @@
    "model": {
     "version": "v1.120.1"
    },
+   "name": "k8s-config-connector",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "github",
+    "name": "Github",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "enabled",
+   "subCategory": "Google Cloud Platform",
+   "version": "v1.0.0",
    "components": null,
    "relationships": null
   },
-  "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
    "primaryColor": "#4285F4",
-   "secondaryColor": "",
    "shape": "rectangle",
-   "shapePolygonPoints": "",
-   "status": "enabled",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
    "svgColor": "\u003csvg width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"\u003e\n    \u003cg stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e\n        \u003cpath d=\"M12.3008862,4.00003179 L18.9908678,7.90329279 L19,11.4442164 L14.973309,9.0680926 L14.973309,10.8562526 L16.9806355,12.0276231 L16.9918433,15.1064843 L14.973309,13.9136004 L14.973309,18.415105 L12.3008862,20 L12.3008862,4.00003179 Z M11.6991138,4 L11.6991138,19.9999682 L9.02669102,18.4150732 L9.02669102,9.06816678 L5,11.4441846 L5.00913223,7.903261 L11.6991138,4 Z\" fill=\"#4285F4\"\u003e\u003c/path\u003e\n    \u003c/g\u003e\n\u003c/svg\u003e",
-   "svgComplete": "",
    "svgWhite": "\u003csvg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M12.3009 4.00003L18.9909 7.90329L19 11.4442L14.9733 9.06809V10.8563L16.9806 12.0276L16.9918 15.1065L14.9733 13.9136V18.4151L12.3009 20V4.00003ZM11.6991 4V20L9.02669 18.4151V9.06817L5 11.4442L5.00913 7.90326L11.6991 4Z\" fill=\"white\"/\u003e\n\u003c/svg\u003e\n"
   },
-  "component": {
-   "kind": "DialogflowCXAgent",
-   "version": "dialogflowcx.cnrm.cloud.google.com/v1alpha1",
-   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"avatarUri\": {\n     \"description\": \"The URI of the agent's avatar. Avatars are used throughout the Dialogflow console and in the self-hosted Web Demo integration.\",\n     \"type\": \"string\"\n    },\n    \"defaultLanguageCode\": {\n     \"description\": \"Immutable. The default language of the agent as a language tag. [See Language Support](https://cloud.google.com/dialogflow/cx/docs/reference/language)\\nfor a list of the currently supported language codes. This field cannot be updated after creation.\",\n     \"type\": \"string\"\n    },\n    \"description\": {\n     \"description\": \"The description of this agent. The maximum length is 500 characters. If exceeded, the request is rejected.\",\n     \"type\": \"string\"\n    },\n    \"displayName\": {\n     \"description\": \"The human-readable name of the agent, unique within the location.\",\n     \"type\": \"string\"\n    },\n    \"enableSpellCorrection\": {\n     \"description\": \"Indicates if automatic spell correction is enabled in detect intent requests.\",\n     \"type\": \"boolean\"\n    },\n    \"enableStackdriverLogging\": {\n     \"description\": \"Determines whether this agent should log conversation queries.\",\n     \"type\": \"boolean\"\n    },\n    \"location\": {\n     \"description\": \"Immutable. The name of the location this agent is located in.\\n\\n~\\u003e **Note:** The first time you are deploying an Agent in your project you must configure location settings.\\n This is a one time step but at the moment you can only [configure location settings](https://cloud.google.com/dialogflow/cx/docs/concept/region#location-settings) via the Dialogflow CX console.\\n Another options is to use global location so you don't need to manually configure location settings.\",\n     \"type\": \"string\"\n    },\n    \"projectRef\": {\n     \"description\": \"The project that this resource belongs to.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `name` field of a `Project` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The service-generated name of the resource. Used for acquisition only. Leave unset to create a new resource.\",\n     \"type\": \"string\"\n    },\n    \"securitySettings\": {\n     \"description\": \"Name of the SecuritySettings reference for the agent. Format: projects/\\u003cProject ID\\u003e/locations/\\u003cLocation ID\\u003e/securitySettings/\\u003cSecurity Settings ID\\u003e.\",\n     \"type\": \"string\"\n    },\n    \"speechToTextSettings\": {\n     \"description\": \"Settings related to speech recognition.\",\n     \"properties\": {\n      \"enableSpeechAdaptation\": {\n       \"description\": \"Whether to use speech adaptation for speech recognition.\",\n       \"type\": \"boolean\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"supportedLanguageCodes\": {\n     \"description\": \"The list of all languages supported by this agent (except for the default_language_code).\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"timeZone\": {\n     \"description\": \"The time zone of this agent from the [time zone database](https://www.iana.org/time-zones), e.g., America/New_York,\\nEurope/Paris.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"defaultLanguageCode\",\n    \"displayName\",\n    \"location\",\n    \"projectRef\",\n    \"timeZone\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Dialogflow CX Agent\",\n \"type\": \"object\"\n}"
-  }
+  "version": "v1.0.0"
  }

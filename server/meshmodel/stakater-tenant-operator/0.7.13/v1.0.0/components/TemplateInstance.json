@@ -1,29 +1,31 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "displayName": "Template Instance",
+  "capabilities": null,
+  "component": {
+   "kind": "TemplateInstance",
+   "schema": "{\n \"description\": \"TemplateInstance is the Schema for the templatesinstance API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"TemplateInstanceSpec holds the expected cluster status of the template instance\",\n   \"properties\": {\n    \"parameters\": {\n     \"description\": \"Parameters hold the values of the defined parameters in the template\",\n     \"items\": {\n      \"properties\": {\n       \"name\": {\n        \"description\": \"Name is the name of the parameter to set\",\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"description\": \"Value is the value of the parameter to set\",\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"sync\": {\n     \"description\": \"If true the template instance will keep the deployed resources in sync with the template.\",\n     \"type\": \"boolean\"\n    },\n    \"template\": {\n     \"description\": \"The template to instantiate. This is an immutable field\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"template\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Template Instance\",\n \"type\": \"object\"\n}",
+   "version": "tenantoperator.stakater.com/v1alpha1"
+  },
+  "configuration": null,
   "description": "",
+  "displayName": "Template Instance",
   "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "published": false,
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": ""
+  },
   "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "version": "v1.0.0",
-   "name": "stakater-tenant-operator",
-   "displayName": "stakater-tenant-operator",
-   "description": "",
-   "status": "ignored",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "registrant": {
-    "hostname": "artifacthub"
-   },
    "category": {
-    "name": "Uncategorized",
-    "metadata": null
+    "name": "Uncategorized"
    },
-   "subCategory": "Uncategorized",
+   "displayName": "stakater-tenant-operator",
+   "id": "00000000-0000-0000-0000-000000000000",
    "metadata": {
-    "capabilities": "",
     "defaultData": "",
     "isAnnotation": false,
     "primaryColor": "#00B39F",
@@ -39,30 +41,36 @@
    "model": {
     "version": "0.7.13"
    },
+   "name": "stakater-tenant-operator",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "subCategory": "Uncategorized",
+   "version": "v1.0.0",
    "components": null,
    "relationships": null
   },
-  "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "ignored",
+  "styles": {
    "primaryColor": "#00B39F",
    "secondaryColor": "#00D3A9",
    "shape": "circle",
-   "shapePolygonPoints": "",
-   "status": "ignored",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
    "svgColor": "",
-   "svgComplete": "",
    "svgWhite": ""
   },
-  "component": {
-   "kind": "TemplateInstance",
-   "version": "tenantoperator.stakater.com/v1alpha1",
-   "schema": "{\n \"description\": \"TemplateInstance is the Schema for the templatesinstance API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"TemplateInstanceSpec holds the expected cluster status of the template instance\",\n   \"properties\": {\n    \"parameters\": {\n     \"description\": \"Parameters hold the values of the defined parameters in the template\",\n     \"items\": {\n      \"properties\": {\n       \"name\": {\n        \"description\": \"Name is the name of the parameter to set\",\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"description\": \"Value is the value of the parameter to set\",\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"sync\": {\n     \"description\": \"If true the template instance will keep the deployed resources in sync with the template.\",\n     \"type\": \"boolean\"\n    },\n    \"template\": {\n     \"description\": \"The template to instantiate. This is an immutable field\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"template\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Template Instance\",\n \"type\": \"object\"\n}"
-  }
+  "version": "v1.0.0"
  }

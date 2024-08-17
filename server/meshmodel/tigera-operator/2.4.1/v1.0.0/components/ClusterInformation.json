@@ -1,61 +1,67 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "displayName": "Cluster Information",
+  "capabilities": null,
+  "component": {
+   "kind": "ClusterInformation",
+   "schema": "{\n \"description\": \"ClusterInformation contains the cluster specific information.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ClusterInformationSpec contains the values of describing the cluster.\",\n   \"properties\": {\n    \"calicoVersion\": {\n     \"description\": \"CalicoVersion is the version of Calico that the cluster is running\",\n     \"type\": \"string\"\n    },\n    \"clusterGUID\": {\n     \"description\": \"ClusterGUID is the GUID of the cluster\",\n     \"type\": \"string\"\n    },\n    \"clusterType\": {\n     \"description\": \"ClusterType describes the type of the cluster\",\n     \"type\": \"string\"\n    },\n    \"datastoreReady\": {\n     \"description\": \"DatastoreReady is used during significant datastore migrations to signal to components such as Felix that it should wait before accessing the datastore.\",\n     \"type\": \"boolean\"\n    },\n    \"variant\": {\n     \"description\": \"Variant declares which variant of Calico should be active.\",\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Cluster Information\",\n \"type\": \"object\"\n}",
+   "version": "crd.projectcalico.org/v1"
+  },
+  "configuration": null,
   "description": "",
+  "displayName": "Cluster Information",
   "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "published": false,
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": ""
+  },
   "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "version": "v1.0.0",
-   "name": "tigera-operator",
-   "displayName": "Tigera Operator",
-   "description": "",
-   "status": "ignored",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "registrant": {
-    "hostname": "artifacthub"
-   },
    "category": {
-    "name": "Runtime",
-    "metadata": null
+    "name": "Runtime"
    },
-   "subCategory": "",
+   "displayName": "Tigera Operator",
+   "id": "00000000-0000-0000-0000-000000000000",
    "metadata": {
-    "source_uri": "https://github.com/stevehipwell/helm-charts/releases/download/tigera-operator-2.9.0/tigera-operator-2.9.0.tgz"
+    "source_uri": "https://github.com/stevehipwell/helm-charts/releases/download/tigera-operator-2.9.0/tigera-operator-2.9.0.tgz",
+    "svgColor": "",
+    "svgWhite": ""
    },
    "model": {
     "version": "2.4.1"
    },
+   "name": "tigera-operator",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "version": "v1.0.0",
    "components": null,
    "relationships": null
   },
-  "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isModelAnnotation": "FALSE",
-   "isNamespaced": false,
-   "logoURL": "",
-   "model": "tigera-operator",
-   "modelDisplayName": "Tigera Operator",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "ignored",
+  "styles": {
    "primaryColor": "#00B39F",
    "secondaryColor": "#00D3A9",
    "shape": "circle",
-   "shapePolygonPoints": "",
-   "status": "ignored",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
    "svgColor": "",
-   "svgComplete": "",
    "svgWhite": ""
   },
-  "component": {
-   "kind": "ClusterInformation",
-   "version": "crd.projectcalico.org/v1",
-   "schema": "{\n \"description\": \"ClusterInformation contains the cluster specific information.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ClusterInformationSpec contains the values of describing the cluster.\",\n   \"properties\": {\n    \"calicoVersion\": {\n     \"description\": \"CalicoVersion is the version of Calico that the cluster is running\",\n     \"type\": \"string\"\n    },\n    \"clusterGUID\": {\n     \"description\": \"ClusterGUID is the GUID of the cluster\",\n     \"type\": \"string\"\n    },\n    \"clusterType\": {\n     \"description\": \"ClusterType describes the type of the cluster\",\n     \"type\": \"string\"\n    },\n    \"datastoreReady\": {\n     \"description\": \"DatastoreReady is used during significant datastore migrations to signal to components such as Felix that it should wait before accessing the datastore.\",\n     \"type\": \"boolean\"\n    },\n    \"variant\": {\n     \"description\": \"Variant declares which variant of Calico should be active.\",\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Cluster Information\",\n \"type\": \"object\"\n}"
-  }
+  "version": "v1.0.0"
  }

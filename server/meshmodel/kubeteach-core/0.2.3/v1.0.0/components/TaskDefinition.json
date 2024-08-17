@@ -1,29 +1,31 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "displayName": "Task Definition",
+  "capabilities": null,
+  "component": {
+   "kind": "TaskDefinition",
+   "schema": "{\n \"description\": \"TaskDefinition is the Schema for the taskdefinitions API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"TaskDefinitionSpec defines the desired state of TaskDefinition.\",\n   \"properties\": {\n    \"points\": {\n     \"description\": \"Points Number of points for this TaskDefinition. Points will be summarized in an ExerciseSet.\",\n     \"type\": \"integer\"\n    },\n    \"requiredTaskName\": {\n     \"description\": \"RequiredTaskName defines a TaskDefinition Name that have to be done before. Useful for example if in task1 a object should be created and in task2 the object should be deleted again.\",\n     \"type\": \"string\"\n    },\n    \"taskCondition\": {\n     \"description\": \"TaskConditions defines a list of conditions for a object that must be true to complete the task.\",\n     \"items\": {\n      \"description\": \"TaskCondition defines a list of conditions for a object that must be true to complete the task.\",\n      \"properties\": {\n       \"apiGroup\": {\n        \"description\": \"APIGroup is used of the object that should be match this conditions\",\n        \"type\": \"string\"\n       },\n       \"apiVersion\": {\n        \"description\": \"APIVersion is used of the object that should be match this conditions\",\n        \"minLength\": 1,\n        \"type\": \"string\"\n       },\n       \"kind\": {\n        \"description\": \"Kind is used of the object that should be match this conditions\",\n        \"minLength\": 1,\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"description\": \"Name defines the name of the object that must apply to this conditions\",\n        \"minLength\": 1,\n        \"type\": \"string\"\n       },\n       \"namespace\": {\n        \"description\": \"Namespace is used to find the object if it is namespaced\",\n        \"type\": \"string\"\n       },\n       \"notExists\": {\n        \"description\": \"NotExists if set to true, all ResourceCondition are ignored and the TaskCondition is true if object do not exists\",\n        \"type\": \"boolean\"\n       },\n       \"resourceCondition\": {\n        \"description\": \"ResourceCondition describe the conditions that must be apply to success this TaskCondition If no ResourceCondition is set this TaskCondition just check if object exits\",\n        \"items\": {\n         \"description\": \"ResourceCondition describe the conditions that must be apply to success this TaskCondition\",\n         \"properties\": {\n          \"field\": {\n           \"description\": \"Field is the json search string for this condition. Example: metadata.name For more details have a look into gjson docs: https://github.com/tidwall/gjson\",\n           \"minLength\": 1,\n           \"type\": \"string\"\n          },\n          \"operator\": {\n           \"description\": \"Operator is for the condition. Valid operators are eq, neq, lt, gt, nil, notnil contains.\",\n           \"enum\": [\n            \"eq\",\n            \"neq\",\n            \"lt\",\n            \"gt\",\n            \"contains\",\n            \"nil\",\n            \"notnil\"\n           ],\n           \"type\": \"string\"\n          },\n          \"value\": {\n           \"description\": \"Value contains the value which the Operator must match. Must be a string but for lt and gt only numbers are allowed in this string. Value is ignored by Operator nil and notnil\",\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"field\",\n          \"operator\"\n         ],\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       }\n      },\n      \"required\": [\n       \"apiVersion\",\n       \"kind\",\n       \"name\"\n      ],\n      \"type\": \"object\"\n     },\n     \"minItems\": 1,\n     \"type\": \"array\"\n    },\n    \"taskSpec\": {\n     \"description\": \"TaskSpec represents spec of the task that is creating for this TaskDefinition.\",\n     \"properties\": {\n      \"description\": {\n       \"description\": \"Description describes the task\",\n       \"minLength\": 1,\n       \"type\": \"string\"\n      },\n      \"helpURL\": {\n       \"description\": \"HelpURL is a URL that can help to solve this Task\",\n       \"type\": \"string\"\n      },\n      \"longDescription\": {\n       \"description\": \"LongDescription describes the task\",\n       \"type\": \"string\"\n      },\n      \"title\": {\n       \"description\": \"Title is the title of the task\",\n       \"minLength\": 1,\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"description\",\n      \"title\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"taskCondition\",\n    \"taskSpec\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Task Definition\",\n \"type\": \"object\"\n}",
+   "version": "kubeteach.geberl.io/v1alpha1"
+  },
+  "configuration": null,
   "description": "",
+  "displayName": "Task Definition",
   "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "published": false,
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": ""
+  },
   "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "version": "v1.0.0",
-   "name": "kubeteach-core",
-   "displayName": "Kubeteach Core",
-   "description": "",
-   "status": "ignored",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "registrant": {
-    "hostname": "artifacthub"
-   },
    "category": {
-    "name": "Uncategorized",
-    "metadata": null
+    "name": "Uncategorized"
    },
-   "subCategory": "Uncategorized",
+   "displayName": "Kubeteach Core",
+   "id": "00000000-0000-0000-0000-000000000000",
    "metadata": {
-    "capabilities": "",
     "defaultData": "",
     "isAnnotation": false,
     "primaryColor": "#00B39F",
@@ -39,30 +41,36 @@
    "model": {
     "version": "0.2.3"
    },
+   "name": "kubeteach-core",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "subCategory": "Uncategorized",
+   "version": "v1.0.0",
    "components": null,
    "relationships": null
   },
-  "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "ignored",
+  "styles": {
    "primaryColor": "#00B39F",
    "secondaryColor": "#00D3A9",
    "shape": "circle",
-   "shapePolygonPoints": "",
-   "status": "ignored",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
    "svgColor": "",
-   "svgComplete": "",
    "svgWhite": ""
   },
-  "component": {
-   "kind": "TaskDefinition",
-   "version": "kubeteach.geberl.io/v1alpha1",
-   "schema": "{\n \"description\": \"TaskDefinition is the Schema for the taskdefinitions API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"TaskDefinitionSpec defines the desired state of TaskDefinition.\",\n   \"properties\": {\n    \"points\": {\n     \"description\": \"Points Number of points for this TaskDefinition. Points will be summarized in an ExerciseSet.\",\n     \"type\": \"integer\"\n    },\n    \"requiredTaskName\": {\n     \"description\": \"RequiredTaskName defines a TaskDefinition Name that have to be done before. Useful for example if in task1 a object should be created and in task2 the object should be deleted again.\",\n     \"type\": \"string\"\n    },\n    \"taskCondition\": {\n     \"description\": \"TaskConditions defines a list of conditions for a object that must be true to complete the task.\",\n     \"items\": {\n      \"description\": \"TaskCondition defines a list of conditions for a object that must be true to complete the task.\",\n      \"properties\": {\n       \"apiGroup\": {\n        \"description\": \"APIGroup is used of the object that should be match this conditions\",\n        \"type\": \"string\"\n       },\n       \"apiVersion\": {\n        \"description\": \"APIVersion is used of the object that should be match this conditions\",\n        \"minLength\": 1,\n        \"type\": \"string\"\n       },\n       \"kind\": {\n        \"description\": \"Kind is used of the object that should be match this conditions\",\n        \"minLength\": 1,\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"description\": \"Name defines the name of the object that must apply to this conditions\",\n        \"minLength\": 1,\n        \"type\": \"string\"\n       },\n       \"namespace\": {\n        \"description\": \"Namespace is used to find the object if it is namespaced\",\n        \"type\": \"string\"\n       },\n       \"notExists\": {\n        \"description\": \"NotExists if set to true, all ResourceCondition are ignored and the TaskCondition is true if object do not exists\",\n        \"type\": \"boolean\"\n       },\n       \"resourceCondition\": {\n        \"description\": \"ResourceCondition describe the conditions that must be apply to success this TaskCondition If no ResourceCondition is set this TaskCondition just check if object exits\",\n        \"items\": {\n         \"description\": \"ResourceCondition describe the conditions that must be apply to success this TaskCondition\",\n         \"properties\": {\n          \"field\": {\n           \"description\": \"Field is the json search string for this condition. Example: metadata.name For more details have a look into gjson docs: https://github.com/tidwall/gjson\",\n           \"minLength\": 1,\n           \"type\": \"string\"\n          },\n          \"operator\": {\n           \"description\": \"Operator is for the condition. Valid operators are eq, neq, lt, gt, nil, notnil contains.\",\n           \"enum\": [\n            \"eq\",\n            \"neq\",\n            \"lt\",\n            \"gt\",\n            \"contains\",\n            \"nil\",\n            \"notnil\"\n           ],\n           \"type\": \"string\"\n          },\n          \"value\": {\n           \"description\": \"Value contains the value which the Operator must match. Must be a string but for lt and gt only numbers are allowed in this string. Value is ignored by Operator nil and notnil\",\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"field\",\n          \"operator\"\n         ],\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       }\n      },\n      \"required\": [\n       \"apiVersion\",\n       \"kind\",\n       \"name\"\n      ],\n      \"type\": \"object\"\n     },\n     \"minItems\": 1,\n     \"type\": \"array\"\n    },\n    \"taskSpec\": {\n     \"description\": \"TaskSpec represents spec of the task that is creating for this TaskDefinition.\",\n     \"properties\": {\n      \"description\": {\n       \"description\": \"Description describes the task\",\n       \"minLength\": 1,\n       \"type\": \"string\"\n      },\n      \"helpURL\": {\n       \"description\": \"HelpURL is a URL that can help to solve this Task\",\n       \"type\": \"string\"\n      },\n      \"longDescription\": {\n       \"description\": \"LongDescription describes the task\",\n       \"type\": \"string\"\n      },\n      \"title\": {\n       \"description\": \"Title is the title of the task\",\n       \"minLength\": 1,\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"description\",\n      \"title\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"taskCondition\",\n    \"taskSpec\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Task Definition\",\n \"type\": \"object\"\n}"
-  }
+  "version": "v1.0.0"
  }

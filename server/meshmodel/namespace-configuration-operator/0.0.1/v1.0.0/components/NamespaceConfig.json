@@ -1,29 +1,31 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "displayName": "Namespace Config",
+  "capabilities": null,
+  "component": {
+   "kind": "NamespaceConfig",
+   "schema": "{\n \"description\": \"NamespaceConfig is the Schema for the namespaceconfigs API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"NamespaceConfigSpec defines the desired state of NamespaceConfig There are two selectors: \\\"labelSelector\\\", \\\"annotationSelector\\\". Selectors are considered in AND, so if multiple are defined they must all be true for a Namespace to be selected.\",\n   \"properties\": {\n    \"annotationSelector\": {\n     \"description\": \"AnnotationSelector selects Namespaces by annotation.\",\n     \"properties\": {\n      \"matchExpressions\": {\n       \"description\": \"matchExpressions is a list of label selector requirements. The requirements are ANDed.\",\n       \"items\": {\n        \"description\": \"A label selector requirement is a selector that contains values, a key, and an operator that relates the key and values.\",\n        \"properties\": {\n         \"key\": {\n          \"description\": \"key is the label key that the selector applies to.\",\n          \"type\": \"string\"\n         },\n         \"operator\": {\n          \"description\": \"operator represents a key's relationship to a set of values. Valid operators are In, NotIn, Exists and DoesNotExist.\",\n          \"type\": \"string\"\n         },\n         \"values\": {\n          \"description\": \"values is an array of string values. If the operator is In or NotIn, the values array must be non-empty. If the operator is Exists or DoesNotExist, the values array must be empty. This array is replaced during a strategic merge patch.\",\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         }\n        },\n        \"required\": [\n         \"key\",\n         \"operator\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"matchLabels\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels map is equivalent to an element of matchExpressions, whose key field is \\\"key\\\", the operator is \\\"In\\\", and the values array contains only \\\"value\\\". The requirements are ANDed.\",\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"labelSelector\": {\n     \"description\": \"LabelSelector selects Namespaces by label.\",\n     \"properties\": {\n      \"matchExpressions\": {\n       \"description\": \"matchExpressions is a list of label selector requirements. The requirements are ANDed.\",\n       \"items\": {\n        \"description\": \"A label selector requirement is a selector that contains values, a key, and an operator that relates the key and values.\",\n        \"properties\": {\n         \"key\": {\n          \"description\": \"key is the label key that the selector applies to.\",\n          \"type\": \"string\"\n         },\n         \"operator\": {\n          \"description\": \"operator represents a key's relationship to a set of values. Valid operators are In, NotIn, Exists and DoesNotExist.\",\n          \"type\": \"string\"\n         },\n         \"values\": {\n          \"description\": \"values is an array of string values. If the operator is In or NotIn, the values array must be non-empty. If the operator is Exists or DoesNotExist, the values array must be empty. This array is replaced during a strategic merge patch.\",\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         }\n        },\n        \"required\": [\n         \"key\",\n         \"operator\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"matchLabels\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels map is equivalent to an element of matchExpressions, whose key field is \\\"key\\\", the operator is \\\"In\\\", and the values array contains only \\\"value\\\". The requirements are ANDed.\",\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"templates\": {\n     \"description\": \"Templates these are the templates of the resources to be created when a selected namespace is created/updated\",\n     \"items\": {\n      \"description\": \"LockedResourceTemplate represents a resource template in go language to be enforced in a LockedResourceController and can be used in a API specification\",\n      \"properties\": {\n       \"excludedPaths\": {\n        \"description\": \"ExludedPaths are a set of json paths that need not be considered by the LockedResourceReconciler\",\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\",\n        \"x-kubernetes-list-type\": \"set\"\n       },\n       \"objectTemplate\": {\n        \"description\": \"ObjectTemplate is a goland template. Whne processed, it must resolve to a yaml representation of an API resource\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"objectTemplate\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Namespace Config\",\n \"type\": \"object\"\n}",
+   "version": "redhatcop.redhat.io/v1alpha1"
+  },
+  "configuration": null,
   "description": "",
+  "displayName": "Namespace Config",
   "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "published": false,
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": ""
+  },
   "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "version": "v1.0.0",
-   "name": "namespace-configuration-operator",
-   "displayName": "Namespace Configuration Operator",
-   "description": "",
-   "status": "ignored",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "registrant": {
-    "hostname": "artifacthub"
-   },
    "category": {
-    "name": "Uncategorized",
-    "metadata": null
+    "name": "Uncategorized"
    },
-   "subCategory": "Uncategorized",
+   "displayName": "Namespace Configuration Operator",
+   "id": "00000000-0000-0000-0000-000000000000",
    "metadata": {
-    "capabilities": "",
     "defaultData": "",
     "isAnnotation": false,
     "primaryColor": "#00B39F",
@@ -39,30 +41,36 @@
    "model": {
     "version": "0.0.1"
    },
+   "name": "namespace-configuration-operator",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "subCategory": "Uncategorized",
+   "version": "v1.0.0",
    "components": null,
    "relationships": null
   },
-  "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": false,
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "ignored",
+  "styles": {
    "primaryColor": "#00B39F",
    "secondaryColor": "#00D3A9",
    "shape": "circle",
-   "shapePolygonPoints": "",
-   "status": "ignored",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
    "svgColor": "",
-   "svgComplete": "",
    "svgWhite": ""
   },
-  "component": {
-   "kind": "NamespaceConfig",
-   "version": "redhatcop.redhat.io/v1alpha1",
-   "schema": "{\n \"description\": \"NamespaceConfig is the Schema for the namespaceconfigs API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"NamespaceConfigSpec defines the desired state of NamespaceConfig There are two selectors: \\\"labelSelector\\\", \\\"annotationSelector\\\". Selectors are considered in AND, so if multiple are defined they must all be true for a Namespace to be selected.\",\n   \"properties\": {\n    \"annotationSelector\": {\n     \"description\": \"AnnotationSelector selects Namespaces by annotation.\",\n     \"properties\": {\n      \"matchExpressions\": {\n       \"description\": \"matchExpressions is a list of label selector requirements. The requirements are ANDed.\",\n       \"items\": {\n        \"description\": \"A label selector requirement is a selector that contains values, a key, and an operator that relates the key and values.\",\n        \"properties\": {\n         \"key\": {\n          \"description\": \"key is the label key that the selector applies to.\",\n          \"type\": \"string\"\n         },\n         \"operator\": {\n          \"description\": \"operator represents a key's relationship to a set of values. Valid operators are In, NotIn, Exists and DoesNotExist.\",\n          \"type\": \"string\"\n         },\n         \"values\": {\n          \"description\": \"values is an array of string values. If the operator is In or NotIn, the values array must be non-empty. If the operator is Exists or DoesNotExist, the values array must be empty. This array is replaced during a strategic merge patch.\",\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         }\n        },\n        \"required\": [\n         \"key\",\n         \"operator\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"matchLabels\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels map is equivalent to an element of matchExpressions, whose key field is \\\"key\\\", the operator is \\\"In\\\", and the values array contains only \\\"value\\\". The requirements are ANDed.\",\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"labelSelector\": {\n     \"description\": \"LabelSelector selects Namespaces by label.\",\n     \"properties\": {\n      \"matchExpressions\": {\n       \"description\": \"matchExpressions is a list of label selector requirements. The requirements are ANDed.\",\n       \"items\": {\n        \"description\": \"A label selector requirement is a selector that contains values, a key, and an operator that relates the key and values.\",\n        \"properties\": {\n         \"key\": {\n          \"description\": \"key is the label key that the selector applies to.\",\n          \"type\": \"string\"\n         },\n         \"operator\": {\n          \"description\": \"operator represents a key's relationship to a set of values. Valid operators are In, NotIn, Exists and DoesNotExist.\",\n          \"type\": \"string\"\n         },\n         \"values\": {\n          \"description\": \"values is an array of string values. If the operator is In or NotIn, the values array must be non-empty. If the operator is Exists or DoesNotExist, the values array must be empty. This array is replaced during a strategic merge patch.\",\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         }\n        },\n        \"required\": [\n         \"key\",\n         \"operator\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"matchLabels\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels map is equivalent to an element of matchExpressions, whose key field is \\\"key\\\", the operator is \\\"In\\\", and the values array contains only \\\"value\\\". The requirements are ANDed.\",\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"templates\": {\n     \"description\": \"Templates these are the templates of the resources to be created when a selected namespace is created/updated\",\n     \"items\": {\n      \"description\": \"LockedResourceTemplate represents a resource template in go language to be enforced in a LockedResourceController and can be used in a API specification\",\n      \"properties\": {\n       \"excludedPaths\": {\n        \"description\": \"ExludedPaths are a set of json paths that need not be considered by the LockedResourceReconciler\",\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\",\n        \"x-kubernetes-list-type\": \"set\"\n       },\n       \"objectTemplate\": {\n        \"description\": \"ObjectTemplate is a goland template. Whne processed, it must resolve to a yaml representation of an API resource\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"objectTemplate\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Namespace Config\",\n \"type\": \"object\"\n}"
-  }
+  "version": "v1.0.0"
  }

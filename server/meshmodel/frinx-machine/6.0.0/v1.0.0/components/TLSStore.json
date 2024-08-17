@@ -1,27 +1,30 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "displayName": "TLS Store",
+  "capabilities": null,
+  "component": {
+   "kind": "TLSStore",
+   "schema": "{\n \"description\": \"TLSStore is the CRD implementation of a Traefik TLS Store.\\nFor the time being, only the TLSStore named default is supported.\\nThis means that you cannot have two stores that are named default in different Kubernetes namespaces.\\nMore info: https://doc.traefik.io/traefik/v2.11/https/tls/#certificates-stores\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"TLSStoreSpec defines the desired state of a TLSStore.\",\n   \"properties\": {\n    \"certificates\": {\n     \"description\": \"Certificates is a list of secret names, each secret holding a key/certificate pair to add to the store.\",\n     \"items\": {\n      \"description\": \"Certificate holds a secret name for the TLSStore resource.\",\n      \"properties\": {\n       \"secretName\": {\n        \"description\": \"SecretName is the name of the referenced Kubernetes Secret to specify the certificate details.\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"secretName\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"defaultCertificate\": {\n     \"description\": \"DefaultCertificate defines the default certificate configuration.\",\n     \"properties\": {\n      \"secretName\": {\n       \"description\": \"SecretName is the name of the referenced Kubernetes Secret to specify the certificate details.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"secretName\"\n     ],\n     \"type\": \"object\"\n    },\n    \"defaultGeneratedCert\": {\n     \"description\": \"DefaultGeneratedCert defines the default generated certificate configuration.\",\n     \"properties\": {\n      \"domain\": {\n       \"description\": \"Domain is the domain definition for the DefaultCertificate.\",\n       \"properties\": {\n        \"main\": {\n         \"description\": \"Main defines the main domain name.\",\n         \"type\": \"string\"\n        },\n        \"sans\": {\n         \"description\": \"SANs defines the subject alternative domain names.\",\n         \"items\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"array\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"resolver\": {\n       \"description\": \"Resolver is the name of the resolver that will be used to issue the DefaultCertificate.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"metadata\",\n  \"spec\"\n ],\n \"title\": \"TLS Store\",\n \"type\": \"object\"\n}",
+   "version": "traefik.io/v1alpha1"
+  },
+  "configuration": null,
   "description": "",
+  "displayName": "TLS Store",
   "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "published": false,
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": ""
+  },
   "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "version": "v1.0.0",
-   "name": "frinx-machine",
-   "displayName": "Frinx Machine",
-   "description": "",
-   "status": "ignored",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "registrant": {
-    "hostname": "artifacthub"
-   },
    "category": {
-    "name": "Uncategorized",
-    "metadata": null
+    "name": "Uncategorized"
    },
-   "subCategory": "Uncategorized",
+   "displayName": "Frinx Machine",
+   "id": "00000000-0000-0000-0000-000000000000",
    "metadata": {
     "isAnnotation": false,
     "subCategory": "Uncategorized",
@@ -32,30 +35,36 @@
    "model": {
     "version": "6.0.0"
    },
+   "name": "frinx-machine",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "subCategory": "Uncategorized",
+   "version": "v1.0.0",
    "components": null,
    "relationships": null
   },
-  "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "ignored",
+  "styles": {
    "primaryColor": "#00B39F",
    "secondaryColor": "#00D3A9",
    "shape": "circle",
-   "shapePolygonPoints": "",
-   "status": "ignored",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
    "svgColor": "\u003csvg width=\"144\" height=\"146\" viewBox=\"0 0 144 146\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M3 0H46L143.5 146H100.5L3 0Z\" fill=\"#03AAFF\"/\u003e\n\u003cpath d=\"M140.5 0H97.5L0 146H43L140.5 0Z\" fill=\"#03AAFF\"/\u003e\n\u003cpath d=\"M50.5 70.5L71.5 39L93 70.5L72 103L50.5 70.5Z\" fill=\"#0370FF\"/\u003e\n\u003c/svg\u003e\r",
-   "svgComplete": "",
    "svgWhite": "\u003csvg width=\"144\" height=\"146\" viewBox=\"0 0 144 146\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M3 0H46L143.5 146H100.5L3 0Z\" fill=\"white\"/\u003e\n\u003cpath d=\"M140.5 0H97.5L0 146H43L140.5 0Z\" fill=\"white\"/\u003e\n\u003cpath d=\"M50.5 70.5L71.5 39L93 70.5L72 103L50.5 70.5Z\" fill=\"#F0F0F0\"/\u003e\n\u003c/svg\u003e\r"
   },
-  "component": {
-   "kind": "TLSStore",
-   "version": "traefik.io/v1alpha1",
-   "schema": "{\n \"description\": \"TLSStore is the CRD implementation of a Traefik TLS Store.\\nFor the time being, only the TLSStore named default is supported.\\nThis means that you cannot have two stores that are named default in different Kubernetes namespaces.\\nMore info: https://doc.traefik.io/traefik/v2.11/https/tls/#certificates-stores\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"TLSStoreSpec defines the desired state of a TLSStore.\",\n   \"properties\": {\n    \"certificates\": {\n     \"description\": \"Certificates is a list of secret names, each secret holding a key/certificate pair to add to the store.\",\n     \"items\": {\n      \"description\": \"Certificate holds a secret name for the TLSStore resource.\",\n      \"properties\": {\n       \"secretName\": {\n        \"description\": \"SecretName is the name of the referenced Kubernetes Secret to specify the certificate details.\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"secretName\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"defaultCertificate\": {\n     \"description\": \"DefaultCertificate defines the default certificate configuration.\",\n     \"properties\": {\n      \"secretName\": {\n       \"description\": \"SecretName is the name of the referenced Kubernetes Secret to specify the certificate details.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"secretName\"\n     ],\n     \"type\": \"object\"\n    },\n    \"defaultGeneratedCert\": {\n     \"description\": \"DefaultGeneratedCert defines the default generated certificate configuration.\",\n     \"properties\": {\n      \"domain\": {\n       \"description\": \"Domain is the domain definition for the DefaultCertificate.\",\n       \"properties\": {\n        \"main\": {\n         \"description\": \"Main defines the main domain name.\",\n         \"type\": \"string\"\n        },\n        \"sans\": {\n         \"description\": \"SANs defines the subject alternative domain names.\",\n         \"items\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"array\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"resolver\": {\n       \"description\": \"Resolver is the name of the resolver that will be used to issue the DefaultCertificate.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"metadata\",\n  \"spec\"\n ],\n \"title\": \"TLS Store\",\n \"type\": \"object\"\n}"
-  }
+  "version": "v1.0.0"
  }

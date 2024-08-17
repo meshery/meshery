@@ -1,29 +1,31 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "displayName": "Device Set",
+  "capabilities": null,
+  "component": {
+   "kind": "DeviceSet",
+   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"devices\": {\n     \"additionalProperties\": {\n      \"properties\": {\n       \"height\": {\n        \"format\": \"int32\",\n        \"type\": \"integer\"\n       },\n       \"pixelRatio\": {\n        \"type\": \"number\"\n       },\n       \"printVersion\": {\n        \"default\": false,\n        \"type\": \"boolean\"\n       },\n       \"userAgent\": {\n        \"type\": \"string\"\n       },\n       \"width\": {\n        \"format\": \"int32\",\n        \"type\": \"integer\"\n       }\n      },\n      \"required\": [\n       \"height\",\n       \"pixelRatio\",\n       \"userAgent\",\n       \"width\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"devices\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Device Set\",\n \"type\": \"object\"\n}",
+   "version": "moon.aerokube.com/v1"
+  },
+  "configuration": null,
   "description": "",
+  "displayName": "Device Set",
   "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "published": false,
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": ""
+  },
   "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "version": "v1.0.0",
-   "name": "aerokube",
-   "displayName": "Aerokube",
-   "description": "",
-   "status": "ignored",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "registrant": {
-    "hostname": "artifacthub"
-   },
    "category": {
-    "name": "Uncategorized",
-    "metadata": null
+    "name": "Uncategorized"
    },
-   "subCategory": "Uncategorized",
+   "displayName": "Aerokube",
+   "id": "00000000-0000-0000-0000-000000000000",
    "metadata": {
-    "capabilities": "",
     "defaultData": "",
     "isAnnotation": false,
     "primaryColor": "#00B39F",
@@ -39,30 +41,36 @@
    "model": {
     "version": "2.7.1"
    },
+   "name": "aerokube",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "subCategory": "Uncategorized",
+   "version": "v1.0.0",
    "components": null,
    "relationships": null
   },
-  "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "ignored",
+  "styles": {
    "primaryColor": "#00B39F",
    "secondaryColor": "#00D3A9",
    "shape": "circle",
-   "shapePolygonPoints": "",
-   "status": "ignored",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
    "svgColor": "",
-   "svgComplete": "",
    "svgWhite": ""
   },
-  "component": {
-   "kind": "DeviceSet",
-   "version": "moon.aerokube.com/v1",
-   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"devices\": {\n     \"additionalProperties\": {\n      \"properties\": {\n       \"height\": {\n        \"format\": \"int32\",\n        \"type\": \"integer\"\n       },\n       \"pixelRatio\": {\n        \"type\": \"number\"\n       },\n       \"printVersion\": {\n        \"default\": false,\n        \"type\": \"boolean\"\n       },\n       \"userAgent\": {\n        \"type\": \"string\"\n       },\n       \"width\": {\n        \"format\": \"int32\",\n        \"type\": \"integer\"\n       }\n      },\n      \"required\": [\n       \"height\",\n       \"pixelRatio\",\n       \"userAgent\",\n       \"width\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"devices\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Device Set\",\n \"type\": \"object\"\n}"
-  }
+  "version": "v1.0.0"
  }

@@ -1,29 +1,31 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "displayName": "Compute HTTPS Health Check",
+  "capabilities": null,
+  "component": {
+   "kind": "ComputeHTTPSHealthCheck",
+   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"checkIntervalSec\": {\n     \"description\": \"How often (in seconds) to send a health check. The default value is 5\\nseconds.\",\n     \"type\": \"integer\"\n    },\n    \"description\": {\n     \"description\": \"An optional description of this resource. Provide this property when\\nyou create the resource.\",\n     \"type\": \"string\"\n    },\n    \"healthyThreshold\": {\n     \"description\": \"A so-far unhealthy instance will be marked healthy after this many\\nconsecutive successes. The default value is 2.\",\n     \"type\": \"integer\"\n    },\n    \"host\": {\n     \"description\": \"The value of the host header in the HTTPS health check request. If\\nleft empty (default value), the public IP on behalf of which this\\nhealth check is performed will be used.\",\n     \"type\": \"string\"\n    },\n    \"port\": {\n     \"description\": \"The TCP port number for the HTTPS health check request.\\nThe default value is 443.\",\n     \"type\": \"integer\"\n    },\n    \"requestPath\": {\n     \"description\": \"The request path of the HTTPS health check request.\\nThe default value is /.\",\n     \"type\": \"string\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    },\n    \"timeoutSec\": {\n     \"description\": \"How long (in seconds) to wait before claiming failure.\\nThe default value is 5 seconds.  It is invalid for timeoutSec to have\\ngreater value than checkIntervalSec.\",\n     \"type\": \"integer\"\n    },\n    \"unhealthyThreshold\": {\n     \"description\": \"A so-far healthy instance will be marked unhealthy after this many\\nconsecutive failures. The default value is 2.\",\n     \"type\": \"integer\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Compute HTTPS Health Check\",\n \"type\": \"object\"\n}",
+   "version": "compute.cnrm.cloud.google.com/v1beta1"
+  },
+  "configuration": null,
   "description": "",
+  "displayName": "Compute HTTPS Health Check",
   "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "published": false,
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": ""
+  },
   "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "version": "v1.0.0",
-   "name": "k8s-config-connector",
-   "displayName": "Google Cloud Platform",
-   "description": "",
-   "status": "enabled",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "registrant": {
-    "hostname": "github"
-   },
    "category": {
-    "name": "Orchestration \u0026 Management",
-    "metadata": null
+    "name": "Orchestration \u0026 Management"
    },
-   "subCategory": "Google Cloud Platform",
+   "displayName": "Google Cloud Platform",
+   "id": "00000000-0000-0000-0000-000000000000",
    "metadata": {
-    "capabilities": "",
     "defaultData": "",
     "isAnnotation": false,
     "primaryColor": "#4285F4",
@@ -39,30 +41,35 @@
    "model": {
     "version": "v1.120.1"
    },
+   "name": "k8s-config-connector",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "github",
+    "name": "Github",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "enabled",
+   "subCategory": "Google Cloud Platform",
+   "version": "v1.0.0",
    "components": null,
    "relationships": null
   },
-  "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
    "primaryColor": "#4285F4",
-   "secondaryColor": "",
    "shape": "rectangle",
-   "shapePolygonPoints": "",
-   "status": "enabled",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
    "svgColor": "\u003csvg width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"\u003e\n    \u003cg stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e\n        \u003cpath d=\"M12.3008862,4.00003179 L18.9908678,7.90329279 L19,11.4442164 L14.973309,9.0680926 L14.973309,10.8562526 L16.9806355,12.0276231 L16.9918433,15.1064843 L14.973309,13.9136004 L14.973309,18.415105 L12.3008862,20 L12.3008862,4.00003179 Z M11.6991138,4 L11.6991138,19.9999682 L9.02669102,18.4150732 L9.02669102,9.06816678 L5,11.4441846 L5.00913223,7.903261 L11.6991138,4 Z\" fill=\"#4285F4\"\u003e\u003c/path\u003e\n    \u003c/g\u003e\n\u003c/svg\u003e",
-   "svgComplete": "",
    "svgWhite": "\u003csvg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M12.3009 4.00003L18.9909 7.90329L19 11.4442L14.9733 9.06809V10.8563L16.9806 12.0276L16.9918 15.1065L14.9733 13.9136V18.4151L12.3009 20V4.00003ZM11.6991 4V20L9.02669 18.4151V9.06817L5 11.4442L5.00913 7.90326L11.6991 4Z\" fill=\"white\"/\u003e\n\u003c/svg\u003e\n"
   },
-  "component": {
-   "kind": "ComputeHTTPSHealthCheck",
-   "version": "compute.cnrm.cloud.google.com/v1beta1",
-   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"checkIntervalSec\": {\n     \"description\": \"How often (in seconds) to send a health check. The default value is 5\\nseconds.\",\n     \"type\": \"integer\"\n    },\n    \"description\": {\n     \"description\": \"An optional description of this resource. Provide this property when\\nyou create the resource.\",\n     \"type\": \"string\"\n    },\n    \"healthyThreshold\": {\n     \"description\": \"A so-far unhealthy instance will be marked healthy after this many\\nconsecutive successes. The default value is 2.\",\n     \"type\": \"integer\"\n    },\n    \"host\": {\n     \"description\": \"The value of the host header in the HTTPS health check request. If\\nleft empty (default value), the public IP on behalf of which this\\nhealth check is performed will be used.\",\n     \"type\": \"string\"\n    },\n    \"port\": {\n     \"description\": \"The TCP port number for the HTTPS health check request.\\nThe default value is 443.\",\n     \"type\": \"integer\"\n    },\n    \"requestPath\": {\n     \"description\": \"The request path of the HTTPS health check request.\\nThe default value is /.\",\n     \"type\": \"string\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    },\n    \"timeoutSec\": {\n     \"description\": \"How long (in seconds) to wait before claiming failure.\\nThe default value is 5 seconds.  It is invalid for timeoutSec to have\\ngreater value than checkIntervalSec.\",\n     \"type\": \"integer\"\n    },\n    \"unhealthyThreshold\": {\n     \"description\": \"A so-far healthy instance will be marked unhealthy after this many\\nconsecutive failures. The default value is 2.\",\n     \"type\": \"integer\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Compute HTTPS Health Check\",\n \"type\": \"object\"\n}"
-  }
+  "version": "v1.0.0"
  }

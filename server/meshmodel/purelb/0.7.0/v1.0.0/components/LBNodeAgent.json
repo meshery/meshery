@@ -1,61 +1,67 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "displayName": "LB Node Agent",
+  "capabilities": null,
+  "component": {
+   "kind": "LBNodeAgent",
+   "schema": "{\n \"description\": \"LBNodeAgent is the top-level custom resource for configuring node agents. It contains the usual CRD metadata, and the agent spec and status.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"LBNodeAgentSpec configures the node agents.  It will have one Local configuration to announce service addresses locally. For examples, see the \\\"config/\\\" directory in the PureLB source tree.\",\n   \"properties\": {\n    \"local\": {\n     \"description\": \"LBNodeAgentLocalSpec configures the announcers to announce service addresses by configuring the underlying operating system. LocalInterface is unimplemented but will be optional. If it is not provided then the agents will add the service address to whichever interface carries the default route. ExtLBInterface is also unimplemented.\",\n     \"properties\": {\n      \"extlbint\": {\n       \"default\": \"kube-lb0\",\n       \"description\": \"ExtLBInterface specifies the name of the interface to use for announcement of non-local routes. This field is optional but the default is \\\"kube-lb0\\\" which works in most cases.\",\n       \"type\": \"string\"\n      },\n      \"localint\": {\n       \"default\": \"default\",\n       \"description\": \"LocalInterface allows the user to specify the interface to use for announcement of local addresses. This field is optional but the default is \\\"default\\\" which will make PureLB use the interface that has the default route, which works in most cases.\",\n       \"type\": \"string\"\n      },\n      \"sendgarp\": {\n       \"default\": false,\n       \"description\": \"SendGratuitousARP determines whether or not the node agent should send Gratuitous ARP messages when it adds an IP address to the local interface. This can be used to alert network equipment that the IP-to-MAC binding has changed.\",\n       \"type\": \"boolean\"\n      }\n     },\n     \"required\": [\n      \"sendgarp\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"local\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"LB Node Agent\",\n \"type\": \"object\"\n}",
+   "version": "purelb.io/v1"
+  },
+  "configuration": null,
   "description": "",
+  "displayName": "LB Node Agent",
   "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "published": false,
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": ""
+  },
   "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "version": "v1.0.0",
-   "name": "purelb",
-   "displayName": "Purelb",
-   "description": "",
-   "status": "ignored",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "registrant": {
-    "hostname": "artifacthub"
-   },
    "category": {
-    "name": "Uncategorized",
-    "metadata": null
+    "name": "Uncategorized"
    },
-   "subCategory": "",
+   "displayName": "Purelb",
+   "id": "00000000-0000-0000-0000-000000000000",
    "metadata": {
-    "source_uri": "https://gitlab.com/api/v4/projects/20400619/packages/helm/stable/charts/purelb-v0.0.0-125-cidr-error-checking-latest.tgz"
+    "source_uri": "https://gitlab.com/api/v4/projects/20400619/packages/helm/stable/charts/purelb-v0.0.0-125-cidr-error-checking-latest.tgz",
+    "svgColor": "",
+    "svgWhite": ""
    },
    "model": {
     "version": "0.7.0"
    },
+   "name": "purelb",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "version": "v1.0.0",
    "components": null,
    "relationships": null
   },
-  "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isModelAnnotation": "FALSE",
-   "isNamespaced": true,
-   "logoURL": "",
-   "model": "purelb",
-   "modelDisplayName": "Purelb",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "ignored",
+  "styles": {
    "primaryColor": "#00B39F",
    "secondaryColor": "#00D3A9",
    "shape": "circle",
-   "shapePolygonPoints": "",
-   "status": "ignored",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
    "svgColor": "",
-   "svgComplete": "",
    "svgWhite": ""
   },
-  "component": {
-   "kind": "LBNodeAgent",
-   "version": "purelb.io/v1",
-   "schema": "{\n \"description\": \"LBNodeAgent is the top-level custom resource for configuring node agents. It contains the usual CRD metadata, and the agent spec and status.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"LBNodeAgentSpec configures the node agents.  It will have one Local configuration to announce service addresses locally. For examples, see the \\\"config/\\\" directory in the PureLB source tree.\",\n   \"properties\": {\n    \"local\": {\n     \"description\": \"LBNodeAgentLocalSpec configures the announcers to announce service addresses by configuring the underlying operating system. LocalInterface is unimplemented but will be optional. If it is not provided then the agents will add the service address to whichever interface carries the default route. ExtLBInterface is also unimplemented.\",\n     \"properties\": {\n      \"extlbint\": {\n       \"default\": \"kube-lb0\",\n       \"description\": \"ExtLBInterface specifies the name of the interface to use for announcement of non-local routes. This field is optional but the default is \\\"kube-lb0\\\" which works in most cases.\",\n       \"type\": \"string\"\n      },\n      \"localint\": {\n       \"default\": \"default\",\n       \"description\": \"LocalInterface allows the user to specify the interface to use for announcement of local addresses. This field is optional but the default is \\\"default\\\" which will make PureLB use the interface that has the default route, which works in most cases.\",\n       \"type\": \"string\"\n      },\n      \"sendgarp\": {\n       \"default\": false,\n       \"description\": \"SendGratuitousARP determines whether or not the node agent should send Gratuitous ARP messages when it adds an IP address to the local interface. This can be used to alert network equipment that the IP-to-MAC binding has changed.\",\n       \"type\": \"boolean\"\n      }\n     },\n     \"required\": [\n      \"sendgarp\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"local\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"LB Node Agent\",\n \"type\": \"object\"\n}"
-  }
+  "version": "v1.0.0"
  }

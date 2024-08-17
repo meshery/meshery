@@ -1,61 +1,67 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "displayName": "Nexus",
+  "capabilities": null,
+  "component": {
+   "kind": "Nexus",
+   "schema": "{\n \"description\": \"Nexus is the Schema for the nexuses API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"NexusSpec defines the desired state of Nexus.\",\n   \"properties\": {\n    \"basePath\": {\n     \"type\": \"string\"\n    },\n    \"edpSpec\": {\n     \"properties\": {\n      \"dnsWildcard\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"keycloakSpec\": {\n     \"properties\": {\n      \"enabled\": {\n       \"type\": \"boolean\"\n      },\n      \"proxyImage\": {\n       \"type\": \"string\"\n      },\n      \"realm\": {\n       \"type\": \"string\"\n      },\n      \"roles\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"url\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"enabled\"\n     ],\n     \"type\": \"object\"\n    },\n    \"users\": {\n     \"items\": {\n      \"properties\": {\n       \"email\": {\n        \"type\": \"string\"\n       },\n       \"first_name\": {\n        \"type\": \"string\"\n       },\n       \"last_name\": {\n        \"type\": \"string\"\n       },\n       \"roles\": {\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       },\n       \"username\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"keycloakSpec\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Nexus\",\n \"type\": \"object\"\n}",
+   "version": "v2.edp.epam.com/v1"
+  },
+  "configuration": null,
   "description": "",
+  "displayName": "Nexus",
   "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "published": false,
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": ""
+  },
   "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "version": "v1.0.0",
-   "name": "nexus-operator",
-   "displayName": "Nexus Operator",
-   "description": "",
-   "status": "ignored",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "registrant": {
-    "hostname": "artifacthub"
-   },
    "category": {
-    "name": "Uncategorized",
-    "metadata": null
+    "name": "Uncategorized"
    },
-   "subCategory": "",
+   "displayName": "Nexus Operator",
+   "id": "00000000-0000-0000-0000-000000000000",
    "metadata": {
-    "source_uri": "https://epam.github.io/edp-helm-charts/stable/packages/nexus-operator-2.17.0.tgz"
+    "source_uri": "https://epam.github.io/edp-helm-charts/stable/packages/nexus-operator-2.17.0.tgz",
+    "svgColor": "",
+    "svgWhite": ""
    },
    "model": {
     "version": "2.13.0"
    },
+   "name": "nexus-operator",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "version": "v1.0.0",
    "components": null,
    "relationships": null
   },
-  "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isModelAnnotation": "FALSE",
-   "isNamespaced": true,
-   "logoURL": "",
-   "model": "nexus-operator",
-   "modelDisplayName": "Nexus Operator",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "ignored",
+  "styles": {
    "primaryColor": "#00B39F",
    "secondaryColor": "#00D3A9",
    "shape": "circle",
-   "shapePolygonPoints": "",
-   "status": "ignored",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
    "svgColor": "",
-   "svgComplete": "",
    "svgWhite": ""
   },
-  "component": {
-   "kind": "Nexus",
-   "version": "v2.edp.epam.com/v1",
-   "schema": "{\n \"description\": \"Nexus is the Schema for the nexuses API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"NexusSpec defines the desired state of Nexus.\",\n   \"properties\": {\n    \"basePath\": {\n     \"type\": \"string\"\n    },\n    \"edpSpec\": {\n     \"properties\": {\n      \"dnsWildcard\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"keycloakSpec\": {\n     \"properties\": {\n      \"enabled\": {\n       \"type\": \"boolean\"\n      },\n      \"proxyImage\": {\n       \"type\": \"string\"\n      },\n      \"realm\": {\n       \"type\": \"string\"\n      },\n      \"roles\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"url\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"enabled\"\n     ],\n     \"type\": \"object\"\n    },\n    \"users\": {\n     \"items\": {\n      \"properties\": {\n       \"email\": {\n        \"type\": \"string\"\n       },\n       \"first_name\": {\n        \"type\": \"string\"\n       },\n       \"last_name\": {\n        \"type\": \"string\"\n       },\n       \"roles\": {\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       },\n       \"username\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"keycloakSpec\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Nexus\",\n \"type\": \"object\"\n}"
-  }
+  "version": "v1.0.0"
  }

@@ -1,27 +1,30 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "displayName": "Inference Component",
+  "capabilities": null,
+  "component": {
+   "kind": "InferenceComponent",
+   "schema": "{\n \"description\": \"InferenceComponent is the Schema for the InferenceComponents API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"InferenceComponentSpec defines the desired state of InferenceComponent.\",\n   \"properties\": {\n    \"endpointName\": {\n     \"description\": \"The name of an existing endpoint where you host the inference component.\",\n     \"type\": \"string\"\n    },\n    \"inferenceComponentName\": {\n     \"description\": \"A unique name to assign to the inference component.\",\n     \"type\": \"string\"\n    },\n    \"runtimeConfig\": {\n     \"description\": \"Runtime settings for a model that is deployed with an inference component.\",\n     \"properties\": {\n      \"copyCount\": {\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"specification\": {\n     \"description\": \"Details about the resources to deploy with this inference component, including\\nthe model, container, and compute resources.\",\n     \"properties\": {\n      \"computeResourceRequirements\": {\n       \"description\": \"Defines the compute resources to allocate to run a model that you assign\\nto an inference component. These resources include CPU cores, accelerators,\\nand memory.\",\n       \"properties\": {\n        \"maxMemoryRequiredInMb\": {\n         \"format\": \"int64\",\n         \"type\": \"integer\"\n        },\n        \"minMemoryRequiredInMb\": {\n         \"format\": \"int64\",\n         \"type\": \"integer\"\n        },\n        \"numberOfAcceleratorDevicesRequired\": {\n         \"type\": \"number\"\n        },\n        \"numberOfCPUCoresRequired\": {\n         \"type\": \"number\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"container\": {\n       \"description\": \"Defines a container that provides the runtime environment for a model that\\nyou deploy with an inference component.\",\n       \"properties\": {\n        \"artifactURL\": {\n         \"type\": \"string\"\n        },\n        \"environment\": {\n         \"additionalProperties\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"object\"\n        },\n        \"image\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"modelName\": {\n       \"type\": \"string\"\n      },\n      \"startupParameters\": {\n       \"description\": \"Settings that take effect while the model container starts up.\",\n       \"properties\": {\n        \"containerStartupHealthCheckTimeoutInSeconds\": {\n         \"format\": \"int64\",\n         \"type\": \"integer\"\n        },\n        \"modelDataDownloadTimeoutInSeconds\": {\n         \"format\": \"int64\",\n         \"type\": \"integer\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"tags\": {\n     \"description\": \"A list of key-value pairs associated with the model. For more information,\\nsee Tagging Amazon Web Services resources (https://docs.aws.amazon.com/general/latest/gr/aws_tagging.html)\\nin the Amazon Web Services General Reference.\",\n     \"items\": {\n      \"description\": \"A tag object that consists of a key and an optional value, used to manage\\nmetadata for SageMaker Amazon Web Services resources.\\n\\n\\nYou can add tags to notebook instances, training jobs, hyperparameter tuning\\njobs, batch transform jobs, models, labeling jobs, work teams, endpoint configurations,\\nand endpoints. For more information on adding tags to SageMaker resources,\\nsee AddTags (https://docs.aws.amazon.com/sagemaker/latest/APIReference/API_AddTags.html).\\n\\n\\nFor more information on adding metadata to your Amazon Web Services resources\\nwith tagging, see Tagging Amazon Web Services resources (https://docs.aws.amazon.com/general/latest/gr/aws_tagging.html).\\nFor advice on best practices for managing Amazon Web Services resources with\\ntagging, see Tagging Best Practices: Implement an Effective Amazon Web Services\\nResource Tagging Strategy (https://d1.awsstatic.com/whitepapers/aws-tagging-best-practices.pdf).\",\n      \"properties\": {\n       \"key\": {\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"variantName\": {\n     \"description\": \"The name of an existing production variant where you host the inference component.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"inferenceComponentName\",\n    \"runtimeConfig\",\n    \"specification\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Inference Component\",\n \"type\": \"object\"\n}",
+   "version": "sagemaker.services.k8s.aws/v1alpha1"
+  },
+  "configuration": null,
   "description": "",
+  "displayName": "Inference Component",
   "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "published": false,
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": ""
+  },
   "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "version": "v1.0.0",
-   "name": "aws-sagemaker-controller",
-   "displayName": "AWS SageMaker",
-   "description": "",
-   "status": "enabled",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "registrant": {
-    "hostname": "artifacthub"
-   },
    "category": {
-    "name": "Machine Learning",
-    "metadata": null
+    "name": "Machine Learning"
    },
-   "subCategory": "Machine Learning",
+   "displayName": "AWS SageMaker",
+   "id": "00000000-0000-0000-0000-000000000000",
    "metadata": {
     "isAnnotation": false,
     "subCategory": "Machine Learning",
@@ -32,30 +35,35 @@
    "model": {
     "version": "v1.2.10"
    },
+   "name": "aws-sagemaker-controller",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "enabled",
+   "subCategory": "Machine Learning",
+   "version": "v1.0.0",
    "components": null,
    "relationships": null
   },
-  "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
    "primaryColor": "",
-   "secondaryColor": "",
    "shape": "rectangle",
-   "shapePolygonPoints": "",
-   "status": "enabled",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
    "svgColor": "",
-   "svgComplete": "",
    "svgWhite": ""
   },
-  "component": {
-   "kind": "InferenceComponent",
-   "version": "sagemaker.services.k8s.aws/v1alpha1",
-   "schema": "{\n \"description\": \"InferenceComponent is the Schema for the InferenceComponents API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"InferenceComponentSpec defines the desired state of InferenceComponent.\",\n   \"properties\": {\n    \"endpointName\": {\n     \"description\": \"The name of an existing endpoint where you host the inference component.\",\n     \"type\": \"string\"\n    },\n    \"inferenceComponentName\": {\n     \"description\": \"A unique name to assign to the inference component.\",\n     \"type\": \"string\"\n    },\n    \"runtimeConfig\": {\n     \"description\": \"Runtime settings for a model that is deployed with an inference component.\",\n     \"properties\": {\n      \"copyCount\": {\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"specification\": {\n     \"description\": \"Details about the resources to deploy with this inference component, including\\nthe model, container, and compute resources.\",\n     \"properties\": {\n      \"computeResourceRequirements\": {\n       \"description\": \"Defines the compute resources to allocate to run a model that you assign\\nto an inference component. These resources include CPU cores, accelerators,\\nand memory.\",\n       \"properties\": {\n        \"maxMemoryRequiredInMb\": {\n         \"format\": \"int64\",\n         \"type\": \"integer\"\n        },\n        \"minMemoryRequiredInMb\": {\n         \"format\": \"int64\",\n         \"type\": \"integer\"\n        },\n        \"numberOfAcceleratorDevicesRequired\": {\n         \"type\": \"number\"\n        },\n        \"numberOfCPUCoresRequired\": {\n         \"type\": \"number\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"container\": {\n       \"description\": \"Defines a container that provides the runtime environment for a model that\\nyou deploy with an inference component.\",\n       \"properties\": {\n        \"artifactURL\": {\n         \"type\": \"string\"\n        },\n        \"environment\": {\n         \"additionalProperties\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"object\"\n        },\n        \"image\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"modelName\": {\n       \"type\": \"string\"\n      },\n      \"startupParameters\": {\n       \"description\": \"Settings that take effect while the model container starts up.\",\n       \"properties\": {\n        \"containerStartupHealthCheckTimeoutInSeconds\": {\n         \"format\": \"int64\",\n         \"type\": \"integer\"\n        },\n        \"modelDataDownloadTimeoutInSeconds\": {\n         \"format\": \"int64\",\n         \"type\": \"integer\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"tags\": {\n     \"description\": \"A list of key-value pairs associated with the model. For more information,\\nsee Tagging Amazon Web Services resources (https://docs.aws.amazon.com/general/latest/gr/aws_tagging.html)\\nin the Amazon Web Services General Reference.\",\n     \"items\": {\n      \"description\": \"A tag object that consists of a key and an optional value, used to manage\\nmetadata for SageMaker Amazon Web Services resources.\\n\\n\\nYou can add tags to notebook instances, training jobs, hyperparameter tuning\\njobs, batch transform jobs, models, labeling jobs, work teams, endpoint configurations,\\nand endpoints. For more information on adding tags to SageMaker resources,\\nsee AddTags (https://docs.aws.amazon.com/sagemaker/latest/APIReference/API_AddTags.html).\\n\\n\\nFor more information on adding metadata to your Amazon Web Services resources\\nwith tagging, see Tagging Amazon Web Services resources (https://docs.aws.amazon.com/general/latest/gr/aws_tagging.html).\\nFor advice on best practices for managing Amazon Web Services resources with\\ntagging, see Tagging Best Practices: Implement an Effective Amazon Web Services\\nResource Tagging Strategy (https://d1.awsstatic.com/whitepapers/aws-tagging-best-practices.pdf).\",\n      \"properties\": {\n       \"key\": {\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"variantName\": {\n     \"description\": \"The name of an existing production variant where you host the inference component.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"inferenceComponentName\",\n    \"runtimeConfig\",\n    \"specification\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Inference Component\",\n \"type\": \"object\"\n}"
-  }
+  "version": "v1.0.0"
  }

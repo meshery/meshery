@@ -1,62 +1,68 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "displayName": "Middleware TCP",
+  "capabilities": null,
+  "component": {
+   "kind": "MiddlewareTCP",
+   "schema": "{\n \"description\": \"MiddlewareTCP is the CRD implementation of a Traefik TCP middleware. More info: https://doc.traefik.io/traefik/v2.10/middlewares/overview/\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"MiddlewareTCPSpec defines the desired state of a MiddlewareTCP.\",\n   \"properties\": {\n    \"inFlightConn\": {\n     \"description\": \"InFlightConn defines the InFlightConn middleware configuration.\",\n     \"properties\": {\n      \"amount\": {\n       \"description\": \"Amount defines the maximum amount of allowed simultaneous connections. The middleware closes the connection if there are already amount connections opened.\",\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"ipWhiteList\": {\n     \"description\": \"IPWhiteList defines the IPWhiteList middleware configuration.\",\n     \"properties\": {\n      \"sourceRange\": {\n       \"description\": \"SourceRange defines the allowed IPs (or ranges of allowed IPs by using CIDR notation).\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"metadata\",\n  \"spec\"\n ],\n \"title\": \"Middleware TCP\",\n \"type\": \"object\"\n}",
+   "version": "traefik.io/v1alpha1"
+  },
+  "configuration": null,
   "description": "",
+  "displayName": "Middleware TCP",
   "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "published": false,
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": ""
+  },
   "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "version": "v1.0.0",
-   "name": "scrutiny",
-   "displayName": "scrutiny",
-   "description": "",
-   "status": "ignored",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "registrant": {
-    "hostname": "artifacthub"
-   },
    "category": {
-    "name": "Uncategorized",
-    "metadata": null
+    "name": "Uncategorized"
    },
-   "subCategory": "",
+   "displayName": "scrutiny",
+   "id": "00000000-0000-0000-0000-000000000000",
    "metadata": {
     "isAnnotation": false,
-    "source_uri": "https://github.com/truecharts/helm-staging/releases/download/scrutiny-6.0.24/scrutiny-6.0.24.tgz"
+    "source_uri": "https://github.com/truecharts/helm-staging/releases/download/scrutiny-6.0.24/scrutiny-6.0.24.tgz",
+    "svgColor": "",
+    "svgWhite": ""
    },
    "model": {
     "version": "5.0.9"
    },
+   "name": "scrutiny",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "version": "v1.0.0",
    "components": null,
    "relationships": null
   },
-  "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isModelAnnotation": "FALSE",
-   "isNamespaced": true,
-   "logoURL": "https://layer5.io/company/brand",
-   "model": "scrutiny",
-   "modelDisplayName": "scrutiny",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "ignored",
+  "styles": {
    "primaryColor": "#00B39F",
    "secondaryColor": "#00D3A9",
    "shape": "circle",
-   "shapePolygonPoints": "",
-   "status": "ignored",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
    "svgColor": "",
-   "svgComplete": "",
    "svgWhite": ""
   },
-  "component": {
-   "kind": "MiddlewareTCP",
-   "version": "traefik.io/v1alpha1",
-   "schema": "{\n \"description\": \"MiddlewareTCP is the CRD implementation of a Traefik TCP middleware. More info: https://doc.traefik.io/traefik/v2.10/middlewares/overview/\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"MiddlewareTCPSpec defines the desired state of a MiddlewareTCP.\",\n   \"properties\": {\n    \"inFlightConn\": {\n     \"description\": \"InFlightConn defines the InFlightConn middleware configuration.\",\n     \"properties\": {\n      \"amount\": {\n       \"description\": \"Amount defines the maximum amount of allowed simultaneous connections. The middleware closes the connection if there are already amount connections opened.\",\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"ipWhiteList\": {\n     \"description\": \"IPWhiteList defines the IPWhiteList middleware configuration.\",\n     \"properties\": {\n      \"sourceRange\": {\n       \"description\": \"SourceRange defines the allowed IPs (or ranges of allowed IPs by using CIDR notation).\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"metadata\",\n  \"spec\"\n ],\n \"title\": \"Middleware TCP\",\n \"type\": \"object\"\n}"
-  }
+  "version": "v1.0.0"
  }

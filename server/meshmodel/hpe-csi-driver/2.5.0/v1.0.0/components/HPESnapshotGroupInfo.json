@@ -1,29 +1,31 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "displayName": "HPE Snapshot Group Info",
+  "capabilities": null,
+  "component": {
+   "kind": "HPESnapshotGroupInfo",
+   "schema": "{\n \"properties\": {\n  \"hpeSnapshotGroupInfos\": {\n   \"description\": \"List of HPE snapshot groups created for 3PAR/Primera arrays.\",\n   \"items\": {\n    \"properties\": {\n     \"record\": {\n      \"description\": \"Metadata for the volume group\",\n      \"type\": \"object\"\n     },\n     \"snapshotVolumes\": {\n      \"description\": \"Snapshot volumes that are part of this snapshot group\",\n      \"items\": {\n       \"properties\": {\n        \"snapshotId\": {\n         \"description\": \"Snapshot volume Id\",\n         \"type\": \"string\"\n        },\n        \"snapshotName\": {\n         \"description\": \"Snapshot volume name\",\n         \"type\": \"string\"\n        },\n        \"srcVolumeId\": {\n         \"description\": \"ID of the volume that is the source of this snapshot volume\",\n         \"type\": \"string\"\n        },\n        \"srcVolumeName\": {\n         \"description\": \"Name of the volume that is the source of this snapshot volume\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"type\": \"object\"\n     },\n     \"uuid\": {\n      \"description\": \"The UUID of the node.\",\n      \"type\": \"string\"\n     }\n    },\n    \"type\": \"object\"\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"HPE Snapshot Group Info\",\n \"type\": \"object\"\n}",
+   "version": "storage.hpe.com/v1"
+  },
+  "configuration": null,
   "description": "",
+  "displayName": "HPE Snapshot Group Info",
   "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "published": false,
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": ""
+  },
   "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "version": "v1.0.0",
-   "name": "hpe-csi-driver",
-   "displayName": "HPE CSI Driver",
-   "description": "",
-   "status": "ignored",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "registrant": {
-    "hostname": "artifacthub"
-   },
    "category": {
-    "name": "Uncategorized",
-    "metadata": null
+    "name": "Uncategorized"
    },
-   "subCategory": "Uncategorized",
+   "displayName": "HPE CSI Driver",
+   "id": "00000000-0000-0000-0000-000000000000",
    "metadata": {
-    "capabilities": "",
     "defaultData": "",
     "isAnnotation": false,
     "primaryColor": "#00B39F",
@@ -39,30 +41,36 @@
    "model": {
     "version": "2.5.0"
    },
+   "name": "hpe-csi-driver",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "subCategory": "Uncategorized",
+   "version": "v1.0.0",
    "components": null,
    "relationships": null
   },
-  "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": false,
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "ignored",
+  "styles": {
    "primaryColor": "#00B39F",
    "secondaryColor": "#00D3A9",
    "shape": "circle",
-   "shapePolygonPoints": "",
-   "status": "ignored",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
    "svgColor": "",
-   "svgComplete": "",
    "svgWhite": ""
   },
-  "component": {
-   "kind": "HPESnapshotGroupInfo",
-   "version": "storage.hpe.com/v1",
-   "schema": "{\n \"properties\": {\n  \"hpeSnapshotGroupInfos\": {\n   \"description\": \"List of HPE snapshot groups created for 3PAR/Primera arrays.\",\n   \"items\": {\n    \"properties\": {\n     \"record\": {\n      \"description\": \"Metadata for the volume group\",\n      \"type\": \"object\"\n     },\n     \"snapshotVolumes\": {\n      \"description\": \"Snapshot volumes that are part of this snapshot group\",\n      \"items\": {\n       \"properties\": {\n        \"snapshotId\": {\n         \"description\": \"Snapshot volume Id\",\n         \"type\": \"string\"\n        },\n        \"snapshotName\": {\n         \"description\": \"Snapshot volume name\",\n         \"type\": \"string\"\n        },\n        \"srcVolumeId\": {\n         \"description\": \"ID of the volume that is the source of this snapshot volume\",\n         \"type\": \"string\"\n        },\n        \"srcVolumeName\": {\n         \"description\": \"Name of the volume that is the source of this snapshot volume\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"type\": \"object\"\n     },\n     \"uuid\": {\n      \"description\": \"The UUID of the node.\",\n      \"type\": \"string\"\n     }\n    },\n    \"type\": \"object\"\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"HPE Snapshot Group Info\",\n \"type\": \"object\"\n}"
-  }
+  "version": "v1.0.0"
  }

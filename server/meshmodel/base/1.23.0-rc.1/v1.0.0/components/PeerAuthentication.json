@@ -1,29 +1,31 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "displayName": "Peer Authentication",
+  "capabilities": null,
+  "component": {
+   "kind": "PeerAuthentication",
+   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Peer authentication configuration for workloads. See more details at: https://istio.io/docs/reference/config/security/peer_authentication.html\",\n   \"properties\": {\n    \"mtls\": {\n     \"description\": \"Mutual TLS settings for workload.\",\n     \"properties\": {\n      \"mode\": {\n       \"description\": \"Defines the mTLS mode used for peer authentication.\\n\\nValid Options: DISABLE, PERMISSIVE, STRICT\",\n       \"enum\": [\n        \"UNSET\",\n        \"DISABLE\",\n        \"PERMISSIVE\",\n        \"STRICT\"\n       ],\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"portLevelMtls\": {\n     \"additionalProperties\": {\n      \"properties\": {\n       \"mode\": {\n        \"description\": \"Defines the mTLS mode used for peer authentication.\\n\\nValid Options: DISABLE, PERMISSIVE, STRICT\",\n        \"enum\": [\n         \"UNSET\",\n         \"DISABLE\",\n         \"PERMISSIVE\",\n         \"STRICT\"\n        ],\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"description\": \"Port specific mutual TLS settings.\",\n     \"minProperties\": 1,\n     \"type\": \"object\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"port must be between 1-65535\",\n       \"rule\": \"self.all(key, 0 \\u003c int(key) \\u0026\\u0026 int(key) \\u003c= 65535)\"\n      }\n     ]\n    },\n    \"selector\": {\n     \"description\": \"The selector determines the workloads to apply the PeerAuthentication on.\",\n     \"properties\": {\n      \"matchLabels\": {\n       \"additionalProperties\": {\n        \"maxLength\": 63,\n        \"type\": \"string\",\n        \"x-kubernetes-validations\": [\n         {\n          \"message\": \"wildcard not allowed in label value match\",\n          \"rule\": \"!self.contains('*')\"\n         }\n        ]\n       },\n       \"description\": \"One or more labels that indicate a specific set of pods/VMs on which a policy should be applied.\",\n       \"maxProperties\": 4096,\n       \"type\": \"object\",\n       \"x-kubernetes-validations\": [\n        {\n         \"message\": \"wildcard not allowed in label key match\",\n         \"rule\": \"self.all(key, !key.contains('*'))\"\n        },\n        {\n         \"message\": \"key must not be empty\",\n         \"rule\": \"self.all(key, key.size() != 0)\"\n        }\n       ]\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\",\n   \"x-kubernetes-validations\": [\n    {\n     \"message\": \"portLevelMtls requires selector\",\n     \"rule\": \"(has(self.selector) \\u0026\\u0026 has(self.selector.matchLabels) \\u0026\\u0026 self.selector.matchLabels.size() \\u003e 0) || !has(self.portLevelMtls)\"\n    }\n   ]\n  }\n },\n \"title\": \"Peer Authentication\",\n \"type\": \"object\"\n}",
+   "version": "security.istio.io/v1"
+  },
+  "configuration": null,
   "description": "",
+  "displayName": "Peer Authentication",
   "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "published": false,
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": ""
+  },
   "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "version": "v1.0.0",
-   "name": "base",
-   "displayName": "base",
-   "description": "",
-   "status": "ignored",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "registrant": {
-    "hostname": "artifacthub"
-   },
    "category": {
-    "name": "Uncategorized",
-    "metadata": null
+    "name": "Uncategorized"
    },
-   "subCategory": "Uncategorized",
+   "displayName": "base",
+   "id": "00000000-0000-0000-0000-000000000000",
    "metadata": {
-    "capabilities": "",
     "defaultData": "",
     "isAnnotation": false,
     "primaryColor": "#00B39F",
@@ -39,30 +41,36 @@
    "model": {
     "version": "1.23.0-rc.1"
    },
+   "name": "base",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "subCategory": "Uncategorized",
+   "version": "v1.0.0",
    "components": null,
    "relationships": null
   },
-  "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "ignored",
+  "styles": {
    "primaryColor": "#00B39F",
    "secondaryColor": "#00D3A9",
    "shape": "circle",
-   "shapePolygonPoints": "",
-   "status": "ignored",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
    "svgColor": "\u003csvg width=\"160\" height=\"240\" viewBox=\"0 0 160 240\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M0 210H160L60 240L0 210Z\" fill=\"#466BB0\"/\u003e\n\u003cpath d=\"M0 200L60 190V80L0 200Z\" fill=\"#466BB0\"/\u003e\n\u003cpath d=\"M70 190L160 200L70 0V190Z\" fill=\"#466BB0\"/\u003e\n\u003c/svg\u003e\n",
-   "svgComplete": "",
    "svgWhite": "\u003csvg viewBox=\"6.386270046234131 3.7419400215148926 18.227430820465088 25.258059978485107\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cpath d=\"M6.38627 24.7904L13.2215 23.738V12.1613L6.38627 24.7904Z\" fill=\"white\"/\u003e\u003cpath d=\"M6.38627 25.8427H24.6137L13.2215 29L6.38627 25.8427Z\" fill=\"white\"/\u003e\u003cpath d=\"M14.3608 23.7379L24.6137 24.7904L14.3608 3.74194V23.7379Z\" fill=\"white\"/\u003e\u003c/svg\u003e"
   },
-  "component": {
-   "kind": "PeerAuthentication",
-   "version": "security.istio.io/v1",
-   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Peer authentication configuration for workloads. See more details at: https://istio.io/docs/reference/config/security/peer_authentication.html\",\n   \"properties\": {\n    \"mtls\": {\n     \"description\": \"Mutual TLS settings for workload.\",\n     \"properties\": {\n      \"mode\": {\n       \"description\": \"Defines the mTLS mode used for peer authentication.\\n\\nValid Options: DISABLE, PERMISSIVE, STRICT\",\n       \"enum\": [\n        \"UNSET\",\n        \"DISABLE\",\n        \"PERMISSIVE\",\n        \"STRICT\"\n       ],\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"portLevelMtls\": {\n     \"additionalProperties\": {\n      \"properties\": {\n       \"mode\": {\n        \"description\": \"Defines the mTLS mode used for peer authentication.\\n\\nValid Options: DISABLE, PERMISSIVE, STRICT\",\n        \"enum\": [\n         \"UNSET\",\n         \"DISABLE\",\n         \"PERMISSIVE\",\n         \"STRICT\"\n        ],\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"description\": \"Port specific mutual TLS settings.\",\n     \"minProperties\": 1,\n     \"type\": \"object\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"port must be between 1-65535\",\n       \"rule\": \"self.all(key, 0 \\u003c int(key) \\u0026\\u0026 int(key) \\u003c= 65535)\"\n      }\n     ]\n    },\n    \"selector\": {\n     \"description\": \"The selector determines the workloads to apply the PeerAuthentication on.\",\n     \"properties\": {\n      \"matchLabels\": {\n       \"additionalProperties\": {\n        \"maxLength\": 63,\n        \"type\": \"string\",\n        \"x-kubernetes-validations\": [\n         {\n          \"message\": \"wildcard not allowed in label value match\",\n          \"rule\": \"!self.contains('*')\"\n         }\n        ]\n       },\n       \"description\": \"One or more labels that indicate a specific set of pods/VMs on which a policy should be applied.\",\n       \"maxProperties\": 4096,\n       \"type\": \"object\",\n       \"x-kubernetes-validations\": [\n        {\n         \"message\": \"wildcard not allowed in label key match\",\n         \"rule\": \"self.all(key, !key.contains('*'))\"\n        },\n        {\n         \"message\": \"key must not be empty\",\n         \"rule\": \"self.all(key, key.size() != 0)\"\n        }\n       ]\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\",\n   \"x-kubernetes-validations\": [\n    {\n     \"message\": \"portLevelMtls requires selector\",\n     \"rule\": \"(has(self.selector) \\u0026\\u0026 has(self.selector.matchLabels) \\u0026\\u0026 self.selector.matchLabels.size() \\u003e 0) || !has(self.portLevelMtls)\"\n    }\n   ]\n  }\n },\n \"title\": \"Peer Authentication\",\n \"type\": \"object\"\n}"
-  }
+  "version": "v1.0.0"
  }

@@ -1,29 +1,31 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "displayName": "Snapshot Group",
+  "capabilities": null,
+  "component": {
+   "kind": "SnapshotGroup",
+   "schema": "{\n \"description\": \"SnapshotGroup is a user's request for creating a snapshotgroup\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"spec defines the desired characteristics of a snapshotGroup requested by a user. Required.\",\n   \"properties\": {\n    \"snapshotGroupClassName\": {\n     \"description\": \"snapshotGroupClassName is the name of the SnapshotGroupClass requested by the SnapshotGroup.\",\n     \"type\": \"string\"\n    },\n    \"snapshotGroupContentName\": {\n     \"description\": \"snapshotGroupContentName is the name of the snapshotGroupContent the snapshotGroup is bound.\",\n     \"type\": \"string\"\n    },\n    \"source\": {\n     \"description\": \"source specifies where a snapshotGroup will be created. This field is immutable after creation. Required.\",\n     \"properties\": {\n      \"apiGroup\": {\n       \"description\": \"apiGroup of the source. Current supported is storage.hpe.com\",\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"description\": \"kind of the source (VolumeGroup) is the only supported one.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"name specifies the volumeGroupName of the VolumeGroup object in the same namespace as the SnapshotGroup object where the snapshotGroup should be dynamically taken from. This field is immutable.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"volumeSnapshotClassName\": {\n     \"description\": \"name of the volumeSnapshotClass to create pre-provisioned snapshots\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"source\",\n    \"volumeSnapshotClassName\",\n    \"snapshotGroupClassName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Snapshot Group\",\n \"type\": \"object\"\n}",
+   "version": "storage.hpe.com/v1"
+  },
+  "configuration": null,
   "description": "",
+  "displayName": "Snapshot Group",
   "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "published": false,
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": ""
+  },
   "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "version": "v1.0.0",
-   "name": "hpe-csi-driver",
-   "displayName": "HPE CSI Driver",
-   "description": "",
-   "status": "ignored",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "registrant": {
-    "hostname": "artifacthub"
-   },
    "category": {
-    "name": "Uncategorized",
-    "metadata": null
+    "name": "Uncategorized"
    },
-   "subCategory": "Uncategorized",
+   "displayName": "HPE CSI Driver",
+   "id": "00000000-0000-0000-0000-000000000000",
    "metadata": {
-    "capabilities": "",
     "defaultData": "",
     "isAnnotation": false,
     "primaryColor": "#00B39F",
@@ -39,30 +41,36 @@
    "model": {
     "version": "2.5.0-beta3"
    },
+   "name": "hpe-csi-driver",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "subCategory": "Uncategorized",
+   "version": "v1.0.0",
    "components": null,
    "relationships": null
   },
-  "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "ignored",
+  "styles": {
    "primaryColor": "#00B39F",
    "secondaryColor": "#00D3A9",
    "shape": "circle",
-   "shapePolygonPoints": "",
-   "status": "ignored",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
    "svgColor": "",
-   "svgComplete": "",
    "svgWhite": ""
   },
-  "component": {
-   "kind": "SnapshotGroup",
-   "version": "storage.hpe.com/v1",
-   "schema": "{\n \"description\": \"SnapshotGroup is a user's request for creating a snapshotgroup\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"spec defines the desired characteristics of a snapshotGroup requested by a user. Required.\",\n   \"properties\": {\n    \"snapshotGroupClassName\": {\n     \"description\": \"snapshotGroupClassName is the name of the SnapshotGroupClass requested by the SnapshotGroup.\",\n     \"type\": \"string\"\n    },\n    \"snapshotGroupContentName\": {\n     \"description\": \"snapshotGroupContentName is the name of the snapshotGroupContent the snapshotGroup is bound.\",\n     \"type\": \"string\"\n    },\n    \"source\": {\n     \"description\": \"source specifies where a snapshotGroup will be created. This field is immutable after creation. Required.\",\n     \"properties\": {\n      \"apiGroup\": {\n       \"description\": \"apiGroup of the source. Current supported is storage.hpe.com\",\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"description\": \"kind of the source (VolumeGroup) is the only supported one.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"name specifies the volumeGroupName of the VolumeGroup object in the same namespace as the SnapshotGroup object where the snapshotGroup should be dynamically taken from. This field is immutable.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"volumeSnapshotClassName\": {\n     \"description\": \"name of the volumeSnapshotClass to create pre-provisioned snapshots\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"source\",\n    \"volumeSnapshotClassName\",\n    \"snapshotGroupClassName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Snapshot Group\",\n \"type\": \"object\"\n}"
-  }
+  "version": "v1.0.0"
  }

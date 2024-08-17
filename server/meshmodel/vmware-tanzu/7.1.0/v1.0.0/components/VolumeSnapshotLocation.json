@@ -1,29 +1,31 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "displayName": "Volume Snapshot Location",
+  "capabilities": null,
+  "component": {
+   "kind": "VolumeSnapshotLocation",
+   "schema": "{\n \"description\": \"VolumeSnapshotLocation is a location where Velero stores volume snapshots.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"VolumeSnapshotLocationSpec defines the specification for a Velero VolumeSnapshotLocation.\",\n   \"properties\": {\n    \"config\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"Config is for provider-specific configuration fields.\",\n     \"type\": \"object\"\n    },\n    \"credential\": {\n     \"description\": \"Credential contains the credential information intended to be used with this location\",\n     \"properties\": {\n      \"key\": {\n       \"description\": \"The key of the secret to select from.  Must be a valid secret key.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\\nTODO: Add other useful fields. apiVersion, kind, uid?\",\n       \"type\": \"string\"\n      },\n      \"optional\": {\n       \"description\": \"Specify whether the Secret or its key must be defined\",\n       \"type\": \"boolean\"\n      }\n     },\n     \"required\": [\n      \"key\"\n     ],\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    },\n    \"provider\": {\n     \"description\": \"Provider is the provider of the volume storage.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"provider\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Volume Snapshot Location\",\n \"type\": \"object\"\n}",
+   "version": "velero.io/v1"
+  },
+  "configuration": null,
   "description": "",
+  "displayName": "Volume Snapshot Location",
   "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "published": false,
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": ""
+  },
   "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "version": "v1.0.0",
-   "name": "vmware-tanzu",
-   "displayName": "Vmware Tanzu",
-   "description": "",
-   "status": "ignored",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "registrant": {
-    "hostname": "artifacthub"
-   },
    "category": {
-    "name": "Uncategorized",
-    "metadata": null
+    "name": "Uncategorized"
    },
-   "subCategory": "Uncategorized",
+   "displayName": "Vmware Tanzu",
+   "id": "00000000-0000-0000-0000-000000000000",
    "metadata": {
-    "capabilities": "",
     "defaultData": "",
     "isAnnotation": false,
     "primaryColor": "#00B39F",
@@ -39,30 +41,36 @@
    "model": {
     "version": "7.1.0"
    },
+   "name": "vmware-tanzu",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "subCategory": "Uncategorized",
+   "version": "v1.0.0",
    "components": null,
    "relationships": null
   },
-  "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "ignored",
+  "styles": {
    "primaryColor": "#00B39F",
    "secondaryColor": "#00D3A9",
    "shape": "circle",
-   "shapePolygonPoints": "",
-   "status": "ignored",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
    "svgColor": "",
-   "svgComplete": "",
    "svgWhite": ""
   },
-  "component": {
-   "kind": "VolumeSnapshotLocation",
-   "version": "velero.io/v1",
-   "schema": "{\n \"description\": \"VolumeSnapshotLocation is a location where Velero stores volume snapshots.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"VolumeSnapshotLocationSpec defines the specification for a Velero VolumeSnapshotLocation.\",\n   \"properties\": {\n    \"config\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"Config is for provider-specific configuration fields.\",\n     \"type\": \"object\"\n    },\n    \"credential\": {\n     \"description\": \"Credential contains the credential information intended to be used with this location\",\n     \"properties\": {\n      \"key\": {\n       \"description\": \"The key of the secret to select from.  Must be a valid secret key.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\\nTODO: Add other useful fields. apiVersion, kind, uid?\",\n       \"type\": \"string\"\n      },\n      \"optional\": {\n       \"description\": \"Specify whether the Secret or its key must be defined\",\n       \"type\": \"boolean\"\n      }\n     },\n     \"required\": [\n      \"key\"\n     ],\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    },\n    \"provider\": {\n     \"description\": \"Provider is the provider of the volume storage.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"provider\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Volume Snapshot Location\",\n \"type\": \"object\"\n}"
-  }
+  "version": "v1.0.0"
  }

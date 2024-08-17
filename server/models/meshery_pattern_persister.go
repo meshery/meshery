@@ -173,7 +173,7 @@ func (mpp *MesheryPatternPersister) DeleteMesheryPatterns(patterns MesheryPatter
 }
 
 func (mpp *MesheryPatternPersister) SaveMesheryPattern(pattern *MesheryPattern) ([]byte, error) {
-	patternFile, err := patterns.GetPatternFormat(pattern.PatternFile)
+	pf, err := patterns.GetPatternFormat(pattern.PatternFile)
 	if err != nil {
 		return nil, err
 	}
@@ -186,22 +186,22 @@ func (mpp *MesheryPatternPersister) SaveMesheryPattern(pattern *MesheryPattern) 
 		if err != nil {
 			return nil, ErrGenerateUUID(err)
 		}
-		patterns.AssignVersion(patternFile)
+
+		patterns.AssignVersion(pf)
 
 		pattern.ID = &id
 	} else {
-		nextVersion, err := patterns.GetNextVersion(patternFile)
+		nextVersion, err := patterns.GetNextVersion(pf)
 		if err != nil {
 			return nil, err
 		}
-		patternFile.Version = nextVersion
+		pf.Version = nextVersion
+		byt, err := yaml.Marshal(pf)
+		if err != nil {
+			return nil, err
+		}
+		pattern.PatternFile = string(byt)
 	}
-	marshalledPatternFile, err := yaml.Marshal(patternFile)
-	if err != nil {
-		return nil, ErrMarshalYAML(err, "pattern file")
-	}
-
-	pattern.PatternFile = string(marshalledPatternFile)
 
 	return marshalMesheryPatterns([]MesheryPattern{*pattern}), mpp.DB.Save(pattern).Error
 }
@@ -211,10 +211,12 @@ func (mpp *MesheryPatternPersister) SaveMesheryPatterns(mesheryPatterns []Mesher
 	finalPatterns := []MesheryPattern{}
 	nilUserID := ""
 	for _, pattern := range mesheryPatterns {
-		patternFile, err := patterns.GetPatternFormat(pattern.PatternFile)
+
+		pf, err := patterns.GetPatternFormat(pattern.PatternFile)
 		if err != nil {
 			return nil, err
 		}
+
 		if pattern.Visibility == "" {
 			pattern.Visibility = Private
 		}
@@ -224,21 +226,16 @@ func (mpp *MesheryPatternPersister) SaveMesheryPatterns(mesheryPatterns []Mesher
 			if err != nil {
 				return nil, ErrGenerateUUID(err)
 			}
-			patterns.AssignVersion(patternFile)
+			patterns.AssignVersion(pf)
 			pattern.ID = &id
 		} else {
-			nextVersion, err := patterns.GetNextVersion(patternFile)
+			nextVersion, err := patterns.GetNextVersion(pf)
 			if err != nil {
 				return nil, err
 			}
-			patternFile.Version = nextVersion
-		}
-		marshalledPatternFile, err := yaml.Marshal(patternFile)
-		if err != nil {
-			return nil, ErrMarshalYAML(err, "pattern file")
+			pf.Version = nextVersion
 		}
 
-		pattern.PatternFile = string(marshalledPatternFile)
 		finalPatterns = append(finalPatterns, pattern)
 	}
 

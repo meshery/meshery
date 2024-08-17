@@ -1,29 +1,31 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "displayName": "Webhook Authenticator",
+  "capabilities": null,
+  "component": {
+   "kind": "WebhookAuthenticator",
+   "schema": "{\n \"description\": \"WebhookAuthenticator describes the configuration of a webhook authenticator.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Spec for configuring the authenticator.\",\n   \"properties\": {\n    \"endpoint\": {\n     \"description\": \"Webhook server endpoint URL.\",\n     \"minLength\": 1,\n     \"pattern\": \"^https://\",\n     \"type\": \"string\"\n    },\n    \"tls\": {\n     \"description\": \"TLS configuration.\",\n     \"properties\": {\n      \"certificateAuthorityData\": {\n       \"description\": \"X.509 Certificate Authority (base64-encoded PEM bundle). If omitted, a default set of system roots will be trusted.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"endpoint\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Webhook Authenticator\",\n \"type\": \"object\"\n}",
+   "version": "authentication.concierge.pinniped.dev/v1alpha1"
+  },
+  "configuration": null,
   "description": "",
+  "displayName": "Webhook Authenticator",
   "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "published": false,
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": ""
+  },
   "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "version": "v1.0.0",
-   "name": "pinniped",
-   "displayName": "Pinniped",
-   "description": "",
-   "status": "ignored",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "registrant": {
-    "hostname": "artifacthub"
-   },
    "category": {
-    "name": "Security \u0026 Compliance",
-    "metadata": null
+    "name": "Security \u0026 Compliance"
    },
-   "subCategory": "Key Management",
+   "displayName": "Pinniped",
+   "id": "00000000-0000-0000-0000-000000000000",
    "metadata": {
-    "capabilities": "",
     "defaultData": "",
     "isAnnotation": false,
     "primaryColor": "#00B39F",
@@ -39,30 +41,36 @@
    "model": {
     "version": "2.2.7"
    },
+   "name": "pinniped",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "subCategory": "Key Management",
+   "version": "v1.0.0",
    "components": null,
    "relationships": null
   },
-  "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": false,
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "ignored",
+  "styles": {
    "primaryColor": "#00B39F",
    "secondaryColor": "#00D3A9",
    "shape": "circle",
-   "shapePolygonPoints": "",
-   "status": "ignored",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
    "svgColor": "",
-   "svgComplete": "",
    "svgWhite": ""
   },
-  "component": {
-   "kind": "WebhookAuthenticator",
-   "version": "authentication.concierge.pinniped.dev/v1alpha1",
-   "schema": "{\n \"description\": \"WebhookAuthenticator describes the configuration of a webhook authenticator.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Spec for configuring the authenticator.\",\n   \"properties\": {\n    \"endpoint\": {\n     \"description\": \"Webhook server endpoint URL.\",\n     \"minLength\": 1,\n     \"pattern\": \"^https://\",\n     \"type\": \"string\"\n    },\n    \"tls\": {\n     \"description\": \"TLS configuration.\",\n     \"properties\": {\n      \"certificateAuthorityData\": {\n       \"description\": \"X.509 Certificate Authority (base64-encoded PEM bundle). If omitted, a default set of system roots will be trusted.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"endpoint\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Webhook Authenticator\",\n \"type\": \"object\"\n}"
-  }
+  "version": "v1.0.0"
  }

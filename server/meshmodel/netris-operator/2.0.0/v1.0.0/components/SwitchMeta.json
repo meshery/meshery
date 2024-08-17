@@ -1,29 +1,31 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "displayName": "Switch Meta",
+  "capabilities": null,
+  "component": {
+   "kind": "SwitchMeta",
+   "schema": "{\n \"description\": \"SwitchMeta is the Schema for the switchmeta API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"SwitchMetaSpec defines the desired state of SwitchMeta\",\n   \"properties\": {\n    \"asn\": {\n     \"type\": \"integer\"\n    },\n    \"description\": {\n     \"type\": \"string\"\n    },\n    \"id\": {\n     \"type\": \"integer\"\n    },\n    \"imported\": {\n     \"description\": \"INSERT ADDITIONAL SPEC FIELDS - desired state of cluster Important: Run \\\"make\\\" to regenerate code after modifying this file\",\n     \"type\": \"boolean\"\n    },\n    \"macAddress\": {\n     \"type\": \"string\"\n    },\n    \"mainIp\": {\n     \"type\": \"string\"\n    },\n    \"mgmtIp\": {\n     \"type\": \"string\"\n    },\n    \"nos\": {\n     \"properties\": {\n      \"id\": {\n       \"type\": \"integer\"\n      },\n      \"name\": {\n       \"type\": \"string\"\n      },\n      \"tag\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"id\",\n      \"name\",\n      \"tag\"\n     ],\n     \"type\": \"object\"\n    },\n    \"portsCount\": {\n     \"type\": \"integer\"\n    },\n    \"profile\": {\n     \"type\": \"integer\"\n    },\n    \"reclaimPolicy\": {\n     \"type\": \"boolean\"\n    },\n    \"site\": {\n     \"type\": \"integer\"\n    },\n    \"switchGeneration\": {\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"switchName\": {\n     \"type\": \"string\"\n    },\n    \"tenant\": {\n     \"type\": \"integer\"\n    }\n   },\n   \"required\": [\n    \"id\",\n    \"imported\",\n    \"reclaimPolicy\",\n    \"switchGeneration\",\n    \"switchName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Switch Meta\",\n \"type\": \"object\"\n}",
+   "version": "k8s.netris.ai/v1alpha1"
+  },
+  "configuration": null,
   "description": "",
+  "displayName": "Switch Meta",
   "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "published": false,
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": ""
+  },
   "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "version": "v1.0.0",
-   "name": "netris-operator",
-   "displayName": "Netris Operator",
-   "description": "",
-   "status": "ignored",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "registrant": {
-    "hostname": "artifacthub"
-   },
    "category": {
-    "name": "Uncategorized",
-    "metadata": null
+    "name": "Uncategorized"
    },
-   "subCategory": "Uncategorized",
+   "displayName": "Netris Operator",
+   "id": "00000000-0000-0000-0000-000000000000",
    "metadata": {
-    "capabilities": "",
     "defaultData": "",
     "isAnnotation": false,
     "primaryColor": "#00B39F",
@@ -39,30 +41,36 @@
    "model": {
     "version": "2.0.0"
    },
+   "name": "netris-operator",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "subCategory": "Uncategorized",
+   "version": "v1.0.0",
    "components": null,
    "relationships": null
   },
-  "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "ignored",
+  "styles": {
    "primaryColor": "#00B39F",
    "secondaryColor": "#00D3A9",
    "shape": "circle",
-   "shapePolygonPoints": "",
-   "status": "ignored",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
    "svgColor": "",
-   "svgComplete": "",
    "svgWhite": ""
   },
-  "component": {
-   "kind": "SwitchMeta",
-   "version": "k8s.netris.ai/v1alpha1",
-   "schema": "{\n \"description\": \"SwitchMeta is the Schema for the switchmeta API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"SwitchMetaSpec defines the desired state of SwitchMeta\",\n   \"properties\": {\n    \"asn\": {\n     \"type\": \"integer\"\n    },\n    \"description\": {\n     \"type\": \"string\"\n    },\n    \"id\": {\n     \"type\": \"integer\"\n    },\n    \"imported\": {\n     \"description\": \"INSERT ADDITIONAL SPEC FIELDS - desired state of cluster Important: Run \\\"make\\\" to regenerate code after modifying this file\",\n     \"type\": \"boolean\"\n    },\n    \"macAddress\": {\n     \"type\": \"string\"\n    },\n    \"mainIp\": {\n     \"type\": \"string\"\n    },\n    \"mgmtIp\": {\n     \"type\": \"string\"\n    },\n    \"nos\": {\n     \"properties\": {\n      \"id\": {\n       \"type\": \"integer\"\n      },\n      \"name\": {\n       \"type\": \"string\"\n      },\n      \"tag\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"id\",\n      \"name\",\n      \"tag\"\n     ],\n     \"type\": \"object\"\n    },\n    \"portsCount\": {\n     \"type\": \"integer\"\n    },\n    \"profile\": {\n     \"type\": \"integer\"\n    },\n    \"reclaimPolicy\": {\n     \"type\": \"boolean\"\n    },\n    \"site\": {\n     \"type\": \"integer\"\n    },\n    \"switchGeneration\": {\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"switchName\": {\n     \"type\": \"string\"\n    },\n    \"tenant\": {\n     \"type\": \"integer\"\n    }\n   },\n   \"required\": [\n    \"id\",\n    \"imported\",\n    \"reclaimPolicy\",\n    \"switchGeneration\",\n    \"switchName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Switch Meta\",\n \"type\": \"object\"\n}"
-  }
+  "version": "v1.0.0"
  }

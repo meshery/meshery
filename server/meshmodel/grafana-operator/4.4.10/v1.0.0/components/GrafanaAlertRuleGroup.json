@@ -1,29 +1,31 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "displayName": "Grafana Alert Rule Group",
+  "capabilities": null,
+  "component": {
+   "kind": "GrafanaAlertRuleGroup",
+   "schema": "{\n \"description\": \"GrafanaAlertRuleGroup is the Schema for the grafanaalertrulegroups API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"GrafanaAlertRuleGroupSpec defines the desired state of GrafanaAlertRuleGroup\",\n   \"properties\": {\n    \"allowCrossNamespaceImport\": {\n     \"type\": \"boolean\"\n    },\n    \"folderRef\": {\n     \"description\": \"Match GrafanaFolders CRs to infer the uid\",\n     \"type\": \"string\"\n    },\n    \"folderUID\": {\n     \"description\": \"UID of the folder containing this rule group\\nOverrides the FolderSelector\",\n     \"type\": \"string\"\n    },\n    \"instanceSelector\": {\n     \"description\": \"selects Grafanas for import\",\n     \"properties\": {\n      \"matchExpressions\": {\n       \"description\": \"matchExpressions is a list of label selector requirements. The requirements are ANDed.\",\n       \"items\": {\n        \"description\": \"A label selector requirement is a selector that contains values, a key, and an operator that\\nrelates the key and values.\",\n        \"properties\": {\n         \"key\": {\n          \"description\": \"key is the label key that the selector applies to.\",\n          \"type\": \"string\"\n         },\n         \"operator\": {\n          \"description\": \"operator represents a key's relationship to a set of values.\\nValid operators are In, NotIn, Exists and DoesNotExist.\",\n          \"type\": \"string\"\n         },\n         \"values\": {\n          \"description\": \"values is an array of string values. If the operator is In or NotIn,\\nthe values array must be non-empty. If the operator is Exists or DoesNotExist,\\nthe values array must be empty. This array is replaced during a strategic\\nmerge patch.\",\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\",\n          \"x-kubernetes-list-type\": \"atomic\"\n         }\n        },\n        \"required\": [\n         \"key\",\n         \"operator\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\",\n       \"x-kubernetes-list-type\": \"atomic\"\n      },\n      \"matchLabels\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels\\nmap is equivalent to an element of matchExpressions, whose key field is \\\"key\\\", the\\noperator is \\\"In\\\", and the values array contains only \\\"value\\\". The requirements are ANDed.\",\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"Value is immutable\",\n       \"rule\": \"self == oldSelf\"\n      }\n     ]\n    },\n    \"interval\": {\n     \"format\": \"duration\",\n     \"pattern\": \"^([0-9]+(\\\\.[0-9]+)?(ns|us|µs|ms|s|m|h))+$\",\n     \"type\": \"string\"\n    },\n    \"resyncPeriod\": {\n     \"default\": \"10m\",\n     \"format\": \"duration\",\n     \"pattern\": \"^([0-9]+(\\\\.[0-9]+)?(ns|us|µs|ms|s|m|h))+$\",\n     \"type\": \"string\"\n    },\n    \"rules\": {\n     \"items\": {\n      \"description\": \"AlertRule defines a specific rule to be evaluated. It is based on the upstream model with some k8s specific type mappings\",\n      \"properties\": {\n       \"annotations\": {\n        \"additionalProperties\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"object\"\n       },\n       \"condition\": {\n        \"type\": \"string\"\n       },\n       \"data\": {\n        \"items\": {\n         \"properties\": {\n          \"datasourceUid\": {\n           \"description\": \"Grafana data source unique identifier; it should be '__expr__' for a Server Side Expression operation.\",\n           \"type\": \"string\"\n          },\n          \"model\": {\n           \"description\": \"JSON is the raw JSON query and includes the above properties as well as custom properties.\",\n           \"format\": \"textarea\",\n           \"type\": \"string\"\n          },\n          \"queryType\": {\n           \"description\": \"QueryType is an optional identifier for the type of query.\\nIt can be used to distinguish different types of queries.\",\n           \"type\": \"string\"\n          },\n          \"refId\": {\n           \"description\": \"RefID is the unique identifier of the query, set by the frontend call.\",\n           \"type\": \"string\"\n          },\n          \"relativeTimeRange\": {\n           \"description\": \"relative time range\",\n           \"properties\": {\n            \"from\": {\n             \"description\": \"from\",\n             \"format\": \"int64\",\n             \"type\": \"integer\"\n            },\n            \"to\": {\n             \"description\": \"to\",\n             \"format\": \"int64\",\n             \"type\": \"integer\"\n            }\n           },\n           \"type\": \"object\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       },\n       \"execErrState\": {\n        \"enum\": [\n         \"OK\",\n         \"Alerting\",\n         \"Error\",\n         \"KeepLast\"\n        ],\n        \"type\": \"string\"\n       },\n       \"for\": {\n        \"format\": \"duration\",\n        \"pattern\": \"^([0-9]+(\\\\.[0-9]+)?(ns|us|µs|ms|s|m|h))+$\",\n        \"type\": \"string\"\n       },\n       \"isPaused\": {\n        \"type\": \"boolean\"\n       },\n       \"labels\": {\n        \"additionalProperties\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"object\"\n       },\n       \"noDataState\": {\n        \"enum\": [\n         \"Alerting\",\n         \"NoData\",\n         \"OK\",\n         \"KeepLast\"\n        ],\n        \"type\": \"string\"\n       },\n       \"notificationSettings\": {\n        \"properties\": {\n         \"group_by\": {\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         },\n         \"group_interval\": {\n          \"type\": \"string\"\n         },\n         \"group_wait\": {\n          \"type\": \"string\"\n         },\n         \"mute_time_intervals\": {\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         },\n         \"receiver\": {\n          \"type\": \"string\"\n         },\n         \"repeat_interval\": {\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"receiver\"\n        ],\n        \"type\": \"object\"\n       },\n       \"title\": {\n        \"example\": \"Always firing\",\n        \"maxLength\": 190,\n        \"minLength\": 1,\n        \"type\": \"string\"\n       },\n       \"uid\": {\n        \"pattern\": \"^[a-zA-Z0-9-_]+$\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"condition\",\n       \"data\",\n       \"execErrState\",\n       \"for\",\n       \"noDataState\",\n       \"title\",\n       \"uid\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"instanceSelector\",\n    \"interval\",\n    \"rules\"\n   ],\n   \"type\": \"object\",\n   \"x-kubernetes-validations\": [\n    {\n     \"message\": \"Only one of FolderUID or FolderRef can be set\",\n     \"rule\": \"(has(self.folderUID) \\u0026\\u0026 !(has(self.folderRef))) || (has(self.folderRef) \\u0026\\u0026 !(has(self.folderUID)))\"\n    }\n   ]\n  }\n },\n \"title\": \"Grafana Alert Rule Group\",\n \"type\": \"object\"\n}",
+   "version": "grafana.integreatly.org/v1beta1"
+  },
+  "configuration": null,
   "description": "",
+  "displayName": "Grafana Alert Rule Group",
   "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "published": false,
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": ""
+  },
   "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "version": "v1.0.0",
-   "name": "grafana-operator",
-   "displayName": "Grafana Operator",
-   "description": "",
-   "status": "enabled",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "registrant": {
-    "hostname": "artifacthub"
-   },
    "category": {
-    "name": "Observability and Analysis",
-    "metadata": null
+    "name": "Observability and Analysis"
    },
-   "subCategory": "Monitoring",
+   "displayName": "Grafana Operator",
+   "id": "00000000-0000-0000-0000-000000000000",
    "metadata": {
-    "capabilities": "",
     "defaultData": "",
     "isAnnotation": false,
     "primaryColor": "#F15B2A",
@@ -39,30 +41,35 @@
    "model": {
     "version": "4.4.10"
    },
+   "name": "grafana-operator",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "enabled",
+   "subCategory": "Monitoring",
+   "version": "v1.0.0",
    "components": null,
    "relationships": null
   },
-  "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
    "primaryColor": "",
-   "secondaryColor": "",
    "shape": "circle",
-   "shapePolygonPoints": "",
-   "status": "enabled",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
    "svgColor": "",
-   "svgComplete": "",
    "svgWhite": ""
   },
-  "component": {
-   "kind": "GrafanaAlertRuleGroup",
-   "version": "grafana.integreatly.org/v1beta1",
-   "schema": "{\n \"description\": \"GrafanaAlertRuleGroup is the Schema for the grafanaalertrulegroups API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"GrafanaAlertRuleGroupSpec defines the desired state of GrafanaAlertRuleGroup\",\n   \"properties\": {\n    \"allowCrossNamespaceImport\": {\n     \"type\": \"boolean\"\n    },\n    \"folderRef\": {\n     \"description\": \"Match GrafanaFolders CRs to infer the uid\",\n     \"type\": \"string\"\n    },\n    \"folderUID\": {\n     \"description\": \"UID of the folder containing this rule group\\nOverrides the FolderSelector\",\n     \"type\": \"string\"\n    },\n    \"instanceSelector\": {\n     \"description\": \"selects Grafanas for import\",\n     \"properties\": {\n      \"matchExpressions\": {\n       \"description\": \"matchExpressions is a list of label selector requirements. The requirements are ANDed.\",\n       \"items\": {\n        \"description\": \"A label selector requirement is a selector that contains values, a key, and an operator that\\nrelates the key and values.\",\n        \"properties\": {\n         \"key\": {\n          \"description\": \"key is the label key that the selector applies to.\",\n          \"type\": \"string\"\n         },\n         \"operator\": {\n          \"description\": \"operator represents a key's relationship to a set of values.\\nValid operators are In, NotIn, Exists and DoesNotExist.\",\n          \"type\": \"string\"\n         },\n         \"values\": {\n          \"description\": \"values is an array of string values. If the operator is In or NotIn,\\nthe values array must be non-empty. If the operator is Exists or DoesNotExist,\\nthe values array must be empty. This array is replaced during a strategic\\nmerge patch.\",\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\",\n          \"x-kubernetes-list-type\": \"atomic\"\n         }\n        },\n        \"required\": [\n         \"key\",\n         \"operator\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\",\n       \"x-kubernetes-list-type\": \"atomic\"\n      },\n      \"matchLabels\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels\\nmap is equivalent to an element of matchExpressions, whose key field is \\\"key\\\", the\\noperator is \\\"In\\\", and the values array contains only \\\"value\\\". The requirements are ANDed.\",\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"Value is immutable\",\n       \"rule\": \"self == oldSelf\"\n      }\n     ]\n    },\n    \"interval\": {\n     \"format\": \"duration\",\n     \"pattern\": \"^([0-9]+(\\\\.[0-9]+)?(ns|us|µs|ms|s|m|h))+$\",\n     \"type\": \"string\"\n    },\n    \"resyncPeriod\": {\n     \"default\": \"10m\",\n     \"format\": \"duration\",\n     \"pattern\": \"^([0-9]+(\\\\.[0-9]+)?(ns|us|µs|ms|s|m|h))+$\",\n     \"type\": \"string\"\n    },\n    \"rules\": {\n     \"items\": {\n      \"description\": \"AlertRule defines a specific rule to be evaluated. It is based on the upstream model with some k8s specific type mappings\",\n      \"properties\": {\n       \"annotations\": {\n        \"additionalProperties\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"object\"\n       },\n       \"condition\": {\n        \"type\": \"string\"\n       },\n       \"data\": {\n        \"items\": {\n         \"properties\": {\n          \"datasourceUid\": {\n           \"description\": \"Grafana data source unique identifier; it should be '__expr__' for a Server Side Expression operation.\",\n           \"type\": \"string\"\n          },\n          \"model\": {\n           \"description\": \"JSON is the raw JSON query and includes the above properties as well as custom properties.\",\n           \"format\": \"textarea\",\n           \"type\": \"string\"\n          },\n          \"queryType\": {\n           \"description\": \"QueryType is an optional identifier for the type of query.\\nIt can be used to distinguish different types of queries.\",\n           \"type\": \"string\"\n          },\n          \"refId\": {\n           \"description\": \"RefID is the unique identifier of the query, set by the frontend call.\",\n           \"type\": \"string\"\n          },\n          \"relativeTimeRange\": {\n           \"description\": \"relative time range\",\n           \"properties\": {\n            \"from\": {\n             \"description\": \"from\",\n             \"format\": \"int64\",\n             \"type\": \"integer\"\n            },\n            \"to\": {\n             \"description\": \"to\",\n             \"format\": \"int64\",\n             \"type\": \"integer\"\n            }\n           },\n           \"type\": \"object\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       },\n       \"execErrState\": {\n        \"enum\": [\n         \"OK\",\n         \"Alerting\",\n         \"Error\",\n         \"KeepLast\"\n        ],\n        \"type\": \"string\"\n       },\n       \"for\": {\n        \"format\": \"duration\",\n        \"pattern\": \"^([0-9]+(\\\\.[0-9]+)?(ns|us|µs|ms|s|m|h))+$\",\n        \"type\": \"string\"\n       },\n       \"isPaused\": {\n        \"type\": \"boolean\"\n       },\n       \"labels\": {\n        \"additionalProperties\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"object\"\n       },\n       \"noDataState\": {\n        \"enum\": [\n         \"Alerting\",\n         \"NoData\",\n         \"OK\",\n         \"KeepLast\"\n        ],\n        \"type\": \"string\"\n       },\n       \"notificationSettings\": {\n        \"properties\": {\n         \"group_by\": {\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         },\n         \"group_interval\": {\n          \"type\": \"string\"\n         },\n         \"group_wait\": {\n          \"type\": \"string\"\n         },\n         \"mute_time_intervals\": {\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         },\n         \"receiver\": {\n          \"type\": \"string\"\n         },\n         \"repeat_interval\": {\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"receiver\"\n        ],\n        \"type\": \"object\"\n       },\n       \"title\": {\n        \"example\": \"Always firing\",\n        \"maxLength\": 190,\n        \"minLength\": 1,\n        \"type\": \"string\"\n       },\n       \"uid\": {\n        \"pattern\": \"^[a-zA-Z0-9-_]+$\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"condition\",\n       \"data\",\n       \"execErrState\",\n       \"for\",\n       \"noDataState\",\n       \"title\",\n       \"uid\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"instanceSelector\",\n    \"interval\",\n    \"rules\"\n   ],\n   \"type\": \"object\",\n   \"x-kubernetes-validations\": [\n    {\n     \"message\": \"Only one of FolderUID or FolderRef can be set\",\n     \"rule\": \"(has(self.folderUID) \\u0026\\u0026 !(has(self.folderRef))) || (has(self.folderRef) \\u0026\\u0026 !(has(self.folderUID)))\"\n    }\n   ]\n  }\n },\n \"title\": \"Grafana Alert Rule Group\",\n \"type\": \"object\"\n}"
-  }
+  "version": "v1.0.0"
  }

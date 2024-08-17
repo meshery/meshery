@@ -1,29 +1,31 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "displayName": "Role",
+  "capabilities": null,
+  "component": {
+   "kind": "Role",
+   "schema": "{\n \"description\": \"Role is used to define a role for a function\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"RoleSpec maps a number of principals or attributes within a JWT to\\na set of policies.\",\n   \"properties\": {\n    \"condition\": {\n     \"additionalProperties\": {\n      \"additionalProperties\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"type\": \"object\"\n     },\n     \"description\": \"Condition is a set of conditions that can be used instead of a principal\\nto match against claims within a JWT\\n{\\n\\t\\\"StringLike\\\": {\\n\\t\\t\\\"jwt:https://my-identity-provider.com#sub-id\\\": [\\n\\t\\t\\t\\\"1234567890\\\",\\n\\t\\t\\t\\\"0987654321\\\"\\n\\t\\t],\\n\\t}\\n}\",\n     \"type\": \"object\"\n    },\n    \"policy\": {\n     \"description\": \"Policy is a list of named policies which apply to this role\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"principal\": {\n     \"additionalProperties\": {\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"type\": \"array\"\n     },\n     \"description\": \"Principal is the principal that the role applies to i.e.\\n{\\n\\t\\t\\\"jwt:sub\\\":[\\\"repo:alexellis/minty:ref:refs/heads/master\\\"]\\n}\",\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Role\",\n \"type\": \"object\"\n}",
+   "version": "iam.openfaas.com/v1"
+  },
+  "configuration": null,
   "description": "",
+  "displayName": "Role",
   "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "published": false,
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": ""
+  },
   "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "version": "v1.0.0",
-   "name": "openfaas",
-   "displayName": "OpenFaaS",
-   "description": "",
-   "status": "ignored",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "registrant": {
-    "hostname": "artifacthub"
-   },
    "category": {
-    "name": "Serverless",
-    "metadata": null
+    "name": "Serverless"
    },
-   "subCategory": "Framework",
+   "displayName": "OpenFaaS",
+   "id": "00000000-0000-0000-0000-000000000000",
    "metadata": {
-    "capabilities": "",
     "defaultData": "",
     "isAnnotation": false,
     "primaryColor": "#00B39F",
@@ -39,30 +41,36 @@
    "model": {
     "version": "14.2.50"
    },
+   "name": "openfaas",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "subCategory": "Framework",
+   "version": "v1.0.0",
    "components": null,
    "relationships": null
   },
-  "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "ignored",
+  "styles": {
    "primaryColor": "#00B39F",
    "secondaryColor": "#00D3A9",
    "shape": "circle",
-   "shapePolygonPoints": "",
-   "status": "ignored",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
    "svgColor": "",
-   "svgComplete": "",
    "svgWhite": ""
   },
-  "component": {
-   "kind": "Role",
-   "version": "iam.openfaas.com/v1",
-   "schema": "{\n \"description\": \"Role is used to define a role for a function\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"RoleSpec maps a number of principals or attributes within a JWT to\\na set of policies.\",\n   \"properties\": {\n    \"condition\": {\n     \"additionalProperties\": {\n      \"additionalProperties\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"type\": \"object\"\n     },\n     \"description\": \"Condition is a set of conditions that can be used instead of a principal\\nto match against claims within a JWT\\n{\\n\\t\\\"StringLike\\\": {\\n\\t\\t\\\"jwt:https://my-identity-provider.com#sub-id\\\": [\\n\\t\\t\\t\\\"1234567890\\\",\\n\\t\\t\\t\\\"0987654321\\\"\\n\\t\\t],\\n\\t}\\n}\",\n     \"type\": \"object\"\n    },\n    \"policy\": {\n     \"description\": \"Policy is a list of named policies which apply to this role\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"principal\": {\n     \"additionalProperties\": {\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"type\": \"array\"\n     },\n     \"description\": \"Principal is the principal that the role applies to i.e.\\n{\\n\\t\\t\\\"jwt:sub\\\":[\\\"repo:alexellis/minty:ref:refs/heads/master\\\"]\\n}\",\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Role\",\n \"type\": \"object\"\n}"
-  }
+  "version": "v1.0.0"
  }

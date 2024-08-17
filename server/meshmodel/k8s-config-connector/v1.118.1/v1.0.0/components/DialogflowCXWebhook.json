@@ -1,29 +1,31 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "displayName": "Dialogflow CX Webhook",
+  "capabilities": null,
+  "component": {
+   "kind": "DialogflowCXWebhook",
+   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"disabled\": {\n     \"description\": \"Indicates whether the webhook is disabled.\",\n     \"type\": \"boolean\"\n    },\n    \"displayName\": {\n     \"description\": \"The human-readable name of the webhook, unique within the agent.\",\n     \"type\": \"string\"\n    },\n    \"enableSpellCorrection\": {\n     \"description\": \"Indicates if automatic spell correction is enabled in detect intent requests.\",\n     \"type\": \"boolean\"\n    },\n    \"enableStackdriverLogging\": {\n     \"description\": \"Determines whether this agent should log conversation queries.\",\n     \"type\": \"boolean\"\n    },\n    \"genericWebService\": {\n     \"description\": \"Configuration for a generic web service.\",\n     \"properties\": {\n      \"allowedCaCerts\": {\n       \"description\": \"Specifies a list of allowed custom CA certificates (in DER format) for HTTPS verification.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"requestHeaders\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"Immutable. The HTTP request headers to send together with webhook requests.\",\n       \"type\": \"object\"\n      },\n      \"uri\": {\n       \"description\": \"Whether to use speech adaptation for speech recognition.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"uri\"\n     ],\n     \"type\": \"object\"\n    },\n    \"parent\": {\n     \"description\": \"Immutable. The agent to create a webhook for.\\nFormat: projects/\\u003cProject ID\\u003e/locations/\\u003cLocation ID\\u003e/agents/\\u003cAgent ID\\u003e.\",\n     \"type\": \"string\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The service-generated name of the resource. Used for acquisition only. Leave unset to create a new resource.\",\n     \"type\": \"string\"\n    },\n    \"securitySettings\": {\n     \"description\": \"Name of the SecuritySettings reference for the agent. Format: projects/\\u003cProject ID\\u003e/locations/\\u003cLocation ID\\u003e/securitySettings/\\u003cSecurity Settings ID\\u003e.\",\n     \"type\": \"string\"\n    },\n    \"serviceDirectory\": {\n     \"description\": \"Configuration for a Service Directory service.\",\n     \"properties\": {\n      \"genericWebService\": {\n       \"description\": \"The name of Service Directory service.\",\n       \"properties\": {\n        \"allowedCaCerts\": {\n         \"description\": \"Specifies a list of allowed custom CA certificates (in DER format) for HTTPS verification.\",\n         \"items\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"array\"\n        },\n        \"requestHeaders\": {\n         \"additionalProperties\": {\n          \"type\": \"string\"\n         },\n         \"description\": \"Immutable. The HTTP request headers to send together with webhook requests.\",\n         \"type\": \"object\"\n        },\n        \"uri\": {\n         \"description\": \"Whether to use speech adaptation for speech recognition.\",\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"uri\"\n       ],\n       \"type\": \"object\"\n      },\n      \"service\": {\n       \"description\": \"The name of Service Directory service.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"genericWebService\",\n      \"service\"\n     ],\n     \"type\": \"object\"\n    },\n    \"timeout\": {\n     \"description\": \"Webhook execution timeout.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"displayName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Dialogflow CX Webhook\",\n \"type\": \"object\"\n}",
+   "version": "dialogflowcx.cnrm.cloud.google.com/v1alpha1"
+  },
+  "configuration": null,
   "description": "",
+  "displayName": "Dialogflow CX Webhook",
   "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "published": false,
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": ""
+  },
   "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "version": "v1.0.0",
-   "name": "k8s-config-connector",
-   "displayName": "Google Cloud Platform",
-   "description": "",
-   "status": "enabled",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "registrant": {
-    "hostname": "github"
-   },
    "category": {
-    "name": "Orchestration \u0026 Management",
-    "metadata": null
+    "name": "Orchestration \u0026 Management"
    },
-   "subCategory": "Google Cloud Platform",
+   "displayName": "Google Cloud Platform",
+   "id": "00000000-0000-0000-0000-000000000000",
    "metadata": {
-    "capabilities": "",
     "defaultData": "",
     "isAnnotation": false,
     "primaryColor": "#4285F4",
@@ -39,30 +41,35 @@
    "model": {
     "version": "v1.118.1"
    },
+   "name": "k8s-config-connector",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "github",
+    "name": "Github",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "enabled",
+   "subCategory": "Google Cloud Platform",
+   "version": "v1.0.0",
    "components": null,
    "relationships": null
   },
-  "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
    "primaryColor": "#4285F4",
-   "secondaryColor": "",
    "shape": "rectangle",
-   "shapePolygonPoints": "",
-   "status": "enabled",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
    "svgColor": "\u003csvg width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"\u003e\n    \u003cg stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e\n        \u003cpath d=\"M12.3008862,4.00003179 L18.9908678,7.90329279 L19,11.4442164 L14.973309,9.0680926 L14.973309,10.8562526 L16.9806355,12.0276231 L16.9918433,15.1064843 L14.973309,13.9136004 L14.973309,18.415105 L12.3008862,20 L12.3008862,4.00003179 Z M11.6991138,4 L11.6991138,19.9999682 L9.02669102,18.4150732 L9.02669102,9.06816678 L5,11.4441846 L5.00913223,7.903261 L11.6991138,4 Z\" fill=\"#4285F4\"\u003e\u003c/path\u003e\n    \u003c/g\u003e\n\u003c/svg\u003e",
-   "svgComplete": "",
    "svgWhite": "\u003csvg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M12.3009 4.00003L18.9909 7.90329L19 11.4442L14.9733 9.06809V10.8563L16.9806 12.0276L16.9918 15.1065L14.9733 13.9136V18.4151L12.3009 20V4.00003ZM11.6991 4V20L9.02669 18.4151V9.06817L5 11.4442L5.00913 7.90326L11.6991 4Z\" fill=\"white\"/\u003e\n\u003c/svg\u003e\n"
   },
-  "component": {
-   "kind": "DialogflowCXWebhook",
-   "version": "dialogflowcx.cnrm.cloud.google.com/v1alpha1",
-   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"disabled\": {\n     \"description\": \"Indicates whether the webhook is disabled.\",\n     \"type\": \"boolean\"\n    },\n    \"displayName\": {\n     \"description\": \"The human-readable name of the webhook, unique within the agent.\",\n     \"type\": \"string\"\n    },\n    \"enableSpellCorrection\": {\n     \"description\": \"Indicates if automatic spell correction is enabled in detect intent requests.\",\n     \"type\": \"boolean\"\n    },\n    \"enableStackdriverLogging\": {\n     \"description\": \"Determines whether this agent should log conversation queries.\",\n     \"type\": \"boolean\"\n    },\n    \"genericWebService\": {\n     \"description\": \"Configuration for a generic web service.\",\n     \"properties\": {\n      \"allowedCaCerts\": {\n       \"description\": \"Specifies a list of allowed custom CA certificates (in DER format) for HTTPS verification.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"requestHeaders\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"Immutable. The HTTP request headers to send together with webhook requests.\",\n       \"type\": \"object\"\n      },\n      \"uri\": {\n       \"description\": \"Whether to use speech adaptation for speech recognition.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"uri\"\n     ],\n     \"type\": \"object\"\n    },\n    \"parent\": {\n     \"description\": \"Immutable. The agent to create a webhook for.\\nFormat: projects/\\u003cProject ID\\u003e/locations/\\u003cLocation ID\\u003e/agents/\\u003cAgent ID\\u003e.\",\n     \"type\": \"string\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The service-generated name of the resource. Used for acquisition only. Leave unset to create a new resource.\",\n     \"type\": \"string\"\n    },\n    \"securitySettings\": {\n     \"description\": \"Name of the SecuritySettings reference for the agent. Format: projects/\\u003cProject ID\\u003e/locations/\\u003cLocation ID\\u003e/securitySettings/\\u003cSecurity Settings ID\\u003e.\",\n     \"type\": \"string\"\n    },\n    \"serviceDirectory\": {\n     \"description\": \"Configuration for a Service Directory service.\",\n     \"properties\": {\n      \"genericWebService\": {\n       \"description\": \"The name of Service Directory service.\",\n       \"properties\": {\n        \"allowedCaCerts\": {\n         \"description\": \"Specifies a list of allowed custom CA certificates (in DER format) for HTTPS verification.\",\n         \"items\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"array\"\n        },\n        \"requestHeaders\": {\n         \"additionalProperties\": {\n          \"type\": \"string\"\n         },\n         \"description\": \"Immutable. The HTTP request headers to send together with webhook requests.\",\n         \"type\": \"object\"\n        },\n        \"uri\": {\n         \"description\": \"Whether to use speech adaptation for speech recognition.\",\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"uri\"\n       ],\n       \"type\": \"object\"\n      },\n      \"service\": {\n       \"description\": \"The name of Service Directory service.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"genericWebService\",\n      \"service\"\n     ],\n     \"type\": \"object\"\n    },\n    \"timeout\": {\n     \"description\": \"Webhook execution timeout.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"displayName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Dialogflow CX Webhook\",\n \"type\": \"object\"\n}"
-  }
+  "version": "v1.0.0"
  }

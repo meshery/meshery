@@ -1,61 +1,67 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "displayName": "Environment",
+  "capabilities": null,
+  "component": {
+   "kind": "Environment",
+   "schema": "{\n \"description\": \"Environment is the Schema for the environments API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"EnvironmentSpec defines the desired state of Environment\",\n   \"properties\": {\n    \"deletePolicy\": {\n     \"description\": \"DeletePolicy  删除策略,选项为 delNamespace,delLabels\",\n     \"type\": \"string\"\n    },\n    \"limitRange\": {\n     \"description\": \"LimitRange  默认limitrange\",\n     \"items\": {\n      \"description\": \"LimitRangeItem defines a min/max usage limit for any resource that matches on kind.\",\n      \"properties\": {\n       \"default\": {\n        \"additionalProperties\": {\n         \"anyOf\": [\n          {\n           \"type\": \"integer\"\n          },\n          {\n           \"type\": \"string\"\n          }\n         ],\n         \"pattern\": \"^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$\",\n         \"x-kubernetes-int-or-string\": true\n        },\n        \"description\": \"Default resource requirement limit value by resource name if resource limit is omitted.\",\n        \"type\": \"object\"\n       },\n       \"defaultRequest\": {\n        \"additionalProperties\": {\n         \"anyOf\": [\n          {\n           \"type\": \"integer\"\n          },\n          {\n           \"type\": \"string\"\n          }\n         ],\n         \"pattern\": \"^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$\",\n         \"x-kubernetes-int-or-string\": true\n        },\n        \"description\": \"DefaultRequest is the default resource requirement request value by resource name if resource request is omitted.\",\n        \"type\": \"object\"\n       },\n       \"max\": {\n        \"additionalProperties\": {\n         \"anyOf\": [\n          {\n           \"type\": \"integer\"\n          },\n          {\n           \"type\": \"string\"\n          }\n         ],\n         \"pattern\": \"^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$\",\n         \"x-kubernetes-int-or-string\": true\n        },\n        \"description\": \"Max usage constraints on this kind by resource name.\",\n        \"type\": \"object\"\n       },\n       \"maxLimitRequestRatio\": {\n        \"additionalProperties\": {\n         \"anyOf\": [\n          {\n           \"type\": \"integer\"\n          },\n          {\n           \"type\": \"string\"\n          }\n         ],\n         \"pattern\": \"^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$\",\n         \"x-kubernetes-int-or-string\": true\n        },\n        \"description\": \"MaxLimitRequestRatio if specified, the named resource must have a request and limit that are both non-zero where limit divided by request is less than or equal to the enumerated value; this represents the max burst for the named resource.\",\n        \"type\": \"object\"\n       },\n       \"min\": {\n        \"additionalProperties\": {\n         \"anyOf\": [\n          {\n           \"type\": \"integer\"\n          },\n          {\n           \"type\": \"string\"\n          }\n         ],\n         \"pattern\": \"^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$\",\n         \"x-kubernetes-int-or-string\": true\n        },\n        \"description\": \"Min usage constraints on this kind by resource name.\",\n        \"type\": \"object\"\n       },\n       \"type\": {\n        \"description\": \"Type of resource that this limit applies to.\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"type\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"limitRangeName\": {\n     \"description\": \"LimitRageName\",\n     \"type\": \"string\"\n    },\n    \"namespace\": {\n     \"description\": \"Namespace 关联的ns\",\n     \"type\": \"string\"\n    },\n    \"project\": {\n     \"description\": \"Project 项目\",\n     \"type\": \"string\"\n    },\n    \"resourceQuota\": {\n     \"additionalProperties\": {\n      \"anyOf\": [\n       {\n        \"type\": \"integer\"\n       },\n       {\n        \"type\": \"string\"\n       }\n      ],\n      \"pattern\": \"^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$\",\n      \"x-kubernetes-int-or-string\": true\n     },\n     \"description\": \"ResourceQuota  资源限制\",\n     \"type\": \"object\"\n    },\n    \"resourceQuotaName\": {\n     \"description\": \"ResourceQuotaName\",\n     \"type\": \"string\"\n    },\n    \"tenant\": {\n     \"description\": \"Tenant 租户\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"deletePolicy\",\n    \"namespace\",\n    \"project\",\n    \"tenant\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Environment\",\n \"type\": \"object\"\n}",
+   "version": "gems.kubegems.io/v1beta1"
+  },
+  "configuration": null,
   "description": "",
+  "displayName": "Environment",
   "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "published": false,
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": ""
+  },
   "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "version": "v1.0.0",
-   "name": "kubegems-local",
-   "displayName": "Kubegems Local",
-   "description": "",
-   "status": "ignored",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "registrant": {
-    "hostname": "artifacthub"
-   },
    "category": {
-    "name": "Uncategorized",
-    "metadata": null
+    "name": "Uncategorized"
    },
-   "subCategory": "",
+   "displayName": "Kubegems Local",
+   "id": "00000000-0000-0000-0000-000000000000",
    "metadata": {
-    "source_uri": "https://charts.kubegems.io/kubegems/charts/kubegems-local-1.24.2.tgz"
+    "source_uri": "https://charts.kubegems.io/kubegems/charts/kubegems-local-1.24.2.tgz",
+    "svgColor": "",
+    "svgWhite": ""
    },
    "model": {
     "version": "1.23.6"
    },
+   "name": "kubegems-local",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "version": "v1.0.0",
    "components": null,
    "relationships": null
   },
-  "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isModelAnnotation": "FALSE",
-   "isNamespaced": false,
-   "logoURL": "",
-   "model": "kubegems-local",
-   "modelDisplayName": "Kubegems Local",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "ignored",
+  "styles": {
    "primaryColor": "#00B39F",
    "secondaryColor": "#00D3A9",
    "shape": "circle",
-   "shapePolygonPoints": "",
-   "status": "ignored",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
    "svgColor": "",
-   "svgComplete": "",
    "svgWhite": ""
   },
-  "component": {
-   "kind": "Environment",
-   "version": "gems.kubegems.io/v1beta1",
-   "schema": "{\n \"description\": \"Environment is the Schema for the environments API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"EnvironmentSpec defines the desired state of Environment\",\n   \"properties\": {\n    \"deletePolicy\": {\n     \"description\": \"DeletePolicy  删除策略,选项为 delNamespace,delLabels\",\n     \"type\": \"string\"\n    },\n    \"limitRange\": {\n     \"description\": \"LimitRange  默认limitrange\",\n     \"items\": {\n      \"description\": \"LimitRangeItem defines a min/max usage limit for any resource that matches on kind.\",\n      \"properties\": {\n       \"default\": {\n        \"additionalProperties\": {\n         \"anyOf\": [\n          {\n           \"type\": \"integer\"\n          },\n          {\n           \"type\": \"string\"\n          }\n         ],\n         \"pattern\": \"^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$\",\n         \"x-kubernetes-int-or-string\": true\n        },\n        \"description\": \"Default resource requirement limit value by resource name if resource limit is omitted.\",\n        \"type\": \"object\"\n       },\n       \"defaultRequest\": {\n        \"additionalProperties\": {\n         \"anyOf\": [\n          {\n           \"type\": \"integer\"\n          },\n          {\n           \"type\": \"string\"\n          }\n         ],\n         \"pattern\": \"^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$\",\n         \"x-kubernetes-int-or-string\": true\n        },\n        \"description\": \"DefaultRequest is the default resource requirement request value by resource name if resource request is omitted.\",\n        \"type\": \"object\"\n       },\n       \"max\": {\n        \"additionalProperties\": {\n         \"anyOf\": [\n          {\n           \"type\": \"integer\"\n          },\n          {\n           \"type\": \"string\"\n          }\n         ],\n         \"pattern\": \"^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$\",\n         \"x-kubernetes-int-or-string\": true\n        },\n        \"description\": \"Max usage constraints on this kind by resource name.\",\n        \"type\": \"object\"\n       },\n       \"maxLimitRequestRatio\": {\n        \"additionalProperties\": {\n         \"anyOf\": [\n          {\n           \"type\": \"integer\"\n          },\n          {\n           \"type\": \"string\"\n          }\n         ],\n         \"pattern\": \"^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$\",\n         \"x-kubernetes-int-or-string\": true\n        },\n        \"description\": \"MaxLimitRequestRatio if specified, the named resource must have a request and limit that are both non-zero where limit divided by request is less than or equal to the enumerated value; this represents the max burst for the named resource.\",\n        \"type\": \"object\"\n       },\n       \"min\": {\n        \"additionalProperties\": {\n         \"anyOf\": [\n          {\n           \"type\": \"integer\"\n          },\n          {\n           \"type\": \"string\"\n          }\n         ],\n         \"pattern\": \"^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$\",\n         \"x-kubernetes-int-or-string\": true\n        },\n        \"description\": \"Min usage constraints on this kind by resource name.\",\n        \"type\": \"object\"\n       },\n       \"type\": {\n        \"description\": \"Type of resource that this limit applies to.\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"type\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"limitRangeName\": {\n     \"description\": \"LimitRageName\",\n     \"type\": \"string\"\n    },\n    \"namespace\": {\n     \"description\": \"Namespace 关联的ns\",\n     \"type\": \"string\"\n    },\n    \"project\": {\n     \"description\": \"Project 项目\",\n     \"type\": \"string\"\n    },\n    \"resourceQuota\": {\n     \"additionalProperties\": {\n      \"anyOf\": [\n       {\n        \"type\": \"integer\"\n       },\n       {\n        \"type\": \"string\"\n       }\n      ],\n      \"pattern\": \"^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$\",\n      \"x-kubernetes-int-or-string\": true\n     },\n     \"description\": \"ResourceQuota  资源限制\",\n     \"type\": \"object\"\n    },\n    \"resourceQuotaName\": {\n     \"description\": \"ResourceQuotaName\",\n     \"type\": \"string\"\n    },\n    \"tenant\": {\n     \"description\": \"Tenant 租户\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"deletePolicy\",\n    \"namespace\",\n    \"project\",\n    \"tenant\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Environment\",\n \"type\": \"object\"\n}"
-  }
+  "version": "v1.0.0"
  }

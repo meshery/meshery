@@ -1,29 +1,31 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "displayName": "Grafana Contact Point",
+  "capabilities": null,
+  "component": {
+   "kind": "GrafanaContactPoint",
+   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"allowCrossNamespaceImport\": {\n     \"type\": \"boolean\"\n    },\n    \"disableResolveMessage\": {\n     \"type\": \"boolean\"\n    },\n    \"instanceSelector\": {\n     \"properties\": {\n      \"matchExpressions\": {\n       \"items\": {\n        \"properties\": {\n         \"key\": {\n          \"type\": \"string\"\n         },\n         \"operator\": {\n          \"type\": \"string\"\n         },\n         \"values\": {\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\",\n          \"x-kubernetes-list-type\": \"atomic\"\n         }\n        },\n        \"required\": [\n         \"key\",\n         \"operator\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\",\n       \"x-kubernetes-list-type\": \"atomic\"\n      },\n      \"matchLabels\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"Value is immutable\",\n       \"rule\": \"self == oldSelf\"\n      }\n     ]\n    },\n    \"name\": {\n     \"type\": \"string\"\n    },\n    \"resyncPeriod\": {\n     \"default\": \"10m\",\n     \"format\": \"duration\",\n     \"pattern\": \"^([0-9]+(\\\\.[0-9]+)?(ns|us|µs|ms|s|m|h))+$\",\n     \"type\": \"string\"\n    },\n    \"settings\": {\n     \"format\": \"textarea\",\n     \"type\": \"string\"\n    },\n    \"type\": {\n     \"enum\": [\n      \"alertmanager\",\n      \"prometheus-alertmanager\",\n      \"dingding\",\n      \"discord\",\n      \"email\",\n      \"googlechat\",\n      \"kafka\",\n      \"line\",\n      \"opsgenie\",\n      \"pagerduty\",\n      \"pushover\",\n      \"sensugo\",\n      \"sensu\",\n      \"slack\",\n      \"teams\",\n      \"telegram\",\n      \"threema\",\n      \"victorops\",\n      \"webhook\",\n      \"wecom\",\n      \"hipchat\",\n      \"oncall\"\n     ],\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"instanceSelector\",\n    \"name\",\n    \"settings\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Grafana Contact Point\",\n \"type\": \"object\"\n}",
+   "version": "grafana.integreatly.org/v1beta1"
+  },
+  "configuration": null,
   "description": "",
+  "displayName": "Grafana Contact Point",
   "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "published": false,
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": ""
+  },
   "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "version": "v1.0.0",
-   "name": "grafana-operator",
-   "displayName": "Grafana Operator",
-   "description": "",
-   "status": "enabled",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "registrant": {
-    "hostname": "artifacthub"
-   },
    "category": {
-    "name": "Observability and Analysis",
-    "metadata": null
+    "name": "Observability and Analysis"
    },
-   "subCategory": "Monitoring",
+   "displayName": "Grafana Operator",
+   "id": "00000000-0000-0000-0000-000000000000",
    "metadata": {
-    "capabilities": "",
     "defaultData": "",
     "isAnnotation": false,
     "primaryColor": "#F15B2A",
@@ -39,30 +41,35 @@
    "model": {
     "version": "4.4.8"
    },
+   "name": "grafana-operator",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "enabled",
+   "subCategory": "Monitoring",
+   "version": "v1.0.0",
    "components": null,
    "relationships": null
   },
-  "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
    "primaryColor": "",
-   "secondaryColor": "",
    "shape": "circle",
-   "shapePolygonPoints": "",
-   "status": "enabled",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
    "svgColor": "",
-   "svgComplete": "",
    "svgWhite": ""
   },
-  "component": {
-   "kind": "GrafanaContactPoint",
-   "version": "grafana.integreatly.org/v1beta1",
-   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"allowCrossNamespaceImport\": {\n     \"type\": \"boolean\"\n    },\n    \"disableResolveMessage\": {\n     \"type\": \"boolean\"\n    },\n    \"instanceSelector\": {\n     \"properties\": {\n      \"matchExpressions\": {\n       \"items\": {\n        \"properties\": {\n         \"key\": {\n          \"type\": \"string\"\n         },\n         \"operator\": {\n          \"type\": \"string\"\n         },\n         \"values\": {\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\",\n          \"x-kubernetes-list-type\": \"atomic\"\n         }\n        },\n        \"required\": [\n         \"key\",\n         \"operator\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\",\n       \"x-kubernetes-list-type\": \"atomic\"\n      },\n      \"matchLabels\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"Value is immutable\",\n       \"rule\": \"self == oldSelf\"\n      }\n     ]\n    },\n    \"name\": {\n     \"type\": \"string\"\n    },\n    \"resyncPeriod\": {\n     \"default\": \"10m\",\n     \"format\": \"duration\",\n     \"pattern\": \"^([0-9]+(\\\\.[0-9]+)?(ns|us|µs|ms|s|m|h))+$\",\n     \"type\": \"string\"\n    },\n    \"settings\": {\n     \"format\": \"textarea\",\n     \"type\": \"string\"\n    },\n    \"type\": {\n     \"enum\": [\n      \"alertmanager\",\n      \"prometheus-alertmanager\",\n      \"dingding\",\n      \"discord\",\n      \"email\",\n      \"googlechat\",\n      \"kafka\",\n      \"line\",\n      \"opsgenie\",\n      \"pagerduty\",\n      \"pushover\",\n      \"sensugo\",\n      \"sensu\",\n      \"slack\",\n      \"teams\",\n      \"telegram\",\n      \"threema\",\n      \"victorops\",\n      \"webhook\",\n      \"wecom\",\n      \"hipchat\",\n      \"oncall\"\n     ],\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"instanceSelector\",\n    \"name\",\n    \"settings\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Grafana Contact Point\",\n \"type\": \"object\"\n}"
-  }
+  "version": "v1.0.0"
  }

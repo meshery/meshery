@@ -107,7 +107,7 @@ const BaseInput = (props) => {
                     title={props.rawErrors?.join('  ')}
                     interactive={true}
                   >
-                    <IconButton component="span" size="small">
+                    <IconButton component="span" size="small" tabIndex={-1}>
                       <ErrorOutlineIcon
                         width="14px"
                         height="14px"
@@ -123,7 +123,7 @@ const BaseInput = (props) => {
                     title={props.schema?.description}
                     interactive={true}
                   >
-                    <IconButton component="span" size="small">
+                    <IconButton component="span" size="small" tabIndex={-1}>
                       <HelpOutlineIcon
                         width="14px"
                         height="14px"

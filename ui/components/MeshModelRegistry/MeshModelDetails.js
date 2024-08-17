@@ -223,7 +223,7 @@ const ComponentContents = withSuppressedErrorBoundary(({ componentDef }) => {
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <TitleWithImg
               displayName={componentData?.displayName}
-              iconSrc={componentData?.metadata?.svgColor}
+              iconSrc={componentData?.styles?.svgColor}
             />
           </div>
           <Description description={JSON.parse(componentData?.component?.schema)?.description} />

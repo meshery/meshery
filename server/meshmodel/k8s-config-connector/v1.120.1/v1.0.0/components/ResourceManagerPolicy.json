@@ -1,29 +1,31 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "displayName": "Resource Manager Policy",
+  "capabilities": null,
+  "component": {
+   "kind": "ResourceManagerPolicy",
+   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"booleanPolicy\": {\n     \"description\": \"A boolean policy is a constraint that is either enforced or not.\",\n     \"properties\": {\n      \"enforced\": {\n       \"description\": \"If true, then the Policy is enforced. If false, then any configuration is acceptable.\",\n       \"type\": \"boolean\"\n      }\n     },\n     \"required\": [\n      \"enforced\"\n     ],\n     \"type\": \"object\"\n    },\n    \"constraint\": {\n     \"description\": \"Immutable. The name of the Constraint the Policy is configuring, for example, serviceuser.services.\",\n     \"type\": \"string\"\n    },\n    \"folderRef\": {\n     \"description\": \"The folder on which to configure the constraint. Only one of\\nprojectRef, folderRef, or organizationRef may be specified.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `name` field of a `Folder` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"listPolicy\": {\n     \"description\": \"A policy that can define specific values that are allowed or denied for the given constraint. It can also be used to allow or deny all values. .\",\n     \"properties\": {\n      \"allow\": {\n       \"description\": \"One or the other must be set.\",\n       \"properties\": {\n        \"all\": {\n         \"description\": \"The policy allows or denies all values.\",\n         \"type\": \"boolean\"\n        },\n        \"values\": {\n         \"description\": \"The policy can define specific values that are allowed or denied.\",\n         \"items\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"array\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"deny\": {\n       \"description\": \"One or the other must be set.\",\n       \"properties\": {\n        \"all\": {\n         \"description\": \"The policy allows or denies all values.\",\n         \"type\": \"boolean\"\n        },\n        \"values\": {\n         \"description\": \"The policy can define specific values that are allowed or denied.\",\n         \"items\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"array\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"inheritFromParent\": {\n       \"description\": \"If set to true, the values from the effective Policy of the parent resource are inherited, meaning the values set in this Policy are added to the values inherited up the hierarchy.\",\n       \"type\": \"boolean\"\n      },\n      \"suggestedValue\": {\n       \"description\": \"The Google Cloud Console will try to default to a configuration that matches the value specified in this field.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"organizationRef\": {\n     \"description\": \"The organization on which to configure the constraint. Only one of\\nprojectRef, folderRef, or organizationRef may be specified.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `name` field of an `Organization` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"projectRef\": {\n     \"description\": \"The project on which to configure the constraint. Only one of\\nprojectRef, folderRef, or organizationRef may be specified.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `name` field of a `Project` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"restorePolicy\": {\n     \"description\": \"A restore policy is a constraint to restore the default policy.\",\n     \"properties\": {\n      \"default\": {\n       \"description\": \"May only be set to true. If set, then the default Policy is restored.\",\n       \"type\": \"boolean\"\n      }\n     },\n     \"required\": [\n      \"default\"\n     ],\n     \"type\": \"object\"\n    },\n    \"version\": {\n     \"description\": \"Version of the Policy. Default version is 0.\",\n     \"type\": \"integer\"\n    }\n   },\n   \"required\": [\n    \"constraint\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Resource Manager Policy\",\n \"type\": \"object\"\n}",
+   "version": "resourcemanager.cnrm.cloud.google.com/v1beta1"
+  },
+  "configuration": null,
   "description": "",
+  "displayName": "Resource Manager Policy",
   "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "published": false,
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": ""
+  },
   "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "version": "v1.0.0",
-   "name": "k8s-config-connector",
-   "displayName": "Google Cloud Platform",
-   "description": "",
-   "status": "enabled",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "registrant": {
-    "hostname": "github"
-   },
    "category": {
-    "name": "Orchestration \u0026 Management",
-    "metadata": null
+    "name": "Orchestration \u0026 Management"
    },
-   "subCategory": "Google Cloud Platform",
+   "displayName": "Google Cloud Platform",
+   "id": "00000000-0000-0000-0000-000000000000",
    "metadata": {
-    "capabilities": "",
     "defaultData": "",
     "isAnnotation": false,
     "primaryColor": "#4285F4",
@@ -39,30 +41,35 @@
    "model": {
     "version": "v1.120.1"
    },
+   "name": "k8s-config-connector",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "github",
+    "name": "Github",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "enabled",
+   "subCategory": "Google Cloud Platform",
+   "version": "v1.0.0",
    "components": null,
    "relationships": null
   },
-  "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
    "primaryColor": "#4285F4",
-   "secondaryColor": "",
    "shape": "rectangle",
-   "shapePolygonPoints": "",
-   "status": "enabled",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
    "svgColor": "\u003csvg width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"\u003e\n    \u003cg stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e\n        \u003cpath d=\"M12.3008862,4.00003179 L18.9908678,7.90329279 L19,11.4442164 L14.973309,9.0680926 L14.973309,10.8562526 L16.9806355,12.0276231 L16.9918433,15.1064843 L14.973309,13.9136004 L14.973309,18.415105 L12.3008862,20 L12.3008862,4.00003179 Z M11.6991138,4 L11.6991138,19.9999682 L9.02669102,18.4150732 L9.02669102,9.06816678 L5,11.4441846 L5.00913223,7.903261 L11.6991138,4 Z\" fill=\"#4285F4\"\u003e\u003c/path\u003e\n    \u003c/g\u003e\n\u003c/svg\u003e",
-   "svgComplete": "",
    "svgWhite": "\u003csvg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M12.3009 4.00003L18.9909 7.90329L19 11.4442L14.9733 9.06809V10.8563L16.9806 12.0276L16.9918 15.1065L14.9733 13.9136V18.4151L12.3009 20V4.00003ZM11.6991 4V20L9.02669 18.4151V9.06817L5 11.4442L5.00913 7.90326L11.6991 4Z\" fill=\"white\"/\u003e\n\u003c/svg\u003e\n"
   },
-  "component": {
-   "kind": "ResourceManagerPolicy",
-   "version": "resourcemanager.cnrm.cloud.google.com/v1beta1",
-   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"booleanPolicy\": {\n     \"description\": \"A boolean policy is a constraint that is either enforced or not.\",\n     \"properties\": {\n      \"enforced\": {\n       \"description\": \"If true, then the Policy is enforced. If false, then any configuration is acceptable.\",\n       \"type\": \"boolean\"\n      }\n     },\n     \"required\": [\n      \"enforced\"\n     ],\n     \"type\": \"object\"\n    },\n    \"constraint\": {\n     \"description\": \"Immutable. The name of the Constraint the Policy is configuring, for example, serviceuser.services.\",\n     \"type\": \"string\"\n    },\n    \"folderRef\": {\n     \"description\": \"The folder on which to configure the constraint. Only one of\\nprojectRef, folderRef, or organizationRef may be specified.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `name` field of a `Folder` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"listPolicy\": {\n     \"description\": \"A policy that can define specific values that are allowed or denied for the given constraint. It can also be used to allow or deny all values. .\",\n     \"properties\": {\n      \"allow\": {\n       \"description\": \"One or the other must be set.\",\n       \"properties\": {\n        \"all\": {\n         \"description\": \"The policy allows or denies all values.\",\n         \"type\": \"boolean\"\n        },\n        \"values\": {\n         \"description\": \"The policy can define specific values that are allowed or denied.\",\n         \"items\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"array\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"deny\": {\n       \"description\": \"One or the other must be set.\",\n       \"properties\": {\n        \"all\": {\n         \"description\": \"The policy allows or denies all values.\",\n         \"type\": \"boolean\"\n        },\n        \"values\": {\n         \"description\": \"The policy can define specific values that are allowed or denied.\",\n         \"items\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"array\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"inheritFromParent\": {\n       \"description\": \"If set to true, the values from the effective Policy of the parent resource are inherited, meaning the values set in this Policy are added to the values inherited up the hierarchy.\",\n       \"type\": \"boolean\"\n      },\n      \"suggestedValue\": {\n       \"description\": \"The Google Cloud Console will try to default to a configuration that matches the value specified in this field.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"organizationRef\": {\n     \"description\": \"The organization on which to configure the constraint. Only one of\\nprojectRef, folderRef, or organizationRef may be specified.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `name` field of an `Organization` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"projectRef\": {\n     \"description\": \"The project on which to configure the constraint. Only one of\\nprojectRef, folderRef, or organizationRef may be specified.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `name` field of a `Project` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"restorePolicy\": {\n     \"description\": \"A restore policy is a constraint to restore the default policy.\",\n     \"properties\": {\n      \"default\": {\n       \"description\": \"May only be set to true. If set, then the default Policy is restored.\",\n       \"type\": \"boolean\"\n      }\n     },\n     \"required\": [\n      \"default\"\n     ],\n     \"type\": \"object\"\n    },\n    \"version\": {\n     \"description\": \"Version of the Policy. Default version is 0.\",\n     \"type\": \"integer\"\n    }\n   },\n   \"required\": [\n    \"constraint\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Resource Manager Policy\",\n \"type\": \"object\"\n}"
-  }
+  "version": "v1.0.0"
  }
