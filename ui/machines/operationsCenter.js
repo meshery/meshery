@@ -1,7 +1,4 @@
-import {
-  SEVERITY_TO_NOTIFICATION_TYPE_MAPPING,
-  validateEvent,
-} from '@/components/NotificationCenter/constants';
+import { SEVERITY_TO_NOTIFICATION_TYPE_MAPPING } from '@/components/NotificationCenter/constants';
 import subscribeEvents from '@/components/graphql/subscriptions/EventsSubscription';
 import { createMachine, emit, fromCallback, spawnChild } from 'xstate';
 import { store } from '../store';
