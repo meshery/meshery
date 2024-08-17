@@ -58,15 +58,13 @@ jobs:
       - name: Pull changes from remote
         run: git pull origin master
 
-      - name: Commit changes
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_user_name: l5io
-          commit_user_email: ci@layer5.io
-          commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
-          commit_options: "--signoff"
-          commit_message: "New Models generated and updated"
-          branch: master
+      - name: Stage and commit all changes
+        run: |
+          git config user.name "l5io"
+          git config user.email "ci@layer5.io"
+          git add --all
+          git commit -m "New Models generated and updated" --signoff
+          git push origin master
 
       - name: Send Email on Workflow Failure
         if: failure()
