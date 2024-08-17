@@ -382,9 +382,12 @@ function K8sContextMenu({
                   ? `/${connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon}`
                   : '/static/img/kubernetes.svg'
               }
+              onError={(e) => {
+                e.target.src = '/static/img/kubernetes.svg';
+              }}
               width="24px"
               height="24px"
-              // style={{ zIndex: '2' }}
+              style={{ objectFit: 'contain' }}
             />
             <div className={classes.cbadge}>{contexts?.total_count || 0}</div>
           </div>

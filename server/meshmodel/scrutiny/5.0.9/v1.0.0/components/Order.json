@@ -1,62 +1,71 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "displayName": "Order",
-  "description": "",
-  "format": "JSON",
-  "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "version": "v1.0.0",
-   "name": "scrutiny",
-   "displayName": "scrutiny",
-   "description": "",
-   "status": "ignored",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "registrant": {
-    "hostname": "artifacthub"
-   },
-   "category": {
-    "name": "Uncategorized",
-    "metadata": null
-   },
-   "subCategory": "",
-   "metadata": {
-    "isAnnotation": false,
-    "source_uri": "https://github.com/truecharts/helm-staging/releases/download/scrutiny-6.0.24/scrutiny-6.0.24.tgz"
-   },
-   "model": {
-    "version": "5.0.9"
-   },
-   "components": null,
-   "relationships": null
-  },
-  "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isModelAnnotation": "FALSE",
-   "isNamespaced": true,
-   "logoURL": "https://layer5.io/company/brand",
-   "model": "scrutiny",
-   "modelDisplayName": "scrutiny",
-   "primaryColor": "#00B39F",
-   "secondaryColor": "#00D3A9",
-   "shape": "circle",
-   "shapePolygonPoints": "",
-   "status": "ignored",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
-   "svgColor": "",
-   "svgComplete": "",
-   "svgWhite": ""
-  },
+  "capabilities": null,
   "component": {
-   "kind": "Order",
-   "version": "acme.cert-manager.io/v1",
-   "schema": "{\n \"description\": \"Order is a type to represent an Order with an ACME server\",\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"commonName\": {\n     \"description\": \"CommonName is the common name as specified on the DER encoded CSR. If specified, this value must also be present in `dnsNames` or `ipAddresses`. This field must match the corresponding field on the DER encoded CSR.\",\n     \"type\": \"string\"\n    },\n    \"dnsNames\": {\n     \"description\": \"DNSNames is a list of DNS names that should be included as part of the Order validation process. This field must match the corresponding field on the DER encoded CSR.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"duration\": {\n     \"description\": \"Duration is the duration for the not after date for the requested certificate. this is set on order creation as pe the ACME spec.\",\n     \"type\": \"string\"\n    },\n    \"ipAddresses\": {\n     \"description\": \"IPAddresses is a list of IP addresses that should be included as part of the Order validation process. This field must match the corresponding field on the DER encoded CSR.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"issuerRef\": {\n     \"description\": \"IssuerRef references a properly configured ACME-type Issuer which should be used to create this Order. If the Issuer does not exist, processing will be retried. If the Issuer is not an 'ACME' Issuer, an error will be returned and the Order will be marked as failed.\",\n     \"properties\": {\n      \"group\": {\n       \"description\": \"Group of the resource being referred to.\",\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"description\": \"Kind of the resource being referred to.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the resource being referred to.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"request\": {\n     \"description\": \"Certificate signing request bytes in DER encoding. This will be used when finalizing the order. This field must be set on the order.\",\n     \"format\": \"byte\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"issuerRef\",\n    \"request\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"metadata\",\n  \"spec\"\n ],\n \"title\": \"Order\",\n \"type\": \"object\"\n}"
-  }
- }
+    "kind": "Order",
+    "schema": "{\n \"description\": \"Order is a type to represent an Order with an ACME server\",\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"commonName\": {\n     \"description\": \"CommonName is the common name as specified on the DER encoded CSR. If specified, this value must also be present in `dnsNames` or `ipAddresses`. This field must match the corresponding field on the DER encoded CSR.\",\n     \"type\": \"string\"\n    },\n    \"dnsNames\": {\n     \"description\": \"DNSNames is a list of DNS names that should be included as part of the Order validation process. This field must match the corresponding field on the DER encoded CSR.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"duration\": {\n     \"description\": \"Duration is the duration for the not after date for the requested certificate. this is set on order creation as pe the ACME spec.\",\n     \"type\": \"string\"\n    },\n    \"ipAddresses\": {\n     \"description\": \"IPAddresses is a list of IP addresses that should be included as part of the Order validation process. This field must match the corresponding field on the DER encoded CSR.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"issuerRef\": {\n     \"description\": \"IssuerRef references a properly configured ACME-type Issuer which should be used to create this Order. If the Issuer does not exist, processing will be retried. If the Issuer is not an 'ACME' Issuer, an error will be returned and the Order will be marked as failed.\",\n     \"properties\": {\n      \"group\": {\n       \"description\": \"Group of the resource being referred to.\",\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"description\": \"Kind of the resource being referred to.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the resource being referred to.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"request\": {\n     \"description\": \"Certificate signing request bytes in DER encoding. This will be used when finalizing the order. This field must be set on the order.\",\n     \"format\": \"byte\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"issuerRef\",\n    \"request\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"metadata\",\n  \"spec\"\n ],\n \"title\": \"Order\",\n \"type\": \"object\"\n}",
+    "version": "acme.cert-manager.io/v1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "Order",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+    "defaultData": "",
+    "genealogy": "",
+    "isAnnotation": false,
+    "isModelAnnotation": "FALSE",
+    "isNamespaced": true,
+    "logoURL": "https://layer5.io/company/brand",
+    "model": "scrutiny",
+    "modelDisplayName": "scrutiny",
+    "published": false,
+    "shapePolygonPoints": ""
+  },
+  "model": {
+    "category": {
+      "name": "Uncategorized"
+    },
+    "displayName": "scrutiny",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "metadata": {
+      "isAnnotation": false,
+      "source_uri": "https://github.com/truecharts/helm-staging/releases/download/scrutiny-6.0.24/scrutiny-6.0.24.tgz",
+      "svgColor": "",
+      "svgWhite": ""
+    },
+    "model": {
+      "version": "5.0.9"
+    },
+    "name": "scrutiny",
+    "registrant": {
+      "created_at": "0001-01-01T00:00:00Z",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "deleted_at": "0001-01-01T00:00:00Z",
+      "id": "00000000-0000-0000-0000-000000000000",
+      "kind": "artifacthub",
+      "name": "Artifact Hub",
+      "status": "discovered",
+      "sub_type": "",
+      "type": "registry",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "user_id": "00000000-0000-0000-0000-000000000000"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "status": "ignored",
+    "version": "v1.0.0",
+    "components": null,
+    "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "ignored",
+  "styles": {
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "svgColor": "",
+    "svgWhite": ""
+  },
+  "version": "v1.0.0"
+}

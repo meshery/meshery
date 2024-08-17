@@ -111,7 +111,7 @@ const ExtensionsComponent = () => {
   const [changing, isChanging] = useState(false)
   // const [emptystate, isEmptystate] = useState(true)
   // const [meshAdapters, setMeshAdapters] = useState(null)
-  const [pattern, setPattern] = useState(null)
+  const [catalogDesigns, setCatalogDesigns] = useState(null)
   const [filter, setFilter] = useState(null)
   const [userDesigns, setUserDesigns] = useState(null)
 
@@ -171,7 +171,7 @@ const ExtensionsComponent = () => {
           fetch(`${mesheryCloudUrl}/api/catalog/content/pattern`)
             .then((result) => result.text())
             .then((result) => {
-              setPattern(JSON.parse(result))
+              setCatalogDesigns(JSON.parse(result))
             })
             .catch(console.error)
           fetch(`${mesheryCloudUrl}/api/catalog/content/filter`)
@@ -482,7 +482,7 @@ const ExtensionsComponent = () => {
         </SectionWrapper>
         {isLoggedIn &&
           (<SectionWrapper>
-            <CatalogChart filter={filter} pattern={pattern} isTheme={isDarkTheme} />
+            <CatalogChart filter={filter} pattern={catalogDesigns} isTheme={isDarkTheme} />
             <Grid sx={{ backgroundColor: isDarkTheme ? '#666A75' : '#D7DADE', borderRadius: "15px", height: "23rem", display: "flex", justifyContent: "center" }}>
 
               <div style={{ paddingTop: isLoggedIn ? '1.2rem' : null, margin: "10px 0" }}>
@@ -492,14 +492,14 @@ const ExtensionsComponent = () => {
                     height: ['22rem', '17rem', '14rem'],
                   }}
                 >
-                  {userDesigns?.patterns.length > 0 ? (
+                  {catalogDesigns?.patterns.length > 0 ? (
                     <div>
                       <Typography variant="h5" sx={{ padding: '3rem 0 1rem 0', fontWeight: "bold" }}>
                         Designs
                       </Typography>
                       <MeshModels>
                         {
-                          userDesigns?.patterns?.slice(0, 2).map((pattern, index) => {
+                          catalogDesigns?.patterns?.slice(0, 2).map((pattern, index) => {
                             let patternType =
                               pattern.catalog_data && pattern.catalog_data.type && pattern.catalog_data.type !== ""
                                 ? pattern.catalog_data.type

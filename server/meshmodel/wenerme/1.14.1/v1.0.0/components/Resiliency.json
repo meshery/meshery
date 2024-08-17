@@ -1,0 +1,76 @@
+{
+  "capabilities": null,
+  "component": {
+    "kind": "Resiliency",
+    "schema": "{\n \"properties\": {\n  \"scopes\": {\n   \"items\": {\n    \"type\": \"string\"\n   },\n   \"type\": \"array\"\n  },\n  \"spec\": {\n   \"properties\": {\n    \"policies\": {\n     \"properties\": {\n      \"circuitBreakers\": {\n       \"additionalProperties\": {\n        \"properties\": {\n         \"interval\": {\n          \"type\": \"string\"\n         },\n         \"maxRequests\": {\n          \"type\": \"integer\"\n         },\n         \"timeout\": {\n          \"type\": \"string\"\n         },\n         \"trip\": {\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"object\"\n      },\n      \"retries\": {\n       \"additionalProperties\": {\n        \"properties\": {\n         \"duration\": {\n          \"type\": \"string\"\n         },\n         \"maxInterval\": {\n          \"type\": \"string\"\n         },\n         \"maxRetries\": {\n          \"type\": \"integer\"\n         },\n         \"policy\": {\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"object\"\n      },\n      \"timeouts\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"targets\": {\n     \"properties\": {\n      \"actors\": {\n       \"additionalProperties\": {\n        \"properties\": {\n         \"circuitBreaker\": {\n          \"type\": \"string\"\n         },\n         \"circuitBreakerCacheSize\": {\n          \"type\": \"integer\"\n         },\n         \"circuitBreakerScope\": {\n          \"type\": \"string\"\n         },\n         \"retry\": {\n          \"type\": \"string\"\n         },\n         \"timeout\": {\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"object\"\n      },\n      \"apps\": {\n       \"additionalProperties\": {\n        \"properties\": {\n         \"circuitBreaker\": {\n          \"type\": \"string\"\n         },\n         \"circuitBreakerCacheSize\": {\n          \"type\": \"integer\"\n         },\n         \"retry\": {\n          \"type\": \"string\"\n         },\n         \"timeout\": {\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"object\"\n      },\n      \"components\": {\n       \"additionalProperties\": {\n        \"properties\": {\n         \"inbound\": {\n          \"properties\": {\n           \"circuitBreaker\": {\n            \"type\": \"string\"\n           },\n           \"retry\": {\n            \"type\": \"string\"\n           },\n           \"timeout\": {\n            \"type\": \"string\"\n           }\n          },\n          \"type\": \"object\"\n         },\n         \"outbound\": {\n          \"properties\": {\n           \"circuitBreaker\": {\n            \"type\": \"string\"\n           },\n           \"retry\": {\n            \"type\": \"string\"\n           },\n           \"timeout\": {\n            \"type\": \"string\"\n           }\n          },\n          \"type\": \"object\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"policies\",\n    \"targets\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Resiliency\",\n \"type\": \"object\"\n}",
+    "version": "dapr.io/v1alpha1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "Resiliency",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+    "defaultData": "",
+    "genealogy": "",
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false,
+    "shapePolygonPoints": ""
+  },
+  "model": {
+    "category": {
+      "name": "Uncategorized"
+    },
+    "displayName": "Wenerme",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "metadata": {
+      "capabilities": null,
+      "defaultData": "",
+      "isAnnotation": false,
+      "primaryColor": "#00B39F",
+      "secondaryColor": "#00D3A9",
+      "shape": "circle",
+      "shapePolygonPoints": "",
+      "styleOverrides": "",
+      "styles": "",
+      "svgColor": "",
+      "svgComplete": "",
+      "svgWhite": ""
+    },
+    "model": {
+      "version": "1.14.1"
+    },
+    "name": "wenerme",
+    "registrant": {
+      "created_at": "0001-01-01T00:00:00Z",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "deleted_at": "0001-01-01T00:00:00Z",
+      "id": "00000000-0000-0000-0000-000000000000",
+      "kind": "artifacthub",
+      "name": "Artifact Hub",
+      "status": "discovered",
+      "sub_type": "",
+      "type": "registry",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "user_id": "00000000-0000-0000-0000-000000000000"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "status": "ignored",
+    "subCategory": "Uncategorized",
+    "version": "v1.0.0",
+    "components": null,
+    "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "ignored",
+  "styles": {
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "svgColor": "",
+    "svgWhite": ""
+  },
+  "version": "v1.0.0"
+}

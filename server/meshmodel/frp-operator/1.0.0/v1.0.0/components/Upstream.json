@@ -1,61 +1,69 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "displayName": "Upstream",
-  "description": "",
-  "format": "JSON",
-  "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "version": "v1.0.0",
-   "name": "frp-operator",
-   "displayName": "Frp Operator",
-   "description": "",
-   "status": "ignored",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "registrant": {
-    "hostname": "artifacthub"
-   },
-   "category": {
-    "name": "Uncategorized",
-    "metadata": null
-   },
-   "subCategory": "Uncategorized",
-   "metadata": {
-    "isAnnotation": false,
-    "subCategory": "Uncategorized",
-    "svgColor": "",
-    "svgComplete": "",
-    "svgWhite": ""
-   },
-   "model": {
-    "version": "1.0.0"
-   },
-   "components": null,
-   "relationships": null
-  },
-  "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
-   "primaryColor": "#00B39F",
-   "secondaryColor": "#00D3A9",
-   "shape": "circle",
-   "shapePolygonPoints": "",
-   "status": "ignored",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
-   "svgColor": "",
-   "svgComplete": "",
-   "svgWhite": ""
-  },
+  "capabilities": null,
   "component": {
-   "kind": "Upstream",
-   "version": "frp.zufardhiyaulhaq.com/v1alpha1",
-   "schema": "{\n \"description\": \"Upstream is the Schema for the upstreams API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"UpstreamSpec defines the desired state of Upstream\",\n   \"properties\": {\n    \"client\": {\n     \"type\": \"string\"\n    },\n    \"tcp\": {\n     \"properties\": {\n      \"host\": {\n       \"type\": \"string\"\n      },\n      \"port\": {\n       \"type\": \"integer\"\n      },\n      \"proxyProtocol\": {\n       \"enum\": [\n        \"v1\",\n        \"v2\"\n       ],\n       \"type\": \"string\"\n      },\n      \"server\": {\n       \"properties\": {\n        \"port\": {\n         \"type\": \"integer\"\n        }\n       },\n       \"required\": [\n        \"port\"\n       ],\n       \"type\": \"object\"\n      }\n     },\n     \"required\": [\n      \"host\",\n      \"port\",\n      \"server\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"client\",\n    \"tcp\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Upstream\",\n \"type\": \"object\"\n}"
-  }
- }
+    "kind": "Upstream",
+    "schema": "{\n \"description\": \"Upstream is the Schema for the upstreams API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"UpstreamSpec defines the desired state of Upstream\",\n   \"properties\": {\n    \"client\": {\n     \"type\": \"string\"\n    },\n    \"tcp\": {\n     \"properties\": {\n      \"host\": {\n       \"type\": \"string\"\n      },\n      \"port\": {\n       \"type\": \"integer\"\n      },\n      \"proxyProtocol\": {\n       \"enum\": [\n        \"v1\",\n        \"v2\"\n       ],\n       \"type\": \"string\"\n      },\n      \"server\": {\n       \"properties\": {\n        \"port\": {\n         \"type\": \"integer\"\n        }\n       },\n       \"required\": [\n        \"port\"\n       ],\n       \"type\": \"object\"\n      }\n     },\n     \"required\": [\n      \"host\",\n      \"port\",\n      \"server\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"client\",\n    \"tcp\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Upstream\",\n \"type\": \"object\"\n}",
+    "version": "frp.zufardhiyaulhaq.com/v1alpha1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "Upstream",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+    "defaultData": "",
+    "genealogy": "",
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false,
+    "shapePolygonPoints": ""
+  },
+  "model": {
+    "category": {
+      "name": "Uncategorized"
+    },
+    "displayName": "Frp Operator",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "metadata": {
+      "isAnnotation": false,
+      "subCategory": "Uncategorized",
+      "svgColor": "",
+      "svgComplete": "",
+      "svgWhite": ""
+    },
+    "model": {
+      "version": "1.0.0"
+    },
+    "name": "frp-operator",
+    "registrant": {
+      "created_at": "0001-01-01T00:00:00Z",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "deleted_at": "0001-01-01T00:00:00Z",
+      "id": "00000000-0000-0000-0000-000000000000",
+      "kind": "artifacthub",
+      "name": "Artifact Hub",
+      "status": "discovered",
+      "sub_type": "",
+      "type": "registry",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "user_id": "00000000-0000-0000-0000-000000000000"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "status": "ignored",
+    "subCategory": "Uncategorized",
+    "version": "v1.0.0",
+    "components": null,
+    "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "ignored",
+  "styles": {
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "svgColor": "",
+    "svgWhite": ""
+  },
+  "version": "v1.0.0"
+}
