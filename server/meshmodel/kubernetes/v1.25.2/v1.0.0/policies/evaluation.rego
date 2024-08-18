@@ -4,7 +4,7 @@ import rego.v1
 
 rels_in_design_file := input.relationships if {
 	count(input.relationships) > 0
-}
+} else := []
 
 evaluate := updated_design_file if {
 	# iterate relationships in the design file and resolve the patches.
@@ -59,7 +59,7 @@ evaluate := updated_design_file if {
 		{
 			"op": "add", # include those relationships, which do not exist or should be removed.
 			"path": "/relationships",
-			"value": union(updated_relationships),
+			"value": updated_relationships,
 		},
 	])
 }
