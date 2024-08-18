@@ -97,6 +97,22 @@ jobs:
         with:
           name: provider-ui
           path: /home/runner/work/meshery/meshery/provider-ui/out
+
+  lint-rego:
+    name: Run Regal Lint Check
+    if: github.repository == 'meshery/meshery'
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out repository code
+      uses: actions/checkout@v4
+
+    - name: Setup Regal
+      uses: StyraInc/setup-regal@v1
+      with:
+        version: latest
+
+    - name: Lint
+      run: regal lint --format github ./policy
   tests-ui-e2e:
     needs: [build-backend, ui-build]
     name: UI end-to-end tests
