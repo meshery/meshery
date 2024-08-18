@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"time"
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
@@ -25,10 +26,6 @@ const (
 	suffix                        = "_relationship"
 )
 
-type relationshipPolicyEvalPayload struct {
-	PatternFile       string   `json:"pattern_file"`
-	EvaluationQueries []string `json:"evaluation_queries"`
-}
 
 // swagger:route POST /api/meshmodels/relationships/evaluate EvaluateRelationshipPolicy relationshipPolicyEvalPayloadWrapper
 // Handle POST request for evaluating relationships in the provided design file by running a set of provided evaluation queries on the design file
@@ -85,10 +82,13 @@ func (h *Handler) EvaluateRelationshipPolicy(
 		return
 	}
 
+	currentTime := time.Now()
+	evaluationResponse.Timestamp = &currentTime
 	// include trace instead of design file
 	event := eventBuilder.WithDescription(fmt.Sprintf("Relationship evaluation completed for \"%s\" at version \"%s\"", evaluationResponse.Design.Name, evaluationResponse.Design.Version)).
 		WithMetadata(map[string]interface{}{
-			"trace": evaluationResponse.Trace,
+			"trace":        evaluationResponse.Trace,
+			"evaluated_at": &evaluationResponse.Timestamp,
 		}).WithSeverity(events.Informational).Build()
 	_ = provider.PersistEvent(event)
 	go h.config.EventBroadcaster.Publish(userUUID, event)

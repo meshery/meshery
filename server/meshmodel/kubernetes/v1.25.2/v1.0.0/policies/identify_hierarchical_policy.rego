@@ -21,8 +21,8 @@ identify_relationship(
 	}
 
 	# contains "selectors.from" components only, eg: Role/ClusterRole(s) comps only
-	from := extract_components(input.components, from_selectors)
-	to := extract_components(input.components, to_selectors)
+	from := extract_components(design_file.components, from_selectors)
+	to := extract_components(design_file.components, to_selectors)
 
 	evaluation_results := evaluate_hierarchy with data.relationship as relationship
 		with data.from as from
@@ -64,7 +64,7 @@ evaluate_hierarchy contains result if {
 		"to": [match_selector_for_to],
 	}}]}
 
-	result := object.union(data.relationship, cloned_selectors)
+	result := object.union_n([data.relationship, cloned_selectors, {"status": "approved"}])
 }
 
 is_valid_hierarchy(from_declaration, to_declaration, from_selector, to_selector) if {

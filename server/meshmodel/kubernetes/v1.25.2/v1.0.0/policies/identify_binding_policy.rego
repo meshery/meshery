@@ -32,8 +32,8 @@ identify_relationship(
 	}
 
 	# contains "selectors.from" components only, eg: Role/ClusterRole(s) comps only
-	from := extract_components(input.components, from_selectors)
-	to := extract_components(input.components, to_selectors)
+	from := extract_components(design_file.components, from_selectors)
+	to := extract_components(design_file.components, to_selectors)
 
 	# should consider model and versions (regex/operator/normal string)
 	binding_comps := {type |
@@ -47,7 +47,7 @@ identify_relationship(
 	# It contains results for a particular binding_type and each binding_type can be binded by different type of nodes.
 	evaluation_results := union({result |
 		some comp in binding_comps
-		binding_declarations := extract_components(input.components, [{"kind": comp}])
+		binding_declarations := extract_components(design_file.components, [{"kind": comp}])
 
 		count(binding_declarations) > 0
 
@@ -79,7 +79,6 @@ evaluate_bindings contains result if {
 	to_selector := data.to_selectors[concat("#", {to_declaration.component.kind, binding_declaration.component.kind})]
 
 	is_valid_binding(binding_declaration, to_declaration, to_selector)
-
 	match_selector_for_from := json.patch(selector, [
 		{
 			"op": "add",
@@ -121,7 +120,7 @@ evaluate_bindings contains result if {
 		"to": [match_selector_for_to],
 	}}]}
 
-	result := object.union(data.relationship, cloned_selectors)
+	result := object.union_n([data.relationship, cloned_selectors, {"status": "approved"}])
 }
 
 is_valid_binding(resource1, resource2, selectors) if {

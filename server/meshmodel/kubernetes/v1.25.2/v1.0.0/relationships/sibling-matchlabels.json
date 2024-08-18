@@ -30,7 +30,7 @@
       "allow": {
         "from": [
           {
-            "kind": "Service",
+            "kind": "*",
             "model": {
               "name": "kubernetes",
               "registrant": {
@@ -39,14 +39,14 @@
             },
             "match": {
               "refs": [
-                []
+                ["configuration", "metadata", "labels"]
               ]
             }
           }
         ],
         "to": [
           {
-            "kind": "Pod",
+            "kind": "*",
             "model": {
               "name": "kubernetes",
               "registrant": {
@@ -55,7 +55,11 @@
             },
             "match": {
               "refs": [
-                []
+                [
+                    "configuration",
+                    "metadata",
+                    "labels"
+                  ]
               ]
             }
           }
