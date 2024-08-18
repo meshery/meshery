@@ -13,36 +13,46 @@ on:
 # This workflow uses the service account: meshery-integrations-sheet@meshery-237716.iam.gserviceaccount.com
 # See these instructions for setup - https://theoephraim.github.io/node-google-spreadsheet/#/getting-started/authentication
 
+permissions:
+  contents: read
+
 jobs:
   integrations:
+    permissions:
+      contents: write  # for stefanzweifel/git-auto-commit-action to push code in repo
     if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-22.04
     # outputs:
     #   output1: ${{ steps.step1.outputs.test }}
     #   output2: ${{ steps.step2.outputs.test }}
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@5c7944e73c4c2a096b17a9cb74d65b6c2bbafbde # v2.9.1
+        with:
+          egress-policy: audit
+
       - name: Checkout Meshery repo
-        uses: actions/checkout@master
+        uses: actions/checkout@61b9e3751b92087fd0b06925ba6dd6314e06f089 # master
         with:
           path: meshery
           token: ${{ secrets.GH_ACCESS_TOKEN }}
 
       - name: Checkout Layer5.io repo
-        uses: actions/checkout@master
+        uses: actions/checkout@61b9e3751b92087fd0b06925ba6dd6314e06f089 # master
         with:
           repository: layer5io/layer5
           token: ${{ secrets.GH_ACCESS_TOKEN }}
           path: layer5
 
       - name: Checkout Meshery.io repo
-        uses: actions/checkout@master
+        uses: actions/checkout@61b9e3751b92087fd0b06925ba6dd6314e06f089 # master
         with:
           repository: meshery/meshery.io
           token: ${{ secrets.GH_ACCESS_TOKEN }}
           path: meshery.io
 
       - name: Checkout cloud repo
-        uses: actions/checkout@master
+        uses: actions/checkout@61b9e3751b92087fd0b06925ba6dd6314e06f089 # master
         with:
           repository: layer5io/meshery-cloud
           token: ${{ secrets.GH_ACCESS_TOKEN }}
@@ -61,7 +71,7 @@ jobs:
         run: git pull origin master
 
       - name: Commit changes to Meshery.io repo
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@8621497c8c39c72f3e2a999a26b4ca1b5058a842 # v5.0.1
         with:
           commit_user_name: l5io
           repository: ./meshery.io
@@ -80,7 +90,7 @@ jobs:
         run: git pull origin master
 
       - name: Commit changes to Layer5.io repo
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@8621497c8c39c72f3e2a999a26b4ca1b5058a842 # v5.0.1
         with:
           commit_user_name: l5io
           repository: ./layer5
@@ -99,7 +109,7 @@ jobs:
         run: git pull origin master
 
       - name: Commit changes to Meshery repo
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@8621497c8c39c72f3e2a999a26b4ca1b5058a842 # v5.0.1
         with:
           commit_user_name: l5io
           repository: ./meshery
@@ -118,7 +128,7 @@ jobs:
         run: git pull origin master
 
       - name: Commit changes to Cloud repo
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@8621497c8c39c72f3e2a999a26b4ca1b5058a842 # v5.0.1
         with:
           commit_user_name: l5io
           repository: ./meshery-cloud
@@ -130,7 +140,7 @@ jobs:
 
       - name: Send Email on Model Publish Failure
         if: failure()
-        uses: dawidd6/action-send-mail@v3.7.1
+        uses: dawidd6/action-send-mail@6063705cefe50cb915fc53bb06d4049cae2953b2 # v3.7.1
         with:
           server_address: smtp.gmail.com
           server_port: 465

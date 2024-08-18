@@ -11,25 +11,35 @@ on:
     paths:
       - "**.go"
 
+permissions:
+  contents: read
+
 jobs:
   Update-error-codes:
+    permissions:
+      contents: write  # for stefanzweifel/git-auto-commit-action to push code in repo
     name: Error codes utility
     if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@master
+      - name: Harden Runner
+        uses: step-security/harden-runner@5c7944e73c4c2a096b17a9cb74d65b6c2bbafbde # v2.9.1
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@61b9e3751b92087fd0b06925ba6dd6314e06f089 # master
         if: ${{ github.event_name == 'pull_request' }}
         with:
           ref: "master"
           fetch-depth: 1
-      - uses: actions/checkout@master
+      - uses: actions/checkout@61b9e3751b92087fd0b06925ba6dd6314e06f089 # master
         if: ${{ github.event_name == 'push' }}
         with:
           ref: "master"
           fetch-depth: 1
           token: ${{ secrets.GH_ACCESS_TOKEN }}
       - name: Setup Go
-        uses: actions/setup-go@master
+        uses: actions/setup-go@d0c5defdf364f1d1fb07530c000084836192af9c # master
         with:
           go-version: "1.21"
 
@@ -62,7 +72,7 @@ jobs:
 
       - name: Commit changes
         if: ${{ github.event_name != 'pull_request' }}  # Skip for pull requests
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@8621497c8c39c72f3e2a999a26b4ca1b5058a842 # v5.0.1
         with:
           file_pattern: mesheryctl/helpers server/helpers/ **.go docs/
           commit_user_name: l5io

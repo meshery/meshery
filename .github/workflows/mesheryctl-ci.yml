@@ -17,18 +17,29 @@ on:
         required: true
         default: "warning"
 
+permissions:
+  contents: read
+
 jobs:
   golangci:
+    permissions:
+      contents: read  # for actions/checkout to fetch code
+      pull-requests: read  # for golangci/golangci-lint-action to fetch pull requests
     name: golangci-lint
     if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
+      - name: Harden Runner
+        uses: step-security/harden-runner@5c7944e73c4c2a096b17a9cb74d65b6c2bbafbde # v2.9.1
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+      - uses: actions/setup-go@0a12ed9d6a96ab950c8f026ed9f722fe0da7ef32 # v5.0.2
         with:
           go-version: "1.21"
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v6
+        uses: golangci/golangci-lint-action@aaa42aa0628b4ae2578232a66b541047968fac86 # v6.1.0
         with:
           version: v1.59
           working-directory: mesheryctl
@@ -40,23 +51,28 @@ jobs:
     runs-on: macos-latest
     needs: [golangci]
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@5c7944e73c4c2a096b17a9cb74d65b6c2bbafbde # v2.9.1
+        with:
+          egress-policy: audit
+
       - name: Check out code
-        uses: actions/checkout@v4
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
       - name: Unshallow
         run: git fetch --prune --unshallow
       - name: Set up Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@0a12ed9d6a96ab950c8f026ed9f722fe0da7ef32 # v5.0.2
         with:
           go-version: "1.21"
       - name: Setup Cache
-        uses: actions/cache@v4
+        uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
         with:
           path: ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go-
       - name: goreleaser WITHOUT tag
-        uses: goreleaser/goreleaser-action@v5
+        uses: goreleaser/goreleaser-action@5742e2a039330cbb23ebf35f046f814d4c6ff811 # v5.1.0
         if: success() && startsWith(github.ref, 'refs/tags/') == false
         env:
           RELEASE_CHANNEL: "edge"
@@ -64,9 +80,16 @@ jobs:
           version: latest
           args: release --snapshot --skip-publish --clean
   mesheryctl_docs:
+    permissions:
+      contents: write  # for stefanzweifel/git-auto-commit-action to push code in repo
     if: "always() && github.event_name != 'pull_request' && github.repository == 'meshery/meshery' "
     runs-on: ubuntu-22.04
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@5c7944e73c4c2a096b17a9cb74d65b6c2bbafbde # v2.9.1
+        with:
+          egress-policy: audit
+
       - name: Skip if needed
         run: |
           echo "this is it ${{ needs.SkipIfNeeded.outputs.skipdocupdate }} "
@@ -76,12 +99,12 @@ jobs:
           if [ "${{github.event_name }}" == "release" ];then
             echo "version=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_ENV
           fi
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
         with:
           repository: meshery/meshery
           token: ${{ secrets.GH_ACCESS_TOKEN }}
       - name: Setup go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@0a12ed9d6a96ab950c8f026ed9f722fe0da7ef32 # v5.0.2
         with:
           go-version: "1.21"
           check-latest: "true"
@@ -94,7 +117,7 @@ jobs:
         run: git pull origin master
 
       - name: Commit ✅
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@8621497c8c39c72f3e2a999a26b4ca1b5058a842 # v5.0.1
         with:
           file_pattern: docs
           commit_user_name: l5io

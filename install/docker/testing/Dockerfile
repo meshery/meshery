@@ -1,4 +1,4 @@
-FROM golang:1.21.8 as meshery-server
+FROM golang:1.21.8@sha256:856073656d1a517517792e6cdd2f7a5ef080d3ca2dff33e518c8412f140fdd2d as meshery-server
 ARG GIT_VERSION
 
 RUN adduser --disabled-login appuser
@@ -10,7 +10,7 @@ RUN go mod download
 RUN cd server && cd cmd && GOPROXY=https://proxy.golang.org go build -ldflags="-w -s -X main.version=$GIT_VERSION" -tags draft -a -o /meshery .
 
 # This image will be reuse for both UI & UI Provider
-FROM node:18.13.0-alpine3.17 as base-node
+FROM node:18.13.0-alpine3.17@sha256:fda98168118e5a8f4269efca4101ee51dd5c75c0fe56d8eb6fad80455c2f5827 as base-node
 
 FROM base-node as ui-deps
 RUN apk add --no-cache libc6-compat
@@ -52,7 +52,7 @@ COPY provider-ui .
 RUN npm run build && npm run export
 
 # This image will be reuse for wrk2, seed content and the last built
-FROM alpine:3.15.3 as base-alpine
+FROM alpine:3.15.3@sha256:f22945d45ee2eb4dd463ed5a431d9f04fcd80ca768bb1acf898d91ce51f7bf04 as base-alpine
 
 FROM base-alpine as wrk2
 RUN apk update \

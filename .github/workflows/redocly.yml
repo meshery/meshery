@@ -11,14 +11,19 @@ jobs:
     name: Generate Redocly docs
     runs-on: ubuntu-22.04
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@5c7944e73c4c2a096b17a9cb74d65b6c2bbafbde # v2.9.1
+        with:
+          egress-policy: audit
+
       - name: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
       - name: Install Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@1a4442cacd436585916779262731d5b162bc6ec7 # v3.8.2
         with:
           node-version: 16
       - name: Setup go-swagger
-        uses: minchao/setup-go-swagger@v1
+        uses: minchao/setup-go-swagger@0be2506f6c9c8a2eff98c41d57d8d83b097d0a3b # v1
         with:
           version: v0.26.1
       - name: swagger-spec
@@ -34,7 +39,7 @@ jobs:
         run: git pull origin master
 
       - name: Commit changes
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@8621497c8c39c72f3e2a999a26b4ca1b5058a842 # v5.0.1
         with:
           file_pattern: docs
           commit_user_name: l5io

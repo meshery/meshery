@@ -29,8 +29,13 @@ jobs:
         k8s_version: ['v1.29.2', 'v1.28.7']
         platform: ['docker', 'kubernetes']
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@5c7944e73c4c2a096b17a9cb74d65b6c2bbafbde # v2.9.1
+        with:
+          egress-policy: audit
+
       - name: Setup Kubernetes
-        uses: manusa/actions-setup-minikube@v2.10.0
+        uses: manusa/actions-setup-minikube@e2f60d2f9e42413a916781a805284e79ccabaf54 # v2.10.0
         with:
           minikube version: 'v1.32.0'
           kubernetes version: ${{ matrix.k8s_version }}
@@ -47,10 +52,10 @@ jobs:
         run: echo "date=date +'%Y-%m-%d-%H.%M.%S'" >> $GITHUB_OUTPUT
 
       - name: Checkout Code
-        uses: actions/checkout@master
+        uses: actions/checkout@61b9e3751b92087fd0b06925ba6dd6314e06f089 # master
 
       - name: Run Performance Tests
-        uses: layer5io/meshery-smp-action@master
+        uses: layer5io/meshery-smp-action@a040ce507583a71ca2128bbcbac237fc7a31cc80 # master
         with:
           provider_token: ${{ secrets.PROVIDER_TOKEN }}
           platform: ${{ matrix.platform }}
@@ -66,7 +71,7 @@ jobs:
         shell: '/bin/bash {0}'
 
       - name: Apply Pattern
-        uses: layer5io/meshery-service-mesh-patterns-action@master
+        uses: layer5io/meshery-service-mesh-patterns-action@8798f7c10593e3ceb4094a5e08e5c2bc41722158 # master
         with:
           provider_token: ${{ secrets.PROVIDER_TOKEN }}
           platform: ${{ matrix.platform }}
@@ -83,8 +88,13 @@ jobs:
         k8s_version: ['v1.29.2', 'v1.28.7']
         platform: ['docker', 'kubernetes']
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@5c7944e73c4c2a096b17a9cb74d65b6c2bbafbde # v2.9.1
+        with:
+          egress-policy: audit
+
       - name: Setup Kubernetes
-        uses: manusa/actions-setup-minikube@v2.10.0
+        uses: manusa/actions-setup-minikube@e2f60d2f9e42413a916781a805284e79ccabaf54 # v2.10.0
         with:
           minikube version: 'v1.32.0'
           kubernetes version: ${{ matrix.k8s_version }}
@@ -101,10 +111,10 @@ jobs:
         run: echo "date=(date +'%Y-%m-%d-%H.%M.%S')" >> $GITHUB_OUTPUT
 
       - name: Checkout Code
-        uses: actions/checkout@master
+        uses: actions/checkout@61b9e3751b92087fd0b06925ba6dd6314e06f089 # master
 
       - name: Run Performance Tests
-        uses: layer5io/meshery-smp-action@master
+        uses: layer5io/meshery-smp-action@a040ce507583a71ca2128bbcbac237fc7a31cc80 # master
         with:
           provider_token: ${{ secrets.PROVIDER_TOKEN }}
           platform: ${{ matrix.platform }}
@@ -119,21 +129,21 @@ jobs:
         shell: '/bin/bash {0}'
 
       # - name: Apply BookInfo Pattern
-      #   uses: layer5io/mesheryctl-service-mesh-patterns-action@master
+      #   uses: layer5io/mesheryctl-service-mesh-patterns-action@8798f7c10593e3ceb4094a5e08e5c2bc41722158 # master
       #   with:
       #     provider_token: ${{ secrets.PROVIDER_TOKEN }}
       #     platform: ${{ matrix.platform }}
       #     pattern_url: https://raw.githubusercontent.com/service-mesh-patterns/service-mesh-patterns/master/samples/bookInfoPattern.yaml
 
       - name: Apply Kubernetes Metrics Service Pattern
-        uses: layer5io/mesheryctl-service-mesh-patterns-action@master
+        uses: layer5io/mesheryctl-service-mesh-patterns-action@8798f7c10593e3ceb4094a5e08e5c2bc41722158 # master
         with:
           provider_token: ${{ secrets.PROVIDER_TOKEN }}
           platform: ${{ matrix.platform }}
           pattern_url: https://raw.githubusercontent.com/meshery/meshery.io/master/catalog/57f7230d-015b-4892-9042-cd1ea97fcb30.yaml
 
       - name: Load "Serve An LLM With Multiple GPUs In GKE" design
-        uses: layer5io/mesheryctl-service-mesh-patterns-action@master
+        uses: layer5io/mesheryctl-service-mesh-patterns-action@8798f7c10593e3ceb4094a5e08e5c2bc41722158 # master
         with:
           provider_token: ${{ secrets.PROVIDER_TOKEN }}
           platform: ${{ matrix.platform }}

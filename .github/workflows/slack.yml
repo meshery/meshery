@@ -2,19 +2,27 @@ name: Slack Notify
 on: 
   watch:
     types: [started]
+permissions:
+  contents: read
+
 jobs:
   star-notify:
     if: github.event_name == 'watch'
     name: Notify Slack on star
     runs-on: ubuntu-22.04
     steps:
+    - name: Harden Runner
+      uses: step-security/harden-runner@5c7944e73c4c2a096b17a9cb74d65b6c2bbafbde # v2.9.1
+      with:
+        egress-policy: audit
+
     - name: Get current star count
       run: |
         echo "STARS=$(curl --silent 'https://api.github.com/repos/${{github.repository}}' -H 'Accept: application/vnd.github.preview' | jq '.stargazers_count')" >> $GITHUB_ENV
     - name: Notify slack
       env:
         SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-      uses: pullreminders/slack-action@master
+      uses: pullreminders/slack-action@a5a262c896a1cc80dcbae59ba95513e2dfb21439 # master
       with:
         args: '{\"channel\":\"CSK7N9TGX\",\"text\":\"${{ github.actor }} just starred ${{github.repository}}! (https://github.com/${{github.repository}}/stargazers) Total ⭐️: ${{env.STARS}}\"}'
   good-first-issue-notify:
@@ -22,9 +30,14 @@ jobs:
     name: Notify Slack for new good-first-issue
     runs-on: ubuntu-22.04
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@5c7944e73c4c2a096b17a9cb74d65b6c2bbafbde # v2.9.1
+        with:
+          egress-policy: audit
+
       - name: Notify slack
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-        uses: pullreminders/slack-action@master
+        uses: pullreminders/slack-action@a5a262c896a1cc80dcbae59ba95513e2dfb21439 # master
         with:
           args: '{\"channel\":\"C019426UBNY\",\"text\":\"A good first issue label was just added to ${{github.event.issue.html_url}}.\"}'

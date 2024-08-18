@@ -1,11 +1,19 @@
 name: eslint-check
 on: [pull_request]
+permissions:
+  contents: read
+
 jobs:
   eslint:
     name: runner / eslint
     runs-on: ubuntu-22.04
     steps:
-    - uses: actions/checkout@v4
+    - name: Harden Runner
+      uses: step-security/harden-runner@5c7944e73c4c2a096b17a9cb74d65b6c2bbafbde # v2.9.1
+      with:
+        egress-policy: audit
+
+    - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
     - name: Run ESLint Meshery-UI
       run: cd ui && npm i eslint && npx eslint .
     - name: Run ESLint Provider-UI

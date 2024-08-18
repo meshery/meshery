@@ -22,12 +22,17 @@ jobs:
     if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-22.04
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@5c7944e73c4c2a096b17a9cb74d65b6c2bbafbde # v2.9.1
+        with:
+          egress-policy: audit
+
       - name: Check out code
-        uses: actions/checkout@v4
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
         with:
           fetch-depth: 1
       - name: Setup Go
-        uses: actions/setup-go@master
+        uses: actions/setup-go@d0c5defdf364f1d1fb07530c000084836192af9c # master
         with:
           go-version: "1.21"
       - name: Build Meshery Server
@@ -42,16 +47,21 @@ jobs:
     if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-22.04
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@5c7944e73c4c2a096b17a9cb74d65b6c2bbafbde # v2.9.1
+        with:
+          egress-policy: audit
+
       - name: Check out code
-        uses: actions/checkout@v4
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
         with:
           fetch-depth: 1
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@1e60f620b9541d16bece96c5465dc8ee9832be0b # v4.0.3
         with:
           node-version: 18
       - name: Cache node modules
         id: node-cache
-        uses: actions/cache@v4
+        uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
         with:
           path: |
             ~/cache
@@ -88,12 +98,12 @@ jobs:
         run: |
           make ui-provider-build
       - name: Upload meshery-ui artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@834a144ee995460fba8ed112a2fc961b36a5ec5a # v4.3.6
         with:
           name: meshery-ui
           path: /home/runner/work/meshery/meshery/ui/out
       - name: Upload provider-ui artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@834a144ee995460fba8ed112a2fc961b36a5ec5a # v4.3.6
         with:
           name: provider-ui
           path: /home/runner/work/meshery/meshery/provider-ui/out
@@ -102,8 +112,13 @@ jobs:
     if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-22.04
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@5c7944e73c4c2a096b17a9cb74d65b6c2bbafbde # v2.9.1
+        with:
+          egress-policy: audit
+
       - name: Check out code
-        uses: actions/checkout@v4
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
         with:
           fetch-depth: 1
       - name: Docker edge build & tag
@@ -121,7 +136,7 @@ jobs:
           docker push ${{ secrets.IMAGE_NAME }}:edge-${GITHUB_SHA::8}
       - name: Docker Hub Description
         if: github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/') && success()
-        uses: peter-evans/dockerhub-description@v4
+        uses: peter-evans/dockerhub-description@e98e4d1628a5f3be2be7c231e50981aee98723ae # v4.0.0
         env:
           DOCKERHUB_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKERHUB_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
@@ -133,9 +148,14 @@ jobs:
     name: swagger-docs
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v4
+      - name: Harden Runner
+        uses: step-security/harden-runner@5c7944e73c4c2a096b17a9cb74d65b6c2bbafbde # v2.9.1
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
       - name: Check if handlers were modified
-        uses: dorny/paths-filter@v3
+        uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # v3.0.2
         id: changes
         with:
           filters: |
@@ -143,7 +163,7 @@ jobs:
               - added|modified: "handlers/**"
       - name: Setup go-swagger
         if: steps.changes.outputs.modified == 'true'
-        uses: minchao/setup-go-swagger@v1
+        uses: minchao/setup-go-swagger@0be2506f6c9c8a2eff98c41d57d8d83b097d0a3b # v1
         with:
           version: v0.26.1
       - name: swagger-spec
@@ -159,12 +179,17 @@ jobs:
     if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-latest
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@5c7944e73c4c2a096b17a9cb74d65b6c2bbafbde # v2.9.1
+        with:
+          egress-policy: audit
+
       - name: Check out code
-        uses: actions/checkout@v4
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
         with:
           fetch-depth: 1
       - name: Check if schema was modified
-        uses: dorny/paths-filter@v3
+        uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # v3.0.2
         id: filter
         with:
           filters: |
@@ -172,7 +197,7 @@ jobs:
               - added|modified: 'server/internal/graphql/schema/schema.graphql'
       - name: Set up Ruby
         if: steps.filter.outputs.modified == 'true'
-        uses: ruby/setup-ruby@v1
+        uses: ruby/setup-ruby@a6e6f86333f0a2523ece813039b8b4be04560854 # v1.190.0
         with:
           ruby-version: 3.2.2
           bundler-cache: true
