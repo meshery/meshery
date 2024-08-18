@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "HTTPScaledObject",
    "schema": "{\n \"description\": \"HTTPScaledObject is the Schema for the httpscaledobjects API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"HTTPScaledObjectSpec defines the desired state of HTTPScaledObject\",\n   \"properties\": {\n    \"hosts\": {\n     \"description\": \"The hosts to route. All requests which the \\\"Host\\\" header\\nmatches any .spec.hosts (and the Request Target matches any\\n.spec.pathPrefixes) will be routed to the Service and Port specified in\\nthe scaleTargetRef.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"pathPrefixes\": {\n     \"description\": \"The paths to route. All requests which the Request Target matches any\\n.spec.pathPrefixes (and the \\\"Host\\\" header matches any .spec.hosts)\\nwill be routed to the Service and Port specified in\\nthe scaleTargetRef.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"replicas\": {\n     \"description\": \"(optional) Replica information\",\n     \"properties\": {\n      \"max\": {\n       \"description\": \"Maximum amount of replicas to have in the deployment (Default 100)\",\n       \"format\": \"int32\",\n       \"type\": \"integer\"\n      },\n      \"min\": {\n       \"description\": \"Minimum amount of replicas to have in the deployment (Default 0)\",\n       \"format\": \"int32\",\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"scaleTargetRef\": {\n     \"description\": \"The name of the deployment to route HTTP requests to (and to autoscale).\",\n     \"properties\": {\n      \"apiVersion\": {\n       \"type\": \"string\"\n      },\n      \"deployment\": {\n       \"description\": \"Deprecated: The name of the deployment to scale according to HTTP traffic\",\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"type\": \"string\"\n      },\n      \"port\": {\n       \"description\": \"The port to route to\",\n       \"format\": \"int32\",\n       \"type\": \"integer\"\n      },\n      \"service\": {\n       \"description\": \"The name of the service to route to\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"port\",\n      \"service\"\n     ],\n     \"type\": \"object\"\n    },\n    \"scaledownPeriod\": {\n     \"description\": \"(optional) Cooldown period value\",\n     \"format\": \"int32\",\n     \"type\": \"integer\"\n    },\n    \"scalingMetric\": {\n     \"description\": \"(optional) Configuration for the metric used for scaling\",\n     \"properties\": {\n      \"concurrency\": {\n       \"description\": \"Scaling based on concurrent requests for a given target\",\n       \"properties\": {\n        \"targetValue\": {\n         \"description\": \"Target value for rate scaling\",\n         \"type\": \"integer\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"requestRate\": {\n       \"description\": \"Scaling based the average rate during an specific time window for a given target\",\n       \"properties\": {\n        \"granularity\": {\n         \"default\": \"1s\",\n         \"description\": \"Time granularity for rate calculation\",\n         \"type\": \"string\"\n        },\n        \"targetValue\": {\n         \"default\": 100,\n         \"description\": \"Target value for rate scaling\",\n         \"type\": \"integer\"\n        },\n        \"window\": {\n         \"default\": \"1m\",\n         \"description\": \"Time window for rate calculation\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"targetPendingRequests\": {\n     \"description\": \"(optional) DEPRECATED (use SscalingMetric instead) Target metric value\",\n     \"format\": \"int32\",\n     \"type\": \"integer\"\n    }\n   },\n   \"required\": [\n    \"scaleTargetRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"HTTP Scaled Object\",\n \"type\": \"object\"\n}",

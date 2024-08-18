@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "LightrunJavaAgent",
    "schema": "{\n \"description\": \"LightrunJavaAgent is the Schema for the lightrunjavaagents API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"LightrunJavaAgentSpec defines the desired state of LightrunJavaAgent\",\n   \"properties\": {\n    \"agentCliFlags\": {\n     \"description\": \"Add cli flags to the agent \\\"-agentpath:/lightrun/agent/lightrun_agent.so=\\u003cAgentCliFlags\\u003e\\\"\\nhttps://docs.lightrun.com/jvm/agent-configuration/#additional-command-line-flags\",\n     \"type\": \"string\"\n    },\n    \"agentConfig\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"Agent configuration to be changed from default values\\nhttps://docs.lightrun.com/jvm/agent-configuration/#setting-agent-properties-from-the-agentconfig-file\",\n     \"type\": \"object\"\n    },\n    \"agentEnvVarName\": {\n     \"description\": \"Env variable that will be patched with the -agentpath\\nCommon choice is JAVA_TOOL_OPTIONS\\nDepending on the tool used it may vary from JAVA_OPTS to MAVEN_OPTS and CATALINA_OPTS\\nMore info can be found here https://docs.lightrun.com/jvm/build-tools/\",\n     \"type\": \"string\"\n    },\n    \"agentName\": {\n     \"description\": \"Agent name for registration to the server\",\n     \"type\": \"string\"\n    },\n    \"agentTags\": {\n     \"description\": \"Agent tags that will be shown in the portal / IDE plugin\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"containerSelector\": {\n     \"description\": \"List of containers that should be patched in the Pod\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"deploymentName\": {\n     \"description\": \"Name of the Deployment that will be patched\",\n     \"type\": \"string\"\n    },\n    \"initContainer\": {\n     \"properties\": {\n      \"image\": {\n       \"description\": \"Image of the init container. Image name and tag will define platform and version of the agent\",\n       \"type\": \"string\"\n      },\n      \"sharedVolumeMountPath\": {\n       \"description\": \"Path in the app container where volume with agent will be mounted\",\n       \"type\": \"string\"\n      },\n      \"sharedVolumeName\": {\n       \"description\": \"Name of the volume that will be added to pod\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"image\",\n      \"sharedVolumeMountPath\",\n      \"sharedVolumeName\"\n     ],\n     \"type\": \"object\"\n    },\n    \"secretName\": {\n     \"description\": \"Name of the Secret in the same namespace contains lightrun key and conmpany id\",\n     \"type\": \"string\"\n    },\n    \"serverHostname\": {\n     \"description\": \"Lightrun server hostname that will be used for downloading an agent\\nKey and company id in the secret has to be taken from this server as well\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"agentEnvVarName\",\n    \"agentTags\",\n    \"containerSelector\",\n    \"deploymentName\",\n    \"initContainer\",\n    \"secretName\",\n    \"serverHostname\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Lightrun Java Agent\",\n \"type\": \"object\"\n}",

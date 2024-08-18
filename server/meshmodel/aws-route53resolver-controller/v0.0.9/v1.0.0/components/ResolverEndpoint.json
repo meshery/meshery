@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "ResolverEndpoint",
    "schema": "{\n \"description\": \"ResolverEndpoint is the Schema for the ResolverEndpoints API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ResolverEndpointSpec defines the desired state of ResolverEndpoint.\\n\\n\\nIn the response to a CreateResolverEndpoint (https://docs.aws.amazon.com/Route53/latest/APIReference/API_route53resolver_CreateResolverEndpoint.html),\\nDeleteResolverEndpoint (https://docs.aws.amazon.com/Route53/latest/APIReference/API_route53resolver_DeleteResolverEndpoint.html),\\nGetResolverEndpoint (https://docs.aws.amazon.com/Route53/latest/APIReference/API_route53resolver_GetResolverEndpoint.html),\\nUpdates the name, or ResolverEndpointType for an endpoint, or UpdateResolverEndpoint\\n(https://docs.aws.amazon.com/Route53/latest/APIReference/API_route53resolver_UpdateResolverEndpoint.html)\\nrequest, a complex type that contains settings for an existing inbound or\\noutbound Resolver endpoint.\",\n   \"properties\": {\n    \"direction\": {\n     \"description\": \"Specify the applicable value:\\n\\n\\n  - INBOUND: Resolver forwards DNS queries to the DNS service for a VPC\\n    from your network\\n\\n\\n  - OUTBOUND: Resolver forwards DNS queries from the DNS service for a VPC\\n    to your network\",\n     \"type\": \"string\"\n    },\n    \"ipAddresses\": {\n     \"description\": \"The subnets and IP addresses in your VPC that DNS queries originate from\\n(for outbound endpoints) or that you forward DNS queries to (for inbound\\nendpoints). The subnet ID uniquely identifies a VPC.\",\n     \"items\": {\n      \"description\": \"In a CreateResolverEndpoint (https://docs.aws.amazon.com/Route53/latest/APIReference/API_route53resolver_CreateResolverEndpoint.html)\\nrequest, the IP address that DNS queries originate from (for outbound endpoints)\\nor that you forward DNS queries to (for inbound endpoints). IpAddressRequest\\nalso includes the ID of the subnet that contains the IP address.\",\n      \"properties\": {\n       \"ip\": {\n        \"type\": \"string\"\n       },\n       \"ipv6\": {\n        \"type\": \"string\"\n       },\n       \"subnetID\": {\n        \"type\": \"string\"\n       },\n       \"subnetRef\": {\n        \"description\": \"Reference field for SubnetID\",\n        \"properties\": {\n         \"from\": {\n          \"description\": \"AWSResourceReference provides all the values necessary to reference another\\nk8s resource for finding the identifier(Id/ARN/Name)\",\n          \"properties\": {\n           \"name\": {\n            \"type\": \"string\"\n           },\n           \"namespace\": {\n            \"type\": \"string\"\n           }\n          },\n          \"type\": \"object\"\n         }\n        },\n        \"type\": \"object\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"name\": {\n     \"description\": \"A friendly name that lets you easily find a configuration in the Resolver\\ndashboard in the Route 53 console.\",\n     \"type\": \"string\"\n    },\n    \"resolverEndpointType\": {\n     \"description\": \"For the endpoint type you can choose either IPv4, IPv6. or dual-stack. A\\ndual-stack endpoint means that it will resolve via both IPv4 and IPv6. This\\nendpoint type is applied to all IP addresses.\",\n     \"type\": \"string\"\n    },\n    \"securityGroupIDs\": {\n     \"description\": \"The ID of one or more security groups that you want to use to control access\\nto this VPC. The security group that you specify must include one or more\\ninbound rules (for inbound Resolver endpoints) or outbound rules (for outbound\\nResolver endpoints). Inbound and outbound rules must allow TCP and UDP access.\\nFor inbound access, open port 53. For outbound access, open the port that\\nyou're using for DNS queries on your network.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"securityGroupRefs\": {\n     \"items\": {\n      \"description\": \"AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\\ntype to provide more user friendly syntax for references using 'from' field\\nEx:\\nAPIIDRef:\\n\\n\\n\\tfrom:\\n\\t  name: my-api\",\n      \"properties\": {\n       \"from\": {\n        \"description\": \"AWSResourceReference provides all the values necessary to reference another\\nk8s resource for finding the identifier(Id/ARN/Name)\",\n        \"properties\": {\n         \"name\": {\n          \"type\": \"string\"\n         },\n         \"namespace\": {\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"tags\": {\n     \"description\": \"A list of the tag keys and values that you want to associate with the endpoint.\",\n     \"items\": {\n      \"description\": \"One tag that you want to add to the specified resource. A tag consists of\\na Key (a name for the tag) and a Value.\",\n      \"properties\": {\n       \"key\": {\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"direction\",\n    \"ipAddresses\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Resolver Endpoint\",\n \"type\": \"object\"\n}",

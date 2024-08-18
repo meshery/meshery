@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "BigQueryDatasetAccess",
    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"dataset\": {\n     \"description\": \"Immutable. Grants all resources of particular types in a particular dataset read access to the current dataset.\",\n     \"properties\": {\n      \"dataset\": {\n       \"description\": \"Immutable. The dataset this entry applies to.\",\n       \"properties\": {\n        \"datasetId\": {\n         \"description\": \"Immutable. The ID of the dataset containing this table.\",\n         \"type\": \"string\"\n        },\n        \"projectId\": {\n         \"description\": \"Immutable. The ID of the project containing this table.\",\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"datasetId\",\n        \"projectId\"\n       ],\n       \"type\": \"object\"\n      },\n      \"targetTypes\": {\n       \"description\": \"Immutable. Which resources in the dataset this entry applies to. Currently, only views are supported,\\nbut additional target types may be added in the future. Possible values: VIEWS.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"required\": [\n      \"dataset\",\n      \"targetTypes\"\n     ],\n     \"type\": \"object\"\n    },\n    \"datasetId\": {\n     \"description\": \"Immutable. A unique ID for this dataset, without the project name. The ID\\nmust contain only letters (a-z, A-Z), numbers (0-9), or\\nunderscores (_). The maximum length is 1,024 characters.\",\n     \"type\": \"string\"\n    },\n    \"domain\": {\n     \"description\": \"Immutable. A domain to grant access to. Any users signed in with the\\ndomain specified will be granted the specified access.\",\n     \"type\": \"string\"\n    },\n    \"groupByEmail\": {\n     \"description\": \"Immutable. An email address of a Google Group to grant access to.\",\n     \"type\": \"string\"\n    },\n    \"iamMember\": {\n     \"description\": \"Immutable. Some other type of member that appears in the IAM Policy but isn't a user,\\ngroup, domain, or special group. For example: 'allUsers'.\",\n     \"type\": \"string\"\n    },\n    \"projectRef\": {\n     \"description\": \"The project that this resource belongs to.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `name` field of a `Project` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The routine of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    },\n    \"role\": {\n     \"description\": \"Immutable. Describes the rights granted to the user specified by the other\\nmember of the access object. Basic, predefined, and custom roles are\\nsupported. Predefined roles that have equivalent basic roles are\\nswapped by the API to their basic counterparts, and will show a diff\\npost-create. See\\n[official docs](https://cloud.google.com/bigquery/docs/access-control).\",\n     \"type\": \"string\"\n    },\n    \"specialGroup\": {\n     \"description\": \"Immutable. A special group to grant access to. Possible values include:\\n\\n\\n* 'projectOwners': Owners of the enclosing project.\\n\\n\\n* 'projectReaders': Readers of the enclosing project.\\n\\n\\n* 'projectWriters': Writers of the enclosing project.\\n\\n\\n* 'allAuthenticatedUsers': All authenticated BigQuery users.\",\n     \"type\": \"string\"\n    },\n    \"userByEmail\": {\n     \"description\": \"Immutable. An email address of a user to grant access to. For example:\\nfred@example.com.\",\n     \"type\": \"string\"\n    },\n    \"view\": {\n     \"description\": \"Immutable. A view from a different dataset to grant access to. Queries\\nexecuted against that view will have read access to tables in\\nthis dataset. The role field is not required when this field is\\nset. If that view is updated by any user, access to the view\\nneeds to be granted again via an update operation.\",\n     \"properties\": {\n      \"datasetId\": {\n       \"description\": \"Immutable. The ID of the dataset containing this table.\",\n       \"type\": \"string\"\n      },\n      \"projectId\": {\n       \"description\": \"Immutable. The ID of the project containing this table.\",\n       \"type\": \"string\"\n      },\n      \"tableId\": {\n       \"description\": \"Immutable. The ID of the table. The ID must contain only letters (a-z,\\nA-Z), numbers (0-9), or underscores (_). The maximum length\\nis 1,024 characters.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"datasetId\",\n      \"projectId\",\n      \"tableId\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"datasetId\",\n    \"projectRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Big Query Dataset Access\",\n \"type\": \"object\"\n}",

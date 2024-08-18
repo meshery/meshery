@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "SchemaReplication",
    "schema": "{\n \"description\": \"SchemaReplication is the Schema for the schemareplications API\\nThis feature requires Tanzu RabbitMQ with schema replication plugin.\\nFor more information, see: https://tanzu.vmware.com/rabbitmq and https://www.rabbitmq.com/definitions-standby.html.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"SchemaReplicationSpec defines the desired state of SchemaReplication\",\n   \"properties\": {\n    \"endpoints\": {\n     \"description\": \"endpoints should be one or multiple endpoints separated by ','.\\nMust provide either spec.endpoints or endpoints in spec.upstreamSecret.\\nWhen endpoints are provided in both spec.endpoints and spec.upstreamSecret, spec.endpoints takes\\nprecedence.\",\n     \"type\": \"string\"\n    },\n    \"rabbitmqClusterReference\": {\n     \"description\": \"Reference to the RabbitmqCluster that schema replication would be set for. Must be an existing cluster.\",\n     \"properties\": {\n      \"connectionSecret\": {\n       \"description\": \"Secret contains the http management uri for the RabbitMQ cluster.\\nThe Secret must contain the key `uri`, `username` and `password` or operator will error.\\nHave to set either name or connectionSecret, but not both.\",\n       \"properties\": {\n        \"name\": {\n         \"default\": \"\",\n         \"description\": \"Name of the referent.\\nThis field is effectively required, but due to backwards compatibility is\\nallowed to be empty. Instances of this type with an empty value here are\\nalmost certainly wrong.\\nTODO: Add other useful fields. apiVersion, kind, uid?\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\\nTODO: Drop `kubebuilder:default` when controller-gen doesn't need it https://github.com/kubernetes-sigs/kubebuilder/issues/3896.\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\",\n       \"x-kubernetes-map-type\": \"atomic\"\n      },\n      \"name\": {\n       \"description\": \"The name of the RabbitMQ cluster to reference.\\nHave to set either name or connectionSecret, but not both.\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"The namespace of the RabbitMQ cluster to reference.\\nDefaults to the namespace of the requested resource if omitted.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"secretBackend\": {\n     \"description\": \"Set to fetch user credentials from K8s external secret stores to be used for schema replication.\",\n     \"properties\": {\n      \"vault\": {\n       \"properties\": {\n        \"secretPath\": {\n         \"description\": \"Path in Vault to access a KV (Key-Value) secret with the fields username and password to be used for replication.\\nFor example \\\"secret/data/rabbitmq/config\\\".\\nOptional; if not provided, username and password will come from upstreamSecret instead.\\nHave to set either secretBackend.vault.secretPath or upstreamSecret, but not both.\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"upstreamSecret\": {\n     \"description\": \"Defines a Secret which contains credentials to be used for schema replication.\\nThe Secret must contain the keys `username` and `password` in its Data field, or operator will error.\\nHave to set either secretBackend.vault.secretPath or spec.upstreamSecret, but not both.\",\n     \"properties\": {\n      \"name\": {\n       \"default\": \"\",\n       \"description\": \"Name of the referent.\\nThis field is effectively required, but due to backwards compatibility is\\nallowed to be empty. Instances of this type with an empty value here are\\nalmost certainly wrong.\\nTODO: Add other useful fields. apiVersion, kind, uid?\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\\nTODO: Drop `kubebuilder:default` when controller-gen doesn't need it https://github.com/kubernetes-sigs/kubebuilder/issues/3896.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    }\n   },\n   \"required\": [\n    \"rabbitmqClusterReference\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Schema Replication\",\n \"type\": \"object\"\n}",

@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "Replication",
    "schema": "{\n \"description\": \"Replication is the Schema for the replications API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ReplicationSpec defines the desired state of Replication\",\n   \"properties\": {\n    \"creator\": {\n     \"type\": \"string\"\n    },\n    \"description\": {\n     \"type\": \"string\"\n    },\n    \"destNamespace\": {\n     \"description\": \"The destination namespace If left empty, the resource will be but in the same namespace as the source\",\n     \"type\": \"string\"\n    },\n    \"destRegistry\": {\n     \"description\": \"Destination Registry Reference to a registry cr\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"enabled\": {\n     \"description\": \"Whether the policy is enabled or not\",\n     \"type\": \"boolean\"\n    },\n    \"filters\": {\n     \"description\": \"The replication policy filter array\",\n     \"items\": {\n      \"description\": \"ReplicationFilter holds the specifications of a replication filter\",\n      \"properties\": {\n       \"type\": {\n        \"description\": \"The replication policy filter type.\",\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"description\": \"The value of replication policy filter.\",\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"name\": {\n     \"description\": \"The name of the replication\",\n     \"type\": \"string\"\n    },\n    \"override\": {\n     \"description\": \"Whether to override the resources on the destination registry or not\",\n     \"type\": \"boolean\"\n    },\n    \"parentInstance\": {\n     \"description\": \"ParentInstance is a LocalObjectReference to the name of the harbor instance the replication policy gets created for\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"replicateDeletion\": {\n     \"description\": \"Whether to replicate the deletion operation\",\n     \"type\": \"boolean\"\n    },\n    \"srcRegistry\": {\n     \"description\": \"Source Registry Reference to a registry cr\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"trigger\": {\n     \"description\": \"The replication policy trigger type\",\n     \"properties\": {\n      \"triggerSettings\": {\n       \"description\": \"TriggerSettings holds the settings of a trigger\",\n       \"properties\": {\n        \"cron\": {\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"cron\"\n       ],\n       \"type\": \"object\"\n      },\n      \"type\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"triggerAfterCreation\": {\n     \"type\": \"boolean\"\n    }\n   },\n   \"required\": [\n    \"name\",\n    \"override\",\n    \"parentInstance\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Replication\",\n \"type\": \"object\"\n}",

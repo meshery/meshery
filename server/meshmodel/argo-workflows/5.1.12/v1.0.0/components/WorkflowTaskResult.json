@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "WorkflowTaskResult",
    "schema": "{\n \"properties\": {\n  \"message\": {\n   \"type\": \"string\"\n  },\n  \"outputs\": {\n   \"properties\": {\n    \"artifacts\": {\n     \"items\": {\n      \"properties\": {\n       \"archive\": {\n        \"properties\": {\n         \"none\": {\n          \"type\": \"object\"\n         },\n         \"tar\": {\n          \"properties\": {\n           \"compressionLevel\": {\n            \"format\": \"int32\",\n            \"type\": \"integer\"\n           }\n          },\n          \"type\": \"object\"\n         },\n         \"zip\": {\n          \"type\": \"object\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"archiveLogs\": {\n        \"type\": \"boolean\"\n       },\n       \"artifactGC\": {\n        \"properties\": {\n         \"podMetadata\": {\n          \"properties\": {\n           \"annotations\": {\n            \"additionalProperties\": {\n             \"type\": \"string\"\n            },\n            \"type\": \"object\"\n           },\n           \"labels\": {\n            \"additionalProperties\": {\n             \"type\": \"string\"\n            },\n            \"type\": \"object\"\n           }\n          },\n          \"type\": \"object\"\n         },\n         \"serviceAccountName\": {\n          \"type\": \"string\"\n         },\n         \"strategy\": {\n          \"enum\": [\n           \"\",\n           \"OnWorkflowCompletion\",\n           \"OnWorkflowDeletion\",\n           \"Never\"\n          ],\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"artifactory\": {\n        \"properties\": {\n         \"passwordSecret\": {\n          \"properties\": {\n           \"key\": {\n            \"type\": \"string\"\n           },\n           \"name\": {\n            \"type\": \"string\"\n           },\n           \"optional\": {\n            \"type\": \"boolean\"\n           }\n          },\n          \"required\": [\n           \"key\"\n          ],\n          \"type\": \"object\"\n         },\n         \"url\": {\n          \"type\": \"string\"\n         },\n         \"usernameSecret\": {\n          \"properties\": {\n           \"key\": {\n            \"type\": \"string\"\n           },\n           \"name\": {\n            \"type\": \"string\"\n           },\n           \"optional\": {\n            \"type\": \"boolean\"\n           }\n          },\n          \"required\": [\n           \"key\"\n          ],\n          \"type\": \"object\"\n         }\n        },\n        \"required\": [\n         \"url\"\n        ],\n        \"type\": \"object\"\n       },\n       \"azure\": {\n        \"properties\": {\n         \"accountKeySecret\": {\n          \"properties\": {\n           \"key\": {\n            \"type\": \"string\"\n           },\n           \"name\": {\n            \"type\": \"string\"\n           },\n           \"optional\": {\n            \"type\": \"boolean\"\n           }\n          },\n          \"required\": [\n           \"key\"\n          ],\n          \"type\": \"object\"\n         },\n         \"blob\": {\n          \"type\": \"string\"\n         },\n         \"container\": {\n          \"type\": \"string\"\n         },\n         \"endpoint\": {\n          \"type\": \"string\"\n         },\n         \"useSDKCreds\": {\n          \"type\": \"boolean\"\n         }\n        },\n        \"required\": [\n         \"blob\",\n         \"container\",\n         \"endpoint\"\n        ],\n        \"type\": \"object\"\n       },\n       \"deleted\": {\n        \"type\": \"boolean\"\n       },\n       \"from\": {\n        \"type\": \"string\"\n       },\n       \"fromExpression\": {\n        \"type\": \"string\"\n       },\n       \"gcs\": {\n        \"properties\": {\n         \"bucket\": {\n          \"type\": \"string\"\n         },\n         \"key\": {\n          \"type\": \"string\"\n         },\n         \"serviceAccountKeySecret\": {\n          \"properties\": {\n           \"key\": {\n            \"type\": \"string\"\n           },\n           \"name\": {\n            \"type\": \"string\"\n           },\n           \"optional\": {\n            \"type\": \"boolean\"\n           }\n          },\n          \"required\": [\n           \"key\"\n          ],\n          \"type\": \"object\"\n         }\n        },\n        \"required\": [\n         \"key\"\n        ],\n        \"type\": \"object\"\n       },\n       \"git\": {\n        \"properties\": {\n         \"branch\": {\n          \"type\": \"string\"\n         },\n         \"depth\": {\n          \"format\": \"int64\",\n          \"type\": \"integer\"\n         },\n         \"disableSubmodules\": {\n          \"type\": \"boolean\"\n         },\n         \"fetch\": {\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         },\n         \"insecureIgnoreHostKey\": {\n          \"type\": \"boolean\"\n         },\n         \"passwordSecret\": {\n          \"properties\": {\n           \"key\": {\n            \"type\": \"string\"\n           },\n           \"name\": {\n            \"type\": \"string\"\n           },\n           \"optional\": {\n            \"type\": \"boolean\"\n           }\n          },\n          \"required\": [\n           \"key\"\n          ],\n          \"type\": \"object\"\n         },\n         \"repo\": {\n          \"type\": \"string\"\n         },\n         \"revision\": {\n          \"type\": \"string\"\n         },\n         \"singleBranch\": {\n          \"type\": \"boolean\"\n         },\n         \"sshPrivateKeySecret\": {\n          \"properties\": {\n           \"key\": {\n            \"type\": \"string\"\n           },\n           \"name\": {\n            \"type\": \"string\"\n           },\n           \"optional\": {\n            \"type\": \"boolean\"\n           }\n          },\n          \"required\": [\n           \"key\"\n          ],\n          \"type\": \"object\"\n         },\n         \"usernameSecret\": {\n          \"properties\": {\n           \"key\": {\n            \"type\": \"string\"\n           },\n           \"name\": {\n            \"type\": \"string\"\n           },\n           \"optional\": {\n            \"type\": \"boolean\"\n           }\n          },\n          \"required\": [\n           \"key\"\n          ],\n          \"type\": \"object\"\n         }\n        },\n        \"required\": [\n         \"repo\"\n        ],\n        \"type\": \"object\"\n       },\n       \"globalName\": {\n        \"type\": \"string\"\n       },\n       \"hdfs\": {\n        \"properties\": {\n         \"addresses\": {\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         },\n         \"force\": {\n          \"type\": \"boolean\"\n         },\n         \"hdfsUser\": {\n          \"type\": \"string\"\n         },\n         \"krbCCacheSecret\": {\n          \"properties\": {\n           \"key\": {\n            \"type\": \"string\"\n           },\n           \"name\": {\n            \"type\": \"string\"\n           },\n           \"optional\": {\n            \"type\": \"boolean\"\n           }\n          },\n          \"required\": [\n           \"key\"\n          ],\n          \"type\": \"object\"\n         },\n         \"krbConfigConfigMap\": {\n          \"properties\": {\n           \"key\": {\n            \"type\": \"string\"\n           },\n           \"name\": {\n            \"type\": \"string\"\n           },\n           \"optional\": {\n            \"type\": \"boolean\"\n           }\n          },\n          \"required\": [\n           \"key\"\n          ],\n          \"type\": \"object\"\n         },\n         \"krbKeytabSecret\": {\n          \"properties\": {\n           \"key\": {\n            \"type\": \"string\"\n           },\n           \"name\": {\n            \"type\": \"string\"\n           },\n           \"optional\": {\n            \"type\": \"boolean\"\n           }\n          },\n          \"required\": [\n           \"key\"\n          ],\n          \"type\": \"object\"\n         },\n         \"krbRealm\": {\n          \"type\": \"string\"\n         },\n         \"krbServicePrincipalName\": {\n          \"type\": \"string\"\n         },\n         \"krbUsername\": {\n          \"type\": \"string\"\n         },\n         \"path\": {\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"path\"\n        ],\n        \"type\": \"object\"\n       },\n       \"http\": {\n        \"properties\": {\n         \"auth\": {\n          \"properties\": {\n           \"basicAuth\": {\n            \"properties\": {\n             \"passwordSecret\": {\n              \"properties\": {\n               \"key\": {\n                \"type\": \"string\"\n               },\n               \"name\": {\n                \"type\": \"string\"\n               },\n               \"optional\": {\n                \"type\": \"boolean\"\n               }\n              },\n              \"required\": [\n               \"key\"\n              ],\n              \"type\": \"object\"\n             },\n             \"usernameSecret\": {\n              \"properties\": {\n               \"key\": {\n                \"type\": \"string\"\n               },\n               \"name\": {\n                \"type\": \"string\"\n               },\n               \"optional\": {\n                \"type\": \"boolean\"\n               }\n              },\n              \"required\": [\n               \"key\"\n              ],\n              \"type\": \"object\"\n             }\n            },\n            \"type\": \"object\"\n           },\n           \"clientCert\": {\n            \"properties\": {\n             \"clientCertSecret\": {\n              \"properties\": {\n               \"key\": {\n                \"type\": \"string\"\n               },\n               \"name\": {\n                \"type\": \"string\"\n               },\n               \"optional\": {\n                \"type\": \"boolean\"\n               }\n              },\n              \"required\": [\n               \"key\"\n              ],\n              \"type\": \"object\"\n             },\n             \"clientKeySecret\": {\n              \"properties\": {\n               \"key\": {\n                \"type\": \"string\"\n               },\n               \"name\": {\n                \"type\": \"string\"\n               },\n               \"optional\": {\n                \"type\": \"boolean\"\n               }\n              },\n              \"required\": [\n               \"key\"\n              ],\n              \"type\": \"object\"\n             }\n            },\n            \"type\": \"object\"\n           },\n           \"oauth2\": {\n            \"properties\": {\n             \"clientIDSecret\": {\n              \"properties\": {\n               \"key\": {\n                \"type\": \"string\"\n               },\n               \"name\": {\n                \"type\": \"string\"\n               },\n               \"optional\": {\n                \"type\": \"boolean\"\n               }\n              },\n              \"required\": [\n               \"key\"\n              ],\n              \"type\": \"object\"\n             },\n             \"clientSecretSecret\": {\n              \"properties\": {\n               \"key\": {\n                \"type\": \"string\"\n               },\n               \"name\": {\n                \"type\": \"string\"\n               },\n               \"optional\": {\n                \"type\": \"boolean\"\n               }\n              },\n              \"required\": [\n               \"key\"\n              ],\n              \"type\": \"object\"\n             },\n             \"endpointParams\": {\n              \"items\": {\n               \"properties\": {\n                \"key\": {\n                 \"type\": \"string\"\n                },\n                \"value\": {\n                 \"type\": \"string\"\n                }\n               },\n               \"required\": [\n                \"key\"\n               ],\n               \"type\": \"object\"\n              },\n              \"type\": \"array\"\n             },\n             \"scopes\": {\n              \"items\": {\n               \"type\": \"string\"\n              },\n              \"type\": \"array\"\n             },\n             \"tokenURLSecret\": {\n              \"properties\": {\n               \"key\": {\n                \"type\": \"string\"\n               },\n               \"name\": {\n                \"type\": \"string\"\n               },\n               \"optional\": {\n                \"type\": \"boolean\"\n               }\n              },\n              \"required\": [\n               \"key\"\n              ],\n              \"type\": \"object\"\n             }\n            },\n            \"type\": \"object\"\n           }\n          },\n          \"type\": \"object\"\n         },\n         \"headers\": {\n          \"items\": {\n           \"properties\": {\n            \"name\": {\n             \"type\": \"string\"\n            },\n            \"value\": {\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"name\",\n            \"value\"\n           ],\n           \"type\": \"object\"\n          },\n          \"type\": \"array\"\n         },\n         \"url\": {\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"url\"\n        ],\n        \"type\": \"object\"\n       },\n       \"mode\": {\n        \"format\": \"int32\",\n        \"type\": \"integer\"\n       },\n       \"name\": {\n        \"type\": \"string\"\n       },\n       \"optional\": {\n        \"type\": \"boolean\"\n       },\n       \"oss\": {\n        \"properties\": {\n         \"accessKeySecret\": {\n          \"properties\": {\n           \"key\": {\n            \"type\": \"string\"\n           },\n           \"name\": {\n            \"type\": \"string\"\n           },\n           \"optional\": {\n            \"type\": \"boolean\"\n           }\n          },\n          \"required\": [\n           \"key\"\n          ],\n          \"type\": \"object\"\n         },\n         \"bucket\": {\n          \"type\": \"string\"\n         },\n         \"createBucketIfNotPresent\": {\n          \"type\": \"boolean\"\n         },\n         \"endpoint\": {\n          \"type\": \"string\"\n         },\n         \"key\": {\n          \"type\": \"string\"\n         },\n         \"lifecycleRule\": {\n          \"properties\": {\n           \"markDeletionAfterDays\": {\n            \"format\": \"int32\",\n            \"type\": \"integer\"\n           },\n           \"markInfrequentAccessAfterDays\": {\n            \"format\": \"int32\",\n            \"type\": \"integer\"\n           }\n          },\n          \"type\": \"object\"\n         },\n         \"secretKeySecret\": {\n          \"properties\": {\n           \"key\": {\n            \"type\": \"string\"\n           },\n           \"name\": {\n            \"type\": \"string\"\n           },\n           \"optional\": {\n            \"type\": \"boolean\"\n           }\n          },\n          \"required\": [\n           \"key\"\n          ],\n          \"type\": \"object\"\n         },\n         \"securityToken\": {\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"key\"\n        ],\n        \"type\": \"object\"\n       },\n       \"path\": {\n        \"type\": \"string\"\n       },\n       \"raw\": {\n        \"properties\": {\n         \"data\": {\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"data\"\n        ],\n        \"type\": \"object\"\n       },\n       \"recurseMode\": {\n        \"type\": \"boolean\"\n       },\n       \"s3\": {\n        \"properties\": {\n         \"accessKeySecret\": {\n          \"properties\": {\n           \"key\": {\n            \"type\": \"string\"\n           },\n           \"name\": {\n            \"type\": \"string\"\n           },\n           \"optional\": {\n            \"type\": \"boolean\"\n           }\n          },\n          \"required\": [\n           \"key\"\n          ],\n          \"type\": \"object\"\n         },\n         \"bucket\": {\n          \"type\": \"string\"\n         },\n         \"createBucketIfNotPresent\": {\n          \"properties\": {\n           \"objectLocking\": {\n            \"type\": \"boolean\"\n           }\n          },\n          \"type\": \"object\"\n         },\n         \"encryptionOptions\": {\n          \"properties\": {\n           \"enableEncryption\": {\n            \"type\": \"boolean\"\n           },\n           \"kmsEncryptionContext\": {\n            \"type\": \"string\"\n           },\n           \"kmsKeyId\": {\n            \"type\": \"string\"\n           },\n           \"serverSideCustomerKeySecret\": {\n            \"properties\": {\n             \"key\": {\n              \"type\": \"string\"\n             },\n             \"name\": {\n              \"type\": \"string\"\n             },\n             \"optional\": {\n              \"type\": \"boolean\"\n             }\n            },\n            \"required\": [\n             \"key\"\n            ],\n            \"type\": \"object\"\n           }\n          },\n          \"type\": \"object\"\n         },\n         \"endpoint\": {\n          \"type\": \"string\"\n         },\n         \"insecure\": {\n          \"type\": \"boolean\"\n         },\n         \"key\": {\n          \"type\": \"string\"\n         },\n         \"region\": {\n          \"type\": \"string\"\n         },\n         \"roleARN\": {\n          \"type\": \"string\"\n         },\n         \"secretKeySecret\": {\n          \"properties\": {\n           \"key\": {\n            \"type\": \"string\"\n           },\n           \"name\": {\n            \"type\": \"string\"\n           },\n           \"optional\": {\n            \"type\": \"boolean\"\n           }\n          },\n          \"required\": [\n           \"key\"\n          ],\n          \"type\": \"object\"\n         },\n         \"useSDKCreds\": {\n          \"type\": \"boolean\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"subPath\": {\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"name\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"exitCode\": {\n     \"type\": \"string\"\n    },\n    \"parameters\": {\n     \"items\": {\n      \"properties\": {\n       \"default\": {\n        \"type\": \"string\"\n       },\n       \"description\": {\n        \"type\": \"string\"\n       },\n       \"enum\": {\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       },\n       \"globalName\": {\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"type\": \"string\"\n       },\n       \"valueFrom\": {\n        \"properties\": {\n         \"configMapKeyRef\": {\n          \"properties\": {\n           \"key\": {\n            \"type\": \"string\"\n           },\n           \"name\": {\n            \"type\": \"string\"\n           },\n           \"optional\": {\n            \"type\": \"boolean\"\n           }\n          },\n          \"required\": [\n           \"key\"\n          ],\n          \"type\": \"object\"\n         },\n         \"default\": {\n          \"type\": \"string\"\n         },\n         \"event\": {\n          \"type\": \"string\"\n         },\n         \"expression\": {\n          \"type\": \"string\"\n         },\n         \"jqFilter\": {\n          \"type\": \"string\"\n         },\n         \"jsonPath\": {\n          \"type\": \"string\"\n         },\n         \"parameter\": {\n          \"type\": \"string\"\n         },\n         \"path\": {\n          \"type\": \"string\"\n         },\n         \"supplied\": {\n          \"type\": \"object\"\n         }\n        },\n        \"type\": \"object\"\n       }\n      },\n      \"required\": [\n       \"name\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"result\": {\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  },\n  \"phase\": {\n   \"type\": \"string\"\n  },\n  \"progress\": {\n   \"type\": \"string\"\n  }\n },\n \"required\": [\n  \"metadata\"\n ],\n \"title\": \"Workflow Task Result\",\n \"type\": \"object\"\n}",

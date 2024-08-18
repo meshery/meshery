@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "Application",
    "schema": "{\n \"description\": \"Applications resource allows to use the operator to create and manage applications in Gravitee API Management. This means that a management context must be define in the specification when creating an application.\",\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"app_key_mode\": {\n     \"description\": \"The API key mode to use. If shared, the application will reuse the same API key across various subscriptions.\",\n     \"enum\": [\n      \"SHARED\",\n      \"EXCLUSIVE\",\n      \"UNSPECIFIED\"\n     ],\n     \"type\": \"string\"\n    },\n    \"applicationMetaData\": {\n     \"description\": \"Application meta data\",\n     \"items\": {\n      \"properties\": {\n       \"applicationId\": {\n        \"description\": \"Meta data ApplicationId\",\n        \"type\": \"string\"\n       },\n       \"defaultValue\": {\n        \"description\": \"Meta data DefaultValue\",\n        \"type\": \"string\"\n       },\n       \"format\": {\n        \"description\": \"Meta data Format\",\n        \"enum\": [\n         \"STRING\",\n         \"NUMERIC\",\n         \"BOOLEAN\",\n         \"DATE\",\n         \"MAIL\",\n         \"URL\"\n        ],\n        \"type\": \"string\"\n       },\n       \"hidden\": {\n        \"description\": \"Meta data is hidden or not?\",\n        \"type\": \"boolean\"\n       },\n       \"key\": {\n        \"description\": \"Meta data Key\",\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"description\": \"Meta data Name\",\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"description\": \"Meta data Value\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"name\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"background\": {\n     \"description\": \"The base64 encoded background to use for this application when displaying it on the portal\",\n     \"type\": \"string\"\n    },\n    \"clientId\": {\n     \"description\": \"The ClientId identifying the application. This field is required when subscribing to an OAUTH2 / JWT plan.\",\n     \"type\": \"string\"\n    },\n    \"contextRef\": {\n     \"description\": \"The contextRef field allows to reference a previously created ManagementContext. See \\u003ca href=\\\"#managementcontext\\\"\\u003eManagementContext\\u003c/a\\u003e for more information.\",\n     \"properties\": {\n      \"name\": {\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"description\": {\n     \"description\": \"Application Description\",\n     \"type\": \"string\"\n    },\n    \"disable_membership_notifications\": {\n     \"description\": \"Should membership notifications be disabled or not ?\",\n     \"type\": \"boolean\"\n    },\n    \"domain\": {\n     \"description\": \"Application domain\",\n     \"type\": \"string\"\n    },\n    \"groups\": {\n     \"description\": \"Application groups\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"id\": {\n     \"description\": \"Application ID\",\n     \"type\": \"string\"\n    },\n    \"metadata\": {\n     \"description\": \"Application Metadata, a map of arbitrary key-values\",\n     \"format\": \"textarea\",\n     \"type\": \"string\"\n    },\n    \"name\": {\n     \"description\": \"Application name\",\n     \"type\": \"string\"\n    },\n    \"origin\": {\n     \"description\": \"The origin which is used to create this Application\",\n     \"enum\": [\n      \"kubernetes\"\n     ],\n     \"type\": \"string\"\n    },\n    \"picture\": {\n     \"description\": \"The base64 encoded picture to use for this application when displaying it on the portal (if not relying on an URL)\",\n     \"type\": \"string\"\n    },\n    \"picture_url\": {\n     \"description\": \"An URL pointing to the picture to use when displaying the application on the portal\",\n     \"type\": \"string\"\n    },\n    \"redirectUris\": {\n     \"description\": \"List of application Redirect Uris\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"settings\": {\n     \"description\": \"Application settings\",\n     \"properties\": {\n      \"app\": {\n       \"properties\": {\n        \"client_id\": {\n         \"description\": \"ClientId is the client id of the application\",\n         \"type\": \"string\"\n        },\n        \"type\": {\n         \"description\": \"Application Type\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"oauth\": {\n       \"properties\": {\n        \"application_type\": {\n         \"description\": \"Oauth client application type\",\n         \"type\": \"string\"\n        },\n        \"client_id\": {\n         \"description\": \"Oauth client id\",\n         \"type\": \"string\"\n        },\n        \"client_secret\": {\n         \"description\": \"Oauth client secret\",\n         \"type\": \"string\"\n        },\n        \"client_uri\": {\n         \"description\": \"Oauth client uri\",\n         \"type\": \"string\"\n        },\n        \"grant_types\": {\n         \"description\": \"List of Oauth client grant types\",\n         \"items\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"array\"\n        },\n        \"logo_uri\": {\n         \"description\": \"Oauth client logo uri\",\n         \"type\": \"string\"\n        },\n        \"redirect_uris\": {\n         \"description\": \"List of Oauth client redirect uris\",\n         \"items\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"array\"\n        },\n        \"renew_client_secret_supported\": {\n         \"description\": \"Whether client secret renewing is supported or not\",\n         \"type\": \"boolean\"\n        },\n        \"response_types\": {\n         \"description\": \"List of Oauth client response types\",\n         \"items\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"array\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"type\": {\n     \"description\": \"Application Type\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"name\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Application\",\n \"type\": \"object\"\n}",

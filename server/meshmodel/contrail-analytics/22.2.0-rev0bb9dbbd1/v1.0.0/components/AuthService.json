@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "AuthService",
    "schema": "{\n \"description\": \"AuthService is the Schema for the authservices API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"AuthServiceSpec defines the desired state of AuthService\",\n   \"properties\": {\n    \"add_auth_headers\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"object\"\n    },\n    \"add_linkerd_headers\": {\n     \"type\": \"boolean\"\n    },\n    \"allow_request_body\": {\n     \"type\": \"boolean\"\n    },\n    \"allowed_authorization_headers\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"allowed_request_headers\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"ambassador_id\": {\n     \"description\": \"AmbassadorID declares which Ambassador instances should pay attention to this resource. If no value is provided, the default is: \\n    ambassador_id:    - \\\"default\\\"\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"auth_service\": {\n     \"type\": \"string\"\n    },\n    \"failure_mode_allow\": {\n     \"type\": \"boolean\"\n    },\n    \"include_body\": {\n     \"properties\": {\n      \"allow_partial\": {\n       \"type\": \"boolean\"\n      },\n      \"max_bytes\": {\n       \"description\": \"These aren't pointer types because they are required.\",\n       \"type\": \"integer\"\n      }\n     },\n     \"required\": [\n      \"allow_partial\",\n      \"max_bytes\"\n     ],\n     \"type\": \"object\"\n    },\n    \"path_prefix\": {\n     \"type\": \"string\"\n    },\n    \"proto\": {\n     \"enum\": [\n      \"http\",\n      \"grpc\"\n     ],\n     \"type\": \"string\"\n    },\n    \"protocol_version\": {\n     \"enum\": [\n      \"v2\",\n      \"v3\"\n     ],\n     \"type\": \"string\"\n    },\n    \"stats_name\": {\n     \"type\": \"string\"\n    },\n    \"status_on_error\": {\n     \"description\": \"Why isn't this just an int??\",\n     \"properties\": {\n      \"code\": {\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"timeout_ms\": {\n     \"type\": \"integer\"\n    },\n    \"tls\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"auth_service\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Auth Service\",\n \"type\": \"object\"\n}",

@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "StorageBucket",
    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"autoclass\": {\n     \"description\": \"The bucket's autoclass configuration.\",\n     \"properties\": {\n      \"enabled\": {\n       \"description\": \"While set to true, autoclass automatically transitions objects in your bucket to appropriate storage classes based on each object's access pattern.\",\n       \"type\": \"boolean\"\n      }\n     },\n     \"required\": [\n      \"enabled\"\n     ],\n     \"type\": \"object\"\n    },\n    \"bucketPolicyOnly\": {\n     \"description\": \"DEPRECATED. Please use the `uniformBucketLevelAccess` field as this field has been renamed by Google. The `uniformBucketLevelAccess` field will supersede this field.\\nEnables Bucket PolicyOnly access to a bucket.\",\n     \"type\": \"boolean\"\n    },\n    \"cors\": {\n     \"description\": \"The bucket's Cross-Origin Resource Sharing (CORS) configuration.\",\n     \"items\": {\n      \"properties\": {\n       \"maxAgeSeconds\": {\n        \"description\": \"The value, in seconds, to return in the Access-Control-Max-Age header used in preflight responses.\",\n        \"type\": \"integer\"\n       },\n       \"method\": {\n        \"description\": \"The list of HTTP methods on which to include CORS response headers, (GET, OPTIONS, POST, etc) Note: \\\"*\\\" is permitted in the list of methods, and means \\\"any method\\\".\",\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       },\n       \"origin\": {\n        \"description\": \"The list of Origins eligible to receive CORS response headers. Note: \\\"*\\\" is permitted in the list of origins, and means \\\"any Origin\\\".\",\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       },\n       \"responseHeader\": {\n        \"description\": \"The list of HTTP headers other than the simple response headers to give permission for the user-agent to share across domains.\",\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"customPlacementConfig\": {\n     \"description\": \"The bucket's custom location configuration, which specifies the individual regions that comprise a dual-region bucket. If the bucket is designated a single or multi-region, the parameters are empty.\",\n     \"properties\": {\n      \"dataLocations\": {\n       \"description\": \"Immutable. The list of individual regions that comprise a dual-region bucket. See the docs for a list of acceptable regions. Note: If any of the data_locations changes, it will recreate the bucket.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"required\": [\n      \"dataLocations\"\n     ],\n     \"type\": \"object\"\n    },\n    \"defaultEventBasedHold\": {\n     \"description\": \"Whether or not to automatically apply an eventBasedHold to new objects added to the bucket.\",\n     \"type\": \"boolean\"\n    },\n    \"encryption\": {\n     \"description\": \"The bucket's encryption configuration.\",\n     \"properties\": {\n      \"kmsKeyRef\": {\n       \"oneOf\": [\n        {\n         \"not\": {\n          \"required\": [\n           \"external\"\n          ]\n         },\n         \"required\": [\n          \"name\"\n         ]\n        },\n        {\n         \"not\": {\n          \"anyOf\": [\n           {\n            \"required\": [\n             \"name\"\n            ]\n           },\n           {\n            \"required\": [\n             \"namespace\"\n            ]\n           }\n          ]\n         },\n         \"required\": [\n          \"external\"\n         ]\n        }\n       ],\n       \"properties\": {\n        \"external\": {\n         \"description\": \"Allowed value: The `selfLink` field of a `KMSCryptoKey` resource.\",\n         \"type\": \"string\"\n        },\n        \"name\": {\n         \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n         \"type\": \"string\"\n        },\n        \"namespace\": {\n         \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"required\": [\n      \"kmsKeyRef\"\n     ],\n     \"type\": \"object\"\n    },\n    \"lifecycleRule\": {\n     \"description\": \"The bucket's Lifecycle Rules configuration.\",\n     \"items\": {\n      \"properties\": {\n       \"action\": {\n        \"description\": \"The Lifecycle Rule's action configuration. A single block of this type is supported.\",\n        \"properties\": {\n         \"storageClass\": {\n          \"description\": \"The target Storage Class of objects affected by this Lifecycle Rule. Supported values include: MULTI_REGIONAL, REGIONAL, NEARLINE, COLDLINE, ARCHIVE.\",\n          \"type\": \"string\"\n         },\n         \"type\": {\n          \"description\": \"The type of the action of this Lifecycle Rule. Supported values include: Delete, SetStorageClass and AbortIncompleteMultipartUpload.\",\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"type\"\n        ],\n        \"type\": \"object\"\n       },\n       \"condition\": {\n        \"description\": \"The Lifecycle Rule's condition configuration.\",\n        \"properties\": {\n         \"age\": {\n          \"description\": \"Minimum age of an object in days to satisfy this condition.\",\n          \"type\": \"integer\"\n         },\n         \"createdBefore\": {\n          \"description\": \"Creation date of an object in RFC 3339 (e.g. 2017-06-13) to satisfy this condition.\",\n          \"type\": \"string\"\n         },\n         \"customTimeBefore\": {\n          \"description\": \"Creation date of an object in RFC 3339 (e.g. 2017-06-13) to satisfy this condition.\",\n          \"type\": \"string\"\n         },\n         \"daysSinceCustomTime\": {\n          \"description\": \"Number of days elapsed since the user-specified timestamp set on an object.\",\n          \"type\": \"integer\"\n         },\n         \"daysSinceNoncurrentTime\": {\n          \"description\": \"Number of days elapsed since the noncurrent timestamp of an object. This\\n\\t\\t\\t\\t\\t\\t\\t\\t\\t\\tcondition is relevant only for versioned objects.\",\n          \"type\": \"integer\"\n         },\n         \"matchesPrefix\": {\n          \"description\": \"One or more matching name prefixes to satisfy this condition.\",\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         },\n         \"matchesStorageClass\": {\n          \"description\": \"Storage Class of objects to satisfy this condition. Supported values include: MULTI_REGIONAL, REGIONAL, NEARLINE, COLDLINE, ARCHIVE, STANDARD, DURABLE_REDUCED_AVAILABILITY.\",\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         },\n         \"matchesSuffix\": {\n          \"description\": \"One or more matching name suffixes to satisfy this condition.\",\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         },\n         \"noncurrentTimeBefore\": {\n          \"description\": \"Creation date of an object in RFC 3339 (e.g. 2017-06-13) to satisfy this condition.\",\n          \"type\": \"string\"\n         },\n         \"numNewerVersions\": {\n          \"description\": \"Relevant only for versioned objects. The number of newer versions of an object to satisfy this condition.\",\n          \"type\": \"integer\"\n         },\n         \"withState\": {\n          \"description\": \"Match to live and/or archived objects. Unversioned buckets have only live objects. Supported values include: \\\"LIVE\\\", \\\"ARCHIVED\\\", \\\"ANY\\\".\",\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       }\n      },\n      \"required\": [\n       \"action\",\n       \"condition\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"location\": {\n     \"default\": \"US\",\n     \"description\": \"Immutable. The Google Cloud Storage location.\",\n     \"type\": \"string\"\n    },\n    \"logging\": {\n     \"description\": \"The bucket's Access \\u0026 Storage Logs configuration.\",\n     \"properties\": {\n      \"logBucket\": {\n       \"description\": \"The bucket that will receive log objects.\",\n       \"type\": \"string\"\n      },\n      \"logObjectPrefix\": {\n       \"description\": \"The object prefix for log objects. If it's not provided, by default Google Cloud Storage sets this to this bucket's name.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"logBucket\"\n     ],\n     \"type\": \"object\"\n    },\n    \"publicAccessPrevention\": {\n     \"description\": \"Prevents public access to a bucket.\",\n     \"type\": \"string\"\n    },\n    \"requesterPays\": {\n     \"description\": \"Enables Requester Pays on a storage bucket.\",\n     \"type\": \"boolean\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    },\n    \"retentionPolicy\": {\n     \"description\": \"Configuration of the bucket's data retention policy for how long objects in the bucket should be retained.\",\n     \"properties\": {\n      \"isLocked\": {\n       \"description\": \"If set to true, the bucket will be locked and permanently restrict edits to the bucket's retention policy.  Caution: Locking a bucket is an irreversible action.\",\n       \"type\": \"boolean\"\n      },\n      \"retentionPeriod\": {\n       \"description\": \"The period of time, in seconds, that objects in the bucket must be retained and cannot be deleted, overwritten, or archived. The value must be less than 3,155,760,000 seconds.\",\n       \"type\": \"integer\"\n      }\n     },\n     \"required\": [\n      \"retentionPeriod\"\n     ],\n     \"type\": \"object\"\n    },\n    \"softDeletePolicy\": {\n     \"description\": \"The bucket's soft delete policy, which defines the period of time that soft-deleted objects will be retained, and cannot be permanently deleted. If it is not provided, by default Google Cloud Storage sets this to default soft delete policy.\",\n     \"properties\": {\n      \"retentionDurationSeconds\": {\n       \"description\": \"The duration in seconds that soft-deleted objects in the bucket will be retained and cannot be permanently deleted. Default value is 604800.\",\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"storageClass\": {\n     \"description\": \"The Storage Class of the new bucket. Supported values include: STANDARD, MULTI_REGIONAL, REGIONAL, NEARLINE, COLDLINE, ARCHIVE.\",\n     \"type\": \"string\"\n    },\n    \"uniformBucketLevelAccess\": {\n     \"description\": \"Enables uniform bucket-level access on a bucket.\",\n     \"type\": \"boolean\"\n    },\n    \"versioning\": {\n     \"description\": \"The bucket's Versioning configuration.\",\n     \"properties\": {\n      \"enabled\": {\n       \"description\": \"While set to true, versioning is fully enabled for this bucket.\",\n       \"type\": \"boolean\"\n      }\n     },\n     \"required\": [\n      \"enabled\"\n     ],\n     \"type\": \"object\"\n    },\n    \"website\": {\n     \"description\": \"Configuration if the bucket acts as a website.\",\n     \"properties\": {\n      \"mainPageSuffix\": {\n       \"description\": \"Behaves as the bucket's directory index where missing objects are treated as potential directories.\",\n       \"type\": \"string\"\n      },\n      \"notFoundPage\": {\n       \"description\": \"The custom object to return when a requested resource is not found.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Storage Bucket\",\n \"type\": \"object\"\n}",

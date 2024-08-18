@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "CloudIdentityGroup",
    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"description\": {\n     \"description\": \"An extended description to help users determine the purpose of a Group.\\nMust not be longer than 4,096 characters.\",\n     \"type\": \"string\"\n    },\n    \"displayName\": {\n     \"description\": \"The display name of the Group.\",\n     \"type\": \"string\"\n    },\n    \"groupKey\": {\n     \"description\": \"Immutable. EntityKey of the Group.\",\n     \"properties\": {\n      \"id\": {\n       \"description\": \"Immutable. The ID of the entity.\\n\\nFor Google-managed entities, the id must be the email address of an existing\\ngroup or user.\\n\\nFor external-identity-mapped entities, the id must be a string conforming\\nto the Identity Source's requirements.\\n\\nMust be unique within a namespace.\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Immutable. The namespace in which the entity exists.\\n\\nIf not specified, the EntityKey represents a Google-managed entity\\nsuch as a Google user or a Google Group.\\n\\nIf specified, the EntityKey represents an external-identity-mapped group.\\nThe namespace must correspond to an identity source created in Admin Console\\nand must be in the form of 'identitysources/{identity_source_id}'.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"id\"\n     ],\n     \"type\": \"object\"\n    },\n    \"initialGroupConfig\": {\n     \"description\": \"Immutable. The initial configuration options for creating a Group.\\n\\nSee the\\n[API reference](https://cloud.google.com/identity/docs/reference/rest/v1beta1/groups/create#initialgroupconfig)\\nfor possible values. Default value: \\\"EMPTY\\\" Possible values: [\\\"INITIAL_GROUP_CONFIG_UNSPECIFIED\\\", \\\"WITH_INITIAL_OWNER\\\", \\\"EMPTY\\\"].\",\n     \"type\": \"string\"\n    },\n    \"labels\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"One or more label entries that apply to the Group. Currently supported labels contain a key with an empty value.\\n\\nGoogle Groups are the default type of group and have a label with a key of cloudidentity.googleapis.com/groups.discussion_forum and an empty value.\\n\\nExisting Google Groups can have an additional label with a key of cloudidentity.googleapis.com/groups.security and an empty value added to them. This is an immutable change and the security label cannot be removed once added.\\n\\nDynamic groups have a label with a key of cloudidentity.googleapis.com/groups.dynamic.\\n\\nIdentity-mapped groups for Cloud Search have a label with a key of system/groups/external and an empty value.\",\n     \"type\": \"object\"\n    },\n    \"parent\": {\n     \"description\": \"Immutable. The resource name of the entity under which this Group resides in the\\nCloud Identity resource hierarchy.\\n\\nMust be of the form identitysources/{identity_source_id} for external-identity-mapped\\ngroups or customers/{customer_id} for Google Groups.\",\n     \"type\": \"string\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The service-generated name of the resource. Used for acquisition only. Leave unset to create a new resource.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"groupKey\",\n    \"labels\",\n    \"parent\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Cloud Identity Group\",\n \"type\": \"object\"\n}",

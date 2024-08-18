@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "GrafanaDashboard",
    "schema": "{\n \"description\": \"GrafanaDashboard is the Schema for the grafanadashboards API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"GrafanaDashboardSpec defines the desired state of GrafanaDashboard\",\n   \"properties\": {\n    \"allowCrossNamespaceImport\": {\n     \"description\": \"allow to import this resources from an operator in a different namespace\",\n     \"type\": \"boolean\"\n    },\n    \"configMapRef\": {\n     \"description\": \"dashboard from configmap\",\n     \"properties\": {\n      \"key\": {\n       \"description\": \"The key to select.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"default\": \"\",\n       \"description\": \"Name of the referent.\\nThis field is effectively required, but due to backwards compatibility is\\nallowed to be empty. Instances of this type with an empty value here are\\nalmost certainly wrong.\\nTODO: Add other useful fields. apiVersion, kind, uid?\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\\nTODO: Drop `kubebuilder:default` when controller-gen doesn't need it https://github.com/kubernetes-sigs/kubebuilder/issues/3896.\",\n       \"type\": \"string\"\n      },\n      \"optional\": {\n       \"description\": \"Specify whether the ConfigMap or its key must be defined\",\n       \"type\": \"boolean\"\n      }\n     },\n     \"required\": [\n      \"key\"\n     ],\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    },\n    \"contentCacheDuration\": {\n     \"description\": \"Cache duration for dashboards fetched from URLs\",\n     \"type\": \"string\"\n    },\n    \"datasources\": {\n     \"description\": \"maps required data sources to existing ones\",\n     \"items\": {\n      \"properties\": {\n       \"datasourceName\": {\n        \"type\": \"string\"\n       },\n       \"inputName\": {\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"datasourceName\",\n       \"inputName\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"envFrom\": {\n     \"description\": \"environments variables from secrets or config maps\",\n     \"items\": {\n      \"properties\": {\n       \"configMapKeyRef\": {\n        \"description\": \"Selects a key of a ConfigMap.\",\n        \"properties\": {\n         \"key\": {\n          \"description\": \"The key to select.\",\n          \"type\": \"string\"\n         },\n         \"name\": {\n          \"default\": \"\",\n          \"description\": \"Name of the referent.\\nThis field is effectively required, but due to backwards compatibility is\\nallowed to be empty. Instances of this type with an empty value here are\\nalmost certainly wrong.\\nTODO: Add other useful fields. apiVersion, kind, uid?\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\\nTODO: Drop `kubebuilder:default` when controller-gen doesn't need it https://github.com/kubernetes-sigs/kubebuilder/issues/3896.\",\n          \"type\": \"string\"\n         },\n         \"optional\": {\n          \"description\": \"Specify whether the ConfigMap or its key must be defined\",\n          \"type\": \"boolean\"\n         }\n        },\n        \"required\": [\n         \"key\"\n        ],\n        \"type\": \"object\",\n        \"x-kubernetes-map-type\": \"atomic\"\n       },\n       \"secretKeyRef\": {\n        \"description\": \"Selects a key of a Secret.\",\n        \"properties\": {\n         \"key\": {\n          \"description\": \"The key of the secret to select from.  Must be a valid secret key.\",\n          \"type\": \"string\"\n         },\n         \"name\": {\n          \"default\": \"\",\n          \"description\": \"Name of the referent.\\nThis field is effectively required, but due to backwards compatibility is\\nallowed to be empty. Instances of this type with an empty value here are\\nalmost certainly wrong.\\nTODO: Add other useful fields. apiVersion, kind, uid?\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\\nTODO: Drop `kubebuilder:default` when controller-gen doesn't need it https://github.com/kubernetes-sigs/kubebuilder/issues/3896.\",\n          \"type\": \"string\"\n         },\n         \"optional\": {\n          \"description\": \"Specify whether the Secret or its key must be defined\",\n          \"type\": \"boolean\"\n         }\n        },\n        \"required\": [\n         \"key\"\n        ],\n        \"type\": \"object\",\n        \"x-kubernetes-map-type\": \"atomic\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"envs\": {\n     \"description\": \"environments variables as a map\",\n     \"items\": {\n      \"properties\": {\n       \"name\": {\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"description\": \"Inline evn value\",\n        \"type\": \"string\"\n       },\n       \"valueFrom\": {\n        \"description\": \"Reference on value source, might be the reference on a secret or config map\",\n        \"properties\": {\n         \"configMapKeyRef\": {\n          \"description\": \"Selects a key of a ConfigMap.\",\n          \"properties\": {\n           \"key\": {\n            \"description\": \"The key to select.\",\n            \"type\": \"string\"\n           },\n           \"name\": {\n            \"default\": \"\",\n            \"description\": \"Name of the referent.\\nThis field is effectively required, but due to backwards compatibility is\\nallowed to be empty. Instances of this type with an empty value here are\\nalmost certainly wrong.\\nTODO: Add other useful fields. apiVersion, kind, uid?\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\\nTODO: Drop `kubebuilder:default` when controller-gen doesn't need it https://github.com/kubernetes-sigs/kubebuilder/issues/3896.\",\n            \"type\": \"string\"\n           },\n           \"optional\": {\n            \"description\": \"Specify whether the ConfigMap or its key must be defined\",\n            \"type\": \"boolean\"\n           }\n          },\n          \"required\": [\n           \"key\"\n          ],\n          \"type\": \"object\",\n          \"x-kubernetes-map-type\": \"atomic\"\n         },\n         \"secretKeyRef\": {\n          \"description\": \"Selects a key of a Secret.\",\n          \"properties\": {\n           \"key\": {\n            \"description\": \"The key of the secret to select from.  Must be a valid secret key.\",\n            \"type\": \"string\"\n           },\n           \"name\": {\n            \"default\": \"\",\n            \"description\": \"Name of the referent.\\nThis field is effectively required, but due to backwards compatibility is\\nallowed to be empty. Instances of this type with an empty value here are\\nalmost certainly wrong.\\nTODO: Add other useful fields. apiVersion, kind, uid?\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\\nTODO: Drop `kubebuilder:default` when controller-gen doesn't need it https://github.com/kubernetes-sigs/kubebuilder/issues/3896.\",\n            \"type\": \"string\"\n           },\n           \"optional\": {\n            \"description\": \"Specify whether the Secret or its key must be defined\",\n            \"type\": \"boolean\"\n           }\n          },\n          \"required\": [\n           \"key\"\n          ],\n          \"type\": \"object\",\n          \"x-kubernetes-map-type\": \"atomic\"\n         }\n        },\n        \"type\": \"object\"\n       }\n      },\n      \"required\": [\n       \"name\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"folder\": {\n     \"description\": \"folder assignment for dashboard\",\n     \"type\": \"string\"\n    },\n    \"folderRef\": {\n     \"description\": \"Name of a `GrafanaFolder` resource in the same namespace\",\n     \"type\": \"string\"\n    },\n    \"folderUID\": {\n     \"description\": \"UID of the target folder for this dashboard\",\n     \"type\": \"string\"\n    },\n    \"grafanaCom\": {\n     \"description\": \"grafana.com/dashboards\",\n     \"properties\": {\n      \"id\": {\n       \"type\": \"integer\"\n      },\n      \"revision\": {\n       \"type\": \"integer\"\n      }\n     },\n     \"required\": [\n      \"id\"\n     ],\n     \"type\": \"object\"\n    },\n    \"gzipJson\": {\n     \"description\": \"GzipJson the dashboard's JSON compressed with Gzip. Base64-encoded when in YAML.\",\n     \"format\": \"byte\",\n     \"type\": \"string\"\n    },\n    \"instanceSelector\": {\n     \"description\": \"selects Grafanas for import\",\n     \"properties\": {\n      \"matchExpressions\": {\n       \"description\": \"matchExpressions is a list of label selector requirements. The requirements are ANDed.\",\n       \"items\": {\n        \"description\": \"A label selector requirement is a selector that contains values, a key, and an operator that\\nrelates the key and values.\",\n        \"properties\": {\n         \"key\": {\n          \"description\": \"key is the label key that the selector applies to.\",\n          \"type\": \"string\"\n         },\n         \"operator\": {\n          \"description\": \"operator represents a key's relationship to a set of values.\\nValid operators are In, NotIn, Exists and DoesNotExist.\",\n          \"type\": \"string\"\n         },\n         \"values\": {\n          \"description\": \"values is an array of string values. If the operator is In or NotIn,\\nthe values array must be non-empty. If the operator is Exists or DoesNotExist,\\nthe values array must be empty. This array is replaced during a strategic\\nmerge patch.\",\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\",\n          \"x-kubernetes-list-type\": \"atomic\"\n         }\n        },\n        \"required\": [\n         \"key\",\n         \"operator\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\",\n       \"x-kubernetes-list-type\": \"atomic\"\n      },\n      \"matchLabels\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels\\nmap is equivalent to an element of matchExpressions, whose key field is \\\"key\\\", the\\noperator is \\\"In\\\", and the values array contains only \\\"value\\\". The requirements are ANDed.\",\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"Value is immutable\",\n       \"rule\": \"self == oldSelf\"\n      }\n     ]\n    },\n    \"json\": {\n     \"description\": \"dashboard json\",\n     \"type\": \"string\"\n    },\n    \"jsonnet\": {\n     \"description\": \"Jsonnet\",\n     \"type\": \"string\"\n    },\n    \"jsonnetLib\": {\n     \"description\": \"Jsonnet project build\",\n     \"properties\": {\n      \"fileName\": {\n       \"type\": \"string\"\n      },\n      \"gzipJsonnetProject\": {\n       \"format\": \"byte\",\n       \"type\": \"string\"\n      },\n      \"jPath\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"required\": [\n      \"fileName\",\n      \"gzipJsonnetProject\"\n     ],\n     \"type\": \"object\"\n    },\n    \"plugins\": {\n     \"description\": \"plugins\",\n     \"items\": {\n      \"properties\": {\n       \"name\": {\n        \"type\": \"string\"\n       },\n       \"version\": {\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"name\",\n       \"version\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"resyncPeriod\": {\n     \"default\": \"5m\",\n     \"description\": \"how often the dashboard is refreshed, defaults to 5m if not set\",\n     \"format\": \"duration\",\n     \"pattern\": \"^([0-9]+(\\\\.[0-9]+)?(ns|us|µs|ms|s|m|h))+$\",\n     \"type\": \"string\"\n    },\n    \"url\": {\n     \"description\": \"dashboard url\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"instanceSelector\"\n   ],\n   \"type\": \"object\",\n   \"x-kubernetes-validations\": [\n    {\n     \"message\": \"Only one of folderUID or folderRef can be declared at the same time\",\n     \"rule\": \"(has(self.folderUID) \\u0026\\u0026 !(has(self.folderRef))) || (has(self.folderRef) \\u0026\\u0026 !(has(self.folderUID))) || !(has(self.folderRef) \\u0026\\u0026 (has(self.folderUID)))\"\n    },\n    {\n     \"message\": \"folder field cannot be set when folderUID or folderRef is already declared\",\n     \"rule\": \"(has(self.folder) \\u0026\\u0026 !(has(self.folderRef) || has(self.folderUID))) || !(has(self.folder))\"\n    }\n   ]\n  }\n },\n \"title\": \"Grafana Dashboard\",\n \"type\": \"object\"\n}",

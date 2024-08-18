@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "DialogflowCXWebhook",
    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"disabled\": {\n     \"description\": \"Indicates whether the webhook is disabled.\",\n     \"type\": \"boolean\"\n    },\n    \"displayName\": {\n     \"description\": \"The human-readable name of the webhook, unique within the agent.\",\n     \"type\": \"string\"\n    },\n    \"enableSpellCorrection\": {\n     \"description\": \"Indicates if automatic spell correction is enabled in detect intent requests.\",\n     \"type\": \"boolean\"\n    },\n    \"enableStackdriverLogging\": {\n     \"description\": \"Determines whether this agent should log conversation queries.\",\n     \"type\": \"boolean\"\n    },\n    \"genericWebService\": {\n     \"description\": \"Configuration for a generic web service.\",\n     \"properties\": {\n      \"allowedCaCerts\": {\n       \"description\": \"Specifies a list of allowed custom CA certificates (in DER format) for HTTPS verification.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"requestHeaders\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"Immutable. The HTTP request headers to send together with webhook requests.\",\n       \"type\": \"object\"\n      },\n      \"uri\": {\n       \"description\": \"Whether to use speech adaptation for speech recognition.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"uri\"\n     ],\n     \"type\": \"object\"\n    },\n    \"parent\": {\n     \"description\": \"Immutable. The agent to create a webhook for.\\nFormat: projects/\\u003cProject ID\\u003e/locations/\\u003cLocation ID\\u003e/agents/\\u003cAgent ID\\u003e.\",\n     \"type\": \"string\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The service-generated name of the resource. Used for acquisition only. Leave unset to create a new resource.\",\n     \"type\": \"string\"\n    },\n    \"securitySettings\": {\n     \"description\": \"Name of the SecuritySettings reference for the agent. Format: projects/\\u003cProject ID\\u003e/locations/\\u003cLocation ID\\u003e/securitySettings/\\u003cSecurity Settings ID\\u003e.\",\n     \"type\": \"string\"\n    },\n    \"serviceDirectory\": {\n     \"description\": \"Configuration for a Service Directory service.\",\n     \"properties\": {\n      \"genericWebService\": {\n       \"description\": \"The name of Service Directory service.\",\n       \"properties\": {\n        \"allowedCaCerts\": {\n         \"description\": \"Specifies a list of allowed custom CA certificates (in DER format) for HTTPS verification.\",\n         \"items\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"array\"\n        },\n        \"requestHeaders\": {\n         \"additionalProperties\": {\n          \"type\": \"string\"\n         },\n         \"description\": \"Immutable. The HTTP request headers to send together with webhook requests.\",\n         \"type\": \"object\"\n        },\n        \"uri\": {\n         \"description\": \"Whether to use speech adaptation for speech recognition.\",\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"uri\"\n       ],\n       \"type\": \"object\"\n      },\n      \"service\": {\n       \"description\": \"The name of Service Directory service.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"genericWebService\",\n      \"service\"\n     ],\n     \"type\": \"object\"\n    },\n    \"timeout\": {\n     \"description\": \"Webhook execution timeout.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"displayName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Dialogflow CX Webhook\",\n \"type\": \"object\"\n}",

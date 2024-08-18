@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "MeshTrace",
    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Spec is the specification of the Kuma MeshTrace resource.\",\n   \"properties\": {\n    \"default\": {\n     \"description\": \"MeshTrace configuration.\",\n     \"properties\": {\n      \"backends\": {\n       \"description\": \"A one element array of backend definition. Envoy allows configuring only 1 backend, so the natural way of representing that would be just one object. Unfortunately due to the reasons explained in MADR 009-tracing-policy this has to be a one element array for now.\",\n       \"items\": {\n        \"description\": \"Only one of zipkin, datadog or openTelemetry can be used.\",\n        \"properties\": {\n         \"datadog\": {\n          \"description\": \"Datadog backend configuration.\",\n          \"properties\": {\n           \"splitService\": {\n            \"description\": \"Determines if datadog service name should be split based on traffic direction and destination. For example, with `splitService: true` and a `backend` service that communicates with a couple of databases, you would get service names like `backend_INBOUND`, `backend_OUTBOUND_db1`, and `backend_OUTBOUND_db2` in Datadog. Default: false\",\n            \"type\": \"boolean\"\n           },\n           \"url\": {\n            \"description\": \"Address of Datadog collector, only host and port are allowed (no paths, fragments etc.)\",\n            \"type\": \"string\"\n           }\n          },\n          \"required\": [\n           \"url\"\n          ],\n          \"type\": \"object\"\n         },\n         \"openTelemetry\": {\n          \"description\": \"OpenTelemetry backend configuration.\",\n          \"properties\": {\n           \"endpoint\": {\n            \"description\": \"Address of OpenTelemetry collector.\",\n            \"example\": \"otel-collector:4317\",\n            \"minLength\": 1,\n            \"type\": \"string\"\n           }\n          },\n          \"required\": [\n           \"endpoint\"\n          ],\n          \"type\": \"object\"\n         },\n         \"type\": {\n          \"enum\": [\n           \"Zipkin\",\n           \"Datadog\",\n           \"OpenTelemetry\"\n          ],\n          \"type\": \"string\"\n         },\n         \"zipkin\": {\n          \"description\": \"Zipkin backend configuration.\",\n          \"properties\": {\n           \"apiVersion\": {\n            \"default\": \"httpJson\",\n            \"description\": \"Version of the API. values: httpJson, httpProto. Default: httpJson see https://github.com/envoyproxy/envoy/blob/v1.22.0/api/envoy/config/trace/v3/zipkin.proto#L66\",\n            \"enum\": [\n             \"httpJson\",\n             \"httpProto\"\n            ],\n            \"type\": \"string\"\n           },\n           \"sharedSpanContext\": {\n            \"description\": \"Determines whether client and server spans will share the same span context. Default: true. https://github.com/envoyproxy/envoy/blob/v1.22.0/api/envoy/config/trace/v3/zipkin.proto#L63\",\n            \"type\": \"boolean\"\n           },\n           \"traceId128bit\": {\n            \"description\": \"Generate 128bit traces. Default: false\",\n            \"type\": \"boolean\"\n           },\n           \"url\": {\n            \"description\": \"Address of Zipkin collector.\",\n            \"type\": \"string\"\n           }\n          },\n          \"required\": [\n           \"url\"\n          ],\n          \"type\": \"object\"\n         }\n        },\n        \"required\": [\n         \"type\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"sampling\": {\n       \"description\": \"Sampling configuration. Sampling is the process by which a decision is made on whether to process/export a span or not.\",\n       \"properties\": {\n        \"client\": {\n         \"anyOf\": [\n          {\n           \"type\": \"integer\"\n          },\n          {\n           \"type\": \"string\"\n          }\n         ],\n         \"description\": \"Target percentage of requests that will be force traced if the 'x-client-trace-id' header is set. Default: 100% Mirror of client_sampling in Envoy https://github.com/envoyproxy/envoy/blob/v1.22.0/api/envoy/config/filter/network/http_connection_manager/v2/http_connection_manager.proto#L127-L133 Either int or decimal represented as string.\",\n         \"x-kubernetes-int-or-string\": true\n        },\n        \"overall\": {\n         \"anyOf\": [\n          {\n           \"type\": \"integer\"\n          },\n          {\n           \"type\": \"string\"\n          }\n         ],\n         \"description\": \"Target percentage of requests will be traced after all other sampling checks have been applied (client, force tracing, random sampling). This field functions as an upper limit on the total configured sampling rate. For instance, setting client_sampling to 100% but overall_sampling to 1% will result in only 1% of client requests with the appropriate headers to be force traced. Default: 100% Mirror of overall_sampling in Envoy https://github.com/envoyproxy/envoy/blob/v1.22.0/api/envoy/config/filter/network/http_connection_manager/v2/http_connection_manager.proto#L142-L150 Either int or decimal represented as string.\",\n         \"x-kubernetes-int-or-string\": true\n        },\n        \"random\": {\n         \"anyOf\": [\n          {\n           \"type\": \"integer\"\n          },\n          {\n           \"type\": \"string\"\n          }\n         ],\n         \"description\": \"Target percentage of requests that will be randomly selected for trace generation, if not requested by the client or not forced. Default: 100% Mirror of random_sampling in Envoy https://github.com/envoyproxy/envoy/blob/v1.22.0/api/envoy/config/filter/network/http_connection_manager/v2/http_connection_manager.proto#L135-L140 Either int or decimal represented as string.\",\n         \"x-kubernetes-int-or-string\": true\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"tags\": {\n       \"description\": \"Custom tags configuration. You can add custom tags to traces based on headers or literal values.\",\n       \"items\": {\n        \"description\": \"Custom tags configuration. Only one of literal or header can be used.\",\n        \"properties\": {\n         \"header\": {\n          \"description\": \"Tag taken from a header.\",\n          \"properties\": {\n           \"default\": {\n            \"description\": \"Default value to use if header is missing. If the default is missing and there is no value the tag will not be included.\",\n            \"type\": \"string\"\n           },\n           \"name\": {\n            \"description\": \"Name of the header.\",\n            \"type\": \"string\"\n           }\n          },\n          \"required\": [\n           \"name\"\n          ],\n          \"type\": \"object\"\n         },\n         \"literal\": {\n          \"description\": \"Tag taken from literal value.\",\n          \"type\": \"string\"\n         },\n         \"name\": {\n          \"description\": \"Name of the tag.\",\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"name\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"targetRef\": {\n     \"description\": \"TargetRef is a reference to the resource the policy takes an effect on. The resource could be either a real store object or virtual resource defined inplace.\",\n     \"properties\": {\n      \"kind\": {\n       \"description\": \"Kind of the referenced resource\",\n       \"enum\": [\n        \"Mesh\",\n        \"MeshSubset\",\n        \"MeshGateway\",\n        \"MeshService\",\n        \"MeshServiceSubset\",\n        \"MeshHTTPRoute\"\n       ],\n       \"type\": \"string\"\n      },\n      \"mesh\": {\n       \"description\": \"Mesh is reserved for future use to identify cross mesh resources.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referenced resource. Can only be used with kinds: `MeshService`, `MeshServiceSubset` and `MeshGatewayRoute`\",\n       \"type\": \"string\"\n      },\n      \"tags\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"Tags used to select a subset of proxies by tags. Can only be used with kinds `MeshSubset` and `MeshServiceSubset`\",\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"targetRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Mesh Trace\",\n \"type\": \"object\"\n}",

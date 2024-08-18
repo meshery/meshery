@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "ComputeOrganizationSecurityPolicyRule",
    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"action\": {\n     \"description\": \"The Action to perform when the client connection triggers the rule. Can currently be either\\n\\\"allow\\\", \\\"deny\\\" or \\\"goto_next\\\".\",\n     \"type\": \"string\"\n    },\n    \"description\": {\n     \"description\": \"A description of the rule.\",\n     \"type\": \"string\"\n    },\n    \"direction\": {\n     \"description\": \"The direction in which this rule applies. If unspecified an INGRESS rule is created. Possible values: [\\\"INGRESS\\\", \\\"EGRESS\\\"].\",\n     \"type\": \"string\"\n    },\n    \"enableLogging\": {\n     \"description\": \"Denotes whether to enable logging for a particular rule.\\nIf logging is enabled, logs will be exported to the\\nconfigured export destination in Stackdriver.\",\n     \"type\": \"boolean\"\n    },\n    \"match\": {\n     \"description\": \"A match condition that incoming traffic is evaluated against. If it evaluates to true, the corresponding 'action' is enforced.\",\n     \"properties\": {\n      \"config\": {\n       \"description\": \"The configuration options for matching the rule.\",\n       \"properties\": {\n        \"destIpRanges\": {\n         \"description\": \"Destination IP address range in CIDR format. Required for\\nEGRESS rules.\",\n         \"items\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"array\"\n        },\n        \"layer4Config\": {\n         \"description\": \"Pairs of IP protocols and ports that the rule should match.\",\n         \"items\": {\n          \"properties\": {\n           \"ipProtocol\": {\n            \"description\": \"The IP protocol to which this rule applies. The protocol\\ntype is required when creating a firewall rule.\\nThis value can either be one of the following well\\nknown protocol strings (tcp, udp, icmp, esp, ah, ipip, sctp),\\nor the IP protocol number.\",\n            \"type\": \"string\"\n           },\n           \"ports\": {\n            \"description\": \"An optional list of ports to which this rule applies. This field\\nis only applicable for UDP or TCP protocol. Each entry must be\\neither an integer or a range. If not specified, this rule\\napplies to connections through any port.\\n\\nExample inputs include: [\\\"22\\\"], [\\\"80\\\",\\\"443\\\"], and\\n[\\\"12345-12349\\\"].\",\n            \"items\": {\n             \"type\": \"string\"\n            },\n            \"type\": \"array\"\n           }\n          },\n          \"required\": [\n           \"ipProtocol\"\n          ],\n          \"type\": \"object\"\n         },\n         \"type\": \"array\"\n        },\n        \"srcIpRanges\": {\n         \"description\": \"Source IP address range in CIDR format. Required for\\nINGRESS rules.\",\n         \"items\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"array\"\n        }\n       },\n       \"required\": [\n        \"layer4Config\"\n       ],\n       \"type\": \"object\"\n      },\n      \"description\": {\n       \"description\": \"A description of the rule.\",\n       \"type\": \"string\"\n      },\n      \"versionedExpr\": {\n       \"description\": \"Preconfigured versioned expression. For organization security policy rules,\\nthe only supported type is \\\"FIREWALL\\\". Default value: \\\"FIREWALL\\\" Possible values: [\\\"FIREWALL\\\"].\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"config\"\n     ],\n     \"type\": \"object\"\n    },\n    \"policyId\": {\n     \"description\": \"Immutable. The ID of the OrganizationSecurityPolicy this rule applies to.\",\n     \"type\": \"string\"\n    },\n    \"preview\": {\n     \"description\": \"If set to true, the specified action is not enforced.\",\n     \"type\": \"boolean\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The priority of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    },\n    \"targetResources\": {\n     \"description\": \"A list of network resource URLs to which this rule applies.\\nThis field allows you to control which network's VMs get\\nthis rule. If this field is left blank, all VMs\\nwithin the organization will receive the rule.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"targetServiceAccounts\": {\n     \"description\": \"A list of service accounts indicating the sets of\\ninstances that are applied with this rule.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"action\",\n    \"match\",\n    \"policyId\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Compute Organization Security Policy Rule\",\n \"type\": \"object\"\n}",

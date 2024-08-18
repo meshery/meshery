@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "GerritProjectAccess",
    "schema": "{\n \"description\": \"GerritProjectAccess is the Schema for the gerrit project access API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"GerritProjectAccessSpec defines the desired state of GerritProjectAccess.\",\n   \"properties\": {\n    \"ownerName\": {\n     \"description\": \"OwnerName indicates which gerrit CR should be taken to initialize correct client.\",\n     \"nullable\": true,\n     \"type\": \"string\"\n    },\n    \"parent\": {\n     \"description\": \"Parent is parent project.\",\n     \"type\": \"string\"\n    },\n    \"projectName\": {\n     \"description\": \"ProjectName is gerrit project name.\",\n     \"type\": \"string\"\n    },\n    \"references\": {\n     \"description\": \"References contains gerrit references.\",\n     \"items\": {\n      \"properties\": {\n       \"action\": {\n        \"type\": \"string\"\n       },\n       \"force\": {\n        \"description\": \"Force indicates whether the force flag is set.\",\n        \"type\": \"boolean\"\n       },\n       \"groupName\": {\n        \"type\": \"string\"\n       },\n       \"max\": {\n        \"description\": \"Max is the max value of the permission range.\",\n        \"type\": \"integer\"\n       },\n       \"min\": {\n        \"description\": \"Min is the min value of the permission range.\",\n        \"type\": \"integer\"\n       },\n       \"permissionLabel\": {\n        \"type\": \"string\"\n       },\n       \"permissionName\": {\n        \"type\": \"string\"\n       },\n       \"refPattern\": {\n        \"description\": \"Patter is reference pattern, example: refs/heads/*.\",\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"nullable\": true,\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"projectName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Gerrit Project Access\",\n \"type\": \"object\"\n}",

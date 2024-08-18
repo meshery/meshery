@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "VolumeSnapshotContent",
    "schema": "{\n \"description\": \"VolumeSnapshotContent represents the actual \\\"on-disk\\\" snapshot object in the\\nunderlying storage system\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"spec defines properties of a VolumeSnapshotContent created by the underlying storage system.\\nRequired.\",\n   \"properties\": {\n    \"deletionPolicy\": {\n     \"description\": \"deletionPolicy determines whether this VolumeSnapshotContent and its physical snapshot on\\nthe underlying storage system should be deleted when its bound VolumeSnapshot is deleted.\\nSupported values are \\\"Retain\\\" and \\\"Delete\\\".\\n\\\"Retain\\\" means that the VolumeSnapshotContent and its physical snapshot on underlying storage system are kept.\\n\\\"Delete\\\" means that the VolumeSnapshotContent and its physical snapshot on underlying storage system are deleted.\\nFor dynamically provisioned snapshots, this field will automatically be filled in by the\\nCSI snapshotter sidecar with the \\\"DeletionPolicy\\\" field defined in the corresponding\\nVolumeSnapshotClass.\\nFor pre-existing snapshots, users MUST specify this field when creating the\\n VolumeSnapshotContent object.\\nRequired.\",\n     \"enum\": [\n      \"Delete\",\n      \"Retain\"\n     ],\n     \"type\": \"string\"\n    },\n    \"driver\": {\n     \"description\": \"driver is the name of the CSI driver used to create the physical snapshot on\\nthe underlying storage system.\\nThis MUST be the same as the name returned by the CSI GetPluginName() call for\\nthat driver.\\nRequired.\",\n     \"type\": \"string\"\n    },\n    \"source\": {\n     \"description\": \"source specifies whether the snapshot is (or should be) dynamically provisioned\\nor already exists, and just requires a Kubernetes object representation.\\nThis field is immutable after creation.\\nRequired.\",\n     \"properties\": {\n      \"snapshotHandle\": {\n       \"description\": \"snapshotHandle specifies the CSI \\\"snapshot_id\\\" of a pre-existing snapshot on\\nthe underlying storage system for which a Kubernetes object representation\\nwas (or should be) created.\\nThis field is immutable.\",\n       \"type\": \"string\",\n       \"x-kubernetes-validations\": [\n        {\n         \"message\": \"snapshotHandle is immutable\",\n         \"rule\": \"self == oldSelf\"\n        }\n       ]\n      },\n      \"volumeHandle\": {\n       \"description\": \"volumeHandle specifies the CSI \\\"volume_id\\\" of the volume from which a snapshot\\nshould be dynamically taken from.\\nThis field is immutable.\",\n       \"type\": \"string\",\n       \"x-kubernetes-validations\": [\n        {\n         \"message\": \"volumeHandle is immutable\",\n         \"rule\": \"self == oldSelf\"\n        }\n       ]\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"volumeHandle is required once set\",\n       \"rule\": \"!has(oldSelf.volumeHandle) || has(self.volumeHandle)\"\n      },\n      {\n       \"message\": \"snapshotHandle is required once set\",\n       \"rule\": \"!has(oldSelf.snapshotHandle) || has(self.snapshotHandle)\"\n      },\n      {\n       \"message\": \"exactly one of volumeHandle and snapshotHandle must be set\",\n       \"rule\": \"(has(self.volumeHandle) \\u0026\\u0026 !has(self.snapshotHandle)) || (!has(self.volumeHandle) \\u0026\\u0026 has(self.snapshotHandle))\"\n      }\n     ]\n    },\n    \"sourceVolumeMode\": {\n     \"description\": \"SourceVolumeMode is the mode of the volume whose snapshot is taken.\\nCan be either “Filesystem” or “Block”.\\nIf not specified, it indicates the source volume's mode is unknown.\\nThis field is immutable.\\nThis field is an alpha field.\",\n     \"type\": \"string\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"sourceVolumeMode is immutable\",\n       \"rule\": \"self == oldSelf\"\n      }\n     ]\n    },\n    \"volumeSnapshotClassName\": {\n     \"description\": \"name of the VolumeSnapshotClass from which this snapshot was (or will be)\\ncreated.\\nNote that after provisioning, the VolumeSnapshotClass may be deleted or\\nrecreated with different set of values, and as such, should not be referenced\\npost-snapshot creation.\",\n     \"type\": \"string\"\n    },\n    \"volumeSnapshotRef\": {\n     \"description\": \"volumeSnapshotRef specifies the VolumeSnapshot object to which this\\nVolumeSnapshotContent object is bound.\\nVolumeSnapshot.Spec.VolumeSnapshotContentName field must reference to\\nthis VolumeSnapshotContent's name for the bidirectional binding to be valid.\\nFor a pre-existing VolumeSnapshotContent object, name and namespace of the\\nVolumeSnapshot object MUST be provided for binding to happen.\\nThis field is immutable after creation.\\nRequired.\",\n     \"properties\": {\n      \"apiVersion\": {\n       \"description\": \"API version of the referent.\",\n       \"type\": \"string\"\n      },\n      \"fieldPath\": {\n       \"description\": \"If referring to a piece of an object instead of an entire object, this string\\nshould contain a valid JSON/Go field access statement, such as desiredState.manifest.containers[2].\\nFor example, if the object reference is to a container within a pod, this would take on a value like:\\n\\\"spec.containers{name}\\\" (where \\\"name\\\" refers to the name of the container that triggered\\nthe event) or if no container name is specified \\\"spec.containers[2]\\\" (container with\\nindex 2 in this pod). This syntax is chosen only to have some well-defined way of\\nreferencing a part of an object.\\nTODO: this design is not final and this field is subject to change in the future.\",\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"description\": \"Kind of the referent.\\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      },\n      \"resourceVersion\": {\n       \"description\": \"Specific resourceVersion to which this reference is made, if any.\\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#concurrency-control-and-consistency\",\n       \"type\": \"string\"\n      },\n      \"uid\": {\n       \"description\": \"UID of the referent.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#uids\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"both spec.volumeSnapshotRef.name and spec.volumeSnapshotRef.namespace must be set\",\n       \"rule\": \"has(self.name) \\u0026\\u0026 has(self.__namespace__)\"\n      }\n     ]\n    }\n   },\n   \"required\": [\n    \"deletionPolicy\",\n    \"driver\",\n    \"source\",\n    \"volumeSnapshotRef\"\n   ],\n   \"type\": \"object\",\n   \"x-kubernetes-validations\": [\n    {\n     \"message\": \"sourceVolumeMode is required once set\",\n     \"rule\": \"!has(oldSelf.sourceVolumeMode) || has(self.sourceVolumeMode)\"\n    }\n   ]\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Volume Snapshot Content\",\n \"type\": \"object\"\n}",

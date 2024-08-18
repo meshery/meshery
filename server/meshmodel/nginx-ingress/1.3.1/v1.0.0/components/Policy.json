@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "Policy",
    "schema": "{\n \"description\": \"Policy defines a Policy for VirtualServer and VirtualServerRoute resources.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"PolicySpec is the spec of the Policy resource.\\nThe spec includes multiple fields, where each field represents a different policy.\\nOnly one policy (field) is allowed.\",\n   \"properties\": {\n    \"accessControl\": {\n     \"description\": \"AccessControl defines an access policy based on the source IP of a request.\",\n     \"properties\": {\n      \"allow\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"deny\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"apiKey\": {\n     \"description\": \"APIKey defines an API Key policy.\",\n     \"properties\": {\n      \"clientSecret\": {\n       \"type\": \"string\"\n      },\n      \"suppliedIn\": {\n       \"description\": \"SuppliedIn defines the locations API Key should be supplied in.\",\n       \"properties\": {\n        \"header\": {\n         \"items\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"array\"\n        },\n        \"query\": {\n         \"items\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"array\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"basicAuth\": {\n     \"description\": \"BasicAuth holds HTTP Basic authentication configuration\\npolicy status: preview\",\n     \"properties\": {\n      \"realm\": {\n       \"type\": \"string\"\n      },\n      \"secret\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"egressMTLS\": {\n     \"description\": \"EgressMTLS defines an Egress MTLS policy.\",\n     \"properties\": {\n      \"ciphers\": {\n       \"type\": \"string\"\n      },\n      \"protocols\": {\n       \"type\": \"string\"\n      },\n      \"serverName\": {\n       \"type\": \"boolean\"\n      },\n      \"sessionReuse\": {\n       \"type\": \"boolean\"\n      },\n      \"sslName\": {\n       \"type\": \"string\"\n      },\n      \"tlsSecret\": {\n       \"type\": \"string\"\n      },\n      \"trustedCertSecret\": {\n       \"type\": \"string\"\n      },\n      \"verifyDepth\": {\n       \"type\": \"integer\"\n      },\n      \"verifyServer\": {\n       \"type\": \"boolean\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"ingressClassName\": {\n     \"type\": \"string\"\n    },\n    \"ingressMTLS\": {\n     \"description\": \"IngressMTLS defines an Ingress MTLS policy.\",\n     \"properties\": {\n      \"clientCertSecret\": {\n       \"type\": \"string\"\n      },\n      \"crlFileName\": {\n       \"type\": \"string\"\n      },\n      \"verifyClient\": {\n       \"type\": \"string\"\n      },\n      \"verifyDepth\": {\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"jwt\": {\n     \"description\": \"JWTAuth holds JWT authentication configuration.\",\n     \"properties\": {\n      \"jwksURI\": {\n       \"type\": \"string\"\n      },\n      \"keyCache\": {\n       \"type\": \"string\"\n      },\n      \"realm\": {\n       \"type\": \"string\"\n      },\n      \"secret\": {\n       \"type\": \"string\"\n      },\n      \"token\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"oidc\": {\n     \"description\": \"OIDC defines an Open ID Connect policy.\",\n     \"properties\": {\n      \"accessTokenEnable\": {\n       \"type\": \"boolean\"\n      },\n      \"authEndpoint\": {\n       \"type\": \"string\"\n      },\n      \"authExtraArgs\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"clientID\": {\n       \"type\": \"string\"\n      },\n      \"clientSecret\": {\n       \"type\": \"string\"\n      },\n      \"jwksURI\": {\n       \"type\": \"string\"\n      },\n      \"redirectURI\": {\n       \"type\": \"string\"\n      },\n      \"scope\": {\n       \"type\": \"string\"\n      },\n      \"tokenEndpoint\": {\n       \"type\": \"string\"\n      },\n      \"zoneSyncLeeway\": {\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"rateLimit\": {\n     \"description\": \"RateLimit defines a rate limit policy.\",\n     \"properties\": {\n      \"burst\": {\n       \"type\": \"integer\"\n      },\n      \"delay\": {\n       \"type\": \"integer\"\n      },\n      \"dryRun\": {\n       \"type\": \"boolean\"\n      },\n      \"key\": {\n       \"type\": \"string\"\n      },\n      \"logLevel\": {\n       \"type\": \"string\"\n      },\n      \"noDelay\": {\n       \"type\": \"boolean\"\n      },\n      \"rate\": {\n       \"type\": \"string\"\n      },\n      \"rejectCode\": {\n       \"type\": \"integer\"\n      },\n      \"scale\": {\n       \"type\": \"boolean\"\n      },\n      \"zoneSize\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"waf\": {\n     \"description\": \"WAF defines an WAF policy.\",\n     \"properties\": {\n      \"apBundle\": {\n       \"type\": \"string\"\n      },\n      \"apPolicy\": {\n       \"type\": \"string\"\n      },\n      \"enable\": {\n       \"type\": \"boolean\"\n      },\n      \"securityLog\": {\n       \"description\": \"SecurityLog defines the security log of a WAF policy.\",\n       \"properties\": {\n        \"apLogBundle\": {\n         \"type\": \"string\"\n        },\n        \"apLogConf\": {\n         \"type\": \"string\"\n        },\n        \"enable\": {\n         \"type\": \"boolean\"\n        },\n        \"logDest\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"securityLogs\": {\n       \"items\": {\n        \"description\": \"SecurityLog defines the security log of a WAF policy.\",\n        \"properties\": {\n         \"apLogBundle\": {\n          \"type\": \"string\"\n         },\n         \"apLogConf\": {\n          \"type\": \"string\"\n         },\n         \"enable\": {\n          \"type\": \"boolean\"\n         },\n         \"logDest\": {\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Policy\",\n \"type\": \"object\"\n}",

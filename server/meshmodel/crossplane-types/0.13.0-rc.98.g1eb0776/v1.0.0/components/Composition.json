@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "Composition",
    "schema": "{\n \"description\": \"Composition defines the group of resources to be created when a compatible type is created with reference to the composition.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"CompositionSpec specifies the desired state of the definition.\",\n   \"properties\": {\n    \"compositeTypeRef\": {\n     \"description\": \"CompositeTypeRef specifies the type of composite resource that this composition is compatible with.\",\n     \"properties\": {\n      \"apiVersion\": {\n       \"description\": \"APIVersion of the type.\",\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"description\": \"Kind of the type.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"apiVersion\",\n      \"kind\"\n     ],\n     \"type\": \"object\"\n    },\n    \"resources\": {\n     \"description\": \"Resources is the list of resource templates that will be used when a composite resource referring to this composition is created.\",\n     \"items\": {\n      \"description\": \"ComposedTemplate is used to provide information about how the composed resource should be processed.\",\n      \"properties\": {\n       \"base\": {\n        \"description\": \"Base is the target resource that the patches will be applied on.\",\n        \"type\": \"object\"\n       },\n       \"connectionDetails\": {\n        \"description\": \"ConnectionDetails lists the propagation secret keys from this target resource to the composition instance connection secret.\",\n        \"items\": {\n         \"description\": \"ConnectionDetail includes the information about the propagation of the connection information from one secret to another.\",\n         \"properties\": {\n          \"fromConnectionSecretKey\": {\n           \"description\": \"FromConnectionSecretKey is the key that will be used to fetch the value from the given target resource.\",\n           \"type\": \"string\"\n          },\n          \"name\": {\n           \"description\": \"Name of the connection secret key that will be propagated to the connection secret of the composition instance. Leave empty if you'd like to use the same key name.\",\n           \"type\": \"string\"\n          },\n          \"value\": {\n           \"description\": \"Value that will be propagated to the connection secret of the composition instance. Typically you should use FromConnectionSecretKey instead, but an explicit value may be set to inject a fixed, non-sensitive connection secret values, for example a well-known port. Supercedes FromConnectionSecretKey when set.\",\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       },\n       \"patches\": {\n        \"description\": \"Patches will be applied as overlay to the base resource.\",\n        \"items\": {\n         \"description\": \"Patch is used to patch the field on the base resource at ToFieldPath after piping the value that is at FromFieldPath of the target resource through transformers.\",\n         \"properties\": {\n          \"fromFieldPath\": {\n           \"description\": \"FromFieldPath is the path of the field on the upstream resource whose value to be used as input.\",\n           \"type\": \"string\"\n          },\n          \"toFieldPath\": {\n           \"description\": \"ToFieldPath is the path of the field on the base resource whose value will be changed with the result of transforms. Leave empty if you'd like to propagate to the same path on the target resource.\",\n           \"type\": \"string\"\n          },\n          \"transforms\": {\n           \"description\": \"Transforms are the list of functions that are used as a FIFO pipe for the input to be transformed.\",\n           \"items\": {\n            \"description\": \"Transform is a unit of process whose input is transformed into an output with the supplied configuration.\",\n            \"properties\": {\n             \"map\": {\n              \"additionalProperties\": {\n               \"type\": \"string\"\n              },\n              \"description\": \"Map uses the input as a key in the given map and returns the value.\",\n              \"type\": \"object\"\n             },\n             \"math\": {\n              \"description\": \"Math is used to transform the input via mathematical operations such as multiplication.\",\n              \"properties\": {\n               \"multiply\": {\n                \"description\": \"Multiply the value.\",\n                \"format\": \"int64\",\n                \"type\": \"integer\"\n               }\n              },\n              \"type\": \"object\"\n             },\n             \"string\": {\n              \"description\": \"String is used to transform the input into a string or a different kind of string. Note that the input does not necessarily need to be a string.\",\n              \"properties\": {\n               \"fmt\": {\n                \"description\": \"Format the input using a Go format string. See https://golang.org/pkg/fmt/ for details.\",\n                \"type\": \"string\"\n               }\n              },\n              \"required\": [\n               \"fmt\"\n              ],\n              \"type\": \"object\"\n             },\n             \"type\": {\n              \"description\": \"Type of the transform to be run.\",\n              \"type\": \"string\"\n             }\n            },\n            \"required\": [\n             \"type\"\n            ],\n            \"type\": \"object\"\n           },\n           \"type\": \"array\"\n          }\n         },\n         \"required\": [\n          \"fromFieldPath\"\n         ],\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       },\n       \"readinessChecks\": {\n        \"description\": \"ReadinessChecks allows users to define custom readiness checks. All checks have to return true in order for resource to be considered ready. The default readiness check is to have the \\\"Ready\\\" condition to be \\\"True\\\".\",\n        \"items\": {\n         \"description\": \"ReadinessCheck is used to indicate how to tell whether a resource is ready for consumption\",\n         \"properties\": {\n          \"fieldPath\": {\n           \"description\": \"FieldPath shows the path of the field whose value will be used.\",\n           \"type\": \"string\"\n          },\n          \"matchInteger\": {\n           \"description\": \"MatchInt is the value you'd like to match if you're using \\\"MatchInt\\\" type.\",\n           \"format\": \"int64\",\n           \"type\": \"integer\"\n          },\n          \"matchString\": {\n           \"description\": \"MatchString is the value you'd like to match if you're using \\\"MatchString\\\" type.\",\n           \"type\": \"string\"\n          },\n          \"type\": {\n           \"description\": \"Type indicates the type of probe you'd like to use.\",\n           \"enum\": [\n            \"MatchString\",\n            \"MatchInteger\",\n            \"NonEmpty\"\n           ],\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"fieldPath\",\n          \"type\"\n         ],\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       }\n      },\n      \"required\": [\n       \"base\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"writeConnectionSecretsToNamespace\": {\n     \"description\": \"WriteConnectionSecretsToNamespace specifies the namespace in which the connection secrets of composite resource dynamically provisioned using this composition will be created.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"compositeTypeRef\",\n    \"resources\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Composition\",\n \"type\": \"object\"\n}",
