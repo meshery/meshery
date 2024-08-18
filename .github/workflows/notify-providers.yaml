@@ -15,9 +15,14 @@ jobs:
     if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-22.04
     steps:
+    - name: Harden Runner
+      uses: step-security/harden-runner@5c7944e73c4c2a096b17a9cb74d65b6c2bbafbde # v2.9.1
+      with:
+        egress-policy: audit
+
     - name: trigger plugins for edge
       if: startsWith(github.ref, 'refs/tags/') != true && success()
-      uses: layer5io/trigger-remote-provider-action@master
+      uses: layer5io/trigger-remote-provider-action@87c9bf36933f6f4cb7ae3fc511b19741d7473010 # master
       with:
         name: "Build and Publish"
         repo: layer5labs/meshery-extensions
@@ -29,7 +34,7 @@ jobs:
       run: echo "tag=${GITHUB_REF#refs/*/}" >> $GITHUB_OUTPUT
     - name: trigger plugins for release
       if: github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/') && success()
-      uses: layer5io/trigger-remote-provider-action@master
+      uses: layer5io/trigger-remote-provider-action@87c9bf36933f6f4cb7ae3fc511b19741d7473010 # master
       with:
         name: "Build and Publish"
         repo: layer5labs/meshery-extensions

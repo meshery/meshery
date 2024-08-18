@@ -6,14 +6,24 @@ on:
         description: Link of the spreadsheet containing keys.
         type: string
         default: https://docs.google.com/spreadsheets/d/e/2PACX-1vQwzrUSKfuSRcpkp7sJTw1cSB63s4HCjYLJeGPWECsvqn222hjaaONQlN4X8auKvlaB0es3BqV5rQyz/pub?gid=64355745&single=true&output=csv
+permissions:
+  contents: read
+
 jobs:
   fetch-keys:
+    permissions:
+      contents: write  # for stefanzweifel/git-auto-commit-action to push code in repo
     name: Fetch Keys
     if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-22.04
     steps:
+    - name: Harden Runner
+      uses: step-security/harden-runner@5c7944e73c4c2a096b17a9cb74d65b6c2bbafbde # v2.9.1
+      with:
+        egress-policy: audit
+
     - name: Check out code
-      uses: actions/checkout@v4
+      uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
       with:
         token: ${{ secrets.GH_ACCESS_TOKEN }}
         fetch-depth: 1
@@ -35,7 +45,7 @@ jobs:
       run: git pull origin master
 
     - name: Commit changes
-      uses: stefanzweifel/git-auto-commit-action@v5
+      uses: stefanzweifel/git-auto-commit-action@8621497c8c39c72f3e2a999a26b4ca1b5058a842 # v5.0.1
       with:
         commit_message: Added permissions keys.
         branch: master

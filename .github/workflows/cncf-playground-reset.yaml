@@ -10,8 +10,13 @@ jobs:
     if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-latest
     steps:
+    - name: Harden Runner
+      uses: step-security/harden-runner@5c7944e73c4c2a096b17a9cb74d65b6c2bbafbde # v2.9.1
+      with:
+        egress-policy: audit
+
     - name: Cluster cleanup by running the cleanup script inside VM
-      uses: appleboy/ssh-action@master
+      uses: appleboy/ssh-action@b4a07ca5940a7dc94925e99f8e6eab3671b0fa64 # master
       with:
           host: secrets.METAL_SERVER1
           username: root

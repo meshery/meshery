@@ -8,8 +8,13 @@ jobs:
     if: contains(github.event.issue.labels.*.name, 'issue/invite') && github.repository == 'meshery/'
     runs-on: ubuntu-22.04
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@5c7944e73c4c2a096b17a9cb74d65b6c2bbafbde # v2.9.1
+        with:
+          egress-policy: audit
+
       - name: Invite on label
-        uses: vj-abigo/invite-on-label@v1.2
+        uses: vj-abigo/invite-on-label@8a87e2e6d44e21a689036673207244bc324f8ea3 # v1.2
         with:
           organization: layer5io
           label: issue/invite
@@ -19,7 +24,7 @@ jobs:
           INVITE_TOKEN: ${{ secrets.RELEASEDRAFTER_PAT }}
 
       - name: View context attributes
-        uses: actions/github-script@v4
+        uses: actions/github-script@10b53a9ec6c222bb4ce97aa6bd2b5f739696b536 # v4.2.0
         id: set-url
         with:
           script: |
@@ -35,7 +40,7 @@ jobs:
       - name: Notify slack
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-        uses: pullreminders/slack-action@master
+        uses: pullreminders/slack-action@a5a262c896a1cc80dcbae59ba95513e2dfb21439 # master
         with:
           args: '{\"channel\":\"CF9RK4H89\",\"text\":\"An invitation to join the layer5io GitHub org has been sent\"}'
           # to the author of: ${{env.URL}}\"}'

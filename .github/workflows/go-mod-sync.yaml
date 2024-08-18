@@ -6,26 +6,36 @@ on:
       - "master"
     paths:
       - "go.mod"
+permissions:
+  contents: read
+
 jobs:
   sync:
+    permissions:
+      contents: write  # for stefanzweifel/git-auto-commit-action to push code in repo
     if: github.repository == 'meshery/meshery'
     name: sync
     runs-on: ubuntu-22.04
     steps:
+    - name: Harden Runner
+      uses: step-security/harden-runner@5c7944e73c4c2a096b17a9cb74d65b6c2bbafbde # v2.9.1
+      with:
+        egress-policy: audit
+
     - name: check out code for meshery
-      uses: actions/checkout@master
+      uses: actions/checkout@61b9e3751b92087fd0b06925ba6dd6314e06f089 # master
       with:
         repository: meshery/meshery
         token: ${{ secrets.RELEASEDRAFTER_PAT }}
         path: meshery
     - name: Check out code for meshery-extensions
-      uses: actions/checkout@master
+      uses: actions/checkout@61b9e3751b92087fd0b06925ba6dd6314e06f089 # master
       with:
         repository: layer5labs/meshery-extensions
         token: ${{ secrets.RELEASEDRAFTER_PAT }}
         path: meshery-extensions
     - name: Setup Go
-      uses: actions/setup-go@master
+      uses: actions/setup-go@d0c5defdf364f1d1fb07530c000084836192af9c # master
       with:
         go-version: "1.21"
     - name: Go mod sync utility
@@ -36,7 +46,7 @@ jobs:
       run: git pull origin master
 
     - name: Commit
-      uses: stefanzweifel/git-auto-commit-action@v5
+      uses: stefanzweifel/git-auto-commit-action@8621497c8c39c72f3e2a999a26b4ca1b5058a842 # v5.0.1
       with:
         repository: meshery-extensions
         commit_user_name: l5io
@@ -51,8 +61,13 @@ jobs:
       - sync
     if: ${{ always() && contains(needs.*.result, 'failure') }}
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@5c7944e73c4c2a096b17a9cb74d65b6c2bbafbde # v2.9.1
+        with:
+          egress-policy: audit
+
       - name: Send email notification on failure
-        uses: dawidd6/action-send-mail@v3
+        uses: dawidd6/action-send-mail@4226df7daafa6fc901a43789c49bf7ab309066e7 # v3.11.0
         with:
           server_address: smtp.gmail.com
           server_port: 465
