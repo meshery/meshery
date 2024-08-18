@@ -1,4 +1,4 @@
-FROM golang:1.21-alpine AS builder
+FROM golang:1.21-alpine@sha256:2414035b086e3c42b99654c8b26e6f5b1b1598080d65fd03c7f499552ff4dc94 AS builder
 ENV CGO_ENABLED=0
 RUN apk add --update make
 WORKDIR /backend
@@ -12,7 +12,7 @@ RUN --mount=type=cache,target=/go/pkg/mod \
   --mount=type=cache,target=/root/.cache/go-build \
   make bin
 
-FROM node:14.17-alpine3.13 AS client-builder
+FROM node:14.17-alpine3.13@sha256:bd7f3879132b126e5f6770e7e50e223c2e74c1f223d27bfd06dd71a17ebb8fc3 AS client-builder
 WORKDIR /ui
 # cache packages in layer
 COPY ui/package.json /ui/package.json

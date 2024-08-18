@@ -27,17 +27,22 @@ jobs:
     outputs:
       resource_url: ${{ steps.test_result.outputs.resource_url }}
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@5c7944e73c4c2a096b17a9cb74d65b6c2bbafbde # v2.9.1
+        with:
+          egress-policy: audit
+
       - name: Set PR number # To comment the final status on the Pull-request opened in any repository
         run: |
           export pull_number=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
           echo "PULL_NO=$pull_number" >> $GITHUB_ENV
-      - uses: actions/checkout@v4
-      - uses: actions/checkout@v4 #this step would go away
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
         with:
           path: action
           repository: layer5labs/meshmap-snapshot
       - id: test_result
-        uses: layer5labs/MeshMap-Snapshot@v0.2.8
+        uses: layer5labs/MeshMap-Snapshot@9b47ffb5d82f097e6b6c9f9790cb9c0ea07cd5af # v0.2.8
         with:
           githubToken: ${{ secrets.GITHUB_TOKEN }} # github's personal access token example: "ghp_...."
           mesheryToken: ${{ secrets.MESHERY_TOKEN }} # Meshery Cloud Authentication token, signin to meshery-cloud to get one, example: ey.....

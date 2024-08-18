@@ -48,6 +48,9 @@ on:
       token:
         required: true
 
+permissions:
+  contents: read
+
 jobs:
   TestAdapter:
     strategy:
@@ -58,16 +61,21 @@ jobs:
     outputs:
       exitstatus: ${{ steps.runresources.outputs.exitstatus }}
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@5c7944e73c4c2a096b17a9cb74d65b6c2bbafbde # v2.9.1
+        with:
+          egress-policy: audit
+
       - name: Setting up minikube
         id: setk8s
-        uses: manusa/actions-setup-minikube@v2.7.0
+        uses: manusa/actions-setup-minikube@a36e52547d6fb013f8873758b695ae97a353377b # v2.7.0
         with:
           minikube version: "v1.26.1"
           kubernetes version: '"${{ matrix.k8s_version }}"'
           driver: docker
           start args: --cni "${{ inputs.k8s_cni }}"
       - name: Checkout Code
-        uses: actions/checkout@master
+        uses: actions/checkout@61b9e3751b92087fd0b06925ba6dd6314e06f089 # master
 
       # Build the image by setting appropriate environmental variables in order to access the image from minikube
       - name: Build the tagged Docker image
@@ -143,7 +151,7 @@ jobs:
           config='{"contexts":{"local":{"endpoint":'$svcip',"token":"default","platform":"kubernetes","adapters":[],"channel":"stable","version":"latest"}},"current-context":"local","tokens":[{"location":"auth.json","name":"default"}]}'
           echo $config  > ~/.meshery/config.yaml
       - name: Download patternfile
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a # v3.0.2
         with:
           name: patternfile
       - name: Wait for Meshery pods to come up
@@ -236,7 +244,7 @@ jobs:
           echo $(jq '.metadata."meshery-server-version" |="'$MESHERY_VERSION'"' data.json ) > data.json
           echo "exitstatus=$exitstatus" >> $GITHUB_ENV
       - name: UploadResults
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@834a144ee995460fba8ed112a2fc961b36a5ec5a # v4.3.6
         with:
           name: ${{ inputs.output_filename }}
           path: ./${{ inputs.output_filename }}

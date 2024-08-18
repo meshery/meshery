@@ -6,6 +6,9 @@ on:
     types:
       - completed
 
+permissions:
+  contents: read
+
 jobs:
   tests-ui-e2e:
     name: UI end-to-end tests
@@ -15,26 +18,31 @@ jobs:
       issues: write
       pull-requests: write
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@5c7944e73c4c2a096b17a9cb74d65b6c2bbafbde # v2.9.1
+        with:
+          egress-policy: audit
+
       - name: Check out code
-        uses: actions/checkout@v4
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
         with:
           fetch-depth: 0
       - name: Check out meshery-istio code
-        uses: actions/checkout@v4
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
         with:
           repository: layer5io/meshery-istio
           path: ./meshery-istio
       - name: Check out meshery-consul code
-        uses: actions/checkout@v4
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
         with:
           repository: layer5io/meshery-consul
           path: ./meshery-consul
       - name: Create k8s Kind Cluster
-        uses: helm/kind-action@v1.8.0
+        uses: helm/kind-action@dda0770415bac9fc20092cacbc54aa298604d140 # v1.8.0
         with:
           cluster_name: "kind-cluster"
       - name: Setup Go
-        uses: actions/setup-go@master
+        uses: actions/setup-go@d0c5defdf364f1d1fb07530c000084836192af9c # master
         with:
           go-version: "1.21"
       - name: Run meshery-istio
@@ -50,12 +58,12 @@ jobs:
           go run main.go &
           sleep 60
       - name: Setup node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@1e60f620b9541d16bece96c5465dc8ee9832be0b # v4.0.3
         with:
           node-version: 18
       - name: Restore node modules cache
         id: node-cache
-        uses: actions/cache@v4
+        uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
         with:
           path: |
             ~/cache
@@ -70,12 +78,12 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
       - name: Download meshery-ui artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
         with:
           name: meshery-ui
           path: /home/runner/work/meshery/meshery/ui/out
       - name: Download provider-ui artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
         with:
           name: provider-ui
           path: /home/runner/work/meshery/meshery/provider-ui/out
@@ -98,7 +106,7 @@ jobs:
         run: |
           make test-setup-ui
           make test-ui
-      - uses: daun/playwright-report-summary@v3
+      - uses: daun/playwright-report-summary@ae24742e120b2863385a293414cef38dc2cc5690 # v3.5.2
         if: always()
         with:
           github-token: ${{ secrets.GH_ACCESS_TOKEN }}

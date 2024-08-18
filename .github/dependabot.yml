@@ -57,3 +57,53 @@ updates:
   labels:
   - kind/chore
   - pr/dependencies
+
+- package-ecosystem: docker
+  directory: /.github/actions/comment-preview-on-pr
+  schedule:
+    interval: daily
+
+- package-ecosystem: github-actions
+  directory: /
+  schedule:
+    interval: daily
+
+- package-ecosystem: docker
+  directory: /
+  schedule:
+    interval: daily
+
+- package-ecosystem: bundler
+  directory: /docs
+  schedule:
+    interval: daily
+
+- package-ecosystem: bundler
+  directory: /docs/v0.6
+  schedule:
+    interval: daily
+
+- package-ecosystem: docker
+  directory: /install/docker-extension
+  schedule:
+    interval: daily
+
+- package-ecosystem: gomod
+  directory: /install/docker-extension
+  schedule:
+    interval: daily
+
+- package-ecosystem: npm
+  directory: /install/docker-extension/ui
+  schedule:
+    interval: daily
+
+- package-ecosystem: docker
+  directory: /install/docker
+  schedule:
+    interval: daily
+
+- package-ecosystem: docker
+  directory: /install/docker/testing
+  schedule:
+    interval: daily

@@ -5,13 +5,23 @@ on:
   schedule:
     - cron: '0 0 * * *' #runs every day at midnight
 
+permissions:
+  contents: read
+
 jobs:
   update:
+    permissions:
+      contents: write  # for stefanzweifel/git-auto-commit-action to push code in repo
     runs-on: ubuntu-latest
     if: github.repository == 'meshery/meshery'
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@5c7944e73c4c2a096b17a9cb74d65b6c2bbafbde # v2.9.1
+        with:
+          egress-policy: audit
+
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
         with:
           token: ${{ secrets.GH_ACCESS_TOKEN }}
       - name: Fetch data for mesheryctl tag
@@ -23,7 +33,7 @@ jobs:
         run: git pull origin master
 
       - name: Commit changes
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@8621497c8c39c72f3e2a999a26b4ca1b5058a842 # v5.0.1
         with:
           file_pattern: docs/_data/discuss/*.json
           commit_user_name: Discussions bot

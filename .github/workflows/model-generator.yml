@@ -4,20 +4,30 @@ on:
   schedule:
     - cron: "0 0 * * *"
 
+permissions:
+  contents: read
+
 jobs:
   generate-and-update-components:
+    permissions:
+      contents: write  # for stefanzweifel/git-auto-commit-action to push code in repo
     if: github.repository == 'meshery/meshery'
     name: Generate and Update Components
     runs-on: ubuntu-22.04
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@5c7944e73c4c2a096b17a9cb74d65b6c2bbafbde # v2.9.1
+        with:
+          egress-policy: audit
+
       - name: Check out code
-        uses: actions/checkout@v4
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
         with:
           token: ${{ secrets.GH_ACCESS_TOKEN }}
           fetch-depth: 1
 
       - name: Setup Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@0a12ed9d6a96ab950c8f026ed9f722fe0da7ef32 # v5.0.2
         with:
           go-version: "1.21"
 
@@ -36,7 +46,7 @@ jobs:
 
       - name: Upload artifacts
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@834a144ee995460fba8ed112a2fc961b36a5ec5a # v4.3.6
         with:
           name: generate-logs
           path: ~/.meshery/logs/
@@ -59,7 +69,7 @@ jobs:
         run: git pull origin master
 
       - name: Commit changes
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@8621497c8c39c72f3e2a999a26b4ca1b5058a842 # v5.0.1
         with:
           commit_user_name: l5io
           commit_user_email: ci@layer5.io
@@ -70,7 +80,7 @@ jobs:
 
       - name: Send Email on Workflow Failure
         if: failure()
-        uses: dawidd6/action-send-mail@v3.7.1
+        uses: dawidd6/action-send-mail@6063705cefe50cb915fc53bb06d4049cae2953b2 # v3.7.1
         with:
           server_address: smtp.gmail.com
           server_port: 465
@@ -86,7 +96,7 @@ jobs:
 
       - name: Send Email on Registry Generate Error
         if: env.registry-generate-error == 'true'
-        uses: dawidd6/action-send-mail@v3.7.1
+        uses: dawidd6/action-send-mail@6063705cefe50cb915fc53bb06d4049cae2953b2 # v3.7.1
         with:
           server_address: smtp.gmail.com
           server_port: 465
