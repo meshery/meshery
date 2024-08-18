@@ -10,6 +10,10 @@ evaluate := updated_design_file if {
 	# iterate relationships in the design file and resolve the patches.
 	resultant_patches := {patched_declaration |
 		some rel in rels_in_design_file
+
+		# do not evaluate relationships which have status as "deleted".
+		lower(rel.status) != "deleted"
+
 		patched_declaration := perform_eval(input, rel)
 	}
 
@@ -22,6 +26,7 @@ evaluate := updated_design_file if {
 		x := nval
 	}
 
+	# assign id for new identified rels
 	ans := group_by_id(intermediate_result)
 
 	result := {mutated |
@@ -39,11 +44,11 @@ evaluate := updated_design_file if {
 		declaration := filter_updated_declaration(val, result)
 	]
 
-	updated_relationships := {result |
+	updated_relationships := union({result |
 		# relationships from registry
 		some relationship in data.relationships
 		result := identify_relationship(input, relationship)
-	}
+	})
 
 	updated_design_file := json.patch(input, [
 		{
@@ -63,3 +68,8 @@ filter_updated_declaration(declaration, updated_declarations) := obj.declaration
 	some obj in updated_declarations
 	obj.declaration_id == declaration.id
 } else := declaration
+
+filter_relationship(rel, relationships) := relationship if {
+	some relationship in relationships
+	relationship.id == rel.id
+} else := rel
