@@ -3,7 +3,7 @@
   "version": "v1.0.0",
   "kind": "hierarchical",
   "type": "sibling",
-  "subType": "matchLabels", 
+  "subType": "matchLabels",
   "metadata": {
     "description": "A relationship between two objects that are siblings."
   },
@@ -24,6 +24,7 @@
     },
     "metadata": {}
   },
+  "status": "enabled",
   "selectors": [
     {
       "allow": {
@@ -37,7 +38,9 @@
               }
             },
             "match": {
-              "refs": [[]]
+              "refs": [
+                []
+              ]
             }
           }
         ],

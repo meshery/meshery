@@ -3,7 +3,7 @@
     "version": "v1.0.0",
     "kind": "edge",
     "subType": "annotation",
-    "type":"non-binding",
+    "type": "non-binding",
     "metadata": {
         "description": "A relationship that defines annotation edges between components",
         "styles": {
@@ -36,6 +36,7 @@
         },
         "metadata": {}
     },
+    "status": "enabled",
     "selectors": [
         {
             "allow": {
