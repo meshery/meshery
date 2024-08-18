@@ -85,7 +85,11 @@ func (h *Handler) EvaluateRelationshipPolicy(
 		return
 	}
 
-	event := eventBuilder.WithDescription(fmt.Sprintf("Relationship evaluation completed for \"%s\" at version \"%s\"", evaluationResponse.Design.Name, evaluationResponse.Design.Version)).WithSeverity(events.Error).WithMetadata(map[string]interface{}{"evaluation_resut": evaluationResponse.Design}).Build()
+	// include trace instead of design file
+	event := eventBuilder.WithDescription(fmt.Sprintf("Relationship evaluation completed for \"%s\" at version \"%s\"", evaluationResponse.Design.Name, evaluationResponse.Design.Version)).
+		WithMetadata(map[string]interface{}{
+			"trace": evaluationResponse.Trace,
+		}).WithSeverity(events.Informational).Build()
 	_ = provider.PersistEvent(event)
 	go h.config.EventBroadcaster.Publish(userUUID, event)
 
