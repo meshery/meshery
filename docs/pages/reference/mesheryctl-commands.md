@@ -27,28 +27,8 @@ Meshery CLI commands are categorized by function, which are:
 - `mesheryctl registry` - Model Database: Manage the state and contents of Meshery's internal registry of capabilities.
 - `mesheryctl exp` - Experimental features
 
-<style>
-  .table-wrapper {
-  overflow-x: auto; 
-  -webkit-overflow-scrolling: touch;
-  width: 100%; 
-}
-
-table {
-  width: 100%; 
-  border-collapse: collapse; 
-}
-
-th, td {
-  padding: 8px; 
-  text-align: left; 
-  border: 1px solid #ddd; 
-}
-
-</style>
 
 ## Global Commands and Flags
-<div class="table-wrapper">
 <table>
 <thead>
   <tr>
@@ -97,12 +77,10 @@ th, td {
   {% endfor %}
 </thead>
 </table>
-</div>
 
 ## Meshery Lifecycle Management and Troubleshooting
 
 Installation, troubleshooting and debugging of Meshery and its adapters
-<div class="table-wrapper">
 <table>
 <thead>
   <tr>
@@ -412,11 +390,10 @@ Installation, troubleshooting and debugging of Meshery and its adapters
     {% endfor %}
 </thead>
 </table>
-</div>
+
 
 ## Cloud Native Performance Management
-<div class="table-wrapper">
-<table>
+<table class="table-wrapper">
 <thead>
   <tr>
     <th>Main Command</th>
@@ -476,10 +453,8 @@ Installation, troubleshooting and debugging of Meshery and its adapters
   {% endfor %}
 </thead>
 </table>
-</div>
 
 ## Cloud Native Lifecycle and Configuration Management
-<div class="table-wrapper">
 <table>
 <thead>
   <tr>
@@ -516,10 +491,8 @@ Installation, troubleshooting and debugging of Meshery and its adapters
     {% endfor %}
 </thead>
 </table>
-</div>
 
 ## Cloud Native Pattern Configuration and Management
-<div class="table-wrapper">
 <table>
 <thead>
   <tr>
@@ -633,10 +606,8 @@ Installation, troubleshooting and debugging of Meshery and its adapters
       {% endfor %}
 </thead>
 </table>
-</div>
  
 ## Data Plane Intelligence
-<div class="table-wrapper">
 <table>
 <thead>
   <tr>
@@ -702,10 +673,8 @@ Installation, troubleshooting and debugging of Meshery and its adapters
       {% endfor %}
 </thead>
 </table>
-</div>
 
 ## Meshery Registry Management
-<div class="table-wrapper">
 <table>
 <thead>
   <tr>
@@ -766,10 +735,8 @@ Installation, troubleshooting and debugging of Meshery and its adapters
       {% endfor %}
 </thead>
 </table>
-</div>
 
 ## Meshery Models
-<div class="table-wrapper">
 <table>
 <thead>
   <tr>
@@ -807,10 +774,8 @@ Installation, troubleshooting and debugging of Meshery and its adapters
     {% endfor %}
 </thead>
 </table>
-</div>
 
 ## Meshery Components
-<div class="table-wrapper">
 <table>
 <thead>
   <tr>
@@ -848,10 +813,8 @@ Installation, troubleshooting and debugging of Meshery and its adapters
     {% endfor %}
 </thead>
 </table>
-</div>
 
 ## Experimental Features(exp)
-<div class="table-wrapper">
 <table>
 <thead>
   <tr>
@@ -898,7 +861,6 @@ Installation, troubleshooting and debugging of Meshery and its adapters
   {% endfor %}
 </thead>
 </table>
-</div>
 
 {% include related-discussions.html tag="mesheryctl" %}
 
