@@ -1,0 +1,6 @@
+repositories:
+  - name: meshery
+    url: https://github.com/fMurugi/meshery.git
+    policies:
+      - path: policies/wasm/policies/namespace_discovery_relationship_policy/clomonitor.rego
+    schedule: "*/10 * * * *" # Check every hour
