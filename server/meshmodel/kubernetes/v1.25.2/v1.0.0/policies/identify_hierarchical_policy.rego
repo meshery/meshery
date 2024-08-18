@@ -45,7 +45,7 @@ evaluate_hierarchy contains result if {
 	from_decl.id != to_decl.id
 	is_valid_hierarchy(from_decl, to_decl, from_selector, to_selector)
 
-	# Th criteria for relationship is met hence add the relationship if not exists already.
+	# The criteria for relationship is met hence add the relationship.
 
 	match_selector_for_from := json.patch(from_selector, [{
 		"op": "add",
@@ -74,11 +74,18 @@ is_valid_hierarchy(from_declaration, to_declaration, from_selector, to_selector)
 
 	match_results := [result |
 		some i
-		is_feasible(mutator_selector.paths[i], mutated_selector.paths[i], mutator_selector.declaration, mutated_selector.declaration)
-
-		result := true
+		result := is_feasible(
+			mutator_selector.paths[i],
+			mutated_selector.paths[i],
+			mutator_selector.declaration,
+			mutated_selector.declaration,
+		)
+	]
+	valid_results := [i |
+		some result in match_results
+		result == true
+		i := result
 	]
 
-	count(match_results) == count(mutator_selector.paths)
-	count(match_results) == count(mutated_selector.paths)
+	count(valid_results) == count(match_results)
 }
