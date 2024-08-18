@@ -64,6 +64,7 @@ evaluate := updated_design_file if {
 			"value": updated_relationships,
 		},
 	])
+	print("updated_design_file: ", updated_design_file)
 }
 
 filter_updated_declaration(declaration, updated_declarations) := obj.declaration if {
