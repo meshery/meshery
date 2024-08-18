@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "KongPlugin",
    "schema": "{\n \"description\": \"KongPlugin is the Schema for the kongplugins API.\",\n \"properties\": {\n  \"config\": {\n   \"description\": \"Config contains the plugin configuration. It's a list of keys and values\\nrequired to configure the plugin.\\nPlease read the documentation of the plugin being configured to set values\\nin here. For any plugin in Kong, anything that goes in the `config` JSON\\nkey in the Admin API request, goes into this property.\\nOnly one of `config` or `configFrom` may be used in a KongPlugin, not both at once.\",\n   \"format\": \"textarea\",\n   \"type\": \"string\"\n  },\n  \"configFrom\": {\n   \"description\": \"ConfigFrom references a secret containing the plugin configuration.\\nThis should be used when the plugin configuration contains sensitive information,\\nsuch as AWS credentials in the Lambda plugin or the client secret in the OIDC plugin.\\nOnly one of `config` or `configFrom` may be used in a KongPlugin, not both at once.\",\n   \"properties\": {\n    \"secretKeyRef\": {\n     \"description\": \"Specifies a name and a key of a secret to refer to. The namespace is implicitly set to the one of referring object.\",\n     \"properties\": {\n      \"key\": {\n       \"description\": \"The key containing the value.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"The secret containing the key.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"key\",\n      \"name\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"secretKeyRef\"\n   ],\n   \"type\": \"object\"\n  },\n  \"configPatches\": {\n   \"description\": \"ConfigPatches represents JSON patches to the configuration of the plugin.\\nEach item means a JSON patch to add something in the configuration,\\nwhere path is specified in `path` and value is in `valueFrom` referencing\\na key in a secret.\\nWhen Config is specified, patches will be applied to the configuration in Config.\\nOtherwise, patches will be applied to an empty object.\",\n   \"items\": {\n    \"description\": \"ConfigPatch is a JSON patch (RFC6902) to add values from Secret to the generated configuration.\\nIt is an equivalent of the following patch:\\n`{\\\"op\\\": \\\"add\\\", \\\"path\\\": {.Path}, \\\"value\\\": {.ComputedValueFrom}}`.\",\n    \"properties\": {\n     \"path\": {\n      \"description\": \"Path is the JSON-Pointer value (RFC6901) that references a location within the target configuration.\",\n      \"type\": \"string\"\n     },\n     \"valueFrom\": {\n      \"description\": \"ValueFrom is the reference to a key of a secret where the patched value comes from.\",\n      \"properties\": {\n       \"secretKeyRef\": {\n        \"description\": \"Specifies a name and a key of a secret to refer to. The namespace is implicitly set to the one of referring object.\",\n        \"properties\": {\n         \"key\": {\n          \"description\": \"The key containing the value.\",\n          \"type\": \"string\"\n         },\n         \"name\": {\n          \"description\": \"The secret containing the key.\",\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"key\",\n         \"name\"\n        ],\n        \"type\": \"object\"\n       }\n      },\n      \"required\": [\n       \"secretKeyRef\"\n      ],\n      \"type\": \"object\"\n     }\n    },\n    \"required\": [\n     \"path\",\n     \"valueFrom\"\n    ],\n    \"type\": \"object\"\n   },\n   \"type\": \"array\"\n  },\n  \"consumerRef\": {\n   \"description\": \"ConsumerRef is a reference to a particular consumer.\",\n   \"type\": \"string\"\n  },\n  \"disabled\": {\n   \"description\": \"Disabled set if the plugin is disabled or not.\",\n   \"type\": \"boolean\"\n  },\n  \"instance_name\": {\n   \"description\": \"InstanceName is an optional custom name to identify an instance of the plugin. This is useful when running the\\nsame plugin in multiple contexts, for example, on multiple services.\",\n   \"type\": \"string\"\n  },\n  \"ordering\": {\n   \"description\": \"Ordering overrides the normal plugin execution order. It's only available on Kong Enterprise.\\n`\\u003cphase\\u003e` is a request processing phase (for example, `access` or `body_filter`) and\\n`\\u003cplugin\\u003e` is the name of the plugin that will run before or after the KongPlugin.\\nFor example, a KongPlugin with `plugin: rate-limiting` and `before.access: [\\\"key-auth\\\"]`\\nwill create a rate limiting plugin that limits requests _before_ they are authenticated.\",\n   \"properties\": {\n    \"after\": {\n     \"additionalProperties\": {\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"type\": \"array\"\n     },\n     \"description\": \"PluginOrderingPhase indicates which plugins in a phase should affect the target plugin's order\",\n     \"type\": \"object\"\n    },\n    \"before\": {\n     \"additionalProperties\": {\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"type\": \"array\"\n     },\n     \"description\": \"PluginOrderingPhase indicates which plugins in a phase should affect the target plugin's order\",\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  },\n  \"plugin\": {\n   \"description\": \"PluginName is the name of the plugin to which to apply the config.\",\n   \"type\": \"string\"\n  },\n  \"protocols\": {\n   \"description\": \"Protocols configures plugin to run on requests received on specific\\nprotocols.\",\n   \"items\": {\n    \"description\": \"KongProtocol is a valid Kong protocol.\\nThis alias is necessary to deal with https://github.com/kubernetes-sigs/controller-tools/issues/342\",\n    \"enum\": [\n     \"http\",\n     \"https\",\n     \"grpc\",\n     \"grpcs\",\n     \"tcp\",\n     \"tls\",\n     \"udp\"\n    ],\n    \"type\": \"string\"\n   },\n   \"type\": \"array\"\n  },\n  \"run_on\": {\n   \"description\": \"RunOn configures the plugin to run on the first or the second or both\\nnodes in case of a service mesh deployment.\",\n   \"enum\": [\n    \"first\",\n    \"second\",\n    \"all\"\n   ],\n   \"type\": \"string\"\n  }\n },\n \"required\": [\n  \"plugin\"\n ],\n \"title\": \"Kong Plugin\",\n \"type\": \"object\",\n \"x-kubernetes-validations\": [\n  {\n   \"message\": \"Using both config and configFrom fields is not allowed.\",\n   \"rule\": \"!(has(self.config) \\u0026\\u0026 has(self.configFrom))\"\n  },\n  {\n   \"message\": \"Using both configFrom and configPatches fields is not allowed.\",\n   \"rule\": \"!(has(self.configFrom) \\u0026\\u0026 has(self.configPatches))\"\n  },\n  {\n   \"message\": \"The plugin field is immutable\",\n   \"rule\": \"self.plugin == oldSelf.plugin\"\n  }\n ]\n}",

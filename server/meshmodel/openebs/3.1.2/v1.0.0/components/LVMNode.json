@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "LVMNode",
    "schema": "{\n \"description\": \"LVMNode records information about all lvm volume groups available in a node. In general, the openebs node-agent creates the LVMNode object \\u0026 periodically synchronizing the volume groups available in the node. LVMNode has an owner reference pointing to the corresponding node object.\",\n \"properties\": {\n  \"volumeGroups\": {\n   \"items\": {\n    \"description\": \"VolumeGroup specifies attributes of a given vg exists on node.\",\n    \"properties\": {\n     \"allocationPolicy\": {\n      \"description\": \"AllocationPolicy indicates the volume group allocation policy. AllocationPolicy has the following mapping between int and string for its value: [-1: \\\"\\\", 0: \\\"normal\\\", 1: \\\"contiguous\\\", 2: \\\"cling\\\", 3: \\\"anywhere\\\", 4: \\\"inherited\\\"]\",\n      \"type\": \"integer\"\n     },\n     \"free\": {\n      \"anyOf\": [\n       {\n        \"type\": \"integer\"\n       },\n       {\n        \"type\": \"string\"\n       }\n      ],\n      \"description\": \"Free specifies the available capacity of volume group.\",\n      \"pattern\": \"^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$\",\n      \"x-kubernetes-int-or-string\": true\n     },\n     \"lvCount\": {\n      \"description\": \"LVCount denotes total number of logical volumes in volume group.\",\n      \"format\": \"int32\",\n      \"minimum\": 0,\n      \"type\": \"integer\"\n     },\n     \"maxLv\": {\n      \"description\": \"MaxLV denotes maximum number of logical volumes allowed in volume group or 0 if unlimited.\",\n      \"format\": \"int32\",\n      \"type\": \"integer\"\n     },\n     \"maxPv\": {\n      \"description\": \"MaxPV denotes maximum number of physical volumes allowed in volume group or 0 if unlimited.\",\n      \"format\": \"int32\",\n      \"type\": \"integer\"\n     },\n     \"metadataCount\": {\n      \"description\": \"MetadataCount denotes number of metadata areas on the volume group.\",\n      \"format\": \"int32\",\n      \"type\": \"integer\"\n     },\n     \"metadataFree\": {\n      \"anyOf\": [\n       {\n        \"type\": \"integer\"\n       },\n       {\n        \"type\": \"string\"\n       }\n      ],\n      \"description\": \"MetadataFree specifies the available metadata area space for the volume group\",\n      \"pattern\": \"^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$\",\n      \"x-kubernetes-int-or-string\": true\n     },\n     \"metadataSize\": {\n      \"anyOf\": [\n       {\n        \"type\": \"integer\"\n       },\n       {\n        \"type\": \"string\"\n       }\n      ],\n      \"description\": \"MetadataSize specifies size of smallest metadata area for the volume group\",\n      \"pattern\": \"^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$\",\n      \"x-kubernetes-int-or-string\": true\n     },\n     \"metadataUsedCount\": {\n      \"description\": \"MetadataUsedCount denotes number of used metadata areas in volume group\",\n      \"format\": \"int32\",\n      \"type\": \"integer\"\n     },\n     \"missingPvCount\": {\n      \"description\": \"MissingPVCount denotes number of physical volumes in volume group which are missing.\",\n      \"format\": \"int32\",\n      \"type\": \"integer\"\n     },\n     \"name\": {\n      \"description\": \"Name of the lvm volume group.\",\n      \"minLength\": 1,\n      \"type\": \"string\"\n     },\n     \"permissions\": {\n      \"description\": \"Permission indicates the volume group permission which can be writable or read-only. Permission has the following mapping between int and string for its value: [-1: \\\"\\\", 0: \\\"writeable\\\", 1: \\\"read-only\\\"]\",\n      \"type\": \"integer\"\n     },\n     \"pvCount\": {\n      \"description\": \"PVCount denotes total number of physical volumes constituting the volume group.\",\n      \"format\": \"int32\",\n      \"minimum\": 0,\n      \"type\": \"integer\"\n     },\n     \"size\": {\n      \"anyOf\": [\n       {\n        \"type\": \"integer\"\n       },\n       {\n        \"type\": \"string\"\n       }\n      ],\n      \"description\": \"Size specifies the total size of volume group.\",\n      \"pattern\": \"^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$\",\n      \"x-kubernetes-int-or-string\": true\n     },\n     \"snapCount\": {\n      \"description\": \"SnapCount denotes number of snapshots in volume group.\",\n      \"format\": \"int32\",\n      \"type\": \"integer\"\n     },\n     \"uuid\": {\n      \"description\": \"UUID denotes a unique identity of a lvm volume group.\",\n      \"minLength\": 1,\n      \"type\": \"string\"\n     }\n    },\n    \"required\": [\n     \"allocationPolicy\",\n     \"free\",\n     \"lvCount\",\n     \"maxLv\",\n     \"maxPv\",\n     \"metadataCount\",\n     \"metadataFree\",\n     \"metadataSize\",\n     \"metadataUsedCount\",\n     \"missingPvCount\",\n     \"name\",\n     \"permissions\",\n     \"pvCount\",\n     \"size\",\n     \"snapCount\",\n     \"uuid\"\n    ],\n    \"type\": \"object\"\n   },\n   \"type\": \"array\"\n  }\n },\n \"required\": [\n  \"volumeGroups\"\n ],\n \"title\": \"LVM Node\",\n \"type\": \"object\"\n}",

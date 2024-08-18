@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "SubjectAccessReview",
    "schema": "{\"description\":\"SubjectAccessReview checks whether or not a user or group can perform an action.\",\"properties\":{\"spec\":{\"allOf\":[{\"description\":\"SubjectAccessReviewSpec is a description of the access request.  Exactly one of ResourceAuthorizationAttributes and NonResourceAuthorizationAttributes must be set\",\"properties\":{\"extra\":{\"additionalProperties\":{\"items\":{\"default\":\"\",\"type\":\"string\"},\"type\":\"array\"},\"description\":\"Extra corresponds to the user.Info.GetExtra() method from the authenticator.  Since that is input to the authorizer it needs a reflection here.\",\"type\":\"object\"},\"groups\":{\"description\":\"Groups is the groups you're testing for.\",\"items\":{\"default\":\"\",\"type\":\"string\"},\"type\":\"array\"},\"nonResourceAttributes\":{\"allOf\":[{\"description\":\"NonResourceAttributes includes the authorization attributes available for non-resource requests to the Authorizer interface\",\"properties\":{\"path\":{\"description\":\"Path is the URL path of the request\",\"type\":\"string\"},\"verb\":{\"description\":\"Verb is the standard HTTP verb\",\"type\":\"string\"}},\"type\":\"object\"}],\"description\":\"NonResourceAttributes describes information for a non-resource access request\"},\"resourceAttributes\":{\"allOf\":[{\"description\":\"ResourceAttributes includes the authorization attributes available for resource requests to the Authorizer interface\",\"properties\":{\"group\":{\"description\":\"Group is the API Group of the Resource.  \\\"*\\\" means all.\",\"type\":\"string\"},\"name\":{\"description\":\"Name is the name of the resource being requested for a \\\"get\\\" or deleted for a \\\"delete\\\". \\\"\\\" (empty) means all.\",\"type\":\"string\"},\"namespace\":{\"description\":\"Namespace is the namespace of the action being requested.  Currently, there is no distinction between no namespace and all namespaces \\\"\\\" (empty) is defaulted for LocalSubjectAccessReviews \\\"\\\" (empty) is empty for cluster-scoped resources \\\"\\\" (empty) means \\\"all\\\" for namespace scoped resources from a SubjectAccessReview or SelfSubjectAccessReview\",\"type\":\"string\"},\"resource\":{\"description\":\"Resource is one of the existing resource types.  \\\"*\\\" means all.\",\"type\":\"string\"},\"subresource\":{\"description\":\"Subresource is one of the existing resource types.  \\\"\\\" means none.\",\"type\":\"string\"},\"verb\":{\"description\":\"Verb is a kubernetes resource API verb, like: get, list, watch, create, update, delete, proxy.  \\\"*\\\" means all.\",\"type\":\"string\"},\"version\":{\"description\":\"Version is the API Version of the Resource.  \\\"*\\\" means all.\",\"type\":\"string\"}},\"type\":\"object\"}],\"description\":\"ResourceAuthorizationAttributes describes information for a resource access request\"},\"uid\":{\"description\":\"UID information about the requesting user.\",\"type\":\"string\"},\"user\":{\"description\":\"User is the user you're testing for. If you specify \\\"User\\\" but not \\\"Groups\\\", then is it interpreted as \\\"What if User were not a member of any groups\",\"type\":\"string\"}},\"type\":\"object\"}],\"default\":{},\"description\":\"Spec holds information about the request being evaluated\"}},\"required\":[\"spec\"],\"type\":\"object\",\"x-kubernetes-group-version-kind\":[{\"group\":\"authorization.k8s.io\",\"kind\":\"SubjectAccessReview\",\"version\":\"v1\"}]}",

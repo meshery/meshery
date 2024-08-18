@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "Sequence",
    "schema": "{\n \"description\": \"Sequence defines a sequence of Subscribers that will be wired in series through Channels and Subscriptions.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Spec defines the desired state of the Sequence.\",\n   \"properties\": {\n    \"channelTemplate\": {\n     \"description\": \"ChannelTemplate specifies which Channel CRD to use. If left unspecified, it is set to the default Channel CRD for the namespace (or cluster, in case there are no defaults for the namespace).\",\n     \"properties\": {\n      \"apiVersion\": {\n       \"description\": \"APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources\",\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"description\": \"Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds\",\n       \"type\": \"string\"\n      },\n      \"spec\": {\n       \"description\": \"Spec defines the Spec to use for each channel created. Passed in verbatim to the Channel CRD as Spec section.\",\n       \"format\": \"textarea\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"reply\": {\n     \"description\": \"Reply is a Reference to where the result of the last Subscriber gets sent to.\",\n     \"properties\": {\n      \"ref\": {\n       \"description\": \"Ref points to an Addressable.\",\n       \"properties\": {\n        \"apiVersion\": {\n         \"description\": \"API version of the referent.\",\n         \"type\": \"string\"\n        },\n        \"kind\": {\n         \"description\": \"Kind of the referent. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds\",\n         \"type\": \"string\"\n        },\n        \"name\": {\n         \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n         \"type\": \"string\"\n        },\n        \"namespace\": {\n         \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/ This is optional field, it gets defaulted to the object holding it if left out.\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"uri\": {\n       \"description\": \"URI can be an absolute URL(non-empty scheme and non-empty host) pointing to the target or a relative URI. Relative URIs will be resolved using the base URI retrieved from Ref.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"steps\": {\n     \"description\": \"Steps is the list of Destinations (processors / functions) that will be called in the order provided. Each step has its own delivery options\",\n     \"items\": {\n      \"properties\": {\n       \"delivery\": {\n        \"description\": \"Delivery is the delivery specification for events to the subscriber This includes things like retries, DLQ, etc.\",\n        \"format\": \"textarea\",\n        \"properties\": {\n         \"backoffDelay\": {\n          \"description\": \"BackoffDelay is the delay before retrying. More information on Duration format: - https://www.iso.org/iso-8601-date-and-time-format.html - https://en.wikipedia.org/wiki/ISO_8601  For linear policy, backoff delay is backoffDelay*\\u003cnumberOfRetries\\u003e. For exponential policy, backoff delay is backoffDelay*2^\\u003cnumberOfRetries\\u003e.\",\n          \"type\": \"string\"\n         },\n         \"backoffPolicy\": {\n          \"description\": \"BackoffPolicy is the retry backoff policy (linear, exponential).\",\n          \"type\": \"string\"\n         },\n         \"deadLetterSink\": {\n          \"description\": \"DeadLetterSink is the sink receiving event that could not be sent to a destination.\",\n          \"properties\": {\n           \"ref\": {\n            \"description\": \"Ref points to an Addressable.\",\n            \"properties\": {\n             \"apiVersion\": {\n              \"description\": \"API version of the referent.\",\n              \"type\": \"string\"\n             },\n             \"kind\": {\n              \"description\": \"Kind of the referent. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds\",\n              \"type\": \"string\"\n             },\n             \"name\": {\n              \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n              \"type\": \"string\"\n             },\n             \"namespace\": {\n              \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/ This is optional field, it gets defaulted to the object holding it if left out.\",\n              \"type\": \"string\"\n             }\n            },\n            \"type\": \"object\"\n           },\n           \"uri\": {\n            \"description\": \"URI can be an absolute URL(non-empty scheme and non-empty host) pointing to the target or a relative URI. Relative URIs will be resolved using the base URI retrieved from Ref.\",\n            \"type\": \"string\"\n           }\n          },\n          \"type\": \"object\"\n         },\n         \"retry\": {\n          \"description\": \"Retry is the minimum number of retries the sender should attempt when sending an event before moving it to the dead letter sink.\",\n          \"format\": \"int32\",\n          \"type\": \"integer\"\n         }\n        },\n        \"type\": \"string\"\n       },\n       \"ref\": {\n        \"description\": \"Ref points to an Addressable.\",\n        \"properties\": {\n         \"apiVersion\": {\n          \"description\": \"API version of the referent.\",\n          \"type\": \"string\"\n         },\n         \"kind\": {\n          \"description\": \"Kind of the referent. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds\",\n          \"type\": \"string\"\n         },\n         \"name\": {\n          \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n          \"type\": \"string\"\n         },\n         \"namespace\": {\n          \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/ This is optional field, it gets defaulted to the object holding it if left out.\",\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"uri\": {\n        \"description\": \"URI can be an absolute URL(non-empty scheme and non-empty host) pointing to the target or a relative URI. Relative URIs will be resolved using the base URI retrieved from Ref.\",\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Sequence\",\n \"type\": \"object\"\n}",

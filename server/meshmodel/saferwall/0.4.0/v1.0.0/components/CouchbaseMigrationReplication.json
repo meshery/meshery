@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "CouchbaseMigrationReplication",
    "schema": "{\n \"description\": \"The CouchbaseScopeMigration resource represents the use of the special migration mapping within XDCR to take a filtered list from the default scope and collection of the source bucket, replicate it to named scopes and collections within the target bucket. The bucket-to-bucket replication cannot duplicate any used by the CouchbaseReplication resource, as these two types of replication are mutually exclusive between buckets. https://docs.couchbase.com/server/current/learn/clusters-and-availability/xdcr-with-scopes-and-collections.html#migration\",\n \"properties\": {\n  \"migrationMapping\": {\n   \"description\": \"The migration mappings to use, should never be empty as that is just an implicit bucket-to-bucket replication then.\",\n   \"properties\": {\n    \"mappings\": {\n     \"description\": \"The migration mappings to use, should never be empty as that is just an implicit bucket-to-bucket replication then.\",\n     \"items\": {\n      \"description\": \"Indicates whether this is using migration mapping or not. This is only valid when using the default scope/collection.\",\n      \"properties\": {\n       \"filter\": {\n        \"default\": \"_default._default\",\n        \"description\": \"A filter to select from the source default scope and collection. Defaults to select everything in the default scope and collection.\",\n        \"type\": \"string\"\n       },\n       \"targetKeyspace\": {\n        \"description\": \"The destination of our migration, must be a scope and collection.\",\n        \"properties\": {\n         \"collection\": {\n          \"description\": \"The optional collection within the scope. May be empty to just work at scope level.\",\n          \"maxLength\": 251,\n          \"minLength\": 1,\n          \"pattern\": \"^(_default|[a-zA-Z0-9\\\\-][a-zA-Z0-9\\\\-%_]{0,250})$\",\n          \"type\": \"string\"\n         },\n         \"scope\": {\n          \"description\": \"The scope to use.\",\n          \"maxLength\": 251,\n          \"minLength\": 1,\n          \"pattern\": \"^(_default|[a-zA-Z0-9\\\\-][a-zA-Z0-9\\\\-%_]{0,250})$\",\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"scope\"\n        ],\n        \"type\": \"object\"\n       }\n      },\n      \"required\": [\n       \"targetKeyspace\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"mappings\"\n   ],\n   \"type\": \"object\"\n  },\n  \"spec\": {\n   \"description\": \"CouchbaseReplicationSpec allows configuration of an XDCR replication.\",\n   \"properties\": {\n    \"bucket\": {\n     \"description\": \"Bucket is the source bucket to replicate from.  This refers to the Couchbase bucket name, not the resource name of the bucket.  A bucket with this name must be defined on this cluster.  Legal bucket names have a maximum length of 100 characters and may be composed of any character from \\\"a-z\\\", \\\"A-Z\\\", \\\"0-9\\\" and \\\"-_%\\\\.\\\".\",\n     \"maxLength\": 100,\n     \"pattern\": \"^[a-zA-Z0-9-_%\\\\.]{1,100}$\",\n     \"type\": \"string\"\n    },\n    \"compressionType\": {\n     \"default\": \"Auto\",\n     \"description\": \"CompressionType is the type of compression to apply to the replication. When None, no compression will be applied to documents as they are transferred between clusters.  When Auto, Couchbase server will automatically compress documents as they are transferred to reduce bandwidth requirements. This field must be one of \\\"None\\\" or \\\"Auto\\\", defaulting to \\\"Auto\\\".\",\n     \"enum\": [\n      \"None\",\n      \"Auto\"\n     ],\n     \"type\": \"string\"\n    },\n    \"filterExpression\": {\n     \"description\": \"FilterExpression allows certain documents to be filtered out of the replication.\",\n     \"type\": \"string\"\n    },\n    \"paused\": {\n     \"description\": \"Paused allows a replication to be stopped and restarted without having to restart the replication from the beginning.\",\n     \"type\": \"boolean\"\n    },\n    \"remoteBucket\": {\n     \"description\": \"RemoteBucket is the remote bucket name to synchronize to.  This refers to the Couchbase bucket name, not the resource name of the bucket.  Legal bucket names have a maximum length of 100 characters and may be composed of any character from \\\"a-z\\\", \\\"A-Z\\\", \\\"0-9\\\" and \\\"-_%\\\\.\\\".\",\n     \"maxLength\": 100,\n     \"pattern\": \"^[a-zA-Z0-9-_%\\\\.]{1,100}$\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"bucket\",\n    \"remoteBucket\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"migrationMapping\",\n  \"spec\"\n ],\n \"title\": \"Couchbase Migration Replication\",\n \"type\": \"object\"\n}",

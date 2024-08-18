@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "MeshTCPRoute",
    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Spec is the specification of the Kuma MeshTCPRoute resource.\",\n   \"properties\": {\n    \"targetRef\": {\n     \"description\": \"TargetRef is a reference to the resource the policy takes an effect on. The resource could be either a real store object or virtual resource defined in-place.\",\n     \"properties\": {\n      \"kind\": {\n       \"description\": \"Kind of the referenced resource\",\n       \"enum\": [\n        \"Mesh\",\n        \"MeshSubset\",\n        \"MeshGateway\",\n        \"MeshService\",\n        \"MeshServiceSubset\",\n        \"MeshHTTPRoute\"\n       ],\n       \"type\": \"string\"\n      },\n      \"mesh\": {\n       \"description\": \"Mesh is reserved for future use to identify cross mesh resources.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referenced resource. Can only be used with kinds: `MeshService`, `MeshServiceSubset` and `MeshGatewayRoute`\",\n       \"type\": \"string\"\n      },\n      \"tags\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"Tags used to select a subset of proxies by tags. Can only be used with kinds `MeshSubset` and `MeshServiceSubset`\",\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"to\": {\n     \"description\": \"To list makes a match between the consumed services and corresponding configurations\",\n     \"items\": {\n      \"properties\": {\n       \"rules\": {\n        \"description\": \"Rules contains the routing rules applies to a combination of top-level targetRef and the targetRef in this entry.\",\n        \"items\": {\n         \"properties\": {\n          \"default\": {\n           \"description\": \"Default holds routing rules that can be merged with rules from other policies.\",\n           \"properties\": {\n            \"backendRefs\": {\n             \"items\": {\n              \"description\": \"BackendRef defines where to forward traffic.\",\n              \"properties\": {\n               \"kind\": {\n                \"description\": \"Kind of the referenced resource\",\n                \"enum\": [\n                 \"Mesh\",\n                 \"MeshSubset\",\n                 \"MeshGateway\",\n                 \"MeshService\",\n                 \"MeshServiceSubset\",\n                 \"MeshHTTPRoute\"\n                ],\n                \"type\": \"string\"\n               },\n               \"mesh\": {\n                \"description\": \"Mesh is reserved for future use to identify cross mesh resources.\",\n                \"type\": \"string\"\n               },\n               \"name\": {\n                \"description\": \"Name of the referenced resource. Can only be used with kinds: `MeshService`, `MeshServiceSubset` and `MeshGatewayRoute`\",\n                \"type\": \"string\"\n               },\n               \"tags\": {\n                \"additionalProperties\": {\n                 \"type\": \"string\"\n                },\n                \"description\": \"Tags used to select a subset of proxies by tags. Can only be used with kinds `MeshSubset` and `MeshServiceSubset`\",\n                \"type\": \"object\"\n               },\n               \"weight\": {\n                \"default\": 1,\n                \"minimum\": 0,\n                \"type\": \"integer\"\n               }\n              },\n              \"type\": \"object\"\n             },\n             \"minItems\": 1,\n             \"type\": \"array\"\n            }\n           },\n           \"required\": [\n            \"backendRefs\"\n           ],\n           \"type\": \"object\"\n          }\n         },\n         \"required\": [\n          \"default\"\n         ],\n         \"type\": \"object\"\n        },\n        \"maxItems\": 1,\n        \"type\": \"array\"\n       },\n       \"targetRef\": {\n        \"description\": \"TargetRef is a reference to the resource that represents a group of destinations.\",\n        \"properties\": {\n         \"kind\": {\n          \"description\": \"Kind of the referenced resource\",\n          \"enum\": [\n           \"Mesh\",\n           \"MeshSubset\",\n           \"MeshGateway\",\n           \"MeshService\",\n           \"MeshServiceSubset\",\n           \"MeshHTTPRoute\"\n          ],\n          \"type\": \"string\"\n         },\n         \"mesh\": {\n          \"description\": \"Mesh is reserved for future use to identify cross mesh resources.\",\n          \"type\": \"string\"\n         },\n         \"name\": {\n          \"description\": \"Name of the referenced resource. Can only be used with kinds: `MeshService`, `MeshServiceSubset` and `MeshGatewayRoute`\",\n          \"type\": \"string\"\n         },\n         \"tags\": {\n          \"additionalProperties\": {\n           \"type\": \"string\"\n          },\n          \"description\": \"Tags used to select a subset of proxies by tags. Can only be used with kinds `MeshSubset` and `MeshServiceSubset`\",\n          \"type\": \"object\"\n         }\n        },\n        \"type\": \"object\"\n       }\n      },\n      \"required\": [\n       \"targetRef\"\n      ],\n      \"type\": \"object\"\n     },\n     \"minItems\": 1,\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"targetRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Mesh TCP Route\",\n \"type\": \"object\"\n}",

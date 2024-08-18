@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "NetworkServicesTCPRoute",
    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"description\": {\n     \"description\": \"Optional. A free-text description of the resource. Max length 1024 characters.\",\n     \"type\": \"string\"\n    },\n    \"gateways\": {\n     \"items\": {\n      \"oneOf\": [\n       {\n        \"not\": {\n         \"required\": [\n          \"external\"\n         ]\n        },\n        \"required\": [\n         \"name\"\n        ]\n       },\n       {\n        \"not\": {\n         \"anyOf\": [\n          {\n           \"required\": [\n            \"name\"\n           ]\n          },\n          {\n           \"required\": [\n            \"namespace\"\n           ]\n          }\n         ]\n        },\n        \"required\": [\n         \"external\"\n        ]\n       }\n      ],\n      \"properties\": {\n       \"external\": {\n        \"description\": \"Allowed value: The `selfLink` field of a `NetworkServicesGateway` resource.\",\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n        \"type\": \"string\"\n       },\n       \"namespace\": {\n        \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"location\": {\n     \"description\": \"Immutable. The location for the resource\",\n     \"type\": \"string\"\n    },\n    \"meshes\": {\n     \"items\": {\n      \"oneOf\": [\n       {\n        \"not\": {\n         \"required\": [\n          \"external\"\n         ]\n        },\n        \"required\": [\n         \"name\"\n        ]\n       },\n       {\n        \"not\": {\n         \"anyOf\": [\n          {\n           \"required\": [\n            \"name\"\n           ]\n          },\n          {\n           \"required\": [\n            \"namespace\"\n           ]\n          }\n         ]\n        },\n        \"required\": [\n         \"external\"\n        ]\n       }\n      ],\n      \"properties\": {\n       \"external\": {\n        \"description\": \"Allowed value: The `selfLink` field of a `NetworkServicesMesh` resource.\",\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n        \"type\": \"string\"\n       },\n       \"namespace\": {\n        \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"projectRef\": {\n     \"description\": \"Immutable. The Project that this resource belongs to.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"The project for the resource\\n\\nAllowed value: The Google Cloud resource name of a `Project` resource (format: `projects/{{name}}`).\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    },\n    \"rules\": {\n     \"description\": \"Required. Rules that define how traffic is routed and handled. At least one RouteRule must be supplied. If there are multiple rules then the action taken will be the first rule to match.\",\n     \"items\": {\n      \"properties\": {\n       \"action\": {\n        \"description\": \"Required. The detailed rule defining how to route matched traffic.\",\n        \"properties\": {\n         \"destinations\": {\n          \"description\": \"Optional. The destination services to which traffic should be forwarded. At least one destination service is required.\",\n          \"items\": {\n           \"properties\": {\n            \"serviceRef\": {\n             \"oneOf\": [\n              {\n               \"not\": {\n                \"required\": [\n                 \"external\"\n                ]\n               },\n               \"required\": [\n                \"name\"\n               ]\n              },\n              {\n               \"not\": {\n                \"anyOf\": [\n                 {\n                  \"required\": [\n                   \"name\"\n                  ]\n                 },\n                 {\n                  \"required\": [\n                   \"namespace\"\n                  ]\n                 }\n                ]\n               },\n               \"required\": [\n                \"external\"\n               ]\n              }\n             ],\n             \"properties\": {\n              \"external\": {\n               \"description\": \"Required. The URL of a BackendService to route traffic to.\\n\\nAllowed value: The Google Cloud resource name of a `ComputeBackendService` resource (format: `projects/{{project}}/global/backendServices/{{name}}`).\",\n               \"type\": \"string\"\n              },\n              \"name\": {\n               \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n               \"type\": \"string\"\n              },\n              \"namespace\": {\n               \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n               \"type\": \"string\"\n              }\n             },\n             \"type\": \"object\"\n            },\n            \"weight\": {\n             \"description\": \"Optional. Specifies the proportion of requests forwarded to the backend referenced by the serviceName field. This is computed as: weight/Sum(weights in this destination list). For non-zero values, there may be some epsilon from the exact proportion defined here depending on the precision an implementation supports. If only one serviceName is specified and it has a weight greater than 0, 100% of the traffic is forwarded to that backend. If weights are specified for any one service name, they need to be specified for all of them. If weights are unspecified for all services, then, traffic is distributed in equal proportions to all of them.\",\n             \"format\": \"int64\",\n             \"type\": \"integer\"\n            }\n           },\n           \"required\": [\n            \"serviceRef\"\n           ],\n           \"type\": \"object\"\n          },\n          \"type\": \"array\"\n         },\n         \"originalDestination\": {\n          \"description\": \"Optional. If true, Router will use the destination IP and port of the original connection as the destination of the request. Default is false.\",\n          \"type\": \"boolean\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"matches\": {\n        \"description\": \"Optional. RouteMatch defines the predicate used to match requests to a given action. Multiple match types are “OR”ed for evaluation. If no routeMatch field is specified, this rule will unconditionally match traffic.\",\n        \"items\": {\n         \"properties\": {\n          \"address\": {\n           \"description\": \"Required. Must be specified in the CIDR range format. A CIDR range consists of an IP Address and a prefix length to construct the subnet mask. By default, the prefix length is 32 (i.e. matches a single IP address). Only IPV4 addresses are supported. Examples: “10.0.0.1” - matches against this exact IP address. “10.0.0.0/8\\\" - matches against any IP address within the 10.0.0.0 subnet and 255.255.255.0 mask. \\\"0.0.0.0/0\\\" - matches against any IP address'.\",\n           \"type\": \"string\"\n          },\n          \"port\": {\n           \"description\": \"Required. Specifies the destination port to match against.\",\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"address\",\n          \"port\"\n         ],\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       }\n      },\n      \"required\": [\n       \"action\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"location\",\n    \"projectRef\",\n    \"rules\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Network Services TCP Route\",\n \"type\": \"object\"\n}",

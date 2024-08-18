@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "PulsarSink",
    "schema": "{\n \"description\": \"PulsarSink is the Schema for the pulsar functions API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"PulsarSinkSpec defines the desired state of PulsarSink\",\n   \"properties\": {\n    \"archive\": {\n     \"description\": \"Archive is the archive of the PulsarSink\",\n     \"properties\": {\n      \"url\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"autoAck\": {\n     \"description\": \"AutoAck is the flag to enable or disable the auto ack\",\n     \"type\": \"boolean\"\n    },\n    \"className\": {\n     \"description\": \"ClassName is the class name of the PulsarSink\",\n     \"type\": \"string\"\n    },\n    \"cleanupSubscription\": {\n     \"description\": \"CleanupSubscription is the flag to enable or disable the cleanup of subscription\",\n     \"type\": \"boolean\"\n    },\n    \"configs\": {\n     \"description\": \"Configs is the map of configs of the PulsarSink\",\n     \"format\": \"textarea\",\n     \"type\": \"string\"\n    },\n    \"connectionRef\": {\n     \"description\": \"ConnectionRef is the reference to the PulsarConnection resource\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of the referent.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\\nTODO: Add other useful fields. apiVersion, kind, uid?\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    },\n    \"customRuntimeOptions\": {\n     \"description\": \"CustomRuntimeOptions is the custom runtime options of the PulsarSink\",\n     \"format\": \"textarea\",\n     \"type\": \"string\"\n    },\n    \"deadLetterTopic\": {\n     \"description\": \"DeadLetterTopic is the dead letter topic of the PulsarSink\",\n     \"type\": \"string\"\n    },\n    \"inputSpecs\": {\n     \"additionalProperties\": {\n      \"description\": \"ConsumerConfig represents the configuration for the consumer of the pulsar functions and connectors\",\n      \"properties\": {\n       \"consumerProperties\": {\n        \"additionalProperties\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"object\"\n       },\n       \"cryptoConfig\": {\n        \"description\": \"CryptoConfig represents the configuration for the crypto of the pulsar functions and connectors\",\n        \"properties\": {\n         \"consumerCryptoFailureAction\": {\n          \"type\": \"string\"\n         },\n         \"cryptoKeyReaderClassName\": {\n          \"type\": \"string\"\n         },\n         \"cryptoKeyReaderConfig\": {\n          \"additionalProperties\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"object\"\n         },\n         \"encryptionKeys\": {\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         },\n         \"producerCryptoFailureAction\": {\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"consumerCryptoFailureAction\",\n         \"cryptoKeyReaderClassName\",\n         \"cryptoKeyReaderConfig\",\n         \"encryptionKeys\",\n         \"producerCryptoFailureAction\"\n        ],\n        \"type\": \"object\"\n       },\n       \"poolMessages\": {\n        \"type\": \"boolean\"\n       },\n       \"receiverQueueSize\": {\n        \"type\": \"integer\"\n       },\n       \"regexPattern\": {\n        \"type\": \"boolean\"\n       },\n       \"schemaProperties\": {\n        \"additionalProperties\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"object\"\n       },\n       \"schemaType\": {\n        \"type\": \"string\"\n       },\n       \"serdeClassName\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"description\": \"InputSpecs is the map of input specs of the PulsarSink\",\n     \"type\": \"object\"\n    },\n    \"inputs\": {\n     \"description\": \"Inputs is the list of inputs of the PulsarSink\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"lifecyclePolicy\": {\n     \"description\": \"PulsarResourceLifeCyclePolicy indicates whether it will keep or delete the resource\\nin pulsar cluster after resource is deleted by controller\\nKeepAfterDeletion or CleanUpAfterDeletion\",\n     \"enum\": [\n      \"CleanUpAfterDeletion\",\n      \"KeepAfterDeletion\"\n     ],\n     \"type\": \"string\"\n    },\n    \"maxMessageRetries\": {\n     \"description\": \"MaxMessageRetries is the max message retries of the PulsarSink\",\n     \"type\": \"integer\"\n    },\n    \"name\": {\n     \"description\": \"Name is the name of the PulsarSink\",\n     \"type\": \"string\"\n    },\n    \"namespace\": {\n     \"description\": \"Namespace is the namespace of the PulsarSink\",\n     \"type\": \"string\"\n    },\n    \"negativeAckRedeliveryDelayMs\": {\n     \"description\": \"NegativeAckRedeliveryDelayMs is the negative ack redelivery delay in milliseconds of the PulsarSink\",\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"parallelism\": {\n     \"description\": \"Parallelism is the parallelism of the PulsarSink\",\n     \"type\": \"integer\"\n    },\n    \"processingGuarantees\": {\n     \"description\": \"ProcessingGuarantees is the processing guarantees of the PulsarSink\",\n     \"type\": \"string\"\n    },\n    \"resources\": {\n     \"description\": \"Resources is the resource requirements for the PulsarSink\",\n     \"properties\": {\n      \"cpu\": {\n       \"type\": \"string\"\n      },\n      \"disk\": {\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"ram\": {\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      }\n     },\n     \"required\": [\n      \"cpu\",\n      \"disk\",\n      \"ram\"\n     ],\n     \"type\": \"object\"\n    },\n    \"retainKeyOrdering\": {\n     \"description\": \"RetainKeyOrdering is the flag to enable or disable the retain key ordering\",\n     \"type\": \"boolean\"\n    },\n    \"retainOrdering\": {\n     \"description\": \"RetainOrdering is the flag to enable or disable the retain ordering\",\n     \"type\": \"boolean\"\n    },\n    \"runtimeFlags\": {\n     \"description\": \"RuntimeFlags is the runtime flags of the PulsarSink\",\n     \"type\": \"string\"\n    },\n    \"secrets\": {\n     \"additionalProperties\": {\n      \"description\": \"SecretKeyRef indicates a secret name and key\",\n      \"properties\": {\n       \"key\": {\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"key\",\n       \"name\"\n      ],\n      \"type\": \"object\"\n     },\n     \"description\": \"Secrets is the map of secrets of the PulsarSink\",\n     \"type\": \"object\"\n    },\n    \"sinkType\": {\n     \"description\": \"SinkType is the type of the PulsarSink\",\n     \"type\": \"string\"\n    },\n    \"sourceSubscriptionName\": {\n     \"description\": \"SourceSubscriptionName is the source subscription name of the PulsarSink\",\n     \"type\": \"string\"\n    },\n    \"sourceSubscriptionPosition\": {\n     \"description\": \"SourceSubscriptionPosition is the source subscription position of the PulsarSink\",\n     \"type\": \"string\"\n    },\n    \"tenant\": {\n     \"description\": \"Tenant is the tenant of the PulsarSink\",\n     \"type\": \"string\"\n    },\n    \"timeoutMs\": {\n     \"description\": \"TimeoutMs is the timeout in milliseconds for the PulsarSink\",\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"topicToSchemaProperties\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"TopicToSchemaProperties is the map of topic to schema properties of the PulsarSink\",\n     \"type\": \"object\"\n    },\n    \"topicToSchemaType\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"TopicToSchemaType is the map of topic to schema type of the PulsarSink\",\n     \"type\": \"object\"\n    },\n    \"topicToSerdeClassName\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"TopicToSerdeClassName is the map of topic to serde class name of the PulsarSink\",\n     \"type\": \"object\"\n    },\n    \"topicsPattern\": {\n     \"description\": \"TopicsPattern is the pattern of topics to consume from Pulsar\",\n     \"type\": \"string\"\n    },\n    \"transformFunction\": {\n     \"description\": \"TransformFunction is the transform function of the PulsarSink\",\n     \"type\": \"string\"\n    },\n    \"transformFunctionClassName\": {\n     \"description\": \"TransformFunctionClassName is the transform function class name of the PulsarSink\",\n     \"type\": \"string\"\n    },\n    \"transformFunctionConfig\": {\n     \"description\": \"TransformFunctionConfig is the transform function config of the PulsarSink\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"connectionRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Pulsar Sink\",\n \"type\": \"object\"\n}",

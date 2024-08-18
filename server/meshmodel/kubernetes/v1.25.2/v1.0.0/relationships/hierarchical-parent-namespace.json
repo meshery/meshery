@@ -24,6 +24,7 @@
         },
         "metadata": {}
     },
+    "status": "enabled",
     "selectors": [
         {
             "allow": {
@@ -37,7 +38,7 @@
                             "patchStrategy": "replace",
                             "mutatedRef": [
                                 [
-                                    "namespace"
+                                    "configuration", "metadata", "namespace"
                                 ]
                             ],
                             "description": "Namespace configuration to be applied to all namespaced resources."

@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "AlloyDBInstance",
    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"oneOf\": [\n    {\n     \"required\": [\n      \"instanceType\"\n     ]\n    },\n    {\n     \"required\": [\n      \"instanceTypeRef\"\n     ]\n    }\n   ],\n   \"properties\": {\n    \"annotations\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"Annotations to allow client tools to store small amount of arbitrary data. This is distinct from labels.\",\n     \"type\": \"object\"\n    },\n    \"availabilityType\": {\n     \"description\": \"'Availability type of an Instance. Defaults to REGIONAL for both primary and read instances.\\nNote that primary and read instances can have different availability types.\\nOnly READ_POOL instance supports ZONAL type. Users can't specify the zone for READ_POOL instance.\\nZone is automatically chosen from the list of zones in the region specified.\\nRead pool of size 1 can only have zonal availability. Read pools with node count of 2 or more\\ncan have regional availability (nodes are present in 2 or more zones in a region).' Possible values: [\\\"AVAILABILITY_TYPE_UNSPECIFIED\\\", \\\"ZONAL\\\", \\\"REGIONAL\\\"].\",\n     \"type\": \"string\"\n    },\n    \"clusterRef\": {\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `name` field of an `AlloyDBCluster` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"databaseFlags\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"Database flags. Set at instance level. * They are copied from primary instance on read instance creation. * Read instances can set new or override existing flags that are relevant for reads, e.g. for enabling columnar cache on a read instance. Flags set on read instance may or may not be present on primary.\",\n     \"type\": \"object\"\n    },\n    \"displayName\": {\n     \"description\": \"User-settable and human-readable display name for the Instance.\",\n     \"type\": \"string\"\n    },\n    \"gceZone\": {\n     \"description\": \"The Compute Engine zone that the instance should serve from, per https://cloud.google.com/compute/docs/regions-zones This can ONLY be specified for ZONAL instances. If present for a REGIONAL instance, an error will be thrown. If this is absent for a ZONAL instance, instance is created in a random zone with available capacity.\",\n     \"type\": \"string\"\n    },\n    \"instanceType\": {\n     \"description\": \"We recommend that you use `instanceTypeRef` instead.\\nThe type of the instance. Possible values: [PRIMARY, READ_POOL, SECONDARY]\",\n     \"type\": \"string\"\n    },\n    \"instanceTypeRef\": {\n     \"description\": \"The type of instance.\\nPossible values: [\\\"PRIMARY\\\", \\\"READ_POOL\\\", \\\"SECONDARY\\\"]\\nFor PRIMARY and SECONDARY instances, set the value to refer to the name of the associated cluster.\\nThis is recommended because the instance type of primary and secondary instances is tied to the cluster type of the associated cluster.\\nIf the secondary cluster is promoted to primary cluster, then the associated secondary instance also becomes primary instance.\\nExample:\\ninstanceTypeRef:\\n  name: clusterName\\nFor instances of type READ_POOL, set the value using external keyword.\\nExample:\\ninstanceTypeRef:\\n  external: READ_POOL\\nIf the instance type is SECONDARY, the delete instance operation does not delete the secondary instance but abandons it instead.\\nUse deletionPolicy = \\\"FORCE\\\" in the associated secondary cluster and delete the cluster forcefully to delete the secondary cluster as well its associated secondary instance.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `clusterType` field of an `AlloyDBCluster` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"machineConfig\": {\n     \"description\": \"Configurations for the machines that host the underlying database engine.\",\n     \"properties\": {\n      \"cpuCount\": {\n       \"description\": \"The number of CPU's in the VM instance.\",\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"networkConfig\": {\n     \"description\": \"Instance level network configuration.\",\n     \"properties\": {\n      \"authorizedExternalNetworks\": {\n       \"description\": \"A list of external networks authorized to access this instance. This field is only allowed to be set when 'enable_public_ip' is set to true.\",\n       \"items\": {\n        \"properties\": {\n         \"cidrRange\": {\n          \"description\": \"CIDR range for one authorized network of the instance.\",\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"enablePublicIp\": {\n       \"description\": \"Enabling public ip for the instance. If a user wishes to disable this, please also clear the list of the authorized external networks set on the same instance.\",\n       \"type\": \"boolean\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"readPoolConfig\": {\n     \"description\": \"Read pool specific config. If the instance type is READ_POOL, this configuration must be provided.\",\n     \"properties\": {\n      \"nodeCount\": {\n       \"description\": \"Read capacity, i.e. number of nodes in a read pool instance.\",\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The instanceId of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"clusterRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Alloy DB Instance\",\n \"type\": \"object\"\n}",

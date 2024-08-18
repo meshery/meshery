@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "Node",
    "schema": "{\"description\":\"Node is a worker node in Kubernetes. Each node will have a unique identifier in the cache (i.e. in etcd).\",\"properties\":{\"spec\":{\"allOf\":[{\"description\":\"NodeSpec describes the attributes that a node is created with.\",\"properties\":{\"configSource\":{\"allOf\":[{\"description\":\"NodeConfigSource specifies a source of node configuration. Exactly one subfield (excluding metadata) must be non-nil. This API is deprecated since 1.22\",\"properties\":{\"configMap\":{\"allOf\":[{\"description\":\"ConfigMapNodeConfigSource contains the information to reference a ConfigMap as a config source for the Node. This API is deprecated since 1.22: https://git.k8s.io/enhancements/keps/sig-node/281-dynamic-kubelet-configuration\",\"properties\":{\"kubeletConfigKey\":{\"default\":\"\",\"description\":\"KubeletConfigKey declares which key of the referenced ConfigMap corresponds to the KubeletConfiguration structure This field is required in all cases.\",\"type\":\"string\"},\"name\":{\"default\":\"\",\"description\":\"Name is the metadata.name of the referenced ConfigMap. This field is required in all cases.\",\"type\":\"string\"},\"namespace\":{\"default\":\"\",\"description\":\"Namespace is the metadata.namespace of the referenced ConfigMap. This field is required in all cases.\",\"type\":\"string\"},\"resourceVersion\":{\"description\":\"ResourceVersion is the metadata.ResourceVersion of the referenced ConfigMap. This field is forbidden in Node.Spec, and required in Node.Status.\",\"type\":\"string\"},\"uid\":{\"description\":\"UID is the metadata.UID of the referenced ConfigMap. This field is forbidden in Node.Spec, and required in Node.Status.\",\"type\":\"string\"}},\"required\":[\"namespace\",\"name\",\"kubeletConfigKey\"],\"type\":\"object\"}],\"description\":\"ConfigMap is a reference to a Node's ConfigMap\"}},\"type\":\"object\"}],\"description\":\"Deprecated: Previously used to specify the source of the node's configuration for the DynamicKubeletConfig feature. This feature is removed from Kubelets as of 1.24 and will be fully removed in 1.26.\"},\"externalID\":{\"description\":\"Deprecated. Not all kubelets will set this field. Remove field after 1.13. see: https://issues.k8s.io/61966\",\"type\":\"string\"},\"podCIDR\":{\"description\":\"PodCIDR represents the pod IP range assigned to the node.\",\"type\":\"string\"},\"podCIDRs\":{\"description\":\"podCIDRs represents the IP ranges assigned to the node for usage by Pods on that node. If this field is specified, the 0th entry must match the podCIDR field. It may contain at most 1 value for each of IPv4 and IPv6.\",\"items\":{\"default\":\"\",\"type\":\"string\"},\"type\":\"array\",\"x-kubernetes-patch-strategy\":\"merge\"},\"providerID\":{\"description\":\"ID of the node assigned by the cloud provider in the format: \\u003cProviderName\\u003e://\\u003cProviderSpecificNodeID\\u003e\",\"type\":\"string\"},\"taints\":{\"description\":\"If specified, the node's taints.\",\"items\":{\"allOf\":[{\"description\":\"The node this Taint is attached to has the \\\"effect\\\" on any pod that does not tolerate the Taint.\",\"properties\":{\"effect\":{\"default\":\"\",\"description\":\"Required. The effect of the taint on pods that do not tolerate the taint. Valid effects are NoSchedule, PreferNoSchedule and NoExecute.\\n\\nPossible enum values:\\n - `\\\"NoExecute\\\"` Evict any already-running pods that do not tolerate the taint. Currently enforced by NodeController.\\n - `\\\"NoSchedule\\\"` Do not allow new pods to schedule onto the node unless they tolerate the taint, but allow all pods submitted to Kubelet without going through the scheduler to start, and allow all already-running pods to continue running. Enforced by the scheduler.\\n - `\\\"PreferNoSchedule\\\"` Like TaintEffectNoSchedule, but the scheduler tries not to schedule new pods onto the node, rather than prohibiting new pods from scheduling onto the node entirely. Enforced by the scheduler.\",\"enum\":[\"NoExecute\",\"NoSchedule\",\"PreferNoSchedule\"],\"type\":\"string\"},\"key\":{\"default\":\"\",\"description\":\"Required. The taint key to be applied to a node.\",\"type\":\"string\"},\"timeAdded\":{\"allOf\":[{\"description\":\"Time is a wrapper around time.Time which supports correct marshaling to YAML and JSON.  Wrappers are provided for many of the factory methods that the time package offers.\",\"format\":\"date-time\",\"type\":\"string\"}],\"description\":\"TimeAdded represents the time at which the taint was added. It is only written for NoExecute taints.\"},\"value\":{\"description\":\"The taint value corresponding to the taint key.\",\"type\":\"string\"}},\"required\":[\"key\",\"effect\"],\"type\":\"object\"}],\"default\":{}},\"type\":\"array\"},\"unschedulable\":{\"description\":\"Unschedulable controls node schedulability of new pods. By default, node is schedulable. More info: https://kubernetes.io/docs/concepts/nodes/node/#manual-node-administration\",\"type\":\"boolean\"}},\"type\":\"object\"}],\"default\":{},\"description\":\"Spec defines the behavior of a node. https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status\"}},\"type\":\"object\",\"x-kubernetes-group-version-kind\":[{\"group\":\"\",\"kind\":\"Node\",\"version\":\"v1\"}]}",

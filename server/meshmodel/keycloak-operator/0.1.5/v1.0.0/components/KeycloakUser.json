@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "KeycloakUser",
    "schema": "{\n \"description\": \"KeycloakUser is the Schema for the keycloakusers API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"KeycloakUserSpec defines the desired state of KeycloakUser.\",\n   \"properties\": {\n    \"realmSelector\": {\n     \"description\": \"Selector for looking up KeycloakRealm Custom Resources.\",\n     \"properties\": {\n      \"matchExpressions\": {\n       \"description\": \"matchExpressions is a list of label selector requirements. The requirements are ANDed.\",\n       \"items\": {\n        \"description\": \"A label selector requirement is a selector that contains values, a key, and an operator that relates the key and values.\",\n        \"properties\": {\n         \"key\": {\n          \"description\": \"key is the label key that the selector applies to.\",\n          \"type\": \"string\"\n         },\n         \"operator\": {\n          \"description\": \"operator represents a key's relationship to a set of values. Valid operators are In, NotIn, Exists and DoesNotExist.\",\n          \"type\": \"string\"\n         },\n         \"values\": {\n          \"description\": \"values is an array of string values. If the operator is In or NotIn, the values array must be non-empty. If the operator is Exists or DoesNotExist, the values array must be empty. This array is replaced during a strategic merge patch.\",\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         }\n        },\n        \"required\": [\n         \"key\",\n         \"operator\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"matchLabels\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels map is equivalent to an element of matchExpressions, whose key field is \\\"key\\\", the operator is \\\"In\\\", and the values array contains only \\\"value\\\". The requirements are ANDed.\",\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"user\": {\n     \"description\": \"Keycloak User REST object.\",\n     \"properties\": {\n      \"attributes\": {\n       \"additionalProperties\": {\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       },\n       \"description\": \"A set of Attributes.\",\n       \"type\": \"object\"\n      },\n      \"clientRoles\": {\n       \"additionalProperties\": {\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       },\n       \"description\": \"A set of Client Roles.\",\n       \"type\": \"object\"\n      },\n      \"credentials\": {\n       \"description\": \"A set of Credentials.\",\n       \"items\": {\n        \"properties\": {\n         \"temporary\": {\n          \"description\": \"True if this credential object is temporary.\",\n          \"type\": \"boolean\"\n         },\n         \"type\": {\n          \"description\": \"Credential Type.\",\n          \"type\": \"string\"\n         },\n         \"value\": {\n          \"description\": \"Credential Value.\",\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"email\": {\n       \"description\": \"Email.\",\n       \"type\": \"string\"\n      },\n      \"emailVerified\": {\n       \"description\": \"True if email has already been verified.\",\n       \"type\": \"boolean\"\n      },\n      \"enabled\": {\n       \"description\": \"User enabled flag.\",\n       \"type\": \"boolean\"\n      },\n      \"federatedIdentities\": {\n       \"description\": \"A set of Federated Identities.\",\n       \"items\": {\n        \"properties\": {\n         \"identityProvider\": {\n          \"description\": \"Federated Identity Provider.\",\n          \"type\": \"string\"\n         },\n         \"userId\": {\n          \"description\": \"Federated Identity User ID.\",\n          \"type\": \"string\"\n         },\n         \"userName\": {\n          \"description\": \"Federated Identity User Name.\",\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"firstName\": {\n       \"description\": \"First Name.\",\n       \"type\": \"string\"\n      },\n      \"groups\": {\n       \"description\": \"A set of Groups.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"id\": {\n       \"description\": \"User ID.\",\n       \"type\": \"string\"\n      },\n      \"lastName\": {\n       \"description\": \"Last Name.\",\n       \"type\": \"string\"\n      },\n      \"realmRoles\": {\n       \"description\": \"A set of Realm Roles.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"requiredActions\": {\n       \"description\": \"A set of Required Actions.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"username\": {\n       \"description\": \"User Name.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"user\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Keycloak User\",\n \"type\": \"object\"\n}",

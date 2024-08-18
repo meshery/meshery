@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "NotebookInstanceLifecycleConfig",
    "schema": "{\n \"description\": \"NotebookInstanceLifecycleConfig is the Schema for the NotebookInstanceLifecycleConfigs API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"NotebookInstanceLifecycleConfigSpec defines the desired state of NotebookInstanceLifecycleConfig.\",\n   \"properties\": {\n    \"notebookInstanceLifecycleConfigName\": {\n     \"description\": \"The name of the lifecycle configuration.\",\n     \"type\": \"string\"\n    },\n    \"onCreate\": {\n     \"description\": \"A shell script that runs only once, when you create a notebook instance.\\nThe shell script must be a base64-encoded string.\",\n     \"items\": {\n      \"description\": \"Contains the notebook instance lifecycle configuration script.\\n\\n\\nEach lifecycle configuration script has a limit of 16384 characters.\\n\\n\\nThe value of the $PATH environment variable that is available to both scripts\\nis /sbin:bin:/usr/sbin:/usr/bin.\\n\\n\\nView CloudWatch Logs for notebook instance lifecycle configurations in log\\ngroup /aws/sagemaker/NotebookInstances in log stream [notebook-instance-name]/[LifecycleConfigHook].\\n\\n\\nLifecycle configuration scripts cannot run for longer than 5 minutes. If\\na script runs for longer than 5 minutes, it fails and the notebook instance\\nis not created or started.\\n\\n\\nFor information about notebook instance lifestyle configurations, see Step\\n2.1: (Optional) Customize a Notebook Instance (https://docs.aws.amazon.com/sagemaker/latest/dg/notebook-lifecycle-config.html).\",\n      \"properties\": {\n       \"content\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"onStart\": {\n     \"description\": \"A shell script that runs every time you start a notebook instance, including\\nwhen you create the notebook instance. The shell script must be a base64-encoded\\nstring.\",\n     \"items\": {\n      \"description\": \"Contains the notebook instance lifecycle configuration script.\\n\\n\\nEach lifecycle configuration script has a limit of 16384 characters.\\n\\n\\nThe value of the $PATH environment variable that is available to both scripts\\nis /sbin:bin:/usr/sbin:/usr/bin.\\n\\n\\nView CloudWatch Logs for notebook instance lifecycle configurations in log\\ngroup /aws/sagemaker/NotebookInstances in log stream [notebook-instance-name]/[LifecycleConfigHook].\\n\\n\\nLifecycle configuration scripts cannot run for longer than 5 minutes. If\\na script runs for longer than 5 minutes, it fails and the notebook instance\\nis not created or started.\\n\\n\\nFor information about notebook instance lifestyle configurations, see Step\\n2.1: (Optional) Customize a Notebook Instance (https://docs.aws.amazon.com/sagemaker/latest/dg/notebook-lifecycle-config.html).\",\n      \"properties\": {\n       \"content\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"notebookInstanceLifecycleConfigName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Notebook Instance Lifecycle Config\",\n \"type\": \"object\"\n}",

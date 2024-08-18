@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "Workshop",
    "schema": "{\n \"description\": \"Workshop is the Schema for the workshops API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"WorkshopSpec defines the desired state of Workshop\",\n   \"properties\": {\n    \"infrastructure\": {\n     \"description\": \"InfrastructureSpec ...\",\n     \"properties\": {\n      \"certManager\": {\n       \"description\": \"CertManagerSpec ...\",\n       \"properties\": {\n        \"enabled\": {\n         \"type\": \"boolean\"\n        },\n        \"operatorHub\": {\n         \"description\": \"OperatorHubSpec ...\",\n         \"properties\": {\n          \"channel\": {\n           \"type\": \"string\"\n          },\n          \"clusterServiceVersion\": {\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"channel\"\n         ],\n         \"type\": \"object\"\n        }\n       },\n       \"required\": [\n        \"enabled\",\n        \"operatorHub\"\n       ],\n       \"type\": \"object\"\n      },\n      \"codeReadyWorkspace\": {\n       \"description\": \"CodeReadyWorkspaceSpec ...\",\n       \"properties\": {\n        \"enabled\": {\n         \"type\": \"boolean\"\n        },\n        \"openshiftOAuth\": {\n         \"type\": \"boolean\"\n        },\n        \"operatorHub\": {\n         \"description\": \"OperatorHubSpec ...\",\n         \"properties\": {\n          \"channel\": {\n           \"type\": \"string\"\n          },\n          \"clusterServiceVersion\": {\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"channel\"\n         ],\n         \"type\": \"object\"\n        },\n        \"pluginRegistryImage\": {\n         \"description\": \"ImageSpec ...\",\n         \"properties\": {\n          \"name\": {\n           \"type\": \"string\"\n          },\n          \"tag\": {\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"name\",\n          \"tag\"\n         ],\n         \"type\": \"object\"\n        }\n       },\n       \"required\": [\n        \"enabled\",\n        \"openshiftOAuth\",\n        \"operatorHub\"\n       ],\n       \"type\": \"object\"\n      },\n      \"gitea\": {\n       \"description\": \"GiteaSpec ...\",\n       \"properties\": {\n        \"enabled\": {\n         \"type\": \"boolean\"\n        },\n        \"image\": {\n         \"description\": \"ImageSpec ...\",\n         \"properties\": {\n          \"name\": {\n           \"type\": \"string\"\n          },\n          \"tag\": {\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"name\",\n          \"tag\"\n         ],\n         \"type\": \"object\"\n        }\n       },\n       \"required\": [\n        \"enabled\",\n        \"image\"\n       ],\n       \"type\": \"object\"\n      },\n      \"gitops\": {\n       \"description\": \"GitOpsSpec ...\",\n       \"properties\": {\n        \"enabled\": {\n         \"type\": \"boolean\"\n        },\n        \"operatorHub\": {\n         \"description\": \"OperatorHubSpec ...\",\n         \"properties\": {\n          \"channel\": {\n           \"type\": \"string\"\n          },\n          \"clusterServiceVersion\": {\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"channel\"\n         ],\n         \"type\": \"object\"\n        }\n       },\n       \"required\": [\n        \"enabled\",\n        \"operatorHub\"\n       ],\n       \"type\": \"object\"\n      },\n      \"guide\": {\n       \"description\": \"GuideSpec ...\",\n       \"properties\": {\n        \"bookbag\": {\n         \"description\": \"BookbagSpec ...\",\n         \"properties\": {\n          \"enabled\": {\n           \"type\": \"boolean\"\n          },\n          \"image\": {\n           \"description\": \"ImageSpec ...\",\n           \"properties\": {\n            \"name\": {\n             \"type\": \"string\"\n            },\n            \"tag\": {\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"name\",\n            \"tag\"\n           ],\n           \"type\": \"object\"\n          }\n         },\n         \"required\": [\n          \"enabled\",\n          \"image\"\n         ],\n         \"type\": \"object\"\n        },\n        \"scholars\": {\n         \"description\": \"ScholarsSpec ...\",\n         \"properties\": {\n          \"enabled\": {\n           \"type\": \"boolean\"\n          },\n          \"guideURL\": {\n           \"additionalProperties\": {\n            \"type\": \"string\"\n           },\n           \"type\": \"object\"\n          }\n         },\n         \"required\": [\n          \"enabled\",\n          \"guideURL\"\n         ],\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"nexus\": {\n       \"description\": \"NexusSpec ...\",\n       \"properties\": {\n        \"enabled\": {\n         \"type\": \"boolean\"\n        },\n        \"image\": {\n         \"description\": \"ImageSpec ...\",\n         \"properties\": {\n          \"name\": {\n           \"type\": \"string\"\n          },\n          \"tag\": {\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"name\",\n          \"tag\"\n         ],\n         \"type\": \"object\"\n        }\n       },\n       \"required\": [\n        \"enabled\",\n        \"image\"\n       ],\n       \"type\": \"object\"\n      },\n      \"pipeline\": {\n       \"description\": \"PipelineSpec ...\",\n       \"properties\": {\n        \"enabled\": {\n         \"type\": \"boolean\"\n        },\n        \"operatorHub\": {\n         \"description\": \"OperatorHubSpec ...\",\n         \"properties\": {\n          \"channel\": {\n           \"type\": \"string\"\n          },\n          \"clusterServiceVersion\": {\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"channel\"\n         ],\n         \"type\": \"object\"\n        }\n       },\n       \"required\": [\n        \"enabled\",\n        \"operatorHub\"\n       ],\n       \"type\": \"object\"\n      },\n      \"project\": {\n       \"description\": \"ProjectSpec ...\",\n       \"properties\": {\n        \"enabled\": {\n         \"type\": \"boolean\"\n        },\n        \"stagingName\": {\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"enabled\",\n        \"stagingName\"\n       ],\n       \"type\": \"object\"\n      },\n      \"serverless\": {\n       \"description\": \"ServerlessSpec ...\",\n       \"properties\": {\n        \"enabled\": {\n         \"type\": \"boolean\"\n        },\n        \"operatorHub\": {\n         \"description\": \"OperatorHubSpec ...\",\n         \"properties\": {\n          \"channel\": {\n           \"type\": \"string\"\n          },\n          \"clusterServiceVersion\": {\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"channel\"\n         ],\n         \"type\": \"object\"\n        }\n       },\n       \"required\": [\n        \"enabled\",\n        \"operatorHub\"\n       ],\n       \"type\": \"object\"\n      },\n      \"serviceMesh\": {\n       \"description\": \"ServiceMeshSpec ...\",\n       \"properties\": {\n        \"elasticSearchOperatorHub\": {\n         \"description\": \"OperatorHubSpec ...\",\n         \"properties\": {\n          \"channel\": {\n           \"type\": \"string\"\n          },\n          \"clusterServiceVersion\": {\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"channel\"\n         ],\n         \"type\": \"object\"\n        },\n        \"enabled\": {\n         \"type\": \"boolean\"\n        },\n        \"jaegerOperatorHub\": {\n         \"description\": \"OperatorHubSpec ...\",\n         \"properties\": {\n          \"channel\": {\n           \"type\": \"string\"\n          },\n          \"clusterServiceVersion\": {\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"channel\"\n         ],\n         \"type\": \"object\"\n        },\n        \"kialiOperatorHub\": {\n         \"description\": \"OperatorHubSpec ...\",\n         \"properties\": {\n          \"channel\": {\n           \"type\": \"string\"\n          },\n          \"clusterServiceVersion\": {\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"channel\"\n         ],\n         \"type\": \"object\"\n        },\n        \"serviceMeshOperatorHub\": {\n         \"description\": \"OperatorHubSpec ...\",\n         \"properties\": {\n          \"channel\": {\n           \"type\": \"string\"\n          },\n          \"clusterServiceVersion\": {\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"channel\"\n         ],\n         \"type\": \"object\"\n        }\n       },\n       \"required\": [\n        \"elasticSearchOperatorHub\",\n        \"enabled\",\n        \"jaegerOperatorHub\",\n        \"kialiOperatorHub\",\n        \"serviceMeshOperatorHub\"\n       ],\n       \"type\": \"object\"\n      },\n      \"vault\": {\n       \"description\": \"VaultSpec ...\",\n       \"properties\": {\n        \"agentInjectorImage\": {\n         \"description\": \"ImageSpec ...\",\n         \"properties\": {\n          \"name\": {\n           \"type\": \"string\"\n          },\n          \"tag\": {\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"name\",\n          \"tag\"\n         ],\n         \"type\": \"object\"\n        },\n        \"enabled\": {\n         \"type\": \"boolean\"\n        },\n        \"image\": {\n         \"description\": \"ImageSpec ...\",\n         \"properties\": {\n          \"name\": {\n           \"type\": \"string\"\n          },\n          \"tag\": {\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"name\",\n          \"tag\"\n         ],\n         \"type\": \"object\"\n        }\n       },\n       \"required\": [\n        \"agentInjectorImage\",\n        \"enabled\",\n        \"image\"\n       ],\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"source\": {\n     \"description\": \"INSERT ADDITIONAL SPEC FIELDS - desired state of cluster Important: Run \\\"make\\\" to regenerate code after modifying this file\",\n     \"properties\": {\n      \"gitBranch\": {\n       \"type\": \"string\"\n      },\n      \"gitURL\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"gitBranch\",\n      \"gitURL\"\n     ],\n     \"type\": \"object\"\n    },\n    \"userDetails\": {\n     \"description\": \"UserDetailsSpec ...\",\n     \"properties\": {\n      \"defaultPassword\": {\n       \"type\": \"string\"\n      },\n      \"numberOfUsers\": {\n       \"type\": \"integer\"\n      },\n      \"userNamePrefix\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"defaultPassword\",\n      \"numberOfUsers\",\n      \"userNamePrefix\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"infrastructure\",\n    \"source\",\n    \"userDetails\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Workshop\",\n \"type\": \"object\"\n}",

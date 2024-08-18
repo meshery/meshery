@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "GlobalRateLimit",
    "schema": "{\n \"description\": \"GlobalRateLimit is the Schema for the globalratelimits API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"GlobalRateLimitSpec defines the desired state of GlobalRateLimit\",\n   \"properties\": {\n    \"config\": {\n     \"type\": \"string\"\n    },\n    \"identifier\": {\n     \"type\": \"string\"\n    },\n    \"limit\": {\n     \"properties\": {\n      \"requests_per_unit\": {\n       \"type\": \"integer\"\n      },\n      \"unit\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"matcher\": {\n     \"items\": {\n      \"properties\": {\n       \"destination_cluster\": {\n        \"type\": \"object\"\n       },\n       \"generic_key\": {\n        \"properties\": {\n         \"descriptor_key\": {\n          \"description\": \"An optional key to use in the descriptor entry. If not set it defaults to 'generic_key' as the descriptor key.\",\n          \"type\": \"string\"\n         },\n         \"descriptor_value\": {\n          \"description\": \"The value to use in the descriptor entry.\",\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"header_value_match\": {\n        \"properties\": {\n         \"descriptor_value\": {\n          \"description\": \"The value to use in the descriptor entry.\",\n          \"type\": \"string\"\n         },\n         \"expect_match\": {\n          \"description\": \"If set to true, the action will append a descriptor entry when the request matches the headers. If set to false, the action will append a descriptor entry when the request does not match the headers. The default value is true.\",\n          \"type\": \"boolean\"\n         },\n         \"headers\": {\n          \"description\": \"Specifies a set of headers that the rate limit action should match on. The action will check the request’s headers against all the specified headers in the config. A match will happen if all the headers in the config are present in the request with the same values (or based on presence if the value field is not in the config).\",\n          \"items\": {\n           \"properties\": {\n            \"contains_match\": {\n             \"type\": \"string\"\n            },\n            \"exact_match\": {\n             \"description\": \"Specifies how the header match will be performed to route the request.\",\n             \"type\": \"string\"\n            },\n            \"invert_match\": {\n             \"description\": \"If specified, the match result will be inverted before checking. Defaults to false. \\n Examples: \\n * The regex ``\\\\d{3}`` does not match the value *1234*, so it will match when inverted. * The range [-10,0) will match the value -1, so it will not match when inverted.\",\n             \"type\": \"boolean\"\n            },\n            \"name\": {\n             \"description\": \"Specifies the name of the header in the request.\",\n             \"type\": \"string\"\n            },\n            \"prefix_match\": {\n             \"type\": \"string\"\n            },\n            \"present_match\": {\n             \"type\": \"boolean\"\n            },\n            \"range_match\": {\n             \"properties\": {\n              \"end\": {\n               \"description\": \"end of the range (exclusive)\",\n               \"format\": \"int64\",\n               \"type\": \"integer\"\n              },\n              \"start\": {\n               \"description\": \"start of the range (inclusive)\",\n               \"format\": \"int64\",\n               \"type\": \"integer\"\n              }\n             },\n             \"type\": \"object\"\n            },\n            \"regex_match\": {\n             \"type\": \"string\"\n            },\n            \"safe_regex_match\": {\n             \"properties\": {\n              \"regex\": {\n               \"type\": \"string\"\n              }\n             },\n             \"type\": \"object\"\n            },\n            \"suffix_match\": {\n             \"type\": \"string\"\n            }\n           },\n           \"type\": \"object\"\n          },\n          \"type\": \"array\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"remote_address\": {\n        \"type\": \"object\"\n       },\n       \"request_headers\": {\n        \"properties\": {\n         \"descriptor_key\": {\n          \"description\": \"The key to use in the descriptor entry.\",\n          \"type\": \"string\"\n         },\n         \"header_name\": {\n          \"description\": \"The header name to be queried from the request headers. The header’s value is used to populate the value of the descriptor entry for the descriptor_key.\",\n          \"type\": \"string\"\n         },\n         \"skip_if_absent\": {\n          \"description\": \"If set to true, Envoy skips the descriptor while calling rate limiting service when header is not present in the request. By default it skips calling the rate limiting service if this header is not present in the request.\",\n          \"type\": \"boolean\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"source_cluster\": {\n        \"type\": \"object\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"selector\": {\n     \"properties\": {\n      \"route\": {\n       \"type\": \"string\"\n      },\n      \"vhost\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"vhost\"\n     ],\n     \"type\": \"object\"\n    },\n    \"shadow_mode\": {\n     \"type\": \"boolean\"\n    }\n   },\n   \"required\": [\n    \"config\",\n    \"matcher\",\n    \"selector\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Global Rate Limit\",\n \"type\": \"object\"\n}",

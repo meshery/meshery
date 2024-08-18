@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "UpdateRequest",
    "schema": "{\n \"description\": \"UpdateRequest is a request to process mutate and generate rules in background.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ResourceSpec is the information to identify the trigger resource.\",\n   \"properties\": {\n    \"context\": {\n     \"description\": \"Context ...\",\n     \"properties\": {\n      \"admissionRequestInfo\": {\n       \"description\": \"AdmissionRequestInfoObject stores the admission request and operation details\",\n       \"properties\": {\n        \"admissionRequest\": {\n         \"description\": \"AdmissionRequest describes the admission.Attributes for the admission request.\",\n         \"properties\": {\n          \"dryRun\": {\n           \"description\": \"DryRun indicates that modifications will definitely not be persisted for this request.\\nDefaults to false.\",\n           \"type\": \"boolean\"\n          },\n          \"kind\": {\n           \"description\": \"Kind is the fully-qualified type of object being submitted (for example, v1.Pod or autoscaling.v1.Scale)\",\n           \"properties\": {\n            \"group\": {\n             \"type\": \"string\"\n            },\n            \"kind\": {\n             \"type\": \"string\"\n            },\n            \"version\": {\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"group\",\n            \"kind\",\n            \"version\"\n           ],\n           \"type\": \"object\"\n          },\n          \"name\": {\n           \"description\": \"Name is the name of the object as presented in the request.  On a CREATE operation, the client may omit name and\\nrely on the server to generate the name.  If that is the case, this field will contain an empty string.\",\n           \"type\": \"string\"\n          },\n          \"namespace\": {\n           \"description\": \"Namespace is the namespace associated with the request (if any).\",\n           \"type\": \"string\"\n          },\n          \"object\": {\n           \"description\": \"Object is the object from the incoming request.\",\n           \"format\": \"textarea\",\n           \"type\": \"string\"\n          },\n          \"oldObject\": {\n           \"description\": \"OldObject is the existing object. Only populated for DELETE and UPDATE requests.\",\n           \"format\": \"textarea\",\n           \"type\": \"string\"\n          },\n          \"operation\": {\n           \"description\": \"Operation is the operation being performed. This may be different than the operation\\nrequested. e.g. a patch can result in either a CREATE or UPDATE Operation.\",\n           \"type\": \"string\"\n          },\n          \"options\": {\n           \"description\": \"Options is the operation option structure of the operation being performed.\\ne.g. `meta.k8s.io/v1.DeleteOptions` or `meta.k8s.io/v1.CreateOptions`. This may be\\ndifferent than the options the caller provided. e.g. for a patch request the performed\\nOperation might be a CREATE, in which case the Options will a\\n`meta.k8s.io/v1.CreateOptions` even though the caller provided `meta.k8s.io/v1.PatchOptions`.\",\n           \"format\": \"textarea\",\n           \"type\": \"string\"\n          },\n          \"requestKind\": {\n           \"description\": \"RequestKind is the fully-qualified type of the original API request (for example, v1.Pod or autoscaling.v1.Scale).\\nIf this is specified and differs from the value in \\\"kind\\\", an equivalent match and conversion was performed.\\n\\n\\nFor example, if deployments can be modified via apps/v1 and apps/v1beta1, and a webhook registered a rule of\\n`apiGroups:[\\\"apps\\\"], apiVersions:[\\\"v1\\\"], resources: [\\\"deployments\\\"]` and `matchPolicy: Equivalent`,\\nan API request to apps/v1beta1 deployments would be converted and sent to the webhook\\nwith `kind: {group:\\\"apps\\\", version:\\\"v1\\\", kind:\\\"Deployment\\\"}` (matching the rule the webhook registered for),\\nand `requestKind: {group:\\\"apps\\\", version:\\\"v1beta1\\\", kind:\\\"Deployment\\\"}` (indicating the kind of the original API request).\\n\\n\\nSee documentation for the \\\"matchPolicy\\\" field in the webhook configuration type for more details.\",\n           \"properties\": {\n            \"group\": {\n             \"type\": \"string\"\n            },\n            \"kind\": {\n             \"type\": \"string\"\n            },\n            \"version\": {\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"group\",\n            \"kind\",\n            \"version\"\n           ],\n           \"type\": \"object\"\n          },\n          \"requestResource\": {\n           \"description\": \"RequestResource is the fully-qualified resource of the original API request (for example, v1.pods).\\nIf this is specified and differs from the value in \\\"resource\\\", an equivalent match and conversion was performed.\\n\\n\\nFor example, if deployments can be modified via apps/v1 and apps/v1beta1, and a webhook registered a rule of\\n`apiGroups:[\\\"apps\\\"], apiVersions:[\\\"v1\\\"], resources: [\\\"deployments\\\"]` and `matchPolicy: Equivalent`,\\nan API request to apps/v1beta1 deployments would be converted and sent to the webhook\\nwith `resource: {group:\\\"apps\\\", version:\\\"v1\\\", resource:\\\"deployments\\\"}` (matching the resource the webhook registered for),\\nand `requestResource: {group:\\\"apps\\\", version:\\\"v1beta1\\\", resource:\\\"deployments\\\"}` (indicating the resource of the original API request).\\n\\n\\nSee documentation for the \\\"matchPolicy\\\" field in the webhook configuration type.\",\n           \"properties\": {\n            \"group\": {\n             \"type\": \"string\"\n            },\n            \"resource\": {\n             \"type\": \"string\"\n            },\n            \"version\": {\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"group\",\n            \"resource\",\n            \"version\"\n           ],\n           \"type\": \"object\"\n          },\n          \"requestSubResource\": {\n           \"description\": \"RequestSubResource is the name of the subresource of the original API request, if any (for example, \\\"status\\\" or \\\"scale\\\")\\nIf this is specified and differs from the value in \\\"subResource\\\", an equivalent match and conversion was performed.\\nSee documentation for the \\\"matchPolicy\\\" field in the webhook configuration type.\",\n           \"type\": \"string\"\n          },\n          \"resource\": {\n           \"description\": \"Resource is the fully-qualified resource being requested (for example, v1.pods)\",\n           \"properties\": {\n            \"group\": {\n             \"type\": \"string\"\n            },\n            \"resource\": {\n             \"type\": \"string\"\n            },\n            \"version\": {\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"group\",\n            \"resource\",\n            \"version\"\n           ],\n           \"type\": \"object\"\n          },\n          \"subResource\": {\n           \"description\": \"SubResource is the subresource being requested, if any (for example, \\\"status\\\" or \\\"scale\\\")\",\n           \"type\": \"string\"\n          },\n          \"uid\": {\n           \"description\": \"UID is an identifier for the individual request/response. It allows us to distinguish instances of requests which are\\notherwise identical (parallel requests, requests when earlier requests did not modify etc)\\nThe UID is meant to track the round trip (request/response) between the KAS and the WebHook, not the user request.\\nIt is suitable for correlating log entries between the webhook and apiserver, for either auditing or debugging.\",\n           \"type\": \"string\"\n          },\n          \"userInfo\": {\n           \"description\": \"UserInfo is information about the requesting user\",\n           \"properties\": {\n            \"extra\": {\n             \"additionalProperties\": {\n              \"description\": \"ExtraValue masks the value so protobuf can generate\",\n              \"items\": {\n               \"type\": \"string\"\n              },\n              \"type\": \"array\"\n             },\n             \"description\": \"Any additional information provided by the authenticator.\",\n             \"type\": \"object\"\n            },\n            \"groups\": {\n             \"description\": \"The names of groups this user is a part of.\",\n             \"items\": {\n              \"type\": \"string\"\n             },\n             \"type\": \"array\"\n            },\n            \"uid\": {\n             \"description\": \"A unique value that identifies this user across time. If this user is\\ndeleted and another user by the same name is added, they will have\\ndifferent UIDs.\",\n             \"type\": \"string\"\n            },\n            \"username\": {\n             \"description\": \"The name that uniquely identifies this user among all active users.\",\n             \"type\": \"string\"\n            }\n           },\n           \"type\": \"object\"\n          }\n         },\n         \"required\": [\n          \"kind\",\n          \"operation\",\n          \"resource\",\n          \"uid\",\n          \"userInfo\"\n         ],\n         \"type\": \"object\"\n        },\n        \"operation\": {\n         \"description\": \"Operation is the type of resource operation being checked for admission control\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"userInfo\": {\n       \"description\": \"RequestInfo contains permission info carried in an admission request.\",\n       \"properties\": {\n        \"clusterRoles\": {\n         \"description\": \"ClusterRoles is a list of possible clusterRoles send the request.\",\n         \"items\": {\n          \"type\": \"string\"\n         },\n         \"nullable\": true,\n         \"type\": \"array\"\n        },\n        \"roles\": {\n         \"description\": \"Roles is a list of possible role send the request.\",\n         \"items\": {\n          \"type\": \"string\"\n         },\n         \"nullable\": true,\n         \"type\": \"array\"\n        },\n        \"userInfo\": {\n         \"description\": \"UserInfo is the userInfo carried in the admission request.\",\n         \"properties\": {\n          \"extra\": {\n           \"additionalProperties\": {\n            \"description\": \"ExtraValue masks the value so protobuf can generate\",\n            \"items\": {\n             \"type\": \"string\"\n            },\n            \"type\": \"array\"\n           },\n           \"description\": \"Any additional information provided by the authenticator.\",\n           \"type\": \"object\"\n          },\n          \"groups\": {\n           \"description\": \"The names of groups this user is a part of.\",\n           \"items\": {\n            \"type\": \"string\"\n           },\n           \"type\": \"array\"\n          },\n          \"uid\": {\n           \"description\": \"A unique value that identifies this user across time. If this user is\\ndeleted and another user by the same name is added, they will have\\ndifferent UIDs.\",\n           \"type\": \"string\"\n          },\n          \"username\": {\n           \"description\": \"The name that uniquely identifies this user among all active users.\",\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"deleteDownstream\": {\n     \"description\": \"DeleteDownstream represents whether the downstream needs to be deleted.\",\n     \"type\": \"boolean\"\n    },\n    \"policy\": {\n     \"description\": \"Specifies the name of the policy.\",\n     \"type\": \"string\"\n    },\n    \"requestType\": {\n     \"description\": \"Type represents request type for background processing\",\n     \"enum\": [\n      \"mutate\",\n      \"generate\"\n     ],\n     \"type\": \"string\"\n    },\n    \"resource\": {\n     \"description\": \"ResourceSpec is the information to identify the trigger resource.\",\n     \"properties\": {\n      \"apiVersion\": {\n       \"description\": \"APIVersion specifies resource apiVersion.\",\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"description\": \"Kind specifies resource kind.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name specifies the resource name.\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace specifies resource namespace.\",\n       \"type\": \"string\"\n      },\n      \"uid\": {\n       \"description\": \"UID specifies the resource uid.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"rule\": {\n     \"description\": \"Rule is the associate rule name of the current UR.\",\n     \"type\": \"string\"\n    },\n    \"synchronize\": {\n     \"description\": \"Synchronize represents the sync behavior of the corresponding rule\\nOptional. Defaults to \\\"false\\\" if not specified.\",\n     \"type\": \"boolean\"\n    }\n   },\n   \"required\": [\n    \"context\",\n    \"deleteDownstream\",\n    \"policy\",\n    \"resource\",\n    \"rule\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Update Request\",\n \"type\": \"object\"\n}",

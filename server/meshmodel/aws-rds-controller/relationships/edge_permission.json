@@ -15,8 +15,9 @@
     "metadata": {}
   },
   "subType": "permission",
-  "type":"binding",
+  "type": "binding",
   "rego_query": "edge_binding_relationship",
+  "status": "enabled",
   "selectors": {
     "allow": {
       "from": [

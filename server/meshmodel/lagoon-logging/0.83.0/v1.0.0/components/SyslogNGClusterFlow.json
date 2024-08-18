@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "SyslogNGClusterFlow",
    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"filters\": {\n     \"items\": {\n      \"properties\": {\n       \"id\": {\n        \"type\": \"string\"\n       },\n       \"match\": {\n        \"properties\": {\n         \"and\": {\n          \"format\": \"textarea\",\n          \"type\": \"string\"\n         },\n         \"not\": {\n          \"format\": \"textarea\",\n          \"type\": \"string\"\n         },\n         \"or\": {\n          \"format\": \"textarea\",\n          \"type\": \"string\"\n         },\n         \"regexp\": {\n          \"properties\": {\n           \"flags\": {\n            \"items\": {\n             \"type\": \"string\"\n            },\n            \"type\": \"array\"\n           },\n           \"pattern\": {\n            \"type\": \"string\"\n           },\n           \"template\": {\n            \"type\": \"string\"\n           },\n           \"type\": {\n            \"type\": \"string\"\n           },\n           \"value\": {\n            \"type\": \"string\"\n           }\n          },\n          \"required\": [\n           \"pattern\"\n          ],\n          \"type\": \"object\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"parser\": {\n        \"properties\": {\n         \"metrics-probe\": {\n          \"properties\": {\n           \"key\": {\n            \"type\": \"string\"\n           },\n           \"labels\": {\n            \"additionalProperties\": {\n             \"type\": \"string\"\n            },\n            \"type\": \"object\"\n           },\n           \"level\": {\n            \"type\": \"integer\"\n           }\n          },\n          \"type\": \"object\"\n         },\n         \"regexp\": {\n          \"properties\": {\n           \"flags\": {\n            \"items\": {\n             \"type\": \"string\"\n            },\n            \"type\": \"array\"\n           },\n           \"patterns\": {\n            \"items\": {\n             \"type\": \"string\"\n            },\n            \"type\": \"array\"\n           },\n           \"prefix\": {\n            \"type\": \"string\"\n           },\n           \"template\": {\n            \"type\": \"string\"\n           }\n          },\n          \"required\": [\n           \"patterns\"\n          ],\n          \"type\": \"object\"\n         },\n         \"syslog-parser\": {\n          \"properties\": {\n           \"flags\": {\n            \"items\": {\n             \"type\": \"string\"\n            },\n            \"type\": \"array\"\n           }\n          },\n          \"type\": \"object\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"rewrite\": {\n        \"items\": {\n         \"properties\": {\n          \"group_unset\": {\n           \"properties\": {\n            \"condition\": {\n             \"properties\": {\n              \"and\": {\n               \"format\": \"textarea\",\n               \"type\": \"string\"\n              },\n              \"not\": {\n               \"format\": \"textarea\",\n               \"type\": \"string\"\n              },\n              \"or\": {\n               \"format\": \"textarea\",\n               \"type\": \"string\"\n              },\n              \"regexp\": {\n               \"properties\": {\n                \"flags\": {\n                 \"items\": {\n                  \"type\": \"string\"\n                 },\n                 \"type\": \"array\"\n                },\n                \"pattern\": {\n                 \"type\": \"string\"\n                },\n                \"template\": {\n                 \"type\": \"string\"\n                },\n                \"type\": {\n                 \"type\": \"string\"\n                },\n                \"value\": {\n                 \"type\": \"string\"\n                }\n               },\n               \"required\": [\n                \"pattern\"\n               ],\n               \"type\": \"object\"\n              }\n             },\n             \"type\": \"object\"\n            },\n            \"pattern\": {\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"pattern\"\n           ],\n           \"type\": \"object\"\n          },\n          \"rename\": {\n           \"properties\": {\n            \"condition\": {\n             \"properties\": {\n              \"and\": {\n               \"format\": \"textarea\",\n               \"type\": \"string\"\n              },\n              \"not\": {\n               \"format\": \"textarea\",\n               \"type\": \"string\"\n              },\n              \"or\": {\n               \"format\": \"textarea\",\n               \"type\": \"string\"\n              },\n              \"regexp\": {\n               \"properties\": {\n                \"flags\": {\n                 \"items\": {\n                  \"type\": \"string\"\n                 },\n                 \"type\": \"array\"\n                },\n                \"pattern\": {\n                 \"type\": \"string\"\n                },\n                \"template\": {\n                 \"type\": \"string\"\n                },\n                \"type\": {\n                 \"type\": \"string\"\n                },\n                \"value\": {\n                 \"type\": \"string\"\n                }\n               },\n               \"required\": [\n                \"pattern\"\n               ],\n               \"type\": \"object\"\n              }\n             },\n             \"type\": \"object\"\n            },\n            \"newName\": {\n             \"type\": \"string\"\n            },\n            \"oldName\": {\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"newName\",\n            \"oldName\"\n           ],\n           \"type\": \"object\"\n          },\n          \"set\": {\n           \"properties\": {\n            \"condition\": {\n             \"properties\": {\n              \"and\": {\n               \"format\": \"textarea\",\n               \"type\": \"string\"\n              },\n              \"not\": {\n               \"format\": \"textarea\",\n               \"type\": \"string\"\n              },\n              \"or\": {\n               \"format\": \"textarea\",\n               \"type\": \"string\"\n              },\n              \"regexp\": {\n               \"properties\": {\n                \"flags\": {\n                 \"items\": {\n                  \"type\": \"string\"\n                 },\n                 \"type\": \"array\"\n                },\n                \"pattern\": {\n                 \"type\": \"string\"\n                },\n                \"template\": {\n                 \"type\": \"string\"\n                },\n                \"type\": {\n                 \"type\": \"string\"\n                },\n                \"value\": {\n                 \"type\": \"string\"\n                }\n               },\n               \"required\": [\n                \"pattern\"\n               ],\n               \"type\": \"object\"\n              }\n             },\n             \"type\": \"object\"\n            },\n            \"field\": {\n             \"type\": \"string\"\n            },\n            \"value\": {\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"field\",\n            \"value\"\n           ],\n           \"type\": \"object\"\n          },\n          \"subst\": {\n           \"properties\": {\n            \"condition\": {\n             \"properties\": {\n              \"and\": {\n               \"format\": \"textarea\",\n               \"type\": \"string\"\n              },\n              \"not\": {\n               \"format\": \"textarea\",\n               \"type\": \"string\"\n              },\n              \"or\": {\n               \"format\": \"textarea\",\n               \"type\": \"string\"\n              },\n              \"regexp\": {\n               \"properties\": {\n                \"flags\": {\n                 \"items\": {\n                  \"type\": \"string\"\n                 },\n                 \"type\": \"array\"\n                },\n                \"pattern\": {\n                 \"type\": \"string\"\n                },\n                \"template\": {\n                 \"type\": \"string\"\n                },\n                \"type\": {\n                 \"type\": \"string\"\n                },\n                \"value\": {\n                 \"type\": \"string\"\n                }\n               },\n               \"required\": [\n                \"pattern\"\n               ],\n               \"type\": \"object\"\n              }\n             },\n             \"type\": \"object\"\n            },\n            \"field\": {\n             \"type\": \"string\"\n            },\n            \"flags\": {\n             \"items\": {\n              \"type\": \"string\"\n             },\n             \"type\": \"array\"\n            },\n            \"pattern\": {\n             \"type\": \"string\"\n            },\n            \"replace\": {\n             \"type\": \"string\"\n            },\n            \"type\": {\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"field\",\n            \"pattern\",\n            \"replace\"\n           ],\n           \"type\": \"object\"\n          },\n          \"unset\": {\n           \"properties\": {\n            \"condition\": {\n             \"properties\": {\n              \"and\": {\n               \"format\": \"textarea\",\n               \"type\": \"string\"\n              },\n              \"not\": {\n               \"format\": \"textarea\",\n               \"type\": \"string\"\n              },\n              \"or\": {\n               \"format\": \"textarea\",\n               \"type\": \"string\"\n              },\n              \"regexp\": {\n               \"properties\": {\n                \"flags\": {\n                 \"items\": {\n                  \"type\": \"string\"\n                 },\n                 \"type\": \"array\"\n                },\n                \"pattern\": {\n                 \"type\": \"string\"\n                },\n                \"template\": {\n                 \"type\": \"string\"\n                },\n                \"type\": {\n                 \"type\": \"string\"\n                },\n                \"value\": {\n                 \"type\": \"string\"\n                }\n               },\n               \"required\": [\n                \"pattern\"\n               ],\n               \"type\": \"object\"\n              }\n             },\n             \"type\": \"object\"\n            },\n            \"field\": {\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"field\"\n           ],\n           \"type\": \"object\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"globalOutputRefs\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"loggingRef\": {\n     \"type\": \"string\"\n    },\n    \"match\": {\n     \"properties\": {\n      \"and\": {\n       \"format\": \"textarea\",\n       \"type\": \"string\"\n      },\n      \"not\": {\n       \"format\": \"textarea\",\n       \"type\": \"string\"\n      },\n      \"or\": {\n       \"format\": \"textarea\",\n       \"type\": \"string\"\n      },\n      \"regexp\": {\n       \"properties\": {\n        \"flags\": {\n         \"items\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"array\"\n        },\n        \"pattern\": {\n         \"type\": \"string\"\n        },\n        \"template\": {\n         \"type\": \"string\"\n        },\n        \"type\": {\n         \"type\": \"string\"\n        },\n        \"value\": {\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"pattern\"\n       ],\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"outputMetrics\": {\n     \"items\": {\n      \"properties\": {\n       \"key\": {\n        \"type\": \"string\"\n       },\n       \"labels\": {\n        \"additionalProperties\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"object\"\n       },\n       \"level\": {\n        \"type\": \"integer\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Syslog NG Cluster Flow\",\n \"type\": \"object\"\n}",

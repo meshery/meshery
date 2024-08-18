@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "KongClusterPlugin",
    "schema": "{\n \"description\": \"KongClusterPlugin is the Schema for the kongclusterplugins API\",\n \"properties\": {\n  \"config\": {\n   \"description\": \"Config contains the plugin configuration.\",\n   \"format\": \"textarea\",\n   \"type\": \"string\"\n  },\n  \"configFrom\": {\n   \"description\": \"ConfigFrom references a secret containing the plugin configuration.\",\n   \"properties\": {\n    \"secretKeyRef\": {\n     \"description\": \"NamespacedSecretValueFromSource represents the source of a secret value specifying the secret namespace\",\n     \"properties\": {\n      \"key\": {\n       \"description\": \"the key containing the value\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"the secret containing the key\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"The namespace containing the secret\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"key\",\n      \"name\",\n      \"namespace\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  },\n  \"consumerRef\": {\n   \"description\": \"ConsumerRef is a reference to a particular consumer\",\n   \"type\": \"string\"\n  },\n  \"disabled\": {\n   \"description\": \"Disabled set if the plugin is disabled or not\",\n   \"type\": \"boolean\"\n  },\n  \"plugin\": {\n   \"description\": \"PluginName is the name of the plugin to which to apply the config\",\n   \"type\": \"string\"\n  },\n  \"protocols\": {\n   \"description\": \"Protocols configures plugin to run on requests received on specific protocols.\",\n   \"items\": {\n    \"enum\": [\n     \"http\",\n     \"https\",\n     \"grpc\",\n     \"grpcs\",\n     \"tcp\",\n     \"tls\",\n     \"udp\"\n    ],\n    \"type\": \"string\"\n   },\n   \"type\": \"array\"\n  },\n  \"run_on\": {\n   \"description\": \"RunOn configures the plugin to run on the first or the second or both nodes in case of a service mesh deployment.\",\n   \"enum\": [\n    \"first\",\n    \"second\",\n    \"all\"\n   ],\n   \"type\": \"string\"\n  }\n },\n \"required\": [\n  \"plugin\"\n ],\n \"title\": \"Kong Cluster Plugin\",\n \"type\": \"object\"\n}",

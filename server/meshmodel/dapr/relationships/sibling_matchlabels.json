@@ -20,7 +20,8 @@
     "metadata": {}
   },
   "subType": "matchLabels",
-  "type":"sibling",
+  "type": "sibling",
+  "status": "enabled",
   "selectors": [
     {
       "allow": {

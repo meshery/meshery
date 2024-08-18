@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "StrimziSchemaRegistry",
    "schema": "{\n \"description\": \"StrimziSchemaRegistry represents a desired Schema Registry instance\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"The specification of the Schema Registry instance.\",\n   \"properties\": {\n    \"compatibilityLevel\": {\n     \"default\": \"forward\",\n     \"description\": \"The default schema compatibility level in a subject. Can be none, backward, backward_transitive, forward, forward_transitive, full, and full_transitive.\",\n     \"type\": \"string\"\n    },\n    \"cpuLimit\": {\n     \"default\": \"\",\n     \"description\": \"The cap on CPU usage for the Schema Registry container. Default is to leave unset. Example 1000m limits to 1 CPU.\",\n     \"type\": \"string\"\n    },\n    \"cpuRequest\": {\n     \"default\": \"\",\n     \"description\": \"The requested CPU allocation for the Schema Registry container. Default is to leave unset. Example 1000m requests 1 CPU.\",\n     \"type\": \"string\"\n    },\n    \"listener\": {\n     \"default\": \"tls\",\n     \"description\": \"The name of the Kafka listener to use to connect.\",\n     \"type\": \"string\"\n    },\n    \"memoryLimit\": {\n     \"default\": \"\",\n     \"description\": \"The cap on memory usage for the Schema Registry container. Default is to leave unset. Example 1000M limits to 1000 megabytes.\",\n     \"type\": \"string\"\n    },\n    \"memoryRequest\": {\n     \"default\": \"\",\n     \"description\": \"The requested memory for the Schema Registry container. Default is to leave unset. Example: `768M` requests 768 megabytes.\",\n     \"type\": \"string\"\n    },\n    \"registryImage\": {\n     \"default\": \"confluentinc/cp-schema-registry\",\n     \"description\": \"The Docker image for the Confluent Schema Registry.\",\n     \"type\": \"string\"\n    },\n    \"registryImageTag\": {\n     \"default\": \"7.2.1\",\n     \"description\": \"The Docker image tag for the Confluent Schema Registry. Use this property to control the version of the deployed schema registry.\",\n     \"type\": \"string\"\n    },\n    \"securityProtocol\": {\n     \"default\": \"SSL\",\n     \"description\": \"The security protocol for the Schema Registry to communicate with Kafka. Default is SSL. Can be SSL, PLAINTEXT, SASL_PLAINTEXT, or SASL_SSL.\",\n     \"type\": \"string\"\n    },\n    \"serviceType\": {\n     \"default\": \"ClusterIP\",\n     \"description\": \"The type of service to create for the registry. Default is ClusterIP. Can be NodePort to publish the registry externally.\",\n     \"type\": \"string\"\n    },\n    \"strimzi-version\": {\n     \"default\": \"v1beta2\",\n     \"description\": \"Deprecated. Use strimziVersion instead.\",\n     \"type\": \"string\"\n    },\n    \"strimziVersion\": {\n     \"default\": \"v1beta2\",\n     \"description\": \"The version of the Strimzi Custom Resource API to use. The correct value depends on the deployed version of Strimzi.\",\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Strimzi Schema Registry\",\n \"type\": \"object\"\n}",

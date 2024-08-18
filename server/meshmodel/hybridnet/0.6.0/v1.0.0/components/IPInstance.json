@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "IPInstance",
    "schema": "{\n \"description\": \"IPInstance is the Schema for the ipinstances API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"IPInstanceSpec defines the desired state of IPInstance\",\n   \"properties\": {\n    \"address\": {\n     \"properties\": {\n      \"gateway\": {\n       \"type\": \"string\"\n      },\n      \"ip\": {\n       \"type\": \"string\"\n      },\n      \"mac\": {\n       \"type\": \"string\"\n      },\n      \"netID\": {\n       \"format\": \"int32\",\n       \"type\": \"integer\"\n      },\n      \"version\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"ip\",\n      \"mac\",\n      \"version\"\n     ],\n     \"type\": \"object\"\n    },\n    \"binding\": {\n     \"description\": \"Binding defines a binding object with necessary info of an IPInstance\",\n     \"properties\": {\n      \"nodeName\": {\n       \"type\": \"string\"\n      },\n      \"podName\": {\n       \"type\": \"string\"\n      },\n      \"podUID\": {\n       \"description\": \"UID is a type that holds unique ID values, including UUIDs.  Because we don't ONLY use UUIDs, this is an alias to string.  Being a type captures intent and helps make sure that UIDs and names do not get conflated.\",\n       \"type\": \"string\"\n      },\n      \"referredObject\": {\n       \"description\": \"ObjectMeta is a short version of ObjectMeta which is pointing to an Object in specified namespace\",\n       \"properties\": {\n        \"kind\": {\n         \"type\": \"string\"\n        },\n        \"name\": {\n         \"type\": \"string\"\n        },\n        \"uid\": {\n         \"description\": \"UID is a type that holds unique ID values, including UUIDs.  Because we don't ONLY use UUIDs, this is an alias to string.  Being a type captures intent and helps make sure that UIDs and names do not get conflated.\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"stateful\": {\n       \"description\": \"StatefulInfo is a collection of related info if binding to a stateful workload\",\n       \"properties\": {\n        \"index\": {\n         \"format\": \"int32\",\n         \"type\": \"integer\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"network\": {\n     \"type\": \"string\"\n    },\n    \"subnet\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"address\",\n    \"network\",\n    \"subnet\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"IP Instance\",\n \"type\": \"object\"\n}",

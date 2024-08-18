@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "Instance",
    "schema": "{\n \"description\": \"Instance is the Schema for the instances API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"InstanceSpec defines the desired state of Instance.\",\n   \"properties\": {\n    \"garbageCollection\": {\n     \"description\": \"GarbageCollection holds request information for a garbage collection schedule.\",\n     \"properties\": {\n      \"cron\": {\n       \"type\": \"string\"\n      },\n      \"deleteUntagged\": {\n       \"type\": \"boolean\"\n      },\n      \"scheduleType\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"helmChart\": {\n     \"properties\": {\n      \"NameTemplate\": {\n       \"description\": \"NameTemplate is the template used to generate the release name if GenerateName is configured.\",\n       \"type\": \"string\"\n      },\n      \"atomic\": {\n       \"description\": \"Atomic indicates whether to install resources atomically. 'Wait' will automatically be set to true when using Atomic.\",\n       \"type\": \"boolean\"\n      },\n      \"chart\": {\n       \"type\": \"string\"\n      },\n      \"cleanupOnFail\": {\n       \"description\": \"CleanupOnFail indicates whether to cleanup the release on failure.\",\n       \"type\": \"boolean\"\n      },\n      \"createNamespace\": {\n       \"description\": \"CreateNamespace indicates whether to create the namespace if it does not exist.\",\n       \"type\": \"boolean\"\n      },\n      \"dependencyUpdate\": {\n       \"description\": \"DependencyUpdate indicates whether to update the chart release if the dependencies have changed.\",\n       \"type\": \"boolean\"\n      },\n      \"disableHooks\": {\n       \"description\": \"DisableHooks indicates whether to disable hooks.\",\n       \"type\": \"boolean\"\n      },\n      \"dryRun\": {\n       \"description\": \"DryRun indicates whether to perform a dry run.\",\n       \"type\": \"boolean\"\n      },\n      \"force\": {\n       \"description\": \"Force indicates whether to force the operation.\",\n       \"type\": \"boolean\"\n      },\n      \"generateName\": {\n       \"description\": \"GenerateName indicates that the release name should be generated.\",\n       \"type\": \"boolean\"\n      },\n      \"maxHistory\": {\n       \"description\": \"MaxHistory limits the maximum number of revisions saved per release.\",\n       \"type\": \"integer\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace where the chart release is deployed. Note that helmclient.Options.Namespace should ideally match the namespace configured here.\",\n       \"type\": \"string\"\n      },\n      \"recreate\": {\n       \"description\": \"Recreate indicates whether to recreate the release if it already exists.\",\n       \"type\": \"boolean\"\n      },\n      \"release\": {\n       \"type\": \"string\"\n      },\n      \"replace\": {\n       \"description\": \"Replace indicates whether to replace the chart release if it already exists.\",\n       \"type\": \"boolean\"\n      },\n      \"resetValues\": {\n       \"description\": \"ResetValues indicates whether to reset the values.yaml file during installation.\",\n       \"type\": \"boolean\"\n      },\n      \"reuseValues\": {\n       \"description\": \"ReuseValues indicates whether to reuse the values.yaml file during installation.\",\n       \"type\": \"boolean\"\n      },\n      \"secretValues\": {\n       \"description\": \"set additional chart values from secret\",\n       \"properties\": {\n        \"key\": {\n         \"type\": \"string\"\n        },\n        \"secretRef\": {\n         \"description\": \"LocalObjectReference contains enough information to let you locate the referenced object inside the same namespace.\",\n         \"properties\": {\n          \"name\": {\n           \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?\",\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"required\": [\n        \"key\",\n        \"secretRef\"\n       ],\n       \"type\": \"object\"\n      },\n      \"skipCRDs\": {\n       \"description\": \"SkipCRDs indicates whether to skip CRDs during installation.\",\n       \"type\": \"boolean\"\n      },\n      \"subNotes\": {\n       \"description\": \"SubNotes indicates whether to print sub-notes.\",\n       \"type\": \"boolean\"\n      },\n      \"timeout\": {\n       \"description\": \"Timeout configures the time to wait for any individual Kubernetes operation (like Jobs for hooks).\",\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"upgradeCRDs\": {\n       \"description\": \"Upgrade indicates whether to perform a CRD upgrade during installation.\",\n       \"type\": \"boolean\"\n      },\n      \"valuesYaml\": {\n       \"description\": \"ValuesYaml is the values.yaml content. use string instead of map[string]interface{} https://github.com/kubernetes-sigs/kubebuilder/issues/528#issuecomment-466449483 and https://github.com/kubernetes-sigs/controller-tools/pull/317\",\n       \"type\": \"string\"\n      },\n      \"version\": {\n       \"description\": \"Version of the chart release.\",\n       \"type\": \"string\"\n      },\n      \"wait\": {\n       \"description\": \"Wait indicates whether to wait for the release to be deployed or not.\",\n       \"type\": \"boolean\"\n      }\n     },\n     \"required\": [\n      \"chart\",\n      \"namespace\",\n      \"release\"\n     ],\n     \"type\": \"object\"\n    },\n    \"instanceURL\": {\n     \"type\": \"string\"\n    },\n    \"name\": {\n     \"type\": \"string\"\n    },\n    \"type\": {\n     \"description\": \"can't use the resulting string-type so this is a simple string and will be casted to an OperatorType in the resolver: error: Hit an unsupported type invalid type for invalid type\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"helmChart\",\n    \"instanceURL\",\n    \"name\",\n    \"type\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Instance\",\n \"type\": \"object\"\n}",

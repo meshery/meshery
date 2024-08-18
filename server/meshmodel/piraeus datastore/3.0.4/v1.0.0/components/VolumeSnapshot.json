@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "VolumeSnapshot",
    "schema": "{\n \"description\": \"VolumeSnapshot is a user's request for either creating a point-in-time\\nsnapshot of a persistent volume, or binding to a pre-existing snapshot.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"spec defines the desired characteristics of a snapshot requested by a user.\\nMore info: https://kubernetes.io/docs/concepts/storage/volume-snapshots#volumesnapshots\\nRequired.\",\n   \"properties\": {\n    \"source\": {\n     \"description\": \"source specifies where a snapshot will be created from.\\nThis field is immutable after creation.\\nRequired.\",\n     \"properties\": {\n      \"persistentVolumeClaimName\": {\n       \"description\": \"persistentVolumeClaimName specifies the name of the PersistentVolumeClaim\\nobject representing the volume from which a snapshot should be created.\\nThis PVC is assumed to be in the same namespace as the VolumeSnapshot\\nobject.\\nThis field should be set if the snapshot does not exists, and needs to be\\ncreated.\\nThis field is immutable.\",\n       \"type\": \"string\",\n       \"x-kubernetes-validations\": [\n        {\n         \"message\": \"persistentVolumeClaimName is immutable\",\n         \"rule\": \"self == oldSelf\"\n        }\n       ]\n      },\n      \"volumeSnapshotContentName\": {\n       \"description\": \"volumeSnapshotContentName specifies the name of a pre-existing VolumeSnapshotContent\\nobject representing an existing volume snapshot.\\nThis field should be set if the snapshot already exists and only needs a representation in Kubernetes.\\nThis field is immutable.\",\n       \"type\": \"string\",\n       \"x-kubernetes-validations\": [\n        {\n         \"message\": \"volumeSnapshotContentName is immutable\",\n         \"rule\": \"self == oldSelf\"\n        }\n       ]\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"persistentVolumeClaimName is required once set\",\n       \"rule\": \"!has(oldSelf.persistentVolumeClaimName) || has(self.persistentVolumeClaimName)\"\n      },\n      {\n       \"message\": \"volumeSnapshotContentName is required once set\",\n       \"rule\": \"!has(oldSelf.volumeSnapshotContentName) || has(self.volumeSnapshotContentName)\"\n      },\n      {\n       \"message\": \"exactly one of volumeSnapshotContentName and persistentVolumeClaimName must be set\",\n       \"rule\": \"(has(self.volumeSnapshotContentName) \\u0026\\u0026 !has(self.persistentVolumeClaimName)) || (!has(self.volumeSnapshotContentName) \\u0026\\u0026 has(self.persistentVolumeClaimName))\"\n      }\n     ]\n    },\n    \"volumeSnapshotClassName\": {\n     \"description\": \"VolumeSnapshotClassName is the name of the VolumeSnapshotClass\\nrequested by the VolumeSnapshot.\\nVolumeSnapshotClassName may be left nil to indicate that the default\\nSnapshotClass should be used.\\nA given cluster may have multiple default Volume SnapshotClasses: one\\ndefault per CSI Driver. If a VolumeSnapshot does not specify a SnapshotClass,\\nVolumeSnapshotSource will be checked to figure out what the associated\\nCSI Driver is, and the default VolumeSnapshotClass associated with that\\nCSI Driver will be used. If more than one VolumeSnapshotClass exist for\\na given CSI Driver and more than one have been marked as default,\\nCreateSnapshot will fail and generate an event.\\nEmpty string is not allowed for this field.\",\n     \"type\": \"string\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"volumeSnapshotClassName must not be the empty string when set\",\n       \"rule\": \"size(self) \\u003e 0\"\n      }\n     ]\n    }\n   },\n   \"required\": [\n    \"source\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Volume Snapshot\",\n \"type\": \"object\"\n}",

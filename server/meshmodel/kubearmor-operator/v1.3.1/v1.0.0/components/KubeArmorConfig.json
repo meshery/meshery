@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "KubeArmorConfig",
    "schema": "{\n \"description\": \"KubeArmorConfig is the Schema for the KubeArmorConfigs API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"KubeArmorConfigSpec defines the desired state of KubeArmorConfig\",\n   \"properties\": {\n    \"defaultCapabilitiesPosture\": {\n     \"enum\": [\n      \"audit\",\n      \"block\"\n     ],\n     \"type\": \"string\"\n    },\n    \"defaultFilePosture\": {\n     \"enum\": [\n      \"audit\",\n      \"block\"\n     ],\n     \"type\": \"string\"\n    },\n    \"defaultNetworkPosture\": {\n     \"enum\": [\n      \"audit\",\n      \"block\"\n     ],\n     \"type\": \"string\"\n    },\n    \"defaultVisibility\": {\n     \"type\": \"string\"\n    },\n    \"enableStdOutAlerts\": {\n     \"type\": \"boolean\"\n    },\n    \"enableStdOutLogs\": {\n     \"type\": \"boolean\"\n    },\n    \"enableStdOutMsgs\": {\n     \"type\": \"boolean\"\n    },\n    \"kubeRbacProxyImage\": {\n     \"description\": \"ImageSpec defines the image specifications\",\n     \"properties\": {\n      \"image\": {\n       \"type\": \"string\"\n      },\n      \"imagePullPolicy\": {\n       \"default\": \"Always\",\n       \"enum\": [\n        \"Always\",\n        \"IfNotPresent\",\n        \"Never\"\n       ],\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"kubearmorControllerImage\": {\n     \"description\": \"ImageSpec defines the image specifications\",\n     \"properties\": {\n      \"image\": {\n       \"type\": \"string\"\n      },\n      \"imagePullPolicy\": {\n       \"default\": \"Always\",\n       \"enum\": [\n        \"Always\",\n        \"IfNotPresent\",\n        \"Never\"\n       ],\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"kubearmorImage\": {\n     \"description\": \"ImageSpec defines the image specifications\",\n     \"properties\": {\n      \"image\": {\n       \"type\": \"string\"\n      },\n      \"imagePullPolicy\": {\n       \"default\": \"Always\",\n       \"enum\": [\n        \"Always\",\n        \"IfNotPresent\",\n        \"Never\"\n       ],\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"kubearmorInitImage\": {\n     \"description\": \"ImageSpec defines the image specifications\",\n     \"properties\": {\n      \"image\": {\n       \"type\": \"string\"\n      },\n      \"imagePullPolicy\": {\n       \"default\": \"Always\",\n       \"enum\": [\n        \"Always\",\n        \"IfNotPresent\",\n        \"Never\"\n       ],\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"kubearmorRelayImage\": {\n     \"description\": \"ImageSpec defines the image specifications\",\n     \"properties\": {\n      \"image\": {\n       \"type\": \"string\"\n      },\n      \"imagePullPolicy\": {\n       \"default\": \"Always\",\n       \"enum\": [\n        \"Always\",\n        \"IfNotPresent\",\n        \"Never\"\n       ],\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"seccompEnabled\": {\n     \"default\": true,\n     \"type\": \"boolean\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Kube Armor Config\",\n \"type\": \"object\"\n}",

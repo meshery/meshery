@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "KeycloakAuthFlow",
    "schema": "{\n \"description\": \"KeycloakAuthFlow is the Schema for the keycloak authentication flow API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"KeycloakAuthFlowSpec defines the desired state of KeycloakAuthFlow.\",\n   \"properties\": {\n    \"alias\": {\n     \"description\": \"Alias is display name for authentication flow.\",\n     \"type\": \"string\"\n    },\n    \"authenticationExecutions\": {\n     \"description\": \"AuthenticationExecutions is list of authentication executions for this auth flow.\",\n     \"items\": {\n      \"description\": \"AuthenticationExecution defines keycloak authentication execution.\",\n      \"properties\": {\n       \"alias\": {\n        \"description\": \"Alias is display name for this execution.\",\n        \"type\": \"string\"\n       },\n       \"authenticator\": {\n        \"description\": \"Authenticator is name of authenticator.\",\n        \"type\": \"string\"\n       },\n       \"authenticatorConfig\": {\n        \"description\": \"AuthenticatorConfig is configuration for authenticator.\",\n        \"nullable\": true,\n        \"properties\": {\n         \"alias\": {\n          \"description\": \"Alias is display name for authenticator config.\",\n          \"type\": \"string\"\n         },\n         \"config\": {\n          \"additionalProperties\": {\n           \"type\": \"string\"\n          },\n          \"description\": \"Config is configuration for authenticator.\",\n          \"type\": \"object\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"authenticatorFlow\": {\n        \"description\": \"AuthenticatorFlow is true if this is auth flow.\",\n        \"type\": \"boolean\"\n       },\n       \"priority\": {\n        \"description\": \"Priority is priority for this execution. Lower values have higher priority.\",\n        \"type\": \"integer\"\n       },\n       \"requirement\": {\n        \"description\": \"Requirement is requirement for this execution. Available options: REQUIRED, ALTERNATIVE, DISABLED, CONDITIONAL.\",\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"nullable\": true,\n     \"type\": \"array\"\n    },\n    \"builtIn\": {\n     \"description\": \"BuiltIn is true if this is built-in auth flow.\",\n     \"type\": \"boolean\"\n    },\n    \"childType\": {\n     \"description\": \"ChildType is type for auth flow if it has a parent, available options: basic-flow, form-flow\",\n     \"type\": \"string\"\n    },\n    \"description\": {\n     \"description\": \"Description is description for authentication flow.\",\n     \"type\": \"string\"\n    },\n    \"parentName\": {\n     \"description\": \"ParentName is name of parent auth flow.\",\n     \"type\": \"string\"\n    },\n    \"providerId\": {\n     \"description\": \"ProviderID for root auth flow and provider for child auth flows.\",\n     \"type\": \"string\"\n    },\n    \"realm\": {\n     \"description\": \"Deprecated: use RealmRef instead. Realm is name of KeycloakRealm custom resource.\",\n     \"type\": \"string\"\n    },\n    \"realmRef\": {\n     \"description\": \"RealmRef is reference to Realm custom resource.\",\n     \"properties\": {\n      \"kind\": {\n       \"description\": \"Kind specifies the kind of the Keycloak resource.\",\n       \"enum\": [\n        \"KeycloakRealm\",\n        \"ClusterKeycloakRealm\"\n       ],\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name specifies the name of the Keycloak resource.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"topLevel\": {\n     \"description\": \"TopLevel is true if this is root auth flow.\",\n     \"type\": \"boolean\"\n    }\n   },\n   \"required\": [\n    \"alias\",\n    \"builtIn\",\n    \"providerId\",\n    \"topLevel\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Keycloak Auth Flow\",\n \"type\": \"object\"\n}",

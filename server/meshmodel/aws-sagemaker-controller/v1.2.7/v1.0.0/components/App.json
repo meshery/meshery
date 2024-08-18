@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "App",
    "schema": "{\n \"description\": \"App is the Schema for the Apps API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"AppSpec defines the desired state of App.\",\n   \"properties\": {\n    \"appName\": {\n     \"description\": \"The name of the app.\",\n     \"type\": \"string\"\n    },\n    \"appType\": {\n     \"description\": \"The type of app.\",\n     \"type\": \"string\"\n    },\n    \"domainID\": {\n     \"description\": \"The domain ID.\",\n     \"type\": \"string\"\n    },\n    \"resourceSpec\": {\n     \"description\": \"The instance type and the Amazon Resource Name (ARN) of the SageMaker image\\ncreated on the instance.\\n\\n\\nThe value of InstanceType passed as part of the ResourceSpec in the CreateApp\\ncall overrides the value passed as part of the ResourceSpec configured for\\nthe user profile or the domain. If InstanceType is not specified in any of\\nthose three ResourceSpec values for a KernelGateway app, the CreateApp call\\nfails with a request validation error.\",\n     \"properties\": {\n      \"instanceType\": {\n       \"type\": \"string\"\n      },\n      \"lifecycleConfigARN\": {\n       \"type\": \"string\"\n      },\n      \"sageMakerImageARN\": {\n       \"type\": \"string\"\n      },\n      \"sageMakerImageVersionARN\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"tags\": {\n     \"description\": \"Each tag consists of a key and an optional value. Tag keys must be unique\\nper resource.\",\n     \"items\": {\n      \"description\": \"A tag object that consists of a key and an optional value, used to manage\\nmetadata for SageMaker Amazon Web Services resources.\\n\\n\\nYou can add tags to notebook instances, training jobs, hyperparameter tuning\\njobs, batch transform jobs, models, labeling jobs, work teams, endpoint configurations,\\nand endpoints. For more information on adding tags to SageMaker resources,\\nsee AddTags.\\n\\n\\nFor more information on adding metadata to your Amazon Web Services resources\\nwith tagging, see Tagging Amazon Web Services resources (https://docs.aws.amazon.com/general/latest/gr/aws_tagging.html).\\nFor advice on best practices for managing Amazon Web Services resources with\\ntagging, see Tagging Best Practices: Implement an Effective Amazon Web Services\\nResource Tagging Strategy (https://d1.awsstatic.com/whitepapers/aws-tagging-best-practices.pdf).\",\n      \"properties\": {\n       \"key\": {\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"userProfileName\": {\n     \"description\": \"The user profile name. If this value is not set, then SpaceName must be set.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"appName\",\n    \"appType\",\n    \"domainID\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"App\",\n \"type\": \"object\"\n}",

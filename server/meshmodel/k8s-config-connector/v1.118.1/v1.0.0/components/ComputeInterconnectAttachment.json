@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "ComputeInterconnectAttachment",
    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"adminEnabled\": {\n     \"description\": \"Whether the VLAN attachment is enabled or disabled.  When using\\nPARTNER type this will Pre-Activate the interconnect attachment.\",\n     \"type\": \"boolean\"\n    },\n    \"bandwidth\": {\n     \"description\": \"Provisioned bandwidth capacity for the interconnect attachment.\\nFor attachments of type DEDICATED, the user can set the bandwidth.\\nFor attachments of type PARTNER, the Google Partner that is operating the interconnect must set the bandwidth.\\nOutput only for PARTNER type, mutable for PARTNER_PROVIDER and DEDICATED,\\nDefaults to BPS_10G Possible values: [\\\"BPS_50M\\\", \\\"BPS_100M\\\", \\\"BPS_200M\\\", \\\"BPS_300M\\\", \\\"BPS_400M\\\", \\\"BPS_500M\\\", \\\"BPS_1G\\\", \\\"BPS_2G\\\", \\\"BPS_5G\\\", \\\"BPS_10G\\\", \\\"BPS_20G\\\", \\\"BPS_50G\\\"].\",\n     \"type\": \"string\"\n    },\n    \"candidateSubnets\": {\n     \"description\": \"Immutable. Up to 16 candidate prefixes that can be used to restrict the allocation\\nof cloudRouterIpAddress and customerRouterIpAddress for this attachment.\\nAll prefixes must be within link-local address space (169.254.0.0/16)\\nand must be /29 or shorter (/28, /27, etc). Google will attempt to select\\nan unused /29 from the supplied candidate prefix(es). The request will\\nfail if all possible /29s are in use on Google's edge. If not supplied,\\nGoogle will randomly select an unused /29 from all of link-local space.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"description\": {\n     \"description\": \"An optional description of this resource.\",\n     \"type\": \"string\"\n    },\n    \"edgeAvailabilityDomain\": {\n     \"description\": \"Immutable. Desired availability domain for the attachment. Only available for type\\nPARTNER, at creation time. For improved reliability, customers should\\nconfigure a pair of attachments with one per availability domain. The\\nselected availability domain will be provided to the Partner via the\\npairing key so that the provisioned circuit will lie in the specified\\ndomain. If not specified, the value will default to AVAILABILITY_DOMAIN_ANY.\",\n     \"type\": \"string\"\n    },\n    \"encryption\": {\n     \"description\": \"Immutable. Indicates the user-supplied encryption option of this interconnect\\nattachment. Can only be specified at attachment creation for PARTNER or\\nDEDICATED attachments.\\n\\n* NONE - This is the default value, which means that the VLAN attachment\\ncarries unencrypted traffic. VMs are able to send traffic to, or receive\\ntraffic from, such a VLAN attachment.\\n\\n* IPSEC - The VLAN attachment carries only encrypted traffic that is\\nencrypted by an IPsec device, such as an HA VPN gateway or third-party\\nIPsec VPN. VMs cannot directly send traffic to, or receive traffic from,\\nsuch a VLAN attachment. To use HA VPN over Cloud Interconnect, the VLAN\\nattachment must be created with this option. Default value: \\\"NONE\\\" Possible values: [\\\"NONE\\\", \\\"IPSEC\\\"].\",\n     \"type\": \"string\"\n    },\n    \"interconnect\": {\n     \"description\": \"Immutable. URL of the underlying Interconnect object that this attachment's\\ntraffic will traverse through. Required if type is DEDICATED, must not\\nbe set if type is PARTNER.\",\n     \"type\": \"string\"\n    },\n    \"ipsecInternalAddresses\": {\n     \"items\": {\n      \"description\": \"Immutable. The addresses that have been reserved for the\\ninterconnect attachment. Used only for interconnect attachment that\\nhas the encryption option as IPSEC.\\n\\nThe addresses must be RFC 1918 IP address ranges. When creating HA\\nVPN gateway over the interconnect attachment, if the attachment is\\nconfigured to use an RFC 1918 IP address, then the VPN gateway's IP\\naddress will be allocated from the IP address range specified\\nhere.\\n\\nFor example, if the HA VPN gateway's interface 0 is paired to this\\ninterconnect attachment, then an RFC 1918 IP address for the VPN\\ngateway interface 0 will be allocated from the IP address specified\\nfor this interconnect attachment.\\n\\nIf this field is not specified for interconnect attachment that has\\nencryption option as IPSEC, later on when creating HA VPN gateway on\\nthis interconnect attachment, the HA VPN gateway's IP address will\\nbe allocated from regional external IP address pool.\",\n      \"oneOf\": [\n       {\n        \"not\": {\n         \"required\": [\n          \"external\"\n         ]\n        },\n        \"required\": [\n         \"name\"\n        ]\n       },\n       {\n        \"not\": {\n         \"anyOf\": [\n          {\n           \"required\": [\n            \"name\"\n           ]\n          },\n          {\n           \"required\": [\n            \"namespace\"\n           ]\n          }\n         ]\n        },\n        \"required\": [\n         \"external\"\n        ]\n       }\n      ],\n      \"properties\": {\n       \"external\": {\n        \"description\": \"Allowed value: The `selfLink` field of a `ComputeAddress` resource.\",\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n        \"type\": \"string\"\n       },\n       \"namespace\": {\n        \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"mtu\": {\n     \"description\": \"Maximum Transmission Unit (MTU), in bytes, of packets passing through\\nthis interconnect attachment. Currently, only 1440 and 1500 are allowed. If not specified, the value will default to 1440.\",\n     \"type\": \"string\"\n    },\n    \"region\": {\n     \"description\": \"Region where the regional interconnect attachment resides.\",\n     \"type\": \"string\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    },\n    \"routerRef\": {\n     \"description\": \"The Cloud Router to be used for dynamic routing. This router must\\nbe in the same region as this ComputeInterconnectAttachment. The\\nComputeInterconnectAttachment will automatically connect the\\ninterconnect to the network \\u0026 region within which the Cloud Router\\nis configured.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `selfLink` field of a `ComputeRouter` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"type\": {\n     \"description\": \"Immutable. The type of InterconnectAttachment you wish to create. Defaults to\\nDEDICATED. Possible values: [\\\"DEDICATED\\\", \\\"PARTNER\\\", \\\"PARTNER_PROVIDER\\\"].\",\n     \"type\": \"string\"\n    },\n    \"vlanTag8021q\": {\n     \"description\": \"Immutable. The IEEE 802.1Q VLAN tag for this attachment, in the range 2-4094. When\\nusing PARTNER type this will be managed upstream.\",\n     \"type\": \"integer\"\n    }\n   },\n   \"required\": [\n    \"region\",\n    \"routerRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Compute Interconnect Attachment\",\n \"type\": \"object\"\n}",

@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "ComputeNodeGroup",
    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"autoscalingPolicy\": {\n     \"description\": \"Immutable. If you use sole-tenant nodes for your workloads, you can use the node\\ngroup autoscaler to automatically manage the sizes of your node groups.\",\n     \"properties\": {\n      \"maxNodes\": {\n       \"description\": \"Immutable. Maximum size of the node group. Set to a value less than or equal\\nto 100 and greater than or equal to min-nodes.\",\n       \"type\": \"integer\"\n      },\n      \"minNodes\": {\n       \"description\": \"Immutable. Minimum size of the node group. Must be less\\nthan or equal to max-nodes. The default value is 0.\",\n       \"type\": \"integer\"\n      },\n      \"mode\": {\n       \"description\": \"Immutable. The autoscaling mode. Set to one of the following:\\n  - OFF: Disables the autoscaler.\\n  - ON: Enables scaling in and scaling out.\\n  - ONLY_SCALE_OUT: Enables only scaling out.\\n  You must use this mode if your node groups are configured to\\n  restart their hosted VMs on minimal servers. Possible values: [\\\"OFF\\\", \\\"ON\\\", \\\"ONLY_SCALE_OUT\\\"].\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"description\": {\n     \"description\": \"Immutable. An optional textual description of the resource.\",\n     \"type\": \"string\"\n    },\n    \"initialSize\": {\n     \"description\": \"Immutable. The initial number of nodes in the node group. One of 'initial_size' or 'size' must be specified.\",\n     \"type\": \"integer\"\n    },\n    \"maintenancePolicy\": {\n     \"description\": \"Immutable. Specifies how to handle instances when a node in the group undergoes maintenance. Set to one of: DEFAULT, RESTART_IN_PLACE, or MIGRATE_WITHIN_NODE_GROUP. The default value is DEFAULT.\",\n     \"type\": \"string\"\n    },\n    \"maintenanceWindow\": {\n     \"description\": \"Immutable. contains properties for the timeframe of maintenance.\",\n     \"properties\": {\n      \"startTime\": {\n       \"description\": \"Immutable. instances.start time of the window. This must be in UTC format that resolves to one of 00:00, 04:00, 08:00, 12:00, 16:00, or 20:00. For example, both 13:00-5 and 08:00 are valid.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"startTime\"\n     ],\n     \"type\": \"object\"\n    },\n    \"nodeTemplateRef\": {\n     \"description\": \"The node template to which this node group belongs.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `selfLink` field of a `ComputeNodeTemplate` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    },\n    \"shareSettings\": {\n     \"description\": \"Immutable. Share settings for the node group.\",\n     \"properties\": {\n      \"projectMap\": {\n       \"description\": \"Immutable. A map of project id and project config. This is only valid when shareType's value is SPECIFIC_PROJECTS.\",\n       \"items\": {\n        \"properties\": {\n         \"idRef\": {\n          \"description\": \"The key of this project config in the parent map.\",\n          \"oneOf\": [\n           {\n            \"not\": {\n             \"required\": [\n              \"external\"\n             ]\n            },\n            \"required\": [\n             \"name\"\n            ]\n           },\n           {\n            \"not\": {\n             \"anyOf\": [\n              {\n               \"required\": [\n                \"name\"\n               ]\n              },\n              {\n               \"required\": [\n                \"namespace\"\n               ]\n              }\n             ]\n            },\n            \"required\": [\n             \"external\"\n            ]\n           }\n          ],\n          \"properties\": {\n           \"external\": {\n            \"description\": \"Allowed value: The `name` field of a `Project` resource.\",\n            \"type\": \"string\"\n           },\n           \"name\": {\n            \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n            \"type\": \"string\"\n           },\n           \"namespace\": {\n            \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n            \"type\": \"string\"\n           }\n          },\n          \"type\": \"object\"\n         },\n         \"projectIdRef\": {\n          \"description\": \"The project id/number should be the same as the key of this project\\nconfig in the project map.\",\n          \"oneOf\": [\n           {\n            \"not\": {\n             \"required\": [\n              \"external\"\n             ]\n            },\n            \"required\": [\n             \"name\"\n            ]\n           },\n           {\n            \"not\": {\n             \"anyOf\": [\n              {\n               \"required\": [\n                \"name\"\n               ]\n              },\n              {\n               \"required\": [\n                \"namespace\"\n               ]\n              }\n             ]\n            },\n            \"required\": [\n             \"external\"\n            ]\n           }\n          ],\n          \"properties\": {\n           \"external\": {\n            \"description\": \"Allowed value: The `name` field of a `Project` resource.\",\n            \"type\": \"string\"\n           },\n           \"name\": {\n            \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n            \"type\": \"string\"\n           },\n           \"namespace\": {\n            \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n            \"type\": \"string\"\n           }\n          },\n          \"type\": \"object\"\n         }\n        },\n        \"required\": [\n         \"idRef\",\n         \"projectIdRef\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"shareType\": {\n       \"description\": \"Immutable. Node group sharing type. Possible values: [\\\"ORGANIZATION\\\", \\\"SPECIFIC_PROJECTS\\\", \\\"LOCAL\\\"].\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"shareType\"\n     ],\n     \"type\": \"object\"\n    },\n    \"size\": {\n     \"description\": \"Immutable. The total number of nodes in the node group. One of 'initial_size' or 'size' must be specified.\",\n     \"type\": \"integer\"\n    },\n    \"zone\": {\n     \"description\": \"Immutable. Zone where this node group is located.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"nodeTemplateRef\",\n    \"zone\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Compute Node Group\",\n \"type\": \"object\"\n}",

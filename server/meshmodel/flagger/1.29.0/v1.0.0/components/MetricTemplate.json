@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "MetricTemplate",
    "schema": "{\n \"description\": \"MetricTemplate is the Schema for the MetricTemplates API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"MetricTemplateSpec defines the desired state of a MetricTemplate.\",\n   \"properties\": {\n    \"provider\": {\n     \"description\": \"Provider of this metric template\",\n     \"properties\": {\n      \"address\": {\n       \"description\": \"API address of this provider\",\n       \"type\": \"string\"\n      },\n      \"insecureSkipVerify\": {\n       \"description\": \"Disable SSL certificate validation for the provider address\",\n       \"type\": \"boolean\"\n      },\n      \"region\": {\n       \"description\": \"Region of the provider\",\n       \"type\": \"string\"\n      },\n      \"secretRef\": {\n       \"description\": \"Kubernetes secret reference containing the provider credentials\",\n       \"properties\": {\n        \"name\": {\n         \"description\": \"Name of the Kubernetes secret\",\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"name\"\n       ],\n       \"type\": \"object\"\n      },\n      \"type\": {\n       \"description\": \"Type of this provider\",\n       \"enum\": [\n        \"prometheus\",\n        \"influxdb\",\n        \"datadog\",\n        \"stackdriver\",\n        \"cloudwatch\",\n        \"newrelic\",\n        \"graphite\",\n        \"dynatrace\"\n       ],\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"type\"\n     ],\n     \"type\": \"object\"\n    },\n    \"query\": {\n     \"description\": \"Query of this metric template\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"provider\",\n    \"query\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Metric Template\",\n \"type\": \"object\"\n}",

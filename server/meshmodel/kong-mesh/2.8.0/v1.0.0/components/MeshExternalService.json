@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "MeshExternalService",
    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Spec is the specification of the Kuma MeshExternalService resource.\",\n   \"properties\": {\n    \"endpoints\": {\n     \"description\": \"Endpoints defines a list of destinations to send traffic to.\",\n     \"items\": {\n      \"properties\": {\n       \"address\": {\n        \"description\": \"Address defines an address to which a user want to send a request. Is possible to provide `domain`, `ip` and `unix` sockets.\",\n        \"example\": \"unix:///tmp/example.sock\",\n        \"minLength\": 1,\n        \"type\": \"string\"\n       },\n       \"port\": {\n        \"description\": \"Port of the endpoint\",\n        \"maximum\": 65535,\n        \"minimum\": 1,\n        \"type\": \"integer\"\n       }\n      },\n      \"required\": [\n       \"address\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"extension\": {\n     \"description\": \"Extension struct for a plugin configuration, in the presence of an extension `endpoints` and `tls` are not required anymore - it's up to the extension to validate them independently.\",\n     \"properties\": {\n      \"config\": {\n       \"description\": \"Config freeform configuration for the extension.\",\n       \"format\": \"textarea\",\n       \"type\": \"string\"\n      },\n      \"type\": {\n       \"description\": \"Type of the extension.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"config\",\n      \"type\"\n     ],\n     \"type\": \"object\"\n    },\n    \"match\": {\n     \"description\": \"Match defines traffic that should be routed through the sidecar.\",\n     \"properties\": {\n      \"port\": {\n       \"description\": \"Port defines a port to which a user does request.\",\n       \"maximum\": 65535,\n       \"minimum\": 1,\n       \"type\": \"integer\"\n      },\n      \"protocol\": {\n       \"default\": \"tcp\",\n       \"description\": \"Protocol defines a protocol of the communication. Possible values: `tcp`, `grpc`, `http`, `http2`.\",\n       \"enum\": [\n        \"tcp\",\n        \"grpc\",\n        \"http\",\n        \"http2\"\n       ],\n       \"type\": \"string\"\n      },\n      \"type\": {\n       \"default\": \"HostnameGenerator\",\n       \"description\": \"Type of the match, only `HostnameGenerator` is available at the moment.\",\n       \"enum\": [\n        \"HostnameGenerator\"\n       ],\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"port\"\n     ],\n     \"type\": \"object\"\n    },\n    \"tls\": {\n     \"description\": \"Tls provides a TLS configuration when proxy is resposible for a TLS origination\",\n     \"properties\": {\n      \"allowRenegotiation\": {\n       \"default\": false,\n       \"description\": \"AllowRenegotiation defines if TLS sessions will allow renegotiation.\\nSetting this to true is not recommended for security reasons.\",\n       \"type\": \"boolean\"\n      },\n      \"enabled\": {\n       \"default\": false,\n       \"description\": \"Enabled defines if proxy should originate TLS.\",\n       \"type\": \"boolean\"\n      },\n      \"verification\": {\n       \"description\": \"Verification section for providing TLS verification details.\",\n       \"properties\": {\n        \"caCert\": {\n         \"description\": \"CaCert defines a certificate of CA.\",\n         \"properties\": {\n          \"inline\": {\n           \"description\": \"Data source is inline bytes.\",\n           \"format\": \"byte\",\n           \"type\": \"string\"\n          },\n          \"inlineString\": {\n           \"description\": \"Data source is inline string`\",\n           \"type\": \"string\"\n          },\n          \"secret\": {\n           \"description\": \"Data source is a secret with given Secret key.\",\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"clientCert\": {\n         \"description\": \"ClientCert defines a certificate of a client.\",\n         \"properties\": {\n          \"inline\": {\n           \"description\": \"Data source is inline bytes.\",\n           \"format\": \"byte\",\n           \"type\": \"string\"\n          },\n          \"inlineString\": {\n           \"description\": \"Data source is inline string`\",\n           \"type\": \"string\"\n          },\n          \"secret\": {\n           \"description\": \"Data source is a secret with given Secret key.\",\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"clientKey\": {\n         \"description\": \"ClientKey defines a client private key.\",\n         \"properties\": {\n          \"inline\": {\n           \"description\": \"Data source is inline bytes.\",\n           \"format\": \"byte\",\n           \"type\": \"string\"\n          },\n          \"inlineString\": {\n           \"description\": \"Data source is inline string`\",\n           \"type\": \"string\"\n          },\n          \"secret\": {\n           \"description\": \"Data source is a secret with given Secret key.\",\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"mode\": {\n         \"default\": \"Secured\",\n         \"description\": \"Mode defines if proxy should skip verification, one of `SkipSAN`, `SkipCA`, `Secured`, `SkipAll`. Default `Secured`.\",\n         \"enum\": [\n          \"SkipSAN\",\n          \"SkipCA\",\n          \"Secured\",\n          \"SkipAll\"\n         ],\n         \"type\": \"string\"\n        },\n        \"serverName\": {\n         \"description\": \"ServerName overrides the default Server Name Indicator set by Kuma.\",\n         \"type\": \"string\"\n        },\n        \"subjectAltNames\": {\n         \"description\": \"SubjectAltNames list of names to verify in the certificate.\",\n         \"items\": {\n          \"properties\": {\n           \"type\": {\n            \"default\": \"Exact\",\n            \"description\": \"Type specifies matching type, one of `Exact`, `Prefix`. Default: `Exact`\",\n            \"enum\": [\n             \"Exact\",\n             \"Prefix\"\n            ],\n            \"type\": \"string\"\n           },\n           \"value\": {\n            \"description\": \"Value to match.\",\n            \"type\": \"string\"\n           }\n          },\n          \"required\": [\n           \"value\"\n          ],\n          \"type\": \"object\"\n         },\n         \"type\": \"array\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"version\": {\n       \"description\": \"Version section for providing version specification.\",\n       \"properties\": {\n        \"max\": {\n         \"default\": \"TLSAuto\",\n         \"description\": \"Max defines maximum supported version. One of `TLSAuto`, `TLS10`, `TLS11`, `TLS12`, `TLS13`.\",\n         \"enum\": [\n          \"TLSAuto\",\n          \"TLS10\",\n          \"TLS11\",\n          \"TLS12\",\n          \"TLS13\"\n         ],\n         \"type\": \"string\"\n        },\n        \"min\": {\n         \"default\": \"TLSAuto\",\n         \"description\": \"Min defines minimum supported version. One of `TLSAuto`, `TLS10`, `TLS11`, `TLS12`, `TLS13`.\",\n         \"enum\": [\n          \"TLSAuto\",\n          \"TLS10\",\n          \"TLS11\",\n          \"TLS12\",\n          \"TLS13\"\n         ],\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"match\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Mesh External Service\",\n \"type\": \"object\"\n}",
