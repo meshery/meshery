@@ -7,7 +7,7 @@ import rego.v1
 evaluate_relationships_deleted(
 	design_file,
 	identified_relationships,
-) := result if {
+) := deleted_relationships if {
 	deleted_relationships := [rel |
 		some existing_rel in design_file.relationships
 
@@ -44,7 +44,7 @@ evaluate_relationships_added(
 ]
 
 does_relationship_exist_in_design(design_file, identified_rel) if {
-	some existing_rel in design_file
+	some existing_rel in design_file.relationships
 
 	is_of_same_kind(existing_rel, identified_rel)
 	does_belongs_to_same_model(existing_rel, identified_rel)
@@ -52,17 +52,19 @@ does_relationship_exist_in_design(design_file, identified_rel) if {
 }
 
 is_of_same_kind(existing_rel, new_rel) if {
-	new_rel.kind == existing_rel.kind
-	new_rel.type == existing_rel.type
-	new_rel.subType == existing_rel.subTyp
+	lower(new_rel.kind) == lower(existing_rel.kind)
+	lower(new_rel.type) == lower(existing_rel.type)
+	lower(new_rel.subType) == lower(existing_rel.subType)
 }
 
-default does_belongs_to_same_model := true
+# default does_belongs_to_same_model := undefined
 
 # consider for wildcard in name and version?
 does_belongs_to_same_model(existing_rel, new_rel) if {
-	new_rel.model.name == existing_rel.model.name
-	new_rel.model.model.version == existing_rel.model.model.version
+	object.get(existing_rel.model, "name", "") == object.get(new_rel.model, "name", "")
+
+	# use model.model.version and same model check o mode defined in selectrors to be added
+	object.get(existing_rel.model, "version", "") == object.get(new_rel.model, "version", "")
 }
 
 is_same_selector(existing_rel, new_rel) if {
@@ -79,13 +81,23 @@ is_same_selector(existing_rel, new_rel) if {
 	# is relationship between same components or different
 	ex_from_selector.id == from_selector.id
 	ex_to_selector.id == to_selector.id
-
+	
 	# check if the relationship includes binding component.
 	# If present, verify the binding component for the existing and the identified relationship are same or different.
+
+	
+}
+
+is_same_binding(ex_from_selector, from_selector, ex_to_selector, to_selector) if {
 	has_key(ex_from_selector, "match")
 	has_key(from_selector, "match")
 
 	is_same_binding_declaration(ex_from_selector, ex_to_selector, from_selector, to_selector)
+}
+
+is_same_binding(ex_from_selector, from_selector, ex_to_selector, to_selector) if {
+	not has_key(ex_from_selector, "match")
+	not has_key(from_selector, "match")
 }
 
 is_same_binding_declaration(ex_from_selector, ex_to_selector, from_selector, to_selector) if {
@@ -100,4 +112,6 @@ is_same_binding_declaration(ex_from_selector, ex_to_selector, from_selector, to_
 		from_selector.match.to[0].id,
 		to_selector.match.to[0].id,
 	}
+
+	existing_binding == identified_binding
 }

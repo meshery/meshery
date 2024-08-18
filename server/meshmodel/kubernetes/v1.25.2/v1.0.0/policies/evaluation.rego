@@ -51,7 +51,11 @@ evaluate := updated_design_file if {
 		some relationship in data.relationships
 		result := identify_relationship(input, relationship)
 	})
-
+	
+	relationships_added := evaluate_relationships_added(input, updated_relationships)
+	
+	combined_relationships := array.concat(input.relationships, relationships_added)
+	
 	updated_design_file := json.patch(input, [
 		{
 			"op": "replace",
@@ -59,12 +63,11 @@ evaluate := updated_design_file if {
 			"value": design_file_with_updated_declarations,
 		},
 		{
-			"op": "add", # include those relationships, which do not exist or should be removed.
+			"op": "replace",
 			"path": "/relationships",
-			"value": updated_relationships,
-		},
+			"value": combined_relationships,
+		}
 	])
-	print("updated_design_file: ", updated_design_file)
 }
 
 filter_updated_declaration(declaration, updated_declarations) := obj.declaration if {
