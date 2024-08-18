@@ -359,6 +359,16 @@ paths:
             summary: Handle GET request for events.
             tags:
                 - EventsAPI
+        post:
+            description: |-
+                Receives client-generated events bound for the Notification Center.
+            operationId: idClientEventHandler
+            responses:
+                "200":
+                    $ref: '#/responses/eventResponseWrapper'
+            summary: Handle POST request for client-generated events.
+            tags:
+                - EventsAPI
     /api/events/{id}:
         delete:
             description: Deletes event associated with the id.

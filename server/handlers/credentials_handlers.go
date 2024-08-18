@@ -41,7 +41,7 @@ func (h *Handler) SaveUserCredential(w http.ResponseWriter, req *http.Request, _
 		return
 	}
 
-	h.log.Info("credential saved successfully", createdCredential.Name, createdCredential.ID)
+	h.log.Info("Credential saved.", createdCredential.Name, createdCredential.ID)
 	w.WriteHeader(http.StatusCreated)
 }
 
@@ -126,7 +126,7 @@ func (h *Handler) UpdateUserCredential(w http.ResponseWriter, req *http.Request,
 		return
 	}
 
-	h.log.Info("credential updated successfully")
+	h.log.Info("Credential updated.")
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -141,6 +141,6 @@ func (h *Handler) DeleteUserCredential(w http.ResponseWriter, req *http.Request,
 		return
 	}
 
-	h.log.Info("credential deleted successfully")
+	h.log.Info("Credential deleted.")
 	w.WriteHeader(http.StatusOK)
 }

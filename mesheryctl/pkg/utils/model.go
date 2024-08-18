@@ -72,7 +72,7 @@ func (m *ModelCSV) UpdateModelDefinition(modelDef *v1beta1.Model) error {
 		if key == "svgColor" || key == "svgWhite" {
 			svg, err := utils.Cast[string](modelMetadata[key])
 			if err == nil {
-				metadata[key], err = utils.UpdateSVGString(svg, SVG_WIDTH, SVG_HEIGHT)
+				metadata[key], err = utils.UpdateSVGString(svg, SVG_WIDTH, SVG_HEIGHT, false)
 				if err != nil {
 					// If svg cannot be updated, assign the svg value as it is
 					metadata[key] = modelMetadata[key]
@@ -154,7 +154,7 @@ func NewModelCSVHelper(sheetURL, spreadsheetName string, spreadsheetID int64) (*
 	}, nil
 }
 
-func (mch *ModelCSVHelper) ParseModelsSheet(parseForDocs bool) error {
+func (mch *ModelCSVHelper) ParseModelsSheet(parseForDocs bool, modelName string) error {
 	ch := make(chan ModelCSV, 1)
 	errorChan := make(chan error, 1)
 	csvReader, err := csv.NewCSVParser[ModelCSV](mch.CSVPath, rowIndex, nil, func(columns []string, currentRow []string) bool {
@@ -189,6 +189,9 @@ func (mch *ModelCSVHelper) ParseModelsSheet(parseForDocs bool) error {
 		select {
 
 		case data := <-ch:
+			if modelName != "" && data.Model != modelName {
+				continue
+			}
 			mch.Models = append(mch.Models, data)
 			Log.Info(fmt.Sprintf("Reading registrant [%s] model [%s]", data.Registrant, data.Model))
 		case err := <-errorChan:

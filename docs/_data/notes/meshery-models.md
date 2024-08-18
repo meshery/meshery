@@ -43,7 +43,7 @@ The goal is to have a model for Meshery that:
 1. Where’s the database? - Meshery Cloud / Git
 2. Where is the pattern engine doc?
 
-# MeshModel Model Constructs
+# Model Constructs
 
 # Model Packaging
 
@@ -86,7 +86,7 @@ Every construct will be represented in three forms (two static and one dynamic).
 3. **Declaration** (static) - A defined construct; A specific deof the Definition. 3. _Example: NGINX container as a Kubernetes Pod_
 4. **Instance** (dynamic) - A realized construct (deployed/discovered); An instantiation of the Declaration. 4. _Example: NGINX-as234z2 pod running in cluster_
 
-MeshModel supports a common substrate of operands to support granularly, expressively selectors for matching (or not matching) model constructs. The set of supported operands in MeshModel is a direct representation of those supported by Cuelang and defined by RFC xxx / regex xxx. Sample operands:
+Model supports a common substrate of operands to support granularly, expressively selectors for matching (or not matching) model constructs. The set of supported operands in Model is a direct representation of those supported by Cuelang and defined by RFC xxx / regex xxx. Sample operands:
 
 1. - - wildcard
 2. ? - ….

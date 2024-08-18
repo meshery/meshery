@@ -4,6 +4,7 @@
   "kind": "Edge",
   "metadata": {
     "description": "A relationship that defines network edges between components",
+    "animation": "marching-ants",
     "capabilities": {
       "designer": {
         "edit": {
@@ -28,6 +29,7 @@
     },
     "metadata": {}
   },
+  "type": "Network",
   "subType": "Network",
   "evaluationQuery": "edge_network_relationship",
   "selectors": [

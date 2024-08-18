@@ -6,15 +6,16 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"path"
 	"io"
 	"net/http"
 	"net/url"
 	"os"
+	"path"
 	"path/filepath"
 	"strconv"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/gofrs/uuid"
 	guid "github.com/google/uuid"
@@ -334,7 +335,7 @@ func (h *Handler) handlePatternPOST(
 				// go h.config.EventBroadcaster.Publish(userID, event)
 				//
 			} else {
-				h.log.Info("OCI Artifact decompressed successfully")
+				h.log.Info("OCI Artifact decompressed.")
 				event := eventBuilder.WithSeverity(events.Informational).WithDescription(fmt.Sprintf("OCI Artifact decompressed into %s design file", mesheryPattern.Name)).Build()
 				_ = provider.PersistEvent(event)
 				go h.config.EventBroadcaster.Publish(userID, event)
@@ -359,7 +360,7 @@ func (h *Handler) handlePatternPOST(
 			}
 
 			var pattern pCore.Pattern
-			err = yaml.Unmarshal(bytPattern, &pattern)
+			err = yaml.Unmarshal([]byte(mesheryPattern.PatternFile), &pattern)
 			if err != nil {
 				h.log.Error(utils.ErrDecodeYaml(err))
 				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
@@ -1185,7 +1186,7 @@ func (h *Handler) DownloadMesheryPatternHandler(
 		}
 		defer os.RemoveAll(tmpDir)
 
-		tmpDesignFile := filepath.Join(tmpDir, pattern.Name+".yaml")
+		tmpDesignFile := filepath.Join(tmpDir, "design.yml")
 		file, err := os.Create(tmpDesignFile)
 		if err != nil {
 			h.log.Error(ErrCreateFile(err, tmpDesignFile))
@@ -1294,9 +1295,9 @@ func (h *Handler) DownloadMesheryPatternHandler(
 			return
 		}
 
-		h.log.Info(fmt.Sprintf("OCI Image successfully built. Digest: %v, Size: %v", digest, size))
+		h.log.Info(fmt.Sprintf("OCI Image built. Digest: %v, Size: %v", digest, size))
 
-		eventBuilder.WithSeverity(events.Informational).WithDescription(fmt.Sprintf("OCI Image successfully built. Digest: %v, Size: %v", digest, size))
+		eventBuilder.WithSeverity(events.Informational).WithDescription(fmt.Sprintf("OCI Image built. Digest: %v, Size: %v", digest, size))
 		event := eventBuilder.Build()
 		go h.config.EventBroadcaster.Publish(userID, event)
 		_ = provider.PersistEvent(event)
@@ -1334,19 +1335,22 @@ func (h *Handler) DownloadMesheryPatternHandler(
 			http.Error(rw, ErrIOReader(err).Error(), http.StatusInternalServerError)
 			event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
 				"error": ErrIOReader(err),
-			}).WithDescription(fmt.Sprintf("Failed to read contents of OCI Artifact %s", tmpOCITarFilePath)).Build()
+			}).WithDescription(fmt.Sprintf("Failed to read contents of OCI artifact %s", tmpOCITarFilePath)).Build()
 			_ = provider.PersistEvent(event)
 			go h.config.EventBroadcaster.Publish(userID, event)
 
 			return
 		}
 
-		h.log.Info("OCI Artifact successfully saved at: ", tmpOCITarFilePath)
+		h.log.Info("OCI Artifact saved at: ", tmpOCITarFilePath)
 
 		eventBuilder.WithSeverity(events.Informational).WithDescription(fmt.Sprintf("OCI Artifact temporarily saved at: %s", tmpOCITarFilePath))
 		event = eventBuilder.Build()
 		go h.config.EventBroadcaster.Publish(userID, event)
 		_ = provider.PersistEvent(event)
+
+		rw.Header().Set("Content-Type", "application/tar")
+		rw.Header().Add("Content-Disposition", fmt.Sprintf("attachment;filename=%s.tar", pattern.Name))
 
 		reader := bytes.NewReader(content)
 		if _, err := io.Copy(rw, reader); err != nil {
@@ -2066,7 +2070,7 @@ func createArtifactHubPkg(pattern *models.MesheryPattern, user string) ([]byte, 
 	if isCatalogItem {
 		version = pattern.CatalogData.PublishedVersion
 	}
-	artifactHubPkg := catalog.BuildArtifactHubPkg(pattern.Name, "", user, version, pattern.CreatedAt.String(), &pattern.CatalogData)
+	artifactHubPkg := catalog.BuildArtifactHubPkg(pattern.Name, "", user, version, pattern.CreatedAt.Format(time.RFC3339), &pattern.CatalogData)
 
 	data, err := yaml.Marshal(artifactHubPkg)
 	if err != nil {

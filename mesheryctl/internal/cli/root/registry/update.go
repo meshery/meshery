@@ -119,7 +119,7 @@ func InvokeCompUpdate() error {
 		return err
 	}
 
-	err = componentCSVHelper.ParseComponentsSheet()
+	err = componentCSVHelper.ParseComponentsSheet(modelName)
 	if err != nil {
 		err = ErrUpdateRegistry(err, modelLocation)
 		utils.Log.Error(err)
