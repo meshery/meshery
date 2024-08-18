@@ -81,6 +81,11 @@ evaluate_bindings contains result if {
 	match_selector_for_from := json.patch(selector, [
 		{
 			"op": "add",
+			"path": "id",
+			"value": from_declaration.id,
+		},
+		{
+			"op": "add",
 			"path": "/match/from/0/id",
 			"value": from_declaration.id,
 		},
@@ -92,6 +97,11 @@ evaluate_bindings contains result if {
 	])
 
 	match_selector_for_to := json.patch(to_selector, [
+		{
+			"op": "add",
+			"path": "id",
+			"value": to_declaration.id,
+		},
 		{
 			"op": "add",
 			"path": "/match/from/0/id",
