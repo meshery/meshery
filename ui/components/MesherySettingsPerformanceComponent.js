@@ -1,5 +1,5 @@
 /* eslint-disable */
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Button from '@material-ui/core/Button';
 import SaveOutlinedIcon from '@material-ui/icons/SaveOutlined';
@@ -50,84 +50,92 @@ const styles = (theme) => ({
   },
 });
 
-class MesherySettingsPerformanceComponent extends React.Component {
-  constructor(props) {
-    super(props);
-    const { qps, c, t, gen } = props;
-    this.state = {
-      qps,
-      c,
-      t,
-      tValue: t,
-      gen,
-      blockRunTest: false,
-      tError: '',
-    };
-  }
+const MesherySettingsPerformanceComponent = ({
+  qps,
+  c,
+  t,
+  updateProgress,
+  selectedK8sContexts,
+  notify,
+  updateLoadTestPref,
+  classes,
+  gen,
+}) => {
+  const [tValue, settValue] = useState('');
+  const [tError, settError] = useState('');
+  const [blockRunTest, setBlockRunTest] = useState('');
+  const [queriesPerSecond, setQueriesPerSecond] = useState(qps);
+  const [concurrentRequests, setConcurrentRequests] = useState(c);
+  const [timeDuration, setTimeDuration] = useState(t);
+  const [generator, setGenerator] = useState(gen);
 
-  handleChange = (name) => (event) => {
-    if (name === 'qps' || name === 'c') {
-      this.setState({ [name]: parseInt(event.target.value) });
-    } else {
-      this.setState({ [name]: event.target.value });
+  const handleChange = (name) => (event) => {
+    const value = event.target.value;
+    switch (name) {
+      case 'qps':
+        setQueriesPerSecond(parseInt(value));
+        break;
+      case 'c':
+        setConcurrentRequests(parseInt(value));
+        break;
+      case 'gen':
+        setGenerator(value);
+        break;
+      default:
+        break;
     }
   };
 
-  handleDurationChange = (event, newValue) => {
-    this.setState({ tValue: newValue });
+  const handleDurationChange = (event, newValue) => {
+    settValue(newValue);
     if (newValue !== null) {
-      this.setState({ tError: '' });
+      settError('');
     }
   };
 
-  handleInputDurationChange = (event, newValue) => {
-    this.setState({ t: newValue });
+  const handleInputDurationChange = (event, newValue) => {
+    setTimeDuration(newValue);
   };
 
-  handleSubmit = () => {
-    const { t } = this.state;
-
+  const handleSubmit = () => {
     let err = false;
     let tNum = 0;
     try {
-      tNum = parseInt(t.substring(0, t.length - 1));
+      tNum = parseInt(timeDuration.substring(0, timeDuration.length - 1));
     } catch (ex) {
       err = true;
     }
 
     if (
-      t === '' ||
+      timeDuration === '' ||
       !(
-        t.toLowerCase().endsWith('h') ||
-        t.toLowerCase().endsWith('m') ||
-        t.toLowerCase().endsWith('s')
+        timeDuration.toLowerCase().endsWith('h') ||
+        timeDuration.toLowerCase().endsWith('m') ||
+        timeDuration.toLowerCase().endsWith('s')
       ) ||
       err ||
       tNum <= 0
     ) {
-      this.setState({ tError: 'error-autocomplete-value' });
+      settError('error-autocomplete-value');
       return;
     }
 
-    this.submitPerfPreference();
+    submitPerfPreference();
   };
 
-  submitPerfPreference = () => {
-    const { qps, c, t, gen } = this.state;
-
+  const submitPerfPreference = () => {
     const loadTestPrefs = {
-      qps,
-      c,
-      t,
-      gen,
+      qps: queriesPerSecond,
+      c: concurrentRequests,
+      t: timeDuration,
+      gen: generator,
     };
-    const requestBody = JSON.stringify({ loadTestPrefs: loadTestPrefs });
 
-    this.setState({ blockRunTest: true }); // to block the button
-    this.props.updateProgress({ showProgress: true });
-    const self = this;
+    const requestBody = JSON.stringify({ loadTestPrefs });
+    setBlockRunTest(true); // to block the button
+    updateProgress({ showProgress: true });
     dataFetch(
-      ctxUrl('/api/user/prefs', this.props.selectedK8sContexts),
+      ctxUrl('/api/user/prefs', selectedK8sContexts),
       {
         credentials: 'same-origin',
         method: 'POST',
@@ -138,188 +146,171 @@ class MesherySettingsPerformanceComponent extends React.Component {
         body: requestBody,
       },
       (result) => {
-        this.props.updateProgress({ showProgress: false });
+        updateProgress({ showProgress: false });
         if (typeof result !== 'undefined') {
-          const notify = this.props.notify;
           notify({ message: 'Preferences saved', event_type: EVENT_TYPES.SUCCESS });
-          this.props.updateLoadTestPref({
+          updateLoadTestPref({
             loadTestPref: {
-              qps: self.state.qps,
-              c: self.state.c,
-              t: self.state.t,
-              gen: self.state.gen,
+              qps: queriesPerSecond,
+              c: concurrentRequests,
+              t: timeDuration,
+              gen: generator,
             },
           });
-          this.setState({ blockRunTest: false });
+          setBlockRunTest(false);
         }
       },
-      self.handleError('There was an error saving your preferences'),
+      handleError('There was an error saving your preferences'),
     );
   };
 
-  componentDidMount() {
-    this.getLoadTestPrefs();
-  }
-
-  getLoadTestPrefs = () => {
-    const self = this;
+  const getLoadTestPrefs = () => {
     dataFetch(
-      ctxUrl('/api/user/prefs', this.props.selectedK8sContexts),
+      ctxUrl('/api/user/prefs', selectedK8sContexts),
       {
         credentials: 'same-origin',
         method: 'GET',
         credentials: 'include',
       },
       (result) => {
-        if (typeof result !== 'undefined') {
-          this.setState({
-            qps: result.loadTestPrefs.qps,
-            c: result.loadTestPrefs.c,
-            t: result.loadTestPrefs.t,
-            gen: result.loadTestPrefs.gen,
-          });
+        if (result) {
+          setQueriesPerSecond(result.loadTestPrefs.qps);
+          setConcurrentRequests(result.loadTestPrefs.c);
+          setTimeDuration(result.loadTestPrefs.t);
+          setGen(result.loadTestPrefs.gen);
         }
       },
       () => {
-        !qps || !t || !c ? self.handleError('There was an error fetching your preferences') : {};
+        !qps || !t || !c ? handleError('There was an error fetching your preferences') : {};
       },
     );
   };
 
-  handleError = (msg) => {
-    const self = this;
+  const handleError = (msg) => {
     return (error) => {
-      self.setState({ blockRunTest: false });
+      setBlockRunTest(false);
       let finalMsg = msg;
       if (typeof error === 'string') {
         finalMsg = `${msg}: ${error}`;
       }
-      const notify = self.props.notify;
       notify({ message: finalMsg, event_type: EVENT_TYPES.ERROR, details: error.toString() });
     };
   };
 
-  render() {
-    const { classes } = this.props;
-    const { blockRunTest, qps, t, c, gen, tValue, tError } = this.state;
+  useEffect(() => {
+    getLoadTestPrefs();
+  }, []);
 
-    return (
-      <NoSsr>
-        <React.Fragment>
-          <div className={classes.root}>
-            <label>
-              <strong>Performance Load Test Defaults</strong>
-            </label>
-            <Grid container spacing={3}>
-              <Grid item xs={12} lg={4}>
-                <TextField
-                  required
-                  id="c"
-                  name="c"
-                  label="Concurrent requests"
-                  type="number"
-                  fullWidth
-                  value={c}
-                  inputProps={{ min: '0', step: '1' }}
-                  margin="normal"
-                  variant="outlined"
-                  onChange={this.handleChange('c')}
-                  InputLabelProps={{ shrink: true }}
-                />
-              </Grid>
-              <Grid item xs={12} lg={4}>
-                <TextField
-                  required
-                  id="qps"
-                  name="qps"
-                  label="Queries per second"
-                  type="number"
-                  fullWidth
-                  value={qps}
-                  inputProps={{ min: '0', step: '1' }}
-                  margin="normal"
-                  variant="outlined"
-                  onChange={this.handleChange('qps')}
-                  InputLabelProps={{ shrink: true }}
-                />
-              </Grid>
-              <Grid item xs={12} lg={4}>
-                <Tooltip
-                  title={
-                    "Please use 'h', 'm' or 's' suffix for hour, minute or second respectively."
-                  }
-                >
-                  <Autocomplete
-                    required
-                    id="t"
-                    name="t"
-                    freeSolo
-                    label="Duration*"
-                    fullWidth
-                    variant="outlined"
-                    className={classes.errorValue}
-                    classes={{ root: tError }}
-                    value={tValue}
-                    inputValue={t}
-                    onChange={this.handleDurationChange}
-                    onInputChange={this.handleInputDurationChange}
-                    options={durationOptions}
-                    style={{ marginTop: '16px', marginBottom: '8px' }}
-                    renderInput={(params) => (
-                      <TextField {...params} label="Duration*" variant="outlined" />
-                    )}
-                  />
-                </Tooltip>
-              </Grid>
-              <Grid item xs={12} lg={4}>
-                <FormControl component="loadGenerator" className={classes.formControl}>
-                  <label>
-                    <strong>Default Load Generator</strong>
-                  </label>
-                  <RadioGroup
-                    aria-label="loadGenerator"
-                    name="loadGenerator"
-                    value={gen}
-                    onChange={this.handleChange('gen')}
-                    row
-                  >
-                    {loadGenerators.map((lg) => (
-                      <FormControlLabel
-                        value={lg}
-                        control={
-                          <Radio
-                            color="primary"
-                            disabled={lg === 'wrk2'}
-                            className={classes.radio}
-                          />
-                        }
-                        label={lg}
-                      />
-                    ))}
-                  </RadioGroup>
-                </FormControl>
-              </Grid>
+  return (
+    <NoSsr>
+      <React.Fragment>
+        <div className={classes.root}>
+          <label>
+            <strong>Performance Load Test Defaults</strong>
+          </label>
+          <Grid container spacing={3}>
+            <Grid item xs={12} lg={4}>
+              <TextField
+                required
+                id="c"
+                name="c"
+                label="Concurrent requests"
+                type="number"
+                fullWidth
+                value={concurrentRequests}
+                inputProps={{ min: '0', step: '1' }}
+                margin="normal"
+                variant="outlined"
+                onChange={handleChange('c')}
+                InputLabelProps={{ shrink: true }}
+              />
             </Grid>
-            <div className={classes.buttons}>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                size="large"
-                onClick={this.handleSubmit}
-                className={classes.button}
-                disabled={blockRunTest}
+            <Grid item xs={12} lg={4}>
+              <TextField
+                required
+                id="qps"
+                name="qps"
+                label="Queries per second"
+                type="number"
+                fullWidth
+                value={queriesPerSecond}
+                inputProps={{ min: '0', step: '1' }}
+                margin="normal"
+                variant="outlined"
+                onChange={handleChange('qps')}
+                InputLabelProps={{ shrink: true }}
+              />
+            </Grid>
+            <Grid item xs={12} lg={4}>
+              <Tooltip
+                title={"Please use 'h', 'm' or 's' suffix for hour, minute or second respectively."}
               >
-                <SaveOutlinedIcon style={{ marginRight: '3px' }} />
-                {blockRunTest ? <CircularProgress size={30} /> : 'Save'}
-              </Button>
-            </div>
+                <Autocomplete
+                  required
+                  id="t"
+                  name="t"
+                  freeSolo
+                  label="Duration*"
+                  fullWidth
+                  variant="outlined"
+                  className={classes.errorValue}
+                  classes={{ root: tError }}
+                  value={tValue}
+                  inputValue={timeDuration}
+                  onChange={handleDurationChange}
+                  onInputChange={handleInputDurationChange}
+                  options={durationOptions}
+                  style={{ marginTop: '16px', marginBottom: '8px' }}
+                  renderInput={(params) => (
+                    <TextField {...params} label="Duration*" variant="outlined" />
+                  )}
+                />
+              </Tooltip>
+            </Grid>
+            <Grid item xs={12} lg={4}>
+              <FormControl component="loadGenerator" className={classes.formControl}>
+                <label>
+                  <strong>Default Load Generator</strong>
+                </label>
+                <RadioGroup
+                  aria-label="loadGenerator"
+                  name="loadGenerator"
+                  value={generator}
+                  onChange={handleChange('gen')}
+                  row
+                >
+                  {loadGenerators.map((lg) => (
+                    <FormControlLabel
+                      value={lg}
+                      control={
+                        <Radio color="primary" disabled={lg === 'wrk2'} className={classes.radio} />
+                      }
+                      label={lg}
+                    />
+                  ))}
+                </RadioGroup>
+              </FormControl>
+            </Grid>
+          </Grid>
+          <div className={classes.buttons}>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              size="large"
+              onClick={handleSubmit}
+              className={classes.button}
+              disabled={blockRunTest}
+            >
+              <SaveOutlinedIcon style={{ marginRight: '3px' }} />
+              {blockRunTest ? <CircularProgress size={30} /> : 'Save'}
+            </Button>
           </div>
-        </React.Fragment>
-      </NoSsr>
-    );
-  }
-}
+        </div>
+      </React.Fragment>
+    </NoSsr>
+  );
+};
 
 MesherySettingsPerformanceComponent.propTypes = {
   classes: PropTypes.object.isRequired,

@@ -33,7 +33,6 @@ import RemoteComponent from '../RemoteComponent';
 import ExtensionPointSchemaValidator from '../../utils/ExtensionPointSchemaValidator';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTachometerAlt } from '@fortawesome/free-solid-svg-icons';
-import MesherySettingsPerformanceComponent from '../MesherySettingsPerformanceComponent';
 import { ctxUrl } from '../../utils/multi-ctx';
 import { iconMedium } from '../../css/icons.styles';
 import { getTheme, setTheme } from '../../utils/theme';
@@ -41,6 +40,7 @@ import { isExtensionOpen } from '../../pages/_app';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { useWindowDimensions } from '@/utils/dimension';
+import MesherySettingsPerformanceComponent from '../MesherySettingsPerformanceComponent';
 
 const styles = (theme) => ({
   statsWrapper: {
