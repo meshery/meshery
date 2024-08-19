@@ -1112,7 +1112,6 @@ function Connections(props) {
     setKindFilter(kindFilter);
     setStatusFilter(statusFilter);
   };
-
   return (
     <NoSsr>
       {CAN(keys.VIEW_CONNECTIONS.action, keys.VIEW_CONNECTIONS.subject) ? (
