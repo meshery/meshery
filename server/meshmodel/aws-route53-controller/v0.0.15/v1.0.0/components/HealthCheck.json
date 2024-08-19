@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "HealthCheck",
    "schema": "{\n \"description\": \"HealthCheck is the Schema for the HealthChecks API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"HealthCheckSpec defines the desired state of HealthCheck.\\n\\n\\nA complex type that contains information about one health check that is associated\\nwith the current Amazon Web Services account.\",\n   \"properties\": {\n    \"healthCheckConfig\": {\n     \"description\": \"A complex type that contains settings for a new health check.\",\n     \"properties\": {\n      \"alarmIdentifier\": {\n       \"description\": \"A complex type that identifies the CloudWatch alarm that you want Amazon\\nRoute 53 health checkers to use to determine whether the specified health\\ncheck is healthy.\",\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        },\n        \"region\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"childHealthChecks\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"disabled\": {\n       \"type\": \"boolean\"\n      },\n      \"enableSNI\": {\n       \"type\": \"boolean\"\n      },\n      \"failureThreshold\": {\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"fullyQualifiedDomainName\": {\n       \"type\": \"string\"\n      },\n      \"healthThreshold\": {\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"iPAddress\": {\n       \"type\": \"string\"\n      },\n      \"insufficientDataHealthStatus\": {\n       \"type\": \"string\"\n      },\n      \"inverted\": {\n       \"type\": \"boolean\"\n      },\n      \"measureLatency\": {\n       \"type\": \"boolean\"\n      },\n      \"port\": {\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"regions\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"requestInterval\": {\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"resourcePath\": {\n       \"type\": \"string\"\n      },\n      \"routingControlARN\": {\n       \"type\": \"string\"\n      },\n      \"searchString\": {\n       \"type\": \"string\"\n      },\n      \"type\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"tags\": {\n     \"description\": \"A complex type that contains a list of the tags that you want to add to the\\nspecified health check or hosted zone and/or the tags that you want to edit\\nValue for.\\n\\n\\nYou can add a maximum of 10 tags to a health check or a hosted zone.\",\n     \"items\": {\n      \"description\": \"A complex type that contains information about a tag that you want to add\\nor edit for the specified health check or hosted zone.\",\n      \"properties\": {\n       \"key\": {\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"healthCheckConfig\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Health Check\",\n \"type\": \"object\"\n}",

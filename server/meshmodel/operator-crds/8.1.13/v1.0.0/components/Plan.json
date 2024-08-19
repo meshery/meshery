@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "Plan",
    "schema": "{\n \"description\": \"Plan is the Schema for the plans API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"PlanSpec defines the desired state of Plan\",\n   \"properties\": {\n    \"apiVersion\": {\n     \"type\": \"string\"\n    },\n    \"backoffLimit\": {\n     \"default\": 4,\n     \"description\": \"Number of attempts to retry scheduling a lost schedule\",\n     \"type\": \"integer\"\n    },\n    \"checkpointRef\": {\n     \"description\": \"Enable pushing or fetching checkpoint dates from one of the supported backend\",\n     \"properties\": {\n      \"kind\": {\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"cron\": {\n     \"description\": \"Either corn or interval should be set needs a cron expression\",\n     \"type\": \"string\"\n    },\n    \"dates\": {\n     \"additionalProperties\": {\n      \"properties\": {\n       \"format\": {\n        \"type\": \"string\"\n       },\n       \"offset\": {\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"format\",\n       \"offset\"\n      ],\n      \"type\": \"object\"\n     },\n     \"description\": \"Templating can be applied before executing the plan Generates dates that will be substituted in .spec.punchline.template\",\n     \"type\": \"object\"\n    },\n    \"implementation\": {\n     \"description\": \"Will be used in case of Sparkline for executing pyspark/spark\",\n     \"enum\": [\n      \"java\",\n      \"python\"\n     ],\n     \"type\": \"string\"\n    },\n    \"interval\": {\n     \"description\": \"Either corn or interval should be set use 1s, 1m, 1h or 1d\",\n     \"type\": \"string\"\n    },\n    \"kind\": {\n     \"enum\": [\n      \"Flinkline\",\n      \"Stormline\",\n      \"Sparkline\",\n      \"Application\"\n     ],\n     \"type\": \"string\"\n    },\n    \"maxIteration\": {\n     \"description\": \"Stop plan after N iteration\",\n     \"type\": \"integer\"\n    },\n    \"templateSpec\": {\n     \"description\": \"Application, Sparkline, Stormline or Flinkline (only .spec.dag)\",\n     \"format\": \"textarea\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"apiVersion\",\n    \"kind\",\n    \"templateSpec\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Plan\",\n \"type\": \"object\"\n}",

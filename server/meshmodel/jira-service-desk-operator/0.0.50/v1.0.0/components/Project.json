@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "Project",
    "schema": "{\n \"description\": \"Project is the Schema for the projects API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ProjectSpec defines the desired state of Project\",\n   \"properties\": {\n    \"assigneeType\": {\n     \"description\": \"Task assignee type\",\n     \"enum\": [\n      \"PROJECT_LEAD\",\n      \"UNASSIGNED\"\n     ],\n     \"type\": \"string\"\n    },\n    \"avatarId\": {\n     \"description\": \"An integer value for the project's avatar.\",\n     \"type\": \"integer\"\n    },\n    \"categoryId\": {\n     \"description\": \"The ID of the project's category\",\n     \"type\": \"integer\"\n    },\n    \"description\": {\n     \"description\": \"Description for project\",\n     \"type\": \"string\"\n    },\n    \"issueSecurityScheme\": {\n     \"description\": \"The ID of the issue security scheme for the project, which enables you to control who can and cannot view issues\",\n     \"type\": \"integer\"\n    },\n    \"key\": {\n     \"description\": \"The project key is used as the prefix of your project's issue keys\",\n     \"maxLength\": 10,\n     \"pattern\": \"^[A-Z][A-Z0-9]+$\",\n     \"type\": \"string\"\n    },\n    \"leadAccountId\": {\n     \"description\": \"ID of project lead\",\n     \"maxLength\": 128,\n     \"type\": \"string\"\n    },\n    \"name\": {\n     \"description\": \"Name of the project\",\n     \"type\": \"string\"\n    },\n    \"notificationScheme\": {\n     \"description\": \"The ID of the notification scheme for the project\",\n     \"type\": \"integer\"\n    },\n    \"openAccess\": {\n     \"description\": \"The Open Access status, which dictates who can access the project. If set to true all customers can access the project. If false, only customers added to project can access the project.\",\n     \"type\": \"boolean\"\n    },\n    \"permissionScheme\": {\n     \"description\": \"The ID of the permission scheme for the project\",\n     \"type\": \"integer\"\n    },\n    \"projectTemplateKey\": {\n     \"description\": \"A prebuilt configuration for a project\",\n     \"type\": \"string\"\n    },\n    \"projectTypeKey\": {\n     \"description\": \"The project type, which dictates the application-specific feature set\",\n     \"enum\": [\n      \"business\",\n      \"service_desk\",\n      \"software\"\n     ],\n     \"type\": \"string\"\n    },\n    \"url\": {\n     \"description\": \"A link to information about this project, such as project documentation\",\n     \"pattern\": \"(http|ftp|https)://([a-zA-Z0-9~!@#$%^\\u0026*()_=+/?.:;',-]*)?\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"assigneeType\",\n    \"description\",\n    \"key\",\n    \"leadAccountId\",\n    \"name\",\n    \"projectTemplateKey\",\n    \"projectTypeKey\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Project\",\n \"type\": \"object\"\n}",

@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "TPUNode",
    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"acceleratorType\": {\n     \"description\": \"Immutable. The type of hardware accelerators associated with this node.\",\n     \"type\": \"string\"\n    },\n    \"cidrBlock\": {\n     \"description\": \"Immutable. The CIDR block that the TPU node will use when selecting an IP\\naddress. This CIDR block must be a /29 block; the Compute Engine\\nnetworks API forbids a smaller block, and using a larger block would\\nbe wasteful (a node can only consume one IP address).\\n\\nErrors will occur if the CIDR block has already been used for a\\ncurrently existing TPU node, the CIDR block conflicts with any\\nsubnetworks in the user's provided network, or the provided network\\nis peered with another network that is using that CIDR block.\",\n     \"type\": \"string\"\n    },\n    \"description\": {\n     \"description\": \"Immutable. The user-supplied description of the TPU. Maximum of 512 characters.\",\n     \"type\": \"string\"\n    },\n    \"network\": {\n     \"description\": \"Immutable. The name of a network to peer the TPU node to. It must be a\\npreexisting Compute Engine network inside of the project on which\\nthis API has been activated. If none is provided, \\\"default\\\" will be\\nused.\",\n     \"type\": \"string\"\n    },\n    \"projectRef\": {\n     \"description\": \"The project that this resource belongs to.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `name` field of a `Project` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    },\n    \"schedulingConfig\": {\n     \"description\": \"Immutable. Sets the scheduling options for this TPU instance.\",\n     \"properties\": {\n      \"preemptible\": {\n       \"description\": \"Immutable. Defines whether the TPU instance is preemptible.\",\n       \"type\": \"boolean\"\n      }\n     },\n     \"required\": [\n      \"preemptible\"\n     ],\n     \"type\": \"object\"\n    },\n    \"tensorflowVersion\": {\n     \"description\": \"The version of Tensorflow running in the Node.\",\n     \"type\": \"string\"\n    },\n    \"useServiceNetworking\": {\n     \"description\": \"Immutable. Whether the VPC peering for the node is set up through Service Networking API.\\nThe VPC Peering should be set up before provisioning the node. If this field is set,\\ncidr_block field should not be specified. If the network that you want to peer the\\nTPU Node to is a Shared VPC network, the node must be created with this this field enabled.\",\n     \"type\": \"boolean\"\n    },\n    \"zone\": {\n     \"description\": \"Immutable. The GCP location for the TPU. If it is not provided, the provider zone is used.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"acceleratorType\",\n    \"projectRef\",\n    \"tensorflowVersion\",\n    \"zone\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"TPU Node\",\n \"type\": \"object\"\n}",

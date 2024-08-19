@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "Feature",
    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"chart\": {\n     \"description\": \"Chart specifies the chart information that will be used by the FluxCD to install the respective feature\",\n     \"properties\": {\n      \"createNamespace\": {\n       \"type\": \"boolean\"\n      },\n      \"name\": {\n       \"description\": \"Name specifies the name of the chart\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace where the respective feature resources will be deployed.\",\n       \"type\": \"string\"\n      },\n      \"sourceRef\": {\n       \"description\": \"SourceRef specifies the source of the chart\",\n       \"properties\": {\n        \"apiGroup\": {\n         \"type\": \"string\"\n        },\n        \"kind\": {\n         \"type\": \"string\"\n        },\n        \"name\": {\n         \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n         \"type\": \"string\"\n        },\n        \"namespace\": {\n         \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"name\"\n       ],\n       \"type\": \"object\"\n      },\n      \"valuesFiles\": {\n       \"description\": \"Alternative list of values files to use as the chart values (values.yaml is not included by default), expected to be a relative path in the SourceRef. Values files are merged in the order of this list with the last file overriding the first. Ignored when omitted.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"version\": {\n       \"description\": \"Version specifies the version of the chart.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\",\n      \"sourceRef\"\n     ],\n     \"type\": \"object\"\n    },\n    \"description\": {\n     \"description\": \"Description specifies a short description of the service this feature provides.\",\n     \"type\": \"string\"\n    },\n    \"featureBlock\": {\n     \"description\": \"FeatureBlock specifies the ui block name of this feature.\",\n     \"type\": \"string\"\n    },\n    \"featureSet\": {\n     \"description\": \"FeatureSet specifies the name of the FeatureSet where this feature belong to.\",\n     \"type\": \"string\"\n    },\n    \"icons\": {\n     \"description\": \"Icons is an optional list of icons for an application. Icon information includes the source, size, and mime type. These icons will be used in UI.\",\n     \"items\": {\n      \"description\": \"ImageSpec contains information about an image used as an icon.\",\n      \"properties\": {\n       \"size\": {\n        \"description\": \"(optional) The size of the image in pixels (e.g., 25x25).\",\n        \"type\": \"string\"\n       },\n       \"src\": {\n        \"description\": \"The source for image represented as either an absolute URL to the image or a Data URL containing the image. Data URLs are defined in RFC 2397.\",\n        \"type\": \"string\"\n       },\n       \"type\": {\n        \"description\": \"(optional) The mine type of the image (e.g., \\\"image/png\\\").\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"src\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"readinessChecks\": {\n     \"description\": \"ReadinessChecks specifies the conditions for this feature to be considered enabled.\",\n     \"properties\": {\n      \"resources\": {\n       \"description\": \"Resources specifies the resources that should be registered to consider this feature as enabled.\",\n       \"items\": {\n        \"description\": \"GroupVersionKind unambiguously identifies a kind.  It doesn't anonymously include GroupVersion to avoid automatic coercion.  It doesn't use a GroupVersion to avoid custom marshalling\",\n        \"properties\": {\n         \"group\": {\n          \"type\": \"string\"\n         },\n         \"kind\": {\n          \"type\": \"string\"\n         },\n         \"version\": {\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"group\",\n         \"kind\",\n         \"version\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"workloads\": {\n       \"description\": \"Workloads specifies the workloads that should exist to consider this feature as enabled.\",\n       \"items\": {\n        \"properties\": {\n         \"group\": {\n          \"type\": \"string\"\n         },\n         \"kind\": {\n          \"type\": \"string\"\n         },\n         \"selector\": {\n          \"additionalProperties\": {\n           \"type\": \"string\"\n          },\n          \"description\": \"Selector specifies label selector that should be used to select this workload\",\n          \"type\": \"object\"\n         },\n         \"version\": {\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"group\",\n         \"kind\",\n         \"selector\",\n         \"version\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"recommended\": {\n     \"description\": \"Required specifies whether this feature is mandatory or not for enabling the respecting FeatureSet.\",\n     \"type\": \"boolean\"\n    },\n    \"requirements\": {\n     \"description\": \"Requirements specifies the requirements to enable this feature.\",\n     \"properties\": {\n      \"features\": {\n       \"description\": \"Features specifies a list of Feature names that must be enabled for using this feature.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"title\": {\n     \"description\": \"Title specifies the title of this feature.\",\n     \"type\": \"string\"\n    },\n    \"values\": {\n     \"description\": \"Values holds the values for this Helm release.\",\n     \"format\": \"textarea\",\n     \"type\": \"string\"\n    },\n    \"valuesFrom\": {\n     \"description\": \"ValuesFrom holds references to resources containing Helm values for this HelmRelease, and information about how they should be merged.\",\n     \"items\": {\n      \"description\": \"copied from: https://github.com/fluxcd/helm-controller/blob/v0.37.4/api/v2beta2/reference_types.go#L45-L80 ValuesReference contains a reference to a resource containing Helm values, and optionally the key they can be found at.\",\n      \"properties\": {\n       \"kind\": {\n        \"description\": \"Kind of the values referent, valid values are ('Secret', 'ConfigMap').\",\n        \"enum\": [\n         \"Secret\",\n         \"ConfigMap\"\n        ],\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"description\": \"Name of the values referent. Should reside in the same namespace as the referring resource.\",\n        \"maxLength\": 253,\n        \"minLength\": 1,\n        \"type\": \"string\"\n       },\n       \"optional\": {\n        \"description\": \"Optional marks this ValuesReference as optional. When set, a not found error for the values reference is ignored, but any ValuesKey, TargetPath or transient error will still result in a reconciliation failure.\",\n        \"type\": \"boolean\"\n       },\n       \"targetPath\": {\n        \"description\": \"TargetPath is the YAML dot notation path the value should be merged at. When set, the ValuesKey is expected to be a single flat value. Defaults to 'None', which results in the values getting merged at the root.\",\n        \"maxLength\": 250,\n        \"pattern\": \"^([a-zA-Z0-9_\\\\-.\\\\\\\\\\\\/]|\\\\[[0-9]{1,5}\\\\])+$\",\n        \"type\": \"string\"\n       },\n       \"valuesKey\": {\n        \"description\": \"ValuesKey is the data key where the values.yaml or a specific value can be found at. Defaults to 'values.yaml'.\",\n        \"maxLength\": 253,\n        \"pattern\": \"^[\\\\-._a-zA-Z0-9]+$\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"kind\",\n       \"name\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"description\",\n    \"featureSet\",\n    \"title\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Feature\",\n \"type\": \"object\"\n}",

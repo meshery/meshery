@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "DomainName",
    "schema": "{\n \"description\": \"DomainName is the Schema for the DomainNames API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"DomainNameSpec defines the desired state of DomainName.\\n\\n\\nRepresents a domain name.\",\n   \"properties\": {\n    \"domainName\": {\n     \"type\": \"string\"\n    },\n    \"domainNameConfigurations\": {\n     \"items\": {\n      \"description\": \"The domain name configuration.\",\n      \"properties\": {\n       \"certificateARN\": {\n        \"description\": \"Represents an Amazon Resource Name (ARN).\",\n        \"type\": \"string\"\n       },\n       \"certificateName\": {\n        \"description\": \"A string with a length between [1-128].\",\n        \"type\": \"string\"\n       },\n       \"endpointType\": {\n        \"description\": \"Represents an endpoint type.\",\n        \"type\": \"string\"\n       },\n       \"ownershipVerificationCertificateARN\": {\n        \"description\": \"Represents an Amazon Resource Name (ARN).\",\n        \"type\": \"string\"\n       },\n       \"securityPolicy\": {\n        \"description\": \"The Transport Layer Security (TLS) version of the security policy for this\\ndomain name. The valid values are TLS_1_0 and TLS_1_2.\",\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"mutualTLSAuthentication\": {\n     \"description\": \"If specified, API Gateway performs two-way authentication between the client\\nand the server. Clients must present a trusted certificate to access your\\nAPI.\",\n     \"properties\": {\n      \"truststoreURI\": {\n       \"description\": \"A string representation of a URI with a length between [1-2048].\",\n       \"type\": \"string\"\n      },\n      \"truststoreVersion\": {\n       \"description\": \"A string with a length between [1-64].\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"tags\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"domainName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Domain Name\",\n \"type\": \"object\"\n}",

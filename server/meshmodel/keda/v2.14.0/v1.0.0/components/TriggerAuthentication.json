@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "TriggerAuthentication",
    "schema": "{\n \"description\": \"TriggerAuthentication defines how a trigger can authenticate\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"TriggerAuthenticationSpec defines the various ways to authenticate\",\n   \"properties\": {\n    \"awsSecretManager\": {\n     \"description\": \"AwsSecretManager is used to authenticate using AwsSecretManager\",\n     \"properties\": {\n      \"credentials\": {\n       \"properties\": {\n        \"accessKey\": {\n         \"properties\": {\n          \"valueFrom\": {\n           \"properties\": {\n            \"secretKeyRef\": {\n             \"properties\": {\n              \"key\": {\n               \"type\": \"string\"\n              },\n              \"name\": {\n               \"type\": \"string\"\n              }\n             },\n             \"required\": [\n              \"key\",\n              \"name\"\n             ],\n             \"type\": \"object\"\n            }\n           },\n           \"required\": [\n            \"secretKeyRef\"\n           ],\n           \"type\": \"object\"\n          }\n         },\n         \"required\": [\n          \"valueFrom\"\n         ],\n         \"type\": \"object\"\n        },\n        \"accessSecretKey\": {\n         \"properties\": {\n          \"valueFrom\": {\n           \"properties\": {\n            \"secretKeyRef\": {\n             \"properties\": {\n              \"key\": {\n               \"type\": \"string\"\n              },\n              \"name\": {\n               \"type\": \"string\"\n              }\n             },\n             \"required\": [\n              \"key\",\n              \"name\"\n             ],\n             \"type\": \"object\"\n            }\n           },\n           \"required\": [\n            \"secretKeyRef\"\n           ],\n           \"type\": \"object\"\n          }\n         },\n         \"required\": [\n          \"valueFrom\"\n         ],\n         \"type\": \"object\"\n        },\n        \"accessToken\": {\n         \"properties\": {\n          \"valueFrom\": {\n           \"properties\": {\n            \"secretKeyRef\": {\n             \"properties\": {\n              \"key\": {\n               \"type\": \"string\"\n              },\n              \"name\": {\n               \"type\": \"string\"\n              }\n             },\n             \"required\": [\n              \"key\",\n              \"name\"\n             ],\n             \"type\": \"object\"\n            }\n           },\n           \"required\": [\n            \"secretKeyRef\"\n           ],\n           \"type\": \"object\"\n          }\n         },\n         \"required\": [\n          \"valueFrom\"\n         ],\n         \"type\": \"object\"\n        }\n       },\n       \"required\": [\n        \"accessKey\",\n        \"accessSecretKey\"\n       ],\n       \"type\": \"object\"\n      },\n      \"podIdentity\": {\n       \"description\": \"AuthPodIdentity allows users to select the platform native identity\\nmechanism\",\n       \"properties\": {\n        \"identityAuthorityHost\": {\n         \"description\": \"Set identityAuthorityHost to override the default Azure authority host. If this is set, then the IdentityTenantID must also be set\",\n         \"type\": \"string\"\n        },\n        \"identityId\": {\n         \"type\": \"string\"\n        },\n        \"identityOwner\": {\n         \"description\": \"IdentityOwner configures which identity has to be used during auto discovery, keda or the scaled workload. Mutually exclusive with roleArn\",\n         \"enum\": [\n          \"keda\",\n          \"workload\"\n         ],\n         \"type\": \"string\"\n        },\n        \"identityTenantId\": {\n         \"description\": \"Set identityTenantId to override the default Azure tenant id. If this is set, then the IdentityID must also be set\",\n         \"type\": \"string\"\n        },\n        \"provider\": {\n         \"description\": \"PodIdentityProvider contains the list of providers\",\n         \"enum\": [\n          \"azure\",\n          \"azure-workload\",\n          \"gcp\",\n          \"aws\",\n          \"aws-eks\",\n          \"aws-kiam\",\n          \"none\"\n         ],\n         \"type\": \"string\"\n        },\n        \"roleArn\": {\n         \"description\": \"RoleArn sets the AWS RoleArn to be used. Mutually exclusive with IdentityOwner\",\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"provider\"\n       ],\n       \"type\": \"object\"\n      },\n      \"region\": {\n       \"type\": \"string\"\n      },\n      \"secrets\": {\n       \"items\": {\n        \"properties\": {\n         \"name\": {\n          \"type\": \"string\"\n         },\n         \"parameter\": {\n          \"type\": \"string\"\n         },\n         \"versionId\": {\n          \"type\": \"string\"\n         },\n         \"versionStage\": {\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"name\",\n         \"parameter\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"required\": [\n      \"secrets\"\n     ],\n     \"type\": \"object\"\n    },\n    \"azureKeyVault\": {\n     \"description\": \"AzureKeyVault is used to authenticate using Azure Key Vault\",\n     \"properties\": {\n      \"cloud\": {\n       \"properties\": {\n        \"activeDirectoryEndpoint\": {\n         \"type\": \"string\"\n        },\n        \"keyVaultResourceURL\": {\n         \"type\": \"string\"\n        },\n        \"type\": {\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"type\"\n       ],\n       \"type\": \"object\"\n      },\n      \"credentials\": {\n       \"properties\": {\n        \"clientId\": {\n         \"type\": \"string\"\n        },\n        \"clientSecret\": {\n         \"properties\": {\n          \"valueFrom\": {\n           \"properties\": {\n            \"secretKeyRef\": {\n             \"properties\": {\n              \"key\": {\n               \"type\": \"string\"\n              },\n              \"name\": {\n               \"type\": \"string\"\n              }\n             },\n             \"required\": [\n              \"key\",\n              \"name\"\n             ],\n             \"type\": \"object\"\n            }\n           },\n           \"required\": [\n            \"secretKeyRef\"\n           ],\n           \"type\": \"object\"\n          }\n         },\n         \"required\": [\n          \"valueFrom\"\n         ],\n         \"type\": \"object\"\n        },\n        \"tenantId\": {\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"clientId\",\n        \"clientSecret\",\n        \"tenantId\"\n       ],\n       \"type\": \"object\"\n      },\n      \"podIdentity\": {\n       \"description\": \"AuthPodIdentity allows users to select the platform native identity\\nmechanism\",\n       \"properties\": {\n        \"identityAuthorityHost\": {\n         \"description\": \"Set identityAuthorityHost to override the default Azure authority host. If this is set, then the IdentityTenantID must also be set\",\n         \"type\": \"string\"\n        },\n        \"identityId\": {\n         \"type\": \"string\"\n        },\n        \"identityOwner\": {\n         \"description\": \"IdentityOwner configures which identity has to be used during auto discovery, keda or the scaled workload. Mutually exclusive with roleArn\",\n         \"enum\": [\n          \"keda\",\n          \"workload\"\n         ],\n         \"type\": \"string\"\n        },\n        \"identityTenantId\": {\n         \"description\": \"Set identityTenantId to override the default Azure tenant id. If this is set, then the IdentityID must also be set\",\n         \"type\": \"string\"\n        },\n        \"provider\": {\n         \"description\": \"PodIdentityProvider contains the list of providers\",\n         \"enum\": [\n          \"azure\",\n          \"azure-workload\",\n          \"gcp\",\n          \"aws\",\n          \"aws-eks\",\n          \"aws-kiam\",\n          \"none\"\n         ],\n         \"type\": \"string\"\n        },\n        \"roleArn\": {\n         \"description\": \"RoleArn sets the AWS RoleArn to be used. Mutually exclusive with IdentityOwner\",\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"provider\"\n       ],\n       \"type\": \"object\"\n      },\n      \"secrets\": {\n       \"items\": {\n        \"properties\": {\n         \"name\": {\n          \"type\": \"string\"\n         },\n         \"parameter\": {\n          \"type\": \"string\"\n         },\n         \"version\": {\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"name\",\n         \"parameter\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"vaultUri\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"secrets\",\n      \"vaultUri\"\n     ],\n     \"type\": \"object\"\n    },\n    \"configMapTargetRef\": {\n     \"items\": {\n      \"description\": \"AuthConfigMapTargetRef is used to authenticate using a reference to a config map\",\n      \"properties\": {\n       \"key\": {\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"type\": \"string\"\n       },\n       \"parameter\": {\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"key\",\n       \"name\",\n       \"parameter\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"env\": {\n     \"items\": {\n      \"description\": \"AuthEnvironment is used to authenticate using environment variables\\nin the destination ScaleTarget spec\",\n      \"properties\": {\n       \"containerName\": {\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"type\": \"string\"\n       },\n       \"parameter\": {\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"name\",\n       \"parameter\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"gcpSecretManager\": {\n     \"properties\": {\n      \"credentials\": {\n       \"properties\": {\n        \"clientSecret\": {\n         \"properties\": {\n          \"valueFrom\": {\n           \"properties\": {\n            \"secretKeyRef\": {\n             \"properties\": {\n              \"key\": {\n               \"type\": \"string\"\n              },\n              \"name\": {\n               \"type\": \"string\"\n              }\n             },\n             \"required\": [\n              \"key\",\n              \"name\"\n             ],\n             \"type\": \"object\"\n            }\n           },\n           \"required\": [\n            \"secretKeyRef\"\n           ],\n           \"type\": \"object\"\n          }\n         },\n         \"required\": [\n          \"valueFrom\"\n         ],\n         \"type\": \"object\"\n        }\n       },\n       \"required\": [\n        \"clientSecret\"\n       ],\n       \"type\": \"object\"\n      },\n      \"podIdentity\": {\n       \"description\": \"AuthPodIdentity allows users to select the platform native identity\\nmechanism\",\n       \"properties\": {\n        \"identityAuthorityHost\": {\n         \"description\": \"Set identityAuthorityHost to override the default Azure authority host. If this is set, then the IdentityTenantID must also be set\",\n         \"type\": \"string\"\n        },\n        \"identityId\": {\n         \"type\": \"string\"\n        },\n        \"identityOwner\": {\n         \"description\": \"IdentityOwner configures which identity has to be used during auto discovery, keda or the scaled workload. Mutually exclusive with roleArn\",\n         \"enum\": [\n          \"keda\",\n          \"workload\"\n         ],\n         \"type\": \"string\"\n        },\n        \"identityTenantId\": {\n         \"description\": \"Set identityTenantId to override the default Azure tenant id. If this is set, then the IdentityID must also be set\",\n         \"type\": \"string\"\n        },\n        \"provider\": {\n         \"description\": \"PodIdentityProvider contains the list of providers\",\n         \"enum\": [\n          \"azure\",\n          \"azure-workload\",\n          \"gcp\",\n          \"aws\",\n          \"aws-eks\",\n          \"aws-kiam\",\n          \"none\"\n         ],\n         \"type\": \"string\"\n        },\n        \"roleArn\": {\n         \"description\": \"RoleArn sets the AWS RoleArn to be used. Mutually exclusive with IdentityOwner\",\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"provider\"\n       ],\n       \"type\": \"object\"\n      },\n      \"secrets\": {\n       \"items\": {\n        \"properties\": {\n         \"id\": {\n          \"type\": \"string\"\n         },\n         \"parameter\": {\n          \"type\": \"string\"\n         },\n         \"version\": {\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"id\",\n         \"parameter\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"required\": [\n      \"secrets\"\n     ],\n     \"type\": \"object\"\n    },\n    \"hashiCorpVault\": {\n     \"description\": \"HashiCorpVault is used to authenticate using Hashicorp Vault\",\n     \"properties\": {\n      \"address\": {\n       \"type\": \"string\"\n      },\n      \"authentication\": {\n       \"description\": \"VaultAuthentication contains the list of Hashicorp Vault authentication methods\",\n       \"type\": \"string\"\n      },\n      \"credential\": {\n       \"description\": \"Credential defines the Hashicorp Vault credentials depending on the authentication method\",\n       \"properties\": {\n        \"serviceAccount\": {\n         \"type\": \"string\"\n        },\n        \"token\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"mount\": {\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"type\": \"string\"\n      },\n      \"role\": {\n       \"type\": \"string\"\n      },\n      \"secrets\": {\n       \"items\": {\n        \"description\": \"VaultSecret defines the mapping between the path of the secret in Vault to the parameter\",\n        \"properties\": {\n         \"key\": {\n          \"type\": \"string\"\n         },\n         \"parameter\": {\n          \"type\": \"string\"\n         },\n         \"path\": {\n          \"type\": \"string\"\n         },\n         \"pkiData\": {\n          \"properties\": {\n           \"altNames\": {\n            \"type\": \"string\"\n           },\n           \"commonName\": {\n            \"type\": \"string\"\n           },\n           \"format\": {\n            \"type\": \"string\"\n           },\n           \"ipSans\": {\n            \"type\": \"string\"\n           },\n           \"otherSans\": {\n            \"type\": \"string\"\n           },\n           \"ttl\": {\n            \"type\": \"string\"\n           },\n           \"uriSans\": {\n            \"type\": \"string\"\n           }\n          },\n          \"type\": \"object\"\n         },\n         \"type\": {\n          \"description\": \"VaultSecretType defines the type of vault secret\",\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"key\",\n         \"parameter\",\n         \"path\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"required\": [\n      \"address\",\n      \"authentication\",\n      \"secrets\"\n     ],\n     \"type\": \"object\"\n    },\n    \"podIdentity\": {\n     \"description\": \"AuthPodIdentity allows users to select the platform native identity\\nmechanism\",\n     \"properties\": {\n      \"identityAuthorityHost\": {\n       \"description\": \"Set identityAuthorityHost to override the default Azure authority host. If this is set, then the IdentityTenantID must also be set\",\n       \"type\": \"string\"\n      },\n      \"identityId\": {\n       \"type\": \"string\"\n      },\n      \"identityOwner\": {\n       \"description\": \"IdentityOwner configures which identity has to be used during auto discovery, keda or the scaled workload. Mutually exclusive with roleArn\",\n       \"enum\": [\n        \"keda\",\n        \"workload\"\n       ],\n       \"type\": \"string\"\n      },\n      \"identityTenantId\": {\n       \"description\": \"Set identityTenantId to override the default Azure tenant id. If this is set, then the IdentityID must also be set\",\n       \"type\": \"string\"\n      },\n      \"provider\": {\n       \"description\": \"PodIdentityProvider contains the list of providers\",\n       \"enum\": [\n        \"azure\",\n        \"azure-workload\",\n        \"gcp\",\n        \"aws\",\n        \"aws-eks\",\n        \"aws-kiam\",\n        \"none\"\n       ],\n       \"type\": \"string\"\n      },\n      \"roleArn\": {\n       \"description\": \"RoleArn sets the AWS RoleArn to be used. Mutually exclusive with IdentityOwner\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"provider\"\n     ],\n     \"type\": \"object\"\n    },\n    \"secretTargetRef\": {\n     \"items\": {\n      \"description\": \"AuthSecretTargetRef is used to authenticate using a reference to a secret\",\n      \"properties\": {\n       \"key\": {\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"type\": \"string\"\n       },\n       \"parameter\": {\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"key\",\n       \"name\",\n       \"parameter\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Trigger Authentication\",\n \"type\": \"object\"\n}",

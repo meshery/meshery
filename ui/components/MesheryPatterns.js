@@ -18,6 +18,10 @@ import {
   OutlinedPatternIcon,
   SearchBar,
   UniversalFilter,
+  importDesignSchema,
+  importDesignUiSchema,
+  publishCatalogItemSchema,
+  publishCatalogItemUiSchema,
 } from '@layer5/sistent';
 import { withStyles } from '@material-ui/core/styles';
 import CloseIcon from '@material-ui/icons/Close';
@@ -33,7 +37,6 @@ import { UnControlled as CodeMirror } from 'react-codemirror2';
 import Moment from 'react-moment';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import dataFetch from '../lib/data-fetch';
 import { toggleCatalogContent, updateProgress } from '../lib/store';
 import {
   encodeDesignFile,
@@ -364,7 +367,6 @@ function MesheryPatterns({
   const [selectedRowData, setSelectedRowData] = useState(null);
   const [selectedPattern, setSelectedPattern] = useState(resetSelectedPattern());
   const router = useRouter();
-  const [importSchema, setImportSchema] = useState({});
   const [meshModels, setMeshModels] = useState([]);
   const [selectedFilters, setSelectedFilters] = useState(initialFilters);
 
@@ -610,53 +612,33 @@ function MesheryPatterns({
   //   toggleCatalogContent({ catalogVisibility: !catalogVisibility });
   // };
 
-  useEffect(() => {
-    dataFetch(
-      '/api/schema/resource/design',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      (result) => {
-        setImportSchema(result);
-      },
-      handleError(ACTION_TYPES.SCHEMA_FETCH),
-    );
-    dataFetch(
-      '/api/schema/resource/publish',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      async (result) => {
-        try {
-          const { models } = await getMeshModels();
-          const modelNames = _.uniqBy(
-            models?.map((model) => {
-              if (model.displayName && model.displayName !== '') {
-                return model.displayName;
-              }
-            }),
-            _.toLower,
-          );
-          modelNames.sort();
+  useEffect(async () => {
+    try {
+      const { models } = await getMeshModels();
+      const modelNames = _.uniqBy(
+        models?.map((model) => {
+          if (model.displayName && model.displayName !== '') {
+            return model.displayName;
+          }
+        }),
+        _.toLower,
+      );
+      modelNames.sort();
 
-          // Modify the schema using the utility function
-          const modifiedSchema = modifyRJSFSchema(
-            result.rjsfSchema,
-            'properties.compatibility.items.enum',
-            modelNames,
-          );
+      // Modify the schema using the utility function
+      const modifiedSchema = modifyRJSFSchema(
+        publishCatalogItemSchema,
+        'properties.compatibility.items.enum',
+        modelNames,
+      );
 
-          setPublishSchema({ rjsfSchema: modifiedSchema, uiSchema: result.uiSchema });
-          setMeshModels(models);
-        } catch (err) {
-          console.error(err);
-          handleError(ACTION_TYPES.SCHEMA_FETCH);
-          setPublishSchema(result);
-        }
-      },
-    );
+      setPublishSchema({ rjsfSchema: modifiedSchema, uiSchema: publishCatalogItemUiSchema });
+      setMeshModels(models);
+    } catch (err) {
+      console.error(err);
+      handleError(ACTION_TYPES.SCHEMA_FETCH);
+    }
+
     catalogVisibilityRef.current = catalogVisibility;
 
     /*
@@ -1719,7 +1701,6 @@ function MesheryPatterns({
             )}
           {importModal.open && CAN(keys.IMPORT_DESIGN.action, keys.IMPORT_DESIGN.subject) && (
             <ImportModal
-              importFormSchema={importSchema}
               handleClose={handleUploadImportClose}
               handleImportDesign={handleImportDesign}
             />
@@ -1734,7 +1715,7 @@ function MesheryPatterns({
 }
 
 const ImportModal = React.memo((props) => {
-  const { importFormSchema, handleClose, handleImportDesign } = props;
+  const { handleClose, handleImportDesign } = props;
 
   return (
     <>
@@ -1753,8 +1734,8 @@ const ImportModal = React.memo((props) => {
           title="Import Design"
         >
           <RJSFModalWrapper
-            schema={importFormSchema.rjsfSchema}
-            uiSchema={importFormSchema.uiSchema}
+            schema={importDesignSchema}
+            uiSchema={importDesignUiSchema}
             handleSubmit={handleImportDesign}
             submitBtnText="Import"
             handleClose={handleClose}
@@ -1766,7 +1747,7 @@ const ImportModal = React.memo((props) => {
 });
 
 const PublishModal = React.memo((props) => {
-  const { publishFormSchema, handleClose, handleSubmit, title } = props;
+  const { handleClose, handleSubmit, title } = props;
 
   return (
     <>
@@ -1786,8 +1767,8 @@ const PublishModal = React.memo((props) => {
           maxWidth="sm"
         >
           <RJSFModalWrapper
-            schema={publishFormSchema.rjsfSchema}
-            uiSchema={publishFormSchema.uiSchema}
+            schema={publishCatalogItemSchema}
+            uiSchema={publishCatalogItemUiSchema}
             handleSubmit={handleSubmit}
             submitBtnText="Submit for Approval"
             handleClose={handleClose}

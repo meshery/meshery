@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "AccessControlPolicy",
    "schema": "{\n \"description\": \"AccessControlPolicy defines an access control policy.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"AccessControlPolicySpec configures an access control policy.\",\n   \"properties\": {\n    \"apiKey\": {\n     \"description\": \"AccessControlPolicyAPIKey configure an APIKey control policy.\",\n     \"properties\": {\n      \"forwardHeaders\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"ForwardHeaders instructs the middleware to forward key metadata as header values upon successful authentication.\",\n       \"type\": \"object\"\n      },\n      \"keySource\": {\n       \"description\": \"KeySource defines how to extract API keys from requests.\",\n       \"properties\": {\n        \"cookie\": {\n         \"description\": \"Cookie is the name of a cookie.\",\n         \"type\": \"string\"\n        },\n        \"header\": {\n         \"description\": \"Header is the name of a header.\",\n         \"type\": \"string\"\n        },\n        \"headerAuthScheme\": {\n         \"description\": \"HeaderAuthScheme sets an optional auth scheme when Header is set to \\\"Authorization\\\". If set, this scheme is removed from the token, and all requests not including it are dropped.\",\n         \"type\": \"string\"\n        },\n        \"query\": {\n         \"description\": \"Query is the name of a query parameter.\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"keys\": {\n       \"description\": \"Keys define the set of authorized keys to access a protected resource.\",\n       \"items\": {\n        \"description\": \"AccessControlPolicyAPIKeyKey defines an API key.\",\n        \"properties\": {\n         \"id\": {\n          \"description\": \"ID is the unique identifier of the key.\",\n          \"type\": \"string\"\n         },\n         \"metadata\": {\n          \"additionalProperties\": {\n           \"type\": \"string\"\n          },\n          \"description\": \"Metadata holds arbitrary metadata for this key, can be used by ForwardHeaders.\",\n          \"type\": \"object\"\n         },\n         \"value\": {\n          \"description\": \"Value is the SHAKE-256 hash (using 64 bytes) of the API key.\",\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"id\",\n         \"value\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"required\": [\n      \"keySource\"\n     ],\n     \"type\": \"object\"\n    },\n    \"basicAuth\": {\n     \"description\": \"AccessControlPolicyBasicAuth holds the HTTP basic authentication configuration.\",\n     \"properties\": {\n      \"forwardUsernameHeader\": {\n       \"type\": \"string\"\n      },\n      \"realm\": {\n       \"type\": \"string\"\n      },\n      \"stripAuthorizationHeader\": {\n       \"type\": \"boolean\"\n      },\n      \"users\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"jwt\": {\n     \"description\": \"AccessControlPolicyJWT configures a JWT access control policy.\",\n     \"properties\": {\n      \"claims\": {\n       \"type\": \"string\"\n      },\n      \"forwardHeaders\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"object\"\n      },\n      \"jwksFile\": {\n       \"type\": \"string\"\n      },\n      \"jwksUrl\": {\n       \"type\": \"string\"\n      },\n      \"publicKey\": {\n       \"type\": \"string\"\n      },\n      \"signingSecret\": {\n       \"type\": \"string\"\n      },\n      \"signingSecretBase64Encoded\": {\n       \"type\": \"boolean\"\n      },\n      \"stripAuthorizationHeader\": {\n       \"type\": \"boolean\"\n      },\n      \"tokenQueryKey\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"oAuthIntro\": {\n     \"description\": \"AccessControlOAuthIntro configures an OAuth 2.0 Token Introspection access control policy.\",\n     \"properties\": {\n      \"claims\": {\n       \"type\": \"string\"\n      },\n      \"clientConfig\": {\n       \"description\": \"AccessControlOAuthIntroClientConfig configures the OAuth 2.0 client for issuing token introspection requests.\",\n       \"properties\": {\n        \"auth\": {\n         \"description\": \"Auth configures the required authentication to the Authorization Server.\",\n         \"properties\": {\n          \"kind\": {\n           \"description\": \"Kind sets the kind of authentication that can be used to authenticate requests. The content of the referenced depends on this kind.\",\n           \"enum\": [\n            \"Basic\",\n            \"Bearer\",\n            \"Header\",\n            \"Query\"\n           ],\n           \"type\": \"string\"\n          },\n          \"secret\": {\n           \"description\": \"Secret is the reference to the Kubernetes secrets containing sensitive authentication data.\",\n           \"properties\": {\n            \"name\": {\n             \"description\": \"name is unique within a namespace to reference a secret resource.\",\n             \"type\": \"string\"\n            },\n            \"namespace\": {\n             \"description\": \"namespace defines the space within which the secret name must be unique.\",\n             \"type\": \"string\"\n            }\n           },\n           \"type\": \"object\"\n          }\n         },\n         \"required\": [\n          \"kind\",\n          \"secret\"\n         ],\n         \"type\": \"object\"\n        },\n        \"headers\": {\n         \"additionalProperties\": {\n          \"type\": \"string\"\n         },\n         \"description\": \"Headers to set when sending requests to the Authorization Server.\",\n         \"type\": \"object\"\n        },\n        \"maxRetries\": {\n         \"default\": 3,\n         \"description\": \"MaxRetries defines the number of retries for introspection requests.\",\n         \"type\": \"integer\"\n        },\n        \"timeoutSeconds\": {\n         \"default\": 5,\n         \"description\": \"TimeoutSeconds configures the maximum amount of seconds to wait before giving up on requests.\",\n         \"type\": \"integer\"\n        },\n        \"tls\": {\n         \"description\": \"TLS configures TLS communication with the Authorization Server.\",\n         \"properties\": {\n          \"caBundle\": {\n           \"description\": \"CABundle sets the CA bundle used to sign the Authorization Server certificate.\",\n           \"type\": \"string\"\n          },\n          \"insecureSkipVerify\": {\n           \"description\": \"InsecureSkipVerify skips the Authorization Server certificate validation. For testing purposes only, do not use in production.\",\n           \"type\": \"boolean\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"tokenTypeHint\": {\n         \"description\": \"TokenTypeHint is a hint to pass to the Authorization Server. See https://tools.ietf.org/html/rfc7662#section-2.1 for more information.\",\n         \"type\": \"string\"\n        },\n        \"url\": {\n         \"description\": \"URL of the Authorization Server.\",\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"auth\",\n        \"url\"\n       ],\n       \"type\": \"object\"\n      },\n      \"forwardHeaders\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"object\"\n      },\n      \"tokenSource\": {\n       \"description\": \"TokenSource describes how to extract tokens from HTTP requests. If multiple sources are set, the order is the following: header \\u003e query \\u003e cookie.\",\n       \"properties\": {\n        \"cookie\": {\n         \"description\": \"Cookie is the name of a cookie.\",\n         \"type\": \"string\"\n        },\n        \"header\": {\n         \"description\": \"Header is the name of a header.\",\n         \"type\": \"string\"\n        },\n        \"headerAuthScheme\": {\n         \"description\": \"HeaderAuthScheme sets an optional auth scheme when Header is set to \\\"Authorization\\\". If set, this scheme is removed from the token, and all requests not including it are dropped.\",\n         \"type\": \"string\"\n        },\n        \"query\": {\n         \"description\": \"Query is the name of a query parameter.\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"required\": [\n      \"clientConfig\",\n      \"tokenSource\"\n     ],\n     \"type\": \"object\"\n    },\n    \"oidc\": {\n     \"description\": \"AccessControlPolicyOIDC holds the OIDC authentication configuration.\",\n     \"properties\": {\n      \"authParams\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"object\"\n      },\n      \"claims\": {\n       \"type\": \"string\"\n      },\n      \"clientId\": {\n       \"type\": \"string\"\n      },\n      \"forwardHeaders\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"object\"\n      },\n      \"issuer\": {\n       \"type\": \"string\"\n      },\n      \"logoutUrl\": {\n       \"type\": \"string\"\n      },\n      \"redirectUrl\": {\n       \"type\": \"string\"\n      },\n      \"scopes\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"secret\": {\n       \"description\": \"SecretReference represents a Secret Reference. It has enough information to retrieve secret in any namespace\",\n       \"properties\": {\n        \"name\": {\n         \"description\": \"name is unique within a namespace to reference a secret resource.\",\n         \"type\": \"string\"\n        },\n        \"namespace\": {\n         \"description\": \"namespace defines the space within which the secret name must be unique.\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"session\": {\n       \"description\": \"Session holds session configuration.\",\n       \"properties\": {\n        \"domain\": {\n         \"type\": \"string\"\n        },\n        \"path\": {\n         \"type\": \"string\"\n        },\n        \"refresh\": {\n         \"type\": \"boolean\"\n        },\n        \"sameSite\": {\n         \"type\": \"string\"\n        },\n        \"secure\": {\n         \"type\": \"boolean\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"stateCookie\": {\n       \"description\": \"StateCookie holds state cookie configuration.\",\n       \"properties\": {\n        \"domain\": {\n         \"type\": \"string\"\n        },\n        \"path\": {\n         \"type\": \"string\"\n        },\n        \"sameSite\": {\n         \"type\": \"string\"\n        },\n        \"secure\": {\n         \"type\": \"boolean\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"oidcGoogle\": {\n     \"description\": \"AccessControlPolicyOIDCGoogle holds the Google OIDC authentication configuration.\",\n     \"properties\": {\n      \"authParams\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"object\"\n      },\n      \"clientId\": {\n       \"type\": \"string\"\n      },\n      \"emails\": {\n       \"description\": \"Emails are the allowed emails to connect.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"minItems\": 1,\n       \"type\": \"array\"\n      },\n      \"forwardHeaders\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"object\"\n      },\n      \"logoutUrl\": {\n       \"type\": \"string\"\n      },\n      \"redirectUrl\": {\n       \"type\": \"string\"\n      },\n      \"secret\": {\n       \"description\": \"SecretReference represents a Secret Reference. It has enough information to retrieve secret in any namespace\",\n       \"properties\": {\n        \"name\": {\n         \"description\": \"name is unique within a namespace to reference a secret resource.\",\n         \"type\": \"string\"\n        },\n        \"namespace\": {\n         \"description\": \"namespace defines the space within which the secret name must be unique.\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"session\": {\n       \"description\": \"Session holds session configuration.\",\n       \"properties\": {\n        \"domain\": {\n         \"type\": \"string\"\n        },\n        \"path\": {\n         \"type\": \"string\"\n        },\n        \"refresh\": {\n         \"type\": \"boolean\"\n        },\n        \"sameSite\": {\n         \"type\": \"string\"\n        },\n        \"secure\": {\n         \"type\": \"boolean\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"stateCookie\": {\n       \"description\": \"StateCookie holds state cookie configuration.\",\n       \"properties\": {\n        \"domain\": {\n         \"type\": \"string\"\n        },\n        \"path\": {\n         \"type\": \"string\"\n        },\n        \"sameSite\": {\n         \"type\": \"string\"\n        },\n        \"secure\": {\n         \"type\": \"boolean\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Access Control Policy\",\n \"type\": \"object\"\n}",

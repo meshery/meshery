@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "RateLimit",
    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"burst\": {\n     \"description\": \"The number of requests to allow beyond the given rate.\",\n     \"minimum\": 0,\n     \"type\": \"integer\"\n    },\n    \"delay\": {\n     \"description\": \"The number of requests after which to delay requests.\",\n     \"x-kubernetes-int-or-string\": true\n    },\n    \"destination\": {\n     \"description\": \"The destination of this rate limit.\",\n     \"properties\": {\n      \"kind\": {\n       \"description\": \"Kind of the destination.\",\n       \"minLength\": 1,\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the destination.\",\n       \"minLength\": 1,\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the destination.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\",\n      \"kind\"\n     ],\n     \"type\": \"object\"\n    },\n    \"name\": {\n     \"description\": \"Name of this rate limit spec.\",\n     \"minLength\": 1,\n     \"type\": \"string\"\n    },\n    \"rate\": {\n     \"description\": \"The allowed rate of traffic.\",\n     \"pattern\": \"^[0-9]+r/[s,m]$\",\n     \"type\": \"string\"\n    },\n    \"sources\": {\n     \"description\": \"Sources of this rate limit.\",\n     \"items\": {\n      \"properties\": {\n       \"kind\": {\n        \"description\": \"Kind of this source.\",\n        \"minLength\": 1,\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"description\": \"Name of this source.\",\n        \"minLength\": 1,\n        \"type\": \"string\"\n       },\n       \"namespace\": {\n        \"description\": \"Namespace of this source.\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"name\",\n       \"kind\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"name\",\n    \"destination\",\n    \"rate\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Rate Limit\",\n \"type\": \"object\"\n}",

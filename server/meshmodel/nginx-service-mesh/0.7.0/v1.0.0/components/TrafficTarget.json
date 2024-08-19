@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "TrafficTarget",
    "schema": "{\n \"description\": \"TrafficTarget associates a set of traffic definitions (rules) with a service identity which is allocated to a group of pods. Access is controlled via referenced TrafficSpecs and by a list of source service identities. * If a pod which holds the referenced service identity makes a call to the destination on one of the defined routes then access   will be allowed * Any pod which attempts to connect and is not in the defined list of sources will be denied * Any pod which is in the defined list, but attempts to connect on a route which is not in the list of the   TrafficSpecs will be denied\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"TrafficTargetSpec is the specification of a TrafficTarget\",\n   \"properties\": {\n    \"destination\": {\n     \"description\": \"Selector is the pod or group of pods to allow ingress traffic\",\n     \"properties\": {\n      \"kind\": {\n       \"description\": \"Kind is the type of Subject to allow ingress (ServiceAccount | Group)\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the Subject, i.e. ServiceAccountName\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace where the Subject is deployed\",\n       \"type\": \"string\"\n      },\n      \"port\": {\n       \"description\": \"Port defines a TCP port to apply the TrafficTarget to\",\n       \"type\": \"integer\"\n      }\n     },\n     \"required\": [\n      \"kind\",\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"rules\": {\n     \"description\": \"Rules are the traffic rules to allow (HTTPRoutes | TCPRoute)\",\n     \"items\": {\n      \"description\": \"TrafficTargetRule is the TrafficSpec to allow for a TrafficTarget\",\n      \"properties\": {\n       \"kind\": {\n        \"description\": \"Kind is the kind of TrafficSpec to allow\",\n        \"type\": \"string\"\n       },\n       \"matches\": {\n        \"description\": \"Matches is a list of TrafficSpec routes to allow traffic for\",\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       },\n       \"name\": {\n        \"description\": \"Name of the TrafficSpec to use\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"kind\",\n       \"name\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"sources\": {\n     \"description\": \"Sources are the pod or group of pods to allow ingress traffic\",\n     \"items\": {\n      \"description\": \"IdentityBindingSubject is a Kubernetes objects which should be allowed access to the TrafficTarget\",\n      \"properties\": {\n       \"kind\": {\n        \"description\": \"Kind is the type of Subject to allow ingress (ServiceAccount | Group)\",\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"description\": \"Name of the Subject, i.e. ServiceAccountName\",\n        \"type\": \"string\"\n       },\n       \"namespace\": {\n        \"description\": \"Namespace where the Subject is deployed\",\n        \"type\": \"string\"\n       },\n       \"port\": {\n        \"description\": \"Port defines a TCP port to apply the TrafficTarget to\",\n        \"type\": \"integer\"\n       }\n      },\n      \"required\": [\n       \"kind\",\n       \"name\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"destination\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Traffic Target\",\n \"type\": \"object\"\n}",

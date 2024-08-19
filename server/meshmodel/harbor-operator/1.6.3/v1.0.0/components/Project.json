@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "Project",
    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"memberRequests\": {\n     \"description\": \"Ref to the name of a 'User' resource\",\n     \"items\": {\n      \"properties\": {\n       \"role\": {\n        \"type\": \"string\"\n       },\n       \"user\": {\n        \"description\": \"LocalObjectReference contains enough information to let you locate the\\nreferenced object inside the same namespace.\",\n        \"properties\": {\n         \"name\": {\n          \"description\": \"Name of the referent.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\\nTODO: Add other useful fields. apiVersion, kind, uid?\",\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\",\n        \"x-kubernetes-map-type\": \"atomic\"\n       }\n      },\n      \"required\": [\n       \"role\",\n       \"user\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"metadata\": {\n     \"properties\": {\n      \"autoScan\": {\n       \"description\": \"Whether to scan images automatically when pushing or not\",\n       \"type\": \"boolean\"\n      },\n      \"enableContentTrust\": {\n       \"description\": \"Whether content trust is enabled or not\\nIf it is, users can not pull unsigned images from this project\",\n       \"type\": \"boolean\"\n      },\n      \"preventVul\": {\n       \"description\": \"Whether to prevent the vulnerable images from running or not.\",\n       \"type\": \"boolean\"\n      },\n      \"public\": {\n       \"description\": \"Public status of the Project\",\n       \"type\": \"boolean\"\n      },\n      \"reuseSysCVEAllowlist\": {\n       \"description\": \"Whether this project reuses the system level CVE allowlist as the allowlist of its own.\\nThe valid values are \\\"true\\\", \\\"false\\\".\\nIf set to \\\"true\\\", the actual allowlist associated with this project, if any, will be ignored.\",\n       \"type\": \"boolean\"\n      },\n      \"severity\": {\n       \"description\": \"If a vulnerability's severity is higher than the severity defined here,\\nimages can't be pulled. Valid values are \\\"none\\\", \\\"low\\\", \\\"medium\\\", \\\"high\\\", \\\"critical\\\".\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"public\"\n     ],\n     \"type\": \"object\"\n    },\n    \"name\": {\n     \"type\": \"string\"\n    },\n    \"parentInstance\": {\n     \"description\": \"ParentInstance is a LocalObjectReference to the\\nname of the harbor instance the project is created for\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of the referent.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\\nTODO: Add other useful fields. apiVersion, kind, uid?\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    },\n    \"proxyCache\": {\n     \"description\": \"ProxyCache defines an optional reference to a registry resource.\\nThe project will be created as a \\\"Proxy Cache\\\" project, if specified.\",\n     \"properties\": {\n      \"registry\": {\n       \"description\": \"LocalObjectReference contains enough information to let you locate the\\nreferenced object inside the same namespace.\",\n       \"properties\": {\n        \"name\": {\n         \"description\": \"Name of the referent.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\\nTODO: Add other useful fields. apiVersion, kind, uid?\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\",\n       \"x-kubernetes-map-type\": \"atomic\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"storageLimit\": {\n     \"type\": \"integer\"\n    }\n   },\n   \"required\": [\n    \"name\",\n    \"parentInstance\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Project\",\n \"type\": \"object\"\n}",

@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "GKEBackupBackupPlan",
    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"backupConfig\": {\n     \"description\": \"Defines the configuration of Backups created via this BackupPlan.\",\n     \"properties\": {\n      \"allNamespaces\": {\n       \"description\": \"If True, include all namespaced resources.\",\n       \"type\": \"boolean\"\n      },\n      \"encryptionKey\": {\n       \"description\": \"This defines a customer managed encryption key that will be used to encrypt the \\\"config\\\"\\nportion (the Kubernetes resources) of Backups created via this plan.\",\n       \"properties\": {\n        \"gcpKmsEncryptionKey\": {\n         \"description\": \"Google Cloud KMS encryption key. Format: projects/*/locations/*/keyRings/*/cryptoKeys/*.\",\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"gcpKmsEncryptionKey\"\n       ],\n       \"type\": \"object\"\n      },\n      \"includeSecrets\": {\n       \"description\": \"This flag specifies whether Kubernetes Secret resources should be included\\nwhen they fall into the scope of Backups.\",\n       \"type\": \"boolean\"\n      },\n      \"includeVolumeData\": {\n       \"description\": \"This flag specifies whether volume data should be backed up when PVCs are\\nincluded in the scope of a Backup.\",\n       \"type\": \"boolean\"\n      },\n      \"selectedApplications\": {\n       \"description\": \"A list of namespaced Kubernetes Resources.\",\n       \"properties\": {\n        \"namespacedNames\": {\n         \"description\": \"A list of namespaced Kubernetes resources.\",\n         \"items\": {\n          \"properties\": {\n           \"name\": {\n            \"description\": \"The name of a Kubernetes Resource.\",\n            \"type\": \"string\"\n           },\n           \"namespace\": {\n            \"description\": \"The namespace of a Kubernetes Resource.\",\n            \"type\": \"string\"\n           }\n          },\n          \"required\": [\n           \"name\",\n           \"namespace\"\n          ],\n          \"type\": \"object\"\n         },\n         \"type\": \"array\"\n        }\n       },\n       \"required\": [\n        \"namespacedNames\"\n       ],\n       \"type\": \"object\"\n      },\n      \"selectedNamespaces\": {\n       \"description\": \"If set, include just the resources in the listed namespaces.\",\n       \"properties\": {\n        \"namespaces\": {\n         \"description\": \"A list of Kubernetes Namespaces.\",\n         \"items\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"array\"\n        }\n       },\n       \"required\": [\n        \"namespaces\"\n       ],\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"backupSchedule\": {\n     \"description\": \"Defines a schedule for automatic Backup creation via this BackupPlan.\",\n     \"properties\": {\n      \"cronSchedule\": {\n       \"description\": \"A standard cron string that defines a repeating schedule for\\ncreating Backups via this BackupPlan.\\nIf this is defined, then backupRetainDays must also be defined.\",\n       \"type\": \"string\"\n      },\n      \"paused\": {\n       \"description\": \"This flag denotes whether automatic Backup creation is paused for this BackupPlan.\",\n       \"type\": \"boolean\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"cluster\": {\n     \"description\": \"Immutable. The source cluster from which Backups will be created via this BackupPlan.\",\n     \"type\": \"string\"\n    },\n    \"deactivated\": {\n     \"description\": \"This flag indicates whether this BackupPlan has been deactivated.\\nSetting this field to True locks the BackupPlan such that no further updates will be allowed\\n(except deletes), including the deactivated field itself. It also prevents any new Backups\\nfrom being created via this BackupPlan (including scheduled Backups).\",\n     \"type\": \"boolean\"\n    },\n    \"description\": {\n     \"description\": \"User specified descriptive string for this BackupPlan.\",\n     \"type\": \"string\"\n    },\n    \"location\": {\n     \"description\": \"Immutable. The region of the Backup Plan.\",\n     \"type\": \"string\"\n    },\n    \"projectRef\": {\n     \"description\": \"The project that this resource belongs to.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `name` field of a `Project` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    },\n    \"retentionPolicy\": {\n     \"description\": \"RetentionPolicy governs lifecycle of Backups created under this plan.\",\n     \"properties\": {\n      \"backupDeleteLockDays\": {\n       \"description\": \"Minimum age for a Backup created via this BackupPlan (in days).\\nMust be an integer value between 0-90 (inclusive).\\nA Backup created under this BackupPlan will not be deletable\\nuntil it reaches Backup's (create time + backup_delete_lock_days).\\nUpdating this field of a BackupPlan does not affect existing Backups.\\nBackups created after a successful update will inherit this new value.\",\n       \"type\": \"integer\"\n      },\n      \"backupRetainDays\": {\n       \"description\": \"The default maximum age of a Backup created via this BackupPlan.\\nThis field MUST be an integer value \\u003e= 0 and \\u003c= 365. If specified,\\na Backup created under this BackupPlan will be automatically deleted\\nafter its age reaches (createTime + backupRetainDays).\\nIf not specified, Backups created under this BackupPlan will NOT be\\nsubject to automatic deletion. Updating this field does NOT affect\\nexisting Backups under it. Backups created AFTER a successful update\\nwill automatically pick up the new value.\\nNOTE: backupRetainDays must be \\u003e= backupDeleteLockDays.\\nIf cronSchedule is defined, then this must be \\u003c= 360 * the creation interval.].\",\n       \"type\": \"integer\"\n      },\n      \"locked\": {\n       \"description\": \"This flag denotes whether the retention policy of this BackupPlan is locked.\\nIf set to True, no further update is allowed on this policy, including\\nthe locked field itself.\",\n       \"type\": \"boolean\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"cluster\",\n    \"location\",\n    \"projectRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"GKE Backup Backup Plan\",\n \"type\": \"object\"\n}",

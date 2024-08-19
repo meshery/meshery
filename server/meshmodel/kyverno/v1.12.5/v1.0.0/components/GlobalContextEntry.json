@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "GlobalContextEntry",
    "schema": "{\n \"description\": \"GlobalContextEntry declares resources to be cached.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Spec declares policy exception behaviors.\",\n   \"properties\": {\n    \"apiCall\": {\n     \"description\": \"Stores results from an API call which will be cached.\\nMutually exclusive with KubernetesResource.\\nThis can be used to make calls to external (non-Kubernetes API server) services.\\nIt can also be used to make calls to the Kubernetes API server in such cases:\\n1. A POST is needed to create a resource.\\n2. Finer-grained control is needed. Example: To restrict the number of resources cached.\",\n     \"properties\": {\n      \"data\": {\n       \"description\": \"The data object specifies the POST data sent to the server.\\nOnly applicable when the method field is set to POST.\",\n       \"items\": {\n        \"description\": \"RequestData contains the HTTP POST data\",\n        \"properties\": {\n         \"key\": {\n          \"description\": \"Key is a unique identifier for the data value\",\n          \"type\": \"string\"\n         },\n         \"value\": {\n          \"description\": \"Value is the data value\",\n          \"format\": \"textarea\",\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"key\",\n         \"value\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"method\": {\n       \"default\": \"GET\",\n       \"description\": \"Method is the HTTP request type (GET or POST).\",\n       \"enum\": [\n        \"GET\",\n        \"POST\"\n       ],\n       \"type\": \"string\"\n      },\n      \"refreshInterval\": {\n       \"default\": \"10m\",\n       \"description\": \"RefreshInterval defines the interval in duration at which to poll the APICall.\\nThe duration is a sequence of decimal numbers, each with optional fraction and a unit suffix,\\nsuch as \\\"300ms\\\", \\\"1.5h\\\" or \\\"2h45m\\\". Valid time units are \\\"ns\\\", \\\"us\\\" (or \\\"µs\\\"), \\\"ms\\\", \\\"s\\\", \\\"m\\\", \\\"h\\\".\",\n       \"format\": \"duration\",\n       \"type\": \"string\"\n      },\n      \"service\": {\n       \"description\": \"Service is an API call to a JSON web service.\\nThis is used for non-Kubernetes API server calls.\\nIt's mutually exclusive with the URLPath field.\",\n       \"properties\": {\n        \"caBundle\": {\n         \"description\": \"CABundle is a PEM encoded CA bundle which will be used to validate\\nthe server certificate.\",\n         \"type\": \"string\"\n        },\n        \"url\": {\n         \"description\": \"URL is the JSON web service URL. A typical form is\\n`https://{service}.{namespace}:{port}/{path}`.\",\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"url\"\n       ],\n       \"type\": \"object\"\n      },\n      \"urlPath\": {\n       \"description\": \"URLPath is the URL path to be used in the HTTP GET or POST request to the\\nKubernetes API server (e.g. \\\"/api/v1/namespaces\\\" or  \\\"/apis/apps/v1/deployments\\\").\\nThe format required is the same format used by the `kubectl get --raw` command.\\nSee https://kyverno.io/docs/writing-policies/external-data-sources/#variables-from-kubernetes-api-server-calls\\nfor details.\\nIt's mutually exclusive with the Service field.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"kubernetesResource\": {\n     \"description\": \"Stores a list of Kubernetes resources which will be cached.\\nMutually exclusive with APICall.\",\n     \"properties\": {\n      \"group\": {\n       \"description\": \"Group defines the group of the resource.\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace defines the namespace of the resource. Leave empty for cluster scoped resources.\\nIf left empty for namespaced resources, all resources from all namespaces will be cached.\",\n       \"type\": \"string\"\n      },\n      \"resource\": {\n       \"description\": \"Resource defines the type of the resource.\\nRequires the pluralized form of the resource kind in lowercase. (Ex., \\\"deployments\\\")\",\n       \"type\": \"string\"\n      },\n      \"version\": {\n       \"description\": \"Version defines the version of the resource.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Global Context Entry\",\n \"type\": \"object\"\n}",

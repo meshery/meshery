@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "GrafanaDashboard",
    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"allowCrossNamespaceImport\": {\n     \"type\": \"boolean\"\n    },\n    \"configMapRef\": {\n     \"properties\": {\n      \"key\": {\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"type\": \"string\"\n      },\n      \"optional\": {\n       \"type\": \"boolean\"\n      }\n     },\n     \"required\": [\n      \"key\"\n     ],\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    },\n    \"contentCacheDuration\": {\n     \"type\": \"string\"\n    },\n    \"datasources\": {\n     \"items\": {\n      \"properties\": {\n       \"datasourceName\": {\n        \"type\": \"string\"\n       },\n       \"inputName\": {\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"datasourceName\",\n       \"inputName\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"envFrom\": {\n     \"items\": {\n      \"properties\": {\n       \"configMapKeyRef\": {\n        \"properties\": {\n         \"key\": {\n          \"type\": \"string\"\n         },\n         \"name\": {\n          \"type\": \"string\"\n         },\n         \"optional\": {\n          \"type\": \"boolean\"\n         }\n        },\n        \"required\": [\n         \"key\"\n        ],\n        \"type\": \"object\",\n        \"x-kubernetes-map-type\": \"atomic\"\n       },\n       \"secretKeyRef\": {\n        \"properties\": {\n         \"key\": {\n          \"type\": \"string\"\n         },\n         \"name\": {\n          \"type\": \"string\"\n         },\n         \"optional\": {\n          \"type\": \"boolean\"\n         }\n        },\n        \"required\": [\n         \"key\"\n        ],\n        \"type\": \"object\",\n        \"x-kubernetes-map-type\": \"atomic\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"envs\": {\n     \"items\": {\n      \"properties\": {\n       \"name\": {\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"type\": \"string\"\n       },\n       \"valueFrom\": {\n        \"properties\": {\n         \"configMapKeyRef\": {\n          \"properties\": {\n           \"key\": {\n            \"type\": \"string\"\n           },\n           \"name\": {\n            \"type\": \"string\"\n           },\n           \"optional\": {\n            \"type\": \"boolean\"\n           }\n          },\n          \"required\": [\n           \"key\"\n          ],\n          \"type\": \"object\",\n          \"x-kubernetes-map-type\": \"atomic\"\n         },\n         \"secretKeyRef\": {\n          \"properties\": {\n           \"key\": {\n            \"type\": \"string\"\n           },\n           \"name\": {\n            \"type\": \"string\"\n           },\n           \"optional\": {\n            \"type\": \"boolean\"\n           }\n          },\n          \"required\": [\n           \"key\"\n          ],\n          \"type\": \"object\",\n          \"x-kubernetes-map-type\": \"atomic\"\n         }\n        },\n        \"type\": \"object\"\n       }\n      },\n      \"required\": [\n       \"name\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"folder\": {\n     \"type\": \"string\"\n    },\n    \"grafanaCom\": {\n     \"properties\": {\n      \"id\": {\n       \"type\": \"integer\"\n      },\n      \"revision\": {\n       \"type\": \"integer\"\n      }\n     },\n     \"required\": [\n      \"id\"\n     ],\n     \"type\": \"object\"\n    },\n    \"gzipJson\": {\n     \"format\": \"byte\",\n     \"type\": \"string\"\n    },\n    \"instanceSelector\": {\n     \"properties\": {\n      \"matchExpressions\": {\n       \"items\": {\n        \"properties\": {\n         \"key\": {\n          \"type\": \"string\"\n         },\n         \"operator\": {\n          \"type\": \"string\"\n         },\n         \"values\": {\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         }\n        },\n        \"required\": [\n         \"key\",\n         \"operator\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"matchLabels\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    },\n    \"json\": {\n     \"type\": \"string\"\n    },\n    \"jsonnet\": {\n     \"type\": \"string\"\n    },\n    \"jsonnetLib\": {\n     \"properties\": {\n      \"fileName\": {\n       \"type\": \"string\"\n      },\n      \"gzipJsonnetProject\": {\n       \"format\": \"byte\",\n       \"type\": \"string\"\n      },\n      \"jPath\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"required\": [\n      \"fileName\",\n      \"gzipJsonnetProject\"\n     ],\n     \"type\": \"object\"\n    },\n    \"plugins\": {\n     \"items\": {\n      \"properties\": {\n       \"name\": {\n        \"type\": \"string\"\n       },\n       \"version\": {\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"name\",\n       \"version\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"resyncPeriod\": {\n     \"type\": \"string\"\n    },\n    \"url\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"instanceSelector\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Grafana Dashboard\",\n \"type\": \"object\"\n}",

@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "CloudBuildWorkerPool",
    "schema": "{\n \"description\": \"CloudBuildWorkerPool is the Schema for the CloudBuild WorkerPool API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"CloudBuildWorkerPoolSpec defines the desired state of Instance\",\n   \"properties\": {\n    \"displayName\": {\n     \"description\": \"A user-specified, human-readable name for the `WorkerPool`. If provided, this value must be 1-63 characters.\",\n     \"type\": \"string\"\n    },\n    \"location\": {\n     \"type\": \"string\"\n    },\n    \"privatePoolV1Config\": {\n     \"description\": \"Legacy Private Pool configuration.\",\n     \"properties\": {\n      \"networkConfig\": {\n       \"description\": \"Network configuration for the pool.\",\n       \"properties\": {\n        \"egressOption\": {\n         \"description\": \"Option to configure network egress for the workers.\",\n         \"type\": \"string\"\n        },\n        \"peeredNetworkIPRange\": {\n         \"description\": \"Immutable. Subnet IP range within the peered network. This is specified in CIDR notation with a slash and the subnet prefix size. You can optionally specify an IP address before the subnet prefix value. e.g. `192.168.0.0/29` would specify an IP range starting at 192.168.0.0 with a prefix size of 29 bits. `/16` would specify a prefix size of 16 bits, with an automatically determined IP within the peered VPC. If unspecified, a value of `/24` will be used.\",\n         \"type\": \"string\"\n        },\n        \"peeredNetworkRef\": {\n         \"description\": \"Immutable. The network definition that the workers are peered to. If this section is left empty, the workers will be peered to `WorkerPool.project_id` on the service producer network.\",\n         \"oneOf\": [\n          {\n           \"not\": {\n            \"required\": [\n             \"external\"\n            ]\n           },\n           \"required\": [\n            \"name\"\n           ]\n          },\n          {\n           \"not\": {\n            \"anyOf\": [\n             {\n              \"required\": [\n               \"name\"\n              ]\n             },\n             {\n              \"required\": [\n               \"namespace\"\n              ]\n             }\n            ]\n           },\n           \"required\": [\n            \"external\"\n           ]\n          }\n         ],\n         \"properties\": {\n          \"external\": {\n           \"description\": \"The compute network selflink of form \\\"projects/\\u003cproject\\u003e/global/networks/\\u003cnetwork\\u003e\\\", when not managed by KCC.\",\n           \"type\": \"string\"\n          },\n          \"name\": {\n           \"description\": \"The `name` field of a `ComputeNetwork` resource.\",\n           \"type\": \"string\"\n          },\n          \"namespace\": {\n           \"description\": \"The `namespace` field of a `ComputeNetwork` resource.\",\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"workerConfig\": {\n       \"description\": \"Machine configuration for the workers in the pool.\",\n       \"properties\": {\n        \"diskSizeGb\": {\n         \"description\": \"Size of the disk attached to the worker, in GB. See [Worker pool config file](https://cloud.google.com/build/docs/private-pools/worker-pool-config-file-schema). Specify a value of up to 2000. If `0` is specified, Cloud Build will use a standard disk size.\",\n         \"format\": \"int64\",\n         \"type\": \"integer\"\n        },\n        \"machineType\": {\n         \"description\": \"Machine type of a worker, such as `e2-medium`. See [Worker pool config file](https://cloud.google.com/build/docs/private-pools/worker-pool-config-file-schema). If left blank, Cloud Build will use a sensible default.\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"required\": [\n      \"workerConfig\"\n     ],\n     \"type\": \"object\"\n    },\n    \"projectRef\": {\n     \"description\": \"The Project that this resource belongs to.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"The `projectID` field of a project, when not managed by KCC.\",\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"description\": \"The kind of the Project resource; optional but must be `Project` if provided.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"The `name` field of a `Project` resource.\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"The `namespace` field of a `Project` resource.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"The `WorkerPool` name. If not given, the metadata.name will be used.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"location\",\n    \"privatePoolV1Config\",\n    \"projectRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Cloud Build Worker Pool\",\n \"type\": \"object\"\n}",

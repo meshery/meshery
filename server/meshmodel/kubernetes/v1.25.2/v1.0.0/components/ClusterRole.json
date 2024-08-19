@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "ClusterRole",
    "schema": "{\"description\":\"ClusterRole is a cluster level, logical grouping of PolicyRules that can be referenced as a unit by a RoleBinding or ClusterRoleBinding.\",\"properties\":{\"aggregationRule\":{\"allOf\":[{\"description\":\"AggregationRule describes how to locate ClusterRoles to aggregate into the ClusterRole\",\"properties\":{\"clusterRoleSelectors\":{\"description\":\"ClusterRoleSelectors holds a list of selectors which will be used to find ClusterRoles and create the rules. If any of the selectors match, then the ClusterRole's permissions will be added\",\"items\":{\"allOf\":[{\"description\":\"A label selector is a label query over a set of resources. The result of matchLabels and matchExpressions are ANDed. An empty label selector matches all objects. A null label selector matches no objects.\",\"properties\":{\"matchExpressions\":{\"description\":\"matchExpressions is a list of label selector requirements. The requirements are ANDed.\",\"items\":{\"allOf\":[{\"description\":\"A label selector requirement is a selector that contains values, a key, and an operator that relates the key and values.\",\"properties\":{\"key\":{\"default\":\"\",\"description\":\"key is the label key that the selector applies to.\",\"type\":\"string\",\"x-kubernetes-patch-merge-key\":\"key\",\"x-kubernetes-patch-strategy\":\"merge\"},\"operator\":{\"default\":\"\",\"description\":\"operator represents a key's relationship to a set of values. Valid operators are In, NotIn, Exists and DoesNotExist.\",\"type\":\"string\"},\"values\":{\"description\":\"values is an array of string values. If the operator is In or NotIn, the values array must be non-empty. If the operator is Exists or DoesNotExist, the values array must be empty. This array is replaced during a strategic merge patch.\",\"items\":{\"default\":\"\",\"type\":\"string\"},\"type\":\"array\"}},\"required\":[\"key\",\"operator\"],\"type\":\"object\"}],\"default\":{}},\"type\":\"array\"},\"matchLabels\":{\"additionalProperties\":{\"default\":\"\",\"type\":\"string\"},\"description\":\"matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels map is equivalent to an element of matchExpressions, whose key field is \\\"key\\\", the operator is \\\"In\\\", and the values array contains only \\\"value\\\". The requirements are ANDed.\",\"type\":\"object\"}},\"type\":\"object\",\"x-kubernetes-map-type\":\"atomic\"}],\"default\":{}},\"type\":\"array\"}},\"type\":\"object\"}],\"description\":\"AggregationRule is an optional field that describes how to build the Rules for this ClusterRole. If AggregationRule is set, then the Rules are controller managed and direct changes to Rules will be stomped by the controller.\"},\"rules\":{\"description\":\"Rules holds all the PolicyRules for this ClusterRole\",\"items\":{\"allOf\":[{\"description\":\"PolicyRule holds information that describes a policy rule, but does not contain information about who the rule applies to or which namespace the rule applies to.\",\"properties\":{\"apiGroups\":{\"description\":\"APIGroups is the name of the APIGroup that contains the resources.  If multiple API groups are specified, any action requested against one of the enumerated resources in any API group will be allowed. \\\"\\\" represents the core API group and \\\"*\\\" represents all API groups.\",\"items\":{\"default\":\"\",\"type\":\"string\"},\"type\":\"array\"},\"nonResourceURLs\":{\"description\":\"NonResourceURLs is a set of partial urls that a user should have access to.  *s are allowed, but only as the full, final step in the path Since non-resource URLs are not namespaced, this field is only applicable for ClusterRoles referenced from a ClusterRoleBinding. Rules can either apply to API resources (such as \\\"pods\\\" or \\\"secrets\\\") or non-resource URL paths (such as \\\"/api\\\"),  but not both.\",\"items\":{\"default\":\"\",\"type\":\"string\"},\"type\":\"array\"},\"resourceNames\":{\"description\":\"ResourceNames is an optional white list of names that the rule applies to.  An empty set means that everything is allowed.\",\"items\":{\"default\":\"\",\"type\":\"string\"},\"type\":\"array\"},\"resources\":{\"description\":\"Resources is a list of resources this rule applies to. '*' represents all resources.\",\"items\":{\"default\":\"\",\"type\":\"string\"},\"type\":\"array\"},\"verbs\":{\"description\":\"Verbs is a list of Verbs that apply to ALL the ResourceKinds contained in this rule. '*' represents all verbs.\",\"items\":{\"default\":\"\",\"type\":\"string\"},\"type\":\"array\"}},\"required\":[\"verbs\"],\"type\":\"object\"}],\"default\":{}},\"type\":\"array\"}},\"type\":\"object\",\"x-kubernetes-group-version-kind\":[{\"group\":\"rbac.authorization.k8s.io\",\"kind\":\"ClusterRole\",\"version\":\"v1\"}]}",

@@ -28,6 +28,7 @@
       "svgWhite": ""
     }
   },
+  "status": "enabled",
   "selectors": [
     {
       "allow": {

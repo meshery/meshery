@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "FirestoreIndex",
    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"collection\": {\n     \"description\": \"Immutable. The collection being indexed.\",\n     \"type\": \"string\"\n    },\n    \"database\": {\n     \"description\": \"Immutable. The Firestore database id. Defaults to '\\\"(default)\\\"'.\",\n     \"type\": \"string\"\n    },\n    \"fields\": {\n     \"description\": \"Immutable. The fields supported by this index. The last field entry is always for\\nthe field path '__name__'. If, on creation, '__name__' was not\\nspecified as the last field, it will be added automatically with the\\nsame direction as that of the last field defined. If the final field\\nin a composite index is not directional, the '__name__' will be\\nordered '\\\"ASCENDING\\\"' (unless explicitly specified otherwise).\",\n     \"items\": {\n      \"properties\": {\n       \"arrayConfig\": {\n        \"description\": \"Immutable. Indicates that this field supports operations on arrayValues. Only one of 'order' and 'arrayConfig' can\\nbe specified. Possible values: [\\\"CONTAINS\\\"].\",\n        \"type\": \"string\"\n       },\n       \"fieldPath\": {\n        \"description\": \"Immutable. Name of the field.\",\n        \"type\": \"string\"\n       },\n       \"order\": {\n        \"description\": \"Immutable. Indicates that this field supports ordering by the specified order or comparing using =, \\u003c, \\u003c=, \\u003e, \\u003e=.\\nOnly one of 'order' and 'arrayConfig' can be specified. Possible values: [\\\"ASCENDING\\\", \\\"DESCENDING\\\"].\",\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"queryScope\": {\n     \"description\": \"Immutable. The scope at which a query is run. Default value: \\\"COLLECTION\\\" Possible values: [\\\"COLLECTION\\\", \\\"COLLECTION_GROUP\\\"].\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"collection\",\n    \"fields\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Firestore Index\",\n \"type\": \"object\"\n}",

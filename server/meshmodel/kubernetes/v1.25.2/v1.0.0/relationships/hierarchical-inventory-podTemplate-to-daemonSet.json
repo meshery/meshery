@@ -24,6 +24,7 @@
     },
     "metadata": {}
   },
+  "status": "enabled",
   "selectors": [
     {
       "allow": {

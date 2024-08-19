@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "ClusterKeycloakRealm",
    "schema": "{\n \"description\": \"ClusterKeycloakRealm is the Schema for the clusterkeycloakrealms API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ClusterKeycloakRealmSpec defines the desired state of ClusterKeycloakRealm.\",\n   \"properties\": {\n    \"browserSecurityHeaders\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"BrowserSecurityHeaders is a map of security headers to apply to HTTP responses from the realm's browser clients.\",\n     \"nullable\": true,\n     \"type\": \"object\"\n    },\n    \"clusterKeycloakRef\": {\n     \"description\": \"ClusterKeycloakRef is a name of the ClusterKeycloak instance that owns the realm.\",\n     \"type\": \"string\"\n    },\n    \"frontendUrl\": {\n     \"description\": \"FrontendURL Set the frontend URL for the realm. Use in combination with the default hostname provider to override the base URL for frontend requests for a specific realm.\",\n     \"type\": \"string\"\n    },\n    \"localization\": {\n     \"description\": \"Localization is the configuration for localization in the realm.\",\n     \"nullable\": true,\n     \"properties\": {\n      \"internationalizationEnabled\": {\n       \"description\": \"InternationalizationEnabled indicates whether to enable internationalization.\",\n       \"nullable\": true,\n       \"type\": \"boolean\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"passwordPolicy\": {\n     \"description\": \"PasswordPolicies is a list of password policies to apply to the realm.\",\n     \"items\": {\n      \"properties\": {\n       \"type\": {\n        \"description\": \"Type of password policy.\",\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"description\": \"Value of password policy.\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"type\",\n       \"value\"\n      ],\n      \"type\": \"object\"\n     },\n     \"nullable\": true,\n     \"type\": \"array\"\n    },\n    \"realmEventConfig\": {\n     \"description\": \"RealmEventConfig is the configuration for events in the realm.\",\n     \"nullable\": true,\n     \"properties\": {\n      \"adminEventsDetailsEnabled\": {\n       \"description\": \"AdminEventsDetailsEnabled indicates whether to enable detailed admin events.\",\n       \"type\": \"boolean\"\n      },\n      \"adminEventsEnabled\": {\n       \"description\": \"AdminEventsEnabled indicates whether to enable admin events.\",\n       \"type\": \"boolean\"\n      },\n      \"enabledEventTypes\": {\n       \"description\": \"EnabledEventTypes is a list of event types to enable.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"eventsEnabled\": {\n       \"description\": \"EventsEnabled indicates whether to enable events.\",\n       \"type\": \"boolean\"\n      },\n      \"eventsExpiration\": {\n       \"description\": \"EventsExpiration is the number of seconds after which events expire.\",\n       \"type\": \"integer\"\n      },\n      \"eventsListeners\": {\n       \"description\": \"EventsListeners is a list of event listeners to enable.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"realmName\": {\n     \"description\": \"RealmName specifies the name of the realm.\",\n     \"type\": \"string\"\n    },\n    \"themes\": {\n     \"description\": \"Themes is a map of themes to apply to the realm.\",\n     \"nullable\": true,\n     \"properties\": {\n      \"accountTheme\": {\n       \"description\": \"AccountTheme specifies the account theme to use for the realm.\",\n       \"nullable\": true,\n       \"type\": \"string\"\n      },\n      \"adminConsoleTheme\": {\n       \"description\": \"AdminConsoleTheme specifies the admin console theme to use for the realm.\",\n       \"nullable\": true,\n       \"type\": \"string\"\n      },\n      \"emailTheme\": {\n       \"description\": \"EmailTheme specifies the email theme to use for the realm.\",\n       \"nullable\": true,\n       \"type\": \"string\"\n      },\n      \"loginTheme\": {\n       \"description\": \"LoginTheme specifies the login theme to use for the realm.\",\n       \"nullable\": true,\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"clusterKeycloakRef\",\n    \"realmName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Cluster Keycloak Realm\",\n \"type\": \"object\"\n}",

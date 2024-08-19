@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "JSBundle",
    "schema": "{\n \"description\": \"JSBundle declares a js bundle that needs to be injected into ks-console, the endpoint can be provided by a service or a static file.\",\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"raw\": {\n     \"format\": \"byte\",\n     \"type\": \"string\"\n    },\n    \"rawFrom\": {\n     \"properties\": {\n      \"caBundle\": {\n       \"format\": \"byte\",\n       \"type\": \"string\"\n      },\n      \"configMapKeyRef\": {\n       \"description\": \"Selects a key of a ConfigMap.\",\n       \"properties\": {\n        \"key\": {\n         \"description\": \"The key to select.\",\n         \"type\": \"string\"\n        },\n        \"name\": {\n         \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?\",\n         \"type\": \"string\"\n        },\n        \"namespace\": {\n         \"type\": \"string\"\n        },\n        \"optional\": {\n         \"description\": \"Specify whether the ConfigMap or its key must be defined\",\n         \"type\": \"boolean\"\n        }\n       },\n       \"required\": [\n        \"key\",\n        \"namespace\"\n       ],\n       \"type\": \"object\",\n       \"x-kubernetes-map-type\": \"atomic\"\n      },\n      \"insecureSkipVerify\": {\n       \"type\": \"boolean\"\n      },\n      \"secretKeyRef\": {\n       \"description\": \"Selects a key of a Secret.\",\n       \"properties\": {\n        \"key\": {\n         \"description\": \"The key of the secret to select from.  Must be a valid secret key.\",\n         \"type\": \"string\"\n        },\n        \"name\": {\n         \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?\",\n         \"type\": \"string\"\n        },\n        \"namespace\": {\n         \"type\": \"string\"\n        },\n        \"optional\": {\n         \"description\": \"Specify whether the Secret or its key must be defined\",\n         \"type\": \"boolean\"\n        }\n       },\n       \"required\": [\n        \"key\",\n        \"namespace\"\n       ],\n       \"type\": \"object\",\n       \"x-kubernetes-map-type\": \"atomic\"\n      },\n      \"service\": {\n       \"description\": \"service is a reference to the service for this endpoint. Either service or url must be specified. the scheme is default to HTTPS.\",\n       \"properties\": {\n        \"name\": {\n         \"description\": \"name is the name of the service. Required\",\n         \"type\": \"string\"\n        },\n        \"namespace\": {\n         \"description\": \"namespace is the namespace of the service. Required\",\n         \"type\": \"string\"\n        },\n        \"path\": {\n         \"description\": \"path is an optional URL path at which the upstream will be contacted.\",\n         \"type\": \"string\"\n        },\n        \"port\": {\n         \"description\": \"port is an optional service port at which the upstream will be contacted. `port` should be a valid port number (1-65535, inclusive). Defaults to 443 for backward compatibility.\",\n         \"format\": \"int32\",\n         \"type\": \"integer\"\n        }\n       },\n       \"required\": [\n        \"name\",\n        \"namespace\"\n       ],\n       \"type\": \"object\"\n      },\n      \"url\": {\n       \"description\": \"`url` gives the location of the upstream, in standard URL form (`scheme://host:port/path`). Exactly one of `url` or `service` must be specified.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"JS Bundle\",\n \"type\": \"object\"\n}",

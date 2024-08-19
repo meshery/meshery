@@ -20,7 +20,8 @@
         "metadata": {}
     },
     "type": "parent",
-    "subType":"inventory",
+    "subType": "inventory",
+    "status": "enabled",
     "selectors": [
         {
             "allow": {

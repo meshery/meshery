@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "MojaloopReport",
    "schema": "{\n \"description\": \"MojaloopReport is the Schema for MojaloopReport API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"MojaloopReport.spec describes the desired state of my resource\",\n   \"properties\": {\n    \"endpoint\": {\n     \"description\": \"Reporting endpoint\",\n     \"properties\": {\n      \"params\": {\n       \"description\": \"Report query params\",\n       \"items\": {\n        \"description\": \"Query param\",\n        \"properties\": {\n         \"default\": {\n          \"description\": \"Default query param value\",\n          \"type\": \"string\"\n         },\n         \"name\": {\n          \"description\": \"Query param name\",\n          \"type\": \"string\"\n         },\n         \"required\": {\n          \"description\": \"Make query param required\",\n          \"type\": \"boolean\"\n         }\n        },\n        \"required\": [\n         \"name\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"path\": {\n       \"description\": \"Report URL path\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"path\"\n     ],\n     \"type\": \"object\"\n    },\n    \"permission\": {\n     \"description\": \"Permission to be needed to access this report. This is optional. If unspecified, the name of the resource will be considered as permission.\",\n     \"type\": \"string\"\n    },\n    \"queries\": {\n     \"description\": \"The list of queries used in ejs reporting template\",\n     \"items\": {\n      \"description\": \"permission ID.\",\n      \"properties\": {\n       \"name\": {\n        \"description\": \"Variable name that the query result will be assigned to\",\n        \"type\": \"string\"\n       },\n       \"query\": {\n        \"description\": \"SQL query\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"name\",\n       \"query\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"template\": {\n     \"description\": \"ejs reporting template\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"endpoint\",\n    \"queries\",\n    \"template\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Mojaloop Report\",\n \"type\": \"object\"\n}",

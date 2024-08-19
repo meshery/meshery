@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "MySQLBackup",
    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"addTimestampToBackupDirectory\": {\n     \"default\": true,\n     \"type\": \"boolean\"\n    },\n    \"backupProfile\": {\n     \"description\": \"backupProfile specification if backupProfileName is not specified\",\n     \"format\": \"textarea\",\n     \"properties\": {\n      \"dumpInstance\": {\n       \"properties\": {\n        \"dumpOptions\": {\n         \"description\": \"A dictionary of key-value pairs passed directly to MySQL Shell's DumpInstance()\",\n         \"format\": \"textarea\",\n         \"type\": \"string\"\n        },\n        \"storage\": {\n         \"format\": \"textarea\",\n         \"properties\": {\n          \"azure\": {\n           \"properties\": {\n            \"config\": {\n             \"description\": \"Name of a Secret with Azure BLOB Storage configuration and credentials\",\n             \"type\": \"string\"\n            },\n            \"containerName\": {\n             \"description\": \"Name of the Azure  BLOB Storage container where the dump is stored\",\n             \"type\": \"string\"\n            },\n            \"prefix\": {\n             \"description\": \"Path in the container where the dump files are stored\",\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"containerName\",\n            \"config\"\n           ],\n           \"type\": \"object\"\n          },\n          \"ociObjectStorage\": {\n           \"properties\": {\n            \"bucketName\": {\n             \"description\": \"Name of the OCI bucket where backup is stored\",\n             \"type\": \"string\"\n            },\n            \"credentials\": {\n             \"description\": \"Name of a Secret with data for accessing the bucket\",\n             \"type\": \"string\"\n            },\n            \"prefix\": {\n             \"description\": \"Path in bucket where backup is stored\",\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"bucketName\",\n            \"credentials\"\n           ],\n           \"type\": \"object\"\n          },\n          \"persistentVolumeClaim\": {\n           \"description\": \"Specification of the PVC to be used. Used 'as is' in pod executing the backup.\",\n           \"format\": \"textarea\",\n           \"type\": \"string\"\n          },\n          \"s3\": {\n           \"properties\": {\n            \"bucketName\": {\n             \"description\": \"Name of the S3 bucket where the dump is stored\",\n             \"type\": \"string\"\n            },\n            \"config\": {\n             \"description\": \"Name of a Secret with S3 configuration and credentials\",\n             \"type\": \"string\"\n            },\n            \"endpoint\": {\n             \"description\": \"Override endpoint URL\",\n             \"type\": \"string\"\n            },\n            \"prefix\": {\n             \"description\": \"Path in the bucket where the dump files are stored\",\n             \"type\": \"string\"\n            },\n            \"profile\": {\n             \"default\": \"\",\n             \"description\": \"Profile being used in configuration files\",\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"bucketName\",\n            \"config\"\n           ],\n           \"type\": \"object\"\n          }\n         },\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"podAnnotations\": {\n       \"format\": \"textarea\",\n       \"type\": \"string\"\n      },\n      \"podLabels\": {\n       \"format\": \"textarea\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"string\"\n    },\n    \"backupProfileName\": {\n     \"type\": \"string\"\n    },\n    \"clusterName\": {\n     \"type\": \"string\"\n    },\n    \"deleteBackupData\": {\n     \"default\": false,\n     \"type\": \"boolean\"\n    }\n   },\n   \"required\": [\n    \"clusterName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"My SQL Backup\",\n \"type\": \"object\"\n}",

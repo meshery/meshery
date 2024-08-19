@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "ResolverRule",
    "schema": "{\n \"description\": \"ResolverRule is the Schema for the ResolverRules API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ResolverRuleSpec defines the desired state of ResolverRule.\\n\\n\\nFor queries that originate in your VPC, detailed information about a Resolver\\nrule, which specifies how to route DNS queries out of the VPC. The ResolverRule\\nparameter appears in the response to a CreateResolverRule (https://docs.aws.amazon.com/Route53/latest/APIReference/API_route53resolver_CreateResolverRule.html),\\nDeleteResolverRule (https://docs.aws.amazon.com/Route53/latest/APIReference/API_route53resolver_DeleteResolverRule.html),\\nGetResolverRule (https://docs.aws.amazon.com/Route53/latest/APIReference/API_route53resolver_GetResolverRule.html),\\nListResolverRules (https://docs.aws.amazon.com/Route53/latest/APIReference/API_route53resolver_ListResolverRules.html),\\nor UpdateResolverRule (https://docs.aws.amazon.com/Route53/latest/APIReference/API_route53resolver_UpdateResolverRule.html)\\nrequest.\",\n   \"properties\": {\n    \"associations\": {\n     \"items\": {\n      \"description\": \"In the response to an AssociateResolverRule (https://docs.aws.amazon.com/Route53/latest/APIReference/API_route53resolver_AssociateResolverRule.html),\\nDisassociateResolverRule (https://docs.aws.amazon.com/Route53/latest/APIReference/API_route53resolver_DisassociateResolverRule.html),\\nor ListResolverRuleAssociations (https://docs.aws.amazon.com/Route53/latest/APIReference/API_route53resolver_ListResolverRuleAssociations.html)\\nrequest, provides information about an association between a Resolver rule\\nand a VPC. The association determines which DNS queries that originate in\\nthe VPC are forwarded to your network.\",\n      \"properties\": {\n       \"id\": {\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"type\": \"string\"\n       },\n       \"resolverRuleID\": {\n        \"type\": \"string\"\n       },\n       \"status\": {\n        \"type\": \"string\"\n       },\n       \"statusMessage\": {\n        \"type\": \"string\"\n       },\n       \"vpcID\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"domainName\": {\n     \"description\": \"DNS queries for this domain name are forwarded to the IP addresses that you\\nspecify in TargetIps. If a query matches multiple Resolver rules (example.com\\nand www.example.com), outbound DNS queries are routed using the Resolver\\nrule that contains the most specific domain name (www.example.com).\",\n     \"type\": \"string\"\n    },\n    \"name\": {\n     \"description\": \"A friendly name that lets you easily find a rule in the Resolver dashboard\\nin the Route 53 console.\",\n     \"type\": \"string\"\n    },\n    \"resolverEndpointID\": {\n     \"description\": \"The ID of the outbound Resolver endpoint that you want to use to route DNS\\nqueries to the IP addresses that you specify in TargetIps.\",\n     \"type\": \"string\"\n    },\n    \"ruleType\": {\n     \"description\": \"When you want to forward DNS queries for specified domain name to resolvers\\non your network, specify FORWARD.\\n\\n\\nWhen you have a forwarding rule to forward DNS queries for a domain to your\\nnetwork and you want Resolver to process queries for a subdomain of that\\ndomain, specify SYSTEM.\\n\\n\\nFor example, to forward DNS queries for example.com to resolvers on your\\nnetwork, you create a rule and specify FORWARD for RuleType. To then have\\nResolver process queries for apex.example.com, you create a rule and specify\\nSYSTEM for RuleType.\\n\\n\\nCurrently, only Resolver can create rules that have a value of RECURSIVE\\nfor RuleType.\",\n     \"type\": \"string\"\n    },\n    \"tags\": {\n     \"description\": \"A list of the tag keys and values that you want to associate with the endpoint.\",\n     \"items\": {\n      \"description\": \"One tag that you want to add to the specified resource. A tag consists of\\na Key (a name for the tag) and a Value.\",\n      \"properties\": {\n       \"key\": {\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"targetIPs\": {\n     \"description\": \"The IPs that you want Resolver to forward DNS queries to. You can specify\\nonly IPv4 addresses. Separate IP addresses with a space.\\n\\n\\nTargetIps is available only when the value of Rule type is FORWARD.\",\n     \"items\": {\n      \"description\": \"In a CreateResolverRule (https://docs.aws.amazon.com/Route53/latest/APIReference/API_route53resolver_CreateResolverRule.html)\\nrequest, an array of the IPs that you want to forward DNS queries to.\",\n      \"properties\": {\n       \"ip\": {\n        \"type\": \"string\"\n       },\n       \"ipv6\": {\n        \"type\": \"string\"\n       },\n       \"port\": {\n        \"format\": \"int64\",\n        \"type\": \"integer\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"domainName\",\n    \"ruleType\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Resolver Rule\",\n \"type\": \"object\"\n}",

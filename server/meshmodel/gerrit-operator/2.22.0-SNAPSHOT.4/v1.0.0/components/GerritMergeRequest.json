@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "GerritMergeRequest",
    "schema": "{\n \"description\": \"GerritMergeRequest is the Schema for the gerrit merge request API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"GerritMergeRequestSpec defines the desired state of GerritMergeRequest.\",\n   \"properties\": {\n    \"additionalArguments\": {\n     \"description\": \"AdditionalArguments contains merge command additional command line arguments.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"nullable\": true,\n     \"type\": \"array\"\n    },\n    \"authorEmail\": {\n     \"description\": \"AuthorEmail is the email of the user who creates the merge request.\",\n     \"example\": \"john.foe@mail.com\",\n     \"type\": \"string\"\n    },\n    \"authorName\": {\n     \"description\": \"AuthorName is the name of the user who creates the merge request.\",\n     \"example\": \"John Doe\",\n     \"type\": \"string\"\n    },\n    \"changesConfigMap\": {\n     \"description\": \"ChangesConfigMap is the name of the ConfigMap, which contains files contents that should be merged.\\nConfigMap should contain eny data keys with content in the json\\nformat: {\\\"path\\\": \\\"/controllers/user.go\\\", \\\"contents\\\": \\\"some code here\\\"} - to add file\\nor format: {\\\"path\\\": \\\"/controllers/user.go\\\"} - to remove file.\\nIf files already exist in the project, they will be overwritten.\\nIf empty, sourceBranch should be set.\",\n     \"example\": \"config-map-new-feature\",\n     \"type\": \"string\"\n    },\n    \"commitMessage\": {\n     \"description\": \"CommitMessage is the commit message for the merge request.\\nIf empty, the operator will generate the commit message.\",\n     \"example\": \"merge new-feature to master\",\n     \"type\": \"string\"\n    },\n    \"ownerName\": {\n     \"description\": \"OwnerName is the name of Gerrit CR, which should be used to initialize the client.\\nIf empty, the operator will get first Gerrit CR from the namespace.\",\n     \"example\": \"gerrit\",\n     \"type\": \"string\"\n    },\n    \"projectName\": {\n     \"description\": \"ProjectName is gerrit project name.\",\n     \"example\": \"my-project\",\n     \"type\": \"string\"\n    },\n    \"sourceBranch\": {\n     \"description\": \"SourceBranch is the name of the branch from which the changes should be merged.\\nIf empty, changesConfigMap should be set.\",\n     \"example\": \"new-feature\",\n     \"type\": \"string\"\n    },\n    \"targetBranch\": {\n     \"default\": \"master\",\n     \"description\": \"TargetBranch is the name of the branch to which the changes should be merged.\\nIf changesConfigMap is set, the targetBranch can be only the origin HEAD branch.\",\n     \"example\": \"master\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"authorEmail\",\n    \"authorName\",\n    \"projectName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Gerrit Merge Request\",\n \"type\": \"object\"\n}",

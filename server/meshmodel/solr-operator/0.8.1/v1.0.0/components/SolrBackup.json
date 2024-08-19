@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "SolrBackup",
    "schema": "{\n \"description\": \"SolrBackup is the Schema for the solrbackups API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"SolrBackupSpec defines the desired state of SolrBackup\",\n   \"properties\": {\n    \"collections\": {\n     \"description\": \"The list of collections to backup.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"location\": {\n     \"description\": \"The location to store the backup in the specified backup repository.\",\n     \"type\": \"string\"\n    },\n    \"recurrence\": {\n     \"description\": \"Set this backup to be taken recurrently, with options for scheduling and storage. \\n NOTE: This is only supported for Solr Clouds version 8.9+, as it uses the incremental backup API.\",\n     \"properties\": {\n      \"disabled\": {\n       \"default\": false,\n       \"description\": \"Disable the recurring backups. Note this will not affect any currently-running backup.\",\n       \"type\": \"boolean\"\n      },\n      \"maxSaved\": {\n       \"default\": 5,\n       \"description\": \"Define the number of backup points to save for this backup at any given time. The oldest backups will be deleted if too many exist when a backup is taken. If not provided, this defaults to 5.\",\n       \"minimum\": 1,\n       \"type\": \"integer\"\n      },\n      \"schedule\": {\n       \"description\": \"Perform a backup on the given schedule, in CRON format. \\n Multiple CRON syntaxes are supported - Standard CRON (e.g. \\\"CRON_TZ=Asia/Seoul 0 6 * * ?\\\") - Predefined Schedules (e.g. \\\"@yearly\\\", \\\"@weekly\\\", \\\"@daily\\\", etc.) - Intervals (e.g. \\\"@every 10h30m\\\") \\n For more information please check this reference: https://pkg.go.dev/github.com/robfig/cron/v3?utm_source=godoc#hdr-CRON_Expression_Format\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"schedule\"\n     ],\n     \"type\": \"object\"\n    },\n    \"repositoryName\": {\n     \"description\": \"The name of the repository to use for the backup.  Defaults to \\\"legacy_local_repository\\\" if not specified (the auto-configured repository for legacy singleton volumes).\",\n     \"maxLength\": 100,\n     \"minLength\": 1,\n     \"pattern\": \"[a-zA-Z0-9]([-_a-zA-Z0-9]*[a-zA-Z0-9])?\",\n     \"type\": \"string\"\n    },\n    \"solrCloud\": {\n     \"description\": \"A reference to the SolrCloud to create a backup for\",\n     \"maxLength\": 63,\n     \"minLength\": 1,\n     \"pattern\": \"[a-z0-9]([-a-z0-9]*[a-z0-9])?\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"solrCloud\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Solr Backup\",\n \"type\": \"object\"\n}",

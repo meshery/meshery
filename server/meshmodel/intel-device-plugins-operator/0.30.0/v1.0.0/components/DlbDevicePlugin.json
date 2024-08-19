@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "DlbDevicePlugin",
    "schema": "{\n \"description\": \"DlbDevicePlugin is the Schema for the dlbdeviceplugins API. It represents\\nthe DLB device plugin responsible for advertising Intel DLB hardware resources to\\nthe kubelet.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"DlbDevicePluginSpec defines the desired state of DlbDevicePlugin.\",\n   \"properties\": {\n    \"image\": {\n     \"description\": \"Image is a container image with DLB device plugin executable.\",\n     \"type\": \"string\"\n    },\n    \"initImage\": {\n     \"description\": \"InitImage is a container image with a script that initializes devices.\",\n     \"type\": \"string\"\n    },\n    \"logLevel\": {\n     \"description\": \"LogLevel sets the plugin's log level.\",\n     \"minimum\": 0,\n     \"type\": \"integer\"\n    },\n    \"nodeSelector\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"NodeSelector provides a simple way to constrain device plugin pods to nodes with particular labels.\",\n     \"type\": \"object\"\n    },\n    \"tolerations\": {\n     \"description\": \"Specialized nodes (e.g., with accelerators) can be Tainted to make sure unwanted pods are not scheduled on them. Tolerations can be set for the plugin pod to neutralize the Taint.\",\n     \"items\": {\n      \"description\": \"The pod this Toleration is attached to tolerates any taint that matches\\nthe triple \\u003ckey,value,effect\\u003e using the matching operator \\u003coperator\\u003e.\",\n      \"properties\": {\n       \"effect\": {\n        \"description\": \"Effect indicates the taint effect to match. Empty means match all taint effects.\\nWhen specified, allowed values are NoSchedule, PreferNoSchedule and NoExecute.\",\n        \"type\": \"string\"\n       },\n       \"key\": {\n        \"description\": \"Key is the taint key that the toleration applies to. Empty means match all taint keys.\\nIf the key is empty, operator must be Exists; this combination means to match all values and all keys.\",\n        \"type\": \"string\"\n       },\n       \"operator\": {\n        \"description\": \"Operator represents a key's relationship to the value.\\nValid operators are Exists and Equal. Defaults to Equal.\\nExists is equivalent to wildcard for value, so that a pod can\\ntolerate all taints of a particular category.\",\n        \"type\": \"string\"\n       },\n       \"tolerationSeconds\": {\n        \"description\": \"TolerationSeconds represents the period of time the toleration (which must be\\nof effect NoExecute, otherwise this field is ignored) tolerates the taint. By default,\\nit is not set, which means tolerate the taint forever (do not evict). Zero and\\nnegative values will be treated as 0 (evict immediately) by the system.\",\n        \"format\": \"int64\",\n        \"type\": \"integer\"\n       },\n       \"value\": {\n        \"description\": \"Value is the taint value the toleration matches to.\\nIf the operator is Exists, the value should be empty, otherwise just a regular string.\",\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Dlb Device Plugin\",\n \"type\": \"object\"\n}",

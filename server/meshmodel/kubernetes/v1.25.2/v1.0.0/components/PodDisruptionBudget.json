@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "PodDisruptionBudget",
    "schema": "{\"description\":\"PodDisruptionBudget is an object to define the max disruption that can be caused to a collection of pods\",\"properties\":{\"spec\":{\"allOf\":[{\"description\":\"PodDisruptionBudgetSpec is a description of a PodDisruptionBudget.\",\"properties\":{\"maxUnavailable\":{\"allOf\":[{\"description\":\"IntOrString is a type that can hold an int32 or a string.  When used in JSON or YAML marshalling and unmarshalling, it produces or consumes the inner type.  This allows you to have, for example, a JSON field that can accept a name or number.\",\"format\":\"int-or-string\",\"oneOf\":[{\"type\":\"integer\"},{\"type\":\"string\"}]}],\"description\":\"An eviction is allowed if at most \\\"maxUnavailable\\\" pods selected by \\\"selector\\\" are unavailable after the eviction, i.e. even in absence of the evicted pod. For example, one can prevent all voluntary evictions by specifying 0. This is a mutually exclusive setting with \\\"minAvailable\\\".\"},\"minAvailable\":{\"allOf\":[{\"description\":\"IntOrString is a type that can hold an int32 or a string.  When used in JSON or YAML marshalling and unmarshalling, it produces or consumes the inner type.  This allows you to have, for example, a JSON field that can accept a name or number.\",\"format\":\"int-or-string\",\"oneOf\":[{\"type\":\"integer\"},{\"type\":\"string\"}]}],\"description\":\"An eviction is allowed if at least \\\"minAvailable\\\" pods selected by \\\"selector\\\" will still be available after the eviction, i.e. even in the absence of the evicted pod.  So for example you can prevent all voluntary evictions by specifying \\\"100%\\\".\"},\"selector\":{\"allOf\":[{\"description\":\"A label selector is a label query over a set of resources. The result of matchLabels and matchExpressions are ANDed. An empty label selector matches all objects. A null label selector matches no objects.\",\"properties\":{\"matchExpressions\":{\"description\":\"matchExpressions is a list of label selector requirements. The requirements are ANDed.\",\"items\":{\"allOf\":[{\"description\":\"A label selector requirement is a selector that contains values, a key, and an operator that relates the key and values.\",\"properties\":{\"key\":{\"default\":\"\",\"description\":\"key is the label key that the selector applies to.\",\"type\":\"string\",\"x-kubernetes-patch-merge-key\":\"key\",\"x-kubernetes-patch-strategy\":\"merge\"},\"operator\":{\"default\":\"\",\"description\":\"operator represents a key's relationship to a set of values. Valid operators are In, NotIn, Exists and DoesNotExist.\",\"type\":\"string\"},\"values\":{\"description\":\"values is an array of string values. If the operator is In or NotIn, the values array must be non-empty. If the operator is Exists or DoesNotExist, the values array must be empty. This array is replaced during a strategic merge patch.\",\"items\":{\"default\":\"\",\"type\":\"string\"},\"type\":\"array\"}},\"required\":[\"key\",\"operator\"],\"type\":\"object\"}],\"default\":{}},\"type\":\"array\"},\"matchLabels\":{\"additionalProperties\":{\"default\":\"\",\"type\":\"string\"},\"description\":\"matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels map is equivalent to an element of matchExpressions, whose key field is \\\"key\\\", the operator is \\\"In\\\", and the values array contains only \\\"value\\\". The requirements are ANDed.\",\"type\":\"object\"}},\"type\":\"object\",\"x-kubernetes-map-type\":\"atomic\"}],\"description\":\"Label query over pods whose evictions are managed by the disruption budget. A null selector will match no pods, while an empty ({}) selector will select all pods within the namespace.\",\"x-kubernetes-patch-strategy\":\"replace\"}},\"type\":\"object\"}],\"default\":{},\"description\":\"Specification of the desired behavior of the PodDisruptionBudget.\"}},\"type\":\"object\",\"x-kubernetes-group-version-kind\":[{\"group\":\"policy\",\"kind\":\"PodDisruptionBudget\",\"version\":\"v1\"}]}",

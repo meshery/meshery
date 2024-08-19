@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "User",
    "schema": "{\n \"description\": \"User is the Schema for the users API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"UserSpec defines the desired state of User\",\n   \"properties\": {\n    \"description\": {\n     \"description\": \"Description of the user.\",\n     \"type\": \"string\"\n    },\n    \"displayName\": {\n     \"type\": \"string\"\n    },\n    \"email\": {\n     \"description\": \"Unique email address(https://www.ietf.org/rfc/rfc5322.txt).\",\n     \"type\": \"string\"\n    },\n    \"groups\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"lang\": {\n     \"description\": \"The preferred written or spoken language for the user.\",\n     \"type\": \"string\"\n    },\n    \"password\": {\n     \"description\": \"password will be encrypted by mutating admission webhook\\nPassword pattern is tricky here.\\nThe rule is simple: length between [6,64], at least one uppercase letter, one lowercase letter, one digit.\\nThe regexp in console(javascript) is quite straightforward: ^(?=.*[a-z])(?=.*[A-Z])(?=.*\\\\d)[^]{6,64}$\\nBut in Go, we don't have ?= (back tracking) capability in regexp (also in CRD validation pattern)\\nSo we adopted an alternative scheme to achieve.\\nUse 6 different regexp to combine to achieve the same effect.\\nThese six schemes enumerate the arrangement of numbers, uppercase letters, and lowercase letters that appear for the first time.\\n- ^(.*[a-z].*[A-Z].*[0-9].*)$ stands for lowercase letter comes first, then followed by an uppercase letter, then a digit.\\n- ^(.*[a-z].*[0-9].*[A-Z].*)$ stands for lowercase letter comes first, then followed by a digit, then an uppercase leeter.\\n- ^(.*[A-Z].*[a-z].*[0-9].*)$ ...\\n- ^(.*[A-Z].*[0-9].*[a-z].*)$ ...\\n- ^(.*[0-9].*[a-z].*[A-Z].*)$ ...\\n- ^(.*[0-9].*[A-Z].*[a-z].*)$ ...\\nLast but not least, the bcrypt string is also included to match the encrypted password. ^(\\\\$2[ayb]\\\\$.{56})$\",\n     \"maxLength\": 64,\n     \"minLength\": 8,\n     \"pattern\": \"^(.*[a-z].*[A-Z].*[0-9].*)$|^(.*[a-z].*[0-9].*[A-Z].*)$|^(.*[A-Z].*[a-z].*[0-9].*)$|^(.*[A-Z].*[0-9].*[a-z].*)$|^(.*[0-9].*[a-z].*[A-Z].*)$|^(.*[0-9].*[A-Z].*[a-z].*)$|^(\\\\$2[ayb]\\\\$.{56})$\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"email\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"User\",\n \"type\": \"object\"\n}",
