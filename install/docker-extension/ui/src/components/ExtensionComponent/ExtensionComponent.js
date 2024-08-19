@@ -505,8 +505,7 @@ const ExtensionsComponent = () => {
                                 ? pattern.catalog_data.type
                                 : "deployment";
                             return (
-                             <SistentThemeProviderWithoutBaseLine>
-                              <div style={{gap: '18px'}}>
+                             <SistentThemeProviderWithoutBaseLine>                          
                               <CatalogCard
                                 pattern={pattern}
                                 key={`design-${index}`}
@@ -514,8 +513,7 @@ const ExtensionsComponent = () => {
                                 catalog={true}
                                 cardHeight='18rem'
                                 cardWidth='15rem'
-                              />
-                              </div>
+                              />                            
                              </SistentThemeProviderWithoutBaseLine>
                             )
                           })
