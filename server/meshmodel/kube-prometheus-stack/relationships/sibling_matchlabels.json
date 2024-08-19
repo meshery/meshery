@@ -1,12 +1,14 @@
 {
-  "schemaVersion": "relationships.meshery.io/v1alpha2",
-  "version": "*",
-  "kind": "Sibling",
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "version": "v1.0.0",
+  "kind": "hierarchical",
+  "type": "sibling",
+  "subType": "matchlabels",
   "metadata": {
     "description": "Sibling relationships represent connections between components that are at the same hierarchical level or share a common parent. An example of this relationship is a Service and a Pod in Kubernetes. In kube-prometheus-stack, ServiceMonitor and PodMonitor resources configure Prometheus to scrape metrics from Kubernetes services and Pods respectively."
   },
   "model": {
-    "schemaVersion": "relationships.meshery.io/v1alpha2",
+    "schemaVersion": "models.meshery.io/v1beta1",
     "version": "*",
     "name": "kube-prometheus-stack",
     "model": {
@@ -19,21 +21,40 @@
     },
     "metadata": {}
   },
-  "subType": "MatchLabels",
-  "evaluationQuery": "sibling_matchlabels_relationship",
+  "status": "enabled",
   "selectors": [
     {
       "allow": {
         "from": [
           {
             "kind": "ServiceMonitor",
-            "model": "kube-prometheus-stack"
+            "model": {
+              "name": "kube-prometheus-stack",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
+            "match": {
+              "refs": [
+                []
+              ]
+            }
           }
         ],
         "to": [
           {
             "kind": "Service",
-            "model": "kubernetes"
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
+            "match": {
+              "refs": [
+                []
+              ]
+            }
           }
         ]
       },
@@ -47,13 +68,33 @@
         "from": [
           {
             "kind": "PodMonitor",
-            "model": "kube-prometheus-stack"
+            "model": {
+              "name": "kube-prometheus-stack",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
+            "match": {
+              "refs": [
+                []
+              ]
+            }
           }
         ],
         "to": [
           {
             "kind": "Pod",
-            "model": "kubernetes"
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
+            "match": {
+              "refs": [
+                []
+              ]
+            }
           }
         ]
       },

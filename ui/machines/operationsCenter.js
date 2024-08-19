@@ -1,7 +1,4 @@
-import {
-  SEVERITY_TO_NOTIFICATION_TYPE_MAPPING,
-  validateEvent,
-} from '@/components/NotificationCenter/constants';
+import { SEVERITY_TO_NOTIFICATION_TYPE_MAPPING } from '@/components/NotificationCenter/constants';
 import subscribeEvents from '@/components/graphql/subscriptions/EventsSubscription';
 import { createMachine, emit, fromCallback, spawnChild } from 'xstate';
 import { store } from '../store';
@@ -27,7 +24,8 @@ const subscriptionActor = fromCallback(({ sendBack }) => {
       console.error('Invalid event received', result);
       return;
     }
-    const [isValid, validatedEvent] = validateEvent({
+
+    const event = {
       ...result.event,
       user_id: result.event.userID,
       system_id: result.event.systemID,
@@ -35,12 +33,8 @@ const subscriptionActor = fromCallback(({ sendBack }) => {
       created_at: result.event.createdAt,
       deleted_at: result.event.deletedAt,
       operation_id: result.event.operationID,
-    });
-    if (!isValid) {
-      console.error('Invalid event received', result);
-      return;
-    }
-    sendBack(events.eventReceivedFromServer(validatedEvent));
+    };
+    sendBack(events.eventReceivedFromServer(event));
   });
 
   () => {

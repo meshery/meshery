@@ -22,6 +22,12 @@ import (
 	meshkitutils "github.com/layer5io/meshkit/utils"
 
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
+	_models "github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
+	"github.com/meshery/schemas/models/v1beta1/component"
+	"github.com/meshery/schemas/models/v1alpha3/relationship"
+	"github.com/meshery/schemas/models/v1beta1/connection"
+	_model "github.com/meshery/schemas/models/v1beta1/model"
+
 	"github.com/layer5io/meshkit/models/meshmodel/entity"
 	"github.com/layer5io/meshkit/models/meshmodel/registry"
 
@@ -73,9 +79,9 @@ func (h *Handler) GetMeshmodelModelsByCategories(rw http.ResponseWriter, r *http
 		filter.DisplayName = search
 	}
 	entities, count, _, _ := h.registryManager.GetEntities(filter)
-	var modelDefs []v1beta1.Model
+	var modelDefs []_model.ModelDefinition
 	for _, model := range entities {
-		model, ok := model.(*v1beta1.Model)
+		model, ok := model.(*_model.ModelDefinition)
 		if ok {
 			modelDefs = append(modelDefs, *model)
 		}
@@ -145,9 +151,9 @@ func (h *Handler) GetMeshmodelModelsByCategoriesByModel(rw http.ResponseWriter, 
 		Annotations: returnAnnotationComp,
 	})
 
-	var modelDefs []v1beta1.Model
+	var modelDefs []_model.ModelDefinition
 	for _, model := range entities {
-		model, ok := model.(*v1beta1.Model)
+		model, ok := model.(*_model.ModelDefinition)
 		if ok {
 			modelDefs = append(modelDefs, *model)
 		}
@@ -220,9 +226,9 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 	}
 
 	entities, count, _, _ := h.registryManager.GetEntities(filter)
-	var modelDefs []v1beta1.Model
+	var modelDefs []_model.ModelDefinition
 	for _, model := range entities {
-		model, ok := model.(*v1beta1.Model)
+		model, ok := model.(*_model.ModelDefinition)
 		if ok {
 			modelDefs = append(modelDefs, *model)
 		}
@@ -293,9 +299,9 @@ func (h *Handler) GetMeshmodelModelsByName(rw http.ResponseWriter, r *http.Reque
 		Relationships: queryParams.Get("relationships") == "true",
 	})
 
-	var modelDefs []v1beta1.Model
+	var modelDefs []_model.ModelDefinition
 	for _, model := range entities {
-		model, ok := model.(*v1beta1.Model)
+		model, ok := model.(*_model.ModelDefinition)
 		if ok {
 			modelDefs = append(modelDefs, *model)
 		}
@@ -1030,7 +1036,7 @@ func (h *Handler) RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Re
 		http.Error(rw, err.Error(), http.StatusBadRequest)
 		return
 	}
-	var c v1beta1.ComponentDefinition
+	var c component.ComponentDefinition
 	switch cc.EntityType {
 	case entity.ComponentDefinition:
 		var isModelError bool
@@ -1041,8 +1047,8 @@ func (h *Handler) RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Re
 			return
 		}
 		utils.WriteSVGsOnFileSystem(&c)
-		isRegistranError, isModelError, err = h.registryManager.RegisterEntity(cc.Host, &c)
-		helpers.HandleError(cc.Host, &c, err, isModelError, isRegistranError)
+		isRegistranError, isModelError, err = h.registryManager.RegisterEntity(cc.Connection, &c)
+		helpers.HandleError(cc.Connection, &c, err, isModelError, isRegistranError)
 	}
 	err = helpers.WriteLogsToFiles()
 	if err != nil {
@@ -1078,7 +1084,7 @@ func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Reques
 	enc := json.NewEncoder(rw)
 	page, offset, limit, search, order, sort, _ := getPaginationParams(r)
 
-	filter := &v1beta1.HostFilter{
+	filter := &_models.HostFilter{
 		Limit:   limit,
 		Offset:  offset,
 		Sort:    sort,
@@ -1164,10 +1170,10 @@ func (h *Handler) UpdateEntityStatus(rw http.ResponseWriter, r *http.Request, _ 
 	rw.WriteHeader(http.StatusNoContent)
 }
 
-func prettifyCompDefSchema(entities []entity.Entity) []v1beta1.ComponentDefinition {
-	var comps []v1beta1.ComponentDefinition
+func prettifyCompDefSchema(entities []entity.Entity) []component.ComponentDefinition {
+	var comps []component.ComponentDefinition
 	for _, r := range entities {
-		comp, ok := r.(*v1beta1.ComponentDefinition)
+		comp, ok := r.(*component.ComponentDefinition)
 		if ok {
 			m := make(map[string]interface{})
 			_ = json.Unmarshal([]byte(comp.Component.Schema), &m)
@@ -1398,4 +1404,69 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 		h.log.Error(ErrGetMeshModels(err)) // TODO: Add appropriate meshkit error
 		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
 	}
+	err = filepath.Walk(tempDir, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return meshkitutils.ErrFileWalkDir(err, path)
+		}
+		if !info.IsDir() {
+			if meshkitutils.IsYaml(path) {
+				content, err := os.ReadFile(path)
+				if err != nil {
+					return meshkitutils.ErrReadFile(err, path)
+				}
+				entityType, err := meshkitutils.FindEntityType(content)
+				if err != nil {
+					return err
+				}
+				if entityType != "" {
+					err = RegisterEntity(content, entityType, h)
+					if err != nil {
+						return err
+					}
+					if entityType == entity.ComponentDefinition {
+						*compCount++
+					} else {
+						*relCount++
+					}
+				}
+
+			}
+			if meshkitutils.IsTarGz(path) || meshkitutils.IsZip(path) {
+				return processUploadedFile(path, h, compCount, relCount)
+			}
+		}
+		return nil
+	})
+	return err
+}
+func RegisterEntity(content []byte, entityType entity.EntityType, h *Handler) error {
+	switch entityType {
+	case entity.ComponentDefinition:
+		var c component.ComponentDefinition
+		err := json.Unmarshal(content, &c)
+		if err != nil {
+			return meshkitutils.ErrUnmarshal(err)
+		}
+		isRegistrantError, isModelError, err := h.registryManager.RegisterEntity(connection.Connection{
+			Kind: c.Model.Registrant.Kind,
+		}, &c)
+		helpers.HandleError(connection.Connection{
+			Kind: c.Model.Registrant.Kind,
+		}, &c, err, isModelError, isRegistrantError)
+		return nil
+	case entity.RelationshipDefinition:
+		var r relationship.RelationshipDefinition
+		err := json.Unmarshal(content, &r)
+		if err != nil {
+			return meshkitutils.ErrUnmarshal(err)
+		}
+		isRegistrantError, isModelError, err := h.registryManager.RegisterEntity(connection.Connection{
+			Kind: r.Model.Registrant.Kind,
+		}, &r)
+		helpers.HandleError(connection.Connection{
+			Kind: r.Model.Registrant.Kind,
+		}, &r, err, isModelError, isRegistrantError)
+		return nil
+	}
+	return meshkitutils.ErrInvalidSchemaVersion
 }

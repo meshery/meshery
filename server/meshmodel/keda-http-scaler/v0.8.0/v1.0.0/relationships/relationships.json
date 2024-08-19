@@ -1,9 +1,9 @@
 {
-  "schemaVersion": "relationships.meshery.io/v1alpha2",
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
   "version": "v1.0.0",
-  "kind": "Edge",
-  "type": "Network",
-  "subType": "Network",
+  "kind": "edge",
+  "type": "non-binding",
+  "subType": "network",
   "metadata": {
     "description": "A KEDA HTTPScaledObject is a Kubernetes custom resource definition (CRD) used in conjunction with the KEDA HTTP Add-on to enable the automatic scaling of your HTTP-based applications based on incoming HTTP traffic. This means your application can dynamically adjust the number of replicas (pods) running to handle varying workloads efficiently.",
     "capabilities": {
@@ -25,18 +25,24 @@
       "version": "*"
     }
   },
+  "status": "enabled",
   "selectors": [
     {
       "allow": {
         "from": [
           {
             "kind": "HTTPScaledObject",
-            "model": "keda-http-scaler",
+            "model": {
+              "name": "keda-http-scaler",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
             "patch": {
               "patchStrategy": "replace",
               "mutatedRef": [
                 [
-                  "settings",
+                  "configuration",
                   "spec",
                   "scaleTargetRef",
                   "service"
@@ -49,12 +55,17 @@
         "to": [
           {
             "kind": "Service",
-            "model": "kubernetes",
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
             "patch": {
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "name"
+                  "displayName"
                 ]
               ],
               "description": "Autoscale any Kubernetes Deployments and StatefulSets that expose HTTP-based applications (and handles incoming HTTP traffic)."

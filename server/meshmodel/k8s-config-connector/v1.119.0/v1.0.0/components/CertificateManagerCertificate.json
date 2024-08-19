@@ -1,29 +1,154 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "displayName": "Certificate Manager Certificate",
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "CertificateManagerCertificate",
+   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"description\": {\n     \"description\": \"A human-readable description of the resource.\",\n     \"type\": \"string\"\n    },\n    \"location\": {\n     \"description\": \"Immutable. The Certificate Manager location. If not specified, \\\"global\\\" is used.\",\n     \"type\": \"string\"\n    },\n    \"managed\": {\n     \"description\": \"Immutable. Configuration and state of a Managed Certificate.\\nCertificate Manager provisions and renews Managed Certificates\\nautomatically, for as long as it's authorized to do so.\",\n     \"properties\": {\n      \"authorizationAttemptInfo\": {\n       \"description\": \"Detailed state of the latest authorization attempt for each domain\\nspecified for this Managed Certificate.\",\n       \"items\": {\n        \"properties\": {\n         \"details\": {\n          \"description\": \"Human readable explanation for reaching the state. Provided to help\\naddress the configuration issues.\\nNot guaranteed to be stable. For programmatic access use 'failure_reason' field.\",\n          \"type\": \"string\"\n         },\n         \"domain\": {\n          \"description\": \"Domain name of the authorization attempt.\",\n          \"type\": \"string\"\n         },\n         \"failureReason\": {\n          \"description\": \"Reason for failure of the authorization attempt for the domain.\",\n          \"type\": \"string\"\n         },\n         \"state\": {\n          \"description\": \"State of the domain for managed certificate issuance.\",\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"dnsAuthorizationsRefs\": {\n       \"items\": {\n        \"description\": \"Authorizations that will be used for performing domain authorization. Either issuanceConfig or dnsAuthorizations should be specified, but not both.\",\n        \"oneOf\": [\n         {\n          \"not\": {\n           \"required\": [\n            \"external\"\n           ]\n          },\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"not\": {\n           \"anyOf\": [\n            {\n             \"required\": [\n              \"name\"\n             ]\n            },\n            {\n             \"required\": [\n              \"namespace\"\n             ]\n            }\n           ]\n          },\n          \"required\": [\n           \"external\"\n          ]\n         }\n        ],\n        \"properties\": {\n         \"external\": {\n          \"description\": \"Allowed value: string of the format `projects/{{project}}/locations/global/dnsAuthorizations/{{value}}`, where {{value}} is the `name` field of a `CertificateManagerDNSAuthorization` resource.\",\n          \"type\": \"string\"\n         },\n         \"name\": {\n          \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n          \"type\": \"string\"\n         },\n         \"namespace\": {\n          \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"domains\": {\n       \"description\": \"Immutable. The domains for which a managed SSL certificate will be generated.\\nWildcard domains are only supported with DNS challenge resolution.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"issuanceConfigRef\": {\n       \"description\": \"Only the `external` field is supported to configure the reference.\\n\\nImmutable. The resource name for a CertificateIssuanceConfig used to configure private PKI certificates in the format projects/*/locations/*/certificateIssuanceConfigs/*.\\nIf this field is not set, the certificates will instead be publicly signed as documented at https://cloud.google.com/load-balancing/docs/ssl-certificates/google-managed-certs#caa.\\nEither issuanceConfig or dnsAuthorizations should be specified, but not both.\",\n       \"oneOf\": [\n        {\n         \"not\": {\n          \"required\": [\n           \"external\"\n          ]\n         },\n         \"required\": [\n          \"name\"\n         ]\n        },\n        {\n         \"not\": {\n          \"anyOf\": [\n           {\n            \"required\": [\n             \"name\"\n            ]\n           },\n           {\n            \"required\": [\n             \"namespace\"\n            ]\n           }\n          ]\n         },\n         \"required\": [\n          \"external\"\n         ]\n        }\n       ],\n       \"properties\": {\n        \"external\": {\n         \"description\": \"Allowed value: string of the format `projects/{{project}}/locations/{{location}}/certificateIssuanceConfigs/{{name}}`, where {{value}} is the `name` field of a `CertificateManagerCertificateIssuanceConfig` resource.\",\n         \"type\": \"string\"\n        },\n        \"name\": {\n         \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n         \"type\": \"string\"\n        },\n        \"namespace\": {\n         \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"provisioningIssue\": {\n       \"description\": \"Information about issues with provisioning this Managed Certificate.\",\n       \"items\": {\n        \"properties\": {\n         \"details\": {\n          \"description\": \"Human readable explanation about the issue. Provided to help address\\nthe configuration issues.\\nNot guaranteed to be stable. For programmatic access use 'reason' field.\",\n          \"type\": \"string\"\n         },\n         \"reason\": {\n          \"description\": \"Reason for provisioning failures.\",\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"state\": {\n       \"description\": \"A state of this Managed Certificate.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"projectRef\": {\n     \"description\": \"The project that this resource belongs to.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `name` field of a `Project` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    },\n    \"scope\": {\n     \"description\": \"Immutable. The scope of the certificate.\\n\\nDEFAULT: Certificates with default scope are served from core Google data centers.\\nIf unsure, choose this option.\\n\\nEDGE_CACHE: Certificates with scope EDGE_CACHE are special-purposed certificates,\\nserved from non-core Google data centers.\\n\\nALL_REGIONS: Certificates with ALL_REGIONS scope are served from all GCP regions (You can only use ALL_REGIONS with global certs).\\nsee https://cloud.google.com/compute/docs/regions-zones.\",\n     \"type\": \"string\"\n    },\n    \"selfManaged\": {\n     \"description\": \"Immutable. Certificate data for a SelfManaged Certificate.\\nSelfManaged Certificates are uploaded by the user. Updating such\\ncertificates before they expire remains the user's responsibility.\",\n     \"properties\": {\n      \"certificatePem\": {\n       \"description\": \"DEPRECATED. `certificate_pem` is deprecated. Use `pem_certificate` instead. Immutable. The certificate chain in PEM-encoded form.\\n\\nLeaf certificate comes first, followed by intermediate ones if any.\",\n       \"oneOf\": [\n        {\n         \"not\": {\n          \"required\": [\n           \"valueFrom\"\n          ]\n         },\n         \"required\": [\n          \"value\"\n         ]\n        },\n        {\n         \"not\": {\n          \"required\": [\n           \"value\"\n          ]\n         },\n         \"required\": [\n          \"valueFrom\"\n         ]\n        }\n       ],\n       \"properties\": {\n        \"value\": {\n         \"description\": \"Value of the field. Cannot be used if 'valueFrom' is specified.\",\n         \"type\": \"string\"\n        },\n        \"valueFrom\": {\n         \"description\": \"Source for the field's value. Cannot be used if 'value' is specified.\",\n         \"properties\": {\n          \"secretKeyRef\": {\n           \"description\": \"Reference to a value with the given key in the given Secret in the resource's namespace.\",\n           \"properties\": {\n            \"key\": {\n             \"description\": \"Key that identifies the value to be extracted.\",\n             \"type\": \"string\"\n            },\n            \"name\": {\n             \"description\": \"Name of the Secret to extract a value from.\",\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"name\",\n            \"key\"\n           ],\n           \"type\": \"object\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"pemCertificate\": {\n       \"description\": \"Immutable. The certificate chain in PEM-encoded form.\\n\\nLeaf certificate comes first, followed by intermediate ones if any.\",\n       \"type\": \"string\"\n      },\n      \"pemPrivateKey\": {\n       \"description\": \"Immutable. The private key of the leaf certificate in PEM-encoded form.\",\n       \"oneOf\": [\n        {\n         \"not\": {\n          \"required\": [\n           \"valueFrom\"\n          ]\n         },\n         \"required\": [\n          \"value\"\n         ]\n        },\n        {\n         \"not\": {\n          \"required\": [\n           \"value\"\n          ]\n         },\n         \"required\": [\n          \"valueFrom\"\n         ]\n        }\n       ],\n       \"properties\": {\n        \"value\": {\n         \"description\": \"Value of the field. Cannot be used if 'valueFrom' is specified.\",\n         \"type\": \"string\"\n        },\n        \"valueFrom\": {\n         \"description\": \"Source for the field's value. Cannot be used if 'value' is specified.\",\n         \"properties\": {\n          \"secretKeyRef\": {\n           \"description\": \"Reference to a value with the given key in the given Secret in the resource's namespace.\",\n           \"properties\": {\n            \"key\": {\n             \"description\": \"Key that identifies the value to be extracted.\",\n             \"type\": \"string\"\n            },\n            \"name\": {\n             \"description\": \"Name of the Secret to extract a value from.\",\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"name\",\n            \"key\"\n           ],\n           \"type\": \"object\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"privateKeyPem\": {\n       \"description\": \"DEPRECATED. `private_key_pem` is deprecated. Use `pem_private_key` instead. Immutable. The private key of the leaf certificate in PEM-encoded form.\",\n       \"oneOf\": [\n        {\n         \"not\": {\n          \"required\": [\n           \"valueFrom\"\n          ]\n         },\n         \"required\": [\n          \"value\"\n         ]\n        },\n        {\n         \"not\": {\n          \"required\": [\n           \"value\"\n          ]\n         },\n         \"required\": [\n          \"valueFrom\"\n         ]\n        }\n       ],\n       \"properties\": {\n        \"value\": {\n         \"description\": \"Value of the field. Cannot be used if 'valueFrom' is specified.\",\n         \"type\": \"string\"\n        },\n        \"valueFrom\": {\n         \"description\": \"Source for the field's value. Cannot be used if 'value' is specified.\",\n         \"properties\": {\n          \"secretKeyRef\": {\n           \"description\": \"Reference to a value with the given key in the given Secret in the resource's namespace.\",\n           \"properties\": {\n            \"key\": {\n             \"description\": \"Key that identifies the value to be extracted.\",\n             \"type\": \"string\"\n            },\n            \"name\": {\n             \"description\": \"Name of the Secret to extract a value from.\",\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"name\",\n            \"key\"\n           ],\n           \"type\": \"object\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"location\",\n    \"projectRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Certificate Manager Certificate\",\n \"type\": \"object\"\n}",
+   "version": "certificatemanager.cnrm.cloud.google.com/v1beta1"
+  },
+  "configuration": null,
   "description": "",
+  "displayName": "Certificate Manager Certificate",
   "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "published": false,
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": ""
+  },
   "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "version": "v1.0.0",
-   "name": "k8s-config-connector",
-   "displayName": "Google Cloud Platform",
-   "description": "",
-   "status": "enabled",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "registrant": {
-    "hostname": "github"
-   },
    "category": {
-    "name": "Orchestration \u0026 Management",
-    "metadata": null
+    "name": "Orchestration \u0026 Management"
    },
-   "subCategory": "Google Cloud Platform",
+   "displayName": "Google Cloud Platform",
+   "id": "00000000-0000-0000-0000-000000000000",
    "metadata": {
-    "capabilities": "",
     "defaultData": "",
     "isAnnotation": false,
     "primaryColor": "#4285F4",
@@ -39,30 +164,35 @@
    "model": {
     "version": "v1.119.0"
    },
+   "name": "k8s-config-connector",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "github",
+    "name": "Github",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "enabled",
+   "subCategory": "Google Cloud Platform",
+   "version": "v1.0.0",
    "components": null,
    "relationships": null
   },
-  "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
    "primaryColor": "#4285F4",
-   "secondaryColor": "",
    "shape": "rectangle",
-   "shapePolygonPoints": "",
-   "status": "enabled",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
    "svgColor": "\u003csvg width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"\u003e\n    \u003cg stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e\n        \u003cpath d=\"M12.3008862,4.00003179 L18.9908678,7.90329279 L19,11.4442164 L14.973309,9.0680926 L14.973309,10.8562526 L16.9806355,12.0276231 L16.9918433,15.1064843 L14.973309,13.9136004 L14.973309,18.415105 L12.3008862,20 L12.3008862,4.00003179 Z M11.6991138,4 L11.6991138,19.9999682 L9.02669102,18.4150732 L9.02669102,9.06816678 L5,11.4441846 L5.00913223,7.903261 L11.6991138,4 Z\" fill=\"#4285F4\"\u003e\u003c/path\u003e\n    \u003c/g\u003e\n\u003c/svg\u003e",
-   "svgComplete": "",
    "svgWhite": "\u003csvg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M12.3009 4.00003L18.9909 7.90329L19 11.4442L14.9733 9.06809V10.8563L16.9806 12.0276L16.9918 15.1065L14.9733 13.9136V18.4151L12.3009 20V4.00003ZM11.6991 4V20L9.02669 18.4151V9.06817L5 11.4442L5.00913 7.90326L11.6991 4Z\" fill=\"white\"/\u003e\n\u003c/svg\u003e\n"
   },
-  "component": {
-   "kind": "CertificateManagerCertificate",
-   "version": "certificatemanager.cnrm.cloud.google.com/v1beta1",
-   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"description\": {\n     \"description\": \"A human-readable description of the resource.\",\n     \"type\": \"string\"\n    },\n    \"location\": {\n     \"description\": \"Immutable. The Certificate Manager location. If not specified, \\\"global\\\" is used.\",\n     \"type\": \"string\"\n    },\n    \"managed\": {\n     \"description\": \"Immutable. Configuration and state of a Managed Certificate.\\nCertificate Manager provisions and renews Managed Certificates\\nautomatically, for as long as it's authorized to do so.\",\n     \"properties\": {\n      \"authorizationAttemptInfo\": {\n       \"description\": \"Detailed state of the latest authorization attempt for each domain\\nspecified for this Managed Certificate.\",\n       \"items\": {\n        \"properties\": {\n         \"details\": {\n          \"description\": \"Human readable explanation for reaching the state. Provided to help\\naddress the configuration issues.\\nNot guaranteed to be stable. For programmatic access use 'failure_reason' field.\",\n          \"type\": \"string\"\n         },\n         \"domain\": {\n          \"description\": \"Domain name of the authorization attempt.\",\n          \"type\": \"string\"\n         },\n         \"failureReason\": {\n          \"description\": \"Reason for failure of the authorization attempt for the domain.\",\n          \"type\": \"string\"\n         },\n         \"state\": {\n          \"description\": \"State of the domain for managed certificate issuance.\",\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"dnsAuthorizationsRefs\": {\n       \"items\": {\n        \"description\": \"Authorizations that will be used for performing domain authorization. Either issuanceConfig or dnsAuthorizations should be specified, but not both.\",\n        \"oneOf\": [\n         {\n          \"not\": {\n           \"required\": [\n            \"external\"\n           ]\n          },\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"not\": {\n           \"anyOf\": [\n            {\n             \"required\": [\n              \"name\"\n             ]\n            },\n            {\n             \"required\": [\n              \"namespace\"\n             ]\n            }\n           ]\n          },\n          \"required\": [\n           \"external\"\n          ]\n         }\n        ],\n        \"properties\": {\n         \"external\": {\n          \"description\": \"Allowed value: string of the format `projects/{{project}}/locations/global/dnsAuthorizations/{{value}}`, where {{value}} is the `name` field of a `CertificateManagerDNSAuthorization` resource.\",\n          \"type\": \"string\"\n         },\n         \"name\": {\n          \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n          \"type\": \"string\"\n         },\n         \"namespace\": {\n          \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"domains\": {\n       \"description\": \"Immutable. The domains for which a managed SSL certificate will be generated.\\nWildcard domains are only supported with DNS challenge resolution.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"issuanceConfigRef\": {\n       \"description\": \"Only the `external` field is supported to configure the reference.\\n\\nImmutable. The resource name for a CertificateIssuanceConfig used to configure private PKI certificates in the format projects/*/locations/*/certificateIssuanceConfigs/*.\\nIf this field is not set, the certificates will instead be publicly signed as documented at https://cloud.google.com/load-balancing/docs/ssl-certificates/google-managed-certs#caa.\\nEither issuanceConfig or dnsAuthorizations should be specified, but not both.\",\n       \"oneOf\": [\n        {\n         \"not\": {\n          \"required\": [\n           \"external\"\n          ]\n         },\n         \"required\": [\n          \"name\"\n         ]\n        },\n        {\n         \"not\": {\n          \"anyOf\": [\n           {\n            \"required\": [\n             \"name\"\n            ]\n           },\n           {\n            \"required\": [\n             \"namespace\"\n            ]\n           }\n          ]\n         },\n         \"required\": [\n          \"external\"\n         ]\n        }\n       ],\n       \"properties\": {\n        \"external\": {\n         \"description\": \"Allowed value: string of the format `projects/{{project}}/locations/{{location}}/certificateIssuanceConfigs/{{name}}`, where {{value}} is the `name` field of a `CertificateManagerCertificateIssuanceConfig` resource.\",\n         \"type\": \"string\"\n        },\n        \"name\": {\n         \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n         \"type\": \"string\"\n        },\n        \"namespace\": {\n         \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"provisioningIssue\": {\n       \"description\": \"Information about issues with provisioning this Managed Certificate.\",\n       \"items\": {\n        \"properties\": {\n         \"details\": {\n          \"description\": \"Human readable explanation about the issue. Provided to help address\\nthe configuration issues.\\nNot guaranteed to be stable. For programmatic access use 'reason' field.\",\n          \"type\": \"string\"\n         },\n         \"reason\": {\n          \"description\": \"Reason for provisioning failures.\",\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"state\": {\n       \"description\": \"A state of this Managed Certificate.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"projectRef\": {\n     \"description\": \"The project that this resource belongs to.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `name` field of a `Project` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    },\n    \"scope\": {\n     \"description\": \"Immutable. The scope of the certificate.\\n\\nDEFAULT: Certificates with default scope are served from core Google data centers.\\nIf unsure, choose this option.\\n\\nEDGE_CACHE: Certificates with scope EDGE_CACHE are special-purposed certificates,\\nserved from non-core Google data centers.\\n\\nALL_REGIONS: Certificates with ALL_REGIONS scope are served from all GCP regions (You can only use ALL_REGIONS with global certs).\\nsee https://cloud.google.com/compute/docs/regions-zones.\",\n     \"type\": \"string\"\n    },\n    \"selfManaged\": {\n     \"description\": \"Immutable. Certificate data for a SelfManaged Certificate.\\nSelfManaged Certificates are uploaded by the user. Updating such\\ncertificates before they expire remains the user's responsibility.\",\n     \"properties\": {\n      \"certificatePem\": {\n       \"description\": \"DEPRECATED. `certificate_pem` is deprecated. Use `pem_certificate` instead. Immutable. The certificate chain in PEM-encoded form.\\n\\nLeaf certificate comes first, followed by intermediate ones if any.\",\n       \"oneOf\": [\n        {\n         \"not\": {\n          \"required\": [\n           \"valueFrom\"\n          ]\n         },\n         \"required\": [\n          \"value\"\n         ]\n        },\n        {\n         \"not\": {\n          \"required\": [\n           \"value\"\n          ]\n         },\n         \"required\": [\n          \"valueFrom\"\n         ]\n        }\n       ],\n       \"properties\": {\n        \"value\": {\n         \"description\": \"Value of the field. Cannot be used if 'valueFrom' is specified.\",\n         \"type\": \"string\"\n        },\n        \"valueFrom\": {\n         \"description\": \"Source for the field's value. Cannot be used if 'value' is specified.\",\n         \"properties\": {\n          \"secretKeyRef\": {\n           \"description\": \"Reference to a value with the given key in the given Secret in the resource's namespace.\",\n           \"properties\": {\n            \"key\": {\n             \"description\": \"Key that identifies the value to be extracted.\",\n             \"type\": \"string\"\n            },\n            \"name\": {\n             \"description\": \"Name of the Secret to extract a value from.\",\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"name\",\n            \"key\"\n           ],\n           \"type\": \"object\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"pemCertificate\": {\n       \"description\": \"Immutable. The certificate chain in PEM-encoded form.\\n\\nLeaf certificate comes first, followed by intermediate ones if any.\",\n       \"type\": \"string\"\n      },\n      \"pemPrivateKey\": {\n       \"description\": \"Immutable. The private key of the leaf certificate in PEM-encoded form.\",\n       \"oneOf\": [\n        {\n         \"not\": {\n          \"required\": [\n           \"valueFrom\"\n          ]\n         },\n         \"required\": [\n          \"value\"\n         ]\n        },\n        {\n         \"not\": {\n          \"required\": [\n           \"value\"\n          ]\n         },\n         \"required\": [\n          \"valueFrom\"\n         ]\n        }\n       ],\n       \"properties\": {\n        \"value\": {\n         \"description\": \"Value of the field. Cannot be used if 'valueFrom' is specified.\",\n         \"type\": \"string\"\n        },\n        \"valueFrom\": {\n         \"description\": \"Source for the field's value. Cannot be used if 'value' is specified.\",\n         \"properties\": {\n          \"secretKeyRef\": {\n           \"description\": \"Reference to a value with the given key in the given Secret in the resource's namespace.\",\n           \"properties\": {\n            \"key\": {\n             \"description\": \"Key that identifies the value to be extracted.\",\n             \"type\": \"string\"\n            },\n            \"name\": {\n             \"description\": \"Name of the Secret to extract a value from.\",\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"name\",\n            \"key\"\n           ],\n           \"type\": \"object\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"privateKeyPem\": {\n       \"description\": \"DEPRECATED. `private_key_pem` is deprecated. Use `pem_private_key` instead. Immutable. The private key of the leaf certificate in PEM-encoded form.\",\n       \"oneOf\": [\n        {\n         \"not\": {\n          \"required\": [\n           \"valueFrom\"\n          ]\n         },\n         \"required\": [\n          \"value\"\n         ]\n        },\n        {\n         \"not\": {\n          \"required\": [\n           \"value\"\n          ]\n         },\n         \"required\": [\n          \"valueFrom\"\n         ]\n        }\n       ],\n       \"properties\": {\n        \"value\": {\n         \"description\": \"Value of the field. Cannot be used if 'valueFrom' is specified.\",\n         \"type\": \"string\"\n        },\n        \"valueFrom\": {\n         \"description\": \"Source for the field's value. Cannot be used if 'value' is specified.\",\n         \"properties\": {\n          \"secretKeyRef\": {\n           \"description\": \"Reference to a value with the given key in the given Secret in the resource's namespace.\",\n           \"properties\": {\n            \"key\": {\n             \"description\": \"Key that identifies the value to be extracted.\",\n             \"type\": \"string\"\n            },\n            \"name\": {\n             \"description\": \"Name of the Secret to extract a value from.\",\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"name\",\n            \"key\"\n           ],\n           \"type\": \"object\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"location\",\n    \"projectRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Certificate Manager Certificate\",\n \"type\": \"object\"\n}"
-  }
+  "version": "v1.0.0"
  }
