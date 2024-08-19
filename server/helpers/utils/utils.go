@@ -17,6 +17,7 @@ import (
 	"github.com/layer5io/meshkit/utils"
 
 	"github.com/meshery/schemas/models/v1beta1/component"
+	"github.com/meshery/schemas/models/v1beta1/model"
 
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
@@ -443,10 +444,10 @@ func ConvertToJSONCompatible(data interface{}) interface{} {
 	}
 	return data
 }
-func ReplaceSVGData(model *v1beta1.Model) error {
+func ReplaceSVGData(model *model.ModelDefinition) error {
 	// Function to read SVG data from file
 	readSVGData := func(path string) (string, error) {
-		path = "../../" + path // adjust path as needed
+		path = "../../" + path
 		svgData, err := os.ReadFile(path)
 		if err != nil {
 			return "", err
@@ -456,42 +457,45 @@ func ReplaceSVGData(model *v1beta1.Model) error {
 
 	// Replace SVG paths with actual data in metadata
 	metadata := model.Metadata
-	if svgColor, ok := metadata["svgColor"].(string); ok && svgColor != "" {
-		svgData, err := readSVGData(svgColor)
+	if metadata.SvgColor != "" {
+		svgData, err := readSVGData(metadata.SvgColor)
 		if err == nil {
-			metadata["svgColor"] = svgData
+			metadata.SvgColor = svgData
 		} else {
 			return err
 		}
 	}
-	if svgWhite, ok := metadata["svgWhite"].(string); ok && svgWhite != "" {
-		svgData, err := readSVGData(svgWhite)
+	if metadata.SvgWhite != "" {
+		svgData, err := readSVGData(metadata.SvgWhite)
 		if err == nil {
-			metadata["svgWhite"] = svgData
+			metadata.SvgWhite = svgData
 		} else {
 			return err
 		}
 	}
-
+	components, ok := model.Components.([]component.ComponentDefinition)
+	if !ok {
+		return fmt.Errorf("invalid type for Components field")
+	}
 	// Replace SVG paths with actual data in components
-	for i := range model.Components {
-		compMetadata := model.Components[i].Metadata
-		if svgColor, ok := compMetadata["svgColor"].(string); ok && svgColor != "" {
-			svgData, err := readSVGData(svgColor)
+	for i := range components {
+		compStyle := components[i].Styles
+		if compStyle != nil {
+			svgColor, err := readSVGData(compStyle.SvgColor)
 			if err == nil {
-				compMetadata["svgColor"] = svgData
+				compStyle.SvgColor = svgColor
+			} else {
+				return err
+			}
+			svgWhite, err := readSVGData(compStyle.SvgWhite)
+			if err == nil {
+				compStyle.SvgWhite = svgWhite
 			} else {
 				return err
 			}
 		}
-		if svgWhite, ok := compMetadata["svgWhite"].(string); ok && svgWhite != "" {
-			svgData, err := readSVGData(svgWhite)
-			if err == nil {
-				compMetadata["svgWhite"] = svgData
-			} else {
-				return err
-			}
-		}
+		components[i].Styles = compStyle
 	}
+	model.Components = components
 	return nil
 }

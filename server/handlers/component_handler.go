@@ -21,11 +21,11 @@ import (
 	meshkitoci "github.com/layer5io/meshkit/models/oci"
 	meshkitutils "github.com/layer5io/meshkit/utils"
 
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	_models "github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
-	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1alpha3/relationship"
+	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/connection"
+	"github.com/meshery/schemas/models/v1beta1/model"
 	_model "github.com/meshery/schemas/models/v1beta1/model"
 
 	"github.com/layer5io/meshkit/models/meshmodel/entity"
@@ -1351,14 +1351,14 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 		Components:    true,
 		Relationships: true,
 	}
-	e, err := h.registryManager.GetEntityById(modelFilter)
+	e, _, _, err := h.registryManager.GetEntities(modelFilter)
 	if err != nil {
 		h.log.Error(ErrGetMeshModels(err))
 		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
 		return // Ensure the function returns after handling the error
 	}
 
-	model := e.(*v1beta1.Model)
+	model := e[0].(*model.ModelDefinition)
 
 	// 2. Convert it to oci
 	temp := os.TempDir()
@@ -1404,40 +1404,6 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 		h.log.Error(ErrGetMeshModels(err)) // TODO: Add appropriate meshkit error
 		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
 	}
-	err = filepath.Walk(tempDir, func(path string, info os.FileInfo, err error) error {
-		if err != nil {
-			return meshkitutils.ErrFileWalkDir(err, path)
-		}
-		if !info.IsDir() {
-			if meshkitutils.IsYaml(path) {
-				content, err := os.ReadFile(path)
-				if err != nil {
-					return meshkitutils.ErrReadFile(err, path)
-				}
-				entityType, err := meshkitutils.FindEntityType(content)
-				if err != nil {
-					return err
-				}
-				if entityType != "" {
-					err = RegisterEntity(content, entityType, h)
-					if err != nil {
-						return err
-					}
-					if entityType == entity.ComponentDefinition {
-						*compCount++
-					} else {
-						*relCount++
-					}
-				}
-
-			}
-			if meshkitutils.IsTarGz(path) || meshkitutils.IsZip(path) {
-				return processUploadedFile(path, h, compCount, relCount)
-			}
-		}
-		return nil
-	})
-	return err
 }
 func RegisterEntity(content []byte, entityType entity.EntityType, h *Handler) error {
 	switch entityType {

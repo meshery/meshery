@@ -23,12 +23,15 @@ import (
 	"path/filepath"
 
 	"github.com/fatih/color"
+
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/handlers"
+
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/models/oci"
 	"github.com/manifoldco/promptui"
+	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/model"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
@@ -307,7 +310,7 @@ func exportModel(modelName string, cmd *cobra.Command, url string, displayCountO
 		return ErrExportModel(fmt.Errorf("Model with the given name could not be found in the registry"), modelName)
 	}
 	model := modelsResponse.Models[0]
-	replaceSVGData(&model)
+	_ = ReplaceSVGData(&model)
 
 	var exportedModelPath string
 	// Convert it to the required output type and write it
@@ -343,7 +346,7 @@ func exportModel(modelName string, cmd *cobra.Command, url string, displayCountO
 	utils.Log.Infof("Exported model to %s", exportedModelPath)
 	return nil
 }
-func replaceSVGData(model *v1beta1.Model) {
+func ReplaceSVGData(model *model.ModelDefinition) error {
 	// Function to read SVG data from file
 	readSVGData := func(path string) (string, error) {
 		path = "../" + path // adjust path as needed
@@ -353,44 +356,48 @@ func replaceSVGData(model *v1beta1.Model) {
 		}
 		return string(svgData), nil
 	}
-
 	// Replace SVG paths with actual data in metadata
 	metadata := model.Metadata
-	if svgColor, ok := metadata["svgColor"].(string); ok && svgColor != "" {
-		svgData, err := readSVGData(svgColor)
+	if metadata.SvgColor != "" {
+		svgData, err := readSVGData(metadata.SvgColor)
+		fmt.Println("svgData", svgData)
 		if err == nil {
-			metadata["svgColor"] = svgData
+			metadata.SvgColor = svgData
 		} else {
-			utils.Log.Warnf("Failed to read SVGColor data: %v", err)
+			return err
 		}
 	}
-	if svgWhite, ok := metadata["svgWhite"].(string); ok && svgWhite != "" {
-		svgData, err := readSVGData(svgWhite)
+	if metadata.SvgWhite != "" {
+		svgData, err := readSVGData(metadata.SvgWhite)
 		if err == nil {
-			metadata["svgWhite"] = svgData
+			metadata.SvgWhite = svgData
 		} else {
-			utils.Log.Warnf("Failed to read SVGWhite data: %v", err)
+			return err
 		}
 	}
-
+	components, ok := model.Components.([]component.ComponentDefinition)
+	if !ok {
+		return fmt.Errorf("invalid type for Components field")
+	}
 	// Replace SVG paths with actual data in components
-	for i := range model.Components {
-		compMetadata := model.Components[i].Metadata
-		if svgColor, ok := compMetadata["svgColor"].(string); ok && svgColor != "" {
-			svgData, err := readSVGData(svgColor)
+	for i := range components {
+		compStyle := components[i].Styles
+		if compStyle != nil {
+			svgColor, err := readSVGData(compStyle.SvgColor)
 			if err == nil {
-				compMetadata["svgColor"] = svgData
+				compStyle.SvgColor = svgColor
 			} else {
-				utils.Log.Warnf("Failed to read component SVGColor data: %v", err)
+				return err
+			}
+			svgWhite, err := readSVGData(compStyle.SvgWhite)
+			if err == nil {
+				compStyle.SvgWhite = svgWhite
+			} else {
+				return err
 			}
 		}
-		if svgWhite, ok := compMetadata["svgWhite"].(string); ok && svgWhite != "" {
-			svgData, err := readSVGData(svgWhite)
-			if err == nil {
-				compMetadata["svgWhite"] = svgData
-			} else {
-				utils.Log.Warnf("Failed to read component SVGWhite data: %v", err)
-			}
-		}
+		components[i].Styles = compStyle
 	}
+	model.Components = components
+	return nil
 }

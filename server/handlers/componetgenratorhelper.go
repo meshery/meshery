@@ -10,15 +10,15 @@ import (
 	"sync"
 
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/server/helpers"
 	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/models/events"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha2"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	"github.com/layer5io/meshkit/models/meshmodel/entity"
 	"github.com/layer5io/meshkit/models/registration"
 	meshkitutils "github.com/layer5io/meshkit/utils"
+	"github.com/meshery/schemas/models/v1alpha3/relationship"
+	"github.com/meshery/schemas/models/v1beta1/component"
+	"github.com/meshery/schemas/models/v1beta1/model"
 	"gopkg.in/yaml.v2"
 )
 
@@ -133,7 +133,7 @@ func processFileToRegistry(response *models.RegistryAPIResponse, content []byte,
 		addUnsuccessfulEntry(path, response, err, "")
 	}
 	if entityType != "" {
-		path, err := RegisterEntity(content, entityType, h, response, mu)
+		path, err := RegisterEntityForImport(content, entityType, h, response, mu)
 		if err != nil {
 			incrementCountersOnErr(mu, entityType, response)
 			h.log.Error(err)
@@ -160,7 +160,7 @@ func addSuccessfulEntry(content []byte, entityType entity.EntityType, response *
 
 	switch entityType {
 	case entity.ComponentDefinition:
-		var c v1beta1.ComponentDefinition
+		var c component.ComponentDefinition
 		if err := meshkitutils.Unmarshal(string(content), &c); err == nil {
 			entry := map[string]interface{}{
 				"Model":       c.Model,
@@ -174,7 +174,7 @@ func addSuccessfulEntry(content []byte, entityType entity.EntityType, response *
 			}
 		}
 	case entity.RelationshipDefinition:
-		var r v1alpha2.RelationshipDefinition
+		var r relationship.RelationshipDefinition
 		if err := meshkitutils.Unmarshal(string(content), &r); err == nil {
 			entry := map[string]interface{}{
 				"Model":     r.Model,
@@ -189,7 +189,7 @@ func addSuccessfulEntry(content []byte, entityType entity.EntityType, response *
 			}
 		}
 	case entity.Model:
-		var m v1beta1.Model
+		var m model.ModelDefinition
 		if err := meshkitutils.Unmarshal(string(content), &m); err == nil {
 			entry := map[string]interface{}{
 				"Model":       m.Model,
@@ -329,13 +329,13 @@ func (h *Handler) sendFileEvent(userID uuid.UUID, provider models.Provider, resp
 		}
 
 		for _, component := range response.EntityTypeSummary.SuccessfulComponents {
-			if component["Model"].(v1beta1.Model).Name == modelName {
+			if component["Model"].(model.ModelDefinition).Name == modelName {
 				modelData["Components"] = append(modelData["Components"].([]interface{}), component)
 			}
 		}
 
 		for _, relationship := range response.EntityTypeSummary.SuccessfulRelationships {
-			if relationship["Model"].(v1beta1.Model).Name == modelName {
+			if relationship["Model"].(model.ModelDefinition).Name == modelName {
 				modelData["Relationships"] = append(modelData["Relationships"].([]interface{}), relationship)
 			}
 		}
@@ -386,55 +386,93 @@ func getFirst42Chars(s string) string {
 	}
 	return s
 }
-func RegisterEntity(content []byte, entityType entity.EntityType, h *Handler, response *models.RegistryAPIResponse, mu *sync.Mutex) (string, error) {
+func RegisterEntityForImport(content []byte, entityType entity.EntityType, h *Handler, response *models.RegistryAPIResponse, mu *sync.Mutex) (string, error) {
 	switch entityType {
 	case entity.ComponentDefinition:
 		svgBaseDir := utils.UI
-		var c v1beta1.ComponentDefinition
-		if err := meshkitutils.Unmarshal(string(content), &c); err != nil {
+		var comp component.ComponentDefinition
+		if err := meshkitutils.Unmarshal(string(content), &comp); err != nil {
 			return "", err
 		}
-
-		registration.WriteAndReplaceSVGWithFileSystemPath(c.Metadata, svgBaseDir, c.Model.Name, c.Component.Kind)
-		registration.WriteAndReplaceSVGWithFileSystemPath(c.Model.Metadata, svgBaseDir, c.Model.Name, c.Model.Name) //Write SVG for models
-
-		isRegistrantError, isModelError, err := h.registryManager.RegisterEntity(v1beta1.Host{Hostname: c.Model.Registrant.Hostname}, &c)
-		helpers.HandleError(v1beta1.Host{Hostname: c.Model.Registrant.Hostname}, &c, err, isModelError, isRegistrantError)
-
-		return c.DisplayName, err
+		if comp.Styles != nil {
+			comp.Styles.SvgColor, comp.Styles.SvgWhite, comp.Styles.SvgComplete = registration.WriteAndReplaceSVGWithFileSystemPath(
+				comp.Styles.SvgColor,
+				comp.Styles.SvgWhite,
+				comp.Styles.SvgComplete,
+				svgBaseDir,
+				comp.Model.Name,
+				comp.Component.Kind,
+			)
+		}
+		err := RegisterEntity(content, entity.ComponentDefinition, h)
+		return comp.DisplayName, err
 	case entity.RelationshipDefinition:
-		var r v1alpha2.RelationshipDefinition
+		var r relationship.RelationshipDefinition
 		if err := meshkitutils.Unmarshal(string(content), &r); err != nil {
 			return "", meshkitutils.ErrUnmarshal(err)
 		}
-		isRegistrantError, isModelError, err := h.registryManager.RegisterEntity(v1beta1.Host{Hostname: r.Model.Registrant.Hostname}, &r)
-		helpers.HandleError(v1beta1.Host{Hostname: r.Model.Registrant.Hostname}, &r, err, isModelError, isRegistrantError)
-
-		return r.Kind, err
+		err := RegisterEntity(content, entity.RelationshipDefinition, h)
+		kind := r.Kind
+		return string(kind), err
 	case entity.Model:
-		var m v1beta1.Model
+		var m model.ModelDefinition
 		svgBaseDir := utils.UI
 		checkBool := false
 		if err := meshkitutils.Unmarshal(string(content), &m); err != nil {
 			err = meshkitutils.ErrUnmarshal(err)
 			return "", err
 		}
-		registration.WriteAndReplaceSVGWithFileSystemPath(m.Metadata, svgBaseDir, m.Name, m.Name) //Write SVG for models
+		if m.Metadata != nil {
+			svgComplete := ""
+			if m.Metadata.SvgComplete != nil {
+				svgComplete = *m.Metadata.SvgComplete
+			}
 
-		var rels []v1alpha2.RelationshipDefinition
-		components := m.Components
-		if m.Relationships != nil {
-			slice, ok := m.Relationships.([]interface{})
+			var svgCompletePath string
+			m.Metadata.SvgColor, m.Metadata.SvgWhite, svgCompletePath = registration.WriteAndReplaceSVGWithFileSystemPath(m.Metadata.SvgColor,
+				m.Metadata.SvgWhite,
+				svgComplete, svgBaseDir,
+				m.Name,
+				m.Name,
+			)
+			if svgCompletePath != "" {
+				m.Metadata.SvgComplete = &svgCompletePath
+			}
+
+		}
+		var rels []relationship.RelationshipDefinition
+		var components []component.ComponentDefinition
+		if m.Components != nil {
+			slice, ok := m.Components.([]interface{})
 			if !ok {
 				return "", meshkitutils.ErrUnmarshal(meshkitutils.ErrInvalidSchemaVersion)
 			}
-			rels = make([]v1alpha2.RelationshipDefinition, len(slice))
+			components = make([]component.ComponentDefinition, len(slice))
 			for i, v := range slice {
 				bytes, err := json.Marshal(v)
 				if err != nil {
 					continue
 				}
-				var rel v1alpha2.RelationshipDefinition
+				var comp component.ComponentDefinition
+				err = json.Unmarshal(bytes, &comp)
+				if err != nil {
+					continue
+				}
+				components[i] = comp
+			}
+		}
+		if m.Relationships != nil {
+			slice, ok := m.Relationships.([]interface{})
+			if !ok {
+				return "", meshkitutils.ErrUnmarshal(meshkitutils.ErrInvalidSchemaVersion)
+			}
+			rels = make([]relationship.RelationshipDefinition, len(slice))
+			for i, v := range slice {
+				bytes, err := json.Marshal(v)
+				if err != nil {
+					continue
+				}
+				var rel relationship.RelationshipDefinition
 				err = json.Unmarshal(bytes, &rel)
 				if err != nil {
 					continue
@@ -455,9 +493,17 @@ func RegisterEntity(content []byte, entityType entity.EntityType, h *Handler, re
 				addUnsuccessfulEntry(m.Name, response, err, string(entity.ComponentDefinition))
 				continue
 			}
-			registration.WriteAndReplaceSVGWithFileSystemPath(comp.Metadata, svgBaseDir, comp.Model.Name, comp.Component.Kind)
-			isRegistrantError, isModelError, err := h.registryManager.RegisterEntity(v1beta1.Host{Hostname: comp.Model.Registrant.Hostname}, &comp)
-			helpers.HandleError(v1beta1.Host{Hostname: comp.Model.Registrant.Hostname}, &comp, err, isModelError, isRegistrantError)
+			if comp.Styles != nil {
+				comp.Styles.SvgColor, comp.Styles.SvgWhite, comp.Styles.SvgComplete = registration.WriteAndReplaceSVGWithFileSystemPath(
+					comp.Styles.SvgColor,
+					comp.Styles.SvgWhite,
+					comp.Styles.SvgComplete,
+					svgBaseDir,
+					comp.Model.Name,
+					comp.Component.Kind,
+				)
+			}
+			err = RegisterEntity(compBytes, entity.ComponentDefinition, h)
 			if err != nil {
 				incrementCountersOnErr(mu, entity.ComponentDefinition, response)
 				addUnsuccessfulEntry(m.Name, response, err, string(entity.ComponentDefinition))
@@ -477,8 +523,7 @@ func RegisterEntity(content []byte, entityType entity.EntityType, h *Handler, re
 				addUnsuccessfulEntry(m.Name, response, err, string(entity.RelationshipDefinition))
 				continue
 			}
-			isRegistrantError, isModelError, err := h.registryManager.RegisterEntity(v1beta1.Host{Hostname: r.Model.Registrant.Hostname}, &r)
-			helpers.HandleError(v1beta1.Host{Hostname: r.Model.Registrant.Hostname}, &r, err, isModelError, isRegistrantError)
+			err = RegisterEntity(relBytes, entity.RelationshipDefinition, h)
 			if err != nil {
 				incrementCountersOnErr(mu, entity.RelationshipDefinition, response)
 				addUnsuccessfulEntry(m.Name, response, err, string(entity.RelationshipDefinition))
