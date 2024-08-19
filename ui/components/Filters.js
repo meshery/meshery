@@ -1311,12 +1311,13 @@ function MesheryFilters({
               CAN(keys.DETAILS_OF_WASM_FILTER.action, keys.DETAILS_OF_WASM_FILTER.subject) && (
                 <UsesSistent>
                   <InfoModal
+                    handlePublish={handlePublish}
                     infoModalOpen={true}
                     handleInfoModalClose={handleInfoModalClose}
                     dataName="filters"
                     selectedResource={infoModal.selectedResource}
                     resourceOwnerID={infoModal.ownerID}
-                    currentUserID={user?.id}
+                    currentUser={user}
                     formSchema={publishSchema}
                     meshModels={meshModels}
                     patternFetcher={() => getFilters()}
