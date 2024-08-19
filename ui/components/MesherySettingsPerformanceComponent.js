@@ -1,30 +1,29 @@
 /* eslint-disable */
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import Button from '@material-ui/core/Button';
-import SaveOutlinedIcon from '@material-ui/icons/SaveOutlined';
-import { withStyles } from '@material-ui/core/styles';
-import { Autocomplete } from '@material-ui/lab';
-import Grid from '@material-ui/core/Grid';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import {
   NoSsr,
   Tooltip,
-  IconButton,
   CircularProgress,
   FormControl,
   RadioGroup,
   FormControlLabel,
   Radio,
+  Button,
+  Grid,
+  TextField,
 } from '@material-ui/core';
+import SaveOutlinedIcon from '@material-ui/icons/SaveOutlined';
+import { Autocomplete } from '@material-ui/lab';
+import { withStyles } from '@material-ui/core/styles';
 import dataFetch from '../lib/data-fetch';
-import TextField from '@material-ui/core/TextField';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { updateLoadTestPref, updateProgress } from '../lib/store';
 import { durationOptions } from '../lib/prePopulatedOptions';
-import { ctxUrl } from '../utils/multi-ctx';
-import { withNotify } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
+import { withNotify } from '../utils/hooks/useNotification';
+import { ctxUrl } from '../utils/multi-ctx';
 
 const loadGenerators = ['fortio', 'wrk2', 'nighthawk'];
 
