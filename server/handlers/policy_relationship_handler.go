@@ -5,15 +5,16 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"time"
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/meshery/schemas/models/v1alpha3/relationship"
+	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 
-	"github.com/layer5io/meshkit/encoding"
 	"github.com/layer5io/meshkit/models/events"
 
 	regv1alpha3 "github.com/layer5io/meshkit/models/meshmodel/registry/v1alpha3"
@@ -25,11 +26,6 @@ const (
 	relationshipPolicyPackageName = "data.relationship_evaluation_policy"
 	suffix                        = "_relationship"
 )
-
-type relationshipPolicyEvalPayload struct {
-	PatternFile       string   `json:"pattern_file"`
-	EvaluationQueries []string `json:"evaluation_queries"`
-}
 
 // swagger:route POST /api/meshmodels/relationships/evaluate EvaluateRelationshipPolicy relationshipPolicyEvalPayloadWrapper
 // Handle POST request for evaluating relationships in the provided design file by running a set of provided evaluation queries on the design file
@@ -58,43 +54,24 @@ func (h *Handler) EvaluateRelationshipPolicy(
 		return
 	}
 
-	relationshipPolicyEvalPayload := relationshipPolicyEvalPayload{}
+	relationshipPolicyEvalPayload := pattern.EvaluationRequest{}
 	err = json.Unmarshal(body, &relationshipPolicyEvalPayload)
 
 	if err != nil {
 		http.Error(rw, ErrDecoding(err, "design file").Error(), http.StatusInternalServerError)
 		return
 	}
-	var patternFile pattern.PatternFile
+	// decode the pattern file
 
-	err = encoding.Unmarshal([]byte(relationshipPolicyEvalPayload.PatternFile), &patternFile)
-	if err != nil {
-		http.Error(rw, ErrDecoding(err, "design file").Error(), http.StatusInternalServerError)
-		return
-	}
+	
 
-	evaluationQueries := relationshipPolicyEvalPayload.EvaluationQueries
-
-	for _, component := range patternFile.Components {
-		component.Configuration = core.Format.DePrettify(component.Configuration, false)
-	}
-
-	patternUUID := patternFile.Id
+	patternUUID := relationshipPolicyEvalPayload.Design.Id
 	eventBuilder.ActedUpon(patternUUID)
 
 	// evaluate specified relationship policies
 	// on successful eval the event containing details like comps evaulated, relationships indeitified should be emitted and peristed.
-	verifiedEvaluationQueries := h.verifyEvaluationQueries(evaluationQueries)
-	if len(verifiedEvaluationQueries) == 0 {
-		event := eventBuilder.WithDescription("Invalid or unsupported evaluation queries provided").WithSeverity(events.Error).WithMetadata(map[string]interface{}{"evaluationQueries": evaluationQueries}).Build()
-		_ = provider.PersistEvent(event)
-		go h.config.EventBroadcaster.Publish(userUUID, event)
-		return
-	}
-
-	evaluationResponse, err := h.Rego.RegoPolicyHandler(patternFile,
+	evaluationResponse, err := h.Rego.RegoPolicyHandler(relationshipPolicyEvalPayload.Design,
 		relationshipPolicyPackageName,
-		verifiedEvaluationQueries...,
 	)
 	if err != nil {
 		h.log.Debug(err)
@@ -103,7 +80,14 @@ func (h *Handler) EvaluateRelationshipPolicy(
 		return
 	}
 
-	event := eventBuilder.WithDescription(fmt.Sprintf("Relationship evaluation completed for \"%s\" at version \"%s\"", evaluationResponse.Design.Name, evaluationResponse.Design.Version)).WithSeverity(events.Error).WithMetadata(map[string]interface{}{"evaluation_resut": evaluationResponse.Design}).Build()
+	currentTime := time.Now()
+	evaluationResponse.Timestamp = &currentTime
+	// include trace instead of design file
+	event := eventBuilder.WithDescription(fmt.Sprintf("Relationship evaluation completed for \"%s\" at version \"%s\"", evaluationResponse.Design.Name, evaluationResponse.Design.Version)).
+		WithMetadata(map[string]interface{}{
+			"trace":        evaluationResponse.Trace,
+			"evaluated_at": &evaluationResponse.Timestamp,
+		}).WithSeverity(events.Informational).Build()
 	_ = provider.PersistEvent(event)
 	go h.config.EventBroadcaster.Publish(userUUID, event)
 
@@ -113,6 +97,29 @@ func (h *Handler) EvaluateRelationshipPolicy(
 
 	for _, component := range evaluationResponse.Design.Components {
 		component.Configuration = core.Format.Prettify(component.Configuration, false)
+	}
+
+	if relationshipPolicyEvalPayload.Options.ReturnDiffOnly != nil && *relationshipPolicyEvalPayload.Options.ReturnDiffOnly {
+		evaluationResponse.Design.Components = []*component.ComponentDefinition{}
+		evaluationResponse.Design.Relationships = []*relationship.RelationshipDefinition{}
+		for _, component := range evaluationResponse.Trace.ComponentsUpdated {
+			_c := component
+			evaluationResponse.Design.Components = append(evaluationResponse.Design.Components, &_c)
+		}
+
+		for _, relationship := range evaluationResponse.Trace.RelationshipsAdded {
+			_r := relationship
+			evaluationResponse.Design.Relationships = append(evaluationResponse.Design.Relationships, &_r)
+		}
+		for _, relationship := range evaluationResponse.Trace.RelationshipsRemoved {
+			_r := relationship
+			evaluationResponse.Design.Relationships = append(evaluationResponse.Design.Relationships, &_r)
+		}
+
+	}
+
+	for _, component := range relationshipPolicyEvalPayload.Design.Components {
+		component.Configuration = core.Format.DePrettify(component.Configuration, false)
 	}
 
 	// write the response

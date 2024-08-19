@@ -3,7 +3,7 @@
   "version": "v1.0.0",
   "kind": "hierarchical",
   "type": "sibling",
-  "subType": "matchLabels", 
+  "subType": "matchLabels",
   "metadata": {
     "description": "A relationship between two objects that are siblings."
   },
@@ -24,26 +24,13 @@
     },
     "metadata": {}
   },
+  "status": "enabled",
   "selectors": [
     {
       "allow": {
         "from": [
           {
-            "kind": "Service",
-            "model": {
-              "name": "kubernetes",
-              "registrant": {
-                "kind": "artifacthub"
-              }
-            },
-            "match": {
-              "refs": [[]]
-            }
-          }
-        ],
-        "to": [
-          {
-            "kind": "Pod",
+            "kind": "*",
             "model": {
               "name": "kubernetes",
               "registrant": {
@@ -52,7 +39,27 @@
             },
             "match": {
               "refs": [
-                []
+                ["configuration", "metadata", "labels"]
+              ]
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "*",
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
+            "match": {
+              "refs": [
+                [
+                    "configuration",
+                    "metadata",
+                    "labels"
+                  ]
               ]
             }
           }

@@ -33,6 +33,7 @@
     },
     "metadata": {}
   },
+  "status": "enabled",
   "selectors": [
     {
       "deny": {

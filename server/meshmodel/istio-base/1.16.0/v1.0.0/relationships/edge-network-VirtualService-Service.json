@@ -2,7 +2,7 @@
   "schemaVersion": "relationships.meshery.io/v1alpha3",
   "version": "v1.0.0",
   "kind": "edge",
-  "subType":"network",
+  "subType": "network",
   "metadata": {
     "description": "A relationship that defines network edges between components"
   },
@@ -23,6 +23,7 @@
     }
   },
   "type": "non-binding",
+  "status": "enabled",
   "selectors": [
     {
       "allow": {

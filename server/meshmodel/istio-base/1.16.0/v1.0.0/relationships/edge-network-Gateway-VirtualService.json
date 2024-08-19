@@ -23,6 +23,7 @@
   },
   "type": "non-binding",
   "subType": "network",
+  "status": "enabled",
   "selectors": [
     {
       "allow": {

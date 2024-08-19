@@ -3,7 +3,7 @@
   "version": "v1.0.0",
   "kind": "hierarchical",
   "type": "sibling",
-  "subType":"matchlabels",
+  "subType": "matchlabels",
   "metadata": {
     "description": "Sibling relationships represent connections between components that are at the same hierarchical level or share a common parent. An example of this relationship is a Service and a Pod in Kubernetes. In kube-prometheus-stack, ServiceMonitor and PodMonitor resources configure Prometheus to scrape metrics from Kubernetes services and Pods respectively."
   },
@@ -21,6 +21,7 @@
     },
     "metadata": {}
   },
+  "status": "enabled",
   "selectors": [
     {
       "allow": {
