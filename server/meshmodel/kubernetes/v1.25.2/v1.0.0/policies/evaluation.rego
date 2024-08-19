@@ -72,6 +72,10 @@ evaluate := eval_results if {
 		declaration := filter_updated_declaration(val, result)
 	]
 
+	updated_declarations := [decl |
+		some obj in result
+		decl := obj.declaration
+	]
 	# all pending relationships are now resolved.
 	updated_design_file := json.patch(input, [{
 		"op": "replace",
@@ -108,6 +112,7 @@ evaluate := eval_results if {
 	eval_results := {
 		"design": final_design_file,
 		"trace": {
+			"componentsUpdated": updated_declarations,
 			"relationshipsAdded": relationships_added,
 			"relationshipsRemoved": relationships_deleted,
 		},
