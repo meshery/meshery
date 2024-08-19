@@ -1,7 +1,9 @@
 {
-  "schemaVersion": "relationships.meshery.io/v1alpha2",
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
   "version": "v1.0.0",
-  "kind": "Hierarchical",
+  "kind": "hierarchical",
+  "type": "parent",
+  "subType": "inventory",
   "metadata": {
     "description": "A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component."
   },
@@ -9,6 +11,9 @@
     "schemaVersion": "models.meshery.io/v1beta1",
     "version": "v1.0.0",
     "name": "kubernetes",
+    "registrant": {
+      "kind": "artifacthub"
+    },
     "model": {
       "version": "v1.25.2"
     },
@@ -19,26 +24,32 @@
     },
     "metadata": {}
   },
-  "subType": "Inventory",
-  "evaluationQuery": "hierarchical_inventory_relationship",
+  "status": "enabled",
   "selectors": [
     {
       "allow": {
         "from": [
           {
             "kind": "Deployment",
-            "model": "kubernetes",
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
             "patch": {
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "apiVersion"
+                  "component",
+                  "version"
                 ],
                 [
-                  "name"
+                  "displayName"
                 ],
                 [
-                  "type"
+                  "component",
+                  "kind"
                 ]
               ],
               "description": "Allow Horizontal Pod Autoscaler to scale based on observed metrics for Deployments."
@@ -48,24 +59,29 @@
         "to": [
           {
             "kind": "HorizontalPodAutoscaler",
-            "model": "kubernetes",
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
             "patch": {
               "patchStrategy": "replace",
               "mutatedRef": [
                 [
-                  "settings",
+                  "configuration",
                   "spec",
                   "scaleTargetRef",
                   "apiVersion"
                 ],
                 [
-                  "settings",
+                  "configuration",
                   "spec",
                   "scaleTargetRef",
                   "name"
                 ],
                 [
-                  "settings",
+                  "configuration",
                   "spec",
                   "scaleTargetRef",
                   "kind"

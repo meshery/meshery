@@ -14,7 +14,7 @@ import { NotificationDrawerButton } from './NotificationCenter';
 import User from './User';
 import Slide from '@material-ui/core/Slide';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
-import { Checkbox, Button } from '@material-ui/core';
+import { Button } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import { Search } from '@material-ui/icons';
 import { TextField } from '@material-ui/core';
@@ -38,12 +38,13 @@ import { useNotification, withNotify } from '../utils/hooks/useNotification';
 import useKubernetesHook, { useControllerStatus } from './hooks/useKubernetesHook';
 import { formatToTitleCase } from '../utils/utils';
 import { CONNECTION_KINDS } from '../utils/Enum';
-import { OutlinedSettingsIcon } from '@layer5/sistent';
+import { Checkbox, OutlinedSettingsIcon } from '@layer5/sistent';
 import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomTextTooltip';
 import { Colors } from '@/themes/app';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import SpaceSwitcher from './SpacesSwitcher/SpaceSwitcher';
+import { UsesSistent } from './SistentWrapper';
 
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 const styles = (theme) => ({
@@ -74,13 +75,11 @@ const styles = (theme) => ({
   appBarOnDrawerOpen: {
     backgroundColor: theme.palette.secondary.mainBackground,
     shadowColor: ' #808080',
-    zIndex: theme.zIndex.drawer + 1,
     [theme.breakpoints.between(635, 732)]: { padding: theme.spacing(0.75, 1.4) },
     [theme.breakpoints.between(600, 635)]: { padding: theme.spacing(0.4, 1.4) },
   },
   appBarOnDrawerClosed: {
     backgroundColor: theme.palette.secondary.mainBackground,
-    zIndex: theme.zIndex.drawer + 1,
   },
   toolbarOnDrawerClosed: {
     minHeight: 59,
@@ -260,16 +259,18 @@ const K8sContextConnectionChip_ = ({
           }}
         >
           {selectable && (
-            <Checkbox checked={selected} onChange={() => onSelectChange(ctx.id)} color="primary" />
+            <UsesSistent>
+              <Checkbox checked={selected} onChange={() => onSelectChange(ctx.id)} />
+            </UsesSistent>
           )}
           <_ConnectionChip
             title={ctx?.name}
             onDelete={onDelete ? () => onDelete(ctx.name, ctx.connection_id) : null}
             handlePing={() => ping(ctx.name, ctx.server, ctx.connection_id)}
             iconSrc={
-              connectionMetadataState
+              connectionMetadataState && connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
                 ? `/${connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon}`
-                : ''
+                : '/static/img/kubernetes.svg'
             } // chnage to use connection def
             status={operatorState}
           />
@@ -376,13 +377,17 @@ function K8sContextMenu({
             <img
               className="k8s-image"
               src={
-                connectionMetadataState
+                connectionMetadataState &&
+                connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
                   ? `/${connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon}`
                   : '/static/img/kubernetes.svg'
               }
+              onError={(e) => {
+                e.target.src = '/static/img/kubernetes.svg';
+              }}
               width="24px"
               height="24px"
-              // style={{ zIndex: '2' }}
+              style={{ objectFit: 'contain' }}
             />
             <div className={classes.cbadge}>{contexts?.total_count || 0}</div>
           </div>
@@ -432,11 +437,13 @@ function K8sContextMenu({
               <div>
                 {contexts?.total_count ? (
                   <>
-                    <Checkbox
-                      checked={activeContexts.includes('all')}
-                      onChange={() => setActiveContexts('all')}
-                      color="primary"
-                    />
+                    <UsesSistent>
+                      <Checkbox
+                        checked={activeContexts.includes('all')}
+                        onChange={() => setActiveContexts('all')}
+                        color="primary"
+                      />
+                    </UsesSistent>
                     <span style={{ fontWeight: 'bolder' }}>select all</span>
                   </>
                 ) : (
@@ -528,6 +535,7 @@ class Header extends React.PureComponent {
       abilityUpdated,
     } = this.props;
     const loaderType = 'circular';
+
     return (
       <NoSsr>
         <React.Fragment>

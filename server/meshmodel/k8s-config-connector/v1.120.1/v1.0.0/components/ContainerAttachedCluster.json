@@ -1,29 +1,154 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "displayName": "Container Attached Cluster",
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "ContainerAttachedCluster",
+   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"annotations\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"Optional. Annotations on the cluster. This field has the same\\nrestrictions as Kubernetes annotations. The total size of all keys and\\nvalues combined is limited to 256k. Key can have 2 segments: prefix (optional)\\nand name (required), separated by a slash (/). Prefix must be a DNS subdomain.\\nName must be 63 characters or less, begin and end with alphanumerics,\\nwith dashes (-), underscores (_), dots (.), and alphanumerics between.\",\n     \"type\": \"object\"\n    },\n    \"authorization\": {\n     \"description\": \"Configuration related to the cluster RBAC settings.\",\n     \"properties\": {\n      \"adminUsers\": {\n       \"description\": \"Users that can perform operations as a cluster admin. A managed\\nClusterRoleBinding will be created to grant the 'cluster-admin' ClusterRole\\nto the users. Up to ten admin users can be provided.\\n\\nFor more info on RBAC, see\\nhttps://kubernetes.io/docs/reference/access-authn-authz/rbac/#user-facing-roles.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"binaryAuthorization\": {\n     \"description\": \"Binary Authorization configuration.\",\n     \"properties\": {\n      \"evaluationMode\": {\n       \"description\": \"Configure Binary Authorization evaluation mode. Possible values: [\\\"DISABLED\\\", \\\"PROJECT_SINGLETON_POLICY_ENFORCE\\\"].\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"deletionPolicy\": {\n     \"description\": \"Policy to determine what flags to send on delete.\",\n     \"type\": \"string\"\n    },\n    \"description\": {\n     \"description\": \"A human readable description of this attached cluster. Cannot be longer\\nthan 255 UTF-8 encoded bytes.\",\n     \"type\": \"string\"\n    },\n    \"distribution\": {\n     \"description\": \"Immutable. The Kubernetes distribution of the underlying attached cluster. Supported values:\\n\\\"eks\\\", \\\"aks\\\".\",\n     \"type\": \"string\"\n    },\n    \"fleet\": {\n     \"description\": \"Fleet configuration.\",\n     \"properties\": {\n      \"membership\": {\n       \"description\": \"The name of the managed Hub Membership resource associated to this\\ncluster. Membership names are formatted as\\nprojects/\\u003cproject-number\\u003e/locations/global/membership/\\u003ccluster-id\\u003e.\",\n       \"type\": \"string\"\n      },\n      \"projectRef\": {\n       \"description\": \"The number of the Fleet host project where this cluster will be registered.\",\n       \"oneOf\": [\n        {\n         \"not\": {\n          \"required\": [\n           \"external\"\n          ]\n         },\n         \"required\": [\n          \"name\"\n         ]\n        },\n        {\n         \"not\": {\n          \"anyOf\": [\n           {\n            \"required\": [\n             \"name\"\n            ]\n           },\n           {\n            \"required\": [\n             \"namespace\"\n            ]\n           }\n          ]\n         },\n         \"required\": [\n          \"external\"\n         ]\n        }\n       ],\n       \"properties\": {\n        \"external\": {\n         \"description\": \"Allowed value: string of the format `projects/{{value}}`, where {{value}} is the `number` field of a `Project` resource.\",\n         \"type\": \"string\"\n        },\n        \"name\": {\n         \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n         \"type\": \"string\"\n        },\n        \"namespace\": {\n         \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"required\": [\n      \"projectRef\"\n     ],\n     \"type\": \"object\"\n    },\n    \"location\": {\n     \"description\": \"Immutable. The location for the resource.\",\n     \"type\": \"string\"\n    },\n    \"loggingConfig\": {\n     \"description\": \"Logging configuration.\",\n     \"properties\": {\n      \"componentConfig\": {\n       \"description\": \"The configuration of the logging components.\",\n       \"properties\": {\n        \"enableComponents\": {\n         \"description\": \"The components to be enabled. Possible values: [\\\"SYSTEM_COMPONENTS\\\", \\\"WORKLOADS\\\"].\",\n         \"items\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"array\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"monitoringConfig\": {\n     \"description\": \"Monitoring configuration.\",\n     \"properties\": {\n      \"managedPrometheusConfig\": {\n       \"description\": \"Enable Google Cloud Managed Service for Prometheus in the cluster.\",\n       \"properties\": {\n        \"enabled\": {\n         \"description\": \"Enable Managed Collection.\",\n         \"type\": \"boolean\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"oidcConfig\": {\n     \"description\": \"OIDC discovery information of the target cluster.\\n\\nKubernetes Service Account (KSA) tokens are JWT tokens signed by the cluster\\nAPI server. This fields indicates how GCP services\\nvalidate KSA tokens in order to allow system workloads (such as GKE Connect\\nand telemetry agents) to authenticate back to GCP.\\n\\nBoth clusters with public and private issuer URLs are supported.\\nClusters with public issuers only need to specify the 'issuer_url' field\\nwhile clusters with private issuers need to provide both\\n'issuer_url' and 'jwks'.\",\n     \"properties\": {\n      \"issuerUrl\": {\n       \"description\": \"Immutable. A JSON Web Token (JWT) issuer URI. 'issuer' must start with 'https://'.\",\n       \"type\": \"string\"\n      },\n      \"jwks\": {\n       \"description\": \"Immutable. OIDC verification keys in JWKS format (RFC 7517).\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"issuerUrl\"\n     ],\n     \"type\": \"object\"\n    },\n    \"platformVersion\": {\n     \"description\": \"The platform version for the cluster (e.g. '1.23.0-gke.1').\",\n     \"type\": \"string\"\n    },\n    \"projectRef\": {\n     \"description\": \"The ID of the project in which the resource belongs. If it is not provided, the provider project is used.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `name` field of a `Project` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"distribution\",\n    \"fleet\",\n    \"location\",\n    \"oidcConfig\",\n    \"platformVersion\",\n    \"projectRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Container Attached Cluster\",\n \"type\": \"object\"\n}",
+   "version": "containerattached.cnrm.cloud.google.com/v1beta1"
+  },
+  "configuration": null,
   "description": "",
+  "displayName": "Container Attached Cluster",
   "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "published": false,
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": ""
+  },
   "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "version": "v1.0.0",
-   "name": "k8s-config-connector",
-   "displayName": "Google Cloud Platform",
-   "description": "",
-   "status": "enabled",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "registrant": {
-    "hostname": "github"
-   },
    "category": {
-    "name": "Orchestration \u0026 Management",
-    "metadata": null
+    "name": "Orchestration \u0026 Management"
    },
-   "subCategory": "Google Cloud Platform",
+   "displayName": "Google Cloud Platform",
+   "id": "00000000-0000-0000-0000-000000000000",
    "metadata": {
-    "capabilities": "",
     "defaultData": "",
     "isAnnotation": false,
     "primaryColor": "#4285F4",
@@ -39,30 +164,35 @@
    "model": {
     "version": "v1.120.1"
    },
+   "name": "k8s-config-connector",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "github",
+    "name": "Github",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "enabled",
+   "subCategory": "Google Cloud Platform",
+   "version": "v1.0.0",
    "components": null,
    "relationships": null
   },
-  "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
    "primaryColor": "#4285F4",
-   "secondaryColor": "",
    "shape": "rectangle",
-   "shapePolygonPoints": "",
-   "status": "enabled",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
    "svgColor": "\u003csvg width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"\u003e\n    \u003cg stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e\n        \u003cpath d=\"M12.3008862,4.00003179 L18.9908678,7.90329279 L19,11.4442164 L14.973309,9.0680926 L14.973309,10.8562526 L16.9806355,12.0276231 L16.9918433,15.1064843 L14.973309,13.9136004 L14.973309,18.415105 L12.3008862,20 L12.3008862,4.00003179 Z M11.6991138,4 L11.6991138,19.9999682 L9.02669102,18.4150732 L9.02669102,9.06816678 L5,11.4441846 L5.00913223,7.903261 L11.6991138,4 Z\" fill=\"#4285F4\"\u003e\u003c/path\u003e\n    \u003c/g\u003e\n\u003c/svg\u003e",
-   "svgComplete": "",
    "svgWhite": "\u003csvg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M12.3009 4.00003L18.9909 7.90329L19 11.4442L14.9733 9.06809V10.8563L16.9806 12.0276L16.9918 15.1065L14.9733 13.9136V18.4151L12.3009 20V4.00003ZM11.6991 4V20L9.02669 18.4151V9.06817L5 11.4442L5.00913 7.90326L11.6991 4Z\" fill=\"white\"/\u003e\n\u003c/svg\u003e\n"
   },
-  "component": {
-   "kind": "ContainerAttachedCluster",
-   "version": "containerattached.cnrm.cloud.google.com/v1beta1",
-   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"annotations\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"Optional. Annotations on the cluster. This field has the same\\nrestrictions as Kubernetes annotations. The total size of all keys and\\nvalues combined is limited to 256k. Key can have 2 segments: prefix (optional)\\nand name (required), separated by a slash (/). Prefix must be a DNS subdomain.\\nName must be 63 characters or less, begin and end with alphanumerics,\\nwith dashes (-), underscores (_), dots (.), and alphanumerics between.\",\n     \"type\": \"object\"\n    },\n    \"authorization\": {\n     \"description\": \"Configuration related to the cluster RBAC settings.\",\n     \"properties\": {\n      \"adminUsers\": {\n       \"description\": \"Users that can perform operations as a cluster admin. A managed\\nClusterRoleBinding will be created to grant the 'cluster-admin' ClusterRole\\nto the users. Up to ten admin users can be provided.\\n\\nFor more info on RBAC, see\\nhttps://kubernetes.io/docs/reference/access-authn-authz/rbac/#user-facing-roles.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"binaryAuthorization\": {\n     \"description\": \"Binary Authorization configuration.\",\n     \"properties\": {\n      \"evaluationMode\": {\n       \"description\": \"Configure Binary Authorization evaluation mode. Possible values: [\\\"DISABLED\\\", \\\"PROJECT_SINGLETON_POLICY_ENFORCE\\\"].\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"deletionPolicy\": {\n     \"description\": \"Policy to determine what flags to send on delete.\",\n     \"type\": \"string\"\n    },\n    \"description\": {\n     \"description\": \"A human readable description of this attached cluster. Cannot be longer\\nthan 255 UTF-8 encoded bytes.\",\n     \"type\": \"string\"\n    },\n    \"distribution\": {\n     \"description\": \"Immutable. The Kubernetes distribution of the underlying attached cluster. Supported values:\\n\\\"eks\\\", \\\"aks\\\".\",\n     \"type\": \"string\"\n    },\n    \"fleet\": {\n     \"description\": \"Fleet configuration.\",\n     \"properties\": {\n      \"membership\": {\n       \"description\": \"The name of the managed Hub Membership resource associated to this\\ncluster. Membership names are formatted as\\nprojects/\\u003cproject-number\\u003e/locations/global/membership/\\u003ccluster-id\\u003e.\",\n       \"type\": \"string\"\n      },\n      \"projectRef\": {\n       \"description\": \"The number of the Fleet host project where this cluster will be registered.\",\n       \"oneOf\": [\n        {\n         \"not\": {\n          \"required\": [\n           \"external\"\n          ]\n         },\n         \"required\": [\n          \"name\"\n         ]\n        },\n        {\n         \"not\": {\n          \"anyOf\": [\n           {\n            \"required\": [\n             \"name\"\n            ]\n           },\n           {\n            \"required\": [\n             \"namespace\"\n            ]\n           }\n          ]\n         },\n         \"required\": [\n          \"external\"\n         ]\n        }\n       ],\n       \"properties\": {\n        \"external\": {\n         \"description\": \"Allowed value: string of the format `projects/{{value}}`, where {{value}} is the `number` field of a `Project` resource.\",\n         \"type\": \"string\"\n        },\n        \"name\": {\n         \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n         \"type\": \"string\"\n        },\n        \"namespace\": {\n         \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"required\": [\n      \"projectRef\"\n     ],\n     \"type\": \"object\"\n    },\n    \"location\": {\n     \"description\": \"Immutable. The location for the resource.\",\n     \"type\": \"string\"\n    },\n    \"loggingConfig\": {\n     \"description\": \"Logging configuration.\",\n     \"properties\": {\n      \"componentConfig\": {\n       \"description\": \"The configuration of the logging components.\",\n       \"properties\": {\n        \"enableComponents\": {\n         \"description\": \"The components to be enabled. Possible values: [\\\"SYSTEM_COMPONENTS\\\", \\\"WORKLOADS\\\"].\",\n         \"items\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"array\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"monitoringConfig\": {\n     \"description\": \"Monitoring configuration.\",\n     \"properties\": {\n      \"managedPrometheusConfig\": {\n       \"description\": \"Enable Google Cloud Managed Service for Prometheus in the cluster.\",\n       \"properties\": {\n        \"enabled\": {\n         \"description\": \"Enable Managed Collection.\",\n         \"type\": \"boolean\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"oidcConfig\": {\n     \"description\": \"OIDC discovery information of the target cluster.\\n\\nKubernetes Service Account (KSA) tokens are JWT tokens signed by the cluster\\nAPI server. This fields indicates how GCP services\\nvalidate KSA tokens in order to allow system workloads (such as GKE Connect\\nand telemetry agents) to authenticate back to GCP.\\n\\nBoth clusters with public and private issuer URLs are supported.\\nClusters with public issuers only need to specify the 'issuer_url' field\\nwhile clusters with private issuers need to provide both\\n'issuer_url' and 'jwks'.\",\n     \"properties\": {\n      \"issuerUrl\": {\n       \"description\": \"Immutable. A JSON Web Token (JWT) issuer URI. 'issuer' must start with 'https://'.\",\n       \"type\": \"string\"\n      },\n      \"jwks\": {\n       \"description\": \"Immutable. OIDC verification keys in JWKS format (RFC 7517).\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"issuerUrl\"\n     ],\n     \"type\": \"object\"\n    },\n    \"platformVersion\": {\n     \"description\": \"The platform version for the cluster (e.g. '1.23.0-gke.1').\",\n     \"type\": \"string\"\n    },\n    \"projectRef\": {\n     \"description\": \"The ID of the project in which the resource belongs. If it is not provided, the provider project is used.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `name` field of a `Project` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"distribution\",\n    \"fleet\",\n    \"location\",\n    \"oidcConfig\",\n    \"platformVersion\",\n    \"projectRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Container Attached Cluster\",\n \"type\": \"object\"\n}"
-  }
+  "version": "v1.0.0"
  }

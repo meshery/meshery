@@ -1,29 +1,154 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "displayName": "Big Query Connection Connection",
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "BigQueryConnectionConnection",
+   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"aws\": {\n     \"description\": \"Connection properties specific to Amazon Web Services.\",\n     \"properties\": {\n      \"accessRole\": {\n       \"description\": \"Authentication using Google owned service account to assume into customer's AWS IAM Role.\",\n       \"properties\": {\n        \"iamRoleId\": {\n         \"description\": \"The user’s AWS IAM Role that trusts the Google-owned AWS IAM user Connection.\",\n         \"type\": \"string\"\n        },\n        \"identity\": {\n         \"description\": \"A unique Google-owned and Google-generated identity for the Connection. This identity will be used to access the user's AWS IAM Role.\",\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"iamRoleId\"\n       ],\n       \"type\": \"object\"\n      }\n     },\n     \"required\": [\n      \"accessRole\"\n     ],\n     \"type\": \"object\"\n    },\n    \"azure\": {\n     \"description\": \"Container for connection properties specific to Azure.\",\n     \"properties\": {\n      \"application\": {\n       \"description\": \"The name of the Azure Active Directory Application.\",\n       \"type\": \"string\"\n      },\n      \"clientId\": {\n       \"description\": \"The client id of the Azure Active Directory Application.\",\n       \"type\": \"string\"\n      },\n      \"customerTenantId\": {\n       \"description\": \"The id of customer's directory that host the data.\",\n       \"type\": \"string\"\n      },\n      \"federatedApplicationClientId\": {\n       \"description\": \"The Azure Application (client) ID where the federated credentials will be hosted.\",\n       \"type\": \"string\"\n      },\n      \"identity\": {\n       \"description\": \"A unique Google-owned and Google-generated identity for the Connection. This identity will be used to access the user's Azure Active Directory Application.\",\n       \"type\": \"string\"\n      },\n      \"objectId\": {\n       \"description\": \"The object id of the Azure Active Directory Application.\",\n       \"type\": \"string\"\n      },\n      \"redirectUri\": {\n       \"description\": \"The URL user will be redirected to after granting consent during connection setup.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"customerTenantId\"\n     ],\n     \"type\": \"object\"\n    },\n    \"cloudResource\": {\n     \"description\": \"Container for connection properties for delegation of access to GCP resources.\",\n     \"properties\": {\n      \"serviceAccountId\": {\n       \"description\": \"The account ID of the service created for the purpose of this connection.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"cloudSpanner\": {\n     \"description\": \"Connection properties specific to Cloud Spanner.\",\n     \"properties\": {\n      \"database\": {\n       \"description\": \"Cloud Spanner database in the form 'project/instance/database'.\",\n       \"type\": \"string\"\n      },\n      \"useParallelism\": {\n       \"description\": \"If parallelism should be used when reading from Cloud Spanner.\",\n       \"type\": \"boolean\"\n      },\n      \"useServerlessAnalytics\": {\n       \"description\": \"If the serverless analytics service should be used to read data from Cloud Spanner. useParallelism must be set when using serverless analytics.\",\n       \"type\": \"boolean\"\n      }\n     },\n     \"required\": [\n      \"database\"\n     ],\n     \"type\": \"object\"\n    },\n    \"cloudSql\": {\n     \"description\": \"Connection properties specific to the Cloud SQL.\",\n     \"properties\": {\n      \"credential\": {\n       \"description\": \"Cloud SQL properties.\",\n       \"properties\": {\n        \"password\": {\n         \"description\": \"Password for database.\",\n         \"oneOf\": [\n          {\n           \"not\": {\n            \"required\": [\n             \"valueFrom\"\n            ]\n           },\n           \"required\": [\n            \"value\"\n           ]\n          },\n          {\n           \"not\": {\n            \"required\": [\n             \"value\"\n            ]\n           },\n           \"required\": [\n            \"valueFrom\"\n           ]\n          }\n         ],\n         \"properties\": {\n          \"value\": {\n           \"description\": \"Value of the field. Cannot be used if 'valueFrom' is specified.\",\n           \"type\": \"string\"\n          },\n          \"valueFrom\": {\n           \"description\": \"Source for the field's value. Cannot be used if 'value' is specified.\",\n           \"properties\": {\n            \"secretKeyRef\": {\n             \"description\": \"Reference to a value with the given key in the given Secret in the resource's namespace.\",\n             \"properties\": {\n              \"key\": {\n               \"description\": \"Key that identifies the value to be extracted.\",\n               \"type\": \"string\"\n              },\n              \"name\": {\n               \"description\": \"Name of the Secret to extract a value from.\",\n               \"type\": \"string\"\n              }\n             },\n             \"required\": [\n              \"name\",\n              \"key\"\n             ],\n             \"type\": \"object\"\n            }\n           },\n           \"type\": \"object\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"username\": {\n         \"description\": \"Username for database.\",\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"password\",\n        \"username\"\n       ],\n       \"type\": \"object\"\n      },\n      \"database\": {\n       \"description\": \"Database name.\",\n       \"type\": \"string\"\n      },\n      \"instanceId\": {\n       \"description\": \"Cloud SQL instance ID in the form project:location:instance.\",\n       \"type\": \"string\"\n      },\n      \"serviceAccountId\": {\n       \"description\": \"When the connection is used in the context of an operation in BigQuery, this service account will serve as the identity being used for connecting to the CloudSQL instance specified in this connection.\",\n       \"type\": \"string\"\n      },\n      \"type\": {\n       \"description\": \"Type of the Cloud SQL database. Possible values: [\\\"DATABASE_TYPE_UNSPECIFIED\\\", \\\"POSTGRES\\\", \\\"MYSQL\\\"].\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"credential\",\n      \"database\",\n      \"instanceId\",\n      \"type\"\n     ],\n     \"type\": \"object\"\n    },\n    \"description\": {\n     \"description\": \"A descriptive description for the connection.\",\n     \"type\": \"string\"\n    },\n    \"friendlyName\": {\n     \"description\": \"A descriptive name for the connection.\",\n     \"type\": \"string\"\n    },\n    \"location\": {\n     \"description\": \"Immutable. The geographic location where the connection should reside.\\nCloud SQL instance must be in the same location as the connection\\nwith following exceptions: Cloud SQL us-central1 maps to BigQuery US, Cloud SQL europe-west1 maps to BigQuery EU.\\nExamples: US, EU, asia-northeast1, us-central1, europe-west1.\\nSpanner Connections same as spanner region\\nAWS allowed regions are aws-us-east-1\\nAzure allowed regions are azure-eastus2.\",\n     \"type\": \"string\"\n    },\n    \"projectRef\": {\n     \"description\": \"The project that this resource belongs to.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `name` field of a `Project` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The connectionId of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"location\",\n    \"projectRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Big Query Connection Connection\",\n \"type\": \"object\"\n}",
+   "version": "bigqueryconnection.cnrm.cloud.google.com/v1alpha1"
+  },
+  "configuration": null,
   "description": "",
+  "displayName": "Big Query Connection Connection",
   "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "published": false,
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": ""
+  },
   "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "version": "v1.0.0",
-   "name": "k8s-config-connector",
-   "displayName": "Google Cloud Platform",
-   "description": "",
-   "status": "enabled",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "registrant": {
-    "hostname": "github"
-   },
    "category": {
-    "name": "Orchestration \u0026 Management",
-    "metadata": null
+    "name": "Orchestration \u0026 Management"
    },
-   "subCategory": "Google Cloud Platform",
+   "displayName": "Google Cloud Platform",
+   "id": "00000000-0000-0000-0000-000000000000",
    "metadata": {
-    "capabilities": "",
     "defaultData": "",
     "isAnnotation": false,
     "primaryColor": "#4285F4",
@@ -39,30 +164,35 @@
    "model": {
     "version": "v1.120.1"
    },
+   "name": "k8s-config-connector",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "github",
+    "name": "Github",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "enabled",
+   "subCategory": "Google Cloud Platform",
+   "version": "v1.0.0",
    "components": null,
    "relationships": null
   },
-  "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
    "primaryColor": "#4285F4",
-   "secondaryColor": "",
    "shape": "rectangle",
-   "shapePolygonPoints": "",
-   "status": "enabled",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
    "svgColor": "\u003csvg width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"\u003e\n    \u003cg stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e\n        \u003cpath d=\"M12.3008862,4.00003179 L18.9908678,7.90329279 L19,11.4442164 L14.973309,9.0680926 L14.973309,10.8562526 L16.9806355,12.0276231 L16.9918433,15.1064843 L14.973309,13.9136004 L14.973309,18.415105 L12.3008862,20 L12.3008862,4.00003179 Z M11.6991138,4 L11.6991138,19.9999682 L9.02669102,18.4150732 L9.02669102,9.06816678 L5,11.4441846 L5.00913223,7.903261 L11.6991138,4 Z\" fill=\"#4285F4\"\u003e\u003c/path\u003e\n    \u003c/g\u003e\n\u003c/svg\u003e",
-   "svgComplete": "",
    "svgWhite": "\u003csvg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M12.3009 4.00003L18.9909 7.90329L19 11.4442L14.9733 9.06809V10.8563L16.9806 12.0276L16.9918 15.1065L14.9733 13.9136V18.4151L12.3009 20V4.00003ZM11.6991 4V20L9.02669 18.4151V9.06817L5 11.4442L5.00913 7.90326L11.6991 4Z\" fill=\"white\"/\u003e\n\u003c/svg\u003e\n"
   },
-  "component": {
-   "kind": "BigQueryConnectionConnection",
-   "version": "bigqueryconnection.cnrm.cloud.google.com/v1alpha1",
-   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"aws\": {\n     \"description\": \"Connection properties specific to Amazon Web Services.\",\n     \"properties\": {\n      \"accessRole\": {\n       \"description\": \"Authentication using Google owned service account to assume into customer's AWS IAM Role.\",\n       \"properties\": {\n        \"iamRoleId\": {\n         \"description\": \"The user’s AWS IAM Role that trusts the Google-owned AWS IAM user Connection.\",\n         \"type\": \"string\"\n        },\n        \"identity\": {\n         \"description\": \"A unique Google-owned and Google-generated identity for the Connection. This identity will be used to access the user's AWS IAM Role.\",\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"iamRoleId\"\n       ],\n       \"type\": \"object\"\n      }\n     },\n     \"required\": [\n      \"accessRole\"\n     ],\n     \"type\": \"object\"\n    },\n    \"azure\": {\n     \"description\": \"Container for connection properties specific to Azure.\",\n     \"properties\": {\n      \"application\": {\n       \"description\": \"The name of the Azure Active Directory Application.\",\n       \"type\": \"string\"\n      },\n      \"clientId\": {\n       \"description\": \"The client id of the Azure Active Directory Application.\",\n       \"type\": \"string\"\n      },\n      \"customerTenantId\": {\n       \"description\": \"The id of customer's directory that host the data.\",\n       \"type\": \"string\"\n      },\n      \"federatedApplicationClientId\": {\n       \"description\": \"The Azure Application (client) ID where the federated credentials will be hosted.\",\n       \"type\": \"string\"\n      },\n      \"identity\": {\n       \"description\": \"A unique Google-owned and Google-generated identity for the Connection. This identity will be used to access the user's Azure Active Directory Application.\",\n       \"type\": \"string\"\n      },\n      \"objectId\": {\n       \"description\": \"The object id of the Azure Active Directory Application.\",\n       \"type\": \"string\"\n      },\n      \"redirectUri\": {\n       \"description\": \"The URL user will be redirected to after granting consent during connection setup.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"customerTenantId\"\n     ],\n     \"type\": \"object\"\n    },\n    \"cloudResource\": {\n     \"description\": \"Container for connection properties for delegation of access to GCP resources.\",\n     \"properties\": {\n      \"serviceAccountId\": {\n       \"description\": \"The account ID of the service created for the purpose of this connection.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"cloudSpanner\": {\n     \"description\": \"Connection properties specific to Cloud Spanner.\",\n     \"properties\": {\n      \"database\": {\n       \"description\": \"Cloud Spanner database in the form 'project/instance/database'.\",\n       \"type\": \"string\"\n      },\n      \"useParallelism\": {\n       \"description\": \"If parallelism should be used when reading from Cloud Spanner.\",\n       \"type\": \"boolean\"\n      },\n      \"useServerlessAnalytics\": {\n       \"description\": \"If the serverless analytics service should be used to read data from Cloud Spanner. useParallelism must be set when using serverless analytics.\",\n       \"type\": \"boolean\"\n      }\n     },\n     \"required\": [\n      \"database\"\n     ],\n     \"type\": \"object\"\n    },\n    \"cloudSql\": {\n     \"description\": \"Connection properties specific to the Cloud SQL.\",\n     \"properties\": {\n      \"credential\": {\n       \"description\": \"Cloud SQL properties.\",\n       \"properties\": {\n        \"password\": {\n         \"description\": \"Password for database.\",\n         \"oneOf\": [\n          {\n           \"not\": {\n            \"required\": [\n             \"valueFrom\"\n            ]\n           },\n           \"required\": [\n            \"value\"\n           ]\n          },\n          {\n           \"not\": {\n            \"required\": [\n             \"value\"\n            ]\n           },\n           \"required\": [\n            \"valueFrom\"\n           ]\n          }\n         ],\n         \"properties\": {\n          \"value\": {\n           \"description\": \"Value of the field. Cannot be used if 'valueFrom' is specified.\",\n           \"type\": \"string\"\n          },\n          \"valueFrom\": {\n           \"description\": \"Source for the field's value. Cannot be used if 'value' is specified.\",\n           \"properties\": {\n            \"secretKeyRef\": {\n             \"description\": \"Reference to a value with the given key in the given Secret in the resource's namespace.\",\n             \"properties\": {\n              \"key\": {\n               \"description\": \"Key that identifies the value to be extracted.\",\n               \"type\": \"string\"\n              },\n              \"name\": {\n               \"description\": \"Name of the Secret to extract a value from.\",\n               \"type\": \"string\"\n              }\n             },\n             \"required\": [\n              \"name\",\n              \"key\"\n             ],\n             \"type\": \"object\"\n            }\n           },\n           \"type\": \"object\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"username\": {\n         \"description\": \"Username for database.\",\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"password\",\n        \"username\"\n       ],\n       \"type\": \"object\"\n      },\n      \"database\": {\n       \"description\": \"Database name.\",\n       \"type\": \"string\"\n      },\n      \"instanceId\": {\n       \"description\": \"Cloud SQL instance ID in the form project:location:instance.\",\n       \"type\": \"string\"\n      },\n      \"serviceAccountId\": {\n       \"description\": \"When the connection is used in the context of an operation in BigQuery, this service account will serve as the identity being used for connecting to the CloudSQL instance specified in this connection.\",\n       \"type\": \"string\"\n      },\n      \"type\": {\n       \"description\": \"Type of the Cloud SQL database. Possible values: [\\\"DATABASE_TYPE_UNSPECIFIED\\\", \\\"POSTGRES\\\", \\\"MYSQL\\\"].\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"credential\",\n      \"database\",\n      \"instanceId\",\n      \"type\"\n     ],\n     \"type\": \"object\"\n    },\n    \"description\": {\n     \"description\": \"A descriptive description for the connection.\",\n     \"type\": \"string\"\n    },\n    \"friendlyName\": {\n     \"description\": \"A descriptive name for the connection.\",\n     \"type\": \"string\"\n    },\n    \"location\": {\n     \"description\": \"Immutable. The geographic location where the connection should reside.\\nCloud SQL instance must be in the same location as the connection\\nwith following exceptions: Cloud SQL us-central1 maps to BigQuery US, Cloud SQL europe-west1 maps to BigQuery EU.\\nExamples: US, EU, asia-northeast1, us-central1, europe-west1.\\nSpanner Connections same as spanner region\\nAWS allowed regions are aws-us-east-1\\nAzure allowed regions are azure-eastus2.\",\n     \"type\": \"string\"\n    },\n    \"projectRef\": {\n     \"description\": \"The project that this resource belongs to.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `name` field of a `Project` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The connectionId of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"location\",\n    \"projectRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Big Query Connection Connection\",\n \"type\": \"object\"\n}"
-  }
+  "version": "v1.0.0"
  }

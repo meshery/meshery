@@ -46,6 +46,10 @@ components:
   colorIcon: assets/img/integrations/vault-secrets/components/vault-auth-global/icons/color/vault-auth-global-color.svg
   whiteIcon: assets/img/integrations/vault-secrets/components/vault-auth-global/icons/white/vault-auth-global-white.svg
   description: 
+- name: vault-auth-global
+  colorIcon: assets/img/integrations/vault-secrets/components/vault-auth-global/icons/color/vault-auth-global-color.svg
+  whiteIcon: assets/img/integrations/vault-secrets/components/vault-auth-global/icons/white/vault-auth-global-white.svg
+  description: 
 featureList: [
   "Automates secret syncing from Vault",
   "Manages secret rotation and lifecycle",
