@@ -53,17 +53,13 @@
   
   
   <div class="extension-guides-container">
-    <!-- data_file="shapes"
-    guide_title="Shape"
-    guide_description="Description"
-    guide_usecase="CommonUseCase" -->
-    <!-- guide_svg="SVG" -->
-    {% assign data_file = include.data_file %} <!-- shapes -->
-    {% assign guide_title = include.guide_title %} <!-- Shape -->
-    {% assign guide_description = include.guide_description %} <!-- Description -->
-    {% assign guide_usecase = include.guide_usecase %} <!-- CommonUseCase -->
-    {% assign guide_svg = include.guide_svg %} <!-- SVG -->
-    {% assign guide_assests_folder = include.guide_assests_folder %} <!-- shapes -->
+
+    {% assign data_file = include.data_file %}
+    {% assign guide_title = include.guide_title %}
+    {% assign guide_description = include.guide_description %}
+    {% assign guide_usecase = include.guide_usecase %} 
+    {% assign guide_svg = include.guide_svg %}
+    {% assign guide_assests_folder = include.guide_assests_folder %}
 
   {% assign sorted_guide = site.data[data_file] | sort: guide_title %}
       {% for guide in sorted_guide %}
