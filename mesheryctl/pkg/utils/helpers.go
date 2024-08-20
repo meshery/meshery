@@ -1223,7 +1223,7 @@ func HandlePagination(pageSize int, component string, data [][]string, header []
 		whiteBoardPrinter.Print("Page: ", startIndex/pageSize+1)
 		fmt.Println()
 
-		whiteBoardPrinter.Println("Press Enter or ↓ to continue, Esc or Ctrl+C (Ctrl+Cmd for OS user) to exit")
+		whiteBoardPrinter.Println("Press Enter or ↓ to continue. Press Esc or Ctrl+C to exit.")
 
 		if len(footer) > 0 {
 			PrintToTableWithFooter(header, data[startIndex:endIndex], footer[0])

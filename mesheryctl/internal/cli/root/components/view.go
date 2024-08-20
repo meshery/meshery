@@ -42,27 +42,6 @@ var viewComponentCmd = &cobra.Command{
 // View details of a specific component
 mesheryctl components view [component-name]
 	`,
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-		//Check prerequisite
-
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			return err
-		}
-		err = utils.IsServerRunning(mctlCfg.GetBaseMesheryURL())
-		if err != nil {
-			return err
-		}
-		ctx, err := mctlCfg.GetCurrentContext()
-		if err != nil {
-			return err
-		}
-		err = ctx.ValidateVersion()
-		if err != nil {
-			return err
-		}
-		return nil
-	},
 	Args: func(_ *cobra.Command, args []string) error {
 		const errMsg = "Usage: mesheryctl exp component view [component-name]\nRun 'mesheryctl exp component view --help' to see detailed help message"
 		if len(args) == 0 {
@@ -85,13 +64,13 @@ mesheryctl components view [component-name]
 		req, err := utils.NewRequest(http.MethodGet, url, nil)
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 
 		resp, err := utils.MakeRequest(req)
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 
 		// defers the closing of the response body after its use, ensuring that the resources are properly released.
@@ -100,14 +79,14 @@ mesheryctl components view [component-name]
 		data, err := io.ReadAll(resp.Body)
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 
 		componentResponse := &models.MeshmodelComponentsAPIResponse{}
 		err = json.Unmarshal(data, componentResponse)
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 
 		var selectedComponent component.ComponentDefinition
