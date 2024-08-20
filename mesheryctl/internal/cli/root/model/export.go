@@ -2,6 +2,7 @@ package model
 
 import (
 	"fmt"
+
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
@@ -21,26 +22,6 @@ mesheryctl model export [model-name] -o [oci/json/yaml] (default is oci)
 mesheryctl model export [model-name] -l /home/meshery/
 mesheryctl model export [model-name] --discard-components --discard-relationships
     `,
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-		//Check prerequisite
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			return err
-		}
-		err = utils.IsServerRunning(mctlCfg.GetBaseMesheryURL())
-		if err != nil {
-			return err
-		}
-		ctx, err := mctlCfg.GetCurrentContext()
-		if err != nil {
-			return err
-		}
-		err = ctx.ValidateVersion()
-		if err != nil {
-			return err
-		}
-		return nil
-	},
 	Args: func(_ *cobra.Command, args []string) error {
 		const errMsg = "Usage: mesheryctl model export [model-name]\nRun 'mesheryctl model export --help' to see detailed help message"
 		if len(args) == 0 {
