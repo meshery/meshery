@@ -252,7 +252,16 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 				// Assign the component status corresponding to model status.
 				// i.e. If model is enabled comps are also "enabled". Ultimately all individual comps itself will have ability to control their status.
 				// The status "enabled" indicates that the component will be registered inside the registry.
+
+				if modelDef.Metadata.AdditionalProperties == nil {
+					modelDef.Metadata.AdditionalProperties = make(map[string]interface{})
+				}
+
+				if comp.Model.Metadata.AdditionalProperties != nil {
+					modelDef.Metadata.AdditionalProperties["source_uri"] = comp.Model.Metadata.AdditionalProperties["source_uri"]
+				}
 				comp.Model = *modelDef
+				
 				assignDefaultsForCompDefs(&comp, modelDef)
 				err := comp.WriteComponentDefinition(compDirPath)
 				if err != nil {
