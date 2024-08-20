@@ -112,7 +112,7 @@ https://docs.layer5.io/cloud/spaces/environments/
 				whiteBoardPrinter.Println("Total number of environments: ", len(rows))
 				whiteBoardPrinter.Println("Page: ", startIndex/maxRowsPerPage+1)
 
-				whiteBoardPrinter.Println("Press Enter or ↓ to continue, Esc or Ctrl+C (Ctrl+Cmd for OS user) to exit")
+				whiteBoardPrinter.Println("Press Enter or ↓ to continue. Press Esc or Ctrl+C to exit.")
 
 				utils.PrintToTable(header, rows[startIndex:endIndex])
 				keysEvents, err := keyboard.GetKeys(10)

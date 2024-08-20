@@ -143,7 +143,7 @@ mesheryctl exp relationship search --[flag] [query-text]`,
 			fmt.Print("Page: ", startIndex/maxRowsPerPage+1)
 			fmt.Println()
 
-			fmt.Println("Press Enter or ↓ to continue, Esc or Ctrl+C (Ctrl+Cmd for OS user) to exit")
+			fmt.Println("Press Enter or ↓ to continue. Press Esc or Ctrl+C to exit.")
 
 			utils.PrintToTable(header, rows[startIndex:endIndex])
 			keysEvents, err := keyboard.GetKeys(10)
