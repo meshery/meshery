@@ -74,22 +74,12 @@ Below are all the shapes with their current usage in a general context.
 </style>
 
 
-<div class="shapes-container">
-{% assign sorted_shapes = site.data.shapes | sort: 'Shape' %}
-    {% for shape in sorted_shapes %}
-
-      <div class="shapes-card">
-      <div class="shapes-svg-container">
-      {% if shape.SVG %}
-        <img src="{{ site.baseurl }}/assets/shapes/{{shape.SVG}}" alt="Shape">
-      {% endif %}
-       <div style="text-align:center;">{{ shape.Shape }}</div>
-      </div>
-      <div class="shapes-details">
-      <div>{{ shape.Description }}</div>
-      <div>{{ shape.CommonUseCase }}</div>
-      </div>
-      </div>
-
-    {% endfor %}
- </div>
+{% include extension-guide.html 
+ data_file="shapes"
+ guide_title="Shape"
+ guide_description="Description"
+ guide_usecase="CommonUseCase"
+ guide_svg="SVG"
+ guide_assests_folder="shapes"
+%}
+ 
