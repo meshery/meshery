@@ -10,22 +10,11 @@
   "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
-   "capabilities": "",
    "defaultData": "",
    "genealogy": "",
    "isAnnotation": false,
-   "primaryColor": "#00B39F",
    "published": false,
-   "secondaryColor": "#00D3A9",
-   "shape": "circle",
-   "shapePolygonPoints": "",
-   "status": "enabled",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
-   "svgColor": "",
-   "svgComplete": "",
-   "svgWhite": ""
+   "shapePolygonPoints": ""
   },
   "model": {
    "category": {
@@ -73,7 +62,13 @@
    "relationships": null
   },
   "schemaVersion": "components.meshery.io/v1beta1",
-  "status": null,
-  "styles": null,
+  "status": "enabled",
+  "styles": {
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "svgColor": "",
+   "svgWhite": ""
+  },
   "version": "v1.0.0"
  }
