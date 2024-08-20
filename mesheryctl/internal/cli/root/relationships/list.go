@@ -38,27 +38,6 @@ var listRelationshipsCmd = &cobra.Command{
     View list of relationship with specified page number (25 relationships per page)
     mesheryctl exp relationship list --page 2
 	`,
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-		// Check prerequisites for the command here
-
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			return err
-		}
-		err = utils.IsServerRunning(mctlCfg.GetBaseMesheryURL())
-		if err != nil {
-			return err
-		}
-		ctx, err := mctlCfg.GetCurrentContext()
-		if err != nil {
-			return err
-		}
-		err = ctx.ValidateVersion()
-		if err != nil {
-			return err
-		}
-		return nil
-	},
 	Args: func(_ *cobra.Command, args []string) error {
 		const errMsg = "Usage: mesheryctl exp relationship list \nRun 'mesheryctl exp relationship list --help' to see detailed help message"
 		if len(args) != 0 {

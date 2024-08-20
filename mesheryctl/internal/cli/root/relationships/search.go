@@ -46,26 +46,6 @@ var SearchComponentsCmd = &cobra.Command{
 	Example: `
 // Search for relationship using a query
 mesheryctl exp relationship search --[flag] [query-text]`,
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-		//Check prerequisites
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			return err
-		}
-		err = utils.IsServerRunning(mctlCfg.GetBaseMesheryURL())
-		if err != nil {
-			return err
-		}
-		ctx, err := mctlCfg.GetCurrentContext()
-		if err != nil {
-			return err
-		}
-		err = ctx.ValidateVersion()
-		if err != nil {
-			return err
-		}
-		return nil
-	},
 	Args: func(cmd *cobra.Command, args []string) error {
 		const errMsg = "Usage: mesheryctl exp relationship search --[flag] [query-text] \nRun 'mesheryctl exp relationship search --help' to see detailed help message"
 		if len(args) == 1 {

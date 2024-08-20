@@ -23,7 +23,6 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -32,31 +31,11 @@ import (
 var searchComponentsCmd = &cobra.Command{
 	Use:   "search",
 	Short: "search registered components",
-	Long:  "search components registered in Meshery Server",
+	Long:  "search components registered in Meshery Server based on kind",
 	Example: `
 // Search for components using a query
 mesheryctl components search [query-text]
 	`,
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-		//Check prerequisites
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			return err
-		}
-		err = utils.IsServerRunning(mctlCfg.GetBaseMesheryURL())
-		if err != nil {
-			return err
-		}
-		ctx, err := mctlCfg.GetCurrentContext()
-		if err != nil {
-			return err
-		}
-		err = ctx.ValidateVersion()
-		if err != nil {
-			return err
-		}
-		return nil
-	},
 	Args: func(_ *cobra.Command, args []string) error {
 		const errMsg = "Usage: mesheryctl exp component search [query-text]\nRun 'mesheryctl exp component search --help' to see detailed help message"
 		if len(args) == 0 {
@@ -67,7 +46,7 @@ mesheryctl components search [query-text]
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			log.Fatalln(err, "error processing config")
+			utils.Log.Error(err)
 		}
 
 		baseUrl := mctlCfg.GetBaseMesheryURL()
