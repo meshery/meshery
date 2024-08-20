@@ -1,0 +1,56 @@
+{
+    "schemaVersion": "relationships.meshery.io/v1alpha3",
+    "version": "v1.0.0",
+    "kind": "edge",
+    "type": "binding",
+    "subType": "network",
+    "selectors": [
+      {
+        "allow": {
+          "from": [
+            {
+              "kind": "DBCluster",
+              "model": {
+                "name": "aws-rds-controller",
+                "registrant": {
+                 "name": "github"
+                }
+              },
+              "patch": {
+                "patchStrategy": "merge",
+                "mutatorRef": [
+                  [
+                    "spec",
+                    "dbSubnetGroupName"
+                  ]
+                ],
+                "description": "The DBCluster is associated with a DBSubnetGroup, which determines the placement of DBInstances within subnets of a VPC."
+              }
+            }
+          ],
+          "to": [
+            {
+              "kind": "DBSubnetGroup",
+              "model": {
+                "name": "aws-rds-controller",
+                "registrant": {
+                 "name": "github"
+                }
+              },
+              "patch": {
+                "patchStrategy": "replace",
+                "mutatedRef": [
+                  [
+                    "status",
+                    "subnetIDs"
+                  ]
+                ],
+                "description": "The DBSubnetGroup specifies the subnets where the DBInstances in the DBCluster will be created."
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+  

@@ -1,0 +1,56 @@
+{
+    "schemaVersion": "relationships.meshery.io/v1alpha3",
+    "version": "v1.0.0",
+    "kind": "edge",
+    "type": "binding",
+    "subType": "configuration",
+    "selectors": [
+      {
+        "allow": {
+          "from": [
+            {
+              "kind": "DBParameterGroup",
+              "model": {
+                "name": "aws-rds-controller",
+                "registrant": {
+                 "name": "github"
+                }
+              },
+              "patch": {
+                "patchStrategy": "merge",
+                "mutatorRef": [
+                  [
+                    "spec",
+                    "parameters"
+                  ]
+                ],
+                "description": "The DBParameterGroup provides a set of parameters that are applied to the DBInstance to manage its behavior."
+              }
+            }
+          ],
+          "to": [
+            {
+              "kind": "DBInstance",
+              "model": {
+                "name": "aws-rds-controller",
+                "registrant": {
+                 "name": "github"
+                }
+              },
+              "patch": {
+                "patchStrategy": "replace",
+                "mutatedRef": [
+                  [
+                    "status",
+                    "dbParameterGroupName"
+                  ]
+                ],
+                "description": "The DBInstance relies on the DBParameterGroup for its engine's configuration."
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+  
