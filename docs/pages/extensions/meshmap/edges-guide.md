@@ -78,7 +78,7 @@ Below are all the edges with their current usage in a general context.
       <div class="edges-card">
       <div class="edges-svg-container">
       {% if edge.SVG %}
-        <img src="{{ site.baseurl }}/assets/shapes/edgesAndArrowHeads/{{edge.SVG}}" alt="Edge">
+        <img src="{{ site.baseurl }}/assets/shapes/{{ edge.SVG }}" alt="Edge">
       {% endif %}
        <div style="text-align:center;">{{ edge.Edge }}</div>
       </div>
