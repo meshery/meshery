@@ -261,7 +261,7 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 					modelDef.Metadata.AdditionalProperties["source_uri"] = comp.Model.Metadata.AdditionalProperties["source_uri"]
 				}
 				comp.Model = *modelDef
-				
+
 				assignDefaultsForCompDefs(&comp, modelDef)
 				err := comp.WriteComponentDefinition(compDirPath)
 				if err != nil {
