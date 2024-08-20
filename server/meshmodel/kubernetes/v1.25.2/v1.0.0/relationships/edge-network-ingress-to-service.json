@@ -40,7 +40,7 @@
       "allow": {
         "from": [
           {
-            "kind": "Service",
+            "kind": "Ingress",
             "model": {
               "name": "kubernetes",
               "registrant": {
@@ -53,22 +53,24 @@
                 [
                   "configuration",
                   "spec",
-                  "selectors",
-                  "matchLabels"
+                  "rules",
+                  "_",
+                  "http",
+                  "paths",
+                  "_",
+                  "backend",
+                  "serviceName"
                 ],
                 [
                   "configuration",
                   "spec",
-                  "ports",
+                  "rules",
                   "_",
-                  "targetPort"
-                ],
-                [
-                  "configuration",
-                  "spec",
-                  "ports",
+                  "http",
+                  "paths",
                   "_",
-                  "protocol"
+                  "backend",
+                  "servicePort"
                 ]
               ]
             }
@@ -76,7 +78,7 @@
         ],
         "to": [
           {
-            "kind": "Pod",
+            "kind": "Service",
             "model": {
               "name": "kubernetes",
               "registrant": {
@@ -87,77 +89,19 @@
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "configuration",
-                  "metadata",
-                  "labels"
+                  "displayName"
                 ],
                 [
                   "configuration",
                   "spec",
-                  "containers",
-                  "_",
                   "ports",
                   "_",
-                  "containerPort"
-                ],
-                [
-                  "configuration",
-                  "spec",
-                  "containers",
-                  "_",
-                  "ports",
-                  "_",
-                  "protocol"
-                ]
-              ]
-            }
-          },
-          {
-            "kind": "Deployment",
-            "model": {
-              "name": "kubernetes",
-              "registrant": {
-                "kind": "artifacthub"
-              }
-            },
-            "patch": {
-              "patchStrategy": "replace",
-              "mutatorRef": [
-                [
-                  "configuration",
-                  "metadata",
-                  "labels"
-                ],
-                [
-                  "configuration",
-                  "spec",
-                  "template",
-                  "spec",
-                  "containers",
-                  "_",
-                  "ports",
-                  "_",
-                  "containerPort"
-                ],
-                [
-                  "configuration",
-                  "spec",
-                  "template",
-                  "spec",
-                  "containers",
-                  "_",
-                  "ports",
-                  "_",
-                  "protocol"
+                  "port"
                 ]
               ]
             }
           }
         ]
-      },
-      "deny": {
-        "from": [],
-        "to": []
       }
     }
   ]
