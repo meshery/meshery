@@ -1,0 +1,21 @@
+on:
+  workflow_run:
+    workflows: ['Meshery UI and Server']
+    types: [completed]
+  
+jobs:
+  on-success:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+    - name: Download e2e test report artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: e2e-test-report
+        github-token: ${{ secrets.GH_ACCESS_TOKEN }}
+        run-id: ${{ github.event.workflow_run.id }}
+  on-failure:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'failure' }}
+    steps:
+    - run: echo 'The triggering workflow failed'
