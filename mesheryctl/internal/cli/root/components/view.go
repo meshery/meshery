@@ -64,13 +64,13 @@ mesheryctl components view [component-name]
 		req, err := utils.NewRequest(http.MethodGet, url, nil)
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 
 		resp, err := utils.MakeRequest(req)
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 
 		// defers the closing of the response body after its use, ensuring that the resources are properly released.
@@ -79,14 +79,14 @@ mesheryctl components view [component-name]
 		data, err := io.ReadAll(resp.Body)
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 
 		componentResponse := &models.MeshmodelComponentsAPIResponse{}
 		err = json.Unmarshal(data, componentResponse)
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 
 		var selectedComponent component.ComponentDefinition

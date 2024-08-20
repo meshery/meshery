@@ -64,13 +64,13 @@ var listRelationshipsCmd = &cobra.Command{
 		req, err := utils.NewRequest(http.MethodGet, url, nil)
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 
 		resp, err := utils.MakeRequest(req)
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 
 		// defers the closing of the response body after its use, ensuring that the resources are properly released.
@@ -79,14 +79,14 @@ var listRelationshipsCmd = &cobra.Command{
 		data, err := io.ReadAll(resp.Body)
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 
 		relationshipsResponse := &MeshmodelRelationshipsAPIResponse{}
 		err = json.Unmarshal(data, relationshipsResponse)
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 
 		header := []string{"kind", "API Version", "Model name", "Sub Type", "Evaluation Policy"}

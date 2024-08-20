@@ -33,7 +33,7 @@ mesheryctl model search [query-text]
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 
 		baseUrl := mctlCfg.GetBaseMesheryURL()
@@ -43,13 +43,13 @@ mesheryctl model search [query-text]
 		req, err := utils.NewRequest(http.MethodGet, url, nil)
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 
 		resp, err := utils.MakeRequest(req)
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 
 		// defers the closing of the response body after its use, ensuring that the resources are properly released.
@@ -58,14 +58,14 @@ mesheryctl model search [query-text]
 		data, err := io.ReadAll(resp.Body)
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 
 		modelsResponse := &models.MeshmodelsAPIResponse{}
 		err = json.Unmarshal(data, modelsResponse)
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 
 		header := []string{"Model", "Category", "Version"}

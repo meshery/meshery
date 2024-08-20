@@ -50,13 +50,13 @@ mesheryctl exp connections list --page 2
 		req, err := utils.NewRequest(http.MethodGet, url, nil)
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 
 		resp, err := utils.MakeRequest(req)
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 
 		// defers the closing of the response body after its use, ensuring that the resources are properly released.
@@ -65,14 +65,14 @@ mesheryctl exp connections list --page 2
 		data, err := io.ReadAll(resp.Body)
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 
 		connectionsResponse := &connections.ConnectionPage{}
 		err = json.Unmarshal(data, connectionsResponse)
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 
 		header := []string{"id", "Name", "Type", "Status"}

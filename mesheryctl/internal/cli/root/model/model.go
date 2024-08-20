@@ -246,7 +246,7 @@ func listModel(cmd *cobra.Command, url string, displayCountOnly bool) error {
 		err := utils.HandlePagination(maxRowsPerPage, "models", rows, header)
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 	}
 
@@ -304,7 +304,7 @@ func exportModel(modelName string, cmd *cobra.Command, url string, displayCountO
 		img, err := oci.BuildImage(modelDir)
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 		exportedModelPath = outLocationFlag + modelName + ".tar"
 		err = oci.SaveOCIArtifact(img, outLocationFlag+modelName+".tar", modelName)

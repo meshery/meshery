@@ -38,7 +38,7 @@ mesheryctl model view [model-name]
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 
 		baseUrl := mctlCfg.GetBaseMesheryURL()
@@ -48,13 +48,13 @@ mesheryctl model view [model-name]
 		req, err := utils.NewRequest(http.MethodGet, url, nil)
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 
 		resp, err := utils.MakeRequest(req)
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 
 		// defers the closing of the response body after its use, ensuring that the resources are properly released.
@@ -63,14 +63,14 @@ mesheryctl model view [model-name]
 		data, err := io.ReadAll(resp.Body)
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 
 		modelsResponse := &models.MeshmodelsAPIResponse{}
 		err = json.Unmarshal(data, modelsResponse)
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 
 		var selectedModel model.ModelDefinition
