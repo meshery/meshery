@@ -360,7 +360,6 @@ func ReplaceSVGData(model *model.ModelDefinition) error {
 	metadata := model.Metadata
 	if metadata.SvgColor != "" {
 		svgData, err := readSVGData(metadata.SvgColor)
-		fmt.Println("svgData", svgData)
 		if err == nil {
 			metadata.SvgColor = svgData
 		} else {
