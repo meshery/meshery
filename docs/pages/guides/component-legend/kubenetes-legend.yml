@@ -1,0 +1,176 @@
+- Shape: Container
+  Description: A container is a standalone executable software package. “borrowed” the ship container icon because it’s commonly used in the cloud-native context to represent a container.
+
+- Shape: CronJob
+  Description: CronJobs are similar to Jobs but handle recurring tasks on a predefined schedule. Icon builds on the “job” icon plus a clock to indicate scheduling.
+
+- Shape: Daemonset
+  Description: A DaemonSet ensures that all (or some) Nodes run a copy of a Pod.
+
+- Shape: Deployment
+  Description: A Deployment manages a replicated application in a cluster.
+
+- Shape: Endpoints
+  Description: Endpoints are sets of network addresses that represent a service, such as a web application or a database.
+
+- Shape: Endpoint
+  Description: Endpoint slice basically takes a single large monolithic Endpoints object, and slices it up into smaller more consumable slices.
+
+- Shape: Ingress
+  Description: An Ingress is an API object that manages external access to the services in a cluster, typically HTTP
+
+- Shape: Icon
+  Description: Icon combines “ingress” + “class”
+
+- Shape: Jobs
+  Description: Jobs are used to create transient pods that perform specific tasks assigned to them. Jobs handle one-off tasks.
+
+- Shape: Pod
+  Description: A Pod represents a set of running containers in a cluster.
+
+- Shape: Icon2
+  Description: Icon shows a rectangle followed by two similar rectangles (replicas of the original) with dashed lines (to suggest a set)
+
+- Shape: ReplicationController
+  Description: A replication controller ensures that a specified number of pod replicas are running at any one time. This icon builds on the concept of the “replica set” with a cog to represent “controller”
+
+- Shape: Service
+  Description: A Service exposes a network application that is running as one or more pod in a cluster
+
+- Shape: StatefulSet
+  Description: A StatefulSet handles the deployment and scaling of a group of Pods. It is often associated with persistent storage for stateful applications, hence the cylinder in the icon.
+
+- Shape: Builds
+  Description: Builds on the “service” icon. the arrows indicate interaction or data flow.
+
+- Shape: ConfigMap
+  Description: A ConfigMap stores configuration data in key-value pairs. The icon tries to represent these “key-value pairs”
+
+- Shape: CSI Drivers
+  Description: CSI drivers enable dynamic provisioning of storage volumes, attaching and mounting volumes, and other storage-related operations.
+
+- Shape: CSI Node
+  Description: a CSI node refers to a node in the cluster that is capable of hosting storage volumes provisioned by CSI drivers. The icon shows a cylinder (storage) nested within a node.
+
+- Shape: CSI Storage
+  Description: CSI storage capacity refers to the amount of storage space available for dynamic provisioning by CSI drivers in a Kubernetes cluster. Used dashed lined to denote limit/capacity of the cylinder.
+
+- Shape: Persistent Volume Claim (PVC)
+  Description: A Persistent Volume Claim (PVC) is a request for storage by a pod or set of pods. The question mark on the cylinder indicates inquiry or uncertainty, suggesting that the storage is being requested or claimed.
+
+- Shape: Secret
+  Description: a Secret is an object used to store sensitive data, such as passwords, API keys, and other confidential information. Lock icon denotes privacy/security
+
+- Shape: Storage Class
+  Description: a Storage Class defines the different classes or tiers of storage available in a cluster and their corresponding provisioning requirements. The storage class icon may seem to deviate from the other “class” icons (see volume attributes class for e.g). I think this design (cylinders of varying volumes stacked on one another) accurately conveys the concept of storage class compared to the pre-defined “class/set” icon. 
+
+- Shape: Cylinder
+  Description: Cylinder to represent volume/storage
+
+- Shape: Volume + Attachment
+  Description: “Volume” + “Attachment”
+
+- Shape: 
+  Description: "Volume" + "Class"
+
+- Shape: Cluster Trust Bundle
+  Description: It is used to store and manage sensitive information, such as passwords, OAuth tokens, and SSH keys.
+
+- Shape: Controller Revision
+  Description: It ensures a specified number of pod replicas are running at any given time.
+
+- Shape: Custom Resource Definition
+  Description: It automatically adjusts the number of pods in a deployment based on observed CPU utilization or other select metrics.
+
+- Shape: Event
+  Description: Events are records of notable occurrences in the cluster, typically used for debugging purposes.
+
+- Shape: Limit Range
+  Description: the smallest and simplest Kubernetes object, representing a single instance of a running process in your cluster.
+
+- Shape: Horizontal Pod Autoscaler
+  Description: It manages ReplicaSets and provides declarative updates to applications.
+
+- Shape: Mutatating Webhook Configuration
+  Description: Webhook icon plus a turning arrow to indicate the component’s ability to modify the objects sent to the API server.
+
+- Shape: Pod Scheduling Context
+  Description: Represents the scheduling context for a pod, which includes the conditions and constraints under which the Kubernetes scheduler will attempt to place a pod on a node.
+
+- Shape: Pod Template
+  Description: Represents the pod template, which is used to define the specifications for the pod, such as containers, volumes, and labels. It is often part of a higher-level object like a Deployment or StatefulSet.
+
+- Shape: Pod Disruption Budget
+  Description: Defines the minimum number or percentage of replicas that must be up and running at any time, allowing voluntary disruptions (like upgrades) without violating service-level agreements.
+
+- Shape: Priority Class
+  Description: Represents the priority of a pod relative to other pods. Pods with higher priority are scheduled first and can preempt lower-priority pods.
+
+- Shape: Resource Class
+  Description: Represents a class of resources that define how and where resources are provisioned, typically used for storage classes.
+
+- Shape: Resource Claim
+  Description: Represents a claim for resources, such as storage, that a pod can use. The claim binds to a specific resource instance.
+
+- Shape: Resource Claim Template
+  Description: Represents a template for creating resource claims, often used in StatefulSets to dynamically provision storage.
+
+- Shape: Validating Admission Policy
+  Description: Represents a policy that is used to validate the requests sent to the Kubernetes API server before they are persisted in the database.
+
+- Shape: Validating Admission Policy Binding
+  Description: Represents the binding of a validating admission policy to a set of resources, specifying which resources the policy should apply to.
+
+- Shape: Validating Webhook Configuration
+  Description: Represents the configuration of a validating webhook that intercepts requests sent to the Kubernetes API server and validates them before they are allowed to persist.
+
+- Shape: API Service
+  Description: Represents an extension of the Kubernetes API that can handle API requests and provide additional functionalities within the Kubernetes ecosystem.
+
+- Shape: Binding
+  Description: Represents the binding of a Pod to a specific Node, which ensures that the Pod is scheduled to run on the designated Node.
+
+- Shape: Certificate Signing Request
+  Description: Represents a request for a certificate from a Certificate Authority, used to establish secure communication within the Kubernetes cluster.
+
+- Shape: Cluster Role
+  Description: Represents a cluster-wide permission policy, defining what actions can be performed on resources within the Kubernetes cluster.
+
+- Shape: Cluster Role Binding
+  Description: Represents the association between a ClusterRole and a user or group, granting them the specified permissions across the entire Kubernetes cluster.
+
+- Shape: Component Status
+  Description: Represents the health and status of various Kubernetes components, such as the API server, controller manager, and scheduler.
+
+- Shape: Flow Schema
+  Description: Represents the configuration that defines how requests are prioritized and handled by the Kubernetes API server, often used in conjunction with priority and fairness controls.
+
+- Shape: IP Address
+  Description: Represents an IP address within the Kubernetes cluster, used for networking and communication between different components and services.
+
+- Shape: Lease
+  Description: Represents a lease object in Kubernetes, which is used for coordination between nodes and components, often utilized in leader election mechanisms.
+
+- Shape: Local Subject Access Review
+  Description: Represents a request to check the permissions of a user or group within a specific namespace to determine what actions they are allowed to perform.
+
+- Shape: Namespace
+  Description: Represents a namespace, which provides a mechanism to divide cluster resources between multiple users (via resource quota) and serves as a scope for names.
+
+- Shape: Node
+  Description: Represents a node in the Kubernetes cluster, which is a physical or virtual machine that runs the pods and workloads.
+
+- Shape: Network Policy
+  Description: Represents a network policy, which is used to control the network traffic allowed to and from the pods, typically based on rules defined by the administrator.
+
+- Shape: Persistent Volume
+  Description: Represents a persistent volume, which is a piece of storage in the cluster that has been provisioned by an administrator or dynamically provisioned using StorageClasses.
+
+- Shape: Priority Level Configuration
+  Description: Represents the configuration of priority levels in Kubernetes, used to determine the importance of different API requests when the server is under load.
+
+- Shape: Resource Quota
+  Description: Represents a resource quota, which limits the amount of resources (such as CPU, memory, or storage) that a namespace can use.
+
+- Shape: Role
+  Description: Represents a role within Kubernetes, which is used to grant specific permissions to users or groups within a particular namespace.
