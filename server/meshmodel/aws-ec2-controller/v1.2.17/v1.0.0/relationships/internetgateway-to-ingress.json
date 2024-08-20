@@ -11,9 +11,9 @@
             {
               "kind": "InternetGateway",
               "model": {
-                "name": "ec2",
+                "name": "aws-ec2-controller",
                 "registrant": {
-                  "kind": "aws"
+                  "kind": "github"
                 }
               },
               "patch": {
