@@ -3,8 +3,6 @@ import AlertIcon from '../../assets/icons/AlertIcon';
 import ErrorIcon from '../../assets/icons/ErrorIcon.js';
 import { Colors } from '../../themes/app';
 import ReadIcon from '../../assets/icons/ReadIcon';
-import Ajv from 'ajv';
-import _ from 'lodash';
 import { InfoIcon } from '@layer5/sistent';
 
 export const SEVERITY = {
@@ -61,58 +59,12 @@ export const SEVERITY_STYLE = {
   },
 };
 
-//TODO: This should be generated from OPENAPI schema
-const EVENT_SCHEMA = {
-  type: 'object',
-  properties: {
-    id: { type: 'string' },
-    description: {
-      type: 'string',
-      default: '',
-    },
-    severity: {
-      type: 'string',
-      enum: Object.values(SEVERITY),
-      default: SEVERITY.INFO,
-    },
-    status: {
-      type: 'string',
-      enum: Object.values(STATUS),
-      default: STATUS.UNREAD,
-    },
-    created_at: { type: 'string' },
-    updated_at: { type: 'string' },
-    user_id: { type: 'string' },
-    system_id: { type: 'string' },
-    operation_id: { type: 'string' },
-    action: { type: 'string' },
-    category: { type: 'string' },
-    metadata: {
-      type: ['object', 'null'],
-    },
-  },
-  required: [
-    'id',
-    'severity',
-    'status',
-    'created_at',
-    'updated_at',
-    'user_id',
-    'system_id',
-    'action',
-  ],
-};
-
 // Validate event against EVENT_SCHEMA and return [isValid,validatedEvent]
 export const validateEvent = (event) => {
-  const eventCopy = _.cloneDeep(event) || {};
-  eventCopy.status = eventCopy.status.trim() || STATUS.UNREAD;
-  eventCopy.severity = eventCopy.severity.trim() || SEVERITY.INFO;
-  const ajv = new Ajv({
-    useDefaults: true,
-  });
-  const validate = ajv.compile(EVENT_SCHEMA);
-  const valid = validate(eventCopy);
+  const eventCopy = { ...event };
+  event.status = eventCopy.status.trim() || STATUS.UNREAD;
+  event.severity = eventCopy.severity.trim() || SEVERITY.INFO;
+  const valid = eventCopy !== null && eventCopy !== undefined;
   return [valid, eventCopy];
 };
 
@@ -126,36 +78,7 @@ export const validateEvents = (events) => {
     .filter((event) => event);
 };
 
-const EVENT_METADATA_SCHEMA = {
-  type: 'object',
-  properties: {
-    error: {
-      type: 'object',
-      properties: {
-        Code: { type: 'string' },
-        LongDescription: { type: 'array', items: { type: 'string' }, default: [] },
-        ProbableCause: { type: 'array', items: { type: 'string' }, default: [] },
-        Severity: { type: 'number', default: 1 },
-        ShortDescription: { type: 'array', items: { type: 'string' }, default: [] },
-        SuggestedRemediation: { type: 'array', items: { type: 'string' }, default: [] },
-      },
-      required: [
-        'Code',
-        'LongDescription',
-        'ProbableCause',
-        'Severity',
-        'ShortDescription',
-        'SuggestedRemediation',
-      ],
-    },
-  },
-  required: ['error'],
-};
-
 export const validateEventMetadata = (metadata) => {
-  const metadataCopy = _.cloneDeep(metadata) || {};
-  const ajv = new Ajv();
-  const validate = ajv.compile(EVENT_METADATA_SCHEMA);
-  const valid = validate(metadataCopy);
-  return [valid, metadataCopy];
+  const valid = metadata !== null && metadata !== undefined;
+  return [valid, metadata];
 };
