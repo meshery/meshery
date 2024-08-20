@@ -34,7 +34,7 @@ import {
 import { MesheryAnimation } from '../MesheryAnimation/MesheryAnimation'
 import { randomApplicationNameGenerator } from '../../utils'
 import CatalogChart from '../Catalog/Chart'
-import CatalogCard from '../Catalog/CatalogCard';
+import {CatalogCard, SistentThemeProviderWithoutBaseLine} from '@layer5/sistent';
 import { MESHMAP, mesheryCloudUrl } from '../utils/constants';
 
 const AuthenticatedMsg = 'Authenticated'
@@ -505,12 +505,16 @@ const ExtensionsComponent = () => {
                                 ? pattern.catalog_data.type
                                 : "deployment";
                             return (
+                             <SistentThemeProviderWithoutBaseLine>                          
                               <CatalogCard
                                 pattern={pattern}
                                 key={`design-${index}`}
                                 patternType={patternType}
                                 catalog={true}
-                              />
+                                cardHeight='18rem'
+                                cardWidth='15rem'
+                              />                            
+                             </SistentThemeProviderWithoutBaseLine>
                             )
                           })
                         }

@@ -12,6 +12,7 @@ import (
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/meshery/schemas/models/v1alpha3/relationship"
+	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 
 	"github.com/layer5io/meshkit/models/events"
@@ -25,7 +26,6 @@ const (
 	relationshipPolicyPackageName = "data.relationship_evaluation_policy"
 	suffix                        = "_relationship"
 )
-
 
 // swagger:route POST /api/meshmodels/relationships/evaluate EvaluateRelationshipPolicy relationshipPolicyEvalPayloadWrapper
 // Handle POST request for evaluating relationships in the provided design file by running a set of provided evaluation queries on the design file
@@ -63,9 +63,7 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	}
 	// decode the pattern file
 
-	for _, component := range relationshipPolicyEvalPayload.Design.Components {
-		component.Configuration = core.Format.DePrettify(component.Configuration, false)
-	}
+	
 
 	patternUUID := relationshipPolicyEvalPayload.Design.Id
 	eventBuilder.ActedUpon(patternUUID)
@@ -99,6 +97,29 @@ func (h *Handler) EvaluateRelationshipPolicy(
 
 	for _, component := range evaluationResponse.Design.Components {
 		component.Configuration = core.Format.Prettify(component.Configuration, false)
+	}
+
+	if relationshipPolicyEvalPayload.Options.ReturnDiffOnly != nil && *relationshipPolicyEvalPayload.Options.ReturnDiffOnly {
+		evaluationResponse.Design.Components = []*component.ComponentDefinition{}
+		evaluationResponse.Design.Relationships = []*relationship.RelationshipDefinition{}
+		for _, component := range evaluationResponse.Trace.ComponentsUpdated {
+			_c := component
+			evaluationResponse.Design.Components = append(evaluationResponse.Design.Components, &_c)
+		}
+
+		for _, relationship := range evaluationResponse.Trace.RelationshipsAdded {
+			_r := relationship
+			evaluationResponse.Design.Relationships = append(evaluationResponse.Design.Relationships, &_r)
+		}
+		for _, relationship := range evaluationResponse.Trace.RelationshipsRemoved {
+			_r := relationship
+			evaluationResponse.Design.Relationships = append(evaluationResponse.Design.Relationships, &_r)
+		}
+
+	}
+
+	for _, component := range relationshipPolicyEvalPayload.Design.Components {
+		component.Configuration = core.Format.DePrettify(component.Configuration, false)
 	}
 
 	// write the response

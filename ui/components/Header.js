@@ -447,7 +447,7 @@ function K8sContextMenu({
                     <span style={{ fontWeight: 'bolder' }}>select all</span>
                   </>
                 ) : (
-                  <Link href="/settings">
+                  <Link href="/management/connections">
                     <Button
                       type="submit"
                       variant="contained"
