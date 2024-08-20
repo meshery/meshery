@@ -1,4 +1,4 @@
-import { test } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import { ENV } from './env';
 
 test.describe('meshery settings performance', () => {
@@ -22,6 +22,6 @@ test.describe('meshery settings performance', () => {
     await page.getByRole('button', { name: 'Save' }).click();
 
     // And Preferences are saved successfully
-    await page.getByText('Preferences saved').click();
+    await expect(page.getByText('Preferences saved')).toBeVisible();
   });
 });
