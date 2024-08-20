@@ -20,59 +20,6 @@ Although the usage of the components is divided into categories, some shapes ser
 Below are all the shapes with their current usage in a general context.
 
 
-<style>
-
-  .shapes-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: space-between;
-    margin-top: 2rem;
-
-  }
-  .shapes-card {
-	 display: flex;
-   flex-direction: column;
-	 max-width: 20rem;
-	 max-height: 30rem;
-	 gap: 1rem;
-}
-  .shapes-svg-container {
-	 height: auto;
-	 display: flex;
-	 flex-direction: column;
-	 align-items: center;
-	 gap: 0.455rem;
-   flex-basis: 30%;
-}
-  .shapes-svg-container img {
-   width: 50%;
-   height: auto;
-}
-  .shapes-details {
-	 display: flex;
-	 flex-direction: column;
-	 flex-basis: 77%;
-	 gap: 10px;
-   text-align: center;
-}
-  @media (max-width: 767px) {
-    .shapes-container {
-      flex-direction: column;
-    }
-    .shapes-svg-container {
-      gap: 0.3rem;
-    }
-    .shapes-svg-container img {
-      width: 40%;
-    }
-    .shapes-card{
-      max-width: 30rem;
-      flex-direction: column;
-    }
-   }
-</style>
-
 
 {% include extension-guide.html 
  data_file="shapes"
