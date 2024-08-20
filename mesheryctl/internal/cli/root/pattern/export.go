@@ -16,7 +16,6 @@ package pattern
 
 import (
 	"bytes"
-	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -127,7 +126,7 @@ func fetchPatternIDByName(baseUrl, patternName string) (string, error) {
 		TotalCount int                     `json:"total_count"`
 		Patterns   []models.MesheryPattern `json:"patterns"`
 	}
-	if err = json.Unmarshal(buf, &response); err != nil {
+	if err := meshkitutils.Unmarshal(string(buf), &response); err != nil {
 		return "", err
 	}
 
@@ -199,7 +198,7 @@ func fetchPatternData(dataURL string) (*models.MesheryPattern, error) {
 	}
 
 	var pattern models.MesheryPattern
-	if err = json.Unmarshal(buf.Bytes(), &pattern); err != nil {
+	if err = meshkitutils.Unmarshal(buf.String(), &pattern); err != nil {
 		return nil, err
 	}
 
@@ -262,7 +261,7 @@ func getOwnerName(ownerID string, baseURL string) (string, error) {
 		return "", ErrReadFromBody(err)
 	}
 
-	if err := json.Unmarshal(body, &userProfile); err != nil {
+	if err := meshkitutils.Unmarshal(string(body), &userProfile); err != nil {
 		return "", err
 	}
 
