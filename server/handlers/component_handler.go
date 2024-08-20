@@ -1401,7 +1401,7 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Set("Content-Length", fmt.Sprintf("%d", len(byt))) // Correctly format the Content-Length header
 	_, err = rw.Write(byt)
 	if err != nil {
-		h.log.Error(ErrGetMeshModels(err)) // TODO: Add appropriate meshkit error
+		h.log.Error(ErrGetMeshModels(err)) 
 		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
 	}
 }
