@@ -1,4 +1,4 @@
-<svg viewBox="0 0 63.067 63.067" width={width} height={height}>
+<svg viewBox="0 0 63.067 63.067"  xmlns="http://www.w3.org/2000/svg">
       <g>
         <path
           fill="#ddd"

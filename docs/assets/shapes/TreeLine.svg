@@ -1,9 +1,6 @@
 <svg
-    width={width}
-    height={height}
     xmlns="http://www.w3.org/2000/svg"
     fill="#ddd"
-    {...props}
     viewBox="0 0 18 14"
   >
     <g id="Layer_2" data-name="Layer 2">
