@@ -1,0 +1,8 @@
+<svg viewBox="0 0 24 25" width={width} height={height}>
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M4 19L12 6L20 19H4Z"
+        fill="#DDDDDD"
+      />
+ </svg>
