@@ -1,0 +1,60 @@
+{
+    "schemaVersion": "relationships.meshery.io/v1alpha3",
+    "version": "v1.0.0",
+    "kind": "edge",
+    "type": "non-binding",
+    "subType": "network",
+    "selectors": [
+      {
+        "allow": {
+          "from": [
+            {
+              "kind": "InternetGateway",
+              "model": {
+                "name": "ec2",
+                "registrant": {
+                  "kind": "aws"
+                }
+              },
+              "patch": {
+                "patchStrategy": "replace",
+                "mutatorRef": [
+                  [
+                    "spec",
+                    "gatewayName"
+                  ]
+                ],
+                "description": "The InternetGateway provides external access to the Kubernetes Ingress controller."
+              }
+            }
+          ],
+          "to": [
+            {
+              "kind": "Ingress",
+              "model": {
+                "name": "kubernetes",
+                "registrant": {
+                  "kind": "artifacthub"
+                }
+              },
+              "patch": {
+                "patchStrategy": "replace",
+                "mutatedRef": [
+                  [
+                    "spec",
+                    "rules",
+                    "http",
+                    "paths",
+                    "_",
+                    "backend"
+                  ]
+                ],
+                "description": "The Kubernetes Ingress rules can be patched to reflect the routing rules provided by the InternetGateway."
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+  

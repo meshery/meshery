@@ -1,0 +1,57 @@
+{
+    "schemaVersion": "relationships.meshery.io/v1alpha3",
+    "version": "v1.0.0",
+    "kind": "hierarchical",
+    "type": "parent",
+    "subType": "inventory",
+    "selectors": [
+      {
+        "allow": {
+          "from": [
+            {
+              "kind": "Instance",
+              "model": {
+                "name": "ec2",
+                "registrant": {
+                  "kind": "aws"
+                }
+              },
+              "patch": {
+                "patchStrategy": "merge",
+                "mutatorRef": [
+                  [
+                    "spec",
+                    "containers",
+                    "image"
+                  ]
+                ],
+                "description": "The EC2 instance acts as the underlying infrastructure for Pods, where the Pod's container images may depend on the configuration of the EC2 instance."
+              }
+            }
+          ],
+          "to": [
+            {
+              "kind": "Pod",
+              "model": {
+                "name": "kubernetes",
+                "registrant": {
+                  "kind": "artifacthub"
+                }
+              },
+              "patch": {
+                "patchStrategy": "replace",
+                "mutatedRef": [
+                  [
+                    "spec",
+                    "nodeName"
+                  ]
+                ],
+                "description": "Pods are scheduled on EC2 instances, with the Pod spec being patched to reflect the EC2 instance as the node on which it runs."
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+  

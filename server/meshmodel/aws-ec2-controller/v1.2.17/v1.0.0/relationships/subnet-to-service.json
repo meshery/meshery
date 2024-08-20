@@ -1,0 +1,56 @@
+{
+    "schemaVersion": "relationships.meshery.io/v1alpha3",
+    "version": "v1.0.0",
+    "kind": "hierarchical",
+    "type": "parent",
+    "subType": "inventory",
+    "selectors": [
+      {
+        "allow": {
+          "from": [
+            {
+              "kind": "Subnet",
+              "model": {
+                "name": "ec2",
+                "registrant": {
+                  "kind": "aws"
+                }
+              },
+              "patch": {
+                "patchStrategy": "merge",
+                "mutatorRef": [
+                  [
+                    "spec",
+                    "ipFamilies"
+                  ]
+                ],
+                "description": "The Subnet provides the network range used by Kubernetes services for assigning IP addresses."
+              }
+            }
+          ],
+          "to": [
+            {
+              "kind": "Service",
+              "model": {
+                "name": "kubernetes",
+                "registrant": {
+                  "kind": "artifacthub"
+                }
+              },
+              "patch": {
+                "patchStrategy": "replace",
+                "mutatedRef": [
+                  [
+                    "spec",
+                    "clusterIP"
+                  ]
+                ],
+                "description": "Kubernetes services utilize the Subnet's IP range to assign cluster IPs to service endpoints."
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+  

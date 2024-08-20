@@ -1,0 +1,56 @@
+{
+    "schemaVersion": "relationships.meshery.io/v1alpha3",
+    "version": "v1.0.0",
+    "kind": "edge",
+    "type": "binding",
+    "subType": "firewall",
+    "selectors": [
+      {
+        "allow": {
+          "from": [
+            {
+              "kind": "SecurityGroup",
+              "model": {
+                "name": "ec2",
+                "registrant": {
+                  "kind": "aws"
+                }
+              },
+              "patch": {
+                "patchStrategy": "replace",
+                "mutatorRef": [
+                  [
+                    "spec",
+                    "ingress"
+                  ]
+                ],
+                "description": "The SecurityGroup rules are used to define the ingress rules in a Kubernetes NetworkPolicy."
+              }
+            }
+          ],
+          "to": [
+            {
+              "kind": "NetworkPolicy",
+              "model": {
+                "name": "kubernetes",
+                "registrant": {
+                  "kind": "artifacthub"
+                }
+              },
+              "patch": {
+                "patchStrategy": "replace",
+                "mutatedRef": [
+                  [
+                    "spec",
+                    "egress"
+                  ]
+                ],
+                "description": "The SecurityGroup's configuration can inform the egress rules of a Kubernetes NetworkPolicy."
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+  

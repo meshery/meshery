@@ -1,0 +1,56 @@
+{
+    "schemaVersion": "relationships.meshery.io/v1alpha3",
+    "version": "v1.0.0",
+    "kind": "hierarchical",
+    "type": "parent",
+    "subType": "inventory",
+    "selectors": [
+      {
+        "allow": {
+          "from": [
+            {
+              "kind": "VPC",
+              "model": {
+                "name": "ec2",
+                "registrant": {
+                  "kind": "aws"
+                }
+              },
+              "patch": {
+                "patchStrategy": "merge",
+                "mutatorRef": [
+                  [
+                    "spec",
+                    "cidrBlock"
+                  ]
+                ],
+                "description": "The VPC provides the CIDR block that is used in Kubernetes NetworkPolicy for defining allowed network traffic."
+              }
+            }
+          ],
+          "to": [
+            {
+              "kind": "NetworkPolicy",
+              "model": {
+                "name": "kubernetes",
+                "registrant": {
+                  "kind": "artifacthub"
+                }
+              },
+              "patch": {
+                "patchStrategy": "replace",
+                "mutatedRef": [
+                  [
+                    "spec",
+                    "podSelector"
+                  ]
+                ],
+                "description": "NetworkPolicy in Kubernetes is influenced by the VPC's CIDR block, defining network access control rules for Pods."
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+  
