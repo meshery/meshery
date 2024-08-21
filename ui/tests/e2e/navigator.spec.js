@@ -2,7 +2,9 @@ import { expect, test } from '@playwright/test';
 const { ENV } = require('./env');
 
 test.describe('Navigator section', () => {
-  test('When I visit the Meshery Dashboard page', async ({ page }) => {
+  test('should render and navigate to all dashboard and verify their visibilities', async ({
+    page,
+  }) => {
     // Navigate to "Dashboard" page
     await page.goto(ENV.MESHERY_SERVER_URL);
 
