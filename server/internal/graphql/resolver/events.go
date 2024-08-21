@@ -16,7 +16,7 @@ func (r *Resolver) eventsResolver(ctx context.Context, provider models.Provider,
 
 	eventsChan := make(chan *model.Event)
 	go func(userID uuid.UUID) {
-		r.Log.Info("Events Subscription started for %s", user.ID)
+		r.Log.Infof("Events Subscription started for %s", user.ID)
 		for {
 			select {
 			case ech := <-ch:
