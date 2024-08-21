@@ -339,6 +339,7 @@ func (h *Handler) handlePatternPOST(
 	}
 
 	if parsedBody.URL != "" {
+		latestKuberVersion := getLatestKubeVersionFromRegistry(h.registryManager)
 		if sourcetype == string(models.HelmChart) {
 			helmSourceResp, err := http.Get(parsedBody.URL)
 			defer func() {
@@ -373,7 +374,8 @@ func (h *Handler) handlePatternPOST(
 			}
 
 			resp, err := kubernetes.ConvertHelmChartToK8sManifest(kubernetes.ApplyHelmChartConfig{
-				URL: parsedBody.URL,
+				URL:               parsedBody.URL,
+				KubernetesVersion: latestKuberVersion,
 			})
 			if err != nil {
 				h.log.Error(ErrConvertingHelmChartToDesign(err))
