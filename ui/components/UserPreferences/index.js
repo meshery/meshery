@@ -21,7 +21,6 @@ import {
 } from '@material-ui/core';
 import { CustomTooltip } from '@layer5/sistent';
 import NoSsr from '@material-ui/core/NoSsr';
-import dataFetch from '../../lib/data-fetch';
 import { updateUser, updateProgress, toggleCatalogContent } from '../../lib/store';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
@@ -34,13 +33,18 @@ import ExtensionPointSchemaValidator from '../../utils/ExtensionPointSchemaValid
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTachometerAlt } from '@fortawesome/free-solid-svg-icons';
 import MesherySettingsPerformanceComponent from '../MesherySettingsPerformanceComponent';
-import { ctxUrl } from '../../utils/multi-ctx';
 import { iconMedium } from '../../css/icons.styles';
 import { getTheme, setTheme } from '../../utils/theme';
 import { isExtensionOpen } from '../../pages/_app';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { useWindowDimensions } from '@/utils/dimension';
+import {
+  useGetProviderCapabilitiesQuery,
+  useGetUserPrefQuery,
+  useUpdateUserPrefMutation,
+  useUpdateUserPrefWithContextMutation,
+} from '@/rtk-query/user';
 
 const styles = (theme) => ({
   statsWrapper: {
@@ -230,6 +234,19 @@ const UserPreference = (props) => {
   const [value, setValue] = useState(0);
   const [providerInfo, setProviderInfo] = useState({});
 
+  const {
+    data: userData,
+    isSuccess: isUserDataFetched,
+    isError: isUserDataError,
+    error: userDataError,
+  } = useGetUserPrefQuery();
+
+  const { data: capabilitiesData, isSuccess: isCapabilitiesDataFetched } =
+    useGetProviderCapabilitiesQuery();
+
+  const [updateUserPref] = useUpdateUserPrefMutation();
+  const [updateUserPrefWithContext] = useUpdateUserPrefWithContextMutation();
+
   const { notify } = useNotification();
 
   const handleValChange = (event, newVal) => {
@@ -246,21 +263,17 @@ const UserPreference = (props) => {
   const handleCatalogPreference = (catalogContent) => {
     let body = Object.assign({}, extensionPreferences);
     body['catalogContent'] = catalogContent;
-    dataFetch(
-      '/api/user/prefs',
-      {
-        credentials: 'include',
-        method: 'POST',
-        body: JSON.stringify({ usersExtensionPreferences: body }),
-      },
-      () => {
+    updateUserPref({ usersExtensionPreferences: body })
+      .unwrap()
+      .then(() => {
         notify({
           message: `Catalog Content was ${catalogContent ? 'enab' : 'disab'}led`,
           event_type: EVENT_TYPES.SUCCESS,
         });
-      },
-      handleError('There was an error sending your preference'),
-    );
+      })
+      .catch(() => {
+        handleError('There was an error sending your preference');
+      });
   };
 
   const handleToggle = (name) => () => {
@@ -298,22 +311,17 @@ const UserPreference = (props) => {
     });
 
     props.updateProgress({ showProgress: true });
-    dataFetch(
-      ctxUrl('/api/user/prefs', props.selectedK8sContexts),
-      {
-        credentials: 'include',
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-        body: requestBody,
-      },
-      (result) => {
+    updateUserPrefWithContext({ body: requestBody })
+      .unwrap()
+      .then((result) => {
         props.updateProgress({ showProgress: false });
         if (typeof result !== 'undefined') {
           notify({ message: msg, event_type: val ? EVENT_TYPES.SUCCESS : EVENT_TYPES.INFO });
         }
-      },
-      handleError('There was an error sending your preference'),
-    );
+      })
+      .catch(() => {
+        handleError('There was an error sending your preference');
+      });
   };
 
   const handleTabValChange = (event, newVal) => {
@@ -333,37 +341,19 @@ const UserPreference = (props) => {
   }, [props.capabilitiesRegistry]);
 
   useEffect(() => {
-    dataFetch(
-      '/api/user/prefs',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      (result) => {
-        if (result) {
-          setExtensionPreferences(result?.usersExtensionPreferences);
-          setCatalogContent(result?.usersExtensionPreferences?.catalogContent);
-        }
-      },
-      (err) => console.error(err),
-    );
-  }, []);
+    if (isUserDataFetched && userData) {
+      setExtensionPreferences(userData?.usersExtensionPreferences);
+      setCatalogContent(userData?.usersExtensionPreferences?.catalogContent);
+    } else if (isUserDataError) {
+      console.error(userDataError);
+    }
+  }, [isUserDataFetched, userData]);
 
   useEffect(() => {
-    dataFetch(
-      '/api/provider/capabilities',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      (result) => {
-        if (result) {
-          setProviderInfo(result);
-        }
-      },
-      (err) => console.error(err),
-    );
-  }, []);
+    if (isCapabilitiesDataFetched && capabilitiesData) {
+      setProviderInfo(capabilitiesData);
+    }
+  }, [isCapabilitiesDataFetched, capabilitiesData]);
 
   function convertToTitleCase(str) {
     const words = str.split('_');
