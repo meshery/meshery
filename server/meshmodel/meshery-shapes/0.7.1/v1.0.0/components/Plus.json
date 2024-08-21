@@ -140,6 +140,7 @@
    "published": false,
    "shapePolygonPoints": "-0.33,-1,0.33,-1,0.33,-0.33,1,-0.33,1,0.33,0.33,0.33,0.33,1,-0.33,1,-0.33,0.33,-1,0.33,-1,-0.33,-0.33,-0.33",
    "styleOverrides": "{\"height\":\"30px\",\"width\":\"30px\", \"background-image\":\"none\",\"border-width\":1,\"border-style\":\"solid\",\"background-opacity\":0.1,\"shape-polygon-points\":\"-0.33,-1,0.33,-1,0.33,-0.33,1,-0.33,1,0.33,0.33,0.33,0.33,1,-0.33,1,-0.33,0.33,-1,0.33,-1,-0.33,-0.33,-0.33\",\"data\":{\"label\":\"\"}}",
+   "isNamespaced": false,
    "styles": "{\"height\":\"30px\",\"width\":\"30px\", \"background-image\":\"none\",\"border-width\":1,\"border-style\":\"solid\",\"background-opacity\":0.1}"
   },
   "model": {

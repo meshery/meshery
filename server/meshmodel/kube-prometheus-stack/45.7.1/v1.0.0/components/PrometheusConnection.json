@@ -140,6 +140,7 @@
    "published": false,
    "shapePolygonPoints": "",
    "styleOverrides": "",
+   "isNamespaced": true,
    "styles": "",
     "transitions": {
       "connected": [
