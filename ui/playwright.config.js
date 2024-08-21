@@ -44,10 +44,27 @@ module.exports = defineConfig({
   /* Configure projects for major browsers */
   projects: [
     // setup
-    { name: 'setup', testMatch: 'tests/e2e/*.setup.js' },
-
+    {
+      name: 'setup',
+      timeout: 1 * 60 * 1000,
+      testMatch: 'tests/e2e/*.setup.js',
+    },
+    {
+      name: 'recorder',
+      testMatch: /.*.record.spec.js/,
+      timeout: 2 * 60 * 1000,
+      use: {
+        ...devices['Desktop Chrome'],
+        storageState: 'playwright/.auth/user.json',
+        video: {
+          mode: 'on',
+        },
+      },
+      dependencies: ['setup-recorder'],
+    },
     {
       name: 'chromium',
+      testIgnore: /.*record.spec.js/,
       use: {
         ...devices['Desktop Chrome'],
         // Use prepared auth state.
@@ -58,6 +75,7 @@ module.exports = defineConfig({
 
     {
       name: 'firefox',
+      testIgnore: /.*record.spec.js/,
       use: {
         ...devices['Desktop Firefox'],
         // Use prepared auth state.

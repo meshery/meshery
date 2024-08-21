@@ -2,8 +2,11 @@
 **/out
 **/.next
 *.log
-.git
-.gitignore
+**/.git
+**/.gitignore
+main
+out
+/docs
 .env
 README.md
 LICENSE
