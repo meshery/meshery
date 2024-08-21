@@ -140,7 +140,43 @@
    "published": false,
    "shapePolygonPoints": "",
    "styleOverrides": "",
-   "styles": ""
+   "styles": "",
+   "transitions": {
+    "connected": [
+      "disconnected",
+      "ignored",
+      "not found",
+      "deleted"
+    ],
+    "deleted": [],
+    "disconnected": [
+      "connected",
+      "deleted"
+    ],
+    "discovered": [
+      "registered",
+      "not found",
+      "deleted"
+    ],
+    "ignored": [
+      "deleted",
+      "registered"
+    ],
+    "maintenance": [
+      "registered",
+      "connected",
+      "ignored",
+      "not found"
+    ],
+    "not found": [
+      "discovered",
+      "deleted"
+    ],
+    "registered": [
+      "connected",
+      "ignored"
+    ]
+  }
   },
   "model": {
    "category": {
