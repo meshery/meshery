@@ -6,8 +6,12 @@ perform_eval(
 	design_file,
 	relationship,
 ) := patched_declarations if {
-	lower(relationship.kind) == "hierarchical"
-	lower(relationship.type) == "parent"
+	applicable_on_rels := [
+		{"kind": "hierarchical", "type": "parent"},
+		{"kind": "edge", "type": "non-binding"},
+	]
+
+	{"kind": lower(relationship.kind), "type": lower(relationship.type)} in applicable_on_rels
 
 	patched_declarations := [result |
 		mutator_object := extract_mutator_config_from_patch(relationship.selectors[0].allow)

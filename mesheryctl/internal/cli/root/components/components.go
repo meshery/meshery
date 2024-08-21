@@ -212,7 +212,7 @@ func listComponents(cmd *cobra.Command, url string, displayCountOnly bool) error
 		err := utils.HandlePagination(maxRowsPerPage, "components", rows, header)
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 	}
 	return nil
