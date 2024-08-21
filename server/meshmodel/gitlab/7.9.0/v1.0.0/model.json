@@ -5,6 +5,7 @@
   "displayName": "GitLab",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://gitlab-charts.s3.amazonaws.com/gitlab-7.9.0.tgz", 
     "isAnnotation": false,
     "published": true,
     "subCategory": "Security \u0026 Compliance",

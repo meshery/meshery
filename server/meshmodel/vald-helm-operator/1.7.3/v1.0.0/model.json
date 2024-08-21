@@ -5,6 +5,7 @@
   "displayName": "Vald Helm Operator",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://vald.vdaas.org/charts/vald-helm-operator-v1.7.10.tgz", 
     "isAnnotation": false,
     "published": true,
     "subCategory": "Key Management",

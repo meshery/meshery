@@ -15,6 +15,7 @@
     "genealogy": "",
     "isAnnotation": true,
     "published": false,
+    "isNamespaced": false,
     "shapePolygonPoints": ""
   },
   "model": {
@@ -57,7 +58,7 @@
   },
   "schemaVersion": "components.meshery.io/v1beta1",
   "status": "enabled",
-   "isNamespaced": false,
+   
   "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",

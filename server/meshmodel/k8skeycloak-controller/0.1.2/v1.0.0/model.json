@@ -5,6 +5,7 @@
   "displayName": "K8s Keycloak Controller",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://github.com/DoodleScheduling/k8skeycloak-controller/releases/download/k8skeycloak-controller-0.1.2/k8skeycloak-controller-0.1.2.tgz", 
    "capabilities": null,
    "defaultData": "",
    "isAnnotation": false,

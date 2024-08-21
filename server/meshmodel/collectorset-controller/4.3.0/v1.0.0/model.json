@@ -5,6 +5,7 @@
   "displayName": "Collectorset Controller",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://github.com/logicmonitor/helm-charts/releases/download/collectorset-controller-6.1.0/collectorset-controller-6.1.0.tgz", 
     "isAnnotation": false,
     "published": false,
     "subCategory": "Uncategorized",

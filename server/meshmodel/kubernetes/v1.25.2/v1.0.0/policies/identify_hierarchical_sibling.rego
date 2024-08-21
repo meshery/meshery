@@ -57,7 +57,12 @@ evaluate_siblings contains result if {
 		"value": to_decl.id,
 	}])
 
-	cloned_selectors := {"selectors": [{"allow": {
+	now := format_int(time.now_ns(), 10)
+	id := uuid.rfc4122(sprintf("%s%s%s%s", [from_decl.id, to_decl.id, data.relationship.id, now]))
+	
+	cloned_selectors := {
+		"id": id,
+		"selectors": [{"allow": {
 		"from": [match_selector_for_from],
 		"to": [match_selector_for_to],
 	}}]}

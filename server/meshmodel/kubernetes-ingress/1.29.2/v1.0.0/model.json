@@ -5,6 +5,7 @@
   "displayName": "HAProxy Kubernetes Ingress",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://github.com/haproxytech/helm-charts/releases/download/kubernetes-ingress-1.32.3/kubernetes-ingress-1.32.3.tgz", 
     "isAnnotation": false,
     "published": true,
     "subCategory": "Service Proxy",

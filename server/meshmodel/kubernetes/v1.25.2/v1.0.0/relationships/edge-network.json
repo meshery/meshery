@@ -134,7 +134,7 @@
                   "template",
                   "spec",
                   "containers",
-                  "_",
+                  "0",
                   "ports",
                   "_",
                   "containerPort"
@@ -145,7 +145,7 @@
                   "template",
                   "spec",
                   "containers",
-                  "_",
+                  "0",
                   "ports",
                   "_",
                   "protocol"

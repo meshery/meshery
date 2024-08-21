@@ -5,6 +5,7 @@
   "displayName": "Codebase Operator",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://epam.github.io/edp-helm-charts/snapshot/packages/codebase-operator-2.17.0-SNAPSHOT.34.tgz", 
     "isAnnotation": false,
     "published": false,
     "subCategory": "Uncategorized",

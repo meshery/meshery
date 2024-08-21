@@ -5,6 +5,7 @@
   "displayName": "base",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://istio-release.storage.googleapis.com/charts/base-1.20.2.tgz", 
     "isAnnotation": false,
     "published": false,
     "subCategory": "Uncategorized",
