@@ -239,7 +239,7 @@ const Extensions = ({ classes, toggleCatalogContent, capabilitiesRegistry }) => 
   const handleCatalogPreference = (catalogPref) => {
     let body = Object.assign({}, extensionPreferences);
     body['catalogContent'] = catalogPref;
-    updateUserPref({ body: body })
+    updateUserPref({ usersExtensionPreferences: body })
       .unwrap()
       .then(() => {
         notify({
