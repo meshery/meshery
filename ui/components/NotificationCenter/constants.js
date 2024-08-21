@@ -61,11 +61,11 @@ export const SEVERITY_STYLE = {
 
 // Validate event against EVENT_SCHEMA and return [isValid,validatedEvent]
 export const validateEvent = (event) => {
-  const eventCopy = { ...event };
-  event.status = eventCopy.status.trim() || STATUS.UNREAD;
-  event.severity = eventCopy.severity.trim() || SEVERITY.INFO;
-  const valid = eventCopy !== null && eventCopy !== undefined;
-  return [valid, eventCopy];
+  // const eventCopy = { ...event };
+  // event.status = eventCopy.status.trim() || STATUS.UNREAD;
+  // event.severity = eventCopy.severity.trim() || SEVERITY.INFO;
+  const valid = event !== null && event !== undefined;
+  return [valid, event];
 };
 
 // return validated events (adds default values if not present)
