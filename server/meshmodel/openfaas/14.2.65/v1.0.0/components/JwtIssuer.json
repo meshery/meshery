@@ -140,6 +140,8 @@
    "published": false,
    "shapePolygonPoints": "",
    "styleOverrides": "",
+   "isNamespaced": true,
+
    "styles": ""
   },
   "model": {

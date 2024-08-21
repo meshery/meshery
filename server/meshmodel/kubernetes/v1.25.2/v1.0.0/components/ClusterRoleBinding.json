@@ -139,7 +139,8 @@
    "isAnnotation": false,
    "published": false,
    "shapePolygonPoints": "",
-   "styleOverrides": "{\"height\":\"25px\",\"width\":\"25px\",\"x\":\"7\", \"y\":\"7\"}",
+   "styleOverrides": "{\"height\":\"25px\",\"width\":\"25px\",\"x\":\"7\",\"y\":\"7\"}",
+    "isNamespaced": false,
    "styles": "{\"height\":\"25px\",\"width\":\"25px\",\"x\":\"7\", \"y\":\"7\"}"
   },
   "model": {

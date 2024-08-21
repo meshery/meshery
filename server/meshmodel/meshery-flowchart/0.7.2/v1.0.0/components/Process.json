@@ -12,7 +12,7 @@
   "metadata": {
    "genealogy": "",
    "isAnnotation": true,
-   "isNamespaced": "false",
+    "isNamespaced": false,
    "logoURL": "",
    "model": "meshery-flowchart",
    "modelDisplayName": "Meshery Flowchart",

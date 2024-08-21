@@ -140,6 +140,7 @@
    "published": false,
    "shapePolygonPoints": "",
    "styleOverrides": "{\"height\":\"30px\",\"width\":\"30px\", \"border-width\":0,\"border-style\":\"solid\",\"background-opacity\":0,\"data\":{\"label\":\"\"}}",
+   "isNamespaced": false,
    "styles": "{\"height\":\"30px\",\"width\":\"30px\", \"border-width\":0,\"border-style\":\"solid\",\"background-opacity\":0}"
   },
   "model": {
