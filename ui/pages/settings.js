@@ -1,11 +1,11 @@
-import MesherySettings from '../components/MesherySettings';
-import { NoSsr, withStyles } from '@material-ui/core';
-import { updatepagepath, updatepagetitle } from '../lib/store';
-import { connect } from 'react-redux';
-import Head from 'next/head';
-import { bindActionCreators } from 'redux';
-import { getPath } from '../lib/path';
 import React, { useEffect } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import Head from 'next/head';
+import { NoSsr, withStyles } from '@material-ui/core';
+import MesherySettings from '../components/MesherySettings';
+import { getPath } from '../lib/path';
+import { updatepagepath, updatepagetitle } from '../lib/store';
 
 const styles = { paper: { maxWidth: '90%', margin: 'auto', overflow: 'hidden' } };
 
