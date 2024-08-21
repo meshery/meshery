@@ -63,10 +63,12 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	}
 	// decode the pattern file
 
-	
-
 	patternUUID := relationshipPolicyEvalPayload.Design.Id
 	eventBuilder.ActedUpon(patternUUID)
+
+	for _, component := range relationshipPolicyEvalPayload.Design.Components {
+		component.Configuration = core.Format.DePrettify(component.Configuration, false)
+	}
 
 	// evaluate specified relationship policies
 	// on successful eval the event containing details like comps evaulated, relationships indeitified should be emitted and peristed.
@@ -91,14 +93,6 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	_ = provider.PersistEvent(event)
 	go h.config.EventBroadcaster.Publish(userUUID, event)
 
-	// Before starting the eval the design is de-prettified, so that we can use the relationships def correctly.
-	// The results contain the updated config.
-	// Prettify the design before sending it to client.
-
-	for _, component := range evaluationResponse.Design.Components {
-		component.Configuration = core.Format.Prettify(component.Configuration, false)
-	}
-
 	if relationshipPolicyEvalPayload.Options.ReturnDiffOnly != nil && *relationshipPolicyEvalPayload.Options.ReturnDiffOnly {
 		evaluationResponse.Design.Components = []*component.ComponentDefinition{}
 		evaluationResponse.Design.Relationships = []*relationship.RelationshipDefinition{}
@@ -118,8 +112,12 @@ func (h *Handler) EvaluateRelationshipPolicy(
 
 	}
 
-	for _, component := range relationshipPolicyEvalPayload.Design.Components {
-		component.Configuration = core.Format.DePrettify(component.Configuration, false)
+	// Before starting the eval the design is de-prettified, so that we can use the relationships def correctly.
+	// The results contain the updated config.
+	// Prettify the design before sending it to client.
+
+	for _, component := range evaluationResponse.Design.Components {
+		component.Configuration = core.Format.Prettify(component.Configuration, false)
 	}
 
 	// write the response

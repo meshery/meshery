@@ -6,9 +6,18 @@ identify_relationship(
 	design_file,
 	relationship,
 ) := evaluation_results if {
-	applicable_on_rels := [{"hierarchical": "parent"}, {"edge": "network"}]
+	applicable_on_rels := [
+		{"kind": "hierarchical", "type": "parent"},
+		{"kind": "edge", "type": "non-binding"},
+	]
 
-	{lower(relationship.kind): lower(relationship.type)} in applicable_on_rels
+	{"kind": lower(relationship.kind), "type": lower(relationship.type)} in applicable_on_rels
+
+	# annotation edges have all selectors as wildcard,
+	# hence it will result in rels being created between same component twice.
+	# Node A  -> Node B and Node B -> Node A.
+	# Hence do not try to identify annotation rels, but only evaluate if the exisitng ones are valid or not.
+	relationship.subType != "annotation" 
 
 	selector_set := relationship.selectors[_]
 	from_selectors := {kind: selectors |
@@ -74,7 +83,8 @@ is_valid_hierarchy(from_declaration, to_declaration, from_selector, to_selector)
 	mutated_selector := identify_mutated(from_selector, to_selector, from_declaration, to_declaration)
 
 	match_results := [result |
-		some i
+		range := numbers.range(0, min([count(mutator_selector.paths), count(mutated_selector.paths)]) - 1)
+		some i in range
 		result := is_feasible(
 			mutator_selector.paths[i],
 			mutated_selector.paths[i],

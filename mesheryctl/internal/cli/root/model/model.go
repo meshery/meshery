@@ -87,27 +87,6 @@ mesheryctl model view [model-name]
 // To search for a specific model
 mesheryctl model search [model-name]
 	`,
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-		//Check prerequisite
-
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			return err
-		}
-		err = utils.IsServerRunning(mctlCfg.GetBaseMesheryURL())
-		if err != nil {
-			return err
-		}
-		ctx, err := mctlCfg.GetCurrentContext()
-		if err != nil {
-			return err
-		}
-		err = ctx.ValidateVersion()
-		if err != nil {
-			return err
-		}
-		return nil
-	},
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 && !countFlag {
 			if err := cmd.Usage(); err != nil {
@@ -270,7 +249,7 @@ func listModel(cmd *cobra.Command, url string, displayCountOnly bool) error {
 		err := utils.HandlePagination(maxRowsPerPage, "models", rows, header)
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 	}
 
@@ -330,7 +309,7 @@ func exportModel(modelName string, cmd *cobra.Command, url string, displayCountO
 		img, err := oci.BuildImage(modelDir)
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 		exportedModelPath = outLocationFlag + modelName + ".tar"
 		err = oci.SaveOCIArtifact(img, outLocationFlag+modelName+".tar", modelName)
