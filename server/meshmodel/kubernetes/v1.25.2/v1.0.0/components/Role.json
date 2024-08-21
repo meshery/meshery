@@ -139,8 +139,8 @@
    "isAnnotation": false,
    "published": false,
    "shapePolygonPoints": "",
-   "styleOverrides": "{\"height\":\"22px\", \"width\":\"22px\", \"x\":\"8.5\", \"y\":\"7.5\",
-   "isNamespaced": true,\"z-index\":4}",
+   "styleOverrides": "{\"height\":\"22px\", \"width\":\"22px\", \"x\":\"8.5\", \"y\":\"7.5\",\"z-index\":4}",
+   "isNamespaced": true,
    "styles": "{\"height\":\"22px\", \"width\":\"22px\", \"x\":\"8.5\", \"y\":\"7.5\",\"z-index\":4}"
   },
   "model": {

@@ -139,8 +139,8 @@
    "isAnnotation": false,
    "published": false,
    "shapePolygonPoints": "",
-   "styleOverrides": "{\"height\":20,\"width\":20,\"padding\":12,\"background-position-y\":4.5,\"x\":\"10px\",
-   "isNamespaced": true,\"y\":\"12px\"}",
+   "styleOverrides": "{\"height\":20,\"width\":20,\"padding\":12,\"background-position-y\":4.5,\"x\":\"10px\",\"y\":\"12px\"}",
+   "isNamespaced": true,
    "styles": "{\"height\":20,\"width\":20,\"padding\":12,\"background-position-y\":4.5,\"x\":\"10px\",\"y\":\"12px\"}"
   },
   "model": {
