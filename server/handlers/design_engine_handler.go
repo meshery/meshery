@@ -18,7 +18,7 @@ import (
 	"github.com/spf13/viper"
 
 	"github.com/layer5io/meshery/server/models/pattern/patterns/k8s"
-		patternutils "github.com/layer5io/meshery/server/models/pattern/utils"
+	patternutils "github.com/layer5io/meshery/server/models/pattern/utils"
 
 	"github.com/layer5io/meshery/server/models/pattern/stages"
 	"github.com/layer5io/meshkit/logger"
@@ -486,7 +486,6 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) ([]patter
 		// Hack until adapters fix the concurrent client
 		// creation issue: https://github.com/layer5io/meshery-adapter-library/issues/32
 		time.Sleep(50 * time.Microsecond)
-
 		sap.log.Debug("Execute operations on: ", host.Kind)
 
 		_hostPort, ok := host.Metadata["port"]
