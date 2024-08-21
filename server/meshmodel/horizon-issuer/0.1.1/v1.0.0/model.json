@@ -5,6 +5,7 @@
   "displayName": "Horizon Issuer",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://repo.evertrust.io/repository/charts/horizon-issuer-0.0.1.tgz", 
     "isAnnotation": false,
     "published": false,
     "subCategory": "Uncategorized",

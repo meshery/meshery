@@ -5,6 +5,7 @@
   "displayName": "ArangoDB Kubernetes Operator",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://harbor.sourcefield.io/chartrepo/sourcefield-public/charts/kube-arangodb-1.2.24.tgz", 
    "capabilities": null,
    "defaultData": "",
    "isAnnotation": false,

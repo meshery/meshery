@@ -5,6 +5,7 @@
   "displayName": "K8s Prom Patch Controller",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://github.com/DoodleScheduling/k8sprom-patch-controller/releases/download/k8sprom-patch-controller-0.1.4/k8sprom-patch-controller-0.1.4.tgz", 
    "capabilities": null,
    "defaultData": "",
    "isAnnotation": false,

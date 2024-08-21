@@ -5,6 +5,7 @@
   "displayName": "PGO (CrunchyData)",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://github.com/direktiv/direktiv-charts/releases/download/pgo-5.3.1/pgo-5.3.1.tgz", 
     "isAnnotation": false,
     "published": true,
     "subCategory": "App Definition and Development",

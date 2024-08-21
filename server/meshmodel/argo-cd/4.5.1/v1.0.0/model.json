@@ -5,6 +5,7 @@
   "displayName": "Argo CD Applications",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://charts.bitnami.com/bitnami/argo-cd-5.3.0.tgz", 
     "isAnnotation": false,
     "published": true,
     "subCategory": "Continuous Integration \u0026 Delivery",
