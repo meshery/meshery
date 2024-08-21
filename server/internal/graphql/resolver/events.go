@@ -44,7 +44,7 @@ func (r *Resolver) eventsResolver(ctx context.Context, provider models.Provider,
 				unsubscribe()
 				close(eventsChan)
 
-				r.Log.Info("Events Subscription stopped for %s", userID)
+				r.Log.Infof("Events Subscription stopped for %s", userID)
 				return
 			}
 		}
