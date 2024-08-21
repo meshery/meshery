@@ -1,17 +1,8 @@
 package stages
 
-import (
-	"github.com/layer5io/meshery/server/helpers"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
-)
-
 // import "github.com/layer5io/meshery/server/models/pattern/patterns"
 
 const DryRunResponseKey = "dryRunResponse"
-
-var mesheryDefinedAPIVersions = map[string]bool{
-	"core.oam.dev/v1alpha1": true,
-}
 
 // There are two types of errors here:
 // 1. Error while performing the Dry Run (when the DryRun request could not be sent)
@@ -26,23 +17,9 @@ func DryRun(_ ServiceInfoProvider, act ServiceActionProvider) ChainStageFunction
 			act.Terminate(err)
 			return
 		}
-		var comps []v1beta1.Component
 		processAnnotations(data.Pattern)
-		for name, svc := range data.Pattern.Services {
-			if mesheryDefinedAPIVersions[svc.APIVersion] {
-				continue
-			}
-			comp, err := data.Pattern.GetApplicationComponent(name)
-			if err != nil {
-				continue
-			}
-			comp.ObjectMeta.Annotations = helpers.MergeStringMaps(
-				v1beta1.GetAnnotationsForWorkload(data.PatternSvcWorkloadCapabilities[name]),
-				comp.ObjectMeta.Annotations,
-			)
-			comps = append(comps, comp)
-		}
-		resp, err := act.DryRun(comps)
+
+		resp, err := act.DryRun(data.Pattern.Components)
 		if err != nil {
 			act.Terminate(err)
 			return

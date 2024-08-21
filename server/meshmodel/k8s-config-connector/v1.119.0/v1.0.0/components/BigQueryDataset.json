@@ -1,29 +1,154 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "displayName": "Big Query Dataset",
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "BigQueryDataset",
+   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"access\": {\n     \"description\": \"An array of objects that define dataset access for one or more entities.\",\n     \"items\": {\n      \"properties\": {\n       \"dataset\": {\n        \"description\": \"Grants all resources of particular types in a particular dataset read access to the current dataset.\",\n        \"properties\": {\n         \"dataset\": {\n          \"description\": \"The dataset this entry applies to.\",\n          \"properties\": {\n           \"datasetId\": {\n            \"description\": \"The ID of the dataset containing this table.\",\n            \"type\": \"string\"\n           },\n           \"projectId\": {\n            \"description\": \"The ID of the project containing this table.\",\n            \"type\": \"string\"\n           }\n          },\n          \"required\": [\n           \"datasetId\",\n           \"projectId\"\n          ],\n          \"type\": \"object\"\n         },\n         \"targetTypes\": {\n          \"description\": \"Which resources in the dataset this entry applies to. Currently, only views are supported,\\nbut additional target types may be added in the future. Possible values: VIEWS.\",\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         }\n        },\n        \"required\": [\n         \"dataset\",\n         \"targetTypes\"\n        ],\n        \"type\": \"object\"\n       },\n       \"domain\": {\n        \"description\": \"A domain to grant access to. Any users signed in with the\\ndomain specified will be granted the specified access.\",\n        \"type\": \"string\"\n       },\n       \"groupByEmail\": {\n        \"description\": \"An email address of a Google Group to grant access to.\",\n        \"type\": \"string\"\n       },\n       \"iamMember\": {\n        \"description\": \"Some other type of member that appears in the IAM Policy but isn't a user,\\ngroup, domain, or special group. For example: 'allUsers'.\",\n        \"type\": \"string\"\n       },\n       \"role\": {\n        \"description\": \"Describes the rights granted to the user specified by the other\\nmember of the access object. Basic, predefined, and custom roles\\nare supported. Predefined roles that have equivalent basic roles\\nare swapped by the API to their basic counterparts. See\\n[official docs](https://cloud.google.com/bigquery/docs/access-control).\",\n        \"type\": \"string\"\n       },\n       \"routine\": {\n        \"description\": \"A routine from a different dataset to grant access to. Queries\\nexecuted against that routine will have read access to tables in\\nthis dataset. The role field is not required when this field is\\nset. If that routine is updated by any user, access to the routine\\nneeds to be granted again via an update operation.\",\n        \"properties\": {\n         \"datasetId\": {\n          \"description\": \"The ID of the dataset containing this table.\",\n          \"type\": \"string\"\n         },\n         \"projectId\": {\n          \"description\": \"The ID of the project containing this table.\",\n          \"type\": \"string\"\n         },\n         \"routineId\": {\n          \"description\": \"The ID of the routine. The ID must contain only letters (a-z,\\nA-Z), numbers (0-9), or underscores (_). The maximum length\\nis 256 characters.\",\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"datasetId\",\n         \"projectId\",\n         \"routineId\"\n        ],\n        \"type\": \"object\"\n       },\n       \"specialGroup\": {\n        \"description\": \"A special group to grant access to. Possible values include:\\n\\n\\n* 'projectOwners': Owners of the enclosing project.\\n\\n\\n* 'projectReaders': Readers of the enclosing project.\\n\\n\\n* 'projectWriters': Writers of the enclosing project.\\n\\n\\n* 'allAuthenticatedUsers': All authenticated BigQuery users.\",\n        \"type\": \"string\"\n       },\n       \"userByEmail\": {\n        \"description\": \"An email address of a user to grant access to. For example:\\nfred@example.com.\",\n        \"type\": \"string\"\n       },\n       \"view\": {\n        \"description\": \"A view from a different dataset to grant access to. Queries\\nexecuted against that view will have read access to tables in\\nthis dataset. The role field is not required when this field is\\nset. If that view is updated by any user, access to the view\\nneeds to be granted again via an update operation.\",\n        \"properties\": {\n         \"datasetId\": {\n          \"description\": \"The ID of the dataset containing this table.\",\n          \"type\": \"string\"\n         },\n         \"projectId\": {\n          \"description\": \"The ID of the project containing this table.\",\n          \"type\": \"string\"\n         },\n         \"tableId\": {\n          \"description\": \"The ID of the table. The ID must contain only letters (a-z,\\nA-Z), numbers (0-9), or underscores (_). The maximum length\\nis 1,024 characters.\",\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"datasetId\",\n         \"projectId\",\n         \"tableId\"\n        ],\n        \"type\": \"object\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"defaultCollation\": {\n     \"description\": \"Defines the default collation specification of future tables created\\nin the dataset. If a table is created in this dataset without table-level\\ndefault collation, then the table inherits the dataset default collation,\\nwhich is applied to the string fields that do not have explicit collation\\nspecified. A change to this field affects only tables created afterwards,\\nand does not alter the existing tables.\\n\\nThe following values are supported:\\n- 'und:ci': undetermined locale, case insensitive.\\n- '': empty string. Default to case-sensitive behavior.\",\n     \"type\": \"string\"\n    },\n    \"defaultEncryptionConfiguration\": {\n     \"description\": \"The default encryption key for all tables in the dataset. Once this property is set,\\nall newly-created partitioned tables in the dataset will have encryption key set to\\nthis value, unless table creation request (or query) overrides the key.\",\n     \"properties\": {\n      \"kmsKeyRef\": {\n       \"description\": \"Describes the Cloud KMS encryption key that will be used to protect destination\\nBigQuery table. The BigQuery Service Account associated with your project requires\\naccess to this encryption key.\",\n       \"oneOf\": [\n        {\n         \"not\": {\n          \"required\": [\n           \"external\"\n          ]\n         },\n         \"required\": [\n          \"name\"\n         ]\n        },\n        {\n         \"not\": {\n          \"anyOf\": [\n           {\n            \"required\": [\n             \"name\"\n            ]\n           },\n           {\n            \"required\": [\n             \"namespace\"\n            ]\n           }\n          ]\n         },\n         \"required\": [\n          \"external\"\n         ]\n        }\n       ],\n       \"properties\": {\n        \"external\": {\n         \"description\": \"Allowed value: The `selfLink` field of a `KMSCryptoKey` resource.\",\n         \"type\": \"string\"\n        },\n        \"name\": {\n         \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n         \"type\": \"string\"\n        },\n        \"namespace\": {\n         \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"required\": [\n      \"kmsKeyRef\"\n     ],\n     \"type\": \"object\"\n    },\n    \"defaultPartitionExpirationMs\": {\n     \"description\": \"The default partition expiration for all partitioned tables in\\nthe dataset, in milliseconds.\\n\\n\\nOnce this property is set, all newly-created partitioned tables in\\nthe dataset will have an 'expirationMs' property in the 'timePartitioning'\\nsettings set to this value, and changing the value will only\\naffect new tables, not existing ones. The storage in a partition will\\nhave an expiration time of its partition time plus this value.\\nSetting this property overrides the use of 'defaultTableExpirationMs'\\nfor partitioned tables: only one of 'defaultTableExpirationMs' and\\n'defaultPartitionExpirationMs' will be used for any new partitioned\\ntable. If you provide an explicit 'timePartitioning.expirationMs' when\\ncreating or updating a partitioned table, that value takes precedence\\nover the default partition expiration time indicated by this property.\",\n     \"type\": \"integer\"\n    },\n    \"defaultTableExpirationMs\": {\n     \"description\": \"The default lifetime of all tables in the dataset, in milliseconds.\\nThe minimum value is 3600000 milliseconds (one hour).\\n\\n\\nOnce this property is set, all newly-created tables in the dataset\\nwill have an 'expirationTime' property set to the creation time plus\\nthe value in this property, and changing the value will only affect\\nnew tables, not existing ones. When the 'expirationTime' for a given\\ntable is reached, that table will be deleted automatically.\\nIf a table's 'expirationTime' is modified or removed before the\\ntable expires, or if you provide an explicit 'expirationTime' when\\ncreating a table, that value takes precedence over the default\\nexpiration time indicated by this property.\",\n     \"type\": \"integer\"\n    },\n    \"description\": {\n     \"description\": \"A user-friendly description of the dataset.\",\n     \"type\": \"string\"\n    },\n    \"friendlyName\": {\n     \"description\": \"A descriptive name for the dataset.\",\n     \"type\": \"string\"\n    },\n    \"isCaseInsensitive\": {\n     \"description\": \"TRUE if the dataset and its table names are case-insensitive, otherwise FALSE.\\nBy default, this is FALSE, which means the dataset and its table names are\\ncase-sensitive. This field does not affect routine references.\",\n     \"type\": \"boolean\"\n    },\n    \"location\": {\n     \"description\": \"Immutable. The geographic location where the dataset should reside.\\nSee [official docs](https://cloud.google.com/bigquery/docs/dataset-locations).\\n\\n\\nThere are two types of locations, regional or multi-regional. A regional\\nlocation is a specific geographic place, such as Tokyo, and a multi-regional\\nlocation is a large geographic area, such as the United States, that\\ncontains at least two geographic places.\\n\\n\\nThe default value is multi-regional location 'US'.\\nChanging this forces a new resource to be created.\",\n     \"type\": \"string\"\n    },\n    \"maxTimeTravelHours\": {\n     \"description\": \"Defines the time travel window in hours. The value can be from 48 to 168 hours (2 to 7 days).\",\n     \"type\": \"string\"\n    },\n    \"projectRef\": {\n     \"description\": \"The project that this resource belongs to.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `name` field of a `Project` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The datasetId of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    },\n    \"storageBillingModel\": {\n     \"description\": \"Specifies the storage billing model for the dataset.\\nSet this flag value to LOGICAL to use logical bytes for storage billing,\\nor to PHYSICAL to use physical bytes instead.\\n\\nLOGICAL is the default if this flag isn't specified.\",\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Big Query Dataset\",\n \"type\": \"object\"\n}",
+   "version": "bigquery.cnrm.cloud.google.com/v1beta1"
+  },
+  "configuration": null,
   "description": "",
+  "displayName": "Big Query Dataset",
   "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "published": false,
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": ""
+  },
   "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "version": "v1.0.0",
-   "name": "k8s-config-connector",
-   "displayName": "Google Cloud Platform",
-   "description": "",
-   "status": "enabled",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "registrant": {
-    "hostname": "github"
-   },
    "category": {
-    "name": "Orchestration \u0026 Management",
-    "metadata": null
+    "name": "Orchestration \u0026 Management"
    },
-   "subCategory": "Google Cloud Platform",
+   "displayName": "Google Cloud Platform",
+   "id": "00000000-0000-0000-0000-000000000000",
    "metadata": {
-    "capabilities": "",
     "defaultData": "",
     "isAnnotation": false,
     "primaryColor": "#4285F4",
@@ -39,30 +164,35 @@
    "model": {
     "version": "v1.119.0"
    },
+   "name": "k8s-config-connector",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "github",
+    "name": "Github",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "enabled",
+   "subCategory": "Google Cloud Platform",
+   "version": "v1.0.0",
    "components": null,
    "relationships": null
   },
-  "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
    "primaryColor": "#4285F4",
-   "secondaryColor": "",
    "shape": "rectangle",
-   "shapePolygonPoints": "",
-   "status": "enabled",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
    "svgColor": "\u003csvg width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"\u003e\n    \u003cg stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e\n        \u003cpath d=\"M12.3008862,4.00003179 L18.9908678,7.90329279 L19,11.4442164 L14.973309,9.0680926 L14.973309,10.8562526 L16.9806355,12.0276231 L16.9918433,15.1064843 L14.973309,13.9136004 L14.973309,18.415105 L12.3008862,20 L12.3008862,4.00003179 Z M11.6991138,4 L11.6991138,19.9999682 L9.02669102,18.4150732 L9.02669102,9.06816678 L5,11.4441846 L5.00913223,7.903261 L11.6991138,4 Z\" fill=\"#4285F4\"\u003e\u003c/path\u003e\n    \u003c/g\u003e\n\u003c/svg\u003e",
-   "svgComplete": "",
    "svgWhite": "\u003csvg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M12.3009 4.00003L18.9909 7.90329L19 11.4442L14.9733 9.06809V10.8563L16.9806 12.0276L16.9918 15.1065L14.9733 13.9136V18.4151L12.3009 20V4.00003ZM11.6991 4V20L9.02669 18.4151V9.06817L5 11.4442L5.00913 7.90326L11.6991 4Z\" fill=\"white\"/\u003e\n\u003c/svg\u003e\n"
   },
-  "component": {
-   "kind": "BigQueryDataset",
-   "version": "bigquery.cnrm.cloud.google.com/v1beta1",
-   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"access\": {\n     \"description\": \"An array of objects that define dataset access for one or more entities.\",\n     \"items\": {\n      \"properties\": {\n       \"dataset\": {\n        \"description\": \"Grants all resources of particular types in a particular dataset read access to the current dataset.\",\n        \"properties\": {\n         \"dataset\": {\n          \"description\": \"The dataset this entry applies to.\",\n          \"properties\": {\n           \"datasetId\": {\n            \"description\": \"The ID of the dataset containing this table.\",\n            \"type\": \"string\"\n           },\n           \"projectId\": {\n            \"description\": \"The ID of the project containing this table.\",\n            \"type\": \"string\"\n           }\n          },\n          \"required\": [\n           \"datasetId\",\n           \"projectId\"\n          ],\n          \"type\": \"object\"\n         },\n         \"targetTypes\": {\n          \"description\": \"Which resources in the dataset this entry applies to. Currently, only views are supported,\\nbut additional target types may be added in the future. Possible values: VIEWS.\",\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         }\n        },\n        \"required\": [\n         \"dataset\",\n         \"targetTypes\"\n        ],\n        \"type\": \"object\"\n       },\n       \"domain\": {\n        \"description\": \"A domain to grant access to. Any users signed in with the\\ndomain specified will be granted the specified access.\",\n        \"type\": \"string\"\n       },\n       \"groupByEmail\": {\n        \"description\": \"An email address of a Google Group to grant access to.\",\n        \"type\": \"string\"\n       },\n       \"iamMember\": {\n        \"description\": \"Some other type of member that appears in the IAM Policy but isn't a user,\\ngroup, domain, or special group. For example: 'allUsers'.\",\n        \"type\": \"string\"\n       },\n       \"role\": {\n        \"description\": \"Describes the rights granted to the user specified by the other\\nmember of the access object. Basic, predefined, and custom roles\\nare supported. Predefined roles that have equivalent basic roles\\nare swapped by the API to their basic counterparts. See\\n[official docs](https://cloud.google.com/bigquery/docs/access-control).\",\n        \"type\": \"string\"\n       },\n       \"routine\": {\n        \"description\": \"A routine from a different dataset to grant access to. Queries\\nexecuted against that routine will have read access to tables in\\nthis dataset. The role field is not required when this field is\\nset. If that routine is updated by any user, access to the routine\\nneeds to be granted again via an update operation.\",\n        \"properties\": {\n         \"datasetId\": {\n          \"description\": \"The ID of the dataset containing this table.\",\n          \"type\": \"string\"\n         },\n         \"projectId\": {\n          \"description\": \"The ID of the project containing this table.\",\n          \"type\": \"string\"\n         },\n         \"routineId\": {\n          \"description\": \"The ID of the routine. The ID must contain only letters (a-z,\\nA-Z), numbers (0-9), or underscores (_). The maximum length\\nis 256 characters.\",\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"datasetId\",\n         \"projectId\",\n         \"routineId\"\n        ],\n        \"type\": \"object\"\n       },\n       \"specialGroup\": {\n        \"description\": \"A special group to grant access to. Possible values include:\\n\\n\\n* 'projectOwners': Owners of the enclosing project.\\n\\n\\n* 'projectReaders': Readers of the enclosing project.\\n\\n\\n* 'projectWriters': Writers of the enclosing project.\\n\\n\\n* 'allAuthenticatedUsers': All authenticated BigQuery users.\",\n        \"type\": \"string\"\n       },\n       \"userByEmail\": {\n        \"description\": \"An email address of a user to grant access to. For example:\\nfred@example.com.\",\n        \"type\": \"string\"\n       },\n       \"view\": {\n        \"description\": \"A view from a different dataset to grant access to. Queries\\nexecuted against that view will have read access to tables in\\nthis dataset. The role field is not required when this field is\\nset. If that view is updated by any user, access to the view\\nneeds to be granted again via an update operation.\",\n        \"properties\": {\n         \"datasetId\": {\n          \"description\": \"The ID of the dataset containing this table.\",\n          \"type\": \"string\"\n         },\n         \"projectId\": {\n          \"description\": \"The ID of the project containing this table.\",\n          \"type\": \"string\"\n         },\n         \"tableId\": {\n          \"description\": \"The ID of the table. The ID must contain only letters (a-z,\\nA-Z), numbers (0-9), or underscores (_). The maximum length\\nis 1,024 characters.\",\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"datasetId\",\n         \"projectId\",\n         \"tableId\"\n        ],\n        \"type\": \"object\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"defaultCollation\": {\n     \"description\": \"Defines the default collation specification of future tables created\\nin the dataset. If a table is created in this dataset without table-level\\ndefault collation, then the table inherits the dataset default collation,\\nwhich is applied to the string fields that do not have explicit collation\\nspecified. A change to this field affects only tables created afterwards,\\nand does not alter the existing tables.\\n\\nThe following values are supported:\\n- 'und:ci': undetermined locale, case insensitive.\\n- '': empty string. Default to case-sensitive behavior.\",\n     \"type\": \"string\"\n    },\n    \"defaultEncryptionConfiguration\": {\n     \"description\": \"The default encryption key for all tables in the dataset. Once this property is set,\\nall newly-created partitioned tables in the dataset will have encryption key set to\\nthis value, unless table creation request (or query) overrides the key.\",\n     \"properties\": {\n      \"kmsKeyRef\": {\n       \"description\": \"Describes the Cloud KMS encryption key that will be used to protect destination\\nBigQuery table. The BigQuery Service Account associated with your project requires\\naccess to this encryption key.\",\n       \"oneOf\": [\n        {\n         \"not\": {\n          \"required\": [\n           \"external\"\n          ]\n         },\n         \"required\": [\n          \"name\"\n         ]\n        },\n        {\n         \"not\": {\n          \"anyOf\": [\n           {\n            \"required\": [\n             \"name\"\n            ]\n           },\n           {\n            \"required\": [\n             \"namespace\"\n            ]\n           }\n          ]\n         },\n         \"required\": [\n          \"external\"\n         ]\n        }\n       ],\n       \"properties\": {\n        \"external\": {\n         \"description\": \"Allowed value: The `selfLink` field of a `KMSCryptoKey` resource.\",\n         \"type\": \"string\"\n        },\n        \"name\": {\n         \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n         \"type\": \"string\"\n        },\n        \"namespace\": {\n         \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"required\": [\n      \"kmsKeyRef\"\n     ],\n     \"type\": \"object\"\n    },\n    \"defaultPartitionExpirationMs\": {\n     \"description\": \"The default partition expiration for all partitioned tables in\\nthe dataset, in milliseconds.\\n\\n\\nOnce this property is set, all newly-created partitioned tables in\\nthe dataset will have an 'expirationMs' property in the 'timePartitioning'\\nsettings set to this value, and changing the value will only\\naffect new tables, not existing ones. The storage in a partition will\\nhave an expiration time of its partition time plus this value.\\nSetting this property overrides the use of 'defaultTableExpirationMs'\\nfor partitioned tables: only one of 'defaultTableExpirationMs' and\\n'defaultPartitionExpirationMs' will be used for any new partitioned\\ntable. If you provide an explicit 'timePartitioning.expirationMs' when\\ncreating or updating a partitioned table, that value takes precedence\\nover the default partition expiration time indicated by this property.\",\n     \"type\": \"integer\"\n    },\n    \"defaultTableExpirationMs\": {\n     \"description\": \"The default lifetime of all tables in the dataset, in milliseconds.\\nThe minimum value is 3600000 milliseconds (one hour).\\n\\n\\nOnce this property is set, all newly-created tables in the dataset\\nwill have an 'expirationTime' property set to the creation time plus\\nthe value in this property, and changing the value will only affect\\nnew tables, not existing ones. When the 'expirationTime' for a given\\ntable is reached, that table will be deleted automatically.\\nIf a table's 'expirationTime' is modified or removed before the\\ntable expires, or if you provide an explicit 'expirationTime' when\\ncreating a table, that value takes precedence over the default\\nexpiration time indicated by this property.\",\n     \"type\": \"integer\"\n    },\n    \"description\": {\n     \"description\": \"A user-friendly description of the dataset.\",\n     \"type\": \"string\"\n    },\n    \"friendlyName\": {\n     \"description\": \"A descriptive name for the dataset.\",\n     \"type\": \"string\"\n    },\n    \"isCaseInsensitive\": {\n     \"description\": \"TRUE if the dataset and its table names are case-insensitive, otherwise FALSE.\\nBy default, this is FALSE, which means the dataset and its table names are\\ncase-sensitive. This field does not affect routine references.\",\n     \"type\": \"boolean\"\n    },\n    \"location\": {\n     \"description\": \"Immutable. The geographic location where the dataset should reside.\\nSee [official docs](https://cloud.google.com/bigquery/docs/dataset-locations).\\n\\n\\nThere are two types of locations, regional or multi-regional. A regional\\nlocation is a specific geographic place, such as Tokyo, and a multi-regional\\nlocation is a large geographic area, such as the United States, that\\ncontains at least two geographic places.\\n\\n\\nThe default value is multi-regional location 'US'.\\nChanging this forces a new resource to be created.\",\n     \"type\": \"string\"\n    },\n    \"maxTimeTravelHours\": {\n     \"description\": \"Defines the time travel window in hours. The value can be from 48 to 168 hours (2 to 7 days).\",\n     \"type\": \"string\"\n    },\n    \"projectRef\": {\n     \"description\": \"The project that this resource belongs to.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `name` field of a `Project` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The datasetId of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    },\n    \"storageBillingModel\": {\n     \"description\": \"Specifies the storage billing model for the dataset.\\nSet this flag value to LOGICAL to use logical bytes for storage billing,\\nor to PHYSICAL to use physical bytes instead.\\n\\nLOGICAL is the default if this flag isn't specified.\",\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Big Query Dataset\",\n \"type\": \"object\"\n}"
-  }
+  "version": "v1.0.0"
  }

@@ -266,15 +266,6 @@ type NullString struct {
 	Valid  bool   `json:"Valid"`
 }
 
-type OAMCapability struct {
-	OamDefinition interface{} `json:"oam_definition,omitempty"`
-	ID            *string     `json:"id,omitempty"`
-	OamRefSchema  *string     `json:"oam_ref_schema,omitempty"`
-	Host          *string     `json:"host,omitempty"`
-	Restricted    *bool       `json:"restricted,omitempty"`
-	Metadata      interface{} `json:"metadata,omitempty"`
-}
-
 type OperatorControllerStatus struct {
 	Name         string `json:"name"`
 	Version      string `json:"version"`

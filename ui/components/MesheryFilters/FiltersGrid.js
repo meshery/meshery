@@ -4,8 +4,6 @@ import { Pagination } from '@material-ui/lab';
 import React, { useState } from 'react';
 import FiltersCard from './FiltersCard';
 import { FILE_OPS } from '../../utils/Enum';
-import ConfirmationMsg from '../ConfirmationModal';
-import { getComponentsinFile } from '../../utils/utils';
 import PublishIcon from '@material-ui/icons/Publish';
 import useStyles from '../MesheryPatterns/Grid.styles';
 import { RJSFModalWrapper } from '../Modal';
@@ -20,9 +18,7 @@ const INITIAL_GRID_SIZE = { xl: 4, md: 6, xs: 12 };
 function FilterCardGridItem({
   filter,
   yamlConfig,
-  handleDeploy,
   handleDownload,
-  handleUndeploy,
   handleSubmit,
   setSelectedFilters,
   handleClone,
@@ -47,8 +43,6 @@ function FilterCardGridItem({
         handleUnpublishModal={handleUnpublishModal}
         requestFullSize={() => setGridProps({ xl: 12, md: 12, xs: 12 })}
         requestSizeRestore={() => setGridProps(INITIAL_GRID_SIZE)}
-        handleDeploy={handleDeploy}
-        handleUndeploy={handleUndeploy}
         handleClone={handleClone}
         handleDownload={(ev) => handleDownload(ev, filter.id, filter.name)}
         deleteHandler={() =>
@@ -115,8 +109,6 @@ function FilterCardGridItem({
 
 function FiltersGrid({
   filters = [],
-  handleDeploy,
-  handleUndeploy,
   handleClone,
   handleDownload,
   handleSubmit,
@@ -154,33 +146,6 @@ function FiltersGrid({
     });
   };
 
-  const [modalOpen, setModalOpen] = useState({
-    open: false,
-    deploy: false,
-    filter_file: null,
-    name: '',
-    count: 0,
-  });
-
-  const handleModalClose = () => {
-    setModalOpen({
-      open: false,
-      filter_file: null,
-      name: '',
-      count: 0,
-    });
-  };
-
-  const handleModalOpen = (filter, isDeploy) => {
-    setModalOpen({
-      open: true,
-      deploy: isDeploy,
-      filter_file: filter.filter_file,
-      name: filter.name,
-      count: getComponentsinFile(filter.filter_file),
-    });
-  };
-
   const getYamlConfig = (filter_resource) => {
     if (filter_resource) {
       return JSON.parse(filter_resource).settings.config;
@@ -200,8 +165,6 @@ function FiltersGrid({
               yamlConfig={getYamlConfig(filter.filter_resource)}
               handleClone={() => handleClone(filter.id, filter.name)}
               handleDownload={handleDownload}
-              handleDeploy={() => handleModalOpen(filter, true)}
-              handleUndeploy={() => handleModalOpen(filter, false)}
               handleSubmit={handleSubmit}
               setSelectedFilters={setSelectedFilter}
               canPublishFilter={canPublishFilter}
@@ -245,18 +208,6 @@ function FiltersGrid({
           />
         </div>
       ) : null}
-      <ConfirmationMsg
-        open={modalOpen.open}
-        handleClose={handleModalClose}
-        submit={{
-          deploy: () => handleDeploy(modalOpen.filter_file),
-          unDeploy: () => handleUndeploy(modalOpen.filter_file),
-        }}
-        isDelete={!modalOpen.deploy}
-        title={modalOpen.name}
-        componentCount={modalOpen.count}
-        tab={modalOpen.deploy ? 2 : 1}
-      />
       {canPublishFilter && publishModal.open && (
         <UsesSistent>
           <SistentModal

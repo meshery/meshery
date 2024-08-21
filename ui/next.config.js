@@ -15,7 +15,7 @@ const nextConfig = removeImports({
       '/extension/[...component]': { page: '/extension/[...component]' },
       '/extensions': { page: '/extensions' },
       '/': { page: '/', query: { __nextDefaultLocale: 'en' } },
-      '/management/service-mesh': { page: '/management/service-mesh' },
+      '/management/adapter': { page: '/management/adapter' },
       '/management/environments': { page: '/management/environments' },
       '/management/connections': { page: '/management/connections' },
       '/management/workspaces': { page: '/management/workspaces' },

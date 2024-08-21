@@ -1,29 +1,154 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "displayName": "Kong Vault",
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "KongVault",
+   "schema": "{\n \"description\": \"KongVault is the schema for kongvaults API which defines a custom Kong vault.\\nA Kong vault is a storage to store sensitive data, where the values can be referenced in configuration of plugins.\\nSee: https://docs.konghq.com/gateway/latest/kong-enterprise/secrets-management/\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"KongVaultSpec defines specification of a custom Kong vault.\",\n   \"properties\": {\n    \"backend\": {\n     \"description\": \"Backend is the type of the backend storing the secrets in the vault.\\nThe supported backends of Kong is listed here:\\nhttps://docs.konghq.com/gateway/latest/kong-enterprise/secrets-management/backends/\",\n     \"minLength\": 1,\n     \"type\": \"string\"\n    },\n    \"config\": {\n     \"description\": \"Config is the configuration of the vault. Varies for different backends.\",\n     \"format\": \"textarea\",\n     \"type\": \"string\"\n    },\n    \"description\": {\n     \"description\": \"Description is the additional information about the vault.\",\n     \"type\": \"string\"\n    },\n    \"prefix\": {\n     \"description\": \"Prefix is the prefix of vault URI for referencing values in the vault.\\nIt is immutable after created.\",\n     \"minLength\": 1,\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"backend\",\n    \"prefix\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Kong Vault\",\n \"type\": \"object\",\n \"x-kubernetes-validations\": [\n  {\n   \"message\": \"The spec.prefix field is immutable\",\n   \"rule\": \"self.spec.prefix == oldSelf.spec.prefix\"\n  }\n ]\n}",
+   "version": "configuration.konghq.com/v1alpha1"
+  },
+  "configuration": null,
   "description": "",
+  "displayName": "Kong Vault",
   "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "published": false,
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": ""
+  },
   "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "version": "v1.0.0",
-   "name": "kong",
-   "displayName": "Kong API Gateway",
-   "description": "",
-   "status": "enabled",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "registrant": {
-    "hostname": "artifacthub"
-   },
    "category": {
-    "name": "Cloud Native Network",
-    "metadata": null
+    "name": "Cloud Native Network"
    },
-   "subCategory": "API Gateway",
+   "displayName": "Kong API Gateway",
+   "id": "00000000-0000-0000-0000-000000000000",
    "metadata": {
-    "capabilities": "",
     "defaultData": "",
     "isAnnotation": false,
     "primaryColor": "#003459",
@@ -39,30 +164,35 @@
    "model": {
     "version": "12.2.4"
    },
+   "name": "kong",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "enabled",
+   "subCategory": "API Gateway",
+   "version": "v1.0.0",
    "components": null,
    "relationships": null
   },
-  "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": false,
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
    "primaryColor": "",
-   "secondaryColor": "",
    "shape": "circle",
-   "shapePolygonPoints": "",
-   "status": "enabled",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
    "svgColor": "",
-   "svgComplete": "",
    "svgWhite": ""
   },
-  "component": {
-   "kind": "KongVault",
-   "version": "configuration.konghq.com/v1alpha1",
-   "schema": "{\n \"description\": \"KongVault is the schema for kongvaults API which defines a custom Kong vault.\\nA Kong vault is a storage to store sensitive data, where the values can be referenced in configuration of plugins.\\nSee: https://docs.konghq.com/gateway/latest/kong-enterprise/secrets-management/\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"KongVaultSpec defines specification of a custom Kong vault.\",\n   \"properties\": {\n    \"backend\": {\n     \"description\": \"Backend is the type of the backend storing the secrets in the vault.\\nThe supported backends of Kong is listed here:\\nhttps://docs.konghq.com/gateway/latest/kong-enterprise/secrets-management/backends/\",\n     \"minLength\": 1,\n     \"type\": \"string\"\n    },\n    \"config\": {\n     \"description\": \"Config is the configuration of the vault. Varies for different backends.\",\n     \"format\": \"textarea\",\n     \"type\": \"string\"\n    },\n    \"description\": {\n     \"description\": \"Description is the additional information about the vault.\",\n     \"type\": \"string\"\n    },\n    \"prefix\": {\n     \"description\": \"Prefix is the prefix of vault URI for referencing values in the vault.\\nIt is immutable after created.\",\n     \"minLength\": 1,\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"backend\",\n    \"prefix\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Kong Vault\",\n \"type\": \"object\",\n \"x-kubernetes-validations\": [\n  {\n   \"message\": \"The spec.prefix field is immutable\",\n   \"rule\": \"self.spec.prefix == oldSelf.spec.prefix\"\n  }\n ]\n}"
-  }
+  "version": "v1.0.0"
  }

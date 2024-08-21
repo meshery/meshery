@@ -1,29 +1,154 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "displayName": "Dataproc Autoscaling Policy",
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "DataprocAutoscalingPolicy",
+   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"basicAlgorithm\": {\n     \"properties\": {\n      \"cooldownPeriod\": {\n       \"description\": \"Optional. Duration between scaling events. A scaling period starts after the update operation from the previous event has completed. Bounds: . Default: 2m.\",\n       \"type\": \"string\"\n      },\n      \"yarnConfig\": {\n       \"description\": \"Required. YARN autoscaling configuration.\",\n       \"properties\": {\n        \"gracefulDecommissionTimeout\": {\n         \"description\": \"Required. Timeout for YARN graceful decommissioning of Node Managers. Specifies the duration to wait for jobs to complete before forcefully removing workers (and potentially interrupting jobs). Only applicable to downscaling operations.\",\n         \"type\": \"string\"\n        },\n        \"scaleDownFactor\": {\n         \"description\": \"Required. Fraction of average YARN pending memory in the last cooldown period for which to remove workers. A scale-down factor of 1 will result in scaling down so that there is no available memory remaining after the update (more aggressive scaling). A scale-down factor of 0 disables removing workers, which can be beneficial for autoscaling a single job. See .\",\n         \"format\": \"double\",\n         \"type\": \"number\"\n        },\n        \"scaleDownMinWorkerFraction\": {\n         \"description\": \"Optional. Minimum scale-down threshold as a fraction of total cluster size before scaling occurs. For example, in a 20-worker cluster, a threshold of 0.1 means the autoscaler must recommend at least a 2 worker scale-down for the cluster to scale. A threshold of 0 means the autoscaler will scale down on any recommended change. Bounds: . Default: 0.0.\",\n         \"format\": \"double\",\n         \"type\": \"number\"\n        },\n        \"scaleUpFactor\": {\n         \"description\": \"Required. Fraction of average YARN pending memory in the last cooldown period for which to add workers. A scale-up factor of 1.0 will result in scaling up so that there is no pending memory remaining after the update (more aggressive scaling). A scale-up factor closer to 0 will result in a smaller magnitude of scaling up (less aggressive scaling). See .\",\n         \"format\": \"double\",\n         \"type\": \"number\"\n        },\n        \"scaleUpMinWorkerFraction\": {\n         \"description\": \"Optional. Minimum scale-up threshold as a fraction of total cluster size before scaling occurs. For example, in a 20-worker cluster, a threshold of 0.1 means the autoscaler must recommend at least a 2-worker scale-up for the cluster to scale. A threshold of 0 means the autoscaler will scale up on any recommended change. Bounds: . Default: 0.0.\",\n         \"format\": \"double\",\n         \"type\": \"number\"\n        }\n       },\n       \"required\": [\n        \"gracefulDecommissionTimeout\",\n        \"scaleDownFactor\",\n        \"scaleUpFactor\"\n       ],\n       \"type\": \"object\"\n      }\n     },\n     \"required\": [\n      \"yarnConfig\"\n     ],\n     \"type\": \"object\"\n    },\n    \"location\": {\n     \"description\": \"Immutable. The location for the resource\",\n     \"type\": \"string\"\n    },\n    \"projectRef\": {\n     \"description\": \"Immutable. The Project that this resource belongs to.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"The project for the resource\\n\\nAllowed value: The Google Cloud resource name of a `Project` resource (format: `projects/{{name}}`).\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    },\n    \"secondaryWorkerConfig\": {\n     \"description\": \"Optional. Describes how the autoscaler will operate for secondary workers.\",\n     \"properties\": {\n      \"maxInstances\": {\n       \"description\": \"Optional. Maximum number of instances for this group. Note that by default, clusters will not use secondary workers. Required for secondary workers if the minimum secondary instances is set. Primary workers - Bounds: [min_instances, ). Secondary workers - Bounds: [min_instances, ). Default: 0.\",\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"minInstances\": {\n       \"description\": \"Optional. Minimum number of instances for this group. Primary workers - Bounds: . Default: 0.\",\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"weight\": {\n       \"description\": \"Optional. Weight for the instance group, which is used to determine the fraction of total workers in the cluster from this instance group. For example, if primary workers have weight 2, and secondary workers have weight 1, the cluster will have approximately 2 primary workers for each secondary worker. The cluster may not reach the specified balance if constrained by min/max bounds or other autoscaling settings. For example, if `max_instances` for secondary workers is 0, then only primary workers will be added. The cluster can also be out of balance when created. If weight is not set on any instance group, the cluster will default to equal weight for all groups: the cluster will attempt to maintain an equal number of workers in each group within the configured size bounds for each group. If weight is set for one group only, the cluster will default to zero weight on the unset group. For example if weight is set only on primary workers, the cluster will use primary workers only and no secondary workers.\",\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"workerConfig\": {\n     \"description\": \"Required. Describes how the autoscaler will operate for primary workers.\",\n     \"properties\": {\n      \"maxInstances\": {\n       \"description\": \"Required. Maximum number of instances for this group. Required for primary workers. Note that by default, clusters will not use secondary workers. Required for secondary workers if the minimum secondary instances is set. Primary workers - Bounds: [min_instances, ). Secondary workers - Bounds: [min_instances, ). Default: 0.\",\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"minInstances\": {\n       \"description\": \"Optional. Minimum number of instances for this group. Primary workers - Bounds: . Default: 0.\",\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"weight\": {\n       \"description\": \"Optional. Weight for the instance group, which is used to determine the fraction of total workers in the cluster from this instance group. For example, if primary workers have weight 2, and secondary workers have weight 1, the cluster will have approximately 2 primary workers for each secondary worker. The cluster may not reach the specified balance if constrained by min/max bounds or other autoscaling settings. For example, if `max_instances` for secondary workers is 0, then only primary workers will be added. The cluster can also be out of balance when created. If weight is not set on any instance group, the cluster will default to equal weight for all groups: the cluster will attempt to maintain an equal number of workers in each group within the configured size bounds for each group. If weight is set for one group only, the cluster will default to zero weight on the unset group. For example if weight is set only on primary workers, the cluster will use primary workers only and no secondary workers.\",\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      }\n     },\n     \"required\": [\n      \"maxInstances\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"basicAlgorithm\",\n    \"location\",\n    \"workerConfig\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Dataproc Autoscaling Policy\",\n \"type\": \"object\"\n}",
+   "version": "dataproc.cnrm.cloud.google.com/v1beta1"
+  },
+  "configuration": null,
   "description": "",
+  "displayName": "Dataproc Autoscaling Policy",
   "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "published": false,
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": ""
+  },
   "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "version": "v1.0.0",
-   "name": "k8s-config-connector",
-   "displayName": "Google Cloud Platform",
-   "description": "",
-   "status": "enabled",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "registrant": {
-    "hostname": "github"
-   },
    "category": {
-    "name": "Orchestration \u0026 Management",
-    "metadata": null
+    "name": "Orchestration \u0026 Management"
    },
-   "subCategory": "Google Cloud Platform",
+   "displayName": "Google Cloud Platform",
+   "id": "00000000-0000-0000-0000-000000000000",
    "metadata": {
-    "capabilities": "",
     "defaultData": "",
     "isAnnotation": false,
     "primaryColor": "#4285F4",
@@ -39,30 +164,35 @@
    "model": {
     "version": "v1.118.1"
    },
+   "name": "k8s-config-connector",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "github",
+    "name": "Github",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "enabled",
+   "subCategory": "Google Cloud Platform",
+   "version": "v1.0.0",
    "components": null,
    "relationships": null
   },
-  "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
    "primaryColor": "#4285F4",
-   "secondaryColor": "",
    "shape": "rectangle",
-   "shapePolygonPoints": "",
-   "status": "enabled",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
    "svgColor": "\u003csvg width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"\u003e\n    \u003cg stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e\n        \u003cpath d=\"M12.3008862,4.00003179 L18.9908678,7.90329279 L19,11.4442164 L14.973309,9.0680926 L14.973309,10.8562526 L16.9806355,12.0276231 L16.9918433,15.1064843 L14.973309,13.9136004 L14.973309,18.415105 L12.3008862,20 L12.3008862,4.00003179 Z M11.6991138,4 L11.6991138,19.9999682 L9.02669102,18.4150732 L9.02669102,9.06816678 L5,11.4441846 L5.00913223,7.903261 L11.6991138,4 Z\" fill=\"#4285F4\"\u003e\u003c/path\u003e\n    \u003c/g\u003e\n\u003c/svg\u003e",
-   "svgComplete": "",
    "svgWhite": "\u003csvg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M12.3009 4.00003L18.9909 7.90329L19 11.4442L14.9733 9.06809V10.8563L16.9806 12.0276L16.9918 15.1065L14.9733 13.9136V18.4151L12.3009 20V4.00003ZM11.6991 4V20L9.02669 18.4151V9.06817L5 11.4442L5.00913 7.90326L11.6991 4Z\" fill=\"white\"/\u003e\n\u003c/svg\u003e\n"
   },
-  "component": {
-   "kind": "DataprocAutoscalingPolicy",
-   "version": "dataproc.cnrm.cloud.google.com/v1beta1",
-   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"basicAlgorithm\": {\n     \"properties\": {\n      \"cooldownPeriod\": {\n       \"description\": \"Optional. Duration between scaling events. A scaling period starts after the update operation from the previous event has completed. Bounds: . Default: 2m.\",\n       \"type\": \"string\"\n      },\n      \"yarnConfig\": {\n       \"description\": \"Required. YARN autoscaling configuration.\",\n       \"properties\": {\n        \"gracefulDecommissionTimeout\": {\n         \"description\": \"Required. Timeout for YARN graceful decommissioning of Node Managers. Specifies the duration to wait for jobs to complete before forcefully removing workers (and potentially interrupting jobs). Only applicable to downscaling operations.\",\n         \"type\": \"string\"\n        },\n        \"scaleDownFactor\": {\n         \"description\": \"Required. Fraction of average YARN pending memory in the last cooldown period for which to remove workers. A scale-down factor of 1 will result in scaling down so that there is no available memory remaining after the update (more aggressive scaling). A scale-down factor of 0 disables removing workers, which can be beneficial for autoscaling a single job. See .\",\n         \"format\": \"double\",\n         \"type\": \"number\"\n        },\n        \"scaleDownMinWorkerFraction\": {\n         \"description\": \"Optional. Minimum scale-down threshold as a fraction of total cluster size before scaling occurs. For example, in a 20-worker cluster, a threshold of 0.1 means the autoscaler must recommend at least a 2 worker scale-down for the cluster to scale. A threshold of 0 means the autoscaler will scale down on any recommended change. Bounds: . Default: 0.0.\",\n         \"format\": \"double\",\n         \"type\": \"number\"\n        },\n        \"scaleUpFactor\": {\n         \"description\": \"Required. Fraction of average YARN pending memory in the last cooldown period for which to add workers. A scale-up factor of 1.0 will result in scaling up so that there is no pending memory remaining after the update (more aggressive scaling). A scale-up factor closer to 0 will result in a smaller magnitude of scaling up (less aggressive scaling). See .\",\n         \"format\": \"double\",\n         \"type\": \"number\"\n        },\n        \"scaleUpMinWorkerFraction\": {\n         \"description\": \"Optional. Minimum scale-up threshold as a fraction of total cluster size before scaling occurs. For example, in a 20-worker cluster, a threshold of 0.1 means the autoscaler must recommend at least a 2-worker scale-up for the cluster to scale. A threshold of 0 means the autoscaler will scale up on any recommended change. Bounds: . Default: 0.0.\",\n         \"format\": \"double\",\n         \"type\": \"number\"\n        }\n       },\n       \"required\": [\n        \"gracefulDecommissionTimeout\",\n        \"scaleDownFactor\",\n        \"scaleUpFactor\"\n       ],\n       \"type\": \"object\"\n      }\n     },\n     \"required\": [\n      \"yarnConfig\"\n     ],\n     \"type\": \"object\"\n    },\n    \"location\": {\n     \"description\": \"Immutable. The location for the resource\",\n     \"type\": \"string\"\n    },\n    \"projectRef\": {\n     \"description\": \"Immutable. The Project that this resource belongs to.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"The project for the resource\\n\\nAllowed value: The Google Cloud resource name of a `Project` resource (format: `projects/{{name}}`).\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    },\n    \"secondaryWorkerConfig\": {\n     \"description\": \"Optional. Describes how the autoscaler will operate for secondary workers.\",\n     \"properties\": {\n      \"maxInstances\": {\n       \"description\": \"Optional. Maximum number of instances for this group. Note that by default, clusters will not use secondary workers. Required for secondary workers if the minimum secondary instances is set. Primary workers - Bounds: [min_instances, ). Secondary workers - Bounds: [min_instances, ). Default: 0.\",\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"minInstances\": {\n       \"description\": \"Optional. Minimum number of instances for this group. Primary workers - Bounds: . Default: 0.\",\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"weight\": {\n       \"description\": \"Optional. Weight for the instance group, which is used to determine the fraction of total workers in the cluster from this instance group. For example, if primary workers have weight 2, and secondary workers have weight 1, the cluster will have approximately 2 primary workers for each secondary worker. The cluster may not reach the specified balance if constrained by min/max bounds or other autoscaling settings. For example, if `max_instances` for secondary workers is 0, then only primary workers will be added. The cluster can also be out of balance when created. If weight is not set on any instance group, the cluster will default to equal weight for all groups: the cluster will attempt to maintain an equal number of workers in each group within the configured size bounds for each group. If weight is set for one group only, the cluster will default to zero weight on the unset group. For example if weight is set only on primary workers, the cluster will use primary workers only and no secondary workers.\",\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"workerConfig\": {\n     \"description\": \"Required. Describes how the autoscaler will operate for primary workers.\",\n     \"properties\": {\n      \"maxInstances\": {\n       \"description\": \"Required. Maximum number of instances for this group. Required for primary workers. Note that by default, clusters will not use secondary workers. Required for secondary workers if the minimum secondary instances is set. Primary workers - Bounds: [min_instances, ). Secondary workers - Bounds: [min_instances, ). Default: 0.\",\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"minInstances\": {\n       \"description\": \"Optional. Minimum number of instances for this group. Primary workers - Bounds: . Default: 0.\",\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"weight\": {\n       \"description\": \"Optional. Weight for the instance group, which is used to determine the fraction of total workers in the cluster from this instance group. For example, if primary workers have weight 2, and secondary workers have weight 1, the cluster will have approximately 2 primary workers for each secondary worker. The cluster may not reach the specified balance if constrained by min/max bounds or other autoscaling settings. For example, if `max_instances` for secondary workers is 0, then only primary workers will be added. The cluster can also be out of balance when created. If weight is not set on any instance group, the cluster will default to equal weight for all groups: the cluster will attempt to maintain an equal number of workers in each group within the configured size bounds for each group. If weight is set for one group only, the cluster will default to zero weight on the unset group. For example if weight is set only on primary workers, the cluster will use primary workers only and no secondary workers.\",\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      }\n     },\n     \"required\": [\n      \"maxInstances\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"basicAlgorithm\",\n    \"location\",\n    \"workerConfig\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Dataproc Autoscaling Policy\",\n \"type\": \"object\"\n}"
-  }
+  "version": "v1.0.0"
  }

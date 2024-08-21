@@ -1,29 +1,154 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "displayName": "Big Query Data Transfer Config",
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "BigQueryDataTransferConfig",
+   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"dataRefreshWindowDays\": {\n     \"description\": \"The number of days to look back to automatically refresh the data.\\nFor example, if dataRefreshWindowDays = 10, then every day BigQuery\\nreingests data for [today-10, today-1], rather than ingesting data for\\njust [today-1]. Only valid if the data source supports the feature.\\nSet the value to 0 to use the default value.\",\n     \"type\": \"integer\"\n    },\n    \"dataSourceId\": {\n     \"description\": \"Immutable. The data source id. Cannot be changed once the transfer config is created.\",\n     \"type\": \"string\"\n    },\n    \"destinationDatasetId\": {\n     \"description\": \"The BigQuery target dataset id.\",\n     \"type\": \"string\"\n    },\n    \"disabled\": {\n     \"description\": \"When set to true, no runs are scheduled for a given transfer.\",\n     \"type\": \"boolean\"\n    },\n    \"displayName\": {\n     \"description\": \"The user specified display name for the transfer config.\",\n     \"type\": \"string\"\n    },\n    \"emailPreferences\": {\n     \"description\": \"Email notifications will be sent according to these preferences to the\\nemail address of the user who owns this transfer config.\",\n     \"properties\": {\n      \"enableFailureEmail\": {\n       \"description\": \"If true, email notifications will be sent on transfer run failures.\",\n       \"type\": \"boolean\"\n      }\n     },\n     \"required\": [\n      \"enableFailureEmail\"\n     ],\n     \"type\": \"object\"\n    },\n    \"location\": {\n     \"description\": \"Immutable. The geographic location where the transfer config should reside.\\nExamples: US, EU, asia-northeast1. The default value is US.\",\n     \"type\": \"string\"\n    },\n    \"notificationPubsubTopic\": {\n     \"description\": \"Pub/Sub topic where notifications will be sent after transfer runs\\nassociated with this transfer config finish.\",\n     \"type\": \"string\"\n    },\n    \"params\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"object\"\n    },\n    \"projectRef\": {\n     \"description\": \"The project that this resource belongs to.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `name` field of a `Project` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The service-generated name of the resource. Used for acquisition only. Leave unset to create a new resource.\",\n     \"type\": \"string\"\n    },\n    \"schedule\": {\n     \"description\": \"Data transfer schedule. If the data source does not support a custom\\nschedule, this should be empty. If it is empty, the default value for\\nthe data source will be used. The specified times are in UTC. Examples\\nof valid format: 1st,3rd monday of month 15:30, every wed,fri of jan,\\njun 13:15, and first sunday of quarter 00:00. See more explanation\\nabout the format here:\\nhttps://cloud.google.com/appengine/docs/flexible/python/scheduling-jobs-with-cron-yaml#the_schedule_format\\nNOTE: the granularity should be at least 8 hours, or less frequent.\",\n     \"type\": \"string\"\n    },\n    \"scheduleOptions\": {\n     \"description\": \"Options customizing the data transfer schedule.\",\n     \"properties\": {\n      \"disableAutoScheduling\": {\n       \"description\": \"If true, automatic scheduling of data transfer runs for this\\nconfiguration will be disabled. The runs can be started on ad-hoc\\nbasis using transferConfigs.startManualRuns API. When automatic\\nscheduling is disabled, the TransferConfig.schedule field will\\nbe ignored.\",\n       \"type\": \"boolean\"\n      },\n      \"endTime\": {\n       \"description\": \"Defines time to stop scheduling transfer runs. A transfer run cannot be\\nscheduled at or after the end time. The end time can be changed at any\\nmoment. The time when a data transfer can be triggered manually is not\\nlimited by this option.\",\n       \"type\": \"string\"\n      },\n      \"startTime\": {\n       \"description\": \"Specifies time to start scheduling transfer runs. The first run will be\\nscheduled at or after the start time according to a recurrence pattern\\ndefined in the schedule string. The start time can be changed at any\\nmoment. The time when a data transfer can be triggered manually is not\\nlimited by this option.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"sensitiveParams\": {\n     \"description\": \"Different parameters are configured primarily using the the 'params' field on this\\nresource. This block contains the parameters which contain secrets or passwords so that they can be marked\\nsensitive and hidden from plan output. The name of the field, eg: secret_access_key, will be the key\\nin the 'params' map in the api request.\\n\\nCredentials may not be specified in both locations and will cause an error. Changing from one location\\nto a different credential configuration in the config will require an apply to update state.\",\n     \"properties\": {\n      \"secretAccessKey\": {\n       \"description\": \"The Secret Access Key of the AWS account transferring data from.\",\n       \"oneOf\": [\n        {\n         \"not\": {\n          \"required\": [\n           \"valueFrom\"\n          ]\n         },\n         \"required\": [\n          \"value\"\n         ]\n        },\n        {\n         \"not\": {\n          \"required\": [\n           \"value\"\n          ]\n         },\n         \"required\": [\n          \"valueFrom\"\n         ]\n        }\n       ],\n       \"properties\": {\n        \"value\": {\n         \"description\": \"Value of the field. Cannot be used if 'valueFrom' is specified.\",\n         \"type\": \"string\"\n        },\n        \"valueFrom\": {\n         \"description\": \"Source for the field's value. Cannot be used if 'value' is specified.\",\n         \"properties\": {\n          \"secretKeyRef\": {\n           \"description\": \"Reference to a value with the given key in the given Secret in the resource's namespace.\",\n           \"properties\": {\n            \"key\": {\n             \"description\": \"Key that identifies the value to be extracted.\",\n             \"type\": \"string\"\n            },\n            \"name\": {\n             \"description\": \"Name of the Secret to extract a value from.\",\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"name\",\n            \"key\"\n           ],\n           \"type\": \"object\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"required\": [\n      \"secretAccessKey\"\n     ],\n     \"type\": \"object\"\n    },\n    \"serviceAccountName\": {\n     \"description\": \"Service account email. If this field is set, transfer config will\\nbe created with this service account credentials. It requires that\\nrequesting user calling this API has permissions to act as this service account.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"dataSourceId\",\n    \"displayName\",\n    \"params\",\n    \"projectRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Big Query Data Transfer Config\",\n \"type\": \"object\"\n}",
+   "version": "bigquerydatatransfer.cnrm.cloud.google.com/v1alpha1"
+  },
+  "configuration": null,
   "description": "",
+  "displayName": "Big Query Data Transfer Config",
   "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "published": false,
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": ""
+  },
   "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "version": "v1.0.0",
-   "name": "k8s-config-connector",
-   "displayName": "Google Cloud Platform",
-   "description": "",
-   "status": "enabled",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "registrant": {
-    "hostname": "github"
-   },
    "category": {
-    "name": "Orchestration \u0026 Management",
-    "metadata": null
+    "name": "Orchestration \u0026 Management"
    },
-   "subCategory": "Google Cloud Platform",
+   "displayName": "Google Cloud Platform",
+   "id": "00000000-0000-0000-0000-000000000000",
    "metadata": {
-    "capabilities": "",
     "defaultData": "",
     "isAnnotation": false,
     "primaryColor": "#4285F4",
@@ -39,30 +164,35 @@
    "model": {
     "version": "v1.119.0"
    },
+   "name": "k8s-config-connector",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "github",
+    "name": "Github",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "enabled",
+   "subCategory": "Google Cloud Platform",
+   "version": "v1.0.0",
    "components": null,
    "relationships": null
   },
-  "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
    "primaryColor": "#4285F4",
-   "secondaryColor": "",
    "shape": "rectangle",
-   "shapePolygonPoints": "",
-   "status": "enabled",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
    "svgColor": "\u003csvg width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"\u003e\n    \u003cg stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e\n        \u003cpath d=\"M12.3008862,4.00003179 L18.9908678,7.90329279 L19,11.4442164 L14.973309,9.0680926 L14.973309,10.8562526 L16.9806355,12.0276231 L16.9918433,15.1064843 L14.973309,13.9136004 L14.973309,18.415105 L12.3008862,20 L12.3008862,4.00003179 Z M11.6991138,4 L11.6991138,19.9999682 L9.02669102,18.4150732 L9.02669102,9.06816678 L5,11.4441846 L5.00913223,7.903261 L11.6991138,4 Z\" fill=\"#4285F4\"\u003e\u003c/path\u003e\n    \u003c/g\u003e\n\u003c/svg\u003e",
-   "svgComplete": "",
    "svgWhite": "\u003csvg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M12.3009 4.00003L18.9909 7.90329L19 11.4442L14.9733 9.06809V10.8563L16.9806 12.0276L16.9918 15.1065L14.9733 13.9136V18.4151L12.3009 20V4.00003ZM11.6991 4V20L9.02669 18.4151V9.06817L5 11.4442L5.00913 7.90326L11.6991 4Z\" fill=\"white\"/\u003e\n\u003c/svg\u003e\n"
   },
-  "component": {
-   "kind": "BigQueryDataTransferConfig",
-   "version": "bigquerydatatransfer.cnrm.cloud.google.com/v1alpha1",
-   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"dataRefreshWindowDays\": {\n     \"description\": \"The number of days to look back to automatically refresh the data.\\nFor example, if dataRefreshWindowDays = 10, then every day BigQuery\\nreingests data for [today-10, today-1], rather than ingesting data for\\njust [today-1]. Only valid if the data source supports the feature.\\nSet the value to 0 to use the default value.\",\n     \"type\": \"integer\"\n    },\n    \"dataSourceId\": {\n     \"description\": \"Immutable. The data source id. Cannot be changed once the transfer config is created.\",\n     \"type\": \"string\"\n    },\n    \"destinationDatasetId\": {\n     \"description\": \"The BigQuery target dataset id.\",\n     \"type\": \"string\"\n    },\n    \"disabled\": {\n     \"description\": \"When set to true, no runs are scheduled for a given transfer.\",\n     \"type\": \"boolean\"\n    },\n    \"displayName\": {\n     \"description\": \"The user specified display name for the transfer config.\",\n     \"type\": \"string\"\n    },\n    \"emailPreferences\": {\n     \"description\": \"Email notifications will be sent according to these preferences to the\\nemail address of the user who owns this transfer config.\",\n     \"properties\": {\n      \"enableFailureEmail\": {\n       \"description\": \"If true, email notifications will be sent on transfer run failures.\",\n       \"type\": \"boolean\"\n      }\n     },\n     \"required\": [\n      \"enableFailureEmail\"\n     ],\n     \"type\": \"object\"\n    },\n    \"location\": {\n     \"description\": \"Immutable. The geographic location where the transfer config should reside.\\nExamples: US, EU, asia-northeast1. The default value is US.\",\n     \"type\": \"string\"\n    },\n    \"notificationPubsubTopic\": {\n     \"description\": \"Pub/Sub topic where notifications will be sent after transfer runs\\nassociated with this transfer config finish.\",\n     \"type\": \"string\"\n    },\n    \"params\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"object\"\n    },\n    \"projectRef\": {\n     \"description\": \"The project that this resource belongs to.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `name` field of a `Project` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The service-generated name of the resource. Used for acquisition only. Leave unset to create a new resource.\",\n     \"type\": \"string\"\n    },\n    \"schedule\": {\n     \"description\": \"Data transfer schedule. If the data source does not support a custom\\nschedule, this should be empty. If it is empty, the default value for\\nthe data source will be used. The specified times are in UTC. Examples\\nof valid format: 1st,3rd monday of month 15:30, every wed,fri of jan,\\njun 13:15, and first sunday of quarter 00:00. See more explanation\\nabout the format here:\\nhttps://cloud.google.com/appengine/docs/flexible/python/scheduling-jobs-with-cron-yaml#the_schedule_format\\nNOTE: the granularity should be at least 8 hours, or less frequent.\",\n     \"type\": \"string\"\n    },\n    \"scheduleOptions\": {\n     \"description\": \"Options customizing the data transfer schedule.\",\n     \"properties\": {\n      \"disableAutoScheduling\": {\n       \"description\": \"If true, automatic scheduling of data transfer runs for this\\nconfiguration will be disabled. The runs can be started on ad-hoc\\nbasis using transferConfigs.startManualRuns API. When automatic\\nscheduling is disabled, the TransferConfig.schedule field will\\nbe ignored.\",\n       \"type\": \"boolean\"\n      },\n      \"endTime\": {\n       \"description\": \"Defines time to stop scheduling transfer runs. A transfer run cannot be\\nscheduled at or after the end time. The end time can be changed at any\\nmoment. The time when a data transfer can be triggered manually is not\\nlimited by this option.\",\n       \"type\": \"string\"\n      },\n      \"startTime\": {\n       \"description\": \"Specifies time to start scheduling transfer runs. The first run will be\\nscheduled at or after the start time according to a recurrence pattern\\ndefined in the schedule string. The start time can be changed at any\\nmoment. The time when a data transfer can be triggered manually is not\\nlimited by this option.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"sensitiveParams\": {\n     \"description\": \"Different parameters are configured primarily using the the 'params' field on this\\nresource. This block contains the parameters which contain secrets or passwords so that they can be marked\\nsensitive and hidden from plan output. The name of the field, eg: secret_access_key, will be the key\\nin the 'params' map in the api request.\\n\\nCredentials may not be specified in both locations and will cause an error. Changing from one location\\nto a different credential configuration in the config will require an apply to update state.\",\n     \"properties\": {\n      \"secretAccessKey\": {\n       \"description\": \"The Secret Access Key of the AWS account transferring data from.\",\n       \"oneOf\": [\n        {\n         \"not\": {\n          \"required\": [\n           \"valueFrom\"\n          ]\n         },\n         \"required\": [\n          \"value\"\n         ]\n        },\n        {\n         \"not\": {\n          \"required\": [\n           \"value\"\n          ]\n         },\n         \"required\": [\n          \"valueFrom\"\n         ]\n        }\n       ],\n       \"properties\": {\n        \"value\": {\n         \"description\": \"Value of the field. Cannot be used if 'valueFrom' is specified.\",\n         \"type\": \"string\"\n        },\n        \"valueFrom\": {\n         \"description\": \"Source for the field's value. Cannot be used if 'value' is specified.\",\n         \"properties\": {\n          \"secretKeyRef\": {\n           \"description\": \"Reference to a value with the given key in the given Secret in the resource's namespace.\",\n           \"properties\": {\n            \"key\": {\n             \"description\": \"Key that identifies the value to be extracted.\",\n             \"type\": \"string\"\n            },\n            \"name\": {\n             \"description\": \"Name of the Secret to extract a value from.\",\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"name\",\n            \"key\"\n           ],\n           \"type\": \"object\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"required\": [\n      \"secretAccessKey\"\n     ],\n     \"type\": \"object\"\n    },\n    \"serviceAccountName\": {\n     \"description\": \"Service account email. If this field is set, transfer config will\\nbe created with this service account credentials. It requires that\\nrequesting user calling this API has permissions to act as this service account.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"dataSourceId\",\n    \"displayName\",\n    \"params\",\n    \"projectRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Big Query Data Transfer Config\",\n \"type\": \"object\"\n}"
-  }
+  "version": "v1.0.0"
  }

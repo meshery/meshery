@@ -1,29 +1,154 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "displayName": "Grafana Alert Rule Group",
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "GrafanaAlertRuleGroup",
+   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"allowCrossNamespaceImport\": {\n     \"type\": \"boolean\"\n    },\n    \"folderRef\": {\n     \"type\": \"string\"\n    },\n    \"folderUID\": {\n     \"type\": \"string\"\n    },\n    \"instanceSelector\": {\n     \"properties\": {\n      \"matchExpressions\": {\n       \"items\": {\n        \"properties\": {\n         \"key\": {\n          \"type\": \"string\"\n         },\n         \"operator\": {\n          \"type\": \"string\"\n         },\n         \"values\": {\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\",\n          \"x-kubernetes-list-type\": \"atomic\"\n         }\n        },\n        \"required\": [\n         \"key\",\n         \"operator\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\",\n       \"x-kubernetes-list-type\": \"atomic\"\n      },\n      \"matchLabels\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"Value is immutable\",\n       \"rule\": \"self == oldSelf\"\n      }\n     ]\n    },\n    \"interval\": {\n     \"format\": \"duration\",\n     \"pattern\": \"^([0-9]+(\\\\.[0-9]+)?(ns|us|µs|ms|s|m|h))+$\",\n     \"type\": \"string\"\n    },\n    \"resyncPeriod\": {\n     \"default\": \"10m\",\n     \"format\": \"duration\",\n     \"pattern\": \"^([0-9]+(\\\\.[0-9]+)?(ns|us|µs|ms|s|m|h))+$\",\n     \"type\": \"string\"\n    },\n    \"rules\": {\n     \"items\": {\n      \"properties\": {\n       \"annotations\": {\n        \"additionalProperties\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"object\"\n       },\n       \"condition\": {\n        \"type\": \"string\"\n       },\n       \"data\": {\n        \"items\": {\n         \"properties\": {\n          \"datasourceUid\": {\n           \"type\": \"string\"\n          },\n          \"model\": {\n           \"format\": \"textarea\",\n           \"type\": \"string\"\n          },\n          \"queryType\": {\n           \"type\": \"string\"\n          },\n          \"refId\": {\n           \"type\": \"string\"\n          },\n          \"relativeTimeRange\": {\n           \"properties\": {\n            \"from\": {\n             \"format\": \"int64\",\n             \"type\": \"integer\"\n            },\n            \"to\": {\n             \"format\": \"int64\",\n             \"type\": \"integer\"\n            }\n           },\n           \"type\": \"object\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       },\n       \"execErrState\": {\n        \"enum\": [\n         \"OK\",\n         \"Alerting\",\n         \"Error\",\n         \"KeepLast\"\n        ],\n        \"type\": \"string\"\n       },\n       \"for\": {\n        \"format\": \"duration\",\n        \"pattern\": \"^([0-9]+(\\\\.[0-9]+)?(ns|us|µs|ms|s|m|h))+$\",\n        \"type\": \"string\"\n       },\n       \"isPaused\": {\n        \"type\": \"boolean\"\n       },\n       \"labels\": {\n        \"additionalProperties\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"object\"\n       },\n       \"noDataState\": {\n        \"enum\": [\n         \"Alerting\",\n         \"NoData\",\n         \"OK\",\n         \"KeepLast\"\n        ],\n        \"type\": \"string\"\n       },\n       \"notificationSettings\": {\n        \"properties\": {\n         \"group_by\": {\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         },\n         \"group_interval\": {\n          \"type\": \"string\"\n         },\n         \"group_wait\": {\n          \"type\": \"string\"\n         },\n         \"mute_time_intervals\": {\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         },\n         \"receiver\": {\n          \"type\": \"string\"\n         },\n         \"repeat_interval\": {\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"receiver\"\n        ],\n        \"type\": \"object\"\n       },\n       \"title\": {\n        \"example\": \"Always firing\",\n        \"maxLength\": 190,\n        \"minLength\": 1,\n        \"type\": \"string\"\n       },\n       \"uid\": {\n        \"pattern\": \"^[a-zA-Z0-9-_]+$\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"condition\",\n       \"data\",\n       \"execErrState\",\n       \"for\",\n       \"noDataState\",\n       \"title\",\n       \"uid\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"instanceSelector\",\n    \"interval\",\n    \"rules\"\n   ],\n   \"type\": \"object\",\n   \"x-kubernetes-validations\": [\n    {\n     \"message\": \"Only one of FolderUID or FolderRef can be set\",\n     \"rule\": \"(has(self.folderUID) \\u0026\\u0026 !(has(self.folderRef))) || (has(self.folderRef) \\u0026\\u0026 !(has(self.folderUID)))\"\n    }\n   ]\n  }\n },\n \"title\": \"Grafana Alert Rule Group\",\n \"type\": \"object\"\n}",
+   "version": "grafana.integreatly.org/v1beta1"
+  },
+  "configuration": null,
   "description": "",
+  "displayName": "Grafana Alert Rule Group",
   "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "published": false,
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": ""
+  },
   "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "version": "v1.0.0",
-   "name": "grafana-operator",
-   "displayName": "Grafana Operator",
-   "description": "",
-   "status": "enabled",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "registrant": {
-    "hostname": "artifacthub"
-   },
    "category": {
-    "name": "Observability and Analysis",
-    "metadata": null
+    "name": "Observability and Analysis"
    },
-   "subCategory": "Monitoring",
+   "displayName": "Grafana Operator",
+   "id": "00000000-0000-0000-0000-000000000000",
    "metadata": {
-    "capabilities": "",
     "defaultData": "",
     "isAnnotation": false,
     "primaryColor": "#F15B2A",
@@ -39,30 +164,35 @@
    "model": {
     "version": "4.4.3"
    },
+   "name": "grafana-operator",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "enabled",
+   "subCategory": "Monitoring",
+   "version": "v1.0.0",
    "components": null,
    "relationships": null
   },
-  "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
    "primaryColor": "",
-   "secondaryColor": "",
    "shape": "circle",
-   "shapePolygonPoints": "",
-   "status": "enabled",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
    "svgColor": "",
-   "svgComplete": "",
    "svgWhite": ""
   },
-  "component": {
-   "kind": "GrafanaAlertRuleGroup",
-   "version": "grafana.integreatly.org/v1beta1",
-   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"allowCrossNamespaceImport\": {\n     \"type\": \"boolean\"\n    },\n    \"folderRef\": {\n     \"type\": \"string\"\n    },\n    \"folderUID\": {\n     \"type\": \"string\"\n    },\n    \"instanceSelector\": {\n     \"properties\": {\n      \"matchExpressions\": {\n       \"items\": {\n        \"properties\": {\n         \"key\": {\n          \"type\": \"string\"\n         },\n         \"operator\": {\n          \"type\": \"string\"\n         },\n         \"values\": {\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\",\n          \"x-kubernetes-list-type\": \"atomic\"\n         }\n        },\n        \"required\": [\n         \"key\",\n         \"operator\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\",\n       \"x-kubernetes-list-type\": \"atomic\"\n      },\n      \"matchLabels\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"Value is immutable\",\n       \"rule\": \"self == oldSelf\"\n      }\n     ]\n    },\n    \"interval\": {\n     \"format\": \"duration\",\n     \"pattern\": \"^([0-9]+(\\\\.[0-9]+)?(ns|us|µs|ms|s|m|h))+$\",\n     \"type\": \"string\"\n    },\n    \"resyncPeriod\": {\n     \"default\": \"10m\",\n     \"format\": \"duration\",\n     \"pattern\": \"^([0-9]+(\\\\.[0-9]+)?(ns|us|µs|ms|s|m|h))+$\",\n     \"type\": \"string\"\n    },\n    \"rules\": {\n     \"items\": {\n      \"properties\": {\n       \"annotations\": {\n        \"additionalProperties\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"object\"\n       },\n       \"condition\": {\n        \"type\": \"string\"\n       },\n       \"data\": {\n        \"items\": {\n         \"properties\": {\n          \"datasourceUid\": {\n           \"type\": \"string\"\n          },\n          \"model\": {\n           \"format\": \"textarea\",\n           \"type\": \"string\"\n          },\n          \"queryType\": {\n           \"type\": \"string\"\n          },\n          \"refId\": {\n           \"type\": \"string\"\n          },\n          \"relativeTimeRange\": {\n           \"properties\": {\n            \"from\": {\n             \"format\": \"int64\",\n             \"type\": \"integer\"\n            },\n            \"to\": {\n             \"format\": \"int64\",\n             \"type\": \"integer\"\n            }\n           },\n           \"type\": \"object\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       },\n       \"execErrState\": {\n        \"enum\": [\n         \"OK\",\n         \"Alerting\",\n         \"Error\",\n         \"KeepLast\"\n        ],\n        \"type\": \"string\"\n       },\n       \"for\": {\n        \"format\": \"duration\",\n        \"pattern\": \"^([0-9]+(\\\\.[0-9]+)?(ns|us|µs|ms|s|m|h))+$\",\n        \"type\": \"string\"\n       },\n       \"isPaused\": {\n        \"type\": \"boolean\"\n       },\n       \"labels\": {\n        \"additionalProperties\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"object\"\n       },\n       \"noDataState\": {\n        \"enum\": [\n         \"Alerting\",\n         \"NoData\",\n         \"OK\",\n         \"KeepLast\"\n        ],\n        \"type\": \"string\"\n       },\n       \"notificationSettings\": {\n        \"properties\": {\n         \"group_by\": {\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         },\n         \"group_interval\": {\n          \"type\": \"string\"\n         },\n         \"group_wait\": {\n          \"type\": \"string\"\n         },\n         \"mute_time_intervals\": {\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         },\n         \"receiver\": {\n          \"type\": \"string\"\n         },\n         \"repeat_interval\": {\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"receiver\"\n        ],\n        \"type\": \"object\"\n       },\n       \"title\": {\n        \"example\": \"Always firing\",\n        \"maxLength\": 190,\n        \"minLength\": 1,\n        \"type\": \"string\"\n       },\n       \"uid\": {\n        \"pattern\": \"^[a-zA-Z0-9-_]+$\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"condition\",\n       \"data\",\n       \"execErrState\",\n       \"for\",\n       \"noDataState\",\n       \"title\",\n       \"uid\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"instanceSelector\",\n    \"interval\",\n    \"rules\"\n   ],\n   \"type\": \"object\",\n   \"x-kubernetes-validations\": [\n    {\n     \"message\": \"Only one of FolderUID or FolderRef can be set\",\n     \"rule\": \"(has(self.folderUID) \\u0026\\u0026 !(has(self.folderRef))) || (has(self.folderRef) \\u0026\\u0026 !(has(self.folderUID)))\"\n    }\n   ]\n  }\n },\n \"title\": \"Grafana Alert Rule Group\",\n \"type\": \"object\"\n}"
-  }
+  "version": "v1.0.0"
  }
