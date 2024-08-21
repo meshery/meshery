@@ -19,12 +19,12 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/meshery/schemas/models/v1beta1/model"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	meshkitUtils "github.com/layer5io/meshkit/utils"
 )
 
@@ -115,7 +115,7 @@ mesheryctl registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwiz
 					utils.Log.Error(err)
 					return nil
 				}
-				err := modelCSVHelper.ParseModelsSheet(true)
+				err := modelCSVHelper.ParseModelsSheet(true, modelName)
 				if err != nil {
 					utils.Log.Error(err)
 					return nil
@@ -126,7 +126,7 @@ mesheryctl registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwiz
 					utils.Log.Error(err)
 					return nil
 				}
-				err := componentCSVHelper.ParseComponentsSheet()
+				err := componentCSVHelper.ParseComponentsSheet(modelName)
 				if err != nil {
 					utils.Log.Error(err)
 					return nil
@@ -269,10 +269,10 @@ func init() {
 	// publishCmd.MarkFlagRequired("imgs-output-path")
 }
 
-func WriteModelDefToFileSystem(model *utils.ModelCSV, version string, location string) (string, *v1beta1.Model, error) {
+func WriteModelDefToFileSystem(model *utils.ModelCSV, version string, location string) (string, *model.ModelDefinition, error) {
 	modelDef := model.CreateModelDefinition(version, defVersion)
 	modelDefPath := filepath.Join(location, modelDef.Name)
-	err := modelDef.WriteModelDefinition(modelDefPath)
+	err := modelDef.WriteModelDefinition(modelDefPath+"/model.json", "json")
 	if err != nil {
 		return "", nil, err
 	}

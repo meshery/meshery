@@ -1,77 +1,95 @@
 {
-    "schemaVersion": "relationships.meshery.io/v1alpha2",
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "version": "v1.0.0",
+  "kind": "hierarchical",
+  "type": "parent",
+  "subType": "inventory",
+  "metadata": {
+    "description": "A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component."
+  },
+  "model": {
+    "schemaVersion": "models.meshery.io/v1beta1",
     "version": "v1.0.0",
-    "kind": "Hierarchical",
-    "metadata": {
-      "description": "A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component."
+    "name": "kubernetes",
+    "registrant": {
+      "kind": "artifacthub"
     },
     "model": {
-      "schemaVersion": "core.meshery.io/v1beta1",
-      "version": "v1.0.0",
-      "name": "kubernetes",
-      "model": {
-        "version": "v1.25.2"
-      },
-      "displayName": "Kubernetes",
-      "category": {
-        "name": "Orchestration \u0026 Management",
-        "metadata": null
-      },
-      "metadata": {}
+      "version": "v1.25.2"
     },
-    "subType": "Inventory",
-    "evaluationQuery": "hierarchical_inventory_relationship",
-    "selectors": [
-      {
-        "allow": {
-          "from": [
-            {
-              "kind": "Pod",
-              "model": "kubernetes",
-              "patch": {
-                "patchStrategy": "replace",
-                "mutatorRef": [
-                  [
-                    "name"
-                  ],
-                  [
-                    "namespace"
-                  ],
-                  [
-                    "kind"
-                  ],
-                  [
-                    "apiVersion"
-                  ]
-                ],
-                "description": "A Pod establishes an inventory relationship with Events. Pod specifications are patched with Event specifications to enable monitoring of Pod-related events, providing insights into their lifecycle and behavior within the cluster."
+    "displayName": "Kubernetes",
+    "category": {
+      "name": "Orchestration \u0026 Management",
+      "metadata": null
+    },
+    "metadata": {}
+  },
+  "status": "enabled",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "Pod",
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
               }
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  "displayName"
+                ],
+                [
+                  "configuration",
+                  "metadata",
+                  "namespace"
+                ],
+                [
+                  "component",
+                  "kind"
+                ],
+                [
+                  "component",
+                  "version"
+                ]
+              ],
+              "description": "A Pod establishes an inventory relationship with Events. Pod specifications are patched with Event specifications to enable monitoring of Pod-related events, providing insights into their lifecycle and behavior within the cluster."
             }
+          }
         ],
-            "to": [
+        "to": [
           {
             "kind": "Event",
-            "model": "kubernetes",
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
             "patch": {
               "patchStrategy": "replace",
               "mutatedRef": [
                 [
-                  "settings",
+                  "configuration",
                   "regarding",
                   "name"
                 ],
                 [
-                  "settings",
+                  "configuration",
                   "regarding",
                   "namespace"
                 ],
                 [
-                  "settings",
+                  "configuration",
                   "regarding",
                   "kind"
                 ],
                 [
-                  "settings",
+                  "configuration",
                   "regarding",
                   "apiVersion"
                 ]
@@ -81,4 +99,6 @@
           }
         ]
       }
-    }]}
+    }
+  ]
+}

@@ -1,6 +1,11 @@
 name: Meshery Build and Releaser (edge)
 on:
   workflow_dispatch:
+    inputs:
+     branch:
+        description: "Branch to deploy in the staging environment. If not provided, master branch of the repository will be used."
+        default: "master"
+        type: string
   push:
     branches:
       - "master"
@@ -36,6 +41,10 @@ jobs:
         if: steps.changes.outputs.modified == 'true'
         run: |
           make swagger-docs-build
+
+      - name: Pull changes from remote
+        run: git pull origin master
+
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
@@ -55,6 +64,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 1
+          ref: ${{ inputs.branch }}
       - name: Check if schema was modified
         uses: dorny/paths-filter@v3
         id: filter
@@ -73,6 +83,10 @@ jobs:
         run: |
           cd docs; bundle install; cd ..; \
           make graphql-docs-build
+
+      - name: Pull changes from remote
+        run: git pull origin master
+
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
@@ -97,6 +111,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 1
+          ref: ${{ inputs.branch }} 
       - name: Docker login
         uses: azure/docker-login@v1
         with:

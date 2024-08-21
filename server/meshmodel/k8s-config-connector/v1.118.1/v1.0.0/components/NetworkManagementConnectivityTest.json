@@ -1,29 +1,154 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "core.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "displayName": "Network Management Connectivity Test",
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "NetworkManagementConnectivityTest",
+   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"description\": {\n     \"description\": \"The user-supplied description of the Connectivity Test.\\nMaximum of 512 characters.\",\n     \"type\": \"string\"\n    },\n    \"destination\": {\n     \"description\": \"Required. Destination specification of the Connectivity Test.\\n\\nYou can use a combination of destination IP address, Compute\\nEngine VM instance, or VPC network to uniquely identify the\\ndestination location.\\n\\nEven if the destination IP address is not unique, the source IP\\nlocation is unique. Usually, the analysis can infer the destination\\nendpoint from route information.\\n\\nIf the destination you specify is a VM instance and the instance has\\nmultiple network interfaces, then you must also specify either a\\ndestination IP address or VPC network to identify the destination\\ninterface.\\n\\nA reachability analysis proceeds even if the destination location\\nis ambiguous. However, the result can include endpoints that you\\ndon't intend to test.\",\n     \"properties\": {\n      \"instance\": {\n       \"description\": \"A Compute Engine instance URI.\",\n       \"type\": \"string\"\n      },\n      \"ipAddress\": {\n       \"description\": \"The IP address of the endpoint, which can be an external or\\ninternal IP. An IPv6 address is only allowed when the test's\\ndestination is a global load balancer VIP.\",\n       \"type\": \"string\"\n      },\n      \"network\": {\n       \"description\": \"A Compute Engine network URI.\",\n       \"type\": \"string\"\n      },\n      \"port\": {\n       \"description\": \"The IP protocol port of the endpoint. Only applicable when\\nprotocol is TCP or UDP.\",\n       \"type\": \"integer\"\n      },\n      \"projectId\": {\n       \"description\": \"Project ID where the endpoint is located. The Project ID can be\\nderived from the URI if you provide a VM instance or network URI.\\nThe following are two cases where you must provide the project ID:\\n1. Only the IP address is specified, and the IP address is within\\na GCP project. 2. When you are using Shared VPC and the IP address\\nthat you provide is from the service project. In this case, the\\nnetwork that the IP address resides in is defined in the host\\nproject.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"projectRef\": {\n     \"description\": \"The project that this resource belongs to.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `name` field of a `Project` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"protocol\": {\n     \"description\": \"IP Protocol of the test. When not provided, \\\"TCP\\\" is assumed.\",\n     \"type\": \"string\"\n    },\n    \"relatedProjects\": {\n     \"description\": \"Other projects that may be relevant for reachability analysis.\\nThis is applicable to scenarios where a test can cross project\\nboundaries.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    },\n    \"source\": {\n     \"description\": \"Required. Source specification of the Connectivity Test.\\n\\nYou can use a combination of source IP address, virtual machine\\n(VM) instance, or Compute Engine network to uniquely identify the\\nsource location.\\n\\nExamples: If the source IP address is an internal IP address within\\na Google Cloud Virtual Private Cloud (VPC) network, then you must\\nalso specify the VPC network. Otherwise, specify the VM instance,\\nwhich already contains its internal IP address and VPC network\\ninformation.\\n\\nIf the source of the test is within an on-premises network, then\\nyou must provide the destination VPC network.\\n\\nIf the source endpoint is a Compute Engine VM instance with multiple\\nnetwork interfaces, the instance itself is not sufficient to\\nidentify the endpoint. So, you must also specify the source IP\\naddress or VPC network.\\n\\nA reachability analysis proceeds even if the source location is\\nambiguous. However, the test result may include endpoints that\\nyou don't intend to test.\",\n     \"properties\": {\n      \"instance\": {\n       \"description\": \"A Compute Engine instance URI.\",\n       \"type\": \"string\"\n      },\n      \"ipAddress\": {\n       \"description\": \"The IP address of the endpoint, which can be an external or\\ninternal IP. An IPv6 address is only allowed when the test's\\ndestination is a global load balancer VIP.\",\n       \"type\": \"string\"\n      },\n      \"network\": {\n       \"description\": \"A Compute Engine network URI.\",\n       \"type\": \"string\"\n      },\n      \"networkType\": {\n       \"description\": \"Type of the network where the endpoint is located. Possible values: [\\\"GCP_NETWORK\\\", \\\"NON_GCP_NETWORK\\\"].\",\n       \"type\": \"string\"\n      },\n      \"port\": {\n       \"description\": \"The IP protocol port of the endpoint. Only applicable when\\nprotocol is TCP or UDP.\",\n       \"type\": \"integer\"\n      },\n      \"projectId\": {\n       \"description\": \"Project ID where the endpoint is located. The Project ID can be\\nderived from the URI if you provide a VM instance or network URI.\\nThe following are two cases where you must provide the project ID:\\n\\n1. Only the IP address is specified, and the IP address is\\n   within a GCP project.\\n2. When you are using Shared VPC and the IP address\\n   that you provide is from the service project. In this case,\\n   the network that the IP address resides in is defined in the\\n   host project.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"destination\",\n    \"projectRef\",\n    \"source\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Network Management Connectivity Test\",\n \"type\": \"object\"\n}",
+   "version": "networkmanagement.cnrm.cloud.google.com/v1alpha1"
+  },
+  "configuration": null,
   "description": "",
+  "displayName": "Network Management Connectivity Test",
   "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "published": false,
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": ""
+  },
   "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "core.meshery.io/v1beta1",
-   "version": "v1.0.0",
-   "name": "k8s-config-connector",
-   "displayName": "Google Cloud Platform",
-   "description": "",
-   "status": "enabled",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "registrant": {
-    "hostname": "github"
-   },
    "category": {
-    "name": "Orchestration \u0026 Management",
-    "metadata": null
+    "name": "Orchestration \u0026 Management"
    },
-   "subCategory": "Google Cloud Platform",
+   "displayName": "Google Cloud Platform",
+   "id": "00000000-0000-0000-0000-000000000000",
    "metadata": {
-    "capabilities": "",
     "defaultData": "",
     "isAnnotation": false,
     "primaryColor": "#4285F4",
@@ -39,30 +164,35 @@
    "model": {
     "version": "v1.118.1"
    },
+   "name": "k8s-config-connector",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "github",
+    "name": "Github",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "enabled",
+   "subCategory": "Google Cloud Platform",
+   "version": "v1.0.0",
    "components": null,
    "relationships": null
   },
-  "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
    "primaryColor": "#4285F4",
-   "secondaryColor": "",
    "shape": "rectangle",
-   "shapePolygonPoints": "",
-   "status": "enabled",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
    "svgColor": "\u003csvg width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"\u003e\n    \u003cg stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e\n        \u003cpath d=\"M12.3008862,4.00003179 L18.9908678,7.90329279 L19,11.4442164 L14.973309,9.0680926 L14.973309,10.8562526 L16.9806355,12.0276231 L16.9918433,15.1064843 L14.973309,13.9136004 L14.973309,18.415105 L12.3008862,20 L12.3008862,4.00003179 Z M11.6991138,4 L11.6991138,19.9999682 L9.02669102,18.4150732 L9.02669102,9.06816678 L5,11.4441846 L5.00913223,7.903261 L11.6991138,4 Z\" fill=\"#4285F4\"\u003e\u003c/path\u003e\n    \u003c/g\u003e\n\u003c/svg\u003e",
-   "svgComplete": "",
    "svgWhite": "\u003csvg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M12.3009 4.00003L18.9909 7.90329L19 11.4442L14.9733 9.06809V10.8563L16.9806 12.0276L16.9918 15.1065L14.9733 13.9136V18.4151L12.3009 20V4.00003ZM11.6991 4V20L9.02669 18.4151V9.06817L5 11.4442L5.00913 7.90326L11.6991 4Z\" fill=\"white\"/\u003e\n\u003c/svg\u003e\n"
   },
-  "component": {
-   "kind": "NetworkManagementConnectivityTest",
-   "version": "networkmanagement.cnrm.cloud.google.com/v1alpha1",
-   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"description\": {\n     \"description\": \"The user-supplied description of the Connectivity Test.\\nMaximum of 512 characters.\",\n     \"type\": \"string\"\n    },\n    \"destination\": {\n     \"description\": \"Required. Destination specification of the Connectivity Test.\\n\\nYou can use a combination of destination IP address, Compute\\nEngine VM instance, or VPC network to uniquely identify the\\ndestination location.\\n\\nEven if the destination IP address is not unique, the source IP\\nlocation is unique. Usually, the analysis can infer the destination\\nendpoint from route information.\\n\\nIf the destination you specify is a VM instance and the instance has\\nmultiple network interfaces, then you must also specify either a\\ndestination IP address or VPC network to identify the destination\\ninterface.\\n\\nA reachability analysis proceeds even if the destination location\\nis ambiguous. However, the result can include endpoints that you\\ndon't intend to test.\",\n     \"properties\": {\n      \"instance\": {\n       \"description\": \"A Compute Engine instance URI.\",\n       \"type\": \"string\"\n      },\n      \"ipAddress\": {\n       \"description\": \"The IP address of the endpoint, which can be an external or\\ninternal IP. An IPv6 address is only allowed when the test's\\ndestination is a global load balancer VIP.\",\n       \"type\": \"string\"\n      },\n      \"network\": {\n       \"description\": \"A Compute Engine network URI.\",\n       \"type\": \"string\"\n      },\n      \"port\": {\n       \"description\": \"The IP protocol port of the endpoint. Only applicable when\\nprotocol is TCP or UDP.\",\n       \"type\": \"integer\"\n      },\n      \"projectId\": {\n       \"description\": \"Project ID where the endpoint is located. The Project ID can be\\nderived from the URI if you provide a VM instance or network URI.\\nThe following are two cases where you must provide the project ID:\\n1. Only the IP address is specified, and the IP address is within\\na GCP project. 2. When you are using Shared VPC and the IP address\\nthat you provide is from the service project. In this case, the\\nnetwork that the IP address resides in is defined in the host\\nproject.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"projectRef\": {\n     \"description\": \"The project that this resource belongs to.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `name` field of a `Project` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"protocol\": {\n     \"description\": \"IP Protocol of the test. When not provided, \\\"TCP\\\" is assumed.\",\n     \"type\": \"string\"\n    },\n    \"relatedProjects\": {\n     \"description\": \"Other projects that may be relevant for reachability analysis.\\nThis is applicable to scenarios where a test can cross project\\nboundaries.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    },\n    \"source\": {\n     \"description\": \"Required. Source specification of the Connectivity Test.\\n\\nYou can use a combination of source IP address, virtual machine\\n(VM) instance, or Compute Engine network to uniquely identify the\\nsource location.\\n\\nExamples: If the source IP address is an internal IP address within\\na Google Cloud Virtual Private Cloud (VPC) network, then you must\\nalso specify the VPC network. Otherwise, specify the VM instance,\\nwhich already contains its internal IP address and VPC network\\ninformation.\\n\\nIf the source of the test is within an on-premises network, then\\nyou must provide the destination VPC network.\\n\\nIf the source endpoint is a Compute Engine VM instance with multiple\\nnetwork interfaces, the instance itself is not sufficient to\\nidentify the endpoint. So, you must also specify the source IP\\naddress or VPC network.\\n\\nA reachability analysis proceeds even if the source location is\\nambiguous. However, the test result may include endpoints that\\nyou don't intend to test.\",\n     \"properties\": {\n      \"instance\": {\n       \"description\": \"A Compute Engine instance URI.\",\n       \"type\": \"string\"\n      },\n      \"ipAddress\": {\n       \"description\": \"The IP address of the endpoint, which can be an external or\\ninternal IP. An IPv6 address is only allowed when the test's\\ndestination is a global load balancer VIP.\",\n       \"type\": \"string\"\n      },\n      \"network\": {\n       \"description\": \"A Compute Engine network URI.\",\n       \"type\": \"string\"\n      },\n      \"networkType\": {\n       \"description\": \"Type of the network where the endpoint is located. Possible values: [\\\"GCP_NETWORK\\\", \\\"NON_GCP_NETWORK\\\"].\",\n       \"type\": \"string\"\n      },\n      \"port\": {\n       \"description\": \"The IP protocol port of the endpoint. Only applicable when\\nprotocol is TCP or UDP.\",\n       \"type\": \"integer\"\n      },\n      \"projectId\": {\n       \"description\": \"Project ID where the endpoint is located. The Project ID can be\\nderived from the URI if you provide a VM instance or network URI.\\nThe following are two cases where you must provide the project ID:\\n\\n1. Only the IP address is specified, and the IP address is\\n   within a GCP project.\\n2. When you are using Shared VPC and the IP address\\n   that you provide is from the service project. In this case,\\n   the network that the IP address resides in is defined in the\\n   host project.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"destination\",\n    \"projectRef\",\n    \"source\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Network Management Connectivity Test\",\n \"type\": \"object\"\n}"
-  }
+  "version": "v1.0.0"
  }

@@ -41,6 +41,25 @@ Some portions of the workflow require secrets to accomplish their tasks. These s
 - `SLACK_BOT_TOKEN`: Used for notification of new GitHub stars given to the Meshery repo.
 - `CYPRESS_RECORD_KEY`: Used for integration with the Layer5 account on Cypress.
 - `GLOBAL_TOKEN`: Used for securely transmitting performance test results for the None Provider.
+- `NPM_TOKEN`: npm authentication token, used to perform authentication against the npm registry in meshery deployment workflow.
+- `GH_ACCESS_TOKEN`: GitHub access token for various operations
+- `INTEGRATION_SPREADSHEET_CRED`: Credentials for integration spreadsheet access
+- `MAIL_PASSWORD`: Password for email notifications
+- `MAIL_USERNAME`: Username for email notifications
+- `MESHERY_PROVIDER_TOKEN`: Token for Meshery provider authentication
+- `MESHERY_TOKEN`: General Meshery authentication token
+- `METAL_AUTH_TOKEN`: Authentication token for metal provider
+- `METAL_SERVER1`: Configuration for metal server 1
+- `METAL_SERVER2`: Configuration for metal server 2
+- `METAL_SERVER3`: Configuration for metal server 3
+- `NETLIFY_AUTH_TOKEN`: Authentication token for Netlify
+- `NETLIFY_SITE_ID`: Site ID for Netlify deployments
+- `PLAYGROUND_CONFIG`: Configuration for playground environments
+- `PROVIDER_TOKEN`: General provider authentication token
+- `RELEASEDRAFTER_PAT`: Personal access token for Release Drafter
+- `RELEASE_NOTES_PAT`: Personal access token for release notes generation
+- `REMOTE_PROVIDER_USER_EMAIL`: Email used for authentication in Playwright tests
+- `REMOTE_PROVIDER_USER_PASS`: Password used for authentication in Playwright tests
 
 The Docker Hub user, `mesheryci`, belongs to the "ciusers" team in Docker Hub and acts as the service account under which these automated builds are being pushed. Every time a new Docker Hub repository is created we have to grant “Admin” (in order to update the README in the Docker Hub repository) permissions to the ciusers team.
 
@@ -169,11 +188,11 @@ All Meshery GitHub repositories are configured with GitHub Actions. Everytime a 
 1. assign each of these two tags to the new container image as well as the latest tag.
 1. push the new Docker tags and image to Docker Hub.
 
-### Building `mesheryctl`
+### `mesheryctl`
 
-As a special case, the meshery repository contains an additional artifact produced during each build. This artifact is mesheryctl which is built as an executable binary. In order to make the job of building mesheryctl easier for a combination of different platform architectures and operating systems, we are using [GoReleaser](https://goreleaser.com). Irrespective of branch, for every git commit and git push to the meshery repository, GoReleaser will execute and generate the OS and arch-specific binaries ( but will NOT publish them to GitHub). Even though mesheryctl binaries are built each time a pull request is merged to master, only stable channel artifacts are published (persisted).
+As a special case, the `meshery` repository contains an additional artifact produced during each build. This artifact is `mesheryctl`, which is built as an executable binary. In order to make the job of building `mesheryctl` easier for a combination of different platform architectures and operating systems, we are using [GoReleaser](https://goreleaser.com). Irrespective of branch, for every git commit and git push to the `meshery` repository, GoReleaser will execute and generate the OS and arch-specific binaries (but will NOT persist these artifacts in GitHub). Even though mesheryctl binaries are built each time a pull request is merged to master, only stable channel artifacts are published (persisted).
 
-### Releasing `mesheryctl` to GitHub
+#### Releasing `mesheryctl` to GitHub
 
 Only when a git tag containing a semantic version number is present (is a commit in the master branch) will GoReleaser execute, generate the archives, and also publish the archives to [Meshery’s GitHub releases](https://github.com/meshery/meshery/releases) automatically. GoReleaser is configured to generate artifacts for the following OS, ARCH combination:
 
@@ -184,11 +203,11 @@ Only when a git tag containing a semantic version number is present (is a commit
 
 The artifacts will be made available as a tar.gz archive for all the operating systems. mesheryctl is bundled into packages for commonly used package managers: homebrew and scoop.
 
-#### Homebrew
+##### Homebrew
 
-GoReleaser facilitates the creation of a brew formula for mesheryctl. The [homebrew-tap](https://github.com/layer5io/homebrew-tap) repository is the location for Layer5’s brew formulas.
+GoReleaser facilitates the creation of a brew formula for mesheryctl. The [homebrew-tap](https://github.com/meshery/homebrew-tap) repository is the location for `mesheryctl`'s brew formulas. Releases of mesheryctl are  published in the official homebrew-core tap at https://github.com/Homebrew/homebrew-core/pkgs/container/core%2Fmesheryctl.
 
-#### Scoop
+##### Scoop
 
 GoReleaser facilitates the creation of a Scoop app for mesheryctl. The [scoop-bucket](https://github.com/layer5io/scoop-bucket) repository is the location of Layer5’s Scoop bucket.
 

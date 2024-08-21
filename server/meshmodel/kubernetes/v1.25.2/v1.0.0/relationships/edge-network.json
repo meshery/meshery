@@ -1,9 +1,12 @@
 {
-  "schemaVersion": "relationships.meshery.io/v1alpha2",
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
   "version": "v1.0.0",
-  "kind": "Edge",
+  "kind": "edge",
+  "subType": "network",
+  "type": "non-binding",
   "metadata": {
     "description": "A relationship that defines network edges between components",
+    "animation": "marching-ants",
     "capabilities": {
       "designer": {
         "edit": {
@@ -15,9 +18,12 @@
     }
   },
   "model": {
-    "schemaVersion": "core.meshery.io/v1beta1",
+    "schemaVersion": "models.meshery.io/v1beta1",
     "version": "v1.0.0",
     "name": "kubernetes",
+    "registrant": {
+      "kind": "artifacthub"
+    },
     "model": {
       "version": "v1.25.2"
     },
@@ -28,61 +34,130 @@
     },
     "metadata": {}
   },
-  "subType": "Network",
-  "evaluationQuery": "edge_network_relationship",
+  "status": "enabled",
   "selectors": [
     {
       "allow": {
         "from": [
           {
             "kind": "Service",
-            "model": "kubernetes"
-          },
-          {
-            "kind": "Ingress",
-            "model": "kubernetes"
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "selectors",
+                  "matchLabels"
+                ],
+                [
+                  "configuration",
+                  "spec",
+                  "ports",
+                  "_",
+                  "targetPort"
+                ],
+                [
+                  "configuration",
+                  "spec",
+                  "ports",
+                  "_",
+                  "protocol"
+                ]
+              ]
+            }
           }
         ],
         "to": [
           {
-            "kind": "Endpoints",
-            "model": "kubernetes"
-          },
-          {
             "kind": "Pod",
-            "model": "kubernetes"
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "metadata",
+                  "labels"
+                ],
+                [
+                  "configuration",
+                  "spec",
+                  "containers",
+                  "0",
+                  "ports",
+                  "_",
+                  "containerPort"
+                ],
+                [
+                  "configuration",
+                  "spec",
+                  "containers",
+                  "0",
+                  "ports",
+                  "_",
+                  "protocol"
+                ]
+              ]
+            }
           },
           {
             "kind": "Deployment",
-            "model": "kubernetes"
-          },
-          {
-            "kind": "Service",
-            "model": "kubernetes"
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "metadata",
+                  "labels"
+                ],
+                [
+                  "configuration",
+                  "spec",
+                  "template",
+                  "spec",
+                  "containers",
+                  "_",
+                  "ports",
+                  "_",
+                  "containerPort"
+                ],
+                [
+                  "configuration",
+                  "spec",
+                  "template",
+                  "spec",
+                  "containers",
+                  "_",
+                  "ports",
+                  "_",
+                  "protocol"
+                ]
+              ]
+            }
           }
         ]
       },
       "deny": {
-        "from": [
-          {
-            "kind": "Ingress",
-            "model": "kubernetes"
-          }
-        ],
-        "to": [
-          {
-            "kind": "Endpoints",
-            "model": "kubernetes"
-          },
-          {
-            "kind": "Pod",
-            "model": "kubernetes"
-          },
-          {
-            "kind": "Deployment",
-            "model": "kubernetes"
-          }
-        ]
+        "from": [],
+        "to": []
       }
     }
   ]

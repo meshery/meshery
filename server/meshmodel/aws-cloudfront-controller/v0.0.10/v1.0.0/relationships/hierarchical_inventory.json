@@ -1,12 +1,14 @@
 {
-  "schemaVersion": "relationships.meshery.io/v1alpha2",
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
   "version": "v1.0.0",
-  "kind": "Hierarchical",
+  "kind": "hierarchical",
+  "type": "parent",
+  "subType": "inventory",
   "metadata": {
     "name": "A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the FieldExport (parent) component is patched with the configuration as received from Pod (child) component."
   },
   "model": {
-    "schemaVersion": "core.meshery.io/v1beta1",
+    "schemaVersion": "models.meshery.io/v1beta1",
     "version": "v1.0.0",
     "name": "aws-cloudfront-controller",
     "model": {
@@ -26,25 +28,32 @@
       "svgWhite": ""
     }
   },
-  "subType": "Inventory",
-  "evaluationQuery": "hierarchical_inventory_relationship",
+  "status": "enabled",
   "selectors": [
     {
       "allow": {
         "from": [
           {
             "kind": "*",
-            "model": "Kubernetes",
+            "model": {
+              "name": "argo-cd",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
             "patch": {
               "mutatorRef": [
                 [
-                  "name"
+                  "displayName"
                 ],
                 [
+                  "configuration",
+                  "metadata",
                   "namespace"
                 ],
                 [
-                  "type"
+                  "component",
+                  "kind"
                 ]
               ],
               "description": "Kubernetes components manage containerized applications, while AWS Field Export exports data from AWS CloudFront. Kubernetes can run applications that generate data ingested by CloudFront, facilitating efficient content delivery and scaling in AWS environments."
@@ -54,25 +63,30 @@
         "to": [
           {
             "kind": "FieldExport",
-            "model": "aws-cloudfront-controller",
+            "model": {
+              "name": "aws-cloudfront-controller",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
             "patch": {
               "mutatorRef": [
                 [
-                  "settings",
+                  "configuration",
                   "spec",
                   "from",
                   "resource",
                   "name"
                 ],
                 [
-                  "settings",
+                  "configuration",
                   "spec",
                   "from",
                   "resource",
                   "namespace"
                 ],
                 [
-                  "settings",
+                  "configuration",
                   "spec",
                   "from",
                   "resource",

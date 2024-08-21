@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Containerd
-subtitle: Collaborative and visual infrastructure as code for Containerd
+subtitle: Collaborative and visual infrastructure as design for Containerd
 image: /assets/img/integrations/containerd/icons/color/containerd-color.svg
 permalink: extensibility/integrations/containerd
 docURL: https://docs.meshery.io/extensibility/integrations/containerd
@@ -15,7 +15,7 @@ featureList: [
   "Improves the current OCI image specification.",
   "Supports lazy pulling feature."
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

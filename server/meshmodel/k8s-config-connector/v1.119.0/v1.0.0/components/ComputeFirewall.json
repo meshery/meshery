@@ -1,29 +1,154 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "core.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "displayName": "Compute Firewall",
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "ComputeFirewall",
+   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"allow\": {\n     \"description\": \"The list of ALLOW rules specified by this firewall. Each rule\\nspecifies a protocol and port-range tuple that describes a permitted\\nconnection.\",\n     \"items\": {\n      \"properties\": {\n       \"ports\": {\n        \"description\": \"An optional list of ports to which this rule applies. This field\\nis only applicable for UDP or TCP protocol. Each entry must be\\neither an integer or a range. If not specified, this rule\\napplies to connections through any port.\\n\\nExample inputs include: [\\\"22\\\"], [\\\"80\\\",\\\"443\\\"], and\\n[\\\"12345-12349\\\"].\",\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       },\n       \"protocol\": {\n        \"description\": \"The IP protocol to which this rule applies. The protocol type is\\nrequired when creating a firewall rule. This value can either be\\none of the following well known protocol strings (tcp, udp,\\nicmp, esp, ah, sctp, ipip, all), or the IP protocol number.\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"protocol\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"deny\": {\n     \"description\": \"The list of DENY rules specified by this firewall. Each rule specifies\\na protocol and port-range tuple that describes a denied connection.\",\n     \"items\": {\n      \"properties\": {\n       \"ports\": {\n        \"description\": \"An optional list of ports to which this rule applies. This field\\nis only applicable for UDP or TCP protocol. Each entry must be\\neither an integer or a range. If not specified, this rule\\napplies to connections through any port.\\n\\nExample inputs include: [\\\"22\\\"], [\\\"80\\\",\\\"443\\\"], and\\n[\\\"12345-12349\\\"].\",\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       },\n       \"protocol\": {\n        \"description\": \"The IP protocol to which this rule applies. The protocol type is\\nrequired when creating a firewall rule. This value can either be\\none of the following well known protocol strings (tcp, udp,\\nicmp, esp, ah, sctp, ipip, all), or the IP protocol number.\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"protocol\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"description\": {\n     \"description\": \"An optional description of this resource. Provide this property when\\nyou create the resource.\",\n     \"type\": \"string\"\n    },\n    \"destinationRanges\": {\n     \"description\": \"If destination ranges are specified, the firewall will apply only to\\ntraffic that has destination IP address in these ranges. These ranges\\nmust be expressed in CIDR format. IPv4 or IPv6 ranges are supported.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"direction\": {\n     \"description\": \"Immutable. Direction of traffic to which this firewall applies; default is\\nINGRESS. Note: For INGRESS traffic, one of 'source_ranges',\\n'source_tags' or 'source_service_accounts' is required. Possible values: [\\\"INGRESS\\\", \\\"EGRESS\\\"].\",\n     \"type\": \"string\"\n    },\n    \"disabled\": {\n     \"description\": \"Denotes whether the firewall rule is disabled, i.e not applied to the\\nnetwork it is associated with. When set to true, the firewall rule is\\nnot enforced and the network behaves as if it did not exist. If this\\nis unspecified, the firewall rule will be enabled.\",\n     \"type\": \"boolean\"\n    },\n    \"enableLogging\": {\n     \"description\": \"DEPRECATED. Deprecated in favor of log_config. This field denotes whether to enable logging for a particular firewall rule. If logging is enabled, logs will be exported to Stackdriver.\",\n     \"type\": \"boolean\"\n    },\n    \"logConfig\": {\n     \"description\": \"This field denotes the logging options for a particular firewall rule.\\nIf defined, logging is enabled, and logs will be exported to Cloud Logging.\",\n     \"properties\": {\n      \"metadata\": {\n       \"description\": \"This field denotes whether to include or exclude metadata for firewall logs. Possible values: [\\\"EXCLUDE_ALL_METADATA\\\", \\\"INCLUDE_ALL_METADATA\\\"].\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"metadata\"\n     ],\n     \"type\": \"object\"\n    },\n    \"networkRef\": {\n     \"description\": \"The network to attach this firewall to.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `selfLink` field of a `ComputeNetwork` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"priority\": {\n     \"description\": \"Priority for this rule. This is an integer between 0 and 65535, both\\ninclusive. When not specified, the value assumed is 1000. Relative\\npriorities determine precedence of conflicting rules. Lower value of\\npriority implies higher precedence (eg, a rule with priority 0 has\\nhigher precedence than a rule with priority 1). DENY rules take\\nprecedence over ALLOW rules having equal priority.\",\n     \"type\": \"integer\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    },\n    \"sourceRanges\": {\n     \"description\": \"If source ranges are specified, the firewall will apply only to\\ntraffic that has source IP address in these ranges. These ranges must\\nbe expressed in CIDR format. One or both of sourceRanges and\\nsourceTags may be set. If both properties are set, the firewall will\\napply to traffic that has source IP address within sourceRanges OR the\\nsource IP that belongs to a tag listed in the sourceTags property. The\\nconnection does not need to match both properties for the firewall to\\napply. IPv4 or IPv6 ranges are supported. For INGRESS traffic, one of\\n'source_ranges', 'source_tags' or 'source_service_accounts' is required.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"sourceServiceAccounts\": {\n     \"items\": {\n      \"description\": \"If source service accounts are specified, the firewall will apply only\\nto traffic originating from an instance with a service account in this\\nlist. Source service accounts cannot be used to control traffic to an\\ninstance's external IP address because service accounts are associated\\nwith an instance, not an IP address. sourceRanges can be set at the\\nsame time as sourceServiceAccounts. If both are set, the firewall will\\napply to traffic that has source IP address within sourceRanges OR the\\nsource IP belongs to an instance with service account listed in\\nsourceServiceAccount. The connection does not need to match both\\nproperties for the firewall to apply. sourceServiceAccounts cannot be\\nused at the same time as sourceTags or targetTags.\",\n      \"oneOf\": [\n       {\n        \"not\": {\n         \"required\": [\n          \"external\"\n         ]\n        },\n        \"required\": [\n         \"name\"\n        ]\n       },\n       {\n        \"not\": {\n         \"anyOf\": [\n          {\n           \"required\": [\n            \"name\"\n           ]\n          },\n          {\n           \"required\": [\n            \"namespace\"\n           ]\n          }\n         ]\n        },\n        \"required\": [\n         \"external\"\n        ]\n       }\n      ],\n      \"properties\": {\n       \"external\": {\n        \"description\": \"Allowed value: The `email` field of an `IAMServiceAccount` resource.\",\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n        \"type\": \"string\"\n       },\n       \"namespace\": {\n        \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"sourceTags\": {\n     \"description\": \"If source tags are specified, the firewall will apply only to traffic\\nwith source IP that belongs to a tag listed in source tags. Source\\ntags cannot be used to control traffic to an instance's external IP\\naddress. Because tags are associated with an instance, not an IP\\naddress. One or both of sourceRanges and sourceTags may be set. If\\nboth properties are set, the firewall will apply to traffic that has\\nsource IP address within sourceRanges OR the source IP that belongs to\\na tag listed in the sourceTags property. The connection does not need\\nto match both properties for the firewall to apply. For INGRESS traffic,\\none of 'source_ranges', 'source_tags' or 'source_service_accounts' is required.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"targetServiceAccounts\": {\n     \"items\": {\n      \"description\": \"A list of service accounts indicating sets of instances located in the\\nnetwork that may make network connections as specified in allowed[].\\ntargetServiceAccounts cannot be used at the same time as targetTags or\\nsourceTags. If neither targetServiceAccounts nor targetTags are\\nspecified, the firewall rule applies to all instances on the specified\\nnetwork.\",\n      \"oneOf\": [\n       {\n        \"not\": {\n         \"required\": [\n          \"external\"\n         ]\n        },\n        \"required\": [\n         \"name\"\n        ]\n       },\n       {\n        \"not\": {\n         \"anyOf\": [\n          {\n           \"required\": [\n            \"name\"\n           ]\n          },\n          {\n           \"required\": [\n            \"namespace\"\n           ]\n          }\n         ]\n        },\n        \"required\": [\n         \"external\"\n        ]\n       }\n      ],\n      \"properties\": {\n       \"external\": {\n        \"description\": \"Allowed value: The `email` field of an `IAMServiceAccount` resource.\",\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n        \"type\": \"string\"\n       },\n       \"namespace\": {\n        \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"targetTags\": {\n     \"description\": \"A list of instance tags indicating sets of instances located in the\\nnetwork that may make network connections as specified in allowed[].\\nIf no targetTags are specified, the firewall rule applies to all\\ninstances on the specified network.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"networkRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Compute Firewall\",\n \"type\": \"object\"\n}",
+   "version": "compute.cnrm.cloud.google.com/v1beta1"
+  },
+  "configuration": null,
   "description": "",
+  "displayName": "Compute Firewall",
   "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "published": false,
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": ""
+  },
   "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "core.meshery.io/v1beta1",
-   "version": "v1.0.0",
-   "name": "k8s-config-connector",
-   "displayName": "Google Cloud Platform",
-   "description": "",
-   "status": "enabled",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "registrant": {
-    "hostname": "github"
-   },
    "category": {
-    "name": "Orchestration \u0026 Management",
-    "metadata": null
+    "name": "Orchestration \u0026 Management"
    },
-   "subCategory": "Google Cloud Platform",
+   "displayName": "Google Cloud Platform",
+   "id": "00000000-0000-0000-0000-000000000000",
    "metadata": {
-    "capabilities": "",
     "defaultData": "",
     "isAnnotation": false,
     "primaryColor": "#4285F4",
@@ -39,30 +164,35 @@
    "model": {
     "version": "v1.119.0"
    },
+   "name": "k8s-config-connector",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "github",
+    "name": "Github",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "enabled",
+   "subCategory": "Google Cloud Platform",
+   "version": "v1.0.0",
    "components": null,
    "relationships": null
   },
-  "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
    "primaryColor": "#4285F4",
-   "secondaryColor": "",
    "shape": "rectangle",
-   "shapePolygonPoints": "",
-   "status": "enabled",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
    "svgColor": "\u003csvg width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"\u003e\n    \u003cg stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e\n        \u003cpath d=\"M12.3008862,4.00003179 L18.9908678,7.90329279 L19,11.4442164 L14.973309,9.0680926 L14.973309,10.8562526 L16.9806355,12.0276231 L16.9918433,15.1064843 L14.973309,13.9136004 L14.973309,18.415105 L12.3008862,20 L12.3008862,4.00003179 Z M11.6991138,4 L11.6991138,19.9999682 L9.02669102,18.4150732 L9.02669102,9.06816678 L5,11.4441846 L5.00913223,7.903261 L11.6991138,4 Z\" fill=\"#4285F4\"\u003e\u003c/path\u003e\n    \u003c/g\u003e\n\u003c/svg\u003e",
-   "svgComplete": "",
    "svgWhite": "\u003csvg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M12.3009 4.00003L18.9909 7.90329L19 11.4442L14.9733 9.06809V10.8563L16.9806 12.0276L16.9918 15.1065L14.9733 13.9136V18.4151L12.3009 20V4.00003ZM11.6991 4V20L9.02669 18.4151V9.06817L5 11.4442L5.00913 7.90326L11.6991 4Z\" fill=\"white\"/\u003e\n\u003c/svg\u003e\n"
   },
-  "component": {
-   "kind": "ComputeFirewall",
-   "version": "compute.cnrm.cloud.google.com/v1beta1",
-   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"allow\": {\n     \"description\": \"The list of ALLOW rules specified by this firewall. Each rule\\nspecifies a protocol and port-range tuple that describes a permitted\\nconnection.\",\n     \"items\": {\n      \"properties\": {\n       \"ports\": {\n        \"description\": \"An optional list of ports to which this rule applies. This field\\nis only applicable for UDP or TCP protocol. Each entry must be\\neither an integer or a range. If not specified, this rule\\napplies to connections through any port.\\n\\nExample inputs include: [\\\"22\\\"], [\\\"80\\\",\\\"443\\\"], and\\n[\\\"12345-12349\\\"].\",\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       },\n       \"protocol\": {\n        \"description\": \"The IP protocol to which this rule applies. The protocol type is\\nrequired when creating a firewall rule. This value can either be\\none of the following well known protocol strings (tcp, udp,\\nicmp, esp, ah, sctp, ipip, all), or the IP protocol number.\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"protocol\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"deny\": {\n     \"description\": \"The list of DENY rules specified by this firewall. Each rule specifies\\na protocol and port-range tuple that describes a denied connection.\",\n     \"items\": {\n      \"properties\": {\n       \"ports\": {\n        \"description\": \"An optional list of ports to which this rule applies. This field\\nis only applicable for UDP or TCP protocol. Each entry must be\\neither an integer or a range. If not specified, this rule\\napplies to connections through any port.\\n\\nExample inputs include: [\\\"22\\\"], [\\\"80\\\",\\\"443\\\"], and\\n[\\\"12345-12349\\\"].\",\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       },\n       \"protocol\": {\n        \"description\": \"The IP protocol to which this rule applies. The protocol type is\\nrequired when creating a firewall rule. This value can either be\\none of the following well known protocol strings (tcp, udp,\\nicmp, esp, ah, sctp, ipip, all), or the IP protocol number.\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"protocol\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"description\": {\n     \"description\": \"An optional description of this resource. Provide this property when\\nyou create the resource.\",\n     \"type\": \"string\"\n    },\n    \"destinationRanges\": {\n     \"description\": \"If destination ranges are specified, the firewall will apply only to\\ntraffic that has destination IP address in these ranges. These ranges\\nmust be expressed in CIDR format. IPv4 or IPv6 ranges are supported.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"direction\": {\n     \"description\": \"Immutable. Direction of traffic to which this firewall applies; default is\\nINGRESS. Note: For INGRESS traffic, one of 'source_ranges',\\n'source_tags' or 'source_service_accounts' is required. Possible values: [\\\"INGRESS\\\", \\\"EGRESS\\\"].\",\n     \"type\": \"string\"\n    },\n    \"disabled\": {\n     \"description\": \"Denotes whether the firewall rule is disabled, i.e not applied to the\\nnetwork it is associated with. When set to true, the firewall rule is\\nnot enforced and the network behaves as if it did not exist. If this\\nis unspecified, the firewall rule will be enabled.\",\n     \"type\": \"boolean\"\n    },\n    \"enableLogging\": {\n     \"description\": \"DEPRECATED. Deprecated in favor of log_config. This field denotes whether to enable logging for a particular firewall rule. If logging is enabled, logs will be exported to Stackdriver.\",\n     \"type\": \"boolean\"\n    },\n    \"logConfig\": {\n     \"description\": \"This field denotes the logging options for a particular firewall rule.\\nIf defined, logging is enabled, and logs will be exported to Cloud Logging.\",\n     \"properties\": {\n      \"metadata\": {\n       \"description\": \"This field denotes whether to include or exclude metadata for firewall logs. Possible values: [\\\"EXCLUDE_ALL_METADATA\\\", \\\"INCLUDE_ALL_METADATA\\\"].\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"metadata\"\n     ],\n     \"type\": \"object\"\n    },\n    \"networkRef\": {\n     \"description\": \"The network to attach this firewall to.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `selfLink` field of a `ComputeNetwork` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"priority\": {\n     \"description\": \"Priority for this rule. This is an integer between 0 and 65535, both\\ninclusive. When not specified, the value assumed is 1000. Relative\\npriorities determine precedence of conflicting rules. Lower value of\\npriority implies higher precedence (eg, a rule with priority 0 has\\nhigher precedence than a rule with priority 1). DENY rules take\\nprecedence over ALLOW rules having equal priority.\",\n     \"type\": \"integer\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    },\n    \"sourceRanges\": {\n     \"description\": \"If source ranges are specified, the firewall will apply only to\\ntraffic that has source IP address in these ranges. These ranges must\\nbe expressed in CIDR format. One or both of sourceRanges and\\nsourceTags may be set. If both properties are set, the firewall will\\napply to traffic that has source IP address within sourceRanges OR the\\nsource IP that belongs to a tag listed in the sourceTags property. The\\nconnection does not need to match both properties for the firewall to\\napply. IPv4 or IPv6 ranges are supported. For INGRESS traffic, one of\\n'source_ranges', 'source_tags' or 'source_service_accounts' is required.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"sourceServiceAccounts\": {\n     \"items\": {\n      \"description\": \"If source service accounts are specified, the firewall will apply only\\nto traffic originating from an instance with a service account in this\\nlist. Source service accounts cannot be used to control traffic to an\\ninstance's external IP address because service accounts are associated\\nwith an instance, not an IP address. sourceRanges can be set at the\\nsame time as sourceServiceAccounts. If both are set, the firewall will\\napply to traffic that has source IP address within sourceRanges OR the\\nsource IP belongs to an instance with service account listed in\\nsourceServiceAccount. The connection does not need to match both\\nproperties for the firewall to apply. sourceServiceAccounts cannot be\\nused at the same time as sourceTags or targetTags.\",\n      \"oneOf\": [\n       {\n        \"not\": {\n         \"required\": [\n          \"external\"\n         ]\n        },\n        \"required\": [\n         \"name\"\n        ]\n       },\n       {\n        \"not\": {\n         \"anyOf\": [\n          {\n           \"required\": [\n            \"name\"\n           ]\n          },\n          {\n           \"required\": [\n            \"namespace\"\n           ]\n          }\n         ]\n        },\n        \"required\": [\n         \"external\"\n        ]\n       }\n      ],\n      \"properties\": {\n       \"external\": {\n        \"description\": \"Allowed value: The `email` field of an `IAMServiceAccount` resource.\",\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n        \"type\": \"string\"\n       },\n       \"namespace\": {\n        \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"sourceTags\": {\n     \"description\": \"If source tags are specified, the firewall will apply only to traffic\\nwith source IP that belongs to a tag listed in source tags. Source\\ntags cannot be used to control traffic to an instance's external IP\\naddress. Because tags are associated with an instance, not an IP\\naddress. One or both of sourceRanges and sourceTags may be set. If\\nboth properties are set, the firewall will apply to traffic that has\\nsource IP address within sourceRanges OR the source IP that belongs to\\na tag listed in the sourceTags property. The connection does not need\\nto match both properties for the firewall to apply. For INGRESS traffic,\\none of 'source_ranges', 'source_tags' or 'source_service_accounts' is required.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"targetServiceAccounts\": {\n     \"items\": {\n      \"description\": \"A list of service accounts indicating sets of instances located in the\\nnetwork that may make network connections as specified in allowed[].\\ntargetServiceAccounts cannot be used at the same time as targetTags or\\nsourceTags. If neither targetServiceAccounts nor targetTags are\\nspecified, the firewall rule applies to all instances on the specified\\nnetwork.\",\n      \"oneOf\": [\n       {\n        \"not\": {\n         \"required\": [\n          \"external\"\n         ]\n        },\n        \"required\": [\n         \"name\"\n        ]\n       },\n       {\n        \"not\": {\n         \"anyOf\": [\n          {\n           \"required\": [\n            \"name\"\n           ]\n          },\n          {\n           \"required\": [\n            \"namespace\"\n           ]\n          }\n         ]\n        },\n        \"required\": [\n         \"external\"\n        ]\n       }\n      ],\n      \"properties\": {\n       \"external\": {\n        \"description\": \"Allowed value: The `email` field of an `IAMServiceAccount` resource.\",\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n        \"type\": \"string\"\n       },\n       \"namespace\": {\n        \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"targetTags\": {\n     \"description\": \"A list of instance tags indicating sets of instances located in the\\nnetwork that may make network connections as specified in allowed[].\\nIf no targetTags are specified, the firewall rule applies to all\\ninstances on the specified network.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"networkRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Compute Firewall\",\n \"type\": \"object\"\n}"
-  }
+  "version": "v1.0.0"
  }

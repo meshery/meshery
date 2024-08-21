@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: EPAM Delivery Platform
-subtitle: Collaborative and visual infrastructure as code for EPAM Delivery Platform
+subtitle: Collaborative and visual infrastructure as design for EPAM Delivery Platform
 image: /assets/img/integrations/admin-console-operator/icons/color/admin-console-operator-color.svg
 permalink: extensibility/integrations/admin-console-operator
 docURL: https://docs.meshery.io/extensibility/integrations/admin-console-operator
@@ -19,7 +19,7 @@ featureList: [
   "Kubernetes native approach (CRD, CR) to declare CI/CD pipelines",
   "Gerrit, GitLab or GitHub as a version control system for your code"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

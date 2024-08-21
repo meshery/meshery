@@ -63,6 +63,7 @@ export const rjsfTheme = createTheme({
     MuiFormControlLabel: {
       root: {
         textTransform: 'capitalize',
+        marginLeft: 'auto',
       },
     },
     MuiBox: {
@@ -245,7 +246,7 @@ const darkRjsfTheme = createTheme({
   overrides: {
     MuiOutlinedInput: {
       root: {
-        backgroundColor: '#303030',
+        // backgroundColor: '#303030',
       },
     },
     MuiButton: {
@@ -262,6 +263,7 @@ const darkRjsfTheme = createTheme({
     MuiFormControlLabel: {
       root: {
         textTransform: 'capitalize',
+        marginLeft: 'auto',
       },
     },
     MuiInputLabel: {
@@ -389,6 +391,7 @@ const darkRjsfTheme = createTheme({
         '&:hover': {
           overflow: 'visible',
         },
+        background: 'none',
         // To scale the grid items on a particular screen size
         [breakpoints.up('lg')]: {
           '& > *:nth-child(2)': {

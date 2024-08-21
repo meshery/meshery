@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Fabedge
-subtitle: Collaborative and visual infrastructure as code for Fabedge
+subtitle: Collaborative and visual infrastructure as design for Fabedge
 image: /assets/img/integrations/fabedge/icons/color/fabedge-color.svg
 permalink: extensibility/integrations/fabedge
 docURL: https://docs.meshery.io/extensibility/integrations/fabedge

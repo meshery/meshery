@@ -43,7 +43,6 @@ export default function DesignConfigurator() {
     designId,
     designDelete,
     updateDesignName,
-    designName,
     loadDesign,
     updateDesignData,
   } = useDesignLifecycle();
@@ -168,7 +167,7 @@ export default function DesignConfigurator() {
           {/* Action Toolbar */}
           <TextField
             label="Design Name"
-            value={designName}
+            value={designJson.name}
             onChange={(e) => updateDesignName(e.target.value)}
           />
 
@@ -216,7 +215,7 @@ export default function DesignConfigurator() {
                 const hasInvalidSchema = !!trimmedComponent.metadata?.hasInvalidSchema;
                 return (
                   <LazyComponentForm
-                    key={`${trimmedComponent.kind}-${idx}`}
+                    key={`${trimmedComponent.component.kind}-${idx}`}
                     component={trimmedComponent}
                     onSettingsChange={onSettingsChange(trimmedComponent, formReference)}
                     reference={formReference}

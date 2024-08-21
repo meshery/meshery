@@ -6,7 +6,7 @@
 //
 //     http://www.apache.org/licenses/LICENSE-2.0
 //
-// Unless required by applicable law or agreed to in writing, software
+// Unless required by a, filepath.Dir(${1:}modelDefPathpplicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
@@ -20,13 +20,16 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"path/filepath"
 
 	"github.com/fatih/color"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/layer5io/meshery/server/handlers"
 	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
+	"github.com/layer5io/meshkit/models/oci"
 	"github.com/manifoldco/promptui"
+	"github.com/meshery/schemas/models/v1beta1/model"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -39,13 +42,22 @@ var (
 	// flag used to specify format of output of view {model-name} command
 	outFormatFlag string
 
+	// flag used to specify output location of export {model-name} command
+	outLocationFlag string
+	// flag used to specify format of output of export {model-name} command
+	outTypeFlag string
+	// flag used to specify whether to discard components in the model
+	discardComponentsFlag bool
+	// flag used to specify whether to discard relationships in the model
+	discardRelationshipsFlag bool
+
 	// Maximum number of rows to be displayed in a page
 	maxRowsPerPage = 25
 
 	// Color for the whiteboard printer
 	whiteBoardPrinter = color.New(color.FgHiBlack, color.BgWhite, color.Bold)
 
-	availableSubcommands = []*cobra.Command{listModelCmd, viewModelCmd, searchModelCmd}
+	availableSubcommands = []*cobra.Command{listModelCmd, viewModelCmd, searchModelCmd, importModelCmd, exportModal}
 
 	countFlag bool
 )
@@ -72,27 +84,6 @@ mesheryctl model view [model-name]
 // To search for a specific model
 mesheryctl model search [model-name]
 	`,
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-		//Check prerequisite
-
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			return err
-		}
-		err = utils.IsServerRunning(mctlCfg.GetBaseMesheryURL())
-		if err != nil {
-			return err
-		}
-		ctx, err := mctlCfg.GetCurrentContext()
-		if err != nil {
-			return err
-		}
-		err = ctx.ValidateVersion()
-		if err != nil {
-			return err
-		}
-		return nil
-	},
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 && !countFlag {
 			if err := cmd.Usage(); err != nil {
@@ -133,13 +124,19 @@ mesheryctl model search [model-name]
 func init() {
 	listModelCmd.Flags().IntVarP(&pageNumberFlag, "page", "p", 1, "(optional) List next set of models with --page (default = 1)")
 	viewModelCmd.Flags().StringVarP(&outFormatFlag, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
+
+	exportModal.Flags().StringVarP(&outLocationFlag, "output-location", "l", "./", "(optional) output location (default = current directory)")
+	exportModal.Flags().StringVarP(&outTypeFlag, "output-type", "o", "oci", "(optional) format to display in [oci|json|yaml] (default = oci)")
+	exportModal.Flags().BoolVarP(&discardComponentsFlag, "discard-components", "c", false, "(optional) whether to discard components in the exported model definition (default = false)")
+	exportModal.Flags().BoolVarP(&discardRelationshipsFlag, "discard-relationships", "r", false, "(optional) whether to discard relationships in the exported model definition (default = false)")
+
 	ModelCmd.AddCommand(availableSubcommands...)
 	ModelCmd.Flags().BoolVarP(&countFlag, "count", "", false, "(optional) Get the number of models in total")
 }
 
 // selectModelPrompt lets user to select a model if models are more than one
-func selectModelPrompt(models []v1beta1.Model) v1beta1.Model {
-	modelArray := []v1beta1.Model{}
+func selectModelPrompt(models []model.ModelDefinition) model.ModelDefinition {
+	modelArray := []model.ModelDefinition{}
 	modelNames := []string{}
 
 	modelArray = append(modelArray, models...)
@@ -164,7 +161,7 @@ func selectModelPrompt(models []v1beta1.Model) v1beta1.Model {
 	}
 }
 
-func outputJson(model v1beta1.Model) error {
+func outputJson(model model.ModelDefinition) error {
 	if err := prettifyJson(model); err != nil {
 		// if prettifyJson return error, marshal output in conventional way using json.MarshalIndent
 		// but it doesn't convert unicode to its corresponding HTML string (it is default behavior)
@@ -178,9 +175,9 @@ func outputJson(model v1beta1.Model) error {
 	return nil
 }
 
-// prettifyJson takes a v1beta1.Model struct as input, marshals it into a nicely formatted JSON representation,
+// prettifyJson takes a model.ModelDefinition struct as input, marshals it into a nicely formatted JSON representation,
 // and prints it to standard output with proper indentation and without escaping HTML entities.
-func prettifyJson(model v1beta1.Model) error {
+func prettifyJson(model model.ModelDefinition) error {
 	// Create a new JSON encoder that writes to the standard output (os.Stdout).
 	enc := json.NewEncoder(os.Stdout)
 	// Configure the JSON encoder settings.
@@ -249,9 +246,77 @@ func listModel(cmd *cobra.Command, url string, displayCountOnly bool) error {
 		err := utils.HandlePagination(maxRowsPerPage, "models", rows, header)
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 	}
 
+	return nil
+}
+
+func exportModel(modelName string, cmd *cobra.Command, url string, displayCountOnly bool) error {
+	// Find the entity with the model name
+	req, err := utils.NewRequest(http.MethodGet, url, nil)
+	if err != nil {
+		utils.Log.Error(err)
+		return err
+	}
+
+	resp, err := utils.MakeRequest(req)
+	if err != nil {
+		utils.Log.Error(err)
+		return err
+	}
+
+	// ensure proper cleaning of resources
+	defer resp.Body.Close()
+
+	data, err := io.ReadAll(resp.Body)
+	if err != nil {
+		utils.Log.Error(err)
+		return err
+	}
+
+	modelsResponse := &models.MeshmodelsAPIResponse{}
+	err = json.Unmarshal(data, modelsResponse)
+	if err != nil {
+		utils.Log.Error(err)
+		return err
+	}
+	if len(modelsResponse.Models) < 1 {
+		return ErrExportModel(fmt.Errorf("Model with the given name could not be found in the registry"), modelName)
+	}
+	model := modelsResponse.Models[0]
+	var exportedModelPath string
+	// Convert it to the required output type and write it
+	if outTypeFlag == "yaml" {
+		exportedModelPath = filepath.Join(outLocationFlag, modelName, "model.yaml")
+		err = model.WriteModelDefinition(exportedModelPath, "yaml")
+	}
+	if outTypeFlag == "json" {
+		exportedModelPath = filepath.Join(outLocationFlag, modelName, "model.json")
+		err = model.WriteModelDefinition(exportedModelPath, "json")
+	}
+	if outTypeFlag == "oci" {
+		// write model as yaml temporarily
+		modelDir := filepath.Join(outLocationFlag, modelName)
+		err = model.WriteModelDefinition(filepath.Join(modelDir, "model.json"), "json")
+		// build oci image for the model
+		img, err := oci.BuildImage(modelDir)
+		if err != nil {
+			utils.Log.Error(err)
+			return nil
+		}
+		exportedModelPath = outLocationFlag + modelName + ".tar"
+		err = oci.SaveOCIArtifact(img, outLocationFlag+modelName+".tar", modelName)
+		if err != nil {
+			utils.Log.Error(handlers.ErrSaveOCIArtifact(err))
+		}
+		os.RemoveAll(modelDir)
+	}
+	if err != nil {
+		utils.Log.Error(err)
+		return err
+	}
+	utils.Log.Infof("Exported model to %s", exportedModelPath)
 	return nil
 }

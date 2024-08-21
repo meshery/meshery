@@ -1,44 +1,55 @@
 {
-    "schemaVersion": "relationships.meshery.io/v1alpha2",
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "version": "v1.0.0",
+  "kind": "hierarchical",
+  "type": "parent",
+  "subType": "inventory",
+  "metadata": {
+    "description": "A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component."
+  },
+  "model": {
+    "schemaVersion": "models.meshery.io/v1beta1",
     "version": "v1.0.0",
-    "kind": "Hierarchical",
-    "metadata": {
-      "description": "A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component."
+    "name": "kubernetes",
+    "registrant": {
+      "kind": "artifacthub"
     },
     "model": {
-      "schemaVersion": "core.meshery.io/v1beta1",
-      "version": "v1.0.0",
-      "name": "kubernetes",
-      "model": {
-        "version": "v1.25.2"
-      },
-      "displayName": "Kubernetes",
-      "category": {
-        "name": "Orchestration \u0026 Management",
-        "metadata": null
-      },
-      "metadata": {}
+      "version": "v1.25.2"
     },
-    "subType": "Inventory",
-    "evaluationQuery": "hierarchical_inventory_relationship",
-    "selectors": [
-      {
-        "allow": {
+    "displayName": "Kubernetes",
+    "category": {
+      "name": "Orchestration \u0026 Management",
+      "metadata": null
+    },
+    "metadata": {}
+  },
+  "status": "enabled",
+  "selectors": [
+    {
+      "allow": {
         "from": [
           {
             "kind": "ReplicaSet",
-            "model": "kubernetes",
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
             "patch": {
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "apiVersion"
+                  "displayName"
                 ],
                 [
-                  "name"
+                  "component",
+                  "kind"
                 ],
                 [
-                  "type"
+                  "component",
+                  "version"
                 ]
               ],
               "description": "Allow Horizontal Pod Autoscaler to scale based on observed metrics for ReplicaSet."
@@ -48,24 +59,29 @@
         "to": [
           {
             "kind": "HorizontalPodAutoscaler",
-            "model": "kubernetes",
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
             "patch": {
               "patchStrategy": "replace",
               "mutatedRef": [
                 [
-                  "settings",
+                  "configuration",
                   "spec",
                   "scaleTargetRef",
                   "apiVersion"
                 ],
                 [
-                  "settings",
+                  "configuration",
                   "spec",
                   "scaleTargetRef",
                   "name"
                 ],
                 [
-                  "settings",
+                  "configuration",
                   "spec",
                   "scaleTargetRef",
                   "kind"
@@ -80,4 +96,6 @@
         "from": [],
         "to": []
       }
-    }]}
+    }
+  ]
+}

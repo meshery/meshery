@@ -1,23 +1,16 @@
 {
-    "schemaVersion": "relationships.meshery.io/v1alpha2",
+    "schemaVersion": "relationships.meshery.io/v1alpha3",
     "version": "v1.0.0",
-    "kind": "Edge",
+    "kind": "edge",
+    "subType": "annotation",
+    "type": "non-binding",
     "metadata": {
         "description": "A relationship that defines annotation edges between components",
         "styles": {
-            "lineStyle": "solid",
-            "lineColor": "#00B39F",
+            "line-style": "solid",
+            "line-color": "#00B39F",
             "target-arrow-color": "#00B39F",
             "targetArrowShape": "triangle"
-        },
-        "capabilities": {
-            "designer": {
-                "edit": {
-                    "style": true,
-                    "config": false,
-                    "label": true
-                }
-            }
         }
     },
     "model": {
@@ -34,52 +27,24 @@
         },
         "metadata": {}
     },
-    "subType": "Annotation",
+    "status": "enabled",
     "selectors": [
         {
             "allow": {
                 "from": [
                     {
                         "kind": "*",
-                        "model": "meshery-core"
-                    },
-                    {
-                        "kind": "*",
-                        "model": "meshery-shapes"
-                    },
-                    {
-                        "kind": "*",
-                        "model": "aws"
-                    },
-                    {
-                        "kind": "*",
-                        "model": "gcp"
-                    },
-                    {
-                        "kind": "*",
-                        "model": "meshery-flowchart"
+                        "model": {
+                            "name": "*"
+                        }
                     }
                 ],
                 "to": [
                     {
                         "kind": "*",
-                        "model": "meshery-shapes"
-                    },
-                    {
-                        "kind": "*",
-                        "model": "meshery-core"
-                    },
-                    {
-                        "kind": "*",
-                        "model": "aws"
-                    },
-                    {
-                        "kind": "*",
-                        "model": "gcp"
-                    },
-                    {
-                        "kind": "*",
-                        "model": "meshery-flowchart"
+                        "model": {
+                            "name": "*"
+                        }
                     }
                 ]
             },

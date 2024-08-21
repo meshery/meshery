@@ -1,12 +1,16 @@
 // @ts-check
 const { defineConfig, devices } = require('@playwright/test');
 const { BASE_TIMEOUT } = require('./tests/e2e/delays');
+const dotenv = require('dotenv');
+const path = require('path');
 
 /**
  * Read environment variables from file.
  * https://github.com/motdotla/dotenv
  */
-// require('dotenv').config();
+if (!process.env.CI) {
+  dotenv.config({ path: path.resolve(__dirname, '.env') });
+}
 
 /**
  * @see https://playwright.dev/docs/test-configuration
@@ -18,12 +22,14 @@ module.exports = defineConfig({
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
   timeout: BASE_TIMEOUT,
+  expect: {
+    /* The number of milliseconds the test runner will wait for the expect matchers to pass. */
+    timeout: BASE_TIMEOUT,
+  },
   /* Retry on CI only */
   retries: process.env.CI ? 2 : 0,
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : 1,
-  /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: process.env.CI ? [['html', { open: 'never' }], ['list']] : 'list',
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */

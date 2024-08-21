@@ -7,6 +7,7 @@ import { getWebAdress } from './webApis';
 import { APPLICATION, DESIGN, FILTER } from '../constants/navigator';
 import { Tooltip } from '@mui/material';
 import jsyaml from 'js-yaml';
+import yaml from 'js-yaml';
 
 /**
  * Check if an object is empty
@@ -370,13 +371,46 @@ export const ResizableCell = ({ value }) => (
   </div>
 );
 
+export const parseDesignFile = (designFile) => {
+  try {
+    return jsyaml.load(designFile);
+  } catch (e) {
+    console.error('Error parsing design file', e);
+    return null;
+  }
+};
+
+export const encodeDesignFile = (designJson) => {
+  try {
+    return jsyaml.dump(designJson);
+  } catch (e) {
+    console.error('Error encoding design file', e);
+    return null;
+  }
+};
+
+/**
+ * Process the design data to extract the components and design version
+ * @param {object} design - The design file of format design schema v1beta1
+ */
 export const processDesign = (design) => {
-  const designJson = jsyaml.load(design.pattern_file);
+  console.log('Design to process', design);
+  if (design.schemaVersion != 'designs.meshery.io/v1beta1') {
+    console.error('Invalid design schema version', design);
+    return {
+      configurableComponents: [],
+      annotationComponents: [],
+      components: [],
+      designJson: {
+        name: '',
+        components: [],
+      },
+    };
+  }
 
-  const isAnnotation = (component) =>
-    component?.traits?.meshmap?.['meshmodel-metadata']?.isAnnotation;
+  const isAnnotation = (component) => component?.metadata?.isAnnotation;
 
-  const components = Object.values(designJson.services);
+  const components = design.components;
   const configurableComponents = components.filter(_.negate(isAnnotation));
   const annotationComponents = components.filter(isAnnotation);
 
@@ -384,6 +418,28 @@ export const processDesign = (design) => {
     configurableComponents,
     annotationComponents,
     components,
-    designJson,
+    designJson: design,
   };
+};
+
+export const getComponentFromDesign = (design, componentId) => {
+  const component = design.components.find((component) => component.id === componentId);
+  return component;
+};
+
+/*
+ * Get the design version from the design file
+ * @param {object} design - The design resource
+ */
+export const getDesignVersion = (design) => {
+  if (design.visibility === 'published') {
+    return design.catalog_data.published_version;
+  } else {
+    try {
+      const parsedYaml = yaml.load(design.pattern_file);
+      return parsedYaml.version;
+    } catch (error) {
+      console.error('Version is not available for this design: ', error);
+    }
+  }
 };

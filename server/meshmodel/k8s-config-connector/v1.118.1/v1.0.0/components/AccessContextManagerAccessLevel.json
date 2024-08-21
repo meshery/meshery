@@ -1,29 +1,154 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "core.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "displayName": "Access Context Manager Access Level",
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "AccessContextManagerAccessLevel",
+   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"accessPolicyRef\": {\n     \"description\": \"The AccessContextManagerAccessPolicy this\\nAccessContextManagerAccessLevel lives in.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: string of the format `accessPolicies/{{value}}`, where {{value}} is the `name` field of an `AccessContextManagerAccessPolicy` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"basic\": {\n     \"description\": \"A set of predefined conditions for the access level and a combining function.\",\n     \"properties\": {\n      \"combiningFunction\": {\n       \"description\": \"How the conditions list should be combined to determine if a request\\nis granted this AccessLevel. If AND is used, each Condition in\\nconditions must be satisfied for the AccessLevel to be applied. If\\nOR is used, at least one Condition in conditions must be satisfied\\nfor the AccessLevel to be applied. Default value: \\\"AND\\\" Possible values: [\\\"AND\\\", \\\"OR\\\"].\",\n       \"type\": \"string\"\n      },\n      \"conditions\": {\n       \"description\": \"A set of requirements for the AccessLevel to be granted.\",\n       \"items\": {\n        \"properties\": {\n         \"devicePolicy\": {\n          \"description\": \"Device specific restrictions, all restrictions must hold for\\nthe Condition to be true. If not specified, all devices are\\nallowed.\",\n          \"properties\": {\n           \"allowedDeviceManagementLevels\": {\n            \"description\": \"A list of allowed device management levels.\\nAn empty list allows all management levels. Possible values: [\\\"MANAGEMENT_UNSPECIFIED\\\", \\\"NONE\\\", \\\"BASIC\\\", \\\"COMPLETE\\\"].\",\n            \"items\": {\n             \"type\": \"string\"\n            },\n            \"type\": \"array\"\n           },\n           \"allowedEncryptionStatuses\": {\n            \"description\": \"A list of allowed encryptions statuses.\\nAn empty list allows all statuses. Possible values: [\\\"ENCRYPTION_UNSPECIFIED\\\", \\\"ENCRYPTION_UNSUPPORTED\\\", \\\"UNENCRYPTED\\\", \\\"ENCRYPTED\\\"].\",\n            \"items\": {\n             \"type\": \"string\"\n            },\n            \"type\": \"array\"\n           },\n           \"osConstraints\": {\n            \"description\": \"A list of allowed OS versions.\\nAn empty list allows all types and all versions.\",\n            \"items\": {\n             \"properties\": {\n              \"minimumVersion\": {\n               \"description\": \"The minimum allowed OS version. If not set, any version\\nof this OS satisfies the constraint.\\nFormat: \\\"major.minor.patch\\\" such as \\\"10.5.301\\\", \\\"9.2.1\\\".\",\n               \"type\": \"string\"\n              },\n              \"osType\": {\n               \"description\": \"The operating system type of the device. Possible values: [\\\"OS_UNSPECIFIED\\\", \\\"DESKTOP_MAC\\\", \\\"DESKTOP_WINDOWS\\\", \\\"DESKTOP_LINUX\\\", \\\"DESKTOP_CHROME_OS\\\", \\\"ANDROID\\\", \\\"IOS\\\"].\",\n               \"type\": \"string\"\n              },\n              \"requireVerifiedChromeOs\": {\n               \"description\": \"If you specify DESKTOP_CHROME_OS for osType, you can optionally include requireVerifiedChromeOs to require Chrome Verified Access.\",\n               \"type\": \"boolean\"\n              }\n             },\n             \"required\": [\n              \"osType\"\n             ],\n             \"type\": \"object\"\n            },\n            \"type\": \"array\"\n           },\n           \"requireAdminApproval\": {\n            \"description\": \"Whether the device needs to be approved by the customer admin.\",\n            \"type\": \"boolean\"\n           },\n           \"requireCorpOwned\": {\n            \"description\": \"Whether the device needs to be corp owned.\",\n            \"type\": \"boolean\"\n           },\n           \"requireScreenLock\": {\n            \"description\": \"Whether or not screenlock is required for the DevicePolicy\\nto be true. Defaults to false.\",\n            \"type\": \"boolean\"\n           }\n          },\n          \"type\": \"object\"\n         },\n         \"ipSubnetworks\": {\n          \"description\": \"A list of CIDR block IP subnetwork specification. May be IPv4\\nor IPv6.\\nNote that for a CIDR IP address block, the specified IP address\\nportion must be properly truncated (i.e. all the host bits must\\nbe zero) or the input is considered malformed. For example,\\n\\\"192.0.2.0/24\\\" is accepted but \\\"192.0.2.1/24\\\" is not. Similarly,\\nfor IPv6, \\\"2001:db8::/32\\\" is accepted whereas \\\"2001:db8::1/32\\\"\\nis not. The originating IP of a request must be in one of the\\nlisted subnets in order for this Condition to be true.\\nIf empty, all IP addresses are allowed.\",\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         },\n         \"members\": {\n          \"items\": {\n           \"description\": \"An allowed list of members (users, service accounts).\\nUsing groups is not supported.\\n\\nThe signed-in user originating the request must be a part of one\\nof the provided members. If not specified, a request may come\\nfrom any user (logged in/not logged in, not present in any\\ngroups, etc.).\",\n           \"oneOf\": [\n            {\n             \"required\": [\n              \"serviceAccountRef\"\n             ]\n            },\n            {\n             \"required\": [\n              \"user\"\n             ]\n            }\n           ],\n           \"properties\": {\n            \"serviceAccountRef\": {\n             \"oneOf\": [\n              {\n               \"not\": {\n                \"required\": [\n                 \"external\"\n                ]\n               },\n               \"required\": [\n                \"name\"\n               ]\n              },\n              {\n               \"not\": {\n                \"anyOf\": [\n                 {\n                  \"required\": [\n                   \"name\"\n                  ]\n                 },\n                 {\n                  \"required\": [\n                   \"namespace\"\n                  ]\n                 }\n                ]\n               },\n               \"required\": [\n                \"external\"\n               ]\n              }\n             ],\n             \"properties\": {\n              \"external\": {\n               \"description\": \"Allowed value: string of the format `serviceAccount:{{value}}`, where {{value}} is the `email` field of an `IAMServiceAccount` resource.\",\n               \"type\": \"string\"\n              },\n              \"name\": {\n               \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n               \"type\": \"string\"\n              },\n              \"namespace\": {\n               \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n               \"type\": \"string\"\n              }\n             },\n             \"type\": \"object\"\n            },\n            \"user\": {\n             \"type\": \"string\"\n            }\n           },\n           \"type\": \"object\"\n          },\n          \"type\": \"array\"\n         },\n         \"negate\": {\n          \"description\": \"Whether to negate the Condition. If true, the Condition becomes\\na NAND over its non-empty fields, each field must be false for\\nthe Condition overall to be satisfied. Defaults to false.\",\n          \"type\": \"boolean\"\n         },\n         \"regions\": {\n          \"description\": \"The request must originate from one of the provided\\ncountries/regions.\\nFormat: A valid ISO 3166-1 alpha-2 code.\",\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         },\n         \"requiredAccessLevels\": {\n          \"items\": {\n           \"description\": \"A list of other access levels defined in the same policy.\\nReferencing an AccessContextManagerAccessLevel which does not exist\\nis an error. All access levels listed must be granted for the\\ncondition to be true.\",\n           \"oneOf\": [\n            {\n             \"not\": {\n              \"required\": [\n               \"external\"\n              ]\n             },\n             \"required\": [\n              \"name\"\n             ]\n            },\n            {\n             \"not\": {\n              \"anyOf\": [\n               {\n                \"required\": [\n                 \"name\"\n                ]\n               },\n               {\n                \"required\": [\n                 \"namespace\"\n                ]\n               }\n              ]\n             },\n             \"required\": [\n              \"external\"\n             ]\n            }\n           ],\n           \"properties\": {\n            \"external\": {\n             \"description\": \"Allowed value: The `name` field of an `AccessContextManagerAccessLevel` resource.\",\n             \"type\": \"string\"\n            },\n            \"name\": {\n             \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n             \"type\": \"string\"\n            },\n            \"namespace\": {\n             \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n             \"type\": \"string\"\n            }\n           },\n           \"type\": \"object\"\n          },\n          \"type\": \"array\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"required\": [\n      \"conditions\"\n     ],\n     \"type\": \"object\"\n    },\n    \"custom\": {\n     \"description\": \"Custom access level conditions are set using the Cloud Common Expression Language to represent the necessary conditions for the level to apply to a request.\\nSee CEL spec at: https://github.com/google/cel-spec.\",\n     \"properties\": {\n      \"expr\": {\n       \"description\": \"Represents a textual expression in the Common Expression Language (CEL) syntax. CEL is a C-like expression language.\\nThis page details the objects and attributes that are used to the build the CEL expressions for\\ncustom access levels - https://cloud.google.com/access-context-manager/docs/custom-access-level-spec.\",\n       \"properties\": {\n        \"description\": {\n         \"description\": \"Description of the expression.\",\n         \"type\": \"string\"\n        },\n        \"expression\": {\n         \"description\": \"Textual representation of an expression in Common Expression Language syntax.\",\n         \"type\": \"string\"\n        },\n        \"location\": {\n         \"description\": \"String indicating the location of the expression for error reporting, e.g. a file name and a position in the file.\",\n         \"type\": \"string\"\n        },\n        \"title\": {\n         \"description\": \"Title for the expression, i.e. a short string describing its purpose.\",\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"expression\"\n       ],\n       \"type\": \"object\"\n      }\n     },\n     \"required\": [\n      \"expr\"\n     ],\n     \"type\": \"object\"\n    },\n    \"description\": {\n     \"description\": \"Description of the AccessLevel and its use. Does not affect behavior.\",\n     \"type\": \"string\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    },\n    \"title\": {\n     \"description\": \"Human readable title. Must be unique within the Policy.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"accessPolicyRef\",\n    \"title\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Access Context Manager Access Level\",\n \"type\": \"object\"\n}",
+   "version": "accesscontextmanager.cnrm.cloud.google.com/v1beta1"
+  },
+  "configuration": null,
   "description": "",
+  "displayName": "Access Context Manager Access Level",
   "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "published": false,
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": ""
+  },
   "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "core.meshery.io/v1beta1",
-   "version": "v1.0.0",
-   "name": "k8s-config-connector",
-   "displayName": "Google Cloud Platform",
-   "description": "",
-   "status": "enabled",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "registrant": {
-    "hostname": "github"
-   },
    "category": {
-    "name": "Orchestration \u0026 Management",
-    "metadata": null
+    "name": "Orchestration \u0026 Management"
    },
-   "subCategory": "Google Cloud Platform",
+   "displayName": "Google Cloud Platform",
+   "id": "00000000-0000-0000-0000-000000000000",
    "metadata": {
-    "capabilities": "",
     "defaultData": "",
     "isAnnotation": false,
     "primaryColor": "#4285F4",
@@ -39,30 +164,35 @@
    "model": {
     "version": "v1.118.1"
    },
+   "name": "k8s-config-connector",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "github",
+    "name": "Github",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "enabled",
+   "subCategory": "Google Cloud Platform",
+   "version": "v1.0.0",
    "components": null,
    "relationships": null
   },
-  "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
    "primaryColor": "#4285F4",
-   "secondaryColor": "",
    "shape": "rectangle",
-   "shapePolygonPoints": "",
-   "status": "enabled",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
    "svgColor": "\u003csvg width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"\u003e\n    \u003cg stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e\n        \u003cpath d=\"M12.3008862,4.00003179 L18.9908678,7.90329279 L19,11.4442164 L14.973309,9.0680926 L14.973309,10.8562526 L16.9806355,12.0276231 L16.9918433,15.1064843 L14.973309,13.9136004 L14.973309,18.415105 L12.3008862,20 L12.3008862,4.00003179 Z M11.6991138,4 L11.6991138,19.9999682 L9.02669102,18.4150732 L9.02669102,9.06816678 L5,11.4441846 L5.00913223,7.903261 L11.6991138,4 Z\" fill=\"#4285F4\"\u003e\u003c/path\u003e\n    \u003c/g\u003e\n\u003c/svg\u003e",
-   "svgComplete": "",
    "svgWhite": "\u003csvg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M12.3009 4.00003L18.9909 7.90329L19 11.4442L14.9733 9.06809V10.8563L16.9806 12.0276L16.9918 15.1065L14.9733 13.9136V18.4151L12.3009 20V4.00003ZM11.6991 4V20L9.02669 18.4151V9.06817L5 11.4442L5.00913 7.90326L11.6991 4Z\" fill=\"white\"/\u003e\n\u003c/svg\u003e\n"
   },
-  "component": {
-   "kind": "AccessContextManagerAccessLevel",
-   "version": "accesscontextmanager.cnrm.cloud.google.com/v1beta1",
-   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"accessPolicyRef\": {\n     \"description\": \"The AccessContextManagerAccessPolicy this\\nAccessContextManagerAccessLevel lives in.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: string of the format `accessPolicies/{{value}}`, where {{value}} is the `name` field of an `AccessContextManagerAccessPolicy` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"basic\": {\n     \"description\": \"A set of predefined conditions for the access level and a combining function.\",\n     \"properties\": {\n      \"combiningFunction\": {\n       \"description\": \"How the conditions list should be combined to determine if a request\\nis granted this AccessLevel. If AND is used, each Condition in\\nconditions must be satisfied for the AccessLevel to be applied. If\\nOR is used, at least one Condition in conditions must be satisfied\\nfor the AccessLevel to be applied. Default value: \\\"AND\\\" Possible values: [\\\"AND\\\", \\\"OR\\\"].\",\n       \"type\": \"string\"\n      },\n      \"conditions\": {\n       \"description\": \"A set of requirements for the AccessLevel to be granted.\",\n       \"items\": {\n        \"properties\": {\n         \"devicePolicy\": {\n          \"description\": \"Device specific restrictions, all restrictions must hold for\\nthe Condition to be true. If not specified, all devices are\\nallowed.\",\n          \"properties\": {\n           \"allowedDeviceManagementLevels\": {\n            \"description\": \"A list of allowed device management levels.\\nAn empty list allows all management levels. Possible values: [\\\"MANAGEMENT_UNSPECIFIED\\\", \\\"NONE\\\", \\\"BASIC\\\", \\\"COMPLETE\\\"].\",\n            \"items\": {\n             \"type\": \"string\"\n            },\n            \"type\": \"array\"\n           },\n           \"allowedEncryptionStatuses\": {\n            \"description\": \"A list of allowed encryptions statuses.\\nAn empty list allows all statuses. Possible values: [\\\"ENCRYPTION_UNSPECIFIED\\\", \\\"ENCRYPTION_UNSUPPORTED\\\", \\\"UNENCRYPTED\\\", \\\"ENCRYPTED\\\"].\",\n            \"items\": {\n             \"type\": \"string\"\n            },\n            \"type\": \"array\"\n           },\n           \"osConstraints\": {\n            \"description\": \"A list of allowed OS versions.\\nAn empty list allows all types and all versions.\",\n            \"items\": {\n             \"properties\": {\n              \"minimumVersion\": {\n               \"description\": \"The minimum allowed OS version. If not set, any version\\nof this OS satisfies the constraint.\\nFormat: \\\"major.minor.patch\\\" such as \\\"10.5.301\\\", \\\"9.2.1\\\".\",\n               \"type\": \"string\"\n              },\n              \"osType\": {\n               \"description\": \"The operating system type of the device. Possible values: [\\\"OS_UNSPECIFIED\\\", \\\"DESKTOP_MAC\\\", \\\"DESKTOP_WINDOWS\\\", \\\"DESKTOP_LINUX\\\", \\\"DESKTOP_CHROME_OS\\\", \\\"ANDROID\\\", \\\"IOS\\\"].\",\n               \"type\": \"string\"\n              },\n              \"requireVerifiedChromeOs\": {\n               \"description\": \"If you specify DESKTOP_CHROME_OS for osType, you can optionally include requireVerifiedChromeOs to require Chrome Verified Access.\",\n               \"type\": \"boolean\"\n              }\n             },\n             \"required\": [\n              \"osType\"\n             ],\n             \"type\": \"object\"\n            },\n            \"type\": \"array\"\n           },\n           \"requireAdminApproval\": {\n            \"description\": \"Whether the device needs to be approved by the customer admin.\",\n            \"type\": \"boolean\"\n           },\n           \"requireCorpOwned\": {\n            \"description\": \"Whether the device needs to be corp owned.\",\n            \"type\": \"boolean\"\n           },\n           \"requireScreenLock\": {\n            \"description\": \"Whether or not screenlock is required for the DevicePolicy\\nto be true. Defaults to false.\",\n            \"type\": \"boolean\"\n           }\n          },\n          \"type\": \"object\"\n         },\n         \"ipSubnetworks\": {\n          \"description\": \"A list of CIDR block IP subnetwork specification. May be IPv4\\nor IPv6.\\nNote that for a CIDR IP address block, the specified IP address\\nportion must be properly truncated (i.e. all the host bits must\\nbe zero) or the input is considered malformed. For example,\\n\\\"192.0.2.0/24\\\" is accepted but \\\"192.0.2.1/24\\\" is not. Similarly,\\nfor IPv6, \\\"2001:db8::/32\\\" is accepted whereas \\\"2001:db8::1/32\\\"\\nis not. The originating IP of a request must be in one of the\\nlisted subnets in order for this Condition to be true.\\nIf empty, all IP addresses are allowed.\",\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         },\n         \"members\": {\n          \"items\": {\n           \"description\": \"An allowed list of members (users, service accounts).\\nUsing groups is not supported.\\n\\nThe signed-in user originating the request must be a part of one\\nof the provided members. If not specified, a request may come\\nfrom any user (logged in/not logged in, not present in any\\ngroups, etc.).\",\n           \"oneOf\": [\n            {\n             \"required\": [\n              \"serviceAccountRef\"\n             ]\n            },\n            {\n             \"required\": [\n              \"user\"\n             ]\n            }\n           ],\n           \"properties\": {\n            \"serviceAccountRef\": {\n             \"oneOf\": [\n              {\n               \"not\": {\n                \"required\": [\n                 \"external\"\n                ]\n               },\n               \"required\": [\n                \"name\"\n               ]\n              },\n              {\n               \"not\": {\n                \"anyOf\": [\n                 {\n                  \"required\": [\n                   \"name\"\n                  ]\n                 },\n                 {\n                  \"required\": [\n                   \"namespace\"\n                  ]\n                 }\n                ]\n               },\n               \"required\": [\n                \"external\"\n               ]\n              }\n             ],\n             \"properties\": {\n              \"external\": {\n               \"description\": \"Allowed value: string of the format `serviceAccount:{{value}}`, where {{value}} is the `email` field of an `IAMServiceAccount` resource.\",\n               \"type\": \"string\"\n              },\n              \"name\": {\n               \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n               \"type\": \"string\"\n              },\n              \"namespace\": {\n               \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n               \"type\": \"string\"\n              }\n             },\n             \"type\": \"object\"\n            },\n            \"user\": {\n             \"type\": \"string\"\n            }\n           },\n           \"type\": \"object\"\n          },\n          \"type\": \"array\"\n         },\n         \"negate\": {\n          \"description\": \"Whether to negate the Condition. If true, the Condition becomes\\na NAND over its non-empty fields, each field must be false for\\nthe Condition overall to be satisfied. Defaults to false.\",\n          \"type\": \"boolean\"\n         },\n         \"regions\": {\n          \"description\": \"The request must originate from one of the provided\\ncountries/regions.\\nFormat: A valid ISO 3166-1 alpha-2 code.\",\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         },\n         \"requiredAccessLevels\": {\n          \"items\": {\n           \"description\": \"A list of other access levels defined in the same policy.\\nReferencing an AccessContextManagerAccessLevel which does not exist\\nis an error. All access levels listed must be granted for the\\ncondition to be true.\",\n           \"oneOf\": [\n            {\n             \"not\": {\n              \"required\": [\n               \"external\"\n              ]\n             },\n             \"required\": [\n              \"name\"\n             ]\n            },\n            {\n             \"not\": {\n              \"anyOf\": [\n               {\n                \"required\": [\n                 \"name\"\n                ]\n               },\n               {\n                \"required\": [\n                 \"namespace\"\n                ]\n               }\n              ]\n             },\n             \"required\": [\n              \"external\"\n             ]\n            }\n           ],\n           \"properties\": {\n            \"external\": {\n             \"description\": \"Allowed value: The `name` field of an `AccessContextManagerAccessLevel` resource.\",\n             \"type\": \"string\"\n            },\n            \"name\": {\n             \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n             \"type\": \"string\"\n            },\n            \"namespace\": {\n             \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n             \"type\": \"string\"\n            }\n           },\n           \"type\": \"object\"\n          },\n          \"type\": \"array\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"required\": [\n      \"conditions\"\n     ],\n     \"type\": \"object\"\n    },\n    \"custom\": {\n     \"description\": \"Custom access level conditions are set using the Cloud Common Expression Language to represent the necessary conditions for the level to apply to a request.\\nSee CEL spec at: https://github.com/google/cel-spec.\",\n     \"properties\": {\n      \"expr\": {\n       \"description\": \"Represents a textual expression in the Common Expression Language (CEL) syntax. CEL is a C-like expression language.\\nThis page details the objects and attributes that are used to the build the CEL expressions for\\ncustom access levels - https://cloud.google.com/access-context-manager/docs/custom-access-level-spec.\",\n       \"properties\": {\n        \"description\": {\n         \"description\": \"Description of the expression.\",\n         \"type\": \"string\"\n        },\n        \"expression\": {\n         \"description\": \"Textual representation of an expression in Common Expression Language syntax.\",\n         \"type\": \"string\"\n        },\n        \"location\": {\n         \"description\": \"String indicating the location of the expression for error reporting, e.g. a file name and a position in the file.\",\n         \"type\": \"string\"\n        },\n        \"title\": {\n         \"description\": \"Title for the expression, i.e. a short string describing its purpose.\",\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"expression\"\n       ],\n       \"type\": \"object\"\n      }\n     },\n     \"required\": [\n      \"expr\"\n     ],\n     \"type\": \"object\"\n    },\n    \"description\": {\n     \"description\": \"Description of the AccessLevel and its use. Does not affect behavior.\",\n     \"type\": \"string\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    },\n    \"title\": {\n     \"description\": \"Human readable title. Must be unique within the Policy.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"accessPolicyRef\",\n    \"title\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Access Context Manager Access Level\",\n \"type\": \"object\"\n}"
-  }
+  "version": "v1.0.0"
  }

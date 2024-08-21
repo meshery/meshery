@@ -1,9 +1,12 @@
 {
-  "schemaVersion": "relationships.meshery.io/v1alpha2",
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
   "version": "v1.0.0",
-  "kind": "Edge",
+  "kind": "edge",
+  "type": "binding",
+  "subType": "firewall",
   "metadata": {
     "description": "A relationship that act as a firewall for ingress and egress traffic from Pods.",
+    "animation": "marching-ants",
     "capabilities": {
       "designer": {
         "edit": {
@@ -16,7 +19,10 @@
   },
   "model": {
     "name": "kubernetes",
-    "schemaVersion": "core.meshery.io/v1beta1",
+    "registrant": {
+      "kind": "artifacthub"
+    },
+    "schemaVersion": "models.meshery.io/v1beta1",
     "version": "v1.0.0",
     "model": {
       "version": "v1.25.2"
@@ -28,28 +34,65 @@
     },
     "metadata": {}
   },
-  "subType": "Firewall",
-  "evaluationQuery": "edge_binding_relationship",
+  "status": "enabled",
   "selectors": [
     {
       "allow": {
         "from": [
           {
             "kind": "Pod",
-            "model": "kubernetes",
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
             "match": {
-              "self": [],
-              "NetworkPolicy": []
+              "from": [
+                {
+                  "kind": "self",
+                  "mutatedRef": [
+                    []
+                  ]
+                }
+              ],
+              "to": [
+                {
+                  "kind": "NetworkPolicy",
+                  "mutatorRef": [
+                    []
+                  ]
+                }
+              ]
             }
           }
         ],
         "to": [
           {
             "kind": "Pod",
-            "model": "kubernetes",
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
             "match": {
-              "self": [],
-              "NetworkPolicy": []
+              "from": [
+                {
+                  "kind": "NetworkPolicy",
+                  "mutatedRef": [
+                    []
+                  ]
+                }
+              ],
+              "to": [
+                {
+                  "kind": "seld",
+                  "mutatorRef": [
+                    []
+                  ]
+                }
+              ]
             }
           }
         ]
