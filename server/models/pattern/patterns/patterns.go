@@ -80,7 +80,6 @@ func Process(kconfigs []string, componets []component.ComponentDefinition, isDel
 					// Deploys resources that are required inside cluster for successful deployment of the design.
 					result, err := depHandler.HandleDependents(comp, kcli, !isDel, upgradeExistingRelease)
 					// If dependencies were not resolved fail forward, there can be case that dependency already exist in the cluster.
-					fmt.Println("TEST INSIDE line 83 : ", err, result)
 					deploymentMsg.Message = result
 					if err != nil {
 						deploymentMsg.Success = false
