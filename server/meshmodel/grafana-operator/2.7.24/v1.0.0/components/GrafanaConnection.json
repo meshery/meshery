@@ -141,7 +141,18 @@
    "shapePolygonPoints": "",
    "styleOverrides": "",
    "isNamespaced": true,
-   "styles": ""
+   "styles": "",
+    "transitions": {
+      "connected": [
+        "disconnected",
+        "deleted"
+      ],
+      "deleted": [],
+      "disconnected": [
+        "connected",
+        "deleted"
+      ]
+    }
   },
   "model": {
    "category": {
