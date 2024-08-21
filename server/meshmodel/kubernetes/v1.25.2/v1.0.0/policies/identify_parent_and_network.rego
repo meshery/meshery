@@ -6,9 +6,12 @@ identify_relationship(
 	design_file,
 	relationship,
 ) := evaluation_results if {
-	applicable_on_rels := [{"hierarchical": "parent"}, {"edge": "network"}]
+	applicable_on_rels := [
+		{"kind": "hierarchical", "type": "parent"},
+		{"kind": "edge", "type": "non-binding"},
+	]
 
-	{lower(relationship.kind): lower(relationship.type)} in applicable_on_rels
+	{"kind": lower(relationship.kind), "type": lower(relationship.type)} in applicable_on_rels
 
 	selector_set := relationship.selectors[_]
 	from_selectors := {kind: selectors |

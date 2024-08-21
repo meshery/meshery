@@ -95,7 +95,7 @@
                   "configuration",
                   "spec",
                   "containers",
-                  "_",
+                  "0",
                   "ports",
                   "_",
                   "containerPort"
@@ -104,7 +104,7 @@
                   "configuration",
                   "spec",
                   "containers",
-                  "_",
+                  "0",
                   "ports",
                   "_",
                   "protocol"

@@ -150,7 +150,7 @@ is_feasible(from, to, resource1, resource2) if {
 	formatted_to_path = format_json_path(to_path)
 
 	val1 := object.get(resource1, formatted_from_path, "")
-	val2 := object.get(resource2, formatted_to_path, null)
+	val2 := object.get(resource2, formatted_to_path, "")
 
 	val1 == val2
 } else := false
