@@ -1,29 +1,154 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "displayName": "Billing Budgets Budget",
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "BillingBudgetsBudget",
+   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"allUpdatesRule\": {\n     \"description\": \"Optional. Rules to apply to notifications sent based on budget spend and thresholds.\",\n     \"properties\": {\n      \"disableDefaultIamRecipients\": {\n       \"description\": \"Optional. When set to true, disables default notifications sent when a threshold is exceeded. Default notifications are sent to those with Billing Account Administrator and Billing Account User IAM roles for the target account.\",\n       \"type\": \"boolean\"\n      },\n      \"monitoringNotificationChannels\": {\n       \"items\": {\n        \"oneOf\": [\n         {\n          \"not\": {\n           \"required\": [\n            \"external\"\n           ]\n          },\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"not\": {\n           \"anyOf\": [\n            {\n             \"required\": [\n              \"name\"\n             ]\n            },\n            {\n             \"required\": [\n              \"namespace\"\n             ]\n            }\n           ]\n          },\n          \"required\": [\n           \"external\"\n          ]\n         }\n        ],\n        \"properties\": {\n         \"external\": {\n          \"description\": \"Allowed value: The Google Cloud resource name of a `MonitoringNotificationChannel` resource (format: `projects/{{project}}/notificationChannels/{{name}}`).\",\n          \"type\": \"string\"\n         },\n         \"name\": {\n          \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n          \"type\": \"string\"\n         },\n         \"namespace\": {\n          \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"pubsubTopicRef\": {\n       \"oneOf\": [\n        {\n         \"not\": {\n          \"required\": [\n           \"external\"\n          ]\n         },\n         \"required\": [\n          \"name\"\n         ]\n        },\n        {\n         \"not\": {\n          \"anyOf\": [\n           {\n            \"required\": [\n             \"name\"\n            ]\n           },\n           {\n            \"required\": [\n             \"namespace\"\n            ]\n           }\n          ]\n         },\n         \"required\": [\n          \"external\"\n         ]\n        }\n       ],\n       \"properties\": {\n        \"external\": {\n         \"description\": \"Optional. The name of the Pub/Sub topic where budget related messages will be published, in the form `projects/{project_id}/topics/{topic_id}`. Updates are sent at regular intervals to the topic. The topic needs to be created before the budget is created; see https://cloud.google.com/billing/docs/how-to/budgets-programmatic-notifications for more details. Caller is expected to have `pubsub.topics.setIamPolicy` permission on the topic when it's set for a budget, otherwise, the API call will fail with PERMISSION_DENIED. See https://cloud.google.com/billing/docs/how-to/budgets-programmatic-notifications#permissions_required_for_this_task for more details on Pub/Sub roles and permissions.\\n\\nAllowed value: The Google Cloud resource name of a `PubSubTopic` resource (format: `projects/{{project}}/topics/{{name}}`).\",\n         \"type\": \"string\"\n        },\n        \"name\": {\n         \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n         \"type\": \"string\"\n        },\n        \"namespace\": {\n         \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"schemaVersion\": {\n       \"description\": \"Optional. Required when NotificationsRule.pubsub_topic is set. The schema version of the notification sent to NotificationsRule.pubsub_topic. Only \\\"1.0\\\" is accepted. It represents the JSON schema as defined in https://cloud.google.com/billing/docs/how-to/budgets-programmatic-notifications#notification_format.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"amount\": {\n     \"description\": \"Required. Budgeted amount.\",\n     \"properties\": {\n      \"lastPeriodAmount\": {\n       \"description\": \"Use the last period's actual spend as the budget for the present period. LastPeriodAmount can only be set when the budget's time period is a .\",\n       \"format\": \"textarea\",\n       \"type\": \"string\"\n      },\n      \"specifiedAmount\": {\n       \"description\": \"A specified amount to use as the budget. `currency_code` is optional. If specified when creating a budget, it must match the currency of the billing account. If specified when updating a budget, it must match the currency_code of the existing budget. The `currency_code` is provided on output.\",\n       \"properties\": {\n        \"currencyCode\": {\n         \"description\": \"Immutable. The three-letter currency code defined in ISO 4217.\",\n         \"type\": \"string\"\n        },\n        \"nanos\": {\n         \"description\": \"Number of nano (10^-9) units of the amount. The value must be between -999,999,999 and +999,999,999 inclusive. If `units` is positive, `nanos` must be positive or zero. If `units` is zero, `nanos` can be positive, zero, or negative. If `units` is negative, `nanos` must be negative or zero. For example $-1.75 is represented as `units`=-1 and `nanos`=-750,000,000.\",\n         \"format\": \"int64\",\n         \"type\": \"integer\"\n        },\n        \"units\": {\n         \"description\": \"The whole units of the amount. For example if `currencyCode` is `\\\"USD\\\"`, then 1 unit is one US dollar.\",\n         \"format\": \"int64\",\n         \"type\": \"integer\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"billingAccountRef\": {\n     \"description\": \"Immutable.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"The billing account of the resource\\n\\nAllowed value: The Google Cloud resource name of a Google Cloud Billing Account (format: `billingAccounts/{{name}}`).\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"[WARNING] BillingAccount not yet supported in Config Connector, use 'external' field to reference existing resources.\\nName of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"budgetFilter\": {\n     \"description\": \"Optional. Filters that define which resources are used to compute the actual spend against the budget amount, such as projects, services, and the budget's time period, as well as other filters.\",\n     \"properties\": {\n      \"calendarPeriod\": {\n       \"description\": \"Optional. Specifies to track usage for recurring calendar period. For example, assume that CalendarPeriod.QUARTER is set. The budget will track usage from April 1 to June 30, when the current calendar month is April, May, June. After that, it will track usage from July 1 to September 30 when the current calendar month is July, August, September, so on. Possible values: CALENDAR_PERIOD_UNSPECIFIED, MONTH, QUARTER, YEAR\",\n       \"type\": \"string\"\n      },\n      \"creditTypes\": {\n       \"description\": \"Optional. If Filter.credit_types_treatment is INCLUDE_SPECIFIED_CREDITS, this is a list of credit types to be subtracted from gross cost to determine the spend for threshold calculations. See a list of acceptable credit type values. If Filter.credit_types_treatment is not INCLUDE_SPECIFIED_CREDITS, this field must be empty.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"creditTypesTreatment\": {\n       \"description\": \"Optional. If not set, default behavior is `INCLUDE_ALL_CREDITS`.\",\n       \"type\": \"string\"\n      },\n      \"customPeriod\": {\n       \"description\": \"Optional. Specifies to track usage from any start date (required) to any end date (optional). This time period is static, it does not recur.\",\n       \"properties\": {\n        \"endDate\": {\n         \"description\": \"Immutable. Optional. The end date of the time period. Budgets with elapsed end date won't be processed. If unset, specifies to track all usage incurred since the start_date.\",\n         \"properties\": {\n          \"day\": {\n           \"description\": \"Immutable. Day of a month. Must be from 1 to 31 and valid for the year and month, or 0 to specify a year by itself or a year and month where the day isn't significant.\",\n           \"format\": \"int64\",\n           \"type\": \"integer\"\n          },\n          \"month\": {\n           \"description\": \"Immutable. Month of a year. Must be from 1 to 12, or 0 to specify a year without a month and day.\",\n           \"format\": \"int64\",\n           \"type\": \"integer\"\n          },\n          \"year\": {\n           \"description\": \"Immutable. Year of the date. Must be from 1 to 9999, or 0 to specify a date without a year.\",\n           \"format\": \"int64\",\n           \"type\": \"integer\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"startDate\": {\n         \"description\": \"Immutable. Required. The start date must be after January 1, 2017.\",\n         \"properties\": {\n          \"day\": {\n           \"description\": \"Immutable. Day of a month. Must be from 1 to 31 and valid for the year and month, or 0 to specify a year by itself or a year and month where the day isn't significant.\",\n           \"format\": \"int64\",\n           \"type\": \"integer\"\n          },\n          \"month\": {\n           \"description\": \"Immutable. Month of a year. Must be from 1 to 12, or 0 to specify a year without a month and day.\",\n           \"format\": \"int64\",\n           \"type\": \"integer\"\n          },\n          \"year\": {\n           \"description\": \"Immutable. Year of the date. Must be from 1 to 9999, or 0 to specify a date without a year.\",\n           \"format\": \"int64\",\n           \"type\": \"integer\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"required\": [\n        \"startDate\"\n       ],\n       \"type\": \"object\"\n      },\n      \"labels\": {\n       \"additionalProperties\": {\n        \"properties\": {\n         \"values\": {\n          \"description\": \"Immutable. The values of the label\",\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"description\": \"Optional. A single label and value pair specifying that usage from only this set of labeled resources should be included in the budget. Currently, multiple entries or multiple values per entry are not allowed. If omitted, the report will include all labeled and unlabeled usage.\",\n       \"type\": \"object\"\n      },\n      \"projects\": {\n       \"items\": {\n        \"oneOf\": [\n         {\n          \"not\": {\n           \"required\": [\n            \"external\"\n           ]\n          },\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"not\": {\n           \"anyOf\": [\n            {\n             \"required\": [\n              \"name\"\n             ]\n            },\n            {\n             \"required\": [\n              \"namespace\"\n             ]\n            }\n           ]\n          },\n          \"required\": [\n           \"external\"\n          ]\n         }\n        ],\n        \"properties\": {\n         \"external\": {\n          \"description\": \"Allowed value: The Google Cloud resource name of a `Project` resource (format: `projects/{{name}}`).\",\n          \"type\": \"string\"\n         },\n         \"name\": {\n          \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n          \"type\": \"string\"\n         },\n         \"namespace\": {\n          \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"services\": {\n       \"description\": \"Optional. A set of services of the form `services/{service_id}`, specifying that usage from only this set of services should be included in the budget. If omitted, the report will include usage for all the services. The service names are available through the Catalog API: https://cloud.google.com/billing/v1/how-tos/catalog-api.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"subaccounts\": {\n       \"items\": {\n        \"oneOf\": [\n         {\n          \"not\": {\n           \"required\": [\n            \"external\"\n           ]\n          },\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"not\": {\n           \"anyOf\": [\n            {\n             \"required\": [\n              \"name\"\n             ]\n            },\n            {\n             \"required\": [\n              \"namespace\"\n             ]\n            }\n           ]\n          },\n          \"required\": [\n           \"external\"\n          ]\n         }\n        ],\n        \"properties\": {\n         \"external\": {\n          \"type\": \"string\"\n         },\n         \"name\": {\n          \"description\": \"[WARNING] CloudBillingBillingAccount not yet supported in Config Connector, use 'external' field to reference existing resources.\\nName of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n          \"type\": \"string\"\n         },\n         \"namespace\": {\n          \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"displayName\": {\n     \"description\": \"User data for display name in UI. The name must be less than or equal to 60 characters.\",\n     \"type\": \"string\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The service-generated name of the resource. Used for acquisition only. Leave unset to create a new resource.\",\n     \"type\": \"string\"\n    },\n    \"thresholdRules\": {\n     \"description\": \"Optional. Rules that trigger alerts (notifications of thresholds being crossed) when spend exceeds the specified percentages of the budget.\",\n     \"items\": {\n      \"properties\": {\n       \"spendBasis\": {\n        \"description\": \"Optional. The type of basis used to determine if spend has passed the threshold. Behavior defaults to CURRENT_SPEND if not set. Possible values: BASIS_UNSPECIFIED, CURRENT_SPEND, FORECASTED_SPEND\",\n        \"type\": \"string\"\n       },\n       \"thresholdPercent\": {\n        \"description\": \"Required. Send an alert when this threshold is exceeded. This is a 1.0-based percentage, so 0.5 = 50%. Validation: non-negative number.\",\n        \"format\": \"double\",\n        \"type\": \"number\"\n       }\n      },\n      \"required\": [\n       \"thresholdPercent\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"amount\",\n    \"billingAccountRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Billing Budgets Budget\",\n \"type\": \"object\"\n}",
+   "version": "billingbudgets.cnrm.cloud.google.com/v1beta1"
+  },
+  "configuration": null,
   "description": "",
+  "displayName": "Billing Budgets Budget",
   "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "published": false,
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": ""
+  },
   "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "version": "v1.0.0",
-   "name": "k8s-config-connector",
-   "displayName": "Google Cloud Platform",
-   "description": "",
-   "status": "enabled",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "registrant": {
-    "hostname": "github"
-   },
    "category": {
-    "name": "Orchestration \u0026 Management",
-    "metadata": null
+    "name": "Orchestration \u0026 Management"
    },
-   "subCategory": "Google Cloud Platform",
+   "displayName": "Google Cloud Platform",
+   "id": "00000000-0000-0000-0000-000000000000",
    "metadata": {
-    "capabilities": "",
     "defaultData": "",
     "isAnnotation": false,
     "primaryColor": "#4285F4",
@@ -39,30 +164,35 @@
    "model": {
     "version": "v1.118.1"
    },
+   "name": "k8s-config-connector",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "github",
+    "name": "Github",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "enabled",
+   "subCategory": "Google Cloud Platform",
+   "version": "v1.0.0",
    "components": null,
    "relationships": null
   },
-  "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
    "primaryColor": "#4285F4",
-   "secondaryColor": "",
    "shape": "rectangle",
-   "shapePolygonPoints": "",
-   "status": "enabled",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
    "svgColor": "\u003csvg width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"\u003e\n    \u003cg stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e\n        \u003cpath d=\"M12.3008862,4.00003179 L18.9908678,7.90329279 L19,11.4442164 L14.973309,9.0680926 L14.973309,10.8562526 L16.9806355,12.0276231 L16.9918433,15.1064843 L14.973309,13.9136004 L14.973309,18.415105 L12.3008862,20 L12.3008862,4.00003179 Z M11.6991138,4 L11.6991138,19.9999682 L9.02669102,18.4150732 L9.02669102,9.06816678 L5,11.4441846 L5.00913223,7.903261 L11.6991138,4 Z\" fill=\"#4285F4\"\u003e\u003c/path\u003e\n    \u003c/g\u003e\n\u003c/svg\u003e",
-   "svgComplete": "",
    "svgWhite": "\u003csvg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M12.3009 4.00003L18.9909 7.90329L19 11.4442L14.9733 9.06809V10.8563L16.9806 12.0276L16.9918 15.1065L14.9733 13.9136V18.4151L12.3009 20V4.00003ZM11.6991 4V20L9.02669 18.4151V9.06817L5 11.4442L5.00913 7.90326L11.6991 4Z\" fill=\"white\"/\u003e\n\u003c/svg\u003e\n"
   },
-  "component": {
-   "kind": "BillingBudgetsBudget",
-   "version": "billingbudgets.cnrm.cloud.google.com/v1beta1",
-   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"allUpdatesRule\": {\n     \"description\": \"Optional. Rules to apply to notifications sent based on budget spend and thresholds.\",\n     \"properties\": {\n      \"disableDefaultIamRecipients\": {\n       \"description\": \"Optional. When set to true, disables default notifications sent when a threshold is exceeded. Default notifications are sent to those with Billing Account Administrator and Billing Account User IAM roles for the target account.\",\n       \"type\": \"boolean\"\n      },\n      \"monitoringNotificationChannels\": {\n       \"items\": {\n        \"oneOf\": [\n         {\n          \"not\": {\n           \"required\": [\n            \"external\"\n           ]\n          },\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"not\": {\n           \"anyOf\": [\n            {\n             \"required\": [\n              \"name\"\n             ]\n            },\n            {\n             \"required\": [\n              \"namespace\"\n             ]\n            }\n           ]\n          },\n          \"required\": [\n           \"external\"\n          ]\n         }\n        ],\n        \"properties\": {\n         \"external\": {\n          \"description\": \"Allowed value: The Google Cloud resource name of a `MonitoringNotificationChannel` resource (format: `projects/{{project}}/notificationChannels/{{name}}`).\",\n          \"type\": \"string\"\n         },\n         \"name\": {\n          \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n          \"type\": \"string\"\n         },\n         \"namespace\": {\n          \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"pubsubTopicRef\": {\n       \"oneOf\": [\n        {\n         \"not\": {\n          \"required\": [\n           \"external\"\n          ]\n         },\n         \"required\": [\n          \"name\"\n         ]\n        },\n        {\n         \"not\": {\n          \"anyOf\": [\n           {\n            \"required\": [\n             \"name\"\n            ]\n           },\n           {\n            \"required\": [\n             \"namespace\"\n            ]\n           }\n          ]\n         },\n         \"required\": [\n          \"external\"\n         ]\n        }\n       ],\n       \"properties\": {\n        \"external\": {\n         \"description\": \"Optional. The name of the Pub/Sub topic where budget related messages will be published, in the form `projects/{project_id}/topics/{topic_id}`. Updates are sent at regular intervals to the topic. The topic needs to be created before the budget is created; see https://cloud.google.com/billing/docs/how-to/budgets-programmatic-notifications for more details. Caller is expected to have `pubsub.topics.setIamPolicy` permission on the topic when it's set for a budget, otherwise, the API call will fail with PERMISSION_DENIED. See https://cloud.google.com/billing/docs/how-to/budgets-programmatic-notifications#permissions_required_for_this_task for more details on Pub/Sub roles and permissions.\\n\\nAllowed value: The Google Cloud resource name of a `PubSubTopic` resource (format: `projects/{{project}}/topics/{{name}}`).\",\n         \"type\": \"string\"\n        },\n        \"name\": {\n         \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n         \"type\": \"string\"\n        },\n        \"namespace\": {\n         \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"schemaVersion\": {\n       \"description\": \"Optional. Required when NotificationsRule.pubsub_topic is set. The schema version of the notification sent to NotificationsRule.pubsub_topic. Only \\\"1.0\\\" is accepted. It represents the JSON schema as defined in https://cloud.google.com/billing/docs/how-to/budgets-programmatic-notifications#notification_format.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"amount\": {\n     \"description\": \"Required. Budgeted amount.\",\n     \"properties\": {\n      \"lastPeriodAmount\": {\n       \"description\": \"Use the last period's actual spend as the budget for the present period. LastPeriodAmount can only be set when the budget's time period is a .\",\n       \"format\": \"textarea\",\n       \"type\": \"string\"\n      },\n      \"specifiedAmount\": {\n       \"description\": \"A specified amount to use as the budget. `currency_code` is optional. If specified when creating a budget, it must match the currency of the billing account. If specified when updating a budget, it must match the currency_code of the existing budget. The `currency_code` is provided on output.\",\n       \"properties\": {\n        \"currencyCode\": {\n         \"description\": \"Immutable. The three-letter currency code defined in ISO 4217.\",\n         \"type\": \"string\"\n        },\n        \"nanos\": {\n         \"description\": \"Number of nano (10^-9) units of the amount. The value must be between -999,999,999 and +999,999,999 inclusive. If `units` is positive, `nanos` must be positive or zero. If `units` is zero, `nanos` can be positive, zero, or negative. If `units` is negative, `nanos` must be negative or zero. For example $-1.75 is represented as `units`=-1 and `nanos`=-750,000,000.\",\n         \"format\": \"int64\",\n         \"type\": \"integer\"\n        },\n        \"units\": {\n         \"description\": \"The whole units of the amount. For example if `currencyCode` is `\\\"USD\\\"`, then 1 unit is one US dollar.\",\n         \"format\": \"int64\",\n         \"type\": \"integer\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"billingAccountRef\": {\n     \"description\": \"Immutable.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"The billing account of the resource\\n\\nAllowed value: The Google Cloud resource name of a Google Cloud Billing Account (format: `billingAccounts/{{name}}`).\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"[WARNING] BillingAccount not yet supported in Config Connector, use 'external' field to reference existing resources.\\nName of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"budgetFilter\": {\n     \"description\": \"Optional. Filters that define which resources are used to compute the actual spend against the budget amount, such as projects, services, and the budget's time period, as well as other filters.\",\n     \"properties\": {\n      \"calendarPeriod\": {\n       \"description\": \"Optional. Specifies to track usage for recurring calendar period. For example, assume that CalendarPeriod.QUARTER is set. The budget will track usage from April 1 to June 30, when the current calendar month is April, May, June. After that, it will track usage from July 1 to September 30 when the current calendar month is July, August, September, so on. Possible values: CALENDAR_PERIOD_UNSPECIFIED, MONTH, QUARTER, YEAR\",\n       \"type\": \"string\"\n      },\n      \"creditTypes\": {\n       \"description\": \"Optional. If Filter.credit_types_treatment is INCLUDE_SPECIFIED_CREDITS, this is a list of credit types to be subtracted from gross cost to determine the spend for threshold calculations. See a list of acceptable credit type values. If Filter.credit_types_treatment is not INCLUDE_SPECIFIED_CREDITS, this field must be empty.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"creditTypesTreatment\": {\n       \"description\": \"Optional. If not set, default behavior is `INCLUDE_ALL_CREDITS`.\",\n       \"type\": \"string\"\n      },\n      \"customPeriod\": {\n       \"description\": \"Optional. Specifies to track usage from any start date (required) to any end date (optional). This time period is static, it does not recur.\",\n       \"properties\": {\n        \"endDate\": {\n         \"description\": \"Immutable. Optional. The end date of the time period. Budgets with elapsed end date won't be processed. If unset, specifies to track all usage incurred since the start_date.\",\n         \"properties\": {\n          \"day\": {\n           \"description\": \"Immutable. Day of a month. Must be from 1 to 31 and valid for the year and month, or 0 to specify a year by itself or a year and month where the day isn't significant.\",\n           \"format\": \"int64\",\n           \"type\": \"integer\"\n          },\n          \"month\": {\n           \"description\": \"Immutable. Month of a year. Must be from 1 to 12, or 0 to specify a year without a month and day.\",\n           \"format\": \"int64\",\n           \"type\": \"integer\"\n          },\n          \"year\": {\n           \"description\": \"Immutable. Year of the date. Must be from 1 to 9999, or 0 to specify a date without a year.\",\n           \"format\": \"int64\",\n           \"type\": \"integer\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"startDate\": {\n         \"description\": \"Immutable. Required. The start date must be after January 1, 2017.\",\n         \"properties\": {\n          \"day\": {\n           \"description\": \"Immutable. Day of a month. Must be from 1 to 31 and valid for the year and month, or 0 to specify a year by itself or a year and month where the day isn't significant.\",\n           \"format\": \"int64\",\n           \"type\": \"integer\"\n          },\n          \"month\": {\n           \"description\": \"Immutable. Month of a year. Must be from 1 to 12, or 0 to specify a year without a month and day.\",\n           \"format\": \"int64\",\n           \"type\": \"integer\"\n          },\n          \"year\": {\n           \"description\": \"Immutable. Year of the date. Must be from 1 to 9999, or 0 to specify a date without a year.\",\n           \"format\": \"int64\",\n           \"type\": \"integer\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"required\": [\n        \"startDate\"\n       ],\n       \"type\": \"object\"\n      },\n      \"labels\": {\n       \"additionalProperties\": {\n        \"properties\": {\n         \"values\": {\n          \"description\": \"Immutable. The values of the label\",\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"description\": \"Optional. A single label and value pair specifying that usage from only this set of labeled resources should be included in the budget. Currently, multiple entries or multiple values per entry are not allowed. If omitted, the report will include all labeled and unlabeled usage.\",\n       \"type\": \"object\"\n      },\n      \"projects\": {\n       \"items\": {\n        \"oneOf\": [\n         {\n          \"not\": {\n           \"required\": [\n            \"external\"\n           ]\n          },\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"not\": {\n           \"anyOf\": [\n            {\n             \"required\": [\n              \"name\"\n             ]\n            },\n            {\n             \"required\": [\n              \"namespace\"\n             ]\n            }\n           ]\n          },\n          \"required\": [\n           \"external\"\n          ]\n         }\n        ],\n        \"properties\": {\n         \"external\": {\n          \"description\": \"Allowed value: The Google Cloud resource name of a `Project` resource (format: `projects/{{name}}`).\",\n          \"type\": \"string\"\n         },\n         \"name\": {\n          \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n          \"type\": \"string\"\n         },\n         \"namespace\": {\n          \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"services\": {\n       \"description\": \"Optional. A set of services of the form `services/{service_id}`, specifying that usage from only this set of services should be included in the budget. If omitted, the report will include usage for all the services. The service names are available through the Catalog API: https://cloud.google.com/billing/v1/how-tos/catalog-api.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"subaccounts\": {\n       \"items\": {\n        \"oneOf\": [\n         {\n          \"not\": {\n           \"required\": [\n            \"external\"\n           ]\n          },\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"not\": {\n           \"anyOf\": [\n            {\n             \"required\": [\n              \"name\"\n             ]\n            },\n            {\n             \"required\": [\n              \"namespace\"\n             ]\n            }\n           ]\n          },\n          \"required\": [\n           \"external\"\n          ]\n         }\n        ],\n        \"properties\": {\n         \"external\": {\n          \"type\": \"string\"\n         },\n         \"name\": {\n          \"description\": \"[WARNING] CloudBillingBillingAccount not yet supported in Config Connector, use 'external' field to reference existing resources.\\nName of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n          \"type\": \"string\"\n         },\n         \"namespace\": {\n          \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"displayName\": {\n     \"description\": \"User data for display name in UI. The name must be less than or equal to 60 characters.\",\n     \"type\": \"string\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The service-generated name of the resource. Used for acquisition only. Leave unset to create a new resource.\",\n     \"type\": \"string\"\n    },\n    \"thresholdRules\": {\n     \"description\": \"Optional. Rules that trigger alerts (notifications of thresholds being crossed) when spend exceeds the specified percentages of the budget.\",\n     \"items\": {\n      \"properties\": {\n       \"spendBasis\": {\n        \"description\": \"Optional. The type of basis used to determine if spend has passed the threshold. Behavior defaults to CURRENT_SPEND if not set. Possible values: BASIS_UNSPECIFIED, CURRENT_SPEND, FORECASTED_SPEND\",\n        \"type\": \"string\"\n       },\n       \"thresholdPercent\": {\n        \"description\": \"Required. Send an alert when this threshold is exceeded. This is a 1.0-based percentage, so 0.5 = 50%. Validation: non-negative number.\",\n        \"format\": \"double\",\n        \"type\": \"number\"\n       }\n      },\n      \"required\": [\n       \"thresholdPercent\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"amount\",\n    \"billingAccountRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Billing Budgets Budget\",\n \"type\": \"object\"\n}"
-  }
+  "version": "v1.0.0"
  }

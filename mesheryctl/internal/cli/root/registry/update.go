@@ -21,9 +21,9 @@ import (
 	"path/filepath"
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	mutils "github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshkit/utils/store"
+	comp "github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/sirupsen/logrus"
 
 	"github.com/spf13/cobra"
@@ -81,7 +81,7 @@ mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 		err = InvokeCompUpdate()
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 
 		return nil
@@ -178,7 +178,7 @@ func InvokeCompUpdate() error {
 							utils.Log.Error(ErrUpdateComponent(err, modelName, component.Component))
 							continue
 						}
-						componentDef := v1beta1.ComponentDefinition{}
+						componentDef := comp.ComponentDefinition{}
 						err = json.Unmarshal(componentByte, &componentDef)
 						if err != nil {
 							utils.Log.Error(ErrUpdateComponent(err, modelName, component.Component))
@@ -190,7 +190,7 @@ func InvokeCompUpdate() error {
 							utils.Log.Error(ErrUpdateComponent(err, modelName, component.Component))
 							continue
 						}
-						err = mutils.WriteJSONToFile[v1beta1.ComponentDefinition](compPath, componentDef)
+						err = mutils.WriteJSONToFile[comp.ComponentDefinition](compPath, componentDef)
 						if err != nil {
 							utils.Log.Error(err)
 							continue

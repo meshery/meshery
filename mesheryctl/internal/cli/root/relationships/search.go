@@ -46,26 +46,6 @@ var SearchComponentsCmd = &cobra.Command{
 	Example: `
 // Search for relationship using a query
 mesheryctl exp relationship search --[flag] [query-text]`,
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-		//Check prerequisites
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			return err
-		}
-		err = utils.IsServerRunning(mctlCfg.GetBaseMesheryURL())
-		if err != nil {
-			return err
-		}
-		ctx, err := mctlCfg.GetCurrentContext()
-		if err != nil {
-			return err
-		}
-		err = ctx.ValidateVersion()
-		if err != nil {
-			return err
-		}
-		return nil
-	},
 	Args: func(cmd *cobra.Command, args []string) error {
 		const errMsg = "Usage: mesheryctl exp relationship search --[flag] [query-text] \nRun 'mesheryctl exp relationship search --help' to see detailed help message"
 		if len(args) == 1 {
@@ -105,13 +85,13 @@ mesheryctl exp relationship search --[flag] [query-text]`,
 		req, err := utils.NewRequest(http.MethodGet, url, nil)
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 
 		resp, err := utils.MakeRequest(req)
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 
 		// defers the closing of the response body after its use, ensuring that the resources are properly released.
@@ -120,14 +100,14 @@ mesheryctl exp relationship search --[flag] [query-text]`,
 		data, err := io.ReadAll(resp.Body)
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 
 		relationshipResponse := &MeshmodelRelationshipsAPIResponse{}
 		err = json.Unmarshal(data, relationshipResponse)
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 
 		header := []string{"kind", "apiVersion", "model-name", "subType", "regoQuery"}
@@ -135,7 +115,11 @@ mesheryctl exp relationship search --[flag] [query-text]`,
 
 		for _, relationship := range relationshipResponse.Relationships {
 			if len(relationship.Type()) > 0 {
-				rows = append(rows, []string{relationship.Kind, relationship.SchemaVersion, relationship.Model.DisplayName, relationship.SubType, relationship.EvaluationQuery})
+				evaluationQuery := ""
+				if relationship.EvaluationQuery != nil {
+					evaluationQuery = *relationship.EvaluationQuery
+				}
+				rows = append(rows, []string{string(relationship.Kind), relationship.SchemaVersion, relationship.Model.DisplayName, relationship.SubType, evaluationQuery})
 			}
 		}
 
@@ -159,7 +143,7 @@ mesheryctl exp relationship search --[flag] [query-text]`,
 			fmt.Print("Page: ", startIndex/maxRowsPerPage+1)
 			fmt.Println()
 
-			fmt.Println("Press Enter or ↓ to continue, Esc or Ctrl+C (Ctrl+Cmd for OS user) to exit")
+			fmt.Println("Press Enter or ↓ to continue. Press Esc or Ctrl+C to exit.")
 
 			utils.PrintToTable(header, rows[startIndex:endIndex])
 			keysEvents, err := keyboard.GetKeys(10)

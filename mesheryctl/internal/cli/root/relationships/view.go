@@ -21,14 +21,12 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha2"
-
 	"gopkg.in/yaml.v2"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/components"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/schemas/models/v1alpha3/relationship"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -42,27 +40,6 @@ var ViewRelationshipsCmd = &cobra.Command{
 // View relationships of a model
 mesheryctl exp relationship view [model-name]
 	`,
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-		//Check prerequisite
-
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			return utils.ErrLoadConfig(err)
-		}
-		err = utils.IsServerRunning(mctlCfg.GetBaseMesheryURL())
-		if err != nil {
-			return err
-		}
-		ctx, err := mctlCfg.GetCurrentContext()
-		if err != nil {
-			return system.ErrGetCurrentContext(err)
-		}
-		err = ctx.ValidateVersion()
-		if err != nil {
-			return err
-		}
-		return nil
-	},
 	Args: func(cmd *cobra.Command, args []string) error {
 		const errMsg = "Usage: mesheryctl exp relationships view [model-name]\nRun 'mesheryctl exp relationships view --help' to see detailed help message"
 		if len(args) == 0 {
@@ -107,7 +84,7 @@ mesheryctl exp relationship view [model-name]
 			return err
 		}
 
-		var selectedModel *v1alpha2.RelationshipDefinition
+		var selectedModel *relationship.RelationshipDefinition
 
 		if relationshipsResponse.Count == 0 {
 			utils.Log.Info("No relationship(s) found for the given name ", model)

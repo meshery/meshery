@@ -1,27 +1,153 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "displayName": "Service Import",
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "ServiceImport",
+   "schema": "{\n \"description\": \"ServiceImport is the Schema for the serviceimports API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ServiceImportSpec defines the desired state of ServiceImport\",\n   \"properties\": {\n    \"aliases\": {\n     \"description\": \"Alias names for the exported service. The service could be addressed by the alias names in addition to the slice.local name.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"dnsName\": {\n     \"description\": \"DNSName shows the FQDN to reach the service\",\n     \"type\": \"string\"\n    },\n    \"ports\": {\n     \"description\": \"Ports which should be exposed through the service\",\n     \"items\": {\n      \"description\": \"ServicePort is the port exposed by ServicePod\",\n      \"properties\": {\n       \"containerPort\": {\n        \"description\": \"Port number exposed from the container\",\n        \"format\": \"int32\",\n        \"type\": \"integer\"\n       },\n       \"name\": {\n        \"description\": \"Name of the port\",\n        \"type\": \"string\"\n       },\n       \"protocol\": {\n        \"default\": \"TCP\",\n        \"description\": \"Protocol for port. Must be UDP, TCP, or SCTP. Defaults to \\\"TCP\\\".\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"containerPort\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"slice\": {\n     \"description\": \"Slice denotes the slice which the app is part of\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"dnsName\",\n    \"ports\",\n    \"slice\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Service Import\",\n \"type\": \"object\"\n}",
+   "version": "networking.kubeslice.io/v1beta1"
+  },
+  "configuration": null,
   "description": "",
+  "displayName": "Service Import",
   "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "published": false,
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": ""
+  },
   "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "version": "v1.0.0",
-   "name": "kubeslice-worker",
-   "displayName": "Kubeslice Worker",
-   "description": "",
-   "status": "enabled",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "registrant": {
-    "hostname": "artifacthub"
-   },
    "category": {
-    "name": "Provisioning",
-    "metadata": null
+    "name": "Provisioning"
    },
-   "subCategory": "Automation \u0026 Configuration",
+   "displayName": "Kubeslice Worker",
+   "id": "00000000-0000-0000-0000-000000000000",
    "metadata": {
     "isAnnotation": false,
     "subCategory": "Automation \u0026 Configuration",
@@ -32,30 +158,36 @@
    "model": {
     "version": "1.2.0"
    },
+   "name": "kubeslice-worker",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "enabled",
+   "subCategory": "Automation \u0026 Configuration",
+   "version": "v1.0.0",
    "components": null,
    "relationships": null
   },
-  "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
    "primaryColor": "#00105f",
    "secondaryColor": "#2bbafe",
    "shape": "circle",
-   "shapePolygonPoints": "",
-   "status": "enabled",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
    "svgColor": "",
-   "svgComplete": "",
    "svgWhite": ""
   },
-  "component": {
-   "kind": "ServiceImport",
-   "version": "networking.kubeslice.io/v1beta1",
-   "schema": "{\n \"description\": \"ServiceImport is the Schema for the serviceimports API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ServiceImportSpec defines the desired state of ServiceImport\",\n   \"properties\": {\n    \"aliases\": {\n     \"description\": \"Alias names for the exported service. The service could be addressed by the alias names in addition to the slice.local name.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"dnsName\": {\n     \"description\": \"DNSName shows the FQDN to reach the service\",\n     \"type\": \"string\"\n    },\n    \"ports\": {\n     \"description\": \"Ports which should be exposed through the service\",\n     \"items\": {\n      \"description\": \"ServicePort is the port exposed by ServicePod\",\n      \"properties\": {\n       \"containerPort\": {\n        \"description\": \"Port number exposed from the container\",\n        \"format\": \"int32\",\n        \"type\": \"integer\"\n       },\n       \"name\": {\n        \"description\": \"Name of the port\",\n        \"type\": \"string\"\n       },\n       \"protocol\": {\n        \"default\": \"TCP\",\n        \"description\": \"Protocol for port. Must be UDP, TCP, or SCTP. Defaults to \\\"TCP\\\".\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"containerPort\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"slice\": {\n     \"description\": \"Slice denotes the slice which the app is part of\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"dnsName\",\n    \"ports\",\n    \"slice\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Service Import\",\n \"type\": \"object\"\n}"
-  }
+  "version": "v1.0.0"
  }
