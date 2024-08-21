@@ -37,7 +37,7 @@ Learn how to import manifest files, visualize Kubernetes resources, create new r
 
 #### Download the Kubernetes Configuration Files
 
-To get started we will need some yaml files that will contain the configurations for the pods and services that will run on Meshery. Go ahead and download them.
+To get started we will need some yaml files that will contain the configurations for the pods and services that will run on Meshery. You can download them to see what the look like.
 1. [redis-leader-deployment.yaml](https://k8s.io/examples/application/guestbook/redis-leader-deployment.yaml)
 2. [redis-leader-service.yaml](https://k8s.io/examples/application/guestbook/redis-leader-service.yaml)
 3. [redis-follower-deployment.yaml](https://k8s.io/examples/application/guestbook/redis-follower-deployment.yaml)
@@ -63,14 +63,15 @@ These YAML files contain the Service definitions and Deployment configurations f
 
    - Select `Kubernetes Manifest` from the "Design Type" dropdown menu.
 
-   - Choose `URL Import` for the upload method, and select the file you just downloaded.
+   - Choose `URL Import` for the upload method, and input the URL.
 
    - Then, click on `Import`
 
         ![Import redis-leader-deployment](./screenshots/redis-leader-deployment.png)
 
-#### 2. **Deploying a Microservices Application:**
-   - Deploy a sample microservices application with multiple components using Kubernetes Deployments.
+3. 
+
+4. Now, follow the same steps to import the rest of the files.
 
 \```bash
 # Deploying a sample microservices application
