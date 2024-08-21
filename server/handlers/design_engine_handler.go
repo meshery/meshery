@@ -486,7 +486,7 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) ([]patter
 		// Hack until adapters fix the concurrent client
 		// creation issue: https://github.com/layer5io/meshery-adapter-library/issues/32
 		time.Sleep(50 * time.Microsecond)
-
+		fmt.Println("line 489: ", "Execute operations on: ", host.Kind)
 		sap.log.Debug("Execute operations on: ", host.Kind)
 
 		_hostPort, ok := host.Metadata["port"]
@@ -509,6 +509,7 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) ([]patter
 				sap.skipCrdAndOperator,
 				sap.upgradeExistingRelease,
 			)
+			fmt.Println("line 512 : ", resp, err)
 			return resp, err
 		}
 
