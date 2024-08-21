@@ -18,7 +18,7 @@ import (
 	"github.com/spf13/viper"
 
 	"github.com/layer5io/meshery/server/models/pattern/patterns/k8s"
-		patternutils "github.com/layer5io/meshery/server/models/pattern/utils"
+	patternutils "github.com/layer5io/meshery/server/models/pattern/utils"
 
 	"github.com/layer5io/meshery/server/models/pattern/stages"
 	"github.com/layer5io/meshkit/logger"
@@ -508,7 +508,6 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) ([]patter
 				sap.skipCrdAndOperator,
 				sap.upgradeExistingRelease,
 			)
-			fmt.Println("line 512 : ", resp, err)
 			return resp, err
 		}
 
