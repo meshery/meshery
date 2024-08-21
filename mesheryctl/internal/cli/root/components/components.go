@@ -17,14 +17,15 @@ package components
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/layer5io/meshery/server/models"
 	"io"
 	"net/http"
 	"os"
 
+	"github.com/layer5io/meshery/server/models"
+	"github.com/meshery/schemas/models/v1beta1/component"
+
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	"github.com/manifoldco/promptui"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
@@ -96,9 +97,9 @@ mesheryctl components search [component-name]
 }
 
 // selectComponentPrompt lets user to select a model if models are more than one
-func selectComponentPrompt(components []v1beta1.ComponentDefinition) v1beta1.ComponentDefinition {
+func selectComponentPrompt(components []component.ComponentDefinition) component.ComponentDefinition {
 	componentNames := []string{}
-	componentArray := []v1beta1.ComponentDefinition{}
+	componentArray := []component.ComponentDefinition{}
 
 	componentArray = append(componentArray, components...)
 
@@ -136,7 +137,7 @@ func OutputJson(component interface{}) error {
 	return nil
 }
 
-// prettifyJson takes a v1beta1.Model struct as input, marshals it into a nicely formatted JSON representation,
+// prettifyJson takes a model.ModelDefinition struct as input, marshals it into a nicely formatted JSON representation,
 // and prints it to standard output with proper indentation and without escaping HTML entities.
 func prettifyJson(component interface{}) error {
 	// Create a new JSON encoder that writes to the standard output (os.Stdout).
@@ -211,7 +212,7 @@ func listComponents(cmd *cobra.Command, url string, displayCountOnly bool) error
 		err := utils.HandlePagination(maxRowsPerPage, "components", rows, header)
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 	}
 	return nil

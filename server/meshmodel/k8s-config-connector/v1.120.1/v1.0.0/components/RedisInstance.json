@@ -1,29 +1,154 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "displayName": "Redis Instance",
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "RedisInstance",
+   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"alternativeLocationId\": {\n     \"description\": \"Immutable. Only applicable to STANDARD_HA tier which protects the instance\\nagainst zonal failures by provisioning it across two zones.\\nIf provided, it must be a different zone from the one provided in\\n[locationId].\",\n     \"type\": \"string\"\n    },\n    \"authEnabled\": {\n     \"description\": \"Optional. Indicates whether OSS Redis AUTH is enabled for the\\ninstance. If set to \\\"true\\\" AUTH is enabled on the instance.\\nDefault value is \\\"false\\\" meaning AUTH is disabled.\",\n     \"type\": \"boolean\"\n    },\n    \"authString\": {\n     \"description\": \"Output only. AUTH String set on the instance. This field will only be populated if auth_enabled is true.\",\n     \"type\": \"string\"\n    },\n    \"authorizedNetworkRef\": {\n     \"description\": \"The network to which the instance is connected. If left\\nunspecified, the default network will be used.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `selfLink` field of a `ComputeNetwork` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"connectMode\": {\n     \"description\": \"Immutable. The connection mode of the Redis instance. Default value: \\\"DIRECT_PEERING\\\" Possible values: [\\\"DIRECT_PEERING\\\", \\\"PRIVATE_SERVICE_ACCESS\\\"].\",\n     \"type\": \"string\"\n    },\n    \"customerManagedKeyRef\": {\n     \"description\": \"Immutable. Optional. The KMS key reference that you want to use to\\nencrypt the data at rest for this Redis instance. If this is\\nprovided, CMEK is enabled.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `selfLink` field of a `KMSCryptoKey` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"displayName\": {\n     \"description\": \"An arbitrary and optional user-provided name for the instance.\",\n     \"type\": \"string\"\n    },\n    \"locationId\": {\n     \"description\": \"Immutable. The zone where the instance will be provisioned. If not provided,\\nthe service will choose a zone for the instance. For STANDARD_HA tier,\\ninstances will be created across two zones for protection against\\nzonal failures. If [alternativeLocationId] is also provided, it must\\nbe different from [locationId].\",\n     \"type\": \"string\"\n    },\n    \"maintenancePolicy\": {\n     \"description\": \"Maintenance policy for an instance.\",\n     \"properties\": {\n      \"createTime\": {\n       \"description\": \"Output only. The time when the policy was created.\\nA timestamp in RFC3339 UTC \\\"Zulu\\\" format, with nanosecond\\nresolution and up to nine fractional digits.\",\n       \"type\": \"string\"\n      },\n      \"description\": {\n       \"description\": \"Optional. Description of what this policy is for.\\nCreate/Update methods return INVALID_ARGUMENT if the\\nlength is greater than 512.\",\n       \"type\": \"string\"\n      },\n      \"updateTime\": {\n       \"description\": \"Output only. The time when the policy was last updated.\\nA timestamp in RFC3339 UTC \\\"Zulu\\\" format, with nanosecond\\nresolution and up to nine fractional digits.\",\n       \"type\": \"string\"\n      },\n      \"weeklyMaintenanceWindow\": {\n       \"description\": \"Optional. Maintenance window that is applied to resources covered by this policy.\\nMinimum 1. For the current version, the maximum number\\nof weekly_window is expected to be one.\",\n       \"items\": {\n        \"properties\": {\n         \"day\": {\n          \"description\": \"Required. The day of week that maintenance updates occur.\\n\\n- DAY_OF_WEEK_UNSPECIFIED: The day of the week is unspecified.\\n- MONDAY: Monday\\n- TUESDAY: Tuesday\\n- WEDNESDAY: Wednesday\\n- THURSDAY: Thursday\\n- FRIDAY: Friday\\n- SATURDAY: Saturday\\n- SUNDAY: Sunday Possible values: [\\\"DAY_OF_WEEK_UNSPECIFIED\\\", \\\"MONDAY\\\", \\\"TUESDAY\\\", \\\"WEDNESDAY\\\", \\\"THURSDAY\\\", \\\"FRIDAY\\\", \\\"SATURDAY\\\", \\\"SUNDAY\\\"].\",\n          \"type\": \"string\"\n         },\n         \"duration\": {\n          \"description\": \"Output only. Duration of the maintenance window.\\nThe current window is fixed at 1 hour.\\nA duration in seconds with up to nine fractional digits,\\nterminated by 's'. Example: \\\"3.5s\\\".\",\n          \"type\": \"string\"\n         },\n         \"startTime\": {\n          \"description\": \"Required. Start time of the window in UTC time.\",\n          \"properties\": {\n           \"hours\": {\n            \"description\": \"Hours of day in 24 hour format. Should be from 0 to 23.\\nAn API may choose to allow the value \\\"24:00:00\\\" for scenarios like business closing time.\",\n            \"type\": \"integer\"\n           },\n           \"minutes\": {\n            \"description\": \"Minutes of hour of day. Must be from 0 to 59.\",\n            \"type\": \"integer\"\n           },\n           \"nanos\": {\n            \"description\": \"Fractions of seconds in nanoseconds. Must be from 0 to 999,999,999.\",\n            \"type\": \"integer\"\n           },\n           \"seconds\": {\n            \"description\": \"Seconds of minutes of the time. Must normally be from 0 to 59.\\nAn API may allow the value 60 if it allows leap-seconds.\",\n            \"type\": \"integer\"\n           }\n          },\n          \"type\": \"object\"\n         }\n        },\n        \"required\": [\n         \"day\",\n         \"startTime\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"maintenanceSchedule\": {\n     \"description\": \"Upcoming maintenance schedule.\",\n     \"items\": {\n      \"properties\": {\n       \"endTime\": {\n        \"description\": \"Output only. The end time of any upcoming scheduled maintenance for this instance.\\nA timestamp in RFC3339 UTC \\\"Zulu\\\" format, with nanosecond\\nresolution and up to nine fractional digits.\",\n        \"type\": \"string\"\n       },\n       \"scheduleDeadlineTime\": {\n        \"description\": \"Output only. The deadline that the maintenance schedule start time\\ncan not go beyond, including reschedule.\\nA timestamp in RFC3339 UTC \\\"Zulu\\\" format, with nanosecond\\nresolution and up to nine fractional digits.\",\n        \"type\": \"string\"\n       },\n       \"startTime\": {\n        \"description\": \"Output only. The start time of any upcoming scheduled maintenance for this instance.\\nA timestamp in RFC3339 UTC \\\"Zulu\\\" format, with nanosecond\\nresolution and up to nine fractional digits.\",\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"memorySizeGb\": {\n     \"description\": \"Redis memory size in GiB.\",\n     \"type\": \"integer\"\n    },\n    \"persistenceConfig\": {\n     \"description\": \"Persistence configuration for an instance.\",\n     \"properties\": {\n      \"persistenceMode\": {\n       \"description\": \"Optional. Controls whether Persistence features are enabled. If not provided, the existing value will be used.\\n\\n- DISABLED: \\tPersistence is disabled for the instance, and any existing snapshots are deleted.\\n- RDB: RDB based Persistence is enabled. Possible values: [\\\"DISABLED\\\", \\\"RDB\\\"].\",\n       \"type\": \"string\"\n      },\n      \"rdbNextSnapshotTime\": {\n       \"description\": \"Output only. The next time that a snapshot attempt is scheduled to occur.\\nA timestamp in RFC3339 UTC \\\"Zulu\\\" format, with nanosecond resolution and up\\nto nine fractional digits.\\nExamples: \\\"2014-10-02T15:01:23Z\\\" and \\\"2014-10-02T15:01:23.045123456Z\\\".\",\n       \"type\": \"string\"\n      },\n      \"rdbSnapshotPeriod\": {\n       \"description\": \"Optional. Available snapshot periods for scheduling.\\n\\n- ONE_HOUR:\\tSnapshot every 1 hour.\\n- SIX_HOURS:\\tSnapshot every 6 hours.\\n- TWELVE_HOURS:\\tSnapshot every 12 hours.\\n- TWENTY_FOUR_HOURS:\\tSnapshot every 24 hours. Possible values: [\\\"ONE_HOUR\\\", \\\"SIX_HOURS\\\", \\\"TWELVE_HOURS\\\", \\\"TWENTY_FOUR_HOURS\\\"].\",\n       \"type\": \"string\"\n      },\n      \"rdbSnapshotStartTime\": {\n       \"description\": \"Optional. Date and time that the first snapshot was/will be attempted,\\nand to which future snapshots will be aligned. If not provided,\\nthe current time will be used.\\nA timestamp in RFC3339 UTC \\\"Zulu\\\" format, with nanosecond resolution\\nand up to nine fractional digits.\\nExamples: \\\"2014-10-02T15:01:23Z\\\" and \\\"2014-10-02T15:01:23.045123456Z\\\".\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"readReplicasMode\": {\n     \"description\": \"Optional. Read replica mode. Can only be specified when trying to create the instance.\\nIf not set, Memorystore Redis backend will default to READ_REPLICAS_DISABLED.\\n- READ_REPLICAS_DISABLED: If disabled, read endpoint will not be provided and the\\ninstance cannot scale up or down the number of replicas.\\n- READ_REPLICAS_ENABLED: If enabled, read endpoint will be provided and the instance\\ncan scale up and down the number of replicas. Possible values: [\\\"READ_REPLICAS_DISABLED\\\", \\\"READ_REPLICAS_ENABLED\\\"].\",\n     \"type\": \"string\"\n    },\n    \"redisConfigs\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"Redis configuration parameters, according to http://redis.io/topics/config.\\nPlease check Memorystore documentation for the list of supported parameters:\\nhttps://cloud.google.com/memorystore/docs/redis/reference/rest/v1/projects.locations.instances#Instance.FIELDS.redis_configs.\",\n     \"type\": \"object\"\n    },\n    \"redisVersion\": {\n     \"description\": \"The version of Redis software. If not provided, latest supported\\nversion will be used. Please check the API documentation linked\\nat the top for the latest valid values.\",\n     \"type\": \"string\"\n    },\n    \"region\": {\n     \"description\": \"Immutable. The name of the Redis region of the instance.\",\n     \"type\": \"string\"\n    },\n    \"replicaCount\": {\n     \"description\": \"Optional. The number of replica nodes. The valid range for the Standard Tier with\\nread replicas enabled is [1-5] and defaults to 2. If read replicas are not enabled\\nfor a Standard Tier instance, the only valid value is 1 and the default is 1.\\nThe valid value for basic tier is 0 and the default is also 0.\",\n     \"type\": \"integer\"\n    },\n    \"reservedIpRange\": {\n     \"description\": \"Immutable. The CIDR range of internal addresses that are reserved for this\\ninstance. If not provided, the service will choose an unused /29\\nblock, for example, 10.0.0.0/29 or 192.168.0.0/29. Ranges must be\\nunique and non-overlapping with existing subnets in an authorized\\nnetwork.\",\n     \"type\": \"string\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    },\n    \"secondaryIpRange\": {\n     \"description\": \"Optional. Additional IP range for node placement. Required when enabling read replicas on\\nan existing instance. For DIRECT_PEERING mode value must be a CIDR range of size /28, or\\n\\\"auto\\\". For PRIVATE_SERVICE_ACCESS mode value must be the name of an allocated address\\nrange associated with the private service access connection, or \\\"auto\\\".\",\n     \"type\": \"string\"\n    },\n    \"tier\": {\n     \"description\": \"Immutable. The service tier of the instance. Must be one of these values:\\n\\n- BASIC: standalone instance\\n- STANDARD_HA: highly available primary/replica instances Default value: \\\"BASIC\\\" Possible values: [\\\"BASIC\\\", \\\"STANDARD_HA\\\"].\",\n     \"type\": \"string\"\n    },\n    \"transitEncryptionMode\": {\n     \"description\": \"Immutable. The TLS mode of the Redis instance, If not provided, TLS is disabled for the instance.\\n\\n- SERVER_AUTHENTICATION: Client to Server traffic encryption enabled with server authentication Default value: \\\"DISABLED\\\" Possible values: [\\\"SERVER_AUTHENTICATION\\\", \\\"DISABLED\\\"].\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"memorySizeGb\",\n    \"region\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Redis Instance\",\n \"type\": \"object\"\n}",
+   "version": "redis.cnrm.cloud.google.com/v1beta1"
+  },
+  "configuration": null,
   "description": "",
+  "displayName": "Redis Instance",
   "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "published": false,
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": ""
+  },
   "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "version": "v1.0.0",
-   "name": "k8s-config-connector",
-   "displayName": "Google Cloud Platform",
-   "description": "",
-   "status": "enabled",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "registrant": {
-    "hostname": "github"
-   },
    "category": {
-    "name": "Orchestration \u0026 Management",
-    "metadata": null
+    "name": "Orchestration \u0026 Management"
    },
-   "subCategory": "Google Cloud Platform",
+   "displayName": "Google Cloud Platform",
+   "id": "00000000-0000-0000-0000-000000000000",
    "metadata": {
-    "capabilities": "",
     "defaultData": "",
     "isAnnotation": false,
     "primaryColor": "#4285F4",
@@ -39,30 +164,35 @@
    "model": {
     "version": "v1.120.1"
    },
+   "name": "k8s-config-connector",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "github",
+    "name": "Github",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "enabled",
+   "subCategory": "Google Cloud Platform",
+   "version": "v1.0.0",
    "components": null,
    "relationships": null
   },
-  "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
    "primaryColor": "#4285F4",
-   "secondaryColor": "",
    "shape": "rectangle",
-   "shapePolygonPoints": "",
-   "status": "enabled",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
    "svgColor": "\u003csvg width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"\u003e\n    \u003cg stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e\n        \u003cpath d=\"M12.3008862,4.00003179 L18.9908678,7.90329279 L19,11.4442164 L14.973309,9.0680926 L14.973309,10.8562526 L16.9806355,12.0276231 L16.9918433,15.1064843 L14.973309,13.9136004 L14.973309,18.415105 L12.3008862,20 L12.3008862,4.00003179 Z M11.6991138,4 L11.6991138,19.9999682 L9.02669102,18.4150732 L9.02669102,9.06816678 L5,11.4441846 L5.00913223,7.903261 L11.6991138,4 Z\" fill=\"#4285F4\"\u003e\u003c/path\u003e\n    \u003c/g\u003e\n\u003c/svg\u003e",
-   "svgComplete": "",
    "svgWhite": "\u003csvg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M12.3009 4.00003L18.9909 7.90329L19 11.4442L14.9733 9.06809V10.8563L16.9806 12.0276L16.9918 15.1065L14.9733 13.9136V18.4151L12.3009 20V4.00003ZM11.6991 4V20L9.02669 18.4151V9.06817L5 11.4442L5.00913 7.90326L11.6991 4Z\" fill=\"white\"/\u003e\n\u003c/svg\u003e\n"
   },
-  "component": {
-   "kind": "RedisInstance",
-   "version": "redis.cnrm.cloud.google.com/v1beta1",
-   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"alternativeLocationId\": {\n     \"description\": \"Immutable. Only applicable to STANDARD_HA tier which protects the instance\\nagainst zonal failures by provisioning it across two zones.\\nIf provided, it must be a different zone from the one provided in\\n[locationId].\",\n     \"type\": \"string\"\n    },\n    \"authEnabled\": {\n     \"description\": \"Optional. Indicates whether OSS Redis AUTH is enabled for the\\ninstance. If set to \\\"true\\\" AUTH is enabled on the instance.\\nDefault value is \\\"false\\\" meaning AUTH is disabled.\",\n     \"type\": \"boolean\"\n    },\n    \"authString\": {\n     \"description\": \"Output only. AUTH String set on the instance. This field will only be populated if auth_enabled is true.\",\n     \"type\": \"string\"\n    },\n    \"authorizedNetworkRef\": {\n     \"description\": \"The network to which the instance is connected. If left\\nunspecified, the default network will be used.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `selfLink` field of a `ComputeNetwork` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"connectMode\": {\n     \"description\": \"Immutable. The connection mode of the Redis instance. Default value: \\\"DIRECT_PEERING\\\" Possible values: [\\\"DIRECT_PEERING\\\", \\\"PRIVATE_SERVICE_ACCESS\\\"].\",\n     \"type\": \"string\"\n    },\n    \"customerManagedKeyRef\": {\n     \"description\": \"Immutable. Optional. The KMS key reference that you want to use to\\nencrypt the data at rest for this Redis instance. If this is\\nprovided, CMEK is enabled.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `selfLink` field of a `KMSCryptoKey` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"displayName\": {\n     \"description\": \"An arbitrary and optional user-provided name for the instance.\",\n     \"type\": \"string\"\n    },\n    \"locationId\": {\n     \"description\": \"Immutable. The zone where the instance will be provisioned. If not provided,\\nthe service will choose a zone for the instance. For STANDARD_HA tier,\\ninstances will be created across two zones for protection against\\nzonal failures. If [alternativeLocationId] is also provided, it must\\nbe different from [locationId].\",\n     \"type\": \"string\"\n    },\n    \"maintenancePolicy\": {\n     \"description\": \"Maintenance policy for an instance.\",\n     \"properties\": {\n      \"createTime\": {\n       \"description\": \"Output only. The time when the policy was created.\\nA timestamp in RFC3339 UTC \\\"Zulu\\\" format, with nanosecond\\nresolution and up to nine fractional digits.\",\n       \"type\": \"string\"\n      },\n      \"description\": {\n       \"description\": \"Optional. Description of what this policy is for.\\nCreate/Update methods return INVALID_ARGUMENT if the\\nlength is greater than 512.\",\n       \"type\": \"string\"\n      },\n      \"updateTime\": {\n       \"description\": \"Output only. The time when the policy was last updated.\\nA timestamp in RFC3339 UTC \\\"Zulu\\\" format, with nanosecond\\nresolution and up to nine fractional digits.\",\n       \"type\": \"string\"\n      },\n      \"weeklyMaintenanceWindow\": {\n       \"description\": \"Optional. Maintenance window that is applied to resources covered by this policy.\\nMinimum 1. For the current version, the maximum number\\nof weekly_window is expected to be one.\",\n       \"items\": {\n        \"properties\": {\n         \"day\": {\n          \"description\": \"Required. The day of week that maintenance updates occur.\\n\\n- DAY_OF_WEEK_UNSPECIFIED: The day of the week is unspecified.\\n- MONDAY: Monday\\n- TUESDAY: Tuesday\\n- WEDNESDAY: Wednesday\\n- THURSDAY: Thursday\\n- FRIDAY: Friday\\n- SATURDAY: Saturday\\n- SUNDAY: Sunday Possible values: [\\\"DAY_OF_WEEK_UNSPECIFIED\\\", \\\"MONDAY\\\", \\\"TUESDAY\\\", \\\"WEDNESDAY\\\", \\\"THURSDAY\\\", \\\"FRIDAY\\\", \\\"SATURDAY\\\", \\\"SUNDAY\\\"].\",\n          \"type\": \"string\"\n         },\n         \"duration\": {\n          \"description\": \"Output only. Duration of the maintenance window.\\nThe current window is fixed at 1 hour.\\nA duration in seconds with up to nine fractional digits,\\nterminated by 's'. Example: \\\"3.5s\\\".\",\n          \"type\": \"string\"\n         },\n         \"startTime\": {\n          \"description\": \"Required. Start time of the window in UTC time.\",\n          \"properties\": {\n           \"hours\": {\n            \"description\": \"Hours of day in 24 hour format. Should be from 0 to 23.\\nAn API may choose to allow the value \\\"24:00:00\\\" for scenarios like business closing time.\",\n            \"type\": \"integer\"\n           },\n           \"minutes\": {\n            \"description\": \"Minutes of hour of day. Must be from 0 to 59.\",\n            \"type\": \"integer\"\n           },\n           \"nanos\": {\n            \"description\": \"Fractions of seconds in nanoseconds. Must be from 0 to 999,999,999.\",\n            \"type\": \"integer\"\n           },\n           \"seconds\": {\n            \"description\": \"Seconds of minutes of the time. Must normally be from 0 to 59.\\nAn API may allow the value 60 if it allows leap-seconds.\",\n            \"type\": \"integer\"\n           }\n          },\n          \"type\": \"object\"\n         }\n        },\n        \"required\": [\n         \"day\",\n         \"startTime\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"maintenanceSchedule\": {\n     \"description\": \"Upcoming maintenance schedule.\",\n     \"items\": {\n      \"properties\": {\n       \"endTime\": {\n        \"description\": \"Output only. The end time of any upcoming scheduled maintenance for this instance.\\nA timestamp in RFC3339 UTC \\\"Zulu\\\" format, with nanosecond\\nresolution and up to nine fractional digits.\",\n        \"type\": \"string\"\n       },\n       \"scheduleDeadlineTime\": {\n        \"description\": \"Output only. The deadline that the maintenance schedule start time\\ncan not go beyond, including reschedule.\\nA timestamp in RFC3339 UTC \\\"Zulu\\\" format, with nanosecond\\nresolution and up to nine fractional digits.\",\n        \"type\": \"string\"\n       },\n       \"startTime\": {\n        \"description\": \"Output only. The start time of any upcoming scheduled maintenance for this instance.\\nA timestamp in RFC3339 UTC \\\"Zulu\\\" format, with nanosecond\\nresolution and up to nine fractional digits.\",\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"memorySizeGb\": {\n     \"description\": \"Redis memory size in GiB.\",\n     \"type\": \"integer\"\n    },\n    \"persistenceConfig\": {\n     \"description\": \"Persistence configuration for an instance.\",\n     \"properties\": {\n      \"persistenceMode\": {\n       \"description\": \"Optional. Controls whether Persistence features are enabled. If not provided, the existing value will be used.\\n\\n- DISABLED: \\tPersistence is disabled for the instance, and any existing snapshots are deleted.\\n- RDB: RDB based Persistence is enabled. Possible values: [\\\"DISABLED\\\", \\\"RDB\\\"].\",\n       \"type\": \"string\"\n      },\n      \"rdbNextSnapshotTime\": {\n       \"description\": \"Output only. The next time that a snapshot attempt is scheduled to occur.\\nA timestamp in RFC3339 UTC \\\"Zulu\\\" format, with nanosecond resolution and up\\nto nine fractional digits.\\nExamples: \\\"2014-10-02T15:01:23Z\\\" and \\\"2014-10-02T15:01:23.045123456Z\\\".\",\n       \"type\": \"string\"\n      },\n      \"rdbSnapshotPeriod\": {\n       \"description\": \"Optional. Available snapshot periods for scheduling.\\n\\n- ONE_HOUR:\\tSnapshot every 1 hour.\\n- SIX_HOURS:\\tSnapshot every 6 hours.\\n- TWELVE_HOURS:\\tSnapshot every 12 hours.\\n- TWENTY_FOUR_HOURS:\\tSnapshot every 24 hours. Possible values: [\\\"ONE_HOUR\\\", \\\"SIX_HOURS\\\", \\\"TWELVE_HOURS\\\", \\\"TWENTY_FOUR_HOURS\\\"].\",\n       \"type\": \"string\"\n      },\n      \"rdbSnapshotStartTime\": {\n       \"description\": \"Optional. Date and time that the first snapshot was/will be attempted,\\nand to which future snapshots will be aligned. If not provided,\\nthe current time will be used.\\nA timestamp in RFC3339 UTC \\\"Zulu\\\" format, with nanosecond resolution\\nand up to nine fractional digits.\\nExamples: \\\"2014-10-02T15:01:23Z\\\" and \\\"2014-10-02T15:01:23.045123456Z\\\".\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"readReplicasMode\": {\n     \"description\": \"Optional. Read replica mode. Can only be specified when trying to create the instance.\\nIf not set, Memorystore Redis backend will default to READ_REPLICAS_DISABLED.\\n- READ_REPLICAS_DISABLED: If disabled, read endpoint will not be provided and the\\ninstance cannot scale up or down the number of replicas.\\n- READ_REPLICAS_ENABLED: If enabled, read endpoint will be provided and the instance\\ncan scale up and down the number of replicas. Possible values: [\\\"READ_REPLICAS_DISABLED\\\", \\\"READ_REPLICAS_ENABLED\\\"].\",\n     \"type\": \"string\"\n    },\n    \"redisConfigs\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"Redis configuration parameters, according to http://redis.io/topics/config.\\nPlease check Memorystore documentation for the list of supported parameters:\\nhttps://cloud.google.com/memorystore/docs/redis/reference/rest/v1/projects.locations.instances#Instance.FIELDS.redis_configs.\",\n     \"type\": \"object\"\n    },\n    \"redisVersion\": {\n     \"description\": \"The version of Redis software. If not provided, latest supported\\nversion will be used. Please check the API documentation linked\\nat the top for the latest valid values.\",\n     \"type\": \"string\"\n    },\n    \"region\": {\n     \"description\": \"Immutable. The name of the Redis region of the instance.\",\n     \"type\": \"string\"\n    },\n    \"replicaCount\": {\n     \"description\": \"Optional. The number of replica nodes. The valid range for the Standard Tier with\\nread replicas enabled is [1-5] and defaults to 2. If read replicas are not enabled\\nfor a Standard Tier instance, the only valid value is 1 and the default is 1.\\nThe valid value for basic tier is 0 and the default is also 0.\",\n     \"type\": \"integer\"\n    },\n    \"reservedIpRange\": {\n     \"description\": \"Immutable. The CIDR range of internal addresses that are reserved for this\\ninstance. If not provided, the service will choose an unused /29\\nblock, for example, 10.0.0.0/29 or 192.168.0.0/29. Ranges must be\\nunique and non-overlapping with existing subnets in an authorized\\nnetwork.\",\n     \"type\": \"string\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    },\n    \"secondaryIpRange\": {\n     \"description\": \"Optional. Additional IP range for node placement. Required when enabling read replicas on\\nan existing instance. For DIRECT_PEERING mode value must be a CIDR range of size /28, or\\n\\\"auto\\\". For PRIVATE_SERVICE_ACCESS mode value must be the name of an allocated address\\nrange associated with the private service access connection, or \\\"auto\\\".\",\n     \"type\": \"string\"\n    },\n    \"tier\": {\n     \"description\": \"Immutable. The service tier of the instance. Must be one of these values:\\n\\n- BASIC: standalone instance\\n- STANDARD_HA: highly available primary/replica instances Default value: \\\"BASIC\\\" Possible values: [\\\"BASIC\\\", \\\"STANDARD_HA\\\"].\",\n     \"type\": \"string\"\n    },\n    \"transitEncryptionMode\": {\n     \"description\": \"Immutable. The TLS mode of the Redis instance, If not provided, TLS is disabled for the instance.\\n\\n- SERVER_AUTHENTICATION: Client to Server traffic encryption enabled with server authentication Default value: \\\"DISABLED\\\" Possible values: [\\\"SERVER_AUTHENTICATION\\\", \\\"DISABLED\\\"].\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"memorySizeGb\",\n    \"region\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Redis Instance\",\n \"type\": \"object\"\n}"
-  }
+  "version": "v1.0.0"
  }
