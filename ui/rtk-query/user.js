@@ -23,7 +23,7 @@ const userApi = api.injectEndpoints({
       query: (queryArg) => ({
         url: 'user/prefs',
         method: 'POST',
-        body: queryArg,
+        body: queryArg.body,
         credentials: 'include',
       }),
     }),
