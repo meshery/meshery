@@ -482,7 +482,7 @@ const MesheryPerformanceComponent = (props) => {
 
   const handleProfileUpload = (body, generateNotif, cb) => {
     if (generateNotif) props.updateProgress({ showProgress: true });
-    savePerformanceProfile({ body })
+    savePerformanceProfile({ body: body })
       .unwrap()
       .then((result) => {
         if (result) {

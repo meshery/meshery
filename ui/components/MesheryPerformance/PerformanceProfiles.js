@@ -231,7 +231,7 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
   }
 
   function deleteProfile(id) {
-    deletePerformanceProfile({ id })
+    deletePerformanceProfile({ id: id })
       .unwrap()
       .then(() => {
         updateProgress({ showProgress: false });

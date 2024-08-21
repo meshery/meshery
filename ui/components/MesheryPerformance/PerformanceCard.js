@@ -1,6 +1,5 @@
 //@ts-check
 import React, { useEffect, useState } from 'react';
-import Moment from 'react-moment';
 import moment from 'moment';
 import {
   Avatar,
@@ -239,7 +238,7 @@ function PerformanceCard({
                     }`,
                   }}
                 >
-                  Last Run: <Moment format="LLL">{lastRun}</Moment>
+                  Last Run: {moment(lastRun).format('LLL')}
                 </Typography>
               )}
             </div>
