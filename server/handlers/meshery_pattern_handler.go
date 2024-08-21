@@ -28,9 +28,9 @@ import (
 	"github.com/layer5io/meshery/server/models/pattern/resource/selector"
 	"github.com/layer5io/meshery/server/models/pattern/stages"
 	patternutils "github.com/layer5io/meshery/server/models/pattern/utils"
+	"github.com/layer5io/meshkit/encoding"
 	"github.com/layer5io/meshkit/errors"
 	"github.com/layer5io/meshkit/logger"
-	"github.com/layer5io/meshkit/encoding"
 	"github.com/layer5io/meshkit/models/catalog/v1alpha1"
 	"github.com/layer5io/meshkit/models/events"
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
@@ -167,86 +167,6 @@ func (h *Handler) handlePatternPOST(
 	format := r.URL.Query().Get("output")
 	mesheryPattern := &models.MesheryPattern{} // pattern to be saved in the database
 
-	if parsedBody.CytoscapeJSON != "" {
-		pf, err := pCore.NewPatternFileFromCytoscapeJSJSON(parsedBody.Name, []byte(parsedBody.CytoscapeJSON))
-		if err != nil {
-			rw.WriteHeader(http.StatusBadRequest)
-			fmt.Fprintf(rw, "%s", err)
-			event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-				"error": ErrSavePattern(err),
-			}).WithDescription("Pattern save failed, cytoJSON could be malformed.").Build()
-
-			_ = provider.PersistEvent(event)
-			go h.config.EventBroadcaster.Publish(userID, event)
-			return
-		}
-
-		patternName := pf.Name
-
-		pfByt, err := yaml.Marshal(pf)
-		if err != nil {
-			err = ErrEncodePattern(err)
-			http.Error(rw, err.Error(), http.StatusInternalServerError)
-			event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-				"error": ErrEncodePattern(err),
-			}).WithDescription("Pattern save failed, cytoJSON could be malformed.").Build()
-
-			_ = provider.PersistEvent(event)
-			go h.config.EventBroadcaster.Publish(userID, event)
-			return
-		}
-		mesheryPattern := &models.MesheryPattern{
-			Name:        patternName,
-			PatternFile: string(pfByt),
-			Location: map[string]interface{}{
-				"host": "",
-				"path": "",
-				"type": "local",
-			},
-			CatalogData: parsedBody.PatternData.CatalogData,
-			Type: sql.NullString{
-				String: string(models.Design),
-				Valid:  true,
-			},
-		}
-		if parsedBody.PatternData != nil {
-			mesheryPattern.ID = parsedBody.PatternData.ID
-		}
-
-		if parsedBody.Save {
-			resp, err := provider.SaveMesheryPattern(token, mesheryPattern)
-			if err != nil {
-				h.log.Error(ErrSavePattern(err))
-				http.Error(rw, ErrSavePattern(err).Error(), http.StatusInternalServerError)
-				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-					"error": ErrSavePattern(err),
-				}).WithDescription(ErrSavePattern(err).Error()).Build()
-
-				_ = provider.PersistEvent(event)
-				go h.config.EventBroadcaster.Publish(userID, event)
-				return
-			}
-
-			h.formatPatternOutput(rw, resp, format, sourcetype, eventBuilder, parsedBody.URL, action)
-			event := eventBuilder.Build()
-			_ = provider.PersistEvent(event)
-			// Do not send pattern save event if pattern is in cyto format as user is on meshmap and every node move will result in save request flooding user's screen.
-			// go h.config.EventBroadcaster.Publish(userID, event)
-			go h.config.PatternChannel.Publish(uuid.FromStringOrNil(user.ID), struct{}{})
-			return
-		}
-
-		byt, err := json.Marshal([]models.MesheryPattern{*mesheryPattern})
-		if err != nil {
-			h.log.Error(ErrEncodePattern(err))
-			http.Error(rw, ErrEncodePattern(err).Error(), http.StatusInternalServerError)
-			return
-		}
-
-		h.formatPatternOutput(rw, byt, format, sourcetype, eventBuilder, parsedBody.URL, action)
-
-		return
-	}
 	// If Content is not empty then assume it's a local upload
 	if parsedBody.PatternData != nil {
 		mesheryPattern.Name = parsedBody.PatternData.Name
@@ -308,22 +228,33 @@ func (h *Handler) handlePatternPOST(
 			pfByt, _ := yaml.Marshal(patternFile)
 			mesheryPattern.PatternFile = string(pfByt)
 		} else {
-			patternFile := pattern.PatternFile{}
-			err := encoding.Unmarshal(bytPattern, &patternFile)
+			patternFile := &pattern.PatternFile{}
+			var err error
+			patternFileStr := string(parsedBody.PatternData.PatternFile)
+			isOldFormat, err := patternutils.IsDesignInAlpha2Format(string(parsedBody.PatternData.PatternFile))
 			if err != nil {
-				err = ErrParsePattern(err)
-				h.log.Error(err)
-				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-					"error": models.ErrMarshallingDesignIntoYAML(err),
-				}).WithDescription(fmt.Sprintf("Failed to decode \"%s\" design file .", mesheryPattern.Name)).Build()
+				err = ErrPatternFile(err)
+				event := events.NewEvent().ActedUpon(*actedUpon).FromSystem(*h.SystemID).FromUser(userID).WithCategory("pattern").WithAction("view").WithDescription(fmt.Sprintf("Failed to parse design \"%s\".", parsedBody.PatternData.ID)).WithMetadata(map[string]interface{}{"error": err, "id": *actedUpon}).Build()
 				_ = provider.PersistEvent(event)
 				go h.config.EventBroadcaster.Publish(userID, event)
-
+				h.log.Error(err)
 				http.Error(rw, err.Error(), http.StatusInternalServerError)
-
 				return
 			}
-			mesheryPattern.PatternFile = string(bytPattern)
+
+			if isOldFormat {
+				patternFile, patternFileStr, err = h.convertV1alpha2ToV1beta1(string(parsedBody.PatternData.PatternFile), *actedUpon)
+				if err != nil {
+					event := events.NewEvent().ActedUpon(*actedUpon).FromSystem(*h.SystemID).FromUser(userID).WithCategory("pattern").WithAction("convert").WithDescription(fmt.Sprintf("Failed to convert design \"%s\" to v1beta1 design format", parsedBody.PatternData.Name)).WithMetadata(map[string]interface{}{"error": err, "id": *actedUpon}).Build()
+					_ = provider.PersistEvent(event)
+					go h.config.EventBroadcaster.Publish(userID, event)
+					h.log.Error(err)
+					http.Error(rw, err.Error(), http.StatusInternalServerError)
+					return
+				}
+
+			}
+			mesheryPattern.PatternFile = patternFileStr
 			mesheryPattern.CatalogData = parsedBody.PatternData.CatalogData
 
 			if parsedBody.PatternData.ID != nil {
@@ -1107,6 +1038,7 @@ func (h *Handler) DownloadMesheryPatternHandler(
 	patternID := mux.Vars(r)["id"]
 	ociFormat, _ := strconv.ParseBool(r.URL.Query().Get("oci"))
 	ahpkg, _ := strconv.ParseBool(r.URL.Query().Get("pkg"))
+	var unmarshalledPatternFile pattern.PatternFile
 
 	resp, err := provider.GetMesheryPattern(r, patternID, "false")
 	if err != nil {
@@ -1413,9 +1345,16 @@ func (h *Handler) DownloadMesheryPatternHandler(
 			return
 		}
 	}
+	err = encoding.Unmarshal([]byte(pattern.PatternFile), &unmarshalledPatternFile)
+	if err != nil {
+		err = ErrParsePattern(err)
+		h.log.Error(err)
+		http.Error(rw, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
 	rw.Header().Set("Content-Type", "application/yaml")
-	err = yaml.NewEncoder(rw).Encode(pattern.PatternFile)
+	err = yaml.NewEncoder(rw).Encode(unmarshalledPatternFile)
 	if err != nil {
 		err = ErrEncodePattern(err)
 		http.Error(rw, err.Error(), http.StatusInternalServerError)
@@ -2143,7 +2082,7 @@ func (h *Handler) convertV1alpha2ToV1beta1(patternFile string, patternId uuid.UU
 		return nil, "", err
 	}
 
-	v1beta1PatternByt, err := yaml.Marshal(v1beta1PatternFile)
+	v1beta1PatternByt, err := encoding.Marshal(v1beta1PatternFile)
 	if err != nil {
 		return nil, "", utils.ErrMarshal(err)
 	}
@@ -2177,7 +2116,7 @@ func mapModelRelatedData(reg *meshmodel.RegistryManager, patternFile *pattern.Pa
 		if comp.Model.Metadata.SvgComplete != nil && *comp.Model.Metadata.SvgComplete == "" {
 			comp.Model.Metadata.SvgComplete = nil
 		}
-
+		comp.Capabilities = wc.Capabilities
 		comp.Metadata.Genealogy = wc.Metadata.Genealogy
 		comp.Metadata.IsAnnotation = wc.Metadata.IsAnnotation
 		comp.Metadata.Published = wc.Metadata.Published
