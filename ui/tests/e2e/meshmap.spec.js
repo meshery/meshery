@@ -3,7 +3,6 @@ import { ENV } from './env';
 
 test.describe('Test meshmap', () => {
   test('Go to MeshMap extension and check skip on the tutorial modal', async ({ page }) => {
-    test.slow();
     await page.goto(`${ENV.MESHERY_SERVER_URL}/extension/meshmap`);
 
     await expect(page.getByText('Tutorial')).toBeVisible();
@@ -14,7 +13,6 @@ test.describe('Test meshmap', () => {
   });
 
   test('Go to MeshMap extension and go to the first design', async ({ page }) => {
-    test.slow();
     await page.goto(`${ENV.MESHERY_SERVER_URL}/extension/meshmap`);
 
     await page.getByTestId('MuiDataTableBodyCell-2-0').first().click();
@@ -23,7 +21,6 @@ test.describe('Test meshmap', () => {
   });
 
   test('Go to MeshMap extension settings and turn on again tutorial', async ({ page }) => {
-    test.slow();
     await page.goto(`${ENV.MESHERY_SERVER_URL}/extension/meshmap`);
 
     await page.getByLabel('CANVAS_CONTROLS').nth(1).hover();

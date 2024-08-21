@@ -46,13 +46,11 @@ module.exports = defineConfig({
     // setup
     {
       name: 'setup',
-      timeout: 1 * 60 * 1000,
       testMatch: 'tests/e2e/*.setup.js',
     },
     {
       name: 'recorder',
       testMatch: /.*.record.spec.js/,
-      timeout: 2 * 60 * 1000,
       use: {
         ...devices['Desktop Chrome'],
         storageState: 'playwright/.auth/user.json',
@@ -60,7 +58,7 @@ module.exports = defineConfig({
           mode: 'on',
         },
       },
-      dependencies: ['setup-recorder'],
+      dependencies: ['setup'],
     },
     {
       name: 'chromium',
