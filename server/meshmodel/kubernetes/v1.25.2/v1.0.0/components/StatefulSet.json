@@ -139,7 +139,8 @@
    "isAnnotation": false,
    "published": false,
    "shapePolygonPoints": "",
-   "styleOverrides": "{\"height\":\"15\",\"width\":\"15\",\"x\":\"12\",\"y\":\"20\",\"background-opacity\":\"0.2\"}",
+   "styleOverrides": "{\"height\":\"15\",\"width\":\"15\",\"x\":\"12\",\"y\":\"20\",
+   "isNamespaced": true,\"background-opacity\":\"0.2\"}",
    "styles": "{\"height\":\"15\",\"width\":\"15\",\"x\":\"12\",\"y\":\"20\",\"background-opacity\":\"0.2\"}"
   },
   "model": {

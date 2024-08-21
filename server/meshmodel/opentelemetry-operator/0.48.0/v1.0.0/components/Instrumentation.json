@@ -14,7 +14,7 @@
     "defaultData": "",
     "genealogy": "",
     "isAnnotation": false,
-    "isNamespaced": true,
+     "isNamespaced": true,
     "published": false,
     "shapePolygonPoints": ""
   },
@@ -65,4 +65,4 @@
     "svgWhite": ""
   },
   "version": "v1.0.0"
-}
+},
