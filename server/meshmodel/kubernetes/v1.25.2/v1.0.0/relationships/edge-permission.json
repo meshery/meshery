@@ -214,7 +214,7 @@
               "from": [
                 {
                   "kind": "ClusterRoleBinding",
-                  "mutatorRef": [
+                  "mutatedRef": [
                     [
                       "configuration",
                       "subjects",
@@ -227,7 +227,7 @@
               "to": [
                 {
                   "kind": "self",
-                  "mutatedRef": [
+                  "mutatorRef": [
                     [
                       "displayName"
                     ]
@@ -248,7 +248,7 @@
               "from": [
                 {
                   "kind": "RoleBinding",
-                  "mutatorRef": [
+                  "mutatedRef": [
                     [
                       "configuration",
                       "subjects",
@@ -261,7 +261,7 @@
               "to": [
                 {
                   "kind": "self",
-                  "mutatedRef": [
+                  "mutatorRef": [
                     [
                       "displayName"
                     ]
