@@ -19,7 +19,6 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/helpers"
 	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshery/server/models/pattern/core"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 
 	"github.com/layer5io/meshkit/models/events"
@@ -195,8 +194,6 @@ func (h *Handler) deleteK8SConfig(_ *models.User, _ *models.Preference, w http.R
 	// 	return
 	// }
 
-	ctxID := "0" //To be replaced with actual context ID after multi context support
-	go core.DeleteK8sWorkloads(ctxID)
 	_, _ = w.Write([]byte("{}"))
 }
 

@@ -414,7 +414,7 @@ const MesheryTreeViewRegistrants = ({
           nodeId={registrant.id}
           data-id={registrant.id}
           top
-          labelText={registrant?.hostname}
+          labelText={registrant?.name}
           newParentId={registrant.id}
           onClick={() => {
             setShowDetailsData({

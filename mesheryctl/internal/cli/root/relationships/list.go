@@ -38,27 +38,6 @@ var listRelationshipsCmd = &cobra.Command{
     View list of relationship with specified page number (25 relationships per page)
     mesheryctl exp relationship list --page 2
 	`,
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-		// Check prerequisites for the command here
-
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			return err
-		}
-		err = utils.IsServerRunning(mctlCfg.GetBaseMesheryURL())
-		if err != nil {
-			return err
-		}
-		ctx, err := mctlCfg.GetCurrentContext()
-		if err != nil {
-			return err
-		}
-		err = ctx.ValidateVersion()
-		if err != nil {
-			return err
-		}
-		return nil
-	},
 	Args: func(_ *cobra.Command, args []string) error {
 		const errMsg = "Usage: mesheryctl exp relationship list \nRun 'mesheryctl exp relationship list --help' to see detailed help message"
 		if len(args) != 0 {
@@ -85,13 +64,13 @@ var listRelationshipsCmd = &cobra.Command{
 		req, err := utils.NewRequest(http.MethodGet, url, nil)
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 
 		resp, err := utils.MakeRequest(req)
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 
 		// defers the closing of the response body after its use, ensuring that the resources are properly released.
@@ -100,23 +79,26 @@ var listRelationshipsCmd = &cobra.Command{
 		data, err := io.ReadAll(resp.Body)
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 
 		relationshipsResponse := &MeshmodelRelationshipsAPIResponse{}
 		err = json.Unmarshal(data, relationshipsResponse)
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 
 		header := []string{"kind", "API Version", "Model name", "Sub Type", "Evaluation Policy"}
 		var rows [][]string
 
 		for _, rel := range relationshipsResponse.Relationships {
-
+			evaluationQuery := ""
+			if rel.EvaluationQuery != nil {
+				evaluationQuery = *rel.EvaluationQuery
+			}
 			if len(rel.GetEntityDetail()) > 0 {
-				rows = append(rows, []string{rel.Kind, rel.Version, rel.Model.Name, rel.SubType, rel.EvaluationQuery})
+				rows = append(rows, []string{string(rel.Kind), rel.Version, rel.Model.Name, rel.SubType, evaluationQuery})
 			}
 		}
 

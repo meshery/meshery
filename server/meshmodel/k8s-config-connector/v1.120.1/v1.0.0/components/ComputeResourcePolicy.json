@@ -1,29 +1,154 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "displayName": "Compute Resource Policy",
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "ComputeResourcePolicy",
+   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"description\": {\n     \"description\": \"Immutable. An optional description of this resource. Provide this property when you create the resource.\",\n     \"type\": \"string\"\n    },\n    \"diskConsistencyGroupPolicy\": {\n     \"description\": \"Immutable. Replication consistency group for asynchronous disk replication.\",\n     \"properties\": {\n      \"enabled\": {\n       \"description\": \"Immutable. Enable disk consistency on the resource policy.\",\n       \"type\": \"boolean\"\n      }\n     },\n     \"required\": [\n      \"enabled\"\n     ],\n     \"type\": \"object\"\n    },\n    \"groupPlacementPolicy\": {\n     \"description\": \"Immutable. Resource policy for instances used for placement configuration.\",\n     \"properties\": {\n      \"availabilityDomainCount\": {\n       \"description\": \"Immutable. The number of availability domains instances will be spread across. If two instances are in different\\navailability domain, they will not be put in the same low latency network.\",\n       \"type\": \"integer\"\n      },\n      \"collocation\": {\n       \"description\": \"Immutable. Collocation specifies whether to place VMs inside the same availability domain on the same low-latency network.\\nSpecify 'COLLOCATED' to enable collocation. Can only be specified with 'vm_count'. If compute instances are created\\nwith a COLLOCATED policy, then exactly 'vm_count' instances must be created at the same time with the resource policy\\nattached. Possible values: [\\\"COLLOCATED\\\"].\",\n       \"type\": \"string\"\n      },\n      \"maxDistance\": {\n       \"description\": \"Immutable. Specifies the number of max logical switches.\",\n       \"type\": \"integer\"\n      },\n      \"vmCount\": {\n       \"description\": \"Immutable. Number of VMs in this placement group. Google does not recommend that you use this field\\nunless you use a compact policy and you want your policy to work only if it contains this\\nexact number of VMs.\",\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"instanceSchedulePolicy\": {\n     \"description\": \"Immutable. Resource policy for scheduling instance operations.\",\n     \"properties\": {\n      \"expirationTime\": {\n       \"description\": \"Immutable. The expiration time of the schedule. The timestamp is an RFC3339 string.\",\n       \"type\": \"string\"\n      },\n      \"startTime\": {\n       \"description\": \"Immutable. The start time of the schedule. The timestamp is an RFC3339 string.\",\n       \"type\": \"string\"\n      },\n      \"timeZone\": {\n       \"description\": \"Immutable. Specifies the time zone to be used in interpreting the schedule. The value of this field must be a time zone name\\nfrom the tz database: http://en.wikipedia.org/wiki/Tz_database.\",\n       \"type\": \"string\"\n      },\n      \"vmStartSchedule\": {\n       \"description\": \"Immutable. Specifies the schedule for starting instances.\",\n       \"properties\": {\n        \"schedule\": {\n         \"description\": \"Immutable. Specifies the frequency for the operation, using the unix-cron format.\",\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"schedule\"\n       ],\n       \"type\": \"object\"\n      },\n      \"vmStopSchedule\": {\n       \"description\": \"Immutable. Specifies the schedule for stopping instances.\",\n       \"properties\": {\n        \"schedule\": {\n         \"description\": \"Immutable. Specifies the frequency for the operation, using the unix-cron format.\",\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"schedule\"\n       ],\n       \"type\": \"object\"\n      }\n     },\n     \"required\": [\n      \"timeZone\"\n     ],\n     \"type\": \"object\"\n    },\n    \"region\": {\n     \"description\": \"Immutable. Region where resource policy resides.\",\n     \"type\": \"string\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    },\n    \"snapshotSchedulePolicy\": {\n     \"description\": \"Immutable. Policy for creating snapshots of persistent disks.\",\n     \"properties\": {\n      \"retentionPolicy\": {\n       \"description\": \"Immutable. Retention policy applied to snapshots created by this resource policy.\",\n       \"properties\": {\n        \"maxRetentionDays\": {\n         \"description\": \"Immutable. Maximum age of the snapshot that is allowed to be kept.\",\n         \"type\": \"integer\"\n        },\n        \"onSourceDiskDelete\": {\n         \"description\": \"Immutable. Specifies the behavior to apply to scheduled snapshots when\\nthe source disk is deleted. Default value: \\\"KEEP_AUTO_SNAPSHOTS\\\" Possible values: [\\\"KEEP_AUTO_SNAPSHOTS\\\", \\\"APPLY_RETENTION_POLICY\\\"].\",\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"maxRetentionDays\"\n       ],\n       \"type\": \"object\"\n      },\n      \"schedule\": {\n       \"description\": \"Immutable. Contains one of an 'hourlySchedule', 'dailySchedule', or 'weeklySchedule'.\",\n       \"properties\": {\n        \"dailySchedule\": {\n         \"description\": \"Immutable. The policy will execute every nth day at the specified time.\",\n         \"properties\": {\n          \"daysInCycle\": {\n           \"description\": \"Immutable. Defines a schedule with units measured in days. The value determines how many days pass between the start of each cycle. Days in cycle for snapshot schedule policy must be 1.\",\n           \"type\": \"integer\"\n          },\n          \"startTime\": {\n           \"description\": \"Immutable. This must be in UTC format that resolves to one of\\n00:00, 04:00, 08:00, 12:00, 16:00, or 20:00. For example,\\nboth 13:00-5 and 08:00 are valid.\",\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"daysInCycle\",\n          \"startTime\"\n         ],\n         \"type\": \"object\"\n        },\n        \"hourlySchedule\": {\n         \"description\": \"Immutable. The policy will execute every nth hour starting at the specified time.\",\n         \"properties\": {\n          \"hoursInCycle\": {\n           \"description\": \"Immutable. The number of hours between snapshots.\",\n           \"type\": \"integer\"\n          },\n          \"startTime\": {\n           \"description\": \"Immutable. Time within the window to start the operations.\\nIt must be in an hourly format \\\"HH:MM\\\",\\nwhere HH : [00-23] and MM : [00] GMT.\\neg: 21:00.\",\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"hoursInCycle\",\n          \"startTime\"\n         ],\n         \"type\": \"object\"\n        },\n        \"weeklySchedule\": {\n         \"description\": \"Immutable. Allows specifying a snapshot time for each day of the week.\",\n         \"properties\": {\n          \"dayOfWeeks\": {\n           \"description\": \"Immutable. May contain up to seven (one for each day of the week) snapshot times.\",\n           \"items\": {\n            \"properties\": {\n             \"day\": {\n              \"description\": \"Immutable. The day of the week to create the snapshot. e.g. MONDAY Possible values: [\\\"MONDAY\\\", \\\"TUESDAY\\\", \\\"WEDNESDAY\\\", \\\"THURSDAY\\\", \\\"FRIDAY\\\", \\\"SATURDAY\\\", \\\"SUNDAY\\\"].\",\n              \"type\": \"string\"\n             },\n             \"startTime\": {\n              \"description\": \"Immutable. Time within the window to start the operations.\\nIt must be in format \\\"HH:MM\\\", where HH : [00-23] and MM : [00-00] GMT.\",\n              \"type\": \"string\"\n             }\n            },\n            \"required\": [\n             \"day\",\n             \"startTime\"\n            ],\n            \"type\": \"object\"\n           },\n           \"type\": \"array\"\n          }\n         },\n         \"required\": [\n          \"dayOfWeeks\"\n         ],\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"snapshotProperties\": {\n       \"description\": \"Immutable. Properties with which the snapshots are created, such as labels.\",\n       \"properties\": {\n        \"chainName\": {\n         \"description\": \"Immutable. Creates the new snapshot in the snapshot chain labeled with the\\nspecified name. The chain name must be 1-63 characters long and comply\\nwith RFC1035.\",\n         \"type\": \"string\"\n        },\n        \"guestFlush\": {\n         \"description\": \"Immutable. Whether to perform a 'guest aware' snapshot.\",\n         \"type\": \"boolean\"\n        },\n        \"labels\": {\n         \"additionalProperties\": {\n          \"type\": \"string\"\n         },\n         \"description\": \"Immutable. A set of key-value pairs.\",\n         \"type\": \"object\"\n        },\n        \"storageLocations\": {\n         \"description\": \"Immutable. Cloud Storage bucket location to store the auto snapshot\\n(regional or multi-regional).\",\n         \"items\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"array\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"required\": [\n      \"schedule\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"region\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Compute Resource Policy\",\n \"type\": \"object\"\n}",
+   "version": "compute.cnrm.cloud.google.com/v1beta1"
+  },
+  "configuration": null,
   "description": "",
+  "displayName": "Compute Resource Policy",
   "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "published": false,
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": ""
+  },
   "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "version": "v1.0.0",
-   "name": "k8s-config-connector",
-   "displayName": "Google Cloud Platform",
-   "description": "",
-   "status": "enabled",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "registrant": {
-    "hostname": "github"
-   },
    "category": {
-    "name": "Orchestration \u0026 Management",
-    "metadata": null
+    "name": "Orchestration \u0026 Management"
    },
-   "subCategory": "Google Cloud Platform",
+   "displayName": "Google Cloud Platform",
+   "id": "00000000-0000-0000-0000-000000000000",
    "metadata": {
-    "capabilities": "",
     "defaultData": "",
     "isAnnotation": false,
     "primaryColor": "#4285F4",
@@ -39,30 +164,35 @@
    "model": {
     "version": "v1.120.1"
    },
+   "name": "k8s-config-connector",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "github",
+    "name": "Github",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "enabled",
+   "subCategory": "Google Cloud Platform",
+   "version": "v1.0.0",
    "components": null,
    "relationships": null
   },
-  "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
    "primaryColor": "#4285F4",
-   "secondaryColor": "",
    "shape": "rectangle",
-   "shapePolygonPoints": "",
-   "status": "enabled",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
    "svgColor": "\u003csvg width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"\u003e\n    \u003cg stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e\n        \u003cpath d=\"M12.3008862,4.00003179 L18.9908678,7.90329279 L19,11.4442164 L14.973309,9.0680926 L14.973309,10.8562526 L16.9806355,12.0276231 L16.9918433,15.1064843 L14.973309,13.9136004 L14.973309,18.415105 L12.3008862,20 L12.3008862,4.00003179 Z M11.6991138,4 L11.6991138,19.9999682 L9.02669102,18.4150732 L9.02669102,9.06816678 L5,11.4441846 L5.00913223,7.903261 L11.6991138,4 Z\" fill=\"#4285F4\"\u003e\u003c/path\u003e\n    \u003c/g\u003e\n\u003c/svg\u003e",
-   "svgComplete": "",
    "svgWhite": "\u003csvg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M12.3009 4.00003L18.9909 7.90329L19 11.4442L14.9733 9.06809V10.8563L16.9806 12.0276L16.9918 15.1065L14.9733 13.9136V18.4151L12.3009 20V4.00003ZM11.6991 4V20L9.02669 18.4151V9.06817L5 11.4442L5.00913 7.90326L11.6991 4Z\" fill=\"white\"/\u003e\n\u003c/svg\u003e\n"
   },
-  "component": {
-   "kind": "ComputeResourcePolicy",
-   "version": "compute.cnrm.cloud.google.com/v1beta1",
-   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"description\": {\n     \"description\": \"Immutable. An optional description of this resource. Provide this property when you create the resource.\",\n     \"type\": \"string\"\n    },\n    \"diskConsistencyGroupPolicy\": {\n     \"description\": \"Immutable. Replication consistency group for asynchronous disk replication.\",\n     \"properties\": {\n      \"enabled\": {\n       \"description\": \"Immutable. Enable disk consistency on the resource policy.\",\n       \"type\": \"boolean\"\n      }\n     },\n     \"required\": [\n      \"enabled\"\n     ],\n     \"type\": \"object\"\n    },\n    \"groupPlacementPolicy\": {\n     \"description\": \"Immutable. Resource policy for instances used for placement configuration.\",\n     \"properties\": {\n      \"availabilityDomainCount\": {\n       \"description\": \"Immutable. The number of availability domains instances will be spread across. If two instances are in different\\navailability domain, they will not be put in the same low latency network.\",\n       \"type\": \"integer\"\n      },\n      \"collocation\": {\n       \"description\": \"Immutable. Collocation specifies whether to place VMs inside the same availability domain on the same low-latency network.\\nSpecify 'COLLOCATED' to enable collocation. Can only be specified with 'vm_count'. If compute instances are created\\nwith a COLLOCATED policy, then exactly 'vm_count' instances must be created at the same time with the resource policy\\nattached. Possible values: [\\\"COLLOCATED\\\"].\",\n       \"type\": \"string\"\n      },\n      \"maxDistance\": {\n       \"description\": \"Immutable. Specifies the number of max logical switches.\",\n       \"type\": \"integer\"\n      },\n      \"vmCount\": {\n       \"description\": \"Immutable. Number of VMs in this placement group. Google does not recommend that you use this field\\nunless you use a compact policy and you want your policy to work only if it contains this\\nexact number of VMs.\",\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"instanceSchedulePolicy\": {\n     \"description\": \"Immutable. Resource policy for scheduling instance operations.\",\n     \"properties\": {\n      \"expirationTime\": {\n       \"description\": \"Immutable. The expiration time of the schedule. The timestamp is an RFC3339 string.\",\n       \"type\": \"string\"\n      },\n      \"startTime\": {\n       \"description\": \"Immutable. The start time of the schedule. The timestamp is an RFC3339 string.\",\n       \"type\": \"string\"\n      },\n      \"timeZone\": {\n       \"description\": \"Immutable. Specifies the time zone to be used in interpreting the schedule. The value of this field must be a time zone name\\nfrom the tz database: http://en.wikipedia.org/wiki/Tz_database.\",\n       \"type\": \"string\"\n      },\n      \"vmStartSchedule\": {\n       \"description\": \"Immutable. Specifies the schedule for starting instances.\",\n       \"properties\": {\n        \"schedule\": {\n         \"description\": \"Immutable. Specifies the frequency for the operation, using the unix-cron format.\",\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"schedule\"\n       ],\n       \"type\": \"object\"\n      },\n      \"vmStopSchedule\": {\n       \"description\": \"Immutable. Specifies the schedule for stopping instances.\",\n       \"properties\": {\n        \"schedule\": {\n         \"description\": \"Immutable. Specifies the frequency for the operation, using the unix-cron format.\",\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"schedule\"\n       ],\n       \"type\": \"object\"\n      }\n     },\n     \"required\": [\n      \"timeZone\"\n     ],\n     \"type\": \"object\"\n    },\n    \"region\": {\n     \"description\": \"Immutable. Region where resource policy resides.\",\n     \"type\": \"string\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    },\n    \"snapshotSchedulePolicy\": {\n     \"description\": \"Immutable. Policy for creating snapshots of persistent disks.\",\n     \"properties\": {\n      \"retentionPolicy\": {\n       \"description\": \"Immutable. Retention policy applied to snapshots created by this resource policy.\",\n       \"properties\": {\n        \"maxRetentionDays\": {\n         \"description\": \"Immutable. Maximum age of the snapshot that is allowed to be kept.\",\n         \"type\": \"integer\"\n        },\n        \"onSourceDiskDelete\": {\n         \"description\": \"Immutable. Specifies the behavior to apply to scheduled snapshots when\\nthe source disk is deleted. Default value: \\\"KEEP_AUTO_SNAPSHOTS\\\" Possible values: [\\\"KEEP_AUTO_SNAPSHOTS\\\", \\\"APPLY_RETENTION_POLICY\\\"].\",\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"maxRetentionDays\"\n       ],\n       \"type\": \"object\"\n      },\n      \"schedule\": {\n       \"description\": \"Immutable. Contains one of an 'hourlySchedule', 'dailySchedule', or 'weeklySchedule'.\",\n       \"properties\": {\n        \"dailySchedule\": {\n         \"description\": \"Immutable. The policy will execute every nth day at the specified time.\",\n         \"properties\": {\n          \"daysInCycle\": {\n           \"description\": \"Immutable. Defines a schedule with units measured in days. The value determines how many days pass between the start of each cycle. Days in cycle for snapshot schedule policy must be 1.\",\n           \"type\": \"integer\"\n          },\n          \"startTime\": {\n           \"description\": \"Immutable. This must be in UTC format that resolves to one of\\n00:00, 04:00, 08:00, 12:00, 16:00, or 20:00. For example,\\nboth 13:00-5 and 08:00 are valid.\",\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"daysInCycle\",\n          \"startTime\"\n         ],\n         \"type\": \"object\"\n        },\n        \"hourlySchedule\": {\n         \"description\": \"Immutable. The policy will execute every nth hour starting at the specified time.\",\n         \"properties\": {\n          \"hoursInCycle\": {\n           \"description\": \"Immutable. The number of hours between snapshots.\",\n           \"type\": \"integer\"\n          },\n          \"startTime\": {\n           \"description\": \"Immutable. Time within the window to start the operations.\\nIt must be in an hourly format \\\"HH:MM\\\",\\nwhere HH : [00-23] and MM : [00] GMT.\\neg: 21:00.\",\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"hoursInCycle\",\n          \"startTime\"\n         ],\n         \"type\": \"object\"\n        },\n        \"weeklySchedule\": {\n         \"description\": \"Immutable. Allows specifying a snapshot time for each day of the week.\",\n         \"properties\": {\n          \"dayOfWeeks\": {\n           \"description\": \"Immutable. May contain up to seven (one for each day of the week) snapshot times.\",\n           \"items\": {\n            \"properties\": {\n             \"day\": {\n              \"description\": \"Immutable. The day of the week to create the snapshot. e.g. MONDAY Possible values: [\\\"MONDAY\\\", \\\"TUESDAY\\\", \\\"WEDNESDAY\\\", \\\"THURSDAY\\\", \\\"FRIDAY\\\", \\\"SATURDAY\\\", \\\"SUNDAY\\\"].\",\n              \"type\": \"string\"\n             },\n             \"startTime\": {\n              \"description\": \"Immutable. Time within the window to start the operations.\\nIt must be in format \\\"HH:MM\\\", where HH : [00-23] and MM : [00-00] GMT.\",\n              \"type\": \"string\"\n             }\n            },\n            \"required\": [\n             \"day\",\n             \"startTime\"\n            ],\n            \"type\": \"object\"\n           },\n           \"type\": \"array\"\n          }\n         },\n         \"required\": [\n          \"dayOfWeeks\"\n         ],\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"snapshotProperties\": {\n       \"description\": \"Immutable. Properties with which the snapshots are created, such as labels.\",\n       \"properties\": {\n        \"chainName\": {\n         \"description\": \"Immutable. Creates the new snapshot in the snapshot chain labeled with the\\nspecified name. The chain name must be 1-63 characters long and comply\\nwith RFC1035.\",\n         \"type\": \"string\"\n        },\n        \"guestFlush\": {\n         \"description\": \"Immutable. Whether to perform a 'guest aware' snapshot.\",\n         \"type\": \"boolean\"\n        },\n        \"labels\": {\n         \"additionalProperties\": {\n          \"type\": \"string\"\n         },\n         \"description\": \"Immutable. A set of key-value pairs.\",\n         \"type\": \"object\"\n        },\n        \"storageLocations\": {\n         \"description\": \"Immutable. Cloud Storage bucket location to store the auto snapshot\\n(regional or multi-regional).\",\n         \"items\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"array\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"required\": [\n      \"schedule\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"region\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Compute Resource Policy\",\n \"type\": \"object\"\n}"
-  }
+  "version": "v1.0.0"
  }

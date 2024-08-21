@@ -13,11 +13,12 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/server/meshes"
 	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshery/server/models/pattern/utils"
 	"github.com/layer5io/meshkit/models/events"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
+	"github.com/meshery/schemas/models/v1beta1"
+	"github.com/meshery/schemas/models/v1beta1/component"
+	"github.com/meshery/schemas/models/v1beta1/model"
 )
 
 // swagger:route GET /api/filter/file/{id} FiltersAPI idGetFilterFile
@@ -635,18 +636,26 @@ func (h *Handler) generateFilterComponent(config string) (string, error) {
 
 	if len(res) > 0 {
 		filterEntity := res[0]
-		filterCompDef, ok := filterEntity.(*v1beta1.ComponentDefinition)
+		filterCompDef, ok := filterEntity.(*component.ComponentDefinition)
 		if ok {
 			filterID, _ := uuid.NewV4()
-			filterSvc := core.Service{
-				ID:           &filterID,
-				Name:         strings.ToLower(filterCompDef.Component.Kind) + utils.GetRandomAlphabetsOfDigit(5),
-				Type:         filterCompDef.Component.Kind,
-				APIVersion:   filterCompDef.Component.Version,
-				Version:      filterCompDef.Model.Version,
-				Model:        filterCompDef.Model.Name,
-				IsAnnotation: true,
-				Settings: map[string]interface{}{
+			filterSvc := component.ComponentDefinition{
+				Id:           filterID,
+				DisplayName:  strings.ToLower(filterCompDef.Component.Kind) + utils.GetRandomAlphabetsOfDigit(5),
+				Component: component.Component{
+					Kind:    filterCompDef.Component.Kind,
+					Version: filterCompDef.Component.Version,
+				},
+				Model: model.ModelDefinition{
+					Name: filterCompDef.Model.Name,
+					Model: model.Model{
+						Version:      filterCompDef.Model.Model.Version,
+					},
+				},
+				Metadata: component.ComponentDefinition_Metadata{
+					IsAnnotation: true,
+				},
+				Configuration: map[string]interface{}{
 					"config": config,
 				},
 			}

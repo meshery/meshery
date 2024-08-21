@@ -1,20 +1,9 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "models.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "name": "clickhouse",
-  "displayName": "Clickhouse",
-  "description": "",
-  "status": "ignored",
-  "hostID": "00000000-0000-0000-0000-000000000000",
-  "registrant": {
-    "hostname": "artifacthub"
-  },
   "category": {
-    "name": "Database",
-    "metadata": null
+    "name": "Database"
   },
-  "subCategory": "App Definition and Development",
+  "displayName": "Clickhouse",
+  "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
     "isAnnotation": false,
     "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" height=\"20\" viewBox=\"0 0 9 8\" width=\"20\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"m0 7h1v1h-1z\" fill=\"#f00\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"m0 0h1v7h-1zm2 0h1v8h-1zm2 0h1v8h-1zm2 0h1v8h-1zm2 3.25h1v1.5h-1z\" fill=\"#fc0\"\u003e\u003c/path\u003e\u003c/svg\u003e",
@@ -24,6 +13,25 @@
   "model": {
     "version": "6.0.5"
   },
+  "name": "clickhouse",
+  "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+  },
+  "connection_id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "models.meshery.io/v1beta1",
+  "status": "ignored",
+  "subCategory": "App Definition and Development",
+  "version": "v1.0.0",
   "components": null,
   "relationships": null
 }
