@@ -21,7 +21,6 @@ import Moment from 'react-moment';
 import CloseIcon from '@material-ui/icons/Close';
 import EditIcon from '@material-ui/icons/Edit';
 import { toggleCatalogContent, updateProgress } from '../lib/store';
-import dataFetch from '../lib/data-fetch';
 import PromptComponent from './PromptComponent';
 import FullscreenIcon from '@material-ui/icons/Fullscreen';
 import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
@@ -31,8 +30,6 @@ import FiltersGrid from './MesheryFilters/FiltersGrid';
 import { trueRandom } from '../lib/trueRandom';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import PublicIcon from '@material-ui/icons/Public';
-import { ctxUrl } from '../utils/multi-ctx';
-import ConfirmationMsg from './ConfirmationModal';
 import PublishIcon from '@material-ui/icons/Publish';
 import downloadContent from '../utils/fileDownloader';
 import CloneIcon from '../public/static/img/CloneIcon';
@@ -53,6 +50,10 @@ import {
   ResponsiveDataTable,
   SearchBar,
   UniversalFilter,
+  importFilterSchema,
+  importFilterUiSchema,
+  publishCatalogItemSchema,
+  publishCatalogItemUiSchema,
 } from '@layer5/sistent';
 import useStyles from '../assets/styles/general/tool.styles';
 import { updateVisibleColumns } from '../utils/responsive-column';
@@ -247,7 +248,6 @@ function MesheryFilters({
   updateProgress,
   user,
   classes,
-  selectedK8sContexts,
   catalogVisibility,
   // toggleCatalogContent,
 }) {
@@ -260,9 +260,7 @@ function MesheryFilters({
   const [filters, setFilters] = useState([]);
   const [selectedFilter, setSelectedFilter] = useState(resetSelectedFilter());
   const [selectedRowData, setSelectedRowData] = useState(null);
-  const [setExtensionPreferences] = useState({});
   const [canPublishFilter, setCanPublishFilter] = useState(false);
-  const [importSchema, setImportSchema] = useState({});
   const [publishSchema, setPublishSchema] = useState({});
   const { width } = useWindowDimensions();
   const [meshModels, setMeshModels] = useState([]);
@@ -270,8 +268,6 @@ function MesheryFilters({
     /**  @type {TypeView} */
     ('grid'),
   );
-  const FILTER_URL = '/api/filter';
-  const DEPLOY_URL = FILTER_URL + '/deploy';
 
   //hooks
   const { notify } = useNotification();
@@ -282,14 +278,6 @@ function MesheryFilters({
     open: false,
     ownerID: '',
     selectedResource: {},
-  });
-
-  const [modalOpen, setModalOpen] = useState({
-    open: false,
-    filter_file: null,
-    deploy: false,
-    name: '',
-    count: 0,
   });
 
   const [importModal, setImportModal] = useState({
@@ -386,45 +374,23 @@ function MesheryFilters({
    * Checking whether users are signed in under a provider that doesn't have
    * publish filter capability and setting the canPublishFilter state accordingly
    */
-  useEffect(() => {
-    dataFetch(
-      '/api/schema/resource/filter',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      (result) => {
-        setImportSchema(result);
-      },
-      handleError(ACTION_TYPES.SCHEMA_FETCH),
-    );
-    dataFetch(
-      '/api/schema/resource/publish',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      async (result) => {
-        try {
-          const { models } = await getMeshModels();
-          const modelNames = _.uniq(models?.map((model) => model.displayName));
-          modelNames.sort();
+  useEffect(async () => {
+    try {
+      const { models } = await getMeshModels();
+      const modelNames = _.uniq(models?.map((model) => model.displayName));
+      modelNames.sort();
 
-          // Modify the schema using the utility function
-          const modifiedSchema = modifyRJSFSchema(
-            result.rjsfSchema,
-            'properties.compatibility.items.enum',
-            modelNames,
-          );
-          setPublishSchema({ rjsfSchema: modifiedSchema, uiSchema: result.uiSchema });
-          setMeshModels(models);
-        } catch (err) {
-          console.error(err);
-          setPublishSchema(result);
-        }
-      },
-      handleError(ACTION_TYPES.SCHEMA_FETCH),
-    );
+      // Modify the schema using the utility function
+      const modifiedSchema = modifyRJSFSchema(
+        publishCatalogItemSchema,
+        'properties.compatibility.items.enum',
+        modelNames,
+      );
+      setPublishSchema({ rjsfSchema: modifiedSchema, uiSchema: publishCatalogItemUiSchema });
+      setMeshModels(models);
+    } catch (err) {
+      handleError(ACTION_TYPES.SCHEMA_FETCH);
+    }
 
     if (capabilitiesData) {
       const capabilitiesRegistry = capabilitiesData;
@@ -535,22 +501,6 @@ function MesheryFilters({
   //   );
   // };
 
-  const fetchUserPrefs = () => {
-    dataFetch(
-      '/api/user/prefs',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      (result) => {
-        if (result) {
-          setExtensionPreferences(result?.usersExtensionPreferences);
-        }
-      },
-      (err) => console.error(err),
-    );
-  };
-
   // const handleCatalogVisibility = () => {
   //   handleCatalogPreference(!catalogVisibilityRef.current);
   //   catalogVisibilityRef.current = !catalogVisibility;
@@ -558,7 +508,6 @@ function MesheryFilters({
   // };
 
   useEffect(() => {
-    fetchUserPrefs();
     handleSetFilters(filters);
   }, [catalogVisibility]);
 
@@ -584,31 +533,6 @@ function MesheryFilters({
       disposeConfSubscriptionRef.current?.dispose();
     };
   }, []);
-
-  const handleDeploy = (filter_file, name) => {
-    dataFetch(
-      ctxUrl(DEPLOY_URL, selectedK8sContexts),
-      { credentials: 'include', method: 'POST', body: filter_file },
-      () => {
-        console.log('FilterFile Deploy API', `/api/filter/deploy`);
-        notify({ message: `"${name}" filter deployed`, event_type: EVENT_TYPES.SUCCESS });
-        updateProgress({ showProgress: false });
-      },
-      handleError(ACTION_TYPES.DEPLOY_FILTERS),
-    );
-  };
-
-  const handleUndeploy = (filter_file, name) => {
-    dataFetch(
-      ctxUrl(DEPLOY_URL, selectedK8sContexts),
-      { credentials: 'include', method: 'DELETE', body: filter_file },
-      () => {
-        updateProgress({ showProgress: false });
-        notify({ message: `"${name}" filter undeployed`, event_type: EVENT_TYPES.SUCCESS });
-      },
-      handleError(ACTION_TYPES.UNDEPLOY_FILTERS),
-    );
-  };
 
   const handlePublish = (formData) => {
     const compatibilityStore = _.uniqBy(meshModels, (model) => _.toLower(model.displayName))
@@ -727,15 +651,6 @@ function MesheryFilters({
       },
     );
     disposeConfSubscriptionRef.current = configurationSubscription;
-  };
-
-  const handleModalClose = () => {
-    setModalOpen({
-      open: false,
-      filter_file: null,
-      name: '',
-      count: 0,
-    });
   };
 
   function resetSelectedRowData() {
@@ -1357,8 +1272,6 @@ function MesheryFilters({
               // grid view
               <FiltersGrid
                 filters={filters}
-                handleDeploy={handleDeploy}
-                handleUndeploy={handleUndeploy}
                 handleSubmit={handleSubmit}
                 canPublishFilter={canPublishFilter}
                 handlePublish={handlePublish}
@@ -1370,7 +1283,6 @@ function MesheryFilters({
                 setSelectedFilter={setSelectedFilter}
                 selectedFilter={selectedFilter}
                 pages={Math.ceil(count / pageSize)}
-                importSchema={importSchema}
                 setPage={setPage}
                 selectedPage={page}
                 publishModal={publishModal}
@@ -1380,23 +1292,10 @@ function MesheryFilters({
                 handleInfoModal={handleInfoModal}
               />
             )}
-            <ConfirmationMsg
-              open={modalOpen.open}
-              handleClose={handleModalClose}
-              submit={{
-                deploy: () => handleDeploy(modalOpen.filter_file, modalOpen.name),
-                unDeploy: () => handleUndeploy(modalOpen.filter_file, modalOpen.name),
-              }}
-              isDelete={!modalOpen.deploy}
-              title={modalOpen.name}
-              componentCount={modalOpen.count}
-              tab={modalOpen.deploy ? 2 : 1}
-            />
             {canPublishFilter &&
               publishModal.open &&
               CAN(keys.PUBLISH_WASM_FILTER.action, keys.PUBLISH_WASM_FILTER.subject) && (
                 <PublishModal
-                  publishFormSchema={publishSchema}
                   handleClose={handlePublishModalClose}
                   title={publishModal.filter?.name}
                   handleSubmit={handlePublish}
@@ -1404,24 +1303,26 @@ function MesheryFilters({
               )}
             {importModal.open && CAN(keys.IMPORT_FILTER.action, keys.IMPORT_FILTER.subject) && (
               <ImportModal
-                importFormSchema={importSchema}
                 handleClose={handleUploadImportClose}
                 handleImportFilter={handleImportFilter}
               />
             )}
             {infoModal.open &&
               CAN(keys.DETAILS_OF_WASM_FILTER.action, keys.DETAILS_OF_WASM_FILTER.subject) && (
-                <InfoModal
-                  infoModalOpen={true}
-                  handleInfoModalClose={handleInfoModalClose}
-                  dataName="filters"
-                  selectedResource={infoModal.selectedResource}
-                  resourceOwnerID={infoModal.ownerID}
-                  currentUserID={user?.id}
-                  formSchema={publishSchema}
-                  meshModels={meshModels}
-                  patternFetcher={() => getFilters()}
-                />
+                <UsesSistent>
+                  <InfoModal
+                    handlePublish={handlePublish}
+                    infoModalOpen={true}
+                    handleInfoModalClose={handleInfoModalClose}
+                    dataName="filters"
+                    selectedResource={infoModal.selectedResource}
+                    resourceOwnerID={infoModal.ownerID}
+                    currentUser={user}
+                    formSchema={publishSchema}
+                    meshModels={meshModels}
+                    patternFetcher={() => getFilters()}
+                  />
+                </UsesSistent>
               )}
             <PromptComponent ref={modalRef} />
           </>
@@ -1434,7 +1335,7 @@ function MesheryFilters({
 }
 
 const ImportModal = React.memo((props) => {
-  const { importFormSchema, handleClose, handleImportFilter } = props;
+  const { handleClose, handleImportFilter } = props;
 
   // const classes = useStyles();
 
@@ -1454,8 +1355,8 @@ const ImportModal = React.memo((props) => {
         maxWidth="sm"
       >
         <RJSFModalWrapper
-          schema={importFormSchema.rjsfSchema}
-          uiSchema={importFormSchema.uiSchema}
+          schema={importFilterSchema}
+          uiSchema={importFilterUiSchema}
           handleSubmit={handleImportFilter}
           submitBtnText="Import"
           handleClose={handleClose}
@@ -1466,7 +1367,7 @@ const ImportModal = React.memo((props) => {
 });
 
 const PublishModal = React.memo((props) => {
-  const { publishFormSchema, handleClose, handleSubmit, title } = props;
+  const { handleClose, handleSubmit, title } = props;
 
   return (
     <UsesSistent>
@@ -1485,8 +1386,8 @@ const PublishModal = React.memo((props) => {
         maxWidth="sm"
       >
         <RJSFModalWrapper
-          schema={publishFormSchema.rjsfSchema}
-          uiSchema={publishFormSchema.uiSchema}
+          schema={publishCatalogItemSchema}
+          uiSchema={publishCatalogItemUiSchema}
           submitBtnText="Submit for Approval"
           handleSubmit={handleSubmit}
           helpText="Upon submitting your catalog item, an approval flow will be initiated.[Learn more](https://docs.meshery.io/concepts/catalog)"

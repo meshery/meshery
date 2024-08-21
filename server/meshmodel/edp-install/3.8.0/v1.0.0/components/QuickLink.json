@@ -1,27 +1,153 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "displayName": "Quick Link",
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "QuickLink",
+   "schema": "{\n \"description\": \"QuickLink is the Schema for the quicklinks API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"QuickLinkSpec defines the desired state of QuickLink.\",\n   \"properties\": {\n    \"icon\": {\n     \"description\": \"Icon is a base64 encoded SVG icon of the component.\",\n     \"type\": \"string\"\n    },\n    \"type\": {\n     \"default\": \"default\",\n     \"description\": \"Type is a quicklink type. It can be default or system. Default value is default.\",\n     \"enum\": [\n      \"default\",\n      \"system\"\n     ],\n     \"type\": \"string\"\n    },\n    \"url\": {\n     \"default\": \"\",\n     \"description\": \"Url specifies a link to the component.\",\n     \"type\": \"string\"\n    },\n    \"visible\": {\n     \"default\": true,\n     \"description\": \"Visible specifies whether a component is visible. The default value is true.\",\n     \"type\": \"boolean\"\n    }\n   },\n   \"required\": [\n    \"icon\",\n    \"type\",\n    \"url\",\n    \"visible\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Quick Link\",\n \"type\": \"object\"\n}",
+   "version": "v2.edp.epam.com/v1"
+  },
+  "configuration": null,
   "description": "",
+  "displayName": "Quick Link",
   "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "defaultData": "",
+   "genealogy": "",
+   "isAnnotation": false,
+   "published": false,
+   "shapePolygonPoints": "",
+   "styleOverrides": "",
+   "styles": ""
+  },
   "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "version": "v1.0.0",
-   "name": "edp-install",
-   "displayName": "EDP Install",
-   "description": "",
-   "status": "ignored",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "registrant": {
-    "hostname": "artifacthub"
-   },
    "category": {
-    "name": "Uncategorized",
-    "metadata": null
+    "name": "Uncategorized"
    },
-   "subCategory": "Uncategorized",
+   "displayName": "EDP Install",
+   "id": "00000000-0000-0000-0000-000000000000",
    "metadata": {
     "isAnnotation": false,
     "subCategory": "Uncategorized",
@@ -32,30 +158,35 @@
    "model": {
     "version": "3.8.0"
    },
+   "name": "edp-install",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "subCategory": "Uncategorized",
+   "version": "v1.0.0",
    "components": null,
    "relationships": null
   },
-  "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "ignored",
+  "styles": {
    "primaryColor": "",
-   "secondaryColor": "",
    "shape": "circle",
-   "shapePolygonPoints": "",
-   "status": "ignored",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
    "svgColor": "",
-   "svgComplete": "",
    "svgWhite": ""
   },
-  "component": {
-   "kind": "QuickLink",
-   "version": "v2.edp.epam.com/v1",
-   "schema": "{\n \"description\": \"QuickLink is the Schema for the quicklinks API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"QuickLinkSpec defines the desired state of QuickLink.\",\n   \"properties\": {\n    \"icon\": {\n     \"description\": \"Icon is a base64 encoded SVG icon of the component.\",\n     \"type\": \"string\"\n    },\n    \"type\": {\n     \"default\": \"default\",\n     \"description\": \"Type is a quicklink type. It can be default or system. Default value is default.\",\n     \"enum\": [\n      \"default\",\n      \"system\"\n     ],\n     \"type\": \"string\"\n    },\n    \"url\": {\n     \"default\": \"\",\n     \"description\": \"Url specifies a link to the component.\",\n     \"type\": \"string\"\n    },\n    \"visible\": {\n     \"default\": true,\n     \"description\": \"Visible specifies whether a component is visible. The default value is true.\",\n     \"type\": \"boolean\"\n    }\n   },\n   \"required\": [\n    \"icon\",\n    \"type\",\n    \"url\",\n    \"visible\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Quick Link\",\n \"type\": \"object\"\n}"
-  }
+  "version": "v1.0.0"
  }

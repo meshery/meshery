@@ -70,6 +70,10 @@ components:
   colorIcon: assets/img/integrations/victoria-metrics-k8s-stack/components/vm-scrape-config/icons/color/vm-scrape-config-color.svg
   whiteIcon: assets/img/integrations/victoria-metrics-k8s-stack/components/vm-scrape-config/icons/white/vm-scrape-config-white.svg
   description: 
+- name: v-logs
+  colorIcon: assets/img/integrations/victoria-metrics-k8s-stack/components/v-logs/icons/color/v-logs-color.svg
+  whiteIcon: assets/img/integrations/victoria-metrics-k8s-stack/components/v-logs/icons/white/v-logs-white.svg
+  description: 
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

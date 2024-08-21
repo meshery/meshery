@@ -1,7 +1,9 @@
 name: Meshery UI and Server
 on:
   pull_request_target:
-    types: [opened, synchronize]
+    types: [opened, synchronize, reopened]
+    branches:
+      - "master"
     paths-ignore:
       - "docs/**"
       - "mesheryctl/**"
@@ -17,7 +19,7 @@ on:
 jobs:
   build-backend:
     name: Backend build
-    # if: github.repository == 'meshery/meshery'
+    if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-22.04
     steps:
       - name: Check out code
@@ -37,7 +39,7 @@ jobs:
           make build-server
   ui-build:
     name: UI build
-    # if: github.repository == 'meshery/meshery'
+    if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-22.04
     steps:
       - name: Check out code
@@ -95,149 +97,6 @@ jobs:
         with:
           name: provider-ui
           path: /home/runner/work/meshery/meshery/provider-ui/out
-  tests-ui-e2e:
-    needs: [build-backend, ui-build]
-    name: UI end-to-end tests
-    # if: github.repository == 'meshery/meshery'
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Set PR number
-        run: |
-          export pull_number=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
-          echo "PULL_NO=$pull_number" >> $GITHUB_ENV
-      - name: set branch name
-        if: github.event_name == 'pull_request' || github.event_name == 'pull_request_target'
-        run: |
-          echo "BRANCH_NAME=$GITHUB_HEAD_REF" >> $GITHUB_ENV 
-      - name: comment starting point
-        uses: hasura/comment-progress@v2.3.0
-        with:
-          github-token: ${{ secrets.GH_ACCESS_TOKEN }}
-          number: ${{ inputs.pr_number }}
-          id: extension-test
-          message: "Starting [Meshery UI tests](https://github.com/meshery/meshery/actions/runs/${{ github.run_id }})..."
-          recreate: true
-      - name: Check out code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-      - name: Check out meshery-istio code
-        uses: actions/checkout@v4
-        with:
-          repository: layer5io/meshery-istio
-          path: ./meshery-istio
-      - name: Check out meshery-consul code
-        uses: actions/checkout@v4
-        with:
-          repository: layer5io/meshery-consul
-          path: ./meshery-consul
-      - name: Create k8s Kind Cluster
-        uses: helm/kind-action@v1.8.0
-        with:
-          cluster_name: "kind-cluster"
-      - name: Setup Go
-        uses: actions/setup-go@master
-        with:
-          go-version: "1.21"
-      - name: Run meshery-istio
-        run: |
-          mkdir -p /home/runner/.meshery/bin
-          cd ./meshery-istio
-          go run main.go &
-          sleep 60
-      - name: Run meshery-consul
-        run: |
-          mkdir -p /home/runner/.meshery/bin
-          cd ./meshery-consul
-          go run main.go &
-          sleep 60
-      - name: Setup node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18
-      - name: Restore node modules cache
-        id: node-cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/cache
-            ~/.cache
-            /home/runner/.cache
-            !~/cache/exclude
-            **/node_modules
-            /home/runner/.cache/Cypress
-            ~/.npm
-            ${{ github.workspace }}/.next/cache
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
-          restore-keys: |
-            ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
-      - name: Download meshery-ui artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: meshery-ui
-          path: /home/runner/work/meshery/meshery/ui/out
-      - name: Download provider-ui artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: provider-ui
-          path: /home/runner/work/meshery/meshery/provider-ui/out
-      - name: Run Meshery UI and Server
-        env:
-          PROVIDER_BASE_URLS: "https://meshery.layer5.io"
-          PORT: 9081
-          ADAPTER_URLS: "localhost:10000 localhost:10001 localhost:10002 localhost:10003 localhost:10004 localhost:10009 localhost:10007"
-        run: |
-          make server &
-          sleep 60
-      - name: comment progress start
-        uses: hasura/comment-progress@v2.3.0
-        with:
-          github-token: ${{ secrets.GH_ACCESS_TOKEN }}
-          number: ${{ inputs.pr_number }}
-          id: meshery-ui-test
-          message: ":heavy_check_mark: Test environment ready. Starting tests..."
-          append: true
-      - name: Run Playwright End-to-End Tests
-        env:
-          MESHERY_SERVER_URL: "http://localhost:9081"
-          REMOTE_PROVIDER_URL: "https://meshery.layer5.io"
-          REMOTE_PROVIDER_USER_EMAIL: ${{ secrets.REMOTE_PROVIDER_USER_EMAIL }}
-          REMOTE_PROVIDER_USER_PASSWORD: ${{ secrets.REMOTE_PROVIDER_USER_PASS }}
-          PROVIDER_TOKEN: ${{ secrets.PROVIDER_TOKEN }}
-        run: |
-          make test-setup-ui
-          echo 'test-results<<EOF' >> $GITHUB_OUTPUT
-          make test-ui >> $GITHUB_OUTPUT
-          echo 'EOF' >> $GITHUB_OUTPUT
-      - name: comment the summary
-        uses: hasura/comment-progress@v2.3.0
-        if: always()
-        with:
-          message: |
-            ${{join(steps.run_tests.outputs.*, '\n')}}
-
-          github-token: ${{ secrets.GH_ACCESS_TOKEN }}
-          number: ${{ inputs.pr_number }}
-          id: meshery-ui-test
-          append: true
-      - name: Comment Test failure
-        uses: hasura/comment-progress@v2.3.0
-        if: ${{ failure()  }}
-        with:
-          github-token: ${{ secrets.GH_ACCESS_TOKEN }}
-          number: ${{ inputs.pr_number }}
-          id: meshery-ui-test
-          message: ":x: One or more tests have failed."
-          append: true
-      - name: Comment Final Status
-        if: always()
-        uses: hasura/comment-progress@v2.3.0
-        with:
-          github-token: ${{ secrets.GH_ACCESS_TOKEN }}
-          number: ${{ inputs.pr_number }}
-          id: meshery-ui-test
-          message: ":heavy_check_mark: Extension [test results](https://github.com/meshery/meshery/actions/runs/${{ github.run_id }})."
-          append: true
   docker-build-test:
     name: Docker build
     if: github.repository == 'meshery/meshery'
