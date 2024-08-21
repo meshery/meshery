@@ -5,6 +5,7 @@
   "displayName": "K8sDB Controller",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://github.com/DoodleScheduling/k8sdb-controller/releases/download/k8sdb-controller-0.1.2/k8sdb-controller-0.1.2.tgz", 
    "capabilities": null,
    "defaultData": "",
    "isAnnotation": false,

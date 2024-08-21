@@ -5,6 +5,7 @@
   "displayName": "Capsule",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://clastix.github.io/charts/capsule-0.4.6.tgz", 
     "isAnnotation": false,
     "published": false,
     "subCategory": "Scheduling \u0026 Orchestration",

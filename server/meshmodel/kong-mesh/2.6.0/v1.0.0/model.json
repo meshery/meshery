@@ -5,6 +5,7 @@
   "displayName": "Kong Mesh",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://github.com/Kong/kong-mesh-charts/releases/download/kong-mesh-2.6.0/kong-mesh-2.6.0.tgz", 
     "isAnnotation": false,
     "published": true,
     "subCategory": "Service Mesh",

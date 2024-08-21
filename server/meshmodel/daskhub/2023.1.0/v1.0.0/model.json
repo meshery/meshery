@@ -5,6 +5,7 @@
   "displayName": "Daskhub",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://helm.dask.org/daskhub-2024.1.0.tgz", 
     "isAnnotation": false,
     "published": false,
     "subCategory": "Uncategorized",

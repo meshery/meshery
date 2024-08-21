@@ -5,6 +5,7 @@
   "displayName": "Backyards",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://kubernetes-charts.banzaicloud.com/charts/backyards-operator-1.5.5.tgz", 
    "capabilities": null,
    "defaultData": "",
    "isAnnotation": false,

@@ -5,6 +5,7 @@
   "displayName": "OpenTelemetry Operator",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://github.com/open-telemetry/opentelemetry-helm-charts/releases/download/opentelemetry-operator-0.47.1/opentelemetry-operator-0.47.1.tgz", 
     "isAnnotation": false,
     "published": true,
     "subCategory": "Tracing",

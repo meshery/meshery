@@ -5,6 +5,7 @@
   "displayName": "AWS VPC CNI",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://aws.github.io/eks-charts/aws-vpc-cni-1.16.0.tgz", 
     "isAnnotation": false,
     "published": true,
     "subCategory": "Cloud Native Network",

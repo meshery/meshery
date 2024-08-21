@@ -5,6 +5,7 @@
   "displayName": "Eclipse Che",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://eclipse-che.github.io/che-operator/charts/stable/eclipse-che-7.80.0.tgz", 
     "isAnnotation": false,
     "published": false,
     "subCategory": "Application Definition \u0026 Image Build",
