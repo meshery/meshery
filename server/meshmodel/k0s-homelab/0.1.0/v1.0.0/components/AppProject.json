@@ -137,10 +137,10 @@
    "defaultData": "",
    "genealogy": "",
    "isAnnotation": false,
+   "isNamespaced": true,
    "published": false,
    "shapePolygonPoints": "",
    "styleOverrides": "",
-   "isNamespaced": true,
    "styles": ""
   },
   "model": {
@@ -156,6 +156,7 @@
     "secondaryColor": "#00D3A9",
     "shape": "circle",
     "shapePolygonPoints": "",
+    "source_uri": "https://gitlab.com/api/v4/projects/32758508/packages/helm/testing/charts/k0s-homelab-0.1.0.tgz",
     "styleOverrides": "",
     "styles": "",
     "svgColor": "",

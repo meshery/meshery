@@ -137,10 +137,10 @@
    "defaultData": "",
    "genealogy": "",
    "isAnnotation": false,
+   "isNamespaced": true,
    "published": false,
    "shapePolygonPoints": "",
    "styleOverrides": "",
-   "isNamespaced": true,
    "styles": ""
   },
   "model": {
@@ -156,6 +156,7 @@
     "secondaryColor": "#00D3A9",
     "shape": "circle",
     "shapePolygonPoints": "",
+    "source_uri": "https://charts.crossplane.io/master/oam-kubernetes-runtime-legacy-0.4.0-rc1.18.g64a2994.tgz",
     "styleOverrides": "",
     "styles": "",
     "svgColor": "",

@@ -137,10 +137,10 @@
    "defaultData": "",
    "genealogy": "",
    "isAnnotation": false,
+   "isNamespaced": true,
    "published": false,
    "shapePolygonPoints": "",
    "styleOverrides": "",
-   "isNamespaced": true,
    "styles": ""
   },
   "model": {
@@ -156,6 +156,7 @@
     "secondaryColor": "#00D3A9",
     "shape": "circle",
     "shapePolygonPoints": "",
+    "source_uri": "https://github.com/cosmo-workspace/charts/releases/download/cosmo-controller-manager-0.9.0/cosmo-controller-manager-0.9.0.tgz",
     "styleOverrides": "",
     "styles": "",
     "svgColor": "",

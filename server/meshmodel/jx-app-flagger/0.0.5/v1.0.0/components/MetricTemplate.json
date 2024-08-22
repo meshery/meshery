@@ -137,10 +137,10 @@
    "defaultData": "",
    "genealogy": "",
    "isAnnotation": false,
+   "isNamespaced": true,
    "published": false,
    "shapePolygonPoints": "",
    "styleOverrides": "",
-   "isNamespaced": true,
    "styles": ""
   },
   "model": {
@@ -156,6 +156,7 @@
     "secondaryColor": "#00D3A9",
     "shape": "circle",
     "shapePolygonPoints": "",
+    "source_uri": "https://jenkins-x-charts.github.io/v2/charts/jx-app-flagger-0.0.5.tgz",
     "styleOverrides": "",
     "styles": "",
     "svgColor": "",

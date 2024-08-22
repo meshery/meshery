@@ -137,10 +137,10 @@
    "defaultData": "",
    "genealogy": "",
    "isAnnotation": false,
+   "isNamespaced": true,
    "published": false,
    "shapePolygonPoints": "",
    "styleOverrides": "",
-   "isNamespaced": true,
    "styles": ""
   },
   "model": {
@@ -156,6 +156,7 @@
     "secondaryColor": "#e281f0",
     "shape": "circle",
     "shapePolygonPoints": "",
+    "source_uri": "https://traefik.github.io/charts/mesh/traefik-mesh-4.1.1.tgz",
     "styleOverrides": "",
     "styles": "",
     "svgColor": "",

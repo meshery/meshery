@@ -137,22 +137,11 @@
    "defaultData": "",
    "genealogy": "",
    "isAnnotation": false,
+   "isNamespaced": true,
    "published": false,
    "shapePolygonPoints": "",
    "styleOverrides": "",
-   "isNamespaced": true,
-   "styles": "",
-    "transitions": {
-      "connected": [
-        "disconnected",
-        "deleted"
-      ],
-      "deleted": [],
-      "disconnected": [
-        "connected",
-        "deleted"
-      ]
-    }
+   "styles": ""
   },
   "model": {
    "category": {

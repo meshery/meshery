@@ -137,10 +137,10 @@
    "defaultData": "",
    "genealogy": "",
    "isAnnotation": false,
+   "isNamespaced": true,
    "published": false,
    "shapePolygonPoints": "",
    "styleOverrides": "",
-   "isNamespaced": true,
    "styles": ""
   },
   "model": {
@@ -156,6 +156,7 @@
     "secondaryColor": "#4FF0EE",
     "shape": "circle",
     "shapePolygonPoints": "",
+    "source_uri": "https://nubificus.github.io/akri-helm-chart/akri-0.12.55.tgz",
     "styleOverrides": "",
     "styles": "",
     "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 2155 2155\" xmlns:_xmlns=\"xmlns\" _xmlns:xlink=\"http://www.w3.org/1999/xlink\"\u003e \u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e \u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"a\" d=\"M744.151 1273.145.22 843.325V.884L744.15 435.97z\"\u003e\u003c/path\u003e \u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"c\" d=\"m742.709.099 742.867 435.22L742.71 870.537.63 435.75z\"\u003e\u003c/path\u003e \u003c/defs\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" fill-rule=\"evenodd\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" transform=\"rotate(180 546.561 964.86)\"\u003e \u003cmask xmlns=\"http://www.w3.org/2000/svg\" id=\"b\" fill=\"#fff\"\u003e \u003cuse xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"#a\"\u003e\u003c/use\u003e \u003c/mask\u003e \u003cuse xmlns=\"http://www.w3.org/2000/svg\" fill=\"#3FB594\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"#a\"\u003e\u003c/use\u003e \u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill=\"#FFF\" fill-rule=\"nonzero\" mask=\"url(#b)\" d=\"M507.433 986.135V567.83l-519.26-308.953v453.269L-.41 717.04l117.006 72.149V948.07l138.88 62.987V712.146l-140.758-87.872V490.983l264.289 156.582v430.58L762.234 1299.5V420.663L-4.59-18.859v152.075l4.18 7.775L620.867 507.06v543.835z\"\u003e\u003c/path\u003e \u003c/g\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" transform=\"rotate(180 916.878 545.928)\"\u003e \u003cmask xmlns=\"http://www.w3.org/2000/svg\" id=\"d\" fill=\"#fff\"\u003e \u003cuse xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"#c\"\u003e\u003c/use\u003e \u003c/mask\u003e \u003cuse xmlns=\"http://www.w3.org/2000/svg\" fill=\"#3FB594\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"#c\"\u003e\u003c/use\u003e \u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill=\"#FFF\" fill-rule=\"nonzero\" mask=\"url(#d)\" d=\"M1484.755 435.078 742.928 870.46.54 435.661l132.67-78.493 609.464 356.767 624.63-364.565-359.202-206.601-10.925 6.202-254.249 140.671-138.725-84.646-120.337 70.162 259.062 148.79 253.239-142.774 138.533 81.993-390.762 220.966-506.256-290.958L636.734 60.672l108.215 67.2L910.056 38.82l616.077 345.261z\"\u003e\u003c/path\u003e \u003c/g\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"nonzero\"\u003e \u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill=\"#3FB594\" d=\"m1092.19 1928.268 740.669-437.063v-833.99l-740.67 434.778z\"\u003e\u003c/path\u003e \u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill=\"#FFF\" d=\"M1700.908 733.433v443.238l-377.737 213.875v-140.165l268.929-151.446V796.972l-134.862 78.876v146.551l-255.115 147.81v435.511l630.661-361.338.416-588.515zm-608.637 1195.244v-139.69l741.015-431.897.634 133.754z\"\u003e\u003c/path\u003e \u003c/g\u003e \u003c/g\u003e \u003c/svg\u003e",

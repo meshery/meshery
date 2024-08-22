@@ -137,10 +137,10 @@
    "defaultData": "",
    "genealogy": "",
    "isAnnotation": false,
+   "isNamespaced": true,
    "published": false,
    "shapePolygonPoints": "",
    "styleOverrides": "",
-   "isNamespaced": true,
    "styles": ""
   },
   "model": {
@@ -155,6 +155,7 @@
     "primaryColor": "#E7157B",
     "shape": "rectangle",
     "shapePolygonPoints": "",
+    "source_uri": "git://github.com/aws-controllers-k8s/opensearchservice-controller/main/helm",
     "styleOverrides": "",
     "styles": "",
     "svgColor": "",
