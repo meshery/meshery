@@ -6,6 +6,7 @@
 **Attendees**: 
 - Vivek Vishal
 - Ashparsh Pandey
+- Subhendu Mondal
 - 
 - 
 - 
