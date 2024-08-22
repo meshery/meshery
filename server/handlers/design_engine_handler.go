@@ -106,11 +106,18 @@ func (h *Handler) PatternFileHandler(
 	}
 
 	if isDesignInAlpha2Format {
-		_, patternFileStr, err := h.convertV1alpha2ToV1beta1(payload.PatternFile, payload.PatternID)
+		eventBuilder := events.NewEvent().ActedUpon(payload.PatternID).FromSystem(*h.SystemID).FromUser(userID).WithCategory("pattern").WithAction("convert")
+
+		_, patternFileStr, err := h.convertV1alpha2ToV1beta1(&models.MesheryPattern{
+			ID:          &patternID,
+			PatternFile: payload.PatternFile,
+		}, eventBuilder)
+
+		event := eventBuilder.Build()
+		_ = provider.PersistEvent(event)
+		go h.config.EventBroadcaster.Publish(userID, event)
+		
 		if err != nil {
-			event := events.NewEvent().ActedUpon(payload.PatternID).FromSystem(*h.SystemID).FromUser(userID).WithCategory("pattern").WithAction("convert").WithDescription("Failed to convert design to v1beta1 design format").WithMetadata(map[string]interface{}{"error": err, "id": payload.PatternID}).Build()
-			_ = provider.PersistEvent(event)
-			go h.config.EventBroadcaster.Publish(userID, event)
 			h.log.Error(err)
 			http.Error(rw, err.Error(), http.StatusInternalServerError)
 			return

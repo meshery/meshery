@@ -2061,7 +2061,7 @@ func (h *Handler) convertV1alpha2ToV1beta1(mesheryPattern *models.MesheryPattern
 
 	err = mapModelRelatedData(h.registryManager, &v1beta1PatternFile)
 	if err != nil {
-		eventBuilder.WithDescription("Design converted to v1beta1 format but failed to assign styles and metadata").
+		eventBuilder = eventBuilder.WithDescription("Design converted to v1beta1 format but failed to assign styles and metadata").
 			WithMetadata(map[string]interface{}{"error": err, "id": *mesheryPattern.ID}).WithSeverity(events.Warning)
 		return nil, "", err
 	}

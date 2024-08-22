@@ -88,7 +88,7 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	event := eventBuilder.WithDescription(fmt.Sprintf("Relationship evaluation completed for \"%s\" at version \"%s\"", evaluationResponse.Design.Name, evaluationResponse.Design.Version)).
 		WithMetadata(map[string]interface{}{
 			"trace":        evaluationResponse.Trace,
-			"evaluated_at": &evaluationResponse.Timestamp,
+			"evaluated_at": *evaluationResponse.Timestamp,
 		}).WithSeverity(events.Informational).Build()
 	_ = provider.PersistEvent(event)
 	go h.config.EventBroadcaster.Publish(userUUID, event)
