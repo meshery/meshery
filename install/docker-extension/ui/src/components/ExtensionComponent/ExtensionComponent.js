@@ -34,13 +34,14 @@ import {
 import { MesheryAnimation } from '../MesheryAnimation/MesheryAnimation'
 import { randomApplicationNameGenerator } from '../../utils'
 import CatalogChart from '../Catalog/Chart'
-import {CatalogCard, SistentThemeProviderWithoutBaseLine} from '@layer5/sistent';
+import {CatalogCard, FeedbackButton, SistentThemeProviderWithoutBaseLine} from '@layer5/sistent';
 import { MESHMAP, mesheryCloudUrl } from '../utils/constants';
 
 const AuthenticatedMsg = 'Authenticated'
 const UnauthenticatedMsg = 'Unauthenticated'
 const proxyUrl = 'http://127.0.0.1:7877'
 const httpDelete = 'DELETE'
+const httpPost = 'POST'
 
 // const adapters = {
 //   APP_MESH: {
@@ -132,6 +133,36 @@ const ExtensionsComponent = () => {
       .catch(console.error)
   }
 
+  const onSubmit = async feedback => {
+    // if (!validateFeedback(feedback)) {
+    //   handleError(
+    //     "We are unable to process your feedback. Did you include a message in your submission?"
+    //   );
+    //   return;
+    // }
+    // const path = router.pathname;
+    const userFeedbackRequestBody = {
+      scope: feedback?.label,
+      message: feedback?.message,
+      page_location: "",
+      metadata: {}
+    };
+    fetch(proxyUrl + '/api/extensions/identity/users/notify/feedback', { 
+      method: httpPost,
+      body: userFeedbackRequestBody
+     })
+     .then(console.log)
+      .catch(console.error)
+
+    // if (resp.error) {
+    //   handleError(
+    //     "Error submitting feedback. Check your Internet connection and try again."
+    //   );
+    //   return;
+    // }
+    // handleSuccess("Thank you! We have received your feedback.");
+  };
+
   useEffect(() => {
     let ws = new WebSocket('ws://127.0.0.1:7877/ws')
     ws.onmessage = (msg) => {
@@ -187,7 +218,7 @@ const ExtensionsComponent = () => {
 
   useEffect(() => {
     if (user?.id) {
-      fetch(`${mesheryCloudUrl}/api/content/patterns?user_id=${user?.id}`)
+      fetch(`${mesheryCloudUrl}/api/catalog/content/pattern?userid=${user?.id}`)
         .then((result) => result.text())
         .then((result) => {
           setUserDesigns(JSON.parse(result))
@@ -558,6 +589,13 @@ const ExtensionsComponent = () => {
             </div>
           )}
         </SectionWrapper>
+        <SistentThemeProviderWithoutBaseLine>
+        <FeedbackButton
+         containerStyles={{ zIndex: 10 }}
+         renderPosition="right-middle"
+         onSubmit={onSubmit}
+        /> 
+        </SistentThemeProviderWithoutBaseLine>
       </ComponentWrapper>
     </DockerMuiThemeProvider>
   )

@@ -6,9 +6,9 @@ import HelpIcon from '@mui/icons-material/Help';
 const TOUR_STEPS = [
   {
     target: ".first-step",
-    title: "Choose the Service Mesh that you would like to deploy",
+    title: "View Catalog items or publish your own design",
     placement: "right-start",
-    content: <i>Deploy any service mesh with a single click.</i>, 
+    content: <i>A Catalog is a web-based, public catalog to facilitate easy sharing and discovery of common cloud native architectures and design patterns.</i>, 
     disableBeacon: true,
   },
   {
