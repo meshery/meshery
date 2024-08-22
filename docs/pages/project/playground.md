@@ -51,4 +51,4 @@ _Creating your own account ensures that any designs you create or save will be s
 _To ensure accountability in the Playground, it's crucial to promote the use of individual named accounts. This helps prevent bad actors from hiding behind anonymous general-use accounts and maliciously abusing the Playground. Therefore, the use of named accounts is an essential step towards achieving this goal._
 
 ### Question: Can I deploy the Meshery on-premises?
-**Answer:** _Yes, Meshery can be deployed on-premises with a single command to download, install, and run your own instance of Meshery in your environment. See all supported platforms to deploy your own Meshery instance at <a href=https://docs.meshery.io/installation>docs.meshery.io/installation</a> _
+**Answer:** _Yes, Meshery can be deployed on-premises with a single command to download, install, and run your own instance of Meshery in your environment. See all supported platforms to deploy your own Meshery instance at [https://docs.meshery.io/installation](https://docs.meshery.io/installation)_
