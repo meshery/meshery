@@ -76,11 +76,11 @@ Name: **“None”**
 
 Meshery's Remote Provider extensibility framework is designed to enable the following functionalities:
 
-1. **Pluggable UI Functionality:**
+1. **Pluggable UI Functionality**
    - Out-of-tree custom UI components with seamless user experience.
    - A system of remote retrieval of extension packages (ReactJS components and Golang binaries).
 
-1. **Pluggable Backend Functionality:**
+1. **Pluggable Backend Functionality**
    - Remote Providers have any number of capabilities unbeknownst to Meshery.
 
 1. **Pluggable AuthZ**
