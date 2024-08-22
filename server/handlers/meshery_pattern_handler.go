@@ -214,7 +214,6 @@ func (h *Handler) handlePatternPOST(
 				}
 			}
 			patternFile, err := pCore.NewPatternFileFromK8sManifest(k8sres, fileName, false, h.registryManager)
-			fmt.Println("TEST ", patternFile)
 			if err != nil {
 				h.log.Error(ErrConvertingK8sManifestToDesign(err))
 				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
@@ -412,7 +411,6 @@ func (h *Handler) handlePatternPOST(
 
 				return
 			}
-			fmt.Println("TEST 411", pattern)
 			bytPattern, _ := yaml.Marshal(pattern)
 
 			mesheryPattern = &models.MesheryPattern{
