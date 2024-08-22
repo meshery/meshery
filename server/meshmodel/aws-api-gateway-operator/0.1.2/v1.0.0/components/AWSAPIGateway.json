@@ -137,6 +137,7 @@
    "defaultData": "",
    "genealogy": "",
    "isAnnotation": false,
+   "isNamespaced": true,
    "published": false,
    "shapePolygonPoints": "",
    "styleOverrides": "",
@@ -148,6 +149,11 @@
    },
    "displayName": "AWS API Gateway",
    "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "source_uri": "https://github.com/mintel/helm-charts/releases/download/aws-api-gateway-operator-0.1.2/aws-api-gateway-operator-0.1.2.tgz",
+    "svgColor": "",
+    "svgWhite": ""
+   },
    "model": {
     "version": "0.1.2"
    },

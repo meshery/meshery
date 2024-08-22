@@ -5,6 +5,7 @@
   "displayName": "Ambassador",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://wenerme.github.io/charts/ambassador-6.9.5.tgz", 
     "isAnnotation": false,
     "published": true,
     "subCategory": "API Gateway",

@@ -5,6 +5,7 @@
   "displayName": "Gitlab Runner Operator",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://charts.alekc.dev/gitlab-runner-operator-1.6.0.tgz", 
     "isAnnotation": false,
     "published": true,
     "subCategory": "Source Version Control",

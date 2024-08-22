@@ -19,8 +19,6 @@ import (
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -40,39 +38,15 @@ mesheryctl components list --page 2
 // To view the number of components present in Meshery
 mesheryctl components list --count
 	`,
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-		// Check prerequisites for the command here
-
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			return err
-		}
-		err = utils.IsServerRunning(mctlCfg.GetBaseMesheryURL())
-		if err != nil {
-			return err
-		}
-		ctx, err := mctlCfg.GetCurrentContext()
-		if err != nil {
-			return err
-		}
-		err = ctx.ValidateVersion()
-		if err != nil {
-			return err
-		}
-		return nil
-	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if len(args) != 0 {
-			return errors.New(utils.SystemModelSubError("this command takes no arguments\n", "list"))
-		}
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			log.Fatalln(err, "error processing config")
+			utils.Log.Error(err)
+			return nil
 		}
 
 		baseUrl := mctlCfg.GetBaseMesheryURL()
 		url := fmt.Sprintf("%s/api/meshmodels/components?%s", baseUrl, utils.GetPageQueryParameter(cmd, pageNumberFlag))
-
 		return listComponents(cmd, url, false)
 	},
 }

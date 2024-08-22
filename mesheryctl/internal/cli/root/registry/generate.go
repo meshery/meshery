@@ -34,6 +34,8 @@ import (
 	"github.com/layer5io/meshkit/utils/store"
 	"github.com/layer5io/meshkit/utils/walker"
 	"github.com/meshery/schemas/models/v1beta1/component"
+	v1beta1Model "github.com/meshery/schemas/models/v1beta1/model"
+
 	"github.com/meshery/schemas/models/v1beta1/model"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -252,7 +254,9 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 				// Assign the component status corresponding to model status.
 				// i.e. If model is enabled comps are also "enabled". Ultimately all individual comps itself will have ability to control their status.
 				// The status "enabled" indicates that the component will be registered inside the registry.
-
+				if modelDef.Metadata == nil {
+					modelDef.Metadata = &v1beta1Model.ModelDefinition_Metadata{}
+				}
 				if modelDef.Metadata.AdditionalProperties == nil {
 					modelDef.Metadata.AdditionalProperties = make(map[string]interface{})
 				}
@@ -261,7 +265,7 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 					modelDef.Metadata.AdditionalProperties["source_uri"] = comp.Model.Metadata.AdditionalProperties["source_uri"]
 				}
 				comp.Model = *modelDef
-				
+
 				assignDefaultsForCompDefs(&comp, modelDef)
 				err := comp.WriteComponentDefinition(compDirPath)
 				if err != nil {

@@ -5,6 +5,7 @@
   "displayName": "Aperture Controller",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://fluxninja.github.io/aperture/aperture-controller-v2.31.1.tgz", 
     "isAnnotation": false,
     "published": true,
     "subCategory": "Scheduling \u0026 Orchestration",

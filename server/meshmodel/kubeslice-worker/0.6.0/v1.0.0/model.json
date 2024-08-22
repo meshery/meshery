@@ -5,6 +5,7 @@
   "displayName": "Kubeslice Worker",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://github.com/kubeslice/kubeslice/releases/download/kubeslice-worker-1.1.0/kubeslice-worker-1.1.0.tgz", 
     "isAnnotation": false,
     "published": true,
     "subCategory": "Automation \u0026 Configuration",

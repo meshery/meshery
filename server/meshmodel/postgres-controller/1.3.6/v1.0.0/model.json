@@ -5,6 +5,7 @@
   "displayName": "Postgres Controller",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://github.com/evgkrsk/postgres-controller/releases/download/postgres-controller-1.3.6/postgres-controller-1.3.6.tgz", 
     "isAnnotation": false,
     "published": true,
     "subCategory": "App Definition and Development",

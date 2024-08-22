@@ -13,6 +13,7 @@
    "defaultData": "{\"label\":\"\"}",
    "genealogy": "parent",
    "isAnnotation": true,
+   "isNamespaced": false,
    "published": false,
    "shapePolygonPoints": ""
   },

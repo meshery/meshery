@@ -115,7 +115,13 @@ evaluate_bindings contains result if {
 		},
 	])
 
-	cloned_selectors := {"selectors": [{"allow": {
+	now := format_int(time.now_ns(), 10)
+
+	id := uuid.rfc4122(sprintf("%s%s%s%s%s", 
+	[from_declaration.id, binding_declaration.id, to_declaration.id, data.relationship.id, now]))
+	cloned_selectors := {
+		"id": id,
+		"selectors": [{"allow": {
 		"from": [match_selector_for_from],
 		"to": [match_selector_for_to],
 	}}]}
@@ -150,7 +156,7 @@ is_feasible(from, to, resource1, resource2) if {
 	formatted_to_path = format_json_path(to_path)
 
 	val1 := object.get(resource1, formatted_from_path, "")
-	val2 := object.get(resource2, formatted_to_path, null)
+	val2 := object.get(resource2, formatted_to_path, "")
 
 	val1 == val2
 } else := false

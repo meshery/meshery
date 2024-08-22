@@ -5,6 +5,7 @@
   "displayName": "Epam Delivery Platform (EDP) Admin Console",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://epam.github.io/edp-helm-charts/snapshot/packages/admin-console-operator-2.15.0-SNAPSHOT.3.tgz", 
     "isAnnotation": false,
     "published": true,
     "subCategory": "Automation \u0026 Configuration",

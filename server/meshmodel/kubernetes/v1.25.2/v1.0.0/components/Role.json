@@ -137,6 +137,7 @@
    "defaultData": "",
    "genealogy": "",
    "isAnnotation": false,
+   "isNamespaced": true,
    "published": false,
    "shapePolygonPoints": "",
    "styleOverrides": "{\"height\":\"22px\", \"width\":\"22px\", \"x\":\"8.5\", \"y\":\"7.5\",\"z-index\":4}",

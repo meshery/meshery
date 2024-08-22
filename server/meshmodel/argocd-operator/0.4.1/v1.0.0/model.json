@@ -5,6 +5,7 @@
   "displayName": "Argo CD Operator",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://github.com/StatCan/charts/releases/download/argocd-operator-0.5.0/argocd-operator-0.5.0.tgz", 
     "isAnnotation": false,
     "published": true,
     "subCategory": "Continuous Integration \u0026 Delivery",
