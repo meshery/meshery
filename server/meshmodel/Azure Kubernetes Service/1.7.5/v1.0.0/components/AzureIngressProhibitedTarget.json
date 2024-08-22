@@ -137,10 +137,10 @@
    "defaultData": "",
    "genealogy": "",
    "isAnnotation": false,
+   "isNamespaced": true,
    "published": false,
    "shapePolygonPoints": "",
    "styleOverrides": "",
-   "isNamespaced": true,
    "styles": ""
   },
   "model": {
@@ -156,6 +156,7 @@
     "secondaryColor": "#804998",
     "shape": "circle",
     "shapePolygonPoints": "",
+    "source_uri": "https://appgwingress.blob.core.windows.net/ingress-azure-helm-package/ingress-azure-1.7.5.tgz",
     "styleOverrides": "",
     "styles": "",
     "svgColor": "",

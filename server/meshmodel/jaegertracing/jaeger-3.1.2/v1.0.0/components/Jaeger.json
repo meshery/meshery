@@ -137,10 +137,10 @@
    "defaultData": "",
    "genealogy": "",
    "isAnnotation": false,
+   "isNamespaced": true,
    "published": false,
    "shapePolygonPoints": "",
    "styleOverrides": "",
-   "isNamespaced": true,
    "styles": ""
   },
   "model": {
@@ -157,6 +157,7 @@
     "secondaryColor": "#ACFFFF",
     "shape": "circle",
     "shapePolygonPoints": "",
+    "source_uri": "git://github.com/jaegertracing/helm-charts/main/charts/",
     "styleOverrides": "",
     "styles": "",
     "svgColor": "",

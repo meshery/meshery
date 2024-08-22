@@ -137,10 +137,10 @@
    "defaultData": "",
    "genealogy": "parent",
    "isAnnotation": false,
+   "isNamespaced": false,
    "published": false,
    "shapePolygonPoints": "",
    "styleOverrides": "{\"background-image\":\"none\",\"border-width\":2,\"border-style\":\"dashed\",\"background-opacity\":0.5}",
-  "isNamespaced": false,
    "styles": "{\"background-image\":\"none\",\"border-width\":2,\"border-style\":\"dashed\",\"background-opacity\":0.5}"
   },
   "model": {

@@ -137,10 +137,10 @@
    "defaultData": "",
    "genealogy": "",
    "isAnnotation": false,
+   "isNamespaced": false,
    "published": false,
    "shapePolygonPoints": "",
    "styleOverrides": "",
-   "isNamespaced": false,
    "styles": ""
   },
   "model": {
@@ -156,6 +156,7 @@
     "secondaryColor": "#00D3A9",
     "shape": "circle",
     "shapePolygonPoints": "",
+    "source_uri": "https://github.com/nirmata/kyverno-charts/releases/download/kube-bench-adapter-v1.2.9/kube-bench-adapter-v1.2.9.tgz",
     "styleOverrides": "",
     "styles": "",
     "svgColor": "",

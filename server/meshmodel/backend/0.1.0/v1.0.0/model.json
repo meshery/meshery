@@ -5,7 +5,6 @@
   "displayName": "Backend",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
-    "source_uri": "https://docs.mojaloop.io/charts/repo/backend-0.1.0.tgz", 
    "capabilities": null,
    "defaultData": "",
    "isAnnotation": false,

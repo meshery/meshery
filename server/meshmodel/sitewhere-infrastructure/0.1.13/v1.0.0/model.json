@@ -5,7 +5,6 @@
   "displayName": "Sitewhere Infrastructure",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
-    "source_uri": "https://sitewhere.io/helm-charts/sitewhere-infrastructure-0.1.13.tgz", 
    "capabilities": null,
    "defaultData": "",
    "isAnnotation": false,
