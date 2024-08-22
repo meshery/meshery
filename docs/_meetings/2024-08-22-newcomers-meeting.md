@@ -5,7 +5,7 @@
 
 **Attendees**: 
 - Vivek Vishal
-- 
+- Subhendu Mondal
 - 
 - 
 - 
