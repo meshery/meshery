@@ -2092,14 +2092,25 @@ func mapModelRelatedData(reg *meshmodel.RegistryManager, patternFile *pattern.Pa
 		comp.Metadata.Genealogy = wc.Metadata.Genealogy
 		comp.Metadata.IsAnnotation = wc.Metadata.IsAnnotation
 		comp.Metadata.Published = wc.Metadata.Published
-		position := comp.Styles.Position
 
+		var styles component.Styles
+
+		if comp.Styles != nil {
+			styles = *comp.Styles
+		} else {
+			comp.Styles = &component.Styles{}
+		}
+		
+
+		// Assign the other styles and reassign the position.
 		if wc.Styles != nil {
 			comp.Styles = wc.Styles
 		}
-		comp.Styles.Position = position
-	}
+		if styles.Position != nil {
+			comp.Styles.Position = styles.Position
+		}
 
+	}
 
 	return nil
 }
