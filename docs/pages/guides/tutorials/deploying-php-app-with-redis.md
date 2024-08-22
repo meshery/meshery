@@ -69,14 +69,13 @@ These YAML files contain the Service definitions and Deployment configurations f
 
         ![Import redis-leader-deployment](./screenshots/redis-leader-deployment.png)
 
-3. 
+3. Now, follow the same steps (1-2) to import the rest of the files.
 
-4. Now, follow the same steps to import the rest of the files.
+4. Under the “Designs” tab, you will see that we have successfully imported the manifest as designs, then you can drag and drop them in the canvas. This will "Merge" all the designs since it's all just one application
+    ![merging all designs](./screenshots/app-canvas.png)
 
-\```bash
-# Deploying a sample microservices application
-mesheryctl pattern apply -f https://raw.githubusercontent.com/example/microservices-app-deployment.yaml
-\```
+
+
 
 #### 3. **Scaling Deployments:**
   - Explore how to scale individual components of the microservices application by adjusting the replicas in the Deployment configuration.
