@@ -5,8 +5,11 @@
 
 **Attendees**: 
 - Vivek Vishal
-- 
-- 
+- Saurabh Singh
+- Ashparsh Pandey
+- Subhendu Mondal
+- Sparsh Agarwal
+- Aditya Mohan
 - 
 - 
 -
