@@ -266,7 +266,6 @@ func (h *Handler) handlePatternPOST(
 			// if errors occurs in decompressing OCI Artifact into design file
 			// then fall back to importing design as yaml file
 			if err != nil {
-				h.log.Warn(ErrUnCompressOCIArtifact(err))
 				h.log.Info("Falling back to importing design as yaml file")
 
 				// commenting for now as every save event would other wise send following event
