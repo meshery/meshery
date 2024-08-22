@@ -1,4 +1,4 @@
-FROM golang:1.21.8 as meshery-server
+FROM golang:1.21.8 AS meshery-server
 ARG GIT_VERSION
 
 RUN adduser --disabled-login appuser
@@ -10,9 +10,9 @@ RUN go mod download
 RUN cd server && cd cmd && GOPROXY=https://proxy.golang.org go build -ldflags="-w -s -X main.version=$GIT_VERSION" -tags draft -a -o /meshery .
 
 # This image will be reuse for both UI & UI Provider
-FROM node:18.13.0-alpine3.17 as base-node
+FROM node:18.13.0-alpine3.17 AS base-node
 
-FROM base-node as ui-deps
+FROM base-node AS ui-deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
@@ -28,11 +28,11 @@ COPY ui .
 # Next.js collects completely anonymous telemetry data about general usage.
 # Learn more here: https://nextjs.org/telemetry
 # Uncomment the following line in case you want to disable telemetry during the build.
-ENV NEXT_TELEMETRY_DISABLED 1
+ENV NEXT_TELEMETRY_DISABLED=1
 
 RUN npm run build && npm run export
 
-FROM base-node as ui-provider-deps
+FROM base-node AS ui-provider-deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 # Install dependencies based on the preferred package manager
@@ -46,22 +46,22 @@ COPY --from=ui-provider-deps /app/node_modules ./node_modules
 # Next.js collects completely anonymous telemetry data about general usage.
 # Learn more here: https://nextjs.org/telemetry
 # Uncomment the following line in case you want to disable telemetry during the build.
-ENV NEXT_TELEMETRY_DISABLED 1
+ENV NEXT_TELEMETRY_DISABLED=1
 
 COPY provider-ui .
 RUN npm run build && npm run export
 
 # This image will be reuse for wrk2, seed content and the last built
-FROM alpine:3.15.3 as base-alpine
+FROM alpine:3.15.3 AS base-alpine
 
-FROM base-alpine as wrk2
+FROM base-alpine AS wrk2
 RUN apk update \
     && apk --no-cache --update add alpine-sdk zlib-dev openssl-dev wget git
 RUN git config --global user.email "meshery@layer5.io"
 RUN git config --global user.name "meshery"
 RUN git clone --depth=1 https://github.com/layer5io/wrk2 && cd wrk2 && make
 
-FROM base-alpine as seed_content
+FROM base-alpine AS seed_content
 RUN apk add --no-cache curl
 WORKDIR /
 RUN lines=$(curl -s https://api.github.com/repos/layer5io/wasm-filters/releases/latest | grep "browser_download_url.*wasm" | cut -d : -f 2,3 | sed 's/"//g') \
@@ -137,4 +137,4 @@ RUN mkdir -p /var/run; chown -R appuser:docker /var/run/
 RUN mkdir -p /home/appuser/.meshery/config; chown -R appuser /home/appuser/; chown -R appuser /app/ui/public
 USER appuser
 WORKDIR /app/server/cmd
-CMD ./meshery
+CMD ["./meshery"]

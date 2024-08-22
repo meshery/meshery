@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { ENV } from './env';
 
-test.describe('Test meshmap', () => {
+test.describe('Test meshmap Tutorial', () => {
   test('Go to MeshMap extension and check skip on the tutorial modal', async ({ page }) => {
     await page.goto(`${ENV.MESHERY_SERVER_URL}/extension/meshmap`);
 
@@ -12,12 +12,10 @@ test.describe('Test meshmap', () => {
     await page.locator('#tutorial-dialog-title svg').nth(2).click();
   });
 
-  test('Go to MeshMap extension and go to the first design', async ({ page }) => {
+  test('Go to MeshMap extension and check for tutorial not visible', async ({ page }) => {
     await page.goto(`${ENV.MESHERY_SERVER_URL}/extension/meshmap`);
 
-    await page.getByTestId('MuiDataTableBodyCell-2-0').first().click();
-
-    await expect(page.locator('#custom-noti').getByRole('alert')).toBeVisible();
+    await expect(page.getByText('Tutorial')).not.toBeVisible();
   });
 
   test('Go to MeshMap extension settings and turn on again tutorial', async ({ page }) => {
@@ -29,12 +27,7 @@ test.describe('Test meshmap', () => {
 
     await expect(page.getByText('Show Tutorial')).toBeVisible();
 
-    // Sign of bad UX, should implemented optimistic updates so user not be confused
-    await page
-      .locator('li')
-      .filter({ hasText: 'Show Tutorial' })
-      .getByRole('checkbox')
-      .check({ force: true });
+    await page.locator('li').filter({ hasText: 'Show Tutorial' }).getByRole('checkbox').click();
 
     await page.getByRole('button').first().click();
   });

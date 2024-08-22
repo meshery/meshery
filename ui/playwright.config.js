@@ -49,10 +49,37 @@ module.exports = defineConfig({
       testMatch: 'tests/e2e/*.setup.js',
     },
     {
-      name: 'recorder',
+      name: 'recorder-local',
       testMatch: /.*.record.spec.js/,
       use: {
         ...devices['Desktop Chrome'],
+        baseURL: 'http://localhost:9081',
+        storageState: 'playwright/.auth/user.json',
+        video: {
+          mode: 'on',
+        },
+      },
+      dependencies: ['setup'],
+    },
+    {
+      name: 'recorder-playground',
+      testMatch: /.*.record.spec.js/,
+      use: {
+        ...devices['Desktop Chrome'],
+        baseURL: 'https://playground.meshery.io',
+        storageState: 'playwright/.auth/user.json',
+        video: {
+          mode: 'on',
+        },
+      },
+      dependencies: ['setup'],
+    },
+    {
+      name: 'recorder-staging',
+      testMatch: /.*.record.spec.js/,
+      use: {
+        ...devices['Desktop Chrome'],
+        baseURL: 'https://staging-playground.meshery.io',
         storageState: 'playwright/.auth/user.json',
         video: {
           mode: 'on',
