@@ -214,6 +214,7 @@ func (h *Handler) handlePatternPOST(
 				}
 			}
 			patternFile, err := pCore.NewPatternFileFromK8sManifest(k8sres, fileName, false, h.registryManager)
+			fmt.Println("TEST ", patternFile)
 			if err != nil {
 				h.log.Error(ErrConvertingK8sManifestToDesign(err))
 				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
@@ -245,16 +246,20 @@ func (h *Handler) handlePatternPOST(
 			}
 
 			if isOldFormat {
-				patternFile, patternFileStr, err = h.convertV1alpha2ToV1beta1(string(parsedBody.PatternData.PatternFile), *actedUpon)
+				eventBuilder := events.NewEvent().ActedUpon(*actedUpon).FromSystem(*h.SystemID).FromUser(userID).WithCategory("pattern").WithAction("convert")
+				patternFile, patternFileStr, err = h.convertV1alpha2ToV1beta1(&models.MesheryPattern{
+					ID:           actedUpon,
+					Name:         parsedBody.PatternData.Name,
+					PatternFile:  string(parsedBody.PatternData.PatternFile),
+					Location:     parsedBody.PatternData.Location}, eventBuilder)
+				event := eventBuilder.Build()
+				_ = provider.PersistEvent(event)
+				go h.config.EventBroadcaster.Publish(userID, event)
 				if err != nil {
-					event := events.NewEvent().ActedUpon(*actedUpon).FromSystem(*h.SystemID).FromUser(userID).WithCategory("pattern").WithAction("convert").WithDescription(fmt.Sprintf("Failed to convert design \"%s\" to v1beta1 design format", parsedBody.PatternData.Name)).WithMetadata(map[string]interface{}{"error": err, "id": *actedUpon}).Build()
-					_ = provider.PersistEvent(event)
-					go h.config.EventBroadcaster.Publish(userID, event)
 					h.log.Error(err)
 					http.Error(rw, err.Error(), http.StatusInternalServerError)
 					return
 				}
-
 			}
 			mesheryPattern.PatternFile = patternFileStr
 			mesheryPattern.CatalogData = parsedBody.PatternData.CatalogData
@@ -407,8 +412,8 @@ func (h *Handler) handlePatternPOST(
 
 				return
 			}
-
-			bytPattern, _ := encoding.Marshal(pattern)
+			fmt.Println("TEST 411", pattern)
+			bytPattern, _ := yaml.Marshal(pattern)
 
 			mesheryPattern = &models.MesheryPattern{
 				Name:        parsedBody.Name,
@@ -659,7 +664,7 @@ func (h *Handler) VerifyAndConvertToDesign(
 				err = ErrConvertingK8sManifestToDesign(err)
 				return err
 			}
-			bytPattern, _ := encoding.Marshal(pattern)
+			bytPattern, _ := yaml.Marshal(pattern)
 			mesheryPattern.PatternFile = string(bytPattern)
 		}
 
@@ -766,7 +771,7 @@ func githubRepoDesignScan(
 					return err //always a meshkit error
 				}
 
-				patternByt, _ := encoding.Marshal(pattern)
+				patternByt, _ := yaml.Marshal(pattern)
 
 				af := models.MesheryPattern{
 					Name:        strings.TrimSuffix(f.Name, ext),
@@ -840,7 +845,7 @@ func genericHTTPDesignFile(fileURL, patternName, sourceType string, reg *meshmod
 		pattern.Name = patternName
 	}
 
-	patternByt, _ := encoding.Marshal(pattern)
+	patternByt, _ := yaml.Marshal(pattern)
 
 	url := strings.Split(fileURL, "/")
 	af := models.MesheryPattern{
@@ -1093,15 +1098,18 @@ func (h *Handler) DownloadMesheryPatternHandler(
 	}
 
 	if isOldFormat {
-		_, patternFileStr, err := h.convertV1alpha2ToV1beta1(pattern.PatternFile, *pattern.ID)
+		
+		eventBuilder := events.NewEvent().ActedUpon(*pattern.ID).FromSystem(*h.SystemID).FromUser(userID).WithCategory("pattern").WithAction("convert")
+		_, patternFileStr, err := h.convertV1alpha2ToV1beta1(pattern, eventBuilder)
+		event := eventBuilder.Build()
+		_ = provider.PersistEvent(event)
+		go h.config.EventBroadcaster.Publish(userID, event)
 		if err != nil {
-			event := events.NewEvent().ActedUpon(*pattern.ID).FromSystem(*h.SystemID).FromUser(userID).WithCategory("pattern").WithAction("convert").WithDescription(fmt.Sprintf("Failed to convert design \"%s\" to v1beta1 design format", pattern.Name)).WithMetadata(map[string]interface{}{"error": err, "id": pattern.ID}).Build()
-			_ = provider.PersistEvent(event)
-			go h.config.EventBroadcaster.Publish(userID, event)
 			h.log.Error(err)
 			http.Error(rw, err.Error(), http.StatusInternalServerError)
 			return
 		}
+		
 		pattern.PatternFile = patternFileStr
 	}
 
@@ -1383,7 +1391,7 @@ func (h *Handler) CloneMesheryPatternHandler(
 ) {
 	patternID := mux.Vars(r)["id"]
 	patternUUID := uuid.FromStringOrNil(patternID)
-	
+
 	userID := uuid.FromStringOrNil(user.ID)
 	token, _ := r.Context().Value(models.TokenCtxKey).(string)
 
@@ -1440,11 +1448,12 @@ func (h *Handler) CloneMesheryPatternHandler(
 	}
 
 	if isOldFormat {
-		_, patternFileStr, err := h.convertV1alpha2ToV1beta1(pattern.PatternFile, *pattern.ID)
+		eventBuilder := events.NewEvent().ActedUpon(*pattern.ID).FromSystem(*h.SystemID).FromUser(userID).WithCategory("pattern").WithAction("convert")
+		_, patternFileStr, err := h.convertV1alpha2ToV1beta1(pattern, eventBuilder)
+		event := eventBuilder.Build()
+		_ = provider.PersistEvent(event)
+		go h.config.EventBroadcaster.Publish(userID, event)
 		if err != nil {
-			event := events.NewEvent().ActedUpon(*pattern.ID).FromSystem(*h.SystemID).FromUser(userID).WithCategory("pattern").WithAction("convert").WithDescription(fmt.Sprintf("Failed to convert design \"%s\" to v1beta1 design format", pattern.Name)).WithMetadata(map[string]interface{}{"error": err, "id": patternID}).Build()
-			_ = provider.PersistEvent(event)
-			go h.config.EventBroadcaster.Publish(userID, event)
 			h.log.Error(err)
 			http.Error(rw, err.Error(), http.StatusInternalServerError)
 			return
@@ -1722,11 +1731,12 @@ func (h *Handler) GetMesheryPatternHandler(
 	}
 
 	if isOldFormat {
-		_, patternFileStr, err := h.convertV1alpha2ToV1beta1(pattern.PatternFile, patternUUID)
+		eventBuilder := events.NewEvent().ActedUpon(*pattern.ID).FromSystem(*h.SystemID).FromUser(userID).WithCategory("pattern").WithAction("convert")
+		_, patternFileStr, err := h.convertV1alpha2ToV1beta1(pattern, eventBuilder)
+		event := eventBuilder.Build()
+		_ = provider.PersistEvent(event)
+		go h.config.EventBroadcaster.Publish(userID, event)
 		if err != nil {
-			event := events.NewEvent().ActedUpon(*pattern.ID).FromSystem(*h.SystemID).FromUser(userID).WithCategory("pattern").WithAction("convert").WithDescription(fmt.Sprintf("Failed to convert design \"%s\" to v1beta1 design format", pattern.Name)).WithMetadata(map[string]interface{}{"error": err, "id": pattern.ID}).Build()
-			_ = provider.PersistEvent(event)
-			go h.config.EventBroadcaster.Publish(userID, event)
 			h.log.Error(err)
 			http.Error(rw, err.Error(), http.StatusInternalServerError)
 			return
@@ -2023,13 +2033,13 @@ func createArtifactHubPkg(pattern *models.MesheryPattern, user string) ([]byte, 
 	return data, nil
 }
 
-func (h *Handler) convertV1alpha2ToV1beta1(patternFile string, patternId uuid.UUID) (*pattern.PatternFile, string, error) {
+func (h *Handler) convertV1alpha2ToV1beta1(mesheryPattern *models.MesheryPattern, eventBuilder *events.EventBuilder) (*pattern.PatternFile, string, error) {
 
 	v1alpha1PatternFile := v1alpha2.PatternFile{}
 
 	v1beta1PatternFile := pattern.PatternFile{}
 
-	err := encoding.Unmarshal([]byte(patternFile), &v1alpha1PatternFile)
+	err := encoding.Unmarshal([]byte(mesheryPattern.PatternFile), &v1alpha1PatternFile)
 	if err != nil {
 		return nil, "", ErrParsePattern(err)
 	}
@@ -2044,13 +2054,15 @@ func (h *Handler) convertV1alpha2ToV1beta1(patternFile string, patternId uuid.UU
 		return nil, "", err
 	}
 
-	v1beta1PatternFile.Id = patternId
+	v1beta1PatternFile.Id = *mesheryPattern.ID
 	v1beta1PatternFile.Version = v1alpha1PatternFile.Version
 
-	h.log.Infof("Converted design file with id \"%s\" to v1beta1 format", patternId)
+	h.log.Infof("Converted design file with id \"%s\" to v1beta1 format", *mesheryPattern.ID)
 
 	err = mapModelRelatedData(h.registryManager, &v1beta1PatternFile)
 	if err != nil {
+		eventBuilder.WithDescription("Design converted to v1beta1 format but failed to assign styles and metadata").
+			WithMetadata(map[string]interface{}{"error": err, "id": *mesheryPattern.ID}).WithSeverity(events.Warning)
 		return nil, "", err
 	}
 
@@ -2058,6 +2070,7 @@ func (h *Handler) convertV1alpha2ToV1beta1(patternFile string, patternId uuid.UU
 	if err != nil {
 		return nil, "", utils.ErrMarshal(err)
 	}
+	eventBuilder.WithSeverity(events.Informational).WithDescription(fmt.Sprintf("Converted design file \"%s\" with id \"%s\" to v1beta1 format", mesheryPattern.Name, *mesheryPattern.ID))
 	return &v1beta1PatternFile, string(v1beta1PatternByt), nil
 }
 
@@ -2100,7 +2113,6 @@ func mapModelRelatedData(reg *meshmodel.RegistryManager, patternFile *pattern.Pa
 		} else {
 			comp.Styles = &component.Styles{}
 		}
-		
 
 		// Assign the other styles and reassign the position.
 		if wc.Styles != nil {
