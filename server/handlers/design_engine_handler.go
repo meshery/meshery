@@ -106,7 +106,7 @@ func (h *Handler) PatternFileHandler(
 	}
 
 	if isDesignInAlpha2Format {
-		eventBuilder := events.NewEvent().ActedUpon(payload.PatternID).FromSystem(*h.SystemID).FromUser(userID).WithCategory("pattern").WithAction("convert")
+		eventBuilder := events.NewEvent().ActedUpon(patternID).FromSystem(*h.SystemID).FromUser(userID).WithCategory("pattern").WithAction("convert")
 
 		_, patternFileStr, err := h.convertV1alpha2ToV1beta1(&models.MesheryPattern{
 			ID:          &patternID,

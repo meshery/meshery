@@ -248,10 +248,10 @@ func (h *Handler) handlePatternPOST(
 			if isOldFormat {
 				eventBuilder := events.NewEvent().ActedUpon(*actedUpon).FromSystem(*h.SystemID).FromUser(userID).WithCategory("pattern").WithAction("convert")
 				patternFile, patternFileStr, err = h.convertV1alpha2ToV1beta1(&models.MesheryPattern{
-					ID:           actedUpon,
-					Name:         parsedBody.PatternData.Name,
-					PatternFile:  string(parsedBody.PatternData.PatternFile),
-					Location:     parsedBody.PatternData.Location}, eventBuilder)
+					ID:          actedUpon,
+					Name:        parsedBody.PatternData.Name,
+					PatternFile: string(parsedBody.PatternData.PatternFile),
+				}, eventBuilder)
 				event := eventBuilder.Build()
 				_ = provider.PersistEvent(event)
 				go h.config.EventBroadcaster.Publish(userID, event)
@@ -1098,7 +1098,7 @@ func (h *Handler) DownloadMesheryPatternHandler(
 	}
 
 	if isOldFormat {
-		
+
 		eventBuilder := events.NewEvent().ActedUpon(*pattern.ID).FromSystem(*h.SystemID).FromUser(userID).WithCategory("pattern").WithAction("convert")
 		_, patternFileStr, err := h.convertV1alpha2ToV1beta1(pattern, eventBuilder)
 		event := eventBuilder.Build()
@@ -1109,7 +1109,7 @@ func (h *Handler) DownloadMesheryPatternHandler(
 			http.Error(rw, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		
+
 		pattern.PatternFile = patternFileStr
 	}
 
