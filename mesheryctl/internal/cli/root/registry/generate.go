@@ -16,7 +16,6 @@ package registry
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"net/url"
 	"os"
@@ -27,6 +26,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/layer5io/meshkit/encoding"
+
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshkit/generators"
 	"github.com/layer5io/meshkit/generators/github"
@@ -36,7 +37,6 @@ import (
 	"github.com/meshery/schemas/models/v1beta1/component"
 	v1beta1Model "github.com/meshery/schemas/models/v1beta1/model"
 
-	"github.com/meshery/schemas/models/v1beta1/model"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"golang.org/x/sync/semaphore"
@@ -291,7 +291,7 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 	return nil
 }
 
-func assignDefaultsForCompDefs(componentDef *component.ComponentDefinition, modelDef *model.ModelDefinition) {
+func assignDefaultsForCompDefs(componentDef *component.ComponentDefinition, modelDef *v1beta1Model.ModelDefinition) {
 	// Assign the status from the model to the component
 	compStatus := component.ComponentDefinitionStatus(modelDef.Status)
 	componentDef.Status = &compStatus
@@ -309,9 +309,17 @@ func assignDefaultsForCompDefs(componentDef *component.ComponentDefinition, mode
 
 	// Iterate through modelDef.Metadata
 	if modelDef.Metadata != nil {
+		if modelDef.Metadata.AdditionalProperties["styleOverrides"] != nil {
+			styleOverrides, ok := modelDef.Metadata.AdditionalProperties["styleOverrides"].(string)
+			if ok {
+				err := encoding.Unmarshal([]byte(styleOverrides), &componentDef.Styles)
+				if err != nil {
+					utils.LogError.Error(err)
+				}
+			}
+		}
 		if (modelDef.Metadata.Capabilities) != nil {
 			componentDef.Capabilities = modelDef.Metadata.Capabilities
-
 		}
 		if modelDef.Metadata.PrimaryColor != nil {
 			componentDef.Styles.PrimaryColor = *modelDef.Metadata.PrimaryColor
@@ -331,6 +339,9 @@ func assignDefaultsForCompDefs(componentDef *component.ComponentDefinition, mode
 
 		// Iterate through AdditionalProperties and assign appropriately
 		for k, v := range modelDef.Metadata.AdditionalProperties {
+			if k == "styleOverrides" {
+				continue
+			}
 			// Check if the field exists in Styles
 			if field := stylesValue.FieldByNameFunc(func(name string) bool {
 				return strings.EqualFold(k, name)
@@ -412,7 +423,7 @@ func GenerateDefsForCoreRegistrant(model utils.ModelCSV) error {
 				}
 				contentBytes := []byte(f.Content)
 				var componentDef component.ComponentDefinition
-				if err := json.Unmarshal(contentBytes, &componentDef); err != nil {
+				if err := encoding.Unmarshal(contentBytes, &componentDef); err != nil {
 					return err
 				}
 				version = componentDef.Model.Model.Version
@@ -490,7 +501,7 @@ func createVersionedDirectoryForModelAndComp(version, modelName string) (string,
 	return modelDirPath, compDirPath, err
 }
 
-func writeModelDefToFileSystem(model *utils.ModelCSV, version, modelDefPath string) (*model.ModelDefinition, error) {
+func writeModelDefToFileSystem(model *utils.ModelCSV, version, modelDefPath string) (*v1beta1Model.ModelDefinition, error) {
 	modelDef := model.CreateModelDefinition(version, defVersion)
 	err := modelDef.WriteModelDefinition(modelDefPath+"/model.json", "json")
 	if err != nil {
