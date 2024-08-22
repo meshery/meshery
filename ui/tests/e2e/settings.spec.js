@@ -54,7 +54,7 @@ test.describe('Settings Page Tests', () => {
     // Navigate to "Adapters" tab
     await page.getByRole('tab', { name: 'Adapters' }).click();
 
-    // Mesh Adapter URL and Available Adapters input elements are displayed
+    // Mesh Adapter URL and Available adapters input elements are displayed
     await expect(page.locator('label').filter({ hasText: 'Mesh Adapter URL' })).toBeVisible();
     await expect(page.locator('label').filter({ hasText: 'Available Adapters' })).toBeVisible();
 
@@ -70,19 +70,19 @@ test.describe('Settings Page Tests', () => {
     // Navigate to "Prometheus" sub-tab
     await page.getByRole('tab', { name: 'Prometheus' }).click();
 
-    // Prometheus Base URL subt-tab are displayed
+    // Prometheus Base URL sub-tab are displayed
     await expect(page.locator('label').filter({ hasText: 'Prometheus Base URL' })).toBeVisible();
 
     // Navigate to "Registry" tab
     await page.getByRole('tab', { name: 'Registry' }).click();
 
-    // "Mesh Model" component is displayed
+    // "Model" component is displayed
     await expect(page.locator('[data-test="workloads"]')).toBeVisible();
 
-    /// Navigate to "DataBase summary" tab
+    /// Navigate to "Database summary" tab
     await page.getByRole('tab', { name: 'Reset' }).click();
 
-    // "DataBase summary table" is displayed
+    // "Database summary table" is displayed
     await expect(page.getByRole('button', { name: 'RESET DATABASE' })).toBeVisible();
     await expect(page.getByRole('columnheader', { name: 'Name' })).toBeVisible();
     await expect(page.getByRole('columnheader', { name: 'Count' })).toBeVisible();
