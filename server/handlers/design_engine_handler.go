@@ -92,6 +92,8 @@ func (h *Handler) PatternFileHandler(
 	if isDelete {
 		action = "undeploy"
 	}
+	patternID := payload.PatternID
+
 	isDesignInAlpha2Format, err := patternutils.IsDesignInAlpha2Format(payload.PatternFile)
 	if err != nil {
 		err = ErrPatternFile(err)
@@ -117,17 +119,22 @@ func (h *Handler) PatternFileHandler(
 	}
 
 	patternFile, err := core.NewPatternFile(patternFileByte)
-	patternFile.Id = payload.PatternID
+	if err != nil {
+		h.log.Error(ErrPatternFile(err))
+		http.Error(rw, ErrPatternFile(err).Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if patternID == uuid.Nil {
+		patternID = patternFile.Id
+	}
+
+	patternFile.Id = patternID
 	// Generate the pattern file object
 	description := fmt.Sprintf("%sed design '%s'", action, patternFile.Name)
 	if isDryRun {
 		action = "verify"
 		description = fmt.Sprintf("%sed design '%s'", action, patternFile.Name)
-	}
-	if err != nil {
-		h.log.Error(ErrPatternFile(err))
-		http.Error(rw, ErrPatternFile(err).Error(), http.StatusInternalServerError)
-		return
 	}
 
 	opts := &core.ProcessPatternOptions{
@@ -148,7 +155,6 @@ func (h *Handler) PatternFileHandler(
 	}
 	response, err := _processPattern(opts)
 
-	patternID := patternFile.Id
 	eventBuilder := events.NewEvent().ActedUpon(patternID).FromUser(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction(action)
 
 	if err != nil {
