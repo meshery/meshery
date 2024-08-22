@@ -225,7 +225,7 @@ func (h *Handler) handlePatternPOST(
 				return
 			}
 
-			pfByt, _ := yaml.Marshal(patternFile)
+			pfByt, _ := encoding.Marshal(patternFile)
 			mesheryPattern.PatternFile = string(pfByt)
 		} else {
 			patternFile := &pattern.PatternFile{}
@@ -406,7 +406,7 @@ func (h *Handler) handlePatternPOST(
 				return
 			}
 
-			bytPattern, _ := yaml.Marshal(pattern)
+			bytPattern, _ := encoding.Marshal(pattern)
 
 			mesheryPattern = &models.MesheryPattern{
 				Name:        parsedBody.Name,
@@ -657,7 +657,7 @@ func (h *Handler) VerifyAndConvertToDesign(
 				err = ErrConvertingK8sManifestToDesign(err)
 				return err
 			}
-			bytPattern, _ := yaml.Marshal(pattern)
+			bytPattern, _ := encoding.Marshal(pattern)
 			mesheryPattern.PatternFile = string(bytPattern)
 		}
 
@@ -764,7 +764,7 @@ func githubRepoDesignScan(
 					return err //always a meshkit error
 				}
 
-				patternByt, _ := yaml.Marshal(pattern)
+				patternByt, _ := encoding.Marshal(pattern)
 
 				af := models.MesheryPattern{
 					Name:        strings.TrimSuffix(f.Name, ext),
@@ -838,7 +838,7 @@ func genericHTTPDesignFile(fileURL, patternName, sourceType string, reg *meshmod
 		pattern.Name = patternName
 	}
 
-	patternByt, _ := yaml.Marshal(pattern)
+	patternByt, _ := encoding.Marshal(pattern)
 
 	url := strings.Split(fileURL, "/")
 	af := models.MesheryPattern{
@@ -1825,91 +1825,6 @@ func (h *Handler) handlePatternUpdate(
 	}
 	format := r.URL.Query().Get("output")
 
-	if parsedBody.CytoscapeJSON != "" {
-		patternFile, err := pCore.NewPatternFileFromCytoscapeJSJSON(parsedBody.Name, []byte(parsedBody.CytoscapeJSON))
-		if err != nil {
-			errAppSave := ErrSaveApplication(err)
-			rw.WriteHeader(http.StatusBadRequest)
-			fmt.Fprintf(rw, "%s", err)
-
-			event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-				"error": errAppSave,
-			}).WithDescription(fmt.Sprintf("Error saving design %s", parsedBody.PatternData.Name)).Build()
-
-			_ = provider.PersistEvent(event)
-			go h.config.EventBroadcaster.Publish(userID, event)
-
-			return
-		}
-
-		patternByt, err := yaml.Marshal(patternFile)
-		if err != nil {
-			err = ErrEncodePattern(err)
-			http.Error(rw, err.Error(), http.StatusInternalServerError)
-			event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-				"error": ErrEncodePattern(err),
-			}).WithDescription("Pattern save failed, cytoJSON could be malformed.").Build()
-
-			_ = provider.PersistEvent(event)
-			go h.config.EventBroadcaster.Publish(userID, event)
-			return
-		}
-		mesheryPattern := &models.MesheryPattern{
-			Name:        patternFile.Name,
-			PatternFile: string(patternByt),
-			Location: map[string]interface{}{
-				"host": "",
-				"path": "",
-				"type": "local",
-			},
-			Type: sql.NullString{
-				String: sourcetype,
-				Valid:  true,
-			},
-		}
-		if parsedBody.PatternData != nil {
-			mesheryPattern.ID = parsedBody.PatternData.ID
-		}
-		if parsedBody.Save {
-			resp, err := provider.SaveMesheryPattern(token, mesheryPattern)
-			if err != nil {
-				errAppSave := ErrSaveApplication(err)
-				h.log.Error(errAppSave)
-
-				rw.WriteHeader(http.StatusBadRequest)
-				fmt.Fprintf(rw, "%s", err)
-
-				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-					"error": errAppSave,
-				}).WithDescription(fmt.Sprintf("Error saving design %s", parsedBody.PatternData.Name)).Build()
-
-				_ = provider.PersistEvent(event)
-				go h.config.EventBroadcaster.Publish(userID, event)
-
-				return
-			}
-
-			eventBuilder.WithSeverity(events.Informational)
-
-			go h.config.ApplicationChannel.Publish(userID, struct{}{})
-			h.formatPatternOutput(rw, resp, format, sourcetype, eventBuilder, parsedBody.URL, models.Update)
-			event := eventBuilder.Build()
-			// go h.config.EventBroadcaster.Publish(userID, event)
-			_ = provider.PersistEvent(event)
-
-			return
-		}
-
-		byt, err := json.Marshal([]models.MesheryPattern{*mesheryPattern})
-		if err != nil {
-			h.log.Error(ErrEncodePattern(err))
-			http.Error(rw, ErrEncodePattern(err).Error(), http.StatusInternalServerError)
-			return
-		}
-
-		h.formatPatternOutput(rw, byt, format, sourcetype, eventBuilder, parsedBody.URL, models.Update)
-		return
-	}
 	mesheryPattern := parsedBody.PatternData
 	mesheryPattern.Type = sql.NullString{
 		String: sourcetype,
