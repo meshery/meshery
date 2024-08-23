@@ -571,8 +571,15 @@ const MesheryTreeView = ({
         // parent id will be same as relationships[0].id
         // so we can use that id for expanding first level tree for relationships
         arr.push(parent.relationships[0].id);
+      } else if (view === REGISTRANTS) {
+        arr.push(parent.id);
+        arr.push(`${parent.id}.1`);
       } else {
         arr.push(parent.id);
+        parent.versionBasedData.map((child) => {
+          arr.push(`${parent.id}.${child.id}`);
+          arr.push(`${parent.id}.${child.id}.1`);
+        });
       }
     });
     setExpanded(arr);
