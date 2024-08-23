@@ -271,17 +271,17 @@ func (mh *MeshsyncDataHandler) getComponentMetadata(apiVersion string, kind stri
 		} else {
 			mh.log.Error(ErrDBRead(result.Error))
 		}
-		compStyles = K8sMeshModelMetadata
+		compStyles = K8sMeshModelMetadata.Styles
 		return
 	}
 	strMetadata, err := utils.Cast[string](data["styles"])
 	if err != nil {
-		compStyles = K8sMeshModelMetadata
+		compStyles = K8sMeshModelMetadata.Styles
 		return
 	}
 	err = utils.Unmarshal(strMetadata, &compStyles)
 	if err != nil {
-		compStyles = K8sMeshModelMetadata
+		compStyles = K8sMeshModelMetadata.Styles
 		return
 	}
 	return
