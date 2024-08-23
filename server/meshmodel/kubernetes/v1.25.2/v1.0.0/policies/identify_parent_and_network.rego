@@ -18,7 +18,7 @@ identify_relationship(
 	# Hence do not try to identify annotation rels, but only evaluate if the exisitng ones are valid or not.
 	relationship.subType != "annotation"
 
-	selector_set := relationship.selectors[_]
+	some selector_set in relationship.selectors
 	from_selectors := {kind: selectors |
 		some selectors in selector_set.allow.from
 		kind := selectors.kind
@@ -97,7 +97,7 @@ is_valid_hierarchy(from_declaration, to_declaration, from_selector, to_selector)
 			mutator_selector.declaration,
 			mutated_selector.declaration,
 			"",
-			""
+			"",
 		)
 	]
 	valid_results := [i |
