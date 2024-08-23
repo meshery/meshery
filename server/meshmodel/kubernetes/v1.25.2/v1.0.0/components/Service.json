@@ -177,6 +177,7 @@
   "schemaVersion": "components.meshery.io/v1beta1",
   "status": "enabled",
   "styles": {
+   "background-position-y": "4.5",
    "height": 20,
    "padding": 12,
    "primaryColor": "#326CE5",

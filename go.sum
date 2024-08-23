@@ -1695,8 +1695,8 @@ github.com/maxatome/go-testdeep v1.12.0 h1:Ql7Go8Tg0C1D/uMMX59LAoYK7LffeJQ6X2T04
 github.com/maxatome/go-testdeep v1.12.0/go.mod h1:lPZc/HAcJMP92l7yI6TRz1aZN5URwUBUAfUNvrclaNM=
 github.com/meshery/kompose v1.26.2-0.20230425025309-3bb778d54007 h1:JuykLcZhoffc0qkstUou6sFuPvJS+HBmypIFcLDbGkI=
 github.com/meshery/kompose v1.26.2-0.20230425025309-3bb778d54007/go.mod h1:UA0RzM2vfEZAW3DDWXy+ozaXBofKFRnyumBksXHz6Nw=
-github.com/meshery/schemas v0.7.21 h1:/GCBW4IUNKyoIursDQvyxHH0iy/N7psSrm1W4dknaAw=
-github.com/meshery/schemas v0.7.21/go.mod h1:UfiO+zm92yLkaJP0aroNwVnjuozoh793AWDXrKDYmT0=
+github.com/meshery/schemas v0.7.24 h1:ZCg/XKv+FELytMxolp+ex8II1T9fFi0ohExLY8V+jfs=
+github.com/meshery/schemas v0.7.24/go.mod h1:UfiO+zm92yLkaJP0aroNwVnjuozoh793AWDXrKDYmT0=
 github.com/miekg/dns v1.0.14/go.mod h1:W1PPwlIAgtquWBMBEV9nkV9Cazfe8ScdGz/Lj7v3Nrg=
 github.com/miekg/dns v1.1.57 h1:Jzi7ApEIzwEPLHWRcafCN9LZSBbqQpxjt/wpgvg7wcM=
 github.com/miekg/dns v1.1.57/go.mod h1:uqRjCRUuEAA6qsOiJvDd+CFo/vW+y5WR6SNmHE55hZk=
