@@ -134,14 +134,10 @@
   "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
-   "defaultData": "",
    "genealogy": "",
    "isAnnotation": false,
    "isNamespaced": true,
-   "published": false,
-   "shapePolygonPoints": "",
-   "styleOverrides": "",
-   "styles": ""
+   "published": false
   },
   "model": {
    "category": {
@@ -150,15 +146,12 @@
    "displayName": "Terraform",
    "id": "00000000-0000-0000-0000-000000000000",
    "metadata": {
-    "defaultData": "",
     "isAnnotation": false,
     "primaryColor": "#5c4ee5",
     "secondaryColor": "#4040b2",
     "shape": "circle",
-    "shapePolygonPoints": "",
     "source_uri": "https://helm.releases.hashicorp.com/terraform-1.1.2.tgz",
     "styleOverrides": "",
-    "styles": "",
     "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" id=\"Layer_1\" viewBox=\"0 0 72 80.8\" width=\"20\" height=\"20\"\u003e\u003cstyle xmlns=\"http://www.w3.org/2000/svg\"\u003e.st0{fill:#5c4ee5}\u003c/style\u003e\u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"XMLID_8_\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"XMLID_21_\" class=\"st0\" d=\"M25.4 14.3l21.4 12.4v24.7L25.4 39z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"XMLID_20_\" class=\"st0\" d=\"M50.6 26.7L72 14.3V39L50.6 51.4z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"XMLID_19_\" class=\"st0\" d=\"M0 0l21.4 12.4v24.7L0 24.7z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"XMLID_18_\" class=\"st0\" d=\"M25.4 43.7L46.8 56v24.8L25.4 68.4z\"\u003e\u003c/path\u003e\u003c/g\u003e\u003c/svg\u003e",
     "svgComplete": "",
     "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" id=\"Layer_1\" viewBox=\"0 0 72 80.8\" width=\"20\" height=\"20\"\u003e\u003cstyle xmlns=\"http://www.w3.org/2000/svg\"\u003e.st0{fill:#fff}\u003c/style\u003e\u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"XMLID_8_\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"XMLID_21_\" class=\"st0\" d=\"M25.4 14.3l21.4 12.4v24.7L25.4 39z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"XMLID_20_\" class=\"st0\" d=\"M50.6 26.7L72 14.3V39L50.6 51.4z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"XMLID_19_\" class=\"st0\" d=\"M0 0l21.4 12.4v24.7L0 24.7z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"XMLID_18_\" class=\"st0\" d=\"M25.4 43.7L46.8 56v24.8L25.4 68.4z\"\u003e\u003c/path\u003e\u003c/g\u003e\u003c/svg\u003e"

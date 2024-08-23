@@ -134,14 +134,10 @@
   "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
-   "defaultData": "",
    "genealogy": "",
    "isAnnotation": false,
    "isNamespaced": true,
-   "published": false,
-   "shapePolygonPoints": "",
-   "styleOverrides": "",
-   "styles": ""
+   "published": false
   },
   "model": {
    "category": {
@@ -150,15 +146,12 @@
    "displayName": "Oam Kubernetes Runtime",
    "id": "00000000-0000-0000-0000-000000000000",
    "metadata": {
-    "defaultData": "",
     "isAnnotation": false,
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
-    "shapePolygonPoints": "",
     "source_uri": "https://charts.crossplane.io/master/oam-kubernetes-runtime-legacy-0.4.0-rc1.18.g64a2994.tgz",
     "styleOverrides": "",
-    "styles": "",
     "svgColor": "",
     "svgComplete": "",
     "svgWhite": ""

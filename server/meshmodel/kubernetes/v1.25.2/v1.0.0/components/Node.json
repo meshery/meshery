@@ -134,14 +134,10 @@
   "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
-   "defaultData": "",
    "genealogy": "parent",
    "isAnnotation": false,
    "isNamespaced": false,
-   "published": false,
-   "shapePolygonPoints": "",
-   "styleOverrides": "{\"background-image\":\"none\",\"border-width\":2,\"background-opacity\":0.5}",
-   "styles": "{\"background-image\":\"none\",\"border-width\":2,\"background-opacity\":0.5}"
+   "published": false
   },
   "model": {
    "category": {
@@ -181,6 +177,8 @@
   "schemaVersion": "components.meshery.io/v1beta1",
   "status": "enabled",
   "styles": {
+   "background-opacity": 0.5,
+   "border-width": 2,
    "primaryColor": "#326CE5",
    "secondaryColor": "#7aa1f0",
    "shape": "rectangle",

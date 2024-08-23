@@ -134,14 +134,10 @@
   "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
-   "defaultData": "",
    "genealogy": "",
    "isAnnotation": false,
    "isNamespaced": false,
-   "published": false,
-   "shapePolygonPoints": "",
-   "styleOverrides": "",
-   "styles": ""
+   "published": false
   },
   "model": {
    "category": {
@@ -150,15 +146,12 @@
    "displayName": "Trident Operator",
    "id": "00000000-0000-0000-0000-000000000000",
    "metadata": {
-    "defaultData": "",
     "isAnnotation": false,
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
-    "shapePolygonPoints": "",
     "source_uri": "https://netapp.github.io/trident-helm-chart/charts/trident-operator-100.2406.1.tgz",
     "styleOverrides": "",
-    "styles": "",
     "svgColor": "",
     "svgComplete": "",
     "svgWhite": ""
