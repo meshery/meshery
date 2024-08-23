@@ -19,7 +19,7 @@
 				"instance"
 			],
 			"status": "enabled",
-			"metadata": ""
+			"metadata": {}
 		},
 		{
 			"schemaVersion": "capability.meshery.io/v1alpha1",
@@ -34,7 +34,7 @@
 				"declaration"
 			],
 			"status": "enabled",
-			"metadata": ""
+			"metadata": {}
 		},
 		{
 			"schemaVersion": "capability.meshery.io/v1alpha1",
@@ -49,7 +49,7 @@
 				"declaration"
 			],
 			"status": "enabled",
-			"metadata": ""
+			"metadata": {}
 		},
 		{
 			"schemaVersion": "capability.meshery.io/v1alpha1",
@@ -65,7 +65,7 @@
 				"instance"
 			],
 			"status": "enabled",
-			"metadata": ""
+			"metadata": {}
 		},
 		{
 			"schemaVersion": "capability.meshery.io/v1alpha1",
@@ -81,7 +81,7 @@
 				"instance"
 			],
 			"status": "enabled",
-			"metadata": ""
+			"metadata": {}
 		},
 		{
 			"schemaVersion": "capability.meshery.io/v1alpha1",
@@ -96,7 +96,7 @@
 				"declaration"
 			],
 			"status": "enabled",
-			"metadata": ""
+			"metadata": {}
 		},
 		{
 			"schemaVersion": "capability.meshery.io/v1alpha1",
@@ -111,7 +111,7 @@
 				"declaration"
 			],
 			"status": "enabled",
-			"metadata": ""
+			"metadata": {}
 		},
 		{
 			"schemaVersion": "capability.meshery.io/v1alpha1",
@@ -126,7 +126,7 @@
 				"declaration"
 			],
 			"status": "enabled",
-			"metadata": ""
+			"metadata": {}
 		}
 	]
 }
