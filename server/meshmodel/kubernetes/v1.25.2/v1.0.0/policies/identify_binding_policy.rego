@@ -136,7 +136,7 @@ is_valid_binding(resource1, resource2, selectors) if {
 	match_results := [result |
 		some i in numbers.range(0, count(match_from))
 
-		result := is_feasible(match_from.paths[i], match_to.paths[i], match_from.declaration, match_to.declaration)
+		result := is_feasible(match_from.paths[i], match_to.paths[i], match_from.declaration, match_to.declaration, "", "")
 	]
 	valid_results := [i |
 		some result in match_results
@@ -148,16 +148,15 @@ is_valid_binding(resource1, resource2, selectors) if {
 }
 
 # If none of the match paths ("from" and "to") doesn't contain array field in between, then it is a normal lookup.
-is_feasible(from, to, resource1, resource2) if {
+is_feasible(from, to, resource1, resource2, default_value1, default_value2) if {
 	from_path := resolve_path(from, resource1)
 	formatted_from_path = format_json_path(from_path)
 
 	to_path := resolve_path(to, resource2)
 	formatted_to_path = format_json_path(to_path)
 
-	val1 := object.get(resource1, formatted_from_path, "")
-	val2 := object.get(resource2, formatted_to_path, "")
-
+	val1 := object.get(resource1, formatted_from_path, default_value1)
+	val2 := object.get(resource2, formatted_to_path, default_value2)
 	val1 == val2
 } else := false
 

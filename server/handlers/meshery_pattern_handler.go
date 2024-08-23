@@ -273,14 +273,6 @@ func (h *Handler) handlePatternPOST(
 			// then fall back to importing design as yaml file
 			if err != nil {
 				h.log.Info("Falling back to importing design as yaml file")
-
-				// commenting for now as every save event would other wise send following event
-				// event := eventBuilder.WithSeverity(events.Warning).WithMetadata(map[string]interface{}{
-				// 	"error": ErrUnCompressOCIArtifact(err),
-				// }).WithDescription(fmt.Sprintf("Failed uncompressing OCI Artifact %s into Design YAML. Falling back to importing design as YAML.", mesheryPattern.Name)).Build()
-				// _ = provider.PersistEvent(event)
-				// go h.config.EventBroadcaster.Publish(userID, event)
-				//
 			} else {
 				h.log.Info("OCI Artifact decompressed.")
 				event := eventBuilder.WithSeverity(events.Informational).WithDescription(fmt.Sprintf("OCI Artifact decompressed into %s design file", mesheryPattern.Name)).Build()
@@ -322,7 +314,8 @@ func (h *Handler) handlePatternPOST(
 				h.formatPatternOutput(rw, resp, format, sourcetype, eventBuilder, parsedBody.URL, action)
 				event := eventBuilder.Build()
 				_ = provider.PersistEvent(event)
-				go h.config.EventBroadcaster.Publish(userID, event)
+				// Create the event but do not notify the client immediately, as the evaluations are frequent and takes up the view area.
+				// go h.config.EventBroadcaster.Publish(userID, event)
 				go h.config.PatternChannel.Publish(uuid.FromStringOrNil(user.ID), struct{}{})
 				return
 			}
@@ -1784,9 +1777,6 @@ func (h *Handler) formatPatternOutput(rw http.ResponseWriter, content []byte, fo
 	eventBuilder.WithDescription(response)
 	rw.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(rw, string(data))
-	// res.Details = "Design \"" + strings.Join(names, ",") + "\" imported from " + URL + " ."
-	// res.Summary = "Changes to the \"" + strings.Join(names, ",") + "\" design have been saved."
-	// go h.EventsBuffer.Publish(res)
 }
 
 // Since the client currently does not support pattern imports and externalized variables, the first(import) stage of pattern engine
