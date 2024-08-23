@@ -94,6 +94,8 @@ is_valid_hierarchy(from_declaration, to_declaration, from_selector, to_selector)
 			mutated_selector.paths[i],
 			mutator_selector.declaration,
 			mutated_selector.declaration,
+			"",
+			""
 		)
 	]
 	valid_results := [i |

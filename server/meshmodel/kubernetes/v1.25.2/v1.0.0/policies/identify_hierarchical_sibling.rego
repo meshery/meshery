@@ -34,7 +34,6 @@ identify_relationship(
 evaluate_siblings contains result if {
 	some from_selector in data.from_selectors
 	some to_selector in data.to_selectors
-
 	filtered_from_decls := extract_components_by_type(data.from, from_selector)
 	filtered_to_decls := extract_components_by_type(data.to, to_selector)
 
@@ -59,13 +58,14 @@ evaluate_siblings contains result if {
 
 	now := format_int(time.now_ns(), 10)
 	id := uuid.rfc4122(sprintf("%s%s%s%s", [from_decl.id, to_decl.id, data.relationship.id, now]))
-	
+
 	cloned_selectors := {
 		"id": id,
 		"selectors": [{"allow": {
-		"from": [match_selector_for_from],
-		"to": [match_selector_for_to],
-	}}]}
+			"from": [match_selector_for_from],
+			"to": [match_selector_for_to],
+		}}],
+	}
 
 	result := object.union_n([data.relationship, cloned_selectors, {"status": "approved"}])
 }
@@ -76,7 +76,13 @@ is_valid_siblings(from_declaration, to_declaration, from_selector, to_selector) 
 
 	match_results := [result |
 		some i in numbers.range(0, count(match_from))
-		result := is_feasible(match_from[i], match_to[i], from_declaration, to_declaration)
+
+		# if the value at the specified refs does not exist/has empty value
+		# and relationship should not be allowed to be created pass different default values.
+		# For some rels eg: Network, when rel is created it is possible that the values are empty at refs
+		# but because user has explicitly created it, we should allow that.
+		# Hence in the identify_parent_and_network rule, both default values are same.
+		result := is_feasible(match_from[i], match_to[i], from_declaration, to_declaration, "", null)
 	]
 
 	valid_results := [i |
