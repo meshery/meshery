@@ -5,6 +5,7 @@
   "displayName": "Kiali Operator",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://kiali.org/helm-charts/kiali-operator-1.78.0.tgz", 
     "isAnnotation": false,
     "published": true,
     "subCategory": "Monitoring",

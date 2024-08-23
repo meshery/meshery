@@ -13,6 +13,7 @@ evaluate_relationships_deleted(
 	# if the existing rel is not present in the identified_relationships,
 	# it indicates it must be deleted.
 	not temp_rule(existing_rel, identified_relationships)
+	not existing_rel.subType == "annotation"
 	relationship := json.patch(existing_rel, [{
 		"op": "replace",
 		"path": "/status",

@@ -5,6 +5,7 @@
   "displayName": "Karpenter",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://charts.karpenter.sh/karpenter-0.16.3.tgz", 
     "isAnnotation": false,
     "published": true,
     "subCategory": "Automation \u0026 Configuration",

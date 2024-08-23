@@ -137,10 +137,11 @@
    "defaultData": "",
    "genealogy": "parent",
    "isAnnotation": false,
+   "isNamespaced": false,
    "published": false,
    "shapePolygonPoints": "",
-   "styleOverrides": "{\"height\":\"22px\",\"width\":\"22px\",\"x\":\"3.5px\",\"y\":\"7.5px\"}",
-   "styles": "{\"height\":\"22px\",\"width\":\"22px\",\"x\":\"3.5px\",\"y\":\"7.5px\"}"
+   "styleOverrides": "{\"height\":\"22\",\"width\":\"22\",\"x\":\"3.5\",\"y\":\"7.5\"}",
+   "styles": "{\"height\":\"22\",\"width\":\"22\",\"x\":\"3.5\",\"y\":\"7.5\"}"
   },
   "model": {
    "category": {
@@ -187,7 +188,7 @@
    "relationships": null
   },
   "schemaVersion": "components.meshery.io/v1beta1",
-  "status": null,
+  "status": "enabled",
   "styles": {
    "primaryColor": "#00B39F",
    "secondaryColor": "#00D3A9",

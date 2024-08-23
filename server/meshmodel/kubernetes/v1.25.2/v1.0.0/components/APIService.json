@@ -137,10 +137,11 @@
    "defaultData": "",
    "genealogy": "",
    "isAnnotation": false,
+   "isNamespaced": false,
    "published": false,
    "shapePolygonPoints": "",
-   "styleOverrides": "{\"height\":\"23px\",\"width\":\"23px\",\"x\":\"7\", \"y\":\"14\"}",
-   "styles": "{\"height\":\"23px\",\"width\":\"23px\",\"x\":\"7\", \"y\":\"14\"}"
+   "styleOverrides": "{\"height\":\"23\",\"width\":\"23\",\"x\":\"7\", \"y\":\"14\"}",
+   "styles": "{\"height\":\"23\",\"width\":\"23\",\"x\":\"7\", \"y\":\"14\"}"
   },
   "model": {
    "category": {

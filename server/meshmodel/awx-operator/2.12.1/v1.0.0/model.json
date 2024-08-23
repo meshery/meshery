@@ -5,6 +5,7 @@
   "displayName": "AWX Operator",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://github.com/ansible/awx-operator/releases/download/2.12.1/awx-operator-2.12.1.tgz", 
     "isAnnotation": false,
     "published": true,
     "subCategory": "Automation \u0026 Configuration",

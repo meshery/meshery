@@ -5,6 +5,7 @@
   "displayName": "EDP Install",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://epam.github.io/edp-helm-charts/stable/packages/edp-install-3.6.0.tgz", 
     "isAnnotation": false,
     "published": false,
     "subCategory": "Uncategorized",

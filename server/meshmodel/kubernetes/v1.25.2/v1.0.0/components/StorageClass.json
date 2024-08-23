@@ -137,6 +137,7 @@
    "defaultData": "",
    "genealogy": "inventory",
    "isAnnotation": false,
+   "isNamespaced": false,
    "published": false,
    "shapePolygonPoints": "",
    "styleOverrides": "",

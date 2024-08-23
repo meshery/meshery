@@ -5,6 +5,7 @@
   "displayName": "Kong API Gateway",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://charts.bitnami.com/bitnami/kong-9.4.4.tgz", 
     "isAnnotation": false,
     "published": true,
     "subCategory": "API Gateway",

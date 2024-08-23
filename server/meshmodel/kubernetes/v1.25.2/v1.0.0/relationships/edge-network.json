@@ -47,40 +47,69 @@
                 "kind": "artifacthub"
               }
             },
-            "patchRefs": [
-              []
-            ]
-          },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "selectors",
+                  "matchLabels"
+                ],
+                [
+                  "configuration",
+                  "spec",
+                  "ports",
+                  "_",
+                  "targetPort"
+                ],
+                [
+                  "configuration",
+                  "spec",
+                  "ports",
+                  "_",
+                  "protocol"
+                ]
+              ]
+            }
+          }
+        ],
+        "to": [
           {
-            "kind": "Ingress",
+            "kind": "Pod",
             "model": {
               "name": "kubernetes",
               "registrant": {
                 "kind": "artifacthub"
               }
             },
-            "patchRefs": [
-              []
-            ]
-          }
-        ],
-        "to": [
-          {
-            "kind": "Endpoints",
-            "model": {
-              "name": "kubernetes",
-              "registrant": {
-                "kind": "artifacthub"
-              }
-            }
-          },
-          {
-            "kind": "Pod",
-            "model": {
-              "name": "kubernetes",
-              "registrant": {
-                "kind": "artifacthub"
-              }
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "metadata",
+                  "labels"
+                ],
+                [
+                  "configuration",
+                  "spec",
+                  "containers",
+                  "0",
+                  "ports",
+                  "_",
+                  "containerPort"
+                ],
+                [
+                  "configuration",
+                  "spec",
+                  "containers",
+                  "0",
+                  "ports",
+                  "_",
+                  "protocol"
+                ]
+              ]
             }
           },
           {
@@ -90,60 +119,45 @@
               "registrant": {
                 "kind": "artifacthub"
               }
-            }
-          },
-          {
-            "kind": "Service",
-            "model": {
-              "name": "kubernetes",
-              "registrant": {
-                "kind": "artifacthub"
-              }
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "metadata",
+                  "labels"
+                ],
+                [
+                  "configuration",
+                  "spec",
+                  "template",
+                  "spec",
+                  "containers",
+                  "0",
+                  "ports",
+                  "_",
+                  "containerPort"
+                ],
+                [
+                  "configuration",
+                  "spec",
+                  "template",
+                  "spec",
+                  "containers",
+                  "0",
+                  "ports",
+                  "_",
+                  "protocol"
+                ]
+              ]
             }
           }
         ]
       },
       "deny": {
-        "from": [
-          {
-            "kind": "Ingress",
-            "model": {
-              "name": "kubernetes",
-              "registrant": {
-                "kind": "artifacthub"
-              }
-            }
-          }
-        ],
-        "to": [
-          {
-            "kind": "Endpoints",
-            "model": {
-              "name": "kubernetes",
-              "registrant": {
-                "kind": "artifacthub"
-              }
-            }
-          },
-          {
-            "kind": "Pod",
-            "model": {
-              "name": "kubernetes",
-              "registrant": {
-                "kind": "artifacthub"
-              }
-            }
-          },
-          {
-            "kind": "Deployment",
-            "model": {
-              "name": "kubernetes",
-              "registrant": {
-                "kind": "artifacthub"
-              }
-            }
-          }
-        ]
+        "from": [],
+        "to": []
       }
     }
   ]

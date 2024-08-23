@@ -5,6 +5,7 @@
   "displayName": "Github Actions Runner Operator",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://github.com/evryfs/helm-charts/releases/download/github-actions-runner-operator-2.8.1/github-actions-runner-operator-2.8.1.tgz", 
     "isAnnotation": false,
     "published": true,
     "subCategory": "Source Version Control",

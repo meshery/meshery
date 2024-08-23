@@ -81,7 +81,7 @@ mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 		err = InvokeCompUpdate()
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 
 		return nil

@@ -440,14 +440,18 @@ function K8sContextMenu({
                     <UsesSistent>
                       <Checkbox
                         checked={activeContexts.includes('all')}
-                        onChange={() => setActiveContexts('all')}
+                        onChange={() =>
+                          activeContexts.includes('all')
+                            ? setActiveContexts([])
+                            : setActiveContexts('all')
+                        }
                         color="primary"
                       />
                     </UsesSistent>
                     <span style={{ fontWeight: 'bolder' }}>select all</span>
                   </>
                 ) : (
-                  <Link href="/settings">
+                  <Link href="/management/connections">
                     <Button
                       type="submit"
                       variant="contained"
