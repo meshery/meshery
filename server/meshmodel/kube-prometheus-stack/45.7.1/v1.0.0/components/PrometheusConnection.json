@@ -134,15 +134,11 @@
   "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
-   "defaultData": "",
    "genealogy": "",
    "isAnnotation": false,
    "isNamespaced": true,
    "published": false,
-   "shapePolygonPoints": "",
-   "styleOverrides": "",
-   "styles": "",
-    "transitions": {
+   "transitions": {
       "connected": [
         "disconnected",
         "deleted"

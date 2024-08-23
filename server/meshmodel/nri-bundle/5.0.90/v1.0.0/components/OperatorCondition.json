@@ -134,14 +134,10 @@
   "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
-   "defaultData": "",
    "genealogy": "",
    "isAnnotation": false,
    "isNamespaced": true,
-   "published": false,
-   "shapePolygonPoints": "",
-   "styleOverrides": "",
-   "styles": ""
+   "published": false
   },
   "model": {
    "category": {
@@ -150,15 +146,12 @@
    "displayName": "NRI Bundle",
    "id": "00000000-0000-0000-0000-000000000000",
    "metadata": {
-    "defaultData": "",
     "isAnnotation": false,
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
-    "shapePolygonPoints": "",
     "source_uri": "https://github.com/newrelic/helm-charts/releases/download/nri-bundle-5.0.90/nri-bundle-5.0.90.tgz",
     "styleOverrides": "",
-    "styles": "",
     "svgColor": "",
     "svgComplete": "",
     "svgWhite": ""

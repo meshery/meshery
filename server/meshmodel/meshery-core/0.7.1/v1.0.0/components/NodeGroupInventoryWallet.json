@@ -72,14 +72,10 @@
   "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
-   "defaultData": "{\"label\":\"\"}",
    "genealogy": "parent",
    "isAnnotation": true,
    "isNamespaced": false,
-   "published": false,
-   "shapePolygonPoints": "",
-   "styleOverrides": "{\"height\":\"30\",\"width\":\"30\", \"background-image\":\"none\",\"border-width\":0,\"border-style\":\"dashed\",\"background-opacity\":0,\"data\":{\"label\":\"\"}}",
-   "styles": "{\"height\":\"30\",\"width\":\"30\", \"background-image\":\"none\",\"border-width\":0,\"border-style\":\"dashed\",\"background-opacity\":0}"
+   "published": false
   },
   "model": {
    "category": {
@@ -122,11 +118,16 @@
   "schemaVersion": "components.meshery.io/v1beta1",
   "status": "enabled",
   "styles": {
+   "background-opacity": 0,
+   "border-style": "dashed",
+   "border-width": 0,
+   "height": 30,
    "primaryColor": "#00B39F",
    "secondaryColor": "#00D3A9",
    "shape": "round-rectangle",
    "svgColor": "\u003csvg width=\"40\" height=\"40\" viewBox=\"0 0 40 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003crect x=\"1.5\" y=\"1\" width=\"38\" height=\"38\" fill=\"#00B39F\" fill-opacity=\"0.1\" stroke=\"#00B39F\" stroke-miterlimit=\"10\"/\u003e\n\u003c/svg\u003e\n",
-   "svgWhite": "\u003csvg width=\"40\" height=\"40\" viewBox=\"0 0 40 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003crect x=\"1.5\" y=\"1\" width=\"38\" height=\"38\" fill=\"white\" fill-opacity=\"0.1\" stroke=\"white\" stroke-miterlimit=\"10\"/\u003e\n\u003c/svg\u003e\n"
+   "svgWhite": "\u003csvg width=\"40\" height=\"40\" viewBox=\"0 0 40 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003crect x=\"1.5\" y=\"1\" width=\"38\" height=\"38\" fill=\"white\" fill-opacity=\"0.1\" stroke=\"white\" stroke-miterlimit=\"10\"/\u003e\n\u003c/svg\u003e\n",
+   "width": 30
   },
   "version": "v1.0.0"
  }
