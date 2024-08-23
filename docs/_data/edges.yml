@@ -2,9 +2,9 @@
   Description: Represents general direction or flow in diagrams. In UML, it could indicate direction in an association or dependency.
   SVG: "ArrowHead.svg"
 
-- Edge: Arrow With Cross Head
-  Description: 
-  SVG: "ArrowWithCrossHead.svg"
+#- Edge: Arrow With Cross Head
+#  Description: 
+#  SVG: "ArrowWithCrossHead.svg"
 
 - Edge: Bezier Curve Line
   Description: Used for curved relationships, which might indicate non-linear or non-direct connections. In UML, it could be used for inheritance or flow that isn't straightforward.
@@ -18,9 +18,9 @@
   Description: Used for aggregation in UML, typically an empty diamond at the container end, indicating a "whole-part" relationship.
   SVG: "FilledDiamondHead.svg"
 
-- Edge: Filled Rectangle Head
-  Description: 
-  SVG: "FilledRectangleHead.svg"
+#- Edge: Filled Rectangle Head
+#  Description: 
+#  SVG: "FilledRectangleHead.svg"
 
 - Edge: Filled Square Head
   Description: Represents composition in UML, a stronger relationship than aggregation, where the contained class cannot exist without the container (e.g., a house and its rooms).
