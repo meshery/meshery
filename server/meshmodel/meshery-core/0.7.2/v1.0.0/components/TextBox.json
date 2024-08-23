@@ -78,8 +78,8 @@
    "isNamespaced": false,
    "published": false,
    "shapePolygonPoints": "",
-   "styleOverrides": "{\"height\":\"20px\",\"width\":\"40px\", \"background-image\":\"none\",\"border-width\":1,\"border-style\":\"dashed\",\"background-opacity\":0,\"border-color\":\"#808080\",\"data\":{\"label\":\"\"}}",
-   "styles": "{\"height\":\"20px\",\"width\":\"40px\", \"background-image\":\"none\",\"border-width\":1,\"border-style\":\"dashed\",\"background-opacity\":0,\"border-color\":\"#808080\"}"
+   "styleOverrides": "{\"height\":\"20\",\"width\":\"40\", \"background-image\":\"none\",\"border-width\":1,\"border-style\":\"dashed\",\"background-opacity\":0,\"border-color\":\"#808080\",\"data\":{\"label\":\"\"}}",
+   "styles": "{\"height\":\"20\",\"width\":\"40\", \"background-image\":\"none\",\"border-width\":1,\"border-style\":\"dashed\",\"background-opacity\":0,\"border-color\":\"#808080\"}"
   },
   "model": {
    "category": {
