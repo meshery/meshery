@@ -88,12 +88,15 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	event := eventBuilder.WithDescription(fmt.Sprintf("Relationship evaluation completed for \"%s\" at version \"%s\"", evaluationResponse.Design.Name, evaluationResponse.Design.Version)).
 		WithMetadata(map[string]interface{}{
 			"trace":        evaluationResponse.Trace,
-			"evaluated_at": &evaluationResponse.Timestamp,
+			"evaluated_at": *evaluationResponse.Timestamp,
 		}).WithSeverity(events.Informational).Build()
 	_ = provider.PersistEvent(event)
-	go h.config.EventBroadcaster.Publish(userUUID, event)
+	
+	// Create the event but do not notify the client immediately, as the evaluations are frequent and takes up the view area.
+	// go h.config.EventBroadcaster.Publish(userUUID, event)
 
-	if relationshipPolicyEvalPayload.Options.ReturnDiffOnly != nil && *relationshipPolicyEvalPayload.Options.ReturnDiffOnly {
+	if relationshipPolicyEvalPayload.Options != nil && relationshipPolicyEvalPayload.Options.ReturnDiffOnly != nil &&
+	 *relationshipPolicyEvalPayload.Options.ReturnDiffOnly {
 		evaluationResponse.Design.Components = []*component.ComponentDefinition{}
 		evaluationResponse.Design.Relationships = []*relationship.RelationshipDefinition{}
 		for _, component := range evaluationResponse.Trace.ComponentsUpdated {

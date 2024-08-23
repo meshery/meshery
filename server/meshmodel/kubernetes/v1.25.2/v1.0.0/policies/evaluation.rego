@@ -104,7 +104,7 @@ evaluate := eval_results if {
 	]
 
 	final_design_file = json.patch(updated_design_file, [{
-		"op": "replace",
+		"op": "add",
 		"path": "/relationships",
 		"value": final_rels_with_deletions,
 	}])

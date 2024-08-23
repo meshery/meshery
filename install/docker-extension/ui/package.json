@@ -40,7 +40,8 @@
     "styled-components": "^5.3.5",
     "url": "^0.11.4",
     "web-pingjs": "^1.0.1",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "xstate": "^5.17.4"
   },
   "scripts": {
     "start": "react-app-rewired start",

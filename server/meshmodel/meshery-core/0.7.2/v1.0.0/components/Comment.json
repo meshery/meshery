@@ -59,21 +59,6 @@
     "subType": "compoundDnd",
     "type": "graph",
     "version": "0.7.0"
-   },
-   {
-    "description": "Add text to nodes body",
-    "displayName": "Body Text",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "body-text",
-    "type": "style",
-    "version": "0.7.0"
    }
   ],
   "component": {
@@ -93,8 +78,8 @@
    "isNamespaced": false,
    "published": false,
    "shapePolygonPoints": "",
-   "styleOverrides": "{\"height\":\"22px\",\"width\":\"22px\",\"x\":\"1.5px\",\"y\":\"7.5px\"}",
-   "styles": "{\"height\":\"22px\",\"width\":\"22px\",\"x\":\"1.5px\",\"y\":\"7.5px\"}"
+   "styleOverrides": "{\"height\":\"22\",\"width\":\"22\",\"x\":\"1.5\",\"y\":\"7.5\"}",
+   "styles": "{\"height\":\"22\",\"width\":\"22\",\"x\":\"1.5\",\"y\":\"7.5\"}"
   },
   "model": {
    "category": {
