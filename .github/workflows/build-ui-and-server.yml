@@ -191,8 +191,20 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GH_ACCESS_TOKEN  }}
         run: |
           cd ui &&
-          npx playwright test --project=chromium --project=firefox &&
+          npx playwright test --project=chromium --project=firefox --reporter="./tests/e2e/custom-playwright-reporter.js" &&
           cd ..
+      - name: Save PR number
+        run: |
+            mkdir -p ./pr
+            echo ${{ github.event.number }} > ./pr/number
+      - name: Upload Test Report
+        uses: actions/upload-artifact@834a144ee995460fba8ed112a2fc961b36a5ec5a # v4.3.6
+        with:
+            name: e2e-test-reporter
+            path: |
+                ui/test-report.md
+                pr/number
+            retention-days: 14
   docker-build-test:
     name: Docker build
     if: github.repository == 'meshery/meshery'
