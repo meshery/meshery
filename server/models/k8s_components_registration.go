@@ -10,6 +10,7 @@ import (
 	"sync"
 
 	"github.com/gofrs/uuid"
+	"github.com/meshery/schemas/models/v1alpha1/capability"
 	"github.com/meshery/schemas/models/v1beta1/component"
 
 	"github.com/layer5io/meshkit/logger"
@@ -28,7 +29,13 @@ const (
 	Registering
 )
 
-var K8sMeshModelMetadata = component.Styles{}
+type ModelTemplate struct {
+	component.Styles
+	ModelName    string                   `json:"modelName"`
+	Capabilities *[]capability.Capability `json:"capabilities"`
+}
+
+var K8sMeshModelMetadata = ModelTemplate{}
 
 // INstead define a set of actions
 func (rs RegistrationStatus) String() string {
@@ -151,7 +158,7 @@ func init() {
 	if err != nil {
 		return
 	}
-	componentStyles := component.Styles{}
+	componentStyles := ModelTemplate{}
 	err = json.Unmarshal(byt, &componentStyles)
 	if err != nil {
 		return
