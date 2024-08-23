@@ -248,7 +248,6 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 			}
 			if alreadyExsit {
 				totalAvailableModels--
-
 			}
 			comps, err := pkg.GenerateComponents()
 			if err != nil {
@@ -285,18 +284,17 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 			}
 			if !alreadyExsit {
 				if len(comps) == 0 {
-					utils.LogError.Info("Error generating model: ", model.Model)
-					utils.LogError.Info(" no components found for model ")
+					utils.LogError.Error(ErrGenerateModel(fmt.Errorf("no components found for model "), model.Model))
 				} else {
 					utils.Log.Info("Current model: ", model.Model)
 					utils.Log.Info(" extracted ", lengthOfComps, " components for ", model.ModelDisplayName, " (", model.Model, ")")
 				}
 			} else {
+				fmt.Println("lengthOfComps", len(comps))
 				if len(comps) > 0 {
 					utils.Log.Info("Model already exists: ", model.Model)
 				} else {
-					utils.LogError.Info("Model already exists: ", model.Model)
-					utils.LogError.Info(" no components found for model ")
+					utils.LogError.Error(ErrGenerateModel(fmt.Errorf("no components found for model "), model.Model))
 				}
 			}
 			spreadsheeetChan <- utils.SpreadsheetData{
