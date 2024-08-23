@@ -40,7 +40,6 @@ const validateComponent = (component, validateAnnotations = false, componentDef)
 
   const validationResults = {
     ...results,
-    componentDefinition: componentDef,
     component,
   };
   console.log('component results', validationResults);
@@ -96,8 +95,10 @@ const SchemaValidateDesignActor = fromPromise(async ({ input }) => {
       componentDef,
     );
 
+    console.log('validationResults', validationResults);
+
     return {
-      validationResults: _.set(prevValidationResults || {}, component.name, validationResults),
+      validationResults: _.set(prevValidationResults || {}, component.id, validationResults),
     };
   }
 
