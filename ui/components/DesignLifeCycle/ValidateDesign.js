@@ -130,7 +130,7 @@ const ValidationResults_ = (props) => {
   } = props;
 
   const componentsWithErrors = Object.values(validationResults).filter(
-    (result) => result.errors?.length && !result?.componentDefinition?.metatadata?.isAnnotation,
+    (result) => result.errors?.length && !result?.component?.metatadata?.isAnnotation,
   );
 
   console.log('componentsWithErrors', componentsWithErrors);
@@ -201,9 +201,7 @@ const ValidationResults_ = (props) => {
             {/*  Errors For A Component */}
             <ListItem button onClick={() => handleClick(index)} className={classes.componentLabel}>
               {/* key can be error id?? */}
-              <ComponentIcon
-                iconSrc={getSvgWhiteForComponent(componentResult.componentDefinition)}
-              />
+              <ComponentIcon iconSrc={getSvgWhiteForComponent(componentResult.component)} />
               <ListItemText primary={componentResult.component.displayName} disableTypography />(
               {componentResult?.errors?.length}){open[index] ? <ExpandLess /> : <ExpandMore />}
             </ListItem>
