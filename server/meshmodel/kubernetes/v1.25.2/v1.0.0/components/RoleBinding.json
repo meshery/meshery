@@ -140,8 +140,8 @@
    "isNamespaced": true,
    "published": false,
    "shapePolygonPoints": "",
-   "styleOverrides": "{\"height\":\"25px\",\"width\":\"25px\",\"x\":\"7\", \"y\":\"7\",\"z-index\":4}",
-   "styles": "{\"height\":\"25px\",\"width\":\"25px\",\"x\":\"7\", \"y\":\"7\",\"z-index\":4}"
+   "styleOverrides": "{\"height\":\"25\",\"width\":\"25\",\"x\":\"7\", \"y\":\"7\",\"z-index\":4}",
+   "styles": "{\"height\":\"25\",\"width\":\"25\",\"x\":\"7\", \"y\":\"7\",\"z-index\":4}"
   },
   "model": {
    "category": {
