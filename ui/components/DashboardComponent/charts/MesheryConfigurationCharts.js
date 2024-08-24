@@ -14,10 +14,10 @@ import { useGetPatternsQuery } from '@/rtk-query/design';
 import { useGetFiltersQuery } from '@/rtk-query/filter';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
+import { useRouter } from 'next/router';
 
 export default function MesheryConfigurationChart({ classes }) {
-  // const { notify } = useNotification();
-
+  const router = useRouter();
   const [chartData, setChartData] = useState([]);
 
   const { data: patternsData, error: patternsError } = useGetPatternsQuery({
@@ -47,6 +47,9 @@ export default function MesheryConfigurationChart({ classes }) {
       columns: chartData,
       type: donut(),
       colors: dataToColors(chartData),
+      onclick: function (d) {
+        router.push(`/configuration/${d.name}`);
+      },
     },
     arc: {
       cornerRadius: {
@@ -72,65 +75,67 @@ export default function MesheryConfigurationChart({ classes }) {
   };
 
   return (
-    <Link
-      href="/configuration/designs"
-      style={{
-        pointerEvents: !CAN(keys.VIEW_DESIGNS.action, keys.VIEW_DESIGNS.subject) ? 'none' : 'auto',
-      }}
-    >
-      <div className={classes.dashboardSection}>
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+    <div className={classes.dashboardSection}>
+      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+        <Link
+          href="/configuration/designs"
+          style={{
+            pointerEvents: !CAN(keys.VIEW_DESIGNS.action, keys.VIEW_DESIGNS.subject)
+              ? 'none'
+              : 'auto',
+          }}
+        >
           <Typography variant="h6" gutterBottom className={classes.link}>
             Configuration
           </Typography>
-          <div onClick={(e) => e.stopPropagation()}>
-            <CustomTextTooltip
-              placement="left"
-              interactive={true}
-              variant="standard"
-              title={`Meshery Designs are descriptive, declarative characterizations of how your Kubernetes infrastructure should be configured. [Learn more](https://docs.meshery.io/concepts/logical/designs)`}
-            >
-              <IconButton disableRipple={true} disableFocusRipple={true}>
-                <InfoOutlined
-                  color={theme.palette.secondary.iconMain}
-                  style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                  }}
-                />
-              </IconButton>
-            </CustomTextTooltip>
-          </div>
+        </Link>
+        <div onClick={(e) => e.stopPropagation()}>
+          <CustomTextTooltip
+            placement="left"
+            interactive={true}
+            variant="standard"
+            title={`Meshery Designs are descriptive, declarative characterizations of how your Kubernetes infrastructure should be configured. [Learn more](https://docs.meshery.io/concepts/logical/designs)`}
+          >
+            <IconButton disableRipple={true} disableFocusRipple={true}>
+              <InfoOutlined
+                color={theme.palette.secondary.iconMain}
+                style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                }}
+              />
+            </IconButton>
+          </CustomTextTooltip>
         </div>
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            alignContent: 'center',
-            height: '100%',
-          }}
-        >
-          {chartData.length > 0 ? (
-            <BBChart options={chartOptions} />
-          ) : (
-            <div
-              style={{
-                padding: '2rem',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                flexDirection: 'column',
-              }}
-            >
-              <Typography style={{ fontSize: '1.5rem', marginBottom: '1rem' }} align="center">
-                No Meshery configuration found
-              </Typography>
-              <CreateDesignBtn />
-            </div>
-          )}
-        </Box>
       </div>
-    </Link>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          alignContent: 'center',
+          height: '100%',
+        }}
+      >
+        {chartData.length > 0 ? (
+          <BBChart options={chartOptions} />
+        ) : (
+          <div
+            style={{
+              padding: '2rem',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              flexDirection: 'column',
+            }}
+          >
+            <Typography style={{ fontSize: '1.5rem', marginBottom: '1rem' }} align="center">
+              No Meshery configuration found
+            </Typography>
+            <CreateDesignBtn />
+          </div>
+        )}
+      </Box>
+    </div>
   );
 }
