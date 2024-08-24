@@ -1,0 +1,56 @@
+{
+    "schemaVersion": "relationships.meshery.io/v1alpha3",
+    "version": "v1.0.0",
+    "kind": "edge",
+    "type": "binding",
+    "subType": "export",
+    "selectors": [
+      {
+        "allow": {
+          "from": [
+            {
+              "kind": "Bucket",
+              "model": {
+                "name": "aws-s3-controller",
+                "registrant": {
+                  "kind": "github"
+                }
+              },
+              "patch": {
+                "patchStrategy": "merge",
+                "mutatorRef": [
+                  [
+                    "spec",
+                    "name"
+                  ]
+                ],
+                "description": "The Bucket is the source of data that can be exported via a FieldExport configuration."
+              }
+            }
+          ],
+          "to": [
+            {
+              "kind": "FieldExport",
+              "model": {
+                "name": "aws-s3-controller",
+                "registrant": {
+                  "kind": "github"
+                }
+              },
+              "patch": {
+                "patchStrategy": "replace",
+                "mutatedRef": [
+                  [
+                    "status",
+                    "exportStatus"
+                  ]
+                ],
+                "description": "FieldExport is used to export data from a specific Bucket."
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+  
