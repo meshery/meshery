@@ -32,6 +32,8 @@
             url: installation/kubernetes/minikube
           - title: KubeSphere
             url: installation/kubernetes/kubesphere
+          - title: Rancher(rke2)
+            url: installation/kubernetes/rancher
       - title: Linux or macOS ↆ
         url: installation/linux-mac
         grandchildren: 
