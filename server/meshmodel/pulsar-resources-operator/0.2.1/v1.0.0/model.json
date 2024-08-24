@@ -5,6 +5,7 @@
   "displayName": "Pulsar Resources Operator",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://github.com/streamnative/pulsar-resources-operator/releases/download/pulsar-resources-operator-v0.4.5/pulsar-resources-operator-v0.4.5.tgz", 
     "isAnnotation": false,
     "published": true,
     "subCategory": "Streaming \u0026 Messaging",

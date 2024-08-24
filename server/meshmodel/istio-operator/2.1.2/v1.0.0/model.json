@@ -5,6 +5,7 @@
   "displayName": "Istio Operator",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://kubernetes-charts.banzaicloud.com/charts/istio-operator-2.1.4.tgz", 
     "isAnnotation": false,
     "published": true,
     "subCategory": "Service Mesh",

@@ -79,23 +79,28 @@ const useInfiniteScrollRef = (callback) => {
   const triggerRef = useRef(null);
 
   useEffect(() => {
-    if (!triggerRef.current) {
-      return () => observerRef.current && observerRef.current.disconnect();
-    }
+    // setTimeout gives the browser time to finish rendering the DOM elements before executing the callback function.
+    const timeoutId = setTimeout(() => {
+      if (!triggerRef.current) {
+        return () => observerRef.current && observerRef.current.disconnect();
+      }
 
-    observerRef.current = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            callback();
-          }
-        });
-      },
-      { threshold: 0.01 },
-    );
-    observerRef.current.observe(triggerRef.current);
+      observerRef.current = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              callback();
+            }
+          });
+        },
+        { threshold: 0.01 },
+      );
+      observerRef.current.observe(triggerRef.current);
+    }, 0);
+
     return () => {
       observerRef.current && observerRef.current.disconnect();
+      clearTimeout(timeoutId);
     };
   }, [callback, triggerRef.current]);
 

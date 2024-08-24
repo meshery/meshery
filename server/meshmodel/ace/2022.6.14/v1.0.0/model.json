@@ -5,6 +5,7 @@
   "displayName": "Appscode Container Engine",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://charts.appscode.com/stable/ace/ace-v2023.12.20.tgz", 
     "isAnnotation": false,
     "published": false,
     "subCategory": "Runtime",

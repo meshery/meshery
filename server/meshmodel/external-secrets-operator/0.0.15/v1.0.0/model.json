@@ -5,6 +5,7 @@
   "displayName": "External Secrets Operator",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://github.com/slamdev/helm-charts/releases/download/external-secrets-operator-0.0.15/external-secrets-operator-0.0.15.tgz", 
     "isAnnotation": false,
     "published": true,
     "subCategory": "Key Management",

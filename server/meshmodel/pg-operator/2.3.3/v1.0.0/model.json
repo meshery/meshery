@@ -5,6 +5,7 @@
   "displayName": "Percona Postgres Operator",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://github.com/percona/percona-helm-charts/releases/download/pg-operator-2.3.3/pg-operator-2.3.3.tgz", 
     "isAnnotation": false,
     "published": true,
     "subCategory": "App Definition and Development",

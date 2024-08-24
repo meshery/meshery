@@ -91,13 +91,17 @@ format_path(s) := result if {
 
 group_by_id(objects) := {obj |
 	some val in objects
-	grouped_objects := [temp_obj |
+	grouped_objects := [p |
 		some o in objects
 		o.declaration_id == val.declaration_id
-		temp_obj := o.mutated_declaration
+		p := o.patches[_]
 	]
 
-	obj := grouped_objects
+	obj := {
+		"declaration_id": val.declaration_id,
+		"declaration": val.declaration,
+		"patches": grouped_objects
+	}
 }
 
 extract_components(declarations, selectors) := {declaration.id: declaration |

@@ -5,6 +5,7 @@
   "displayName": "Dapr",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://wenerme.github.io/charts/dapr-1.12.3.tgz", 
     "isAnnotation": false,
     "published": true,
     "subCategory": "Framework",

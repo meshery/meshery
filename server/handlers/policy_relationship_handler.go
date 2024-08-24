@@ -63,10 +63,12 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	}
 	// decode the pattern file
 
-	
-
 	patternUUID := relationshipPolicyEvalPayload.Design.Id
 	eventBuilder.ActedUpon(patternUUID)
+
+	for _, component := range relationshipPolicyEvalPayload.Design.Components {
+		component.Configuration = core.Format.DePrettify(component.Configuration, false)
+	}
 
 	// evaluate specified relationship policies
 	// on successful eval the event containing details like comps evaulated, relationships indeitified should be emitted and peristed.
@@ -86,20 +88,15 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	event := eventBuilder.WithDescription(fmt.Sprintf("Relationship evaluation completed for \"%s\" at version \"%s\"", evaluationResponse.Design.Name, evaluationResponse.Design.Version)).
 		WithMetadata(map[string]interface{}{
 			"trace":        evaluationResponse.Trace,
-			"evaluated_at": &evaluationResponse.Timestamp,
+			"evaluated_at": *evaluationResponse.Timestamp,
 		}).WithSeverity(events.Informational).Build()
 	_ = provider.PersistEvent(event)
-	go h.config.EventBroadcaster.Publish(userUUID, event)
+	
+	// Create the event but do not notify the client immediately, as the evaluations are frequent and takes up the view area.
+	// go h.config.EventBroadcaster.Publish(userUUID, event)
 
-	// Before starting the eval the design is de-prettified, so that we can use the relationships def correctly.
-	// The results contain the updated config.
-	// Prettify the design before sending it to client.
-
-	for _, component := range evaluationResponse.Design.Components {
-		component.Configuration = core.Format.Prettify(component.Configuration, false)
-	}
-
-	if relationshipPolicyEvalPayload.Options.ReturnDiffOnly != nil && *relationshipPolicyEvalPayload.Options.ReturnDiffOnly {
+	if relationshipPolicyEvalPayload.Options != nil && relationshipPolicyEvalPayload.Options.ReturnDiffOnly != nil &&
+	 *relationshipPolicyEvalPayload.Options.ReturnDiffOnly {
 		evaluationResponse.Design.Components = []*component.ComponentDefinition{}
 		evaluationResponse.Design.Relationships = []*relationship.RelationshipDefinition{}
 		for _, component := range evaluationResponse.Trace.ComponentsUpdated {
@@ -118,8 +115,12 @@ func (h *Handler) EvaluateRelationshipPolicy(
 
 	}
 
-	for _, component := range relationshipPolicyEvalPayload.Design.Components {
-		component.Configuration = core.Format.DePrettify(component.Configuration, false)
+	// Before starting the eval the design is de-prettified, so that we can use the relationships def correctly.
+	// The results contain the updated config.
+	// Prettify the design before sending it to client.
+
+	for _, component := range evaluationResponse.Design.Components {
+		component.Configuration = core.Format.Prettify(component.Configuration, false)
 	}
 
 	// write the response

@@ -5,6 +5,7 @@
   "displayName": "Galoy",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://github.com/GaloyMoney/charts/releases/download/galoy-v0.31.15/galoy-0.31.15.tgz", 
     "isAnnotation": false,
     "published": false,
     "subCategory": "Uncategorized",

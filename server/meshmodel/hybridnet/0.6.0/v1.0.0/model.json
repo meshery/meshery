@@ -5,6 +5,7 @@
   "displayName": "Hybridnet",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://github.com/alibaba/hybridnet/releases/download/helm-chart-0.6.8/hybridnet-0.6.8.tgz", 
     "isAnnotation": false,
     "published": true,
     "subCategory": "Uncategorized",

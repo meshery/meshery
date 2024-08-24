@@ -34,11 +34,10 @@ apply_patch(design_file, mutator_object, to_mutate_object) := result if {
 
 	resultant_patches_to_apply := ensureParentPathsExist(patches, declaration_to_mutate)
 
-	mutated_declaration := json.patch(declaration_to_mutate, resultant_patches_to_apply)
-
 	result := {
 		"declaration_id": declaration_to_mutate.id,
-		"mutated_declaration": mutated_declaration,
+		"declaration": declaration_to_mutate,
+		"patches": resultant_patches_to_apply,
 	}
 }
 

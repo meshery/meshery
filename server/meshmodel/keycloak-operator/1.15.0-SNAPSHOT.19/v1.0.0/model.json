@@ -5,6 +5,7 @@
   "displayName": "Keycloak Operator",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://epam.github.io/edp-helm-charts/snapshot/packages/keycloak-operator-1.21.0-SNAPSHOT.2.tgz", 
     "isAnnotation": false,
     "published": true,
     "subCategory": "Key Management",

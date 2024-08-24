@@ -5,6 +5,7 @@
   "displayName": "Bitwarden Crd Operator",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://github.com/Lerentis/bitwarden-crd-operator/releases/download/bitwarden-crd-operator-v0.11.1/bitwarden-crd-operator-v0.11.1.tgz", 
     "isAnnotation": false,
     "published": false,
     "subCategory": "Uncategorized",

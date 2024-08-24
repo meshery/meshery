@@ -5,6 +5,7 @@
   "displayName": "Ingress Azure",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://appgwingress.blob.core.windows.net/ingress-azure-helm-package/ingress-azure-1.7.3-rc1.tgz", 
     "isAnnotation": false,
     "published": false,
     "subCategory": "Uncategorized",

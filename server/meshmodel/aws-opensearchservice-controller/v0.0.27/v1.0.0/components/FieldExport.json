@@ -134,13 +134,10 @@
   "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
-   "defaultData": "",
    "genealogy": "",
    "isAnnotation": false,
-   "published": false,
-   "shapePolygonPoints": "",
-   "styleOverrides": "",
-   "styles": ""
+   "isNamespaced": true,
+   "published": false
   },
   "model": {
    "category": {
@@ -149,13 +146,11 @@
    "displayName": "AWS OpenSearch Service",
    "id": "00000000-0000-0000-0000-000000000000",
    "metadata": {
-    "defaultData": "",
     "isAnnotation": false,
     "primaryColor": "#E7157B",
     "shape": "rectangle",
-    "shapePolygonPoints": "",
+    "source_uri": "git://github.com/aws-controllers-k8s/opensearchservice-controller/main/helm",
     "styleOverrides": "",
-    "styles": "",
     "svgColor": "",
     "svgComplete": "",
     "svgWhite": ""
