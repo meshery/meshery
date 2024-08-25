@@ -36,12 +36,10 @@ class MyReporter {
     const message = await this.buildMessage(result);
 
     try {
-      await writeFileSync('test-report.md', message);
+      writeFileSync('test-report.md', message);
     } catch (e) {
       console.log('Cannot write test reporter ', e);
     }
-
-    process.exit(this.failed > 0 ? 130 : 0); // Return non-zero status code if there are failed tests
   }
 
   addFailMessage(message) {
