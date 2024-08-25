@@ -50,7 +50,7 @@ Meshery Server and Meshery Adapters are tested daily for their compatibility wit
       </ul>
       <div class="tab-content" id="myTabContent">
         <div class="tab-pane fade show active" id="kubernetes" role="tabpanel" aria-labelledby="kubernetes-tab">
-            {%include compatibilityMatrix.md k8s_tests_group=k8s_tests_group %}
+            {%include compatibility/compatibilityMatrix.md k8s_tests_group=k8s_tests_group %}
         </div>
         <div style="text-align:center" class="tab-pane fade" id="docker" role="tabpanel" aria-labelledby="docker-tab">
         <h3 style="text-align:left;">The following minimum Docker build versions are required:</h3>
