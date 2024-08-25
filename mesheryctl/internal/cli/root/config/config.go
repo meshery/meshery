@@ -146,7 +146,8 @@ func (mc *MesheryCtlConfig) SetCurrentContext(contextName string) error {
 	}
 	_, err := mc.CheckIfCurrentContextIsValid()
 	if err != nil {
-		log.Errorf(err.Error())
+		log.Errorf("Error: %v", err.Error())
+
 	}
 
 	return err
