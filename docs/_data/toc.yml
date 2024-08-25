@@ -168,6 +168,8 @@
         url: guides/tutorials/exploring-kubernetes-cronjobs
       - title: Understanding Kubernetes ConfigMaps and Secrets
         url: guides/tutorials/kubernetes-configmaps-secrets
+      - title: Hello Kubernetes with Dapr
+        url: guides/tutorials/hello-kubernetes-with-dapr
     - title: Upgrading Meshery ↆ
       url: installation/upgrades
       children:
