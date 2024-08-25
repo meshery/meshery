@@ -12,9 +12,11 @@ import { useGetAllConnectionStatusQuery } from '@/rtk-query/connection';
 import { InfoOutlined } from '@material-ui/icons';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
+import { useRouter } from 'next/router';
 
 export default function ConnectionStatsChart({ classes }) {
   const { data: statusData } = useGetAllConnectionStatusQuery();
+  const router = useRouter();
 
   const chartData =
     statusData?.connections_status
@@ -26,6 +28,9 @@ export default function ConnectionStatsChart({ classes }) {
       columns: chartData,
       type: donut(),
       colors: dataToColors(chartData),
+      onclick: function () {
+        router.push('/management/connections');
+      },
     },
     arc: {
       cornerRadius: {
