@@ -26,7 +26,6 @@ import (
 	"github.com/layer5io/meshery/server/models"
 	pCore "github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshery/server/models/pattern/resource/selector"
-	"github.com/layer5io/meshery/server/models/pattern/stages"
 	patternutils "github.com/layer5io/meshery/server/models/pattern/utils"
 	"github.com/layer5io/meshkit/encoding"
 	"github.com/layer5io/meshkit/errors"
@@ -1736,7 +1735,10 @@ func (h *Handler) GetMesheryPatternHandler(
 	}
 
 	rw.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(rw).Encode(pattern)
+	if err := json.NewEncoder(rw).Encode(pattern); err != nil {
+		http.Error(rw, "Failed to encode response", http.StatusInternalServerError)
+		return
+	}
 }
 
 func (h *Handler) formatPatternOutput(rw http.ResponseWriter, content []byte, format, sourcetype string, eventBuilder *events.EventBuilder, URL, action string) {
@@ -1781,21 +1783,24 @@ func (h *Handler) formatPatternOutput(rw http.ResponseWriter, content []byte, fo
 
 // Since the client currently does not support pattern imports and externalized variables, the first(import) stage of pattern engine
 // is evaluated here to simplify the pattern file such that it is valid when a deploy takes place
-func evalImportAndReferenceStage(p *pattern.PatternFile) (newp pattern.PatternFile) {
-	chain := stages.CreateChain()
-	chain.
-		// Add(stages.Import(sip, sap)). enable this
-		Add(stages.Filler(false)).
-		Add(func(data *stages.Data, err error, next stages.ChainStageNextFunction) {
-			data.Lock.Lock()
-			newp = *data.Pattern
-			data.Lock.Unlock()
-		}).
-		Process(&stages.Data{
-			Pattern: p,
-		})
-	return newp
-}
+
+//unsued currently
+
+// func evalImportAndReferenceStage(p *pattern.PatternFile) (newp pattern.PatternFile) {
+// 	chain := stages.CreateChain()
+// 	chain.
+// 		// Add(stages.Import(sip, sap)). enable this
+// 		Add(stages.Filler(false)).
+// 		Add(func(data *stages.Data, err error, next stages.ChainStageNextFunction) {
+// 			data.Lock.Lock()
+// 			newp = *data.Pattern
+// 			data.Lock.Unlock()
+// 		}).
+// 		Process(&stages.Data{
+// 			Pattern: p,
+// 		})
+// 	return newp
+// }
 
 // Only pass Meshkit err here or there will be a panic
 func addMeshkitErr(res *meshes.EventsResponse, err error) {

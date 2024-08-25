@@ -134,5 +134,5 @@ func mergeErrors(errs []error) error {
 		return nil
 	}
 
-	return fmt.Errorf(strings.Join(msgs, "\n"))
+	return fmt.Errorf("%s", strings.Join(msgs, "\n"))
 }
