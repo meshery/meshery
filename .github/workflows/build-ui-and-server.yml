@@ -191,7 +191,7 @@ jobs:
           REMOTE_PROVIDER_USER_PASSWORD: ${{ secrets.REMOTE_PROVIDER_USER_PASS }}
           PROVIDER_TOKEN: ${{ secrets.PROVIDER_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GH_ACCESS_TOKEN  }}
-        run: npx playwright test --project=chromium --project=firefox --reporter="./tests/e2e/custom-playwright-reporter.js" --reporter=list
+        run: npx playwright test --project=chromium --project=firefox --reporter="./tests/e2e/custom-playwright-reporter.js"
         working-directory: ui
       - name: Save PR number
         if: always()
