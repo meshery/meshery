@@ -13,10 +13,10 @@ func (s *Selector) GetDefinition(name string, version string, modelName string, 
 	var comp *component.ComponentDefinition
 	name = strings.Split(name, ".")[0]
 	fmt.Println(name, modelName, version, apiVersion)
-	if modelName == ""  {
+	if modelName == "" {
 		return component.ComponentDefinition{}, fmt.Errorf("model name is required")
 	}
-	
+
 	if apiVersion == "" {
 		return component.ComponentDefinition{}, fmt.Errorf("apiVersion is required")
 	}
@@ -26,7 +26,7 @@ func (s *Selector) GetDefinition(name string, version string, modelName string, 
 		ModelName:  modelName,
 		APIVersion: apiVersion,
 	})
-	
+
 	found := false
 	for _, en := range entities {
 		if en != nil {
@@ -42,8 +42,7 @@ func (s *Selector) GetDefinition(name string, version string, modelName string, 
 	}
 	if !found || comp == nil {
 		component := component.ComponentDefinition{}
-		return component, fmt.Errorf(fmt.Sprintf("could not find component with name: %s, model: %s, apiVersion: %s", name, modelName, apiVersion))
+		return component, fmt.Errorf("could not find component with name: %s, model: %s, apiVersion: %s", name, modelName, apiVersion)
 	}
 	return *comp, nil
 }
-
