@@ -50,7 +50,7 @@
           - title: Meshery CLI
             url: installation/upgrades#upgrading-meshery-cli            
       - title: Using Multiple Meshery Adapters
-        url: guides/multiple-adapters
+        url: installation/multiple-adapters
       - title: Meshery Playground
         url: installation/playground
 - title: 🧠 Concepts
