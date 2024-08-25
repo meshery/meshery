@@ -194,10 +194,12 @@ jobs:
         run: npx playwright test --project=chromium --project=firefox --reporter="./tests/e2e/custom-playwright-reporter.js"
         working-directory: ui
       - name: Save PR number
+        if: always()
         run: |
             mkdir -p ./pr
             echo ${{ github.event.number }} > ./pr/number
       - name: Upload Test Report
+        if: always()
         uses: actions/upload-artifact@834a144ee995460fba8ed112a2fc961b36a5ec5a # v4.3.6
         with:
             name: e2e-test-reporter
