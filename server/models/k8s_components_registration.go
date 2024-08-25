@@ -10,6 +10,8 @@ import (
 	"sync"
 
 	"github.com/gofrs/uuid"
+	"github.com/meshery/schemas/models/v1alpha1/capability"
+	"github.com/meshery/schemas/models/v1beta1/component"
 
 	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/models/events"
@@ -27,7 +29,13 @@ const (
 	Registering
 )
 
-var K8sMeshModelMetadata = make(map[string]interface{})
+type ModelTemplate struct {
+	component.Styles
+	ModelName    string                   `json:"modelName"`
+	Capabilities *[]capability.Capability `json:"capabilities"`
+}
+
+var K8sMeshModelMetadata = ModelTemplate{}
 
 // INstead define a set of actions
 func (rs RegistrationStatus) String() string {
@@ -72,7 +80,7 @@ func (cg *ComponentsRegistrationHelper) UpdateContexts(ctxs []*K8sContext) *Comp
 	return cg
 }
 
-type K8sRegistrationFunction func(provider *Provider, ctxt context.Context, config []byte, ctxID string, connectionID string, userID string, MesheryInstanceID uuid.UUID, reg *meshmodel.RegistryManager, eb *Broadcast, ctxName string) error
+type K8sRegistrationFunction func(provider *Provider, ctxt context.Context, config []byte, ctxID string, connectionID string, userID string, MesheryInstanceID uuid.UUID, reg *meshmodel.RegistryManager, eb *Broadcast, log logger.Handler, ctxName string) error
 
 // start registration of components for the contexts
 func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, regFunc []K8sRegistrationFunction, reg *meshmodel.RegistryManager, eventsBrodcaster *Broadcast, provider Provider, userID string, skip bool) {
@@ -130,7 +138,7 @@ func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, r
 				return
 			}
 			for _, f := range regFunc {
-				err = f(&provider, context.Background(), cfg, ctxID, ctx.ConnectionID, userID, *ctx.MesheryInstanceID, reg, eventsBrodcaster, ctxName)
+				err = f(&provider, context.Background(), cfg, ctxID, ctx.ConnectionID, userID, *ctx.MesheryInstanceID, reg, eventsBrodcaster, cg.log, ctxName)
 				if err != nil {
 					cg.log.Error(ErrUnreachableKubeAPI(err, ctx.Server))
 					return
@@ -150,10 +158,10 @@ func init() {
 	if err != nil {
 		return
 	}
-	m := make(map[string]interface{})
-	err = json.Unmarshal(byt, &m)
+	componentStyles := ModelTemplate{}
+	err = json.Unmarshal(byt, &componentStyles)
 	if err != nil {
 		return
 	}
-	K8sMeshModelMetadata = m
+	K8sMeshModelMetadata = componentStyles
 }

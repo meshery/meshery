@@ -19,11 +19,11 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/adapter"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/components"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/experimental"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/filter"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/mesh"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/model"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/pattern"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/perf"
@@ -110,7 +110,7 @@ func init() {
 		system.SystemCmd,
 		pattern.PatternCmd,
 		perf.PerfCmd,
-		mesh.MeshCmd,
+		adapter.AdapterCmd,
 		experimental.ExpCmd,
 		filter.FilterCmd,
 		registry.RegistryCmd,

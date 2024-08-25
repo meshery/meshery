@@ -1,0 +1,196 @@
+{
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "ActiveDirectoryIdentityProvider",
+   "schema": "{\n \"description\": \"ActiveDirectoryIdentityProvider describes the configuration of an upstream Microsoft Active Directory identity provider.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Spec for configuring the identity provider.\",\n   \"properties\": {\n    \"bind\": {\n     \"description\": \"Bind contains the configuration for how to provide access credentials during an initial bind to the ActiveDirectory server\\nto be allowed to perform searches and binds to validate a user's credentials during a user's authentication attempt.\",\n     \"properties\": {\n      \"secretName\": {\n       \"description\": \"SecretName contains the name of a namespace-local Secret object that provides the username and\\npassword for an Active Directory bind user. This account will be used to perform LDAP searches. The Secret should be\\nof type \\\"kubernetes.io/basic-auth\\\" which includes \\\"username\\\" and \\\"password\\\" keys. The username value\\nshould be the full dn (distinguished name) of your bind account, e.g. \\\"cn=bind-account,ou=users,dc=example,dc=com\\\".\\nThe password must be non-empty.\",\n       \"minLength\": 1,\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"secretName\"\n     ],\n     \"type\": \"object\"\n    },\n    \"groupSearch\": {\n     \"description\": \"GroupSearch contains the configuration for searching for a user's group membership in ActiveDirectory.\",\n     \"properties\": {\n      \"attributes\": {\n       \"description\": \"Attributes specifies how the group's information should be read from each ActiveDirectory entry which was found as\\nthe result of the group search.\",\n       \"properties\": {\n        \"groupName\": {\n         \"description\": \"GroupName specifies the name of the attribute in the Active Directory entries whose value shall become a group name\\nin the user's list of groups after a successful authentication.\\nThe value of this field is case-sensitive and must match the case of the attribute name returned by the ActiveDirectory\\nserver in the user's entry. E.g. \\\"cn\\\" for common name. Distinguished names can be used by specifying lower-case \\\"dn\\\".\\nOptional. When not specified, this defaults to a custom field that looks like \\\"sAMAccountName@domain\\\",\\nwhere domain is constructed from the domain components of the group DN.\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"base\": {\n       \"description\": \"Base is the dn (distinguished name) that should be used as the search base when searching for groups. E.g.\\n\\\"ou=groups,dc=example,dc=com\\\".\\nOptional, when not specified it will be based on the result of a query for the defaultNamingContext\\n(see https://docs.microsoft.com/en-us/windows/win32/adschema/rootdse).\\nThe default behavior searches your entire domain for groups.\\nIt may make sense to specify a subtree as a search base if you wish to exclude some groups\\nfor security reasons or to make searches faster.\",\n       \"type\": \"string\"\n      },\n      \"filter\": {\n       \"description\": \"Filter is the ActiveDirectory search filter which should be applied when searching for groups for a user.\\nThe pattern \\\"{}\\\" must occur in the filter at least once and will be dynamically replaced by the\\nvalue of an attribute of the user entry found as a result of the user search. Which attribute's\\nvalue is used to replace the placeholder(s) depends on the value of UserAttributeForFilter.\\nE.g. \\\"member={}\\\" or \\\"\\u0026(objectClass=groupOfNames)(member={})\\\".\\nFor more information about ActiveDirectory filters, see https://ldap.com/ldap-filters.\\nNote that the dn (distinguished name) is not an attribute of an entry, so \\\"dn={}\\\" cannot be used.\\nOptional. When not specified, the default will act as if the filter were specified as\\n\\\"(\\u0026(objectClass=group)(member:1.2.840.113556.1.4.1941:={})\\\".\\nThis searches nested groups by default.\\nNote that nested group search can be slow for some Active Directory servers. To disable it,\\nyou can set the filter to\\n\\\"(\\u0026(objectClass=group)(member={})\\\"\",\n       \"type\": \"string\"\n      },\n      \"skipGroupRefresh\": {\n       \"description\": \"The user's group membership is refreshed as they interact with the supervisor\\nto obtain new credentials (as their old credentials expire).  This allows group\\nmembership changes to be quickly reflected into Kubernetes clusters.  Since\\ngroup membership is often used to bind authorization policies, it is important\\nto keep the groups observed in Kubernetes clusters in-sync with the identity\\nprovider.\\n\\n\\nIn some environments, frequent group membership queries may result in a\\nsignificant performance impact on the identity provider and/or the supervisor.\\nThe best approach to handle performance impacts is to tweak the group query\\nto be more performant, for example by disabling nested group search or by\\nusing a more targeted group search base.\\n\\n\\nIf the group search query cannot be made performant and you are willing to\\nhave group memberships remain static for approximately a day, then set\\nskipGroupRefresh to true.  This is an insecure configuration as authorization\\npolicies that are bound to group membership will not notice if a user has\\nbeen removed from a particular group until their next login.\\n\\n\\nThis is an experimental feature that may be removed or significantly altered\\nin the future.  Consumers of this configuration should carefully read all\\nrelease notes before upgrading to ensure that the meaning of this field has\\nnot changed.\",\n       \"type\": \"boolean\"\n      },\n      \"userAttributeForFilter\": {\n       \"description\": \"UserAttributeForFilter specifies which attribute's value from the user entry found as a result of\\nthe user search will be used to replace the \\\"{}\\\" placeholder(s) in the group search Filter.\\nFor example, specifying \\\"uid\\\" as the UserAttributeForFilter while specifying\\n\\\"\\u0026(objectClass=posixGroup)(memberUid={})\\\" as the Filter would search for groups by replacing\\nthe \\\"{}\\\" placeholder in the Filter with the value of the user's \\\"uid\\\" attribute.\\nOptional. When not specified, the default will act as if \\\"dn\\\" were specified. For example, leaving\\nUserAttributeForFilter unspecified while specifying \\\"\\u0026(objectClass=groupOfNames)(member={})\\\" as the Filter\\nwould search for groups by replacing the \\\"{}\\\" placeholder(s) with the dn (distinguished name) of the user.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"host\": {\n     \"description\": \"Host is the hostname of this Active Directory identity provider, i.e., where to connect. For example: ldap.example.com:636.\",\n     \"minLength\": 1,\n     \"type\": \"string\"\n    },\n    \"tls\": {\n     \"description\": \"TLS contains the connection settings for how to establish the connection to the Host.\",\n     \"properties\": {\n      \"certificateAuthorityData\": {\n       \"description\": \"X.509 Certificate Authority (base64-encoded PEM bundle). If omitted, a default set of system roots will be trusted.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"userSearch\": {\n     \"description\": \"UserSearch contains the configuration for searching for a user by name in Active Directory.\",\n     \"properties\": {\n      \"attributes\": {\n       \"description\": \"Attributes specifies how the user's information should be read from the ActiveDirectory entry which was found as\\nthe result of the user search.\",\n       \"properties\": {\n        \"uid\": {\n         \"description\": \"UID specifies the name of the attribute in the ActiveDirectory entry which whose value shall be used to uniquely\\nidentify the user within this ActiveDirectory provider after a successful authentication.\\nOptional, when empty this defaults to \\\"objectGUID\\\".\",\n         \"type\": \"string\"\n        },\n        \"username\": {\n         \"description\": \"Username specifies the name of the attribute in Active Directory entry whose value shall become the username\\nof the user after a successful authentication.\\nOptional, when empty this defaults to \\\"userPrincipalName\\\".\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"base\": {\n       \"description\": \"Base is the dn (distinguished name) that should be used as the search base when searching for users.\\nE.g. \\\"ou=users,dc=example,dc=com\\\".\\nOptional, when not specified it will be based on the result of a query for the defaultNamingContext\\n(see https://docs.microsoft.com/en-us/windows/win32/adschema/rootdse).\\nThe default behavior searches your entire domain for users.\\nIt may make sense to specify a subtree as a search base if you wish to exclude some users\\nor to make searches faster.\",\n       \"type\": \"string\"\n      },\n      \"filter\": {\n       \"description\": \"Filter is the search filter which should be applied when searching for users. The pattern \\\"{}\\\" must occur\\nin the filter at least once and will be dynamically replaced by the username for which the search is being run.\\nE.g. \\\"mail={}\\\" or \\\"\\u0026(objectClass=person)(uid={})\\\". For more information about LDAP filters, see\\nhttps://ldap.com/ldap-filters.\\nNote that the dn (distinguished name) is not an attribute of an entry, so \\\"dn={}\\\" cannot be used.\\nOptional. When not specified, the default will be\\n'(\\u0026(objectClass=person)(!(objectClass=computer))(!(showInAdvancedViewOnly=TRUE))(|(sAMAccountName={}\\\")(mail={})(userPrincipalName={})(sAMAccountType=805306368))'\\nThis means that the user is a person, is not a computer, the sAMAccountType is for a normal user account,\\nand is not shown in advanced view only\\n(which would likely mean its a system created service account with advanced permissions).\\nAlso, either the sAMAccountName, the userPrincipalName, or the mail attribute matches the input username.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"host\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Active Directory Identity Provider\",\n \"type\": \"object\"\n}",
+   "version": "idp.supervisor.pinniped.dev/v1alpha1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "Active Directory Identity Provider",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "published": false
+  },
+  "model": {
+   "category": {
+    "name": "Security \u0026 Compliance"
+   },
+   "displayName": "Pinniped",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "defaultData": "",
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "model": {
+    "version": "2.2.13"
+   },
+   "name": "pinniped",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "subCategory": "Key Management",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "ignored",
+  "styles": {
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "svgColor": "",
+   "svgWhite": ""
+  },
+  "version": "v1.0.0"
+ }

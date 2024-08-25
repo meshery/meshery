@@ -1,29 +1,151 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "displayName": "Healthcare FHIR Store",
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "HealthcareFHIRStore",
+   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"complexDataTypeReferenceParsing\": {\n     \"description\": \"Enable parsing of references within complex FHIR data types such as Extensions. If this value is set to ENABLED, then features like referential integrity and Bundle reference rewriting apply to all references. If this flag has not been specified the behavior of the FHIR store will not change, references in complex data types will not be parsed. New stores will have this value set to ENABLED by default after a notification period. Warning: turning on this flag causes processing existing resources to fail if they contain references to non-existent resources. Possible values: [\\\"COMPLEX_DATA_TYPE_REFERENCE_PARSING_UNSPECIFIED\\\", \\\"DISABLED\\\", \\\"ENABLED\\\"].\",\n     \"type\": \"string\"\n    },\n    \"dataset\": {\n     \"description\": \"Immutable. Identifies the dataset addressed by this request. Must be in the format\\n'projects/{project}/locations/{location}/datasets/{dataset}'.\",\n     \"type\": \"string\"\n    },\n    \"defaultSearchHandlingStrict\": {\n     \"description\": \"If true, overrides the default search behavior for this FHIR store to handling=strict which returns an error for unrecognized search parameters.\\nIf false, uses the FHIR specification default handling=lenient which ignores unrecognized search parameters.\\nThe handling can always be changed from the default on an individual API call by setting the HTTP header Prefer: handling=strict or Prefer: handling=lenient.\",\n     \"type\": \"boolean\"\n    },\n    \"disableReferentialIntegrity\": {\n     \"description\": \"Immutable. Whether to disable referential integrity in this FHIR store. This field is immutable after FHIR store\\ncreation. The default value is false, meaning that the API will enforce referential integrity and fail the\\nrequests that will result in inconsistent state in the FHIR store. When this field is set to true, the API\\nwill skip referential integrity check. Consequently, operations that rely on references, such as\\nPatient.get$everything, will not return all the results if broken references exist.\\n\\n** Changing this property may recreate the FHIR store (removing all data) **.\",\n     \"type\": \"boolean\"\n    },\n    \"disableResourceVersioning\": {\n     \"description\": \"Immutable. Whether to disable resource versioning for this FHIR store. This field can not be changed after the creation\\nof FHIR store. If set to false, which is the default behavior, all write operations will cause historical\\nversions to be recorded automatically. The historical versions can be fetched through the history APIs, but\\ncannot be updated. If set to true, no historical versions will be kept. The server will send back errors for\\nattempts to read the historical versions.\\n\\n** Changing this property may recreate the FHIR store (removing all data) **.\",\n     \"type\": \"boolean\"\n    },\n    \"enableHistoryImport\": {\n     \"description\": \"Immutable. Whether to allow the bulk import API to accept history bundles and directly insert historical resource\\nversions into the FHIR store. Importing resource histories creates resource interactions that appear to have\\noccurred in the past, which clients may not want to allow. If set to false, history bundles within an import\\nwill fail with an error.\\n\\n** Changing this property may recreate the FHIR store (removing all data) **\\n\\n** This property can be changed manually in the Google Cloud Healthcare admin console without recreating the FHIR store **.\",\n     \"type\": \"boolean\"\n    },\n    \"enableUpdateCreate\": {\n     \"description\": \"Whether this FHIR store has the updateCreate capability. This determines if the client can use an Update\\noperation to create a new resource with a client-specified ID. If false, all IDs are server-assigned through\\nthe Create operation and attempts to Update a non-existent resource will return errors. Please treat the audit\\nlogs with appropriate levels of care if client-specified resource IDs contain sensitive data such as patient\\nidentifiers, those IDs will be part of the FHIR resource path recorded in Cloud audit logs and Cloud Pub/Sub\\nnotifications.\",\n     \"type\": \"boolean\"\n    },\n    \"notificationConfig\": {\n     \"description\": \"A nested object resource.\",\n     \"properties\": {\n      \"pubsubTopic\": {\n       \"description\": \"The Cloud Pub/Sub topic that notifications of changes are published on. Supplied by the client.\\nPubsubMessage.Data will contain the resource name. PubsubMessage.MessageId is the ID of this message.\\nIt is guaranteed to be unique within the topic. PubsubMessage.PublishTime is the time at which the message\\nwas published. Notifications are only sent if the topic is non-empty. Topic names must be scoped to a\\nproject. service-PROJECT_NUMBER@gcp-sa-healthcare.iam.gserviceaccount.com must have publisher permissions on the given\\nCloud Pub/Sub topic. Not having adequate permissions will cause the calls that send notifications to fail.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"pubsubTopic\"\n     ],\n     \"type\": \"object\"\n    },\n    \"notificationConfigs\": {\n     \"description\": \"A list of notifcation configs that configure the notification for every resource mutation in this FHIR store.\",\n     \"items\": {\n      \"properties\": {\n       \"pubsubTopic\": {\n        \"description\": \"The Cloud Pub/Sub topic that notifications of changes are published on. Supplied by the client.\\nPubsubMessage.Data will contain the resource name. PubsubMessage.MessageId is the ID of this message.\\nIt is guaranteed to be unique within the topic. PubsubMessage.PublishTime is the time at which the message\\nwas published. Notifications are only sent if the topic is non-empty. Topic names must be scoped to a\\nproject. service-PROJECT_NUMBER@gcp-sa-healthcare.iam.gserviceaccount.com must have publisher permissions on the given\\nCloud Pub/Sub topic. Not having adequate permissions will cause the calls that send notifications to fail.\",\n        \"type\": \"string\"\n       },\n       \"sendFullResource\": {\n        \"description\": \"Whether to send full FHIR resource to this Pub/Sub topic for Create and Update operation.\\nNote that setting this to true does not guarantee that all resources will be sent in the format of\\nfull FHIR resource. When a resource change is too large or during heavy traffic, only the resource name will be\\nsent. Clients should always check the \\\"payloadType\\\" label from a Pub/Sub message to determine whether\\nit needs to fetch the full resource as a separate operation.\",\n        \"type\": \"boolean\"\n       },\n       \"sendPreviousResourceOnDelete\": {\n        \"description\": \"Whether to send full FHIR resource to this Pub/Sub topic for deleting FHIR resource. Note that setting this to\\ntrue does not guarantee that all previous resources will be sent in the format of full FHIR resource. When a\\nresource change is too large or during heavy traffic, only the resource name will be sent. Clients should always\\ncheck the \\\"payloadType\\\" label from a Pub/Sub message to determine whether it needs to fetch the full previous\\nresource as a separate operation.\",\n        \"type\": \"boolean\"\n       }\n      },\n      \"required\": [\n       \"pubsubTopic\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    },\n    \"streamConfigs\": {\n     \"description\": \"A list of streaming configs that configure the destinations of streaming export for every resource mutation in\\nthis FHIR store. Each store is allowed to have up to 10 streaming configs. After a new config is added, the next\\nresource mutation is streamed to the new location in addition to the existing ones. When a location is removed\\nfrom the list, the server stops streaming to that location. Before adding a new config, you must add the required\\nbigquery.dataEditor role to your project's Cloud Healthcare Service Agent service account. Some lag (typically on\\nthe order of dozens of seconds) is expected before the results show up in the streaming destination.\",\n     \"items\": {\n      \"properties\": {\n       \"bigqueryDestination\": {\n        \"description\": \"The destination BigQuery structure that contains both the dataset location and corresponding schema config.\\nThe output is organized in one table per resource type. The server reuses the existing tables (if any) that\\nare named after the resource types, e.g. \\\"Patient\\\", \\\"Observation\\\". When there is no existing table for a given\\nresource type, the server attempts to create one.\\nSee the [streaming config reference](https://cloud.google.com/healthcare/docs/reference/rest/v1beta1/projects.locations.datasets.fhirStores#streamconfig) for more details.\",\n        \"properties\": {\n         \"datasetUri\": {\n          \"description\": \"BigQuery URI to a dataset, up to 2000 characters long, in the format bq://projectId.bqDatasetId.\",\n          \"type\": \"string\"\n         },\n         \"schemaConfig\": {\n          \"description\": \"The configuration for the exported BigQuery schema.\",\n          \"properties\": {\n           \"lastUpdatedPartitionConfig\": {\n            \"description\": \"The configuration for exported BigQuery tables to be partitioned by FHIR resource's last updated time column.\",\n            \"properties\": {\n             \"expirationMs\": {\n              \"description\": \"Number of milliseconds for which to keep the storage for a partition.\",\n              \"type\": \"string\"\n             },\n             \"type\": {\n              \"description\": \"Type of partitioning. Possible values: [\\\"PARTITION_TYPE_UNSPECIFIED\\\", \\\"HOUR\\\", \\\"DAY\\\", \\\"MONTH\\\", \\\"YEAR\\\"].\",\n              \"type\": \"string\"\n             }\n            },\n            \"required\": [\n             \"type\"\n            ],\n            \"type\": \"object\"\n           },\n           \"recursiveStructureDepth\": {\n            \"description\": \"The depth for all recursive structures in the output analytics schema. For example, concept in the CodeSystem\\nresource is a recursive structure; when the depth is 2, the CodeSystem table will have a column called\\nconcept.concept but not concept.concept.concept. If not specified or set to 0, the server will use the default\\nvalue 2. The maximum depth allowed is 5.\",\n            \"type\": \"integer\"\n           },\n           \"schemaType\": {\n            \"description\": \"Specifies the output schema type.\\n * ANALYTICS: Analytics schema defined by the FHIR community.\\n  See https://github.com/FHIR/sql-on-fhir/blob/master/sql-on-fhir.md.\\n * ANALYTICS_V2: Analytics V2, similar to schema defined by the FHIR community, with added support for extensions with one or more occurrences and contained resources in stringified JSON.\\n * LOSSLESS: A data-driven schema generated from the fields present in the FHIR data being exported, with no additional simplification. Default value: \\\"ANALYTICS\\\" Possible values: [\\\"ANALYTICS\\\", \\\"ANALYTICS_V2\\\", \\\"LOSSLESS\\\"].\",\n            \"type\": \"string\"\n           }\n          },\n          \"required\": [\n           \"recursiveStructureDepth\"\n          ],\n          \"type\": \"object\"\n         }\n        },\n        \"required\": [\n         \"datasetUri\",\n         \"schemaConfig\"\n        ],\n        \"type\": \"object\"\n       },\n       \"resourceTypes\": {\n        \"description\": \"Supply a FHIR resource type (such as \\\"Patient\\\" or \\\"Observation\\\"). See\\nhttps://www.hl7.org/fhir/valueset-resource-types.html for a list of all FHIR resource types. The server treats\\nan empty list as an intent to stream all the supported resource types in this FHIR store.\",\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       }\n      },\n      \"required\": [\n       \"bigqueryDestination\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"version\": {\n     \"description\": \"Immutable. The FHIR specification version. Default value: \\\"STU3\\\" Possible values: [\\\"DSTU2\\\", \\\"STU3\\\", \\\"R4\\\"].\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"dataset\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Healthcare FHIR Store\",\n \"type\": \"object\"\n}",
+   "version": "healthcare.cnrm.cloud.google.com/v1alpha1"
+  },
+  "configuration": null,
   "description": "",
+  "displayName": "Healthcare FHIR Store",
   "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "published": false
+  },
   "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "version": "v1.0.0",
-   "name": "k8s-config-connector",
-   "displayName": "Google Cloud Platform",
-   "description": "",
-   "status": "enabled",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "registrant": {
-    "hostname": "github"
-   },
    "category": {
-    "name": "Orchestration \u0026 Management",
-    "metadata": null
+    "name": "Orchestration \u0026 Management"
    },
-   "subCategory": "Google Cloud Platform",
+   "displayName": "Google Cloud Platform",
+   "id": "00000000-0000-0000-0000-000000000000",
    "metadata": {
-    "capabilities": "",
     "defaultData": "",
     "isAnnotation": false,
     "primaryColor": "#4285F4",
@@ -39,30 +161,35 @@
    "model": {
     "version": "v1.118.1"
    },
+   "name": "k8s-config-connector",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "github",
+    "name": "Github",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "enabled",
+   "subCategory": "Google Cloud Platform",
+   "version": "v1.0.0",
    "components": null,
    "relationships": null
   },
-  "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
    "primaryColor": "#4285F4",
-   "secondaryColor": "",
    "shape": "rectangle",
-   "shapePolygonPoints": "",
-   "status": "enabled",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
    "svgColor": "\u003csvg width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"\u003e\n    \u003cg stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e\n        \u003cpath d=\"M12.3008862,4.00003179 L18.9908678,7.90329279 L19,11.4442164 L14.973309,9.0680926 L14.973309,10.8562526 L16.9806355,12.0276231 L16.9918433,15.1064843 L14.973309,13.9136004 L14.973309,18.415105 L12.3008862,20 L12.3008862,4.00003179 Z M11.6991138,4 L11.6991138,19.9999682 L9.02669102,18.4150732 L9.02669102,9.06816678 L5,11.4441846 L5.00913223,7.903261 L11.6991138,4 Z\" fill=\"#4285F4\"\u003e\u003c/path\u003e\n    \u003c/g\u003e\n\u003c/svg\u003e",
-   "svgComplete": "",
    "svgWhite": "\u003csvg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M12.3009 4.00003L18.9909 7.90329L19 11.4442L14.9733 9.06809V10.8563L16.9806 12.0276L16.9918 15.1065L14.9733 13.9136V18.4151L12.3009 20V4.00003ZM11.6991 4V20L9.02669 18.4151V9.06817L5 11.4442L5.00913 7.90326L11.6991 4Z\" fill=\"white\"/\u003e\n\u003c/svg\u003e\n"
   },
-  "component": {
-   "kind": "HealthcareFHIRStore",
-   "version": "healthcare.cnrm.cloud.google.com/v1alpha1",
-   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"complexDataTypeReferenceParsing\": {\n     \"description\": \"Enable parsing of references within complex FHIR data types such as Extensions. If this value is set to ENABLED, then features like referential integrity and Bundle reference rewriting apply to all references. If this flag has not been specified the behavior of the FHIR store will not change, references in complex data types will not be parsed. New stores will have this value set to ENABLED by default after a notification period. Warning: turning on this flag causes processing existing resources to fail if they contain references to non-existent resources. Possible values: [\\\"COMPLEX_DATA_TYPE_REFERENCE_PARSING_UNSPECIFIED\\\", \\\"DISABLED\\\", \\\"ENABLED\\\"].\",\n     \"type\": \"string\"\n    },\n    \"dataset\": {\n     \"description\": \"Immutable. Identifies the dataset addressed by this request. Must be in the format\\n'projects/{project}/locations/{location}/datasets/{dataset}'.\",\n     \"type\": \"string\"\n    },\n    \"defaultSearchHandlingStrict\": {\n     \"description\": \"If true, overrides the default search behavior for this FHIR store to handling=strict which returns an error for unrecognized search parameters.\\nIf false, uses the FHIR specification default handling=lenient which ignores unrecognized search parameters.\\nThe handling can always be changed from the default on an individual API call by setting the HTTP header Prefer: handling=strict or Prefer: handling=lenient.\",\n     \"type\": \"boolean\"\n    },\n    \"disableReferentialIntegrity\": {\n     \"description\": \"Immutable. Whether to disable referential integrity in this FHIR store. This field is immutable after FHIR store\\ncreation. The default value is false, meaning that the API will enforce referential integrity and fail the\\nrequests that will result in inconsistent state in the FHIR store. When this field is set to true, the API\\nwill skip referential integrity check. Consequently, operations that rely on references, such as\\nPatient.get$everything, will not return all the results if broken references exist.\\n\\n** Changing this property may recreate the FHIR store (removing all data) **.\",\n     \"type\": \"boolean\"\n    },\n    \"disableResourceVersioning\": {\n     \"description\": \"Immutable. Whether to disable resource versioning for this FHIR store. This field can not be changed after the creation\\nof FHIR store. If set to false, which is the default behavior, all write operations will cause historical\\nversions to be recorded automatically. The historical versions can be fetched through the history APIs, but\\ncannot be updated. If set to true, no historical versions will be kept. The server will send back errors for\\nattempts to read the historical versions.\\n\\n** Changing this property may recreate the FHIR store (removing all data) **.\",\n     \"type\": \"boolean\"\n    },\n    \"enableHistoryImport\": {\n     \"description\": \"Immutable. Whether to allow the bulk import API to accept history bundles and directly insert historical resource\\nversions into the FHIR store. Importing resource histories creates resource interactions that appear to have\\noccurred in the past, which clients may not want to allow. If set to false, history bundles within an import\\nwill fail with an error.\\n\\n** Changing this property may recreate the FHIR store (removing all data) **\\n\\n** This property can be changed manually in the Google Cloud Healthcare admin console without recreating the FHIR store **.\",\n     \"type\": \"boolean\"\n    },\n    \"enableUpdateCreate\": {\n     \"description\": \"Whether this FHIR store has the updateCreate capability. This determines if the client can use an Update\\noperation to create a new resource with a client-specified ID. If false, all IDs are server-assigned through\\nthe Create operation and attempts to Update a non-existent resource will return errors. Please treat the audit\\nlogs with appropriate levels of care if client-specified resource IDs contain sensitive data such as patient\\nidentifiers, those IDs will be part of the FHIR resource path recorded in Cloud audit logs and Cloud Pub/Sub\\nnotifications.\",\n     \"type\": \"boolean\"\n    },\n    \"notificationConfig\": {\n     \"description\": \"A nested object resource.\",\n     \"properties\": {\n      \"pubsubTopic\": {\n       \"description\": \"The Cloud Pub/Sub topic that notifications of changes are published on. Supplied by the client.\\nPubsubMessage.Data will contain the resource name. PubsubMessage.MessageId is the ID of this message.\\nIt is guaranteed to be unique within the topic. PubsubMessage.PublishTime is the time at which the message\\nwas published. Notifications are only sent if the topic is non-empty. Topic names must be scoped to a\\nproject. service-PROJECT_NUMBER@gcp-sa-healthcare.iam.gserviceaccount.com must have publisher permissions on the given\\nCloud Pub/Sub topic. Not having adequate permissions will cause the calls that send notifications to fail.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"pubsubTopic\"\n     ],\n     \"type\": \"object\"\n    },\n    \"notificationConfigs\": {\n     \"description\": \"A list of notifcation configs that configure the notification for every resource mutation in this FHIR store.\",\n     \"items\": {\n      \"properties\": {\n       \"pubsubTopic\": {\n        \"description\": \"The Cloud Pub/Sub topic that notifications of changes are published on. Supplied by the client.\\nPubsubMessage.Data will contain the resource name. PubsubMessage.MessageId is the ID of this message.\\nIt is guaranteed to be unique within the topic. PubsubMessage.PublishTime is the time at which the message\\nwas published. Notifications are only sent if the topic is non-empty. Topic names must be scoped to a\\nproject. service-PROJECT_NUMBER@gcp-sa-healthcare.iam.gserviceaccount.com must have publisher permissions on the given\\nCloud Pub/Sub topic. Not having adequate permissions will cause the calls that send notifications to fail.\",\n        \"type\": \"string\"\n       },\n       \"sendFullResource\": {\n        \"description\": \"Whether to send full FHIR resource to this Pub/Sub topic for Create and Update operation.\\nNote that setting this to true does not guarantee that all resources will be sent in the format of\\nfull FHIR resource. When a resource change is too large or during heavy traffic, only the resource name will be\\nsent. Clients should always check the \\\"payloadType\\\" label from a Pub/Sub message to determine whether\\nit needs to fetch the full resource as a separate operation.\",\n        \"type\": \"boolean\"\n       },\n       \"sendPreviousResourceOnDelete\": {\n        \"description\": \"Whether to send full FHIR resource to this Pub/Sub topic for deleting FHIR resource. Note that setting this to\\ntrue does not guarantee that all previous resources will be sent in the format of full FHIR resource. When a\\nresource change is too large or during heavy traffic, only the resource name will be sent. Clients should always\\ncheck the \\\"payloadType\\\" label from a Pub/Sub message to determine whether it needs to fetch the full previous\\nresource as a separate operation.\",\n        \"type\": \"boolean\"\n       }\n      },\n      \"required\": [\n       \"pubsubTopic\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    },\n    \"streamConfigs\": {\n     \"description\": \"A list of streaming configs that configure the destinations of streaming export for every resource mutation in\\nthis FHIR store. Each store is allowed to have up to 10 streaming configs. After a new config is added, the next\\nresource mutation is streamed to the new location in addition to the existing ones. When a location is removed\\nfrom the list, the server stops streaming to that location. Before adding a new config, you must add the required\\nbigquery.dataEditor role to your project's Cloud Healthcare Service Agent service account. Some lag (typically on\\nthe order of dozens of seconds) is expected before the results show up in the streaming destination.\",\n     \"items\": {\n      \"properties\": {\n       \"bigqueryDestination\": {\n        \"description\": \"The destination BigQuery structure that contains both the dataset location and corresponding schema config.\\nThe output is organized in one table per resource type. The server reuses the existing tables (if any) that\\nare named after the resource types, e.g. \\\"Patient\\\", \\\"Observation\\\". When there is no existing table for a given\\nresource type, the server attempts to create one.\\nSee the [streaming config reference](https://cloud.google.com/healthcare/docs/reference/rest/v1beta1/projects.locations.datasets.fhirStores#streamconfig) for more details.\",\n        \"properties\": {\n         \"datasetUri\": {\n          \"description\": \"BigQuery URI to a dataset, up to 2000 characters long, in the format bq://projectId.bqDatasetId.\",\n          \"type\": \"string\"\n         },\n         \"schemaConfig\": {\n          \"description\": \"The configuration for the exported BigQuery schema.\",\n          \"properties\": {\n           \"lastUpdatedPartitionConfig\": {\n            \"description\": \"The configuration for exported BigQuery tables to be partitioned by FHIR resource's last updated time column.\",\n            \"properties\": {\n             \"expirationMs\": {\n              \"description\": \"Number of milliseconds for which to keep the storage for a partition.\",\n              \"type\": \"string\"\n             },\n             \"type\": {\n              \"description\": \"Type of partitioning. Possible values: [\\\"PARTITION_TYPE_UNSPECIFIED\\\", \\\"HOUR\\\", \\\"DAY\\\", \\\"MONTH\\\", \\\"YEAR\\\"].\",\n              \"type\": \"string\"\n             }\n            },\n            \"required\": [\n             \"type\"\n            ],\n            \"type\": \"object\"\n           },\n           \"recursiveStructureDepth\": {\n            \"description\": \"The depth for all recursive structures in the output analytics schema. For example, concept in the CodeSystem\\nresource is a recursive structure; when the depth is 2, the CodeSystem table will have a column called\\nconcept.concept but not concept.concept.concept. If not specified or set to 0, the server will use the default\\nvalue 2. The maximum depth allowed is 5.\",\n            \"type\": \"integer\"\n           },\n           \"schemaType\": {\n            \"description\": \"Specifies the output schema type.\\n * ANALYTICS: Analytics schema defined by the FHIR community.\\n  See https://github.com/FHIR/sql-on-fhir/blob/master/sql-on-fhir.md.\\n * ANALYTICS_V2: Analytics V2, similar to schema defined by the FHIR community, with added support for extensions with one or more occurrences and contained resources in stringified JSON.\\n * LOSSLESS: A data-driven schema generated from the fields present in the FHIR data being exported, with no additional simplification. Default value: \\\"ANALYTICS\\\" Possible values: [\\\"ANALYTICS\\\", \\\"ANALYTICS_V2\\\", \\\"LOSSLESS\\\"].\",\n            \"type\": \"string\"\n           }\n          },\n          \"required\": [\n           \"recursiveStructureDepth\"\n          ],\n          \"type\": \"object\"\n         }\n        },\n        \"required\": [\n         \"datasetUri\",\n         \"schemaConfig\"\n        ],\n        \"type\": \"object\"\n       },\n       \"resourceTypes\": {\n        \"description\": \"Supply a FHIR resource type (such as \\\"Patient\\\" or \\\"Observation\\\"). See\\nhttps://www.hl7.org/fhir/valueset-resource-types.html for a list of all FHIR resource types. The server treats\\nan empty list as an intent to stream all the supported resource types in this FHIR store.\",\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       }\n      },\n      \"required\": [\n       \"bigqueryDestination\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"version\": {\n     \"description\": \"Immutable. The FHIR specification version. Default value: \\\"STU3\\\" Possible values: [\\\"DSTU2\\\", \\\"STU3\\\", \\\"R4\\\"].\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"dataset\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Healthcare FHIR Store\",\n \"type\": \"object\"\n}"
-  }
+  "version": "v1.0.0"
  }

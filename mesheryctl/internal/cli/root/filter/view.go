@@ -45,6 +45,9 @@ mesheryctl filter view "[filter-name | ID]"
 
 // View all filter files
 mesheryctl filter view --all
+
+//View multi-word named filter files. Multi-word filter names should be enclosed in quotes
+mesheryctl filter view "filter name"
         `,
 	Args: cobra.ArbitraryArgs,
 	RunE: func(cmd *cobra.Command, args []string) error {

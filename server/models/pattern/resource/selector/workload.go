@@ -4,30 +4,34 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
+	"github.com/meshery/schemas/models/v1beta1/component"
+
 	regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
 )
 
-func (s *Selector) Workload(name string, version string, model string, apiVersion string) (v1beta1.ComponentDefinition, error) {
-	var comp *v1beta1.ComponentDefinition
+func (s *Selector) GetDefinition(name string, version string, modelName string, apiVersion string) (component.ComponentDefinition, error) {
+	var comp *component.ComponentDefinition
 	name = strings.Split(name, ".")[0]
-	fmt.Println(name, model, version)
-	if model == "" && name == "Application" { //If model is not passed, default to core
-		model = "core"
+	fmt.Println(name, modelName, version, apiVersion)
+	if modelName == "" {
+		return component.ComponentDefinition{}, fmt.Errorf("model name is required")
 	}
-	if apiVersion == "core.oam.dev/v1alpha1" { //For backwards compatibility with older designs which were created using OAM
-		apiVersion = ""
+
+	if apiVersion == "" {
+		return component.ComponentDefinition{}, fmt.Errorf("apiVersion is required")
 	}
+
 	entities, _, _, _ := s.registry.GetEntities(&regv1beta1.ComponentFilter{
 		Name:       name,
-		ModelName:  model,
+		ModelName:  modelName,
 		APIVersion: apiVersion,
 	})
+
 	found := false
 	for _, en := range entities {
 		if en != nil {
 			var ok bool
-			comp, ok = en.(*v1beta1.ComponentDefinition)
+			comp, ok = en.(*component.ComponentDefinition)
 			if ok {
 				found = true
 			}
@@ -37,18 +41,8 @@ func (s *Selector) Workload(name string, version string, model string, apiVersio
 		}
 	}
 	if !found || comp == nil {
-		component := v1beta1.ComponentDefinition{}
-		return component, fmt.Errorf(fmt.Sprintf("could not find component with name: %s, model: %s, apiVersion: %s", name, model, apiVersion))
+		component := component.ComponentDefinition{}
+		return component, fmt.Errorf("could not find component with name: %s, model: %s, apiVersion: %s", name, modelName, apiVersion)
 	}
 	return *comp, nil
-}
-
-func getResourceType(metadata map[string]string) string {
-	typ, ok := metadata["@type"]
-	if !ok {
-		// Legacy resource => For now mark it as core
-		return CoreResource
-	}
-
-	return typ
 }

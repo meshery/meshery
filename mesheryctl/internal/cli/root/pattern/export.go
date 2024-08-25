@@ -27,6 +27,7 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshkit/encoding"
 	meshkitutils "github.com/layer5io/meshkit/utils"
 	"github.com/manifoldco/promptui"
 	"github.com/spf13/cobra"
@@ -65,23 +66,6 @@ type allowed are oci, original, and current. The default design type is current.
 	# Export a design with a specific type and save it to a directory
 	mesheryctl pattern export [pattern-name | ID] --type [design-type] --output ./exports
 	`,
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			utils.Log.Error(err)
-			return nil
-		}
-		if err := utils.IsServerRunning(mctlCfg.GetBaseMesheryURL()); err != nil {
-			utils.Log.Error(err)
-			return nil
-		}
-		ctx, err := mctlCfg.GetCurrentContext()
-		if err != nil {
-			utils.Log.Error(err)
-			return nil
-		}
-		return ctx.ValidateVersion()
-	},
 	Args: cobra.MinimumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
@@ -143,7 +127,7 @@ func fetchPatternIDByName(baseUrl, patternName string) (string, error) {
 		TotalCount int                     `json:"total_count"`
 		Patterns   []models.MesheryPattern `json:"patterns"`
 	}
-	if err := meshkitutils.Unmarshal(string(buf), &response); err != nil {
+	if err := encoding.Unmarshal(buf, &response); err != nil {
 		return "", err
 	}
 
@@ -215,7 +199,7 @@ func fetchPatternData(dataURL string) (*models.MesheryPattern, error) {
 	}
 
 	var pattern models.MesheryPattern
-	if err = meshkitutils.Unmarshal(buf.String(), &pattern); err != nil {
+	if err = encoding.Unmarshal((buf.Bytes()), &pattern); err != nil {
 		return nil, err
 	}
 
@@ -278,7 +262,7 @@ func getOwnerName(ownerID string, baseURL string) (string, error) {
 		return "", ErrReadFromBody(err)
 	}
 
-	if err := meshkitutils.Unmarshal(string(body), &userProfile); err != nil {
+	if err := encoding.Unmarshal(body, &userProfile); err != nil {
 		return "", err
 	}
 

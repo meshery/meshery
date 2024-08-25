@@ -1,6 +1,7 @@
 name: Meshery UI and Server
 on:
-  pull_request:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
     branches:
       - "master"
     paths-ignore:
@@ -14,6 +15,8 @@ on:
         description: "Log level"
         required: true
         default: "warning"
+
+permissions: read-all
 
 jobs:
   build-backend:
@@ -90,17 +93,20 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: meshery-ui
+          retention-days: 30
           path: /home/runner/work/meshery/meshery/ui/out
       - name: Upload provider-ui artifacts
         uses: actions/upload-artifact@v4
         with:
           name: provider-ui
+          retention-days: 30
           path: /home/runner/work/meshery/meshery/provider-ui/out
   tests-ui-e2e:
     needs: [build-backend, ui-build]
     name: UI end-to-end tests
     if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-22.04
+    timeout-minutes: 45
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -173,15 +179,34 @@ jobs:
           ADAPTER_URLS: "localhost:10000 localhost:10001 localhost:10002 localhost:10003 localhost:10004 localhost:10009 localhost:10007"
         run: |
           make server &
-          sleep 60
+          sleep 90
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+        working-directory: ui
       - name: Run Playwright End-to-End Tests
         env:
-          REMOTE_PROVIDER_USER_EMAIL: ${{ secrets.LAYER5_CLOUD_TESTING_BOT_EMAIL }}
-          REMOTE_PROVIDER_USER_PASSWORD: ${{ secrets.LAYER5_CLOUD_TESTING_BOT_PASSWORD }}
+          MESHERY_SERVER_URL: "http://localhost:9081"
+          REMOTE_PROVIDER_URL: "https://staging-meshery.layer5.io"
+          REMOTE_PROVIDER_USER_EMAIL: ${{ secrets.REMOTE_PROVIDER_USER_EMAIL }}
+          REMOTE_PROVIDER_USER_PASSWORD: ${{ secrets.REMOTE_PROVIDER_USER_PASS }}
           PROVIDER_TOKEN: ${{ secrets.PROVIDER_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_ACCESS_TOKEN  }}
+        run: npx playwright test --project=chromium --project=firefox --reporter="./tests/e2e/custom-playwright-reporter.js"
+        working-directory: ui
+      - name: Save PR number
+        if: always()
         run: |
-          make test-setup-ui
-          make test-ui
+            mkdir -p ./pr
+            echo ${{ github.event.number }} > ./pr/number
+      - name: Upload Test Report
+        if: always()
+        uses: actions/upload-artifact@834a144ee995460fba8ed112a2fc961b36a5ec5a # v4.3.6
+        with:
+            name: e2e-test-reporter
+            path: |
+                ui/test-report.md
+                pr/number
+            retention-days: 14
   docker-build-test:
     name: Docker build
     if: github.repository == 'meshery/meshery'
@@ -267,4 +292,3 @@ jobs:
           cd docs
           bundle install
           bundle exec rake graphql:compile_docs
-

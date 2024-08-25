@@ -27,14 +27,15 @@ export const findNestedObject = (object, condition) => {
     if (condition(currentObject)) {
       return currentObject;
     }
-    if (_.isObject(currentObject)) {
-      // Push each property of the currentObject onto the stack for further exploration
-      stack.push(..._.values(currentObject));
+    if (_.isObject(currentObject) || _.isArray(currentObject)) {
+      if (_.isObject(currentObject) || _.isArray(currentObject)) {
+        const values = _.values(currentObject).filter((value) => value !== currentObject.models);
+        stack.push(...values);
+      }
     }
   }
   return null;
 };
-
 /**
  * Accept object and removes empty properties from object.
  **/

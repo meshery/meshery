@@ -31,6 +31,10 @@ jobs:
     - name: Go mod sync utility
       run: cd meshery-extensions;make graphql-sync;
 
+    - name: Pull changes from remote
+      working-directory: ./meshery-extensions
+      run: git pull origin master
+
     - name: Commit
       uses: stefanzweifel/git-auto-commit-action@v5
       with:
@@ -43,7 +47,7 @@ jobs:
         branch: master
   notify-via-email:
     runs-on: ubuntu-latest
-    needs: 
+    needs:
       - sync
     if: ${{ always() && contains(needs.*.result, 'failure') }}
     steps:
@@ -58,7 +62,7 @@ jobs:
           to: support@layer5.io
           from: Meshery extensions go.mod sync workflow
           body: |
-            The workflow (https://github.com/meshery/meshery/actions/workflows/go-mod-sync.yml) encountered error(s). This mainly occurs when the go.mod file in the meshery-extensions repository is not in sync with the go.mod file in the meshery/meshery repository. The workflow attempts to update the go.mod file in the meshery-extensions repository to ensure it matches the go.mod file in the meshery/meshery repository. 
+            The workflow (https://github.com/meshery/meshery/actions/workflows/go-mod-sync.yml) encountered error(s). This mainly occurs when the go.mod file in the meshery-extensions repository is not in sync with the go.mod file in the meshery/meshery repository. The workflow attempts to update the go.mod file in the meshery-extensions repository to ensure it matches the go.mod file in the meshery/meshery repository.
 
             The workflow failed. Here are the details:
 
@@ -71,4 +75,3 @@ jobs:
             ${{ toJson(job.steps) }}
 
             Refer to the GitHub Actions log for more details: https://github.com/meshery/meshery/actions/runs/${{ github.run_id }}
-

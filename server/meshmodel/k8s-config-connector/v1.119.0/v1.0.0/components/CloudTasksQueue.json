@@ -1,29 +1,151 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "displayName": "Cloud Tasks Queue",
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "CloudTasksQueue",
+   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"appEngineRoutingOverride\": {\n     \"description\": \"Overrides for task-level appEngineRouting. These settings apply only\\nto App Engine tasks in this queue.\",\n     \"properties\": {\n      \"host\": {\n       \"description\": \"The host that the task is sent to.\",\n       \"type\": \"string\"\n      },\n      \"instance\": {\n       \"description\": \"App instance.\\n\\nBy default, the task is sent to an instance which is available when the task is attempted.\",\n       \"type\": \"string\"\n      },\n      \"service\": {\n       \"description\": \"App service.\\n\\nBy default, the task is sent to the service which is the default service when the task is attempted.\",\n       \"type\": \"string\"\n      },\n      \"version\": {\n       \"description\": \"App version.\\n\\nBy default, the task is sent to the version which is the default version when the task is attempted.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"location\": {\n     \"description\": \"Immutable. The location of the queue.\",\n     \"type\": \"string\"\n    },\n    \"projectRef\": {\n     \"description\": \"The project that this resource belongs to.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `name` field of a `Project` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"rateLimits\": {\n     \"description\": \"Rate limits for task dispatches.\\n\\nThe queue's actual dispatch rate is the result of:\\n\\n* Number of tasks in the queue\\n* User-specified throttling: rateLimits, retryConfig, and the queue's state.\\n* System throttling due to 429 (Too Many Requests) or 503 (Service\\n  Unavailable) responses from the worker, high error rates, or to\\n  smooth sudden large traffic spikes.\",\n     \"properties\": {\n      \"maxBurstSize\": {\n       \"description\": \"The max burst size.\\n\\nMax burst size limits how fast tasks in queue are processed when many tasks are\\nin the queue and the rate is high. This field allows the queue to have a high\\nrate so processing starts shortly after a task is enqueued, but still limits\\nresource usage when many tasks are enqueued in a short period of time.\",\n       \"type\": \"integer\"\n      },\n      \"maxConcurrentDispatches\": {\n       \"description\": \"The maximum number of concurrent tasks that Cloud Tasks allows to\\nbe dispatched for this queue. After this threshold has been\\nreached, Cloud Tasks stops dispatching tasks until the number of\\nconcurrent requests decreases.\",\n       \"type\": \"integer\"\n      },\n      \"maxDispatchesPerSecond\": {\n       \"description\": \"The maximum rate at which tasks are dispatched from this queue.\\n\\nIf unspecified when the queue is created, Cloud Tasks will pick the default.\",\n       \"type\": \"number\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    },\n    \"retryConfig\": {\n     \"description\": \"Settings that determine the retry behavior.\",\n     \"properties\": {\n      \"maxAttempts\": {\n       \"description\": \"Number of attempts per task.\\n\\nCloud Tasks will attempt the task maxAttempts times (that is, if\\nthe first attempt fails, then there will be maxAttempts - 1\\nretries). Must be \\u003e= -1.\\n\\nIf unspecified when the queue is created, Cloud Tasks will pick\\nthe default.\\n\\n-1 indicates unlimited attempts.\",\n       \"type\": \"integer\"\n      },\n      \"maxBackoff\": {\n       \"description\": \"A task will be scheduled for retry between minBackoff and\\nmaxBackoff duration after it fails, if the queue's RetryConfig\\nspecifies that the task should be retried.\",\n       \"type\": \"string\"\n      },\n      \"maxDoublings\": {\n       \"description\": \"The time between retries will double maxDoublings times.\\n\\nA task's retry interval starts at minBackoff, then doubles maxDoublings times,\\nthen increases linearly, and finally retries retries at intervals of maxBackoff\\nup to maxAttempts times.\",\n       \"type\": \"integer\"\n      },\n      \"maxRetryDuration\": {\n       \"description\": \"If positive, maxRetryDuration specifies the time limit for\\nretrying a failed task, measured from when the task was first\\nattempted. Once maxRetryDuration time has passed and the task has\\nbeen attempted maxAttempts times, no further attempts will be\\nmade and the task will be deleted.\\n\\nIf zero, then the task age is unlimited.\",\n       \"type\": \"string\"\n      },\n      \"minBackoff\": {\n       \"description\": \"A task will be scheduled for retry between minBackoff and\\nmaxBackoff duration after it fails, if the queue's RetryConfig\\nspecifies that the task should be retried.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"stackdriverLoggingConfig\": {\n     \"description\": \"Configuration options for writing logs to Stackdriver Logging.\",\n     \"properties\": {\n      \"samplingRatio\": {\n       \"description\": \"Specifies the fraction of operations to write to Stackdriver Logging.\\nThis field may contain any value between 0.0 and 1.0, inclusive. 0.0 is the\\ndefault and means that no operations are logged.\",\n       \"type\": \"number\"\n      }\n     },\n     \"required\": [\n      \"samplingRatio\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"location\",\n    \"projectRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Cloud Tasks Queue\",\n \"type\": \"object\"\n}",
+   "version": "cloudtasks.cnrm.cloud.google.com/v1alpha1"
+  },
+  "configuration": null,
   "description": "",
+  "displayName": "Cloud Tasks Queue",
   "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "published": false
+  },
   "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "version": "v1.0.0",
-   "name": "k8s-config-connector",
-   "displayName": "Google Cloud Platform",
-   "description": "",
-   "status": "enabled",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "registrant": {
-    "hostname": "github"
-   },
    "category": {
-    "name": "Orchestration \u0026 Management",
-    "metadata": null
+    "name": "Orchestration \u0026 Management"
    },
-   "subCategory": "Google Cloud Platform",
+   "displayName": "Google Cloud Platform",
+   "id": "00000000-0000-0000-0000-000000000000",
    "metadata": {
-    "capabilities": "",
     "defaultData": "",
     "isAnnotation": false,
     "primaryColor": "#4285F4",
@@ -39,30 +161,35 @@
    "model": {
     "version": "v1.119.0"
    },
+   "name": "k8s-config-connector",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "github",
+    "name": "Github",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "enabled",
+   "subCategory": "Google Cloud Platform",
+   "version": "v1.0.0",
    "components": null,
    "relationships": null
   },
-  "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
    "primaryColor": "#4285F4",
-   "secondaryColor": "",
    "shape": "rectangle",
-   "shapePolygonPoints": "",
-   "status": "enabled",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
    "svgColor": "\u003csvg width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"\u003e\n    \u003cg stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e\n        \u003cpath d=\"M12.3008862,4.00003179 L18.9908678,7.90329279 L19,11.4442164 L14.973309,9.0680926 L14.973309,10.8562526 L16.9806355,12.0276231 L16.9918433,15.1064843 L14.973309,13.9136004 L14.973309,18.415105 L12.3008862,20 L12.3008862,4.00003179 Z M11.6991138,4 L11.6991138,19.9999682 L9.02669102,18.4150732 L9.02669102,9.06816678 L5,11.4441846 L5.00913223,7.903261 L11.6991138,4 Z\" fill=\"#4285F4\"\u003e\u003c/path\u003e\n    \u003c/g\u003e\n\u003c/svg\u003e",
-   "svgComplete": "",
    "svgWhite": "\u003csvg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M12.3009 4.00003L18.9909 7.90329L19 11.4442L14.9733 9.06809V10.8563L16.9806 12.0276L16.9918 15.1065L14.9733 13.9136V18.4151L12.3009 20V4.00003ZM11.6991 4V20L9.02669 18.4151V9.06817L5 11.4442L5.00913 7.90326L11.6991 4Z\" fill=\"white\"/\u003e\n\u003c/svg\u003e\n"
   },
-  "component": {
-   "kind": "CloudTasksQueue",
-   "version": "cloudtasks.cnrm.cloud.google.com/v1alpha1",
-   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"appEngineRoutingOverride\": {\n     \"description\": \"Overrides for task-level appEngineRouting. These settings apply only\\nto App Engine tasks in this queue.\",\n     \"properties\": {\n      \"host\": {\n       \"description\": \"The host that the task is sent to.\",\n       \"type\": \"string\"\n      },\n      \"instance\": {\n       \"description\": \"App instance.\\n\\nBy default, the task is sent to an instance which is available when the task is attempted.\",\n       \"type\": \"string\"\n      },\n      \"service\": {\n       \"description\": \"App service.\\n\\nBy default, the task is sent to the service which is the default service when the task is attempted.\",\n       \"type\": \"string\"\n      },\n      \"version\": {\n       \"description\": \"App version.\\n\\nBy default, the task is sent to the version which is the default version when the task is attempted.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"location\": {\n     \"description\": \"Immutable. The location of the queue.\",\n     \"type\": \"string\"\n    },\n    \"projectRef\": {\n     \"description\": \"The project that this resource belongs to.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `name` field of a `Project` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"rateLimits\": {\n     \"description\": \"Rate limits for task dispatches.\\n\\nThe queue's actual dispatch rate is the result of:\\n\\n* Number of tasks in the queue\\n* User-specified throttling: rateLimits, retryConfig, and the queue's state.\\n* System throttling due to 429 (Too Many Requests) or 503 (Service\\n  Unavailable) responses from the worker, high error rates, or to\\n  smooth sudden large traffic spikes.\",\n     \"properties\": {\n      \"maxBurstSize\": {\n       \"description\": \"The max burst size.\\n\\nMax burst size limits how fast tasks in queue are processed when many tasks are\\nin the queue and the rate is high. This field allows the queue to have a high\\nrate so processing starts shortly after a task is enqueued, but still limits\\nresource usage when many tasks are enqueued in a short period of time.\",\n       \"type\": \"integer\"\n      },\n      \"maxConcurrentDispatches\": {\n       \"description\": \"The maximum number of concurrent tasks that Cloud Tasks allows to\\nbe dispatched for this queue. After this threshold has been\\nreached, Cloud Tasks stops dispatching tasks until the number of\\nconcurrent requests decreases.\",\n       \"type\": \"integer\"\n      },\n      \"maxDispatchesPerSecond\": {\n       \"description\": \"The maximum rate at which tasks are dispatched from this queue.\\n\\nIf unspecified when the queue is created, Cloud Tasks will pick the default.\",\n       \"type\": \"number\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    },\n    \"retryConfig\": {\n     \"description\": \"Settings that determine the retry behavior.\",\n     \"properties\": {\n      \"maxAttempts\": {\n       \"description\": \"Number of attempts per task.\\n\\nCloud Tasks will attempt the task maxAttempts times (that is, if\\nthe first attempt fails, then there will be maxAttempts - 1\\nretries). Must be \\u003e= -1.\\n\\nIf unspecified when the queue is created, Cloud Tasks will pick\\nthe default.\\n\\n-1 indicates unlimited attempts.\",\n       \"type\": \"integer\"\n      },\n      \"maxBackoff\": {\n       \"description\": \"A task will be scheduled for retry between minBackoff and\\nmaxBackoff duration after it fails, if the queue's RetryConfig\\nspecifies that the task should be retried.\",\n       \"type\": \"string\"\n      },\n      \"maxDoublings\": {\n       \"description\": \"The time between retries will double maxDoublings times.\\n\\nA task's retry interval starts at minBackoff, then doubles maxDoublings times,\\nthen increases linearly, and finally retries retries at intervals of maxBackoff\\nup to maxAttempts times.\",\n       \"type\": \"integer\"\n      },\n      \"maxRetryDuration\": {\n       \"description\": \"If positive, maxRetryDuration specifies the time limit for\\nretrying a failed task, measured from when the task was first\\nattempted. Once maxRetryDuration time has passed and the task has\\nbeen attempted maxAttempts times, no further attempts will be\\nmade and the task will be deleted.\\n\\nIf zero, then the task age is unlimited.\",\n       \"type\": \"string\"\n      },\n      \"minBackoff\": {\n       \"description\": \"A task will be scheduled for retry between minBackoff and\\nmaxBackoff duration after it fails, if the queue's RetryConfig\\nspecifies that the task should be retried.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"stackdriverLoggingConfig\": {\n     \"description\": \"Configuration options for writing logs to Stackdriver Logging.\",\n     \"properties\": {\n      \"samplingRatio\": {\n       \"description\": \"Specifies the fraction of operations to write to Stackdriver Logging.\\nThis field may contain any value between 0.0 and 1.0, inclusive. 0.0 is the\\ndefault and means that no operations are logged.\",\n       \"type\": \"number\"\n      }\n     },\n     \"required\": [\n      \"samplingRatio\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"location\",\n    \"projectRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Cloud Tasks Queue\",\n \"type\": \"object\"\n}"
-  }
+  "version": "v1.0.0"
  }

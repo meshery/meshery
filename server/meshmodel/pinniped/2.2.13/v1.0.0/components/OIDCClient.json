@@ -1,0 +1,196 @@
+{
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "OIDCClient",
+   "schema": "{\n \"description\": \"OIDCClient describes the configuration of an OIDC client.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Spec of the OIDC client.\",\n   \"properties\": {\n    \"allowedGrantTypes\": {\n     \"description\": \"allowedGrantTypes is a list of the allowed grant_type param values that should be accepted during OIDC flows with this\\nclient.\\n\\n\\nMust only contain the following values:\\n- authorization_code: allows the client to perform the authorization code grant flow, i.e. allows the webapp to\\n  authenticate users. This grant must always be listed.\\n- refresh_token: allows the client to perform refresh grants for the user to extend the user's session.\\n  This grant must be listed if allowedScopes lists offline_access.\\n- urn:ietf:params:oauth:grant-type:token-exchange: allows the client to perform RFC8693 token exchange,\\n  which is a step in the process to be able to get a cluster credential for the user.\\n  This grant must be listed if allowedScopes lists pinniped:request-audience.\",\n     \"items\": {\n      \"enum\": [\n       \"authorization_code\",\n       \"refresh_token\",\n       \"urn:ietf:params:oauth:grant-type:token-exchange\"\n      ],\n      \"type\": \"string\"\n     },\n     \"minItems\": 1,\n     \"type\": \"array\",\n     \"x-kubernetes-list-type\": \"set\"\n    },\n    \"allowedRedirectURIs\": {\n     \"description\": \"allowedRedirectURIs is a list of the allowed redirect_uri param values that should be accepted during OIDC flows with this\\nclient. Any other uris will be rejected.\\nMust be a URI with the https scheme, unless the hostname is 127.0.0.1 or ::1 which may use the http scheme.\\nPort numbers are not required for 127.0.0.1 or ::1 and are ignored when checking for a matching redirect_uri.\",\n     \"items\": {\n      \"pattern\": \"^https://.+|^http://(127\\\\.0\\\\.0\\\\.1|\\\\[::1\\\\])(:\\\\d+)?/\",\n      \"type\": \"string\"\n     },\n     \"minItems\": 1,\n     \"type\": \"array\",\n     \"x-kubernetes-list-type\": \"set\"\n    },\n    \"allowedScopes\": {\n     \"description\": \"allowedScopes is a list of the allowed scopes param values that should be accepted during OIDC flows with this client.\\n\\n\\nMust only contain the following values:\\n- openid: The client is allowed to request ID tokens. ID tokens only include the required claims by default (iss, sub, aud, exp, iat).\\n  This scope must always be listed.\\n- offline_access: The client is allowed to request an initial refresh token during the authorization code grant flow.\\n  This scope must be listed if allowedGrantTypes lists refresh_token.\\n- pinniped:request-audience: The client is allowed to request a new audience value during a RFC8693 token exchange,\\n  which is a step in the process to be able to get a cluster credential for the user.\\n  openid, username and groups scopes must be listed when this scope is present.\\n  This scope must be listed if allowedGrantTypes lists urn:ietf:params:oauth:grant-type:token-exchange.\\n- username: The client is allowed to request that ID tokens contain the user's username.\\n  Without the username scope being requested and allowed, the ID token will not contain the user's username.\\n- groups: The client is allowed to request that ID tokens contain the user's group membership,\\n  if their group membership is discoverable by the Supervisor.\\n  Without the groups scope being requested and allowed, the ID token will not contain groups.\",\n     \"items\": {\n      \"enum\": [\n       \"openid\",\n       \"offline_access\",\n       \"username\",\n       \"groups\",\n       \"pinniped:request-audience\"\n      ],\n      \"type\": \"string\"\n     },\n     \"minItems\": 1,\n     \"type\": \"array\",\n     \"x-kubernetes-list-type\": \"set\"\n    },\n    \"tokenLifetimes\": {\n     \"description\": \"tokenLifetimes are the optional overrides of token lifetimes for an OIDCClient.\",\n     \"properties\": {\n      \"idTokenSeconds\": {\n       \"description\": \"idTokenSeconds is the lifetime of ID tokens issued to this client, in seconds. This will choose the lifetime of\\nID tokens returned by the authorization flow and the refresh grant. It will not influence the lifetime of the ID\\ntokens returned by RFC8693 token exchange. When null, a short-lived default value will be used.\\nThis value must be between 120 and 1,800 seconds (30 minutes), inclusive. It is recommended to make these tokens\\nshort-lived to force the client to perform the refresh grant often, because the refresh grant will check with the\\nexternal identity provider to decide if it is acceptable for the end user to continue their session, and will\\nupdate the end user's group memberships from the external identity provider. Giving these tokens a long life is\\nwill allow the end user to continue to use a token while avoiding these updates from the external identity\\nprovider. However, some web applications may have reasons specific to the design of that application to prefer\\nlonger lifetimes.\",\n       \"format\": \"int32\",\n       \"maximum\": 1800,\n       \"minimum\": 120,\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"allowedGrantTypes\",\n    \"allowedRedirectURIs\",\n    \"allowedScopes\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"OIDC Client\",\n \"type\": \"object\"\n}",
+   "version": "config.supervisor.pinniped.dev/v1alpha1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "OIDC Client",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "published": false
+  },
+  "model": {
+   "category": {
+    "name": "Security \u0026 Compliance"
+   },
+   "displayName": "Pinniped",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "defaultData": "",
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "model": {
+    "version": "2.2.13"
+   },
+   "name": "pinniped",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "subCategory": "Key Management",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "ignored",
+  "styles": {
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "svgColor": "",
+   "svgWhite": ""
+  },
+  "version": "v1.0.0"
+ }

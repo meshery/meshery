@@ -1,29 +1,151 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "displayName": "Network Services GRPC Route",
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "NetworkServicesGRPCRoute",
+   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"description\": {\n     \"description\": \"Optional. A free-text description of the resource. Max length 1024 characters.\",\n     \"type\": \"string\"\n    },\n    \"gateways\": {\n     \"items\": {\n      \"oneOf\": [\n       {\n        \"not\": {\n         \"required\": [\n          \"external\"\n         ]\n        },\n        \"required\": [\n         \"name\"\n        ]\n       },\n       {\n        \"not\": {\n         \"anyOf\": [\n          {\n           \"required\": [\n            \"name\"\n           ]\n          },\n          {\n           \"required\": [\n            \"namespace\"\n           ]\n          }\n         ]\n        },\n        \"required\": [\n         \"external\"\n        ]\n       }\n      ],\n      \"properties\": {\n       \"external\": {\n        \"description\": \"Allowed value: The `selfLink` field of a `NetworkServicesGateway` resource.\",\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n        \"type\": \"string\"\n       },\n       \"namespace\": {\n        \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"hostnames\": {\n     \"description\": \"Required. Service hostnames with an optional port for which this route describes traffic. Format: [:] Hostname is the fully qualified domain name of a network host. This matches the RFC 1123 definition of a hostname with 2 notable exceptions: - IPs are not allowed. - A hostname may be prefixed with a wildcard label (*.). The wildcard label must appear by itself as the first label. Hostname can be “precise” which is a domain name without the terminating dot of a network host (e.g. “foo.example.com”) or “wildcard”, which is a domain name prefixed with a single wildcard label (e.g. *.example.com). Note that as per RFC1035 and RFC1123, a label must consist of lower case alphanumeric characters or ‘-’, and must start and end with an alphanumeric character. No other punctuation is allowed. The routes associated with a Router must have unique hostnames. If you attempt to attach multiple routes with conflicting hostnames, the configuration will be rejected. For example, while it is acceptable for routes for the hostnames \\\"*.foo.bar.com\\\" and \\\"*.bar.com\\\" to be associated with the same route, it is not possible to associate two routes both with \\\"*.bar.com\\\" or both with \\\"bar.com\\\". In the case that multiple routes match the hostname, the most specific match will be selected. For example, \\\"foo.bar.baz.com\\\" will take precedence over \\\"*.bar.baz.com\\\" and \\\"*.bar.baz.com\\\" will take precedence over \\\"*.baz.com\\\". If a port is specified, then gRPC clients must use the channel URI with the port to match this rule (i.e. \\\"xds:///service:123\\\"), otherwise they must supply the URI without a port (i.e. \\\"xds:///service\\\").\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"location\": {\n     \"description\": \"Immutable. The location for the resource\",\n     \"type\": \"string\"\n    },\n    \"meshes\": {\n     \"items\": {\n      \"oneOf\": [\n       {\n        \"not\": {\n         \"required\": [\n          \"external\"\n         ]\n        },\n        \"required\": [\n         \"name\"\n        ]\n       },\n       {\n        \"not\": {\n         \"anyOf\": [\n          {\n           \"required\": [\n            \"name\"\n           ]\n          },\n          {\n           \"required\": [\n            \"namespace\"\n           ]\n          }\n         ]\n        },\n        \"required\": [\n         \"external\"\n        ]\n       }\n      ],\n      \"properties\": {\n       \"external\": {\n        \"description\": \"Allowed value: The `selfLink` field of a `NetworkServicesMesh` resource.\",\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n        \"type\": \"string\"\n       },\n       \"namespace\": {\n        \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"projectRef\": {\n     \"description\": \"Immutable. The Project that this resource belongs to.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"The project for the resource\\n\\nAllowed value: The Google Cloud resource name of a `Project` resource (format: `projects/{{name}}`).\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    },\n    \"rules\": {\n     \"description\": \"Required. A list of detailed rules defining how to route traffic. Within a single GrpcRoute, the GrpcRoute.RouteAction associated with the first matching GrpcRoute.RouteRule will be executed. At least one rule must be supplied.\",\n     \"items\": {\n      \"properties\": {\n       \"action\": {\n        \"description\": \"Required. A detailed rule defining how to route traffic. This field is required.\",\n        \"properties\": {\n         \"destinations\": {\n          \"description\": \"Optional. The destination services to which traffic should be forwarded. If multiple destinations are specified, traffic will be split between Backend Service(s) according to the weight field of these destinations.\",\n          \"items\": {\n           \"properties\": {\n            \"serviceRef\": {\n             \"oneOf\": [\n              {\n               \"not\": {\n                \"required\": [\n                 \"external\"\n                ]\n               },\n               \"required\": [\n                \"name\"\n               ]\n              },\n              {\n               \"not\": {\n                \"anyOf\": [\n                 {\n                  \"required\": [\n                   \"name\"\n                  ]\n                 },\n                 {\n                  \"required\": [\n                   \"namespace\"\n                  ]\n                 }\n                ]\n               },\n               \"required\": [\n                \"external\"\n               ]\n              }\n             ],\n             \"properties\": {\n              \"external\": {\n               \"description\": \"Required. The URL of a destination service to which to route traffic. Must refer to either a BackendService or ServiceDirectoryService.\\n\\nAllowed value: The Google Cloud resource name of a `ComputeBackendService` resource (format: `projects/{{project}}/global/backendServices/{{name}}`).\",\n               \"type\": \"string\"\n              },\n              \"name\": {\n               \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n               \"type\": \"string\"\n              },\n              \"namespace\": {\n               \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n               \"type\": \"string\"\n              }\n             },\n             \"type\": \"object\"\n            },\n            \"weight\": {\n             \"description\": \"Optional. Specifies the proportion of requests forwarded to the backend referenced by the serviceName field. This is computed as: weight/Sum(weights in this destination list). For non-zero values, there may be some epsilon from the exact proportion defined here depending on the precision an implementation supports. If only one serviceName is specified and it has a weight greater than 0, 100% of the traffic is forwarded to that backend. If weights are specified for any one service name, they need to be specified for all of them. If weights are unspecified for all services, then, traffic is distributed in equal proportions to all of them.\",\n             \"format\": \"int64\",\n             \"type\": \"integer\"\n            }\n           },\n           \"required\": [\n            \"serviceRef\"\n           ],\n           \"type\": \"object\"\n          },\n          \"type\": \"array\"\n         },\n         \"faultInjectionPolicy\": {\n          \"description\": \"Optional. The specification for fault injection introduced into traffic to test the resiliency of clients to destination service failure. As part of fault injection, when clients send requests to a destination, delays can be introduced on a percentage of requests before sending those requests to the destination service. Similarly requests from clients can be aborted by for a percentage of requests. timeout and retry_policy will be ignored by clients that are configured with a fault_injection_policy\",\n          \"properties\": {\n           \"abort\": {\n            \"description\": \"The specification for aborting to client requests.\",\n            \"properties\": {\n             \"httpStatus\": {\n              \"description\": \"The HTTP status code used to abort the request. The value must be between 200 and 599 inclusive.\",\n              \"format\": \"int64\",\n              \"type\": \"integer\"\n             },\n             \"percentage\": {\n              \"description\": \"The percentage of traffic which will be aborted. The value must be between [0, 100]\",\n              \"format\": \"int64\",\n              \"type\": \"integer\"\n             }\n            },\n            \"type\": \"object\"\n           },\n           \"delay\": {\n            \"description\": \"The specification for injecting delay to client requests.\",\n            \"properties\": {\n             \"fixedDelay\": {\n              \"description\": \"Specify a fixed delay before forwarding the request.\",\n              \"type\": \"string\"\n             },\n             \"percentage\": {\n              \"description\": \"The percentage of traffic on which delay will be injected. The value must be between [0, 100]\",\n              \"format\": \"int64\",\n              \"type\": \"integer\"\n             }\n            },\n            \"type\": \"object\"\n           }\n          },\n          \"type\": \"object\"\n         },\n         \"retryPolicy\": {\n          \"description\": \"Optional. Specifies the retry policy associated with this route.\",\n          \"properties\": {\n           \"numRetries\": {\n            \"description\": \"Specifies the allowed number of retries. This number must be \\u003e 0. If not specpfied, default to 1.\",\n            \"format\": \"int64\",\n            \"type\": \"integer\"\n           },\n           \"retryConditions\": {\n            \"description\": \"- connect-failure: Router will retry on failures connecting to Backend Services, for example due to connection timeouts. - refused-stream: Router will retry if the backend service resets the stream with a REFUSED_STREAM error code. This reset type indicates that it is safe to retry. - cancelled: Router will retry if the gRPC status code in the response header is set to cancelled - deadline-exceeded: Router will retry if the gRPC status code in the response header is set to deadline-exceeded - resource-exhausted: Router will retry if the gRPC status code in the response header is set to resource-exhausted - unavailable: Router will retry if the gRPC status code in the response header is set to unavailable\",\n            \"items\": {\n             \"type\": \"string\"\n            },\n            \"type\": \"array\"\n           }\n          },\n          \"type\": \"object\"\n         },\n         \"timeout\": {\n          \"description\": \"Optional. Specifies the timeout for selected route. Timeout is computed from the time the request has been fully processed (i.e. end of stream) up until the response has been completely processed. Timeout includes all retries.\",\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"matches\": {\n        \"description\": \"Optional. Matches define conditions used for matching the rule against incoming gRPC requests. Each match is independent, i.e. this rule will be matched if ANY one of the matches is satisfied. If no matches field is specified, this rule will unconditionally match traffic.\",\n        \"items\": {\n         \"properties\": {\n          \"headers\": {\n           \"description\": \"Optional. Specifies a collection of headers to match.\",\n           \"items\": {\n            \"properties\": {\n             \"key\": {\n              \"description\": \"Required. The key of the header.\",\n              \"type\": \"string\"\n             },\n             \"type\": {\n              \"description\": \"Optional. Specifies how to match against the value of the header. If not specified, a default value of EXACT is used. Possible values: MATCH_TYPE_UNSPECIFIED, MATCH_ANY, MATCH_ALL\",\n              \"type\": \"string\"\n             },\n             \"value\": {\n              \"description\": \"Required. The value of the header.\",\n              \"type\": \"string\"\n             }\n            },\n            \"required\": [\n             \"key\",\n             \"value\"\n            ],\n            \"type\": \"object\"\n           },\n           \"type\": \"array\"\n          },\n          \"method\": {\n           \"description\": \"Optional. A gRPC method to match against. If this field is empty or omitted, will match all methods.\",\n           \"properties\": {\n            \"caseSensitive\": {\n             \"description\": \"Optional. Specifies that matches are case sensitive. The default value is true. case_sensitive must not be used with a type of REGULAR_EXPRESSION.\",\n             \"type\": \"boolean\"\n            },\n            \"grpcMethod\": {\n             \"description\": \"Required. Name of the method to match against. If unspecified, will match all methods.\",\n             \"type\": \"string\"\n            },\n            \"grpcService\": {\n             \"description\": \"Required. Name of the service to match against. If unspecified, will match all services.\",\n             \"type\": \"string\"\n            },\n            \"type\": {\n             \"description\": \"Optional. Specifies how to match against the name. If not specified, a default value of \\\"EXACT\\\" is used. Possible values: TYPE_UNSPECIFIED, EXACT, REGULAR_EXPRESSION\",\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"grpcMethod\",\n            \"grpcService\"\n           ],\n           \"type\": \"object\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       }\n      },\n      \"required\": [\n       \"action\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"hostnames\",\n    \"location\",\n    \"projectRef\",\n    \"rules\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Network Services GRPC Route\",\n \"type\": \"object\"\n}",
+   "version": "networkservices.cnrm.cloud.google.com/v1beta1"
+  },
+  "configuration": null,
   "description": "",
+  "displayName": "Network Services GRPC Route",
   "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "published": false
+  },
   "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "version": "v1.0.0",
-   "name": "k8s-config-connector",
-   "displayName": "Google Cloud Platform",
-   "description": "",
-   "status": "enabled",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "registrant": {
-    "hostname": "github"
-   },
    "category": {
-    "name": "Orchestration \u0026 Management",
-    "metadata": null
+    "name": "Orchestration \u0026 Management"
    },
-   "subCategory": "Google Cloud Platform",
+   "displayName": "Google Cloud Platform",
+   "id": "00000000-0000-0000-0000-000000000000",
    "metadata": {
-    "capabilities": "",
     "defaultData": "",
     "isAnnotation": false,
     "primaryColor": "#4285F4",
@@ -39,30 +161,35 @@
    "model": {
     "version": "v1.118.1"
    },
+   "name": "k8s-config-connector",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "github",
+    "name": "Github",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "enabled",
+   "subCategory": "Google Cloud Platform",
+   "version": "v1.0.0",
    "components": null,
    "relationships": null
   },
-  "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
    "primaryColor": "#4285F4",
-   "secondaryColor": "",
    "shape": "rectangle",
-   "shapePolygonPoints": "",
-   "status": "enabled",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
    "svgColor": "\u003csvg width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"\u003e\n    \u003cg stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e\n        \u003cpath d=\"M12.3008862,4.00003179 L18.9908678,7.90329279 L19,11.4442164 L14.973309,9.0680926 L14.973309,10.8562526 L16.9806355,12.0276231 L16.9918433,15.1064843 L14.973309,13.9136004 L14.973309,18.415105 L12.3008862,20 L12.3008862,4.00003179 Z M11.6991138,4 L11.6991138,19.9999682 L9.02669102,18.4150732 L9.02669102,9.06816678 L5,11.4441846 L5.00913223,7.903261 L11.6991138,4 Z\" fill=\"#4285F4\"\u003e\u003c/path\u003e\n    \u003c/g\u003e\n\u003c/svg\u003e",
-   "svgComplete": "",
    "svgWhite": "\u003csvg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M12.3009 4.00003L18.9909 7.90329L19 11.4442L14.9733 9.06809V10.8563L16.9806 12.0276L16.9918 15.1065L14.9733 13.9136V18.4151L12.3009 20V4.00003ZM11.6991 4V20L9.02669 18.4151V9.06817L5 11.4442L5.00913 7.90326L11.6991 4Z\" fill=\"white\"/\u003e\n\u003c/svg\u003e\n"
   },
-  "component": {
-   "kind": "NetworkServicesGRPCRoute",
-   "version": "networkservices.cnrm.cloud.google.com/v1beta1",
-   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"description\": {\n     \"description\": \"Optional. A free-text description of the resource. Max length 1024 characters.\",\n     \"type\": \"string\"\n    },\n    \"gateways\": {\n     \"items\": {\n      \"oneOf\": [\n       {\n        \"not\": {\n         \"required\": [\n          \"external\"\n         ]\n        },\n        \"required\": [\n         \"name\"\n        ]\n       },\n       {\n        \"not\": {\n         \"anyOf\": [\n          {\n           \"required\": [\n            \"name\"\n           ]\n          },\n          {\n           \"required\": [\n            \"namespace\"\n           ]\n          }\n         ]\n        },\n        \"required\": [\n         \"external\"\n        ]\n       }\n      ],\n      \"properties\": {\n       \"external\": {\n        \"description\": \"Allowed value: The `selfLink` field of a `NetworkServicesGateway` resource.\",\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n        \"type\": \"string\"\n       },\n       \"namespace\": {\n        \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"hostnames\": {\n     \"description\": \"Required. Service hostnames with an optional port for which this route describes traffic. Format: [:] Hostname is the fully qualified domain name of a network host. This matches the RFC 1123 definition of a hostname with 2 notable exceptions: - IPs are not allowed. - A hostname may be prefixed with a wildcard label (*.). The wildcard label must appear by itself as the first label. Hostname can be “precise” which is a domain name without the terminating dot of a network host (e.g. “foo.example.com”) or “wildcard”, which is a domain name prefixed with a single wildcard label (e.g. *.example.com). Note that as per RFC1035 and RFC1123, a label must consist of lower case alphanumeric characters or ‘-’, and must start and end with an alphanumeric character. No other punctuation is allowed. The routes associated with a Router must have unique hostnames. If you attempt to attach multiple routes with conflicting hostnames, the configuration will be rejected. For example, while it is acceptable for routes for the hostnames \\\"*.foo.bar.com\\\" and \\\"*.bar.com\\\" to be associated with the same route, it is not possible to associate two routes both with \\\"*.bar.com\\\" or both with \\\"bar.com\\\". In the case that multiple routes match the hostname, the most specific match will be selected. For example, \\\"foo.bar.baz.com\\\" will take precedence over \\\"*.bar.baz.com\\\" and \\\"*.bar.baz.com\\\" will take precedence over \\\"*.baz.com\\\". If a port is specified, then gRPC clients must use the channel URI with the port to match this rule (i.e. \\\"xds:///service:123\\\"), otherwise they must supply the URI without a port (i.e. \\\"xds:///service\\\").\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"location\": {\n     \"description\": \"Immutable. The location for the resource\",\n     \"type\": \"string\"\n    },\n    \"meshes\": {\n     \"items\": {\n      \"oneOf\": [\n       {\n        \"not\": {\n         \"required\": [\n          \"external\"\n         ]\n        },\n        \"required\": [\n         \"name\"\n        ]\n       },\n       {\n        \"not\": {\n         \"anyOf\": [\n          {\n           \"required\": [\n            \"name\"\n           ]\n          },\n          {\n           \"required\": [\n            \"namespace\"\n           ]\n          }\n         ]\n        },\n        \"required\": [\n         \"external\"\n        ]\n       }\n      ],\n      \"properties\": {\n       \"external\": {\n        \"description\": \"Allowed value: The `selfLink` field of a `NetworkServicesMesh` resource.\",\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n        \"type\": \"string\"\n       },\n       \"namespace\": {\n        \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"projectRef\": {\n     \"description\": \"Immutable. The Project that this resource belongs to.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"The project for the resource\\n\\nAllowed value: The Google Cloud resource name of a `Project` resource (format: `projects/{{name}}`).\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    },\n    \"rules\": {\n     \"description\": \"Required. A list of detailed rules defining how to route traffic. Within a single GrpcRoute, the GrpcRoute.RouteAction associated with the first matching GrpcRoute.RouteRule will be executed. At least one rule must be supplied.\",\n     \"items\": {\n      \"properties\": {\n       \"action\": {\n        \"description\": \"Required. A detailed rule defining how to route traffic. This field is required.\",\n        \"properties\": {\n         \"destinations\": {\n          \"description\": \"Optional. The destination services to which traffic should be forwarded. If multiple destinations are specified, traffic will be split between Backend Service(s) according to the weight field of these destinations.\",\n          \"items\": {\n           \"properties\": {\n            \"serviceRef\": {\n             \"oneOf\": [\n              {\n               \"not\": {\n                \"required\": [\n                 \"external\"\n                ]\n               },\n               \"required\": [\n                \"name\"\n               ]\n              },\n              {\n               \"not\": {\n                \"anyOf\": [\n                 {\n                  \"required\": [\n                   \"name\"\n                  ]\n                 },\n                 {\n                  \"required\": [\n                   \"namespace\"\n                  ]\n                 }\n                ]\n               },\n               \"required\": [\n                \"external\"\n               ]\n              }\n             ],\n             \"properties\": {\n              \"external\": {\n               \"description\": \"Required. The URL of a destination service to which to route traffic. Must refer to either a BackendService or ServiceDirectoryService.\\n\\nAllowed value: The Google Cloud resource name of a `ComputeBackendService` resource (format: `projects/{{project}}/global/backendServices/{{name}}`).\",\n               \"type\": \"string\"\n              },\n              \"name\": {\n               \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n               \"type\": \"string\"\n              },\n              \"namespace\": {\n               \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n               \"type\": \"string\"\n              }\n             },\n             \"type\": \"object\"\n            },\n            \"weight\": {\n             \"description\": \"Optional. Specifies the proportion of requests forwarded to the backend referenced by the serviceName field. This is computed as: weight/Sum(weights in this destination list). For non-zero values, there may be some epsilon from the exact proportion defined here depending on the precision an implementation supports. If only one serviceName is specified and it has a weight greater than 0, 100% of the traffic is forwarded to that backend. If weights are specified for any one service name, they need to be specified for all of them. If weights are unspecified for all services, then, traffic is distributed in equal proportions to all of them.\",\n             \"format\": \"int64\",\n             \"type\": \"integer\"\n            }\n           },\n           \"required\": [\n            \"serviceRef\"\n           ],\n           \"type\": \"object\"\n          },\n          \"type\": \"array\"\n         },\n         \"faultInjectionPolicy\": {\n          \"description\": \"Optional. The specification for fault injection introduced into traffic to test the resiliency of clients to destination service failure. As part of fault injection, when clients send requests to a destination, delays can be introduced on a percentage of requests before sending those requests to the destination service. Similarly requests from clients can be aborted by for a percentage of requests. timeout and retry_policy will be ignored by clients that are configured with a fault_injection_policy\",\n          \"properties\": {\n           \"abort\": {\n            \"description\": \"The specification for aborting to client requests.\",\n            \"properties\": {\n             \"httpStatus\": {\n              \"description\": \"The HTTP status code used to abort the request. The value must be between 200 and 599 inclusive.\",\n              \"format\": \"int64\",\n              \"type\": \"integer\"\n             },\n             \"percentage\": {\n              \"description\": \"The percentage of traffic which will be aborted. The value must be between [0, 100]\",\n              \"format\": \"int64\",\n              \"type\": \"integer\"\n             }\n            },\n            \"type\": \"object\"\n           },\n           \"delay\": {\n            \"description\": \"The specification for injecting delay to client requests.\",\n            \"properties\": {\n             \"fixedDelay\": {\n              \"description\": \"Specify a fixed delay before forwarding the request.\",\n              \"type\": \"string\"\n             },\n             \"percentage\": {\n              \"description\": \"The percentage of traffic on which delay will be injected. The value must be between [0, 100]\",\n              \"format\": \"int64\",\n              \"type\": \"integer\"\n             }\n            },\n            \"type\": \"object\"\n           }\n          },\n          \"type\": \"object\"\n         },\n         \"retryPolicy\": {\n          \"description\": \"Optional. Specifies the retry policy associated with this route.\",\n          \"properties\": {\n           \"numRetries\": {\n            \"description\": \"Specifies the allowed number of retries. This number must be \\u003e 0. If not specpfied, default to 1.\",\n            \"format\": \"int64\",\n            \"type\": \"integer\"\n           },\n           \"retryConditions\": {\n            \"description\": \"- connect-failure: Router will retry on failures connecting to Backend Services, for example due to connection timeouts. - refused-stream: Router will retry if the backend service resets the stream with a REFUSED_STREAM error code. This reset type indicates that it is safe to retry. - cancelled: Router will retry if the gRPC status code in the response header is set to cancelled - deadline-exceeded: Router will retry if the gRPC status code in the response header is set to deadline-exceeded - resource-exhausted: Router will retry if the gRPC status code in the response header is set to resource-exhausted - unavailable: Router will retry if the gRPC status code in the response header is set to unavailable\",\n            \"items\": {\n             \"type\": \"string\"\n            },\n            \"type\": \"array\"\n           }\n          },\n          \"type\": \"object\"\n         },\n         \"timeout\": {\n          \"description\": \"Optional. Specifies the timeout for selected route. Timeout is computed from the time the request has been fully processed (i.e. end of stream) up until the response has been completely processed. Timeout includes all retries.\",\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"matches\": {\n        \"description\": \"Optional. Matches define conditions used for matching the rule against incoming gRPC requests. Each match is independent, i.e. this rule will be matched if ANY one of the matches is satisfied. If no matches field is specified, this rule will unconditionally match traffic.\",\n        \"items\": {\n         \"properties\": {\n          \"headers\": {\n           \"description\": \"Optional. Specifies a collection of headers to match.\",\n           \"items\": {\n            \"properties\": {\n             \"key\": {\n              \"description\": \"Required. The key of the header.\",\n              \"type\": \"string\"\n             },\n             \"type\": {\n              \"description\": \"Optional. Specifies how to match against the value of the header. If not specified, a default value of EXACT is used. Possible values: MATCH_TYPE_UNSPECIFIED, MATCH_ANY, MATCH_ALL\",\n              \"type\": \"string\"\n             },\n             \"value\": {\n              \"description\": \"Required. The value of the header.\",\n              \"type\": \"string\"\n             }\n            },\n            \"required\": [\n             \"key\",\n             \"value\"\n            ],\n            \"type\": \"object\"\n           },\n           \"type\": \"array\"\n          },\n          \"method\": {\n           \"description\": \"Optional. A gRPC method to match against. If this field is empty or omitted, will match all methods.\",\n           \"properties\": {\n            \"caseSensitive\": {\n             \"description\": \"Optional. Specifies that matches are case sensitive. The default value is true. case_sensitive must not be used with a type of REGULAR_EXPRESSION.\",\n             \"type\": \"boolean\"\n            },\n            \"grpcMethod\": {\n             \"description\": \"Required. Name of the method to match against. If unspecified, will match all methods.\",\n             \"type\": \"string\"\n            },\n            \"grpcService\": {\n             \"description\": \"Required. Name of the service to match against. If unspecified, will match all services.\",\n             \"type\": \"string\"\n            },\n            \"type\": {\n             \"description\": \"Optional. Specifies how to match against the name. If not specified, a default value of \\\"EXACT\\\" is used. Possible values: TYPE_UNSPECIFIED, EXACT, REGULAR_EXPRESSION\",\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"grpcMethod\",\n            \"grpcService\"\n           ],\n           \"type\": \"object\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       }\n      },\n      \"required\": [\n       \"action\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"hostnames\",\n    \"location\",\n    \"projectRef\",\n    \"rules\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Network Services GRPC Route\",\n \"type\": \"object\"\n}"
-  }
+  "version": "v1.0.0"
  }

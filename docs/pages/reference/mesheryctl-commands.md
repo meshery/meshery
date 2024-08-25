@@ -465,51 +465,35 @@ Installation, troubleshooting and debugging of Meshery and its adapters
     <th>Flag</th>
     <th>Function</th>
   </tr>
-  {% assign command7 = site.data.mesheryctlcommands.cmds.mesh %}
+  {% assign command7 = site.data.mesheryctlcommands.cmds.adapter %}
+    {% assign subcommand_flag_count = 0 %}
+    {% for subcommand_hash in command7.subcommands %}
+      {% assign subcommand = subcommand_hash[1] %}
+      {% assign subcommand_flag_count = subcommand_flag_count | plus: subcommand.flags.size %}
+    {% endfor %}
+    {% assign total_rowspan = command7.subcommands.size | plus: subcommand_flag_count | plus: command7.flags.size | plus: 1 %}
     <tr>
-      <td rowspan=13><a href="{{ site.baseurl }}/reference/mesheryctl/mesh">{{ command7.name }}</a></td>
+      <td rowspan={{ total_rowspan }}><a href="{{ site.baseurl }}/reference/mesheryctl/{{ command7.name }}">{{ command7.name }}</a></td>
       <td></td>
       <td></td>
       <td>{{ command7.description }}</td>
     </tr>
-    {% assign subcommand1 = command7.subcommands.validate %}
+    {% for subcommand_hash in command7.subcommands %}{% assign subcommand = subcommand_hash[1] %}
       <tr>
-        <td rowspan=5><a href="{{ site.baseurl }}/reference/mesheryctl/mesh/validate">{{ subcommand1.name }}</a></td>
+        <td rowspan={{ subcommand.flags.size | plus: 1 }} ><a href="{{ site.baseurl }}/reference/mesheryctl/{{ command7.name }}/{{ subcommand.name }}">{{ subcommand.name }}</a></td>
         <td></td>
-        <td>{{ subcommand1.description }}</td>
+        <td>{{ subcommand.description }}</td>
       </tr>
-      {% for flag_hash in subcommand1.flags %}{% assign flag = flag_hash[1] %}
+      {% for flag_hash in subcommand.flags %}{% assign flag = flag_hash[1] %}
         <tr>
           <td>{{ flag.name }}</td>
           <td>{{ flag.description }}</td>
         </tr>
       {% endfor %}
-    {% assign subcommand2 = command7.subcommands.remove %}
-      <tr>
-        <td rowspan=2><a href="{{ site.baseurl }}/reference/mesheryctl/mesh/remove">{{ subcommand2.name }}</a></td>
-        <td></td>
-        <td>{{ subcommand2.description }}</td>
-      </tr>
-      {% for flag_hash in subcommand2.flags %}{% assign flag = flag_hash[1] %}
-        <tr>
-          <td>{{ flag.name }}</td>
-          <td>{{ flag.description }}</td>
-        </tr>
-      {% endfor %}
-    {% assign subcommand3 = command7.subcommands.deploy %}
-      <tr>
-        <td rowspan=4><a href="{{ site.baseurl }}/reference/mesheryctl/mesh/deploy">{{ subcommand3.name }}</a></td>
-        <td></td>
-        <td>{{ subcommand3.description }}</td>
-      </tr>
-      {% for flag_hash in subcommand3.flags %}{% assign flag = flag_hash[1] %}
-        <tr>
-          <td>{{ flag.name }}</td>
-          <td>{{ flag.description }}</td>
-        </tr>
-      {% endfor %}
+    {% endfor %}
 </thead>
 </table>
+
 
 ## Cloud Native Pattern Configuration and Management
 
@@ -523,7 +507,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters
   </tr>
   {% assign command7 = site.data.mesheryctlcommands.cmds.pattern %}
     <tr>
-      <td rowspan=22><a href="{{ site.baseurl }}/reference/mesheryctl/pattern">{{ command7.name }}</a></td>
+      <td rowspan=23><a href="{{ site.baseurl }}/reference/mesheryctl/pattern">{{ command7.name }}</a></td>
       <td></td>
       <td></td>
       <td>{{ command7.description }}</td>
@@ -769,7 +753,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters
   </tr>
   {% assign command12 = site.data.mesheryctlcommands.cmds.model %}
     <tr>
-      <td rowspan=9><a href="{{ site.baseurl }}/reference/mesheryctl/{{ command12.name }}">{{ command12.name }}</a></td>
+      <td rowspan=10><a href="{{ site.baseurl }}/reference/mesheryctl/{{ command12.name }}">{{ command12.name }}</a></td>
       <td></td>
       <td></td>
       <td>{{ command12.description }}</td>

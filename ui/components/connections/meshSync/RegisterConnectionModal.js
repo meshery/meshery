@@ -24,7 +24,7 @@ const RegisterConnectionModal = ({
       .unwrap()
       .then(() => {
         notify({
-          message: 'Connection registration cancelled!',
+          message: 'Connection registration cancelled.',
           event_type: EVENT_TYPES.INFO,
         });
       });

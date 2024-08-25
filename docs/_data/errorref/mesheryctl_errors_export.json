@@ -863,9 +863,9 @@
         "code": "1096",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "Invalid Kube Handler",
-        "probable_cause": "Meshery handler failed to find a valid Kubernetes handler for the deployment",
-        "suggested_remediation": "Try uploading a new kubeconfig and also ensure that Meshery can reach Kubernetes API server"
+        "short_description": "Kubernetes cluster is unavailable for ",
+        "probable_cause": "There might be a network disruption or the Meshery server does not have valid credentials.",
+        "suggested_remediation": "Try uploading a new kubeconfig.\nCheck the network connection and Kubernetes cluster status.\nVerify that the Meshery server has valid and updated credentials to access the Kubernetes cluster."
       },
       "1097": {
         "name": "ErrInvalidKubeContextCode",
@@ -3206,6 +3206,60 @@
         "short_description": "No session found in the request",
         "probable_cause": "User is not authenticated with the selected Provider.\nBrowser might be restricting use of cookies.",
         "suggested_remediation": "Choose a Provider and login to establish an active session (receive a new token and cookie). Optionally, try using a private/incognito browser window.\nVerify that your browser settings allow cookies."
+      },
+      "1357": {
+        "name": "ErrInvalidEventDataCode",
+        "code": "1357",
+        "severity": "Alert",
+        "long_description": "ActedUpon, Action, Category and Severity are required fields of an event",
+        "short_description": "The event provided is not valid",
+        "probable_cause": "",
+        "suggested_remediation": "Ensure that ActedUpon, Action, Category and Severity are present in the event"
+      },
+      "1358": {
+        "name": "ErrSeedingComponentsCode",
+        "code": "1358",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to register the given models into meshery's registry",
+        "probable_cause": "Given models may not be in accordance with Meshery's schema\nInternal(OS level) error while reading files",
+        "suggested_remediation": "Make sure the models being seeded are valid in accordance with Meshery's schema\nIf it is an internal error, please try again after some time"
+      },
+      "1359": {
+        "name": "ErrImportFailureCode",
+        "code": "1359",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "Entity definition might not be in accordance with schema\nEntity version might not be supported by Meshery",
+        "suggested_remediation": "See the registration logs (found at $HOME/.meshery/logs/registry/registry-logs.log) to find out which Entity failed to be imported with more specific error information."
+      },
+      "1360": {
+        "name": "ErrEmptyOCIImageCode",
+        "code": "1360",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1361": {
+        "name": "ErrResolveReferenceCode",
+        "code": "1361",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1362": {
+        "name": "ErrGetComponentDefinitionCode",
+        "code": "1362",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "component definition not found",
+        "probable_cause": "Component might not have been registered\nThe component might not be supported by default, in the version of Meshery you are currently using.",
+        "suggested_remediation": "Ensure component definition is valid JSON/YAML.\nImport the model and try again."
       }
     }
   }

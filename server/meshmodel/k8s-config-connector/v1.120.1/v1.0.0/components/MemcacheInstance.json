@@ -1,29 +1,151 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "displayName": "Memcache Instance",
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "MemcacheInstance",
+   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"displayName\": {\n     \"description\": \"A user-visible name for the instance.\",\n     \"type\": \"string\"\n    },\n    \"maintenancePolicy\": {\n     \"description\": \"Maintenance policy for an instance.\",\n     \"properties\": {\n      \"createTime\": {\n       \"description\": \"Output only. The time when the policy was created.\\nA timestamp in RFC3339 UTC \\\"Zulu\\\" format, with nanosecond\\nresolution and up to nine fractional digits.\",\n       \"type\": \"string\"\n      },\n      \"description\": {\n       \"description\": \"Optional. Description of what this policy is for.\\nCreate/Update methods return INVALID_ARGUMENT if the\\nlength is greater than 512.\",\n       \"type\": \"string\"\n      },\n      \"updateTime\": {\n       \"description\": \"Output only. The time when the policy was updated.\\nA timestamp in RFC3339 UTC \\\"Zulu\\\" format, with nanosecond\\nresolution and up to nine fractional digits.\",\n       \"type\": \"string\"\n      },\n      \"weeklyMaintenanceWindow\": {\n       \"description\": \"Required. Maintenance window that is applied to resources covered by this policy.\\nMinimum 1. For the current version, the maximum number of weekly_maintenance_windows\\nis expected to be one.\",\n       \"items\": {\n        \"properties\": {\n         \"day\": {\n          \"description\": \"Required. The day of week that maintenance updates occur.\\n- DAY_OF_WEEK_UNSPECIFIED: The day of the week is unspecified.\\n- MONDAY: Monday\\n- TUESDAY: Tuesday\\n- WEDNESDAY: Wednesday\\n- THURSDAY: Thursday\\n- FRIDAY: Friday\\n- SATURDAY: Saturday\\n- SUNDAY: Sunday Possible values: [\\\"DAY_OF_WEEK_UNSPECIFIED\\\", \\\"MONDAY\\\", \\\"TUESDAY\\\", \\\"WEDNESDAY\\\", \\\"THURSDAY\\\", \\\"FRIDAY\\\", \\\"SATURDAY\\\", \\\"SUNDAY\\\"].\",\n          \"type\": \"string\"\n         },\n         \"duration\": {\n          \"description\": \"Required. The length of the maintenance window, ranging from 3 hours to 8 hours.\\nA duration in seconds with up to nine fractional digits,\\nterminated by 's'. Example: \\\"3.5s\\\".\",\n          \"type\": \"string\"\n         },\n         \"startTime\": {\n          \"description\": \"Required. Start time of the window in UTC time.\",\n          \"properties\": {\n           \"hours\": {\n            \"description\": \"Hours of day in 24 hour format. Should be from 0 to 23.\\nAn API may choose to allow the value \\\"24:00:00\\\" for scenarios like business closing time.\",\n            \"type\": \"integer\"\n           },\n           \"minutes\": {\n            \"description\": \"Minutes of hour of day. Must be from 0 to 59.\",\n            \"type\": \"integer\"\n           },\n           \"nanos\": {\n            \"description\": \"Fractions of seconds in nanoseconds. Must be from 0 to 999,999,999.\",\n            \"type\": \"integer\"\n           },\n           \"seconds\": {\n            \"description\": \"Seconds of minutes of the time. Must normally be from 0 to 59.\\nAn API may allow the value 60 if it allows leap-seconds.\",\n            \"type\": \"integer\"\n           }\n          },\n          \"type\": \"object\"\n         }\n        },\n        \"required\": [\n         \"day\",\n         \"duration\",\n         \"startTime\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"required\": [\n      \"weeklyMaintenanceWindow\"\n     ],\n     \"type\": \"object\"\n    },\n    \"memcacheParameters\": {\n     \"description\": \"Immutable. User-specified parameters for this memcache instance.\",\n     \"properties\": {\n      \"id\": {\n       \"description\": \"This is a unique ID associated with this set of parameters.\",\n       \"type\": \"string\"\n      },\n      \"params\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"User-defined set of parameters to use in the memcache process.\",\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"memcacheVersion\": {\n     \"description\": \"The major version of Memcached software. If not provided, latest supported version will be used.\\nCurrently the latest supported major version is MEMCACHE_1_5. The minor version will be automatically\\ndetermined by our system based on the latest supported minor version. Default value: \\\"MEMCACHE_1_5\\\" Possible values: [\\\"MEMCACHE_1_5\\\"].\",\n     \"type\": \"string\"\n    },\n    \"networkRef\": {\n     \"description\": \"The full name of the network to connect the instance to.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: string of the format `projects/{{project}}/global/networks/{{value}}`, where {{value}} is the `name` field of a `ComputeNetwork` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"nodeConfig\": {\n     \"description\": \"Immutable. Configuration for memcache nodes.\",\n     \"properties\": {\n      \"cpuCount\": {\n       \"description\": \"Number of CPUs per node.\",\n       \"type\": \"integer\"\n      },\n      \"memorySizeMb\": {\n       \"description\": \"Memory size in Mebibytes for each memcache node.\",\n       \"type\": \"integer\"\n      }\n     },\n     \"required\": [\n      \"cpuCount\",\n      \"memorySizeMb\"\n     ],\n     \"type\": \"object\"\n    },\n    \"nodeCount\": {\n     \"description\": \"Number of nodes in the memcache instance.\",\n     \"type\": \"integer\"\n    },\n    \"region\": {\n     \"description\": \"Immutable. The region of the Memcache instance. If it is not provided, the provider region is used.\",\n     \"type\": \"string\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    },\n    \"zones\": {\n     \"description\": \"Immutable. Zones where memcache nodes should be provisioned.  If not\\nprovided, all zones will be used.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"nodeConfig\",\n    \"nodeCount\",\n    \"region\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Memcache Instance\",\n \"type\": \"object\"\n}",
+   "version": "memcache.cnrm.cloud.google.com/v1beta1"
+  },
+  "configuration": null,
   "description": "",
+  "displayName": "Memcache Instance",
   "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "published": false
+  },
   "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "version": "v1.0.0",
-   "name": "k8s-config-connector",
-   "displayName": "Google Cloud Platform",
-   "description": "",
-   "status": "enabled",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "registrant": {
-    "hostname": "github"
-   },
    "category": {
-    "name": "Orchestration \u0026 Management",
-    "metadata": null
+    "name": "Orchestration \u0026 Management"
    },
-   "subCategory": "Google Cloud Platform",
+   "displayName": "Google Cloud Platform",
+   "id": "00000000-0000-0000-0000-000000000000",
    "metadata": {
-    "capabilities": "",
     "defaultData": "",
     "isAnnotation": false,
     "primaryColor": "#4285F4",
@@ -39,30 +161,35 @@
    "model": {
     "version": "v1.120.1"
    },
+   "name": "k8s-config-connector",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "github",
+    "name": "Github",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "enabled",
+   "subCategory": "Google Cloud Platform",
+   "version": "v1.0.0",
    "components": null,
    "relationships": null
   },
-  "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
    "primaryColor": "#4285F4",
-   "secondaryColor": "",
    "shape": "rectangle",
-   "shapePolygonPoints": "",
-   "status": "enabled",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
    "svgColor": "\u003csvg width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"\u003e\n    \u003cg stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e\n        \u003cpath d=\"M12.3008862,4.00003179 L18.9908678,7.90329279 L19,11.4442164 L14.973309,9.0680926 L14.973309,10.8562526 L16.9806355,12.0276231 L16.9918433,15.1064843 L14.973309,13.9136004 L14.973309,18.415105 L12.3008862,20 L12.3008862,4.00003179 Z M11.6991138,4 L11.6991138,19.9999682 L9.02669102,18.4150732 L9.02669102,9.06816678 L5,11.4441846 L5.00913223,7.903261 L11.6991138,4 Z\" fill=\"#4285F4\"\u003e\u003c/path\u003e\n    \u003c/g\u003e\n\u003c/svg\u003e",
-   "svgComplete": "",
    "svgWhite": "\u003csvg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M12.3009 4.00003L18.9909 7.90329L19 11.4442L14.9733 9.06809V10.8563L16.9806 12.0276L16.9918 15.1065L14.9733 13.9136V18.4151L12.3009 20V4.00003ZM11.6991 4V20L9.02669 18.4151V9.06817L5 11.4442L5.00913 7.90326L11.6991 4Z\" fill=\"white\"/\u003e\n\u003c/svg\u003e\n"
   },
-  "component": {
-   "kind": "MemcacheInstance",
-   "version": "memcache.cnrm.cloud.google.com/v1beta1",
-   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"displayName\": {\n     \"description\": \"A user-visible name for the instance.\",\n     \"type\": \"string\"\n    },\n    \"maintenancePolicy\": {\n     \"description\": \"Maintenance policy for an instance.\",\n     \"properties\": {\n      \"createTime\": {\n       \"description\": \"Output only. The time when the policy was created.\\nA timestamp in RFC3339 UTC \\\"Zulu\\\" format, with nanosecond\\nresolution and up to nine fractional digits.\",\n       \"type\": \"string\"\n      },\n      \"description\": {\n       \"description\": \"Optional. Description of what this policy is for.\\nCreate/Update methods return INVALID_ARGUMENT if the\\nlength is greater than 512.\",\n       \"type\": \"string\"\n      },\n      \"updateTime\": {\n       \"description\": \"Output only. The time when the policy was updated.\\nA timestamp in RFC3339 UTC \\\"Zulu\\\" format, with nanosecond\\nresolution and up to nine fractional digits.\",\n       \"type\": \"string\"\n      },\n      \"weeklyMaintenanceWindow\": {\n       \"description\": \"Required. Maintenance window that is applied to resources covered by this policy.\\nMinimum 1. For the current version, the maximum number of weekly_maintenance_windows\\nis expected to be one.\",\n       \"items\": {\n        \"properties\": {\n         \"day\": {\n          \"description\": \"Required. The day of week that maintenance updates occur.\\n- DAY_OF_WEEK_UNSPECIFIED: The day of the week is unspecified.\\n- MONDAY: Monday\\n- TUESDAY: Tuesday\\n- WEDNESDAY: Wednesday\\n- THURSDAY: Thursday\\n- FRIDAY: Friday\\n- SATURDAY: Saturday\\n- SUNDAY: Sunday Possible values: [\\\"DAY_OF_WEEK_UNSPECIFIED\\\", \\\"MONDAY\\\", \\\"TUESDAY\\\", \\\"WEDNESDAY\\\", \\\"THURSDAY\\\", \\\"FRIDAY\\\", \\\"SATURDAY\\\", \\\"SUNDAY\\\"].\",\n          \"type\": \"string\"\n         },\n         \"duration\": {\n          \"description\": \"Required. The length of the maintenance window, ranging from 3 hours to 8 hours.\\nA duration in seconds with up to nine fractional digits,\\nterminated by 's'. Example: \\\"3.5s\\\".\",\n          \"type\": \"string\"\n         },\n         \"startTime\": {\n          \"description\": \"Required. Start time of the window in UTC time.\",\n          \"properties\": {\n           \"hours\": {\n            \"description\": \"Hours of day in 24 hour format. Should be from 0 to 23.\\nAn API may choose to allow the value \\\"24:00:00\\\" for scenarios like business closing time.\",\n            \"type\": \"integer\"\n           },\n           \"minutes\": {\n            \"description\": \"Minutes of hour of day. Must be from 0 to 59.\",\n            \"type\": \"integer\"\n           },\n           \"nanos\": {\n            \"description\": \"Fractions of seconds in nanoseconds. Must be from 0 to 999,999,999.\",\n            \"type\": \"integer\"\n           },\n           \"seconds\": {\n            \"description\": \"Seconds of minutes of the time. Must normally be from 0 to 59.\\nAn API may allow the value 60 if it allows leap-seconds.\",\n            \"type\": \"integer\"\n           }\n          },\n          \"type\": \"object\"\n         }\n        },\n        \"required\": [\n         \"day\",\n         \"duration\",\n         \"startTime\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"required\": [\n      \"weeklyMaintenanceWindow\"\n     ],\n     \"type\": \"object\"\n    },\n    \"memcacheParameters\": {\n     \"description\": \"Immutable. User-specified parameters for this memcache instance.\",\n     \"properties\": {\n      \"id\": {\n       \"description\": \"This is a unique ID associated with this set of parameters.\",\n       \"type\": \"string\"\n      },\n      \"params\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"User-defined set of parameters to use in the memcache process.\",\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"memcacheVersion\": {\n     \"description\": \"The major version of Memcached software. If not provided, latest supported version will be used.\\nCurrently the latest supported major version is MEMCACHE_1_5. The minor version will be automatically\\ndetermined by our system based on the latest supported minor version. Default value: \\\"MEMCACHE_1_5\\\" Possible values: [\\\"MEMCACHE_1_5\\\"].\",\n     \"type\": \"string\"\n    },\n    \"networkRef\": {\n     \"description\": \"The full name of the network to connect the instance to.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: string of the format `projects/{{project}}/global/networks/{{value}}`, where {{value}} is the `name` field of a `ComputeNetwork` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"nodeConfig\": {\n     \"description\": \"Immutable. Configuration for memcache nodes.\",\n     \"properties\": {\n      \"cpuCount\": {\n       \"description\": \"Number of CPUs per node.\",\n       \"type\": \"integer\"\n      },\n      \"memorySizeMb\": {\n       \"description\": \"Memory size in Mebibytes for each memcache node.\",\n       \"type\": \"integer\"\n      }\n     },\n     \"required\": [\n      \"cpuCount\",\n      \"memorySizeMb\"\n     ],\n     \"type\": \"object\"\n    },\n    \"nodeCount\": {\n     \"description\": \"Number of nodes in the memcache instance.\",\n     \"type\": \"integer\"\n    },\n    \"region\": {\n     \"description\": \"Immutable. The region of the Memcache instance. If it is not provided, the provider region is used.\",\n     \"type\": \"string\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    },\n    \"zones\": {\n     \"description\": \"Immutable. Zones where memcache nodes should be provisioned.  If not\\nprovided, all zones will be used.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"nodeConfig\",\n    \"nodeCount\",\n    \"region\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Memcache Instance\",\n \"type\": \"object\"\n}"
-  }
+  "version": "v1.0.0"
  }

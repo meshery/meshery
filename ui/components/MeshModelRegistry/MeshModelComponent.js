@@ -79,23 +79,28 @@ const useInfiniteScrollRef = (callback) => {
   const triggerRef = useRef(null);
 
   useEffect(() => {
-    if (!triggerRef.current) {
-      return () => observerRef.current && observerRef.current.disconnect();
-    }
+    // setTimeout gives the browser time to finish rendering the DOM elements before executing the callback function.
+    const timeoutId = setTimeout(() => {
+      if (!triggerRef.current) {
+        return () => observerRef.current && observerRef.current.disconnect();
+      }
 
-    observerRef.current = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            callback();
-          }
-        });
-      },
-      { threshold: 0.01 },
-    );
-    observerRef.current.observe(triggerRef.current);
+      observerRef.current = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              callback();
+            }
+          });
+        },
+        { threshold: 0.01 },
+      );
+      observerRef.current.observe(triggerRef.current);
+    }, 0);
+
     return () => {
       observerRef.current && observerRef.current.disconnect();
+      clearTimeout(timeoutId);
     };
   }, [callback, triggerRef.current]);
 
@@ -148,28 +153,19 @@ const MeshModelComponent_ = ({
   const hasMoreRegistrants =
     registrantsData?.total_count > registrantsData?.page_size * registrantsData?.page;
 
-  const loadNextModelsPage = () => {
+  const loadNextModelsPage = useCallback(() => {
     if (modelsRes.isLoading || modelsRes.isFetching || !hasMoreModels) {
       return;
     }
-    setModelsFilters((prev) => {
-      return {
-        ...prev,
-        page: prev.page + 1,
-      };
-    });
-  };
-  const loadNextRegistrantsPage = () => {
+    setModelsFilters((prev) => ({ ...prev, page: prev.page + 1 }));
+  }, [modelsRes, hasMoreModels]);
+
+  const loadNextRegistrantsPage = useCallback(() => {
     if (registrantsRes.isLoading || registrantsRes.isFetching || !hasMoreRegistrants) {
       return;
     }
-    setRegistrantsFilters((prev) => {
-      return {
-        ...prev,
-        page: prev.page + 1,
-      };
-    });
-  };
+    setRegistrantsFilters((prev) => ({ ...prev, page: prev.page + 1 }));
+  }, [registrantsRes, hasMoreRegistrants]);
 
   /**
    * IntersectionObservers
@@ -238,7 +234,7 @@ const MeshModelComponent_ = ({
         let newData = [];
         if (response.data[view.toLowerCase()]) {
           newData =
-            searchText || checked || view === RELATIONSHIPS
+            searchText || view === RELATIONSHIPS
               ? [...response.data[view.toLowerCase()]]
               : [...resourcesDetail, ...response.data[view.toLowerCase()]];
         }

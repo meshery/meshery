@@ -4,10 +4,12 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshkit/broker"
 	"github.com/layer5io/meshkit/database"
+	"github.com/layer5io/meshkit/encoding"
 	"github.com/layer5io/meshkit/logger"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	"github.com/layer5io/meshkit/utils"
+
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
+	"github.com/meshery/schemas/models/v1beta1/component"
 	"gorm.io/gorm"
 )
 
@@ -137,7 +139,7 @@ func (mh *MeshsyncDataHandler) subsribeToStoreUpdates(statusChan chan bool) {
 func (mh *MeshsyncDataHandler) Unmarshal(object interface{}) (meshsyncmodel.KubernetesResource, error) {
 	objectJSON, _ := utils.Marshal(object)
 	obj := meshsyncmodel.KubernetesResource{}
-	err := utils.Unmarshal(objectJSON, &obj)
+	err := encoding.Unmarshal([]byte(objectJSON), &obj)
 	if err != nil {
 		mh.log.Error(ErrUnmarshal(err, objectJSON))
 		return obj, ErrUnmarshal(err, objectJSON)
@@ -257,28 +259,32 @@ func (mh *MeshsyncDataHandler) requestMeshsyncStore() error {
 
 // Returns metadata for the component identified by apiVersion and kind.
 // If the component does not exist in the registry, default metadata for k8s component is returned.
-func (mh *MeshsyncDataHandler) getComponentMetadata(apiVersion string, kind string) map[string]interface{} {
-	var data map[string]interface{}
-	metadata := make(map[string]interface{})
-
-	result := mh.dbHandler.Model(v1beta1.ComponentDefinition{}).Select("metadata").
+func (mh *MeshsyncDataHandler) getComponentMetadata(apiVersion string, kind string) (data map[string]interface{}) {
+	compStyles := component.Styles{}
+	defer func() {
+		data, _ = utils.MarshalAndUnmarshal[component.Styles, map[string]interface{}](compStyles)
+	}()
+	result := mh.dbHandler.Model(component.ComponentDefinition{}).Select("styles").
 		Where("component->>'version' = ? and component->>'kind' = ?", apiVersion, kind).Scan(&data)
+
 	if result.Error != nil {
 		if result.Error == gorm.ErrRecordNotFound {
 			mh.log.Error(ErrResultNotFound(result.Error))
 		} else {
 			mh.log.Error(ErrDBRead(result.Error))
 		}
-		metadata = K8sMeshModelMetadata
-		return metadata
+		compStyles = K8sMeshModelMetadata.Styles
+		return
 	}
-	strMetadata, err := utils.Cast[string](data["metadata"])
+	strMetadata, err := utils.Cast[string](data["styles"])
 	if err != nil {
-		return K8sMeshModelMetadata
+		compStyles = K8sMeshModelMetadata.Styles
+		return
 	}
-	err = utils.Unmarshal(strMetadata, &metadata)
+	err = encoding.Unmarshal([]byte(strMetadata), &compStyles)
 	if err != nil {
-		return K8sMeshModelMetadata
+		compStyles = K8sMeshModelMetadata.Styles
+		return
 	}
-	return metadata
+	return
 }

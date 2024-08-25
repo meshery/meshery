@@ -88,6 +88,7 @@ import { DeleteIcon } from '@layer5/sistent';
 import { withRouter } from 'next/router';
 import { UsesSistent } from '../SistentWrapper';
 import { formatDate } from '../DataFormatter';
+import { getFallbackImageBasedOnKind } from '@/utils/fallback';
 
 const ACTION_TYPES = {
   FETCH_CONNECTIONS: {
@@ -385,7 +386,6 @@ function Connections(props) {
       updatingConnection.current = false;
     }
   };
-
   let colViews = [
     ['name', 'xs'],
     ['environments', 'm'],
@@ -453,8 +453,8 @@ function Connections(props) {
                     getColumnValue(tableMeta.rowData, 'kind', columns),
                   )
                 }
-                handlePing={(e) => {
-                  e.stopPropagation();
+                handlePing={() => {
+                  // e.stopPropagation();
                   if (getColumnValue(tableMeta.rowData, 'kind', columns) === 'kubernetes') {
                     ping(
                       getColumnValue(tableMeta.rowData, 'metadata.name', columns),
@@ -463,7 +463,10 @@ function Connections(props) {
                     );
                   }
                 }}
-                iconSrc={`/${getColumnValue(tableMeta.rowData, 'kindLogo', columns)}`}
+                iconSrc={`/${
+                  getColumnValue(tableMeta.rowData, 'kindLogo', columns) ||
+                  getFallbackImageBasedOnKind(kind)
+                }`}
                 width="12rem"
               />
               {kind == 'kubernetes' && (
@@ -1112,7 +1115,6 @@ function Connections(props) {
     setKindFilter(kindFilter);
     setStatusFilter(statusFilter);
   };
-
   return (
     <NoSsr>
       {CAN(keys.VIEW_CONNECTIONS.action, keys.VIEW_CONNECTIONS.subject) ? (
