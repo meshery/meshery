@@ -44,6 +44,11 @@
         grandchildren: 
           - title: "Scoop"
             url: installation/windows/scoop
+      - title: Upgrading Meshery ↆ
+        url: installation/upgrades
+        children:
+          - title: Meshery CLI
+            url: installation/upgrades#upgrading-meshery-cli            
       - title: Using Multiple Meshery Adapters
         url: guides/multiple-adapters
       - title: Meshery Playground
@@ -168,11 +173,6 @@
         url: guides/tutorials/exploring-kubernetes-cronjobs
       - title: Understanding Kubernetes ConfigMaps and Secrets
         url: guides/tutorials/kubernetes-configmaps-secrets
-    - title: Upgrading Meshery ↆ
-      url: installation/upgrades
-      children:
-        - title: Meshery CLI
-          url: installation/upgrades#upgrading-meshery-cli
 # - title: ⚙️ Tasks
 #   url: tasks
 #   links:
