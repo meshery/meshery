@@ -69,48 +69,49 @@ function MeshModelContructs({ classes }) {
   );
 
   return (
-    <div className={classes.dashboardSection}>
-      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-        <Link
-          href="/settings?settingsCategory=Registry"
-          style={{
-            pointerEvents: !CAN(keys.VIEW_REGISTRY.action, keys.VIEW_REGISTRY.subject)
-              ? 'none'
-              : 'auto',
-          }}
-        >
+    <Link
+      href="/settings?settingsCategory=Registry"
+      style={{
+        pointerEvents: !CAN(keys.VIEW_REGISTRY.action, keys.VIEW_REGISTRY.subject)
+          ? 'none'
+          : 'auto',
+      }}
+    >
+      <div className={classes.dashboardSection}>
+        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           <Typography variant="h6" gutterBottom className={classes.link}>
             Registry
           </Typography>
-        </Link>
 
-        <div onClick={(e) => e.stopPropagation()}>
-          <CustomTextTooltip
-            placement="left"
-            interactive={true}
-            variant="standard"
-            title={`The Meshery Registry is a critical component acting as the central repository for all capabilities known to Meshery. [Learn More](https://docs.meshery.io/concepts/logical/registry)`}
-          >
-            <IconButton disableRipple={true} disableFocusRipple={true}>
-              <InfoOutlined
-                color={theme.palette.secondary.iconMain}
-                style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
-                onClick={(e) => {
-                  e.stopPropagation();
-                }}
-              />
-            </IconButton>
-          </CustomTextTooltip>
+          <div onClick={(e) => e.stopPropagation()}>
+            <CustomTextTooltip
+              placement="left"
+              interactive={true}
+              variant="standard"
+              title={`The Meshery Registry is a critical component acting as the central repository for all capabilities known to Meshery. [Learn More](https://docs.meshery.io/concepts/logical/registry)`}
+            >
+              <IconButton disableRipple={true} disableFocusRipple={true}>
+                <InfoOutlined
+                  color={theme.palette.secondary.iconMain}
+                  style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                  }}
+                />
+              </IconButton>
+            </CustomTextTooltip>
+          </div>
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <BBChart options={chartOptions} />
         </div>
       </div>
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-        <BBChart options={chartOptions} />
-      </div>
-    </div>
+    </Link>
   );
 }
 
 function MeshModelCategories({ classes }) {
+  const router = useRouter();
   const categoryMap = useGetCategoriesSummary();
 
   const cleanedData = useMemo(
@@ -124,6 +125,9 @@ function MeshModelCategories({ classes }) {
         columns: cleanedData,
         colors: dataToColors(cleanedData),
         type: donut(),
+        onclick: function () {
+          router.push('/settings?settingsCategory=Registry&tab=Models');
+        },
       },
       arc: {
         cornerRadius: {
@@ -154,36 +158,37 @@ function MeshModelCategories({ classes }) {
   );
 
   return (
-    <div className={classes.dashboardSection}>
-      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-        <Link href="/settings?settingsCategory=Registry&tab=Models">
+    <Link href="/settings?settingsCategory=Registry&tab=Models">
+      <div className={classes.dashboardSection}>
+        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           <Typography variant="h6" gutterBottom className={classes.link}>
             Models by Category
           </Typography>
-        </Link>
-        <div onClick={(e) => e.stopPropagation()}>
-          <CustomTextTooltip
-            title={`Meshery Models represent the fundamental building blocks of your infrastructure. Models are categorized by their function. For example, a model for Prometheus belongs in the "Observability and Analysis" category. [Learn More](https://docs.meshery.io/concepts/logical/models)`}
-            placement="left"
-            variant="standard"
-            interactive={true}
-          >
-            <IconButton disableRipple={true} disableFocusRipple={true}>
-              <InfoOutlined
-                color={theme.palette.secondary.iconMain}
-                style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
-                onClick={(e) => {
-                  e.stopPropagation();
-                }}
-              />
-            </IconButton>
-          </CustomTextTooltip>
+
+          <div onClick={(e) => e.stopPropagation()}>
+            <CustomTextTooltip
+              title={`Meshery Models represent the fundamental building blocks of your infrastructure. Models are categorized by their function. For example, a model for Prometheus belongs in the "Observability and Analysis" category. [Learn More](https://docs.meshery.io/concepts/logical/models)`}
+              placement="left"
+              variant="standard"
+              interactive={true}
+            >
+              <IconButton disableRipple={true} disableFocusRipple={true}>
+                <InfoOutlined
+                  color={theme.palette.secondary.iconMain}
+                  style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                  }}
+                />
+              </IconButton>
+            </CustomTextTooltip>
+          </div>
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <BBChart options={chartOptions} />
         </div>
       </div>
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-        <BBChart options={chartOptions} />
-      </div>
-    </div>
+    </Link>
   );
 }
 
