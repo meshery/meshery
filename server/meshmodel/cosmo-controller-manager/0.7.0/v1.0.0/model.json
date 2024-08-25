@@ -5,6 +5,7 @@
   "displayName": "Cosmo Controller Manager",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://github.com/cosmo-workspace/charts/releases/download/cosmo-controller-manager-0.9.0/cosmo-controller-manager-0.9.0.tgz", 
     "isAnnotation": false,
     "published": false,
     "subCategory": "Tools",

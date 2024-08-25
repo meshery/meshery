@@ -4,8 +4,10 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshkit/broker"
 	"github.com/layer5io/meshkit/database"
+	"github.com/layer5io/meshkit/encoding"
 	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/utils"
+
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"gorm.io/gorm"
@@ -137,7 +139,7 @@ func (mh *MeshsyncDataHandler) subsribeToStoreUpdates(statusChan chan bool) {
 func (mh *MeshsyncDataHandler) Unmarshal(object interface{}) (meshsyncmodel.KubernetesResource, error) {
 	objectJSON, _ := utils.Marshal(object)
 	obj := meshsyncmodel.KubernetesResource{}
-	err := utils.Unmarshal(objectJSON, &obj)
+	err := encoding.Unmarshal([]byte(objectJSON), &obj)
 	if err != nil {
 		mh.log.Error(ErrUnmarshal(err, objectJSON))
 		return obj, ErrUnmarshal(err, objectJSON)
@@ -271,17 +273,17 @@ func (mh *MeshsyncDataHandler) getComponentMetadata(apiVersion string, kind stri
 		} else {
 			mh.log.Error(ErrDBRead(result.Error))
 		}
-		compStyles = K8sMeshModelMetadata
+		compStyles = K8sMeshModelMetadata.Styles
 		return
 	}
 	strMetadata, err := utils.Cast[string](data["styles"])
 	if err != nil {
-		compStyles = K8sMeshModelMetadata
+		compStyles = K8sMeshModelMetadata.Styles
 		return
 	}
-	err = utils.Unmarshal(strMetadata, &compStyles)
+	err = encoding.Unmarshal([]byte(strMetadata), &compStyles)
 	if err != nil {
-		compStyles = K8sMeshModelMetadata
+		compStyles = K8sMeshModelMetadata.Styles
 		return
 	}
 	return

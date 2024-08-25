@@ -15,9 +15,10 @@
 package registry
 
 import (
+	"bytes"
 	"context"
-	"encoding/json"
 	"fmt"
+	"io"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -27,6 +28,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/layer5io/meshkit/encoding"
+
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshkit/generators"
 	"github.com/layer5io/meshkit/generators/github"
@@ -34,7 +37,8 @@ import (
 	"github.com/layer5io/meshkit/utils/store"
 	"github.com/layer5io/meshkit/utils/walker"
 	"github.com/meshery/schemas/models/v1beta1/component"
-	"github.com/meshery/schemas/models/v1beta1/model"
+	v1beta1Model "github.com/meshery/schemas/models/v1beta1/model"
+
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"golang.org/x/sync/semaphore"
@@ -177,9 +181,11 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 	if err != nil {
 		return err
 	}
+	multiWriter := io.MultiWriter(os.Stdout, logFile)
+	multiErrorWriter := io.MultiWriter(os.Stdout, errorLogFile)
 
-	utils.Log.UpdateLogOutput(logFile)
-	utils.LogError.UpdateLogOutput(errorLogFile)
+	utils.Log.UpdateLogOutput(multiWriter)
+	utils.LogError.UpdateLogOutput(multiErrorWriter)
 	var wgForSpreadsheetUpdate sync.WaitGroup
 	wgForSpreadsheetUpdate.Add(1)
 	go func() {
@@ -235,24 +241,29 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 				utils.LogError.Error(ErrGenerateModel(err, model.Model))
 				return
 			}
-			modelDef, err := writeModelDefToFileSystem(&model, version, modelDirPath)
+			modelDef, alreadyExsit, err := writeModelDefToFileSystem(&model, version, modelDirPath)
 			if err != nil {
 				utils.LogError.Error(err)
 				return
+			}
+			if alreadyExsit {
+				totalAvailableModels--
 			}
 			comps, err := pkg.GenerateComponents()
 			if err != nil {
 				utils.LogError.Error(ErrGenerateModel(err, model.Model))
 				return
 			}
-			utils.Log.Info("Current model: ", model.Model)
-			utils.Log.Info(" extracted ", len(comps), " components for ", model.ModelDisplayName, " (", model.Model, ")")
+			lengthOfComps := len(comps)
+
 			for _, comp := range comps {
 				comp.Version = defVersion
 				// Assign the component status corresponding to model status.
 				// i.e. If model is enabled comps are also "enabled". Ultimately all individual comps itself will have ability to control their status.
 				// The status "enabled" indicates that the component will be registered inside the registry.
-
+				if modelDef.Metadata == nil {
+					modelDef.Metadata = &v1beta1Model.ModelDefinition_Metadata{}
+				}
 				if modelDef.Metadata.AdditionalProperties == nil {
 					modelDef.Metadata.AdditionalProperties = make(map[string]interface{})
 				}
@@ -263,19 +274,36 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 				comp.Model = *modelDef
 
 				assignDefaultsForCompDefs(&comp, modelDef)
-				err := comp.WriteComponentDefinition(compDirPath)
+				compAlreadyExist, err := comp.WriteComponentDefinition(compDirPath)
+				if compAlreadyExist {
+					lengthOfComps--
+				}
 				if err != nil {
 					utils.Log.Info(err)
 				}
 			}
-
+			if !alreadyExsit {
+				if len(comps) == 0 {
+					utils.LogError.Error(ErrGenerateModel(fmt.Errorf("no components found for model "), model.Model))
+				} else {
+					utils.Log.Info("Current model: ", model.Model)
+					utils.Log.Info(" extracted ", lengthOfComps, " components for ", model.ModelDisplayName, " (", model.Model, ")")
+				}
+			} else {
+				fmt.Println("lengthOfComps", len(comps))
+				if len(comps) > 0 {
+					utils.Log.Info("Model already exists: ", model.Model)
+				} else {
+					utils.LogError.Error(ErrGenerateModel(fmt.Errorf("no components found for model "), model.Model))
+				}
+			}
 			spreadsheeetChan <- utils.SpreadsheetData{
 				Model:      &model,
 				Components: comps,
 			}
 
 			modelToCompGenerateTracker.Set(model.Model, compGenerateTracker{
-				totalComps: len(comps),
+				totalComps: lengthOfComps,
 				version:    version,
 			})
 		}(model)
@@ -287,7 +315,7 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 	return nil
 }
 
-func assignDefaultsForCompDefs(componentDef *component.ComponentDefinition, modelDef *model.ModelDefinition) {
+func assignDefaultsForCompDefs(componentDef *component.ComponentDefinition, modelDef *v1beta1Model.ModelDefinition) {
 	// Assign the status from the model to the component
 	compStatus := component.ComponentDefinitionStatus(modelDef.Status)
 	componentDef.Status = &compStatus
@@ -305,9 +333,17 @@ func assignDefaultsForCompDefs(componentDef *component.ComponentDefinition, mode
 
 	// Iterate through modelDef.Metadata
 	if modelDef.Metadata != nil {
+		if modelDef.Metadata.AdditionalProperties["styleOverrides"] != nil {
+			styleOverrides, ok := modelDef.Metadata.AdditionalProperties["styleOverrides"].(string)
+			if ok {
+				err := encoding.Unmarshal([]byte(styleOverrides), &componentDef.Styles)
+				if err != nil {
+					utils.LogError.Error(err)
+				}
+			}
+		}
 		if (modelDef.Metadata.Capabilities) != nil {
 			componentDef.Capabilities = modelDef.Metadata.Capabilities
-
 		}
 		if modelDef.Metadata.PrimaryColor != nil {
 			componentDef.Styles.PrimaryColor = *modelDef.Metadata.PrimaryColor
@@ -327,6 +363,9 @@ func assignDefaultsForCompDefs(componentDef *component.ComponentDefinition, mode
 
 		// Iterate through AdditionalProperties and assign appropriately
 		for k, v := range modelDef.Metadata.AdditionalProperties {
+			if k == "styleOverrides" {
+				continue
+			}
 			// Check if the field exists in Styles
 			if field := stylesValue.FieldByNameFunc(func(name string) bool {
 				return strings.EqualFold(k, name)
@@ -408,7 +447,7 @@ func GenerateDefsForCoreRegistrant(model utils.ModelCSV) error {
 				}
 				contentBytes := []byte(f.Content)
 				var componentDef component.ComponentDefinition
-				if err := json.Unmarshal(contentBytes, &componentDef); err != nil {
+				if err := encoding.Unmarshal(contentBytes, &componentDef); err != nil {
 					return err
 				}
 				version = componentDef.Model.Model.Version
@@ -417,16 +456,21 @@ func GenerateDefsForCoreRegistrant(model utils.ModelCSV) error {
 					err = ErrGenerateModel(err, model.Model)
 					return err
 				}
-				modelDef, err := writeModelDefToFileSystem(&model, version, modelDirPath) // how to infer this? @Beginner86 any idea? new column?
+				modelDef, alreadyExist, err := writeModelDefToFileSystem(&model, version, modelDirPath) // how to infer this? @Beginner86 any idea? new column?
 				if err != nil {
 					return ErrGenerateModel(err, model.Model)
 				}
+				if alreadyExist {
+					utils.Log.Info("Model already exists: ", model.Model)
+				}
 				componentDef.Model = *modelDef
-				err = componentDef.WriteComponentDefinition(compDirPath)
+				_, err = componentDef.WriteComponentDefinition(compDirPath)
+
 				if err != nil {
 					err = ErrGenerateComponent(err, model.Model, componentDef.DisplayName)
 					utils.LogError.Error(err)
 				}
+
 				return nil
 			})
 		err = gw.Walk()
@@ -486,20 +530,62 @@ func createVersionedDirectoryForModelAndComp(version, modelName string) (string,
 	return modelDirPath, compDirPath, err
 }
 
-func writeModelDefToFileSystem(model *utils.ModelCSV, version, modelDefPath string) (*model.ModelDefinition, error) {
+func writeModelDefToFileSystem(model *utils.ModelCSV, version, modelDefPath string) (*v1beta1Model.ModelDefinition, bool, error) {
 	modelDef := model.CreateModelDefinition(version, defVersion)
-	err := modelDef.WriteModelDefinition(modelDefPath+"/model.json", "json")
-	if err != nil {
-		return nil, err
+	filePath := filepath.Join(modelDefPath, "model.json")
+	tmpFilePath := filepath.Join(modelDefPath, "tmp_model.json")
+
+	// Ensure the temporary file is removed regardless of what happens
+	defer func() {
+		_ = os.Remove(tmpFilePath)
+	}()
+
+	// Check if the file exists
+
+	if _, err := os.Stat(filePath); err == nil {
+		existingData, err := os.ReadFile(filePath)
+		if err != nil {
+			goto NewGen
+		}
+
+		err = modelDef.WriteModelDefinition(tmpFilePath, "json")
+		if err != nil {
+			goto NewGen
+		}
+
+		newData, err := os.ReadFile(tmpFilePath)
+		if err != nil {
+			goto NewGen
+		}
+
+		// Compare the existing and new data
+		if bytes.Equal(existingData, newData) {
+			var oldModelDef v1beta1Model.ModelDefinition
+			err = encoding.Unmarshal(existingData, &oldModelDef)
+			if err != nil {
+				goto NewGen
+			}
+			// If they are the same, return without changes
+			return &oldModelDef, true, nil
+		}
 	}
-	return &modelDef, nil
+NewGen:
+	// Write the model definition to the actual file if it's new or different
+	err := modelDef.WriteModelDefinition(filePath, "json")
+	if err != nil {
+		return nil, false, err
+	}
+
+	return &modelDef, false, nil
 }
 
 func logModelGenerationSummary(modelToCompGenerateTracker *store.GenerticThreadSafeStore[compGenerateTracker]) {
 	for key, val := range modelToCompGenerateTracker.GetAllPairs() {
 		utils.Log.Info(fmt.Sprintf("Generated %d components for model [%s] %s", val.totalComps, key, val.version))
 		totalAggregateComponents += val.totalComps
-		totalAggregateModel++
+		if val.totalComps > 0 {
+			totalAggregateModel++
+		}
 	}
 
 	utils.Log.Info(fmt.Sprintf("-----------------------------\n-----------------------------\nGenerated %d models and %d components", totalAggregateModel, totalAggregateComponents))

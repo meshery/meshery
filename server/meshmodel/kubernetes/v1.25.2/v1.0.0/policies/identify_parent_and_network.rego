@@ -6,9 +6,17 @@ identify_relationship(
 	design_file,
 	relationship,
 ) := evaluation_results if {
-	applicable_on_rels := [{"hierarchical": "parent"}, {"edge": "network"}]
+	applicable_on_rels := [
+		{"kind": "hierarchical", "type": "parent"},
+		{"kind": "edge", "type": "non-binding"},
+	]
+	{"kind": lower(relationship.kind), "type": lower(relationship.type)} in applicable_on_rels
 
-	{lower(relationship.kind): lower(relationship.type)} in applicable_on_rels
+	# annotation edges have all selectors as wildcard,
+	# hence it will result in rels being created between same component twice.
+	# Node A  -> Node B and Node B -> Node A.
+	# Hence do not try to identify annotation rels, but only evaluate if the exisitng ones are valid or not.
+	relationship.subType != "annotation"
 
 	selector_set := relationship.selectors[_]
 	from_selectors := {kind: selectors |
@@ -60,10 +68,17 @@ evaluate_hierarchy contains result if {
 		"value": to_decl.id,
 	}])
 
-	cloned_selectors := {"selectors": [{"allow": {
-		"from": [match_selector_for_from],
-		"to": [match_selector_for_to],
-	}}]}
+	now := format_int(time.now_ns(), 10)
+
+	id := uuid.rfc4122(sprintf("%s%s%s%s", [from_decl.id, to_decl.id, data.relationship.id, now]))
+
+	cloned_selectors := {
+		"id": id,
+		"selectors": [{"allow": {
+			"from": [match_selector_for_from],
+			"to": [match_selector_for_to],
+		}}],
+	}
 
 	result := object.union_n([data.relationship, cloned_selectors, {"status": "approved"}])
 }
@@ -74,12 +89,15 @@ is_valid_hierarchy(from_declaration, to_declaration, from_selector, to_selector)
 	mutated_selector := identify_mutated(from_selector, to_selector, from_declaration, to_declaration)
 
 	match_results := [result |
-		some i
+		range := numbers.range(0, min([count(mutator_selector.paths), count(mutated_selector.paths)]) - 1)
+		some i in range
 		result := is_feasible(
 			mutator_selector.paths[i],
 			mutated_selector.paths[i],
 			mutator_selector.declaration,
 			mutated_selector.declaration,
+			"",
+			""
 		)
 	]
 	valid_results := [i |

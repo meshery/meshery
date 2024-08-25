@@ -6,14 +6,11 @@
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
    "capabilities": null,
-   "defaultData": "",
    "isAnnotation": false,
    "primaryColor": "#00B39F",
    "secondaryColor": "#00D3A9",
    "shape": "circle",
-   "shapePolygonPoints": "",
    "styleOverrides": "",
-   "styles": "",
    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 506 397\" fill=\"none\"\u003e\n\u003crect xmlns=\"http://www.w3.org/2000/svg\" width=\"377\" height=\"109\" rx=\"8\" fill=\"#58585A\"\u003e\u003c/rect\u003e\n\u003crect xmlns=\"http://www.w3.org/2000/svg\" y=\"149\" width=\"377\" height=\"109\" rx=\"8\" fill=\"#58585A\"\u003e\u003c/rect\u003e\n\u003crect xmlns=\"http://www.w3.org/2000/svg\" x=\"129\" y=\"288\" width=\"377\" height=\"109\" rx=\"8\" fill=\"url(#paint0_linear_27226_21870)\"\u003e\u003c/rect\u003e\n\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"paint0_linear_27226_21870\" x1=\"129\" y1=\"342.5\" x2=\"506\" y2=\"342.5\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop xmlns=\"http://www.w3.org/2000/svg\" stop-color=\"#D1BE06\"\u003e\u003c/stop\u003e\n\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"1\" stop-color=\"#E7E5DE\"\u003e\u003c/stop\u003e\n\u003c/linearGradient\u003e\n\u003c/defs\u003e\n\u003c/svg\u003e\n",
    "svgComplete": "",
    "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 506 397\" fill=\"none\"\u003e\n\u003crect xmlns=\"http://www.w3.org/2000/svg\" width=\"377\" height=\"109\" rx=\"8\" fill=\"white\"\u003e\u003c/rect\u003e\n\u003crect xmlns=\"http://www.w3.org/2000/svg\" y=\"149\" width=\"377\" height=\"109\" rx=\"8\" fill=\"white\"\u003e\u003c/rect\u003e\n\u003crect xmlns=\"http://www.w3.org/2000/svg\" x=\"129\" y=\"288\" width=\"377\" height=\"109\" rx=\"8\" fill=\"white\"\u003e\u003c/rect\u003e\n\u003c/svg\u003e\n"

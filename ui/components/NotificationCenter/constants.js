@@ -58,27 +58,3 @@ export const SEVERITY_STYLE = {
     darkColor: NOTIFICATIONCOLORS.SUCCESS,
   },
 };
-
-// Validate event against EVENT_SCHEMA and return [isValid,validatedEvent]
-export const validateEvent = (event) => {
-  const eventCopy = { ...event };
-  event.status = eventCopy.status.trim() || STATUS.UNREAD;
-  event.severity = eventCopy.severity.trim() || SEVERITY.INFO;
-  const valid = eventCopy !== null && eventCopy !== undefined;
-  return [valid, eventCopy];
-};
-
-// return validated events (adds default values if not present)
-export const validateEvents = (events) => {
-  return events
-    .map((event) => {
-      const [isValid, validatedEvent] = validateEvent(event);
-      return isValid ? validatedEvent : null;
-    })
-    .filter((event) => event);
-};
-
-export const validateEventMetadata = (metadata) => {
-  const valid = metadata !== null && metadata !== undefined;
-  return [valid, metadata];
-};

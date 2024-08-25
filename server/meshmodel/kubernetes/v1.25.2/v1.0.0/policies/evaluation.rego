@@ -22,7 +22,7 @@ evaluate := eval_results if {
 		# do not evaluate relationships which have status as "deleted".
 		lower(rel.status) == "pending"
 
-		patched_declaration := perform_eval(input, rel)
+		resultant_patch := perform_eval(input, rel)
 
 		# change status for pending relationship
 		r = json.patch(rel, [{
@@ -32,7 +32,7 @@ evaluate := eval_results if {
 		}])
 
 		patched_object := {
-			"declaration": patched_declaration,
+			"patches": resultant_patch,
 			"relationship": r,
 		}
 	}
@@ -50,7 +50,7 @@ evaluate := eval_results if {
 	# separate out same declarations by id.
 	intermediate_result := {x |
 		some val in resultant_patches
-		some nval in val.declaration
+		some nval in val.patches
 		x := nval
 	}
 
@@ -59,10 +59,10 @@ evaluate := eval_results if {
 
 	result := {mutated |
 		some val in ans
-		merged := object.union_n(val)
+		mutated_declaration := json.patch(val.declaration, val.patches)
 		mutated := {
-			"declaration_id": merged.id,
-			"declaration": merged,
+			"declaration_id": mutated_declaration.id,
+			"declaration": mutated_declaration,
 		}
 	}
 
@@ -104,7 +104,7 @@ evaluate := eval_results if {
 	]
 
 	final_design_file = json.patch(updated_design_file, [{
-		"op": "replace",
+		"op": "add",
 		"path": "/relationships",
 		"value": final_rels_with_deletions,
 	}])

@@ -3251,6 +3251,15 @@
         "short_description": "",
         "probable_cause": "",
         "suggested_remediation": ""
+      },
+      "1362": {
+        "name": "ErrGetComponentDefinitionCode",
+        "code": "1362",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "component definition not found",
+        "probable_cause": "Component might not have been registered\nThe component might not be supported by default, in the version of Meshery you are currently using.",
+        "suggested_remediation": "Ensure component definition is valid JSON/YAML.\nImport the model and try again."
       }
     }
   }

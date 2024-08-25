@@ -5,6 +5,7 @@
   "displayName": "Argo Workflows",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://charts.bitnami.com/bitnami/argo-workflows-6.1.4.tgz", 
     "isAnnotation": false,
     "published": true,
     "subCategory": "Continuous Integration \u0026 Delivery",

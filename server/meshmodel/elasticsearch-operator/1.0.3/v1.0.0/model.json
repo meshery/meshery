@@ -5,6 +5,7 @@
   "displayName": "Elastic Search",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://openinfradev.github.io/helm-repo/elasticsearch-operator-1.0.3.tgz", 
     "isAnnotation": false,
     "published": true,
     "subCategory": "Logging",

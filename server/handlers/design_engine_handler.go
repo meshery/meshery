@@ -18,7 +18,7 @@ import (
 	"github.com/spf13/viper"
 
 	"github.com/layer5io/meshery/server/models/pattern/patterns/k8s"
-		patternutils "github.com/layer5io/meshery/server/models/pattern/utils"
+	patternutils "github.com/layer5io/meshery/server/models/pattern/utils"
 
 	"github.com/layer5io/meshery/server/models/pattern/stages"
 	"github.com/layer5io/meshkit/logger"
@@ -92,6 +92,8 @@ func (h *Handler) PatternFileHandler(
 	if isDelete {
 		action = "undeploy"
 	}
+	patternID := payload.PatternID
+
 	isDesignInAlpha2Format, err := patternutils.IsDesignInAlpha2Format(payload.PatternFile)
 	if err != nil {
 		err = ErrPatternFile(err)
@@ -104,11 +106,18 @@ func (h *Handler) PatternFileHandler(
 	}
 
 	if isDesignInAlpha2Format {
-		_, patternFileStr, err := h.convertV1alpha2ToV1beta1(payload.PatternFile, payload.PatternID)
+		eventBuilder := events.NewEvent().ActedUpon(patternID).FromSystem(*h.SystemID).FromUser(userID).WithCategory("pattern").WithAction("convert")
+
+		_, patternFileStr, err := h.convertV1alpha2ToV1beta1(&models.MesheryPattern{
+			ID:          &patternID,
+			PatternFile: payload.PatternFile,
+		}, eventBuilder)
+
+		event := eventBuilder.Build()
+		_ = provider.PersistEvent(event)
+		go h.config.EventBroadcaster.Publish(userID, event)
+		
 		if err != nil {
-			event := events.NewEvent().ActedUpon(payload.PatternID).FromSystem(*h.SystemID).FromUser(userID).WithCategory("pattern").WithAction("convert").WithDescription("Failed to convert design to v1beta1 design format").WithMetadata(map[string]interface{}{"error": err, "id": payload.PatternID}).Build()
-			_ = provider.PersistEvent(event)
-			go h.config.EventBroadcaster.Publish(userID, event)
 			h.log.Error(err)
 			http.Error(rw, err.Error(), http.StatusInternalServerError)
 			return
@@ -117,17 +126,22 @@ func (h *Handler) PatternFileHandler(
 	}
 
 	patternFile, err := core.NewPatternFile(patternFileByte)
-	patternFile.Id = payload.PatternID
+	if err != nil {
+		h.log.Error(ErrPatternFile(err))
+		http.Error(rw, ErrPatternFile(err).Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if patternID == uuid.Nil {
+		patternID = patternFile.Id
+	}
+
+	patternFile.Id = patternID
 	// Generate the pattern file object
 	description := fmt.Sprintf("%sed design '%s'", action, patternFile.Name)
 	if isDryRun {
 		action = "verify"
 		description = fmt.Sprintf("%sed design '%s'", action, patternFile.Name)
-	}
-	if err != nil {
-		h.log.Error(ErrPatternFile(err))
-		http.Error(rw, ErrPatternFile(err).Error(), http.StatusInternalServerError)
-		return
 	}
 
 	opts := &core.ProcessPatternOptions{
@@ -148,7 +162,6 @@ func (h *Handler) PatternFileHandler(
 	}
 	response, err := _processPattern(opts)
 
-	patternID := patternFile.Id
 	eventBuilder := events.NewEvent().ActedUpon(patternID).FromUser(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction(action)
 
 	if err != nil {
@@ -486,7 +499,6 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) ([]patter
 		// Hack until adapters fix the concurrent client
 		// creation issue: https://github.com/layer5io/meshery-adapter-library/issues/32
 		time.Sleep(50 * time.Microsecond)
-
 		sap.log.Debug("Execute operations on: ", host.Kind)
 
 		_hostPort, ok := host.Metadata["port"]

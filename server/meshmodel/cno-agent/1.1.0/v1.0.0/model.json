@@ -5,6 +5,7 @@
   "displayName": "Cno Agent",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://beopencloud.github.io/cno/cno-agent-v2.0.2.tgz", 
     "isAnnotation": false,
     "published": false,
     "subCategory": "Cloud Native Network",

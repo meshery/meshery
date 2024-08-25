@@ -5,6 +5,7 @@
   "displayName": "AWS Load Balancer",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://aws.github.io/eks-charts/aws-load-balancer-controller-1.6.2.tgz", 
     "isAnnotation": false,
     "published": true,
     "subCategory": "Service Proxy",

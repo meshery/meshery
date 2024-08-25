@@ -1,83 +1,6 @@
 {
   "capabilities": [
    {
-    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
-    "displayName": "Performance Test",
-    "entityState": [
-     "instance"
-    ],
-    "key": "",
-    "kind": "action",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "perf-test",
-    "type": "operator",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure the workload specific setting of a component",
-    "displayName": "Workload Configuration",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "config",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure Labels And Annotations for  the component ",
-    "displayName": "Labels and Annotations Configuration",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "labels-and-annotations",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "View relationships for the component",
-    "displayName": "Relationships",
-    "entityState": [
-     "declaration",
-     "instance"
-    ],
-    "key": "",
-    "kind": "view",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "relationship",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "View Component Definition ",
-    "displayName": "Json Schema",
-    "entityState": [
-     "declaration",
-     "instance"
-    ],
-    "key": "",
-    "kind": "view",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "definition",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
     "description": "Configure the visual styles for the component",
     "displayName": "Styling",
     "entityState": [
@@ -121,6 +44,21 @@
     "subType": "compoundDnd",
     "type": "graph",
     "version": "0.7.0"
+   },
+   {
+    "description": "Add text to nodes body",
+    "displayName": "Body Text",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "body-text",
+    "type": "style",
+    "version": "0.7.0"
    }
   ],
   "component": {
@@ -134,13 +72,10 @@
   "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
-   "defaultData": "{\"label\":\"\"}",
    "genealogy": "",
    "isAnnotation": true,
-   "published": false,
-   "shapePolygonPoints": "",
-   "styleOverrides": "{\"height\":\"30px\",\"width\":\"30px\", \"background-image\":\"none\",\"border-width\":1,\"border-style\":\"solid\",\"background-opacity\":0.1,\"data\":{\"label\":\"\"}}",
-   "styles": "{\"height\":\"30px\",\"width\":\"30px\", \"background-image\":\"none\",\"border-width\":1,\"border-style\":\"solid\",\"background-opacity\":0.1}"
+   "isNamespaced": false,
+   "published": false
   },
   "model": {
    "category": {
@@ -183,11 +118,17 @@
   "schemaVersion": "components.meshery.io/v1beta1",
   "status": "enabled",
   "styles": {
+   "background-image": "none",
+   "background-opacity": 0.1,
+   "border-style": "solid",
+   "border-width": 1,
+   "height": 30,
    "primaryColor": "#00B39F",
    "secondaryColor": "#00D3A9",
    "shape": "round-heptagon",
    "svgColor": "\u003csvg width=\"40\" height=\"40\" viewBox=\"0 0 40 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M18.7217 2.39519L7.1149 7.9655C6.03826 8.46733 5.27673 9.42081 5.01413 10.5499L2.09931 23.2713C1.83671 24.3753 2.09931 25.5044 2.83458 26.3826L10.9488 36.5196C11.7103 37.448 12.8658 38 14.1 38H26.9147C28.1489 38 29.3043 37.448 30.0658 36.5196L38.1801 26.3826C38.8891 25.5044 39.1517 24.3502 38.9153 23.2713L36.0005 10.5248C35.7379 9.39571 34.9764 8.46733 33.8997 7.94041L22.2667 2.39519C21.1375 1.86827 19.8246 1.86827 18.6954 2.39519H18.7217Z\" fill=\"#00B39F\" fill-opacity=\"0.1\" stroke=\"#00B39F\" stroke-miterlimit=\"10\"/\u003e\n\u003c/svg\u003e\n",
-   "svgWhite": "\u003csvg width=\"41\" height=\"40\" viewBox=\"0 0 41 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M18.7217 2.39519L7.1149 7.9655C6.03826 8.46733 5.27673 9.42081 5.01413 10.5499L2.09931 23.2713C1.83671 24.3753 2.09931 25.5044 2.83458 26.3826L10.9488 36.5196C11.7103 37.448 12.8658 38 14.1 38H26.9147C28.1489 38 29.3043 37.448 30.0658 36.5196L38.1801 26.3826C38.8891 25.5044 39.1517 24.3502 38.9153 23.2713L36.0005 10.5248C35.7379 9.39571 34.9764 8.46733 33.8997 7.94041L22.2667 2.39519C21.1375 1.86827 19.8246 1.86827 18.6954 2.39519H18.7217Z\" fill=\"white\" fill-opacity=\"0.1\" stroke=\"white\" stroke-miterlimit=\"10\"/\u003e\n\u003c/svg\u003e\n"
+   "svgWhite": "\u003csvg width=\"41\" height=\"40\" viewBox=\"0 0 41 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M18.7217 2.39519L7.1149 7.9655C6.03826 8.46733 5.27673 9.42081 5.01413 10.5499L2.09931 23.2713C1.83671 24.3753 2.09931 25.5044 2.83458 26.3826L10.9488 36.5196C11.7103 37.448 12.8658 38 14.1 38H26.9147C28.1489 38 29.3043 37.448 30.0658 36.5196L38.1801 26.3826C38.8891 25.5044 39.1517 24.3502 38.9153 23.2713L36.0005 10.5248C35.7379 9.39571 34.9764 8.46733 33.8997 7.94041L22.2667 2.39519C21.1375 1.86827 19.8246 1.86827 18.6954 2.39519H18.7217Z\" fill=\"white\" fill-opacity=\"0.1\" stroke=\"white\" stroke-miterlimit=\"10\"/\u003e\n\u003c/svg\u003e\n",
+   "width": 30
   },
   "version": "v1.0.0"
  }

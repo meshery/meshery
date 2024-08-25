@@ -23,8 +23,15 @@ const userApi = api.injectEndpoints({
       query: (queryArg) => ({
         url: 'user/prefs',
         method: 'POST',
-        body: queryArg,
+        body: queryArg.usersExtensionPreferences,
         credentials: 'include',
+      }),
+    }),
+    getUserPrefWithContext: builder.query({
+      query: (selectedK8sContexts) => ({
+        url: ctxUrl('user/prefs', selectedK8sContexts),
+        method: 'GET',
+        credentials: 'same-origin',
       }),
     }),
     updateUserPrefWithContext: builder.mutation({
@@ -50,6 +57,7 @@ export const {
   useLazyGetTokenQuery,
   useGetUserPrefQuery,
   useUpdateUserPrefMutation,
+  useGetUserPrefWithContextQuery,
   useUpdateUserPrefWithContextMutation,
   useGetProviderCapabilitiesQuery,
 } = userApi;

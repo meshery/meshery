@@ -5,6 +5,7 @@
   "displayName": "Vault Config Operator",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://redhat-cop.github.io/vault-config-operator/vault-config-operator/vault-config-operator-v0.8.25.tgz", 
     "isAnnotation": false,
     "published": true,
     "subCategory": "Key Management",
