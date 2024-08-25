@@ -1,5 +1,3 @@
-const core = require('@actions/core');
-
 const MESHERY_SERVER_URL = process.env.MESHERY_SERVER_URL || 'http://localhost:9081';
 const REMOTE_PROVIDER_URL = process.env.REMOTE_PROVIDER_URL || 'https://staging-meshery.layer5.io';
 
@@ -14,6 +12,8 @@ const PROVIDER_SELECTION_URL = `${MESHERY_SERVER_URL}/provider`;
 const PROVIDER_TOKEN = process.env.PROVIDER_TOKEN;
 
 if (process.env.CI) {
+  const core = require('@actions/core');
+
   if (!USER_EMAIL && !USER_PASSWORD) {
     core.warning('Using default email and password on auth');
   } else if (!USER_EMAIL || !USER_PASSWORD) {
