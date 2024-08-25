@@ -121,6 +121,7 @@
   "schemaVersion": "components.meshery.io/v1beta1",
   "status": "enabled",
   "styles": {
+   "background-image": "none",
    "border-style": "dashed",
    "border-width": 0,
    "height": 30,

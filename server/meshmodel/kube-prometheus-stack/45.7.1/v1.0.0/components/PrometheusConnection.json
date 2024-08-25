@@ -137,18 +137,7 @@
    "genealogy": "",
    "isAnnotation": false,
    "isNamespaced": true,
-   "published": false,
-   "transitions": {
-      "connected": [
-        "disconnected",
-        "deleted"
-      ],
-      "deleted": [],
-      "disconnected": [
-        "connected",
-        "deleted"
-      ]
-    }
+   "published": false
   },
   "model": {
    "category": {
