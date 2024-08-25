@@ -156,7 +156,7 @@ func (h *Handler) handleFilterPOST(
 			parsedBody.FilterData.Name = "meshery-filter-" + utils.GetRandomAlphabetsOfDigit(5)
 		}
 		// Assign a location if no location is specified
-		if parsedBody.FilterData.Location == nil || len(parsedBody.FilterData.Location) == 0 {
+		if len(parsedBody.FilterData.Location) == 0 {
 			parsedBody.FilterData.Location = map[string]interface{}{
 				"host":   "",
 				"path":   "",
@@ -640,8 +640,8 @@ func (h *Handler) generateFilterComponent(config string) (string, error) {
 		if ok {
 			filterID, _ := uuid.NewV4()
 			filterSvc := component.ComponentDefinition{
-				Id:           filterID,
-				DisplayName:  strings.ToLower(filterCompDef.Component.Kind) + utils.GetRandomAlphabetsOfDigit(5),
+				Id:          filterID,
+				DisplayName: strings.ToLower(filterCompDef.Component.Kind) + utils.GetRandomAlphabetsOfDigit(5),
 				Component: component.Component{
 					Kind:    filterCompDef.Component.Kind,
 					Version: filterCompDef.Component.Version,
@@ -649,7 +649,7 @@ func (h *Handler) generateFilterComponent(config string) (string, error) {
 				Model: model.ModelDefinition{
 					Name: filterCompDef.Model.Name,
 					Model: model.Model{
-						Version:      filterCompDef.Model.Model.Version,
+						Version: filterCompDef.Model.Model.Version,
 					},
 				},
 				Metadata: component.ComponentDefinition_Metadata{
