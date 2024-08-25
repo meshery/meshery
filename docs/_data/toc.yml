@@ -143,7 +143,7 @@
         - title: Interpreting Performance Test Results 
           url: guides/performance-management/interpreting-performance-test-results
         - title: Performance Profiles and Tests #should go under concepts
-          url: /guides/performance-management/managing-performance
+          url: guides/performance-management/managing-performance
     - title: Using Meshery CLI Guides ↆ
       url: guides/mesheryctl
       children:
