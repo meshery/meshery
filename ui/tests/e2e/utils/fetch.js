@@ -17,7 +17,7 @@ export async function fetchData(endpoint, method = 'GET', body = null) {
 
   const headers = {
     'meshery-token': token,
-    Cookie: `meshery-provider=Meshery; meshery.layer5.io_ref=/;token=${token}`,
+    Cookie: `meshery-provider=Meshery; staging-meshery.layer5.io_ref=/;token=${token}`,
   };
 
   try {
