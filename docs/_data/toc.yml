@@ -128,17 +128,17 @@
       url: guides/events-management
     - title: GitOps with Meshery
       url: guides/infrastructure-management/gitops-with-meshery
-    - title: Using Metrics in Meshery ↆ
+    - title: Performance Management ↆ
       url: guides/performance-management
       children:
-        - title: Performance Management
-          url: guides/performance/managing-performance
-        - title: Integrating Prometheus and Grafana
+        - title: Performance Management with Meshery 
+          url: guides/performance-management/performance-management
+        - title: Using Metrics in Meshery
           url: guides/performance-management/meshery-metrics
         - title: Interpreting Performance Test Results 
           url: guides/performance-management/interpreting-performance-test-results
-        - title: Performance Management with Meshery 
-          url: guides/performance-management/performance-management
+        - title: Performance Profiles and Tests #should go under concepts
+          url: /guides/performance-management/managing-performance
     - title: Using Meshery CLI Guides ↆ
       url: guides/mesheryctl
       children:
