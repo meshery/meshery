@@ -106,6 +106,7 @@ jobs:
     name: UI end-to-end tests
     if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-22.04
+    timeout-minutes: 45
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -178,9 +179,10 @@ jobs:
           ADAPTER_URLS: "localhost:10000 localhost:10001 localhost:10002 localhost:10003 localhost:10004 localhost:10009 localhost:10007"
         run: |
           make server &
-          sleep 60
+          sleep 90
       - name: Install Playwright Browsers
-        run: cd ui && npx playwright install --with-deps && cd ..
+        run: npx playwright install --with-deps
+        working-directory: ui
       - name: Run Playwright End-to-End Tests
         env:
           MESHERY_SERVER_URL: "http://localhost:9081"
@@ -189,15 +191,15 @@ jobs:
           REMOTE_PROVIDER_USER_PASSWORD: ${{ secrets.REMOTE_PROVIDER_USER_PASS }}
           PROVIDER_TOKEN: ${{ secrets.PROVIDER_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GH_ACCESS_TOKEN  }}
-        run: |
-          cd ui &&
-          npx playwright test --project=chromium --project=firefox --reporter="./tests/e2e/custom-playwright-reporter.js" &&
-          cd ..
+        run: npx playwright test --project=chromium --project=firefox --reporter="./tests/e2e/custom-playwright-reporter.js"
+        working-directory: ui
       - name: Save PR number
+        if: always()
         run: |
             mkdir -p ./pr
             echo ${{ github.event.number }} > ./pr/number
       - name: Upload Test Report
+        if: always()
         uses: actions/upload-artifact@834a144ee995460fba8ed112a2fc961b36a5ec5a # v4.3.6
         with:
             name: e2e-test-reporter

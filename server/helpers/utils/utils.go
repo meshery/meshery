@@ -14,7 +14,9 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/layer5io/meshkit/encoding"
 	"github.com/layer5io/meshkit/utils"
+
 	"github.com/meshery/schemas/models/v1beta1/component"
 
 	"golang.org/x/text/cases"
@@ -362,7 +364,7 @@ func MarshalAndUnmarshal[k any, v any](val k) (unmarshalledvalue v, err error) {
 		return
 	}
 
-	err = utils.Unmarshal(data, &unmarshalledvalue)
+	err = encoding.Unmarshal([]byte(data), &unmarshalledvalue)
 	if err != nil {
 		return
 	}
