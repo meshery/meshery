@@ -14,10 +14,11 @@ export async function fetchData(endpoint, method = 'GET', body = null) {
   const url = `${ENV.MESHERY_SERVER_URL}/api${endpoint}`;
   const yourToken = ENV.PROVIDER_TOKEN;
   const token = yourToken || getTokenFromAuthFile();
+  const urlWithoutProtocol = new URL(ENV.REMOTE_PROVIDER_URL).host;
 
   const headers = {
     'meshery-token': token,
-    Cookie: `meshery-provider=Meshery; meshery.layer5.io_ref=/;token=${token}`,
+    Cookie: `meshery-provider=Meshery; ${urlWithoutProtocol}_ref=/;token=${token}`,
   };
 
   try {
