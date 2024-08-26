@@ -121,10 +121,9 @@
   "schemaVersion": "components.meshery.io/v1beta1",
   "status": "enabled",
   "styles": {
-   "background-image": "none",
-   "background-opacity": 0.1,
+   "background-opacity": 0,
    "border-style": "solid",
-   "border-width": 1,
+   "border-width": 0,
    "height": 30,
    "primaryColor": "#00B39F",
    "secondaryColor": "#00D3A9",

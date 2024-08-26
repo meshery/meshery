@@ -87,7 +87,7 @@
               ],
               "to": [
                 {
-                  "kind": "seld",
+                  "kind": "self",
                   "mutatorRef": [
                     []
                   ]
