@@ -19,12 +19,12 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/meshery/schemas/models/v1beta1/model"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	meshkitUtils "github.com/layer5io/meshkit/utils"
 )
 
@@ -269,7 +269,7 @@ func init() {
 	// publishCmd.MarkFlagRequired("imgs-output-path")
 }
 
-func WriteModelDefToFileSystem(model *utils.ModelCSV, version string, location string) (string, *v1beta1.Model, error) {
+func WriteModelDefToFileSystem(model *utils.ModelCSV, version string, location string) (string, *model.ModelDefinition, error) {
 	modelDef := model.CreateModelDefinition(version, defVersion)
 	modelDefPath := filepath.Join(location, modelDef.Name)
 	err := modelDef.WriteModelDefinition(modelDefPath+"/model.json", "json")

@@ -188,11 +188,11 @@ All Meshery GitHub repositories are configured with GitHub Actions. Everytime a 
 1. assign each of these two tags to the new container image as well as the latest tag.
 1. push the new Docker tags and image to Docker Hub.
 
-### Building `mesheryctl`
+### `mesheryctl`
 
-As a special case, the meshery repository contains an additional artifact produced during each build. This artifact is mesheryctl which is built as an executable binary. In order to make the job of building mesheryctl easier for a combination of different platform architectures and operating systems, we are using [GoReleaser](https://goreleaser.com). Irrespective of branch, for every git commit and git push to the meshery repository, GoReleaser will execute and generate the OS and arch-specific binaries ( but will NOT publish them to GitHub). Even though mesheryctl binaries are built each time a pull request is merged to master, only stable channel artifacts are published (persisted).
+As a special case, the `meshery` repository contains an additional artifact produced during each build. This artifact is `mesheryctl`, which is built as an executable binary. In order to make the job of building `mesheryctl` easier for a combination of different platform architectures and operating systems, we are using [GoReleaser](https://goreleaser.com). Irrespective of branch, for every git commit and git push to the `meshery` repository, GoReleaser will execute and generate the OS and arch-specific binaries (but will NOT persist these artifacts in GitHub). Even though mesheryctl binaries are built each time a pull request is merged to master, only stable channel artifacts are published (persisted).
 
-### Releasing `mesheryctl` to GitHub
+#### Releasing `mesheryctl` to GitHub
 
 Only when a git tag containing a semantic version number is present (is a commit in the master branch) will GoReleaser execute, generate the archives, and also publish the archives to [Meshery’s GitHub releases](https://github.com/meshery/meshery/releases) automatically. GoReleaser is configured to generate artifacts for the following OS, ARCH combination:
 
@@ -203,11 +203,11 @@ Only when a git tag containing a semantic version number is present (is a commit
 
 The artifacts will be made available as a tar.gz archive for all the operating systems. mesheryctl is bundled into packages for commonly used package managers: homebrew and scoop.
 
-#### Homebrew
+##### Homebrew
 
-GoReleaser facilitates the creation of a brew formula for mesheryctl. The [homebrew-tap](https://github.com/layer5io/homebrew-tap) repository is the location for Layer5’s brew formulas.
+GoReleaser facilitates the creation of a brew formula for mesheryctl. The [homebrew-tap](https://github.com/meshery/homebrew-tap) repository is the location for `mesheryctl`'s brew formulas. Releases of mesheryctl are  published in the official homebrew-core tap at https://github.com/Homebrew/homebrew-core/pkgs/container/core%2Fmesheryctl.
 
-#### Scoop
+##### Scoop
 
 GoReleaser facilitates the creation of a Scoop app for mesheryctl. The [scoop-bucket](https://github.com/layer5io/scoop-bucket) repository is the location of Layer5’s Scoop bucket.
 

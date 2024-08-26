@@ -1,22 +1,11 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "models.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "name": "mimir-distributed",
-  "displayName": "Mimir",
-  "description": "",
-  "status": "enabled",
-  "hostID": "00000000-0000-0000-0000-000000000000",
-  "registrant": {
-    "hostname": "artifacthub"
-  },
   "category": {
-    "name": "Observability and Analysis",
-    "metadata": null
+    "name": "Observability and Analysis"
   },
-  "subCategory": "Observability and Analysis",
+  "displayName": "Mimir",
+  "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
-    "capabilities": "",
+    "capabilities": null,
     "defaultData": "",
     "isAnnotation": false,
     "primaryColor": "#F2C144",
@@ -32,6 +21,25 @@
   "model": {
     "version": "5.4.0-weekly.294"
   },
+  "name": "mimir-distributed",
+  "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+  },
+  "connection_id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "models.meshery.io/v1beta1",
+  "status": "enabled",
+  "subCategory": "Observability and Analysis",
+  "version": "v1.0.0",
   "components": null,
   "relationships": null
 }
