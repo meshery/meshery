@@ -24,13 +24,12 @@ jobs:
       with:
         script: |
             const fs = require('fs');
-            const PR_NUMBER = Number(fs.readFileSync('./pr/number'));
-            const E2ETestReporter = fs.readFileSync('./ui/test-report.md');
+            const PRNumber = Number(fs.readFileSync('./pr/number'));
+            const E2ETestReporter = String(fs.readFileSync('./ui/test-report.md'));
 
-            const { STAGING_URL } = process.env
             await github.rest.issues.createComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                issue_number: PR_NUMBER,
+                issue_number: PRNumber,
                 body: E2ETestReporter
             });
