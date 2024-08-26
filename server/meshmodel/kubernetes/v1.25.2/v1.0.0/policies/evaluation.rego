@@ -115,6 +115,7 @@ evaluate := eval_results if {
 			"componentsUpdated": updated_declarations,
 			"relationshipsAdded": relationships_added,
 			"relationshipsRemoved": relationships_deleted,
+			"relationshipsUpdated": intermediate_rels,
 		},
 	}
 }
