@@ -11,27 +11,7 @@ list: include
 
 ## List of Announced Vulnerabilities
 
-<style>
-  .scrollable-table {
-    overflow-x: auto;
-  }
-  .styled-table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-  .styled-table th, .styled-table td {
-    border: 1px solid #dddddd;
-    padding: 8px;
-    text-align: left;
-  }
-  .styled-table thead {
-    background-color: #f2f2f2;
-  }
-</style>
-
-
-<div class="scrollable-table">
-  <table class="styled-table">
+<table>
 <tr>
   <th> DATE ANNOUNCED </th>
   <th> CVE ID </th>
@@ -59,7 +39,6 @@ list: include
 
 {% endfor %}
 </table>
-</div>
 
 ## Reporting a vulnerability
 
