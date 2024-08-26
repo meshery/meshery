@@ -17,9 +17,7 @@ import (
 
 	"github.com/layer5io/meshkit/models/events"
 
-	regv1alpha3 "github.com/layer5io/meshkit/models/meshmodel/registry/v1alpha3"
 	regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
-	mutils "github.com/layer5io/meshkit/utils"
 )
 
 const (
@@ -91,12 +89,12 @@ func (h *Handler) EvaluateRelationshipPolicy(
 			"evaluated_at": *evaluationResponse.Timestamp,
 		}).WithSeverity(events.Informational).Build()
 	_ = provider.PersistEvent(event)
-	
+
 	// Create the event but do not notify the client immediately, as the evaluations are frequent and takes up the view area.
 	// go h.config.EventBroadcaster.Publish(userUUID, event)
 
 	if relationshipPolicyEvalPayload.Options != nil && relationshipPolicyEvalPayload.Options.ReturnDiffOnly != nil &&
-	 *relationshipPolicyEvalPayload.Options.ReturnDiffOnly {
+		*relationshipPolicyEvalPayload.Options.ReturnDiffOnly {
 		evaluationResponse.Design.Components = []*component.ComponentDefinition{}
 		evaluationResponse.Design.Relationships = []*relationship.RelationshipDefinition{}
 		for _, component := range evaluationResponse.Trace.ComponentsUpdated {
@@ -133,39 +131,41 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	}
 }
 
-func (h *Handler) verifyEvaluationQueries(evaluationQueries []string) (verifiedEvaluationQueries []string) {
-	registeredRelationships, _, _, _ := h.registryManager.GetEntities(&regv1alpha3.RelationshipFilter{})
+// unused currently
 
-	var relationships []relationship.RelationshipDefinition
-	for _, entity := range registeredRelationships {
-		relationship, err := mutils.Cast[*relationship.RelationshipDefinition](entity)
+// func (h *Handler) verifyEvaluationQueries(evaluationQueries []string) (verifiedEvaluationQueries []string) {
+// 	registeredRelationships, _, _, _ := h.registryManager.GetEntities(&regv1alpha3.RelationshipFilter{})
 
-		if err != nil {
-			return
-		}
-		relationships = append(relationships, *relationship)
-	}
+// 	var relationships []relationship.RelationshipDefinition
+// 	for _, entity := range registeredRelationships {
+// 		relationship, err := mutils.Cast[*relationship.RelationshipDefinition](entity)
 
-	if len(evaluationQueries) == 0 || (len(evaluationQueries) == 1 && evaluationQueries[0] == "all") {
-		for _, relationship := range relationships {
-			if relationship.EvaluationQuery != nil {
-				verifiedEvaluationQueries = append(verifiedEvaluationQueries, *relationship.EvaluationQuery)
-			} else {
-				verifiedEvaluationQueries = append(verifiedEvaluationQueries, relationship.GetDefaultEvaluationQuery())
-			}
-		}
-	} else {
-		for _, regoQuery := range evaluationQueries {
-			for _, relationship := range relationships {
-				if (relationship.EvaluationQuery != nil && regoQuery == *relationship.EvaluationQuery) || regoQuery == relationship.GetDefaultEvaluationQuery() {
-					verifiedEvaluationQueries = append(verifiedEvaluationQueries, *relationship.EvaluationQuery)
-					break
-				}
-			}
-		}
-	}
-	return
-}
+// 		if err != nil {
+// 			return
+// 		}
+// 		relationships = append(relationships, *relationship)
+// 	}
+
+// 	if len(evaluationQueries) == 0 || (len(evaluationQueries) == 1 && evaluationQueries[0] == "all") {
+// 		for _, relationship := range relationships {
+// 			if relationship.EvaluationQuery != nil {
+// 				verifiedEvaluationQueries = append(verifiedEvaluationQueries, *relationship.EvaluationQuery)
+// 			} else {
+// 				verifiedEvaluationQueries = append(verifiedEvaluationQueries, relationship.GetDefaultEvaluationQuery())
+// 			}
+// 		}
+// 	} else {
+// 		for _, regoQuery := range evaluationQueries {
+// 			for _, relationship := range relationships {
+// 				if (relationship.EvaluationQuery != nil && regoQuery == *relationship.EvaluationQuery) || regoQuery == relationship.GetDefaultEvaluationQuery() {
+// 					verifiedEvaluationQueries = append(verifiedEvaluationQueries, *relationship.EvaluationQuery)
+// 					break
+// 				}
+// 			}
+// 		}
+// 	}
+// 	return
+// }
 
 // swagger:route GET /api/meshmodels/models/{model}/policies/{name} GetMeshmodelPoliciesByName idGetMeshmodelPoliciesByName
 // Handle GET request for getting meshmodel policies of a specific model by name.

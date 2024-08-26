@@ -22,7 +22,7 @@ if (process.env.CI) {
 
   if (!PROVIDER_TOKEN) {
     core.setFailed(
-      'Token is required, please provide token from Meshery Cloud Provider https://meshery.layer5.io/security/tokens',
+      'Token is required, please provide token from Meshery Cloud Provider https://staging-meshery.layer5.io/security/tokens',
     );
   }
 } else {

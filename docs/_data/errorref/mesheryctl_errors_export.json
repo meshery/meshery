@@ -2905,10 +2905,10 @@
         "name": "ErrCreatingOPAInstanceCode",
         "code": "1323",
         "severity": "Alert",
-        "long_description": "Unable to create OPA instance, policies will not be evaluated.",
+        "long_description": "",
         "short_description": "Error creating OPA Instance.",
-        "probable_cause": "",
-        "suggested_remediation": ""
+        "probable_cause": "Unable to create OPA instance, policies will not be evaluated.",
+        "suggested_remediation": "Ensure relationships are registered"
       },
       "1324": {
         "name": "ErrEventStreamingNotSupportedCode",

@@ -80,6 +80,12 @@ var compStyleValues = []string{
 }
 
 func (c *ComponentCSV) UpdateCompDefinition(compDef *component.ComponentDefinition) error {
+	var existingAddditionalProperties map[string]interface{}
+
+	if compDef.Metadata.AdditionalProperties != nil {
+		existingAddditionalProperties = compDef.Metadata.AdditionalProperties
+	}
+
 	metadata := map[string]interface{}{}
 	compMetadata, err := utils.MarshalAndUnmarshal[ComponentCSV, map[string]interface{}](*c)
 	if err != nil {
@@ -87,7 +93,6 @@ func (c *ComponentCSV) UpdateCompDefinition(compDef *component.ComponentDefiniti
 	}
 	var capabilities []capability.Capability
 	if c.Capabilities != "" {
-
 		err := encoding.Unmarshal([]byte(c.Capabilities), &capabilities)
 		if err != nil {
 			Log.Error(err)
@@ -97,6 +102,12 @@ func (c *ComponentCSV) UpdateCompDefinition(compDef *component.ComponentDefiniti
 	compDef.Capabilities = &capabilities
 	compDefStyles := &component.Styles{}
 
+	//Addtional properties from file
+	for key, value := range existingAddditionalProperties {
+		metadata[key] = value
+	}
+
+	//metadata properties from csv
 	for _, key := range compMetadataValues {
 		if key == "genealogy" {
 			genealogy, err := utils.Cast[string](compMetadata[key])
@@ -121,6 +132,7 @@ func (c *ComponentCSV) UpdateCompDefinition(compDef *component.ComponentDefiniti
 		}
 	}
 
+	//styling properties from csv
 	for _, key := range compStyleValues {
 		if c.Shape != "" {
 			shape := c.Shape

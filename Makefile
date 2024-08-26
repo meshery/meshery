@@ -30,7 +30,7 @@ docker-build:
 docker-playground-build:
 	# `make docker-playground-build` builds Meshery inside of a multi-stage Docker container.
 	# This method does NOT require that you have Go, NPM, etc. installed locally.
-	DOCKER_BUILDKIT=1 docker build -f install/docker/Dockerfile -t layer5/meshery --build-arg TOKEN=$(GLOBAL_TOKEN) --build-arg GIT_COMMITSHA=$(GIT_COMMITSHA) --build-arg GIT_VERSION=$(GIT_VERSION) --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} --build-arg PROVIDER=$(LOCAL_PROVIDER) --build-arg PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) .
+	DOCKER_BUILDKIT=1 docker build -f install/docker/Dockerfile -t layer5/meshery --build-arg TOKEN=$(GLOBAL_TOKEN) --build-arg GIT_COMMITSHA=$(GIT_COMMITSHA) --build-arg GIT_VERSION=$(GIT_VERSION) --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} --build-arg PROVIDER=$(LOCAL_PROVIDER) --build-arg PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) --build-arg PLAYGROUND=true .
 
 ## Build Meshery Server and UI container for e2e testing.
 docker-testing-env-build:
@@ -415,10 +415,10 @@ graphql-build: dep-check
 
 ## testing
 test-setup-ui:
-	cd ui && npm ci && npx playwright install --with-deps && cd ..
+	cd ui; npm ci; npx playwright install --with-deps; cd ..
 
 test-ui:
-	cd ui && npm run test:e2e && cd ..
+	cd ui; npm run test:e2e; cd ..
 
 #-----------------------------------------------------------------------------
 # Dependencies

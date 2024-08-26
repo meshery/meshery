@@ -3,7 +3,6 @@ package utils
 import (
 	"bufio"
 	"bytes"
-	"encoding/json"
 	"fmt"
 	"io"
 	"math/rand"
@@ -25,8 +24,8 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/constants"
 	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshkit/encoding"
 	"github.com/layer5io/meshkit/logger"
-	"github.com/layer5io/meshkit/utils"
 	"github.com/olekukonko/tablewriter"
 	"github.com/pkg/browser"
 	"github.com/pkg/errors"
@@ -650,7 +649,7 @@ func GetID(mesheryServerUrl, configuration string) ([]string, error) {
 		return idList, ErrReadResponseBody(err)
 	}
 	var dat map[string]interface{}
-	if err = json.Unmarshal(body, &dat); err != nil {
+	if err = encoding.Unmarshal(body, &dat); err != nil {
 		return idList, ErrUnmarshal(errors.Wrap(err, "failed to unmarshal response body"))
 	}
 	if dat == nil {
@@ -686,7 +685,7 @@ func GetName(mesheryServerUrl, configuration string) (map[string]string, error) 
 		return nameIdMap, ErrReadResponseBody(err)
 	}
 	var dat map[string]interface{}
-	if err = json.Unmarshal(body, &dat); err != nil {
+	if err = encoding.Unmarshal(body, &dat); err != nil {
 		return nameIdMap, ErrUnmarshal(errors.Wrap(err, "failed to unmarshal response body"))
 	}
 	if dat == nil {
@@ -862,7 +861,7 @@ func GetSessionData(mctlCfg *config.MesheryCtlConfig) (*models.Preference, error
 	}
 
 	prefs := &models.Preference{}
-	err = utils.Unmarshal(string(body), prefs)
+	err = encoding.Unmarshal(body, prefs)
 	if err != nil {
 		return nil, errors.New("Failed to process JSON data. Please sign into Meshery")
 	}
