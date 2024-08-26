@@ -140,15 +140,15 @@
    "published": false,
    "transitions": {
     "connected": [
-      "disconnected",
-      "deleted"
+     "disconnected",
+     "deleted"
     ],
     "deleted": [],
     "disconnected": [
-      "connected",
-      "deleted"
+     "connected",
+     "deleted"
     ]
-  }
+   }
   },
   "model": {
    "category": {
