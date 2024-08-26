@@ -12,6 +12,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"slices"
 	"strconv"
 	"strings"
 	"sync"
@@ -42,6 +43,7 @@ import (
 	"github.com/layer5io/meshkit/utils/kubernetes/kompose"
 	"github.com/layer5io/meshkit/utils/walker"
 
+	regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
 	"github.com/meshery/schemas/models/v1alpha2"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/connection"
@@ -1449,20 +1451,19 @@ func (h *Handler) CloneMesheryPatternHandler(
 			return
 		}
 		pattern.PatternFile = patternFileStr
-	}
+		_, err = provider.SaveMesheryPattern(token, pattern)
+		if err != nil {
+			h.log.Error(ErrSavePattern(err))
+			http.Error(rw, ErrSavePattern(err).Error(), http.StatusInternalServerError)
 
-	_, err = provider.SaveMesheryPattern(token, pattern)
-	if err != nil {
-		h.log.Error(ErrSavePattern(err))
-		http.Error(rw, ErrSavePattern(err).Error(), http.StatusInternalServerError)
+			event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+				"error": ErrSavePattern(_errors.Wrapf(err, "failed to persist converted v1beta1 design file \"%s\" with id: %s", parsedBody.Name, patternID)),
+			}).WithDescription(ErrSavePattern(err).Error()).Build()
 
-		event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-			"error": ErrSavePattern(_errors.Wrapf(err, "failed to persist converted v1beta1 design file \"%s\" with id: %s", parsedBody.Name, patternID)),
-		}).WithDescription(ErrSavePattern(err).Error()).Build()
-
-		_ = provider.PersistEvent(event)
-		go h.config.EventBroadcaster.Publish(userID, event)
-		return
+			_ = provider.PersistEvent(event)
+			go h.config.EventBroadcaster.Publish(userID, event)
+			return
+		}
 	}
 
 	resp, err := provider.CloneMesheryPattern(r, patternID, parsedBody)
@@ -2074,9 +2075,34 @@ func mapModelRelatedData(reg *meshmodel.RegistryManager, patternFile *pattern.Pa
 			continue
 		}
 
-		wc, err := s.GetDefinition(comp.Component.Kind, comp.Model.Model.Version, comp.Model.Name, comp.Component.Version)
+		wc, err := s.GetDefinition(comp.Component.Kind, comp.Model.Model.Version, comp.Model.Name, comp.Component.Version, true)
 		if err != nil {
-			return err
+			m := []string{"meshery", "meshery-core", "meshery-shapes", "meshery-flowchart"}
+			// if model is one of those defined in the slice above as meshery, and no matching defs were found,
+			// try to find the component just by name, this ensures the component is upgraded to newer model.
+			// Eg: Some old designs contains "Comment" component under "meshery" model instead of "meshery-core"
+			
+			
+			// Update the component kind to reflect the current registry.
+			// Eg: The Connection component for k8s, had "kind" updated to "KuberntesConnection",hence any designs which has model k8s and kind "Connection" will fail, to ensure it gets converted, update the kind
+			if comp.Model.Name == "kubernetes" && comp.Component.Kind == "Connection" {
+				comp.Component.Kind = "KubernetesConnection"
+			} else if comp.Model.Name == "aws" || comp.Model.Name == "gcp" {
+				comp.Component.Kind = fmt.Sprintf("%s %s", strings.ToUpper(comp.Model.Name), comp.Component.Kind)
+			} else if !slices.Contains(m, comp.Model.Name) {
+				return err
+			}
+
+			entities, _, _, _ := reg.GetEntities(&regv1beta1.ComponentFilter{
+				Name:       comp.Component.Kind,
+				APIVersion: comp.Component.Version,
+			})
+			comp, found := selector.FindCompDefinitionWithVersion(entities, comp.Model.Model.Version)
+
+			if found {
+				wc = *comp
+			}
+
 		}
 
 		comp.Model = wc.Model
