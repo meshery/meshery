@@ -100,7 +100,7 @@ group_by_id(objects) := {obj |
 	obj := {
 		"declaration_id": val.declaration_id,
 		"declaration": val.declaration,
-		"patches": grouped_objects
+		"patches": grouped_objects,
 	}
 }
 
