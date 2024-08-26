@@ -191,7 +191,7 @@ func InvokeCompUpdate() error {
 							utils.Log.Error(ErrUpdateComponent(err, modelName, component.Component))
 							continue
 						}
-						tmpFilePath := filepath.Join(compPath, "tmp_model.json")
+						tmpFilePath := filepath.Join(versionPath, "components", "tmp_model.json")
 
 						// Ensure the temporary file is removed regardless of what happens
 						defer func() {
@@ -201,33 +201,33 @@ func InvokeCompUpdate() error {
 							existingData, err := os.ReadFile(compPath)
 							if err != nil {
 								utils.Log.Error(err)
-								continue
+								goto NewGen
 							}
 
 							err = mutils.WriteJSONToFile[comp.ComponentDefinition](tmpFilePath, componentDef)
 							if err != nil {
 								utils.Log.Error(err)
-								continue
+								goto NewGen
 							}
 
 							newData, err := os.ReadFile(tmpFilePath)
 							if err != nil {
 								utils.Log.Error(err)
-								continue
+								goto NewGen
 							}
 
 							if bytes.Equal(existingData, newData) {
 								utils.Log.Info("No changes detected for ", componentDef.Component.Kind)
 								continue
 							}
-						} else {
-							err = mutils.WriteJSONToFile[comp.ComponentDefinition](compPath, componentDef)
-							if err != nil {
-								utils.Log.Error(err)
-								continue
-							}
-							totalCompsUpdatedPerModelPerVersion++
 						}
+					NewGen:
+						err = mutils.WriteJSONToFile[comp.ComponentDefinition](compPath, componentDef)
+						if err != nil {
+							utils.Log.Error(err)
+							continue
+						}
+						totalCompsUpdatedPerModelPerVersion++
 
 					}
 					compUpdateArray = append(compUpdateArray, compUpdateTracker{
