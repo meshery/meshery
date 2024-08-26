@@ -71,7 +71,7 @@ func Validator(prov ServiceInfoProvider, act ServiceActionProvider, validate boo
 		}
 
 		for _, component := range data.Pattern.Components {
-			wc, err := s.GetDefinition(component.Component.Kind, component.Model.Model.Version, component.Model.Name, component.Component.Version)
+			wc, err := s.GetDefinition(component.Component.Kind, component.Model.Model.Version, component.Model.Name, component.Component.Version, false)
 			if err != nil {
 				act.Terminate(err)
 				return
