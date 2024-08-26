@@ -1,0 +1,196 @@
+{
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "ExpansionTemplatePodStatus",
+   "schema": "{\n \"description\": \"ExpansionTemplatePodStatus is the Schema for the expansiontemplatepodstatuses API.\",\n \"properties\": {},\n \"title\": \"Expansion Template Pod Status\",\n \"type\": \"object\"\n}",
+   "version": "status.gatekeeper.sh/v1beta1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "Expansion Template Pod Status",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "published": false
+  },
+  "model": {
+   "category": {
+    "name": "Security \u0026 Compliance"
+   },
+   "displayName": "OPA Gatekeeper",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "defaultData": "",
+    "isAnnotation": false,
+    "primaryColor": "#566366",
+    "secondaryColor": "#9BA8AB",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "svgColor": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" viewBox=\"16.37 -1.63 395.51 435.76\"\u003e\u003cstyle\u003esvg {enable-background:new 0 0 432 434}\u003c/style\u003e\u003cpath fill=\"#bfbfbf\" d=\"M71 214.5c7.5-26.7 20.9-50.1 38.4-68.8-5.9-4.4-29.3-22.6-30.4-36.9C77.3 85.4 100.7 6.7 100.7 6.7S30 92.8 25.1 127.6c-3.9 27.3 40.8 81.5 45.5 87v-.1h.4zm287.7-1.4v.2c0 .1.1.2.1.3 7.8-9.4 48.3-59.9 44.6-86-4.9-34.8-75.6-120.9-75.6-120.9s23.4 78.7 21.7 102.1c-1 13.7-22.3 30.8-29.4 36.2 17.5 18.4 31 41.6 38.6 68.1z\"/\u003e\u003cpath fill=\"#566366\" d=\"M358.7 213.2v-.2c-7.6-26.4-21.1-49.6-38.6-68.1-27.5-29-64.9-46.4-105.2-46.4v93h.1c9.9.1 17.9 8.2 17.9 18.1 0 1.2-.1 2.3-.3 3.4-1.6 8.3-8.8 14.6-17.6 14.7h-.3v34.5l-.2 163.4h3.5s38-55 58.5-70.7c24-18.4 82.2-41.2 82.2-41.2v-99.4l.3-.1c-.1-.2-.1-.5-.2-.7 0-.1 0-.2-.1-.3z\"/\u003e\u003cpath fill=\"#7d9199\" d=\"M214.7 262.3v-34.5c-8.3-.1-15.2-5.7-17.3-13.3-.4-1.5-.7-3.1-.7-4.8 0-10 8.1-18.1 18.1-18.1h.1V98.9c-40.5 0-78 17.5-105.5 46.8-17.5 18.6-30.9 42.1-38.4 68.8h-.3v100.7s58.2 22.8 82.2 41.2c19.9 15.3 58.3 69.4 58.3 69.4h3.6v-.1h-.2l.1-163.4z\"/\u003e\u003cpath fill=\"#fff\" d=\"M196.7 209.7c0 1.7.2 3.3.7 4.8 2.1 7.6 9 13.2 17.3 13.3h.3c8.7-.1 16-6.4 17.6-14.7.2-1.1.3-2.2.3-3.4 0-9.9-8-18-17.9-18.1h-.2c-10 0-18.1 8.1-18.1 18.1z\"/\u003e\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" viewBox=\"16.62 -1.63 395.51 435.76\"\u003e\u003cstyle\u003esvg {enable-background:new 0 0 432 434}\u003c/style\u003e\u003cg fill=\"#fff\"\u003e\u003cpath d=\"M71.1 214.5c7.5-26.7 20.9-50.1 38.4-68.8-5.9-4.4-29.3-22.6-30.4-36.9C77.5 85.4 100.9 6.7 100.9 6.7S30.2 92.8 25.3 127.6c-3.9 27.3 40.8 81.5 45.5 87v-.1h.3zm287.8-1.4v.2c0 .1.1.2.1.3 7.8-9.4 48.3-59.9 44.6-86C398.7 92.8 328 6.7 328 6.7s23.4 78.7 21.7 102.1c-1 13.7-22.3 30.8-29.4 36.2 17.5 18.5 30.9 41.7 38.6 68.1z\" opacity=\".64\"/\u003e\u003cpath d=\"M358.9 213.3v-.2c-7.6-26.4-21.1-49.6-38.6-68.1-27.5-29-64.9-46.4-105.2-46.4v93h.1c9.9.1 17.9 8.2 17.9 18.1 0 1.2-.1 2.3-.3 3.4-1.6 8.3-8.8 14.6-17.6 14.7h-.3v34.5l-.2 163.4h3.5s38-55 58.5-70.7c24-18.4 82.2-41.2 82.2-41.2v-99.4l.3-.1c-.1-.2-.1-.5-.2-.7 0-.1-.1-.2-.1-.3z\" opacity=\".85\"/\u003e\u003cpath d=\"M214.9 262.3v-34.5c-8.3-.1-15.2-5.7-17.3-13.3-.4-1.5-.7-3.1-.7-4.8 0-10 8.1-18.1 18.1-18.1h.1V98.9c-40.5 0-78 17.5-105.5 46.8-17.5 18.6-30.9 42.1-38.4 68.8h-.3v100.7s58.2 22.8 82.2 41.2c19.9 15.3 58.3 69.4 58.3 69.4h3.6v-.1h-.2l.1-163.4z\" opacity=\".75\"/\u003e\u003c/g\u003e\u003c/svg\u003e"
+   },
+   "model": {
+    "version": "3.17.0-rc.0"
+   },
+   "name": "gatekeeper",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "enabled",
+   "subCategory": "Security \u0026 Compliance",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
+   "primaryColor": "#566366",
+   "secondaryColor": "#9BA8AB",
+   "shape": "circle",
+   "svgColor": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" viewBox=\"16.37 -1.63 395.51 435.76\"\u003e\u003cstyle\u003esvg {enable-background:new 0 0 432 434}\u003c/style\u003e\u003cpath fill=\"#bfbfbf\" d=\"M71 214.5c7.5-26.7 20.9-50.1 38.4-68.8-5.9-4.4-29.3-22.6-30.4-36.9C77.3 85.4 100.7 6.7 100.7 6.7S30 92.8 25.1 127.6c-3.9 27.3 40.8 81.5 45.5 87v-.1h.4zm287.7-1.4v.2c0 .1.1.2.1.3 7.8-9.4 48.3-59.9 44.6-86-4.9-34.8-75.6-120.9-75.6-120.9s23.4 78.7 21.7 102.1c-1 13.7-22.3 30.8-29.4 36.2 17.5 18.4 31 41.6 38.6 68.1z\"/\u003e\u003cpath fill=\"#566366\" d=\"M358.7 213.2v-.2c-7.6-26.4-21.1-49.6-38.6-68.1-27.5-29-64.9-46.4-105.2-46.4v93h.1c9.9.1 17.9 8.2 17.9 18.1 0 1.2-.1 2.3-.3 3.4-1.6 8.3-8.8 14.6-17.6 14.7h-.3v34.5l-.2 163.4h3.5s38-55 58.5-70.7c24-18.4 82.2-41.2 82.2-41.2v-99.4l.3-.1c-.1-.2-.1-.5-.2-.7 0-.1 0-.2-.1-.3z\"/\u003e\u003cpath fill=\"#7d9199\" d=\"M214.7 262.3v-34.5c-8.3-.1-15.2-5.7-17.3-13.3-.4-1.5-.7-3.1-.7-4.8 0-10 8.1-18.1 18.1-18.1h.1V98.9c-40.5 0-78 17.5-105.5 46.8-17.5 18.6-30.9 42.1-38.4 68.8h-.3v100.7s58.2 22.8 82.2 41.2c19.9 15.3 58.3 69.4 58.3 69.4h3.6v-.1h-.2l.1-163.4z\"/\u003e\u003cpath fill=\"#fff\" d=\"M196.7 209.7c0 1.7.2 3.3.7 4.8 2.1 7.6 9 13.2 17.3 13.3h.3c8.7-.1 16-6.4 17.6-14.7.2-1.1.3-2.2.3-3.4 0-9.9-8-18-17.9-18.1h-.2c-10 0-18.1 8.1-18.1 18.1z\"/\u003e\u003c/svg\u003e",
+   "svgWhite": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" viewBox=\"16.62 -1.63 395.51 435.76\" width='395.51' height='435.76'\u003e\u003cstyle\u003esvg {enable-background:new 0 0 432 434}\u003c/style\u003e\u003cg fill=\"#fff\"\u003e\u003cpath d=\"M71.1 214.5c7.5-26.7 20.9-50.1 38.4-68.8-5.9-4.4-29.3-22.6-30.4-36.9C77.5 85.4 100.9 6.7 100.9 6.7S30.2 92.8 25.3 127.6c-3.9 27.3 40.8 81.5 45.5 87v-.1h.3zm287.8-1.4v.2c0 .1.1.2.1.3 7.8-9.4 48.3-59.9 44.6-86C398.7 92.8 328 6.7 328 6.7s23.4 78.7 21.7 102.1c-1 13.7-22.3 30.8-29.4 36.2 17.5 18.5 30.9 41.7 38.6 68.1z\" opacity=\".64\"/\u003e\u003cpath d=\"M358.9 213.3v-.2c-7.6-26.4-21.1-49.6-38.6-68.1-27.5-29-64.9-46.4-105.2-46.4v93h.1c9.9.1 17.9 8.2 17.9 18.1 0 1.2-.1 2.3-.3 3.4-1.6 8.3-8.8 14.6-17.6 14.7h-.3v34.5l-.2 163.4h3.5s38-55 58.5-70.7c24-18.4 82.2-41.2 82.2-41.2v-99.4l.3-.1c-.1-.2-.1-.5-.2-.7 0-.1-.1-.2-.1-.3z\" opacity=\".85\"/\u003e\u003cpath d=\"M214.9 262.3v-34.5c-8.3-.1-15.2-5.7-17.3-13.3-.4-1.5-.7-3.1-.7-4.8 0-10 8.1-18.1 18.1-18.1h.1V98.9c-40.5 0-78 17.5-105.5 46.8-17.5 18.6-30.9 42.1-38.4 68.8h-.3v100.7s58.2 22.8 82.2 41.2c19.9 15.3 58.3 69.4 58.3 69.4h3.6v-.1h-.2l.1-163.4z\" opacity=\".75\"/\u003e\u003c/g\u003e\u003c/svg\u003e"
+  },
+  "version": "v1.0.0"
+ }

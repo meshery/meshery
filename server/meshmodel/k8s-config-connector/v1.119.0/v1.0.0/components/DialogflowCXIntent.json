@@ -1,29 +1,151 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "displayName": "Dialogflow CX Intent",
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "DialogflowCXIntent",
+   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"description\": {\n     \"description\": \"Human readable description for better understanding an intent like its scope, content, result etc. Maximum character limit: 140 characters.\",\n     \"type\": \"string\"\n    },\n    \"displayName\": {\n     \"description\": \"The human-readable name of the intent, unique within the agent.\",\n     \"type\": \"string\"\n    },\n    \"isFallback\": {\n     \"description\": \"Indicates whether this is a fallback intent. Currently only default fallback intent is allowed in the agent, which is added upon agent creation.\\nAdding training phrases to fallback intent is useful in the case of requests that are mistakenly matched, since training phrases assigned to fallback intents act as negative examples that triggers no-match event.\",\n     \"type\": \"boolean\"\n    },\n    \"languageCode\": {\n     \"description\": \"Immutable. The language of the following fields in intent:\\nIntent.training_phrases.parts.text\\nIf not specified, the agent's default language is used. Many languages are supported. Note: languages must be enabled in the agent before they can be used.\",\n     \"type\": \"string\"\n    },\n    \"parameters\": {\n     \"description\": \"The collection of parameters associated with the intent.\",\n     \"items\": {\n      \"properties\": {\n       \"entityType\": {\n        \"description\": \"The entity type of the parameter.\\nFormat: projects/-/locations/-/agents/-/entityTypes/\\u003cSystem Entity Type ID\\u003e for system entity types (for example, projects/-/locations/-/agents/-/entityTypes/sys.date), or projects/\\u003cProject ID\\u003e/locations/\\u003cLocation ID\\u003e/agents/\\u003cAgent ID\\u003e/entityTypes/\\u003cEntity Type ID\\u003e for developer entity types.\",\n        \"type\": \"string\"\n       },\n       \"id\": {\n        \"description\": \"The unique identifier of the parameter. This field is used by training phrases to annotate their parts.\",\n        \"type\": \"string\"\n       },\n       \"isList\": {\n        \"description\": \"Indicates whether the parameter represents a list of values.\",\n        \"type\": \"boolean\"\n       },\n       \"redact\": {\n        \"description\": \"Indicates whether the parameter content should be redacted in log. If redaction is enabled, the parameter content will be replaced by parameter name during logging.\\nNote: the parameter content is subject to redaction if either parameter level redaction or entity type level redaction is enabled.\",\n        \"type\": \"boolean\"\n       }\n      },\n      \"required\": [\n       \"entityType\",\n       \"id\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"parent\": {\n     \"description\": \"Immutable. The agent to create an intent for.\\nFormat: projects/\\u003cProject ID\\u003e/locations/\\u003cLocation ID\\u003e/agents/\\u003cAgent ID\\u003e.\",\n     \"type\": \"string\"\n    },\n    \"priority\": {\n     \"description\": \"The priority of this intent. Higher numbers represent higher priorities.\\nIf the supplied value is unspecified or 0, the service translates the value to 500,000, which corresponds to the Normal priority in the console.\\nIf the supplied value is negative, the intent is ignored in runtime detect intent requests.\",\n     \"type\": \"integer\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The service-generated name of the resource. Used for acquisition only. Leave unset to create a new resource.\",\n     \"type\": \"string\"\n    },\n    \"trainingPhrases\": {\n     \"description\": \"The collection of training phrases the agent is trained on to identify the intent.\",\n     \"items\": {\n      \"properties\": {\n       \"id\": {\n        \"description\": \"The unique identifier of the training phrase.\",\n        \"type\": \"string\"\n       },\n       \"parts\": {\n        \"description\": \"The ordered list of training phrase parts. The parts are concatenated in order to form the training phrase.\\nNote: The API does not automatically annotate training phrases like the Dialogflow Console does.\\nNote: Do not forget to include whitespace at part boundaries, so the training phrase is well formatted when the parts are concatenated.\\nIf the training phrase does not need to be annotated with parameters, you just need a single part with only the Part.text field set.\\nIf you want to annotate the training phrase, you must create multiple parts, where the fields of each part are populated in one of two ways:\\nPart.text is set to a part of the phrase that has no parameters.\\nPart.text is set to a part of the phrase that you want to annotate, and the parameterId field is set.\",\n        \"items\": {\n         \"properties\": {\n          \"parameterId\": {\n           \"description\": \"The parameter used to annotate this part of the training phrase. This field is required for annotated parts of the training phrase.\",\n           \"type\": \"string\"\n          },\n          \"text\": {\n           \"description\": \"The text for this part.\",\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"text\"\n         ],\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       },\n       \"repeatCount\": {\n        \"description\": \"Indicates how many times this example was added to the intent.\",\n        \"type\": \"integer\"\n       }\n      },\n      \"required\": [\n       \"parts\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"displayName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Dialogflow CX Intent\",\n \"type\": \"object\"\n}",
+   "version": "dialogflowcx.cnrm.cloud.google.com/v1alpha1"
+  },
+  "configuration": null,
   "description": "",
+  "displayName": "Dialogflow CX Intent",
   "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "published": false
+  },
   "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "version": "v1.0.0",
-   "name": "k8s-config-connector",
-   "displayName": "Google Cloud Platform",
-   "description": "",
-   "status": "enabled",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "registrant": {
-    "hostname": "github"
-   },
    "category": {
-    "name": "Orchestration \u0026 Management",
-    "metadata": null
+    "name": "Orchestration \u0026 Management"
    },
-   "subCategory": "Google Cloud Platform",
+   "displayName": "Google Cloud Platform",
+   "id": "00000000-0000-0000-0000-000000000000",
    "metadata": {
-    "capabilities": "",
     "defaultData": "",
     "isAnnotation": false,
     "primaryColor": "#4285F4",
@@ -39,30 +161,35 @@
    "model": {
     "version": "v1.119.0"
    },
+   "name": "k8s-config-connector",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "github",
+    "name": "Github",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "enabled",
+   "subCategory": "Google Cloud Platform",
+   "version": "v1.0.0",
    "components": null,
    "relationships": null
   },
-  "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
    "primaryColor": "#4285F4",
-   "secondaryColor": "",
    "shape": "rectangle",
-   "shapePolygonPoints": "",
-   "status": "enabled",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
    "svgColor": "\u003csvg width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"\u003e\n    \u003cg stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e\n        \u003cpath d=\"M12.3008862,4.00003179 L18.9908678,7.90329279 L19,11.4442164 L14.973309,9.0680926 L14.973309,10.8562526 L16.9806355,12.0276231 L16.9918433,15.1064843 L14.973309,13.9136004 L14.973309,18.415105 L12.3008862,20 L12.3008862,4.00003179 Z M11.6991138,4 L11.6991138,19.9999682 L9.02669102,18.4150732 L9.02669102,9.06816678 L5,11.4441846 L5.00913223,7.903261 L11.6991138,4 Z\" fill=\"#4285F4\"\u003e\u003c/path\u003e\n    \u003c/g\u003e\n\u003c/svg\u003e",
-   "svgComplete": "",
    "svgWhite": "\u003csvg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M12.3009 4.00003L18.9909 7.90329L19 11.4442L14.9733 9.06809V10.8563L16.9806 12.0276L16.9918 15.1065L14.9733 13.9136V18.4151L12.3009 20V4.00003ZM11.6991 4V20L9.02669 18.4151V9.06817L5 11.4442L5.00913 7.90326L11.6991 4Z\" fill=\"white\"/\u003e\n\u003c/svg\u003e\n"
   },
-  "component": {
-   "kind": "DialogflowCXIntent",
-   "version": "dialogflowcx.cnrm.cloud.google.com/v1alpha1",
-   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"description\": {\n     \"description\": \"Human readable description for better understanding an intent like its scope, content, result etc. Maximum character limit: 140 characters.\",\n     \"type\": \"string\"\n    },\n    \"displayName\": {\n     \"description\": \"The human-readable name of the intent, unique within the agent.\",\n     \"type\": \"string\"\n    },\n    \"isFallback\": {\n     \"description\": \"Indicates whether this is a fallback intent. Currently only default fallback intent is allowed in the agent, which is added upon agent creation.\\nAdding training phrases to fallback intent is useful in the case of requests that are mistakenly matched, since training phrases assigned to fallback intents act as negative examples that triggers no-match event.\",\n     \"type\": \"boolean\"\n    },\n    \"languageCode\": {\n     \"description\": \"Immutable. The language of the following fields in intent:\\nIntent.training_phrases.parts.text\\nIf not specified, the agent's default language is used. Many languages are supported. Note: languages must be enabled in the agent before they can be used.\",\n     \"type\": \"string\"\n    },\n    \"parameters\": {\n     \"description\": \"The collection of parameters associated with the intent.\",\n     \"items\": {\n      \"properties\": {\n       \"entityType\": {\n        \"description\": \"The entity type of the parameter.\\nFormat: projects/-/locations/-/agents/-/entityTypes/\\u003cSystem Entity Type ID\\u003e for system entity types (for example, projects/-/locations/-/agents/-/entityTypes/sys.date), or projects/\\u003cProject ID\\u003e/locations/\\u003cLocation ID\\u003e/agents/\\u003cAgent ID\\u003e/entityTypes/\\u003cEntity Type ID\\u003e for developer entity types.\",\n        \"type\": \"string\"\n       },\n       \"id\": {\n        \"description\": \"The unique identifier of the parameter. This field is used by training phrases to annotate their parts.\",\n        \"type\": \"string\"\n       },\n       \"isList\": {\n        \"description\": \"Indicates whether the parameter represents a list of values.\",\n        \"type\": \"boolean\"\n       },\n       \"redact\": {\n        \"description\": \"Indicates whether the parameter content should be redacted in log. If redaction is enabled, the parameter content will be replaced by parameter name during logging.\\nNote: the parameter content is subject to redaction if either parameter level redaction or entity type level redaction is enabled.\",\n        \"type\": \"boolean\"\n       }\n      },\n      \"required\": [\n       \"entityType\",\n       \"id\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"parent\": {\n     \"description\": \"Immutable. The agent to create an intent for.\\nFormat: projects/\\u003cProject ID\\u003e/locations/\\u003cLocation ID\\u003e/agents/\\u003cAgent ID\\u003e.\",\n     \"type\": \"string\"\n    },\n    \"priority\": {\n     \"description\": \"The priority of this intent. Higher numbers represent higher priorities.\\nIf the supplied value is unspecified or 0, the service translates the value to 500,000, which corresponds to the Normal priority in the console.\\nIf the supplied value is negative, the intent is ignored in runtime detect intent requests.\",\n     \"type\": \"integer\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The service-generated name of the resource. Used for acquisition only. Leave unset to create a new resource.\",\n     \"type\": \"string\"\n    },\n    \"trainingPhrases\": {\n     \"description\": \"The collection of training phrases the agent is trained on to identify the intent.\",\n     \"items\": {\n      \"properties\": {\n       \"id\": {\n        \"description\": \"The unique identifier of the training phrase.\",\n        \"type\": \"string\"\n       },\n       \"parts\": {\n        \"description\": \"The ordered list of training phrase parts. The parts are concatenated in order to form the training phrase.\\nNote: The API does not automatically annotate training phrases like the Dialogflow Console does.\\nNote: Do not forget to include whitespace at part boundaries, so the training phrase is well formatted when the parts are concatenated.\\nIf the training phrase does not need to be annotated with parameters, you just need a single part with only the Part.text field set.\\nIf you want to annotate the training phrase, you must create multiple parts, where the fields of each part are populated in one of two ways:\\nPart.text is set to a part of the phrase that has no parameters.\\nPart.text is set to a part of the phrase that you want to annotate, and the parameterId field is set.\",\n        \"items\": {\n         \"properties\": {\n          \"parameterId\": {\n           \"description\": \"The parameter used to annotate this part of the training phrase. This field is required for annotated parts of the training phrase.\",\n           \"type\": \"string\"\n          },\n          \"text\": {\n           \"description\": \"The text for this part.\",\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"text\"\n         ],\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       },\n       \"repeatCount\": {\n        \"description\": \"Indicates how many times this example was added to the intent.\",\n        \"type\": \"integer\"\n       }\n      },\n      \"required\": [\n       \"parts\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"displayName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Dialogflow CX Intent\",\n \"type\": \"object\"\n}"
-  }
+  "version": "v1.0.0"
  }

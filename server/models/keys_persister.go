@@ -45,7 +45,7 @@ func (kp *KeyPersister) GetUsersKeys(search, order, updatedAfter string) ([]byte
 
 // SaveUsersKey saves a key to the database
 func (kp *KeyPersister) SaveUsersKey(key *Key) (*Key, error) {
-	if err := kp.DB.Create(key).Error; err != nil {
+	if err := kp.DB.Save(key).Error; err != nil {
 		return nil, ErrDBCreate(err)
 	}
 

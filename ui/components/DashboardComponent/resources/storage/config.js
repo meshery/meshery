@@ -293,23 +293,6 @@ export const StorageTableConfig = (
             customHeadRender: function CustomHead({ ...column }) {
               return <DefaultTableCell columnData={column} />;
             },
-            customBodyRender: function CustomBody(value, tableMeta) {
-              return (
-                <>
-                  <div
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                    onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  >
-                    {value}
-                  </div>
-                </>
-              );
-            },
           },
         },
         {

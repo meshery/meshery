@@ -10,7 +10,7 @@ import DotSquare from '../../assets/icons/DotSquare';
 import { useWindowDimensions } from '../../utils/dimension';
 import StyledTreeItem from './StyledTreeItem';
 import { useRouter } from 'next/router';
-import { getFilteredDataForDetailsComponent } from './helper';
+import { getFilteredDataForDetailsComponent, groupRelationshipsByKind } from './helper';
 import { CustomTextTooltip } from '../MesheryMeshInterface/PatternService/CustomTextTooltip';
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import _ from 'lodash';
@@ -32,6 +32,7 @@ const VersionedModelComponentTree = ({
   modelDef,
   versionedModelDef,
   setShowDetailsData,
+  showDetailsData,
 }) => {
   const { notify } = useNotification();
   const {
@@ -43,6 +44,27 @@ const VersionedModelComponentTree = ({
     model: versionedModelDef.name,
     params: { version: versionedModelDef.model.version },
   });
+  const { selectedItemUUID } = useRegistryRouter();
+
+  useEffect(() => {
+    if (componentsData && componentsData.components && componentsData.components.length > 0) {
+      const selectedIdArr = selectedItemUUID.split('.');
+      // Check if selected item is a component
+      if (
+        selectedIdArr.length > 0 &&
+        selectedIdArr[0] === modelDef.id &&
+        selectedIdArr[1] === versionedModelDef.id
+      ) {
+        const showData = getFilteredDataForDetailsComponent(
+          componentsData.components,
+          selectedIdArr[selectedIdArr.length - 1],
+        );
+        if (JSON.stringify(showData) !== JSON.stringify(showDetailsData)) {
+          setShowDetailsData(showData);
+        }
+      }
+    }
+  }, [componentsData, showDetailsData]);
 
   useEffect(() => {
     if (isError) {
@@ -139,7 +161,7 @@ const VersionedModelRelationshipTree = ({
             versionedModelDef.id
           }.2`}
           labelText={`Relationships (${
-            versionedModelDef.relationships ? versionedModelDef.relationships.length : 0
+            relationshipsData.relationships ? relationshipsData.relationships.length : 0
           })`}
         >
           {relationshipsData.relationships.length > 0 && (
@@ -148,7 +170,7 @@ const VersionedModelRelationshipTree = ({
               handleSelect={handleSelect}
               expanded={expanded}
               selected={selected}
-              data={relationshipsData.relationships}
+              data={groupRelationshipsByKind(relationshipsData.relationships)}
               view={MODELS}
               setShowDetailsData={setShowDetailsData}
               idForKindAsProp={`${registrantID ? `${registrantID}.1.` : ''}${modelDef.id}.${
@@ -269,6 +291,7 @@ const MesheryTreeViewItem = ({
   modelDef,
   registrantID,
   setShowDetailsData,
+  showDetailsData,
   handleToggle,
   handleSelect,
   selected,
@@ -328,6 +351,7 @@ const MesheryTreeViewItem = ({
               modelDef={modelDef}
               versionedModelDef={versionedModelDef}
               setShowDetailsData={setShowDetailsData}
+              showDetailsData={showDetailsData}
             />
             <VersionedModelRelationshipTree
               registrantID={registrantID}
@@ -354,6 +378,7 @@ const MesheryTreeViewModel = ({
   setShowDetailsData,
   lastModelRef,
   isModelFetching,
+  showDetailsData,
 }) => {
   return (
     <TreeView
@@ -376,6 +401,7 @@ const MesheryTreeViewModel = ({
           expanded={expanded}
           selected={selected}
           setShowDetailsData={setShowDetailsData}
+          showDetailsData={showDetailsData}
         />
       ))}
       <div ref={lastModelRef} style={{ height: '3rem' }}></div>
@@ -394,6 +420,7 @@ const MesheryTreeViewRegistrants = ({
   setShowDetailsData,
   lastRegistrantRef,
   isRegistrantFetching,
+  showDetailsData,
 }) => {
   return (
     <TreeView
@@ -414,7 +441,7 @@ const MesheryTreeViewRegistrants = ({
           nodeId={registrant.id}
           data-id={registrant.id}
           top
-          labelText={registrant?.hostname}
+          labelText={registrant?.name}
           newParentId={registrant.id}
           onClick={() => {
             setShowDetailsData({
@@ -440,6 +467,7 @@ const MesheryTreeViewRegistrants = ({
                   setShow={setShow}
                   registrantID={registrant.id}
                   setShowDetailsData={setShowDetailsData}
+                  showDetailsData={showDetailsData}
                 />
               ))}
             </StyledTreeItem>
@@ -507,6 +535,7 @@ const MesheryTreeView = ({
   const [selected, setSelected] = React.useState([]);
   const { width } = useWindowDimensions();
   const [isSearchExpanded, setIsSearchExpanded] = useState(searchText ? true : false);
+  const [prevState, setPrevState] = useState({ data: [], uuid: '' });
   const scrollRef = useRef();
 
   const handleScroll = (scrollingView) => (event) => {
@@ -542,8 +571,15 @@ const MesheryTreeView = ({
         // parent id will be same as relationships[0].id
         // so we can use that id for expanding first level tree for relationships
         arr.push(parent.relationships[0].id);
+      } else if (view === REGISTRANTS) {
+        arr.push(parent.id);
+        arr.push(`${parent.id}.1`);
       } else {
         arr.push(parent.id);
+        parent.versionBasedData.map((child) => {
+          arr.push(`${parent.id}.${child.id}`);
+          arr.push(`${parent.id}.${child.id}.1`);
+        });
       }
     });
     setExpanded(arr);
@@ -572,20 +608,42 @@ const MesheryTreeView = ({
   };
 
   useEffect(() => {
+    // Compare previous data with current data and uuid
+    if (
+      prevState.data &&
+      JSON.stringify(prevState.data) === JSON.stringify(data) &&
+      prevState.uuid === selectedItemUUID
+    ) {
+      return;
+    }
+
+    // Update the state with the current data and uuid
+    setPrevState({ data, uuid: selectedItemUUID });
+
+    // No data present then return
+    if (data.length === 0) {
+      return;
+    }
+
     let selectedIdArr = selectedItemUUID.split('.');
     if (selectedIdArr.length >= 0) {
       // Check if showDetailsData data matches with item from route
       // This will prevent unnecessary state update
       if (showDetailsData.data.id !== selectedIdArr[selectedIdArr.length - 1]) {
-        setExpanded(
-          selectedIdArr.reduce(
-            (acc, id, index) => [...acc, index > 0 ? `${acc[index - 1]}.${id}` : id],
-            [],
-          ),
+        const newExpanded = selectedIdArr.reduce(
+          (acc, id, index) => [...acc, index > 0 ? `${acc[index - 1]}.${id}` : id],
+          [],
         );
-        setSelected([selectedItemUUID]);
+        if (JSON.stringify(newExpanded) !== JSON.stringify(expanded)) {
+          setExpanded(newExpanded);
+        }
+        if (JSON.stringify([selectedItemUUID]) !== JSON.stringify(selected)) {
+          setSelected([selectedItemUUID]);
+        }
         const showData = getFilteredDataForDetailsComponent(data, selectedItemUUID);
-        setShowDetailsData(showData);
+        if (JSON.stringify(showData) !== JSON.stringify(showDetailsData)) {
+          setShowDetailsData(showData);
+        }
       }
     } else {
       setExpanded([]);
@@ -595,7 +653,7 @@ const MesheryTreeView = ({
         data: {},
       });
     }
-  }, [view, selectedItemUUID]);
+  }, [selectedItemUUID, data, showDetailsData]);
 
   useEffect(() => {
     let selectedIdArr = selectedItemUUID.split('.');
@@ -741,6 +799,7 @@ const MesheryTreeView = ({
             expanded={expanded}
             selected={selected}
             setShowDetailsData={setShowDetailsData}
+            showDetailsData={showDetailsData}
             lastModelRef={lastItemRef[MODELS]}
             isModelFetching={isFetching[MODELS]}
           />,
@@ -755,6 +814,7 @@ const MesheryTreeView = ({
             expanded={expanded}
             selected={selected}
             setShowDetailsData={setShowDetailsData}
+            showDetailsData={showDetailsData}
             lastRegistrantRef={lastItemRef[REGISTRANTS]}
             isRegistrantFetching={isFetching[REGISTRANTS]}
           />,
