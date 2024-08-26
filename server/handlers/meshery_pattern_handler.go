@@ -342,6 +342,9 @@ func (h *Handler) handlePatternPOST(
 		if sourcetype == string(models.HelmChart) {
 			helmSourceResp, err := http.Get(parsedBody.URL)
 			defer func() {
+				if helmSourceResp == nil {
+					return
+				}
 				_ = helmSourceResp.Body.Close()
 			}()
 			if err != nil {
@@ -405,7 +408,7 @@ func (h *Handler) handlePatternPOST(
 
 				return
 			}
-			bytPattern, _ := yaml.Marshal(pattern)
+			bytPattern, _ := encoding.Marshal(pattern)
 
 			mesheryPattern = &models.MesheryPattern{
 				Name:        parsedBody.Name,
@@ -763,7 +766,7 @@ func githubRepoDesignScan(
 					return err //always a meshkit error
 				}
 
-				patternByt, _ := yaml.Marshal(pattern)
+				patternByt, _ := encoding.Marshal(pattern)
 
 				af := models.MesheryPattern{
 					Name:        strings.TrimSuffix(f.Name, ext),
@@ -837,7 +840,7 @@ func genericHTTPDesignFile(fileURL, patternName, sourceType string, reg *meshmod
 		pattern.Name = patternName
 	}
 
-	patternByt, _ := yaml.Marshal(pattern)
+	patternByt, _ := encoding.Marshal(pattern)
 
 	url := strings.Split(fileURL, "/")
 	af := models.MesheryPattern{
