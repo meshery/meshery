@@ -13,11 +13,13 @@ import (
 	"github.com/layer5io/meshery/server/machines"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/database"
+	"github.com/layer5io/meshkit/encoding"
 	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/models/events"
-	"github.com/meshery/schemas/models/v1beta1/component"
 	regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
 	"github.com/layer5io/meshkit/utils"
+	"github.com/meshery/schemas/models/v1beta1/component"
+
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 	"github.com/spf13/viper"
 )
@@ -87,7 +89,7 @@ func (arh *AutoRegistrationHelper) processRegistration() {
 						continue
 					}
 					var capabilities map[string]interface{}
-					err = utils.Unmarshal(connCapabilities, &capabilities)
+					err = encoding.Unmarshal([]byte(connCapabilities), &capabilities)
 					if err != nil {
 						arh.log.Error(models.ErrUnmarshal(err, fmt.Sprintf("Connection Definition \"%s\" capabilities", connectionDef.Component.Kind)))
 						continue
