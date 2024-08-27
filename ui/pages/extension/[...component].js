@@ -1,12 +1,12 @@
 /* eslint-disable no-unused-vars */
 
 import React, { useState, useEffect } from 'react';
-import { Box, CircularProgress, NoSsr } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'next/router';
 import Head from 'next/head';
 import _ from 'lodash';
+import { Box, CircularProgress, NoSsr } from '@material-ui/core';
 
 import NavigatorExtension from '../../components/NavigatorExtension';
 import ExtensionSandbox, {
@@ -23,8 +23,8 @@ import {
   updateCapabilities,
   updatebetabadge,
 } from '../../lib/store';
-import dataFetch from '../../lib/data-fetch';
 import ExtensionPointSchemaValidator from '../../utils/ExtensionPointSchemaValidator';
+import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
 
 /**
  * getPath returns the current pathname
@@ -69,28 +69,22 @@ const RemoteExtension = ({
   const [isLoading, setIsLoading] = useState(true);
   const [componentTitle, setComponentTitle] = useState('');
   const [capabilitiesRegistryObj, setCapabilitiesRegistryObj] = useState(null);
+  const {
+    data: providerCapabilitiesData,
+    isSuccess: providerCapabilitiesFetched,
+    isError,
+    error: providerCapabilitiesError,
+  } = useGetProviderCapabilitiesQuery();
 
   useEffect(() => {
-    const fetchCapabilities = () => {
-      dataFetch(
-        '/api/provider/capabilities',
-        {
-          method: 'GET',
-          credentials: 'include',
-        },
-        (result) => {
-          updatepagepath({ path: getPath() });
-          if (result) {
-            setCapabilitiesRegistryObj(result);
-            updateCapabilities({ capabilitiesRegistry: result });
-            renderExtension(result);
-          }
-        },
-        (err) => console.error(err),
-      );
-    };
-
-    fetchCapabilities();
+    if (providerCapabilitiesFetched && providerCapabilitiesData) {
+      updatepagepath({ path: getPath() });
+      setCapabilitiesRegistryObj(providerCapabilitiesData);
+      updateCapabilities({ capabilitiesRegistry: providerCapabilitiesData });
+      renderExtension(providerCapabilitiesData);
+    } else if (isError) {
+      console.log(providerCapabilitiesError);
+    }
 
     return () => {
       updateExtensionType({ extensionType: null });
@@ -98,7 +92,7 @@ const RemoteExtension = ({
       setIsLoading(true);
       setCapabilitiesRegistryObj(null);
     };
-  }, [updateExtensionType, updatepagepath, updateCapabilities]);
+  }, [updateExtensionType, updatepagepath, updateCapabilities, providerCapabilitiesData]);
 
   useEffect(() => {
     renderExtension(capabilitiesRegistryObj);
