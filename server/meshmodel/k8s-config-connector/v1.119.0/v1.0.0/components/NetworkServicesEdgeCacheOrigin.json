@@ -1,29 +1,151 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "displayName": "Network Services Edge Cache Origin",
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "NetworkServicesEdgeCacheOrigin",
+   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"awsV4Authentication\": {\n     \"description\": \"Enable AWS Signature Version 4 origin authentication.\",\n     \"properties\": {\n      \"accessKeyId\": {\n       \"description\": \"The access key ID your origin uses to identify the key.\",\n       \"type\": \"string\"\n      },\n      \"originRegion\": {\n       \"description\": \"The name of the AWS region that your origin is in.\",\n       \"type\": \"string\"\n      },\n      \"secretAccessKeyVersion\": {\n       \"description\": \"The Secret Manager secret version of the secret access key used by your origin.\\n\\nThis is the resource name of the secret version in the format 'projects/*/secrets/*/versions/*' where the '*' values are replaced by the project, secret, and version you require.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"accessKeyId\",\n      \"originRegion\",\n      \"secretAccessKeyVersion\"\n     ],\n     \"type\": \"object\"\n    },\n    \"description\": {\n     \"description\": \"A human-readable description of the resource.\",\n     \"type\": \"string\"\n    },\n    \"failoverOrigin\": {\n     \"description\": \"The Origin resource to try when the current origin cannot be reached.\\nAfter maxAttempts is reached, the configured failoverOrigin will be used to fulfil the request.\\n\\nThe value of timeout.maxAttemptsTimeout dictates the timeout across all origins.\\nA reference to a Topic resource.\",\n     \"type\": \"string\"\n    },\n    \"maxAttempts\": {\n     \"description\": \"The maximum number of attempts to cache fill from this origin. Another attempt is made when a cache fill fails with one of the retryConditions.\\n\\nOnce maxAttempts to this origin have failed the failoverOrigin will be used, if one is specified. That failoverOrigin may specify its own maxAttempts,\\nretryConditions and failoverOrigin to control its own cache fill failures.\\n\\nThe total number of allowed attempts to cache fill across this and failover origins is limited to four.\\nThe total time allowed for cache fill attempts across this and failover origins can be controlled with maxAttemptsTimeout.\\n\\nThe last valid, non-retried response from all origins will be returned to the client.\\nIf no origin returns a valid response, an HTTP 502 will be returned to the client.\\n\\nDefaults to 1. Must be a value greater than 0 and less than 4.\",\n     \"type\": \"integer\"\n    },\n    \"originAddress\": {\n     \"description\": \"A fully qualified domain name (FQDN) or IP address reachable over the public Internet, or the address of a Google Cloud Storage bucket.\\n\\nThis address will be used as the origin for cache requests - e.g. FQDN: media-backend.example.com, IPv4: 35.218.1.1, IPv6: 2607:f8b0:4012:809::200e, Cloud Storage: gs://bucketname\\n\\nWhen providing an FQDN (hostname), it must be publicly resolvable (e.g. via Google public DNS) and IP addresses must be publicly routable.  It must not contain a protocol (e.g., https://) and it must not contain any slashes.\\nIf a Cloud Storage bucket is provided, it must be in the canonical \\\"gs://bucketname\\\" format. Other forms, such as \\\"storage.googleapis.com\\\", will be rejected.\",\n     \"type\": \"string\"\n    },\n    \"originOverrideAction\": {\n     \"description\": \"The override actions, including url rewrites and header\\nadditions, for requests that use this origin.\",\n     \"properties\": {\n      \"headerAction\": {\n       \"description\": \"The header actions, including adding and removing\\nheaders, for request handled by this origin.\",\n       \"properties\": {\n        \"requestHeadersToAdd\": {\n         \"description\": \"Describes a header to add.\\n\\nYou may add a maximum of 25 request headers.\",\n         \"items\": {\n          \"properties\": {\n           \"headerName\": {\n            \"description\": \"The name of the header to add.\",\n            \"type\": \"string\"\n           },\n           \"headerValue\": {\n            \"description\": \"The value of the header to add.\",\n            \"type\": \"string\"\n           },\n           \"replace\": {\n            \"description\": \"Whether to replace all existing headers with the same name.\\n\\nBy default, added header values are appended\\nto the response or request headers with the\\nsame field names. The added values are\\nseparated by commas.\\n\\nTo overwrite existing values, set 'replace' to 'true'.\",\n            \"type\": \"boolean\"\n           }\n          },\n          \"required\": [\n           \"headerName\",\n           \"headerValue\"\n          ],\n          \"type\": \"object\"\n         },\n         \"type\": \"array\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"urlRewrite\": {\n       \"description\": \"The URL rewrite configuration for request that are\\nhandled by this origin.\",\n       \"properties\": {\n        \"hostRewrite\": {\n         \"description\": \"Prior to forwarding the request to the selected\\norigin, the request's host header is replaced with\\ncontents of the hostRewrite.\\n\\nThis value must be between 1 and 255 characters.\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"originRedirect\": {\n     \"description\": \"Follow redirects from this origin.\",\n     \"properties\": {\n      \"redirectConditions\": {\n       \"description\": \"The set of redirect response codes that the CDN\\nfollows. Values of\\n[RedirectConditions](https://cloud.google.com/media-cdn/docs/reference/rest/v1/projects.locations.edgeCacheOrigins#redirectconditions)\\nare accepted.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"port\": {\n     \"description\": \"The port to connect to the origin on.\\nDefaults to port 443 for HTTP2 and HTTPS protocols, and port 80 for HTTP.\",\n     \"type\": \"integer\"\n    },\n    \"projectRef\": {\n     \"description\": \"The project that this resource belongs to.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `name` field of a `Project` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"protocol\": {\n     \"description\": \"The protocol to use to connect to the configured origin. Defaults to HTTP2, and it is strongly recommended that users use HTTP2 for both security \\u0026 performance.\\n\\nWhen using HTTP2 or HTTPS as the protocol, a valid, publicly-signed, unexpired TLS (SSL) certificate must be presented by the origin server. Possible values: [\\\"HTTP2\\\", \\\"HTTPS\\\", \\\"HTTP\\\"].\",\n     \"type\": \"string\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    },\n    \"retryConditions\": {\n     \"description\": \"Specifies one or more retry conditions for the configured origin.\\n\\nIf the failure mode during a connection attempt to the origin matches the configured retryCondition(s),\\nthe origin request will be retried up to maxAttempts times. The failoverOrigin, if configured, will then be used to satisfy the request.\\n\\nThe default retryCondition is \\\"CONNECT_FAILURE\\\".\\n\\nretryConditions apply to this origin, and not subsequent failoverOrigin(s),\\nwhich may specify their own retryConditions and maxAttempts.\\n\\nValid values are:\\n\\n- CONNECT_FAILURE: Retry on failures connecting to origins, for example due to connection timeouts.\\n- HTTP_5XX: Retry if the origin responds with any 5xx response code, or if the origin does not respond at all, example: disconnects, reset, read timeout, connection failure, and refused streams.\\n- GATEWAY_ERROR: Similar to 5xx, but only applies to response codes 502, 503 or 504.\\n- RETRIABLE_4XX: Retry for retriable 4xx response codes, which include HTTP 409 (Conflict) and HTTP 429 (Too Many Requests)\\n- NOT_FOUND: Retry if the origin returns a HTTP 404 (Not Found). This can be useful when generating video content, and the segment is not available yet.\\n- FORBIDDEN: Retry if the origin returns a HTTP 403 (Forbidden). Possible values: [\\\"CONNECT_FAILURE\\\", \\\"HTTP_5XX\\\", \\\"GATEWAY_ERROR\\\", \\\"RETRIABLE_4XX\\\", \\\"NOT_FOUND\\\", \\\"FORBIDDEN\\\"].\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"timeout\": {\n     \"description\": \"The connection and HTTP timeout configuration for this origin.\",\n     \"properties\": {\n      \"connectTimeout\": {\n       \"description\": \"The maximum duration to wait for a single origin connection to be established, including DNS lookup, TLS handshake and TCP/QUIC connection establishment.\\n\\nDefaults to 5 seconds. The timeout must be a value between 1s and 15s.\\n\\nThe connectTimeout capped by the deadline set by the request's maxAttemptsTimeout.  The last connection attempt may have a smaller connectTimeout in order to adhere to the overall maxAttemptsTimeout.\",\n       \"type\": \"string\"\n      },\n      \"maxAttemptsTimeout\": {\n       \"description\": \"The maximum time across all connection attempts to the origin, including failover origins, before returning an error to the client. A HTTP 504 will be returned if the timeout is reached before a response is returned.\\n\\nDefaults to 15 seconds. The timeout must be a value between 1s and 30s.\\n\\nIf a failoverOrigin is specified, the maxAttemptsTimeout of the first configured origin sets the deadline for all connection attempts across all failoverOrigins.\",\n       \"type\": \"string\"\n      },\n      \"readTimeout\": {\n       \"description\": \"The maximum duration to wait between reads of a single HTTP connection/stream.\\n\\nDefaults to 15 seconds.  The timeout must be a value between 1s and 30s.\\n\\nThe readTimeout is capped by the responseTimeout.  All reads of the HTTP connection/stream must be completed by the deadline set by the responseTimeout.\\n\\nIf the response headers have already been written to the connection, the response will be truncated and logged.\",\n       \"type\": \"string\"\n      },\n      \"responseTimeout\": {\n       \"description\": \"The maximum duration to wait for the last byte of a response to arrive when reading from the HTTP connection/stream.\\n\\nDefaults to 30 seconds. The timeout must be a value between 1s and 120s.\\n\\nThe responseTimeout starts after the connection has been established.\\n\\nThis also applies to HTTP Chunked Transfer Encoding responses, and/or when an open-ended Range request is made to the origin. Origins that take longer to write additional bytes to the response than the configured responseTimeout will result in an error being returned to the client.\\n\\nIf the response headers have already been written to the connection, the response will be truncated and logged.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"originAddress\",\n    \"projectRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Network Services Edge Cache Origin\",\n \"type\": \"object\"\n}",
+   "version": "networkservices.cnrm.cloud.google.com/v1alpha1"
+  },
+  "configuration": null,
   "description": "",
+  "displayName": "Network Services Edge Cache Origin",
   "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "published": false
+  },
   "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "version": "v1.0.0",
-   "name": "k8s-config-connector",
-   "displayName": "Google Cloud Platform",
-   "description": "",
-   "status": "enabled",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "registrant": {
-    "hostname": "github"
-   },
    "category": {
-    "name": "Orchestration \u0026 Management",
-    "metadata": null
+    "name": "Orchestration \u0026 Management"
    },
-   "subCategory": "Google Cloud Platform",
+   "displayName": "Google Cloud Platform",
+   "id": "00000000-0000-0000-0000-000000000000",
    "metadata": {
-    "capabilities": "",
     "defaultData": "",
     "isAnnotation": false,
     "primaryColor": "#4285F4",
@@ -39,30 +161,35 @@
    "model": {
     "version": "v1.119.0"
    },
+   "name": "k8s-config-connector",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "github",
+    "name": "Github",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "enabled",
+   "subCategory": "Google Cloud Platform",
+   "version": "v1.0.0",
    "components": null,
    "relationships": null
   },
-  "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
    "primaryColor": "#4285F4",
-   "secondaryColor": "",
    "shape": "rectangle",
-   "shapePolygonPoints": "",
-   "status": "enabled",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
    "svgColor": "\u003csvg width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"\u003e\n    \u003cg stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e\n        \u003cpath d=\"M12.3008862,4.00003179 L18.9908678,7.90329279 L19,11.4442164 L14.973309,9.0680926 L14.973309,10.8562526 L16.9806355,12.0276231 L16.9918433,15.1064843 L14.973309,13.9136004 L14.973309,18.415105 L12.3008862,20 L12.3008862,4.00003179 Z M11.6991138,4 L11.6991138,19.9999682 L9.02669102,18.4150732 L9.02669102,9.06816678 L5,11.4441846 L5.00913223,7.903261 L11.6991138,4 Z\" fill=\"#4285F4\"\u003e\u003c/path\u003e\n    \u003c/g\u003e\n\u003c/svg\u003e",
-   "svgComplete": "",
    "svgWhite": "\u003csvg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M12.3009 4.00003L18.9909 7.90329L19 11.4442L14.9733 9.06809V10.8563L16.9806 12.0276L16.9918 15.1065L14.9733 13.9136V18.4151L12.3009 20V4.00003ZM11.6991 4V20L9.02669 18.4151V9.06817L5 11.4442L5.00913 7.90326L11.6991 4Z\" fill=\"white\"/\u003e\n\u003c/svg\u003e\n"
   },
-  "component": {
-   "kind": "NetworkServicesEdgeCacheOrigin",
-   "version": "networkservices.cnrm.cloud.google.com/v1alpha1",
-   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"awsV4Authentication\": {\n     \"description\": \"Enable AWS Signature Version 4 origin authentication.\",\n     \"properties\": {\n      \"accessKeyId\": {\n       \"description\": \"The access key ID your origin uses to identify the key.\",\n       \"type\": \"string\"\n      },\n      \"originRegion\": {\n       \"description\": \"The name of the AWS region that your origin is in.\",\n       \"type\": \"string\"\n      },\n      \"secretAccessKeyVersion\": {\n       \"description\": \"The Secret Manager secret version of the secret access key used by your origin.\\n\\nThis is the resource name of the secret version in the format 'projects/*/secrets/*/versions/*' where the '*' values are replaced by the project, secret, and version you require.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"accessKeyId\",\n      \"originRegion\",\n      \"secretAccessKeyVersion\"\n     ],\n     \"type\": \"object\"\n    },\n    \"description\": {\n     \"description\": \"A human-readable description of the resource.\",\n     \"type\": \"string\"\n    },\n    \"failoverOrigin\": {\n     \"description\": \"The Origin resource to try when the current origin cannot be reached.\\nAfter maxAttempts is reached, the configured failoverOrigin will be used to fulfil the request.\\n\\nThe value of timeout.maxAttemptsTimeout dictates the timeout across all origins.\\nA reference to a Topic resource.\",\n     \"type\": \"string\"\n    },\n    \"maxAttempts\": {\n     \"description\": \"The maximum number of attempts to cache fill from this origin. Another attempt is made when a cache fill fails with one of the retryConditions.\\n\\nOnce maxAttempts to this origin have failed the failoverOrigin will be used, if one is specified. That failoverOrigin may specify its own maxAttempts,\\nretryConditions and failoverOrigin to control its own cache fill failures.\\n\\nThe total number of allowed attempts to cache fill across this and failover origins is limited to four.\\nThe total time allowed for cache fill attempts across this and failover origins can be controlled with maxAttemptsTimeout.\\n\\nThe last valid, non-retried response from all origins will be returned to the client.\\nIf no origin returns a valid response, an HTTP 502 will be returned to the client.\\n\\nDefaults to 1. Must be a value greater than 0 and less than 4.\",\n     \"type\": \"integer\"\n    },\n    \"originAddress\": {\n     \"description\": \"A fully qualified domain name (FQDN) or IP address reachable over the public Internet, or the address of a Google Cloud Storage bucket.\\n\\nThis address will be used as the origin for cache requests - e.g. FQDN: media-backend.example.com, IPv4: 35.218.1.1, IPv6: 2607:f8b0:4012:809::200e, Cloud Storage: gs://bucketname\\n\\nWhen providing an FQDN (hostname), it must be publicly resolvable (e.g. via Google public DNS) and IP addresses must be publicly routable.  It must not contain a protocol (e.g., https://) and it must not contain any slashes.\\nIf a Cloud Storage bucket is provided, it must be in the canonical \\\"gs://bucketname\\\" format. Other forms, such as \\\"storage.googleapis.com\\\", will be rejected.\",\n     \"type\": \"string\"\n    },\n    \"originOverrideAction\": {\n     \"description\": \"The override actions, including url rewrites and header\\nadditions, for requests that use this origin.\",\n     \"properties\": {\n      \"headerAction\": {\n       \"description\": \"The header actions, including adding and removing\\nheaders, for request handled by this origin.\",\n       \"properties\": {\n        \"requestHeadersToAdd\": {\n         \"description\": \"Describes a header to add.\\n\\nYou may add a maximum of 25 request headers.\",\n         \"items\": {\n          \"properties\": {\n           \"headerName\": {\n            \"description\": \"The name of the header to add.\",\n            \"type\": \"string\"\n           },\n           \"headerValue\": {\n            \"description\": \"The value of the header to add.\",\n            \"type\": \"string\"\n           },\n           \"replace\": {\n            \"description\": \"Whether to replace all existing headers with the same name.\\n\\nBy default, added header values are appended\\nto the response or request headers with the\\nsame field names. The added values are\\nseparated by commas.\\n\\nTo overwrite existing values, set 'replace' to 'true'.\",\n            \"type\": \"boolean\"\n           }\n          },\n          \"required\": [\n           \"headerName\",\n           \"headerValue\"\n          ],\n          \"type\": \"object\"\n         },\n         \"type\": \"array\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"urlRewrite\": {\n       \"description\": \"The URL rewrite configuration for request that are\\nhandled by this origin.\",\n       \"properties\": {\n        \"hostRewrite\": {\n         \"description\": \"Prior to forwarding the request to the selected\\norigin, the request's host header is replaced with\\ncontents of the hostRewrite.\\n\\nThis value must be between 1 and 255 characters.\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"originRedirect\": {\n     \"description\": \"Follow redirects from this origin.\",\n     \"properties\": {\n      \"redirectConditions\": {\n       \"description\": \"The set of redirect response codes that the CDN\\nfollows. Values of\\n[RedirectConditions](https://cloud.google.com/media-cdn/docs/reference/rest/v1/projects.locations.edgeCacheOrigins#redirectconditions)\\nare accepted.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"port\": {\n     \"description\": \"The port to connect to the origin on.\\nDefaults to port 443 for HTTP2 and HTTPS protocols, and port 80 for HTTP.\",\n     \"type\": \"integer\"\n    },\n    \"projectRef\": {\n     \"description\": \"The project that this resource belongs to.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `name` field of a `Project` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"protocol\": {\n     \"description\": \"The protocol to use to connect to the configured origin. Defaults to HTTP2, and it is strongly recommended that users use HTTP2 for both security \\u0026 performance.\\n\\nWhen using HTTP2 or HTTPS as the protocol, a valid, publicly-signed, unexpired TLS (SSL) certificate must be presented by the origin server. Possible values: [\\\"HTTP2\\\", \\\"HTTPS\\\", \\\"HTTP\\\"].\",\n     \"type\": \"string\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    },\n    \"retryConditions\": {\n     \"description\": \"Specifies one or more retry conditions for the configured origin.\\n\\nIf the failure mode during a connection attempt to the origin matches the configured retryCondition(s),\\nthe origin request will be retried up to maxAttempts times. The failoverOrigin, if configured, will then be used to satisfy the request.\\n\\nThe default retryCondition is \\\"CONNECT_FAILURE\\\".\\n\\nretryConditions apply to this origin, and not subsequent failoverOrigin(s),\\nwhich may specify their own retryConditions and maxAttempts.\\n\\nValid values are:\\n\\n- CONNECT_FAILURE: Retry on failures connecting to origins, for example due to connection timeouts.\\n- HTTP_5XX: Retry if the origin responds with any 5xx response code, or if the origin does not respond at all, example: disconnects, reset, read timeout, connection failure, and refused streams.\\n- GATEWAY_ERROR: Similar to 5xx, but only applies to response codes 502, 503 or 504.\\n- RETRIABLE_4XX: Retry for retriable 4xx response codes, which include HTTP 409 (Conflict) and HTTP 429 (Too Many Requests)\\n- NOT_FOUND: Retry if the origin returns a HTTP 404 (Not Found). This can be useful when generating video content, and the segment is not available yet.\\n- FORBIDDEN: Retry if the origin returns a HTTP 403 (Forbidden). Possible values: [\\\"CONNECT_FAILURE\\\", \\\"HTTP_5XX\\\", \\\"GATEWAY_ERROR\\\", \\\"RETRIABLE_4XX\\\", \\\"NOT_FOUND\\\", \\\"FORBIDDEN\\\"].\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"timeout\": {\n     \"description\": \"The connection and HTTP timeout configuration for this origin.\",\n     \"properties\": {\n      \"connectTimeout\": {\n       \"description\": \"The maximum duration to wait for a single origin connection to be established, including DNS lookup, TLS handshake and TCP/QUIC connection establishment.\\n\\nDefaults to 5 seconds. The timeout must be a value between 1s and 15s.\\n\\nThe connectTimeout capped by the deadline set by the request's maxAttemptsTimeout.  The last connection attempt may have a smaller connectTimeout in order to adhere to the overall maxAttemptsTimeout.\",\n       \"type\": \"string\"\n      },\n      \"maxAttemptsTimeout\": {\n       \"description\": \"The maximum time across all connection attempts to the origin, including failover origins, before returning an error to the client. A HTTP 504 will be returned if the timeout is reached before a response is returned.\\n\\nDefaults to 15 seconds. The timeout must be a value between 1s and 30s.\\n\\nIf a failoverOrigin is specified, the maxAttemptsTimeout of the first configured origin sets the deadline for all connection attempts across all failoverOrigins.\",\n       \"type\": \"string\"\n      },\n      \"readTimeout\": {\n       \"description\": \"The maximum duration to wait between reads of a single HTTP connection/stream.\\n\\nDefaults to 15 seconds.  The timeout must be a value between 1s and 30s.\\n\\nThe readTimeout is capped by the responseTimeout.  All reads of the HTTP connection/stream must be completed by the deadline set by the responseTimeout.\\n\\nIf the response headers have already been written to the connection, the response will be truncated and logged.\",\n       \"type\": \"string\"\n      },\n      \"responseTimeout\": {\n       \"description\": \"The maximum duration to wait for the last byte of a response to arrive when reading from the HTTP connection/stream.\\n\\nDefaults to 30 seconds. The timeout must be a value between 1s and 120s.\\n\\nThe responseTimeout starts after the connection has been established.\\n\\nThis also applies to HTTP Chunked Transfer Encoding responses, and/or when an open-ended Range request is made to the origin. Origins that take longer to write additional bytes to the response than the configured responseTimeout will result in an error being returned to the client.\\n\\nIf the response headers have already been written to the connection, the response will be truncated and logged.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"originAddress\",\n    \"projectRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Network Services Edge Cache Origin\",\n \"type\": \"object\"\n}"
-  }
+  "version": "v1.0.0"
  }

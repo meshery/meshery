@@ -1,27 +1,88 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "displayName": "Comment",
+  "capabilities": [
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "Comment",
+   "schema": "{\"$id\": \"https://meshery.layer5.io/system/models/definition/Uitlity/Comments\", \"$schema\": \"http://json-schema.org/draft-07/schema\", \"properties\": {\"userMessages\": {\"type\": \"array\", \"title\": \"User Messages\", \"x-chat-field\": true, \"items\": {\"type\": \"object\", \"properties\": {\"userid\": {\"type\": \"string\", \"title\": \"User UUID\"}, \"message\": {\"type\": \"string\", \"title\": \"Message\"}, \"timestamp\": {\"type\": \"string\", \"format\": \"date-time\", \"title\": \"Timestamp\"}}}}}, \"title\": \"Comments\", \"type\": \"object\", \"description\": \"This is a component to add your comments\"}",
+   "version": "core.meshery.io/v1alpha1"
+  },
+  "configuration": null,
   "description": "",
+  "displayName": "Comment",
   "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": true,
+   "isNamespaced": false,
+   "published": false
+  },
   "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "version": "v1.0.0",
-   "name": "meshery-core",
-   "displayName": "Meshery Core",
-   "description": "",
-   "status": "enabled",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "registrant": {
-    "hostname": "artifacthub"
-   },
    "category": {
-    "name": "Orchestration \u0026 Management",
-    "metadata": null
+    "name": "Orchestration \u0026 Management"
    },
-   "subCategory": "App Definition and Development",
+   "displayName": "Meshery Core",
+   "id": "00000000-0000-0000-0000-000000000000",
    "metadata": {
     "isAnnotation": false,
     "subCategory": "App Definition and Development",
@@ -32,29 +93,38 @@
    "model": {
     "version": "0.7.1"
    },
+   "name": "meshery-core",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "enabled",
+   "subCategory": "App Definition and Development",
+   "version": "v1.0.0",
    "components": null,
    "relationships": null
   },
-  "metadata": {
-   "capabilities": "{\"designer\":{\"edit\":{\"config\":true}}}",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": true,
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
+   "height": 22,
    "primaryColor": "#FFDE00",
    "secondaryColor": "#FFDE00",
    "shape": "tag",
-   "shapePolygonPoints": "",
-   "status": "enabled",
-   "styleOverrides": "{\"height\":\"22px\",\"width\":\"22px\",\"x\":\"1.5px\",\"y\":\"7.5px\"}",
-   "styles": "{\"height\":\"22px\",\"width\":\"22px\",\"x\":\"1.5px\",\"y\":\"7.5px\"}",
-   "subCategory": "",
    "svgColor": "\u003csvg stroke=\"currentColor\" fill=\"currentColor\" stroke-width=\"0\" viewBox=\"0 0 24 24\" height=\"1em\" width=\"1em\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cpath fill=\"none\" d=\"M0 0h24v24H0z\"\u003e\u003c/path\u003e\u003cpath d=\"M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z\"\u003e\u003c/path\u003e\u003c/svg\u003e",
-   "svgComplete": "",
-   "svgWhite": "\u003csvg stroke=\"currentColor\" fill=\"currentColor\" stroke-width=\"0\" viewBox=\"0 0 24 24\" height=\"1em\" width=\"1em\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cpath fill=\"none\" d=\"M0 0h24v24H0z\"\u003e\u003c/path\u003e\u003cpath d=\"M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z\"\u003e\u003c/path\u003e\u003c/svg\u003e"
+   "svgWhite": "\u003csvg stroke=\"currentColor\" fill=\"currentColor\" stroke-width=\"0\" viewBox=\"0 0 24 24\" height=\"1em\" width=\"1em\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cpath fill=\"none\" d=\"M0 0h24v24H0z\"\u003e\u003c/path\u003e\u003cpath d=\"M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z\"\u003e\u003c/path\u003e\u003c/svg\u003e",
+   "width": 22
   },
-  "component": {
-   "kind": "Comment",
-   "version": "core.meshery.io/v1alpha1",
-   "schema": "{\"$id\": \"https://meshery.layer5.io/system/models/definition/Uitlity/Comments\", \"$schema\": \"http://json-schema.org/draft-07/schema\", \"properties\": {\"userMessages\": {\"type\": \"array\", \"title\": \"User Messages\", \"x-chat-field\": true, \"items\": {\"type\": \"object\", \"properties\": {\"userid\": {\"type\": \"string\", \"title\": \"User UUID\"}, \"message\": {\"type\": \"string\", \"title\": \"Message\"}, \"timestamp\": {\"type\": \"string\", \"format\": \"date-time\", \"title\": \"Timestamp\"}}}}}, \"title\": \"Comments\", \"type\": \"object\", \"description\": \"This is a component to add your comments\"}"
-  }
+  "version": "v1.0.0"
  }

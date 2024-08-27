@@ -18,6 +18,10 @@ import {
   OutlinedPatternIcon,
   SearchBar,
   UniversalFilter,
+  importDesignSchema,
+  importDesignUiSchema,
+  publishCatalogItemSchema,
+  publishCatalogItemUiSchema,
 } from '@layer5/sistent';
 import { withStyles } from '@material-ui/core/styles';
 import CloseIcon from '@material-ui/icons/Close';
@@ -33,9 +37,13 @@ import { UnControlled as CodeMirror } from 'react-codemirror2';
 import Moment from 'react-moment';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import dataFetch from '../lib/data-fetch';
 import { toggleCatalogContent, updateProgress } from '../lib/store';
-import { getUnit8ArrayDecodedFile, getUnit8ArrayForDesign } from '../utils/utils';
+import {
+  encodeDesignFile,
+  getUnit8ArrayDecodedFile,
+  getUnit8ArrayForDesign,
+  parseDesignFile,
+} from '../utils/utils';
 import ViewSwitch from './ViewSwitch';
 import MesheryPatternGrid from './MesheryPatterns/MesheryPatternGridView';
 import UndeployIcon from '../public/static/img/UndeployIcon';
@@ -359,7 +367,6 @@ function MesheryPatterns({
   const [selectedRowData, setSelectedRowData] = useState(null);
   const [selectedPattern, setSelectedPattern] = useState(resetSelectedPattern());
   const router = useRouter();
-  const [importSchema, setImportSchema] = useState({});
   const [meshModels, setMeshModels] = useState([]);
   const [selectedFilters, setSelectedFilters] = useState(initialFilters);
 
@@ -436,9 +443,10 @@ function MesheryPatterns({
     headerIcon: OutlinedPatternIcon,
   });
   const handleDeploy = async ({ design, selectedK8sContexts }) => {
+    console.log('Deploying pattern', design);
     updateProgress({ showProgress: true });
     await deployPatternMutation({
-      pattern_file: design.pattern_file,
+      pattern_file: encodeDesignFile(design),
       pattern_id: design.id,
       selectedK8sContexts,
     });
@@ -448,7 +456,7 @@ function MesheryPatterns({
   const handleUndeploy = async ({ design, selectedK8sContexts }) => {
     updateProgress({ showProgress: true });
     await undeployPatternMutation({
-      pattern_file: design.pattern_file,
+      pattern_file: encodeDesignFile(design),
       pattern_id: design.id,
       selectedK8sContexts,
     });
@@ -604,53 +612,33 @@ function MesheryPatterns({
   //   toggleCatalogContent({ catalogVisibility: !catalogVisibility });
   // };
 
-  useEffect(() => {
-    dataFetch(
-      '/api/schema/resource/design',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      (result) => {
-        setImportSchema(result);
-      },
-      handleError(ACTION_TYPES.SCHEMA_FETCH),
-    );
-    dataFetch(
-      '/api/schema/resource/publish',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      async (result) => {
-        try {
-          const { models } = await getMeshModels();
-          const modelNames = _.uniqBy(
-            models?.map((model) => {
-              if (model.displayName && model.displayName !== '') {
-                return model.displayName;
-              }
-            }),
-            _.toLower,
-          );
-          modelNames.sort();
+  useEffect(async () => {
+    try {
+      const { models } = await getMeshModels();
+      const modelNames = _.uniqBy(
+        models?.map((model) => {
+          if (model.displayName && model.displayName !== '') {
+            return model.displayName;
+          }
+        }),
+        _.toLower,
+      );
+      modelNames.sort();
 
-          // Modify the schema using the utility function
-          const modifiedSchema = modifyRJSFSchema(
-            result.rjsfSchema,
-            'properties.compatibility.items.enum',
-            modelNames,
-          );
+      // Modify the schema using the utility function
+      const modifiedSchema = modifyRJSFSchema(
+        publishCatalogItemSchema,
+        'properties.compatibility.items.enum',
+        modelNames,
+      );
 
-          setPublishSchema({ rjsfSchema: modifiedSchema, uiSchema: result.uiSchema });
-          setMeshModels(models);
-        } catch (err) {
-          console.error(err);
-          handleError(ACTION_TYPES.SCHEMA_FETCH);
-          setPublishSchema(result);
-        }
-      },
-    );
+      setPublishSchema({ rjsfSchema: modifiedSchema, uiSchema: publishCatalogItemUiSchema });
+      setMeshModels(models);
+    } catch (err) {
+      console.error(err);
+      handleError(ACTION_TYPES.SCHEMA_FETCH);
+    }
+
     catalogVisibilityRef.current = catalogVisibility;
 
     /*
@@ -696,7 +684,8 @@ function MesheryPatterns({
     setPatterns(patterns?.filter((content) => content.visibility !== VISIBILITY.PUBLISHED) || []);
   };
 
-  const openDeployModal = (e, pattern_file, name, pattern_id) => {
+  const openDeployModal = (e, pattern_file, name) => {
+    const design = parseDesignFile(pattern_file);
     e.stopPropagation();
     designLifecycleModal.openModal({
       title: name,
@@ -704,11 +693,7 @@ function MesheryPatterns({
         <DeployStepper
           handleClose={designLifecycleModal.closeModal}
           validationMachine={designValidationActorRef}
-          design={{
-            name,
-            pattern_file,
-            id: pattern_id,
-          }}
+          design={design}
           handleDeploy={handleDeploy}
           deployment_type={DEPLOYMENT_TYPE.DEPLOY}
           selectedK8sContexts={selectedK8sContexts}
@@ -717,19 +702,16 @@ function MesheryPatterns({
     });
   };
 
-  const openUndeployModal = (e, pattern_file, name, pattern_id) => {
+  const openUndeployModal = (e, pattern_file, name) => {
     e.stopPropagation();
+    const design = parseDesignFile(pattern_file);
     designLifecycleModal.openModal({
       title: name,
       reactNode: (
         <UnDeployStepper
           handleClose={designLifecycleModal.closeModal}
           validationMachine={designValidationActorRef}
-          design={{
-            name,
-            pattern_file,
-            id: pattern_id,
-          }}
+          design={design}
           handleUndeploy={handleUndeploy}
           deployment_type={DEPLOYMENT_TYPE.UNDEPLOY}
           selectedK8sContexts={selectedK8sContexts}
@@ -738,8 +720,10 @@ function MesheryPatterns({
     });
   };
 
-  const openDryRunModal = (e, pattern_file, name, pattern_id) => {
+  const openDryRunModal = (e, pattern_file, name) => {
     e.stopPropagation();
+
+    const design = parseDesignFile(pattern_file);
     designLifecycleModal.openModal({
       title: name,
       reactNode: (
@@ -747,11 +731,7 @@ function MesheryPatterns({
           <DryRunDesign
             handleClose={designLifecycleModal.closeModal}
             validationMachine={designValidationActorRef}
-            design={{
-              name,
-              pattern_file,
-              id: pattern_id,
-            }}
+            design={design}
             deployment_type={DEPLOYMENT_TYPE.DEPLOY}
             selectedK8sContexts={selectedK8sContexts}
           />
@@ -760,8 +740,10 @@ function MesheryPatterns({
     });
   };
 
-  const openValidateModal = (e, pattern_file, name, pattern_id) => {
+  const openValidateModal = (e, pattern_file, name) => {
     e.stopPropagation();
+
+    const design = parseDesignFile(pattern_file);
     designLifecycleModal.openModal({
       title: name,
       reactNode: (
@@ -769,11 +751,7 @@ function MesheryPatterns({
           <ValidateDesign
             handleClose={designLifecycleModal.closeModal}
             validationMachine={designValidationActorRef}
-            design={{
-              name,
-              pattern_file,
-              id: pattern_id,
-            }}
+            design={design}
             deployment_type={DEPLOYMENT_TYPE.DEPLOY}
             selectedK8sContexts={selectedK8sContexts}
           />
@@ -1723,7 +1701,6 @@ function MesheryPatterns({
             )}
           {importModal.open && CAN(keys.IMPORT_DESIGN.action, keys.IMPORT_DESIGN.subject) && (
             <ImportModal
-              importFormSchema={importSchema}
               handleClose={handleUploadImportClose}
               handleImportDesign={handleImportDesign}
             />
@@ -1738,7 +1715,7 @@ function MesheryPatterns({
 }
 
 const ImportModal = React.memo((props) => {
-  const { importFormSchema, handleClose, handleImportDesign } = props;
+  const { handleClose, handleImportDesign } = props;
 
   return (
     <>
@@ -1757,8 +1734,8 @@ const ImportModal = React.memo((props) => {
           title="Import Design"
         >
           <RJSFModalWrapper
-            schema={importFormSchema.rjsfSchema}
-            uiSchema={importFormSchema.uiSchema}
+            schema={importDesignSchema}
+            uiSchema={importDesignUiSchema}
             handleSubmit={handleImportDesign}
             submitBtnText="Import"
             handleClose={handleClose}
@@ -1770,7 +1747,7 @@ const ImportModal = React.memo((props) => {
 });
 
 const PublishModal = React.memo((props) => {
-  const { publishFormSchema, handleClose, handleSubmit, title } = props;
+  const { handleClose, handleSubmit, title } = props;
 
   return (
     <>
@@ -1790,8 +1767,8 @@ const PublishModal = React.memo((props) => {
           maxWidth="sm"
         >
           <RJSFModalWrapper
-            schema={publishFormSchema.rjsfSchema}
-            uiSchema={publishFormSchema.uiSchema}
+            schema={publishCatalogItemSchema}
+            uiSchema={publishCatalogItemUiSchema}
             handleSubmit={handleSubmit}
             submitBtnText="Submit for Approval"
             handleClose={handleClose}

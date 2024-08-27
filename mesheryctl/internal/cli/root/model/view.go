@@ -3,18 +3,18 @@ package model
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
-	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
-	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
-	"gopkg.in/yaml.v2"
 	"io"
 	"net/http"
 	"strings"
+
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/layer5io/meshery/server/models"
+	"github.com/meshery/schemas/models/v1beta1/model"
+	"github.com/pkg/errors"
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+	"gopkg.in/yaml.v2"
 )
 
 var viewModelCmd = &cobra.Command{
@@ -25,27 +25,6 @@ var viewModelCmd = &cobra.Command{
 // View current provider
 mesheryctl model view [model-name]
 	`,
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-		//Check prerequisite
-
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			return err
-		}
-		err = utils.IsServerRunning(mctlCfg.GetBaseMesheryURL())
-		if err != nil {
-			return err
-		}
-		ctx, err := mctlCfg.GetCurrentContext()
-		if err != nil {
-			return err
-		}
-		err = ctx.ValidateVersion()
-		if err != nil {
-			return err
-		}
-		return nil
-	},
 	Args: func(_ *cobra.Command, args []string) error {
 		const errMsg = "Usage: mesheryctl model view [model-name]\nRun 'mesheryctl model view --help' to see detailed help message"
 		if len(args) == 0 {
@@ -58,23 +37,24 @@ mesheryctl model view [model-name]
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			log.Fatalln(err, "error processing config")
+			utils.Log.Error(err)
+			return nil
 		}
 
 		baseUrl := mctlCfg.GetBaseMesheryURL()
-		model := args[0]
+		modelDefinition := args[0]
 
-		url := fmt.Sprintf("%s/api/meshmodels/models/%s?pagesize=all", baseUrl, model)
+		url := fmt.Sprintf("%s/api/meshmodels/models/%s?pagesize=all", baseUrl, modelDefinition)
 		req, err := utils.NewRequest(http.MethodGet, url, nil)
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 
 		resp, err := utils.MakeRequest(req)
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 
 		// defers the closing of the response body after its use, ensuring that the resources are properly released.
@@ -83,20 +63,20 @@ mesheryctl model view [model-name]
 		data, err := io.ReadAll(resp.Body)
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 
 		modelsResponse := &models.MeshmodelsAPIResponse{}
 		err = json.Unmarshal(data, modelsResponse)
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 
-		var selectedModel v1beta1.Model
+		var selectedModel model.ModelDefinition
 
 		if modelsResponse.Count == 0 {
-			fmt.Println("No model(s) found for the given name ", model)
+			fmt.Println("No model(s) found for the given name ", modelDefinition)
 			return nil
 		} else if modelsResponse.Count == 1 {
 			selectedModel = modelsResponse.Models[0]

@@ -32,6 +32,7 @@ jobs:
       run: cd meshery-extensions;make graphql-sync;
 
     - name: Pull changes from remote
+      working-directory: ./meshery-extensions
       run: git pull origin master
 
     - name: Commit

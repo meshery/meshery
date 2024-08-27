@@ -548,10 +548,9 @@ perf:
           usage: mesheryctl perf result --view
           example: mesheryctl perf result --view
 
-mesh:
-  name: mesh
+adapter:
+  name: adapter
   description: Lifecycle management of cloud native infrastructure
-
   subcommands:
     validate:
       name: validate
@@ -560,58 +559,58 @@ mesh:
         adapter:
           name: --adapter, -a
           description: (required) adapter to use for validation. Defaults to "meshery-osm:10010"
-          usage: mesheryctl mesh validate --adapter [name of the adapter]
-          example: mesheryctl mesh validate --adapter meshery-istio:10000 -t "~/Download/auth.json"
+          usage: mesheryctl adapter validate --adapter [name of the adapter]
+          example: mesheryctl adapter validate --adapter meshery-istio:10000 -t "~/Download/auth.json"
         namespace:
           name: --namespace, -n
           description: Kubernetes namespace to be used for deploying the validation tests and sample workload
-          usage: mesheryctl mesh validate --namespace [namespace to be used]
-          example: mesheryctl mesh validate --namespace test-x1 -t "~/Download/auth.json"
+          usage: mesheryctl adapter validate --namespace [namespace to be used]
+          example: mesheryctl adapter validate --namespace test-x1 -t "~/Download/auth.json"
         spec:
           name: --spec, -s
           description: (required) specification to be used for conformance test. Defaults to "smi"
-          usage: mesheryctl mesh validate --spec [specification to be used for conformance test]
-          example: mesheryctl mesh validate --spec smi -t "~/Download/auth.json"
+          usage: mesheryctl adapter validate --spec [specification to be used for conformance test]
+          example: mesheryctl adapter validate --spec smi -t "~/Download/auth.json"
         tokenpath:
           name: --tokenpath, -t
           description: (required) path to token for authenticating to Meshery API
-          usage: mesheryctl mesh validate --tokenPath [path to token for authentication]
-          example: mesheryctl mesh validate --tokenPath "~/Downloads/auth.json"
+          usage: mesheryctl adapter validate --tokenPath [path to token for authentication]
+          example: mesheryctl adapter validate --tokenPath "~/Downloads/auth.json"
 
     remove:
       name: remove
       description: Remove service mesh in the connected Kubernetes cluster
-      usage: mesheryctl mesh remove [args] [flags] [args]
+      usage: mesheryctl adapter remove [args] [flags] [args]
       flags:
         namespace:
           name: --namespace, -n
           description: Kubernetes namespace to be used for removing a service mesh under a specific namespace
-          usage: mesheryctl mesh remove [args] --namespace [namespace to be used]
-          example: mesheryctl mesh remove linkerd --namespace linkerd-ns -t "~/Download/auth.json"
+          usage: mesheryctl adapter remove [args] --namespace [namespace to be used]
+          example: mesheryctl adapter remove linkerd --namespace linkerd-ns -t "~/Download/auth.json"
 
     deploy:
       name: deploy
       description: Deploy a service mesh into the cluster
-      usage: mesheryctl mesh deploy [flags]
-      example: mesheryctl mesh deploy -t "~/Downloads/auth.json"
+      usage: mesheryctl adapter deploy [flags]
+      example: mesheryctl adapter deploy -t "~/Downloads/auth.json"
       flags:
         adapter:
           name: --adapter, -a
           description: (required) adapter to use for validation. Defaults to "meshery-osm:10010"
-          usage: mesheryctl mesh deploy --adapter [name of the adapter]
-          example: mesheryctl mesh deploy --adapter meshery-istio:10000
+          usage: mesheryctl adapter deploy --adapter [name of the adapter]
+          example: mesheryctl adapter deploy --adapter meshery-istio:10000
         namespace:
           name: --namespace, -n
           description: Kubernetes namespace to be used for deploying the validation tests and sample workload
-          usage: mesheryctl mesh deploy --namespace [namespace to be used]
+          usage: mesheryctl adapter deploy --namespace [namespace to be used]
           example: |
-            mesheryctl mesh deploy --namespace docker-desktop
-              mesheryctl mesh deploy --namespace minikube
+            mesheryctl adapter deploy --namespace docker-desktop
+              mesheryctl adapter deploy --namespace minikube
         token:
           name: --tokenpath, -t
           description: (required) path to token for authenticating to Meshery API
-          usage: mesheryctl mesh deploy --tokenPath [path to token for authentication]
-          example: mesheryctl mesh deploy --tokenPath "~/Downloads/auth.json"
+          usage: mesheryctl adapter deploy --tokenPath [path to token for authentication]
+          example: mesheryctl adapter deploy --tokenPath "~/Downloads/auth.json"
 
 pattern:
   name: pattern
@@ -725,7 +724,7 @@ pattern:
           description: Specify the output directory to save the design
           usage: mesheryctl pattern export --output [directory-path]
           example: mesheryctl pattern export --output ./exports
-          
+
     offboard:
       name: offboard
       description: Offboard application
@@ -914,6 +913,14 @@ model:
       examples:
          - import model /path/to/[file.yaml|file.json]
          - import model /path/to/models
+    export:
+      name: export
+      description: Export a model by name to the given output type (default is oci).
+      usage: mesheryctl model export [ model-name ]
+      examples:
+         - model export [model-name] -l /home/meshery
+         - model export [model-name] --discard-components
+         - model export [model-name] -o yaml
 
 components:
   name: components
@@ -956,47 +963,11 @@ components:
           example: mesheryctl components view --save "bookInfo.yaml" --output-format yaml
 
 exp:
-  components:
-    name: components
-    description: View list of components and detail of components
-    usage: mesheryctl exp components [command] [flags]
-    flags: 
-      count:
-        name: --count
-        description: (optional) Get the number of exp components in total
-      help:
-        name: --help, -h
-        description: help for exp components
-        usage: mesheryctl exp components --help
-        example: mesheryctl exp components --help
-    subcommands:
-      list:
-        name: list
-        description: list all components registered in Meshery Server
-        usage: mesheryctl exp components list [flags]
-        flags:
-          page:
-            name: -p, --page
-            description: "(optional) List next set of exp components list with --page (default = 1) (default 1)."
-            usage: mesheryctl exp components list --page [page number]
-            example: mesheryctl exp components list --page 2
-      search:
-        name: search
-        description: search components registered in Meshery Server
-        usage: mesheryctl exp components search [query-text]
-      view:
-        name: view
-        description: view a component registered in Meshery Server
-        usage: mesheryctl exp components view [component-name]
-        flags:
-          output-format:
-            name: -o, --output-format
-            description: (optional) format to display in [json|yaml] (default "yaml")
   connections:
     name: connections
     description: Manage connections
     usage: mesheryctl exp connections [command] [flags]
-    flags: 
+    flags:
       help:
         name: --help, -h
         description: help for exp connections
@@ -1024,12 +995,12 @@ exp:
     name: environment
     description: View list of environments and detail of environments
     usage: mesheryctl exp environment [command] [flags]
-    flags: 
+    flags:
     subcommands:
       create:
         name: create
         description: create a new environments by providing the name and description of the environment
-        usage: mesheryctl exp environment create [flags] 
+        usage: mesheryctl exp environment create [flags]
         example: mesheryctl
         flags:
           description:
@@ -1058,7 +1029,7 @@ exp:
       view:
         name: view
         description: view a environments registered in Meshery Server
-        usage: mesheryctl exp environment view [flags] 
+        usage: mesheryctl exp environment view [flags]
         flags:
           output-format:
             name: -o, --output-format
@@ -1072,7 +1043,7 @@ exp:
     name: relationship
     description: View list of relationships and details of relationship
     usage: mesheryctl exp relationship [command] [flags]
-    flags: 
+    flags:
     subcommands:
       generate:
         name: generate
@@ -1093,7 +1064,7 @@ exp:
             usage: mesheryctl exp relationship list --page [page number]
             example: mesheryctl exp relationship list --page 2
       view:
-        name: view 
+        name: view
         description: view a relationship queried by the model name
         usage: mesheryctl exp relationship view [flags]
         flags:
@@ -1104,7 +1075,7 @@ exp:
     name: workspace
     description: View list of workspaces and detail of workspaces
     usage: mesheryctl exp workspace [command] [flags]
-    flags: 
+    flags:
     subcommands:
       create:
         name: create

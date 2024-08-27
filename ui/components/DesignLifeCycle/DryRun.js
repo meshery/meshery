@@ -21,6 +21,7 @@ import {
 } from '../../machines/validator/designValidator';
 import { ErrorIcon } from '@layer5/sistent';
 import { NOTIFICATIONCOLORS } from '@/themes/index';
+import { getComponentFromDesign } from '@/utils/utils';
 
 function breakCapitalizedWords(input) {
   // Use regular expression to split capitalized words
@@ -110,9 +111,7 @@ const ExpandableComponentErrors = withStyles(styles)(({
   validationMachine,
   currentComponentName, // if dry run is initiated by clicking on node's error badge
 }) => {
-  const componentIcon = component
-    ? `/${component?.traits?.meshmap?.['meshmodel-metadata'].svgWhite}`
-    : null;
+  const componentIcon = component ? `/${component?.styles?.svgWhite}` : null;
 
   const isCurrentComponent = (name) => name == currentComponentName;
   const [isComponentAccordionOpen, setIsComponentAccordionOpen] = useState(
@@ -284,7 +283,7 @@ export const FormatDryRunResponse = withStyles(styles)(({
         dryRunErrors?.map((err) => (
           <ExpandableComponentErrors
             key={`${err.compName}`}
-            component={designJson && designJson.services[err.compName]}
+            component={designJson && getComponentFromDesign(designJson, err.compName)}
             componentName={err.compName}
             validationMachine={validationMachine}
             currentComponentName={currentComponentName}
@@ -367,7 +366,7 @@ export const DryRunDesign = ({
   deployment_type,
   includeDependencies,
 }) => {
-  if (!design?.pattern_file) {
+  if (!design) {
     return null;
   }
 
