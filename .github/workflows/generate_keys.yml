@@ -1,5 +1,5 @@
 name: Import Keys
-on: 
+on:
   workflow_dispatch:
     inputs:
       spreadsheet_uri:
@@ -20,16 +20,20 @@ jobs:
     - name: Set spreadsheet_uri as environment variable
       run: echo "spreadsheet_uri=${{inputs.spreadsheet_uri}}" >> $GITHUB_ENV
       if: inputs.spreadsheet_uri != ''
-      
+
     - name: Dump keys from the spreadsheet
       run: |
-        curl -L "${{ env.spreadsheet_uri }}" -o "./keys.csv";      
+        curl -L "${{ env.spreadsheet_uri }}" -o "./keys.csv";
     - name: Create permissions folder
       run: |
           [ ! -d "./server/permissions" ] && mkdir -p "./server/permissions";
           mv keys.csv server/permissions/keys.csv;
     - name: Save keys.csv to docs/assets/excel
       run: cp server/permissions/keys.csv docs/assets/excel/keys.csv
+
+    - name: Pull changes from remote
+      run: git pull origin master
+
     - name: Commit changes
       uses: stefanzweifel/git-auto-commit-action@v5
       with:

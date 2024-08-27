@@ -1,0 +1,196 @@
+{
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "VaultAuthGlobal",
+   "schema": "{\n \"description\": \"VaultAuthGlobal is the Schema for the vaultauthglobals API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"VaultAuthGlobalSpec defines the desired state of VaultAuthGlobal\",\n   \"properties\": {\n    \"allowedNamespaces\": {\n     \"description\": \"AllowedNamespaces Kubernetes Namespaces which are allow-listed for use with\\nthis VaultAuthGlobal. This field allows administrators to customize which\\nKubernetes namespaces are authorized to reference this resource. While Vault\\nwill still enforce its own rules, this has the added configurability of\\nrestricting which VaultAuthMethods can be used by which namespaces. Accepted\\nvalues: []{\\\"*\\\"} - wildcard, all namespaces. []{\\\"a\\\", \\\"b\\\"} - list of namespaces.\\nunset - disallow all namespaces except the Operator's and the referring\\nVaultAuthMethod's namespace, this is the default behavior.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"appRole\": {\n     \"description\": \"AppRole specific auth configuration, requires that the Method be set to `appRole`.\",\n     \"properties\": {\n      \"headers\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"Headers to be included in all Vault requests.\",\n       \"type\": \"object\"\n      },\n      \"mount\": {\n       \"description\": \"Mount to use when authenticating to auth method.\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace to auth to in Vault\",\n       \"type\": \"string\"\n      },\n      \"params\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"Params to use when authenticating to Vault\",\n       \"type\": \"object\"\n      },\n      \"roleId\": {\n       \"description\": \"RoleID of the AppRole Role to use for authenticating to Vault.\",\n       \"type\": \"string\"\n      },\n      \"secretRef\": {\n       \"description\": \"SecretRef is the name of a Kubernetes secret in the consumer's (VDS/VSS/PKI) namespace which\\nprovides the AppRole Role's SecretID. The secret must have a key named `id` which holds the\\nAppRole Role's secretID.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"aws\": {\n     \"description\": \"AWS specific auth configuration, requires that Method be set to `aws`.\",\n     \"properties\": {\n      \"headerValue\": {\n       \"description\": \"The Vault header value to include in the STS signing request\",\n       \"type\": \"string\"\n      },\n      \"headers\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"Headers to be included in all Vault requests.\",\n       \"type\": \"object\"\n      },\n      \"iamEndpoint\": {\n       \"description\": \"The IAM endpoint to use; if not set will use the default\",\n       \"type\": \"string\"\n      },\n      \"irsaServiceAccount\": {\n       \"description\": \"IRSAServiceAccount name to use with IAM Roles for Service Accounts\\n(IRSA), and should be annotated with \\\"eks.amazonaws.com/role-arn\\\". This\\nServiceAccount will be checked for other EKS annotations:\\neks.amazonaws.com/audience and eks.amazonaws.com/token-expiration\",\n       \"type\": \"string\"\n      },\n      \"mount\": {\n       \"description\": \"Mount to use when authenticating to auth method.\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace to auth to in Vault\",\n       \"type\": \"string\"\n      },\n      \"params\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"Params to use when authenticating to Vault\",\n       \"type\": \"object\"\n      },\n      \"region\": {\n       \"description\": \"AWS Region to use for signing the authentication request\",\n       \"type\": \"string\"\n      },\n      \"role\": {\n       \"description\": \"Vault role to use for authenticating\",\n       \"type\": \"string\"\n      },\n      \"secretRef\": {\n       \"description\": \"SecretRef is the name of a Kubernetes Secret in the consumer's (VDS/VSS/PKI) namespace\\nwhich holds credentials for AWS. Expected keys include `access_key_id`, `secret_access_key`,\\n`session_token`\",\n       \"type\": \"string\"\n      },\n      \"sessionName\": {\n       \"description\": \"The role session name to use when creating a webidentity provider\",\n       \"type\": \"string\"\n      },\n      \"stsEndpoint\": {\n       \"description\": \"The STS endpoint to use; if not set will use the default\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"defaultAuthMethod\": {\n     \"description\": \"DefaultAuthMethod to use when authenticating to Vault.\",\n     \"enum\": [\n      \"kubernetes\",\n      \"jwt\",\n      \"appRole\",\n      \"aws\",\n      \"gcp\"\n     ],\n     \"type\": \"string\"\n    },\n    \"defaultMount\": {\n     \"description\": \"DefaultMount to use when authenticating to auth method. If not specified the mount of\\nthe auth method configured in Vault will be used.\",\n     \"type\": \"string\"\n    },\n    \"defaultVaultNamespace\": {\n     \"description\": \"DefaultVaultNamespace to auth to in Vault, if not specified the namespace of the auth\\nmethod will be used. This can be used as a default Vault namespace for all\\nauth methods.\",\n     \"type\": \"string\"\n    },\n    \"gcp\": {\n     \"description\": \"GCP specific auth configuration, requires that Method be set to `gcp`.\",\n     \"properties\": {\n      \"clusterName\": {\n       \"description\": \"GKE cluster name. Defaults to the cluster-name returned from the operator\\npod's local metadata server.\",\n       \"type\": \"string\"\n      },\n      \"headers\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"Headers to be included in all Vault requests.\",\n       \"type\": \"object\"\n      },\n      \"mount\": {\n       \"description\": \"Mount to use when authenticating to auth method.\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace to auth to in Vault\",\n       \"type\": \"string\"\n      },\n      \"params\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"Params to use when authenticating to Vault\",\n       \"type\": \"object\"\n      },\n      \"projectID\": {\n       \"description\": \"GCP project ID. Defaults to the project-id returned from the operator\\npod's local metadata server.\",\n       \"type\": \"string\"\n      },\n      \"region\": {\n       \"description\": \"GCP Region of the GKE cluster's identity provider. Defaults to the region\\nreturned from the operator pod's local metadata server.\",\n       \"type\": \"string\"\n      },\n      \"role\": {\n       \"description\": \"Vault role to use for authenticating\",\n       \"type\": \"string\"\n      },\n      \"workloadIdentityServiceAccount\": {\n       \"description\": \"WorkloadIdentityServiceAccount is the name of a Kubernetes service\\naccount (in the same Kubernetes namespace as the Vault*Secret referencing\\nthis resource) which has been configured for workload identity in GKE.\\nShould be annotated with \\\"iam.gke.io/gcp-service-account\\\".\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"headers\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"DefaultHeaders to be included in all Vault requests.\",\n     \"type\": \"object\"\n    },\n    \"jwt\": {\n     \"description\": \"JWT specific auth configuration, requires that the Method be set to `jwt`.\",\n     \"properties\": {\n      \"audiences\": {\n       \"description\": \"TokenAudiences to include in the ServiceAccount token.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"headers\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"Headers to be included in all Vault requests.\",\n       \"type\": \"object\"\n      },\n      \"mount\": {\n       \"description\": \"Mount to use when authenticating to auth method.\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace to auth to in Vault\",\n       \"type\": \"string\"\n      },\n      \"params\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"Params to use when authenticating to Vault\",\n       \"type\": \"object\"\n      },\n      \"role\": {\n       \"description\": \"Role to use for authenticating to Vault.\",\n       \"type\": \"string\"\n      },\n      \"secretRef\": {\n       \"description\": \"SecretRef is the name of a Kubernetes secret in the consumer's (VDS/VSS/PKI) namespace which\\nprovides the JWT token to authenticate to Vault's JWT authentication backend. The secret must\\nhave a key named `jwt` which holds the JWT token.\",\n       \"type\": \"string\"\n      },\n      \"serviceAccount\": {\n       \"description\": \"ServiceAccount to use when creating a ServiceAccount token to authenticate to Vault's\\nJWT authentication backend.\",\n       \"type\": \"string\"\n      },\n      \"tokenExpirationSeconds\": {\n       \"default\": 600,\n       \"description\": \"TokenExpirationSeconds to set the ServiceAccount token.\",\n       \"format\": \"int64\",\n       \"minimum\": 600,\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"kubernetes\": {\n     \"description\": \"Kubernetes specific auth configuration, requires that the Method be set to `kubernetes`.\",\n     \"properties\": {\n      \"audiences\": {\n       \"description\": \"TokenAudiences to include in the ServiceAccount token.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"headers\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"Headers to be included in all Vault requests.\",\n       \"type\": \"object\"\n      },\n      \"mount\": {\n       \"description\": \"Mount to use when authenticating to auth method.\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace to auth to in Vault\",\n       \"type\": \"string\"\n      },\n      \"params\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"Params to use when authenticating to Vault\",\n       \"type\": \"object\"\n      },\n      \"role\": {\n       \"description\": \"Role to use for authenticating to Vault.\",\n       \"type\": \"string\"\n      },\n      \"serviceAccount\": {\n       \"description\": \"ServiceAccount to use when authenticating to Vault's\\nauthentication backend. This must reside in the consuming secret's (VDS/VSS/PKI) namespace.\",\n       \"type\": \"string\"\n      },\n      \"tokenExpirationSeconds\": {\n       \"default\": 600,\n       \"description\": \"TokenExpirationSeconds to set the ServiceAccount token.\",\n       \"format\": \"int64\",\n       \"minimum\": 600,\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"params\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"DefaultParams to use when authenticating to Vault\",\n     \"type\": \"object\"\n    },\n    \"vaultConnectionRef\": {\n     \"description\": \"VaultConnectionRef to the VaultConnection resource, can be prefixed with a namespace,\\neg: `namespaceA/vaultConnectionRefB`. If no namespace prefix is provided it will default to\\nnamespace of the VaultConnection CR. If no value is specified for VaultConnectionRef the\\nOperator will default to the `default` VaultConnection, configured in the operator's namespace.\",\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Vault Auth Global\",\n \"type\": \"object\"\n}",
+   "version": "secrets.hashicorp.com/v1beta1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "Vault Auth Global",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "published": false
+  },
+  "model": {
+   "category": {
+    "name": "Provisioning"
+   },
+   "displayName": "Vault Secrets",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "defaultData": "",
+    "isAnnotation": false,
+    "primaryColor": "#FFD814",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "svgColor": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewBox=\"0 0 73.6 72\" width=\"2500\" height=\"2446\"\u003e\u003cdefs\u003e\u003cpath fill=\"#FFD814\" id=\"a\" d=\"M37.6 36.8c1.2 0 2.1-1 2.1-2.1s-.9-2.1-2.1-2.1-2.1 1-2.1 2.1.9 2.1 2.1 2.1zM31.3 31c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1s-2.1 1-2.1 2.1c0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2 1 2.1 2.1 2.1zm-12.6-5.7c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1s-2.1 1-2.1 2.1c0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2 1 2.1 2.1 2.1zm-6.3-5.7c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1s-2.1 1-2.1 2.1.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1s1 2.1 2.1 2.1zm-12.6 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1s.9 2.1 2.1 2.1zM36.8 72L0 0h73.6L36.8 72z\"/\u003e\u003c/defs\u003e\u003cuse xlink:href=\"#a\" overflow=\"visible\" fill-rule=\"evenodd\" clip-rule=\"evenodd\"/\u003e\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewBox=\"0 0 73.6 72\" width=\"2500\" height=\"2446\"\u003e\u003cdefs\u003e\u003cpath fill=\"#fff\" id=\"a\" d=\"M37.6 36.8c1.2 0 2.1-1 2.1-2.1s-.9-2.1-2.1-2.1-2.1 1-2.1 2.1.9 2.1 2.1 2.1zM31.3 31c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1s-2.1 1-2.1 2.1c0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2 1 2.1 2.1 2.1zm-12.6-5.7c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1s-2.1 1-2.1 2.1c0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2 1 2.1 2.1 2.1zm-6.3-5.7c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1s-2.1 1-2.1 2.1.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1s1 2.1 2.1 2.1zm-12.6 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1s.9 2.1 2.1 2.1zM36.8 72L0 0h73.6L36.8 72z\"/\u003e\u003c/defs\u003e\u003cuse xlink:href=\"#a\" overflow=\"visible\" fill-rule=\"evenodd\" clip-rule=\"evenodd\"/\u003e\u003c/svg\u003e"
+   },
+   "model": {
+    "version": "0.8.0"
+   },
+   "name": "vault-secrets",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "enabled",
+   "subCategory": "Key Management",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
+   "primaryColor": "#FFD814",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "svgColor": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewBox=\"0 0 73.6 72\" width=\"2500\" height=\"2446\"\u003e\u003cdefs\u003e\u003cpath fill=\"#FFD814\" id=\"a\" d=\"M37.6 36.8c1.2 0 2.1-1 2.1-2.1s-.9-2.1-2.1-2.1-2.1 1-2.1 2.1.9 2.1 2.1 2.1zM31.3 31c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1s-2.1 1-2.1 2.1c0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2 1 2.1 2.1 2.1zm-12.6-5.7c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1s-2.1 1-2.1 2.1c0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2 1 2.1 2.1 2.1zm-6.3-5.7c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1s-2.1 1-2.1 2.1.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1s1 2.1 2.1 2.1zm-12.6 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1s.9 2.1 2.1 2.1zM36.8 72L0 0h73.6L36.8 72z\"/\u003e\u003c/defs\u003e\u003cuse xlink:href=\"#a\" overflow=\"visible\" fill-rule=\"evenodd\" clip-rule=\"evenodd\"/\u003e\u003c/svg\u003e",
+   "svgWhite": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewBox=\"0 0 73.6 72\" width=\"2500\" height=\"2446\"\u003e\u003cdefs\u003e\u003cpath fill=\"#fff\" id=\"a\" d=\"M37.6 36.8c1.2 0 2.1-1 2.1-2.1s-.9-2.1-2.1-2.1-2.1 1-2.1 2.1.9 2.1 2.1 2.1zM31.3 31c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1s-2.1 1-2.1 2.1c0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2 1 2.1 2.1 2.1zm-12.6-5.7c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1s-2.1 1-2.1 2.1c0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2 1 2.1 2.1 2.1zm-6.3-5.7c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1s-2.1 1-2.1 2.1.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1s1 2.1 2.1 2.1zm-12.6 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1s.9 2.1 2.1 2.1zM36.8 72L0 0h73.6L36.8 72z\"/\u003e\u003c/defs\u003e\u003cuse xlink:href=\"#a\" overflow=\"visible\" fill-rule=\"evenodd\" clip-rule=\"evenodd\"/\u003e\u003c/svg\u003e"
+  },
+  "version": "v1.0.0"
+ }

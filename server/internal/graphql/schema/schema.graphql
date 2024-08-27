@@ -687,15 +687,6 @@ type Subscription {
   subscribeEvents : Event!
 }
 
-type OAMCapability {
-  oam_definition: Any
-  id: String
-  oam_ref_schema: String
-  host: String
-  restricted: Boolean
-  metadata: Any
-}
-
 type KctlDescribeDetails {
   describe: String
   ctxid: String

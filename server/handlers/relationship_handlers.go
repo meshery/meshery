@@ -3,15 +3,14 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
-	"strconv"
 
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/server/helpers"
 	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha2"
 	"github.com/layer5io/meshkit/models/meshmodel/entity"
 	"github.com/layer5io/meshkit/models/meshmodel/registry"
-	regv1alpha2 "github.com/layer5io/meshkit/models/meshmodel/registry/v1alpha2"
+	regv1alpha3 "github.com/layer5io/meshkit/models/meshmodel/registry/v1alpha3"
+	"github.com/meshery/schemas/models/v1alpha3/relationship"
 )
 
 // swagger:route GET /api/meshmodels/models/{model}/relationships/{name} GetMeshmodelRelationshipByName idGetMeshmodelRelationshipByName
@@ -38,39 +37,27 @@ import (
 func (h *Handler) GetMeshmodelRelationshipByName(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
+	page, offset, limit, search, order, sort, _ := getPaginationParams(r)
 	typ := mux.Vars(r)["model"]
 	name := mux.Vars(r)["name"]
 	var greedy bool
-	if r.URL.Query().Get("search") == "true" {
+	if search == "true" {
 		greedy = true
 	}
-	limitstr := r.URL.Query().Get("pagesize")
-	var limit int
-	if limitstr != "all" {
-		limit, _ = strconv.Atoi(limitstr)
-		if limit == 0 { //If limit is unspecified then it defaults to 25
-			limit = DefaultPageSizeForMeshModelComponents
-		}
-	}
-	pagestr := r.URL.Query().Get("page")
-	page, _ := strconv.Atoi(pagestr)
-	if page <= 0 {
-		page = 1
-	}
-	offset := (page - 1) * limit
-	entities, count, _, _ := h.registryManager.GetEntities(&regv1alpha2.RelationshipFilter{
+
+	entities, count, _, _ := h.registryManager.GetEntities(&regv1alpha3.RelationshipFilter{
 		Version:   r.URL.Query().Get("version"),
 		Kind:      name,
 		ModelName: typ,
 		Greedy:    greedy,
 		Limit:     limit,
 		Offset:    offset,
-		OrderOn:   r.URL.Query().Get("order"),
-		Sort:      r.URL.Query().Get("sort"),
+		OrderOn:   order,
+		Sort:      sort,
 	})
 
 	var pgSize int64
-	if limitstr == "all" {
+	if limit == 0 {
 		pgSize = count
 	} else {
 		pgSize = int64(limit)
@@ -140,35 +127,23 @@ func (h *Handler) GetMeshmodelRelationshipByName(rw http.ResponseWriter, r *http
 func (h *Handler) GetAllMeshmodelRelationships(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
+	page, offset, limit, _, order, sort, _ := getPaginationParams(r)
 	typ := mux.Vars(r)["model"]
-	limitstr := r.URL.Query().Get("pagesize")
-	var limit int
-	if limitstr != "all" {
-		limit, _ = strconv.Atoi(limitstr)
-		if limit == 0 { //If limit is unspecified then it defaults to 25
-			limit = DefaultPageSizeForMeshModelComponents
-		}
-	}
-	pagestr := r.URL.Query().Get("page")
-	page, _ := strconv.Atoi(pagestr)
-	if page <= 0 {
-		page = 1
-	}
-	offset := (page - 1) * limit
-	entities, count, _, _ := h.registryManager.GetEntities(&regv1alpha2.RelationshipFilter{
+
+	entities, count, _, _ := h.registryManager.GetEntities(&regv1alpha3.RelationshipFilter{
 		Version:          r.URL.Query().Get("version"),
 		ModelName:        typ,
 		Limit:            limit,
 		Offset:           offset,
-		OrderOn:          r.URL.Query().Get("order"),
-		Sort:             r.URL.Query().Get("sort"),
+		OrderOn:          order,
+		Sort:             sort,
 		Kind:             r.URL.Query().Get("kind"),
 		SubType:          r.URL.Query().Get("subType"),
 		RelationshipType: r.URL.Query().Get("type"),
 	})
 
 	var pgSize int64
-	if limitstr == "all" {
+	if limit == 0 {
 		pgSize = count
 	} else {
 		pgSize = int64(limit)
@@ -199,14 +174,14 @@ func (h *Handler) RegisterMeshmodelRelationships(rw http.ResponseWriter, r *http
 	case entity.RelationshipDefinition:
 		var isModelError bool
 		var isRegistranError bool
-		var r v1alpha2.RelationshipDefinition
+		var r relationship.RelationshipDefinition
 		err = json.Unmarshal(cc.Entity, &r)
 		if err != nil {
 			http.Error(rw, err.Error(), http.StatusBadRequest)
 			return
 		}
-		isRegistranError, isModelError, err = h.registryManager.RegisterEntity(cc.Host, &r)
-		helpers.HandleError(cc.Host, &r, err, isModelError, isRegistranError)
+		isRegistranError, isModelError, err = h.registryManager.RegisterEntity(cc.Connection, &r)
+		helpers.HandleError(cc.Connection, &r, err, isModelError, isRegistranError)
 	}
 	err = helpers.WriteLogsToFiles()
 	if err != nil {

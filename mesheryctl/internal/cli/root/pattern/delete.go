@@ -29,6 +29,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"gopkg.in/yaml.v2"
 )
 
 var deleteCmd = &cobra.Command{
@@ -71,6 +72,7 @@ mesheryctl pattern delete [file | URL]
 		deployURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern/deploy"
 		patternURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern"
 
+		var patternFileByt []byte
 		// If file path not a valid URL, treat it like a local file path
 		if !govalidator.IsURL(file) {
 			content, err := os.ReadFile(file)
@@ -79,7 +81,7 @@ mesheryctl pattern delete [file | URL]
 				return utils.ErrFileRead(errors.New(utils.PatternError(fmt.Sprintf("failed to read file %s. Ensure the filename or URL is valid", file))))
 			}
 
-			patternFile = string(content)
+			patternFileByt = content
 		} else {
 			// Else treat it like a URL
 			url, path, err := utils.ParseURLGithub(file)
@@ -135,10 +137,17 @@ mesheryctl pattern delete [file | URL]
 				return nil
 			}
 
-			patternFile = response[0].PatternFile
+			if len(response) == 0 {
+				return ErrPatternNotFound()
+			}
+
+			patternFileByt, err = yaml.Marshal(response[0].PatternFile)
+			if err != nil {
+				return models.ErrMarshallingDesignIntoYAML(err)
+			}
 		}
 
-		req, err = utils.NewRequest("DELETE", deployURL, bytes.NewBuffer([]byte(patternFile)))
+		req, err = utils.NewRequest("DELETE", deployURL, bytes.NewBuffer(patternFileByt))
 		if err != nil {
 			utils.Log.Error(err)
 			return utils.ErrCreatingRequest(err)

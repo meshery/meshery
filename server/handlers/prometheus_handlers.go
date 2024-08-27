@@ -257,11 +257,11 @@ func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Reque
 			http.Error(w, _err.Error(), http.StatusInternalServerError)
 			return
 		}
-		event := eventBuilder.WithDescription(fmt.Sprintf("Connection %s with prometheus created at %s", connName, promURL)).WithSeverity(events.Success).ActedUpon(connection.ID).Build()
+		event := eventBuilder.WithDescription(fmt.Sprintf("Connection %s with Prometheus created at %s", connName, promURL)).WithSeverity(events.Success).ActedUpon(connection.ID).Build()
 		_ = provider.PersistEvent(event)
 		go h.config.EventBroadcaster.Publish(userUUID, event)
 
-		h.log.Debug("Prometheus URL %s successfully saved", promURL)
+		h.log.Debug("Prometheus URL %s saved", promURL)
 	} else if req.Method == http.MethodDelete {
 		http.Error(w, "API is deprecated, please use connections API", http.StatusGone)
 		return

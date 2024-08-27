@@ -14,10 +14,13 @@ import {
 import Moment from 'react-moment';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
-import { ResponsiveDataTable } from '@layer5/sistent';
-import CustomColumnVisibilityControl from '../../../utils/custom-column';
+import {
+  CustomColumnVisibilityControl,
+  ResponsiveDataTable,
+  SearchBar,
+  UniversalFilter,
+} from '@layer5/sistent';
 import useStyles from '../../../assets/styles/general/tool.styles';
-import SearchBar from '../../../utils/custom-search';
 import { MeshSyncDataFormatter } from '../metadata';
 import { getK8sClusterIdsFromCtxId } from '../../../utils/multi-ctx';
 import { DefaultTableCell, SortableTableCell } from '../common';
@@ -32,7 +35,6 @@ import classNames from 'classnames';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import ExploreIcon from '@mui/icons-material/Explore';
 import { CONNECTION_STATES, MESHSYNC_STATES } from '../../../utils/Enum';
-import UniversalFilter from '../../../utils/custom-filter';
 import { updateVisibleColumns } from '../../../utils/responsive-column';
 import { useWindowDimensions } from '../../../utils/dimension';
 import { FormatId } from '../../DataFormatter';
@@ -551,36 +553,38 @@ export default function MeshSyncTable(props) {
     <>
       <div className={StyleClass.toolWrapper} style={{ marginBottom: '5px', marginTop: '-30px' }}>
         <div className={classes.createButton}>{/* <MesherySettingsEnvButtons /> */}</div>
-        <div
-          className={classes.searchAndView}
-          style={{
-            display: 'flex',
-            borderRadius: '0.5rem 0.5rem 0 0',
-          }}
-        >
-          <SearchBar
-            onSearch={(value) => {
-              setSearch(value);
+        <UsesSistent>
+          <div
+            className={classes.searchAndView}
+            style={{
+              display: 'flex',
+              borderRadius: '0.5rem 0.5rem 0 0',
             }}
-            expanded={isSearchExpanded}
-            setExpanded={setIsSearchExpanded}
-            placeholder="Search connections..."
-          />
+          >
+            <SearchBar
+              onSearch={(value) => {
+                setSearch(value);
+              }}
+              expanded={isSearchExpanded}
+              setExpanded={setIsSearchExpanded}
+              placeholder="Search Connections..."
+            />
 
-          <UniversalFilter
-            id="ref"
-            filters={filters}
-            selectedFilters={selectedFilters}
-            setSelectedFilters={setSelectedFilters}
-            handleApplyFilter={handleApplyFilter}
-          />
+            <UniversalFilter
+              id="ref"
+              filters={filters}
+              selectedFilters={selectedFilters}
+              setSelectedFilters={setSelectedFilters}
+              handleApplyFilter={handleApplyFilter}
+            />
 
-          <CustomColumnVisibilityControl
-            id="ref"
-            columns={getVisibilityColums(columns)}
-            customToolsProps={{ columnVisibility, setColumnVisibility }}
-          />
-        </div>
+            <CustomColumnVisibilityControl
+              id="ref"
+              columns={getVisibilityColums(columns)}
+              customToolsProps={{ columnVisibility, setColumnVisibility }}
+            />
+          </div>
+        </UsesSistent>
       </div>
       <UsesSistent>
         <ResponsiveDataTable

@@ -1,0 +1,196 @@
+{
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "NodeFeatureRule",
+   "schema": "{\n \"description\": \"NodeFeatureRule resource specifies a configuration for feature-based\\ncustomization of node objects, such as node labeling.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Spec defines the rules to be evaluated.\",\n   \"properties\": {\n    \"rules\": {\n     \"description\": \"Rules is a list of node customization rules.\",\n     \"items\": {\n      \"description\": \"Rule defines a rule for node customization such as labeling.\",\n      \"properties\": {\n       \"annotations\": {\n        \"additionalProperties\": {\n         \"type\": \"string\"\n        },\n        \"description\": \"Annotations to create if the rule matches.\",\n        \"type\": \"object\"\n       },\n       \"extendedResources\": {\n        \"additionalProperties\": {\n         \"type\": \"string\"\n        },\n        \"description\": \"ExtendedResources to create if the rule matches.\",\n        \"type\": \"object\"\n       },\n       \"labels\": {\n        \"additionalProperties\": {\n         \"type\": \"string\"\n        },\n        \"description\": \"Labels to create if the rule matches.\",\n        \"type\": \"object\"\n       },\n       \"labelsTemplate\": {\n        \"description\": \"LabelsTemplate specifies a template to expand for dynamically generating\\nmultiple labels. Data (after template expansion) must be keys with an\\noptional value (\\u003ckey\\u003e[=\\u003cvalue\\u003e]) separated by newlines.\",\n        \"type\": \"string\"\n       },\n       \"matchAny\": {\n        \"description\": \"MatchAny specifies a list of matchers one of which must match.\",\n        \"items\": {\n         \"description\": \"MatchAnyElem specifies one sub-matcher of MatchAny.\",\n         \"properties\": {\n          \"matchFeatures\": {\n           \"description\": \"MatchFeatures specifies a set of matcher terms all of which must match.\",\n           \"items\": {\n            \"description\": \"FeatureMatcherTerm defines requirements against one feature set. All\\nrequirements (specified as MatchExpressions) are evaluated against each\\nelement in the feature set.\",\n            \"properties\": {\n             \"feature\": {\n              \"description\": \"Feature is the name of the feature set to match against.\",\n              \"type\": \"string\"\n             },\n             \"matchExpressions\": {\n              \"additionalProperties\": {\n               \"description\": \"MatchExpression specifies an expression to evaluate against a set of input\\nvalues. It contains an operator that is applied when matching the input and\\nan array of values that the operator evaluates the input against.\",\n               \"properties\": {\n                \"op\": {\n                 \"description\": \"Op is the operator to be applied.\",\n                 \"enum\": [\n                  \"In\",\n                  \"NotIn\",\n                  \"InRegexp\",\n                  \"Exists\",\n                  \"DoesNotExist\",\n                  \"Gt\",\n                  \"Lt\",\n                  \"GtLt\",\n                  \"IsTrue\",\n                  \"IsFalse\"\n                 ],\n                 \"type\": \"string\"\n                },\n                \"value\": {\n                 \"description\": \"Value is the list of values that the operand evaluates the input\\nagainst. Value should be empty if the operator is Exists, DoesNotExist,\\nIsTrue or IsFalse. Value should contain exactly one element if the\\noperator is Gt or Lt and exactly two elements if the operator is GtLt.\\nIn other cases Value should contain at least one element.\",\n                 \"items\": {\n                  \"type\": \"string\"\n                 },\n                 \"type\": \"array\"\n                }\n               },\n               \"required\": [\n                \"op\"\n               ],\n               \"type\": \"object\"\n              },\n              \"description\": \"MatchExpressions is the set of per-element expressions evaluated. These\\nmatch against the value of the specified elements.\",\n              \"type\": \"object\"\n             },\n             \"matchName\": {\n              \"description\": \"MatchName in an expression that is matched against the name of each\\nelement in the feature set.\",\n              \"properties\": {\n               \"op\": {\n                \"description\": \"Op is the operator to be applied.\",\n                \"enum\": [\n                 \"In\",\n                 \"NotIn\",\n                 \"InRegexp\",\n                 \"Exists\",\n                 \"DoesNotExist\",\n                 \"Gt\",\n                 \"Lt\",\n                 \"GtLt\",\n                 \"IsTrue\",\n                 \"IsFalse\"\n                ],\n                \"type\": \"string\"\n               },\n               \"value\": {\n                \"description\": \"Value is the list of values that the operand evaluates the input\\nagainst. Value should be empty if the operator is Exists, DoesNotExist,\\nIsTrue or IsFalse. Value should contain exactly one element if the\\noperator is Gt or Lt and exactly two elements if the operator is GtLt.\\nIn other cases Value should contain at least one element.\",\n                \"items\": {\n                 \"type\": \"string\"\n                },\n                \"type\": \"array\"\n               }\n              },\n              \"required\": [\n               \"op\"\n              ],\n              \"type\": \"object\"\n             }\n            },\n            \"required\": [\n             \"feature\"\n            ],\n            \"type\": \"object\"\n           },\n           \"type\": \"array\"\n          }\n         },\n         \"required\": [\n          \"matchFeatures\"\n         ],\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       },\n       \"matchFeatures\": {\n        \"description\": \"MatchFeatures specifies a set of matcher terms all of which must match.\",\n        \"items\": {\n         \"description\": \"FeatureMatcherTerm defines requirements against one feature set. All\\nrequirements (specified as MatchExpressions) are evaluated against each\\nelement in the feature set.\",\n         \"properties\": {\n          \"feature\": {\n           \"description\": \"Feature is the name of the feature set to match against.\",\n           \"type\": \"string\"\n          },\n          \"matchExpressions\": {\n           \"additionalProperties\": {\n            \"description\": \"MatchExpression specifies an expression to evaluate against a set of input\\nvalues. It contains an operator that is applied when matching the input and\\nan array of values that the operator evaluates the input against.\",\n            \"properties\": {\n             \"op\": {\n              \"description\": \"Op is the operator to be applied.\",\n              \"enum\": [\n               \"In\",\n               \"NotIn\",\n               \"InRegexp\",\n               \"Exists\",\n               \"DoesNotExist\",\n               \"Gt\",\n               \"Lt\",\n               \"GtLt\",\n               \"IsTrue\",\n               \"IsFalse\"\n              ],\n              \"type\": \"string\"\n             },\n             \"value\": {\n              \"description\": \"Value is the list of values that the operand evaluates the input\\nagainst. Value should be empty if the operator is Exists, DoesNotExist,\\nIsTrue or IsFalse. Value should contain exactly one element if the\\noperator is Gt or Lt and exactly two elements if the operator is GtLt.\\nIn other cases Value should contain at least one element.\",\n              \"items\": {\n               \"type\": \"string\"\n              },\n              \"type\": \"array\"\n             }\n            },\n            \"required\": [\n             \"op\"\n            ],\n            \"type\": \"object\"\n           },\n           \"description\": \"MatchExpressions is the set of per-element expressions evaluated. These\\nmatch against the value of the specified elements.\",\n           \"type\": \"object\"\n          },\n          \"matchName\": {\n           \"description\": \"MatchName in an expression that is matched against the name of each\\nelement in the feature set.\",\n           \"properties\": {\n            \"op\": {\n             \"description\": \"Op is the operator to be applied.\",\n             \"enum\": [\n              \"In\",\n              \"NotIn\",\n              \"InRegexp\",\n              \"Exists\",\n              \"DoesNotExist\",\n              \"Gt\",\n              \"Lt\",\n              \"GtLt\",\n              \"IsTrue\",\n              \"IsFalse\"\n             ],\n             \"type\": \"string\"\n            },\n            \"value\": {\n             \"description\": \"Value is the list of values that the operand evaluates the input\\nagainst. Value should be empty if the operator is Exists, DoesNotExist,\\nIsTrue or IsFalse. Value should contain exactly one element if the\\noperator is Gt or Lt and exactly two elements if the operator is GtLt.\\nIn other cases Value should contain at least one element.\",\n             \"items\": {\n              \"type\": \"string\"\n             },\n             \"type\": \"array\"\n            }\n           },\n           \"required\": [\n            \"op\"\n           ],\n           \"type\": \"object\"\n          }\n         },\n         \"required\": [\n          \"feature\"\n         ],\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       },\n       \"name\": {\n        \"description\": \"Name of the rule.\",\n        \"type\": \"string\"\n       },\n       \"taints\": {\n        \"description\": \"Taints to create if the rule matches.\",\n        \"items\": {\n         \"description\": \"The node this Taint is attached to has the \\\"effect\\\" on\\nany pod that does not tolerate the Taint.\",\n         \"properties\": {\n          \"effect\": {\n           \"description\": \"Required. The effect of the taint on pods\\nthat do not tolerate the taint.\\nValid effects are NoSchedule, PreferNoSchedule and NoExecute.\",\n           \"type\": \"string\"\n          },\n          \"key\": {\n           \"description\": \"Required. The taint key to be applied to a node.\",\n           \"type\": \"string\"\n          },\n          \"timeAdded\": {\n           \"description\": \"TimeAdded represents the time at which the taint was added.\\nIt is only written for NoExecute taints.\",\n           \"format\": \"date-time\",\n           \"type\": \"string\"\n          },\n          \"value\": {\n           \"description\": \"The taint value corresponding to the taint key.\",\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"effect\",\n          \"key\"\n         ],\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       },\n       \"vars\": {\n        \"additionalProperties\": {\n         \"type\": \"string\"\n        },\n        \"description\": \"Vars is the variables to store if the rule matches. Variables do not\\ndirectly inflict any changes in the node object. However, they can be\\nreferenced from other rules enabling more complex rule hierarchies,\\nwithout exposing intermediary output values as labels.\",\n        \"type\": \"object\"\n       },\n       \"varsTemplate\": {\n        \"description\": \"VarsTemplate specifies a template to expand for dynamically generating\\nmultiple variables. Data (after template expansion) must be keys with an\\noptional value (\\u003ckey\\u003e[=\\u003cvalue\\u003e]) separated by newlines.\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"name\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"rules\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Node Feature Rule\",\n \"type\": \"object\"\n}",
+   "version": "nfd.k8s-sigs.io/v1alpha1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "Node Feature Rule",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": false,
+   "published": false
+  },
+  "model": {
+   "category": {
+    "name": "Uncategorized"
+   },
+   "displayName": "Gpu Operator",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "defaultData": "",
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "model": {
+    "version": "24.6.0"
+   },
+   "name": "gpu-operator",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "subCategory": "Uncategorized",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "ignored",
+  "styles": {
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "svgColor": "",
+   "svgWhite": ""
+  },
+  "version": "v1.0.0"
+ }

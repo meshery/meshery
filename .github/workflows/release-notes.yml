@@ -13,12 +13,15 @@ jobs:
           with:
             token: ${{ secrets.RELEASEDRAFTER_PAT }}
             ref: 'master'
-          
+
 
         - name: Get Release Info
           run: |
             export RELEASE_TAG=$(curl -s https://api.github.com/repos/meshery/meshery/releases/latest | jq '.["tag_name"]' | tr -d '"')
             printf '%b\n' "---\nlayout: release\ndate: $(date +'%Y-%m-%d')\ntag: $RELEASE_TAG\n---\n\n`curl -s https://api.github.com/repos/meshery/meshery/releases/latest | jq -r '.["body"]'`" > ./docs/_releases/$RELEASE_TAG.md
+
+        - name: Pull changes from remote
+          run: git pull origin master
 
         - name: Commit
           uses: stefanzweifel/git-auto-commit-action@v5

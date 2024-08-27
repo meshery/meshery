@@ -1378,6 +1378,14 @@ components:
   colorIcon: assets/img/integrations/k8s-config-connector/components/workstations-workstation-cluster/icons/color/workstations-workstation-cluster-color.svg
   whiteIcon: assets/img/integrations/k8s-config-connector/components/workstations-workstation-cluster/icons/white/workstations-workstation-cluster-white.svg
   description: 
+- name: cloud-build-worker-pool
+  colorIcon: assets/img/integrations/k8s-config-connector/components/cloud-build-worker-pool/icons/color/cloud-build-worker-pool-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/cloud-build-worker-pool/icons/white/cloud-build-worker-pool-white.svg
+  description: 
+- name: secure-source-manager-instance
+  colorIcon: assets/img/integrations/k8s-config-connector/components/secure-source-manager-instance/icons/color/secure-source-manager-instance-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/secure-source-manager-instance/icons/white/secure-source-manager-instance-white.svg
+  description: 
 featureList: [
   "Provides a wide range of cloud services",
   "Integrates with Kubernetes",

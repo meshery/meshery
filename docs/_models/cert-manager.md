@@ -7,7 +7,7 @@ permalink: extensibility/integrations/cert-manager
 docURL: https://docs.meshery.io/extensibility/integrations/cert-manager
 description: 
 integrations-category: Provisioning
-integrations-subcategory: Key Management
+integrations-subcategory: Key Management Service
 registrant: GitHub
 components: 
 featureList: [

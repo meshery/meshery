@@ -11,12 +11,12 @@ integrations-subcategory: Certified Kubernetes - Distribution
 registrant: Artifact Hub
 components: 
 featureList: [
-  "Simplifies Kubernetes cluster management",
-  "Provides a user-friendly web interface",
-  "Offers various DevOps and application management tools"
+  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
+  "Invite anyone to review and make changes to your private designs.",
+  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
 ]
-howItWorks: "Integrates Kubesphere"
-howItWorksDetails: "Easier and more efficient Kubernetes management and application delivery"
+howItWorks: "Collaborative Infrastructure as Design"
+howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include
 type: extensibility

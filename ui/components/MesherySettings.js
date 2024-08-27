@@ -450,7 +450,6 @@ class MesherySettings extends React.Component {
                     />
                   </TabContainer>
                 </TabContainer>
-                {/* </div> */}
               </TabContainer>
             )}
             {tabVal === RESET && (

@@ -46,6 +46,14 @@ components:
   colorIcon: assets/img/integrations/aws-apigatewayv2-controller/components/vpc-link/icons/color/vpc-link-color.svg
   whiteIcon: assets/img/integrations/aws-apigatewayv2-controller/components/vpc-link/icons/white/vpc-link-white.svg
   description: 
+- name: api-mapping
+  colorIcon: assets/img/integrations/aws-apigatewayv2-controller/components/api-mapping/icons/color/api-mapping-color.svg
+  whiteIcon: assets/img/integrations/aws-apigatewayv2-controller/components/api-mapping/icons/white/api-mapping-white.svg
+  description: 
+- name: domain-name
+  colorIcon: assets/img/integrations/aws-apigatewayv2-controller/components/domain-name/icons/color/domain-name-color.svg
+  whiteIcon: assets/img/integrations/aws-apigatewayv2-controller/components/domain-name/icons/white/domain-name-white.svg
+  description: 
 featureList: [
   "Handles API requests and responses",
   "Supports RESTful and WebSocket APIs",
