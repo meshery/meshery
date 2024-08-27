@@ -1,0 +1,195 @@
+{
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "WorkspaceRoleBinding",
+   "schema": "{\n \"description\": \"WorkspaceRoleBinding is the Schema for the workspacerolebindings API\",\n \"properties\": {\n  \"roleRef\": {\n   \"description\": \"RoleRef can only reference a WorkspaceRole. If the RoleRef cannot be resolved, the Authorizer must return an error.\",\n   \"properties\": {\n    \"apiGroup\": {\n     \"description\": \"APIGroup is the group for the resource being referenced\",\n     \"type\": \"string\"\n    },\n    \"kind\": {\n     \"description\": \"Kind is the type of resource being referenced\",\n     \"type\": \"string\"\n    },\n    \"name\": {\n     \"description\": \"Name is the name of resource being referenced\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"apiGroup\",\n    \"kind\",\n    \"name\"\n   ],\n   \"type\": \"object\",\n   \"x-kubernetes-map-type\": \"atomic\"\n  },\n  \"subjects\": {\n   \"description\": \"Subjects holds references to the objects the role applies to.\",\n   \"items\": {\n    \"description\": \"Subject contains a reference to the object or user identities a role binding applies to.  This can either hold a direct API object reference, or a value for non-objects such as user and group names.\",\n    \"properties\": {\n     \"apiGroup\": {\n      \"description\": \"APIGroup holds the API group of the referenced subject. Defaults to \\\"\\\" for ServiceAccount subjects. Defaults to \\\"rbac.authorization.k8s.io\\\" for User and Group subjects.\",\n      \"type\": \"string\"\n     },\n     \"kind\": {\n      \"description\": \"Kind of object being referenced. Values defined by this API group are \\\"User\\\", \\\"Group\\\", and \\\"ServiceAccount\\\". If the Authorizer does not recognized the kind value, the Authorizer should report an error.\",\n      \"type\": \"string\"\n     },\n     \"name\": {\n      \"description\": \"Name of the object being referenced.\",\n      \"type\": \"string\"\n     },\n     \"namespace\": {\n      \"description\": \"Namespace of the referenced object.  If the object kind is non-namespace, such as \\\"User\\\" or \\\"Group\\\", and this value is not empty the Authorizer should report an error.\",\n      \"type\": \"string\"\n     }\n    },\n    \"required\": [\n     \"kind\",\n     \"name\"\n    ],\n    \"type\": \"object\",\n    \"x-kubernetes-map-type\": \"atomic\"\n   },\n   \"type\": \"array\"\n  }\n },\n \"required\": [\n  \"roleRef\"\n ],\n \"title\": \"Workspace Role Binding\",\n \"type\": \"object\"\n}",
+   "version": "iam.kubesphere.io/v1alpha2"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "Workspace Role Binding",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": false,
+   "published": false,
+   "source_uri": "git://github.com/kubesphere/kubesphere/master/config/ks-core/crds"
+  },
+  "model": {
+   "category": {
+    "name": "Platform"
+   },
+   "displayName": "Kubesphere",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "source_uri": "git://github.com/kubesphere/kubesphere/master/config/ks-core/crds",
+    "styleOverrides": "",
+    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 32 38\" fill=\"none\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M27.901 30.192L19.814 25.479V34.905L27.901 30.192ZM27.901 7.241L19.814 2.528V11.954L27.901 7.241ZM15.823 0.25L0 9.472V27.962L15.823 37.183V23.154L8.21 18.716L15.823 14.279V0.25ZM15.878 18.717L31.678 27.924V9.509L15.878 18.717Z\" fill=\"#26A678\"\u003e\u003c/path\u003e\n\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 32 38\" fill=\"none\"\u003e\n    \u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M27.901 30.192L19.814 25.479V34.905L27.901 30.192ZM27.901 7.241L19.814 2.528V11.954L27.901 7.241ZM15.823 0.25L0 9.472V27.962L15.823 37.183V23.154L8.21 18.716L15.823 14.279V0.25ZM15.878 18.717L31.678 27.924V9.509L15.878 18.717Z\" fill=\"#fff\"\u003e\u003c/path\u003e\n\u003c/svg\u003e"
+   },
+   "model": {
+    "version": "v3.4.1"
+   },
+   "name": "kubesphere",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "github",
+    "name": "Github",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "subCategory": "Certified Kubernetes - Distribution",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "ignored",
+  "styles": {
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "svgColor": "\u003csvg width=\"32\" height=\"38\" viewBox=\"0 0 32 38\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M27.901 30.192L19.814 25.479V34.905L27.901 30.192ZM27.901 7.241L19.814 2.528V11.954L27.901 7.241ZM15.823 0.25L0 9.472V27.962L15.823 37.183V23.154L8.21 18.716L15.823 14.279V0.25ZM15.878 18.717L31.678 27.924V9.509L15.878 18.717Z\" fill=\"#26A678\"/\u003e\n\u003c/svg\u003e",
+   "svgWhite": "\u003csvg width=\"32\" height=\"38\" viewBox=\"0 0 32 38\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n    \u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\"\n        d=\"M27.901 30.192L19.814 25.479V34.905L27.901 30.192ZM27.901 7.241L19.814 2.528V11.954L27.901 7.241ZM15.823 0.25L0 9.472V27.962L15.823 37.183V23.154L8.21 18.716L15.823 14.279V0.25ZM15.878 18.717L31.678 27.924V9.509L15.878 18.717Z\"\n        fill=\"#fff\" /\u003e\n\u003c/svg\u003e"
+  },
+  "version": "v1.0.0"
+ }

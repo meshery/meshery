@@ -1,0 +1,195 @@
+{
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "GlobalRuleGroup",
+   "schema": "{\n \"description\": \"GlobalRuleGroup is the Schema for the GlobalRuleGroup API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"GlobalRuleGroupSpec defines the desired state of GlobalRuleGroup\",\n   \"properties\": {\n    \"interval\": {\n     \"type\": \"string\"\n    },\n    \"partial_response_strategy\": {\n     \"type\": \"string\"\n    },\n    \"rules\": {\n     \"items\": {\n      \"properties\": {\n       \"alert\": {\n        \"type\": \"string\"\n       },\n       \"annotations\": {\n        \"additionalProperties\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"object\"\n       },\n       \"clusterSelector\": {\n        \"description\": \"Only one of its members may be specified.\",\n        \"properties\": {\n         \"inValues\": {\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         },\n         \"matcher\": {\n          \"properties\": {\n           \"type\": {\n            \"type\": \"string\"\n           },\n           \"value\": {\n            \"type\": \"string\"\n           }\n          },\n          \"required\": [\n           \"type\"\n          ],\n          \"type\": \"object\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"disable\": {\n        \"type\": \"boolean\"\n       },\n       \"expr\": {\n        \"anyOf\": [\n         {\n          \"type\": \"integer\"\n         },\n         {\n          \"type\": \"string\"\n         }\n        ],\n        \"x-kubernetes-int-or-string\": true\n       },\n       \"exprBuilder\": {\n        \"description\": \"If ExprBuilder is not nil, the configured Expr will be ignored\",\n        \"properties\": {\n         \"node\": {\n          \"properties\": {\n           \"comparator\": {\n            \"type\": \"string\"\n           },\n           \"metricThreshold\": {\n            \"description\": \"Only one of its members may be specified.\",\n            \"properties\": {\n             \"cpu\": {\n              \"description\": \"Only one of its members may be specified.\",\n              \"properties\": {\n               \"load15m\": {\n                \"type\": \"number\"\n               },\n               \"load1m\": {\n                \"type\": \"number\"\n               },\n               \"load5m\": {\n                \"type\": \"number\"\n               },\n               \"utilization\": {\n                \"type\": \"number\"\n               }\n              },\n              \"type\": \"object\"\n             },\n             \"disk\": {\n              \"description\": \"Only one of its members may be specified.\",\n              \"properties\": {\n               \"inodeUtilization\": {\n                \"type\": \"number\"\n               },\n               \"iopsRead\": {\n                \"description\": \"The unit is io/s\",\n                \"type\": \"number\"\n               },\n               \"iopsWrite\": {\n                \"description\": \"The unit is io/s\",\n                \"type\": \"number\"\n               },\n               \"spaceAvailable\": {\n                \"description\": \"The unit is bytes\",\n                \"type\": \"number\"\n               },\n               \"spaceUtilization\": {\n                \"type\": \"number\"\n               },\n               \"throughputRead\": {\n                \"description\": \"The unit is bytes/s\",\n                \"type\": \"number\"\n               },\n               \"throughputWrite\": {\n                \"description\": \"The unit is bytes/s\",\n                \"type\": \"number\"\n               }\n              },\n              \"type\": \"object\"\n             },\n             \"memory\": {\n              \"description\": \"Only one of its members may be specified.\",\n              \"properties\": {\n               \"available\": {\n                \"description\": \"The unit is bytes\",\n                \"type\": \"number\"\n               },\n               \"utilization\": {\n                \"type\": \"number\"\n               }\n              },\n              \"type\": \"object\"\n             },\n             \"network\": {\n              \"description\": \"Only one of its members may be specified.\",\n              \"properties\": {\n               \"receivedRate\": {\n                \"description\": \"The unit is bit/s\",\n                \"type\": \"number\"\n               },\n               \"transmittedRate\": {\n                \"description\": \"The unit is bit/s\",\n                \"type\": \"number\"\n               }\n              },\n              \"type\": \"object\"\n             },\n             \"pod\": {\n              \"description\": \"Only one of its members may be specified.\",\n              \"properties\": {\n               \"abnormalRatio\": {\n                \"type\": \"number\"\n               },\n               \"utilization\": {\n                \"type\": \"number\"\n               }\n              },\n              \"type\": \"object\"\n             }\n            },\n            \"type\": \"object\"\n           },\n           \"names\": {\n            \"items\": {\n             \"description\": \"The cluster to which the node belongs must be specified.\",\n             \"properties\": {\n              \"cluster\": {\n               \"type\": \"string\"\n              },\n              \"names\": {\n               \"items\": {\n                \"type\": \"string\"\n               },\n               \"type\": \"array\"\n              }\n             },\n             \"required\": [\n              \"cluster\",\n              \"names\"\n             ],\n             \"type\": \"object\"\n            },\n            \"type\": \"array\"\n           }\n          },\n          \"required\": [\n           \"comparator\",\n           \"names\"\n          ],\n          \"type\": \"object\"\n         },\n         \"workload\": {\n          \"properties\": {\n           \"comparator\": {\n            \"type\": \"string\"\n           },\n           \"kind\": {\n            \"type\": \"string\"\n           },\n           \"metricThreshold\": {\n            \"description\": \"Only one of its members may be specified.\",\n            \"properties\": {\n             \"cpu\": {\n              \"description\": \"Only one of its members may be specified.\",\n              \"properties\": {\n               \"usage\": {\n                \"description\": \"The unit is core\",\n                \"type\": \"number\"\n               }\n              },\n              \"type\": \"object\"\n             },\n             \"memory\": {\n              \"description\": \"Only one of its members may be specified.\",\n              \"properties\": {\n               \"usage\": {\n                \"description\": \"The memory usage contains cache The unit is bytes\",\n                \"type\": \"number\"\n               },\n               \"usageWoCache\": {\n                \"description\": \"The memory usage contains no cache The unit is bytes\",\n                \"type\": \"number\"\n               }\n              },\n              \"type\": \"object\"\n             },\n             \"network\": {\n              \"description\": \"Only one of its members may be specified.\",\n              \"properties\": {\n               \"receivedRate\": {\n                \"description\": \"The unit is bit/s\",\n                \"type\": \"number\"\n               },\n               \"transmittedRate\": {\n                \"description\": \"The unit is bit/s\",\n                \"type\": \"number\"\n               }\n              },\n              \"type\": \"object\"\n             },\n             \"replica\": {\n              \"description\": \"Only one of its members may be specified.\",\n              \"properties\": {\n               \"unavailableRatio\": {\n                \"type\": \"number\"\n               }\n              },\n              \"type\": \"object\"\n             }\n            },\n            \"type\": \"object\"\n           },\n           \"names\": {\n            \"items\": {\n             \"description\": \"The cluster and namespace to which the workloads belongs must be specified.\",\n             \"properties\": {\n              \"cluster\": {\n               \"type\": \"string\"\n              },\n              \"names\": {\n               \"items\": {\n                \"type\": \"string\"\n               },\n               \"type\": \"array\"\n              },\n              \"namespace\": {\n               \"type\": \"string\"\n              }\n             },\n             \"required\": [\n              \"cluster\",\n              \"names\",\n              \"namespace\"\n             ],\n             \"type\": \"object\"\n            },\n            \"type\": \"array\"\n           }\n          },\n          \"required\": [\n           \"comparator\",\n           \"kind\",\n           \"names\"\n          ],\n          \"type\": \"object\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"for\": {\n        \"description\": \"Duration is a valid time unit Supported units: y, w, d, h, m, s, ms Examples: `30s`, `1m`, `1h20m15s`\",\n        \"pattern\": \"^(0|(([0-9]+)y)?(([0-9]+)w)?(([0-9]+)d)?(([0-9]+)h)?(([0-9]+)m)?(([0-9]+)s)?(([0-9]+)ms)?)$\",\n        \"type\": \"string\"\n       },\n       \"labels\": {\n        \"additionalProperties\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"object\"\n       },\n       \"namespaceSelector\": {\n        \"description\": \"Only one of its members may be specified.\",\n        \"properties\": {\n         \"inValues\": {\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         },\n         \"matcher\": {\n          \"properties\": {\n           \"type\": {\n            \"type\": \"string\"\n           },\n           \"value\": {\n            \"type\": \"string\"\n           }\n          },\n          \"required\": [\n           \"type\"\n          ],\n          \"type\": \"object\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"severity\": {\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"alert\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"rules\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Global Rule Group\",\n \"type\": \"object\"\n}",
+   "version": "alerting.kubesphere.io/v2beta1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "Global Rule Group",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": false,
+   "published": false,
+   "source_uri": "git://github.com/kubesphere/kubesphere/master/config/ks-core/crds"
+  },
+  "model": {
+   "category": {
+    "name": "Platform"
+   },
+   "displayName": "Kubesphere",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "source_uri": "git://github.com/kubesphere/kubesphere/master/config/ks-core/crds",
+    "styleOverrides": "",
+    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 32 38\" fill=\"none\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M27.901 30.192L19.814 25.479V34.905L27.901 30.192ZM27.901 7.241L19.814 2.528V11.954L27.901 7.241ZM15.823 0.25L0 9.472V27.962L15.823 37.183V23.154L8.21 18.716L15.823 14.279V0.25ZM15.878 18.717L31.678 27.924V9.509L15.878 18.717Z\" fill=\"#26A678\"\u003e\u003c/path\u003e\n\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 32 38\" fill=\"none\"\u003e\n    \u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M27.901 30.192L19.814 25.479V34.905L27.901 30.192ZM27.901 7.241L19.814 2.528V11.954L27.901 7.241ZM15.823 0.25L0 9.472V27.962L15.823 37.183V23.154L8.21 18.716L15.823 14.279V0.25ZM15.878 18.717L31.678 27.924V9.509L15.878 18.717Z\" fill=\"#fff\"\u003e\u003c/path\u003e\n\u003c/svg\u003e"
+   },
+   "model": {
+    "version": "v3.4.1"
+   },
+   "name": "kubesphere",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "github",
+    "name": "Github",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "subCategory": "Certified Kubernetes - Distribution",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "ignored",
+  "styles": {
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "svgColor": "\u003csvg width=\"32\" height=\"38\" viewBox=\"0 0 32 38\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M27.901 30.192L19.814 25.479V34.905L27.901 30.192ZM27.901 7.241L19.814 2.528V11.954L27.901 7.241ZM15.823 0.25L0 9.472V27.962L15.823 37.183V23.154L8.21 18.716L15.823 14.279V0.25ZM15.878 18.717L31.678 27.924V9.509L15.878 18.717Z\" fill=\"#26A678\"/\u003e\n\u003c/svg\u003e",
+   "svgWhite": "\u003csvg width=\"32\" height=\"38\" viewBox=\"0 0 32 38\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n    \u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\"\n        d=\"M27.901 30.192L19.814 25.479V34.905L27.901 30.192ZM27.901 7.241L19.814 2.528V11.954L27.901 7.241ZM15.823 0.25L0 9.472V27.962L15.823 37.183V23.154L8.21 18.716L15.823 14.279V0.25ZM15.878 18.717L31.678 27.924V9.509L15.878 18.717Z\"\n        fill=\"#fff\" /\u003e\n\u003c/svg\u003e"
+  },
+  "version": "v1.0.0"
+ }

@@ -19,18 +19,34 @@ jobs:
         name: e2e-test-reporter
         github-token: ${{ secrets.GH_ACCESS_TOKEN }}
         run-id: ${{ github.event.workflow_run.id }}
+    - name: Find Comment
+      uses: peter-evans/find-comment@3eae4d37986fb5a8592848f6a574fdf654e61f9e # v3.1.0
+      id: fc
+      with:
+        issue-number: ${{ github.event.pull_request.number }}
+        comment-author: 'github-actions[bot]'
+        body-includes: Test run results
+    - name: Delete Previous Comment
+      if: steps.fc.outputs.comment-id != ''
+      uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+      with:
+        script: |
+          github.rest.issues.deleteComment({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            comment_id: ${{ steps.fc.outputs.comment-id }}
     - name: Comment on staging url
+      if: ${{ !cancelled() }}
       uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
       with:
         script: |
             const fs = require('fs');
-            const PR_NUMBER = Number(fs.readFileSync('./pr/number'));
-            const E2ETestReporter = fs.readFileSync('./ui/test-report.md');
+            const PRNumber = Number(fs.readFileSync('./pr/number'));
+            const E2ETestReporter = String(fs.readFileSync('./ui/test-report.md'));
 
-            const { STAGING_URL } = process.env
             await github.rest.issues.createComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                issue_number: PR_NUMBER,
+                issue_number: PRNumber,
                 body: E2ETestReporter
             });

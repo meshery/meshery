@@ -105,7 +105,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Docker stable and playground build & tag
         run: |
-          DOCKER_BUILDKIT=1 docker build -f install/docker/Dockerfile --no-cache -t ${{ secrets.IMAGE_NAME }}:stable-latest --build-arg TOKEN=${{ secrets.GLOBAL_TOKEN }} --build-arg GIT_COMMITSHA=${GITHUB_SHA::8} --build-arg GIT_VERSION=${GITHUB_REF/refs\/tags\//} --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} .
+          DOCKER_BUILDKIT=1 docker build -f install/docker/Dockerfile --no-cache -t ${{ secrets.IMAGE_NAME }}:stable-latest --build-arg TOKEN=${{ secrets.GLOBAL_TOKEN }} --build-arg GIT_COMMITSHA=${GITHUB_SHA::8} --build-arg GIT_VERSION=${GITHUB_REF/refs\/tags\//} --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} --build-arg PLAYGROUND=true .
           docker tag ${{ secrets.IMAGE_NAME }}:stable-latest ${{ secrets.IMAGE_NAME }}:stable-${GITHUB_REF/refs\/tags\//}
           docker tag ${{ secrets.IMAGE_NAME }}:stable-latest ${{ secrets.IMAGE_NAME }}:stable-${GITHUB_SHA::8}
           docker tag ${{ secrets.IMAGE_NAME }}:stable-latest ${{ secrets.IMAGE_NAME }}:playground-latest
