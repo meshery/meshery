@@ -91,28 +91,19 @@ kubectl scale deployment <deployment-name> --replicas=3
 kubectl set image deployment/<deployment-name> <container-name>=new-image:tag
 \```
 
-#### 5. **Rollback Deployments:**
-   - Understand the process of rolling back changes in case of issues or errors during an update.
-
-\```bash
-kubectl rollout undo deployment/<deployment-name>
-\```
-
 #### 6. **Monitoring and Troubleshooting Deployments:**
   - Utilize Meshery Playground to monitor the status of Deployments and troubleshoot common issues.
 
-#### 7. **Clean-Up:**
-  - Delete the Deployments and associated resources after completing the lab.
 
-\```bash
-mesheryctl pattern delete -f https://raw.githubusercontent.com/example/microservices-app-deployment.yaml
-\```
 
-#### 8. **Saving and Sharing:**
-   - Save your scenario in Meshery Playground for future reference.
+### Saving and Sharing
+  - Save your scenario in Meshery Playground for future reference.
   - Share your Deployment scenarios with the Meshery community for collaborative learning.
 
-### Conclusion
-Congratulations! You've successfully completed the lab on exploring Kubernetes Deployments using Meshery Playground. This hands-on experience has equipped you with practical knowledge on deploying, scaling, updating, and monitoring applications in a Kubernetes environment. Continue exploring more scenarios in the Meshery Playground to enhance your skills in container orchestration.
+### Deleting the resources
 
-{% include related-content.html type="tutorials" %}
+To delete the resources, use the **Undeploy** option from the _Design_ view.
+
+
+### Conclusion
+Congratulations! You've successfully completed the lab on exploring Kubernetes Deployments using Meshery Playground. This hands-on experience has equipped you with practical knowledge on deploying, updating, and monitoring applications in a Kubernetes environment. Continue exploring more scenarios in the Meshery Playground to enhance your skills in container orchestration.
