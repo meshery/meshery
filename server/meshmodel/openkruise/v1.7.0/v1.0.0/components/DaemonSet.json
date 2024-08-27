@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "DaemonSet",
    "schema": "{\n \"description\": \"DaemonSet is the Schema for the daemonsets API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"DaemonSetSpec defines the desired state of DaemonSet\",\n   \"properties\": {\n    \"burstReplicas\": {\n     \"anyOf\": [\n      {\n       \"type\": \"integer\"\n      },\n      {\n       \"type\": \"string\"\n      }\n     ],\n     \"description\": \"BurstReplicas is a rate limiter for booting pods on a lot of pods.\\nThe default value is 250\",\n     \"x-kubernetes-int-or-string\": true\n    },\n    \"lifecycle\": {\n     \"description\": \"Lifecycle defines the lifecycle hooks for Pods pre-delete, in-place update.\\nCurrently, we only support pre-delete hook for Advanced DaemonSet.\",\n     \"properties\": {\n      \"inPlaceUpdate\": {\n       \"description\": \"InPlaceUpdate is the hook before Pod to update and after Pod has been updated.\",\n       \"properties\": {\n        \"finalizersHandler\": {\n         \"items\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"array\"\n        },\n        \"labelsHandler\": {\n         \"additionalProperties\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"object\"\n        },\n        \"markPodNotReady\": {\n         \"description\": \"MarkPodNotReady = true means:\\n- Pod will be set to 'NotReady' at preparingDelete/preparingUpdate state.\\n- Pod will be restored to 'Ready' at Updated state if it was set to 'NotReady' at preparingUpdate state.\\nCurrently, MarkPodNotReady only takes effect on InPlaceUpdate \\u0026 PreDelete hook.\\nDefault to false.\",\n         \"type\": \"boolean\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"preDelete\": {\n       \"description\": \"PreDelete is the hook before Pod to be deleted.\",\n       \"properties\": {\n        \"finalizersHandler\": {\n         \"items\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"array\"\n        },\n        \"labelsHandler\": {\n         \"additionalProperties\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"object\"\n        },\n        \"markPodNotReady\": {\n         \"description\": \"MarkPodNotReady = true means:\\n- Pod will be set to 'NotReady' at preparingDelete/preparingUpdate state.\\n- Pod will be restored to 'Ready' at Updated state if it was set to 'NotReady' at preparingUpdate state.\\nCurrently, MarkPodNotReady only takes effect on InPlaceUpdate \\u0026 PreDelete hook.\\nDefault to false.\",\n         \"type\": \"boolean\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"preNormal\": {\n       \"description\": \"PreNormal is the hook after Pod to be created and ready to be Normal.\",\n       \"properties\": {\n        \"finalizersHandler\": {\n         \"items\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"array\"\n        },\n        \"labelsHandler\": {\n         \"additionalProperties\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"object\"\n        },\n        \"markPodNotReady\": {\n         \"description\": \"MarkPodNotReady = true means:\\n- Pod will be set to 'NotReady' at preparingDelete/preparingUpdate state.\\n- Pod will be restored to 'Ready' at Updated state if it was set to 'NotReady' at preparingUpdate state.\\nCurrently, MarkPodNotReady only takes effect on InPlaceUpdate \\u0026 PreDelete hook.\\nDefault to false.\",\n         \"type\": \"boolean\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"minReadySeconds\": {\n     \"description\": \"The minimum number of seconds for which a newly created DaemonSet pod should\\nbe ready without any of its container crashing, for it to be considered\\navailable. Defaults to 0 (pod will be considered available as soon as it\\nis ready).\",\n     \"format\": \"int32\",\n     \"type\": \"integer\"\n    },\n    \"revisionHistoryLimit\": {\n     \"description\": \"The number of old history to retain to allow rollback.\\nThis is a pointer to distinguish between explicit zero and not specified.\\nDefaults to 10.\",\n     \"format\": \"int32\",\n     \"type\": \"integer\"\n    },\n    \"selector\": {\n     \"description\": \"A label query over pods that are managed by the daemon set.\\nMust match in order to be controlled.\\nIt must match the pod template's labels.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#label-selectors\",\n     \"properties\": {\n      \"matchExpressions\": {\n       \"description\": \"matchExpressions is a list of label selector requirements. The requirements are ANDed.\",\n       \"items\": {\n        \"description\": \"A label selector requirement is a selector that contains values, a key, and an operator that\\nrelates the key and values.\",\n        \"properties\": {\n         \"key\": {\n          \"description\": \"key is the label key that the selector applies to.\",\n          \"type\": \"string\"\n         },\n         \"operator\": {\n          \"description\": \"operator represents a key's relationship to a set of values.\\nValid operators are In, NotIn, Exists and DoesNotExist.\",\n          \"type\": \"string\"\n         },\n         \"values\": {\n          \"description\": \"values is an array of string values. If the operator is In or NotIn,\\nthe values array must be non-empty. If the operator is Exists or DoesNotExist,\\nthe values array must be empty. This array is replaced during a strategic\\nmerge patch.\",\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         }\n        },\n        \"required\": [\n         \"key\",\n         \"operator\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"matchLabels\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels\\nmap is equivalent to an element of matchExpressions, whose key field is \\\"key\\\", the\\noperator is \\\"In\\\", and the values array contains only \\\"value\\\". The requirements are ANDed.\",\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    },\n    \"template\": {\n     \"description\": \"An object that describes the pod that will be created.\\nThe DaemonSet will create exactly one copy of this pod on every node\\nthat matches the template's node selector (or on every node if no node\\nselector is specified).\\nMore info: https://kubernetes.io/docs/concepts/workloads/controllers/replicationcontroller#pod-template\",\n     \"format\": \"textarea\",\n     \"type\": \"string\"\n    },\n    \"updateStrategy\": {\n     \"description\": \"An update strategy to replace existing DaemonSet pods with new pods.\",\n     \"properties\": {\n      \"rollingUpdate\": {\n       \"description\": \"Rolling update config params. Present only if type = \\\"RollingUpdate\\\".\",\n       \"properties\": {\n        \"maxSurge\": {\n         \"anyOf\": [\n          {\n           \"type\": \"integer\"\n          },\n          {\n           \"type\": \"string\"\n          }\n         ],\n         \"description\": \"The maximum number of nodes with an existing available DaemonSet pod that\\ncan have an updated DaemonSet pod during during an update.\\nValue can be an absolute number (ex: 5) or a percentage of desired pods (ex: 10%).\\nThis can not be 0 if MaxUnavailable is 0.\\nAbsolute number is calculated from percentage by rounding up to a minimum of 1.\\nDefault value is 0.\\nExample: when this is set to 30%, at most 30% of the total number of nodes\\nthat should be running the daemon pod (i.e. status.desiredNumberScheduled)\\ncan have their a new pod created before the old pod is marked as deleted.\\nThe update starts by launching new pods on 30% of nodes. Once an updated\\npod is available (Ready for at least minReadySeconds) the old DaemonSet pod\\non that node is marked deleted. If the old pod becomes unavailable for any\\nreason (Ready transitions to false, is evicted, or is drained) an updated\\npod is immediately created on that node without considering surge limits.\\nAllowing surge implies the possibility that the resources consumed by the\\ndaemonset on any given node can double if the readiness check fails, and\\nso resource intensive daemonsets should take into account that they may\\ncause evictions during disruption.\\nThis is beta field and enabled/disabled by DaemonSetUpdateSurge feature gate.\",\n         \"x-kubernetes-int-or-string\": true\n        },\n        \"maxUnavailable\": {\n         \"anyOf\": [\n          {\n           \"type\": \"integer\"\n          },\n          {\n           \"type\": \"string\"\n          }\n         ],\n         \"description\": \"The maximum number of DaemonSet pods that can be unavailable during the\\nupdate. Value can be an absolute number (ex: 5) or a percentage of total\\nnumber of DaemonSet pods at the start of the update (ex: 10%). Absolute\\nnumber is calculated from percentage by rounding up.\\nThis cannot be 0 if MaxSurge is 0\\nDefault value is 1.\\nExample: when this is set to 30%, at most 30% of the total number of nodes\\nthat should be running the daemon pod (i.e. status.desiredNumberScheduled)\\ncan have their pods stopped for an update at any given time. The update\\nstarts by stopping at most 30% of those DaemonSet pods and then brings\\nup new DaemonSet pods in their place. Once the new pods are available,\\nit then proceeds onto other DaemonSet pods, thus ensuring that at least\\n70% of original number of DaemonSet pods are available at all times during\\nthe update.\",\n         \"x-kubernetes-int-or-string\": true\n        },\n        \"partition\": {\n         \"description\": \"The number of DaemonSet pods remained to be old version.\\nDefault value is 0.\\nMaximum value is status.DesiredNumberScheduled, which means no pod will be updated.\",\n         \"format\": \"int32\",\n         \"type\": \"integer\"\n        },\n        \"paused\": {\n         \"description\": \"Indicates that the daemon set is paused and will not be processed by the\\ndaemon set controller.\",\n         \"type\": \"boolean\"\n        },\n        \"rollingUpdateType\": {\n         \"description\": \"Type is to specify which kind of rollingUpdate.\",\n         \"type\": \"string\"\n        },\n        \"selector\": {\n         \"description\": \"A label query over nodes that are managed by the daemon set RollingUpdate.\\nMust match in order to be controlled.\\nIt must match the node's labels.\",\n         \"properties\": {\n          \"matchExpressions\": {\n           \"description\": \"matchExpressions is a list of label selector requirements. The requirements are ANDed.\",\n           \"items\": {\n            \"description\": \"A label selector requirement is a selector that contains values, a key, and an operator that\\nrelates the key and values.\",\n            \"properties\": {\n             \"key\": {\n              \"description\": \"key is the label key that the selector applies to.\",\n              \"type\": \"string\"\n             },\n             \"operator\": {\n              \"description\": \"operator represents a key's relationship to a set of values.\\nValid operators are In, NotIn, Exists and DoesNotExist.\",\n              \"type\": \"string\"\n             },\n             \"values\": {\n              \"description\": \"values is an array of string values. If the operator is In or NotIn,\\nthe values array must be non-empty. If the operator is Exists or DoesNotExist,\\nthe values array must be empty. This array is replaced during a strategic\\nmerge patch.\",\n              \"items\": {\n               \"type\": \"string\"\n              },\n              \"type\": \"array\"\n             }\n            },\n            \"required\": [\n             \"key\",\n             \"operator\"\n            ],\n            \"type\": \"object\"\n           },\n           \"type\": \"array\"\n          },\n          \"matchLabels\": {\n           \"additionalProperties\": {\n            \"type\": \"string\"\n           },\n           \"description\": \"matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels\\nmap is equivalent to an element of matchExpressions, whose key field is \\\"key\\\", the\\noperator is \\\"In\\\", and the values array contains only \\\"value\\\". The requirements are ANDed.\",\n           \"type\": \"object\"\n          }\n         },\n         \"type\": \"object\",\n         \"x-kubernetes-map-type\": \"atomic\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"type\": {\n       \"description\": \"Type of daemon set update. Can be \\\"RollingUpdate\\\" or \\\"OnDelete\\\". Default is RollingUpdate.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"selector\",\n    \"template\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Daemon Set\",\n \"type\": \"object\"\n}",

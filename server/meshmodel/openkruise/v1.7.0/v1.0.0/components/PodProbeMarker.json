@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "PodProbeMarker",
    "schema": "{\n \"description\": \"PodProbeMarker is the Schema for the PodProbeMarker API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"PodProbeMarkerSpec defines the desired state of PodProbeMarker\",\n   \"properties\": {\n    \"probes\": {\n     \"description\": \"Custom container probe, current only support Exec().\\nProbe Result will record in Pod.Status.Conditions, and condition.type=probe.name.\\ncondition.status=True indicates probe success\\ncondition.status=False indicates probe fails\",\n     \"items\": {\n      \"properties\": {\n       \"containerName\": {\n        \"description\": \"container name\",\n        \"type\": \"string\"\n       },\n       \"markerPolicy\": {\n        \"description\": \"According to the execution result of ContainerProbe, perform specific actions,\\nsuch as: patch Pod labels, annotations, ReadinessGate Condition\\nIt cannot be null at the same time as PodConditionType.\",\n        \"items\": {\n         \"properties\": {\n          \"annotations\": {\n           \"additionalProperties\": {\n            \"type\": \"string\"\n           },\n           \"description\": \"Patch annotations pod.annotations\",\n           \"type\": \"object\"\n          },\n          \"labels\": {\n           \"additionalProperties\": {\n            \"type\": \"string\"\n           },\n           \"description\": \"Patch Labels pod.labels\",\n           \"type\": \"object\"\n          },\n          \"state\": {\n           \"description\": \"probe status, True or False\\nFor example: State=Succeeded, annotations[controller.kubernetes.io/pod-deletion-cost] = '10'.\\nState=Failed, annotations[controller.kubernetes.io/pod-deletion-cost] = '-10'.\\nIn addition, if State=Failed is not defined, Exec execution fails, and the annotations[controller.kubernetes.io/pod-deletion-cost] will be Deleted\",\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"state\"\n         ],\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       },\n       \"name\": {\n        \"description\": \"probe name, unique within the Pod(Even between different containers, they cannot be the same)\",\n        \"type\": \"string\"\n       },\n       \"podConditionType\": {\n        \"description\": \"If it is not empty, the Probe execution result will be recorded on the Pod condition.\\nIt cannot be null at the same time as MarkerPolicy.\\nFor example PodConditionType=game.kruise.io/healthy, pod.status.condition.type = game.kruise.io/healthy.\\nWhen probe is Succeeded, pod.status.condition.status = True. Otherwise, when the probe fails to execute, pod.status.condition.status = False.\",\n        \"type\": \"string\"\n       },\n       \"probe\": {\n        \"description\": \"container probe spec\",\n        \"properties\": {\n         \"exec\": {\n          \"description\": \"Exec specifies the action to take.\",\n          \"properties\": {\n           \"command\": {\n            \"description\": \"Command is the command line to execute inside the container, the working directory for the\\ncommand  is root ('/') in the container's filesystem. The command is simply exec'd, it is\\nnot run inside a shell, so traditional shell instructions ('|', etc) won't work. To use\\na shell, you need to explicitly call out to that shell.\\nExit status of 0 is treated as live/healthy and non-zero is unhealthy.\",\n            \"items\": {\n             \"type\": \"string\"\n            },\n            \"type\": \"array\"\n           }\n          },\n          \"type\": \"object\"\n         },\n         \"failureThreshold\": {\n          \"description\": \"Minimum consecutive failures for the probe to be considered failed after having succeeded.\\nDefaults to 3. Minimum value is 1.\",\n          \"format\": \"int32\",\n          \"type\": \"integer\"\n         },\n         \"grpc\": {\n          \"description\": \"GRPC specifies an action involving a GRPC port.\",\n          \"properties\": {\n           \"port\": {\n            \"description\": \"Port number of the gRPC service. Number must be in the range 1 to 65535.\",\n            \"format\": \"int32\",\n            \"type\": \"integer\"\n           },\n           \"service\": {\n            \"description\": \"Service is the name of the service to place in the gRPC HealthCheckRequest\\n(see https://github.com/grpc/grpc/blob/master/doc/health-checking.md).\\n\\n\\nIf this is not specified, the default behavior is defined by gRPC.\",\n            \"type\": \"string\"\n           }\n          },\n          \"required\": [\n           \"port\"\n          ],\n          \"type\": \"object\"\n         },\n         \"httpGet\": {\n          \"description\": \"HTTPGet specifies the http request to perform.\",\n          \"properties\": {\n           \"host\": {\n            \"description\": \"Host name to connect to, defaults to the pod IP. You probably want to set\\n\\\"Host\\\" in httpHeaders instead.\",\n            \"type\": \"string\"\n           },\n           \"httpHeaders\": {\n            \"description\": \"Custom headers to set in the request. HTTP allows repeated headers.\",\n            \"items\": {\n             \"description\": \"HTTPHeader describes a custom header to be used in HTTP probes\",\n             \"properties\": {\n              \"name\": {\n               \"description\": \"The header field name.\\nThis will be canonicalized upon output, so case-variant names will be understood as the same header.\",\n               \"type\": \"string\"\n              },\n              \"value\": {\n               \"description\": \"The header field value\",\n               \"type\": \"string\"\n              }\n             },\n             \"required\": [\n              \"name\",\n              \"value\"\n             ],\n             \"type\": \"object\"\n            },\n            \"type\": \"array\"\n           },\n           \"path\": {\n            \"description\": \"Path to access on the HTTP server.\",\n            \"type\": \"string\"\n           },\n           \"port\": {\n            \"anyOf\": [\n             {\n              \"type\": \"integer\"\n             },\n             {\n              \"type\": \"string\"\n             }\n            ],\n            \"description\": \"Name or number of the port to access on the container.\\nNumber must be in the range 1 to 65535.\\nName must be an IANA_SVC_NAME.\",\n            \"x-kubernetes-int-or-string\": true\n           },\n           \"scheme\": {\n            \"description\": \"Scheme to use for connecting to the host.\\nDefaults to HTTP.\",\n            \"type\": \"string\"\n           }\n          },\n          \"required\": [\n           \"port\"\n          ],\n          \"type\": \"object\"\n         },\n         \"initialDelaySeconds\": {\n          \"description\": \"Number of seconds after the container has started before liveness probes are initiated.\\nMore info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes\",\n          \"format\": \"int32\",\n          \"type\": \"integer\"\n         },\n         \"periodSeconds\": {\n          \"description\": \"How often (in seconds) to perform the probe.\\nDefault to 10 seconds. Minimum value is 1.\",\n          \"format\": \"int32\",\n          \"type\": \"integer\"\n         },\n         \"successThreshold\": {\n          \"description\": \"Minimum consecutive successes for the probe to be considered successful after having failed.\\nDefaults to 1. Must be 1 for liveness and startup. Minimum value is 1.\",\n          \"format\": \"int32\",\n          \"type\": \"integer\"\n         },\n         \"tcpSocket\": {\n          \"description\": \"TCPSocket specifies an action involving a TCP port.\",\n          \"properties\": {\n           \"host\": {\n            \"description\": \"Optional: Host name to connect to, defaults to the pod IP.\",\n            \"type\": \"string\"\n           },\n           \"port\": {\n            \"anyOf\": [\n             {\n              \"type\": \"integer\"\n             },\n             {\n              \"type\": \"string\"\n             }\n            ],\n            \"description\": \"Number or name of the port to access on the container.\\nNumber must be in the range 1 to 65535.\\nName must be an IANA_SVC_NAME.\",\n            \"x-kubernetes-int-or-string\": true\n           }\n          },\n          \"required\": [\n           \"port\"\n          ],\n          \"type\": \"object\"\n         },\n         \"terminationGracePeriodSeconds\": {\n          \"description\": \"Optional duration in seconds the pod needs to terminate gracefully upon probe failure.\\nThe grace period is the duration in seconds after the processes running in the pod are sent\\na termination signal and the time when the processes are forcibly halted with a kill signal.\\nSet this value longer than the expected cleanup time for your process.\\nIf this value is nil, the pod's terminationGracePeriodSeconds will be used. Otherwise, this\\nvalue overrides the value provided by the pod spec.\\nValue must be non-negative integer. The value zero indicates stop immediately via\\nthe kill signal (no opportunity to shut down).\\nThis is a beta field and requires enabling ProbeTerminationGracePeriod feature gate.\\nMinimum value is 1. spec.terminationGracePeriodSeconds is used if unset.\",\n          \"format\": \"int64\",\n          \"type\": \"integer\"\n         },\n         \"timeoutSeconds\": {\n          \"description\": \"Number of seconds after which the probe times out.\\nDefaults to 1 second. Minimum value is 1.\\nMore info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes\",\n          \"format\": \"int32\",\n          \"type\": \"integer\"\n         }\n        },\n        \"type\": \"object\"\n       }\n      },\n      \"required\": [\n       \"containerName\",\n       \"name\",\n       \"probe\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"selector\": {\n     \"description\": \"Selector is a label query over pods that should exec custom probe\\nIt must match the pod template's labels.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#label-selectors\",\n     \"properties\": {\n      \"matchExpressions\": {\n       \"description\": \"matchExpressions is a list of label selector requirements. The requirements are ANDed.\",\n       \"items\": {\n        \"description\": \"A label selector requirement is a selector that contains values, a key, and an operator that\\nrelates the key and values.\",\n        \"properties\": {\n         \"key\": {\n          \"description\": \"key is the label key that the selector applies to.\",\n          \"type\": \"string\"\n         },\n         \"operator\": {\n          \"description\": \"operator represents a key's relationship to a set of values.\\nValid operators are In, NotIn, Exists and DoesNotExist.\",\n          \"type\": \"string\"\n         },\n         \"values\": {\n          \"description\": \"values is an array of string values. If the operator is In or NotIn,\\nthe values array must be non-empty. If the operator is Exists or DoesNotExist,\\nthe values array must be empty. This array is replaced during a strategic\\nmerge patch.\",\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         }\n        },\n        \"required\": [\n         \"key\",\n         \"operator\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"matchLabels\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels\\nmap is equivalent to an element of matchExpressions, whose key field is \\\"key\\\", the\\noperator is \\\"In\\\", and the values array contains only \\\"value\\\". The requirements are ANDed.\",\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    }\n   },\n   \"required\": [\n    \"probes\",\n    \"selector\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Pod Probe Marker\",\n \"type\": \"object\"\n}",

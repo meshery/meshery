@@ -34,7 +34,7 @@
   },
   "connection_id": "00000000-0000-0000-0000-000000000000",
   "schemaVersion": "models.meshery.io/v1beta1",
-  "status": "ignored",
+  "status": "enabled",
   "subCategory": "Cloud Native Storage",
   "version": "v1.0.0",
   "components": null,
