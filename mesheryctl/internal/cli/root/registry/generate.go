@@ -290,7 +290,6 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 					utils.Log.Info(" extracted ", lengthOfComps, " components for ", model.ModelDisplayName, " (", model.Model, ")")
 				}
 			} else {
-				fmt.Println("lengthOfComps", len(comps))
 				if len(comps) > 0 {
 					utils.Log.Info("Model already exists: ", model.Model)
 				} else {
