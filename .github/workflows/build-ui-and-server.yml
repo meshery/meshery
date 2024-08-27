@@ -104,6 +104,7 @@ jobs:
   tests-ui-e2e:
     needs: [build-backend, ui-build]
     name: UI end-to-end tests
+    environment: staging-playground
     if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-22.04
     timeout-minutes: 45
@@ -194,12 +195,12 @@ jobs:
         run: npx playwright test --project=chromium --project=firefox --reporter="./tests/e2e/custom-playwright-reporter.js"
         working-directory: ui
       - name: Save PR number
-        if: always()
+        if: ${{ !cancelled() }}
         run: |
             mkdir -p ./pr
             echo ${{ github.event.number }} > ./pr/number
       - name: Upload Test Report
-        if: always()
+        if: ${{ !cancelled() }}
         uses: actions/upload-artifact@834a144ee995460fba8ed112a2fc961b36a5ec5a # v4.3.6
         with:
             name: e2e-test-reporter
