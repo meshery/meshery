@@ -280,7 +280,7 @@ func main() {
 		models.SeedComponents(log, hc, regManager)
 		r, err := policies.NewRegoInstance(PoliciesPath, regManager)
 		if err != nil {
-			log.Warn(ErrCreatingOPAInstance)
+			log.Warn(ErrCreatingOPAInstance(err))
 		} else {
 			rego = *r
 		}
