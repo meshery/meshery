@@ -3,7 +3,7 @@ layout: default
 title: Deploying WordPress and MySQL with Persistent Volumes with Meshery
 abstract: Learn how to deploy WordPress and MySQL on Kubernetes using Meshery.
 permalink: guides/tutorials/wordpress-mysql-persistentvolume
-model: Kubernetes
+model: kubernetes
 kind: deployments
 type: guides
 category: tutorials
