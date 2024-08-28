@@ -855,13 +855,18 @@ func (l *RemoteProvider) GetK8sContext(token, connectionID string) (K8sContext, 
 	}()
 
 	if resp.StatusCode == http.StatusOK {
-		var kc K8sContext
+		var kc MesheryK8sContextPage
 		if err := json.NewDecoder(resp.Body).Decode(&kc); err != nil {
-			return kc, ErrUnmarshal(err, "Kubernetes context")
+			return K8sContext{}, ErrUnmarshal(err, "Kubernetes context")
+		}
+
+		if len(kc.Contexts) == 0 {
+			return K8sContext{}, fmt.Errorf("no Kubernetes contexts available")
 		}
 
 		l.Log.Info("Retrieved Kubernetes context from remote provider.")
-		return kc, nil
+		// Response will contain single context
+		return *kc.Contexts[0], nil
 	}
 
 	bdr, err := io.ReadAll(resp.Body)
