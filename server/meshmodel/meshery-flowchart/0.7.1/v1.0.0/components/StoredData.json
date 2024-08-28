@@ -1,5 +1,66 @@
 {
-  "capabilities": null,
+  "capabilities": [
+    {
+     "description": "Configure the visual styles for the component",
+     "displayName": "Styling",
+     "entityState": [
+      "declaration"
+     ],
+     "key": "",
+     "kind": "mutate",
+     "metadata": null,
+     "schemaVersion": "capability.meshery.io/v1alpha1",
+     "status": "enabled",
+     "subType": "",
+     "type": "style",
+     "version": "0.7.0"
+    },
+    {
+     "description": "Change the shape of the component",
+     "displayName": "Change Shape",
+     "entityState": [
+      "declaration"
+     ],
+     "key": "",
+     "kind": "mutate",
+     "metadata": null,
+     "schemaVersion": "capability.meshery.io/v1alpha1",
+     "status": "enabled",
+     "subType": "shape",
+     "type": "style",
+     "version": "0.7.0"
+    },
+    {
+     "description": "Drag and Drop a component into a parent component in graph view",
+     "displayName": "Compound Drag And Drop",
+     "entityState": [
+      "declaration"
+     ],
+     "key": "",
+     "kind": "interaction",
+     "metadata": null,
+     "schemaVersion": "capability.meshery.io/v1alpha1",
+     "status": "enabled",
+     "subType": "compoundDnd",
+     "type": "graph",
+     "version": "0.7.0"
+    },
+    {
+     "description": "Add text to nodes body",
+     "displayName": "Body Text",
+     "entityState": [
+      "declaration"
+     ],
+     "key": "",
+     "kind": "mutate",
+     "metadata": null,
+     "schemaVersion": "capability.meshery.io/v1alpha1",
+     "status": "enabled",
+     "subType": "body-text",
+     "type": "style",
+     "version": "0.7.0"
+    }
+   ],
   "component": {
     "kind": "StoredData",
     "schema": "",
@@ -57,6 +118,11 @@
   "schemaVersion": "components.meshery.io/v1beta1",
   "status": "enabled",
   "styles": {
+    "background-opacity": 0,
+    "border-style": "solid",
+    "border-width": 0,
+    "height": 30,
+    "width": 30,
     "primaryColor": "#2196F3",
     "secondaryColor": "#00D3A9",
     "shape": "polygon",

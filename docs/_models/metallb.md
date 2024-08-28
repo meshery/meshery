@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/metallb
 description: 
 integrations-category: Cloud Native Network
 integrations-subcategory: Service Proxy
-registrant: Artifact Hub
+registrant: Github
 components: 
 featureList: [
   "Provides external IP addresses to Kubernetes services",

@@ -33,6 +33,9 @@ export const ConfigurationTableConfig = (
           name: 'id',
           label: 'ID',
           options: {
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: (value) => <FormatId id={value} />,
           },
         },
@@ -150,6 +153,9 @@ export const ConfigurationTableConfig = (
           name: 'id',
           label: 'ID',
           options: {
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: (value) => <FormatId id={value} />,
           },
         },
@@ -285,6 +291,9 @@ export const ConfigurationTableConfig = (
           name: 'id',
           label: 'ID',
           options: {
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: (value) => <FormatId id={value} />,
           },
         },
@@ -402,6 +411,9 @@ export const ConfigurationTableConfig = (
           name: 'id',
           label: 'ID',
           options: {
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: (value) => <FormatId id={value} />,
           },
         },
@@ -521,6 +533,9 @@ export const ConfigurationTableConfig = (
           name: 'id',
           label: 'ID',
           options: {
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: (value) => <FormatId id={value} />,
           },
         },
@@ -684,6 +699,9 @@ export const ConfigurationTableConfig = (
           name: 'id',
           label: 'ID',
           options: {
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: (value) => <FormatId id={value} />,
           },
         },
@@ -803,6 +821,9 @@ export const ConfigurationTableConfig = (
           name: 'id',
           label: 'ID',
           options: {
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: (value) => <FormatId id={value} />,
           },
         },
@@ -980,6 +1001,9 @@ export const ConfigurationTableConfig = (
           name: 'id',
           label: 'ID',
           options: {
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: (value) => <FormatId id={value} />,
           },
         },
@@ -1097,6 +1121,9 @@ export const ConfigurationTableConfig = (
           name: 'id',
           label: 'ID',
           options: {
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: (value) => <FormatId id={value} />,
           },
         },
@@ -1216,6 +1243,9 @@ export const ConfigurationTableConfig = (
           name: 'id',
           label: 'ID',
           options: {
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: (value) => <FormatId id={value} />,
           },
         },
@@ -1348,6 +1378,9 @@ export const ConfigurationTableConfig = (
           name: 'id',
           label: 'ID',
           options: {
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: (value) => <FormatId id={value} />,
           },
         },

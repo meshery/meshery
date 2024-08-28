@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/open policy agent (op
 description: 
 integrations-category: Security & Compliance
 integrations-subcategory: Security & Compliance
-registrant: Artifact Hub
+registrant: Github
 components: 
 featureList: [
   "Policy-based control for Kubernetes",
