@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/jaeger-operator
 description: 
 integrations-category: Observability and Analysis
 integrations-subcategory: Tracing
-registrant: Artifact Hub
+registrant: GitHub
 components: 
 - name: jaeger
   colorIcon: assets/img/integrations/jaeger-operator/components/jaeger/icons/color/jaeger-color.svg
