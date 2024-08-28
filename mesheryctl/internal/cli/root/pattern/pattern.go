@@ -26,6 +26,7 @@ import (
 var (
 	availableSubcommands []*cobra.Command
 	file                 string
+	name                 string
 	validSourceTypes     []string
 )
 
@@ -71,6 +72,6 @@ mesheryctl pattern list
 func init() {
 	PatternCmd.PersistentFlags().StringVarP(&utils.TokenFlag, "token", "t", "", "Path to token file default from current context")
 
-	availableSubcommands = []*cobra.Command{applyCmd, deleteCmd, viewCmd, listCmd, importCmd, onboardCmd, offboardCmd, exportCmd}
+	availableSubcommands = []*cobra.Command{applyCmd, deleteCmd, viewCmd, listCmd, importCmd, onboardCmd, offboardCmd, exportCmd, importChartCmd}
 	PatternCmd.AddCommand(availableSubcommands...)
 }
