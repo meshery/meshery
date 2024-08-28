@@ -490,7 +490,10 @@ const MeshAdapterConfigComponent = (props) => {
                 onClick={handleAdapterUndeploy}
                 className={classes.button}
                 disabled={
-                  !CAN(keys.UNDEPLOY_SERVICE_MESH.action, keys.UNDEPLOY_SERVICE_MESH.subject)
+                  !CAN(
+                    keys.UNDEPLOY_CLOUD_NATIVE_INFRASTRUCTURE.action,
+                    keys.UNDEPLOY_CLOUD_NATIVE_INFRASTRUCTURE.subject,
+                  )
                 }
               >
                 Undeploy
@@ -541,7 +544,12 @@ const MeshAdapterConfigComponent = (props) => {
                   size="large"
                   onClick={handleAdapterDeploy}
                   className={classes.button}
-                  disabled={!CAN(keys.DEPLOY_SERVICE_MESH.action, keys.DEPLOY_SERVICE_MESH.subject)}
+                  disabled={
+                    !CAN(
+                      keys.DEPLOY_CLOUD_NATIVE_INFRASTRUCTURE.action,
+                      keys.DEPLOY_CLOUD_NATIVE_INFRASTRUCTURE.subject,
+                    )
+                  }
                 >
                   Deploy
                 </Button>
