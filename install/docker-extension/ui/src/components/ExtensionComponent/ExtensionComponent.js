@@ -34,7 +34,7 @@ import {
 import { MesheryAnimation } from '../MesheryAnimation/MesheryAnimation'
 import { randomApplicationNameGenerator } from '../../utils'
 import CatalogChart from '../Catalog/Chart'
-import {CatalogCard, FeedbackButton, SistentThemeProviderWithoutBaseLine} from '@layer5/sistent';
+import { CatalogCard, FeedbackButton, SistentThemeProviderWithoutBaseLine } from '@layer5/sistent';
 import { MESHMAP, mesheryCloudUrl } from '../utils/constants';
 
 const AuthenticatedMsg = 'Authenticated'
@@ -134,33 +134,26 @@ const ExtensionsComponent = () => {
   }
 
   const onSubmit = async feedback => {
-    // if (!validateFeedback(feedback)) {
-    //   handleError(
-    //     "We are unable to process your feedback. Did you include a message in your submission?"
-    //   );
-    //   return;
-    // }
-    // const path = router.pathname;
     const userFeedbackRequestBody = {
       scope: feedback?.label,
       message: feedback?.message,
       page_location: "",
       metadata: {}
     };
-    fetch(proxyUrl + '/api/extensions/identity/users/notify/feedback', { 
+    fetch(`${mesheryCloudUrl}` + '/api/identity/users/notify/feedback', {
       method: httpPost,
       body: userFeedbackRequestBody
-     })
-     .then(console.log)
+    })
+      .then(console.log)
       .catch(console.error)
 
     // if (resp.error) {
-    //   handleError(
+    //   window.ddClient.desktopUI.toast.error(
     //     "Error submitting feedback. Check your Internet connection and try again."
     //   );
     //   return;
     // }
-    // handleSuccess("Thank you! We have received your feedback.");
+    // window.ddClient.desktopUI.toast.success("Thank you! We have received your feedback.");
   };
 
   useEffect(() => {
@@ -325,6 +318,12 @@ const ExtensionsComponent = () => {
     reader.readAsText(file)
   }
 
+  const OpenDocs = () => {
+    window.ddClient.host.openExternal(
+      `https://docs.meshery.io/installation/docker/docker-extension`,
+    )
+  }
+
   return (
     <DockerMuiThemeProvider>
       <CssBaseline />
@@ -334,6 +333,19 @@ const ExtensionsComponent = () => {
         </LoadingDiv>
       )}
       <ComponentWrapper sx={{ opacity: changing ? '0.3' : '1' }}>
+        <SistentThemeProviderWithoutBaseLine>
+          <StyledButton
+            size='small'
+            onClick={() => OpenDocs()}
+            style={{
+              position: 'absolute',
+              top: '-8px',
+              right: '55px'
+            }}
+          >
+            Docs
+          </StyledButton>
+        </SistentThemeProviderWithoutBaseLine>
         {isLoggedIn && <Tour />}
         <div
           style={{
@@ -415,7 +427,7 @@ const ExtensionsComponent = () => {
                 >
                   Login
                 </StyledButton>
-              ) : ( <></> )}
+              ) : (<></>)}
             </AccountDiv>
           </ExtensionWrapper>
           {isLoggedIn && (
@@ -514,9 +526,9 @@ const ExtensionsComponent = () => {
         {isLoggedIn &&
           (<SectionWrapper>
             <CatalogChart filter={filter} pattern={catalogDesigns} isTheme={isDarkTheme} />
-            <Grid sx={{ backgroundColor: isDarkTheme ? '#666A75' : '#D7DADE', borderRadius: "15px", height: "23rem", display: "flex", justifyContent: "center" }}>
+            <Grid sx={{ backgroundColor: isDarkTheme ? '#666A75' : '#D7DADE', borderRadius: "15px", height: "28rem", display: "flex", justifyContent: "center", marginTop: '20px' }}>
 
-              <div style={{ paddingTop: isLoggedIn ? '1.2rem' : null, margin: "10px 0" }}>
+              <div style={{ paddingTop: isLoggedIn ? '1.2rem' : null, margin: "10px 0", width: 'max-content' }}>
                 <ExtensionWrapper
                   className="first-step"
                   sx={{
@@ -525,7 +537,7 @@ const ExtensionsComponent = () => {
                 >
                   {catalogDesigns?.patterns.length > 0 ? (
                     <div>
-                      <Typography variant="h5" sx={{ padding: '3rem 0 1rem 0', fontWeight: "bold" }}>
+                      <Typography variant="h5" sx={{ padding: '8rem 0 1rem 0', fontWeight: "bold" }}>
                         Designs
                       </Typography>
                       <MeshModels>
@@ -536,20 +548,34 @@ const ExtensionsComponent = () => {
                                 ? pattern.catalog_data.type
                                 : "deployment";
                             return (
-                             <SistentThemeProviderWithoutBaseLine>                          
-                              <CatalogCard
-                                pattern={pattern}
-                                key={`design-${index}`}
-                                patternType={patternType}
-                                catalog={true}
-                                cardHeight='18rem'
-                                cardWidth='15rem'
-                              />                            
-                             </SistentThemeProviderWithoutBaseLine>
+                              <SistentThemeProviderWithoutBaseLine>
+                                <CatalogCard
+                                  onCardClick={() => {
+                                    window.ddClient.host.openExternal(
+                                      `${mesheryCloudUrl}/catalog/content/catalog/${pattern?.id}`
+                                    )
+                                  }}
+                                  pattern={pattern}
+                                  key={`design-${index}`}
+                                  patternType={patternType}
+                                  catalog={true}
+                                  cardHeight='18rem'
+                                  cardWidth='15rem'
+                                />
+                              </SistentThemeProviderWithoutBaseLine>
                             )
                           })
                         }
                       </MeshModels>
+                      <StyledButton
+                        onClick={() => {
+                          window.ddClient.host.openExternal(
+                            `${mesheryCloudUrl}/catalog`
+                          )
+                        }}
+                      >
+                        View all catalog
+                      </StyledButton>
                     </div>
                   ) : (
                     <div>
@@ -557,10 +583,10 @@ const ExtensionsComponent = () => {
                         Designs
                       </Typography>
                       <a href={user?.role_names?.includes(MESHMAP) ? "https://playground.meshery.io/extension/meshmap" : "https://play.meshery.io"} style={{ textDecoration: "none" }}>
-                      <PublishCard>
-                        <PublishIcon width={"60"} height={"60"} />
-                        <h5>Publish your own design</h5>
-                      </PublishCard>
+                        <PublishCard>
+                          <PublishIcon width={"60"} height={"60"} />
+                          <h5>Publish your own design</h5>
+                        </PublishCard>
                       </a>
                     </div>
                   )}
@@ -589,13 +615,21 @@ const ExtensionsComponent = () => {
             </div>
           )}
         </SectionWrapper>
+
+
+        {/* 
+        
+        // Feedback component is comment currently because the api required to use this authentication error
+
         <SistentThemeProviderWithoutBaseLine>
-        <FeedbackButton
-         containerStyles={{ zIndex: 10 }}
-         renderPosition="right-middle"
-         onSubmit={onSubmit}
-        /> 
+          <FeedbackButton
+            containerStyles={{ zIndex: 10 }}
+            renderPosition="right-middle"
+            onSubmit={onSubmit}
+          />
         </SistentThemeProviderWithoutBaseLine>
+        
+        */}
       </ComponentWrapper>
     </DockerMuiThemeProvider>
   )
