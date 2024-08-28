@@ -1,0 +1,72 @@
+{
+  "capabilities": null,
+  "component": {
+   "kind": "IPAddressPool",
+   "schema": "{\n \"description\": \"IPAddressPool represents a pool of IP addresses that can be allocated\\nto LoadBalancer services.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"IPAddressPoolSpec defines the desired state of IPAddressPool.\",\n   \"properties\": {\n    \"addresses\": {\n     \"description\": \"A list of IP address ranges over which MetalLB has authority.\\nYou can list multiple ranges in a single pool, they will all share the\\nsame settings. Each range can be either a CIDR prefix, or an explicit\\nstart-end range of IPs.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"autoAssign\": {\n     \"default\": true,\n     \"description\": \"AutoAssign flag used to prevent MetallB from automatic allocation\\nfor a pool.\",\n     \"type\": \"boolean\"\n    },\n    \"avoidBuggyIPs\": {\n     \"default\": false,\n     \"description\": \"AvoidBuggyIPs prevents addresses ending with .0 and .255\\nto be used by a pool.\",\n     \"type\": \"boolean\"\n    },\n    \"serviceAllocation\": {\n     \"description\": \"AllocateTo makes ip pool allocation to specific namespace and/or service.\\nThe controller will use the pool with lowest value of priority in case of\\nmultiple matches. A pool with no priority set will be used only if the\\npools with priority can't be used. If multiple matching IPAddressPools are\\navailable it will check for the availability of IPs sorting the matching\\nIPAddressPools by priority, starting from the highest to the lowest. If\\nmultiple IPAddressPools have the same priority, choice will be random.\",\n     \"properties\": {\n      \"namespaceSelectors\": {\n       \"description\": \"NamespaceSelectors list of label selectors to select namespace(s) for ip pool,\\nan alternative to using namespace list.\",\n       \"items\": {\n        \"description\": \"A label selector is a label query over a set of resources. The result of matchLabels and\\nmatchExpressions are ANDed. An empty label selector matches all objects. A null\\nlabel selector matches no objects.\",\n        \"properties\": {\n         \"matchExpressions\": {\n          \"description\": \"matchExpressions is a list of label selector requirements. The requirements are ANDed.\",\n          \"items\": {\n           \"description\": \"A label selector requirement is a selector that contains values, a key, and an operator that\\nrelates the key and values.\",\n           \"properties\": {\n            \"key\": {\n             \"description\": \"key is the label key that the selector applies to.\",\n             \"type\": \"string\"\n            },\n            \"operator\": {\n             \"description\": \"operator represents a key's relationship to a set of values.\\nValid operators are In, NotIn, Exists and DoesNotExist.\",\n             \"type\": \"string\"\n            },\n            \"values\": {\n             \"description\": \"values is an array of string values. If the operator is In or NotIn,\\nthe values array must be non-empty. If the operator is Exists or DoesNotExist,\\nthe values array must be empty. This array is replaced during a strategic\\nmerge patch.\",\n             \"items\": {\n              \"type\": \"string\"\n             },\n             \"type\": \"array\",\n             \"x-kubernetes-list-type\": \"atomic\"\n            }\n           },\n           \"required\": [\n            \"key\",\n            \"operator\"\n           ],\n           \"type\": \"object\"\n          },\n          \"type\": \"array\",\n          \"x-kubernetes-list-type\": \"atomic\"\n         },\n         \"matchLabels\": {\n          \"additionalProperties\": {\n           \"type\": \"string\"\n          },\n          \"description\": \"matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels\\nmap is equivalent to an element of matchExpressions, whose key field is \\\"key\\\", the\\noperator is \\\"In\\\", and the values array contains only \\\"value\\\". The requirements are ANDed.\",\n          \"type\": \"object\"\n         }\n        },\n        \"type\": \"object\",\n        \"x-kubernetes-map-type\": \"atomic\"\n       },\n       \"type\": \"array\"\n      },\n      \"namespaces\": {\n       \"description\": \"Namespaces list of namespace(s) on which ip pool can be attached.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"priority\": {\n       \"description\": \"Priority priority given for ip pool while ip allocation on a service.\",\n       \"type\": \"integer\"\n      },\n      \"serviceSelectors\": {\n       \"description\": \"ServiceSelectors list of label selector to select service(s) for which ip pool\\ncan be used for ip allocation.\",\n       \"items\": {\n        \"description\": \"A label selector is a label query over a set of resources. The result of matchLabels and\\nmatchExpressions are ANDed. An empty label selector matches all objects. A null\\nlabel selector matches no objects.\",\n        \"properties\": {\n         \"matchExpressions\": {\n          \"description\": \"matchExpressions is a list of label selector requirements. The requirements are ANDed.\",\n          \"items\": {\n           \"description\": \"A label selector requirement is a selector that contains values, a key, and an operator that\\nrelates the key and values.\",\n           \"properties\": {\n            \"key\": {\n             \"description\": \"key is the label key that the selector applies to.\",\n             \"type\": \"string\"\n            },\n            \"operator\": {\n             \"description\": \"operator represents a key's relationship to a set of values.\\nValid operators are In, NotIn, Exists and DoesNotExist.\",\n             \"type\": \"string\"\n            },\n            \"values\": {\n             \"description\": \"values is an array of string values. If the operator is In or NotIn,\\nthe values array must be non-empty. If the operator is Exists or DoesNotExist,\\nthe values array must be empty. This array is replaced during a strategic\\nmerge patch.\",\n             \"items\": {\n              \"type\": \"string\"\n             },\n             \"type\": \"array\",\n             \"x-kubernetes-list-type\": \"atomic\"\n            }\n           },\n           \"required\": [\n            \"key\",\n            \"operator\"\n           ],\n           \"type\": \"object\"\n          },\n          \"type\": \"array\",\n          \"x-kubernetes-list-type\": \"atomic\"\n         },\n         \"matchLabels\": {\n          \"additionalProperties\": {\n           \"type\": \"string\"\n          },\n          \"description\": \"matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels\\nmap is equivalent to an element of matchExpressions, whose key field is \\\"key\\\", the\\noperator is \\\"In\\\", and the values array contains only \\\"value\\\". The requirements are ANDed.\",\n          \"type\": \"object\"\n         }\n        },\n        \"type\": \"object\",\n        \"x-kubernetes-map-type\": \"atomic\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"addresses\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"IP Address Pool\",\n \"type\": \"object\"\n}",
+   "version": "metallb.io/v1beta1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "IP Address Pool",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "published": false,
+   "source_uri": "git://github.com/metallb/metallb/main/config/crd/bases"
+  },
+  "model": {
+   "category": {
+    "name": "Cloud Native Network"
+   },
+   "displayName": "Metallb",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "isAnnotation": false,
+    "primaryColor": "#3f51b4",
+    "secondaryColor": "#5262bc",
+    "shape": "circle",
+    "source_uri": "git://github.com/metallb/metallb/main/config/crd/bases",
+    "styleOverrides": "",
+    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" id=\"Layer_1\" data-name=\"Layer 1\" viewBox=\"0 0 300 300\" height=\"20\" width=\"20\"\u003e\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cstyle xmlns=\"http://www.w3.org/2000/svg\"\u003e.cls-1{fill:#3f51b4;}\u003c/style\u003e\u003c/defs\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"cls-1\" d=\"M231.63,227.93943c-30.00761-17.33146-58.71143-33.90746-87.41141-50.48988-13.24879-7.65529-26.41962-15.45247-39.78346-22.8994-3.77076-2.10267-4.28206-3.84618-2.49894-7.8777,12.37322-27.98289,24.41409-56.11279,36.579-84.18772,2.10779-4.86236,3.76309-10.03406,10.67062-10.1197,6.91263-.08564,8.62929,4.87643,10.78438,9.85q34.57854,79.80981,69.25677,159.57614C229.88525,223.3097,230.43617,224.87552,231.63,227.93943ZM96.151,159.98133c1.7665-4.15423,3.184-4.77673,7.24753-2.30975,13.72174,8.33146,27.7413,16.17465,42.547,24.72343L68.27675,227.31566\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"cls-1\" d=\"M149.86967,293.90734A143.95368,143.95368,0,1,1,293.82335,149.95366,143.95367,143.95367,0,0,1,149.86967,293.90734Zm0-272.56865a128.615,128.615,0,1,0,128.615,128.615A128.615,128.615,0,0,0,149.86967,21.33869Z\"\u003e\u003c/path\u003e\u003c/svg\u003e\n",
+    "svgComplete": "",
+    "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" id=\"Layer_1\" data-name=\"Layer 1\" viewBox=\"0 0 300 300\" height=\"20\" width=\"20\"\u003e\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cstyle xmlns=\"http://www.w3.org/2000/svg\"\u003e.cls-1{fill:#fff;}\u003c/style\u003e\u003c/defs\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"cls-1\" d=\"M231.63,227.93943c-30.00761-17.33146-58.71143-33.90746-87.41141-50.48988-13.24879-7.65529-26.41962-15.45247-39.78346-22.8994-3.77076-2.10267-4.28206-3.84618-2.49894-7.8777,12.37322-27.98289,24.41409-56.11279,36.579-84.18772,2.10779-4.86236,3.76309-10.03406,10.67062-10.1197,6.91263-.08564,8.62929,4.87643,10.78438,9.85q34.57854,79.80981,69.25677,159.57614C229.88525,223.3097,230.43617,224.87552,231.63,227.93943ZM96.151,159.98133c1.7665-4.15423,3.184-4.77673,7.24753-2.30975,13.72174,8.33146,27.7413,16.17465,42.547,24.72343L68.27675,227.31566\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"cls-1\" d=\"M149.86967,293.90734A143.95368,143.95368,0,1,1,293.82335,149.95366,143.95367,143.95367,0,0,1,149.86967,293.90734Zm0-272.56865a128.615,128.615,0,1,0,128.615,128.615A128.615,128.615,0,0,0,149.86967,21.33869Z\"\u003e\u003c/path\u003e\u003c/svg\u003e"
+   },
+   "model": {
+    "version": "metallb-chart-0.14.8"
+   },
+   "name": "metallb",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "github",
+    "name": "Github",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "subCategory": "Service Proxy",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "ignored",
+  "styles": {
+   "primaryColor": "#3f51b4",
+   "secondaryColor": "#5262bc",
+   "shape": "circle",
+   "svgColor": "\u003csvg id=\"Layer_1\" data-name=\"Layer 1\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 300 300\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#3f51b4;}\u003c/style\u003e\u003c/defs\u003e\u003cpath class=\"cls-1\" d=\"M231.63,227.93943c-30.00761-17.33146-58.71143-33.90746-87.41141-50.48988-13.24879-7.65529-26.41962-15.45247-39.78346-22.8994-3.77076-2.10267-4.28206-3.84618-2.49894-7.8777,12.37322-27.98289,24.41409-56.11279,36.579-84.18772,2.10779-4.86236,3.76309-10.03406,10.67062-10.1197,6.91263-.08564,8.62929,4.87643,10.78438,9.85q34.57854,79.80981,69.25677,159.57614C229.88525,223.3097,230.43617,224.87552,231.63,227.93943ZM96.151,159.98133c1.7665-4.15423,3.184-4.77673,7.24753-2.30975,13.72174,8.33146,27.7413,16.17465,42.547,24.72343L68.27675,227.31566\"/\u003e\u003cpath class=\"cls-1\" d=\"M149.86967,293.90734A143.95368,143.95368,0,1,1,293.82335,149.95366,143.95367,143.95367,0,0,1,149.86967,293.90734Zm0-272.56865a128.615,128.615,0,1,0,128.615,128.615A128.615,128.615,0,0,0,149.86967,21.33869Z\"/\u003e\u003c/svg\u003e\n",
+   "svgWhite": "\u003csvg id=\"Layer_1\" data-name=\"Layer 1\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 300 300\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#fff;}\u003c/style\u003e\u003c/defs\u003e\u003cpath class=\"cls-1\" d=\"M231.63,227.93943c-30.00761-17.33146-58.71143-33.90746-87.41141-50.48988-13.24879-7.65529-26.41962-15.45247-39.78346-22.8994-3.77076-2.10267-4.28206-3.84618-2.49894-7.8777,12.37322-27.98289,24.41409-56.11279,36.579-84.18772,2.10779-4.86236,3.76309-10.03406,10.67062-10.1197,6.91263-.08564,8.62929,4.87643,10.78438,9.85q34.57854,79.80981,69.25677,159.57614C229.88525,223.3097,230.43617,224.87552,231.63,227.93943ZM96.151,159.98133c1.7665-4.15423,3.184-4.77673,7.24753-2.30975,13.72174,8.33146,27.7413,16.17465,42.547,24.72343L68.27675,227.31566\"/\u003e\u003cpath class=\"cls-1\" d=\"M149.86967,293.90734A143.95368,143.95368,0,1,1,293.82335,149.95366,143.95367,143.95367,0,0,1,149.86967,293.90734Zm0-272.56865a128.615,128.615,0,1,0,128.615,128.615A128.615,128.615,0,0,0,149.86967,21.33869Z\"/\u003e\u003c/svg\u003e"
+  },
+  "version": "v1.0.0"
+ }

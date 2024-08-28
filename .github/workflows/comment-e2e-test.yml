@@ -36,6 +36,7 @@ jobs:
             repo: context.repo.repo,
             comment_id: ${{ steps.fc.outputs.comment-id }}
     - name: Comment on staging url
+      if: ${{ !cancelled() }}
       uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
       with:
         script: |

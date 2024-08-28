@@ -8,31 +8,23 @@ docURL: https://docs.meshery.io/extensibility/integrations/clickhouse
 description: 
 integrations-category: Database
 integrations-subcategory: App Definition and Development
-registrant: Artifact Hub
+registrant: GitHub
 components: 
-- name: cluster-issuer
-  colorIcon: assets/img/integrations/clickhouse/components/cluster-issuer/icons/color/cluster-issuer-color.svg
-  whiteIcon: assets/img/integrations/clickhouse/components/cluster-issuer/icons/white/cluster-issuer-white.svg
+- name: click-house-installation
+  colorIcon: assets/img/integrations/clickhouse/components/click-house-installation/icons/color/click-house-installation-color.svg
+  whiteIcon: assets/img/integrations/clickhouse/components/click-house-installation/icons/white/click-house-installation-white.svg
   description: 
-- name: challenge
-  colorIcon: assets/img/integrations/clickhouse/components/challenge/icons/color/challenge-color.svg
-  whiteIcon: assets/img/integrations/clickhouse/components/challenge/icons/white/challenge-white.svg
+- name: click-house-installation-template
+  colorIcon: assets/img/integrations/clickhouse/components/click-house-installation-template/icons/color/click-house-installation-template-color.svg
+  whiteIcon: assets/img/integrations/clickhouse/components/click-house-installation-template/icons/white/click-house-installation-template-white.svg
   description: 
-- name: certificate-request
-  colorIcon: assets/img/integrations/clickhouse/components/certificate-request/icons/color/certificate-request-color.svg
-  whiteIcon: assets/img/integrations/clickhouse/components/certificate-request/icons/white/certificate-request-white.svg
+- name: click-house-keeper-installation
+  colorIcon: assets/img/integrations/clickhouse/components/click-house-keeper-installation/icons/color/click-house-keeper-installation-color.svg
+  whiteIcon: assets/img/integrations/clickhouse/components/click-house-keeper-installation/icons/white/click-house-keeper-installation-white.svg
   description: 
-- name: issuer
-  colorIcon: assets/img/integrations/clickhouse/components/issuer/icons/color/issuer-color.svg
-  whiteIcon: assets/img/integrations/clickhouse/components/issuer/icons/white/issuer-white.svg
-  description: 
-- name: certificate
-  colorIcon: assets/img/integrations/clickhouse/components/certificate/icons/color/certificate-color.svg
-  whiteIcon: assets/img/integrations/clickhouse/components/certificate/icons/white/certificate-white.svg
-  description: 
-- name: order
-  colorIcon: assets/img/integrations/clickhouse/components/order/icons/color/order-color.svg
-  whiteIcon: assets/img/integrations/clickhouse/components/order/icons/white/order-white.svg
+- name: click-house-operator-configuration
+  colorIcon: assets/img/integrations/clickhouse/components/click-house-operator-configuration/icons/color/click-house-operator-configuration-color.svg
+  whiteIcon: assets/img/integrations/clickhouse/components/click-house-operator-configuration/icons/white/click-house-operator-configuration-white.svg
   description: 
 featureList: [
   "Fast data ingestion and querying",
