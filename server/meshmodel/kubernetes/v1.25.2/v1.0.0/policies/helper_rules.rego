@@ -129,3 +129,16 @@ is_relationship_feasible(selector, comp_type) if {
 is_relationship_feasible(selector, comp_type) if {
 	selector.kind == comp_type
 }
+
+extract_values(component, refs) := values if {
+	values := { formatted_path: component_value |
+		some ref in refs
+		path := resolve_path(ref, component)
+		formatted_path := format_json_path(path)
+
+		component_value := object.get(component, formatted_path, null)
+		component_value != null
+	}
+
+	print("Returning from extract_values", values)
+}

@@ -110,15 +110,24 @@ evaluate := eval_results if {
 		"value": final_rels_with_deletions,
 	}])
 
-	eval_results := {
-		"design": final_design_file,
-		"trace": {
-			"componentsUpdated": updated_declarations,
-			"relationshipsAdded": relationships_added,
-			"relationshipsRemoved": relationships_deleted,
-			"relationshipsUpdated": intermediate_rels,
-		},
+	components_added := {result |
+		# relationships from registry
+		some relationship in data.relationships
+		result := identify_additions(final_design_file, relationship)
 	}
+
+	print("COMPS ADDED: ", components_added)
+
+	eval_results := {}
+	# eval_results := {
+	# 	"design": final_design_file,
+	# 	"trace": {
+	# 		"componentsUpdated": updated_declarations,
+	# 		"relationshipsAdded": relationships_added,
+	# 		"relationshipsRemoved": relationships_deleted,
+	# 		"relationshipsUpdated": intermediate_rels,
+	# 	},
+	# }
 }
 
 filter_updated_declaration(declaration, updated_declarations) := obj.declaration if {
