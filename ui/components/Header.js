@@ -440,7 +440,11 @@ function K8sContextMenu({
                     <UsesSistent>
                       <Checkbox
                         checked={activeContexts.includes('all')}
-                        onChange={() => setActiveContexts('all')}
+                        onChange={() =>
+                          activeContexts.includes('all')
+                            ? setActiveContexts([])
+                            : setActiveContexts('all')
+                        }
                         color="primary"
                       />
                     </UsesSistent>

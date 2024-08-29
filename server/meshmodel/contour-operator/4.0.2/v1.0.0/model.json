@@ -5,6 +5,7 @@
   "displayName": "Contour",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://charts.bitnami.com/bitnami/contour-operator-4.2.1.tgz", 
     "isAnnotation": false,
     "published": true,
     "subCategory": "Service Proxy",

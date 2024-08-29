@@ -5,6 +5,7 @@
   "displayName": "SPIRE",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://github.com/philips-labs/helm-charts/releases/download/spire-0.12.2/spire-0.12.2.tgz", 
     "isAnnotation": false,
     "published": true,
     "subCategory": "Key Management",

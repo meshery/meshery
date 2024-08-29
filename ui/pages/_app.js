@@ -429,6 +429,14 @@ class MesheryApp extends App {
         return;
       }
 
+      // if id is an empty array, clear all active contexts
+      if (Array.isArray(id) && id.length === 0) {
+        this.setState({ activeK8sContexts: [] }, () =>
+          this.activeContextChangeCallback(this.state.activeK8sContexts),
+        );
+        return;
+      }
+
       this.setState(
         (state) => {
           let ids = [...(state.activeK8sContexts || [])];

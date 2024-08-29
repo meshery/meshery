@@ -5,7 +5,8 @@ import (
 	"strings"
 
 	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/utils"
+	"github.com/layer5io/meshkit/encoding"
+
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 
 	corev1 "k8s.io/api/core/v1"
@@ -38,7 +39,7 @@ func GetControlPlaneState(ctx context.Context, selectors []MeshType, provider mo
 			}
 			if meshsyncmodel.IsObject(obj) { //As a fallback extract objectmeta manually, if possible
 				objspec := corev1.PodSpec{}
-				err := utils.Unmarshal(obj.Spec.Attribute, &objspec)
+				err := encoding.Unmarshal([]byte(obj.Spec.Attribute), &objspec)
 				if err != nil {
 					return nil, err
 				}

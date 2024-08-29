@@ -5,6 +5,7 @@
   "displayName": "Frinx Machine",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://github.com/FRINXio/helm-charts/releases/download/frinx-machine-0.4.87/frinx-machine-0.4.87.tgz", 
     "isAnnotation": false,
     "published": false,
     "subCategory": "Uncategorized",

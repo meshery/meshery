@@ -5,6 +5,7 @@
   "displayName": "RabbitMQ Cluster Operator",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://charts.bitnami.com/bitnami/rabbitmq-cluster-operator-3.10.10.tgz", 
     "isAnnotation": false,
     "published": true,
     "subCategory": "Streaming \u0026 Messaging",

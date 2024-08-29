@@ -17,9 +17,7 @@ import (
 
 	"github.com/layer5io/meshkit/models/events"
 
-	regv1alpha3 "github.com/layer5io/meshkit/models/meshmodel/registry/v1alpha3"
 	regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
-	mutils "github.com/layer5io/meshkit/utils"
 )
 
 const (
@@ -63,10 +61,12 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	}
 	// decode the pattern file
 
-	
-
 	patternUUID := relationshipPolicyEvalPayload.Design.Id
 	eventBuilder.ActedUpon(patternUUID)
+
+	for _, component := range relationshipPolicyEvalPayload.Design.Components {
+		component.Configuration = core.Format.DePrettify(component.Configuration, false)
+	}
 
 	// evaluate specified relationship policies
 	// on successful eval the event containing details like comps evaulated, relationships indeitified should be emitted and peristed.
@@ -86,20 +86,15 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	event := eventBuilder.WithDescription(fmt.Sprintf("Relationship evaluation completed for \"%s\" at version \"%s\"", evaluationResponse.Design.Name, evaluationResponse.Design.Version)).
 		WithMetadata(map[string]interface{}{
 			"trace":        evaluationResponse.Trace,
-			"evaluated_at": &evaluationResponse.Timestamp,
+			"evaluated_at": *evaluationResponse.Timestamp,
 		}).WithSeverity(events.Informational).Build()
 	_ = provider.PersistEvent(event)
-	go h.config.EventBroadcaster.Publish(userUUID, event)
 
-	// Before starting the eval the design is de-prettified, so that we can use the relationships def correctly.
-	// The results contain the updated config.
-	// Prettify the design before sending it to client.
+	// Create the event but do not notify the client immediately, as the evaluations are frequent and takes up the view area.
+	// go h.config.EventBroadcaster.Publish(userUUID, event)
 
-	for _, component := range evaluationResponse.Design.Components {
-		component.Configuration = core.Format.Prettify(component.Configuration, false)
-	}
-
-	if relationshipPolicyEvalPayload.Options.ReturnDiffOnly != nil && *relationshipPolicyEvalPayload.Options.ReturnDiffOnly {
+	if relationshipPolicyEvalPayload.Options != nil && relationshipPolicyEvalPayload.Options.ReturnDiffOnly != nil &&
+		*relationshipPolicyEvalPayload.Options.ReturnDiffOnly {
 		evaluationResponse.Design.Components = []*component.ComponentDefinition{}
 		evaluationResponse.Design.Relationships = []*relationship.RelationshipDefinition{}
 		for _, component := range evaluationResponse.Trace.ComponentsUpdated {
@@ -118,8 +113,12 @@ func (h *Handler) EvaluateRelationshipPolicy(
 
 	}
 
-	for _, component := range relationshipPolicyEvalPayload.Design.Components {
-		component.Configuration = core.Format.DePrettify(component.Configuration, false)
+	// Before starting the eval the design is de-prettified, so that we can use the relationships def correctly.
+	// The results contain the updated config.
+	// Prettify the design before sending it to client.
+
+	for _, component := range evaluationResponse.Design.Components {
+		component.Configuration = core.Format.Prettify(component.Configuration, false)
 	}
 
 	// write the response
@@ -132,39 +131,41 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	}
 }
 
-func (h *Handler) verifyEvaluationQueries(evaluationQueries []string) (verifiedEvaluationQueries []string) {
-	registeredRelationships, _, _, _ := h.registryManager.GetEntities(&regv1alpha3.RelationshipFilter{})
+// unused currently
 
-	var relationships []relationship.RelationshipDefinition
-	for _, entity := range registeredRelationships {
-		relationship, err := mutils.Cast[*relationship.RelationshipDefinition](entity)
+// func (h *Handler) verifyEvaluationQueries(evaluationQueries []string) (verifiedEvaluationQueries []string) {
+// 	registeredRelationships, _, _, _ := h.registryManager.GetEntities(&regv1alpha3.RelationshipFilter{})
 
-		if err != nil {
-			return
-		}
-		relationships = append(relationships, *relationship)
-	}
+// 	var relationships []relationship.RelationshipDefinition
+// 	for _, entity := range registeredRelationships {
+// 		relationship, err := mutils.Cast[*relationship.RelationshipDefinition](entity)
 
-	if len(evaluationQueries) == 0 || (len(evaluationQueries) == 1 && evaluationQueries[0] == "all") {
-		for _, relationship := range relationships {
-			if relationship.EvaluationQuery != nil {
-				verifiedEvaluationQueries = append(verifiedEvaluationQueries, *relationship.EvaluationQuery)
-			} else {
-				verifiedEvaluationQueries = append(verifiedEvaluationQueries, relationship.GetDefaultEvaluationQuery())
-			}
-		}
-	} else {
-		for _, regoQuery := range evaluationQueries {
-			for _, relationship := range relationships {
-				if (relationship.EvaluationQuery != nil && regoQuery == *relationship.EvaluationQuery) || regoQuery == relationship.GetDefaultEvaluationQuery() {
-					verifiedEvaluationQueries = append(verifiedEvaluationQueries, *relationship.EvaluationQuery)
-					break
-				}
-			}
-		}
-	}
-	return
-}
+// 		if err != nil {
+// 			return
+// 		}
+// 		relationships = append(relationships, *relationship)
+// 	}
+
+// 	if len(evaluationQueries) == 0 || (len(evaluationQueries) == 1 && evaluationQueries[0] == "all") {
+// 		for _, relationship := range relationships {
+// 			if relationship.EvaluationQuery != nil {
+// 				verifiedEvaluationQueries = append(verifiedEvaluationQueries, *relationship.EvaluationQuery)
+// 			} else {
+// 				verifiedEvaluationQueries = append(verifiedEvaluationQueries, relationship.GetDefaultEvaluationQuery())
+// 			}
+// 		}
+// 	} else {
+// 		for _, regoQuery := range evaluationQueries {
+// 			for _, relationship := range relationships {
+// 				if (relationship.EvaluationQuery != nil && regoQuery == *relationship.EvaluationQuery) || regoQuery == relationship.GetDefaultEvaluationQuery() {
+// 					verifiedEvaluationQueries = append(verifiedEvaluationQueries, *relationship.EvaluationQuery)
+// 					break
+// 				}
+// 			}
+// 		}
+// 	}
+// 	return
+// }
 
 // swagger:route GET /api/meshmodels/models/{model}/policies/{name} GetMeshmodelPoliciesByName idGetMeshmodelPoliciesByName
 // Handle GET request for getting meshmodel policies of a specific model by name.

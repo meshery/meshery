@@ -1,21 +1,6 @@
 {
   "capabilities": [
    {
-    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
-    "displayName": "Performance Test",
-    "entityState": [
-     "instance"
-    ],
-    "key": "",
-    "kind": "action",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "perf-test",
-    "type": "operator",
-    "version": "0.7.0"
-   },
-   {
     "description": "Configure the workload specific setting of a component",
     "displayName": "Workload Configuration",
     "entityState": [
@@ -27,53 +12,6 @@
     "schemaVersion": "capability.meshery.io/v1alpha1",
     "status": "enabled",
     "subType": "config",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure Labels And Annotations for  the component ",
-    "displayName": "Labels and Annotations Configuration",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "labels-and-annotations",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "View relationships for the component",
-    "displayName": "Relationships",
-    "entityState": [
-     "declaration",
-     "instance"
-    ],
-    "key": "",
-    "kind": "view",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "relationship",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "View Component Definition ",
-    "displayName": "Json Schema",
-    "entityState": [
-     "declaration",
-     "instance"
-    ],
-    "key": "",
-    "kind": "view",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "definition",
     "type": "configuration",
     "version": "0.7.0"
    },
@@ -134,13 +72,10 @@
   "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
-   "defaultData": "",
    "genealogy": "",
    "isAnnotation": true,
-   "published": false,
-   "shapePolygonPoints": "",
-   "styleOverrides": "{\"height\":\"22px\",\"width\":\"22px\",\"x\":\"1.5px\",\"y\":\"7.5px\"}",
-   "styles": "{\"height\":\"22px\",\"width\":\"22px\",\"x\":\"1.5px\",\"y\":\"7.5px\"}"
+   "isNamespaced": false,
+   "published": false
   },
   "model": {
    "category": {
@@ -183,11 +118,13 @@
   "schemaVersion": "components.meshery.io/v1beta1",
   "status": "enabled",
   "styles": {
+   "height": 22,
    "primaryColor": "#FFDE00",
    "secondaryColor": "#FFDE00",
    "shape": "tag",
    "svgColor": "\u003csvg stroke=\"currentColor\" fill=\"currentColor\" stroke-width=\"0\" viewBox=\"0 0 24 24\" height=\"1em\" width=\"1em\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cpath fill=\"none\" d=\"M0 0h24v24H0z\"\u003e\u003c/path\u003e\u003cpath d=\"M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z\"\u003e\u003c/path\u003e\u003c/svg\u003e",
-   "svgWhite": "\u003csvg stroke=\"currentColor\" fill=\"currentColor\" stroke-width=\"0\" viewBox=\"0 0 24 24\" height=\"1em\" width=\"1em\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cpath fill=\"none\" d=\"M0 0h24v24H0z\"\u003e\u003c/path\u003e\u003cpath d=\"M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z\"\u003e\u003c/path\u003e\u003c/svg\u003e"
+   "svgWhite": "\u003csvg stroke=\"currentColor\" fill=\"currentColor\" stroke-width=\"0\" viewBox=\"0 0 24 24\" height=\"1em\" width=\"1em\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cpath fill=\"none\" d=\"M0 0h24v24H0z\"\u003e\u003c/path\u003e\u003cpath d=\"M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z\"\u003e\u003c/path\u003e\u003c/svg\u003e",
+   "width": 22
   },
   "version": "v1.0.0"
  }

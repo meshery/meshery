@@ -5,6 +5,7 @@
   "displayName": "Clustersecret",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://github.com/patrungel/helm-charts/releases/download/clustersecret-0.2.0/clustersecret-0.2.0.tgz", 
     "isAnnotation": false,
     "published": false,
     "subCategory": "Uncategorized",

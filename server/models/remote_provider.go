@@ -408,7 +408,7 @@ func (l *RemoteProvider) GetUserByID(req *http.Request, userID string) ([]byte, 
 		l.Log.Info("User profile retrieved from remote provider.")
 		return bdr, nil
 	}
-	err = ErrFetch(fmt.Errorf(fmt.Sprintf("Error retrieving user with ID: %s", userID)), "User Profile", resp.StatusCode)
+	err = ErrFetch(fmt.Errorf("Error retrieving user with ID: %s", userID), "User Profile", resp.StatusCode)
 	l.Log.Error(err)
 	return nil, err
 }
@@ -855,13 +855,18 @@ func (l *RemoteProvider) GetK8sContext(token, connectionID string) (K8sContext, 
 	}()
 
 	if resp.StatusCode == http.StatusOK {
-		var kc K8sContext
+		var kc MesheryK8sContextPage
 		if err := json.NewDecoder(resp.Body).Decode(&kc); err != nil {
-			return kc, ErrUnmarshal(err, "Kubernetes context")
+			return K8sContext{}, ErrUnmarshal(err, "Kubernetes context")
+		}
+
+		if len(kc.Contexts) == 0 {
+			return K8sContext{}, fmt.Errorf("no Kubernetes contexts available")
 		}
 
 		l.Log.Info("Retrieved Kubernetes context from remote provider.")
-		return kc, nil
+		// Response will contain single context
+		return *kc.Contexts[0], nil
 	}
 
 	bdr, err := io.ReadAll(resp.Body)
@@ -3869,7 +3874,7 @@ func (l *RemoteProvider) GetConnectionsByKind(req *http.Request, _ string, page,
 
 	bdr, _ := io.ReadAll(resp.Body)
 	if resp.StatusCode != http.StatusOK {
-		return nil, ErrFetch(fmt.Errorf(string(bdr)), "connections", resp.StatusCode)
+		return nil, ErrFetch(fmt.Errorf("%s", string(bdr)), "connections", resp.StatusCode)
 	}
 
 	var res map[string]interface{}

@@ -5,6 +5,7 @@
   "displayName": "Percona Operator for MySQL",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://github.com/percona/percona-helm-charts/releases/download/ps-operator-0.6.1/ps-operator-0.6.1.tgz", 
     "isAnnotation": false,
     "published": true,
     "subCategory": "App Definition and Development",

@@ -22,7 +22,7 @@ apply_patch(design_file, mutator_object, to_mutate_object) := result if {
 
 		resolved_mutator_path := resolve_path(mutator_object.paths[i], mutating_declaration)
 
-		update_value := object.get(mutating_declaration, resolved_mutator_path, null)
+		update_value := object.get(mutating_declaration, format_json_path(resolved_mutator_path), null)
 
 		update_value != null
 		patch_object := {
@@ -34,11 +34,10 @@ apply_patch(design_file, mutator_object, to_mutate_object) := result if {
 
 	resultant_patches_to_apply := ensureParentPathsExist(patches, declaration_to_mutate)
 
-	mutated_declaration := json.patch(declaration_to_mutate, resultant_patches_to_apply)
-
 	result := {
 		"declaration_id": declaration_to_mutate.id,
-		"mutated_declaration": mutated_declaration,
+		"declaration": declaration_to_mutate,
+		"patches": resultant_patches_to_apply,
 	}
 }
 

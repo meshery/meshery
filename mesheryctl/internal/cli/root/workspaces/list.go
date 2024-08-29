@@ -21,7 +21,6 @@ import (
 
 	"github.com/eiannone/keyboard"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/pkg/errors"
@@ -42,27 +41,6 @@ mesheryctl exp workspace list --orgId [orgId]
 https://docs.layer5.io/cloud/spaces/workspaces/
 
 `,
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-		//Check prerequisite
-
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			return utils.ErrLoadConfig(err)
-		}
-		err = utils.IsServerRunning(mctlCfg.GetBaseMesheryURL())
-		if err != nil {
-			return err
-		}
-		ctx, err := mctlCfg.GetCurrentContext()
-		if err != nil {
-			return system.ErrGetCurrentContext(err)
-		}
-		err = ctx.ValidateVersion()
-		if err != nil {
-			return err
-		}
-		return nil
-	},
 
 	Args: func(cmd *cobra.Command, args []string) error {
 		// Check if the orgID is provided
@@ -133,7 +111,7 @@ https://docs.layer5.io/cloud/spaces/workspaces/
 				whiteBoardPrinter.Println("Total number of workspaces: ", len(rows))
 				whiteBoardPrinter.Println("Page: ", startIndex/maxRowsPerPage+1)
 
-				whiteBoardPrinter.Println("Press Enter or ↓ to continue, Esc or Ctrl+C (Ctrl+Cmd for OS user) to exit")
+				whiteBoardPrinter.Println("Press Enter or ↓ to continue. Press Esc or Ctrl+C to exit.")
 
 				utils.PrintToTable(header, rows[startIndex:endIndex])
 				keysEvents, err := keyboard.GetKeys(10)

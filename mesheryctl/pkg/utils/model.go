@@ -1,12 +1,13 @@
 package utils
 
 import (
-	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
 	"strconv"
 	"strings"
+
+	"github.com/layer5io/meshkit/encoding"
 
 	"github.com/layer5io/meshkit/models/meshmodel/entity"
 	"github.com/layer5io/meshkit/utils"
@@ -61,7 +62,7 @@ type ModelCSV struct {
 }
 
 var modelMetadataValues = []string{
-	"primaryColor", "secondaryColor", "svgColor", "svgWhite", "svgComplete", "styleOverrides", "styles", "shapePolygonPoints", "defaultData", "capabilities", "isAnnotation", "shape",
+	"primaryColor", "secondaryColor", "svgColor", "svgWhite", "svgComplete", "styleOverrides", "capabilities", "isAnnotation", "shape",
 }
 
 func (m *ModelCSV) UpdateModelDefinition(modelDef *model.ModelDefinition) error {
@@ -112,7 +113,7 @@ func (m *ModelCSV) UpdateModelDefinition(modelDef *model.ModelDefinition) error 
 		case "capabilities":
 			var capabilities []capability.Capability
 			if m.Capabilities != "" {
-				err := json.Unmarshal([]byte(m.Capabilities), &capabilities)
+				err := encoding.Unmarshal([]byte(m.Capabilities), &capabilities)
 				if err != nil {
 					return err
 				}

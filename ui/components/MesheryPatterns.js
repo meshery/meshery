@@ -196,7 +196,7 @@ const styles = (theme) => ({
   },
   btnText: {
     display: 'block',
-    '@media (max-width: 1450px)': {
+    '@media (max-width: 765px)': {
       display: 'none',
     },
   },

@@ -5,6 +5,7 @@
   "displayName": "Gooddata Cn",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://charts.gooddata.com/gooddata-cn-3.2.1.tgz", 
     "isAnnotation": false,
     "published": false,
     "subCategory": "Uncategorized",
