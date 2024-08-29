@@ -342,7 +342,12 @@ class MesherySettings extends React.Component {
                     label="Adapters"
                     data-cy="tabServiceMeshes"
                     value={ADAPTERS}
-                    disabled={!CAN(keys.VIEW_SERVICE_MESH.action, keys.VIEW_SERVICE_MESH.subject)}
+                    disabled={
+                      !CAN(
+                        keys.VIEW_CLOUD_NATIVE_INFRASTRUCTURE.action,
+                        keys.VIEW_CLOUD_NATIVE_INFRASTRUCTURE.subject,
+                      )
+                    }
                   />
                 </CustomTooltip>
                 <CustomTooltip title="Configure Metrics backends" placement="top" value={METRICS}>
@@ -378,7 +383,10 @@ class MesherySettings extends React.Component {
               </Tabs>
             </Paper>
             {tabVal === ADAPTERS &&
-              CAN(keys.VIEW_SERVICE_MESH.action, keys.VIEW_SERVICE_MESH.subject) && (
+              CAN(
+                keys.VIEW_CLOUD_NATIVE_INFRASTRUCTURE.action,
+                keys.VIEW_CLOUD_NATIVE_INFRASTRUCTURE.subject,
+              ) && (
                 <TabContainer>
                   <MeshAdapterConfigComponent />
                 </TabContainer>
@@ -450,7 +458,6 @@ class MesherySettings extends React.Component {
                     />
                   </TabContainer>
                 </TabContainer>
-                {/* </div> */}
               </TabContainer>
             )}
             {tabVal === RESET && (

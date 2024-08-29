@@ -115,6 +115,7 @@ export const MeshModels = styled('div')(({ theme }) => ({
   [theme.breakpoints.down("md")]: {
     display: "flex",
   },
+  gap: '15px'
 }));
 
 export const PublishCard = styled("div")(({ theme }) => ({

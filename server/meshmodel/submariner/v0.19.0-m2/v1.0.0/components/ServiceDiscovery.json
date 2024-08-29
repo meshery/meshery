@@ -1,0 +1,195 @@
+{
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "ServiceDiscovery",
+   "schema": "{\n \"description\": \"ServiceDiscovery is the Schema for the servicediscoveries API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ServiceDiscoverySpec defines the desired state of ServiceDiscovery.\",\n   \"properties\": {\n    \"brokerK8sApiServer\": {\n     \"type\": \"string\"\n    },\n    \"brokerK8sApiServerToken\": {\n     \"type\": \"string\"\n    },\n    \"brokerK8sCA\": {\n     \"type\": \"string\"\n    },\n    \"brokerK8sInsecure\": {\n     \"type\": \"boolean\"\n    },\n    \"brokerK8sRemoteNamespace\": {\n     \"type\": \"string\"\n    },\n    \"brokerK8sSecret\": {\n     \"type\": \"string\"\n    },\n    \"clusterID\": {\n     \"type\": \"string\"\n    },\n    \"coreDNSCustomConfig\": {\n     \"properties\": {\n      \"configMapName\": {\n       \"description\": \"Name of the custom CoreDNS configmap.\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the custom CoreDNS configmap.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"customDomains\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\",\n     \"x-kubernetes-list-type\": \"set\"\n    },\n    \"debug\": {\n     \"type\": \"boolean\"\n    },\n    \"globalnetEnabled\": {\n     \"type\": \"boolean\"\n    },\n    \"haltOnCertificateError\": {\n     \"type\": \"boolean\"\n    },\n    \"imageOverrides\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"object\"\n    },\n    \"namespace\": {\n     \"type\": \"string\"\n    },\n    \"nodeSelector\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"object\"\n    },\n    \"repository\": {\n     \"type\": \"string\"\n    },\n    \"tolerations\": {\n     \"items\": {\n      \"description\": \"The pod this Toleration is attached to tolerates any taint that matches the triple \\u003ckey,value,effect\\u003e using the matching operator \\u003coperator\\u003e.\",\n      \"properties\": {\n       \"effect\": {\n        \"description\": \"Effect indicates the taint effect to match. Empty means match all taint effects. When specified, allowed values are NoSchedule, PreferNoSchedule and NoExecute.\",\n        \"type\": \"string\"\n       },\n       \"key\": {\n        \"description\": \"Key is the taint key that the toleration applies to. Empty means match all taint keys. If the key is empty, operator must be Exists; this combination means to match all values and all keys.\",\n        \"type\": \"string\"\n       },\n       \"operator\": {\n        \"description\": \"Operator represents a key's relationship to the value. Valid operators are Exists and Equal. Defaults to Equal. Exists is equivalent to wildcard for value, so that a pod can tolerate all taints of a particular category.\",\n        \"type\": \"string\"\n       },\n       \"tolerationSeconds\": {\n        \"description\": \"TolerationSeconds represents the period of time the toleration (which must be of effect NoExecute, otherwise this field is ignored) tolerates the taint. By default, it is not set, which means tolerate the taint forever (do not evict). Zero and negative values will be treated as 0 (evict immediately) by the system.\",\n        \"format\": \"int64\",\n        \"type\": \"integer\"\n       },\n       \"value\": {\n        \"description\": \"Value is the taint value the toleration matches to. If the operator is Exists, the value should be empty, otherwise just a regular string.\",\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"version\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"brokerK8sApiServer\",\n    \"brokerK8sRemoteNamespace\",\n    \"clusterID\",\n    \"debug\",\n    \"namespace\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Service Discovery\",\n \"type\": \"object\"\n}",
+   "version": "submariner.io/v1alpha1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "Service Discovery",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "published": false,
+   "source_uri": "git://github.com/submariner-io/submariner-operator/devel/config/crd/bases"
+  },
+  "model": {
+   "category": {
+    "name": "Runtime"
+   },
+   "displayName": "Submariner",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "isAnnotation": false,
+    "primaryColor": "#2bdfc4",
+    "secondaryColor": "#40e2ca",
+    "shape": "circle",
+    "source_uri": "git://github.com/submariner-io/submariner-operator/devel/config/crd/bases",
+    "styleOverrides": "",
+    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" id=\"Layer_1\" data-name=\"Layer 1\" viewBox=\"0 0 300 300\" height=\"20\" width=\"20\"\u003e\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cstyle xmlns=\"http://www.w3.org/2000/svg\"\u003e.cls-1{fill:#2bdfc4;}\u003c/style\u003e\u003c/defs\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"cls-1\" d=\"M76.48263,103.73116v31.34008H224.93675a26.46864,26.46864,0,0,1,26.43878,26.43945v38.1769a26.46851,26.46851,0,0,1-26.4388,26.43879H4v11.92916A30.78477,30.78477,0,0,0,34.69457,268.75H263.30542A30.78478,30.78478,0,0,0,294,238.05554V103.73116Z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"cls-1\" d=\"M221.51806,196.26885V164.92871H73.06389A26.46915,26.46915,0,0,1,46.6251,138.48924V100.31248A26.469,26.469,0,0,1,73.06389,73.87369H294V61.94456A30.78479,30.78479,0,0,0,263.30542,31.25H34.69457A30.78477,30.78477,0,0,0,4,61.9445V196.26885Z\"\u003e\u003c/path\u003e\u003c/svg\u003e\n",
+    "svgComplete": "",
+    "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" id=\"Layer_1\" data-name=\"Layer 1\" viewBox=\"0 0 300 300\" height=\"20\" width=\"20\"\u003e\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cstyle xmlns=\"http://www.w3.org/2000/svg\"\u003e.cls-1{fill:#fff;}\u003c/style\u003e\u003c/defs\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"cls-1\" d=\"M76.48263,103.73116v31.34008H224.93675a26.46864,26.46864,0,0,1,26.43878,26.43945v38.1769a26.46851,26.46851,0,0,1-26.4388,26.43879H4v11.92916A30.78477,30.78477,0,0,0,34.69457,268.75H263.30542A30.78478,30.78478,0,0,0,294,238.05554V103.73116Z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"cls-1\" d=\"M221.51806,196.26885V164.92871H73.06389A26.46915,26.46915,0,0,1,46.6251,138.48924V100.31248A26.469,26.469,0,0,1,73.06389,73.87369H294V61.94456A30.78479,30.78479,0,0,0,263.30542,31.25H34.69457A30.78477,30.78477,0,0,0,4,61.9445V196.26885Z\"\u003e\u003c/path\u003e\u003c/svg\u003e\n"
+   },
+   "model": {
+    "version": "v0.19.0-m2"
+   },
+   "name": "submariner",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "github",
+    "name": "Github",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "subCategory": "Cloud Native Network",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "ignored",
+  "styles": {
+   "primaryColor": "#2bdfc4",
+   "secondaryColor": "#40e2ca",
+   "shape": "circle",
+   "svgColor": "\u003csvg id=\"Layer_1\" data-name=\"Layer 1\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 300 300\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#2bdfc4;}\u003c/style\u003e\u003c/defs\u003e\u003cpath class=\"cls-1\" d=\"M76.48263,103.73116v31.34008H224.93675a26.46864,26.46864,0,0,1,26.43878,26.43945v38.1769a26.46851,26.46851,0,0,1-26.4388,26.43879H4v11.92916A30.78477,30.78477,0,0,0,34.69457,268.75H263.30542A30.78478,30.78478,0,0,0,294,238.05554V103.73116Z\"/\u003e\u003cpath class=\"cls-1\" d=\"M221.51806,196.26885V164.92871H73.06389A26.46915,26.46915,0,0,1,46.6251,138.48924V100.31248A26.469,26.469,0,0,1,73.06389,73.87369H294V61.94456A30.78479,30.78479,0,0,0,263.30542,31.25H34.69457A30.78477,30.78477,0,0,0,4,61.9445V196.26885Z\"/\u003e\u003c/svg\u003e\n",
+   "svgWhite": "\u003csvg id=\"Layer_1\" data-name=\"Layer 1\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 300 300\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#fff;}\u003c/style\u003e\u003c/defs\u003e\u003cpath class=\"cls-1\" d=\"M76.48263,103.73116v31.34008H224.93675a26.46864,26.46864,0,0,1,26.43878,26.43945v38.1769a26.46851,26.46851,0,0,1-26.4388,26.43879H4v11.92916A30.78477,30.78477,0,0,0,34.69457,268.75H263.30542A30.78478,30.78478,0,0,0,294,238.05554V103.73116Z\"/\u003e\u003cpath class=\"cls-1\" d=\"M221.51806,196.26885V164.92871H73.06389A26.46915,26.46915,0,0,1,46.6251,138.48924V100.31248A26.469,26.469,0,0,1,73.06389,73.87369H294V61.94456A30.78479,30.78479,0,0,0,263.30542,31.25H34.69457A30.78477,30.78477,0,0,0,4,61.9445V196.26885Z\"/\u003e\u003c/svg\u003e\n"
+  },
+  "version": "v1.0.0"
+ }

@@ -1,0 +1,195 @@
+{
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "EndpointMonitor",
+   "schema": "{\n \"description\": \"EndpointMonitor is the Schema for the endpointmonitors API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"EndpointMonitorSpec defines the desired state of EndpointMonitor\",\n   \"properties\": {\n    \"appInsightsConfig\": {\n     \"description\": \"Configuration for AppInsights Monitor Provider\",\n     \"properties\": {\n      \"frequency\": {\n       \"description\": \"Sets how often the test should run from each test location. Possible values: `300,600,900` seconds\",\n       \"type\": \"integer\"\n      },\n      \"retryEnable\": {\n       \"description\": \"If its `true`, falied test will be retry after a short interval. Possible values: `true, false`\",\n       \"type\": \"boolean\"\n      },\n      \"statusCode\": {\n       \"description\": \"Returned status code that is counted as a success\",\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"forceHttps\": {\n     \"description\": \"Force monitor endpoint to use HTTPS\",\n     \"type\": \"boolean\"\n    },\n    \"gcloudConfig\": {\n     \"description\": \"Configuration for Google Cloud Monitor Provider\",\n     \"properties\": {\n      \"projectId\": {\n       \"description\": \"Google Cloud Project ID\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"grafanaConfig\": {\n     \"description\": \"Configuration for Grafana Cloud Monitor Provider\",\n     \"properties\": {\n      \"alertSensitivity\": {\n       \"default\": \"none\",\n       \"description\": \"The alertSensitivity value defaults to none if there are no alerts or can be set to low, medium, or high to correspond to the check alert levels.\",\n       \"enum\": [\n        \"none\",\n        \"low\",\n        \"medium\",\n        \"high\"\n       ],\n       \"type\": \"string\"\n      },\n      \"frequency\": {\n       \"description\": \"The frequency value specifies how often the check runs in milliseconds\",\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"probes\": {\n       \"description\": \"Probes are the monitoring agents responsible for simulating user interactions with your web applications or services. These agents periodically send requests to predefined URLs and record the responses, checking for expected outcomes and measuring performance.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"tenantId\": {\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"healthEndpoint\": {\n     \"type\": \"string\"\n    },\n    \"pingdomConfig\": {\n     \"description\": \"Configuration for Pingdom Monitor Provider\",\n     \"properties\": {\n      \"alertContacts\": {\n       \"description\": \"`-` separated contact id's (e.g. \\\"1234567_8_9-9876543_2_1\\\")\",\n       \"type\": \"string\"\n      },\n      \"alertIntegrations\": {\n       \"description\": \"`-` separated set list of integrations ids (e.g. \\\"91166-12168\\\")\",\n       \"type\": \"string\"\n      },\n      \"basicAuthUser\": {\n       \"description\": \"Required for basic-authentication\",\n       \"type\": \"string\"\n      },\n      \"notifyWhenBackUp\": {\n       \"description\": \"Set to \\\"false\\\" to disable recovery notifications\",\n       \"type\": \"boolean\"\n      },\n      \"paused\": {\n       \"description\": \"Set to \\\"true\\\" to pause checks\",\n       \"type\": \"boolean\"\n      },\n      \"postDataEnvVar\": {\n       \"description\": \"Data that should be posted to the web page, for example submission data for a sign-up or login form. The data needs to be formatted in the same way as a web browser would send it to the web server. Because post data contains sensitive secret this field is only a reference to an environment variable.\",\n       \"type\": \"string\"\n      },\n      \"requestHeaders\": {\n       \"description\": \"Custom request headers\",\n       \"type\": \"string\"\n      },\n      \"requestHeadersEnvVar\": {\n       \"description\": \"Custom request headers that should be read from an environment variable as it possibly contains sensitive data. An example would be an API token.\",\n       \"type\": \"string\"\n      },\n      \"resolution\": {\n       \"description\": \"The pingdom check interval in minutes\",\n       \"type\": \"integer\"\n      },\n      \"sendNotificationWhenDown\": {\n       \"description\": \"How many failed check attempts before notifying\",\n       \"type\": \"integer\"\n      },\n      \"shouldContain\": {\n       \"description\": \"Set to text string that has to be present in the HTML code of the page\",\n       \"type\": \"string\"\n      },\n      \"sslDownDaysBefore\": {\n       \"description\": \"Consider down prior to certificate expiring Select the number of days prior to your certificate expiry date that you want to consider the check down. At this day your check will be considered down and if applicable a down alert will be sent.\",\n       \"type\": \"integer\"\n      },\n      \"tags\": {\n       \"description\": \"Comma separated set of tags to apply to check (e.g. \\\"testing,aws\\\")\",\n       \"type\": \"string\"\n      },\n      \"teamAlertContacts\": {\n       \"description\": \"`-` separated team id's (e.g. \\\"1234567_8_9-9876543_2_1\\\")\",\n       \"type\": \"string\"\n      },\n      \"verifyCertificate\": {\n       \"description\": \"Monitor SSL/TLS certificate Monitor the validity of your SSL/TLS certificate. With this enabled Uptime checks will be considered DOWN when the certificate becomes invalid or expires. SSL/TLS certificate monitoring is available for HTTP checks.\",\n       \"type\": \"boolean\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"pingdomTransactionConfig\": {\n     \"description\": \"Configuration for Pingdom Transaction Monitor Provider\",\n     \"properties\": {\n      \"alertContacts\": {\n       \"description\": \"`-` separated contact id's (e.g. \\\"1234567_8_9-9876543_2_1\\\")\",\n       \"type\": \"string\"\n      },\n      \"alertIntegrations\": {\n       \"description\": \"`-` separated set list of integrations ids (e.g. \\\"91166-12168\\\")\",\n       \"type\": \"string\"\n      },\n      \"custom_message\": {\n       \"description\": \"Custom message that is part of the email and webhook alerts\",\n       \"type\": \"string\"\n      },\n      \"interval\": {\n       \"description\": \"TMS test intervals in minutes. Allowed intervals: 5,10,20,60,720,1440. The interval you're allowed to set may vary depending on your current plan.\",\n       \"enum\": [\n        5,\n        10,\n        20,\n        60,\n        720,\n        1440\n       ],\n       \"type\": \"integer\"\n      },\n      \"paused\": {\n       \"description\": \"Check status: active or inactive\",\n       \"type\": \"boolean\"\n      },\n      \"region\": {\n       \"description\": \"Name of the region where the check is executed. Supported regions: us-east, us-west, eu, au\",\n       \"enum\": [\n        \"us-east\",\n        \"us-west\",\n        \"eu\",\n        \"au\"\n       ],\n       \"type\": \"string\"\n      },\n      \"send_notification_when_down\": {\n       \"description\": \"Send notification when down X times\",\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"severity_level\": {\n       \"description\": \"Check importance- how important are the alerts when the check fails. Allowed values: low, high\",\n       \"enum\": [\n        \"low\",\n        \"high\"\n       ],\n       \"type\": \"string\"\n      },\n      \"steps\": {\n       \"description\": \"steps to be executed as part of the check\",\n       \"items\": {\n        \"description\": \"PingdomStep respresents a step of the script to run a transcaction check\",\n        \"properties\": {\n         \"args\": {\n          \"additionalProperties\": {\n           \"type\": \"string\"\n          },\n          \"description\": \"contains the html element with assigned value the key element is always lowercase for example {\\\"url\\\": \\\"https://www.pingdom.com\\\"} see available values at https://pkg.go.dev/github.com/karlderkaefer/pingdom-golang-client@latest/pkg/pingdom/client/tmschecks#StepArg\",\n          \"type\": \"object\"\n         },\n         \"function\": {\n          \"description\": \"contains the function that is executed as part of the step commands: go_to, click, fill, check, uncheck, sleep, select_radio, basic_auth, submit, wait_for_element, wait_for_contains validations: url, exists, not_exists, contains, not_contains, field_contains, field_not_contains, is_checked, is_not_checked, radio_selected, dropdown_selected, dropdown_not_selected see updated list https://docs.pingdom.com/api/#section/TMS-Steps-Vocabulary/Script-transaction-checks\",\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"args\",\n         \"function\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"tags\": {\n       \"description\": \"List of tags for a check. The tag name may contain the characters 'A-Z', 'a-z', '0-9', '_' and '-'. The maximum length of a tag is 64 characters.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"teamAlertContacts\": {\n       \"description\": \"`-` separated team id's (e.g. \\\"1234567_8_9-9876543_2_1\\\")\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"steps\"\n     ],\n     \"type\": \"object\"\n    },\n    \"providers\": {\n     \"description\": \"Comma separated list of providers\",\n     \"type\": \"string\"\n    },\n    \"statusCakeConfig\": {\n     \"description\": \"Configuration for StatusCake Monitor Provider\",\n     \"properties\": {\n      \"basicAuthUser\": {\n       \"description\": \"Basic Auth User\",\n       \"type\": \"string\"\n      },\n      \"checkRate\": {\n       \"description\": \"Set Check Rate for the monitor\",\n       \"type\": \"integer\"\n      },\n      \"confirmation\": {\n       \"description\": \"Confirmation value ranges from (0,10)\",\n       \"maximum\": 10,\n       \"minimum\": 0,\n       \"type\": \"integer\"\n      },\n      \"contactGroup\": {\n       \"description\": \"Contact Group to be alerted.\",\n       \"type\": \"string\"\n      },\n      \"enableSslAlert\": {\n       \"description\": \"Enable SSL Alert\",\n       \"type\": \"boolean\"\n      },\n      \"findString\": {\n       \"description\": \"String to look for within the response. Considered down if not found\",\n       \"type\": \"string\"\n      },\n      \"followRedirect\": {\n       \"description\": \"Enable ingress redirects\",\n       \"type\": \"boolean\"\n      },\n      \"paused\": {\n       \"description\": \"Pause the service\",\n       \"type\": \"boolean\"\n      },\n      \"pingUrl\": {\n       \"description\": \"Webhook for alerts\",\n       \"type\": \"string\"\n      },\n      \"port\": {\n       \"description\": \"TCP Port\",\n       \"type\": \"integer\"\n      },\n      \"realBrowser\": {\n       \"description\": \"Enable Real Browser\",\n       \"type\": \"boolean\"\n      },\n      \"regions\": {\n       \"description\": \"Comma separated list of Node Location IDs\",\n       \"type\": \"string\"\n      },\n      \"statusCodes\": {\n       \"description\": \"Comma separated list of HTTP codes to trigger error on\",\n       \"type\": \"string\"\n      },\n      \"testTags\": {\n       \"description\": \"Comma separated list of tags\",\n       \"type\": \"string\"\n      },\n      \"testType\": {\n       \"description\": \"Set Test type - HTTP, TCP, PING\",\n       \"type\": \"string\"\n      },\n      \"triggerRate\": {\n       \"description\": \"Minutes to wait before sending an alert\",\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"updownConfig\": {\n     \"description\": \"Configuration for Updown Monitor Provider\",\n     \"properties\": {\n      \"enable\": {\n       \"description\": \"Enable or disable checks\",\n       \"type\": \"boolean\"\n      },\n      \"period\": {\n       \"description\": \"The pingdom check interval in seconds\",\n       \"type\": \"integer\"\n      },\n      \"publishPage\": {\n       \"description\": \"Make status page public or not\",\n       \"type\": \"boolean\"\n      },\n      \"requestHeaders\": {\n       \"description\": \"Additional request headers for API calls\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"uptimeConfig\": {\n     \"description\": \"Configuration for Uptime Monitor Provider\",\n     \"properties\": {\n      \"checkType\": {\n       \"description\": \"The uptime check type that can be HTTP/DNS/ICMP etc.\",\n       \"type\": \"string\"\n      },\n      \"contacts\": {\n       \"description\": \"Add one or more contact groups separated by `,`\",\n       \"type\": \"string\"\n      },\n      \"interval\": {\n       \"description\": \"The uptime check interval in seconds\",\n       \"type\": \"integer\"\n      },\n      \"locations\": {\n       \"description\": \"Add different locations for the check\",\n       \"type\": \"string\"\n      },\n      \"tags\": {\n       \"description\": \"Add one or more tags for the check separated by `,`\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"uptimeRobotConfig\": {\n     \"description\": \"Configuration for UptimeRobot Monitor Provider\",\n     \"properties\": {\n      \"alertContacts\": {\n       \"description\": \"The uptimerobot alertContacts to be associated with this monitor\",\n       \"type\": \"string\"\n      },\n      \"customHTTPStatuses\": {\n       \"description\": \"Defines which http status codes are treated as up or down For ex: 200:0_401:1_503:1 (to accept 200 as down and 401 and 503 as up)\",\n       \"type\": \"string\"\n      },\n      \"interval\": {\n       \"description\": \"The uptimerobot check interval in seconds\",\n       \"minimum\": 60,\n       \"type\": \"integer\"\n      },\n      \"keywordExists\": {\n       \"description\": \"Alert if value exist (yes) or doesn't exist (no) (Only if monitor-type is keyword)\",\n       \"enum\": [\n        \"yes\",\n        \"no\"\n       ],\n       \"type\": \"string\"\n      },\n      \"keywordValue\": {\n       \"description\": \"keyword to check on URL (e.g.'search' or '404') (Only if monitor-type is keyword)\",\n       \"type\": \"string\"\n      },\n      \"maintenanceWindows\": {\n       \"description\": \"Specify maintenanceWindows i.e. once or recurring “do-not-monitor periods”\",\n       \"type\": \"string\"\n      },\n      \"monitorType\": {\n       \"description\": \"The uptimerobot monitor type (http or keyword)\",\n       \"enum\": [\n        \"http\",\n        \"keyword\"\n       ],\n       \"type\": \"string\"\n      },\n      \"statusPages\": {\n       \"description\": \"The uptimerobot public status page ID to add this monitor to\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"url\": {\n     \"description\": \"URL to monitor\",\n     \"type\": \"string\"\n    },\n    \"urlFrom\": {\n     \"description\": \"URL to monitor from either an ingress or route reference\",\n     \"properties\": {\n      \"ingressRef\": {\n       \"description\": \"IngressURLSource selects an Ingress to populate the URL with\",\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"name\"\n       ],\n       \"type\": \"object\"\n      },\n      \"routeRef\": {\n       \"description\": \"RouteURLSource selects a Route to populate the URL with\",\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"name\"\n       ],\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Endpoint Monitor\",\n \"type\": \"object\"\n}",
+   "version": "endpointmonitor.stakater.com/v1alpha1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "Endpoint Monitor",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "published": false,
+   "source_uri": "https://stakater.github.io/stakater-charts/ingressmonitorcontroller-2.1.64.tgz"
+  },
+  "model": {
+   "category": {
+    "name": "Uncategorized"
+   },
+   "displayName": "Ingressmonitorcontroller",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "source_uri": "https://stakater.github.io/stakater-charts/ingressmonitorcontroller-2.1.64.tgz",
+    "styleOverrides": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "model": {
+    "version": "2.1.64"
+   },
+   "name": "ingressmonitorcontroller",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "subCategory": "Uncategorized",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "ignored",
+  "styles": {
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "svgColor": "",
+   "svgWhite": ""
+  },
+  "version": "v1.0.0"
+ }

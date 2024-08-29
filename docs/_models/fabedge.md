@@ -8,8 +8,20 @@ docURL: https://docs.meshery.io/extensibility/integrations/fabedge
 description: 
 integrations-category: Runtime
 integrations-subcategory: Cloud Native Network
-registrant: Artifact Hub
+registrant: GitHub
 components: 
+- name: global-service
+  colorIcon: assets/img/integrations/fabedge/components/global-service/icons/color/global-service-color.svg
+  whiteIcon: assets/img/integrations/fabedge/components/global-service/icons/white/global-service-white.svg
+  description: 
+- name: cluster
+  colorIcon: assets/img/integrations/fabedge/components/cluster/icons/color/cluster-color.svg
+  whiteIcon: assets/img/integrations/fabedge/components/cluster/icons/white/cluster-white.svg
+  description: 
+- name: community
+  colorIcon: assets/img/integrations/fabedge/components/community/icons/color/community-color.svg
+  whiteIcon: assets/img/integrations/fabedge/components/community/icons/white/community-white.svg
+  description: 
 featureList: [
   "Simplifies network management at the edge",
   "Provides secure and reliable connectivity",

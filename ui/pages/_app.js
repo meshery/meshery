@@ -337,7 +337,7 @@ class MesheryApp extends App {
       if (res?.components) {
         connectionDef[CONNECTION_KINDS[kind]] = {
           transitions: res?.components[0].metadata.transitions,
-          icon: res?.components[0].metadata.svgColor,
+          icon: res?.components[0].styles.svgColor,
         };
       }
       this.setState({ connectionMetadata: connectionDef });
@@ -424,6 +424,14 @@ class MesheryApp extends App {
         this.state.k8sContexts.contexts.forEach((ctx) => activeContexts.push(ctx.id));
         activeContexts.push('all');
         this.setState({ activeK8sContexts: activeContexts }, () =>
+          this.activeContextChangeCallback(this.state.activeK8sContexts),
+        );
+        return;
+      }
+
+      // if id is an empty array, clear all active contexts
+      if (Array.isArray(id) && id.length === 0) {
+        this.setState({ activeK8sContexts: [] }, () =>
           this.activeContextChangeCallback(this.state.activeK8sContexts),
         );
         return;

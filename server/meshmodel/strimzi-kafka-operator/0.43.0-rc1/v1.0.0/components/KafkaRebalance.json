@@ -1,0 +1,195 @@
+{
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "KafkaRebalance",
+   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"The specification of the Kafka rebalance.\",\n   \"properties\": {\n    \"brokers\": {\n     \"description\": \"The list of newly added brokers in case of scaling up or the ones to be removed in case of scaling down to use for rebalancing. This list can be used only with rebalancing mode `add-brokers` and `removed-brokers`. It is ignored with `full` mode.\",\n     \"items\": {\n      \"type\": \"integer\"\n     },\n     \"type\": \"array\"\n    },\n    \"concurrentIntraBrokerPartitionMovements\": {\n     \"description\": \"The upper bound of ongoing partition replica movements between disks within each broker. Default is 2.\",\n     \"minimum\": 0,\n     \"type\": \"integer\"\n    },\n    \"concurrentLeaderMovements\": {\n     \"description\": \"The upper bound of ongoing partition leadership movements. Default is 1000.\",\n     \"minimum\": 0,\n     \"type\": \"integer\"\n    },\n    \"concurrentPartitionMovementsPerBroker\": {\n     \"description\": \"The upper bound of ongoing partition replica movements going into/out of each broker. Default is 5.\",\n     \"minimum\": 0,\n     \"type\": \"integer\"\n    },\n    \"excludedTopics\": {\n     \"description\": \"A regular expression where any matching topics will be excluded from the calculation of optimization proposals. This expression will be parsed by the java.util.regex.Pattern class; for more information on the supported format consult the documentation for that class.\",\n     \"type\": \"string\"\n    },\n    \"goals\": {\n     \"description\": \"A list of goals, ordered by decreasing priority, to use for generating and executing the rebalance proposal. The supported goals are available at https://github.com/linkedin/cruise-control#goals. If an empty goals list is provided, the goals declared in the default.goals Cruise Control configuration parameter are used.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"mode\": {\n     \"description\": \"Mode to run the rebalancing. The supported modes are `full`, `add-brokers`, `remove-brokers`.\\nIf not specified, the `full` mode is used by default. \\n\\n* `full` mode runs the rebalancing across all the brokers in the cluster.\\n* `add-brokers` mode can be used after scaling up the cluster to move some replicas to the newly added brokers.\\n* `remove-brokers` mode can be used before scaling down the cluster to move replicas out of the brokers to be removed.\\n\",\n     \"enum\": [\n      \"full\",\n      \"add-brokers\",\n      \"remove-brokers\"\n     ],\n     \"type\": \"string\"\n    },\n    \"rebalanceDisk\": {\n     \"description\": \"Enables intra-broker disk balancing, which balances disk space utilization between disks on the same broker. Only applies to Kafka deployments that use JBOD storage with multiple disks. When enabled, inter-broker balancing is disabled. Default is false.\",\n     \"type\": \"boolean\"\n    },\n    \"replicaMovementStrategies\": {\n     \"description\": \"A list of strategy class names used to determine the execution order for the replica movements in the generated optimization proposal. By default BaseReplicaMovementStrategy is used, which will execute the replica movements in the order that they were generated.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"replicationThrottle\": {\n     \"description\": \"The upper bound, in bytes per second, on the bandwidth used to move replicas. There is no limit by default.\",\n     \"minimum\": 0,\n     \"type\": \"integer\"\n    },\n    \"skipHardGoalCheck\": {\n     \"description\": \"Whether to allow the hard goals specified in the Kafka CR to be skipped in optimization proposal generation. This can be useful when some of those hard goals are preventing a balance solution being found. Default is false.\",\n     \"type\": \"boolean\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Kafka Rebalance\",\n \"type\": \"object\"\n}",
+   "version": "kafka.strimzi.io/v1beta2"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "Kafka Rebalance",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "published": false,
+   "source_uri": "git://github.com/strimzi/strimzi-kafka-operator/main/helm-charts/helm3/strimzi-kafka-operator/crds"
+  },
+  "model": {
+   "category": {
+    "name": "App Definition and Development"
+   },
+   "displayName": "Strimzi Kafka Operator",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "isAnnotation": false,
+    "primaryColor": "#192c47",
+    "secondaryColor": "#5E718C\n",
+    "shape": "circle",
+    "source_uri": "git://github.com/strimzi/strimzi-kafka-operator/main/helm-charts/helm3/strimzi-kafka-operator/crds",
+    "styleOverrides": "",
+    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" viewBox=\"39.28 -1.97 281.94 323.44\" height=\"20\" width=\"20\"\u003e\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"b\" x1=\"-202.908\" x2=\"-202.212\" y1=\"-1.633\" y2=\"-1.633\" gradientTransform=\"rotate(64.94 -61021.575 94340.097) scale(594.10366)\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"0\" stop-color=\"#fff\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"1\" stop-color=\"#54bad8\"\u003e\u003c/stop\u003e\u003c/linearGradient\u003e\u003cclipPath xmlns=\"http://www.w3.org/2000/svg\" id=\"a\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" d=\"M183.91572 115.62933c-5.54817 7.11267-70.98378 22.98967-123.25192 46.53995v66.835l119.67377 69.09356 119.67379-69.09356v-13.88295a725.85637 725.85637 0 0 0-75.80815-10.22219c-105.26657-9.09661-7.79661-29.89085 36.3892-67.17C304.7791 100.44916 113.73735 89.235 113.73735 89.235s77.97583 16.39764 70.17832 26.39429\"\u003e\u003c/path\u003e\u003c/clipPath\u003e\u003c/defs\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill=\"#192c47\" d=\"M180.33827 4.32553L45.59879 82.11689v155.58548L180.33827 315.493l134.74018-77.79136V82.11689z\"\u003e\u003c/path\u003e\u003cg xmlns=\"http://www.w3.org/2000/svg\" clip-path=\"url(#a)\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill=\"url(#b)\" d=\"M183.91572 115.62933c-5.54817 7.11267-70.98378 22.98967-123.25192 46.53995v66.835l119.67377 69.09356 119.67379-69.09356v-13.88295a725.85637 725.85637 0 0 0-75.80815-10.22219c-105.26657-9.09661-7.79661-29.89085 36.3892-67.17C304.7791 100.44916 113.73735 89.235 113.73735 89.235s77.97583 16.39764 70.17832 26.39429\"\u003e\u003c/path\u003e\u003c/g\u003e\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" viewBox=\"39.28 -1.97 281.94 323.44\" height=\"20\" width=\"20\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill=\"#fff\" d=\"M180.33826 4.32553L45.59882 82.11691v155.58545L180.33826 315.493l134.74017-77.79132V82.11691zm119.67309 224.67871l-119.67376 69.09357-119.67377-69.09357v-66.835C112.932 138.619 178.36755 122.742 183.91571 115.6293l-.00006-.00006c7.79755-9.99664-70.17828-26.39424-70.17828-26.39424s191.04174 11.21418 146.855 48.49421c-44.18579 37.27911-141.65576 58.07336-36.38922 67.17a725.85543 725.85543 0 0 1 75.80816 10.22217z\"\u003e\u003c/path\u003e\u003c/svg\u003e"
+   },
+   "model": {
+    "version": "0.43.0-rc1"
+   },
+   "name": "strimzi-kafka-operator",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "github",
+    "name": "Github",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "subCategory": "Streaming \u0026 Messaging",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "ignored",
+  "styles": {
+   "primaryColor": "#192c47",
+   "secondaryColor": "#5E718C\n",
+   "shape": "circle",
+   "svgColor": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" viewBox=\"39.28 -1.97 281.94 323.44\"\u003e\u003cdefs\u003e\u003clinearGradient id=\"b\" x1=\"-202.908\" x2=\"-202.212\" y1=\"-1.633\" y2=\"-1.633\" gradientTransform=\"rotate(64.94 -61021.575 94340.097) scale(594.10366)\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop offset=\"0\" stop-color=\"#fff\"/\u003e\u003cstop offset=\"1\" stop-color=\"#54bad8\"/\u003e\u003c/linearGradient\u003e\u003cclipPath id=\"a\"\u003e\u003cpath fill=\"none\" d=\"M183.91572 115.62933c-5.54817 7.11267-70.98378 22.98967-123.25192 46.53995v66.835l119.67377 69.09356 119.67379-69.09356v-13.88295a725.85637 725.85637 0 0 0-75.80815-10.22219c-105.26657-9.09661-7.79661-29.89085 36.3892-67.17C304.7791 100.44916 113.73735 89.235 113.73735 89.235s77.97583 16.39764 70.17832 26.39429\"/\u003e\u003c/clipPath\u003e\u003c/defs\u003e\u003cpath fill=\"#192c47\" d=\"M180.33827 4.32553L45.59879 82.11689v155.58548L180.33827 315.493l134.74018-77.79136V82.11689z\"/\u003e\u003cg clip-path=\"url(#a)\"\u003e\u003cpath fill=\"url(#b)\" d=\"M183.91572 115.62933c-5.54817 7.11267-70.98378 22.98967-123.25192 46.53995v66.835l119.67377 69.09356 119.67379-69.09356v-13.88295a725.85637 725.85637 0 0 0-75.80815-10.22219c-105.26657-9.09661-7.79661-29.89085 36.3892-67.17C304.7791 100.44916 113.73735 89.235 113.73735 89.235s77.97583 16.39764 70.17832 26.39429\"/\u003e\u003c/g\u003e\u003c/svg\u003e",
+   "svgWhite": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" viewBox=\"39.28 -1.97 281.94 323.44\"\u003e\u003cpath fill=\"#fff\" d=\"M180.33826 4.32553L45.59882 82.11691v155.58545L180.33826 315.493l134.74017-77.79132V82.11691zm119.67309 224.67871l-119.67376 69.09357-119.67377-69.09357v-66.835C112.932 138.619 178.36755 122.742 183.91571 115.6293l-.00006-.00006c7.79755-9.99664-70.17828-26.39424-70.17828-26.39424s191.04174 11.21418 146.855 48.49421c-44.18579 37.27911-141.65576 58.07336-36.38922 67.17a725.85543 725.85543 0 0 1 75.80816 10.22217z\"/\u003e\u003c/svg\u003e"
+  },
+  "version": "v1.0.0"
+ }

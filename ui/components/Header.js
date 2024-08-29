@@ -268,9 +268,9 @@ const K8sContextConnectionChip_ = ({
             onDelete={onDelete ? () => onDelete(ctx.name, ctx.connection_id) : null}
             handlePing={() => ping(ctx.name, ctx.server, ctx.connection_id)}
             iconSrc={
-              connectionMetadataState
+              connectionMetadataState && connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
                 ? `/${connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon}`
-                : ''
+                : '/static/img/kubernetes.svg'
             } // chnage to use connection def
             status={operatorState}
           />
@@ -377,13 +377,17 @@ function K8sContextMenu({
             <img
               className="k8s-image"
               src={
-                connectionMetadataState
+                connectionMetadataState &&
+                connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
                   ? `/${connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon}`
                   : '/static/img/kubernetes.svg'
               }
+              onError={(e) => {
+                e.target.src = '/static/img/kubernetes.svg';
+              }}
               width="24px"
               height="24px"
-              // style={{ zIndex: '2' }}
+              style={{ objectFit: 'contain' }}
             />
             <div className={classes.cbadge}>{contexts?.total_count || 0}</div>
           </div>
@@ -436,14 +440,18 @@ function K8sContextMenu({
                     <UsesSistent>
                       <Checkbox
                         checked={activeContexts.includes('all')}
-                        onChange={() => setActiveContexts('all')}
+                        onChange={() =>
+                          activeContexts.includes('all')
+                            ? setActiveContexts([])
+                            : setActiveContexts('all')
+                        }
                         color="primary"
                       />
                     </UsesSistent>
                     <span style={{ fontWeight: 'bolder' }}>select all</span>
                   </>
                 ) : (
-                  <Link href="/settings">
+                  <Link href="/management/connections">
                     <Button
                       type="submit"
                       variant="contained"

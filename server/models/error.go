@@ -135,6 +135,7 @@ const (
 	ErrEmptySessionCode                   = "meshery-server-1356"
 	ErrSeedingComponentsCode              = "meshery-server-1358"
 	ErrImportFailureCode                  = "meshery-server-1359"
+	ErrMarshallingDesignIntoYAMLCode      = "meshery-server-1135"
 )
 
 var (
@@ -585,4 +586,8 @@ func ErrImportFailure(hostname string, failedMsg string) error {
 		[]string{"Entity definition might not be in accordance with schema", "Entity version might not be supported by Meshery"},
 		[]string{"See the registration logs (found at $HOME/.meshery/logs/registry/registry-logs.log) to find out which Entity failed to be imported with more specific error information."},
 	)
+}
+
+func ErrMarshallingDesignIntoYAML(err error) error {
+	return errors.New(ErrMarshallingDesignIntoYAMLCode, errors.Alert, []string{"Failed to marshal design into YAML"}, []string{err.Error()}, []string{"unable to marshal design into YAML", "design may be corrupted"}, []string{"check if the design is valid and not corrupted"})
 }

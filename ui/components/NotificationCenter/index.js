@@ -59,6 +59,7 @@ import DeleteIcon from '../../assets/icons/DeleteIcon';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { useActorRef } from '@xstate/react';
 import { operationsCenterActor } from 'machines/operationsCenter';
+import { useSelectorRtk } from '@/store/hooks';
 
 export const NotificationCenterContext = React.createContext({
   drawerAnchorEl: null,
@@ -579,6 +580,12 @@ export const NotificationDrawerButton = () => {
 };
 
 const NotificationCenter = (props) => {
+  const isOpen = useSelectorRtk((state) => state.events.isNotificationCenterOpen);
+
+  if (!isOpen) {
+    return null;
+  }
+
   return (
     <NoSsr>
       <ErrorBoundary

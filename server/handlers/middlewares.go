@@ -81,7 +81,7 @@ func (h *Handler) AuthMiddleware(next http.Handler, auth models.AuthenticationMe
 			// Propagate existing request parameters, if present.
 			queryParams := req.URL.Query()
 			if refURLB64 != "" {
-				queryParams["ref"] = []string{refURLB64} 
+				queryParams["ref"] = []string{refURLB64}
 			}
 			providerI := req.Context().Value(models.ProviderCtxKey)
 			// logrus.Debugf("models.ProviderCtxKey %s", models.ProviderCtxKey)
@@ -102,7 +102,7 @@ func (h *Handler) AuthMiddleware(next http.Handler, auth models.AuthenticationMe
 			isValid, err := h.validateAuth(provider, req)
 			// logrus.Debugf("validate auth: %t", isValid)
 			if !isValid {
-				if !errors.Is(models.ErrEmptySession, err) && provider.GetProviderType() == models.RemoteProviderType {
+				if !errors.Is(err, models.ErrEmptySession) && provider.GetProviderType() == models.RemoteProviderType {
 					provider.HandleUnAuthenticated(w, req)
 					return
 				}

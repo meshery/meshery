@@ -259,10 +259,9 @@ func main() {
 		PrometheusClient:         models.NewPrometheusClient(&log),
 		PrometheusClientForQuery: models.NewPrometheusClientWithHTTPClient(&http.Client{Timeout: time.Second}, &log),
 
-		ApplicationChannel:        models.NewBroadcaster(),
-		PatternChannel:            models.NewBroadcaster(),
-		FilterChannel:             models.NewBroadcaster(),
-		EventBroadcaster:          models.NewBroadcaster(),
+		PatternChannel:            models.NewBroadcaster("Patterns"),
+		FilterChannel:             models.NewBroadcaster("Filters"),
+		EventBroadcaster:          models.NewBroadcaster("Events"),
 		DashboardK8sResourcesChan: models.NewDashboardK8sResourcesHelper(),
 		MeshModelSummaryChannel:   mesherymeshmodel.NewSummaryHelper(),
 
@@ -279,10 +278,12 @@ func main() {
 	go func() {
 		models.SeedComponents(log, hc, regManager)
 		r, err := policies.NewRegoInstance(PoliciesPath, regManager)
-		rego = *r
 		if err != nil {
-			log.Warn(ErrCreatingOPAInstance)
+			log.Warn(ErrCreatingOPAInstance(err))
+		} else {
+			rego = *r
 		}
+		
 		krh.SeedKeys(viper.GetString("KEYS_PATH"))
 		hc.MeshModelSummaryChannel.Publish()
 	}()
