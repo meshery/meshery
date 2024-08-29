@@ -48,7 +48,12 @@ import {
   updateCapabilities,
 } from '../lib/store';
 import { ButtonGroup, IconButton } from '@material-ui/core';
-import { CatalogIcon, CustomTooltip } from '@layer5/sistent';
+import {
+  CatalogIcon,
+  CustomTooltip,
+  OutlinedSettingsIcon,
+  HelpOutlinedIcon,
+} from '@layer5/sistent';
 import { UsesSistent } from './SistentWrapper';
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
 import dataFetch from '../lib/data-fetch';
@@ -73,6 +78,8 @@ import {
   CONNECTION,
   ENVIRONMENT,
   WORKSPACE,
+  SETTINGS,
+  HELP,
 } from '../constants/navigator';
 import { iconSmall } from '../css/icons.styles';
 import CAN from '@/utils/can';
@@ -503,6 +510,29 @@ const getNavigatorComponents = (/** @type {CapabilitiesRegistry} */ capabilityRe
       action: keys.VIEW_EXTENSIONS.action,
       subject: keys.VIEW_EXTENSIONS.subject,
     },
+  },
+];
+
+const mobileOnlyLinks = [
+  {
+    id: SETTINGS,
+    icon: <OutlinedSettingsIcon style={drawerIconsStyle} />,
+    hovericon: <OutlinedSettingsIcon style={drawerIconsStyle} />,
+    href: '/settings',
+    title: 'Settings',
+    show: true,
+    link: true,
+    submenu: true,
+  },
+  {
+    id: HELP,
+    icon: <HelpOutlinedIcon style={drawerIconsStyle} />,
+    hovericon: <HelpOutlinedIcon style={drawerIconsStyle} />,
+    title: 'Help',
+    link: true,
+    href: '/help',
+    show: true,
+    submenu: true,
   },
 ];
 
@@ -1190,9 +1220,9 @@ class Navigator extends React.Component {
         </ListItem>
       </div>
     );
-    const Menu = (
+    const Menu = (items, showNavigator = true) => (
       <List disablePadding className={classes.hideScrollbar}>
-        {navigatorComponents.map(
+        {items.map(
           ({
             id: childId,
             title,
@@ -1289,13 +1319,15 @@ class Navigator extends React.Component {
             );
           },
         )}
-        {this.state.navigator && this.state.navigator.length ? (
-          <React.Fragment>
-            <Divider className={classes.divider} />
-            {this.renderNavigatorExtensions(this.state.navigator, 1)}
-          </React.Fragment>
+        {showNavigator ? (
+          this.state.navigator && this.state.navigator.length ? (
+            <React.Fragment>
+              <Divider className={classes.divider} />
+              {this.renderNavigatorExtensions(this.state.navigator, 1)}
+            </React.Fragment>
+          ) : null
         ) : null}
-        <Divider className={classes.divider} />
+        {showNavigator && <Divider className={classes.divider} />}
       </List>
     );
     const HelpIcons = (
@@ -1422,7 +1454,8 @@ class Navigator extends React.Component {
           style={{ height: '100%' }}
         >
           {Title}
-          {Menu}
+          {Menu(navigatorComponents)}
+          <div style={{ marginTop: '200px' }}>{Menu(mobileOnlyLinks, false)}</div>
           <div className={classes.fixedSidebarFooter}>
             {Chevron}
             {HelpIcons}

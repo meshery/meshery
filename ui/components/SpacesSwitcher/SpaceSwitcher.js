@@ -80,6 +80,11 @@ export const StyledHeader = styled(Typography)(({ theme }) => ({
   fontSize: '1.25rem',
   [theme.breakpoints.up('sm')]: { fontSize: '1.65rem' },
 }));
+
+export const OrgWrapper = styled('div')(({ theme }) => ({
+  [theme.breakpoints.down('xs')]: { display: 'none' },
+}));
+
 export const StyledBetaHeader = styled('sup')(() => ({
   color: '#EEEEEE',
   fontWeight: '300',
@@ -304,13 +309,16 @@ function SpaceSwitcher(props) {
               transition: 'width 2s ease-in',
             }}
           >
-            <Button
-              onClick={() => setOrgOpen(!orgOpen)}
-              style={{ marginRight: orgOpen ? '1rem' : '0' }}
-            >
-              <OrgOutlinedIcon {...iconXLarge} fill={'#eee'} />
-            </Button>
-            <OrgMenu {...props} open={orgOpen} />/
+            <OrgWrapper>
+              <Button
+                onClick={() => setOrgOpen(!orgOpen)}
+                style={{ marginRight: orgOpen ? '1rem' : '0' }}
+              >
+                <OrgOutlinedIcon {...iconXLarge} fill={'#eee'} />
+              </Button>
+              <OrgMenu {...props} open={orgOpen} />/
+            </OrgWrapper>
+
             {/* /
           <Button
             onClick={() => setWorkspaceOpen(!workspaceOpen)}

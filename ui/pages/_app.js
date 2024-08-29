@@ -795,6 +795,7 @@ class MesheryApp extends App {
                           className={classes.mainContent}
                           style={{
                             padding: this.props.extensionType === 'navigator' && '0px',
+                            backgroundColor: '#293B43',
                           }}
                         >
                           <MuiPickersUtilsProvider utils={MomentUtils}>

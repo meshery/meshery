@@ -9,7 +9,19 @@ import { promisifiedDataFetch } from '../../lib/data-fetch';
 import { ctxUrl } from '../../utils/multi-ctx';
 import React, { useEffect, useState } from 'react';
 
-const styles = { paper: { maxWidth: '90%', margin: 'auto', overflow: 'hidden' } };
+const styles = {
+  paper: {
+    maxWidth: '90%',
+    margin: 'auto',
+    overflow: 'hidden',
+    borderRadius: '16px',
+    backgroundColor: '#15272F',
+    paddingLeft: '1rem',
+    paddingRight: '1rem',
+    paddingTop: '2rem',
+    paddingBottom: '1rem',
+  },
+};
 
 const UserPref = (props) => {
   const [anonymousStats, setAnonymousStats] = useState(undefined);

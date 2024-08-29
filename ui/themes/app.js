@@ -48,6 +48,7 @@ export var darkTheme = createTheme({
     type: 'dark',
     primary: blueGrey,
     colors: Colors,
+    gradient: 'linear-gradient(-39deg, #507D90 100%, #3B687B 100%)',
     secondary: {
       main: '#EE5351',
       primeColor: '#303030',

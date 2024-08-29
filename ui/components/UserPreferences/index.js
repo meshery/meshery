@@ -51,32 +51,55 @@ const styles = (theme) => ({
     // padding : theme.spacing(2),
     maxWidth: '100%',
     height: 'auto',
-    borderTopLeftRadius: 0,
-    borderTopRightRadius: 0,
-    borderBottomLeftRadius: 3,
-    borderBottomRightRadius: 3,
+    backgroundColor: 'transparent',
+    // borderTopLeftRadius: 0,
+    // borderTopRightRadius: 0,
+    // borderBottomLeftRadius: 30,
+    // borderBottomRightRadius: 30,
   },
   paperRoot: {
     flexGrow: 1,
     maxWidth: '100%',
     marginLeft: 0,
-    borderTopLeftRadius: 3,
-    borderTopRightRadius: 3,
+    borderTopLeftRadius: '8px',
+    borderTopRightRadius: '8px',
+    border: 'solid 1px',
+    borderColor: '#3D4F57',
+    backgroundColor: 'transparent',
   },
   tabs: {
-    width: '100%',
+    width: '50%',
+    display: 'flex',
+    justifyContent: 'start',
     marginLeft: 0,
     '& .MuiTabs-indicator': {
       backgroundColor: theme.palette.type === 'dark' ? '#00B39F' : theme.palette.primary,
     },
   },
+  tabs1: {
+    width: '100%',
+    marginLeft: 0,
+    backgroundColor: '#3D4F57',
+    borderBottomLeftRadius: '8px',
+    borderBottomRightRadius: '8px',
+    marginBottom: '20px',
+    '& .MuiTabs-indicator': {
+      backgroundColor: theme.palette.type === 'dark' ? '#00B39F' : theme.palette.primary,
+    },
+  },
+  tabWrapper: {
+    width: '35%',
+    paddingLeft: '20px',
+  },
   tab: {
     width: '42%',
     // maxWidth: 'min(33%, 200px)',
     // minWidth: '50px',
+    fullWidth: false,
     margin: 0,
     '&.Mui-selected': {
-      color: theme.palette.type === 'dark' ? '#00B39F' : theme.palette.primary,
+      width: '20px',
+      color: theme.palette.type === 'dark' ? 'blue' : 'blue',
     },
   },
   icon: {
@@ -158,9 +181,10 @@ const styles = (theme) => ({
     margin: '30px 0',
   },
   root: {
+    backgroundColor: 'transparent',
     width: '100%',
-    paddingLeft: theme.spacing(15),
-    paddingRight: theme.spacing(15),
+    paddingLeft: theme.spacing(5),
+    paddingRight: theme.spacing(5),
     paddingBottom: theme.spacing(10),
     paddingTop: theme.spacing(5),
   },
@@ -669,7 +693,7 @@ const UserPreference = (props) => {
           )}
         </Tabs>
       </Paper>
-      <Paper className={props.classes.statsWrapper}>
+      <Paper elevation={0} className={props.classes.statsWrapper}>
         {tabVal === 0 && (
           <>
             <div className={props.classes.formContainer}>
@@ -772,31 +796,33 @@ const UserPreference = (props) => {
         {tabVal === 1 && <MesherySettingsPerformanceComponent />}
         {tabVal === 2 && userPrefs && providerType !== 'local' && (
           <>
-            <Tabs
-              value={value}
-              onChange={handleValChange}
-              variant={width < 600 ? 'scrollable' : 'fullWidth'}
-              scrollButtons="on"
-              allowScrollButtonsMobile={true}
-              indicatorColor="primary"
-              textColor="primary"
-              className={props.classes.tabs}
-              centered
-            >
-              <CustomTooltip title="Details" placement="top">
-                <Tab
-                  className={props.classes.tab}
-                  label={<span className={props.classes.tabLabel}>Details</span>}
-                />
-              </CustomTooltip>
-              <CustomTooltip title="Plugins" placement="top">
-                <Tab
-                  className={props.classes.tab}
-                  label={<span className={props.classes.tabLabel}>Plugins</span>}
-                />
-              </CustomTooltip>
-            </Tabs>
-            <Paper className={props.classes.statsWrapper}>
+            <div className={props.classes.tabs1}>
+              <Tabs
+                value={value}
+                onChange={handleValChange}
+                variant={width < 600 ? 'scrollable' : 'fullWidth'}
+                scrollButtons="on"
+                allowScrollButtonsMobile={true}
+                indicatorColor="primary"
+                textColor="primary"
+                className={props.classes.tabWrapper}
+                centered
+              >
+                <CustomTooltip title="Details" placement="top">
+                  <Tab
+                    className={props.classes.tab}
+                    label={<span className={props.classes.tabLabel}>Details</span>}
+                  />
+                </CustomTooltip>
+                <CustomTooltip title="Plugins" placement="top">
+                  <Tab
+                    className={props.classes.tab}
+                    label={<span className={props.classes.tabLabel}>Plugins</span>}
+                  />
+                </CustomTooltip>
+              </Tabs>
+            </div>
+            <Paper elevation={0} className={props.classes.statsWrapper}>
               {value === 0 && <RemoteProviderInfoTab />}
 
               {value === 1 && (

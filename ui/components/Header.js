@@ -61,16 +61,36 @@ const styles = (theme) => ({
     paddingRight: theme.spacing(0),
     marginLeft: theme.spacing(4),
   },
+  notificationButton: {
+    [theme.breakpoints.down('xs')]: {
+      display: 'none',
+    },
+  },
+  settings: {
+    [theme.breakpoints.down('xs')]: {
+      display: 'none',
+    },
+  },
   userContainer: {
     paddingLeft: 1,
     display: 'flex',
 
     alignItems: 'center',
   },
+  k8Span: {
+    [theme.breakpoints.down('xs')]: {
+      display: 'none',
+    },
+    marginLeft: theme.spacing(1),
+  },
   userSpan: { marginLeft: theme.spacing(1) },
   pageTitleWrapper: {
     flexGrow: 1,
     marginRight: 'auto',
+    [theme.breakpoints.down('xs')]: {
+      display: 'flex',
+      justifyContent: 'center',
+    },
   },
   appBarOnDrawerOpen: {
     backgroundColor: theme.palette.secondary.mainBackground,
@@ -87,6 +107,7 @@ const styles = (theme) => ({
     paddingLeft: 34,
     paddingRight: 34,
     backgroundColor: theme.palette.secondary.mainBackground,
+    background: theme.palette.gradient,
     boxShadow: `3px 0px 4px ${theme.palette.secondary.focused}`,
   },
   toolbarOnDrawerOpen: {
@@ -95,6 +116,7 @@ const styles = (theme) => ({
     paddingLeft: 34,
     paddingRight: 34,
     backgroundColor: theme.palette.secondary.mainBackground,
+    background: theme.palette.gradient,
     [theme.breakpoints.between(620, 732)]: { minHeight: 68, paddingLeft: 20, paddingRight: 20 },
     boxShadow: `3px 0px 4px ${theme.palette.secondary.focused}`,
   },
@@ -583,7 +605,7 @@ class Header extends React.PureComponent {
                       Extension={(url) => RemoteComponent({ url, loaderType })}
                     />
                   )}
-                  <div className={classes.userSpan} style={{ position: 'relative' }}>
+                  <div className={classes.k8Span} style={{ position: 'relative' }}>
                     <K8sContextMenu
                       classes={classes}
                       contexts={this.props.contexts}
@@ -601,6 +623,7 @@ class Header extends React.PureComponent {
                   </div>
 
                   <div
+                    className={classes.settings}
                     data-test="settings-button"
                     aria-describedby={abilityUpdated}
                     style={
@@ -632,7 +655,7 @@ class Header extends React.PureComponent {
                     </Link>
                   </div>
 
-                  <div data-test="notification-button">
+                  <div className={classes.notificationButton} data-test="notification-button">
                     <NotificationDrawerButton />
                   </div>
                   <span className={classes.userSpan}>
