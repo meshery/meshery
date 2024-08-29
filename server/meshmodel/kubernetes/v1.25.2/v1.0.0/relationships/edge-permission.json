@@ -1,11 +1,11 @@
 {
   "schemaVersion": "relationships.meshery.io/v1alpha3",
-  "version": "v1.0.0",
+  "version": "v1.0.1",
   "kind": "edge",
   "type": "binding",
   "subType": "permission",
   "metadata": {
-    "description": "A relationship that represents a set of bindings.",
+    "description": "A relationship that represents a set of security-centric bindings between components.",
     "capabilities": {
       "designer": {
         "edit": {

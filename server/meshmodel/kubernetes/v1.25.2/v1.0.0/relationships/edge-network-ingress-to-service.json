@@ -1,11 +1,11 @@
 {
   "schemaVersion": "relationships.meshery.io/v1alpha3",
-  "version": "v1.0.0",
+  "version": "v1.0.1",
   "kind": "edge",
   "subType": "network",
   "type": "non-binding",
   "metadata": {
-    "description": "A relationship that defines network edges between components",
+    "description": "A relationship that represents a line of communication between two or more components.",
     "animation": "marching-ants",
     "capabilities": {
       "designer": {
