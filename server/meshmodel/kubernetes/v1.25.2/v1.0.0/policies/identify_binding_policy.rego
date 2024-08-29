@@ -61,10 +61,8 @@ identify_relationship(
 }
 
 evaluate_bindings contains result if {
-	some i, j, k
-
-	from_declaration := data.from[i]
-	binding_declaration := data.binding_declarations[j]
+	some i, from_declaration in data.from
+	some j, binding_declaration in data.binding_declarations
 
 	from_declaration.id != binding_declaration.id
 
@@ -72,7 +70,7 @@ evaluate_bindings contains result if {
 
 	is_valid_binding(from_declaration, binding_declaration, selector)
 
-	to_declaration := data.to[k]
+	some k, to_declaration in data.to
 
 	to_declaration.id != binding_declaration.id
 
@@ -117,14 +115,17 @@ evaluate_bindings contains result if {
 
 	now := format_int(time.now_ns(), 10)
 
-	id := uuid.rfc4122(sprintf("%s%s%s%s%s", 
-	[from_declaration.id, binding_declaration.id, to_declaration.id, data.relationship.id, now]))
+	id := uuid.rfc4122(sprintf(
+		"%s%s%s%s%s",
+		[from_declaration.id, binding_declaration.id, to_declaration.id, data.relationship.id, now],
+	))
 	cloned_selectors := {
 		"id": id,
 		"selectors": [{"allow": {
-		"from": [match_selector_for_from],
-		"to": [match_selector_for_to],
-	}}]}
+			"from": [match_selector_for_from],
+			"to": [match_selector_for_to],
+		}}],
+	}
 
 	result := object.union_n([data.relationship, cloned_selectors, {"status": "approved"}])
 }
