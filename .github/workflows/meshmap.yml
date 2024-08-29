@@ -9,6 +9,10 @@ on: # rebuild any PRs and main branch changes
         description: Relative file path from the root directory
         required: true
         type: string
+      email:
+        description: Email address to send the generated resource
+        required: false
+        type: string
     outputs:
       resource_url:
         description: "The URL of the generated resource."
@@ -44,3 +48,4 @@ jobs:
           prNumber: ${{ env.PULL_NO }} # auto-filled from the above step
           application_type: Kubernetes Manifest # your application type, could be any of three: "Kubernetes Manifest", "Docker Compose", "Helm Chart"
           filePath: ${{ inputs.fileName == '' && 'install/deployment_yamls/k8s' || inputs.fileName }} # relative file-path from the root directory in the github-runner env, you might require to checkout the repository as described in step 2
+          email: ${{ inputs.email }} # optional, if you want to send the generated resource to an email address
