@@ -33,10 +33,10 @@ identify_relationship(
 	from := extract_components(design_file.components, from_selectors)
 	to := extract_components(design_file.components, to_selectors)
 
-	evaluation_results := evaluate_hierarchy(relationship, from, to, from_selectors, to_selectors)
+	evaluation_results := evaluate_hierarchy(relationship, from, to, from_selectors, to_selectors, selector_set.deny)
 }
 
-evaluate_hierarchy(relationship, from, to, from_selectors, to_selectors) := result if {
+evaluate_hierarchy(relationship, from, to, from_selectors, to_selectors, deny_selectors) := result if {
 	some from_selector in from_selectors
 	some to_selector in to_selectors
 
@@ -48,6 +48,7 @@ evaluate_hierarchy(relationship, from, to, from_selectors, to_selectors) := resu
 	some to_decl in filtered_to_decls
 
 	from_decl.id != to_decl.id
+	not is_relationship_denied(from_decl, to_decl, deny_selectors)
 	is_valid_hierarchy(from_decl, to_decl, from_selector, to_selector)
 
 	# The criteria for relationship is met hence add the relationship.

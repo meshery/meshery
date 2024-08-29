@@ -24,10 +24,11 @@ identify_relationship(
 	from := extract_components(design_file.components, from_selectors)
 	to := extract_components(design_file.components, to_selectors)
 
-	evaluation_results := evaluate_siblings(relationship, from, to, from_selectors, to_selectors)
+	evaluation_results := evaluate_siblings(
+		relationship, from, to, from_selectors, to_selectors, selector_set.deny)
 }
 
-evaluate_siblings(relationship, from, to, from_selectors, to_selectors) := result if {
+evaluate_siblings(relationship, from, to, from_selectors, to_selectors, deny_selectors) := result if {
 	some from_selector in from_selectors
 	some to_selector in to_selectors
 	filtered_from_decls := extract_components_by_type(from, from_selector)
@@ -37,6 +38,7 @@ evaluate_siblings(relationship, from, to, from_selectors, to_selectors) := resul
 	some to_decl in filtered_to_decls
 
 	from_decl.id != to_decl.id
+	not is_relationship_denied(from_decl, to_decl, deny_selectors)
 
 	is_valid_siblings(from_decl, to_decl, from_selector, to_selector)
 
