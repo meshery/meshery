@@ -55,7 +55,13 @@ identify_relationship(
 	})
 }
 
-evaluate_bindings(binding_declarations, relationship, from, to, from_selectors, to_selectors, deny_selectors) := result if {
+evaluate_bindings(
+	binding_declarations,
+	relationship,
+	from, to,
+	from_selectors,
+	to_selectors, deny_selectors,
+) := {result |
 	some i, from_declaration in from
 	some j, binding_declaration in binding_declarations
 

@@ -36,7 +36,7 @@ identify_relationship(
 	evaluation_results := evaluate_hierarchy(relationship, from, to, from_selectors, to_selectors, selector_set.deny)
 }
 
-evaluate_hierarchy(relationship, from, to, from_selectors, to_selectors, deny_selectors) := result if {
+evaluate_hierarchy(relationship, from, to, from_selectors, to_selectors, deny_selectors) := {result |
 	some from_selector in from_selectors
 	some to_selector in to_selectors
 
@@ -48,6 +48,7 @@ evaluate_hierarchy(relationship, from, to, from_selectors, to_selectors, deny_se
 	some to_decl in filtered_to_decls
 
 	from_decl.id != to_decl.id
+
 	not is_relationship_denied(from_decl, to_decl, deny_selectors)
 	is_valid_hierarchy(from_decl, to_decl, from_selector, to_selector)
 
