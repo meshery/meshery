@@ -1,4 +1,4 @@
-Test run results
+# E2E Playwright Test Results
 
 ---
 
@@ -10,16 +10,19 @@ Summary:
 - 📦 Tests results:
   - ✅ <%- passed %>
   - ❌ <%- failed %>
+  - ⚠️ <%- flaky %>
   - ⏩ <%- skipped %>
 
 <%- failed > 0 ? "👎 Some tests failed!" : "👍 All tests passed successfully!" %>
 
-<% if (failsMessage) { %>
+<% if (testTable) { %>
 
 <details>
-    <summary>Click Here for more details</summary>
-    <%- failsMessage %>
+    <summary>Click Here to see test table</summary>
+
+<%- testTable %>
+
 </details>
 <% } %>
 
-To see the full report, please visit our CI/CD pipeline with reporter.`;
+To see the full report, please visit our CI/CD pipeline with reporter.
