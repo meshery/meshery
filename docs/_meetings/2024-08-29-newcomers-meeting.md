@@ -8,6 +8,7 @@
 - Sudhanshu Dasgupta
 - Ashparsh Pandey
 - Tharanishwaran
+- Amit Kumar Mishra
 - Nandika Agrawal
 - Victor Akoh
 - Prince Gupta
