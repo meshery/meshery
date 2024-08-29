@@ -1,0 +1,16 @@
+rules:
+  style:
+    todo-comment:
+      level: warning
+    rule-length:
+      level: warning
+    external-reference:
+      level: warning
+    line-length:
+      # custom rule configuration
+      max-line-length: 200
+      max-rule-length: 130
+  performance:
+    with-outside-test-context:
+      # one of "error", "warning", "ignore"
+      level: warning
