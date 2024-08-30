@@ -155,8 +155,28 @@
         ]
       },
       "deny": {
-        "from": [],
-        "to": []
+        "from": [
+          {
+            "kind": "Service",
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "Service",
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            }
+          }
+        ]
       }
     }
   ]

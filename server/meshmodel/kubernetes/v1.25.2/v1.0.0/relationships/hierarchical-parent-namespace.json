@@ -67,8 +67,28 @@
                 ]
             },
             "deny": {
-                "from": [],
-                "to": []
+                "from": [
+                    {
+                        "kind": "Namespace",
+                        "model": {
+                            "name": "kubernetes",
+                            "registrant": {
+                                "kind": "artifacthub"
+                            }
+                        }
+                    }
+                ],
+                "to": [
+                    {
+                        "kind": "Namespace",
+                        "model": {
+                            "name": "kubernetes",
+                            "registrant": {
+                                "kind": "artifacthub"
+                            }
+                        }
+                    }
+                ]
             }
         }
     ]

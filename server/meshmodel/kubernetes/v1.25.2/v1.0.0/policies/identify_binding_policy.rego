@@ -51,30 +51,33 @@ identify_relationship(
 
 		count(binding_declarations) > 0
 
-		result := evaluate_bindings with data.binding_declarations as binding_declarations
-			with data.relationship as relationship
-			with data.from as from
-			with data.to as to
-			with data.from_selectors as from_selectors
-			with data.to_selectors as to_selectors
+		result := evaluate_bindings(binding_declarations, relationship, from, to, from_selectors, to_selectors, selector_set.deny)
 	})
 }
 
-evaluate_bindings contains result if {
-	some i, from_declaration in data.from
-	some j, binding_declaration in data.binding_declarations
+evaluate_bindings(
+	binding_declarations,
+	relationship,
+	from, to,
+	from_selectors,
+	to_selectors, deny_selectors,
+) := {result |
+	some i, from_declaration in from
+	some j, binding_declaration in binding_declarations
 
 	from_declaration.id != binding_declaration.id
 
-	selector := data.from_selectors[from_declaration.component.kind]
+	selector := from_selectors[from_declaration.component.kind]
 
 	is_valid_binding(from_declaration, binding_declaration, selector)
 
-	some k, to_declaration in data.to
+	some k, to_declaration in to
 
 	to_declaration.id != binding_declaration.id
 
-	to_selector := data.to_selectors[concat("#", {to_declaration.component.kind, binding_declaration.component.kind})]
+	to_selector := to_selectors[concat("#", {to_declaration.component.kind, binding_declaration.component.kind})]
+
+	not is_relationship_denied(from_declaration, to_declaration, deny_selectors)
 
 	is_valid_binding(binding_declaration, to_declaration, to_selector)
 	match_selector_for_from := json.patch(selector, [
@@ -117,7 +120,7 @@ evaluate_bindings contains result if {
 
 	id := uuid.rfc4122(sprintf(
 		"%s%s%s%s%s",
-		[from_declaration.id, binding_declaration.id, to_declaration.id, data.relationship.id, now],
+		[from_declaration.id, binding_declaration.id, to_declaration.id, relationship.id, now],
 	))
 	cloned_selectors := {
 		"id": id,
@@ -127,7 +130,7 @@ evaluate_bindings contains result if {
 		}}],
 	}
 
-	result := object.union_n([data.relationship, cloned_selectors, {"status": "approved"}])
+	result := object.union_n([relationship, cloned_selectors, {"status": "approved"}])
 }
 
 is_valid_binding(resource1, resource2, selectors) if {
