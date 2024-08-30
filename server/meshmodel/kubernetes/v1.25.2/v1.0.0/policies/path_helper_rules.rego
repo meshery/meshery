@@ -2,9 +2,9 @@ package relationship_evaluation_policy
 
 import rego.v1
 
-ensureParentPathsExist(patches, obj) := result if {
+ensure_parent_paths_exist(patches, obj) := result if {
 	# Extract paths from the patches to a set of paths
-	paths := {p.path | p := patches[_]}
+	paths := {p.path | some p in patches}
 
 	# Compute all missing subpaths to ensure correct patch.
 	# Iterate all paths.
@@ -26,7 +26,7 @@ ensureParentPathsExist(patches, obj) := result if {
 			resultant_path := val
 		]
 
-		not inputPathExists(obj, prefix_path)
+		not input_path_exists(obj, prefix_path)
 	}
 
 	# Sort the paths.
@@ -41,7 +41,7 @@ ensureParentPathsExist(patches, obj) := result if {
 }
 
 # If next path exists and is a number, add an empty array.
-add_path(current_path_index, currentPath, all_paths) := value if {
+add_path(current_path_index, current_path, all_paths) := value if {
 	count(all_paths) > current_path_index + 1
 	next_path := all_paths[current_path_index + 1]
 	regex.match(`[0-9]+$`, next_path)
@@ -49,7 +49,7 @@ add_path(current_path_index, currentPath, all_paths) := value if {
 }
 
 # If next path exists and is not a number, add an empty object.
-add_path(current_path_index, currentPath, all_paths) := value if {
+add_path(current_path_index, current_path, all_paths) := value if {
 	count(all_paths) > current_path_index + 1
 	next_path := all_paths[current_path_index + 1]
 	not regex.match(`[0-9]+$`, next_path)
@@ -57,8 +57,8 @@ add_path(current_path_index, currentPath, all_paths) := value if {
 }
 
 # Check that the given @path exists as part of the input object.
-inputPathExists(object, path) if {
-	walk(object, [path, v])
+input_path_exists(check_object, path) if {
+	walk(check_object, [path, v])
 }
 
 walk_element(str) := str if {
