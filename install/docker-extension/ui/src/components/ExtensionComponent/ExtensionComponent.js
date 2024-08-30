@@ -34,7 +34,7 @@ import {
 import { MesheryAnimation } from '../MesheryAnimation/MesheryAnimation'
 import { randomApplicationNameGenerator } from '../../utils'
 import CatalogChart from '../Catalog/Chart'
-import {CatalogCard, SistentThemeProviderWithoutBaseLine} from '@layer5/sistent';
+import { CatalogCard, SistentThemeProviderWithoutBaseLine } from '@layer5/sistent';
 import { MESHMAP, mesheryCloudUrl } from '../utils/constants';
 
 const AuthenticatedMsg = 'Authenticated'
@@ -142,6 +142,28 @@ const ExtensionsComponent = () => {
     }
     return () => ws.close()
   }, [])
+
+  // Event Interceptor to redirect all external links
+  useEffect(() => {
+    const handleLinkClick = (event) => {
+      const target = event.target.closest('a');
+
+      // Ensure the target is an anchor tag with a valid href and external link
+      if (target && target.href && target.href.startsWith('http')) {
+        event.preventDefault();
+        window.ddClient.host.openExternal(target.href);
+      }
+    };
+
+    // Attach the event listener to a specific container (if possible), or use document
+    const container = document.getElementById('root') || document;
+    container.addEventListener('click', handleLinkClick);
+
+    // Cleanup the event listener on unmount
+    return () => {
+      container.removeEventListener('click', handleLinkClick);
+    };
+  }, []);
 
   useEffect(() => {
     fetch(proxyUrl + '/token')
@@ -384,7 +406,7 @@ const ExtensionsComponent = () => {
                 >
                   Login
                 </StyledButton>
-              ) : ( <></> )}
+              ) : (<></>)}
             </AccountDiv>
           </ExtensionWrapper>
           {isLoggedIn && (
@@ -505,16 +527,16 @@ const ExtensionsComponent = () => {
                                 ? pattern.catalog_data.type
                                 : "deployment";
                             return (
-                             <SistentThemeProviderWithoutBaseLine>                          
-                              <CatalogCard
-                                pattern={pattern}
-                                key={`design-${index}`}
-                                patternType={patternType}
-                                catalog={true}
-                                cardHeight='18rem'
-                                cardWidth='15rem'
-                              />                            
-                             </SistentThemeProviderWithoutBaseLine>
+                              <SistentThemeProviderWithoutBaseLine>
+                                <CatalogCard
+                                  pattern={pattern}
+                                  key={`design-${index}`}
+                                  patternType={patternType}
+                                  catalog={true}
+                                  cardHeight='18rem'
+                                  cardWidth='15rem'
+                                />
+                              </SistentThemeProviderWithoutBaseLine>
                             )
                           })
                         }
@@ -526,10 +548,10 @@ const ExtensionsComponent = () => {
                         Designs
                       </Typography>
                       <a href={user?.role_names?.includes(MESHMAP) ? "https://playground.meshery.io/extension/meshmap" : "https://play.meshery.io"} style={{ textDecoration: "none" }}>
-                      <PublishCard>
-                        <PublishIcon width={"60"} height={"60"} />
-                        <h5>Publish your own design</h5>
-                      </PublishCard>
+                        <PublishCard>
+                          <PublishIcon width={"60"} height={"60"} />
+                          <h5>Publish your own design</h5>
+                        </PublishCard>
                       </a>
                     </div>
                   )}
