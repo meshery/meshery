@@ -46,7 +46,7 @@ It also supports a collaborative environment, where DevOps engineers can share t
 1. **Request to Publish**: The author submits a request to publish their design to the Meshery Catalog, including a description and any relevant considerations.
 2. **Review by Admin**: The workspace owner or admin reviews the design. They have the option to approve, deny, or request changes by commenting on the design.
 3. **Approval Process**:
-    - If the admin **approves** the design, a validation is performed to ensure the design data is accurate. Once validated, the design is published to the catalog.
+    - If the admin or workspace admin **approves** the design, a validation is performed to ensure the design data is accurate. Once validated, the design is published to the catalog.
     - If the admin **denies** the design, feedback is provided for necessary changes. After the changes are made, the design is automatically published with appropriate versioning.
 4. **Ongoing Management**:
     - The author or workspace owner retains permission to edit, delete, or unpublish their designs from the catalog at any time.
