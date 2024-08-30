@@ -78,16 +78,33 @@ evaluate := eval_results if {
 	]
 
 	# all pending relationships are now resolved.
+	# components configurations have been updated.
 	updated_design_file := json.patch(input, [{
 		"op": "replace",
 		"path": "/components",
 		"value": design_file_with_updated_declarations,
 	}])
 
+	components_added := [result |
+		# relationships from registry
+		some relationship in data.relationships
+		new_comps := identify_additions(updated_design_file, relationship)
+		some new_comp in new_comps
+		result := new_comp
+	]
+
+	final_set_of_comps := array.concat(updated_design_file.components, components_added)
+
+	updated_design_file_with_new_comps := json.patch(updated_design_file, [{
+		"op": "replace",
+		"path": "/components",
+		"value": final_set_of_comps,
+	}])
+
 	all_valid_relationships := union({result |
 		# relationships from registry
 		some relationship in data.relationships
-		result := identify_relationship(updated_design_file, relationship)
+		result := identify_relationship(updated_design_file_with_new_comps, relationship)
 	})
 
 	# the evaluate_relationships_added rule can work on the orignal deisng or the updated design.
@@ -104,31 +121,22 @@ evaluate := eval_results if {
 		rel := filter_relationship(relationship, relationships_deleted)
 	]
 
-
-	final_design_file = json.patch(updated_design_file, [{
+	final_design_file = json.patch(updated_design_file_with_new_comps, [{
 		"op": "add",
 		"path": "/relationships",
 		"value": final_rels_with_deletions,
 	}])
 
-	components_added := {result |
-		# relationships from registry
-		some relationship in data.relationships
-		result := identify_additions(final_design_file, relationship)
+	eval_results := {
+		"design": updated_design_file_with_new_comps,
+		"trace": {
+			"componentsUpdated": updated_declarations,
+			"componentsAdded": components_added,
+			"relationshipsAdded": relationships_added,
+			"relationshipsRemoved": relationships_deleted,
+			"relationshipsUpdated": intermediate_rels,
+		},
 	}
-
-	print("COMPS ADDED: ", components_added)
-
-	eval_results := {}
-	# eval_results := {
-	# 	"design": final_design_file,
-	# 	"trace": {
-	# 		"componentsUpdated": updated_declarations,
-	# 		"relationshipsAdded": relationships_added,
-	# 		"relationshipsRemoved": relationships_deleted,
-	# 		"relationshipsUpdated": intermediate_rels,
-	# 	},
-	# }
 }
 
 filter_updated_declaration(declaration, updated_declarations) := obj.declaration if {

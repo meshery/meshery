@@ -5,11 +5,11 @@ import rego.v1
 identify_additions(
 	design_file,
 	relationship,
-) := comps_to_add if {
+) := unique_comps if {
 	lower(relationship.kind) == "hierarchical"
 	lower(relationship.type) == "parent"
 
-	comps_to_add := [{result.id: result} |
+	comps_to_add := {result |
 		some selector_set in relationship.selectors
 
 		mutated_selector_set := union({selector |
@@ -45,7 +45,23 @@ identify_additions(
 		some mutator_selector in mutator_selector_set
 
 		result := process_comps_to_add(design_file, mutated_values, mutator_selector)
-	]
+	}
+
+	unique_comp_ids := {result.id |
+		some key, result in comps_to_add
+	}
+
+	unique_comps := {result |
+		some id in unique_comp_ids
+		component := find_in_comp_array(comps_to_add, id)
+		result := component
+	}
+}
+
+find_in_comp_array(comps, id) := result if {
+	some key, comp in comps
+	comp.id == id
+	result := comp
 }
 
 process_comps_to_add(
@@ -53,18 +69,26 @@ process_comps_to_add(
 	mutated_values, mutator_selector,
 ) := declaration_with_id if {
 	mutator_components := extract_components_by_type(design_file.components, mutator_selector)
-
 	every mutator_component in mutator_components {
 		mutator_values := extract_values(mutator_component, mutator_selector.patch.mutatorRef)
 		not match_object(mutated_values, mutator_values)
 	}
 
+	# location/refs to the configuration for the newly created component.
+	mutator_paths := mutator_selector.patch.mutatorRef
+
+	# values that needs to be assigned at the location/refs for the newly created component.
+	values := [val |
+		some val in mutated_values
+	]
+
+	# set the values that needs to be assigned in the patch object
 	intermediate_patches := [patch |
-		some key, val in mutated_values
+		some i in numbers.range(0, count(mutator_paths) - 1)
 		patch := {
 			"op": "add",
-			"path": key,
-			"value": val,
+			"path": mutator_paths[i],
+			"value": values[i],
 		}
 	]
 
@@ -73,7 +97,7 @@ process_comps_to_add(
 		"model": mutator_selector.model,
 	}
 
-	resultant_patches_to_apply := ensureParentPathsExist(intermediate_patches, component)
+	resultant_patches_to_apply := ensure_parent_paths_exist(intermediate_patches, component)
 
 	declaration := json.patch(component, resultant_patches_to_apply)
 
