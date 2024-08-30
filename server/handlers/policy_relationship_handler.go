@@ -115,6 +115,11 @@ func (h *Handler) EvaluateRelationshipPolicy(
 			evaluationResponse.Design.Relationships = append(evaluationResponse.Design.Relationships, &_r)
 		}
 
+		for _, relationship := range evaluationResponse.Trace.RelationshipsUpdated {
+			_r := relationship
+			evaluationResponse.Design.Relationships = append(evaluationResponse.Design.Relationships, &_r)
+		}
+
 		evaluationResponse.Trace.ComponentsUpdated = compsUpdated
 
 		ec := json.NewEncoder(rw)
