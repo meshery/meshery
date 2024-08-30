@@ -34,7 +34,7 @@
             "model": {
               "name": "meshery-core",
               "registrant": {
-                "kind": "artifacthub"
+                "kind": "meshery"
               }
             },
             "patch": {
