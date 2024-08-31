@@ -50,10 +50,6 @@ import './styles/AnimatedMeshPattern.css';
 import './styles/AnimatedMeshSync.css';
 import PlaygroundMeshDeploy from './extension/AccessMesheryModal';
 import Router from 'next/router';
-import subscribeMeshSyncEvents from '../components/graphql/subscriptions/MeshSyncEventsSubscription';
-import { isTelemetryComponent, TelemetryComps } from '../utils/nameMapper';
-import { extractURLFromScanData } from '../components/ConnectionWizard/helpers/metrics';
-import { formatToTitleCase, updateURLs } from '../utils/utils';
 import { RelayEnvironmentProvider } from 'react-relay';
 import { createRelayEnvironment } from '../lib/relayEnvironment';
 import './styles/charts.css';
@@ -70,6 +66,7 @@ import { store } from '../store';
 import { RTKContext } from '@/store/hooks';
 import classNames from 'classnames';
 import { forwardRef } from 'react';
+import { formatToTitleCase } from '@/utils/utils';
 
 if (typeof window !== 'undefined') {
   require('codemirror/mode/yaml/yaml');
@@ -161,7 +158,6 @@ class MesheryApp extends App {
   constructor() {
     super();
     this.pageContext = getPageContext();
-    this.meshsyncEventsSubscriptionRef = React.createRef();
     this.eventsSubscriptionRef = React.createRef();
     this.fullScreenChanged = this.fullScreenChanged.bind(this);
     this.state = {
@@ -228,53 +224,6 @@ class MesheryApp extends App {
     );
   };
 
-  initMeshSyncEventsSubscription(contexts = []) {
-    if (this.meshsyncEventsSubscriptionRef.current) {
-      this.meshsyncEventsSubscriptionRef.current.dispose();
-    }
-
-    const meshSyncEventsSubscription = subscribeMeshSyncEvents(
-      (result) => {
-        if (result.meshsyncevents.object.kind === 'Service') {
-          const telemetryCompName = isTelemetryComponent(
-            result.meshsyncevents.object?.metadata?.name,
-          );
-          let prometheusURLs = [];
-          let grafanaURLs = [];
-
-          const grafanaUrlsSet = new Set(this.props.telemetryURLs.grafana);
-          const promUrlsSet = new Set(this.props.telemetryURLs.prometheus);
-
-          const eventType = result.meshsyncevents.type;
-          const spec = result?.meshsyncevents?.object?.spec?.attribute;
-          const status = result?.meshsyncevents?.object?.status?.attribute;
-          const data = { spec: JSON.parse(spec), status: JSON.parse(status) };
-
-          if (telemetryCompName === TelemetryComps.GRAFANA) {
-            grafanaURLs = grafanaURLs.concat(extractURLFromScanData(data));
-            updateURLs(grafanaUrlsSet, grafanaURLs, eventType);
-          } else if (telemetryCompName === TelemetryComps.PROMETHEUS) {
-            prometheusURLs = new Set(prometheusURLs.concat(extractURLFromScanData(data)));
-            updateURLs(promUrlsSet, prometheusURLs, eventType);
-          }
-
-          this.props.updateTelemetryUrls({
-            telemetryURLs: {
-              grafana: Array.from(grafanaUrlsSet),
-              prometheus: Array.from(promUrlsSet),
-            },
-          });
-        }
-      },
-      {
-        connectionIDs: getConnectionIDsFromContextIds(contexts, this.props.k8sConfig),
-        eventTypes: ['ADDED', 'DELETED'],
-      },
-    );
-
-    this.meshsyncEventsSubscriptionRef.current = meshSyncEventsSubscription;
-  }
-
   fullScreenChanged = () => {
     this.setState((state) => {
       return { isFullScreenMode: !state.isFullScreenMode };
@@ -302,7 +251,6 @@ class MesheryApp extends App {
       (err) => console.error(err),
     );
 
-    this.initMeshSyncEventsSubscription(this.state.activeK8sContexts);
     // this.initEventsSubscription()
     const k8sContextSubscription = (page = '', search = '', pageSize = '10', order = '') => {
       return subscribeK8sContext(
@@ -372,10 +320,6 @@ class MesheryApp extends App {
         mesheryControllerSubscription.updateSubscription(
           getConnectionIDsFromContextIds(ids, k8sConfig),
         );
-      }
-
-      if (this.meshsyncEventsSubscriptionRef.current) {
-        this.initMeshSyncEventsSubscription(ids);
       }
     }
   }
