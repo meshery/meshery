@@ -2,6 +2,10 @@ package relationship_evaluation_policy
 
 import rego.v1
 
+# The rule is responsible to perform following evaluations:
+# 1. Assess the Design File: Determine if the current components in the design file partially satisfy the defined relationship constraints.
+# 2. Identify Additional Components: If the existing components only partially fulfill the constraints, identify additional components needed, to fully satisfy the relationship requirements.
+
 identify_additions(
 	design_file,
 	relationship,
@@ -9,6 +13,7 @@ identify_additions(
 	lower(relationship.kind) == "hierarchical"
 	lower(relationship.type) == "parent"
 
+	# evaluate for all subTypes.
 	comps_to_add := {result |
 		some selector_set in relationship.selectors
 
