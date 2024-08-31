@@ -1,3 +1,5 @@
+/* jshint esversion: 11 */
+
 /**
  * Finds the host on which Meshery is running, it could be
  * localhost:{port} or an IP adress or a webadress

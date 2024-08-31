@@ -1,5 +1,7 @@
+/* jshint esversion: 6 */
+
 /**
- * function used to calculate the zIndex
+ * Function used to calculate the zIndex
  * @param {number} p - power of zIndex - directly proportional to `zIndex` (css property) value
  * @returns {string} zIndex
  */
@@ -12,5 +14,5 @@ export const ziCalc = (p = 1) => {
     }
     return zIndex;
   }
-  `0`;
+  return '0';
 };
