@@ -107,8 +107,8 @@ evaluate := eval_results if {
 		result := identify_relationship(updated_design_file_with_new_comps, relationship)
 	})
 
-	# the evaluate_relationships_added rule can work on the orignal deisng or the updated design.
-	# because it is concerned only about relationships which is not changed uptil this point.
+	# The evaluate_relationships_added rule can work on the original design or on the updated design.
+	# It is concerned only about relationships which have not changed until this point.
 
 	relationships_added := evaluate_relationships_added(updated_pending_rels, all_valid_relationships)
 
