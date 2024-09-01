@@ -42,7 +42,9 @@ class MyReporter {
     )} | ${result.retry} |`;
     const logs = `${this.countLog}. Project: ${project}, Test: ${
       test.title
-    }, Status: ${this.getStatusEmoji(status)}, Retry: ${result.retry}\n`;
+    }, Status: ${this.getStatusEmoji(status)}, Retry: ${result.retry} ${
+      result?.error ? '\n' + result.error.message : ''
+    }\n`;
 
     process.stdout.write(logs);
 
