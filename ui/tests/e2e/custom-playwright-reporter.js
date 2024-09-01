@@ -5,8 +5,9 @@ import path from 'path';
 
 class MyReporter {
   introMessage = '';
+  totalTests = '';
   expectedTest = '';
-  testTable = ` No | Project | Test Case | Status | Retry |
+  testTable = `| Test | Browser | Test Case | Result | Retries |
 | :---: | :---: | :--- | :---: | :---: |`;
   passed = 0;
   failed = 0;
@@ -16,8 +17,8 @@ class MyReporter {
   countTable = 1;
 
   onBegin(_config, suite) {
-    this.introMessage = `- Test run started at ${moment().format('MMMM Do YYYY, h:mm:ss a')}
-- Number tests cases to run: ${suite.allTests().length}`;
+    this.introMessage = `- Testing started at: ${moment().format('MMMM Do YYYY, h:mm:ss a')}`;
+    this.totalTests = `- Total tests cases: ${suite.allTests().length}`;
   }
 
   // eslint-disable-next-line no-unused-vars
@@ -124,6 +125,7 @@ class MyReporter {
       failed: this.failed,
       flaky: this.flaky,
       skipped: this.skipped,
+      totalTests: this.totalTests,
       testTable: this.testTable,
     });
   }
