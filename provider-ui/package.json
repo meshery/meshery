@@ -39,7 +39,7 @@
     "@cypress/code-coverage": "^3.12.39",
     "cypress": "^13.13.2",
     "eslint": "^8.57.0",
-    "eslint-config-next": "^14.2.4",
+    "eslint-config-next": "^14.2.7",
     "eslint-plugin-cypress": "^3.4.0",
     "start-server-and-test": "^2.0.5"
   },
