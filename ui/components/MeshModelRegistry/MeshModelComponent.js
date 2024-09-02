@@ -231,7 +231,7 @@ const MeshModelComponent_ = ({
             {
               params: {
                 page: searchText ? 0 : relationshipsFilters.page,
-                pagesize: searchText ? 'all' : 25,
+                pagesize: 'all',
                 search: searchText || '',
               },
             },
