@@ -29,7 +29,7 @@ jobs:
       with:
         issue-number: ${{ steps.pr.outputs.PULL_REQUEST }}
         comment-author: 'github-actions[bot]'
-        body-includes: E2E Playwright Test Results
+        body-includes: END-TO-END TESTS
     - name: Delete Previous Comment
       if: steps.fc.outputs.comment-id != ''
       uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
@@ -39,18 +39,19 @@ jobs:
             owner: context.repo.owner,
             repo: context.repo.repo,
             comment_id: ${{ steps.fc.outputs.comment-id }}
+          })
     - name: Comment on staging url
       if: ${{ !cancelled() }}
       uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
       with:
         script: |
-            const fs = require('fs');
-            const PRNumber = Number(fs.readFileSync('./pr/number'));
-            const E2ETestReporter = String(fs.readFileSync('./ui/test-report.md'));
+            const fs = require('fs')
+            const PRNumber = Number(fs.readFileSync('./pr/number'))
+            const E2ETestReporter = String(fs.readFileSync('./ui/test-report.md'))
 
             await github.rest.issues.createComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: PRNumber,
                 body: E2ETestReporter
-            });
+            })
