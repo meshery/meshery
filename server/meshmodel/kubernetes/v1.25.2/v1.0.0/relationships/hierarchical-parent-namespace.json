@@ -38,7 +38,14 @@
                             "patchStrategy": "replace",
                             "mutatedRef": [
                                 [
-                                    "configuration", "metadata", "namespace"
+                                    "configuration",
+                                    "metadata",
+                                    "namespace"
+                                ],
+                                [
+                                    "configuration",
+                                    "metadata",
+                                    "namespace"
                                 ]
                             ],
                             "description": "Namespace configuration to be applied to all namespaced resources."
@@ -58,8 +65,11 @@
                             "patchStrategy": "replace",
                             "mutatorRef": [
                                 [
-                                    "displayName"
-                                ]
+                                    "configuration",
+                                    "metadata",
+                                    "name"
+                                ],
+                                ["displayName"]
                             ],
                             "description": "Namespace configuration to be applied to all namespaced resources."
                         }
