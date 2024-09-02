@@ -17,6 +17,7 @@ import (
 
 	"github.com/layer5io/meshkit/models/events"
 
+	"github.com/layer5io/meshkit/models/meshmodel/registry"
 	regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
 )
 
@@ -92,54 +93,14 @@ func (h *Handler) EvaluateRelationshipPolicy(
 
 	// Create the event but do not notify the client immediately, as the evaluations are frequent and takes up the view area.
 	// go h.config.EventBroadcaster.Publish(userUUID, event)
+	unknownComponents := processEvaluationResponse(h.registryManager, relationshipPolicyEvalPayload, &evaluationResponse)
+	if len(unknownComponents) > 0 {
+		event := events.NewEvent().FromUser(userUUID).FromSystem(*h.SystemID).WithCategory("relationship").WithAction("evaluation").WithSeverity(events.Informational).ActedUpon(patternUUID).WithDescription(fmt.Sprintf("Relationship evaluation for \"%s\" at version \"%s\" resulted in the addition of new components but they are not registered inside the registry.", evaluationResponse.Design.Name, evaluationResponse.Design.Version)).WithMetadata(map[string]interface{}{
+			"ComponentsToBeAdded": unknownComponents,
+		}).Build()
 
-	if relationshipPolicyEvalPayload.Options != nil && relationshipPolicyEvalPayload.Options.ReturnDiffOnly != nil &&
-		*relationshipPolicyEvalPayload.Options.ReturnDiffOnly {
-		compsUpdated := []component.ComponentDefinition{}
-		evaluationResponse.Design.Components = []*component.ComponentDefinition{}
-		evaluationResponse.Design.Relationships = []*relationship.RelationshipDefinition{}
-		for _, component := range evaluationResponse.Trace.ComponentsUpdated {
-			_c := component
-
-			_c.Configuration = core.Format.Prettify(_c.Configuration, false)
-			evaluationResponse.Design.Components = append(evaluationResponse.Design.Components, &_c)
-			compsUpdated = append(compsUpdated, _c)
-		}
-
-		for _, relationship := range evaluationResponse.Trace.RelationshipsAdded {
-			_r := relationship
-			evaluationResponse.Design.Relationships = append(evaluationResponse.Design.Relationships, &_r)
-		}
-		for _, relationship := range evaluationResponse.Trace.RelationshipsRemoved {
-			_r := relationship
-			evaluationResponse.Design.Relationships = append(evaluationResponse.Design.Relationships, &_r)
-		}
-
-		for _, relationship := range evaluationResponse.Trace.RelationshipsUpdated {
-			_r := relationship
-			evaluationResponse.Design.Relationships = append(evaluationResponse.Design.Relationships, &_r)
-		}
-
-		evaluationResponse.Trace.ComponentsUpdated = compsUpdated
-
-		ec := json.NewEncoder(rw)
-		err = ec.Encode(evaluationResponse)
-		if err != nil {
-			h.log.Error(models.ErrEncoding(err, "policy evaluation response"))
-			http.Error(rw, models.ErrEncoding(err, "failed to generate policy evaluation results").Error(), http.StatusInternalServerError)
-			return
-		}
-		return
+		_ = provider.PersistEvent(event)
 	}
-
-	// Before starting the eval the design is de-prettified, so that we can use the relationships def correctly.
-	// The results contain the updated config.
-	// Prettify the design before sending it to client.
-
-	for _, component := range evaluationResponse.Design.Components {
-		component.Configuration = core.Format.Prettify(component.Configuration, false)
-	}
-
 	// write the response
 	ec := json.NewEncoder(rw)
 	err = ec.Encode(evaluationResponse)
@@ -148,6 +109,100 @@ func (h *Handler) EvaluateRelationshipPolicy(
 		http.Error(rw, models.ErrEncoding(err, "failed to generate policy evaluation results").Error(), http.StatusInternalServerError)
 		return
 	}
+}
+
+func processEvaluationResponse(registry *registry.RegistryManager, evalPayload pattern.EvaluationRequest, evalResponse *pattern.EvaluationResponse) []*component.ComponentDefinition {
+	compsUpdated := []component.ComponentDefinition{}
+	compsAdded := []component.ComponentDefinition{}
+
+	// components which were added by the evaluator based on the relationship definition, but doesn't exist in the registry.
+	unknownComponents := []*component.ComponentDefinition{}
+
+	for _, cmp := range evalResponse.Trace.ComponentsAdded {
+		_c := cmp
+
+		compFilter := &regv1beta1.ComponentFilter{
+			Name:       _c.Component.Kind,
+			APIVersion: _c.Component.Version,
+			Version:    _c.Model.Model.Version,
+			ModelName:  _c.Model.Name,
+			Limit:      1,
+		}
+		if _c.Model.Model.Version == "*" {
+			compFilter.Version = ""
+		}
+		entities, _, _, _ := registry.GetEntities(compFilter)
+		if len(entities) == 0 {
+			unknownComponents = append(unknownComponents, &_c)
+			continue
+		}
+		_component, _ := entities[0].(*component.ComponentDefinition)
+
+		_c.Configuration = core.Format.Prettify(_c.Configuration, false)
+		_component.Id = _c.Id
+		if _c.DisplayName != "" {
+			_component.DisplayName = _c.DisplayName
+		}
+		_component.Configuration = _c.Configuration
+		compsAdded = append(compsAdded, *_component)
+	}
+
+	evalResponse.Trace.ComponentsAdded = compsAdded
+
+	for _, component := range evalResponse.Trace.ComponentsUpdated {
+		_c := component
+
+		_c.Configuration = core.Format.Prettify(_c.Configuration, false)
+		compsUpdated = append(compsUpdated, _c)
+	}
+
+	evalResponse.Trace.ComponentsUpdated = compsUpdated
+
+	cmps := append(compsAdded, compsUpdated...)
+
+	if evalPayload.Options != nil && evalPayload.Options.ReturnDiffOnly != nil && *evalPayload.Options.ReturnDiffOnly {
+		evalResponse.Design.Relationships = []*relationship.RelationshipDefinition{}
+		evalResponse.Design.Components = []*component.ComponentDefinition{}
+
+		for _, relationship := range evalResponse.Trace.RelationshipsAdded {
+			_r := relationship
+			evalResponse.Design.Relationships = append(evalResponse.Design.Relationships, &_r)
+		}
+		for _, relationship := range evalResponse.Trace.RelationshipsRemoved {
+			_r := relationship
+			evalResponse.Design.Relationships = append(evalResponse.Design.Relationships, &_r)
+		}
+
+		for _, relationship := range evalResponse.Trace.RelationshipsUpdated {
+			_r := relationship
+			evalResponse.Design.Relationships = append(evalResponse.Design.Relationships, &_r)
+		}
+
+		for _, cmp := range cmps {
+			evalResponse.Design.Components = append(evalResponse.Design.Components, &cmp)
+		}
+		return unknownComponents
+	}
+
+	designComponents := evalResponse.Design.Components
+	evalResponse.Design.Components = []*component.ComponentDefinition{}
+
+	for _, cmp := range designComponents {
+		_c := cmp
+		
+		for _, c := range cmps {
+			if c.Id == _c.Id {
+				_c = &c
+				break
+			}
+		}
+
+		_c.Configuration = core.Format.Prettify(_c.Configuration, false)
+		evalResponse.Design.Components = append(evalResponse.Design.Components, _c)
+
+	}
+
+	return unknownComponents
 }
 
 // unused currently
