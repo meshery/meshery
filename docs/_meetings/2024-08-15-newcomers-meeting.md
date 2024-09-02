@@ -23,6 +23,7 @@
 - Rohit Sharma
 - Divij Sharma
 - Anuj Kumar Sharma
+- Ankit Yadav
 - Ayush Sharma
 - Deep Trivedi
 - Anushka Saxena

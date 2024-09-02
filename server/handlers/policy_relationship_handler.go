@@ -95,11 +95,15 @@ func (h *Handler) EvaluateRelationshipPolicy(
 
 	if relationshipPolicyEvalPayload.Options != nil && relationshipPolicyEvalPayload.Options.ReturnDiffOnly != nil &&
 		*relationshipPolicyEvalPayload.Options.ReturnDiffOnly {
+		compsUpdated := []component.ComponentDefinition{}
 		evaluationResponse.Design.Components = []*component.ComponentDefinition{}
 		evaluationResponse.Design.Relationships = []*relationship.RelationshipDefinition{}
 		for _, component := range evaluationResponse.Trace.ComponentsUpdated {
 			_c := component
+
+			_c.Configuration = core.Format.Prettify(_c.Configuration, false)
 			evaluationResponse.Design.Components = append(evaluationResponse.Design.Components, &_c)
+			compsUpdated = append(compsUpdated, _c)
 		}
 
 		for _, relationship := range evaluationResponse.Trace.RelationshipsAdded {
@@ -111,6 +115,21 @@ func (h *Handler) EvaluateRelationshipPolicy(
 			evaluationResponse.Design.Relationships = append(evaluationResponse.Design.Relationships, &_r)
 		}
 
+		for _, relationship := range evaluationResponse.Trace.RelationshipsUpdated {
+			_r := relationship
+			evaluationResponse.Design.Relationships = append(evaluationResponse.Design.Relationships, &_r)
+		}
+
+		evaluationResponse.Trace.ComponentsUpdated = compsUpdated
+
+		ec := json.NewEncoder(rw)
+		err = ec.Encode(evaluationResponse)
+		if err != nil {
+			h.log.Error(models.ErrEncoding(err, "policy evaluation response"))
+			http.Error(rw, models.ErrEncoding(err, "failed to generate policy evaluation results").Error(), http.StatusInternalServerError)
+			return
+		}
+		return
 	}
 
 	// Before starting the eval the design is de-prettified, so that we can use the relationships def correctly.

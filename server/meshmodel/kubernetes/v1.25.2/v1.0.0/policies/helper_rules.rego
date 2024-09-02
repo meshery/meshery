@@ -94,7 +94,7 @@ group_by_id(objects) := {obj |
 	grouped_objects := [p |
 		some o in objects
 		o.declaration_id == val.declaration_id
-		p := o.patches[_]
+		some p in o.patches
 	]
 
 	obj := {
@@ -112,7 +112,7 @@ extract_components(declarations, selectors) := {declaration.id: declaration |
 }
 
 extract_components_by_type(declarations, selector) := {result |
-	declaration := declarations[_]
+	some declaration in declarations
 
 	is_relationship_feasible(selector, declaration.component.kind)
 	result := declaration
@@ -122,10 +122,10 @@ extract_components_by_type(declarations, selector) := {result |
 # 1. when operators/regex are used in the version fields
 # 2. deny selctor
 
-is_relationship_feasible(selector, compType) if {
+is_relationship_feasible(selector, comp_type) if {
 	selector.kind == "*"
 }
 
-is_relationship_feasible(selector, compType) if {
-	selector.kind == compType
+is_relationship_feasible(selector, comp_type) if {
+	selector.kind == comp_type
 }

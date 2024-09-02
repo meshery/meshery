@@ -1,0 +1,193 @@
+{
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "Domain",
+   "schema": "{\n \"description\": \"Domain is the Schema for the Domains API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"DomainSpec defines the desired state of Domain.\",\n   \"properties\": {\n    \"accessPolicies\": {\n     \"description\": \"Identity and Access Management (IAM) policy document specifying the access\\npolicies for the new domain.\",\n     \"type\": \"string\"\n    },\n    \"advancedOptions\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"Key-value pairs to specify advanced configuration options. The following\\nkey-value pairs are supported:\\n\\n\\n  - \\\"rest.action.multi.allow_explicit_index\\\": \\\"true\\\" | \\\"false\\\" - Note the\\n    use of a string rather than a boolean. Specifies whether explicit references\\n    to indexes are allowed inside the body of HTTP requests. If you want to\\n    configure access policies for domain sub-resources, such as specific indexes\\n    and domain APIs, you must disable this property. Default is true.\\n\\n\\n  - \\\"indices.fielddata.cache.size\\\": \\\"80\\\" - Note the use of a string rather\\n    than a boolean. Specifies the percentage of heap space allocated to field\\n    data. Default is unbounded.\\n\\n\\n  - \\\"indices.query.bool.max_clause_count\\\": \\\"1024\\\" - Note the use of a string\\n    rather than a boolean. Specifies the maximum number of clauses allowed\\n    in a Lucene boolean query. Default is 1,024. Queries with more than the\\n    permitted number of clauses result in a TooManyClauses error.\\n\\n\\n  - \\\"override_main_response_version\\\": \\\"true\\\" | \\\"false\\\" - Note the use of\\n    a string rather than a boolean. Specifies whether the domain reports its\\n    version as 7.10 to allow Elasticsearch OSS clients and plugins to continue\\n    working with it. Default is false when creating a domain and true when\\n    upgrading a domain.\\n\\n\\nFor more information, see Advanced cluster parameters (https://docs.aws.amazon.com/opensearch-service/latest/developerguide/createupdatedomains.html#createdomain-configure-advanced-options).\",\n     \"type\": \"object\"\n    },\n    \"advancedSecurityOptions\": {\n     \"description\": \"Options for fine-grained access control.\",\n     \"properties\": {\n      \"anonymousAuthEnabled\": {\n       \"type\": \"boolean\"\n      },\n      \"enabled\": {\n       \"type\": \"boolean\"\n      },\n      \"internalUserDatabaseEnabled\": {\n       \"type\": \"boolean\"\n      },\n      \"jwtOptions\": {\n       \"description\": \"The JWT authentication and authorization configuration for an Amazon OpenSearch\\nService domain.\",\n       \"properties\": {\n        \"enabled\": {\n         \"type\": \"boolean\"\n        },\n        \"publicKey\": {\n         \"type\": \"string\"\n        },\n        \"rolesKey\": {\n         \"type\": \"string\"\n        },\n        \"subjectKey\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"masterUserOptions\": {\n       \"description\": \"Credentials for the master user for a domain.\",\n       \"properties\": {\n        \"masterUserARN\": {\n         \"description\": \"The Amazon Resource Name (ARN) of the domain. See Identifiers for IAM Entities\\n(https://docs.aws.amazon.com/IAM/latest/UserGuide/index.html) in Using Amazon\\nWeb Services Identity and Access Management for more information.\",\n         \"type\": \"string\"\n        },\n        \"masterUserName\": {\n         \"type\": \"string\"\n        },\n        \"masterUserPassword\": {\n         \"description\": \"SecretKeyReference combines a k8s corev1.SecretReference with a\\nspecific key within the referred-to Secret\",\n         \"properties\": {\n          \"key\": {\n           \"description\": \"Key is the key within the secret\",\n           \"type\": \"string\"\n          },\n          \"name\": {\n           \"description\": \"name is unique within a namespace to reference a secret resource.\",\n           \"type\": \"string\"\n          },\n          \"namespace\": {\n           \"description\": \"namespace defines the space within which the secret name must be unique.\",\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"key\"\n         ],\n         \"type\": \"object\",\n         \"x-kubernetes-map-type\": \"atomic\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"sAMLOptions\": {\n       \"description\": \"The SAML authentication configuration for an Amazon OpenSearch Service domain.\",\n       \"properties\": {\n        \"enabled\": {\n         \"type\": \"boolean\"\n        },\n        \"idp\": {\n         \"description\": \"The SAML identity povider information.\",\n         \"properties\": {\n          \"entityID\": {\n           \"type\": \"string\"\n          },\n          \"metadataContent\": {\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"masterBackendRole\": {\n         \"type\": \"string\"\n        },\n        \"masterUserName\": {\n         \"type\": \"string\"\n        },\n        \"rolesKey\": {\n         \"type\": \"string\"\n        },\n        \"sessionTimeoutMinutes\": {\n         \"format\": \"int64\",\n         \"type\": \"integer\"\n        },\n        \"subjectKey\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"aimlOptions\": {\n     \"description\": \"Options for all machine learning features for the specified domain.\",\n     \"properties\": {\n      \"naturalLanguageQueryGenerationOptions\": {\n       \"description\": \"Container for parameters required to enable the natural language query generation\\nfeature.\",\n       \"properties\": {\n        \"desiredState\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"autoTuneOptions\": {\n     \"description\": \"Options for Auto-Tune.\",\n     \"properties\": {\n      \"desiredState\": {\n       \"description\": \"The Auto-Tune desired state. Valid values are ENABLED and DISABLED.\",\n       \"type\": \"string\"\n      },\n      \"maintenanceSchedules\": {\n       \"items\": {\n        \"description\": \"This object is deprecated. Use the domain's off-peak window (https://docs.aws.amazon.com/opensearch-service/latest/developerguide/off-peak.html)\\nto schedule Auto-Tune optimizations. For migration instructions, see Migrating\\nfrom Auto-Tune maintenance windows (https://docs.aws.amazon.com/opensearch-service/latest/developerguide/off-peak.html#off-peak-migrate).\\n\\n\\nThe Auto-Tune maintenance schedule. For more information, see Auto-Tune for\\nAmazon OpenSearch Service (https://docs.aws.amazon.com/opensearch-service/latest/developerguide/auto-tune.html).\",\n        \"properties\": {\n         \"cronExpressionForRecurrence\": {\n          \"type\": \"string\"\n         },\n         \"duration\": {\n          \"description\": \"The duration of a maintenance schedule. For more information, see Auto-Tune\\nfor Amazon OpenSearch Service (https://docs.aws.amazon.com/opensearch-service/latest/developerguide/auto-tune.html).\",\n          \"properties\": {\n           \"unit\": {\n            \"description\": \"The unit of a maintenance schedule duration. Valid value is HOUR.\",\n            \"type\": \"string\"\n           },\n           \"value\": {\n            \"description\": \"Integer that specifies the value of a maintenance schedule duration.\",\n            \"format\": \"int64\",\n            \"type\": \"integer\"\n           }\n          },\n          \"type\": \"object\"\n         },\n         \"startAt\": {\n          \"format\": \"date-time\",\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"useOffPeakWindow\": {\n       \"type\": \"boolean\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"clusterConfig\": {\n     \"description\": \"Container for the cluster configuration of a domain.\",\n     \"properties\": {\n      \"coldStorageOptions\": {\n       \"description\": \"Container for the parameters required to enable cold storage for an OpenSearch\\nService domain. For more information, see Cold storage for Amazon OpenSearch\\nService (https://docs.aws.amazon.com/opensearch-service/latest/developerguide/cold-storage.html).\",\n       \"properties\": {\n        \"enabled\": {\n         \"type\": \"boolean\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"dedicatedMasterCount\": {\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"dedicatedMasterEnabled\": {\n       \"type\": \"boolean\"\n      },\n      \"dedicatedMasterType\": {\n       \"type\": \"string\"\n      },\n      \"instanceCount\": {\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"instanceType\": {\n       \"type\": \"string\"\n      },\n      \"multiAZWithStandbyEnabled\": {\n       \"type\": \"boolean\"\n      },\n      \"warmCount\": {\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"warmEnabled\": {\n       \"type\": \"boolean\"\n      },\n      \"warmType\": {\n       \"type\": \"string\"\n      },\n      \"zoneAwarenessConfig\": {\n       \"description\": \"The zone awareness configuration for an Amazon OpenSearch Service domain.\",\n       \"properties\": {\n        \"availabilityZoneCount\": {\n         \"format\": \"int64\",\n         \"type\": \"integer\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"zoneAwarenessEnabled\": {\n       \"type\": \"boolean\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"cognitoOptions\": {\n     \"description\": \"Key-value pairs to configure Amazon Cognito authentication. For more information,\\nsee Configuring Amazon Cognito authentication for OpenSearch Dashboards (https://docs.aws.amazon.com/opensearch-service/latest/developerguide/cognito-auth.html).\",\n     \"properties\": {\n      \"enabled\": {\n       \"type\": \"boolean\"\n      },\n      \"identityPoolID\": {\n       \"type\": \"string\"\n      },\n      \"roleARN\": {\n       \"type\": \"string\"\n      },\n      \"userPoolID\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"domainEndpointOptions\": {\n     \"description\": \"Additional options for the domain endpoint, such as whether to require HTTPS\\nfor all traffic.\",\n     \"properties\": {\n      \"customEndpoint\": {\n       \"type\": \"string\"\n      },\n      \"customEndpointCertificateARN\": {\n       \"description\": \"The Amazon Resource Name (ARN) of the domain. See Identifiers for IAM Entities\\n(https://docs.aws.amazon.com/IAM/latest/UserGuide/index.html) in Using Amazon\\nWeb Services Identity and Access Management for more information.\",\n       \"type\": \"string\"\n      },\n      \"customEndpointEnabled\": {\n       \"type\": \"boolean\"\n      },\n      \"enforceHTTPS\": {\n       \"type\": \"boolean\"\n      },\n      \"tlsSecurityPolicy\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"ebsOptions\": {\n     \"description\": \"Container for the parameters required to enable EBS-based storage for an\\nOpenSearch Service domain.\",\n     \"properties\": {\n      \"ebsEnabled\": {\n       \"type\": \"boolean\"\n      },\n      \"iops\": {\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"throughput\": {\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"volumeSize\": {\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"volumeType\": {\n       \"description\": \"The type of EBS volume that a domain uses. For more information, see Configuring\\nEBS-based storage (https://docs.aws.amazon.com/opensearch-service/latest/developerguide/opensearch-createupdatedomains.html#opensearch-createdomain-configure-ebs).\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"encryptionAtRestOptions\": {\n     \"description\": \"Key-value pairs to enable encryption at rest.\",\n     \"properties\": {\n      \"enabled\": {\n       \"type\": \"boolean\"\n      },\n      \"kmsKeyID\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"engineVersion\": {\n     \"description\": \"String of format Elasticsearch_X.Y or OpenSearch_X.Y to specify the engine\\nversion for the OpenSearch Service domain. For example, OpenSearch_1.0 or\\nElasticsearch_7.9. For more information, see Creating and managing Amazon\\nOpenSearch Service domains (https://docs.aws.amazon.com/opensearch-service/latest/developerguide/createupdatedomains.html#createdomains).\",\n     \"type\": \"string\"\n    },\n    \"ipAddressType\": {\n     \"description\": \"Specify either dual stack or IPv4 as your IP address type. Dual stack allows\\nyou to share domain resources across IPv4 and IPv6 address types, and is\\nthe recommended option. If you set your IP address type to dual stack, you\\ncan't change your address type later.\",\n     \"type\": \"string\"\n    },\n    \"logPublishingOptions\": {\n     \"additionalProperties\": {\n      \"description\": \"Specifies whether the Amazon OpenSearch Service domain publishes the OpenSearch\\napplication and slow logs to Amazon CloudWatch. For more information, see\\nMonitoring OpenSearch logs with Amazon CloudWatch Logs (https://docs.aws.amazon.com/opensearch-service/latest/developerguide/createdomain-configure-slow-logs.html).\\n\\n\\nAfter you enable log publishing, you still have to enable the collection\\nof slow logs using the OpenSearch REST API.\",\n      \"properties\": {\n       \"cloudWatchLogsLogGroupARN\": {\n        \"description\": \"ARN of the Cloudwatch log group to publish logs to.\",\n        \"type\": \"string\"\n       },\n       \"enabled\": {\n        \"type\": \"boolean\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"description\": \"Key-value pairs to configure log publishing.\",\n     \"type\": \"object\"\n    },\n    \"name\": {\n     \"description\": \"Name of the OpenSearch Service domain to create. Domain names are unique\\nacross the domains owned by an account within an Amazon Web Services Region.\",\n     \"type\": \"string\"\n    },\n    \"nodeToNodeEncryptionOptions\": {\n     \"description\": \"Enables node-to-node encryption.\",\n     \"properties\": {\n      \"enabled\": {\n       \"type\": \"boolean\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"offPeakWindowOptions\": {\n     \"description\": \"Specifies a daily 10-hour time block during which OpenSearch Service can\\nperform configuration changes on the domain, including service software updates\\nand Auto-Tune enhancements that require a blue/green deployment. If no options\\nare specified, the default start time of 10:00 P.M. local time (for the Region\\nthat the domain is created in) is used.\",\n     \"properties\": {\n      \"enabled\": {\n       \"type\": \"boolean\"\n      },\n      \"offPeakWindow\": {\n       \"description\": \"A custom 10-hour, low-traffic window during which OpenSearch Service can\\nperform mandatory configuration changes on the domain. These actions can\\ninclude scheduled service software updates and blue/green Auto-Tune enhancements.\\nOpenSearch Service will schedule these actions during the window that you\\nspecify.\\n\\n\\nIf you don't specify a window start time, it defaults to 10:00 P.M. local\\ntime.\\n\\n\\nFor more information, see Defining off-peak maintenance windows for Amazon\\nOpenSearch Service (https://docs.aws.amazon.com/opensearch-service/latest/developerguide/off-peak.html).\",\n       \"properties\": {\n        \"windowStartTime\": {\n         \"description\": \"The desired start time for an off-peak maintenance window (https://docs.aws.amazon.com/opensearch-service/latest/APIReference/API_OffPeakWindow.html).\",\n         \"properties\": {\n          \"hours\": {\n           \"format\": \"int64\",\n           \"type\": \"integer\"\n          },\n          \"minutes\": {\n           \"format\": \"int64\",\n           \"type\": \"integer\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"softwareUpdateOptions\": {\n     \"description\": \"Software update options for the domain.\",\n     \"properties\": {\n      \"autoSoftwareUpdateEnabled\": {\n       \"type\": \"boolean\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"tags\": {\n     \"description\": \"List of tags to add to the domain upon creation.\",\n     \"items\": {\n      \"description\": \"A tag (key-value pair) for an Amazon OpenSearch Service resource.\",\n      \"properties\": {\n       \"key\": {\n        \"description\": \"A string between 1 to 128 characters that specifies the key for a tag. Tag\\nkeys must be unique for the domain to which they're attached.\",\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"description\": \"A string between 0 to 256 characters that specifies the value for a tag.\\nTag values can be null and don't have to be unique in a tag set.\",\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"vpcOptions\": {\n     \"description\": \"Container for the values required to configure VPC access domains. If you\\ndon't specify these values, OpenSearch Service creates the domain with a\\npublic endpoint. For more information, see Launching your Amazon OpenSearch\\nService domains using a VPC (https://docs.aws.amazon.com/opensearch-service/latest/developerguide/vpc.html).\",\n     \"properties\": {\n      \"securityGroupIDs\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"subnetIDs\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"name\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Domain\",\n \"type\": \"object\"\n}",
+   "version": "opensearchservice.services.k8s.aws/v1alpha1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "Domain",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "published": false,
+   "source_uri": "git://github.com/aws-controllers-k8s/opensearchservice-controller/main/helm"
+  },
+  "model": {
+   "category": {
+    "name": "Observability and Analysis"
+   },
+   "displayName": "AWS OpenSearch Service",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "isAnnotation": false,
+    "primaryColor": "#E7157B",
+    "shape": "rectangle",
+    "source_uri": "git://github.com/aws-controllers-k8s/opensearchservice-controller/main/helm",
+    "styleOverrides": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "model": {
+    "version": "v0.0.28"
+   },
+   "name": "aws-opensearchservice-controller",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "github",
+    "name": "Github",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "subCategory": "Logging",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "ignored",
+  "styles": {
+   "primaryColor": "#E7157B",
+   "shape": "rectangle",
+   "svgColor": "",
+   "svgWhite": ""
+  },
+  "version": "v1.0.0"
+ }

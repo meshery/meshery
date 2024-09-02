@@ -5,31 +5,47 @@ import path from 'path';
 
 class MyReporter {
   introMessage = '';
-  failsMessage = '';
+  totalTests = '';
+  expectedTest = '';
+  testTable = `| Test | Browser | Test Case | Result | Retries |
+| :---: | :---: | :--- | :---: | :---: |`;
   passed = 0;
   failed = 0;
   skipped = 0;
+  flaky = 0;
+  count = 1;
 
-  onBegin(config, suite) {
-    this.introMessage = `- Test run started at ${moment().format('MMMM Do YYYY, h:mm:ss a')}
-- Number tests cases to run: ${suite.allTests().length}`;
+  onBegin(_config, suite) {
+    this.introMessage = `- Testing started at: ${moment().format('MMMM Do YYYY, h:mm:ss a')}`;
+    this.totalTests = `- Total tests cases: ${suite.allTests().length}`;
+  }
+
+  // eslint-disable-next-line no-unused-vars
+  onStdOut(chunk, _test, _result) {
+    const text = chunk.toString('utf-8');
+    process.stdout.write(text);
+  }
+
+  // eslint-disable-next-line no-unused-vars
+  onStdErr(chunk, _test, _result) {
+    const text = chunk.toString('utf-8');
+    process.stderr.write(text);
   }
 
   onTestEnd(test, result) {
-    switch (result.status) {
-      case 'failed':
-      case 'timedOut':
-        this.addFailMessage(`❌ Test ${test.title} failed\n>${result.error?.message}`);
-        this.failed++;
-        break;
-      case 'skipped':
-        this.addFailMessage(`⚠️ Test ${test.title} skipped`);
-        this.skipped++;
-        break;
-      case 'passed':
-        this.passed++;
-        break;
-    }
+    const status = test.outcome();
+    const project = test.parent.project().name;
+
+    const message = `| ${this.count} | ${project} | ${test.title} | ${this.getStatusEmoji(
+      status,
+    )} | ${result.retry} |`;
+    const logs = `${this.count}. Project: ${project}, Test: ${
+      test.title
+    }, Status: ${this.getStatusEmoji(status)}, Retry: ${result.retry}\n`;
+
+    process.stdout.write(logs);
+    this.addTestTable(message, status);
+    this.countTest(status);
   }
 
   async onEnd(result) {
@@ -42,8 +58,40 @@ class MyReporter {
     }
   }
 
-  addFailMessage(message) {
-    this.failsMessage += `\n${message}`;
+  addTestTable(message, status) {
+    if (status === 'expected') return;
+    this.testTable += `\n${message}`;
+  }
+
+  countTest(status) {
+    if (status === 'expected') {
+      this.passed++;
+    }
+    if (status === 'unexpected') {
+      this.failed++;
+    }
+    if (status === 'flaky') {
+      this.flaky++;
+    }
+    if (status === 'skipped') {
+      this.skipped++;
+    }
+    this.count++;
+  }
+
+  getStatusEmoji(status) {
+    if (status === 'expected') {
+      return '✅';
+    }
+    if (status === 'unexpected') {
+      return '❌';
+    }
+    if (status === 'flaky') {
+      return '⚠️';
+    }
+    if (status === 'skipped') {
+      return '➖';
+    }
   }
 
   async buildMessage(result) {
@@ -57,8 +105,10 @@ class MyReporter {
       seconds,
       passed: this.passed,
       failed: this.failed,
+      flaky: this.flaky,
       skipped: this.skipped,
-      failsMessage: this.failsMessage,
+      totalTests: this.totalTests,
+      testTable: this.testTable,
     });
   }
 }
