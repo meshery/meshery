@@ -32,7 +32,7 @@
         </a>
         <!--Version Selector -->
         <select
-          onchange="window.location=this.value"
+          onchange="changeVersion(this.value)"
           class="appearance-none flex-1 w-full px-0 py-1 placeholder-gray-900 tracking-wide focus:outline-none version-selector"
           name="versioningSelection"
           id="versioningSelection"
@@ -48,10 +48,29 @@
             value="{% if link.url %}{{ site.baseurl }}/{{ link.url }}{% endif %}"
             class="nav-item mr-4 mb-2 mb-lg-0 text-black"
           >
-            <span>{{ link.version }}</span>
+          {{ link.version }}
           </option>
           {% endfor %}
         </select>
+        <script>
+          // Function to change the version and retain the selected option
+          function changeVersion(version) {
+            window.location.href = version;
+          }
+        
+          // On page load, set the selected option based on the current URL
+          document.addEventListener("DOMContentLoaded", function () {
+            var currentPath = window.location.pathname;
+            var selector = document.getElementById("versioningSelection");
+        
+            for (var i = 0; i < selector.options.length; i++) {
+              if (selector.options[i].value === currentPath) {
+                selector.selectedIndex = i;
+                break;
+              }
+            }
+          });
+        </script>
       </ul>
     </div>
 
