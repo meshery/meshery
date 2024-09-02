@@ -1,7 +1,6 @@
 /* eslint-disable react/display-name */
 import {
   Box,
-  Button,
   Dialog,
   DialogActions,
   DialogContent,
@@ -102,6 +101,7 @@ import { ValidateDesign } from './DesignLifeCycle/ValidateDesign';
 import PatternConfigureIcon from '@/assets/icons/PatternConfigure';
 // import { useGetUserPrefQuery } from '@/rtk-query/user';
 import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
+import TooltipButton from '@/utils/TooltipButton';
 
 const genericClickHandler = (ev, fn) => {
   ev.stopPropagation();
@@ -1534,7 +1534,8 @@ function MesheryPatterns({
                   <div className={classes.createButton}>
                     {disableCreateImportDesignButton ? null : (
                       <div style={{ display: 'flex', order: '1' }}>
-                        <Button
+                        <TooltipButton
+                          title="Create Design"
                           aria-label="Add Pattern"
                           variant="contained"
                           color="primary"
@@ -1548,8 +1549,9 @@ function MesheryPatterns({
                         >
                           <AddIcon className={classes.addIcon} />
                           <span className={classes.btnText}> Create Design </span>
-                        </Button>
-                        <Button
+                        </TooltipButton>
+                        <TooltipButton
+                          title="Import Design"
                           aria-label="Add Pattern"
                           variant="contained"
                           color="primary"
@@ -1561,7 +1563,7 @@ function MesheryPatterns({
                         >
                           <PublishIcon className={classes.addIcon} />
                           <span className={classes.btnText}> Import Design </span>
-                        </Button>
+                        </TooltipButton>
                       </div>
                     )}
                   </div>

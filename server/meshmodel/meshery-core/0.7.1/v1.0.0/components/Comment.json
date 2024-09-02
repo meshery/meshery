@@ -119,6 +119,7 @@
   "status": "enabled",
   "styles": {
    "height": 22,
+   "padding": 10,
    "primaryColor": "#FFDE00",
    "secondaryColor": "#FFDE00",
    "shape": "tag",

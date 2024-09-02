@@ -1,0 +1,56 @@
+{
+    "schemaVersion": "relationships.meshery.io/v1alpha3",
+    "version": "v1.0.0",
+    "kind": "hierarchical",
+    "type": "sibling",
+    "subType": "backup",
+    "selectors": [
+      {
+        "allow": {
+          "from": [
+            {
+              "kind": "DBClusterSnapshot",
+              "model": {
+                "name": "aws-rds-controller",
+                "registrant": {
+                 "name": "github"
+                }
+              },
+              "patch": {
+                "patchStrategy": "merge",
+                "mutatorRef": [
+                  [
+                    "spec",
+                    "dbClusterIdentifier"
+                  ]
+                ],
+                "description": "The DBClusterSnapshot is a backup of the DBCluster and references the DBCluster's identifier."
+              }
+            }
+          ],
+          "to": [
+            {
+              "kind": "DBCluster",
+              "model": {
+                "name": "aws-rds-controller",
+                "registrant": {
+                 "name": "github"
+                }
+              },
+              "patch": {
+                "patchStrategy": "replace",
+                "mutatedRef": [
+                  [
+                    "status",
+                    "dbClusterSnapshot"
+                  ]
+                ],
+                "description": "The DBCluster can have multiple snapshots, each providing a backup of its state at a given point in time."
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+  
