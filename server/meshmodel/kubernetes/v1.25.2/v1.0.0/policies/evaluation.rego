@@ -128,7 +128,7 @@ evaluate := eval_results if {
 	}])
 
 	eval_results := {
-		"design": updated_design_file_with_new_comps,
+		"design": final_design_file,
 		"trace": {
 			"componentsUpdated": updated_declarations,
 			"componentsAdded": components_added,

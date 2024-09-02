@@ -36,7 +36,6 @@ identify_additions(
 		mutated_components := extract_components_by_type(design_file.components, mutated_selector)
 
 		some mutated_component in mutated_components
-
 		mutated_values := extract_values(mutated_component, mutated_selector.patch.mutatedRef)
 
 		# For all paths specifed in the ref, ensure the values exists.
@@ -83,9 +82,6 @@ process_comps_to_add(
 	mutator_paths := mutator_selector.patch.mutatorRef
 
 	# values that needs to be assigned at the location/refs for the newly created component.
-	values := [val |
-		some val in mutated_values
-	]
 
 	# set the values that needs to be assigned in the patch object
 	intermediate_patches := [patch |
@@ -93,7 +89,7 @@ process_comps_to_add(
 		patch := {
 			"op": "add",
 			"path": mutator_paths[i],
-			"value": values[i],
+			"value": mutated_values[i],
 		}
 	]
 

@@ -41,7 +41,8 @@
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "configuration"
+                  "configuration",
+                  "spec"
                 ]
               ],
               "description": "Containers contain the configuration for the application that is to be run. They include environment variables, ports, and other configuration."
