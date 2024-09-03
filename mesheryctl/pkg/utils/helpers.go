@@ -1135,6 +1135,9 @@ func SetOverrideValues(ctx *config.Context, mesheryImageVersion, callbackURL, pr
 		"meshery-app-mesh": map[string]interface{}{
 			"enabled": false,
 		},
+		"meshery-nighthawk": map[string]interface{}{
+			"enabled": false,
+		},
 	}
 
 	// set the "enabled" field to true only for the components listed in the context
