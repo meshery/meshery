@@ -13,7 +13,8 @@ class MyReporter {
   failed = 0;
   skipped = 0;
   flaky = 0;
-  count = 1;
+  countLog = 1;
+  countTable = 1;
 
   onBegin(_config, suite) {
     this.introMessage = `- Testing started at: ${moment().format('MMMM Do YYYY, h:mm:ss a')}`;
@@ -36,16 +37,8 @@ class MyReporter {
     const status = test.outcome();
     const project = test.parent.project().name;
 
-    const message = `| ${this.count} | ${project} | ${test.title} | ${this.getStatusEmoji(
-      status,
-    )} | ${result.retry} |`;
-    const logs = `${this.count}. Project: ${project}, Test: ${
-      test.title
-    }, Status: ${this.getStatusEmoji(status)}, Retry: ${result.retry}\n`;
-
-    process.stdout.write(logs);
-    this.addTestTable(message, status);
-    this.countTest(status);
+    this.displayLogs(project, test.title, status, result);
+    this.addTestTable(project, test.title, status, result.retry, test.retries);
   }
 
   async onEnd(result) {
@@ -58,25 +51,64 @@ class MyReporter {
     }
   }
 
-  addTestTable(message, status) {
-    if (status === 'expected') return;
-    this.testTable += `\n${message}`;
+  displayLogs(project, title, status, result) {
+    const logs = `${
+      this.countLog
+    }. Project: ${project}, Test: ${title}, Status: ${this.getStatusEmoji(status)}, Retry: ${
+      result.retry
+    } ${
+      status === 'unexpected' && result.error !== undefined
+        ? '\n' +
+            `File Location: ${result.error.location?.file ?? 'Not Found'}` +
+            '\n' +
+            result.error?.snippet ?? 'No snippet' + '\n' + result.error?.message
+        : ''
+    }\n`;
+
+    process.stdout.write(logs);
+
+    this.countLog++;
   }
 
-  countTest(status) {
+  addTestTable(project, title, status, retry, retries) {
+    this.countTestStatus(status, retry, retries);
+
+    if (status === 'expected') return;
+
+    const lastRetriesRun = retry === retries;
+    const isFail = status === 'unexpected';
+    const isSkipped = status === 'skipped';
+
+    if ((isFail || isSkipped) && !lastRetriesRun) {
+      return;
+    }
+
+    const message = `| ${this.countTable} | ${project} | ${title} | ${this.getStatusEmoji(
+      status,
+    )} | ${retry} |`;
+
+    this.testTable += `\n${message}`;
+    this.countTable++;
+  }
+
+  countTestStatus(status, retry, retries) {
+    const lastRetriesRun = retry === retries;
+    const isFail = status === 'unexpected';
+    const isSkipped = status === 'skipped';
+    const isFlaky = status === 'flaky';
+
     if (status === 'expected') {
       this.passed++;
     }
-    if (status === 'unexpected') {
-      this.failed++;
-    }
-    if (status === 'flaky') {
+    if (isFlaky) {
       this.flaky++;
     }
-    if (status === 'skipped') {
+    if (isFail && lastRetriesRun) {
+      this.failed++;
+    }
+    if (isSkipped && lastRetriesRun) {
       this.skipped++;
     }
-    this.count++;
   }
 
   getStatusEmoji(status) {

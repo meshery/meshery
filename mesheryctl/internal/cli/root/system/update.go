@@ -191,7 +191,7 @@ mesheryctl system update --skip-reset
 			latest := latestVersions[len(latestVersions)-1]
 			if latest != version {
 				log.Printf("A new release of mesheryctl is available: %s → %s", version, latest)
-				log.Printf("https://github.com/meshery/meshery/releases/tag/%s", latest)
+				log.Printf("https://docs.meshery.io/project/releases/%s", latest)
 				log.Print("Check https://docs.meshery.io/installation/upgrades#upgrading-meshery-cli for instructions on how to update mesheryctl\n")
 			}
 		}
