@@ -230,7 +230,7 @@ server-no-content:
 server-playground: dep-check
 	cd server; cd cmd; go mod tidy; \
 	BUILD="$(GIT_VERSION)" \
-	PROVIDER=$(REMOTE_PROVIDER) \
+	PROVIDER=$(LOCAL_PROVIDER) \
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
 	PORT=9081 \
 	DEBUG=true \

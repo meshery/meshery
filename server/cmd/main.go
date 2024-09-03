@@ -242,7 +242,9 @@ func main() {
 		Log:                             log,
 	}
 	lProv.Initialize()
-
+	if viper.GetBool("PLAYGROUND") {
+		lProv.DownloadProviderExtensionPackage()
+	}
 	hc := &models.HandlerConfig{
 		Providers:              provs,
 		ProviderCookieName:     "meshery-provider",
@@ -283,7 +285,7 @@ func main() {
 		} else {
 			rego = *r
 		}
-		
+
 		krh.SeedKeys(viper.GetString("KEYS_PATH"))
 		hc.MeshModelSummaryChannel.Publish()
 	}()

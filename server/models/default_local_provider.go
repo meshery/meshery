@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"path"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -33,6 +34,7 @@ import (
 	"github.com/spf13/viper"
 	"gopkg.in/yaml.v2"
 	"gorm.io/gorm"
+	"k8s.io/client-go/util/homedir"
 )
 
 // DefaultLocalProvider - represents a local provider
@@ -71,14 +73,176 @@ func (l *DefaultLocalProvider) Initialize() {
 		"Free Use",
 	}
 	l.ProviderType = LocalProviderType
+	l.IntializePackage()
+	l.InitializeExtension()
+	l.InitializeCapabilities()
+	l.InitializeAccess()
+}
+
+func (l *DefaultLocalProvider) InitializeAccess() {
+	if viper.GetBool("PLAYGROUND") {
+		var restricted RestrictedAccess
+		restricted.IsMesheryUIRestricted = true
+		restricted.AllowedComponents.Navigator = NavigatorComponents{
+			Help: true,
+		}
+		restricted.AllowedComponents.Header = HeaderComponents{
+			ContextSwitcher: true,
+			Notifications:   true,
+			Profile:         true,
+		}
+		l.RestrictedAccess = restricted
+	}
+}
+func (l *DefaultLocalProvider) IntializePackage() {
 	l.PackageVersion = viper.GetString("BUILD")
 	l.PackageURL = ""
+	playground := viper.GetBool("PLAYGROUND")
+	if playground {
+		version := viper.GetString("BUILD")
+		os := viper.GetString("OS")
+		mesheryCloudURL := "https://meshery.layer5.io"
+		finalURL := fmt.Sprintf("%s/%s/capabilities?os=%s&playground=%s", mesheryCloudURL, version, os, strconv.FormatBool(playground))
+		finalURL = strings.TrimSuffix(finalURL, "\n")
+		remoteProviderURL, err := url.Parse(finalURL)
+		if err != nil {
+			l.Log.Error(ErrUrlParse(err))
+			return
+		}
+		req, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
+
+		c := &http.Client{}
+		resp, err := c.Do(req)
+
+		if err != nil && resp == nil {
+			l.Log.Error(ErrUnreachableRemoteProvider(err))
+			return
+		}
+		if err != nil || resp.StatusCode != http.StatusOK {
+			l.Log.Error(ErrFetch(err, "Capabilities", resp.StatusCode))
+			return
+		}
+		defer func() {
+			err := resp.Body.Close()
+			if err != nil {
+				err := ErrCloseIoReader(err)
+				l.Log.Error(err)
+			}
+		}()
+		var providerProperties ProviderProperties
+		decoder := json.NewDecoder(resp.Body)
+		if err := decoder.Decode(&providerProperties); err != nil {
+			err = ErrUnmarshal(err, "provider properties")
+			l.Log.Error(err)
+			return
+		}
+		l.PackageVersion = providerProperties.PackageVersion
+		l.PackageURL = providerProperties.PackageURL
+	}
+
+}
+func (l *DefaultLocalProvider) InitializeExtension() {
+	if viper.GetBool("PLAYGROUND") {
+		var extentsion Extensions
+		trueVal := true
+		falseVal := false
+		NavigatorExtension := NavigatorExtension{
+			Title:           "Meshmap",
+			OnClickCallback: 1,
+			Href: Href{
+				URI:      "/meshmap",
+				External: &falseVal,
+			},
+			Component: "/provider/navigator/meshmap/index.js",
+			Icon:      "/provider/navigator/img/meshmap-icon.svg",
+			Link:      &trueVal,
+			Show:      &trueVal,
+			Type:      "full_page",
+			AllowedTo: MeshMapComponentSet{
+				Designer: DesignerComponents{
+					Design:      trueVal,
+					Application: trueVal,
+					Filter:      trueVal,
+					Save:        trueVal,
+					New:         trueVal,
+					SaveAs:      trueVal,
+				},
+			},
+			IsBeta: &trueVal,
+		}
+		UserPrefs := UserPrefsExtension{
+			Component: "/provider/userpref/meshmap_userpref/index.js",
+			Type:      "component",
+		}
+		GraphQLExtension := GraphQLExtension{
+			Component: "meshmap",
+			Path:      "provider/navigator/meshmap/graphql/plugin.so",
+			Type:      "backend",
+		}
+		// AccountExtension := AccountExtensions{
+		// 	{
+		// 		Title:           "Profile",
+		// 		OnClickCallback: 1,
+		// 		Href: Href{
+		// 			URI:      "https://meshery.layer5.io/user/958953e8-890e-4217-93f9-84322cc5f952",
+		// 			External: &trueVal,
+		// 		},
+		// 		Link: &trueVal,
+		// 		Show: &trueVal,
+		// 		Type: "full_page",
+		// 	},
+		// 	{
+		// 		Title:           "Cloud",
+		// 		OnClickCallback: 1,
+		// 		Href: Href{
+		// 			URI:      "https://meshery.layer5.io",
+		// 			External: &trueVal,
+		// 		},
+		// 		Link: &trueVal,
+		// 		Show: &trueVal,
+		// 		Type: "link",
+		// 	},
+		// }
+
+		CollaboratorExtension := CollaboratorExtension{
+			Component: "/provider/collaborator/avatar/index.js",
+			Type:      "component",
+		}
+		extentsion.GraphQL = append(extentsion.GraphQL, GraphQLExtension)
+		extentsion.Navigator = append(extentsion.Navigator, NavigatorExtension)
+		extentsion.UserPrefs = append(extentsion.UserPrefs, UserPrefs)
+		// extentsion.Acccount = AccountExtension
+		extentsion.Collaborator = append(extentsion.Collaborator, CollaboratorExtension)
+		l.Extensions = extentsion
+		return
+	}
 	l.Extensions = Extensions{}
+
+}
+
+// assign default value for capabilities for local provider
+func (l *DefaultLocalProvider) InitializeCapabilities() {
 	l.Capabilities = Capabilities{
 		{Feature: PersistMesheryPatterns},
 		{Feature: PersistMesheryApplications},
 		{Feature: PersistMesheryFilters},
 		{Feature: PersistCredentials},
+	}
+}
+func (l *DefaultLocalProvider) DownloadProviderExtensionPackage() {
+	// Location for the package to be stored
+	loc := l.PackageLocation()
+
+	// Skip download if the file is already present
+	if _, err := os.Stat(loc); err == nil {
+		l.Log.Debug(fmt.Sprintf("[Initialize]: Package found at %s skipping download", loc))
+		return
+	}
+
+	l.Log.Debug(fmt.Sprintf("[Initialize]: Package not found at %s proceeding to download", loc))
+	// logrus the provider package
+	if err := TarXZF(l.PackageURL, loc, l.Log); err != nil {
+		l.Log.Error(ErrDownloadPackage(err, "provider package"))
 	}
 }
 
@@ -105,6 +269,9 @@ func (l *DefaultLocalProvider) GetProviderProperties() ProviderProperties {
 // PackageLocation returns an empty string as there is no extension package for
 // the local provider
 func (l *DefaultLocalProvider) PackageLocation() string {
+	if viper.GetBool("PLAYGROUND") {
+		return path.Join(homedir.HomeDir(), ".meshery", "provider", "Playground", l.PackageVersion)
+	}
 	return ""
 }
 
