@@ -1,0 +1,56 @@
+{
+    "schemaVersion": "relationships.meshery.io/v1alpha3",
+    "version": "v1.0.0",
+    "kind": "hierarchical",
+    "type": "parent",
+    "subType": "inventory",
+    "selectors": [
+      {
+        "allow": {
+          "from": [
+            {
+              "kind": "GlobalCluster",
+              "model": {
+                "name": "aws-rds-controller",
+                "registrant": {
+                 "name": "github"
+                }
+              },
+              "patch": {
+                "patchStrategy": "merge",
+                "mutatorRef": [
+                  [
+                    "spec",
+                    "globalClusterIdentifier"
+                  ]
+                ],
+                "description": "The GlobalCluster manages multiple DBClusters across different regions for high availability and disaster recovery."
+              }
+            }
+          ],
+          "to": [
+            {
+              "kind": "DBCluster",
+              "model": {
+                "name": "aws-rds-controller",
+                "registrant": {
+                 "name": "github"
+                }
+              },
+              "patch": {
+                "patchStrategy": "replace",
+                "mutatedRef": [
+                  [
+                    "status",
+                    "globalClusterMember"
+                  ]
+                ],
+                "description": "The DBCluster is a part of a GlobalCluster, contributing to the global database system."
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+  

@@ -72,3 +72,21 @@ identify_mutated(from_selector, to_selector, from_declaration, to_declaration) :
 		"paths": to_selector.patch.mutatedRef,
 	}
 }
+
+mutator_selectors(selector_set) := {selector |
+	some selector in selector_set
+	contains_mutator_selector(selector)
+}
+
+mutated_selectors(selector_set) := {selector |
+	some selector in selector_set
+	contains_mutated_selector(selector)
+}
+
+contains_mutator_selector(selector) if {
+	selector.patch.mutatorRef
+}
+
+contains_mutated_selector(selector) if {
+	selector.patch.mutatedRef
+}
