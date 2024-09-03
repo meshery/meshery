@@ -24,7 +24,6 @@ import InfoModal from '../components/Modals/Information/InfoModal';
 import ConfigurationSubscription from '../components/graphql/subscriptions/ConfigurationSubscription';
 import PromptComponent from './PromptComponent';
 import { CapabilitiesRegistry } from '../utils/disabledComponents';
-import TroubleshootingComponent from './TroubleshootingComponent';
 import { useNotification } from '../utils/hooks/useNotification';
 import Modal, { RJSFModalWrapper } from './Modal';
 import ExportModal from './ExportModal';
@@ -36,6 +35,7 @@ import { ValidateDesign } from './DesignLifeCycle/ValidateDesign';
 import { DryRunDesign } from './DesignLifeCycle/DryRun';
 import { DeployStepper, UnDeployStepper } from './DesignLifeCycle/DeployStepper';
 import { designValidationMachine } from 'machines/validator/designValidator';
+import Troubleshoot from './TroubleshootingComponent';
 
 const requires = createRequires(getDependencies);
 const useRemoteComponent = createUseRemoteComponent({ requires });
@@ -70,7 +70,7 @@ function NavigatorExtension({
           <code>{err.toString()}</code>
         </div>
         <div style={{ marginTop: '1rem' }}>
-          <TroubleshootingComponent showDesignerButton={false} />
+          <Troubleshoot showDesignerButton={false} />
         </div>
       </div>
     );
