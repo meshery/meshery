@@ -101,8 +101,10 @@ process_comps_to_add(
 	resultant_patches_to_apply := ensure_parent_paths_exist(intermediate_patches, component)
 
 	declaration := json.patch(component, resultant_patches_to_apply)
-
-	id := uuid.rfc4122(json.marshal(declaration))
+	
+	now := format_int(time.now_ns(), 10)
+	
+	id := uuid.rfc4122(sprintf("%s%s", [json.marshal(declaration), now]))
 	declaration_with_id := json.patch(declaration, [{
 		"op": "add",
 		"path": ["id"],
