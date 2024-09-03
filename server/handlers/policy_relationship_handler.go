@@ -127,6 +127,7 @@ func processEvaluationResponse(registry *registry.RegistryManager, evalPayload p
 			Version:    _c.Model.Model.Version,
 			ModelName:  _c.Model.Name,
 			Limit:      1,
+			Trim:       true,
 		}
 		if _c.Model.Model.Version == "*" {
 			compFilter.Version = ""
