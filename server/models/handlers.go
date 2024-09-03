@@ -261,7 +261,6 @@ type HandlerConfig struct {
 	PerformanceChannel       chan struct{}
 	PerformanceResultChannel chan struct{}
 
-	ApplicationChannel        *Broadcast
 	PatternChannel            *Broadcast
 	FilterChannel             *Broadcast
 	EventBroadcaster          *Broadcast

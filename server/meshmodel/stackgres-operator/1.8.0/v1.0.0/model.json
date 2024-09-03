@@ -5,6 +5,7 @@
   "displayName": "Stackgres Operator",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://stackgres.io/downloads/stackgres-k8s/stackgres/1.8.0/helm/stackgres-operator.tgz", 
     "isAnnotation": false,
     "published": true,
     "subCategory": "Database",

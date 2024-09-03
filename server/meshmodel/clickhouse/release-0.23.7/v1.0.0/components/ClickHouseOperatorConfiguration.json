@@ -1,0 +1,195 @@
+{
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "ClickHouseOperatorConfiguration",
+   "schema": "{\n \"description\": \"allows customize `clickhouse-operator` settings, need restart clickhouse-operator pod after adding, more details https://github.com/Altinity/clickhouse-operator/blob/master/docs/operator_configuration.md\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Allows to define settings of the clickhouse-operator.\\nMore info: https://github.com/Altinity/clickhouse-operator/blob/master/config/config.yaml\\nCheck into etc-clickhouse-operator* ConfigMaps if you need more control\\n\",\n   \"format\": \"textarea\",\n   \"properties\": {\n    \"annotation\": {\n     \"description\": \"defines which metadata.annotations items will include or exclude during render StatefulSet, Pod, PVC resources\",\n     \"properties\": {\n      \"exclude\": {\n       \"description\": \"When propagating labels from the chi's `metadata.annotations` section to child objects' `metadata.annotations`,\\nexclude annotations with names from the following list\\n\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"include\": {\n       \"description\": \"When propagating labels from the chi's `metadata.annotations` section to child objects' `metadata.annotations`,\\ninclude annotations with names from the following list\\n\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"clickhouse\": {\n     \"description\": \"Clickhouse related parameters used by clickhouse-operator\",\n     \"properties\": {\n      \"access\": {\n       \"description\": \"parameters which use for connect to clickhouse from clickhouse-operator deployment\",\n       \"properties\": {\n        \"password\": {\n         \"description\": \"ClickHouse password to be used by operator to connect to ClickHouse instances, deprecated, use chCredentialsSecretName\",\n         \"type\": \"string\"\n        },\n        \"port\": {\n         \"description\": \"Port to be used by operator to connect to ClickHouse instances\",\n         \"maximum\": 65535,\n         \"minimum\": 1,\n         \"type\": \"integer\"\n        },\n        \"rootCA\": {\n         \"description\": \"Root certificate authority that clients use when verifying server certificates. Used for https connection to ClickHouse\",\n         \"type\": \"string\"\n        },\n        \"scheme\": {\n         \"description\": \"The scheme to user for connecting to ClickHouse. Possible values: http, https, auto\",\n         \"type\": \"string\"\n        },\n        \"secret\": {\n         \"properties\": {\n          \"name\": {\n           \"description\": \"Name of k8s Secret with username and password to be used by operator to connect to ClickHouse instances\",\n           \"type\": \"string\"\n          },\n          \"namespace\": {\n           \"description\": \"Location of k8s Secret with username and password to be used by operator to connect to ClickHouse instances\",\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"timeouts\": {\n         \"description\": \"Timeouts used to limit connection and queries from the operator to ClickHouse instances, In seconds\",\n         \"properties\": {\n          \"connect\": {\n           \"description\": \"Timout to setup connection from the operator to ClickHouse instances. In seconds.\",\n           \"maximum\": 10,\n           \"minimum\": 1,\n           \"type\": \"integer\"\n          },\n          \"query\": {\n           \"description\": \"Timout to perform SQL query from the operator to ClickHouse instances. In seconds.\",\n           \"maximum\": 600,\n           \"minimum\": 1,\n           \"type\": \"integer\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"username\": {\n         \"description\": \"ClickHouse username to be used by operator to connect to ClickHouse instances, deprecated, use chCredentialsSecretName\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"configuration\": {\n       \"properties\": {\n        \"file\": {\n         \"properties\": {\n          \"path\": {\n           \"description\": \"Each 'path' can be either absolute or relative.\\nIn case path is absolute - it is used as is.\\nIn case path is relative - it is relative to the folder where configuration file you are reading right now is located.\\n\",\n           \"properties\": {\n            \"common\": {\n             \"description\": \"Path to the folder where ClickHouse configuration files common for all instances within a CHI are located.\\nDefault value - config.d\\n\",\n             \"type\": \"string\"\n            },\n            \"host\": {\n             \"description\": \"Path to the folder where ClickHouse configuration files unique for each instance (host) within a CHI are located.\\nDefault value - conf.d\\n\",\n             \"type\": \"string\"\n            },\n            \"user\": {\n             \"description\": \"Path to the folder where ClickHouse configuration files with users settings are located.\\nFiles are common for all instances within a CHI.\\nDefault value - users.d\\n\",\n             \"type\": \"string\"\n            }\n           },\n           \"type\": \"object\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"network\": {\n         \"description\": \"Default network parameters for any user which will create\",\n         \"properties\": {\n          \"hostRegexpTemplate\": {\n           \"description\": \"ClickHouse server configuration `\\u003chost_regexp\\u003e...\\u003c/host_regexp\\u003e` for any \\u003cuser\\u003e\",\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"user\": {\n         \"description\": \"Default parameters for any user which will create\",\n         \"properties\": {\n          \"default\": {\n           \"properties\": {\n            \"networksIP\": {\n             \"description\": \"ClickHouse server configuration `\\u003cnetworks\\u003e\\u003cip\\u003e...\\u003c/ip\\u003e\\u003c/networks\\u003e` for any \\u003cuser\\u003e\",\n             \"items\": {\n              \"type\": \"string\"\n             },\n             \"type\": \"array\"\n            },\n            \"password\": {\n             \"description\": \"ClickHouse server configuration `\\u003cpassword\\u003e...\\u003c/password\\u003e` for any \\u003cuser\\u003e\",\n             \"type\": \"string\"\n            },\n            \"profile\": {\n             \"description\": \"ClickHouse server configuration `\\u003cprofile\\u003e...\\u003c/profile\\u003e` for any \\u003cuser\\u003e\",\n             \"type\": \"string\"\n            },\n            \"quota\": {\n             \"description\": \"ClickHouse server configuration `\\u003cquota\\u003e...\\u003c/quota\\u003e` for any \\u003cuser\\u003e\",\n             \"type\": \"string\"\n            }\n           },\n           \"type\": \"object\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"configurationRestartPolicy\": {\n       \"description\": \"Configuration restart policy describes what configuration changes require ClickHouse restart\",\n       \"properties\": {\n        \"rules\": {\n         \"description\": \"Array of set of rules per specified ClickHouse versions\",\n         \"items\": {\n          \"properties\": {\n           \"rules\": {\n            \"description\": \"Set of configuration rules for specified ClickHouse version\",\n            \"items\": {\n             \"description\": \"setting: value pairs for configuration restart policy\",\n             \"type\": \"object\"\n            },\n            \"type\": \"array\"\n           },\n           \"version\": {\n            \"description\": \"ClickHouse version expression\",\n            \"type\": \"string\"\n           }\n          },\n          \"type\": \"object\"\n         },\n         \"type\": \"array\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"metrics\": {\n       \"description\": \"parameters which use for connect to fetch metrics from clickhouse by clickhouse-operator\",\n       \"properties\": {\n        \"timeouts\": {\n         \"description\": \"Timeouts used to limit connection and queries from the metrics exporter to ClickHouse instances\\nSpecified in seconds.\\n\",\n         \"properties\": {\n          \"collect\": {\n           \"description\": \"Timeout used to limit metrics collection request. In seconds.\\nUpon reaching this timeout metrics collection is aborted and no more metrics are collected in this cycle.\\nAll collected metrics are returned.\\n\",\n           \"maximum\": 600,\n           \"minimum\": 1,\n           \"type\": \"integer\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"label\": {\n     \"description\": \"defines which metadata.labels will include or exclude during render StatefulSet, Pod, PVC resources\",\n     \"properties\": {\n      \"appendScope\": {\n       \"description\": \"Whether to append *Scope* labels to StatefulSet and Pod\\n- \\\"LabelShardScopeIndex\\\"\\n- \\\"LabelReplicaScopeIndex\\\"\\n- \\\"LabelCHIScopeIndex\\\"\\n- \\\"LabelCHIScopeCycleSize\\\"\\n- \\\"LabelCHIScopeCycleIndex\\\"\\n- \\\"LabelCHIScopeCycleOffset\\\"\\n- \\\"LabelClusterScopeIndex\\\"\\n- \\\"LabelClusterScopeCycleSize\\\"\\n- \\\"LabelClusterScopeCycleIndex\\\"\\n- \\\"LabelClusterScopeCycleOffset\\\"\\n\",\n       \"enum\": [\n        \"\",\n        \"0\",\n        \"1\",\n        \"False\",\n        \"false\",\n        \"True\",\n        \"true\",\n        \"No\",\n        \"no\",\n        \"Yes\",\n        \"yes\",\n        \"Off\",\n        \"off\",\n        \"On\",\n        \"on\",\n        \"Disable\",\n        \"disable\",\n        \"Enable\",\n        \"enable\",\n        \"Disabled\",\n        \"disabled\",\n        \"Enabled\",\n        \"enabled\"\n       ],\n       \"type\": \"string\"\n      },\n      \"exclude\": {\n       \"description\": \"When propagating labels from the chi's `metadata.labels` section to child objects' `metadata.labels`,\\nexclude labels from the following list\\n\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"include\": {\n       \"description\": \"When propagating labels from the chi's `metadata.labels` section to child objects' `metadata.labels`,\\ninclude labels from the following list\\n\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"logger\": {\n     \"description\": \"allow setup clickhouse-operator logger behavior\",\n     \"properties\": {\n      \"alsologtostderr\": {\n       \"description\": \"boolean allows logs to stderr and files both\",\n       \"type\": \"string\"\n      },\n      \"log_backtrace_at\": {\n       \"description\": \"It can be set to a file and line number with a logging line.\\nEx.: file.go:123\\nEach time when this line is being executed, a stack trace will be written to the Info log.\\n\",\n       \"type\": \"string\"\n      },\n      \"logtostderr\": {\n       \"description\": \"boolean, allows logs to stderr\",\n       \"type\": \"string\"\n      },\n      \"stderrthreshold\": {\n       \"type\": \"string\"\n      },\n      \"v\": {\n       \"description\": \"verbosity level of clickhouse-operator log, default - 1 max - 9\",\n       \"type\": \"string\"\n      },\n      \"vmodule\": {\n       \"description\": \"Comma-separated list of filename=N, where filename (can be a pattern) must have no .go ext, and N is a V level.\\nEx.: file*=2 sets the 'V' to 2 in all files with names like file*.\\n\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"pod\": {\n     \"description\": \"define pod specific parameters\",\n     \"properties\": {\n      \"terminationGracePeriod\": {\n       \"description\": \"Optional duration in seconds the pod needs to terminate gracefully. \\nLook details in `pod.spec.terminationGracePeriodSeconds`\\n\",\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"reconcile\": {\n     \"description\": \"allow tuning reconciling process\",\n     \"properties\": {\n      \"host\": {\n       \"description\": \"Whether the operator during reconcile procedure should wait for a ClickHouse host:\\n  - to be excluded from a ClickHouse cluster\\n  - to complete all running queries\\n  - to be included into a ClickHouse cluster\\nrespectfully before moving forward\\n\",\n       \"properties\": {\n        \"wait\": {\n         \"properties\": {\n          \"exclude\": {\n           \"description\": \"Whether the operator during reconcile procedure should wait for a ClickHouse host to be excluded from a ClickHouse cluster\",\n           \"enum\": [\n            \"\",\n            \"0\",\n            \"1\",\n            \"False\",\n            \"false\",\n            \"True\",\n            \"true\",\n            \"No\",\n            \"no\",\n            \"Yes\",\n            \"yes\",\n            \"Off\",\n            \"off\",\n            \"On\",\n            \"on\",\n            \"Disable\",\n            \"disable\",\n            \"Enable\",\n            \"enable\",\n            \"Disabled\",\n            \"disabled\",\n            \"Enabled\",\n            \"enabled\"\n           ],\n           \"type\": \"string\"\n          },\n          \"include\": {\n           \"description\": \"Whether the operator during reconcile procedure should wait for a ClickHouse host to be included into a ClickHouse cluster\",\n           \"enum\": [\n            \"\",\n            \"0\",\n            \"1\",\n            \"False\",\n            \"false\",\n            \"True\",\n            \"true\",\n            \"No\",\n            \"no\",\n            \"Yes\",\n            \"yes\",\n            \"Off\",\n            \"off\",\n            \"On\",\n            \"on\",\n            \"Disable\",\n            \"disable\",\n            \"Enable\",\n            \"enable\",\n            \"Disabled\",\n            \"disabled\",\n            \"Enabled\",\n            \"enabled\"\n           ],\n           \"type\": \"string\"\n          },\n          \"queries\": {\n           \"description\": \"Whether the operator during reconcile procedure should wait for a ClickHouse host to complete all running queries\",\n           \"enum\": [\n            \"\",\n            \"0\",\n            \"1\",\n            \"False\",\n            \"false\",\n            \"True\",\n            \"true\",\n            \"No\",\n            \"no\",\n            \"Yes\",\n            \"yes\",\n            \"Off\",\n            \"off\",\n            \"On\",\n            \"on\",\n            \"Disable\",\n            \"disable\",\n            \"Enable\",\n            \"enable\",\n            \"Disabled\",\n            \"disabled\",\n            \"Enabled\",\n            \"enabled\"\n           ],\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"runtime\": {\n       \"description\": \"runtime parameters for clickhouse-operator process which are used during reconcile cycle\",\n       \"properties\": {\n        \"reconcileCHIsThreadsNumber\": {\n         \"description\": \"How many goroutines will be used to reconcile CHIs in parallel, 10 by default\",\n         \"maximum\": 65535,\n         \"minimum\": 1,\n         \"type\": \"integer\"\n        },\n        \"reconcileShardsMaxConcurrencyPercent\": {\n         \"description\": \"The maximum percentage of cluster shards that may be reconciled in parallel, 50 percent by default.\",\n         \"maximum\": 100,\n         \"minimum\": 0,\n         \"type\": \"integer\"\n        },\n        \"reconcileShardsThreadsNumber\": {\n         \"description\": \"How many goroutines will be used to reconcile shards of a cluster in parallel, 1 by default\",\n         \"maximum\": 65535,\n         \"minimum\": 1,\n         \"type\": \"integer\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"statefulSet\": {\n       \"description\": \"Allow change default behavior for reconciling StatefulSet which generated by clickhouse-operator\",\n       \"properties\": {\n        \"create\": {\n         \"description\": \"Behavior during create StatefulSet\",\n         \"properties\": {\n          \"onFailure\": {\n           \"description\": \"What to do in case created StatefulSet is not in Ready after `statefulSetUpdateTimeout` seconds\\nPossible options:\\n1. abort - do nothing, just break the process and wait for admin.\\n2. delete - delete newly created problematic StatefulSet.\\n3. ignore (default) - ignore error, pretend nothing happened and move on to the next StatefulSet.\\n\",\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"update\": {\n         \"description\": \"Behavior during update StatefulSet\",\n         \"properties\": {\n          \"onFailure\": {\n           \"description\": \"What to do in case updated StatefulSet is not in Ready after `statefulSetUpdateTimeout` seconds\\nPossible options:\\n1. abort - do nothing, just break the process and wait for admin.\\n2. rollback (default) - delete Pod and rollback StatefulSet to previous Generation. Pod would be recreated by StatefulSet based on rollback-ed configuration.\\n3. ignore - ignore error, pretend nothing happened and move on to the next StatefulSet.\\n\",\n           \"type\": \"string\"\n          },\n          \"pollInterval\": {\n           \"description\": \"How many seconds to wait between checks for created/updated StatefulSet status\",\n           \"type\": \"integer\"\n          },\n          \"timeout\": {\n           \"description\": \"How many seconds to wait for created/updated StatefulSet to be Ready\",\n           \"type\": \"integer\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"statefulSet\": {\n     \"description\": \"define StatefulSet-specific parameters\",\n     \"properties\": {\n      \"revisionHistoryLimit\": {\n       \"description\": \"revisionHistoryLimit is the maximum number of revisions that will be\\nmaintained in the StatefulSet's revision history.                         \\nLook details in `statefulset.spec.revisionHistoryLimit`\\n\",\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"template\": {\n     \"description\": \"Parameters which are used if you want to generate ClickHouseInstallationTemplate custom resources from files which are stored inside clickhouse-operator deployment\",\n     \"properties\": {\n      \"chi\": {\n       \"properties\": {\n        \"path\": {\n         \"description\": \"Path to folder where ClickHouseInstallationTemplate .yaml manifests are located.\",\n         \"type\": \"string\"\n        },\n        \"policy\": {\n         \"description\": \"CHI template updates handling policy\\nPossible policy values:\\n  - ReadOnStart. Accept CHIT updates on the operators start only.\\n  - ApplyOnNextReconcile. Accept CHIT updates at all time. Apply news CHITs on next regular reconcile of the CHI\\n\",\n         \"enum\": [\n          \"\",\n          \"ReadOnStart\",\n          \"ApplyOnNextReconcile\"\n         ],\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"watch\": {\n     \"description\": \"Parameters for watch kubernetes resources which used by clickhouse-operator deployment\",\n     \"properties\": {\n      \"namespaces\": {\n       \"description\": \"List of namespaces where clickhouse-operator watches for events.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"string\"\n  }\n },\n \"title\": \"Click House Operator Configuration\",\n \"type\": \"object\",\n \"x-kubernetes-preserve-unknown-fields\": true\n}",
+   "version": "clickhouse.altinity.com/v1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "Click House Operator Configuration",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "published": false,
+   "source_uri": "git://github.com/Altinity/clickhouse-operator/master/deploy/helm/clickhouse-operator/crds"
+  },
+  "model": {
+   "category": {
+    "name": "Database"
+   },
+   "displayName": "ClickHouse",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "isAnnotation": false,
+    "primaryColor": "#ffcc00",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "source_uri": "git://github.com/Altinity/clickhouse-operator/master/deploy/helm/clickhouse-operator/crds",
+    "styleOverrides": "",
+    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" height=\"20\" viewBox=\"0 0 9 8\" width=\"20\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"m0 7h1v1h-1z\" fill=\"#f00\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"m0 0h1v7h-1zm2 0h1v8h-1zm2 0h1v8h-1zm2 0h1v8h-1zm2 3.25h1v1.5h-1z\" fill=\"#fc0\"\u003e\u003c/path\u003e\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" id=\"Layer_1\" xmlns:_xmlns=\"xmlns\" _xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 2500 2222\" style=\"enable-background:new 0 0 2500 2222;\" xml:space=\"preserve\" height=\"20\" width=\"20\"\u003e\n\u003cstyle xmlns=\"http://www.w3.org/2000/svg\" type=\"text/css\"\u003e\n\u0026#x9;.st0{opacity:0.8;fill:#FFFFFF;}\n\u0026#x9;.st1{fill:#FFFFFF;}\n\u003c/style\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"st0\" d=\"M0.1,1944.2h277.8V2222H0.1V1944.2z\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"st1\" d=\"M0.1,0h277.8v1944.2H0.1V0z M555.6,0h277.8v2222H555.6V0z M1111.1,0h277.8v2222h-277.8V0z M1666.6,0h277.8v2222\u0026#xA;\u0026#x9;h-277.8V0z M2222.1,902.7h277.8v416.6h-277.8V902.7z\"\u003e\u003c/path\u003e\n\u003c/svg\u003e"
+   },
+   "model": {
+    "version": "release-0.23.7"
+   },
+   "name": "clickhouse",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "github",
+    "name": "Github",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "enabled",
+   "subCategory": "App Definition and Development",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
+   "primaryColor": "#ffcc00",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "svgColor": "\u003csvg height=\"2222\" viewBox=\"0 0 9 8\" width=\"2500\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cpath d=\"m0 7h1v1h-1z\" fill=\"#f00\"/\u003e\u003cpath d=\"m0 0h1v7h-1zm2 0h1v8h-1zm2 0h1v8h-1zm2 0h1v8h-1zm2 3.25h1v1.5h-1z\" fill=\"#fc0\"/\u003e\u003c/svg\u003e",
+   "svgWhite": "\u003csvg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\n\t viewBox=\"0 0 2500 2222\" style=\"enable-background:new 0 0 2500 2222;\" xml:space=\"preserve\"\u003e\n\u003cstyle type=\"text/css\"\u003e\n\t.st0{opacity:0.8;fill:#FFFFFF;}\n\t.st1{fill:#FFFFFF;}\n\u003c/style\u003e\n\u003cpath class=\"st0\" d=\"M0.1,1944.2h277.8V2222H0.1V1944.2z\"/\u003e\n\u003cpath class=\"st1\" d=\"M0.1,0h277.8v1944.2H0.1V0z M555.6,0h277.8v2222H555.6V0z M1111.1,0h277.8v2222h-277.8V0z M1666.6,0h277.8v2222\n\th-277.8V0z M2222.1,902.7h277.8v416.6h-277.8V902.7z\"/\u003e\n\u003c/svg\u003e"
+  },
+  "version": "v1.0.0"
+ }

@@ -5,6 +5,7 @@
   "displayName": "AMD GPU",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://github.com/RadeonOpenCompute/k8s-device-plugin/releases/download/amd-gpu-helm-0.10.0/amd-gpu-0.10.0.tgz", 
     "isAnnotation": false,
     "published": true,
     "subCategory": "Automation \u0026 Configuration",

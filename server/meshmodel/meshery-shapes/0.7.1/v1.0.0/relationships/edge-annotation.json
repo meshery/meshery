@@ -11,7 +11,7 @@
             "line-color": "#00B39F",
             "target-arrow-color": "#00B39F",
             "targetArrowShape": "triangle"
-        },
+        }
     },
     "model": {
         "schemaVersion": "core.meshery.io/v1beta1",

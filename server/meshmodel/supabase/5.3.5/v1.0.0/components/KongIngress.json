@@ -1,0 +1,195 @@
+{
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "KongIngress",
+   "schema": "{\n \"description\": \"KongIngress is the Schema for the kongingresses API.\",\n \"properties\": {\n  \"proxy\": {\n   \"description\": \"Proxy defines additional connection options for the routes to be configured in the\\nKong Gateway, e.g. `connection_timeout`, `retries`, etc.\",\n   \"properties\": {\n    \"connect_timeout\": {\n     \"description\": \"The timeout in milliseconds for\\testablishing a connection to the upstream server.\\nDeprecated: use Service's \\\"konghq.com/connect-timeout\\\" annotation instead.\",\n     \"minimum\": 0,\n     \"type\": \"integer\"\n    },\n    \"path\": {\n     \"description\": \"(optional) The path to be used in requests to the upstream server.\\nDeprecated: use Service's \\\"konghq.com/path\\\" annotation instead.\",\n     \"pattern\": \"^/.*$\",\n     \"type\": \"string\"\n    },\n    \"protocol\": {\n     \"description\": \"The protocol used to communicate with the upstream.\\nDeprecated: use Service's \\\"konghq.com/protocol\\\" annotation instead.\",\n     \"enum\": [\n      \"http\",\n      \"https\",\n      \"grpc\",\n      \"grpcs\",\n      \"tcp\",\n      \"tls\",\n      \"udp\"\n     ],\n     \"type\": \"string\"\n    },\n    \"read_timeout\": {\n     \"description\": \"The timeout in milliseconds between two successive read operations\\nfor transmitting a request to the upstream server.\\nDeprecated: use Service's \\\"konghq.com/read-timeout\\\" annotation instead.\",\n     \"minimum\": 0,\n     \"type\": \"integer\"\n    },\n    \"retries\": {\n     \"description\": \"The number of retries to execute upon failure to proxy.\\nDeprecated: use Service's \\\"konghq.com/retries\\\" annotation instead.\",\n     \"minimum\": 0,\n     \"type\": \"integer\"\n    },\n    \"write_timeout\": {\n     \"description\": \"The timeout in milliseconds between two successive write operations\\nfor transmitting a request to the upstream server.\\nDeprecated: use Service's \\\"konghq.com/write-timeout\\\" annotation instead.\",\n     \"minimum\": 0,\n     \"type\": \"integer\"\n    }\n   },\n   \"type\": \"object\"\n  },\n  \"route\": {\n   \"description\": \"Route define rules to match client requests.\\nEach Route is associated with a Service,\\nand a Service may have multiple Routes associated to it.\",\n   \"properties\": {\n    \"headers\": {\n     \"additionalProperties\": {\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"type\": \"array\"\n     },\n     \"description\": \"Headers contains one or more lists of values indexed by header name\\nthat will cause this Route to match if present in the request.\\nThe Host header cannot be used with this attribute.\\nDeprecated: use Ingress' \\\"konghq.com/headers\\\" annotation instead.\",\n     \"type\": \"object\"\n    },\n    \"https_redirect_status_code\": {\n     \"description\": \"HTTPSRedirectStatusCode is the status code Kong responds with\\nwhen all properties of a Route match except the protocol.\\nDeprecated: use Ingress' \\\"ingress.kubernetes.io/force-ssl-redirect\\\" or\\n\\\"konghq.com/https-redirect-status-code\\\" annotations instead.\",\n     \"type\": \"integer\"\n    },\n    \"methods\": {\n     \"description\": \"Methods is a list of HTTP methods that match this Route.\\nDeprecated: use Ingress' \\\"konghq.com/methods\\\" annotation instead.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"path_handling\": {\n     \"description\": \"PathHandling controls how the Service path, Route path and requested path\\nare combined when sending a request to the upstream.\\nDeprecated: use Ingress' \\\"konghq.com/path-handling\\\" annotation instead.\",\n     \"enum\": [\n      \"v0\",\n      \"v1\"\n     ],\n     \"type\": \"string\"\n    },\n    \"preserve_host\": {\n     \"description\": \"PreserveHost sets When matching a Route via one of the hosts domain names,\\nuse the request Host header in the upstream request headers.\\nIf set to false, the upstream Host header will be that of the Service’s host.\\nDeprecated: use Ingress' \\\"konghq.com/preserve-host\\\" annotation instead.\",\n     \"type\": \"boolean\"\n    },\n    \"protocols\": {\n     \"description\": \"Protocols is an array of the protocols this Route should allow.\\nDeprecated: use Ingress' \\\"konghq.com/protocols\\\" annotation instead.\",\n     \"items\": {\n      \"description\": \"KongProtocol is a valid Kong protocol.\\nThis alias is necessary to deal with https://github.com/kubernetes-sigs/controller-tools/issues/342\",\n      \"enum\": [\n       \"http\",\n       \"https\",\n       \"grpc\",\n       \"grpcs\",\n       \"tcp\",\n       \"tls\",\n       \"udp\"\n      ],\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"regex_priority\": {\n     \"description\": \"RegexPriority is a number used to choose which route resolves a given request\\nwhen several routes match it using regexes simultaneously.\\nDeprecated: use Ingress' \\\"konghq.com/regex-priority\\\" annotation instead.\",\n     \"type\": \"integer\"\n    },\n    \"request_buffering\": {\n     \"description\": \"RequestBuffering sets whether to enable request body buffering or not.\\nDeprecated: use Ingress' \\\"konghq.com/request-buffering\\\" annotation instead.\",\n     \"type\": \"boolean\"\n    },\n    \"response_buffering\": {\n     \"description\": \"ResponseBuffering sets whether to enable response body buffering or not.\\nDeprecated: use Ingress' \\\"konghq.com/response-buffering\\\" annotation instead.\",\n     \"type\": \"boolean\"\n    },\n    \"snis\": {\n     \"description\": \"SNIs is a list of SNIs that match this Route when using stream routing.\\nDeprecated: use Ingress' \\\"konghq.com/snis\\\" annotation instead.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"strip_path\": {\n     \"description\": \"StripPath sets When matching a Route via one of the paths\\nstrip the matching prefix from the upstream request URL.\\nDeprecated: use Ingress' \\\"konghq.com/strip-path\\\" annotation instead.\",\n     \"type\": \"boolean\"\n    }\n   },\n   \"type\": \"object\"\n  },\n  \"upstream\": {\n   \"description\": \"Upstream represents a virtual hostname and can be used to loadbalance\\nincoming requests over multiple targets (e.g. Kubernetes `Services` can\\nbe a target, OR `Endpoints` can be targets).\",\n   \"properties\": {\n    \"algorithm\": {\n     \"description\": \"Algorithm is the load balancing algorithm to use.\\nAccepted values are: \\\"round-robin\\\", \\\"consistent-hashing\\\", \\\"least-connections\\\", \\\"latency\\\".\",\n     \"enum\": [\n      \"round-robin\",\n      \"consistent-hashing\",\n      \"least-connections\",\n      \"latency\"\n     ],\n     \"type\": \"string\"\n    },\n    \"hash_fallback\": {\n     \"description\": \"HashFallback defines What to use as hashing input\\nif the primary hash_on does not return a hash.\\nAccepted values are: \\\"none\\\", \\\"consumer\\\", \\\"ip\\\", \\\"header\\\", \\\"cookie\\\".\",\n     \"type\": \"string\"\n    },\n    \"hash_fallback_header\": {\n     \"description\": \"HashFallbackHeader is the header name to take the value from as hash input.\\nOnly required when \\\"hash_fallback\\\" is set to \\\"header\\\".\",\n     \"type\": \"string\"\n    },\n    \"hash_fallback_query_arg\": {\n     \"description\": \"HashFallbackQueryArg is the \\\"hash_fallback\\\" version of HashOnQueryArg.\",\n     \"type\": \"string\"\n    },\n    \"hash_fallback_uri_capture\": {\n     \"description\": \"HashFallbackURICapture is the \\\"hash_fallback\\\" version of HashOnURICapture.\",\n     \"type\": \"string\"\n    },\n    \"hash_on\": {\n     \"description\": \"HashOn defines what to use as hashing input.\\nAccepted values are: \\\"none\\\", \\\"consumer\\\", \\\"ip\\\", \\\"header\\\", \\\"cookie\\\", \\\"path\\\", \\\"query_arg\\\", \\\"uri_capture\\\".\",\n     \"type\": \"string\"\n    },\n    \"hash_on_cookie\": {\n     \"description\": \"The cookie name to take the value from as hash input.\\nOnly required when \\\"hash_on\\\" or \\\"hash_fallback\\\" is set to \\\"cookie\\\".\",\n     \"type\": \"string\"\n    },\n    \"hash_on_cookie_path\": {\n     \"description\": \"The cookie path to set in the response headers.\\nOnly required when \\\"hash_on\\\" or \\\"hash_fallback\\\" is set to \\\"cookie\\\".\",\n     \"type\": \"string\"\n    },\n    \"hash_on_header\": {\n     \"description\": \"HashOnHeader defines the header name to take the value from as hash input.\\nOnly required when \\\"hash_on\\\" is set to \\\"header\\\".\",\n     \"type\": \"string\"\n    },\n    \"hash_on_query_arg\": {\n     \"description\": \"HashOnQueryArg is the query string parameter whose value is the hash input when \\\"hash_on\\\" is set to \\\"query_arg\\\".\",\n     \"type\": \"string\"\n    },\n    \"hash_on_uri_capture\": {\n     \"description\": \"HashOnURICapture is the name of the capture group whose value is the hash input when \\\"hash_on\\\" is set to\\n\\\"uri_capture\\\".\",\n     \"type\": \"string\"\n    },\n    \"healthchecks\": {\n     \"description\": \"Healthchecks defines the health check configurations in Kong.\",\n     \"properties\": {\n      \"active\": {\n       \"description\": \"ActiveHealthcheck configures active health check probing.\",\n       \"properties\": {\n        \"concurrency\": {\n         \"minimum\": 1,\n         \"type\": \"integer\"\n        },\n        \"headers\": {\n         \"additionalProperties\": {\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         },\n         \"type\": \"object\"\n        },\n        \"healthy\": {\n         \"description\": \"Healthy configures thresholds and HTTP status codes\\nto mark targets healthy for an upstream.\",\n         \"properties\": {\n          \"http_statuses\": {\n           \"items\": {\n            \"type\": \"integer\"\n           },\n           \"type\": \"array\"\n          },\n          \"interval\": {\n           \"minimum\": 0,\n           \"type\": \"integer\"\n          },\n          \"successes\": {\n           \"minimum\": 0,\n           \"type\": \"integer\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"http_path\": {\n         \"pattern\": \"^/.*$\",\n         \"type\": \"string\"\n        },\n        \"https_sni\": {\n         \"type\": \"string\"\n        },\n        \"https_verify_certificate\": {\n         \"type\": \"boolean\"\n        },\n        \"timeout\": {\n         \"minimum\": 0,\n         \"type\": \"integer\"\n        },\n        \"type\": {\n         \"type\": \"string\"\n        },\n        \"unhealthy\": {\n         \"description\": \"Unhealthy configures thresholds and HTTP status codes\\nto mark targets unhealthy.\",\n         \"properties\": {\n          \"http_failures\": {\n           \"minimum\": 0,\n           \"type\": \"integer\"\n          },\n          \"http_statuses\": {\n           \"items\": {\n            \"type\": \"integer\"\n           },\n           \"type\": \"array\"\n          },\n          \"interval\": {\n           \"minimum\": 0,\n           \"type\": \"integer\"\n          },\n          \"tcp_failures\": {\n           \"minimum\": 0,\n           \"type\": \"integer\"\n          },\n          \"timeouts\": {\n           \"minimum\": 0,\n           \"type\": \"integer\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"passive\": {\n       \"description\": \"PassiveHealthcheck configures passive checks around\\npassive health checks.\",\n       \"properties\": {\n        \"healthy\": {\n         \"description\": \"Healthy configures thresholds and HTTP status codes\\nto mark targets healthy for an upstream.\",\n         \"properties\": {\n          \"http_statuses\": {\n           \"items\": {\n            \"type\": \"integer\"\n           },\n           \"type\": \"array\"\n          },\n          \"interval\": {\n           \"minimum\": 0,\n           \"type\": \"integer\"\n          },\n          \"successes\": {\n           \"minimum\": 0,\n           \"type\": \"integer\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"type\": {\n         \"type\": \"string\"\n        },\n        \"unhealthy\": {\n         \"description\": \"Unhealthy configures thresholds and HTTP status codes\\nto mark targets unhealthy.\",\n         \"properties\": {\n          \"http_failures\": {\n           \"minimum\": 0,\n           \"type\": \"integer\"\n          },\n          \"http_statuses\": {\n           \"items\": {\n            \"type\": \"integer\"\n           },\n           \"type\": \"array\"\n          },\n          \"interval\": {\n           \"minimum\": 0,\n           \"type\": \"integer\"\n          },\n          \"tcp_failures\": {\n           \"minimum\": 0,\n           \"type\": \"integer\"\n          },\n          \"timeouts\": {\n           \"minimum\": 0,\n           \"type\": \"integer\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"threshold\": {\n       \"type\": \"number\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"host_header\": {\n     \"description\": \"HostHeader is The hostname to be used as Host header\\nwhen proxying requests through Kong.\",\n     \"type\": \"string\"\n    },\n    \"slots\": {\n     \"description\": \"Slots is the number of slots in the load balancer algorithm.\",\n     \"minimum\": 10,\n     \"type\": \"integer\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Kong Ingress\",\n \"type\": \"object\",\n \"x-kubernetes-validations\": [\n  {\n   \"message\": \"'proxy' field is no longer supported, use Service's annotations instead\",\n   \"rule\": \"!has(self.proxy)\"\n  },\n  {\n   \"message\": \"'route' field is no longer supported, use Ingress' annotations instead\",\n   \"rule\": \"!has(self.route)\"\n  }\n ]\n}",
+   "version": "configuration.konghq.com/v1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "Kong Ingress",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "published": false,
+   "source_uri": "https://charts.bitnami.com/bitnami/supabase-5.3.5.tgz"
+  },
+  "model": {
+   "category": {
+    "name": "Provisioning"
+   },
+   "displayName": "supabase",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "isAnnotation": false,
+    "primaryColor": "#1988d9",
+    "secondaryColor": "#54aef0",
+    "shape": "rectangle",
+    "source_uri": "https://charts.bitnami.com/bitnami/supabase-5.3.5.tgz",
+    "styleOverrides": "",
+    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" id=\"bdb56329-4717-4410-aa13-4505ecaa4e46\" width=\"20\" height=\"20\" viewBox=\"0 0 18 18\"\u003e\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"ba2610c3-a45a-4e7e-a0c0-285cfd7e005d\" x1=\"13.25\" y1=\"13.02\" x2=\"8.62\" y2=\"4.25\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"0\" stop-color=\"#1988d9\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"0.9\" stop-color=\"#54aef0\"\u003e\u003c/stop\u003e\u003c/linearGradient\u003e\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"bd8f618b-4f2f-4cb7-aff0-2fd2d211326d\" x1=\"11.26\" y1=\"10.47\" x2=\"14.46\" y2=\"15.99\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"0.1\" stop-color=\"#54aef0\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"0.29\" stop-color=\"#4fabee\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"0.51\" stop-color=\"#41a2e9\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"0.74\" stop-color=\"#2a93e0\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"0.88\" stop-color=\"#1988d9\"\u003e\u003c/stop\u003e\u003c/linearGradient\u003e\u003c/defs\u003e\u003ctitle xmlns=\"http://www.w3.org/2000/svg\"\u003eIcon-identity-221\u003c/title\u003e\u003cpolygon xmlns=\"http://www.w3.org/2000/svg\" points=\"1.01 10.19 8.93 15.33 16.99 10.17 18 11.35 8.93 17.19 0 11.35 1.01 10.19\" fill=\"#50e6ff\"\u003e\u003c/polygon\u003e\u003cpolygon xmlns=\"http://www.w3.org/2000/svg\" points=\"1.61 9.53 8.93 0.81 16.4 9.54 8.93 14.26 1.61 9.53\" fill=\"#fff\"\u003e\u003c/polygon\u003e\u003cpolygon xmlns=\"http://www.w3.org/2000/svg\" points=\"8.93 0.81 8.93 14.26 1.61 9.53 8.93 0.81\" fill=\"#50e6ff\"\u003e\u003c/polygon\u003e\u003cpolygon xmlns=\"http://www.w3.org/2000/svg\" points=\"8.93 0.81 8.93 14.26 16.4 9.54 8.93 0.81\" fill=\"url(#ba2610c3-a45a-4e7e-a0c0-285cfd7e005d)\"\u003e\u003c/polygon\u003e\u003cpolygon xmlns=\"http://www.w3.org/2000/svg\" points=\"8.93 7.76 16.4 9.54 8.93 14.26 8.93 7.76\" fill=\"#53b1e0\"\u003e\u003c/polygon\u003e\u003cpolygon xmlns=\"http://www.w3.org/2000/svg\" points=\"8.93 14.26 1.61 9.53 8.93 7.76 8.93 14.26\" fill=\"#9cebff\"\u003e\u003c/polygon\u003e\u003cpolygon xmlns=\"http://www.w3.org/2000/svg\" points=\"8.93 17.19 18 11.35 16.99 10.17 8.93 15.33 8.93 17.19\" fill=\"url(#bd8f618b-4f2f-4cb7-aff0-2fd2d211326d)\"\u003e\u003c/polygon\u003e\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" id=\"bdb56329-4717-4410-aa13-4505ecaa4e46\" width=\"20\" height=\"20\" viewBox=\"0 0 18 18\"\u003e \u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e \u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"ba2610c3-a45a-4e7e-a0c0-285cfd7e005d\" x1=\"13.25\" y1=\"13.02\" x2=\"8.62\" y2=\"4.25\" gradientUnits=\"userSpaceOnUse\"\u003e \u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"0\" stop-color=\"#FFF\"\u003e\u003c/stop\u003e \u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"0.9\" stop-color=\"#FFF\"\u003e\u003c/stop\u003e \u003c/linearGradient\u003e \u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"bd8f618b-4f2f-4cb7-aff0-2fd2d211326d\" x1=\"11.26\" y1=\"10.47\" x2=\"14.46\" y2=\"15.99\" gradientUnits=\"userSpaceOnUse\"\u003e \u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"0.1\" stop-color=\"#FFF\"\u003e\u003c/stop\u003e \u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"0.29\" stop-color=\"#FFF\"\u003e\u003c/stop\u003e \u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"0.51\" stop-color=\"#FFF\"\u003e\u003c/stop\u003e \u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"0.74\" stop-color=\"#FFF\"\u003e\u003c/stop\u003e \u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"0.88\" stop-color=\"#FFF\"\u003e\u003c/stop\u003e \u003c/linearGradient\u003e \u003c/defs\u003e \u003ctitle xmlns=\"http://www.w3.org/2000/svg\"\u003eIcon-identity-221\u003c/title\u003e \u003cpolygon xmlns=\"http://www.w3.org/2000/svg\" points=\"1.01 10.19 8.93 15.33 16.99 10.17 18 11.35 8.93 17.19 0 11.35 1.01 10.19\" fill=\"#FFF\"\u003e\u003c/polygon\u003e \u003cpolygon xmlns=\"http://www.w3.org/2000/svg\" points=\"1.61 9.53 8.93 0.81 16.4 9.54 8.93 14.26 1.61 9.53\" fill=\"#fff\"\u003e\u003c/polygon\u003e \u003cpolygon xmlns=\"http://www.w3.org/2000/svg\" points=\"8.93 0.81 8.93 14.26 1.61 9.53 8.93 0.81\" fill=\"#FFF\"\u003e\u003c/polygon\u003e \u003cpolygon xmlns=\"http://www.w3.org/2000/svg\" points=\"8.93 0.81 8.93 14.26 16.4 9.54 8.93 0.81\" fill=\"url(#ba2610c3-a45a-4e7e-a0c0-285cfd7e005d)\"\u003e\u003c/polygon\u003e \u003cpolygon xmlns=\"http://www.w3.org/2000/svg\" points=\"8.93 7.76 16.4 9.54 8.93 14.26 8.93 7.76\" fill=\"#FFF\"\u003e\u003c/polygon\u003e \u003cpolygon xmlns=\"http://www.w3.org/2000/svg\" points=\"8.93 14.26 1.61 9.53 8.93 7.76 8.93 14.26\" fill=\"#FFF\"\u003e\u003c/polygon\u003e \u003cpolygon xmlns=\"http://www.w3.org/2000/svg\" points=\"8.93 17.19 18 11.35 16.99 10.17 8.93 15.33 8.93 17.19\" fill=\"url(#bd8f618b-4f2f-4cb7-aff0-2fd2d211326d)\"\u003e\u003c/polygon\u003e \u003c/svg\u003e"
+   },
+   "model": {
+    "version": "5.3.5"
+   },
+   "name": "supabase",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "enabled",
+   "subCategory": "Security \u0026 Compliance",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
+   "primaryColor": "#1988d9",
+   "secondaryColor": "#54aef0",
+   "shape": "rectangle",
+   "svgColor": "\u003csvg id=\"bdb56329-4717-4410-aa13-4505ecaa4e46\" xmlns=\"http://www.w3.org/2000/svg\" width=\"18\" height=\"18\" viewBox=\"0 0 18 18\"\u003e\u003cdefs\u003e\u003clinearGradient id=\"ba2610c3-a45a-4e7e-a0c0-285cfd7e005d\" x1=\"13.25\" y1=\"13.02\" x2=\"8.62\" y2=\"4.25\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop offset=\"0\" stop-color=\"#1988d9\" /\u003e\u003cstop offset=\"0.9\" stop-color=\"#54aef0\" /\u003e\u003c/linearGradient\u003e\u003clinearGradient id=\"bd8f618b-4f2f-4cb7-aff0-2fd2d211326d\" x1=\"11.26\" y1=\"10.47\" x2=\"14.46\" y2=\"15.99\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop offset=\"0.1\" stop-color=\"#54aef0\" /\u003e\u003cstop offset=\"0.29\" stop-color=\"#4fabee\" /\u003e\u003cstop offset=\"0.51\" stop-color=\"#41a2e9\" /\u003e\u003cstop offset=\"0.74\" stop-color=\"#2a93e0\" /\u003e\u003cstop offset=\"0.88\" stop-color=\"#1988d9\" /\u003e\u003c/linearGradient\u003e\u003c/defs\u003e\u003ctitle\u003eIcon-identity-221\u003c/title\u003e\u003cpolygon points=\"1.01 10.19 8.93 15.33 16.99 10.17 18 11.35 8.93 17.19 0 11.35 1.01 10.19\" fill=\"#50e6ff\" /\u003e\u003cpolygon points=\"1.61 9.53 8.93 0.81 16.4 9.54 8.93 14.26 1.61 9.53\" fill=\"#fff\" /\u003e\u003cpolygon points=\"8.93 0.81 8.93 14.26 1.61 9.53 8.93 0.81\" fill=\"#50e6ff\" /\u003e\u003cpolygon points=\"8.93 0.81 8.93 14.26 16.4 9.54 8.93 0.81\" fill=\"url(#ba2610c3-a45a-4e7e-a0c0-285cfd7e005d)\" /\u003e\u003cpolygon points=\"8.93 7.76 16.4 9.54 8.93 14.26 8.93 7.76\" fill=\"#53b1e0\" /\u003e\u003cpolygon points=\"8.93 14.26 1.61 9.53 8.93 7.76 8.93 14.26\" fill=\"#9cebff\" /\u003e\u003cpolygon points=\"8.93 17.19 18 11.35 16.99 10.17 8.93 15.33 8.93 17.19\" fill=\"url(#bd8f618b-4f2f-4cb7-aff0-2fd2d211326d)\" /\u003e\u003c/svg\u003e",
+   "svgWhite": "\u003csvg id=\"bdb56329-4717-4410-aa13-4505ecaa4e46\" xmlns=\"http://www.w3.org/2000/svg\" width=\"18\" height=\"18\" viewBox=\"0 0 18 18\"\u003e \u003cdefs\u003e \u003clinearGradient id=\"ba2610c3-a45a-4e7e-a0c0-285cfd7e005d\" x1=\"13.25\" y1=\"13.02\" x2=\"8.62\" y2=\"4.25\" gradientUnits=\"userSpaceOnUse\"\u003e \u003cstop offset=\"0\" stop-color=\"#FFF\" /\u003e \u003cstop offset=\"0.9\" stop-color=\"#FFF\" /\u003e \u003c/linearGradient\u003e \u003clinearGradient id=\"bd8f618b-4f2f-4cb7-aff0-2fd2d211326d\" x1=\"11.26\" y1=\"10.47\" x2=\"14.46\" y2=\"15.99\" gradientUnits=\"userSpaceOnUse\"\u003e \u003cstop offset=\"0.1\" stop-color=\"#FFF\" /\u003e \u003cstop offset=\"0.29\" stop-color=\"#FFF\" /\u003e \u003cstop offset=\"0.51\" stop-color=\"#FFF\" /\u003e \u003cstop offset=\"0.74\" stop-color=\"#FFF\" /\u003e \u003cstop offset=\"0.88\" stop-color=\"#FFF\" /\u003e \u003c/linearGradient\u003e \u003c/defs\u003e \u003ctitle\u003eIcon-identity-221\u003c/title\u003e \u003cpolygon points=\"1.01 10.19 8.93 15.33 16.99 10.17 18 11.35 8.93 17.19 0 11.35 1.01 10.19\" fill=\"#FFF\" /\u003e \u003cpolygon points=\"1.61 9.53 8.93 0.81 16.4 9.54 8.93 14.26 1.61 9.53\" fill=\"#fff\" /\u003e \u003cpolygon points=\"8.93 0.81 8.93 14.26 1.61 9.53 8.93 0.81\" fill=\"#FFF\" /\u003e \u003cpolygon points=\"8.93 0.81 8.93 14.26 16.4 9.54 8.93 0.81\" fill=\"url(#ba2610c3-a45a-4e7e-a0c0-285cfd7e005d)\" /\u003e \u003cpolygon points=\"8.93 7.76 16.4 9.54 8.93 14.26 8.93 7.76\" fill=\"#FFF\" /\u003e \u003cpolygon points=\"8.93 14.26 1.61 9.53 8.93 7.76 8.93 14.26\" fill=\"#FFF\" /\u003e \u003cpolygon points=\"8.93 17.19 18 11.35 16.99 10.17 8.93 15.33 8.93 17.19\" fill=\"url(#bd8f618b-4f2f-4cb7-aff0-2fd2d211326d)\" /\u003e \u003c/svg\u003e"
+  },
+  "version": "v1.0.0"
+ }

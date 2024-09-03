@@ -5,6 +5,7 @@
   "displayName": "NGINX Service Mesh",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://helm.nginx.com/stable/nginx-service-mesh-2.0.0.tgz", 
     "isAnnotation": false,
     "published": true,
     "subCategory": "Service Mesh",

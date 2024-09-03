@@ -5,6 +5,7 @@
   "displayName": "Base Cluster",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://github.com/4ALLPORTAL/helm-charts/releases/download/base-cluster-38.0.9/base-cluster-38.0.9.tgz", 
     "isAnnotation": false,
     "published": false,
     "subCategory": "Uncategorized",

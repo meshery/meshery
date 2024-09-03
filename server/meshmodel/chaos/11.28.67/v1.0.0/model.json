@@ -5,6 +5,7 @@
   "displayName": "Chaos",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://startxfr.github.io/helm-repository/packages/chaos-14.6.75.tgz", 
     "isAnnotation": false,
     "published": true,
     "subCategory": "Continuous Integration \u0026 Delivery",

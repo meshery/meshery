@@ -167,6 +167,28 @@ const ExtensionsComponent = () => {
     return () => ws.close()
   }, [])
 
+  // Event Interceptor to redirect all external links
+  useEffect(() => {
+    const handleLinkClick = (event) => {
+      const target = event.target.closest('a');
+
+      // Ensure the target is an anchor tag with a valid href and external link
+      if (target && target.href && target.href.startsWith('http')) {
+        event.preventDefault();
+        window.ddClient.host.openExternal(target.href);
+      }
+    };
+
+    // Attach the event listener to a specific container (if possible), or use document
+    const container = document.getElementById('root') || document;
+    container.addEventListener('click', handleLinkClick);
+
+    // Cleanup the event listener on unmount
+    return () => {
+      container.removeEventListener('click', handleLinkClick);
+    };
+  }, []);
+
   useEffect(() => {
     fetch(proxyUrl + '/token')
       .then((res) => res.text())

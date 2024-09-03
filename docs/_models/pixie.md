@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/pixie
 description: 
 integrations-category: Observability and Analysis
 integrations-subcategory: Monitoring
-registrant: Artifact Hub
+registrant: Github
 components: 
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",

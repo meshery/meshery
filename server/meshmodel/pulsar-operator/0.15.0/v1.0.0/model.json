@@ -5,6 +5,7 @@
   "displayName": "Pulsar Operator",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://github.com/streamnative/charts/releases/download/pulsar-operator-0.17.9/pulsar-operator-0.17.9.tgz", 
     "isAnnotation": false,
     "published": true,
     "subCategory": "Streaming \u0026 Messaging",

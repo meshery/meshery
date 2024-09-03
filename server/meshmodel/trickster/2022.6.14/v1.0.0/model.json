@@ -5,6 +5,7 @@
   "displayName": "Trickster",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://charts.appscode.com/stable/trickster/trickster-v2023.10.1.tgz", 
     "isAnnotation": false,
     "published": true,
     "subCategory": "Monitoring",

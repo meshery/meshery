@@ -5,6 +5,7 @@
   "displayName": "Kubevault Catalog",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://charts.appscode.com/stable/kubevault-catalog/kubevault-catalog-v2023.10.26-rc.0.tgz", 
     "isAnnotation": false,
     "published": true,
     "subCategory": "Uncategorized",

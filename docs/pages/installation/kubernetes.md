@@ -74,7 +74,7 @@ You're ready to use Meshery! Open your browser and navigate to the Meshery UI.
 
 Install Meshery on Docker (out-of-cluster) and connect it to your Kubernetes cluster.
 
-## Installation: Upload Config File in Meshery Web UI
+<!-- ## Installation: Upload Config File in Meshery Web UI
 
 - Run the below command to generate the _"config_minikube.yaml"_ file for your cluster:
 
@@ -82,6 +82,25 @@ Install Meshery on Docker (out-of-cluster) and connect it to your Kubernetes clu
  <div class="clipboardjs">kubectl config view --minify --flatten > config_minikube.yaml</div></div>
  </pre>
 
-- Upload the generated config file by navigating to _Settings > Environment > Out of Cluster Deployment_ in the Web UI and using the _"Upload kubeconfig"_ option.
+- Upload the generated config file by navigating to _Settings > Environment > Out of Cluster Deployment_ in the Web UI and using the _"Upload kubeconfig"_ option. -->
+
+## Set up Ingress on Minikube with the NGINX Ingress Controller
+- Run the below command to enable the NGINX Ingress controller for your cluster:
+
+ <pre class="codeblock-pre"><div class="codeblock">
+ <div class="clipboardjs">minikube addons enable ingress</div></div>
+ </pre>
+
+- To check if NGINX Ingress controller is running
+ <pre class="codeblock-pre"><div class="codeblock">
+ <div class="clipboardjs">kubectl get pods -n ingress-nginx</div></div>
+ </pre>
+
+ ## Installing cert-manager with kubectl
+- Run the below command to install cert-manager for your cluster:
+
+ <pre class="codeblock-pre"><div class="codeblock">
+ <div class="clipboardjs">kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.15.3/cert-manager.yaml</div></div>
+ </pre>
 
 {% include related-discussions.html tag="meshery" %}
