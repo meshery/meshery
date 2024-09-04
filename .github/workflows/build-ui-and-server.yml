@@ -127,6 +127,8 @@ jobs:
         uses: helm/kind-action@v1.8.0
         with:
           cluster_name: "kind-cluster"
+      - name: Kubectl Install Cert Manager
+        run: kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.15.3/cert-manager.yaml
       - name: Setup Go
         uses: actions/setup-go@master
         with:

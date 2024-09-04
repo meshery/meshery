@@ -22,6 +22,7 @@ import { CONNECTION_STATES } from '../utils/Enum';
 import { TootltipWrappedConnectionChip, ConnectionStateChip } from './connections/ConnectionChip';
 import useKubernetesHook from './hooks/useKubernetesHook';
 import { keys } from '@/utils/permission_constants';
+import useTestIDsGenerator from './hooks/useTestIDs';
 import CAN from '@/utils/can';
 
 const styles = makeStyles((theme) => ({
@@ -47,6 +48,8 @@ const MesherySettingsEnvButtons = () => {
   const { notify } = useNotification();
 
   let contextsRef = useRef();
+
+  const testIDs = useTestIDsGenerator('connection');
 
   const handleConfigSnackbars = (ctxs) => {
     updateProgress({ showProgress: false });
@@ -124,7 +127,7 @@ const MesherySettingsEnvButtons = () => {
       title: 'Add Kubernetes Cluster(s)',
       subtitle: (
         <>
-          <div style={{ overflow: 'hidden' }}>
+          <div style={{ overflow: 'hidden' }} data-testid={testIDs('addKubernetesModal')}>
             <Typography variant="h6">Upload your kubeconfig</Typography>
             <Typography variant="body2">commonly found at ~/.kube/config</Typography>
             <FormGroup>
@@ -134,6 +137,7 @@ const MesherySettingsEnvButtons = () => {
                 value={k8sfileElementVal}
                 onChange={handleChange}
                 style={{ display: 'none' }}
+                data-testid={testIDs('uploadKubeConfig')}
               />
 
               <TextField
@@ -214,6 +218,7 @@ const MesherySettingsEnvButtons = () => {
             paddingLeft: '4px',
             marginRight: '4px',
           }}
+          data-testid={testIDs('addCluster')}
         >
           {' '}
           Add Cluster
