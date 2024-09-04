@@ -19,7 +19,6 @@
         "test:coverage": "npm run test -- --coverage",
         "relay": "relay-compiler",
         "prepare": "cd .. && husky install ui/.husky",
-        "cy:dev:open": "start-server-and-test dev http://localhost:3000 cy:open",
         "postinstall": "patch-package",
         "clean": "rm -rf .next,out"
     },
