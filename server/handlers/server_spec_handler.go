@@ -18,6 +18,7 @@ type Version struct {
 	Outdated       *bool  `json:"outdated,omitempty"`
 	CommitSHA      string `json:"commitsha,omitempty"`
 	ReleaseChannel string `json:"release_channel,omitempty"`
+	Mode           string `json:"mode,omitempty"`
 }
 
 // swagger:route GET /api/system/version SystemAPI idGetSystemVersion
@@ -30,10 +31,15 @@ type Version struct {
 // ServerVersionHandler handles the version api request for the server
 func (h *Handler) ServerVersionHandler(w http.ResponseWriter, _ *http.Request) {
 	// Default values incase any errors
+	mode := "MESHERY"
+	if h.config.PlaygroundBuild {
+		mode = "PLAYGROUND"
+	}
 	version := &Version{
 		Build:          viper.GetString("BUILD"),
 		CommitSHA:      viper.GetString("COMMITSHA"),
 		ReleaseChannel: viper.GetString("RELEASE_CHANNEL"),
+		Mode:           mode,
 	}
 
 	// if r.Method != http.MethodGet {
