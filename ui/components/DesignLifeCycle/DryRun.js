@@ -283,7 +283,7 @@ export const FormatDryRunResponse = withStyles(styles)(({
         dryRunErrors?.map((err) => (
           <ExpandableComponentErrors
             key={`${err.compName}`}
-            component={designJson && getComponentFromDesign(designJson, err.compName)}
+            component={err.component}
             componentName={err.compName}
             validationMachine={validationMachine}
             currentComponentName={currentComponentName}
