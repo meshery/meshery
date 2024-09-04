@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 )
 
 func GetLatestVersionForMesheryctl() (string, error) {
@@ -27,7 +28,7 @@ func GetLatestVersionForMesheryctl() (string, error) {
 		return "", err
 	}
 
-	return string(data), nil
+	return strings.TrimSpace(string(data)), nil
 }
 
 func CheckMesheryctlClientVersion(build string) {
