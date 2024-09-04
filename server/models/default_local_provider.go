@@ -101,8 +101,7 @@ func (l *DefaultLocalProvider) IntializePackage() {
 	if playground {
 		version := viper.GetString("BUILD")
 		os := viper.GetString("OS")
-		mesheryCloudURL := "https://meshery.layer5.io"
-		finalURL := fmt.Sprintf("%s/%s/capabilities?os=%s&playground=%s", mesheryCloudURL, version, os, strconv.FormatBool(playground))
+		finalURL := fmt.Sprintf("%s/%s/capabilities?os=%s&playground=%s", l.ProviderBaseURL, version, os, strconv.FormatBool(playground))
 		finalURL = strings.TrimSuffix(finalURL, "\n")
 		remoteProviderURL, err := url.Parse(finalURL)
 		if err != nil {
