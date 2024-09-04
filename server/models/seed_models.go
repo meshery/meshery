@@ -7,6 +7,8 @@ import (
 
 	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshkit/logger"
+	meshkitUtils "github.com/layer5io/meshkit/utils"
+
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 	"github.com/layer5io/meshkit/models/registration"
 )
@@ -14,33 +16,26 @@ import (
 var ModelsPath = "../meshmodel"
 
 // Define the maximum number of worker goroutines
-const maxWorkers = 20
+const maxWorkers = 10
 
 func getModelDirectoryPaths() ([]string, error) {
-
-	dirEntries := make([]string, 0)
 	modelsDirs, err := os.ReadDir(ModelsPath)
 	if err != nil {
-		return dirEntries, err
+		return nil, err
 	}
 
-	// Channel to collect directory paths
-	dirPathsChan := make(chan string, 100)
-	// Channel to collect errors
-	errorChan := make(chan error, 10)
-	// Wait group to wait for all goroutines to finish
-	var wg sync.WaitGroup
+	var dirEntries []string
+	var mutex sync.Mutex
+	errors := make(chan error, len(modelsDirs))
 
-	// Function to process a single directory
-	processDirectory := func(modelDir os.DirEntry) {
-		defer wg.Done()
+	workerFunc := func(modelDir os.DirEntry) {
 		if !modelDir.IsDir() {
 			return
 		}
 		modelVersionsDirPath := filepath.Join(ModelsPath, modelDir.Name())
 		modelVersionsDir, err := os.ReadDir(modelVersionsDirPath)
 		if err != nil {
-			errorChan <- err
+			errors <- err
 			return
 		}
 		for _, version := range modelVersionsDir {
@@ -50,90 +45,50 @@ func getModelDirectoryPaths() ([]string, error) {
 			modelDefVersionsDirPath := filepath.Join(modelVersionsDirPath, version.Name())
 			modelDefVersionsDir, err := os.ReadDir(modelDefVersionsDirPath)
 			if err != nil {
-				errorChan <- err
+				errors <- err
 				return
 			}
 			for _, defVersion := range modelDefVersionsDir {
-				if !defVersion.IsDir() {
-					continue
+				if defVersion.IsDir() {
+					defPath := filepath.Join(modelDefVersionsDirPath, defVersion.Name())
+					mutex.Lock()
+					dirEntries = append(dirEntries, defPath)
+					mutex.Unlock()
 				}
-				defPath := filepath.Join(modelDefVersionsDirPath, defVersion.Name())
-				// Send the directory path to the channel
-				dirPathsChan <- defPath
 			}
 		}
 	}
 
-	// Start a goroutine for each top-level directory
-	for _, modelDir := range modelsDirs {
-		wg.Add(1)
-		go processDirectory(modelDir)
-	}
+	meshkitUtils.WorkerPool(modelsDirs, workerFunc, maxWorkers)
 
-	// Close the directory paths channel once all directories are processed
-	go func() {
-		wg.Wait()
-		close(dirPathsChan)
-		close(errorChan)
-	}()
+	close(errors)
 
-	// Collect all directory paths and errors from the channels
-	for dirPathsChan != nil || errorChan != nil {
-		select {
-		case dirPath, ok := <-dirPathsChan:
-			if !ok {
-				dirPathsChan = nil
-			} else {
-				dirEntries = append(dirEntries, dirPath)
-			}
-		case err, ok := <-errorChan:
-			if !ok {
-				errorChan = nil
-			} else {
-				// Return error immediately
-				return dirEntries, err
-			}
+	var firstError error
+	for err := range errors {
+		if firstError == nil && err != nil {
+			firstError = err
 		}
 	}
-	return dirEntries, nil
+
+	return dirEntries, firstError
 }
 
 func SeedComponents(log logger.Handler, hc *HandlerConfig, regm *meshmodel.RegistryManager) {
-
 	regErrorStore := NewRegistrationFailureLogHandler()
 	regHelper := registration.NewRegistrationHelper(utils.UI, regm, regErrorStore)
+
 	modelDirPaths, err := getModelDirectoryPaths()
 	if err != nil {
 		log.Error(ErrSeedingComponents(err))
 		return
 	}
 
-	// Create a buffered channel to control the number of concurrent tasks
-	tasks := make(chan string, len(modelDirPaths))
-	// Create a wait group to wait for all worker goroutines to complete
-	var wg sync.WaitGroup
-
-	// Start worker goroutines
-	for i := 0; i < maxWorkers; i++ {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			for dirPath := range tasks {
-				dir := registration.NewDir(dirPath)
-				regHelper.Register(dir) // Errors are handled inside Register
-			}
-		}()
+	workerFunc := func(dirPath string) {
+		dir := registration.NewDir(dirPath)
+		regHelper.Register(dir)
 	}
 
-	// Distribute tasks to the worker pool
-	for _, dirPath := range modelDirPaths {
-		tasks <- dirPath
-	}
+	meshkitUtils.WorkerPool(modelDirPaths, workerFunc, maxWorkers)
 
-	// Close the tasks channel and wait for all workers to complete
-	close(tasks)
-	wg.Wait()
-
-	// Call RegistryLog after all registrations are complete
 	RegistryLog(log, hc, regm, regErrorStore)
 }
