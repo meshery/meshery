@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "DatadogMonitor",
    "schema": "{\n \"description\": \"DatadogMonitor allows to define and manage Monitors from your Kubernetes Cluster\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"DatadogMonitorSpec defines the desired state of DatadogMonitor\",\n   \"properties\": {\n    \"controllerOptions\": {\n     \"description\": \"ControllerOptions are the optional parameters in the DatadogMonitor controller\",\n     \"properties\": {\n      \"disableRequiredTags\": {\n       \"description\": \"DisableRequiredTags disables the automatic addition of required tags to monitors.\",\n       \"type\": \"boolean\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"message\": {\n     \"description\": \"Message is a message to include with notifications for this monitor\",\n     \"type\": \"string\"\n    },\n    \"name\": {\n     \"description\": \"Name is the monitor name\",\n     \"type\": \"string\"\n    },\n    \"options\": {\n     \"description\": \"Options are the optional parameters associated with your monitor\",\n     \"properties\": {\n      \"enableLogsSample\": {\n       \"description\": \"A Boolean indicating whether to send a log sample when the log monitor triggers.\",\n       \"type\": \"boolean\"\n      },\n      \"escalationMessage\": {\n       \"description\": \"A message to include with a re-notification.\",\n       \"type\": \"string\"\n      },\n      \"evaluationDelay\": {\n       \"description\": \"Time (in seconds) to delay evaluation, as a non-negative integer. For example, if the value is set to 300 (5min),\\nthe timeframe is set to last_5m and the time is 7:00, the monitor evaluates data from 6:50 to 6:55.\\nThis is useful for AWS CloudWatch and other backfilled metrics to ensure the monitor always has data during evaluation.\",\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"groupbySimpleMonitor\": {\n       \"description\": \"A Boolean indicating whether the log alert monitor triggers a single alert or multiple alerts when any group breaches a threshold.\",\n       \"type\": \"boolean\"\n      },\n      \"includeTags\": {\n       \"description\": \"A Boolean indicating whether notifications from this monitor automatically inserts its triggering tags into the title.\",\n       \"type\": \"boolean\"\n      },\n      \"locked\": {\n       \"description\": \"DEPRECATED: Whether or not the monitor is locked (only editable by creator and admins). Use `restricted_roles` instead.\",\n       \"type\": \"boolean\"\n      },\n      \"newGroupDelay\": {\n       \"description\": \"Time (in seconds) to allow a host to boot and applications to fully start before starting the evaluation of\\nmonitor results. Should be a non negative integer.\",\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"noDataTimeframe\": {\n       \"description\": \"The number of minutes before a monitor notifies after data stops reporting. Datadog recommends at least 2x the\\nmonitor timeframe for metric alerts or 2 minutes for service checks. If omitted, 2x the evaluation timeframe\\nis used for metric alerts, and 24 hours is used for service checks.\",\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"notificationPresetName\": {\n       \"description\": \"An enum that toggles the display of additional content sent in the monitor notification.\",\n       \"type\": \"string\"\n      },\n      \"notifyAudit\": {\n       \"description\": \"A Boolean indicating whether tagged users are notified on changes to this monitor.\",\n       \"type\": \"boolean\"\n      },\n      \"notifyBy\": {\n       \"description\": \"A string indicating the granularity a monitor alerts on. Only available for monitors with groupings.\\nFor instance, a monitor grouped by cluster, namespace, and pod can be configured to only notify on each new\\ncluster violating the alert conditions by setting notify_by to [\\\"cluster\\\"]. Tags mentioned in notify_by must\\nbe a subset of the grouping tags in the query. For example, a query grouped by cluster and namespace cannot\\nnotify on region. Setting notify_by to [*] configures the monitor to notify as a simple-alert.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"notifyNoData\": {\n       \"description\": \"A Boolean indicating whether this monitor notifies when data stops reporting.\",\n       \"type\": \"boolean\"\n      },\n      \"onMissingData\": {\n       \"description\": \"An enum that controls how groups or monitors are treated if an evaluation does not return data points.\\nThe default option results in different behavior depending on the monitor query type.\\nFor monitors using Count queries, an empty monitor evaluation is treated as 0 and is compared to the threshold conditions.\\nFor monitors using any query type other than Count, for example Gauge, Measure, or Rate, the monitor shows the last known status.\\nThis option is only available for APM Trace Analytics, Audit Trail, CI, Error Tracking, Event, Logs, and RUM monitors\",\n       \"type\": \"string\"\n      },\n      \"renotifyInterval\": {\n       \"description\": \"The number of minutes after the last notification before a monitor re-notifies on the current status.\\nIt only re-notifies if it’s not resolved.\",\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"renotifyOccurrences\": {\n       \"description\": \"The number of times re-notification messages should be sent on the current status at the provided re-notification interval.\",\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"renotifyStatuses\": {\n       \"description\": \"The types of statuses for which re-notification messages should be sent. Valid values are alert, warn, no data.\",\n       \"items\": {\n        \"description\": \"MonitorRenotifyStatusType The different statuses for which renotification is supported.\",\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"requireFullWindow\": {\n       \"description\": \"A Boolean indicating whether this monitor needs a full window of data before it’s evaluated. We highly\\nrecommend you set this to false for sparse metrics, otherwise some evaluations are skipped. Default is false.\",\n       \"type\": \"boolean\"\n      },\n      \"thresholdWindows\": {\n       \"description\": \"A struct of the alerting time window options.\",\n       \"properties\": {\n        \"recoveryWindow\": {\n         \"description\": \"Describes how long an anomalous metric must be normal before the alert recovers.\",\n         \"type\": \"string\"\n        },\n        \"triggerWindow\": {\n         \"description\": \"Describes how long a metric must be anomalous before an alert triggers.\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"thresholds\": {\n       \"description\": \"A struct of the different monitor threshold values.\",\n       \"properties\": {\n        \"critical\": {\n         \"description\": \"The monitor CRITICAL threshold.\",\n         \"type\": \"string\"\n        },\n        \"criticalRecovery\": {\n         \"description\": \"The monitor CRITICAL recovery threshold.\",\n         \"type\": \"string\"\n        },\n        \"ok\": {\n         \"description\": \"The monitor OK threshold.\",\n         \"type\": \"string\"\n        },\n        \"unknown\": {\n         \"description\": \"The monitor UNKNOWN threshold.\",\n         \"type\": \"string\"\n        },\n        \"warning\": {\n         \"description\": \"The monitor WARNING threshold.\",\n         \"type\": \"string\"\n        },\n        \"warningRecovery\": {\n         \"description\": \"The monitor WARNING recovery threshold.\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"timeoutH\": {\n       \"description\": \"The number of hours of the monitor not reporting data before it automatically resolves from a triggered state.\",\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"priority\": {\n     \"description\": \"Priority is an integer from 1 (high) to 5 (low) indicating alert severity\",\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"query\": {\n     \"description\": \"Query is the Datadog monitor query\",\n     \"type\": \"string\"\n    },\n    \"restrictedRoles\": {\n     \"description\": \"RestrictedRoles is a list of unique role identifiers to define which roles are allowed to edit the monitor.\\n`restricted_roles` is the successor of `locked`. For more information about `locked` and `restricted_roles`,\\nsee the [monitor options docs](https://docs.datadoghq.com/monitors/guide/monitor_api_options/#permissions-options).\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\",\n     \"x-kubernetes-list-type\": \"set\"\n    },\n    \"tags\": {\n     \"description\": \"Tags is the monitor tags associated with your monitor\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\",\n     \"x-kubernetes-list-type\": \"set\"\n    },\n    \"type\": {\n     \"description\": \"Type is the monitor type\",\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Datadog Monitor\",\n \"type\": \"object\"\n}",

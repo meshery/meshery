@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "OCIRepository",
    "schema": "{\n \"description\": \"OCIRepository is the Schema for the ocirepositories API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"OCIRepositorySpec defines the desired state of OCIRepository\",\n   \"properties\": {\n    \"certSecretRef\": {\n     \"description\": \"CertSecretRef can be given the name of a Secret containing\\neither or both of\\n\\n\\n- a PEM-encoded client certificate (`tls.crt`) and private\\nkey (`tls.key`);\\n- a PEM-encoded CA certificate (`ca.crt`)\\n\\n\\nand whichever are supplied, will be used for connecting to the\\nregistry. The client cert and key are useful if you are\\nauthenticating with a certificate; the CA cert is useful if\\nyou are using a self-signed server certificate. The Secret must\\nbe of type `Opaque` or `kubernetes.io/tls`.\\n\\n\\nNote: Support for the `caFile`, `certFile` and `keyFile` keys have\\nbeen deprecated.\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of the referent.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"ignore\": {\n     \"description\": \"Ignore overrides the set of excluded patterns in the .sourceignore format\\n(which is the same as .gitignore). If not provided, a default will be used,\\nconsult the documentation for your version to find out what those are.\",\n     \"type\": \"string\"\n    },\n    \"insecure\": {\n     \"description\": \"Insecure allows connecting to a non-TLS HTTP container registry.\",\n     \"type\": \"boolean\"\n    },\n    \"interval\": {\n     \"description\": \"Interval at which the OCIRepository URL is checked for updates.\\nThis interval is approximate and may be subject to jitter to ensure\\nefficient use of resources.\",\n     \"pattern\": \"^([0-9]+(\\\\.[0-9]+)?(ms|s|m|h))+$\",\n     \"type\": \"string\"\n    },\n    \"layerSelector\": {\n     \"description\": \"LayerSelector specifies which layer should be extracted from the OCI artifact.\\nWhen not specified, the first layer found in the artifact is selected.\",\n     \"properties\": {\n      \"mediaType\": {\n       \"description\": \"MediaType specifies the OCI media type of the layer\\nwhich should be extracted from the OCI Artifact. The\\nfirst layer matching this type is selected.\",\n       \"type\": \"string\"\n      },\n      \"operation\": {\n       \"description\": \"Operation specifies how the selected layer should be processed.\\nBy default, the layer compressed content is extracted to storage.\\nWhen the operation is set to 'copy', the layer compressed content\\nis persisted to storage as it is.\",\n       \"enum\": [\n        \"extract\",\n        \"copy\"\n       ],\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"provider\": {\n     \"default\": \"generic\",\n     \"description\": \"The provider used for authentication, can be 'aws', 'azure', 'gcp' or 'generic'.\\nWhen not specified, defaults to 'generic'.\",\n     \"enum\": [\n      \"generic\",\n      \"aws\",\n      \"azure\",\n      \"gcp\"\n     ],\n     \"type\": \"string\"\n    },\n    \"ref\": {\n     \"description\": \"The OCI reference to pull and monitor for changes,\\ndefaults to the latest tag.\",\n     \"properties\": {\n      \"digest\": {\n       \"description\": \"Digest is the image digest to pull, takes precedence over SemVer.\\nThe value should be in the format 'sha256:\\u003cHASH\\u003e'.\",\n       \"type\": \"string\"\n      },\n      \"semver\": {\n       \"description\": \"SemVer is the range of tags to pull selecting the latest within\\nthe range, takes precedence over Tag.\",\n       \"type\": \"string\"\n      },\n      \"semverFilter\": {\n       \"description\": \"SemverFilter is a regex pattern to filter the tags within the SemVer range.\",\n       \"type\": \"string\"\n      },\n      \"tag\": {\n       \"description\": \"Tag is the image tag to pull, defaults to latest.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"secretRef\": {\n     \"description\": \"SecretRef contains the secret name containing the registry login\\ncredentials to resolve image metadata.\\nThe secret must be of type kubernetes.io/dockerconfigjson.\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of the referent.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"serviceAccountName\": {\n     \"description\": \"ServiceAccountName is the name of the Kubernetes ServiceAccount used to authenticate\\nthe image pull if the service account has attached pull secrets. For more information:\\nhttps://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/#add-imagepullsecrets-to-a-service-account\",\n     \"type\": \"string\"\n    },\n    \"suspend\": {\n     \"description\": \"This flag tells the controller to suspend the reconciliation of this source.\",\n     \"type\": \"boolean\"\n    },\n    \"timeout\": {\n     \"default\": \"60s\",\n     \"description\": \"The timeout for remote OCI Repository operations like pulling, defaults to 60s.\",\n     \"pattern\": \"^([0-9]+(\\\\.[0-9]+)?(ms|s|m))+$\",\n     \"type\": \"string\"\n    },\n    \"url\": {\n     \"description\": \"URL is a reference to an OCI artifact repository hosted\\non a remote container registry.\",\n     \"pattern\": \"^oci://.*$\",\n     \"type\": \"string\"\n    },\n    \"verify\": {\n     \"description\": \"Verify contains the secret name containing the trusted public keys\\nused to verify the signature and specifies which provider to use to check\\nwhether OCI image is authentic.\",\n     \"properties\": {\n      \"matchOIDCIdentity\": {\n       \"description\": \"MatchOIDCIdentity specifies the identity matching criteria to use\\nwhile verifying an OCI artifact which was signed using Cosign keyless\\nsigning. The artifact's identity is deemed to be verified if any of the\\nspecified matchers match against the identity.\",\n       \"items\": {\n        \"description\": \"OIDCIdentityMatch specifies options for verifying the certificate identity,\\ni.e. the issuer and the subject of the certificate.\",\n        \"properties\": {\n         \"issuer\": {\n          \"description\": \"Issuer specifies the regex pattern to match against to verify\\nthe OIDC issuer in the Fulcio certificate. The pattern must be a\\nvalid Go regular expression.\",\n          \"type\": \"string\"\n         },\n         \"subject\": {\n          \"description\": \"Subject specifies the regex pattern to match against to verify\\nthe identity subject in the Fulcio certificate. The pattern must\\nbe a valid Go regular expression.\",\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"issuer\",\n         \"subject\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"provider\": {\n       \"default\": \"cosign\",\n       \"description\": \"Provider specifies the technology used to sign the OCI Artifact.\",\n       \"enum\": [\n        \"cosign\",\n        \"notation\"\n       ],\n       \"type\": \"string\"\n      },\n      \"secretRef\": {\n       \"description\": \"SecretRef specifies the Kubernetes Secret containing the\\ntrusted public keys.\",\n       \"properties\": {\n        \"name\": {\n         \"description\": \"Name of the referent.\",\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"name\"\n       ],\n       \"type\": \"object\"\n      }\n     },\n     \"required\": [\n      \"provider\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"interval\",\n    \"url\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"OCI Repository\",\n \"type\": \"object\"\n}",

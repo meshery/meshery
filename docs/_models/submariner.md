@@ -8,8 +8,20 @@ docURL: https://docs.meshery.io/extensibility/integrations/submariner
 description: 
 integrations-category: Runtime
 integrations-subcategory: Cloud Native Network
-registrant: Artifact Hub
+registrant: GitHub
 components: 
+- name: broker
+  colorIcon: assets/img/integrations/submariner/components/broker/icons/color/broker-color.svg
+  whiteIcon: assets/img/integrations/submariner/components/broker/icons/white/broker-white.svg
+  description: 
+- name: service-discovery
+  colorIcon: assets/img/integrations/submariner/components/service-discovery/icons/color/service-discovery-color.svg
+  whiteIcon: assets/img/integrations/submariner/components/service-discovery/icons/white/service-discovery-white.svg
+  description: 
+- name: submariner
+  colorIcon: assets/img/integrations/submariner/components/submariner/icons/color/submariner-color.svg
+  whiteIcon: assets/img/integrations/submariner/components/submariner/icons/white/submariner-white.svg
+  description: 
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

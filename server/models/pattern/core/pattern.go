@@ -334,8 +334,8 @@ func processCytoElementsWithPattern(eles []cytoscapejs.Element, callback func(sv
 		}
 
 		// Add position
-		declaration.Styles.Position.X = float32(elem.Position.X)
-		declaration.Styles.Position.Y = float32(elem.Position.Y)
+		declaration.Styles.Position.X = elem.Position.X
+		declaration.Styles.Position.Y = elem.Position.Y
 
 		if err := json.Unmarshal(declarationByt, &declaration); err != nil {
 			return fmt.Errorf("failed to create component declaration from the metadata in the scratch")

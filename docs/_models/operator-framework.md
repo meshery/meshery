@@ -8,8 +8,12 @@ docURL: https://docs.meshery.io/extensibility/integrations/operator framework
 description: 
 integrations-category: App Definition and Development
 integrations-subcategory: Application Definition & Image Build
-registrant: Artifact Hub
+registrant: Github
 components: 
+- name: cluster-extension
+  colorIcon: assets/img/integrations/operator-framework/components/cluster-extension/icons/color/cluster-extension-color.svg
+  whiteIcon: assets/img/integrations/operator-framework/components/cluster-extension/icons/white/cluster-extension-white.svg
+  description: 
 featureList: [
   "Defines custom resources for operators",
   "Enables declarative configuration",

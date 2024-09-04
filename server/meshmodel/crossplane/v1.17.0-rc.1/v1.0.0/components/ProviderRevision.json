@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "ProviderRevision",
    "schema": "{\n \"description\": \"A ProviderRevision represents a revision of a Provider. Crossplane\\ncreates new revisions when there are changes to a Provider.\\n\\n\\nCrossplane creates and manages ProviderRevisions. Don't directly edit\\nProviderRevisions.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ProviderRevisionSpec specifies configuration for a ProviderRevision.\",\n   \"properties\": {\n    \"commonLabels\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"Map of string keys and values that can be used to organize and categorize\\n(scope and select) objects. May match selectors of replication controllers\\nand services.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/\",\n     \"type\": \"object\"\n    },\n    \"controllerConfigRef\": {\n     \"description\": \"ControllerConfigRef references a ControllerConfig resource that will be\\nused to configure the packaged controller Deployment.\\nDeprecated: Use RuntimeConfigReference instead.\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of the ControllerConfig.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"desiredState\": {\n     \"description\": \"DesiredState of the PackageRevision. Can be either Active or Inactive.\",\n     \"type\": \"string\"\n    },\n    \"ignoreCrossplaneConstraints\": {\n     \"default\": false,\n     \"description\": \"IgnoreCrossplaneConstraints indicates to the package manager whether to\\nhonor Crossplane version constrains specified by the package.\\nDefault is false.\",\n     \"type\": \"boolean\"\n    },\n    \"image\": {\n     \"description\": \"Package image used by install Pod to extract package contents.\",\n     \"type\": \"string\"\n    },\n    \"packagePullPolicy\": {\n     \"default\": \"IfNotPresent\",\n     \"description\": \"PackagePullPolicy defines the pull policy for the package. It is also\\napplied to any images pulled for the package, such as a provider's\\ncontroller image.\\nDefault is IfNotPresent.\",\n     \"type\": \"string\"\n    },\n    \"packagePullSecrets\": {\n     \"description\": \"PackagePullSecrets are named secrets in the same namespace that can be\\nused to fetch packages from private registries. They are also applied to\\nany images pulled for the package, such as a provider's controller image.\",\n     \"items\": {\n      \"description\": \"LocalObjectReference contains enough information to let you locate the\\nreferenced object inside the same namespace.\",\n      \"properties\": {\n       \"name\": {\n        \"description\": \"Name of the referent.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\\nTODO: Add other useful fields. apiVersion, kind, uid?\",\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\",\n      \"x-kubernetes-map-type\": \"atomic\"\n     },\n     \"type\": \"array\"\n    },\n    \"revision\": {\n     \"description\": \"Revision number. Indicates when the revision will be garbage collected\\nbased on the parent's RevisionHistoryLimit.\",\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"runtimeConfigRef\": {\n     \"default\": {\n      \"name\": \"default\"\n     },\n     \"description\": \"RuntimeConfigRef references a RuntimeConfig resource that will be used\\nto configure the package runtime.\",\n     \"properties\": {\n      \"apiVersion\": {\n       \"default\": \"pkg.crossplane.io/v1beta1\",\n       \"description\": \"API version of the referent.\",\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"default\": \"DeploymentRuntimeConfig\",\n       \"description\": \"Kind of the referent.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the RuntimeConfig.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"skipDependencyResolution\": {\n     \"default\": false,\n     \"description\": \"SkipDependencyResolution indicates to the package manager whether to skip\\nresolving dependencies for a package. Setting this value to true may have\\nunintended consequences.\\nDefault is false.\",\n     \"type\": \"boolean\"\n    },\n    \"tlsClientSecretName\": {\n     \"description\": \"TLSClientSecretName is the name of the TLS Secret that stores client\\ncertificates of the Provider.\",\n     \"type\": \"string\"\n    },\n    \"tlsServerSecretName\": {\n     \"description\": \"TLSServerSecretName is the name of the TLS Secret that stores server\\ncertificates of the Provider.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"desiredState\",\n    \"image\",\n    \"revision\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Provider Revision\",\n \"type\": \"object\"\n}",

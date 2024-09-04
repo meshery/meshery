@@ -45,8 +45,20 @@
                 ]
             },
             "deny": {
-                "from": [],
-                "to": []
+                "from": [
+                    {
+                        "kind": "Environment",
+                        "model": {
+                            "name": "meshery-core"
+                        }
+                    }],
+                "to": [
+                    {
+                        "kind": "Environment",
+                        "model": {
+                            "name": "meshery-core"
+                        }
+                    }]
             }
         }
     ]

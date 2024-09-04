@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "Submariner",
    "schema": "{\n \"description\": \"Submariner is the Schema for the submariners API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"SubmarinerSpec defines the desired state of Submariner\",\n   \"properties\": {\n    \"broker\": {\n     \"type\": \"string\"\n    },\n    \"brokerK8sApiServer\": {\n     \"type\": \"string\"\n    },\n    \"brokerK8sApiServerToken\": {\n     \"type\": \"string\"\n    },\n    \"brokerK8sCA\": {\n     \"type\": \"string\"\n    },\n    \"brokerK8sInsecure\": {\n     \"type\": \"boolean\"\n    },\n    \"brokerK8sRemoteNamespace\": {\n     \"type\": \"string\"\n    },\n    \"cableDriver\": {\n     \"type\": \"string\"\n    },\n    \"ceIPSecDebug\": {\n     \"type\": \"boolean\"\n    },\n    \"ceIPSecForceUDPEncaps\": {\n     \"type\": \"boolean\"\n    },\n    \"ceIPSecIKEPort\": {\n     \"type\": \"integer\"\n    },\n    \"ceIPSecNATTPort\": {\n     \"type\": \"integer\"\n    },\n    \"ceIPSecPSK\": {\n     \"type\": \"string\"\n    },\n    \"ceIPSecPreferredServer\": {\n     \"type\": \"boolean\"\n    },\n    \"clusterCIDR\": {\n     \"type\": \"string\"\n    },\n    \"clusterID\": {\n     \"type\": \"string\"\n    },\n    \"colorCodes\": {\n     \"type\": \"string\"\n    },\n    \"connectionHealthCheck\": {\n     \"properties\": {\n      \"enabled\": {\n       \"type\": \"boolean\"\n      },\n      \"intervalSeconds\": {\n       \"description\": \"The interval at which health check pings are sent.\",\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"maxPacketLossCount\": {\n       \"description\": \"The maximum number of packets lost at which the health checker will mark the connection as down.\",\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"coreDNSCustomConfig\": {\n     \"properties\": {\n      \"configMapName\": {\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"customDomains\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\",\n     \"x-kubernetes-list-type\": \"set\"\n    },\n    \"debug\": {\n     \"type\": \"boolean\"\n    },\n    \"globalCIDR\": {\n     \"type\": \"string\"\n    },\n    \"imageOverrides\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"object\"\n    },\n    \"loadBalancerEnabled\": {\n     \"type\": \"boolean\"\n    },\n    \"namespace\": {\n     \"type\": \"string\"\n    },\n    \"natEnabled\": {\n     \"type\": \"boolean\"\n    },\n    \"repository\": {\n     \"type\": \"string\"\n    },\n    \"serviceCIDR\": {\n     \"type\": \"string\"\n    },\n    \"serviceDiscoveryEnabled\": {\n     \"type\": \"boolean\"\n    },\n    \"version\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"broker\",\n    \"brokerK8sApiServer\",\n    \"brokerK8sApiServerToken\",\n    \"brokerK8sCA\",\n    \"brokerK8sRemoteNamespace\",\n    \"ceIPSecDebug\",\n    \"ceIPSecPSK\",\n    \"clusterCIDR\",\n    \"clusterID\",\n    \"debug\",\n    \"namespace\",\n    \"natEnabled\",\n    \"serviceCIDR\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Submariner\",\n \"type\": \"object\"\n}",

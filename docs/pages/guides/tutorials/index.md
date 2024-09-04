@@ -20,7 +20,7 @@ Explore these tutorials to learn how to use Meshery for collaboratively managing
   <h2>{{ group.name | capitalize }} </h2>
   
     {% for item in group.items %}
-1. [{{ item.title }}]({{ site.baseurl }}{{ item.url }})
+0. [{{ item.title }}]({{ site.baseurl }}{{ item.url }})
     {% endfor %}
   {% endif %}
 {% endfor %}

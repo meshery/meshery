@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "Machine",
    "schema": "{\n \"description\": \"Machine is the Schema for the machines API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"MachineSpec defines desired machine state.\",\n   \"properties\": {\n    \"connection\": {\n     \"description\": \"Connection contains connection data for a Baseboard Management Controller.\",\n     \"properties\": {\n      \"authSecretRef\": {\n       \"description\": \"AuthSecretRef is the SecretReference that contains authentication information of the Machine. The Secret must contain username and password keys. This is optional as it is not required when using the RPC provider.\",\n       \"properties\": {\n        \"name\": {\n         \"description\": \"name is unique within a namespace to reference a secret resource.\",\n         \"type\": \"string\"\n        },\n        \"namespace\": {\n         \"description\": \"namespace defines the space within which the secret name must be unique.\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\",\n       \"x-kubernetes-map-type\": \"atomic\"\n      },\n      \"host\": {\n       \"description\": \"Host is the host IP address or hostname of the Machine.\",\n       \"minLength\": 1,\n       \"type\": \"string\"\n      },\n      \"insecureTLS\": {\n       \"description\": \"InsecureTLS specifies trusted TLS connections.\",\n       \"type\": \"boolean\"\n      },\n      \"port\": {\n       \"default\": 623,\n       \"description\": \"Port is the port number for connecting with the Machine.\",\n       \"type\": \"integer\"\n      },\n      \"providerOptions\": {\n       \"description\": \"ProviderOptions contains provider specific options.\",\n       \"properties\": {\n        \"intelAMT\": {\n         \"description\": \"IntelAMT contains the options to customize the IntelAMT provider.\",\n         \"properties\": {\n          \"port\": {\n           \"description\": \"Port that intelAMT will use for calls.\",\n           \"type\": \"integer\"\n          }\n         },\n         \"required\": [\n          \"port\"\n         ],\n         \"type\": \"object\"\n        },\n        \"ipmitool\": {\n         \"description\": \"IPMITOOL contains the options to customize the Ipmitool provider.\",\n         \"properties\": {\n          \"cipherSuite\": {\n           \"description\": \"CipherSuite that ipmitool will use for calls.\",\n           \"type\": \"string\"\n          },\n          \"port\": {\n           \"description\": \"Port that ipmitool will use for calls.\",\n           \"type\": \"integer\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"redfish\": {\n         \"description\": \"Redfish contains the options to customize the Redfish provider.\",\n         \"properties\": {\n          \"port\": {\n           \"description\": \"Port that redfish will use for calls.\",\n           \"type\": \"integer\"\n          }\n         },\n         \"required\": [\n          \"port\"\n         ],\n         \"type\": \"object\"\n        },\n        \"rpc\": {\n         \"description\": \"RPC contains the options to customize the RPC provider.\",\n         \"properties\": {\n          \"consumerURL\": {\n           \"description\": \"ConsumerURL is the URL where an rpc consumer/listener is running and to which we will send and receive all notifications.\",\n           \"type\": \"string\"\n          },\n          \"experimental\": {\n           \"description\": \"Experimental options.\",\n           \"properties\": {\n            \"customRequestPayload\": {\n             \"description\": \"CustomRequestPayload must be in json.\",\n             \"type\": \"string\"\n            },\n            \"dotPath\": {\n             \"description\": \"DotPath is the path to the json object where the bmclib RequestPayload{} struct will be embedded. For example: object.data.body\",\n             \"type\": \"string\"\n            }\n           },\n           \"type\": \"object\"\n          },\n          \"hmac\": {\n           \"description\": \"HMAC is the options used to create a HMAC signature.\",\n           \"properties\": {\n            \"prefixSigDisabled\": {\n             \"description\": \"PrefixSigDisabled determines whether the algorithm will be prefixed to the signature. Example: sha256=abc123\",\n             \"type\": \"boolean\"\n            },\n            \"secrets\": {\n             \"additionalProperties\": {\n              \"items\": {\n               \"description\": \"SecretReference represents a Secret Reference. It has enough information to retrieve secret in any namespace\",\n               \"properties\": {\n                \"name\": {\n                 \"description\": \"name is unique within a namespace to reference a secret resource.\",\n                 \"type\": \"string\"\n                },\n                \"namespace\": {\n                 \"description\": \"namespace defines the space within which the secret name must be unique.\",\n                 \"type\": \"string\"\n                }\n               },\n               \"type\": \"object\",\n               \"x-kubernetes-map-type\": \"atomic\"\n              },\n              \"type\": \"array\"\n             },\n             \"description\": \"Secrets are a map of algorithms to secrets used for signing.\",\n             \"type\": \"object\"\n            }\n           },\n           \"type\": \"object\"\n          },\n          \"logNotificationsDisabled\": {\n           \"description\": \"LogNotificationsDisabled determines whether responses from rpc consumer/listeners will be logged or not.\",\n           \"type\": \"boolean\"\n          },\n          \"request\": {\n           \"description\": \"Request is the options used to create the rpc HTTP request.\",\n           \"properties\": {\n            \"httpContentType\": {\n             \"description\": \"HTTPContentType is the content type to use for the rpc request notification.\",\n             \"type\": \"string\"\n            },\n            \"httpMethod\": {\n             \"description\": \"HTTPMethod is the HTTP method to use for the rpc request notification.\",\n             \"type\": \"string\"\n            },\n            \"staticHeaders\": {\n             \"additionalProperties\": {\n              \"items\": {\n               \"type\": \"string\"\n              },\n              \"type\": \"array\"\n             },\n             \"description\": \"StaticHeaders are predefined headers that will be added to every request.\",\n             \"type\": \"object\"\n            },\n            \"timestampFormat\": {\n             \"description\": \"TimestampFormat is the time format for the timestamp header.\",\n             \"type\": \"string\"\n            },\n            \"timestampHeader\": {\n             \"description\": \"TimestampHeader is the header name that should contain the timestamp. Example: X-BMCLIB-Timestamp\",\n             \"type\": \"string\"\n            }\n           },\n           \"type\": \"object\"\n          },\n          \"signature\": {\n           \"description\": \"Signature is the options used for adding an HMAC signature to an HTTP request.\",\n           \"properties\": {\n            \"appendAlgoToHeaderDisabled\": {\n             \"description\": \"AppendAlgoToHeaderDisabled decides whether to append the algorithm to the signature header or not. Example: X-BMCLIB-Signature becomes X-BMCLIB-Signature-256 When set to true, a header will be added for each algorithm. Example: X-BMCLIB-Signature-256 and X-BMCLIB-Signature-512\",\n             \"type\": \"boolean\"\n            },\n            \"headerName\": {\n             \"description\": \"HeaderName is the header name that should contain the signature(s). Example: X-BMCLIB-Signature\",\n             \"type\": \"string\"\n            },\n            \"includedPayloadHeaders\": {\n             \"description\": \"IncludedPayloadHeaders are headers whose values will be included in the signature payload. Example: X-BMCLIB-My-Custom-Header All headers will be deduplicated.\",\n             \"items\": {\n              \"type\": \"string\"\n             },\n             \"type\": \"array\"\n            }\n           },\n           \"type\": \"object\"\n          }\n         },\n         \"required\": [\n          \"consumerURL\"\n         ],\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"required\": [\n      \"host\",\n      \"insecureTLS\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"connection\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Machine\",\n \"type\": \"object\"\n}",

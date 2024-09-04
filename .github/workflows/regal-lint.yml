@@ -1,0 +1,21 @@
+name: Run Regal Lint Check
+on:
+  pull_request:
+    branches:
+      - "*"
+    paths:
+      - "**.rego"
+jobs:
+  lint-rego:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+
+      - name: Setup Regal
+        uses: StyraInc/setup-regal@v1
+        with:
+          version: 0.25.0
+
+      - name: Lint
+        run: regal lint --format github ./server/meshmodel      

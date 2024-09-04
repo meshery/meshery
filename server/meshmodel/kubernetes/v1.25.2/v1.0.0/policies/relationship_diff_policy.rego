@@ -3,8 +3,7 @@ package relationship_evaluation_policy
 import rego.v1
 
 # Evaluates the relationships which needs to be added based on the current state of design file.
-
- # "identified_relationships": Always contains valid set of relationships with status as "approved"
+# "identified_relationships": Always contains valid set of relationships with status as "approved"
 
 evaluate_relationships_deleted(
 	design_relationships,
@@ -26,7 +25,6 @@ evaluate_relationships_deleted(
 	}])
 	rel := relationship
 ]
-
 
 # Evaluates the relationships which needs to be added based on the current state of design file.
 
