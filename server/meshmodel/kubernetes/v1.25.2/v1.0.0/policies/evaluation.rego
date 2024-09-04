@@ -78,24 +78,41 @@ evaluate := eval_results if {
 	]
 
 	# all pending relationships are now resolved.
+	# components configurations have been updated.
 	updated_design_file := json.patch(input, [{
 		"op": "replace",
 		"path": "/components",
 		"value": design_file_with_updated_declarations,
 	}])
 
-	updated_relationships := union({result |
+	components_added := [result |
 		# relationships from registry
 		some relationship in data.relationships
-		result := identify_relationship(updated_design_file, relationship)
+		new_comps := identify_additions(updated_design_file, relationship)
+		some new_comp in new_comps
+		result := new_comp
+	]
+
+	final_set_of_comps := array.concat(updated_design_file.components, components_added)
+
+	updated_design_file_with_new_comps := json.patch(updated_design_file, [{
+		"op": "replace",
+		"path": "/components",
+		"value": final_set_of_comps,
+	}])
+
+	all_valid_relationships := union({result |
+		# relationships from registry
+		some relationship in data.relationships
+		result := identify_relationship(updated_design_file_with_new_comps, relationship)
 	})
 
-	# the evaluate_relationships_added rule can work on the orignal deisng or the updated design.
-	# because it is concerned only about relationships which is not changed uptil this point.
+	# The evaluate_relationships_added rule can work on the original design or on the updated design.
+	# It is concerned only about relationships which have not changed until this point.
 
-	relationships_added := evaluate_relationships_added(updated_pending_rels, updated_relationships)
+	relationships_added := evaluate_relationships_added(updated_pending_rels, all_valid_relationships)
 
-	relationships_deleted := evaluate_relationships_deleted(updated_pending_rels, updated_relationships)
+	relationships_deleted := evaluate_relationships_deleted(updated_pending_rels, all_valid_relationships)
 
 	final_rels_added := array.concat(updated_pending_rels, relationships_added)
 
@@ -104,7 +121,7 @@ evaluate := eval_results if {
 		rel := filter_relationship(relationship, relationships_deleted)
 	]
 
-	final_design_file = json.patch(updated_design_file, [{
+	final_design_file = json.patch(updated_design_file_with_new_comps, [{
 		"op": "add",
 		"path": "/relationships",
 		"value": final_rels_with_deletions,
@@ -114,6 +131,7 @@ evaluate := eval_results if {
 		"design": final_design_file,
 		"trace": {
 			"componentsUpdated": updated_declarations,
+			"componentsAdded": components_added,
 			"relationshipsAdded": relationships_added,
 			"relationshipsRemoved": relationships_deleted,
 			"relationshipsUpdated": intermediate_rels,
