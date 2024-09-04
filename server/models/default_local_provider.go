@@ -62,6 +62,13 @@ type DefaultLocalProvider struct {
 	KubeClient       *mesherykube.Client
 	Log              logger.Handler
 }
+type CapabilitiesENV struct {
+	NavigatorExtension    NavigatorExtension    `json:"NAVIGATOR_EXTENSION"`
+	UserPrefsExtension    UserPrefsExtension    `json:"USER_PREFS_EXTENSION"`
+	GraphQLExtension      GraphQLExtension      `json:"GRAPHQL_EXTENSION"`
+	CollaboratorExtension CollaboratorExtension `json:"COLLABORATOR_EXTENSION"`
+	RestrictedAccess      RestrictedAccess      `json:"RESTRICTED_ACCESS"`
+}
 
 // Initialize will initialize the local provider
 func (l *DefaultLocalProvider) Initialize() {
@@ -81,17 +88,12 @@ func (l *DefaultLocalProvider) Initialize() {
 
 func (l *DefaultLocalProvider) InitializeAccess() {
 	if viper.GetBool("PLAYGROUND") {
-		var restricted RestrictedAccess
-		restricted.IsMesheryUIRestricted = true
-		restricted.AllowedComponents.Navigator = NavigatorComponents{
-			Help: true,
+		var config CapabilitiesENV
+		capabilities := viper.GetString("CAPABILITIES")
+		if err := json.Unmarshal([]byte(capabilities), &config); err != nil {
+			l.Log.Error(ErrUnmarshal(err, "CAPABILITIES Env"))
 		}
-		restricted.AllowedComponents.Header = HeaderComponents{
-			ContextSwitcher: true,
-			Notifications:   true,
-			Profile:         true,
-		}
-		l.RestrictedAccess = restricted
+		l.RestrictedAccess = config.RestrictedAccess
 	}
 }
 func (l *DefaultLocalProvider) IntializePackage() {
@@ -143,75 +145,15 @@ func (l *DefaultLocalProvider) IntializePackage() {
 func (l *DefaultLocalProvider) InitializeExtension() {
 	if viper.GetBool("PLAYGROUND") {
 		var extentsion Extensions
-		trueVal := true
-		falseVal := false
-		NavigatorExtension := NavigatorExtension{
-			Title:           "Meshmap",
-			OnClickCallback: 1,
-			Href: Href{
-				URI:      "/meshmap",
-				External: &falseVal,
-			},
-			Component: "/provider/navigator/meshmap/index.js",
-			Icon:      "/provider/navigator/img/meshmap-icon.svg",
-			Link:      &trueVal,
-			Show:      &trueVal,
-			Type:      "full_page",
-			AllowedTo: MeshMapComponentSet{
-				Designer: DesignerComponents{
-					Design:      trueVal,
-					Application: trueVal,
-					Filter:      trueVal,
-					Save:        trueVal,
-					New:         trueVal,
-					SaveAs:      trueVal,
-				},
-			},
-			IsBeta: &trueVal,
+		var config CapabilitiesENV
+		capabilities := viper.GetString("CAPABILITIES")
+		if err := json.Unmarshal([]byte(capabilities), &config); err != nil {
+			l.Log.Error(ErrUnmarshal(err, "CAPABILITIES Env"))
 		}
-		UserPrefs := UserPrefsExtension{
-			Component: "/provider/userpref/meshmap_userpref/index.js",
-			Type:      "component",
-		}
-		GraphQLExtension := GraphQLExtension{
-			Component: "meshmap",
-			Path:      "provider/navigator/meshmap/graphql/plugin.so",
-			Type:      "backend",
-		}
-		// AccountExtension := AccountExtensions{
-		// 	{
-		// 		Title:           "Profile",
-		// 		OnClickCallback: 1,
-		// 		Href: Href{
-		// 			URI:      "https://meshery.layer5.io/user/958953e8-890e-4217-93f9-84322cc5f952",
-		// 			External: &trueVal,
-		// 		},
-		// 		Link: &trueVal,
-		// 		Show: &trueVal,
-		// 		Type: "full_page",
-		// 	},
-		// 	{
-		// 		Title:           "Cloud",
-		// 		OnClickCallback: 1,
-		// 		Href: Href{
-		// 			URI:      "https://meshery.layer5.io",
-		// 			External: &trueVal,
-		// 		},
-		// 		Link: &trueVal,
-		// 		Show: &trueVal,
-		// 		Type: "link",
-		// 	},
-		// }
-
-		CollaboratorExtension := CollaboratorExtension{
-			Component: "/provider/collaborator/avatar/index.js",
-			Type:      "component",
-		}
-		extentsion.GraphQL = append(extentsion.GraphQL, GraphQLExtension)
-		extentsion.Navigator = append(extentsion.Navigator, NavigatorExtension)
-		extentsion.UserPrefs = append(extentsion.UserPrefs, UserPrefs)
-		// extentsion.Acccount = AccountExtension
-		extentsion.Collaborator = append(extentsion.Collaborator, CollaboratorExtension)
+		extentsion.GraphQL = append(extentsion.GraphQL, config.GraphQLExtension)
+		extentsion.Navigator = append(extentsion.Navigator, config.NavigatorExtension)
+		extentsion.UserPrefs = append(extentsion.UserPrefs, config.UserPrefsExtension)
+		extentsion.Collaborator = append(extentsion.Collaborator, config.CollaboratorExtension)
 		l.Extensions = extentsion
 		return
 	}

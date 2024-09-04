@@ -229,6 +229,7 @@ server-no-content:
 
 server-playground: dep-check
 	cd server; cd cmd; go mod tidy; \
+	CAPABILITIES=$(CAPABILITIES) \
 	BUILD="$(GIT_VERSION)" \
 	PROVIDER=$(LOCAL_PROVIDER) \
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
