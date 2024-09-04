@@ -3788,7 +3788,10 @@ func (l *RemoteProvider) SaveConnection(conn *ConnectionPayload, token string, s
 
 	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusCreated {
 		connectionPage := &connections.ConnectionPage{}
-		_ = json.Unmarshal(bdr, connectionPage)
+		err = json.Unmarshal(bdr, connectionPage)
+		if err != nil {
+			return nil, ErrUnmarshal(err, "Connection \"%s\" of type \"%s\" with status \"%s\" from the remote provider")
+		}
 		l.Log.Debug("connections, ", connectionPage)
 		if len(connectionPage.Connections) > 0 {
 			return connectionPage.Connections[0], nil
@@ -3796,7 +3799,7 @@ func (l *RemoteProvider) SaveConnection(conn *ConnectionPayload, token string, s
 		return nil, ErrPost(fmt.Errorf("failed to save the connection"), fmt.Sprint(bdr), resp.StatusCode)
 	}
 
-	return nil, ErrPost(fmt.Errorf("failed to save the connection \"%s\" of type \"%s\" with status %s", conn.Name, conn.Kind, conn.Status), fmt.Sprint(bdr), resp.StatusCode)
+	return nil, ErrPost(fmt.Errorf("failed to save the connection \"%s\" of type \"%s\" with status \"%s\"", conn.Name, conn.Kind, conn.Status), fmt.Sprint(bdr), resp.StatusCode)
 }
 
 func (l *RemoteProvider) GetConnections(req *http.Request, userID string, page, pageSize int, search, order string, filter string, status []string, kind []string) (*connections.ConnectionPage, error) {
