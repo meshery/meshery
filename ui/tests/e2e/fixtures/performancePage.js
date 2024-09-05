@@ -1,5 +1,4 @@
 import { expect } from '@playwright/test';
-import { DYNAMIC_TIMEOUTS } from '../delays';
 import { ENV } from '../env';
 
 export class PerformancePage {
