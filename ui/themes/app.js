@@ -162,10 +162,10 @@ darkTheme = {
     },
     MuiOutlinedInput: {
       root: {
-        '&:hover $notchedOutline': {
+        '&:hover $.MuiOutlinedInput-notchedOutline': {
           borderColor: '#00B39F',
         },
-        '&$focused $notchedOutline': {
+        '&.Mui-focused $.MuiOutlinedInput-notchedOutline': {
           borderColor: '#00B39F',
         },
       },
@@ -183,7 +183,7 @@ darkTheme = {
     MuiDrawer: { paper: { backgroundColor: '#263238' } },
     MuiFormLabel: {
       root: {
-        '&$focused': {
+        '&.Mui-focused': {
           color: '#00B39F',
         },
       },
@@ -523,10 +523,10 @@ theme = {
     },
     MuiOutlinedInput: {
       root: {
-        '&:hover $notchedOutline': {
+        '&:hover $.MuiOutlinedInput-notchedOutline': {
           borderColor: '#00B39F',
         },
-        '&$focused $notchedOutline': {
+        '&.Mui-focused $.MuiOutlinedInput-notchedOutline': {
           borderColor: '#00B39F',
         },
       },
