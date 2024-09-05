@@ -114,6 +114,7 @@ const MesherySettingsEnvButtons = () => {
             connectedContexts={connectedContexts}
             ignoredContexts={ignoredContexts}
             allContextsRef={contextsRef}
+            dataTestid={testIDs('discoveredModal')}
           />
         </>
       ),
@@ -137,9 +138,7 @@ const MesherySettingsEnvButtons = () => {
                 value={k8sfileElementVal}
                 onChange={handleChange}
                 style={{ display: 'none' }}
-                data-testid={testIDs('uploadKubeConfig')}
               />
-
               <TextField
                 id="k8sfileLabelText"
                 name="k8sfileLabelText"
@@ -150,6 +149,7 @@ const MesherySettingsEnvButtons = () => {
                 onClick={() => {
                   document.querySelector('#k8sfile')?.click();
                 }}
+                data-testid={testIDs('uploadKubeConfig')}
                 margin="normal"
                 InputProps={{
                   readOnly: true,
@@ -229,7 +229,12 @@ const MesherySettingsEnvButtons = () => {
   );
 };
 
-const ShowDiscoveredContexts = ({ registeredContexts, connectedContexts, ignoredContexts }) => {
+const ShowDiscoveredContexts = ({
+  registeredContexts,
+  connectedContexts,
+  ignoredContexts,
+  dataTestid,
+}) => {
   const ping = useKubernetesHook();
 
   return (
@@ -240,6 +245,7 @@ const ShowDiscoveredContexts = ({ registeredContexts, connectedContexts, ignored
       spacing={2}
       columns={1}
       xs={16}
+      data-testid={dataTestid}
     >
       {registeredContexts.length > 0 && (
         <K8sConnectionItems

@@ -105,16 +105,16 @@ test('Add a cluster connection by uploading kubeconfig file', async ({ page }) =
   // Navigate to 'Connections' tab
   await page.getByRole('tab', { name: 'Connections' }).click();
 
-  // const addConnectionReq = page.waitForRequest(
-  //   (request) =>
-  //     request.url() === `${ENV.MESHERY_SERVER_URL}/api/system/kubernetes` &&
-  //     request.method() === 'POST',
-  // );
-  // const addConnectionRes = page.waitForResponse(
-  //   (response) =>
-  //     response.url() === `${ENV.MESHERY_SERVER_URL}/api/system/kubernetes` &&
-  //     response.status() === 200,
-  // );
+  const addConnectionReq = page.waitForRequest(
+    (request) =>
+      request.url() === `${ENV.MESHERY_SERVER_URL}/api/system/kubernetes` &&
+      request.method() === 'POST',
+  );
+  const addConnectionRes = page.waitForResponse(
+    (response) =>
+      response.url() === `${ENV.MESHERY_SERVER_URL}/api/system/kubernetes` &&
+      response.status() === 200,
+  );
 
   // Click Add Cluster button
   await page.getByTestId('connection-addCluster').click();
@@ -122,19 +122,23 @@ test('Add a cluster connection by uploading kubeconfig file', async ({ page }) =
   // Verify "Add Kubernetes Cluster(s)" modal opens
   await expect(page.getByTestId('connection-addKubernetesModal')).toBeVisible();
 
+  const fileChooserPromise = page.waitForEvent('filechooser');
+  await page.getByTestId('connection-uploadKubeConfig').click();
+  const fileChooser = await fileChooserPromise;
+
   // Attach existing kubeconfig file of the system, to test the upload without making any changes in configuration
   const kubeConfigPath = `${os.homedir()}/.kube/config`;
-  await page.getByTestId('connection-uploadKubeConfig').setInputFiles(kubeConfigPath);
+  await fileChooser.setFiles(kubeConfigPath);
 
   // Click "IMPORT" button
   await page.getByRole('button', { name: 'IMPORT', exact: true }).click();
 
   // Verify requests and responses
-  // await addConnectionReq;
-  // await addConnectionRes;
+  await addConnectionReq;
+  await addConnectionRes;
 
   // Verify displaying of success modal
-  await expect(page.getByText('Available contexts in')).toBeVisible();
+  await expect(page.getByTestId('connection-discoveredModal')).toBeVisible();
 
   // Verify available contexts were connected
   await expect(page.getByRole('menuitem', { name: 'connected' })).toBeVisible();

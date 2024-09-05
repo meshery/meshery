@@ -48,7 +48,6 @@ module.exports = defineConfig({
 
     {
       name: 'chromium',
-      timeout: 3 * 60 * 1000,
       use: {
         ...devices['Desktop Chrome'],
         // Use prepared auth state.
