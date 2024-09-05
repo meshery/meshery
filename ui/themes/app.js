@@ -1,4 +1,4 @@
-import { createTheme } from '@material-ui/core/styles';
+import { createTheme } from '@mui/material/styles';
 import { blueGrey } from '@material-ui/core/colors';
 import { iconMedium } from '../css/icons.styles';
 
