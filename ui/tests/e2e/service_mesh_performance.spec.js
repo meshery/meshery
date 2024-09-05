@@ -1,6 +1,5 @@
 import { test as base, expect } from '@playwright/test';
 import { PerformancePage } from './fixtures/performancePage';
-import { DYNAMIC_TIMEOUTS } from './delays';
 import { ENV } from './env';
 
 export const test = base.extend({
