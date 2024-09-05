@@ -1,0 +1,195 @@
+{
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "ClusterExtension",
+   "schema": "{\n \"description\": \"ClusterExtension is the Schema for the clusterextensions API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ClusterExtensionSpec defines the desired state of ClusterExtension\",\n   \"properties\": {\n    \"install\": {\n     \"description\": \"install is a required field used to configure the installation options\\nfor the ClusterExtension such as the installation namespace,\\nthe service account and the pre-flight check configuration.\\n\\nBelow is a minimal example of an installation definition (in yaml):\\ninstall:\\n   namespace: example-namespace\\n   serviceAccount:\\n     name: example-sa\",\n     \"properties\": {\n      \"namespace\": {\n       \"description\": \"namespace is a reference to the Namespace in which the bundle of\\ncontent for the package referenced in the packageName field will be applied.\\nThe bundle may contain cluster-scoped resources or resources that are\\napplied to other Namespaces. This Namespace is expected to exist.\\n\\nnamespace is required, immutable, and follows the DNS label standard\\nas defined in [RFC 1123]. This means that valid values:\\n  - Contain no more than 63 characters\\n  - Contain only lowercase alphanumeric characters or '-'\\n  - Start with an alphanumeric character\\n  - End with an alphanumeric character\\n\\nSome examples of valid values are:\\n  - some-namespace\\n  - 123-namespace\\n  - 1-namespace-2\\n  - somenamespace\\n\\nSome examples of invalid values are:\\n  - -some-namespace\\n  - some-namespace-\\n  - thisisareallylongnamespacenamethatisgreaterthanthemaximumlength\\n  - some.namespace\\n\\n[RFC 1123]: https://tools.ietf.org/html/rfc1123\",\n       \"maxLength\": 63,\n       \"pattern\": \"^[a-z0-9]([-a-z0-9]*[a-z0-9])?$\",\n       \"type\": \"string\",\n       \"x-kubernetes-validations\": [\n        {\n         \"message\": \"namespace is immutable\",\n         \"rule\": \"self == oldSelf\"\n        }\n       ]\n      },\n      \"preflight\": {\n       \"description\": \"preflight is an optional field that can be used to configure the preflight checks run before installation or upgrade of the content for the package specified in the packageName field.\\n\\nWhen specified, it overrides the default configuration of the preflight checks that are required to execute successfully during an install/upgrade operation.\\n\\nWhen not specified, the default configuration for each preflight check will be used.\",\n       \"properties\": {\n        \"crdUpgradeSafety\": {\n         \"description\": \"crdUpgradeSafety is used to configure the CRD Upgrade Safety pre-flight\\nchecks that run prior to upgrades of installed content.\\n\\nThe CRD Upgrade Safety pre-flight check safeguards from unintended\\nconsequences of upgrading a CRD, such as data loss.\\n\\nThis field is required if the spec.preflight field is specified.\",\n         \"properties\": {\n          \"policy\": {\n           \"default\": \"Enabled\",\n           \"description\": \"policy is used to configure the state of the CRD Upgrade Safety pre-flight check.\\n\\nThis field is required when the spec.preflight.crdUpgradeSafety field is\\nspecified.\\n\\nAllowed values are [\\\"Enabled\\\", \\\"Disabled\\\"]. The default value is \\\"Enabled\\\".\\n\\nWhen set to \\\"Disabled\\\", the CRD Upgrade Safety pre-flight check will be skipped\\nwhen performing an upgrade operation. This should be used with caution as\\nunintended consequences such as data loss can occur.\\n\\nWhen set to \\\"Enabled\\\", the CRD Upgrade Safety pre-flight check will be run when\\nperforming an upgrade operation.\",\n           \"enum\": [\n            \"Enabled\",\n            \"Disabled\"\n           ],\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"policy\"\n         ],\n         \"type\": \"object\"\n        }\n       },\n       \"required\": [\n        \"crdUpgradeSafety\"\n       ],\n       \"type\": \"object\"\n      },\n      \"serviceAccount\": {\n       \"description\": \"serviceAccount is a required reference to a ServiceAccount that exists\\nin the installNamespace. The provided ServiceAccount is used to install and\\nmanage the content for the package specified in the packageName field.\\n\\nIn order to successfully install and manage the content for the package,\\nthe ServiceAccount provided via this field should be configured with the\\nappropriate permissions to perform the necessary operations on all the\\nresources that are included in the bundle of content being applied.\",\n       \"properties\": {\n        \"name\": {\n         \"description\": \"name is a required, immutable reference to the name of the ServiceAccount\\nto be used for installation and management of the content for the package\\nspecified in the packageName field.\\n\\nThis ServiceAccount is expected to exist in the installNamespace.\\n\\nThis field follows the DNS subdomain name standard as defined in [RFC\\n1123]. This means that valid values:\\n  - Contain no more than 253 characters\\n  - Contain only lowercase alphanumeric characters, '-', or '.'\\n  - Start with an alphanumeric character\\n  - End with an alphanumeric character\\n\\nSome examples of valid values are:\\n  - some-serviceaccount\\n  - 123-serviceaccount\\n  - 1-serviceaccount-2\\n  - someserviceaccount\\n  - some.serviceaccount\\n\\nSome examples of invalid values are:\\n  - -some-serviceaccount\\n  - some-serviceaccount-\\n\\n[RFC 1123]: https://tools.ietf.org/html/rfc1123\",\n         \"maxLength\": 253,\n         \"pattern\": \"^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$\",\n         \"type\": \"string\",\n         \"x-kubernetes-validations\": [\n          {\n           \"message\": \"name is immutable\",\n           \"rule\": \"self == oldSelf\"\n          }\n         ]\n        }\n       },\n       \"required\": [\n        \"name\"\n       ],\n       \"type\": \"object\"\n      }\n     },\n     \"required\": [\n      \"namespace\",\n      \"serviceAccount\"\n     ],\n     \"type\": \"object\"\n    },\n    \"source\": {\n     \"description\": \"source is a required field which selects the installation source of content\\nfor this ClusterExtension. Selection is performed by setting the sourceType.\\n\\nCatalog is currently the only implemented sourceType, and setting the\\nsourcetype to \\\"Catalog\\\" requires the catalog field to also be defined.\\n\\nBelow is a minimal example of a source definition (in yaml):\\n\\nsource:\\n  sourceType: Catalog\\n  catalog:\\n    packageName: example-package\",\n     \"properties\": {\n      \"catalog\": {\n       \"description\": \"catalog is used to configure how information is sourced from a catalog. This field must be defined when sourceType is set to \\\"Catalog\\\",\\nand must be the only field defined for this sourceType.\",\n       \"properties\": {\n        \"channel\": {\n         \"description\": \"channel is an optional reference to a channel belonging to\\nthe package specified in the packageName field.\\n\\nA \\\"channel\\\" is a package author defined stream of updates for an extension.\\n\\nWhen specified, it is used to constrain the set of installable bundles and\\nthe automated upgrade path. This constraint is an AND operation with the\\nversion field. For example:\\n  - Given channel is set to \\\"foo\\\"\\n  - Given version is set to \\\"\\u003e=1.0.0, \\u003c1.5.0\\\"\\n  - Only bundles that exist in channel \\\"foo\\\" AND satisfy the version range comparison will be considered installable\\n  - Automatic upgrades will be constrained to upgrade edges defined by the selected channel\\n\\nWhen unspecified, upgrade edges across all channels will be used to identify valid automatic upgrade paths.\\n\\nThis field follows the DNS subdomain name standard as defined in [RFC\\n1123]. This means that valid entries:\\n  - Contain no more than 253 characters\\n  - Contain only lowercase alphanumeric characters, '-', or '.'\\n  - Start with an alphanumeric character\\n  - End with an alphanumeric character\\n\\nSome examples of valid values are:\\n  - 1.1.x\\n  - alpha\\n  - stable\\n  - stable-v1\\n  - v1-stable\\n  - dev-preview\\n  - preview\\n  - community\\n\\nSome examples of invalid values are:\\n  - -some-channel\\n  - some-channel-\\n  - thisisareallylongchannelnamethatisgreaterthanthemaximumlength\\n  - original_40\\n  - --default-channel\\n\\n[RFC 1123]: https://tools.ietf.org/html/rfc1123\",\n         \"maxLength\": 253,\n         \"pattern\": \"^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$\",\n         \"type\": \"string\"\n        },\n        \"packageName\": {\n         \"description\": \"packageName is a reference to the name of the package to be installed\\nand is used to filter the content from catalogs.\\n\\nThis field is required, immutable and follows the DNS subdomain name\\nstandard as defined in [RFC 1123]. This means that valid entries:\\n  - Contain no more than 253 characters\\n  - Contain only lowercase alphanumeric characters, '-', or '.'\\n  - Start with an alphanumeric character\\n  - End with an alphanumeric character\\n\\nSome examples of valid values are:\\n  - some-package\\n  - 123-package\\n  - 1-package-2\\n  - somepackage\\n\\nSome examples of invalid values are:\\n  - -some-package\\n  - some-package-\\n  - thisisareallylongpackagenamethatisgreaterthanthemaximumlength\\n  - some.package\\n\\n[RFC 1123]: https://tools.ietf.org/html/rfc1123\",\n         \"maxLength\": 253,\n         \"pattern\": \"^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$\",\n         \"type\": \"string\",\n         \"x-kubernetes-validations\": [\n          {\n           \"message\": \"packageName is immutable\",\n           \"rule\": \"self == oldSelf\"\n          }\n         ]\n        },\n        \"selector\": {\n         \"description\": \"selector is an optional field that can be used\\nto filter the set of ClusterCatalogs used in the bundle\\nselection process.\\n\\nWhen unspecified, all ClusterCatalogs will be used in\\nthe bundle selection process.\",\n         \"properties\": {\n          \"matchExpressions\": {\n           \"description\": \"matchExpressions is a list of label selector requirements. The requirements are ANDed.\",\n           \"items\": {\n            \"description\": \"A label selector requirement is a selector that contains values, a key, and an operator that\\nrelates the key and values.\",\n            \"properties\": {\n             \"key\": {\n              \"description\": \"key is the label key that the selector applies to.\",\n              \"type\": \"string\"\n             },\n             \"operator\": {\n              \"description\": \"operator represents a key's relationship to a set of values.\\nValid operators are In, NotIn, Exists and DoesNotExist.\",\n              \"type\": \"string\"\n             },\n             \"values\": {\n              \"description\": \"values is an array of string values. If the operator is In or NotIn,\\nthe values array must be non-empty. If the operator is Exists or DoesNotExist,\\nthe values array must be empty. This array is replaced during a strategic\\nmerge patch.\",\n              \"items\": {\n               \"type\": \"string\"\n              },\n              \"type\": \"array\",\n              \"x-kubernetes-list-type\": \"atomic\"\n             }\n            },\n            \"required\": [\n             \"key\",\n             \"operator\"\n            ],\n            \"type\": \"object\"\n           },\n           \"type\": \"array\",\n           \"x-kubernetes-list-type\": \"atomic\"\n          },\n          \"matchLabels\": {\n           \"additionalProperties\": {\n            \"type\": \"string\"\n           },\n           \"description\": \"matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels\\nmap is equivalent to an element of matchExpressions, whose key field is \\\"key\\\", the\\noperator is \\\"In\\\", and the values array contains only \\\"value\\\". The requirements are ANDed.\",\n           \"type\": \"object\"\n          }\n         },\n         \"type\": \"object\",\n         \"x-kubernetes-map-type\": \"atomic\"\n        },\n        \"upgradeConstraintPolicy\": {\n         \"default\": \"Enforce\",\n         \"description\": \"upgradeConstraintPolicy is an optional field that controls whether\\nthe upgrade path(s) defined in the catalog are enforced for the package\\nreferenced in the packageName field.\\n\\nAllowed values are: [\\\"Enforce\\\", \\\"Ignore\\\"].\\n\\nWhen this field is set to \\\"Enforce\\\", automatic upgrades will only occur\\nwhen upgrade constraints specified by the package author are met.\\n\\nWhen this field is set to \\\"Ignore\\\", the upgrade constraints specified by\\nthe package author are ignored. This allows for upgrades and downgrades to\\nany version of the package. This is considered a dangerous operation as it\\ncan lead to unknown and potentially disastrous outcomes, such as data\\nloss. It is assumed that users have independently verified changes when\\nusing this option.\\n\\nIf unspecified, the default value is \\\"Enforce\\\".\",\n         \"enum\": [\n          \"Enforce\",\n          \"Ignore\"\n         ],\n         \"type\": \"string\"\n        },\n        \"version\": {\n         \"description\": \"version is an optional semver constraint (a specific version or range of versions). When unspecified, the latest version available will be installed.\\n\\nAcceptable version ranges are no longer than 64 characters.\\nVersion ranges are composed of comma- or space-delimited values and one or\\nmore comparison operators, known as comparison strings. Additional\\ncomparison strings can be added using the OR operator (||).\\n\\n# Range Comparisons\\n\\nTo specify a version range, you can use a comparison string like \\\"\\u003e=3.0,\\n\\u003c3.6\\\". When specifying a range, automatic updates will occur within that\\nrange. The example comparison string means \\\"install any version greater than\\nor equal to 3.0.0 but less than 3.6.0.\\\". It also states intent that if any\\nupgrades are available within the version range after initial installation,\\nthose upgrades should be automatically performed.\\n\\n# Pinned Versions\\n\\nTo specify an exact version to install you can use a version range that\\n\\\"pins\\\" to a specific version. When pinning to a specific version, no\\nautomatic updates will occur. An example of a pinned version range is\\n\\\"0.6.0\\\", which means \\\"only install version 0.6.0 and never\\nupgrade from this version\\\".\\n\\n# Basic Comparison Operators\\n\\nThe basic comparison operators and their meanings are:\\n  - \\\"=\\\", equal (not aliased to an operator)\\n  - \\\"!=\\\", not equal\\n  - \\\"\\u003c\\\", less than\\n  - \\\"\\u003e\\\", greater than\\n  - \\\"\\u003e=\\\", greater than OR equal to\\n  - \\\"\\u003c=\\\", less than OR equal to\\n\\n# Wildcard Comparisons\\n\\nYou can use the \\\"x\\\", \\\"X\\\", and \\\"*\\\" characters as wildcard characters in all\\ncomparison operations. Some examples of using the wildcard characters:\\n  - \\\"1.2.x\\\", \\\"1.2.X\\\", and \\\"1.2.*\\\" is equivalent to \\\"\\u003e=1.2.0, \\u003c 1.3.0\\\"\\n  - \\\"\\u003e= 1.2.x\\\", \\\"\\u003e= 1.2.X\\\", and \\\"\\u003e= 1.2.*\\\" is equivalent to \\\"\\u003e= 1.2.0\\\"\\n  - \\\"\\u003c= 2.x\\\", \\\"\\u003c= 2.X\\\", and \\\"\\u003c= 2.*\\\" is equivalent to \\\"\\u003c 3\\\"\\n  - \\\"x\\\", \\\"X\\\", and \\\"*\\\" is equivalent to \\\"\\u003e= 0.0.0\\\"\\n\\n# Patch Release Comparisons\\n\\nWhen you want to specify a minor version up to the next major version you\\ncan use the \\\"~\\\" character to perform patch comparisons. Some examples:\\n  - \\\"~1.2.3\\\" is equivalent to \\\"\\u003e=1.2.3, \\u003c1.3.0\\\"\\n  - \\\"~1\\\" and \\\"~1.x\\\" is equivalent to \\\"\\u003e=1, \\u003c2\\\"\\n  - \\\"~2.3\\\" is equivalent to \\\"\\u003e=2.3, \\u003c2.4\\\"\\n  - \\\"~1.2.x\\\" is equivalent to \\\"\\u003e=1.2.0, \\u003c1.3.0\\\"\\n\\n# Major Release Comparisons\\n\\nYou can use the \\\"^\\\" character to make major release comparisons after a\\nstable 1.0.0 version is published. If there is no stable version published, // minor versions define the stability level. Some examples:\\n  - \\\"^1.2.3\\\" is equivalent to \\\"\\u003e=1.2.3, \\u003c2.0.0\\\"\\n  - \\\"^1.2.x\\\" is equivalent to \\\"\\u003e=1.2.0, \\u003c2.0.0\\\"\\n  - \\\"^2.3\\\" is equivalent to \\\"\\u003e=2.3, \\u003c3\\\"\\n  - \\\"^2.x\\\" is equivalent to \\\"\\u003e=2.0.0, \\u003c3\\\"\\n  - \\\"^0.2.3\\\" is equivalent to \\\"\\u003e=0.2.3, \\u003c0.3.0\\\"\\n  - \\\"^0.2\\\" is equivalent to \\\"\\u003e=0.2.0, \\u003c0.3.0\\\"\\n  - \\\"^0.0.3\\\" is equvalent to \\\"\\u003e=0.0.3, \\u003c0.0.4\\\"\\n  - \\\"^0.0\\\" is equivalent to \\\"\\u003e=0.0.0, \\u003c0.1.0\\\"\\n  - \\\"^0\\\" is equivalent to \\\"\\u003e=0.0.0, \\u003c1.0.0\\\"\\n\\n# OR Comparisons\\nYou can use the \\\"||\\\" character to represent an OR operation in the version\\nrange. Some examples:\\n  - \\\"\\u003e=1.2.3, \\u003c2.0.0 || \\u003e3.0.0\\\"\\n  - \\\"^0 || ^3 || ^5\\\"\\n\\nFor more information on semver, please see https://semver.org/\",\n         \"maxLength\": 64,\n         \"pattern\": \"^(\\\\s*(=||!=|\\u003e|\\u003c|\\u003e=|=\\u003e|\\u003c=|=\\u003c|~|~\\u003e|\\\\^)\\\\s*(v?(0|[1-9]\\\\d*|[x|X|\\\\*])(\\\\.(0|[1-9]\\\\d*|x|X|\\\\*]))?(\\\\.(0|[1-9]\\\\d*|x|X|\\\\*))?(-([0-9A-Za-z\\\\-]+(\\\\.[0-9A-Za-z\\\\-]+)*))?(\\\\+([0-9A-Za-z\\\\-]+(\\\\.[0-9A-Za-z\\\\-]+)*))?)\\\\s*)((?:\\\\s+|,\\\\s*|\\\\s*\\\\|\\\\|\\\\s*)(=||!=|\\u003e|\\u003c|\\u003e=|=\\u003e|\\u003c=|=\\u003c|~|~\\u003e|\\\\^)\\\\s*(v?(0|[1-9]\\\\d*|x|X|\\\\*])(\\\\.(0|[1-9]\\\\d*|x|X|\\\\*))?(\\\\.(0|[1-9]\\\\d*|x|X|\\\\*]))?(-([0-9A-Za-z\\\\-]+(\\\\.[0-9A-Za-z\\\\-]+)*))?(\\\\+([0-9A-Za-z\\\\-]+(\\\\.[0-9A-Za-z\\\\-]+)*))?)\\\\s*)*$\",\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"packageName\"\n       ],\n       \"type\": \"object\"\n      },\n      \"sourceType\": {\n       \"description\": \"sourceType is a required reference to the type of install source.\\n\\nAllowed values are [\\\"Catalog\\\"]\\n\\nWhen this field is set to \\\"Catalog\\\", information for determining the appropriate\\nbundle of content to install will be fetched from ClusterCatalog resources existing\\non the cluster. When using the Catalog sourceType, the catalog field must also be set.\",\n       \"enum\": [\n        \"Catalog\"\n       ],\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"sourceType\"\n     ],\n     \"type\": \"object\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"sourceType Catalog requires catalog field\",\n       \"rule\": \"self.sourceType == 'Catalog' \\u0026\\u0026 has(self.catalog)\"\n      }\n     ]\n    }\n   },\n   \"required\": [\n    \"install\",\n    \"source\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Cluster Extension\",\n \"type\": \"object\"\n}",
+   "version": "olm.operatorframework.io/v1alpha1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "Cluster Extension",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": false,
+   "published": false,
+   "source_uri": "git://github.com/operator-framework/operator-controller/main/config/base/crd/bases"
+  },
+  "model": {
+   "category": {
+    "name": "App Definition and Development"
+   },
+   "displayName": "Operator Framework",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "isAnnotation": false,
+    "primaryColor": "#cc0000",
+    "secondaryColor": "#FF4545\n",
+    "shape": "circle",
+    "source_uri": "git://github.com/operator-framework/operator-controller/main/config/base/crd/bases",
+    "styleOverrides": "",
+    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" id=\"Layer_1\" data-name=\"Layer 1\" viewBox=\"0 0 360 360\" height=\"20\" width=\"20\"\u003e\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cstyle xmlns=\"http://www.w3.org/2000/svg\"\u003e.cls-1{fill:#c00;}.cls-2{fill:#fff;}\u003c/style\u003e\u003c/defs\u003e\u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Page-1\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"Fill-1\" class=\"cls-1\" d=\"M179.432,5.88043A173.22942,173.22942,0,1,1,6.20259,179.10984,173.22942,173.22942,0,0,1,179.432,5.88043\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"Fill-5\" class=\"cls-2\" d=\"M77.65462,205.60375,218.48,26.26036c3.13849,6.1955,0,9.70085-1.22281,13.41-12.7986,35.09424-25.39341,70.433-38.80338,105.32348-3.30154,8.8449-1.87495,10.92365,7.4183,10.92365H276.522c2.44559,0,5.74716-1.2228,7.21448,1.46736s-1.67117,4.72814-3.09775,6.80688L165.20682,317.00046c-1.8342,2.48636-3.6684,6.19549-7.0107,4.36131s-1.2228-5.58411,0-8.68184c8.88565-32.60789,17.32294-64.849,26.61618-97.253,2.32331-7.62211,0-9.29325-6.96993-9.08947H91.71678Z\"\u003e\u003c/path\u003e\u003c/g\u003e\u003c/svg\u003e\n",
+    "svgComplete": "",
+    "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" id=\"Layer_1\" data-name=\"Layer 1\" viewBox=\"0 0 360 360\" height=\"20\" width=\"20\"\u003e\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cstyle xmlns=\"http://www.w3.org/2000/svg\"\u003e.cls-1{fill:#fff;}\u003c/style\u003e\u003c/defs\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"cls-1\" d=\"M179.432,5.88044A173.2294,173.2294,0,1,0,352.66146,179.10987,173.27011,173.27011,0,0,0,179.432,5.88044ZM280.63875,164.19172,165.20687,317.00044c-1.83423,2.48639-3.66846,6.19549-7.01074,4.36132s-1.22278-5.5841,0-8.68182c8.88562-32.60791,17.323-64.849,26.61621-97.253,2.32324-7.62207,0-9.29321-6.97-9.08948H91.71676l-14.06214-.73364L218.47994,26.26039c3.13855,6.19549,0,9.7008-1.22278,13.41-12.79858,35.09424-25.39343,70.433-38.80347,105.32348-3.30151,8.84491-1.87487,10.92365,7.41846,10.92365h90.6499c2.44556,0,5.74707-1.22278,7.21436,1.46735S282.06527,162.113,280.63875,164.19172Z\"\u003e\u003c/path\u003e\u003c/svg\u003e"
+   },
+   "model": {
+    "version": "v0.15.0"
+   },
+   "name": "operator framework",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "github",
+    "name": "Github",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "enabled",
+   "subCategory": "Application Definition \u0026 Image Build",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
+   "primaryColor": "#cc0000",
+   "secondaryColor": "#FF4545\n",
+   "shape": "circle",
+   "svgColor": "\u003csvg id=\"Layer_1\" data-name=\"Layer 1\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 360 360\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#c00;}.cls-2{fill:#fff;}\u003c/style\u003e\u003c/defs\u003e\u003cg id=\"Page-1\"\u003e\u003cpath id=\"Fill-1\" class=\"cls-1\" d=\"M179.432,5.88043A173.22942,173.22942,0,1,1,6.20259,179.10984,173.22942,173.22942,0,0,1,179.432,5.88043\"/\u003e\u003cpath id=\"Fill-5\" class=\"cls-2\" d=\"M77.65462,205.60375,218.48,26.26036c3.13849,6.1955,0,9.70085-1.22281,13.41-12.7986,35.09424-25.39341,70.433-38.80338,105.32348-3.30154,8.8449-1.87495,10.92365,7.4183,10.92365H276.522c2.44559,0,5.74716-1.2228,7.21448,1.46736s-1.67117,4.72814-3.09775,6.80688L165.20682,317.00046c-1.8342,2.48636-3.6684,6.19549-7.0107,4.36131s-1.2228-5.58411,0-8.68184c8.88565-32.60789,17.32294-64.849,26.61618-97.253,2.32331-7.62211,0-9.29325-6.96993-9.08947H91.71678Z\"/\u003e\u003c/g\u003e\u003c/svg\u003e\n",
+   "svgWhite": "\u003csvg id=\"Layer_1\" data-name=\"Layer 1\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 360 360\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#fff;}\u003c/style\u003e\u003c/defs\u003e\u003cpath class=\"cls-1\" d=\"M179.432,5.88044A173.2294,173.2294,0,1,0,352.66146,179.10987,173.27011,173.27011,0,0,0,179.432,5.88044ZM280.63875,164.19172,165.20687,317.00044c-1.83423,2.48639-3.66846,6.19549-7.01074,4.36132s-1.22278-5.5841,0-8.68182c8.88562-32.60791,17.323-64.849,26.61621-97.253,2.32324-7.62207,0-9.29321-6.97-9.08948H91.71676l-14.06214-.73364L218.47994,26.26039c3.13855,6.19549,0,9.7008-1.22278,13.41-12.79858,35.09424-25.39343,70.433-38.80347,105.32348-3.30151,8.84491-1.87487,10.92365,7.41846,10.92365h90.6499c2.44556,0,5.74707-1.22278,7.21436,1.46735S282.06527,162.113,280.63875,164.19172Z\"/\u003e\u003c/svg\u003e"
+  },
+  "version": "v1.0.0"
+ }
