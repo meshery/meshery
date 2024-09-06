@@ -1,6 +1,6 @@
 FROM golang:1.21-alpine AS builder
 ENV CGO_ENABLED=0
-RUN apk add --update make
+RUN apk update && apk add --no-cache gcc libc-dev make
 WORKDIR /backend
 COPY go.* .
 ARG TARGETARCH
