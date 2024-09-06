@@ -68,6 +68,9 @@ func (c *ComponentCSV) CreateComponentDefinition(isModelPublished bool, defVersi
 		},
 		Component: component.Component{},
 	}
+	if c.Description != "" {
+		componentDefinition.Description = c.Description
+	}
 	err := c.UpdateCompDefinition(componentDefinition)
 	return *componentDefinition, err
 }
@@ -81,7 +84,9 @@ var compStyleValues = []string{
 
 func (c *ComponentCSV) UpdateCompDefinition(compDef *component.ComponentDefinition) error {
 	var existingAddditionalProperties map[string]interface{}
-
+	if c.Description != "" {
+		compDef.Description = c.Description
+	}
 	if compDef.Metadata.AdditionalProperties != nil {
 		existingAddditionalProperties = compDef.Metadata.AdditionalProperties
 	}
