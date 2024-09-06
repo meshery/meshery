@@ -387,14 +387,14 @@ func ConvertCompDefToCompCSV(modelcsv *ModelCSV, compDef component.ComponentDefi
 	compCSV.IsAnnotation = strconv.FormatBool(compDef.Metadata.IsAnnotation)
 	if utils.ReplaceSpacesAndConvertToLowercase(compDef.Model.Registrant.Kind) == "meshery" {
 		processStyles(compDef, &compCSV)
-		if len(*compDef.Capabilities) > 0 {
+		if compDef.Capabilities != nil && len(*compDef.Capabilities) > 0 {
 			capabilitiesJSON, err := encoding.Marshal(compDef.Capabilities)
 			if err != nil {
 				Log.Error(err)
+			} else {
+				compCSV.Capabilities = string(capabilitiesJSON)
 			}
-			compCSV.Capabilities = string(capabilitiesJSON)
 		}
-
 		compCSV.Description = compDef.Description
 	}
 	return &compCSV
@@ -497,10 +497,12 @@ func processStyles(compDef component.ComponentDefinition, compCSV *ComponentCSV)
 			styles[stylesType.Field(i).Tag.Get("json")] = fieldValue.String()
 		}
 	}
-	stylesJSON, err := encoding.Marshal(styles)
-	if err != nil {
-		Log.Error(err)
+	if len(styles) > 0 {
+		stylesJSON, err := encoding.Marshal(styles)
+		if err != nil {
+			Log.Error(err)
+		} else {
+			compCSV.Styles = string(stylesJSON)
+		}
 	}
-
-	compCSV.Styles = string(stylesJSON)
 }

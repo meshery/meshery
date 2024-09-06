@@ -204,7 +204,6 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 		if err != nil {
 			break
 		}
-
 		wg.Add(1)
 		go func(model utils.ModelCSV) {
 			defer func() {
@@ -434,7 +433,7 @@ func GenerateDefsForCoreRegistrant(model utils.ModelCSV, spreadsheeetChan chan u
 		utils.LogError.Error(err)
 		return nil
 	}
-
+	alreadyExist := false
 	isModelPublished, _ := strconv.ParseBool(model.PublishToRegistry)
 	//Initialize walker
 	gitWalker := walker.NewGit()
@@ -460,13 +459,11 @@ func GenerateDefsForCoreRegistrant(model utils.ModelCSV, spreadsheeetChan chan u
 					err = ErrGenerateModel(err, model.Model)
 					return err
 				}
-				modelDef, alreadyExist, err := writeModelDefToFileSystem(&model, version, modelDirPath) // how to infer this? @Beginner86 any idea? new column?
+				modelDef, alreadyExists, err := writeModelDefToFileSystem(&model, version, modelDirPath) // how to infer this? @Beginner86 any idea? new column?
 				if err != nil {
 					return ErrGenerateModel(err, model.Model)
 				}
-				if alreadyExist {
-					utils.Log.Info("Model already exists: ", model.Model)
-				}
+				alreadyExist = alreadyExists
 				componentDef.Model = *modelDef
 				_, err = componentDef.WriteComponentDefinition(compDirPath)
 				if err != nil {
@@ -480,6 +477,16 @@ func GenerateDefsForCoreRegistrant(model utils.ModelCSV, spreadsheeetChan chan u
 		err = gw.Walk()
 		if err != nil {
 			return err
+		}
+	}
+	if !alreadyExist {
+		utils.Log.Info("Current model: ", model.Model)
+		utils.Log.Info(" extracted ", len(comps), " components for ", model.ModelDisplayName, " (", model.Model, ")")
+	} else {
+		if len(comps) > 0 {
+			utils.Log.Info("Model already exists: ", model.Model)
+		} else {
+			utils.LogError.Error(ErrGenerateModel(fmt.Errorf("no components found for model "), model.Model))
 		}
 	}
 
