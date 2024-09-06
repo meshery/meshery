@@ -1,6 +1,6 @@
 FROM golang:1.21-alpine AS builder
 ENV CGO_ENABLED=0
-RUN apk add --update make
+RUN apk update && apk add --no-cache gcc libc-dev make
 WORKDIR /backend
 COPY go.* .
 ARG TARGETARCH
@@ -68,4 +68,4 @@ RUN tar -xzf /mesheryctl/linux/mesheryctl_${GIT_STRIPPED_VERSION}_Linux_x86_64.t
 COPY meshery-logo-light.svg .
 COPY --from=client-builder /ui/build ui
 EXPOSE 7877/tcp
-CMD ./service
+CMD ['./service']
