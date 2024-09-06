@@ -5,6 +5,7 @@
   "displayName": "Solr Operator",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://solr.apache.org/charts/solr-operator-0.8.0.tgz", 
     "isAnnotation": false,
     "published": true,
     "subCategory": "Query",

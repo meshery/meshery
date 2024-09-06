@@ -134,13 +134,10 @@
   "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
-   "defaultData": "",
    "genealogy": "",
    "isAnnotation": false,
-   "published": false,
-   "shapePolygonPoints": "",
-   "styleOverrides": "",
-   "styles": ""
+   "isNamespaced": true,
+   "published": false
   },
   "model": {
    "category": {
@@ -150,14 +147,12 @@
    "displayName": "Jaeger",
    "id": "00000000-0000-0000-0000-000000000000",
    "metadata": {
-    "defaultData": "",
     "isAnnotation": false,
     "primaryColor": "#67cfe3",
     "secondaryColor": "#ACFFFF",
     "shape": "circle",
-    "shapePolygonPoints": "",
+    "source_uri": "git://github.com/jaegertracing/helm-charts/main/charts/",
     "styleOverrides": "",
-    "styles": "",
     "svgColor": "",
     "svgComplete": "",
     "svgWhite": ""

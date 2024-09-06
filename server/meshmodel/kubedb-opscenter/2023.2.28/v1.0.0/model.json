@@ -5,6 +5,7 @@
   "displayName": "Kubedb Opscenter",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://charts.appscode.com/stable/kubedb-opscenter/kubedb-opscenter-v2023.11.2.tgz", 
     "isAnnotation": false,
     "published": true,
     "subCategory": "Database",

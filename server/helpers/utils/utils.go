@@ -14,6 +14,7 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/layer5io/meshkit/encoding"
 	"github.com/layer5io/meshkit/utils"
 
 	"github.com/meshery/schemas/models/v1beta1/component"
@@ -122,7 +123,7 @@ func ToMapStringInterface(mp interface{}) map[string]interface{} {
 	return res
 }
 
-func IsClosed(ch chan struct{}) bool {
+func IsClosed[K any](ch chan K) bool {
 	if ch == nil {
 		return true
 	}
@@ -133,6 +134,7 @@ func IsClosed(ch chan struct{}) bool {
 	}
 	return false
 }
+
 
 const UI = "../../ui/public/static/img/meshmodels" //Relative to cmd/main.go
 var UISVGPaths = make([]string, 1)
@@ -364,7 +366,7 @@ func MarshalAndUnmarshal[k any, v any](val k) (unmarshalledvalue v, err error) {
 		return
 	}
 
-	err = utils.Unmarshal(data, &unmarshalledvalue)
+	err = encoding.Unmarshal([]byte(data), &unmarshalledvalue)
 	if err != nil {
 		return
 	}

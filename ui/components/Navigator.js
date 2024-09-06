@@ -399,8 +399,8 @@ const getNavigatorComponents = (/** @type {CapabilitiesRegistry} */ capabilityRe
         icon: <ServiceMeshIcon style={{ ...drawerIconsStyle }} />,
         show: true,
         permission: {
-          action: keys.VIEW_SERVICE_MESH.action,
-          subject: keys.VIEW_SERVICE_MESH.subject,
+          action: keys.VIEW_CLOUD_NATIVE_INFRASTRUCTURE.action,
+          subject: keys.VIEW_CLOUD_NATIVE_INFRASTRUCTURE.subject,
         },
       },
     ],

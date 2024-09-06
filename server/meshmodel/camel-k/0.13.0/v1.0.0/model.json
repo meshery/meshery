@@ -5,6 +5,7 @@
   "displayName": "Camel K",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://apache.github.io/camel-k/charts/camel-k-2.2.0.tgz", 
     "isAnnotation": false,
     "published": true,
     "subCategory": "Application Definition \u0026 Image Build",

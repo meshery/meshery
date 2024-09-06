@@ -145,6 +145,7 @@ const (
 	ErrFailToLoadK8sContextCode            = "meshery-server-1331"
 	ErrNoTarInsideOCiCode                  = "replace_me"
 	ErrEmptyOCIImageCode                   = "meshery-server-1360"
+	ErrGetComponentDefinitionCode          = "meshery-server-1362"
 )
 
 var (
@@ -529,6 +530,10 @@ func ErrGetMeshModels(err error) error {
 	return errors.New(ErrGetMeshModelsCode, errors.Alert, []string{"could not get meshmodel entitities"}, []string{err.Error()}, []string{"Meshmodel entity could not be converted into valid json", "data in the registry was inconsistent"}, []string{"make sure correct and consistent data is present inside the registry", "drop the Meshmodel tables and restart Meshery server"})
 }
 
+func ErrGetComponentDefinition(err error) error {
+	return errors.New(ErrGetComponentDefinitionCode, errors.Alert, []string{"component definition not found"}, []string{err.Error()}, []string{"Component might not have been registered", "The component might not be supported by default, in the version of Meshery you are currently using."}, []string{"Ensure component definition is valid JSON/YAML.", "Import the model and try again."})
+}
+
 func ErrGetUserDetails(err error) error {
 	return errors.New(ErrGetUserDetailsCode, errors.Alert, []string{"could not get user details"}, []string{err.Error()}, []string{"User details could not be fetched from provider", "Your provider may not be reachable", "No user exists for the provided token"}, []string{"Make sure provider is reachable", "Make sure you are logged in", "Make sure you are using a valid token"})
 }
@@ -583,7 +588,7 @@ func ErrGetConnections(err error) error {
 }
 
 func ErrWritingIntoFile(err error, obj string) error {
-	return errors.New(ErrWritingIntoFileCode, errors.Alert, []string{fmt.Sprintf("failed to write into file %s" + obj)}, []string{err.Error()}, []string{"Insufficient permissions to write into file", "file might be corrupted"}, []string{"check if sufficient permissions are givent to the file", "check if the file is corrupted"})
+	return errors.New(ErrWritingIntoFileCode, errors.Alert, []string{fmt.Sprintf("failed to write into file %s", obj)}, []string{err.Error()}, []string{"Insufficient permissions to write into file", "file might be corrupted"}, []string{"check if sufficient permissions are givent to the file", "check if the file is corrupted"})
 }
 
 func ErrBuildOCIImg(err error) error {

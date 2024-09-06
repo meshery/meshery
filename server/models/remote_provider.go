@@ -87,7 +87,8 @@ func (l *RemoteProvider) Initialize() {
 	// Get the capabilities with no token
 	// assuming that this will help get basic info
 	// of the provider
-	l.loadCapabilities("")
+	providerProperties := l.loadCapabilities("")
+	l.ProviderProperties = providerProperties
 }
 
 // loadCapabilities loads the capabilities of the remote provider
@@ -96,9 +97,13 @@ func (l *RemoteProvider) Initialize() {
 // if an empty string is provided then it will try to make a request
 // with no token, however a remote provider is free to refuse to
 // serve requests with no token
-func (l *RemoteProvider) loadCapabilities(token string) {
+func (l *RemoteProvider) loadCapabilities(token string) ProviderProperties {
 	var resp *http.Response
 	var err error
+
+	providerProperties := ProviderProperties{
+		ProviderURL: l.RemoteProviderURL,
+	}
 
 	version := viper.GetString("BUILD")
 	os := viper.GetString("OS")
@@ -108,7 +113,7 @@ func (l *RemoteProvider) loadCapabilities(token string) {
 	remoteProviderURL, err := url.Parse(finalURL)
 	if err != nil {
 		l.Log.Error(ErrUrlParse(err))
-		return
+		return providerProperties
 	}
 
 	req, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
@@ -123,11 +128,11 @@ func (l *RemoteProvider) loadCapabilities(token string) {
 	}
 	if err != nil && resp == nil {
 		l.Log.Error(ErrUnreachableRemoteProvider(err))
-		return
+		return providerProperties
 	}
 	if err != nil || resp.StatusCode != http.StatusOK {
 		l.Log.Error(ErrFetch(err, "Capabilities", resp.StatusCode))
-		return
+		return providerProperties
 	}
 	defer func() {
 		err := resp.Body.Close()
@@ -137,15 +142,12 @@ func (l *RemoteProvider) loadCapabilities(token string) {
 		}
 	}()
 
-	// Clear the previous capabilities before writing new one
-	l.ProviderProperties = ProviderProperties{
-		ProviderURL: l.RemoteProviderURL,
-	}
 	decoder := json.NewDecoder(resp.Body)
-	if err := decoder.Decode(&l.ProviderProperties); err != nil {
+	if err := decoder.Decode(&providerProperties); err != nil {
 		err = ErrUnmarshal(err, "provider properties")
 		l.Log.Error(err)
 	}
+	return providerProperties
 }
 
 // downloadProviderExtensionPackage will download the remote provider extensions
@@ -214,9 +216,12 @@ func (l *RemoteProvider) SyncPreferences() {
 }
 
 // GetProviderCapabilities returns all of the provider properties
-func (l *RemoteProvider) GetProviderCapabilities(w http.ResponseWriter, _ *http.Request) {
+func (l *RemoteProvider) GetProviderCapabilities(w http.ResponseWriter, req *http.Request) {
+	tokenString := req.Context().Value(TokenCtxKey).(string)
+
+	providerProperties := l.loadCapabilities(tokenString)
 	encoder := json.NewEncoder(w)
-	if err := encoder.Encode(l.ProviderProperties); err != nil {
+	if err := encoder.Encode(providerProperties); err != nil {
 		http.Error(w, ErrEncoding(err, "Provider Capablity").Error(), http.StatusInternalServerError)
 	}
 }
@@ -408,7 +413,7 @@ func (l *RemoteProvider) GetUserByID(req *http.Request, userID string) ([]byte, 
 		l.Log.Info("User profile retrieved from remote provider.")
 		return bdr, nil
 	}
-	err = ErrFetch(fmt.Errorf(fmt.Sprintf("Error retrieving user with ID: %s", userID)), "User Profile", resp.StatusCode)
+	err = ErrFetch(fmt.Errorf("Error retrieving user with ID: %s", userID), "User Profile", resp.StatusCode)
 	l.Log.Error(err)
 	return nil, err
 }
@@ -855,13 +860,18 @@ func (l *RemoteProvider) GetK8sContext(token, connectionID string) (K8sContext, 
 	}()
 
 	if resp.StatusCode == http.StatusOK {
-		var kc K8sContext
+		var kc MesheryK8sContextPage
 		if err := json.NewDecoder(resp.Body).Decode(&kc); err != nil {
-			return kc, ErrUnmarshal(err, "Kubernetes context")
+			return K8sContext{}, ErrUnmarshal(err, "Kubernetes context")
+		}
+
+		if len(kc.Contexts) == 0 {
+			return K8sContext{}, fmt.Errorf("no Kubernetes contexts available")
 		}
 
 		l.Log.Info("Retrieved Kubernetes context from remote provider.")
-		return kc, nil
+		// Response will contain single context
+		return *kc.Contexts[0], nil
 	}
 
 	bdr, err := io.ReadAll(resp.Body)
@@ -3416,7 +3426,8 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ 
 
 	// Get new capabilities
 	// Doing this here is important so that
-	l.loadCapabilities(tokenString)
+	providerProperties := l.loadCapabilities(tokenString)
+	l.ProviderProperties = providerProperties
 
 	// Download the package for the user only if they have extension capability
 	if len(l.GetProviderProperties().Extensions.Navigator) > 0 {
@@ -3776,13 +3787,20 @@ func (l *RemoteProvider) SaveConnection(conn *ConnectionPayload, token string, s
 	}
 
 	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusCreated {
-		connection := &connections.Connection{}
-		_ = json.Unmarshal(bdr, connection)
-		l.Log.Debug("connections, ", connection)
-		return connection, nil
+		connectionPage := &connections.ConnectionPage{}
+		err = json.Unmarshal(bdr, connectionPage)
+		if err != nil {
+			return nil, ErrUnmarshal(err, "Connection \"%s\" of type \"%s\" with status \"%s\" from the remote provider")
+		}
+		l.Log.Debug("connections, ", connectionPage)
+		// On POST request to Remote Provider API, the response always contains single entry/connection.
+		if len(connectionPage.Connections) > 0 {
+			return connectionPage.Connections[0], nil
+		}
+		return nil, ErrPost(fmt.Errorf("failed to save the connection"), fmt.Sprint(bdr), resp.StatusCode)
 	}
 
-	return nil, ErrPost(fmt.Errorf("failed to save the connection"), fmt.Sprint(bdr), resp.StatusCode)
+	return nil, ErrPost(fmt.Errorf("failed to save the connection \"%s\" of type \"%s\" with status \"%s\"", conn.Name, conn.Kind, conn.Status), fmt.Sprint(bdr), resp.StatusCode)
 }
 
 func (l *RemoteProvider) GetConnections(req *http.Request, userID string, page, pageSize int, search, order string, filter string, status []string, kind []string) (*connections.ConnectionPage, error) {
@@ -3869,7 +3887,7 @@ func (l *RemoteProvider) GetConnectionsByKind(req *http.Request, _ string, page,
 
 	bdr, _ := io.ReadAll(resp.Body)
 	if resp.StatusCode != http.StatusOK {
-		return nil, ErrFetch(fmt.Errorf(string(bdr)), "connections", resp.StatusCode)
+		return nil, ErrFetch(fmt.Errorf("%s", string(bdr)), "connections", resp.StatusCode)
 	}
 
 	var res map[string]interface{}

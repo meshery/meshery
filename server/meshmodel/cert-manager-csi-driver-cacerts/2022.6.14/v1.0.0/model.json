@@ -5,6 +5,7 @@
   "displayName": "Cert Manager Csi Driver Cacerts",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://charts.appscode.com/stable/cert-manager-csi-driver-cacerts/cert-manager-csi-driver-cacerts-v2023.10.1.tgz", 
     "isAnnotation": false,
     "published": true,
     "subCategory": "Security \u0026 Compliance",

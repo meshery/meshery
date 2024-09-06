@@ -1,19 +1,18 @@
 package utils
 
 import (
-	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
 	"strconv"
 	"strings"
 
-	"github.com/meshery/schemas/models/v1alpha1/capability"
-	schmeaVersion "github.com/meshery/schemas/models/v1beta1"
-
+	"github.com/layer5io/meshkit/encoding"
 	"github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshkit/utils/csv"
 	"github.com/layer5io/meshkit/utils/manifests"
+	"github.com/meshery/schemas/models/v1alpha1/capability"
+	schmeaVersion "github.com/meshery/schemas/models/v1beta1"
 	"github.com/meshery/schemas/models/v1beta1/component"
 )
 
@@ -53,7 +52,7 @@ type ComponentCSV struct {
 func (c *ComponentCSV) CreateComponentDefinition(isModelPublished bool, defVersion string) (component.ComponentDefinition, error) {
 	var capabilities []capability.Capability
 	if c.Capabilities != "" {
-		err := json.Unmarshal([]byte(c.Capabilities), &capabilities)
+		err := encoding.Unmarshal([]byte(c.Capabilities), &capabilities)
 		if err != nil {
 			Log.Error(err)
 		}
@@ -74,13 +73,19 @@ func (c *ComponentCSV) CreateComponentDefinition(isModelPublished bool, defVersi
 }
 
 var compMetadataValues = []string{
-	"styleOverrides", "styles", "shapePolygonPoints", "defaultData", "genealogy", "isAnnotation",
+	"genealogy", "isAnnotation", "styleOverrides",
 }
 var compStyleValues = []string{
 	"primaryColor", "secondaryColor", "svgColor", "svgWhite", "svgComplete", "shape",
 }
 
 func (c *ComponentCSV) UpdateCompDefinition(compDef *component.ComponentDefinition) error {
+	var existingAddditionalProperties map[string]interface{}
+
+	if compDef.Metadata.AdditionalProperties != nil {
+		existingAddditionalProperties = compDef.Metadata.AdditionalProperties
+	}
+
 	metadata := map[string]interface{}{}
 	compMetadata, err := utils.MarshalAndUnmarshal[ComponentCSV, map[string]interface{}](*c)
 	if err != nil {
@@ -88,8 +93,7 @@ func (c *ComponentCSV) UpdateCompDefinition(compDef *component.ComponentDefiniti
 	}
 	var capabilities []capability.Capability
 	if c.Capabilities != "" {
-
-		err := json.Unmarshal([]byte(c.Capabilities), &capabilities)
+		err := encoding.Unmarshal([]byte(c.Capabilities), &capabilities)
 		if err != nil {
 			Log.Error(err)
 		}
@@ -97,18 +101,50 @@ func (c *ComponentCSV) UpdateCompDefinition(compDef *component.ComponentDefiniti
 
 	compDef.Capabilities = &capabilities
 	compDefStyles := &component.Styles{}
-	if c.Shape != "" {
-		shape := c.Shape
-		compDefStyles.Shape = (*component.ComponentDefinitionStylesShape)(&shape)
-	}
-	if c.PrimaryColor != "" {
 
-		compDefStyles.PrimaryColor = c.PrimaryColor
+	//Addtional properties from file
+	for key, value := range existingAddditionalProperties {
+		metadata[key] = value
 	}
-	if c.SecondaryColor != "" {
-		compDefStyles.SecondaryColor = &c.SecondaryColor
+
+	//metadata properties from csv
+	for _, key := range compMetadataValues {
+		if key == "genealogy" {
+			genealogy, err := utils.Cast[string](compMetadata[key])
+			if err == nil {
+				compDef.Metadata.Genealogy = genealogy
+			}
+		} else if key == "isAnnotation" {
+			if strings.ToLower(c.IsAnnotation) == "true" {
+				compDef.Metadata.IsAnnotation = true
+			} else {
+				compDef.Metadata.IsAnnotation = false
+			}
+		} else if key == "styleOverrides" {
+			if c.StyleOverrides != "" {
+				err := encoding.Unmarshal([]byte(c.StyleOverrides), &compDefStyles)
+				if err != nil {
+					return err
+				}
+			}
+		} else {
+			metadata[key] = compMetadata[key]
+		}
 	}
+
+	//styling properties from csv
 	for _, key := range compStyleValues {
+		if c.Shape != "" {
+			shape := c.Shape
+			compDefStyles.Shape = (*component.ComponentDefinitionStylesShape)(&shape)
+		}
+		if c.PrimaryColor != "" {
+
+			compDefStyles.PrimaryColor = c.PrimaryColor
+		}
+		if c.SecondaryColor != "" {
+			compDefStyles.SecondaryColor = &c.SecondaryColor
+		}
 		if key == "svgColor" {
 			compDefStyles.SvgColor, err = utils.Cast[string](compMetadata[key])
 			if err != nil {
@@ -129,25 +165,7 @@ func (c *ComponentCSV) UpdateCompDefinition(compDef *component.ComponentDefiniti
 		}
 
 	}
-
 	compDef.Styles = compDefStyles
-
-	for _, key := range compMetadataValues {
-		if key == "genealogy" {
-			genealogy, err := utils.Cast[string](compMetadata[key])
-			if err == nil {
-				compDef.Metadata.Genealogy = genealogy
-			}
-		} else if key == "isAnnotation" {
-			if strings.ToLower(c.IsAnnotation) == "true" {
-				compDef.Metadata.IsAnnotation = true
-			} else {
-				compDef.Metadata.IsAnnotation = false
-			}
-		} else {
-			metadata[key] = compMetadata[key]
-		}
-	}
 	compDef.Metadata.AdditionalProperties = metadata
 	return nil
 }

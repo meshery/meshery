@@ -5,6 +5,7 @@
   "displayName": "Inlets Operator",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://inlets.github.io/inlets-operator/inlets-operator-0.17.8.tgz", 
     "isAnnotation": false,
     "published": false,
     "subCategory": "Uncategorized",

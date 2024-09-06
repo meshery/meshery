@@ -71,8 +71,9 @@ export const FormattedDate = ({ date }) => {
 export const FormatId = ({ id }) => {
   const [copied, setCopied] = React.useState(false);
   const theme = useTheme();
-  // truncates the id to 15 characters and adds an ellipsis and adds a clicpboard copy button
-  const copyToClipboard = () => {
+  // truncates the id to 15 characters and adds an ellipsis and adds a clipboard copy button
+  const copyToClipboard = (e) => {
+    e.stopPropagation();
     navigator.clipboard.writeText(id);
     setCopied(true);
 

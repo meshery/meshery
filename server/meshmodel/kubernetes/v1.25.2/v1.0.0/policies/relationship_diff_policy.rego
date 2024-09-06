@@ -3,6 +3,7 @@ package relationship_evaluation_policy
 import rego.v1
 
 # Evaluates the relationships which needs to be added based on the current state of design file.
+# "identified_relationships": Always contains valid set of relationships with status as "approved"
 
 evaluate_relationships_deleted(
 	design_relationships,
@@ -10,9 +11,12 @@ evaluate_relationships_deleted(
 ) := [rel |
 	some existing_rel in design_relationships
 
+	existing_rel.status != "deleted"
+
 	# if the existing rel is not present in the identified_relationships,
 	# it indicates it must be deleted.
-	not temp_rule(existing_rel, identified_relationships)
+
+	not does_relationship_exist_in_design(identified_relationships, existing_rel)
 	not existing_rel.subType == "annotation"
 	relationship := json.patch(existing_rel, [{
 		"op": "replace",
@@ -21,13 +25,6 @@ evaluate_relationships_deleted(
 	}])
 	rel := relationship
 ]
-
-temp_rule(existing_rel, identified_rels) if {
-	some rel in identified_rels
-	is_of_same_kind(existing_rel, rel)
-	does_belongs_to_same_model(existing_rel, rel)
-	is_same_selector(existing_rel, rel)
-}
 
 # Evaluates the relationships which needs to be added based on the current state of design file.
 
@@ -41,12 +38,12 @@ evaluate_relationships_added(
 	relationship := rel
 ]
 
-does_relationship_exist_in_design(design_relationships, identified_rel) if {
-	some existing_rel in design_relationships
-
-	is_of_same_kind(existing_rel, identified_rel)
-	does_belongs_to_same_model(existing_rel, identified_rel)
-	is_same_selector(existing_rel, identified_rel)
+does_relationship_exist_in_design(relationships, relationship) if {
+	some rel in relationships
+	rel.status == relationship.status
+	is_of_same_kind(rel, relationship)
+	does_belongs_to_same_model(rel, relationship)
+	is_same_selector(rel, relationship)
 }
 
 is_of_same_kind(existing_rel, new_rel) if {

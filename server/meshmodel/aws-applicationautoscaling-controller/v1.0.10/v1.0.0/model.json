@@ -5,6 +5,7 @@
   "displayName": "AWS Applilcation Autoscaling",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "git://github.com/aws-controllers-k8s/applicationautoscaling-controller/main/helm", 
     "isAnnotation": false,
     "published": true,
     "subCategory": "Management Governance",

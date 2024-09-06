@@ -17,9 +17,8 @@ import (
 
 	"github.com/layer5io/meshkit/models/events"
 
-	regv1alpha3 "github.com/layer5io/meshkit/models/meshmodel/registry/v1alpha3"
+	"github.com/layer5io/meshkit/models/meshmodel/registry"
 	regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
-	mutils "github.com/layer5io/meshkit/utils"
 )
 
 const (
@@ -88,38 +87,20 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	event := eventBuilder.WithDescription(fmt.Sprintf("Relationship evaluation completed for \"%s\" at version \"%s\"", evaluationResponse.Design.Name, evaluationResponse.Design.Version)).
 		WithMetadata(map[string]interface{}{
 			"trace":        evaluationResponse.Trace,
-			"evaluated_at": &evaluationResponse.Timestamp,
+			"evaluated_at": *evaluationResponse.Timestamp,
 		}).WithSeverity(events.Informational).Build()
 	_ = provider.PersistEvent(event)
-	go h.config.EventBroadcaster.Publish(userUUID, event)
 
-	if relationshipPolicyEvalPayload.Options.ReturnDiffOnly != nil && *relationshipPolicyEvalPayload.Options.ReturnDiffOnly {
-		evaluationResponse.Design.Components = []*component.ComponentDefinition{}
-		evaluationResponse.Design.Relationships = []*relationship.RelationshipDefinition{}
-		for _, component := range evaluationResponse.Trace.ComponentsUpdated {
-			_c := component
-			evaluationResponse.Design.Components = append(evaluationResponse.Design.Components, &_c)
-		}
+	// Create the event but do not notify the client immediately, as the evaluations are frequent and takes up the view area.
+	// go h.config.EventBroadcaster.Publish(userUUID, event)
+	unknownComponents := processEvaluationResponse(h.registryManager, relationshipPolicyEvalPayload, &evaluationResponse)
+	if len(unknownComponents) > 0 {
+		event := events.NewEvent().FromUser(userUUID).FromSystem(*h.SystemID).WithCategory("relationship").WithAction("evaluation").WithSeverity(events.Informational).ActedUpon(patternUUID).WithDescription(fmt.Sprintf("Relationship evaluation for \"%s\" at version \"%s\" resulted in the addition of new components but they are not registered inside the registry.", evaluationResponse.Design.Name, evaluationResponse.Design.Version)).WithMetadata(map[string]interface{}{
+			"ComponentsToBeAdded": unknownComponents,
+		}).Build()
 
-		for _, relationship := range evaluationResponse.Trace.RelationshipsAdded {
-			_r := relationship
-			evaluationResponse.Design.Relationships = append(evaluationResponse.Design.Relationships, &_r)
-		}
-		for _, relationship := range evaluationResponse.Trace.RelationshipsRemoved {
-			_r := relationship
-			evaluationResponse.Design.Relationships = append(evaluationResponse.Design.Relationships, &_r)
-		}
-
+		_ = provider.PersistEvent(event)
 	}
-
-	// Before starting the eval the design is de-prettified, so that we can use the relationships def correctly.
-	// The results contain the updated config.
-	// Prettify the design before sending it to client.
-
-	for _, component := range evaluationResponse.Design.Components {
-		component.Configuration = core.Format.Prettify(component.Configuration, false)
-	}
-
 	// write the response
 	ec := json.NewEncoder(rw)
 	err = ec.Encode(evaluationResponse)
@@ -130,39 +111,136 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	}
 }
 
-func (h *Handler) verifyEvaluationQueries(evaluationQueries []string) (verifiedEvaluationQueries []string) {
-	registeredRelationships, _, _, _ := h.registryManager.GetEntities(&regv1alpha3.RelationshipFilter{})
+func processEvaluationResponse(registry *registry.RegistryManager, evalPayload pattern.EvaluationRequest, evalResponse *pattern.EvaluationResponse) []*component.ComponentDefinition {
+	compsUpdated := []component.ComponentDefinition{}
+	compsAdded := []component.ComponentDefinition{}
 
-	var relationships []relationship.RelationshipDefinition
-	for _, entity := range registeredRelationships {
-		relationship, err := mutils.Cast[*relationship.RelationshipDefinition](entity)
+	// components which were added by the evaluator based on the relationship definition, but doesn't exist in the registry.
+	unknownComponents := []*component.ComponentDefinition{}
 
-		if err != nil {
-			return
+	for _, cmp := range evalResponse.Trace.ComponentsAdded {
+		_c := cmp
+
+		compFilter := &regv1beta1.ComponentFilter{
+			Name:       _c.Component.Kind,
+			APIVersion: _c.Component.Version,
+			Version:    _c.Model.Model.Version,
+			ModelName:  _c.Model.Name,
+			Limit:      1,
+			Trim:       true,
 		}
-		relationships = append(relationships, *relationship)
+		if _c.Model.Model.Version == "*" {
+			compFilter.Version = ""
+		}
+		entities, _, _, _ := registry.GetEntities(compFilter)
+		if len(entities) == 0 {
+			unknownComponents = append(unknownComponents, &_c)
+			continue
+		}
+		_component, _ := entities[0].(*component.ComponentDefinition)
+
+		_c.Configuration = core.Format.Prettify(_c.Configuration, false)
+		_component.Id = _c.Id
+		if _c.DisplayName != "" {
+			_component.DisplayName = _c.DisplayName
+		}
+		_component.Configuration = _c.Configuration
+		compsAdded = append(compsAdded, *_component)
 	}
 
-	if len(evaluationQueries) == 0 || (len(evaluationQueries) == 1 && evaluationQueries[0] == "all") {
-		for _, relationship := range relationships {
-			if relationship.EvaluationQuery != nil {
-				verifiedEvaluationQueries = append(verifiedEvaluationQueries, *relationship.EvaluationQuery)
-			} else {
-				verifiedEvaluationQueries = append(verifiedEvaluationQueries, relationship.GetDefaultEvaluationQuery())
-			}
-		}
-	} else {
-		for _, regoQuery := range evaluationQueries {
-			for _, relationship := range relationships {
-				if (relationship.EvaluationQuery != nil && regoQuery == *relationship.EvaluationQuery) || regoQuery == relationship.GetDefaultEvaluationQuery() {
-					verifiedEvaluationQueries = append(verifiedEvaluationQueries, *relationship.EvaluationQuery)
-					break
-				}
-			}
-		}
+	evalResponse.Trace.ComponentsAdded = compsAdded
+
+	for _, component := range evalResponse.Trace.ComponentsUpdated {
+		_c := component
+
+		_c.Configuration = core.Format.Prettify(_c.Configuration, false)
+		compsUpdated = append(compsUpdated, _c)
 	}
-	return
+
+	evalResponse.Trace.ComponentsUpdated = compsUpdated
+
+	cmps := append(compsAdded, compsUpdated...)
+
+	if evalPayload.Options != nil && evalPayload.Options.ReturnDiffOnly != nil && *evalPayload.Options.ReturnDiffOnly {
+		evalResponse.Design.Relationships = []*relationship.RelationshipDefinition{}
+		evalResponse.Design.Components = []*component.ComponentDefinition{}
+
+		for _, relationship := range evalResponse.Trace.RelationshipsAdded {
+			_r := relationship
+			evalResponse.Design.Relationships = append(evalResponse.Design.Relationships, &_r)
+		}
+		for _, relationship := range evalResponse.Trace.RelationshipsRemoved {
+			_r := relationship
+			evalResponse.Design.Relationships = append(evalResponse.Design.Relationships, &_r)
+		}
+
+		for _, relationship := range evalResponse.Trace.RelationshipsUpdated {
+			_r := relationship
+			evalResponse.Design.Relationships = append(evalResponse.Design.Relationships, &_r)
+		}
+
+		for _, cmp := range cmps {
+			evalResponse.Design.Components = append(evalResponse.Design.Components, &cmp)
+		}
+		return unknownComponents
+	}
+
+	designComponents := evalResponse.Design.Components
+	evalResponse.Design.Components = []*component.ComponentDefinition{}
+
+	for _, cmp := range designComponents {
+		_c := cmp
+		
+		for _, c := range cmps {
+			if c.Id == _c.Id {
+				_c = &c
+				break
+			}
+		}
+
+		_c.Configuration = core.Format.Prettify(_c.Configuration, false)
+		evalResponse.Design.Components = append(evalResponse.Design.Components, _c)
+
+	}
+
+	return unknownComponents
 }
+
+// unused currently
+
+// func (h *Handler) verifyEvaluationQueries(evaluationQueries []string) (verifiedEvaluationQueries []string) {
+// 	registeredRelationships, _, _, _ := h.registryManager.GetEntities(&regv1alpha3.RelationshipFilter{})
+
+// 	var relationships []relationship.RelationshipDefinition
+// 	for _, entity := range registeredRelationships {
+// 		relationship, err := mutils.Cast[*relationship.RelationshipDefinition](entity)
+
+// 		if err != nil {
+// 			return
+// 		}
+// 		relationships = append(relationships, *relationship)
+// 	}
+
+// 	if len(evaluationQueries) == 0 || (len(evaluationQueries) == 1 && evaluationQueries[0] == "all") {
+// 		for _, relationship := range relationships {
+// 			if relationship.EvaluationQuery != nil {
+// 				verifiedEvaluationQueries = append(verifiedEvaluationQueries, *relationship.EvaluationQuery)
+// 			} else {
+// 				verifiedEvaluationQueries = append(verifiedEvaluationQueries, relationship.GetDefaultEvaluationQuery())
+// 			}
+// 		}
+// 	} else {
+// 		for _, regoQuery := range evaluationQueries {
+// 			for _, relationship := range relationships {
+// 				if (relationship.EvaluationQuery != nil && regoQuery == *relationship.EvaluationQuery) || regoQuery == relationship.GetDefaultEvaluationQuery() {
+// 					verifiedEvaluationQueries = append(verifiedEvaluationQueries, *relationship.EvaluationQuery)
+// 					break
+// 				}
+// 			}
+// 		}
+// 	}
+// 	return
+// }
 
 // swagger:route GET /api/meshmodels/models/{model}/policies/{name} GetMeshmodelPoliciesByName idGetMeshmodelPoliciesByName
 // Handle GET request for getting meshmodel policies of a specific model by name.

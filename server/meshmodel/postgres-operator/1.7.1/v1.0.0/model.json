@@ -5,6 +5,7 @@
   "displayName": "Postgres Operator",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://github.com/bbriggs/charts/releases/download/postgres-operator-1.7.1/postgres-operator-1.7.1.tgz", 
     "isAnnotation": false,
     "published": true,
     "subCategory": "App Definition and Development",

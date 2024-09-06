@@ -134,13 +134,10 @@
   "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
-   "defaultData": "",
    "genealogy": "",
    "isAnnotation": false,
-   "published": false,
-   "shapePolygonPoints": "",
-   "styleOverrides": "",
-   "styles": ""
+   "isNamespaced": false,
+   "published": false
   },
   "model": {
    "category": {
