@@ -201,7 +201,7 @@ func InvokeCompUpdate() error {
 							existingData, err := os.ReadFile(compPath)
 							if err != nil {
 								utils.Log.Error(err)
-								goto NewGen
+								continue
 							}
 
 							err = mutils.WriteJSONToFile[comp.ComponentDefinition](tmpFilePath, componentDef)
