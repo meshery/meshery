@@ -440,33 +440,20 @@ func processStyles(compDef component.ComponentDefinition, compCSV *ComponentCSV)
 			}
 		case "SvgColor":
 			if compDef.Styles.SvgColor != "" {
-
-				SVGColor, err := DecodeAndProcessSVGString(compDef.Styles.SvgColor)
-				if err != nil {
-					Log.Error(err)
-				} else {
-					compCSV.SVGColor = SVGColor
-				}
+				SVGColor, _ := DecodeAndProcessSVGString(compDef.Styles.SvgColor)
+				compCSV.SVGColor = SVGColor
 				handledFields["SvgColor"] = true
 			}
 		case "SvgWhite":
 			if compDef.Styles.SvgWhite != "" {
-				SVGWhite, err := DecodeAndProcessSVGString(compDef.Styles.SvgWhite)
-				if err != nil {
-					Log.Error(err)
-				} else {
-					compCSV.SVGWhite = SVGWhite
-				}
+				SVGWhite, _ := DecodeAndProcessSVGString(compDef.Styles.SvgWhite)
+				compCSV.SVGWhite = SVGWhite
 				handledFields["SvgWhite"] = true
 			}
 		case "SvgComplete":
 			if compDef.Styles.SvgComplete != "" {
-				SVGComplete, err := DecodeAndProcessSVGString(compDef.Styles.SvgComplete)
-				if err != nil {
-					Log.Error(err)
-				} else {
-					compCSV.SVGComplete = SVGComplete
-				}
+				SVGComplete, _ := DecodeAndProcessSVGString(compDef.Styles.SvgComplete)
+				compCSV.SVGComplete = SVGComplete
 				handledFields["SvgComplete"] = true
 			}
 		case "ShapePolygonPoints":
