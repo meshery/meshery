@@ -76,7 +76,7 @@ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tu
 // Directly generate models from one of the supported registrants by using Registrant Connection Definition and (optional) Registrant Credential Definition
 mesheryctl registry generate --registrant-def [path to connection definition] --registrant-cred [path to credential definition]
 // Generate a specific Model from a Google Spreadsheet (i.e. "Meshery Integrations" spreadsheet).
-mesheryctl registry generate --spreadsheet-id "1Zk62lA6-jdf5KVvjVdRwMQ1V3IT-xFEKlT5b83A-7pg" --spreadsheet-cred --model "meshery-shapes"
+mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred --model "[model-name]"
 
     `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
