@@ -75,8 +75,10 @@ func addEntriesInModelUpdateList(modelEntry *ModelCSV, modelList []*ModelCSV) []
 	if RegistrantToModelsMap[registrant] == nil {
 		RegistrantToModelsMap[registrant] = make(map[string]bool)
 	}
-	RegistrantToModelsMap[registrant][modelEntry.Model] = true
-	modelBatchSize--
+	if registrant != "meshery" {
+		RegistrantToModelsMap[registrant][modelEntry.Model] = true
+		modelBatchSize--
+	}
 
 	return modelList
 }

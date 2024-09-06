@@ -76,7 +76,7 @@ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tu
 // Directly generate models from one of the supported registrants by using Registrant Connection Definition and (optional) Registrant Credential Definition
 mesheryctl registry generate --registrant-def [path to connection definition] --registrant-cred [path to credential definition]
 // Generate a specific Model from a Google Spreadsheet (i.e. "Meshery Integrations" spreadsheet).
-mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred --model "[model-name]"
+mesheryctl registry generate --spreadsheet-id "1Zk62lA6-jdf5KVvjVdRwMQ1V3IT-xFEKlT5b83A-7pg" --spreadsheet-cred --model "meshery-shapes"
 
     `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
@@ -212,7 +212,7 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 				weightedSem.Release(1)
 			}()
 			if mutils.ReplaceSpacesAndConvertToLowercase(model.Registrant) == "meshery" {
-				err = GenerateDefsForCoreRegistrant(model)
+				err = GenerateDefsForCoreRegistrant(model, spreadsheeetChan)
 				if err != nil {
 					utils.LogError.Error(err)
 				}
@@ -403,10 +403,15 @@ func assignDefaultsForCompDefs(componentDef *component.ComponentDefinition, mode
 
 // For registrants eg: meshery, whose components needs to be directly created by referencing meshery/schemas repo.
 // the sourceURL contains the path of models component definitions
-func GenerateDefsForCoreRegistrant(model utils.ModelCSV) error {
+func GenerateDefsForCoreRegistrant(model utils.ModelCSV, spreadsheeetChan chan utils.SpreadsheetData) error {
 	totalComps := 0
 	var version string
+	var comps []component.ComponentDefinition
 	defer func() {
+		spreadsheeetChan <- utils.SpreadsheetData{
+			Model:      &model,
+			Components: comps,
+		}
 		modelToCompGenerateTracker.Set(model.Model, compGenerateTracker{
 			totalComps: totalComps,
 			version:    version,
@@ -464,11 +469,11 @@ func GenerateDefsForCoreRegistrant(model utils.ModelCSV) error {
 				}
 				componentDef.Model = *modelDef
 				_, err = componentDef.WriteComponentDefinition(compDirPath)
-
 				if err != nil {
 					err = ErrGenerateComponent(err, model.Model, componentDef.DisplayName)
 					utils.LogError.Error(err)
 				}
+				comps = append(comps, componentDef)
 
 				return nil
 			})
