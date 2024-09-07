@@ -33,7 +33,7 @@ function configurationTableTheme(style = {}) {
       MUIDataTableSelectCell: {
         styleOverrides: {
           checkboxRoot: {
-            '&$checked': {
+            '&.Mui-checked': {
               color: '#607d8b',
             },
           },
@@ -74,7 +74,7 @@ function configurationTableThemeDark(style = {}) {
       MuiFormLabel: {
         styleOverrides: {
           root: {
-            '&$focused': {
+            '&.Mui-focused': {
               color: '#00B39F',
             },
           },
