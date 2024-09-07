@@ -1,5 +1,5 @@
 import { createTheme } from '@mui/material/styles';
-import { blueGrey } from '@material-ui/core/colors';
+import { blueGrey } from '@mui/material/colors';
 import { iconMedium } from '../css/icons.styles';
 
 const drawerWidth = 256;
@@ -16,10 +16,10 @@ export const common = {
     MuiSwitch: {
       switchBase: {
         color: '#647881',
-        '&$checked': {
+        '&.Mui-checked': {
           color: '#00b39f !important',
         },
-        '&$checked + $track': {
+        '&.Mui-checked + $track': {
           backgroundColor: 'rgba(0,179,159,0.5) !important',
         },
       },
@@ -172,7 +172,7 @@ darkTheme = {
     },
     MuiCheckbox: {
       colorPrimary: {
-        '&$checked': {
+        '&.Mui-checked': {
           color: '#00B39F',
         },
         '&.MuiCheckbox-indeterminate': {
@@ -513,7 +513,7 @@ theme = {
 
     MuiCheckbox: {
       colorPrimary: {
-        '&$checked': {
+        '&.Mui-checked': {
           color: '#00B39F',
         },
         '&.MuiCheckbox-indeterminate': {
