@@ -1,0 +1,126 @@
+{
+  "capabilities": [
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Add text to nodes body",
+    "displayName": "Body Text",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "body-text",
+    "type": "style",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "Shuffle",
+   "schema": "",
+   "version": ""
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "",
+  "format": "",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": true,
+   "isNamespaced": false,
+   "published": false
+  },
+  "model": {
+   "category": {
+    "name": ""
+   },
+   "displayName": "",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "model": {
+    "version": "0.7.2"
+   },
+   "name": "",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "",
+    "name": "",
+    "status": "",
+    "sub_type": "",
+    "type": "",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "",
+   "status": "",
+   "version": "",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "",
+  "status": null,
+  "styles": {
+   "background-image": "none",
+   "background-opacity": 0.1,
+   "border-style": "solid",
+   "border-width": 1,
+   "height": 30,
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "svgColor": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1024 1024\"\u003e\u003cpath d=\"M402.304 505.856l39.264-55.248-134.304-183.28H2.736v64h271.488zm516.479-174.528l-77.536 69.535c-9.344 8.945-12.368 23.44-3.025 32.368l5.472 8.065c9.376 8.944 24.496 8.944 33.824 0l127.744-115.504c.176-.16.384-.193.544-.336l8.464-8.096c4.672-4.496 7.008-10.368 6.976-16.288.032-5.872-2.304-11.776-6.976-16.224l-8.464-8.096c-.16-.16-.336-.225-.544-.368L875.534 157.952c-9.36-8.945-24.464-8.945-33.84 0l-5.471 8.064c-9.36 8.944-6.32 23.408 3.023 32.336l76.048 68.976h-231.76l-409.312 576H2.734v64h304.512l409.328-576zm87.027 521.44c-.16-.16-.337-.226-.545-.37L875.537 733.968c-9.36-8.944-24.464-8.944-33.84 0l-5.471 8.064c-9.36 8.945-6.32 23.409 3.023 32.336l76.336 69.233-199.008-.273L602.145 666.32l-39.28 55.248 120.656 185.76 234.944.288-77.216 69.248c-9.344 8.945-12.368 23.44-3.025 32.368l5.472 8.065c9.376 8.944 24.496 8.944 33.824 0l127.744-115.504c.176-.16.384-.192.544-.336l8.464-8.096c4.672-4.496 7.008-10.368 6.976-16.288.032-5.872-2.304-11.776-6.976-16.224z\"/\u003e\u003c/svg\u003e",
+   "svgWhite": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1024 1024\"\u003e\u003cpath d=\"M402.304 505.856l39.264-55.248-134.304-183.28H2.736v64h271.488zm516.479-174.528l-77.536 69.535c-9.344 8.945-12.368 23.44-3.025 32.368l5.472 8.065c9.376 8.944 24.496 8.944 33.824 0l127.744-115.504c.176-.16.384-.193.544-.336l8.464-8.096c4.672-4.496 7.008-10.368 6.976-16.288.032-5.872-2.304-11.776-6.976-16.224l-8.464-8.096c-.16-.16-.336-.225-.544-.368L875.534 157.952c-9.36-8.945-24.464-8.945-33.84 0l-5.471 8.064c-9.36 8.944-6.32 23.408 3.023 32.336l76.048 68.976h-231.76l-409.312 576H2.734v64h304.512l409.328-576zm87.027 521.44c-.16-.16-.337-.226-.545-.37L875.537 733.968c-9.36-8.944-24.464-8.944-33.84 0l-5.471 8.064c-9.36 8.945-6.32 23.409 3.023 32.336l76.336 69.233-199.008-.273L602.145 666.32l-39.28 55.248 120.656 185.76 234.944.288-77.216 69.248c-9.344 8.945-12.368 23.44-3.025 32.368l5.472 8.065c9.376 8.944 24.496 8.944 33.824 0l127.744-115.504c.176-.16.384-.192.544-.336l8.464-8.096c4.672-4.496 7.008-10.368 6.976-16.288.032-5.872-2.304-11.776-6.976-16.224z\"/\u003e\u003c/svg\u003e",
+   "width": 30
+  },
+  "version": "v1.0.0"
+ }

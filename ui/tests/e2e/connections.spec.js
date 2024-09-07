@@ -92,7 +92,6 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('Verify that UI components are displayed', async ({ page }) => {
-  test.slow();
   // Verify that connections table is displayed (by checking for table headings)
   for (const heading of ['Name', 'Environments', 'Kind', 'Category', 'Status', 'Actions']) {
     await expect(page.getByRole('columnheader', { name: heading })).toBeVisible();
@@ -118,14 +117,18 @@ test('Add a cluster connection by uploading kubeconfig file', async ({ page }) =
   );
 
   // Click Add Cluster button
-  await page.getByRole('button', { name: 'Add Cluster' }).click();
+  await page.getByTestId('connection-addCluster').click();
 
   // Verify "Add Kubernetes Cluster(s)" modal opens
-  await expect(page.getByRole('heading', { name: 'Add Kubernetes Cluster(s)' })).toBeVisible();
+  await expect(page.getByTestId('connection-addKubernetesModal')).toBeVisible();
+
+  const fileChooserPromise = page.waitForEvent('filechooser');
+  await page.getByTestId('connection-uploadKubeConfig').click();
+  const fileChooser = await fileChooserPromise;
 
   // Attach existing kubeconfig file of the system, to test the upload without making any changes in configuration
   const kubeConfigPath = `${os.homedir()}/.kube/config`;
-  await page.locator('input[type="file"]').setInputFiles(kubeConfigPath);
+  await fileChooser.setFiles(kubeConfigPath);
 
   // Click "IMPORT" button
   await page.getByRole('button', { name: 'IMPORT', exact: true }).click();
@@ -135,7 +138,7 @@ test('Add a cluster connection by uploading kubeconfig file', async ({ page }) =
   await addConnectionRes;
 
   // Verify displaying of success modal
-  await expect(page.getByText('Available contexts in')).toBeVisible();
+  await expect(page.getByTestId('connection-discoveredModal')).toBeVisible();
 
   // Verify available contexts were connected
   await expect(page.getByRole('menuitem', { name: 'connected' })).toBeVisible();
