@@ -1,13 +1,13 @@
 ---
 layout: integration
 title: OpenStack (Crossplane)
-subtitle: Collaborative and visual infrastructure as code for OpenStack (Crossplane)
+subtitle: Collaborative and visual infrastructure as design for OpenStack (Crossplane)
 image: /assets/img/integrations/crossplane-provider-openstack/icons/color/crossplane-provider-openstack-color.svg
 permalink: extensibility/integrations/crossplane-provider-openstack
 docURL: https://docs.meshery.io/extensibility/integrations/crossplane-provider-openstack
 description: 
 integrations-category: Orchestration & Management
-integrations-subcategory: OpenStack
+integrations-subcategory: Provisioning
 registrant: GitHub
 components: 
 - name: qos-association-v3

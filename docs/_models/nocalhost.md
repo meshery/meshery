@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Nocalhost
-subtitle: Collaborative and visual infrastructure as code for NGINX Service Mesh
+subtitle: Collaborative and visual infrastructure as design for Nocalhost
 image: /assets/img/integrations/nocalhost/icons/color/nocalhost-color.svg
 permalink: extensibility/integrations/nocalhost
 docURL: https://docs.meshery.io/extensibility/integrations/nocalhost

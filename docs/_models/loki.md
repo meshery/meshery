@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Loki
-subtitle: Collaborative and visual infrastructure as code for Loki
+subtitle: Collaborative and visual infrastructure as design for Loki
 image: /assets/img/integrations/loki/icons/color/loki-color.svg
 permalink: extensibility/integrations/loki
 docURL: https://docs.meshery.io/extensibility/integrations/loki

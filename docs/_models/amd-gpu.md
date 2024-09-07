@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: AMD GPU
-subtitle: Collaborative and visual infrastructure as code for AMD GPU
+subtitle: Collaborative and visual infrastructure as design for AMD GPU
 image: /assets/img/integrations/amd-gpu/icons/color/amd-gpu-color.svg
 permalink: extensibility/integrations/amd-gpu
 docURL: https://docs.meshery.io/extensibility/integrations/amd-gpu

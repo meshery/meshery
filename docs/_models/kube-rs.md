@@ -1,14 +1,14 @@
 ---
 layout: integration
 title: kube-rs
-subtitle: Collaborative and visual infrastructure as code for kube-rs
+subtitle: Collaborative and visual infrastructure as design for kube-rs
 image: /assets/img/integrations/kube-rs/icons/color/kube-rs-color.svg
 permalink: extensibility/integrations/kube-rs
 docURL: https://docs.meshery.io/extensibility/integrations/kube-rs
 description: 
 integrations-category: Runtime
 integrations-subcategory: Scheduling & Orchestration
-registrant: Artifact Hub
+registrant: Github
 components: 
 featureList: [
   "Provides a Rust interface for Kubernetes API",

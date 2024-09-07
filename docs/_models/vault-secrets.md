@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Vault Secrets
-subtitle: Collaborative and visual infrastructure as code for Vault Secrets
+subtitle: Collaborative and visual infrastructure as design for Vault Secrets
 image: /assets/img/integrations/vault-secrets/icons/color/vault-secrets-color.svg
 permalink: extensibility/integrations/vault-secrets
 docURL: https://docs.meshery.io/extensibility/integrations/vault-secrets
@@ -41,6 +41,14 @@ components:
 - name: vault-static-secret
   colorIcon: assets/img/integrations/vault-secrets/components/vault-static-secret/icons/color/vault-static-secret-color.svg
   whiteIcon: assets/img/integrations/vault-secrets/components/vault-static-secret/icons/white/vault-static-secret-white.svg
+  description: 
+- name: vault-auth-global
+  colorIcon: assets/img/integrations/vault-secrets/components/vault-auth-global/icons/color/vault-auth-global-color.svg
+  whiteIcon: assets/img/integrations/vault-secrets/components/vault-auth-global/icons/white/vault-auth-global-white.svg
+  description: 
+- name: vault-auth-global
+  colorIcon: assets/img/integrations/vault-secrets/components/vault-auth-global/icons/color/vault-auth-global-color.svg
+  whiteIcon: assets/img/integrations/vault-secrets/components/vault-auth-global/icons/white/vault-auth-global-white.svg
   description: 
 featureList: [
   "Automates secret syncing from Vault",

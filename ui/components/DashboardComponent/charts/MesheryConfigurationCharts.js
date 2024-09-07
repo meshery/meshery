@@ -14,10 +14,10 @@ import { useGetPatternsQuery } from '@/rtk-query/design';
 import { useGetFiltersQuery } from '@/rtk-query/filter';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
+import { useRouter } from 'next/router';
 
 export default function MesheryConfigurationChart({ classes }) {
-  // const { notify } = useNotification();
-
+  const router = useRouter();
   const [chartData, setChartData] = useState([]);
 
   const { data: patternsData, error: patternsError } = useGetPatternsQuery({
@@ -47,6 +47,10 @@ export default function MesheryConfigurationChart({ classes }) {
       columns: chartData,
       type: donut(),
       colors: dataToColors(chartData),
+      onclick: function (d) {
+        const routeName = d.name.charAt(0).toLowerCase() + d.name.slice(1);
+        router.push(`/configuration/${routeName}`);
+      },
     },
     arc: {
       cornerRadius: {
@@ -87,6 +91,7 @@ export default function MesheryConfigurationChart({ classes }) {
             <CustomTextTooltip
               placement="left"
               interactive={true}
+              variant="standard"
               title={`Meshery Designs are descriptive, declarative characterizations of how your Kubernetes infrastructure should be configured. [Learn more](https://docs.meshery.io/concepts/logical/designs)`}
             >
               <IconButton disableRipple={true} disableFocusRipple={true}>

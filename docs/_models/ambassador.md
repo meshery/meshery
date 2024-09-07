@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Ambassador
-subtitle: Collaborative and visual infrastructure as code for Ambassador
+subtitle: Collaborative and visual infrastructure as design for Ambassador
 image: /assets/img/integrations/ambassador/icons/color/ambassador-color.svg
 permalink: extensibility/integrations/ambassador
 docURL: https://docs.meshery.io/extensibility/integrations/ambassador

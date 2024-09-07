@@ -1,15 +1,19 @@
 ---
 layout: integration
 title: Operator Framework
-subtitle: Collaborative and visual infrastructure as code for Operator
+subtitle: Collaborative and visual infrastructure as design for Operator Framework
 image: /assets/img/integrations/operator-framework/icons/color/operator-framework-color.svg
 permalink: extensibility/integrations/operator-framework
 docURL: https://docs.meshery.io/extensibility/integrations/operator framework
 description: 
 integrations-category: App Definition and Development
 integrations-subcategory: Application Definition & Image Build
-registrant: Artifact Hub
+registrant: Github
 components: 
+- name: cluster-extension
+  colorIcon: assets/img/integrations/operator-framework/components/cluster-extension/icons/color/cluster-extension-color.svg
+  whiteIcon: assets/img/integrations/operator-framework/components/cluster-extension/icons/white/cluster-extension-white.svg
+  description: 
 featureList: [
   "Defines custom resources for operators",
   "Enables declarative configuration",

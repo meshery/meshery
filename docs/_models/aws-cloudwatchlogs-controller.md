@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: AWS CloudWatch Logs
-subtitle: Collaborative and visual infrastructure as code for AWS CloudWatch Logs
+subtitle: Collaborative and visual infrastructure as design for AWS CloudWatch Logs
 image: /assets/img/integrations/aws-cloudwatchlogs-controller/icons/color/aws-cloudwatchlogs-controller-color.svg
 permalink: extensibility/integrations/aws-cloudwatchlogs-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-cloudwatchlogs-controller
@@ -27,7 +27,7 @@ featureList: [
   "Query your log data – You can use CloudWatch Logs Insights to interactively search and analyze your log data. ",
   "Detect and debug using Live Tail – You can use Live Tail to quickly troubleshoot incidents by viewing a streaming list of new log events as they are ingested. "
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

@@ -51,7 +51,7 @@ featureList: [
   "Percona Operators include backup/restore, high availability, replication, sharding, logging features and more.",
   "Create ready-to-use database clusters of open source, enterprise-ready versions of MySQL, MongoDB, and PostgreSQL, created and supported by the Percona team."
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

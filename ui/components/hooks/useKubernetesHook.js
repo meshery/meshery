@@ -61,7 +61,7 @@ export function useMesheryOperator() {
   const handleError = handleErrorGenerator(dispatch, notify);
   const handleSuccess = handleSuccessGenerator(dispatch, notify);
 
-  const ping = (connectionID) => {
+  const ping = ({ connectionID }) => {
     dispatch(updateProgress({ showProgress: true }));
     pingMesheryOperator(
       connectionID,

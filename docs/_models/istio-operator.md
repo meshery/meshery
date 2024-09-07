@@ -35,7 +35,7 @@ featureList: [
   "Analyze Istio Destination Rules",
   "Design Istio Virtual Services"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

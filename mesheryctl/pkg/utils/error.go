@@ -142,6 +142,8 @@ func SystemModelSubError(msg string, cmd string) string {
 		return formatError(msg, cmdModelList)
 	case "view":
 		return formatError(msg, cmdModelView)
+	case "import":
+		return formatError(msg, cmdModelImport)
 	default:
 		return formatError(msg, cmdModel)
 	}
@@ -315,6 +317,8 @@ func formatError(msg string, cmd cmdType) string {
 		return formatUsageDetails(msg, modelUsageURL)
 	case cmdModelList:
 		return formatUsageDetails(msg, modelListURL)
+	case cmdModelImport:
+		return formatUsageDetails(msg, modelImportURl)
 	case cmdModelView:
 		return formatUsageDetails(msg, modelViewURL)
 	case cmdRegistry:

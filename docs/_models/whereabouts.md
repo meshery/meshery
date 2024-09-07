@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Whereabouts
-subtitle: Collaborative and visual infrastructure as code for Whereabouts
+subtitle: Collaborative and visual infrastructure as design for Whereabouts
 image: /assets/img/integrations/whereabouts/icons/color/whereabouts-color.svg
 permalink: extensibility/integrations/whereabouts
 docURL: https://docs.meshery.io/extensibility/integrations/whereabouts

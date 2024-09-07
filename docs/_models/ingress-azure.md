@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Ingress Azure
-subtitle: Collaborative and visual infrastructure as code for Ingress Azure
+subtitle: Collaborative and visual infrastructure as design for Ingress Azure
 image: /assets/img/integrations/ingress-azure/icons/color/ingress-azure-color.svg
 permalink: extensibility/integrations/ingress-azure
 docURL: https://docs.meshery.io/extensibility/integrations/ingress-azure

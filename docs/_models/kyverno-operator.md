@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Kyverno Operator
-subtitle: Collaborative and visual infrastructure as code for Kyverno Operator
+subtitle: Collaborative and visual infrastructure as design for Kyverno Operator
 image: /assets/img/integrations/kyverno-operator/icons/color/kyverno-operator-color.svg
 permalink: extensibility/integrations/kyverno-operator
 docURL: https://docs.meshery.io/extensibility/integrations/kyverno-operator

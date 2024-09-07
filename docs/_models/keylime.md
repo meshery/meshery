@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Keylime
-subtitle: Collaborative and visual infrastructure as code for Keylime
+subtitle: Collaborative and visual infrastructure as design for Keylime
 image: /assets/img/integrations/keylime/icons/color/keylime-color.svg
 permalink: extensibility/integrations/keylime
 docURL: https://docs.meshery.io/extensibility/integrations/keylime

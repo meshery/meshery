@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Terraform
-subtitle: Collaborative and visual infrastructure as code for Terraform
+subtitle: Collaborative and visual infrastructure as design for Terraform
 image: /assets/img/integrations/terraform/icons/color/terraform-color.svg
 permalink: extensibility/integrations/terraform
 docURL: https://docs.meshery.io/extensibility/integrations/terraform

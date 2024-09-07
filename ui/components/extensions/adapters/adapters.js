@@ -7,7 +7,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { updateProgress } from '../../../lib/store';
-import { adaptersList } from './constants';
+import { ADAPTER_STATUS, adaptersList } from './constants';
 import changeAdapterState from '../../graphql/mutations/AdapterStatusMutation';
 import { LARGE_6_MED_12_GRID_STYLE } from '../../../css/grid.style';
 import { promisifiedDataFetch } from '../../../lib/data-fetch';
@@ -62,15 +62,16 @@ const Adapters = ({ updateProgress, classes }) => {
       updateProgress({ showProgress: false });
 
       if (!isNil(errors)) {
-        // Toggle the switch to it's previous state if the request fails.
+        // Toggle the switch to its previous state if the request fails.
         setAvailableAdapters({
           ...availableAdapters,
           [adapterId]: { ...selectedAdapter, enabled: !selectedAdapter.enabled },
         });
         handleError(msg);
       } else {
+        const actionText = payload.status.toLowerCase();
         notify({
-          message: `Adapter ${response.adapterStatus.toLowerCase()}`,
+          message: `${selectedAdapter.name} adapter ${actionText}`,
           event_type: EVENT_TYPES.SUCCESS,
         });
       }
@@ -91,18 +92,18 @@ const Adapters = ({ updateProgress, classes }) => {
       msg = '';
     if (!selectedAdapter.enabled) {
       payload = {
-        status: 'ENABLED',
+        status: ADAPTER_STATUS.ENABLED,
         adapter: selectedAdapter.label,
         targetPort: selectedAdapter.defaultPort,
       };
-      msg = 'Unable to Deploy adapter';
+      msg = 'Unable to deploy adapter';
     } else {
       payload = {
-        status: 'DISABLED',
+        status: ADAPTER_STATUS.DISABLED,
         adapter: selectedAdapter.label,
         targetPort: selectedAdapter.defaultPort,
       };
-      msg = 'Unable to Undeploy adapter';
+      msg = 'Unable to undeploy adapter';
     }
     handleAdapterDeployment(payload, msg, selectedAdapter, adapterId);
   };

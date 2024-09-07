@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Fluent Operator
-subtitle: Collaborative and visual infrastructure as code for Fluent Operator
+subtitle: Collaborative and visual infrastructure as design for Fluent Operator
 image: /assets/img/integrations/fluent-operator/icons/color/fluent-operator-color.svg
 permalink: extensibility/integrations/fluent-operator
 docURL: https://docs.meshery.io/extensibility/integrations/fluent-operator
@@ -71,7 +71,7 @@ featureList: [
   "Fluentds 500+ plugins connect it to many data sources and outputs while keeping its core simple.",
   "Fluentd has a flexible plugin system that allows the community to extend its functionality. "
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

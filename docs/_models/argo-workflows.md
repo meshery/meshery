@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Argo Workflows
-subtitle: Collaborative and visual infrastructure as code for Argo Workflows
+subtitle: Collaborative and visual infrastructure as design for Argo Workflows
 image: /assets/img/integrations/argo-workflows/icons/color/argo-workflows-color.svg
 permalink: extensibility/integrations/argo-workflows
 docURL: https://docs.meshery.io/extensibility/integrations/argo-workflows
@@ -59,7 +59,7 @@ featureList: [
   "Workflow templating to store commonly used Workflows in the cluster.",
   "Archiving Workflows after executing for later access."
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

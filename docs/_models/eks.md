@@ -15,7 +15,7 @@ featureList: [
   "Ensure multi-tenancy enforcement",
   "Dry run your AKS configuration changes"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

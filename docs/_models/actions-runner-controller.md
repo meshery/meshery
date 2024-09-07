@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Actions Runner Controller (ARC)
-subtitle: Collaborative and visual infrastructure as code for Actions Runner Controller (ARC)
+subtitle: Collaborative and visual infrastructure as design for Actions Runner Controller (ARC)
 image: /assets/img/integrations/actions-runner-controller/icons/color/actions-runner-controller-color.svg
 permalink: extensibility/integrations/actions-runner-controller
 docURL: https://docs.meshery.io/extensibility/integrations/actions-runner-controller
@@ -35,7 +35,7 @@ featureList: [
   "Auto scale runners based on demand.",
   "Setup across GitHub editions including GitHub Enterprise editions and GitHub Enterprise Cloud."
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

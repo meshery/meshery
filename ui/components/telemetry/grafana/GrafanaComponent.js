@@ -213,6 +213,7 @@ class GrafanaComponent extends Component {
   handleChange = (name) => (data) => {
     if (name === 'grafanaURL' && !!data) {
       this.setState({ urlError: false });
+      this.setState({ [name]: data.value });
     }
 
     const grafanaConnectionObj = data.target?.value;

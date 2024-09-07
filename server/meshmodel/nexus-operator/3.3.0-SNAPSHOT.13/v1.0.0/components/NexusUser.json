@@ -1,0 +1,197 @@
+{
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "NexusUser",
+   "schema": "{\n \"description\": \"NexusUser is the Schema for the nexususers API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"NexusUserSpec defines the desired state of NexusUser.\",\n   \"properties\": {\n    \"email\": {\n     \"description\": \"Email is the email address of the user.\",\n     \"example\": \"john.doe@example\",\n     \"maxLength\": 254,\n     \"type\": \"string\"\n    },\n    \"firstName\": {\n     \"description\": \"FirstName of the user.\",\n     \"example\": \"John\",\n     \"type\": \"string\"\n    },\n    \"id\": {\n     \"description\": \"ID is the username of the user.\\nID should be unique across all users.\",\n     \"example\": \"new-user\",\n     \"maxLength\": 512,\n     \"type\": \"string\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"Value is immutable\",\n       \"rule\": \"self == oldSelf\"\n      }\n     ]\n    },\n    \"lastName\": {\n     \"description\": \"LastName of the user.\",\n     \"example\": \"Doe\",\n     \"type\": \"string\"\n    },\n    \"nexusRef\": {\n     \"description\": \"NexusRef is a reference to Nexus custom resource.\",\n     \"properties\": {\n      \"kind\": {\n       \"default\": \"Nexus\",\n       \"description\": \"Kind specifies the kind of the Nexus resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name specifies the name of the Nexus resource.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"roles\": {\n     \"description\": \"Roles is a list of roles assigned to user.\",\n     \"example\": [\n      \"nx-admin\"\n     ],\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"minItems\": 1,\n     \"type\": \"array\"\n    },\n    \"secret\": {\n     \"description\": \"Secret is the reference of the k8s object Secret for the user password.\\nFormat: $secret-name:secret-key.\\nUpdating user password is not supported.\",\n     \"example\": \"$nexus-user-secret:password-filed\",\n     \"type\": \"string\"\n    },\n    \"status\": {\n     \"default\": \"active\",\n     \"description\": \"Status is a status of the user.\",\n     \"enum\": [\n      \"active\",\n      \"disabled\"\n     ],\n     \"example\": \"active\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"email\",\n    \"firstName\",\n    \"id\",\n    \"lastName\",\n    \"nexusRef\",\n    \"roles\",\n    \"secret\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Nexus User\",\n \"type\": \"object\"\n}",
+   "version": "edp.epam.com/v1alpha1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "Nexus User",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "published": false
+  },
+  "model": {
+   "category": {
+    "name": "Uncategorized"
+   },
+   "displayName": "Nexus Operator",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "defaultData": "",
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "source_uri": "https://epam.github.io/edp-helm-charts/snapshot/packages/nexus-operator-3.3.0-SNAPSHOT.13.tgz",
+    "styleOverrides": "",
+    "styles": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "model": {
+    "version": "3.3.0-SNAPSHOT.13"
+   },
+   "name": "nexus-operator",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "subCategory": "Uncategorized",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "ignored",
+  "styles": {
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "svgColor": "",
+   "svgWhite": ""
+  },
+  "version": "v1.0.0"
+ }

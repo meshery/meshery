@@ -1,0 +1,62 @@
+{
+    "schemaVersion": "relationships.meshery.io/v1alpha3",
+    "version": "v1.0.0",
+    "kind": "edge",
+    "type": "non-binding",
+    "subType": "network",
+    "selectors": [
+      {
+        "allow": {
+          "from": [
+            {
+              "kind": "Ingress",
+              "model": {
+                "name": "kubernetes",
+                "registrant": {
+                  "kind": "artifacthub"
+                }
+              },
+              "patch": {
+                "patchStrategy": "merge",
+                "mutatorRef": [
+                  [
+                    "spec",
+                    "rules",
+                    "_",
+                    "http",
+                    "paths",
+                    "_",
+                    "backend",
+                    "serviceName"
+                  ]
+                ],
+                "description": "Ingress routes traffic to services that access the S3 Bucket."
+              }
+            }
+          ],
+          "to": [
+            {
+              "kind": "Bucket",
+              "model": {
+                "name": "aws-s3-controller",
+                "registrant": {
+                  "kind": "github"
+                }
+              },
+              "patch": {
+                "patchStrategy": "replace",
+                "mutatedRef": [
+                  [
+                    "spec",
+                    "name"
+                  ]
+                ],
+                "description": "The S3 Bucket hosts content or stores data that is accessed via the Ingress."
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+  

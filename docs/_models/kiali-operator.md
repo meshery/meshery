@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Kiali Operator
-subtitle: Collaborative and visual infrastructure as code for Kiali Operator
+subtitle: Collaborative and visual infrastructure as design for Kiali Operator
 image: /assets/img/integrations/kiali-operator/icons/color/kiali-operator-color.svg
 permalink: extensibility/integrations/kiali-operator
 docURL: https://docs.meshery.io/extensibility/integrations/kiali-operator

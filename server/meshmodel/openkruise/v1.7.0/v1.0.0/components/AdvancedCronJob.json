@@ -1,0 +1,195 @@
+{
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "AdvancedCronJob",
+   "schema": "{\n \"description\": \"AdvancedCronJob is the Schema for the advancedcronjobs API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"AdvancedCronJobSpec defines the desired state of AdvancedCronJob\",\n   \"properties\": {\n    \"concurrencyPolicy\": {\n     \"description\": \"Specifies how to treat concurrent executions of a Job.\\nValid values are:\\n- \\\"Allow\\\" (default): allows CronJobs to run concurrently;\\n- \\\"Forbid\\\": forbids concurrent runs, skipping next run if previous run hasn't finished yet;\\n- \\\"Replace\\\": cancels currently running job and replaces it with a new one\",\n     \"enum\": [\n      \"Allow\",\n      \"Forbid\",\n      \"Replace\"\n     ],\n     \"type\": \"string\"\n    },\n    \"failedJobsHistoryLimit\": {\n     \"description\": \"The number of failed finished jobs to retain.\\nThis is a pointer to distinguish between explicit zero and not specified.\",\n     \"format\": \"int32\",\n     \"type\": \"integer\"\n    },\n    \"paused\": {\n     \"description\": \"Paused will pause the cron job.\",\n     \"type\": \"boolean\"\n    },\n    \"schedule\": {\n     \"description\": \"The schedule in Cron format, see https://en.wikipedia.org/wiki/Cron.\",\n     \"minLength\": 0,\n     \"type\": \"string\"\n    },\n    \"startingDeadlineSeconds\": {\n     \"description\": \"Optional deadline in seconds for starting the job if it misses scheduled\\ntime for any reason.  Missed jobs executions will be counted as failed ones.\",\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"successfulJobsHistoryLimit\": {\n     \"description\": \"The number of successful finished jobs to retain.\\nThis is a pointer to distinguish between explicit zero and not specified.\",\n     \"format\": \"int32\",\n     \"type\": \"integer\"\n    },\n    \"template\": {\n     \"description\": \"Specifies the job that will be created when executing a CronJob.\",\n     \"properties\": {\n      \"broadcastJobTemplate\": {\n       \"description\": \"Specifies the broadcastjob that will be created when executing a BroadcastCronJob.\",\n       \"properties\": {\n        \"metadata\": {\n         \"description\": \"Standard object's metadata of the jobs created from this template.\",\n         \"type\": \"object\"\n        },\n        \"spec\": {\n         \"description\": \"Specification of the desired behavior of the broadcastjob.\",\n         \"properties\": {\n          \"completionPolicy\": {\n           \"description\": \"CompletionPolicy indicates the completion policy of the job.\\nDefault is Always CompletionPolicyType.\",\n           \"properties\": {\n            \"activeDeadlineSeconds\": {\n             \"description\": \"ActiveDeadlineSeconds specifies the duration in seconds relative to the startTime that the job may be active\\nbefore the system tries to terminate it; value must be positive integer.\\nOnly works for Always type.\",\n             \"format\": \"int64\",\n             \"type\": \"integer\"\n            },\n            \"ttlSecondsAfterFinished\": {\n             \"description\": \"ttlSecondsAfterFinished limits the lifetime of a Job that has finished\\nexecution (either Complete or Failed). If this field is set,\\nttlSecondsAfterFinished after the Job finishes, it is eligible to be\\nautomatically deleted. When the Job is being deleted, its lifecycle\\nguarantees (e.g. finalizers) will be honored. If this field is unset,\\nthe Job won't be automatically deleted. If this field is set to zero,\\nthe Job becomes eligible to be deleted immediately after it finishes.\\nThis field is alpha-level and is only honored by servers that enable the\\nTTLAfterFinished feature.\\nOnly works for Always type\",\n             \"format\": \"int32\",\n             \"type\": \"integer\"\n            },\n            \"type\": {\n             \"description\": \"Type indicates the type of the CompletionPolicy.\\nDefault is Always.\",\n             \"type\": \"string\"\n            }\n           },\n           \"type\": \"object\"\n          },\n          \"failurePolicy\": {\n           \"description\": \"FailurePolicy indicates the behavior of the job, when failed pod is found.\",\n           \"properties\": {\n            \"restartLimit\": {\n             \"description\": \"RestartLimit specifies the number of retries before marking the pod failed.\",\n             \"format\": \"int32\",\n             \"type\": \"integer\"\n            },\n            \"type\": {\n             \"description\": \"Type indicates the type of FailurePolicyType.\\nDefault is FailurePolicyTypeFailFast.\",\n             \"type\": \"string\"\n            }\n           },\n           \"type\": \"object\"\n          },\n          \"parallelism\": {\n           \"anyOf\": [\n            {\n             \"type\": \"integer\"\n            },\n            {\n             \"type\": \"string\"\n            }\n           ],\n           \"description\": \"Parallelism specifies the maximum desired number of pods the job should\\nrun at any given time. The actual number of pods running in steady state will\\nbe less than this number when the work left to do is less than max parallelism.\\nNot setting this value means no limit.\",\n           \"x-kubernetes-int-or-string\": true\n          },\n          \"paused\": {\n           \"description\": \"Paused will pause the job.\",\n           \"type\": \"boolean\"\n          },\n          \"template\": {\n           \"description\": \"Template describes the pod that will be created when executing a job.\",\n           \"format\": \"textarea\",\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"template\"\n         ],\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"jobTemplate\": {\n       \"description\": \"Specifies the job that will be created when executing a CronJob.\",\n       \"format\": \"textarea\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"timeZone\": {\n     \"description\": \"The time zone name for the given schedule, see https://en.wikipedia.org/wiki/List_of_tz_database_time_zones.\\nIf not specified, this will default to the time zone of the kruise-controller-manager process.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"schedule\",\n    \"template\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Advanced Cron Job\",\n \"type\": \"object\"\n}",
+   "version": "apps.kruise.io/v1alpha1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "Advanced Cron Job",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "published": false,
+   "source_uri": "git://github.com/openkruise/kruise/master/config/crd/bases"
+  },
+  "model": {
+   "category": {
+    "name": "App Definition and Development"
+   },
+   "displayName": "Openkruise",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "isAnnotation": false,
+    "primaryColor": "#0090ff",
+    "secondaryColor": "#1a9bff",
+    "shape": "circle",
+    "source_uri": "git://github.com/openkruise/kruise/master/config/crd/bases",
+    "styleOverrides": "",
+    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" id=\"图层_1\" data-name=\"图层 1\" xmlns:_xmlns=\"xmlns\" _xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewBox=\"0 0 56.69 56.69\" height=\"20\" width=\"20\"\u003e\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cstyle xmlns=\"http://www.w3.org/2000/svg\"\u003e.cls-1{fill:url(#未命名的渐变_60);}.cls-2{fill:url(#未命名的渐变_89);}.cls-3{fill:url(#未命名的渐变_43);}\u003c/style\u003e\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"未命名的渐变_60\" x1=\"28.35\" y1=\"54.33\" x2=\"28.35\" y2=\"2\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"0\" stop-color=\"#0071ff\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"1\" stop-color=\"#009bff\"\u003e\u003c/stop\u003e\u003c/linearGradient\u003e\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"未命名的渐变_89\" x1=\"11.77\" y1=\"35.48\" x2=\"44.79\" y2=\"35.48\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"0\" stop-color=\"#0050fa\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"1\" stop-color=\"#00a0ff\" stop-opacity=\"0\"\u003e\u003c/stop\u003e\u003c/linearGradient\u003e\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"未命名的渐变_43\" x1=\"35.73\" y1=\"41.11\" x2=\"35.73\" y2=\"7.93\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"0\" stop-color=\"#00a0dc\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"1\" stop-color=\"#3cfaff\"\u003e\u003c/stop\u003e\u003c/linearGradient\u003e\u003c/defs\u003e\u003ctitle xmlns=\"http://www.w3.org/2000/svg\"\u003eopenkruise\u003c/title\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"cls-1\" d=\"M28.35,2A26.17,26.17,0,1,0,54.51,28.16,26.17,26.17,0,0,0,28.35,2Zm0,35.46a9.3,9.3,0,1,1,9.29-9.3A9.3,9.3,0,0,1,28.36,37.46Z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"cls-2\" d=\"M43,38.88A16.58,16.58,0,0,1,20.3,32.81l0,0A9.25,9.25,0,0,1,27.6,18.91,16.57,16.57,0,1,0,44.79,37.64,15.58,15.58,0,0,1,43,38.88Z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"cls-3\" d=\"M49,16.23a16.57,16.57,0,0,0-20.67-7,14.38,14.38,0,0,1,2,1A16.58,16.58,0,0,1,36.4,32.81,6.86,6.86,0,0,1,35.58,34a9.22,9.22,0,0,1-15.37-1.36,1.45,1.45,0,0,0,.09.22A16.58,16.58,0,0,0,49,16.23Z\"\u003e\u003c/path\u003e\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" id=\"图层_1\" data-name=\"图层 1\" xmlns:_xmlns=\"xmlns\" _xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewBox=\"0 0 56.69 56.69\" height=\"20\" width=\"20\"\u003e\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cstyle xmlns=\"http://www.w3.org/2000/svg\"\u003e.cls-1,.cls-2{fill:#fff;}.cls-2{opacity:0.7;}.cls-3{fill:url(#未命名的渐变_5);}\u003c/style\u003e\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"未命名的渐变_5\" x1=\"11.77\" y1=\"35.48\" x2=\"44.79\" y2=\"35.48\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"0\" stop-color=\"#fff\" stop-opacity=\"0\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"1\" stop-color=\"#fff\"\u003e\u003c/stop\u003e\u003c/linearGradient\u003e\u003c/defs\u003e\u003ctitle xmlns=\"http://www.w3.org/2000/svg\"\u003eopenkruise\u003c/title\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"cls-1\" d=\"M28.35,2A26.17,26.17,0,1,0,54.51,28.16,26.17,26.17,0,0,0,28.35,2ZM44.79,37.64A16.58,16.58,0,1,1,27.27,18.91a7.83,7.83,0,0,1,1.09,0,9.28,9.28,0,0,1,8.51,13,16.56,16.56,0,0,0-6.55-21.72,14.38,14.38,0,0,0-2-1A16.58,16.58,0,0,1,44.79,37.64Z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"cls-2\" d=\"M49,16.16a16.53,16.53,0,0,0-20.69-7,14.38,14.38,0,0,1,2,1A16.54,16.54,0,0,1,36.4,32.79a6.21,6.21,0,0,1-.81,1.13A9.21,9.21,0,0,1,20.2,32.56a2.18,2.18,0,0,0,.09.23A16.61,16.61,0,1,0,49,16.16Z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"cls-3\" d=\"M43,38.88A16.58,16.58,0,0,1,20.3,32.81s0,0,0,0a9.28,9.28,0,0,1,7.3-13.9A16.57,16.57,0,1,0,44.79,37.64,15.58,15.58,0,0,1,43,38.88Z\"\u003e\u003c/path\u003e\u003c/svg\u003e"
+   },
+   "model": {
+    "version": "v1.7.0"
+   },
+   "name": "openkruise",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "github",
+    "name": "Github",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "subCategory": "Continuous Integration \u0026 Delivery",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "ignored",
+  "styles": {
+   "primaryColor": "#0090ff",
+   "secondaryColor": "#1a9bff",
+   "shape": "circle",
+   "svgColor": "\u003csvg id=\"图层_1\" data-name=\"图层 1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewBox=\"0 0 56.69 56.69\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:url(#未命名的渐变_60);}.cls-2{fill:url(#未命名的渐变_89);}.cls-3{fill:url(#未命名的渐变_43);}\u003c/style\u003e\u003clinearGradient id=\"未命名的渐变_60\" x1=\"28.35\" y1=\"54.33\" x2=\"28.35\" y2=\"2\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop offset=\"0\" stop-color=\"#0071ff\"/\u003e\u003cstop offset=\"1\" stop-color=\"#009bff\"/\u003e\u003c/linearGradient\u003e\u003clinearGradient id=\"未命名的渐变_89\" x1=\"11.77\" y1=\"35.48\" x2=\"44.79\" y2=\"35.48\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop offset=\"0\" stop-color=\"#0050fa\"/\u003e\u003cstop offset=\"1\" stop-color=\"#00a0ff\" stop-opacity=\"0\"/\u003e\u003c/linearGradient\u003e\u003clinearGradient id=\"未命名的渐变_43\" x1=\"35.73\" y1=\"41.11\" x2=\"35.73\" y2=\"7.93\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop offset=\"0\" stop-color=\"#00a0dc\"/\u003e\u003cstop offset=\"1\" stop-color=\"#3cfaff\"/\u003e\u003c/linearGradient\u003e\u003c/defs\u003e\u003ctitle\u003eopenkruise\u003c/title\u003e\u003cpath class=\"cls-1\" d=\"M28.35,2A26.17,26.17,0,1,0,54.51,28.16,26.17,26.17,0,0,0,28.35,2Zm0,35.46a9.3,9.3,0,1,1,9.29-9.3A9.3,9.3,0,0,1,28.36,37.46Z\"/\u003e\u003cpath class=\"cls-2\" d=\"M43,38.88A16.58,16.58,0,0,1,20.3,32.81l0,0A9.25,9.25,0,0,1,27.6,18.91,16.57,16.57,0,1,0,44.79,37.64,15.58,15.58,0,0,1,43,38.88Z\"/\u003e\u003cpath class=\"cls-3\" d=\"M49,16.23a16.57,16.57,0,0,0-20.67-7,14.38,14.38,0,0,1,2,1A16.58,16.58,0,0,1,36.4,32.81,6.86,6.86,0,0,1,35.58,34a9.22,9.22,0,0,1-15.37-1.36,1.45,1.45,0,0,0,.09.22A16.58,16.58,0,0,0,49,16.23Z\"/\u003e\u003c/svg\u003e",
+   "svgWhite": "\u003csvg id=\"图层_1\" data-name=\"图层 1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewBox=\"0 0 56.69 56.69\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1,.cls-2{fill:#fff;}.cls-2{opacity:0.7;}.cls-3{fill:url(#未命名的渐变_5);}\u003c/style\u003e\u003clinearGradient id=\"未命名的渐变_5\" x1=\"11.77\" y1=\"35.48\" x2=\"44.79\" y2=\"35.48\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop offset=\"0\" stop-color=\"#fff\" stop-opacity=\"0\"/\u003e\u003cstop offset=\"1\" stop-color=\"#fff\"/\u003e\u003c/linearGradient\u003e\u003c/defs\u003e\u003ctitle\u003eopenkruise\u003c/title\u003e\u003cpath class=\"cls-1\" d=\"M28.35,2A26.17,26.17,0,1,0,54.51,28.16,26.17,26.17,0,0,0,28.35,2ZM44.79,37.64A16.58,16.58,0,1,1,27.27,18.91a7.83,7.83,0,0,1,1.09,0,9.28,9.28,0,0,1,8.51,13,16.56,16.56,0,0,0-6.55-21.72,14.38,14.38,0,0,0-2-1A16.58,16.58,0,0,1,44.79,37.64Z\"/\u003e\u003cpath class=\"cls-2\" d=\"M49,16.16a16.53,16.53,0,0,0-20.69-7,14.38,14.38,0,0,1,2,1A16.54,16.54,0,0,1,36.4,32.79a6.21,6.21,0,0,1-.81,1.13A9.21,9.21,0,0,1,20.2,32.56a2.18,2.18,0,0,0,.09.23A16.61,16.61,0,1,0,49,16.16Z\"/\u003e\u003cpath class=\"cls-3\" d=\"M43,38.88A16.58,16.58,0,0,1,20.3,32.81s0,0,0,0a9.28,9.28,0,0,1,7.3-13.9A16.57,16.57,0,1,0,44.79,37.64,15.58,15.58,0,0,1,43,38.88Z\"/\u003e\u003c/svg\u003e"
+  },
+  "version": "v1.0.0"
+ }

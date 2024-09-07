@@ -27,6 +27,8 @@ import {
   TransferList,
   ModalFooter,
   PrimaryActionButtons,
+  createAndEditEnvironmentSchema,
+  createAndEditEnvironmentUiSchema,
 } from '@layer5/sistent';
 import ConnectionIcon from '../../../assets/icons/Connection';
 import { TRANSFER_COMPONENT } from '../../../utils/Enum';
@@ -44,7 +46,6 @@ import styles from './styles';
 import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
 import DefaultError from '../../General/error-404/index';
-import { useGetSchemaQuery } from '@/rtk-query/schema';
 import { UsesSistent } from '@/components/SistentWrapper';
 
 const ACTION_TYPES = {
@@ -135,10 +136,6 @@ const Environments = ({ organization, classes }) => {
     },
   );
 
-  const { data: schemaEnvironment } = useGetSchemaQuery({
-    schemaName: 'environment',
-  });
-
   const environments = environmentsData?.environments ? environmentsData.environments : [];
   const connectionsDataRtk = connections?.connections ? connections.connections : [];
   const environmentConnectionsDataRtk = environmentConnections?.connections
@@ -197,23 +194,26 @@ const Environments = ({ organization, classes }) => {
   }, [organization]);
 
   const fetchSchema = () => {
-    const updatedSchema = { ...schemaEnvironment };
-    updatedSchema.rjsfSchema?.properties?.organization &&
-      ((updatedSchema.rjsfSchema = {
-        ...updatedSchema.rjsfSchema,
+    const updatedSchema = {
+      schema: createAndEditEnvironmentSchema,
+      uischema: createAndEditEnvironmentUiSchema,
+    };
+    updatedSchema.schema.properties?.organization &&
+      ((updatedSchema.schema = {
+        ...updatedSchema.schema,
         properties: {
-          ...updatedSchema.rjsfSchema.properties,
+          ...updatedSchema.schema.properties,
           organization: {
-            ...updatedSchema.rjsfSchema.properties.organization,
+            ...updatedSchema.schema.properties.organization,
             enum: [organization?.id],
             enumNames: [organization?.name],
           },
         },
       }),
-      (updatedSchema.uiSchema = {
-        ...updatedSchema.uiSchema,
+      (updatedSchema.uischema = {
+        ...updatedSchema.uischema,
         organization: {
-          ...updatedSchema.uiSchema.organization,
+          ...updatedSchema.uischema.organization,
           ['ui:widget']: 'hidden',
         },
       }));
@@ -476,7 +476,7 @@ const Environments = ({ organization, classes }) => {
               onSearch={(value) => {
                 setSearch(value);
               }}
-              placeholder="Search connections..."
+              placeholder="Search Environments..."
               expanded={isSearchExpanded}
               setExpanded={setIsSearchExpanded}
             />
@@ -571,8 +571,8 @@ const Environments = ({ organization, classes }) => {
                   }
                 >
                   <RJSFModalWrapper
-                    schema={environmentModal.schema.rjsfSchema}
-                    uiSchema={environmentModal.schema.uiSchema}
+                    schema={environmentModal.schema.schema}
+                    uiSchema={environmentModal.schema.uischema}
                     handleSubmit={
                       actionType === ACTION_TYPES.CREATE
                         ? handleCreateEnvironment
@@ -591,6 +591,7 @@ const Environments = ({ organization, classes }) => {
               closeModal={handleonAssignConnectionModalClose}
               title={`${connectionAssignEnv.name} Resources`}
               headerIcon={<EnvironmentIcon height="2rem" width="2rem" fill="white" />}
+              maxWidth="md"
             >
               <ModalBody>
                 <TransferList

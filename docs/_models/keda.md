@@ -1,13 +1,13 @@
 ---
 layout: integration
-title: Keda
-subtitle: Collaborative and visual infrastructure as code for Keda
+title: KEDA
+subtitle: Collaborative and visual infrastructure as design for KEDA
 image: /assets/img/integrations/keda/icons/color/keda-color.svg
 permalink: extensibility/integrations/keda
 docURL: https://docs.meshery.io/extensibility/integrations/keda
 description: 
-integrations-category: Serverless
-integrations-subcategory: Installable Platform
+integrations-category: Orchestration & Management
+integrations-subcategory: Scheduling & Orchestration
 registrant: GitHub
 components: 
 - name: cloud-event-source

@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: AWS API Gateway v2
-subtitle: Collaborative and visual infrastructure as code for AWS API Gateway v2
+subtitle: Collaborative and visual infrastructure as design for AWS API Gateway v2
 image: /assets/img/integrations/aws-apigatewayv2-controller/icons/color/aws-apigatewayv2-controller-color.svg
 permalink: extensibility/integrations/aws-apigatewayv2-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-apigatewayv2-controller
@@ -45,6 +45,14 @@ components:
 - name: vpc-link
   colorIcon: assets/img/integrations/aws-apigatewayv2-controller/components/vpc-link/icons/color/vpc-link-color.svg
   whiteIcon: assets/img/integrations/aws-apigatewayv2-controller/components/vpc-link/icons/white/vpc-link-white.svg
+  description: 
+- name: api-mapping
+  colorIcon: assets/img/integrations/aws-apigatewayv2-controller/components/api-mapping/icons/color/api-mapping-color.svg
+  whiteIcon: assets/img/integrations/aws-apigatewayv2-controller/components/api-mapping/icons/white/api-mapping-white.svg
+  description: 
+- name: domain-name
+  colorIcon: assets/img/integrations/aws-apigatewayv2-controller/components/domain-name/icons/color/domain-name-color.svg
+  whiteIcon: assets/img/integrations/aws-apigatewayv2-controller/components/domain-name/icons/white/domain-name-white.svg
   description: 
 featureList: [
   "Handles API requests and responses",
