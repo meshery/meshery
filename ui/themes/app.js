@@ -16,12 +16,12 @@ export const common = {
     MuiSwitch: {
       switchBase: {
         styleOverrides: {
-          color: "#647881",
-          "&.Mui-checked": {
-            color: "#00b39f !important",
+          color: '#647881',
+          '&.Mui-checked': {
+            color: '#00b39f !important',
           },
-          "&.Mui-checked + $track": {
-            backgroundColor: "rgba(0,179,159,0.5) !important",
+          '&.Mui-checked + $track': {
+            backgroundColor: 'rgba(0,179,159,0.5) !important',
           },
         },
       },
