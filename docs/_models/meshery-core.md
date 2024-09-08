@@ -70,10 +70,6 @@ components:
   colorIcon: assets/img/integrations/meshery-core/components/pencil/icons/color/pencil-color.svg
   whiteIcon: assets/img/integrations/meshery-core/components/pencil/icons/white/pencil-white.svg
   description: 
-- name: pen
-  colorIcon: assets/img/integrations/meshery-core/components/pen/icons/color/pen-color.svg
-  whiteIcon: assets/img/integrations/meshery-core/components/pen/icons/white/pen-white.svg
-  description: 
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",
