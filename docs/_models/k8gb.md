@@ -8,8 +8,16 @@ docURL: https://docs.meshery.io/extensibility/integrations/k8gb
 description: 
 integrations-category: Orchestration & Management
 integrations-subcategory: Coordination & Service Discovery
-registrant: Artifact Hub
+registrant: GitHub
 components: 
+- name: dns-endpoint
+  colorIcon: assets/img/integrations/k8gb/components/dns-endpoint/icons/color/dns-endpoint-color.svg
+  whiteIcon: assets/img/integrations/k8gb/components/dns-endpoint/icons/white/dns-endpoint-white.svg
+  description: 
+- name: gslb
+  colorIcon: assets/img/integrations/k8gb/components/gslb/icons/color/gslb-color.svg
+  whiteIcon: assets/img/integrations/k8gb/components/gslb/icons/white/gslb-white.svg
+  description: 
 featureList: [
   "Provides a security benchmark for Kubernetes",
   "Identifies misconfigurations and vulnerabilities",

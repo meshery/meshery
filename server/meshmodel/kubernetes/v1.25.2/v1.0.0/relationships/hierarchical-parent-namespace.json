@@ -38,7 +38,9 @@
                             "patchStrategy": "replace",
                             "mutatedRef": [
                                 [
-                                    "configuration", "metadata", "namespace"
+                                    "configuration",
+                                    "metadata",
+                                    "namespace"
                                 ]
                             ],
                             "description": "Namespace configuration to be applied to all namespaced resources."
@@ -67,8 +69,28 @@
                 ]
             },
             "deny": {
-                "from": [],
-                "to": []
+                "from": [
+                    {
+                        "kind": "Namespace",
+                        "model": {
+                            "name": "kubernetes",
+                            "registrant": {
+                                "kind": "artifacthub"
+                            }
+                        }
+                    }
+                ],
+                "to": [
+                    {
+                        "kind": "Namespace",
+                        "model": {
+                            "name": "kubernetes",
+                            "registrant": {
+                                "kind": "artifacthub"
+                            }
+                        }
+                    }
+                ]
             }
         }
     ]

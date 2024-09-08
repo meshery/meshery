@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "DatadogSLO",
    "schema": "{\n \"description\": \"DatadogSLO allows a user to define and manage datadog SLOs from Kubernetes cluster.\",\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"controllerOptions\": {\n     \"description\": \"ControllerOptions are the optional parameters in the DatadogSLO controller\",\n     \"properties\": {\n      \"disableRequiredTags\": {\n       \"description\": \"DisableRequiredTags disables the automatic addition of required tags to SLOs.\",\n       \"type\": \"boolean\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"description\": {\n     \"description\": \"Description is a user-defined description of the service level objective.\\nAlways included in service level objective responses (but may be null). Optional in create/update requests.\",\n     \"type\": \"string\"\n    },\n    \"groups\": {\n     \"description\": \"Groups is a list of (up to 100) monitor groups that narrow the scope of a monitor service level objective.\\nIncluded in service level objective responses if it is not empty.\\nOptional in create/update requests for monitor service level objectives, but may only be used when the length of the monitor_ids field is one.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\",\n     \"x-kubernetes-list-type\": \"set\"\n    },\n    \"monitorIDs\": {\n     \"description\": \"MonitorIDs is a list of monitor IDs that defines the scope of a monitor service level objective. Required if type is monitor.\",\n     \"items\": {\n      \"format\": \"int64\",\n      \"type\": \"integer\"\n     },\n     \"type\": \"array\",\n     \"x-kubernetes-list-type\": \"set\"\n    },\n    \"name\": {\n     \"description\": \"Name is the name of the service level objective.\",\n     \"type\": \"string\"\n    },\n    \"query\": {\n     \"description\": \"Query is the query for a metric-based SLO. Required if type is metric.\\nNote that only the `sum by` aggregator is allowed, which sums all request counts. `Average`, `max`, nor `min` request aggregators are not supported.\",\n     \"properties\": {\n      \"denominator\": {\n       \"description\": \"Denominator is a Datadog metric query for total (valid) events.\",\n       \"type\": \"string\"\n      },\n      \"numerator\": {\n       \"description\": \"Numerator is a Datadog metric query for good events.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"denominator\",\n      \"numerator\"\n     ],\n     \"type\": \"object\"\n    },\n    \"tags\": {\n     \"description\": \"Tags is a list of tags to associate with your service level objective.\\nThis can help you categorize and filter service level objectives in the service level objectives page of the UI.\\nNote: it's not currently possible to filter by these tags when querying via the API.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\",\n     \"x-kubernetes-list-type\": \"set\"\n    },\n    \"targetThreshold\": {\n     \"anyOf\": [\n      {\n       \"type\": \"integer\"\n      },\n      {\n       \"type\": \"string\"\n      }\n     ],\n     \"description\": \"TargetThreshold is the target threshold such that when the service level indicator is above this threshold over the given timeframe, the objective is being met.\",\n     \"pattern\": \"^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$\",\n     \"x-kubernetes-int-or-string\": true\n    },\n    \"timeframe\": {\n     \"description\": \"The SLO time window options.\",\n     \"type\": \"string\"\n    },\n    \"type\": {\n     \"description\": \"Type is the type of the service level objective.\",\n     \"type\": \"string\"\n    },\n    \"warningThreshold\": {\n     \"anyOf\": [\n      {\n       \"type\": \"integer\"\n      },\n      {\n       \"type\": \"string\"\n      }\n     ],\n     \"description\": \"WarningThreshold is a optional warning threshold such that when the service level indicator is below this value for the given threshold, but above the target threshold, the objective appears in a \\\"warning\\\" state. This value must be greater than the target threshold.\",\n     \"pattern\": \"^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$\",\n     \"x-kubernetes-int-or-string\": true\n    }\n   },\n   \"required\": [\n    \"name\",\n    \"targetThreshold\",\n    \"timeframe\",\n    \"type\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Datadog SLO\",\n \"type\": \"object\"\n}",

@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/psmdb-db
 description: 
 integrations-category: Database
 integrations-subcategory: App Definition and Development
-registrant: Artifact Hub
+registrant: Github
 components: 
 featureList: [
   "High-performance MongoDB database",

@@ -1,0 +1,195 @@
+{
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "SGScript",
+   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"continueOnError\": {\n     \"description\": \"If `true`, when any script entry fail will not prevent subsequent script entries from being executed. `false` by default.\\n\",\n     \"type\": \"boolean\"\n    },\n    \"managedVersions\": {\n     \"description\": \"If `true` the versions will be managed by the operator automatically. The user will still be able to update them if needed. `true` by default.\\n\",\n     \"type\": \"boolean\"\n    },\n    \"scripts\": {\n     \"description\": \"A list of SQL scripts.\\n\",\n     \"items\": {\n      \"description\": \"Scripts are executed in auto-commit mode with the user `postgres` in the specified database (or in database `postgres` if not specified).\\n\\nFields `script` and `scriptFrom` are mutually exclusive and only one of them is required.\\n\",\n      \"properties\": {\n       \"database\": {\n        \"description\": \"Database where the script is executed. Defaults to the `postgres` database, if not specified.\\n\",\n        \"type\": \"string\"\n       },\n       \"id\": {\n        \"description\": \"The id is immutable and must be unique across all the script entries. It is replaced by the operator and is used to identify the script for the whole life of the `SGScript` object.\\n\",\n        \"type\": \"integer\"\n       },\n       \"name\": {\n        \"description\": \"Name of the script. Must be unique across this SGScript.\\n\",\n        \"type\": \"string\"\n       },\n       \"retryOnError\": {\n        \"description\": \"If not set or set to `false` the script entry will not be retried if it fails.\\n\\nWhen set to `true` the script execution will be retried with an exponential backoff of 5 minutes,\\n  starting from 10 seconds and a standard deviation of 10 seconds.\\n\\nThis is `false` by default.\\n\",\n        \"type\": \"boolean\"\n       },\n       \"script\": {\n        \"description\": \"Raw SQL script to execute. This field is mutually exclusive with `scriptFrom` field.\\n\",\n        \"type\": \"string\"\n       },\n       \"scriptFrom\": {\n        \"description\": \"Reference to either a Kubernetes [Secret](https://kubernetes.io/docs/concepts/configuration/secret/) or a [ConfigMap](https://kubernetes.io/docs/concepts/configuration/configmap/) that contains the SQL script to execute. This field is mutually exclusive with `script` field.\\n\\nFields `secretKeyRef` and `configMapKeyRef` are mutually exclusive, and one of them is required.\\n\",\n        \"properties\": {\n         \"configMapKeyRef\": {\n          \"description\": \"A [ConfigMap](https://kubernetes.io/docs/concepts/configuration/configmap/) reference that contains the SQL script to execute. This field is mutually exclusive with `secretKeyRef` field.\\n\",\n          \"properties\": {\n           \"key\": {\n            \"description\": \"The key name within the ConfigMap that contains the SQL script to execute.\\n\",\n            \"type\": \"string\"\n           },\n           \"name\": {\n            \"description\": \"The name of the ConfigMap that contains the SQL script to execute.\\n\",\n            \"type\": \"string\"\n           }\n          },\n          \"type\": \"object\"\n         },\n         \"secretKeyRef\": {\n          \"description\": \"A Kubernetes [SecretKeySelector](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.29/#secretkeyselector-v1-core) that contains the SQL script to execute. This field is mutually exclusive with `configMapKeyRef` field.\\n\",\n          \"properties\": {\n           \"key\": {\n            \"description\": \"The key of the secret to select from. Must be a valid secret key.\",\n            \"type\": \"string\"\n           },\n           \"name\": {\n            \"description\": \"Name of the referent. [More information](https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names).\",\n            \"type\": \"string\"\n           }\n          },\n          \"type\": \"object\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"storeStatusInDatabase\": {\n        \"description\": \"When set to `true` the script entry execution will include storing the status of the execution of this\\n  script entry in the table `managed_sql.status` that will be created in the specified `database`. This\\n  will avoid an operation that fails partially to be unrecoverable requiring the intervention from the user\\n  if user in conjunction with `retryOnError`.\\n\\nIf set to `true` then `wrapInTransaction` field must be set.\\n\\nThis is `false` by default.\\n\",\n        \"type\": \"boolean\"\n       },\n       \"user\": {\n        \"description\": \"User that will execute the script. Defaults to the `postgres` user.\\n\",\n        \"type\": \"string\"\n       },\n       \"version\": {\n        \"description\": \"Version of the script. It will allow to identify if this script entry has been changed.\\n\",\n        \"type\": \"integer\"\n       },\n       \"wrapInTransaction\": {\n        \"description\": \"Wrap the script in a transaction using the specified transaction mode:\\n\\n* `read-committed`: The script will be wrapped in a transaction using [READ COMMITTED](https://www.postgresql.org/docs/current/transaction-iso.html#XACT-READ-COMMITTED) isolation level.\\n* `repeatable-read`: The script will be wrapped in a transaction using [REPEATABLE READ](https://www.postgresql.org/docs/current/transaction-iso.html#XACT-REPEATABLE-READ) isolation level.\\n* `serializable`: The script will be wrapped in a transaction using [SERIALIZABLE](https://www.postgresql.org/docs/current/transaction-iso.html#XACT-SERIALIZABLE) isolation level.\\n\\nIf not set the script entry will not be wrapped in a transaction\\n\",\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"metadata\",\n  \"spec\"\n ],\n \"title\": \"SG Script\",\n \"type\": \"object\"\n}",
+   "version": "stackgres.io/v1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "SG Script",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "published": false,
+   "source_uri": "https://stackgres.io/downloads/stackgres-k8s/stackgres/1.13.0-rc1/helm/stackgres-operator.tgz"
+  },
+  "model": {
+   "category": {
+    "name": "App Definition and Development"
+   },
+   "displayName": "Stackgres Operator",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "isAnnotation": false,
+    "primaryColor": "#426d88",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "source_uri": "https://stackgres.io/downloads/stackgres-k8s/stackgres/1.13.0-rc1/helm/stackgres-operator.tgz",
+    "styleOverrides": "",
+    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" id=\"Capa_2\" viewBox=\"0 0 500 500\" height=\"20\" width=\"20\"\u003e\u003cstyle xmlns=\"http://www.w3.org/2000/svg\"\u003e.st0{fill:#42a8c8}.st1{fill:#426d88}.st2{fill:#428bb4}.st3{fill:#16657c}.st4{fill:#39b54a}.st5{fill:#009245}.st6{fill:#f2c63f}.st7{fill:#f2b136}.st8{fill:#f2a130}.st9{fill:#ff7124}.st10{fill:#d93d1b}\u003c/style\u003e\u003cswitch xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cg xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"st0\" d=\"M5.2 273.7l110.7 126.8h268.2l110.7-126.8-110.7-126.8H115.9z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"st1\" d=\"M115.9 400.5h268.4v56.4H115.9z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"st2\" d=\"M115.9 456.8L5.2 330v-56.3l110.7 126.8z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"st3\" d=\"M384.1 456.8L494.8 330v-56.3L384.1 400.5z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"st4\" d=\"M465.7 253.4c0-47-96.6-85.2-215.7-85.2S34.4 206.3 34.4 253.4s96.5 85.2 215.6 85.2 215.7-38.2 215.7-85.2z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"st5\" d=\"M465.7 253.4c0 47-96.6 85.2-215.7 85.2S34.4 300.4 34.4 253.4v46.9c14.9 41.3 106.5 85.2 215.6 85.2s200.8-43.9 215.7-85.2v-46.9z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"st6\" d=\"M16.3 178.6L250 314.1l233.8-135.5L250 43.2z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"st7\" d=\"M16.3 178.6v52.8L250 366.9v-52.8z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"st8\" d=\"M483.8 178.6L250 314.1v52.8l233.8-135.5z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"st9\" d=\"M68 212.4l364.1-53-92.4-106z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"st10\" d=\"M68 212.4l364.1-53v47.8L68 260.1z\"\u003e\u003c/path\u003e\u003c/g\u003e\u003c/switch\u003e\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" id=\"Capa_2\" xmlns:_xmlns=\"xmlns\" _xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 500 500\" style=\"enable-background:new 0 0 500 500;\" xml:space=\"preserve\" height=\"20\" width=\"20\"\u003e\n\u003cstyle xmlns=\"http://www.w3.org/2000/svg\" type=\"text/css\"\u003e\n        .st0{fill:#FFFFFF;}\n        .st1{opacity:0.8;fill:#FFFFFF;}\n        .st2{opacity:0.9;fill:#FFFFFF;}\n\u003c/style\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\"\u003e\n        \u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"st0\" d=\"M5.2,273.7l110.7,126.8h268.2l110.7-126.8L384.1,146.9H115.9L5.2,273.7z\"\u003e\u003c/path\u003e\n        \u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"st1\" d=\"M115.9,400.5h268.4v56.4H115.9V400.5z\"\u003e\u003c/path\u003e\n        \u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"st2\" d=\"M115.9,456.8L5.2,330v-56.3l110.7,126.8L115.9,456.8z\"\u003e\u003c/path\u003e\n        \u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"st2\" d=\"M384.1,456.8L494.8,330v-56.3L384.1,400.5V456.8z\"\u003e\u003c/path\u003e\n        \u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"st0\" d=\"M465.7,253.4c0-47-96.6-85.2-215.7-85.2S34.4,206.3,34.4,253.4s96.5,85.2,215.6,85.2S465.7,300.4,465.7,253.4\u0026#xA;                L465.7,253.4z\"\u003e\u003c/path\u003e\n        \u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"st1\" d=\"M465.7,253.4c0,47-96.6,85.2-215.7,85.2S34.4,300.4,34.4,253.4v46.9c14.9,41.3,106.5,85.2,215.6,85.2\u0026#xA;                s200.8-43.9,215.7-85.2V253.4z\"\u003e\u003c/path\u003e\n        \u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"st0\" d=\"M16.3,178.6L250,314.1l233.8-135.5L250,43.2L16.3,178.6z\"\u003e\u003c/path\u003e\n        \u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"st2\" d=\"M16.3,178.6v52.8L250,366.9v-52.8L16.3,178.6z\"\u003e\u003c/path\u003e\n        \u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"st1\" d=\"M483.8,178.6L250,314.1v52.8l233.8-135.5V178.6z\"\u003e\u003c/path\u003e\n        \u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"st0\" d=\"M68,212.4l364.1-53l-92.4-106L68,212.4z\"\u003e\u003c/path\u003e\n        \u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"st1\" d=\"M68,212.4l364.1-53v47.8L68,260.1V212.4z\"\u003e\u003c/path\u003e\n\u003c/g\u003e\n\u003c/svg\u003e"
+   },
+   "model": {
+    "version": "1.13.0-rc1"
+   },
+   "name": "stackgres-operator",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "enabled",
+   "subCategory": "Database",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
+   "primaryColor": "#426d88",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "svgColor": "\u003csvg id=\"Capa_2\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 500 500\"\u003e\u003cstyle\u003e.st0{fill:#42a8c8}.st1{fill:#426d88}.st2{fill:#428bb4}.st3{fill:#16657c}.st4{fill:#39b54a}.st5{fill:#009245}.st6{fill:#f2c63f}.st7{fill:#f2b136}.st8{fill:#f2a130}.st9{fill:#ff7124}.st10{fill:#d93d1b}\u003c/style\u003e\u003cswitch\u003e\u003cg\u003e\u003cpath class=\"st0\" d=\"M5.2 273.7l110.7 126.8h268.2l110.7-126.8-110.7-126.8H115.9z\"\u003e\u003c/path\u003e\u003cpath class=\"st1\" d=\"M115.9 400.5h268.4v56.4H115.9z\"\u003e\u003c/path\u003e\u003cpath class=\"st2\" d=\"M115.9 456.8L5.2 330v-56.3l110.7 126.8z\"\u003e\u003c/path\u003e\u003cpath class=\"st3\" d=\"M384.1 456.8L494.8 330v-56.3L384.1 400.5z\"\u003e\u003c/path\u003e\u003cpath class=\"st4\" d=\"M465.7 253.4c0-47-96.6-85.2-215.7-85.2S34.4 206.3 34.4 253.4s96.5 85.2 215.6 85.2 215.7-38.2 215.7-85.2z\"\u003e\u003c/path\u003e\u003cpath class=\"st5\" d=\"M465.7 253.4c0 47-96.6 85.2-215.7 85.2S34.4 300.4 34.4 253.4v46.9c14.9 41.3 106.5 85.2 215.6 85.2s200.8-43.9 215.7-85.2v-46.9z\"\u003e\u003c/path\u003e\u003cpath class=\"st6\" d=\"M16.3 178.6L250 314.1l233.8-135.5L250 43.2z\"\u003e\u003c/path\u003e\u003cpath class=\"st7\" d=\"M16.3 178.6v52.8L250 366.9v-52.8z\"\u003e\u003c/path\u003e\u003cpath class=\"st8\" d=\"M483.8 178.6L250 314.1v52.8l233.8-135.5z\"\u003e\u003c/path\u003e\u003cpath class=\"st9\" d=\"M68 212.4l364.1-53-92.4-106z\"\u003e\u003c/path\u003e\u003cpath class=\"st10\" d=\"M68 212.4l364.1-53v47.8L68 260.1z\"\u003e\u003c/path\u003e\u003c/g\u003e\u003c/switch\u003e\u003c/svg\u003e",
+   "svgWhite": "\u003csvg version=\"1.1\" id=\"Capa_2\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\n         viewBox=\"0 0 500 500\" style=\"enable-background:new 0 0 500 500;\" xml:space=\"preserve\" width='500' height='500'\u003e\n\u003cstyle type=\"text/css\"\u003e\n        .st0{fill:#FFFFFF;}\n        .st1{opacity:0.8;fill:#FFFFFF;}\n        .st2{opacity:0.9;fill:#FFFFFF;}\n\u003c/style\u003e\n\u003cg\u003e\n        \u003cpath class=\"st0\" d=\"M5.2,273.7l110.7,126.8h268.2l110.7-126.8L384.1,146.9H115.9L5.2,273.7z\"/\u003e\n        \u003cpath class=\"st1\" d=\"M115.9,400.5h268.4v56.4H115.9V400.5z\"/\u003e\n        \u003cpath class=\"st2\" d=\"M115.9,456.8L5.2,330v-56.3l110.7,126.8L115.9,456.8z\"/\u003e\n        \u003cpath class=\"st2\" d=\"M384.1,456.8L494.8,330v-56.3L384.1,400.5V456.8z\"/\u003e\n        \u003cpath class=\"st0\" d=\"M465.7,253.4c0-47-96.6-85.2-215.7-85.2S34.4,206.3,34.4,253.4s96.5,85.2,215.6,85.2S465.7,300.4,465.7,253.4\n                L465.7,253.4z\"/\u003e\n        \u003cpath class=\"st1\" d=\"M465.7,253.4c0,47-96.6,85.2-215.7,85.2S34.4,300.4,34.4,253.4v46.9c14.9,41.3,106.5,85.2,215.6,85.2\n                s200.8-43.9,215.7-85.2V253.4z\"/\u003e\n        \u003cpath class=\"st0\" d=\"M16.3,178.6L250,314.1l233.8-135.5L250,43.2L16.3,178.6z\"/\u003e\n        \u003cpath class=\"st2\" d=\"M16.3,178.6v52.8L250,366.9v-52.8L16.3,178.6z\"/\u003e\n        \u003cpath class=\"st1\" d=\"M483.8,178.6L250,314.1v52.8l233.8-135.5V178.6z\"/\u003e\n        \u003cpath class=\"st0\" d=\"M68,212.4l364.1-53l-92.4-106L68,212.4z\"/\u003e\n        \u003cpath class=\"st1\" d=\"M68,212.4l364.1-53v47.8L68,260.1V212.4z\"/\u003e\n\u003c/g\u003e\n\u003c/svg\u003e"
+  },
+  "version": "v1.0.0"
+ }

@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "Hardware",
    "schema": "{\n \"description\": \"Hardware is the Schema for the Hardware API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"HardwareSpec defines the desired state of Hardware.\",\n   \"properties\": {\n    \"bmcRef\": {\n     \"description\": \"BMCRef contains a relation to a BMC state management type in the same namespace as the Hardware. This may be used for BMC management by orchestrators.\",\n     \"properties\": {\n      \"apiGroup\": {\n       \"description\": \"APIGroup is the group for the resource being referenced. If APIGroup is not specified, the specified Kind must be in the core API group. For any other third-party types, APIGroup is required.\",\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"description\": \"Kind is the type of resource being referenced\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name is the name of resource being referenced\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"kind\",\n      \"name\"\n     ],\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    },\n    \"disks\": {\n     \"items\": {\n      \"description\": \"Disk represents a disk device for Tinkerbell Hardware.\",\n      \"properties\": {\n       \"device\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"interfaces\": {\n     \"items\": {\n      \"description\": \"Interface represents a network interface configuration for Hardware.\",\n      \"properties\": {\n       \"dhcp\": {\n        \"description\": \"DHCP configuration.\",\n        \"properties\": {\n         \"arch\": {\n          \"type\": \"string\"\n         },\n         \"hostname\": {\n          \"type\": \"string\"\n         },\n         \"iface_name\": {\n          \"type\": \"string\"\n         },\n         \"ip\": {\n          \"description\": \"IP configuration.\",\n          \"properties\": {\n           \"address\": {\n            \"type\": \"string\"\n           },\n           \"family\": {\n            \"format\": \"int64\",\n            \"type\": \"integer\"\n           },\n           \"gateway\": {\n            \"type\": \"string\"\n           },\n           \"netmask\": {\n            \"type\": \"string\"\n           }\n          },\n          \"type\": \"object\"\n         },\n         \"lease_time\": {\n          \"format\": \"int64\",\n          \"type\": \"integer\"\n         },\n         \"mac\": {\n          \"pattern\": \"([0-9a-f]{2}[:]){5}([0-9a-f]{2})\",\n          \"type\": \"string\"\n         },\n         \"name_servers\": {\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         },\n         \"time_servers\": {\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         },\n         \"uefi\": {\n          \"type\": \"boolean\"\n         },\n         \"vlan_id\": {\n          \"description\": \"validation pattern for VLANDID is a string number between 0-4096\",\n          \"pattern\": \"^(([0-9][0-9]{0,2}|[1-3][0-9][0-9][0-9]|40([0-8][0-9]|9[0-6]))(,[1-9][0-9]{0,2}|[1-3][0-9][0-9][0-9]|40([0-8][0-9]|9[0-6]))*)$\",\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"netboot\": {\n        \"description\": \"Netboot configuration.\",\n        \"properties\": {\n         \"allowPXE\": {\n          \"type\": \"boolean\"\n         },\n         \"allowWorkflow\": {\n          \"type\": \"boolean\"\n         },\n         \"ipxe\": {\n          \"description\": \"IPXE configuration.\",\n          \"properties\": {\n           \"contents\": {\n            \"type\": \"string\"\n           },\n           \"url\": {\n            \"type\": \"string\"\n           }\n          },\n          \"type\": \"object\"\n         },\n         \"osie\": {\n          \"description\": \"OSIE configuration.\",\n          \"properties\": {\n           \"baseURL\": {\n            \"type\": \"string\"\n           },\n           \"initrd\": {\n            \"type\": \"string\"\n           },\n           \"kernel\": {\n            \"type\": \"string\"\n           }\n          },\n          \"type\": \"object\"\n         }\n        },\n        \"type\": \"object\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"metadata\": {\n     \"properties\": {\n      \"bonding_mode\": {\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"custom\": {\n       \"properties\": {\n        \"preinstalled_operating_system_version\": {\n         \"properties\": {\n          \"distro\": {\n           \"type\": \"string\"\n          },\n          \"image_tag\": {\n           \"type\": \"string\"\n          },\n          \"os_slug\": {\n           \"type\": \"string\"\n          },\n          \"slug\": {\n           \"type\": \"string\"\n          },\n          \"version\": {\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"private_subnets\": {\n         \"items\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"array\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"facility\": {\n       \"properties\": {\n        \"facility_code\": {\n         \"type\": \"string\"\n        },\n        \"plan_slug\": {\n         \"type\": \"string\"\n        },\n        \"plan_version_slug\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"instance\": {\n       \"properties\": {\n        \"allow_pxe\": {\n         \"type\": \"boolean\"\n        },\n        \"always_pxe\": {\n         \"type\": \"boolean\"\n        },\n        \"crypted_root_password\": {\n         \"type\": \"string\"\n        },\n        \"hostname\": {\n         \"type\": \"string\"\n        },\n        \"id\": {\n         \"type\": \"string\"\n        },\n        \"ips\": {\n         \"items\": {\n          \"properties\": {\n           \"address\": {\n            \"type\": \"string\"\n           },\n           \"family\": {\n            \"format\": \"int64\",\n            \"type\": \"integer\"\n           },\n           \"gateway\": {\n            \"type\": \"string\"\n           },\n           \"management\": {\n            \"type\": \"boolean\"\n           },\n           \"netmask\": {\n            \"type\": \"string\"\n           },\n           \"public\": {\n            \"type\": \"boolean\"\n           }\n          },\n          \"type\": \"object\"\n         },\n         \"type\": \"array\"\n        },\n        \"ipxe_script_url\": {\n         \"type\": \"string\"\n        },\n        \"network_ready\": {\n         \"type\": \"boolean\"\n        },\n        \"operating_system\": {\n         \"properties\": {\n          \"distro\": {\n           \"type\": \"string\"\n          },\n          \"image_tag\": {\n           \"type\": \"string\"\n          },\n          \"os_slug\": {\n           \"type\": \"string\"\n          },\n          \"slug\": {\n           \"type\": \"string\"\n          },\n          \"version\": {\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"rescue\": {\n         \"type\": \"boolean\"\n        },\n        \"ssh_keys\": {\n         \"items\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"array\"\n        },\n        \"state\": {\n         \"type\": \"string\"\n        },\n        \"storage\": {\n         \"properties\": {\n          \"disks\": {\n           \"items\": {\n            \"properties\": {\n             \"device\": {\n              \"type\": \"string\"\n             },\n             \"partitions\": {\n              \"items\": {\n               \"properties\": {\n                \"label\": {\n                 \"type\": \"string\"\n                },\n                \"number\": {\n                 \"format\": \"int64\",\n                 \"type\": \"integer\"\n                },\n                \"size\": {\n                 \"format\": \"int64\",\n                 \"type\": \"integer\"\n                },\n                \"start\": {\n                 \"format\": \"int64\",\n                 \"type\": \"integer\"\n                },\n                \"type_guid\": {\n                 \"type\": \"string\"\n                }\n               },\n               \"type\": \"object\"\n              },\n              \"type\": \"array\"\n             },\n             \"wipe_table\": {\n              \"type\": \"boolean\"\n             }\n            },\n            \"type\": \"object\"\n           },\n           \"type\": \"array\"\n          },\n          \"filesystems\": {\n           \"items\": {\n            \"properties\": {\n             \"mount\": {\n              \"properties\": {\n               \"create\": {\n                \"properties\": {\n                 \"force\": {\n                  \"type\": \"boolean\"\n                 },\n                 \"options\": {\n                  \"items\": {\n                   \"type\": \"string\"\n                  },\n                  \"type\": \"array\"\n                 }\n                },\n                \"type\": \"object\"\n               },\n               \"device\": {\n                \"type\": \"string\"\n               },\n               \"files\": {\n                \"items\": {\n                 \"properties\": {\n                  \"contents\": {\n                   \"type\": \"string\"\n                  },\n                  \"gid\": {\n                   \"format\": \"int64\",\n                   \"type\": \"integer\"\n                  },\n                  \"mode\": {\n                   \"format\": \"int64\",\n                   \"type\": \"integer\"\n                  },\n                  \"path\": {\n                   \"type\": \"string\"\n                  },\n                  \"uid\": {\n                   \"format\": \"int64\",\n                   \"type\": \"integer\"\n                  }\n                 },\n                 \"type\": \"object\"\n                },\n                \"type\": \"array\"\n               },\n               \"format\": {\n                \"type\": \"string\"\n               },\n               \"point\": {\n                \"type\": \"string\"\n               }\n              },\n              \"type\": \"object\"\n             }\n            },\n            \"type\": \"object\"\n           },\n           \"type\": \"array\"\n          },\n          \"raid\": {\n           \"items\": {\n            \"properties\": {\n             \"devices\": {\n              \"items\": {\n               \"type\": \"string\"\n              },\n              \"type\": \"array\"\n             },\n             \"level\": {\n              \"type\": \"string\"\n             },\n             \"name\": {\n              \"type\": \"string\"\n             },\n             \"spare\": {\n              \"format\": \"int64\",\n              \"type\": \"integer\"\n             }\n            },\n            \"type\": \"object\"\n           },\n           \"type\": \"array\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"tags\": {\n         \"items\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"array\"\n        },\n        \"userdata\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"manufacturer\": {\n       \"properties\": {\n        \"id\": {\n         \"type\": \"string\"\n        },\n        \"slug\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"state\": {\n       \"default\": \"provisioning\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resources\": {\n     \"additionalProperties\": {\n      \"anyOf\": [\n       {\n        \"type\": \"integer\"\n       },\n       {\n        \"type\": \"string\"\n       }\n      ],\n      \"pattern\": \"^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$\",\n      \"x-kubernetes-int-or-string\": true\n     },\n     \"description\": \"Resources represents known resources that are available on a machine. Resources may be used for scheduling by orchestrators.\",\n     \"type\": \"object\"\n    },\n    \"tinkVersion\": {\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"userData\": {\n     \"description\": \"UserData is the user data to configure in the hardware's metadata\",\n     \"type\": \"string\"\n    },\n    \"vendorData\": {\n     \"description\": \"VendorData is the vendor data to configure in the hardware's metadata\",\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Hardware\",\n \"type\": \"object\"\n}",

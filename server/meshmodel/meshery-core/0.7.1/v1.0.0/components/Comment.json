@@ -59,6 +59,22 @@
     "subType": "compoundDnd",
     "type": "graph",
     "version": "0.7.0"
+   },
+   {
+    "description": "Change the status of a component to resolved",
+    "displayName": "Resolve Component",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "resolved",
+    "type": "status",
+    "version": "0.7.0"
    }
   ],
   "component": {
@@ -119,6 +135,7 @@
   "status": "enabled",
   "styles": {
    "height": 22,
+   "padding": 10,
    "primaryColor": "#FFDE00",
    "secondaryColor": "#FFDE00",
    "shape": "tag",

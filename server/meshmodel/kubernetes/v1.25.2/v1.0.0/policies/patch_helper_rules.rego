@@ -32,7 +32,7 @@ apply_patch(design_file, mutator_object, to_mutate_object) := result if {
 		}
 	]
 
-	resultant_patches_to_apply := ensureParentPathsExist(patches, declaration_to_mutate)
+	resultant_patches_to_apply := ensure_parent_paths_exist(patches, declaration_to_mutate)
 
 	result := {
 		"declaration_id": declaration_to_mutate.id,
@@ -71,4 +71,22 @@ identify_mutated(from_selector, to_selector, from_declaration, to_declaration) :
 		"declaration": to_declaration,
 		"paths": to_selector.patch.mutatedRef,
 	}
+}
+
+mutator_selectors(selector_set) := {selector |
+	some selector in selector_set
+	contains_mutator_selector(selector)
+}
+
+mutated_selectors(selector_set) := {selector |
+	some selector in selector_set
+	contains_mutated_selector(selector)
+}
+
+contains_mutator_selector(selector) if {
+	selector.patch.mutatorRef
+}
+
+contains_mutated_selector(selector) if {
+	selector.patch.mutatedRef
 }

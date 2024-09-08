@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "HelmChart",
    "schema": "{\n \"description\": \"HelmChart is the Schema for the helmcharts API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"HelmChartSpec specifies the desired state of a Helm chart.\",\n   \"properties\": {\n    \"chart\": {\n     \"description\": \"Chart is the name or path the Helm chart is available at in the\\nSourceRef.\",\n     \"type\": \"string\"\n    },\n    \"ignoreMissingValuesFiles\": {\n     \"description\": \"IgnoreMissingValuesFiles controls whether to silently ignore missing values\\nfiles rather than failing.\",\n     \"type\": \"boolean\"\n    },\n    \"interval\": {\n     \"description\": \"Interval at which the HelmChart SourceRef is checked for updates.\\nThis interval is approximate and may be subject to jitter to ensure\\nefficient use of resources.\",\n     \"pattern\": \"^([0-9]+(\\\\.[0-9]+)?(ms|s|m|h))+$\",\n     \"type\": \"string\"\n    },\n    \"reconcileStrategy\": {\n     \"default\": \"ChartVersion\",\n     \"description\": \"ReconcileStrategy determines what enables the creation of a new artifact.\\nValid values are ('ChartVersion', 'Revision').\\nSee the documentation of the values for an explanation on their behavior.\\nDefaults to ChartVersion when omitted.\",\n     \"enum\": [\n      \"ChartVersion\",\n      \"Revision\"\n     ],\n     \"type\": \"string\"\n    },\n    \"sourceRef\": {\n     \"description\": \"SourceRef is the reference to the Source the chart is available at.\",\n     \"properties\": {\n      \"apiVersion\": {\n       \"description\": \"APIVersion of the referent.\",\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"description\": \"Kind of the referent, valid values are ('HelmRepository', 'GitRepository',\\n'Bucket').\",\n       \"enum\": [\n        \"HelmRepository\",\n        \"GitRepository\",\n        \"Bucket\"\n       ],\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"kind\",\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"suspend\": {\n     \"description\": \"Suspend tells the controller to suspend the reconciliation of this\\nsource.\",\n     \"type\": \"boolean\"\n    },\n    \"valuesFiles\": {\n     \"description\": \"ValuesFiles is an alternative list of values files to use as the chart\\nvalues (values.yaml is not included by default), expected to be a\\nrelative path in the SourceRef.\\nValues files are merged in the order of this list with the last file\\noverriding the first. Ignored when omitted.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"verify\": {\n     \"description\": \"Verify contains the secret name containing the trusted public keys\\nused to verify the signature and specifies which provider to use to check\\nwhether OCI image is authentic.\\nThis field is only supported when using HelmRepository source with spec.type 'oci'.\\nChart dependencies, which are not bundled in the umbrella chart artifact, are not verified.\",\n     \"properties\": {\n      \"matchOIDCIdentity\": {\n       \"description\": \"MatchOIDCIdentity specifies the identity matching criteria to use\\nwhile verifying an OCI artifact which was signed using Cosign keyless\\nsigning. The artifact's identity is deemed to be verified if any of the\\nspecified matchers match against the identity.\",\n       \"items\": {\n        \"description\": \"OIDCIdentityMatch specifies options for verifying the certificate identity,\\ni.e. the issuer and the subject of the certificate.\",\n        \"properties\": {\n         \"issuer\": {\n          \"description\": \"Issuer specifies the regex pattern to match against to verify\\nthe OIDC issuer in the Fulcio certificate. The pattern must be a\\nvalid Go regular expression.\",\n          \"type\": \"string\"\n         },\n         \"subject\": {\n          \"description\": \"Subject specifies the regex pattern to match against to verify\\nthe identity subject in the Fulcio certificate. The pattern must\\nbe a valid Go regular expression.\",\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"issuer\",\n         \"subject\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"provider\": {\n       \"default\": \"cosign\",\n       \"description\": \"Provider specifies the technology used to sign the OCI Artifact.\",\n       \"enum\": [\n        \"cosign\",\n        \"notation\"\n       ],\n       \"type\": \"string\"\n      },\n      \"secretRef\": {\n       \"description\": \"SecretRef specifies the Kubernetes Secret containing the\\ntrusted public keys.\",\n       \"properties\": {\n        \"name\": {\n         \"description\": \"Name of the referent.\",\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"name\"\n       ],\n       \"type\": \"object\"\n      }\n     },\n     \"required\": [\n      \"provider\"\n     ],\n     \"type\": \"object\"\n    },\n    \"version\": {\n     \"default\": \"*\",\n     \"description\": \"Version is the chart version semver expression, ignored for charts from\\nGitRepository and Bucket sources. Defaults to latest when omitted.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"chart\",\n    \"interval\",\n    \"sourceRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Helm Chart\",\n \"type\": \"object\"\n}",
