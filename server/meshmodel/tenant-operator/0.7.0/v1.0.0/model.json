@@ -1,6 +1,6 @@
 {
   "category": {
-   "name": "Uncategorized"
+   "name": "Provisioning"
   },
   "displayName": "Tenant Operator",
   "id": "00000000-0000-0000-0000-000000000000",
@@ -34,8 +34,8 @@
   },
   "connection_id": "00000000-0000-0000-0000-000000000000",
   "schemaVersion": "models.meshery.io/v1beta1",
-  "status": "ignored",
-  "subCategory": "Uncategorized",
+  "status": "enabled",
+  "subCategory": "Kubernetes",
   "version": "v1.0.0",
   "components": null,
   "relationships": null
