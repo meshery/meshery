@@ -402,7 +402,13 @@ func assignDefaultsForCompDefs(componentDef *component.ComponentDefinition, mode
 func GenerateDefsForCoreRegistrant(model utils.ModelCSV, ComponentCSVHelper *utils.ComponentCSVHelper) error {
 	var version string
 	parts := strings.Split(model.SourceURL, "/")
-	version = parts[len(parts)-2]
+	// Assuming the URL is always of the format "protocol://github.com/owner/repo/tree/definitions/{model-name}/version/components"
+	// We know the version is the 7th element (0-indexed) in the split URL
+	if len(parts) >= 8 {
+		version = parts[7] // Fetch the version from the expected position
+	} else {
+		return fmt.Errorf("invalid SourceURL format: %s", model.SourceURL)
+	}
 	isModelPublished, _ := strconv.ParseBool(model.PublishToRegistry)
 	var compDefComps []component.ComponentDefinition
 	alreadyExist := false
