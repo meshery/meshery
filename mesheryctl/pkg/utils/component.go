@@ -82,6 +82,9 @@ func (c *ComponentCSV) UpdateCompDefinition(compDef *component.ComponentDefiniti
 	if c.Description != "" {
 		compDef.Description = c.Description
 	}
+	if c.Schema != "" {
+		compDef.Component.Schema = c.Schema
+	}
 	if compDef.Metadata.AdditionalProperties != nil {
 		existingAddditionalProperties = compDef.Metadata.AdditionalProperties
 	}
