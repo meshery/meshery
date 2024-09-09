@@ -413,50 +413,46 @@ func GenerateDefsForCoreRegistrant(model utils.ModelCSV, ComponentCSVHelper *uti
 			version:    version,
 		})
 	}()
-	if isModelPublished {
-		modelDirPath, compDirPath, err := createVersionedDirectoryForModelAndComp(version, model.Model)
-		if err != nil {
-			err = ErrGenerateModel(err, model.Model)
-			return err
-		}
-		modelDef, alreadyExists, err := writeModelDefToFileSystem(&model, version, modelDirPath)
-		if err != nil {
-			return ErrGenerateModel(err, model.Model)
-		}
-		alreadyExist = alreadyExists
-		for registrant, models := range ComponentCSVHelper.Components {
-			if registrant != "meshery" {
-				continue
-			}
-			for _, comps := range models {
-				for _, comp := range comps {
-					if comp.Model != model.Model {
-						continue
-					}
-					var componentDef component.ComponentDefinition
-					componentDef, err = comp.CreateComponentDefinition(isModelPublished, "v1.0.0")
-					if err != nil {
-						utils.Log.Error(ErrUpdateComponent(err, modelName, comp.Component))
-						continue
-					}
-					componentDef.Model = *modelDef
-					alreadyExists, err = componentDef.WriteComponentDefinition(compDirPath)
-					if err != nil {
-						err = ErrGenerateComponent(err, comp.Model, componentDef.DisplayName)
-						utils.LogError.Error(err)
-					}
-					if alreadyExists {
-						actualCompCount++
-					}
-					compDefComps = append(compDefComps, componentDef)
-				}
-			}
-		}
 
-	} else {
-		utils.Log.Info("Model is not published to registry: ", model.Model)
-		return nil
+	modelDirPath, compDirPath, err := createVersionedDirectoryForModelAndComp(version, model.Model)
+	if err != nil {
+		err = ErrGenerateModel(err, model.Model)
+		return err
 	}
+	modelDef, alreadyExists, err := writeModelDefToFileSystem(&model, version, modelDirPath)
+	if err != nil {
+		return ErrGenerateModel(err, model.Model)
+	}
+	alreadyExist = alreadyExists
+	for registrant, models := range ComponentCSVHelper.Components {
+		if registrant != "meshery" {
+			continue
+		}
+		for _, comps := range models {
+			for _, comp := range comps {
+				if comp.Model != model.Model {
+					continue
+				}
+				var componentDef component.ComponentDefinition
+				componentDef, err = comp.CreateComponentDefinition(isModelPublished, "v1.0.0")
+				if err != nil {
+					utils.Log.Error(ErrUpdateComponent(err, modelName, comp.Component))
+					continue
+				}
+				componentDef.Model = *modelDef
+				alreadyExists, err = componentDef.WriteComponentDefinition(compDirPath)
+				if err != nil {
+					err = ErrGenerateComponent(err, comp.Model, componentDef.DisplayName)
+					utils.LogError.Error(err)
+				}
+				if alreadyExists {
+					actualCompCount++
+				}
+				compDefComps = append(compDefComps, componentDef)
+			}
+		}
+	}
+
 	if !alreadyExist {
 		if len(compDefComps) == 0 {
 			utils.LogError.Error(ErrGenerateModel(fmt.Errorf("no components found for model "), model.Model))

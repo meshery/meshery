@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/layer5io/meshkit/encoding"
+	"github.com/layer5io/meshkit/models/meshmodel/entity"
 	"github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshkit/utils/csv"
 	"github.com/layer5io/meshkit/utils/manifests"
@@ -51,11 +52,17 @@ type ComponentCSV struct {
 
 // The Component Definition generated assumes or is only for components which have registrant as "meshery"
 func (c *ComponentCSV) CreateComponentDefinition(isModelPublished bool, defVersion string) (component.ComponentDefinition, error) {
+	status := entity.Ignored
+	if isModelPublished {
+		status = entity.Enabled
+	}
+	_status := component.ComponentDefinitionStatus(status)
 	componentDefinition := &component.ComponentDefinition{
 		SchemaVersion: schmeaVersion.ComponentSchemaVersion,
 		DisplayName:   c.Component,
 		Format:        "JSON",
 		Version:       defVersion,
+		Status:        &_status,
 		Metadata: component.ComponentDefinition_Metadata{
 			Published: isModelPublished,
 		},

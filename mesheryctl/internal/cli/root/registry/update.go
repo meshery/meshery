@@ -49,6 +49,8 @@ mesheryctl registry update --spreadsheet-id [id] --spreadsheet-cred [base64 enco
 
 // Updating models in the meshery/meshery repo
 mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw --spreadsheet-cred $CRED
+// Updating models in the meshery/meshery repo based on flag 
+mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw --spreadsheet-cred $CRED --model "[model-name]"
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 
@@ -264,6 +266,7 @@ func init() {
 
 	updateCmd.PersistentFlags().StringVar(&spreadsheeetID, "spreadsheet-id", "", "spreadsheet it for the integration spreadsheet")
 	updateCmd.PersistentFlags().StringVar(&spreadsheeetCred, "spreadsheet-cred", "", "base64 encoded credential to download the spreadsheet")
+	updateCmd.PersistentFlags().StringVarP(&modelName, "model", "m", "", "specific model name to be generated")
 
 	updateCmd.MarkFlagsRequiredTogether("spreadsheet-id", "spreadsheet-cred")
 
