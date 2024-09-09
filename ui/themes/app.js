@@ -12,14 +12,14 @@ export const Colors = {
 };
 
 export const common = {
-  overrides: {
+  components: {
     MuiSwitch: {
       switchBase: {
         color: '#647881',
-        '&$checked': {
+        '&.Mui-checked': {
           color: '#00b39f !important',
         },
-        '&$checked + $track': {
+        '&.Mui-checked + $track': {
           backgroundColor: 'rgba(0,179,159,0.5) !important',
         },
       },
@@ -29,7 +29,7 @@ export const common = {
 
 export var darkTheme = createTheme({
   typography: {
-    useNextVariants: true,
+    // useNextVariants: true,
     fontFamily: ['Qanelas Soft', 'Roboto', 'Helvectica', 'Arial', 'sans-serif'].join(','),
     h5: {
       fontWeight: 'bolder',
@@ -45,7 +45,7 @@ export var darkTheme = createTheme({
     },
   },
   palette: {
-    type: 'dark',
+    mode: 'dark',
     primary: blueGrey,
     colors: Colors,
     secondary: {
@@ -172,7 +172,7 @@ darkTheme = {
     },
     MuiCheckbox: {
       colorPrimary: {
-        '&$checked': {
+        '&.Mui-checked': {
           color: '#00B39F',
         },
         '&.MuiCheckbox-indeterminate': {
@@ -316,7 +316,7 @@ darkTheme = {
 let theme = createTheme({
   typography: {
     fontFamily: ['Qanelas Soft', 'Roboto', 'Helvectica', 'Arial', 'sans-serif'].join(','),
-    useNextVariants: true,
+    // useNextVariants: true,
     h5: {
       fontWeight: 'bolder',
       fontSize: 26,
@@ -324,7 +324,7 @@ let theme = createTheme({
     },
   },
   palette: {
-    type: 'light',
+    mode: 'light',
     // primary: {
     //   light: '#cfd8dc',
     //   main: '#607d8b',
@@ -513,7 +513,7 @@ theme = {
 
     MuiCheckbox: {
       colorPrimary: {
-        '&$checked': {
+        '&.Mui-checked': {
           color: '#00B39F',
         },
         '&.MuiCheckbox-indeterminate': {
