@@ -7,7 +7,7 @@ permalink: extensibility/integrations/cluster-api-provider-openstack
 docURL: https://docs.meshery.io/extensibility/integrations/cluster-api-provider-openstack
 description: 
 integrations-category: Orchestration & Management
-integrations-subcategory: Orchestration & Management
+integrations-subcategory: Provisioning
 registrant: GitHub
 components: 
 - name: open-stack-cluster
@@ -25,6 +25,10 @@ components:
 - name: open-stack-machine
   colorIcon: assets/img/integrations/cluster-api-provider-openstack/components/open-stack-machine/icons/color/open-stack-machine-color.svg
   whiteIcon: assets/img/integrations/cluster-api-provider-openstack/components/open-stack-machine/icons/white/open-stack-machine-white.svg
+  description: 
+- name: open-stack-machine-template
+  colorIcon: assets/img/integrations/cluster-api-provider-openstack/components/open-stack-machine-template/icons/color/open-stack-machine-template-color.svg
+  whiteIcon: assets/img/integrations/cluster-api-provider-openstack/components/open-stack-machine-template/icons/white/open-stack-machine-template-white.svg
   description: 
 - name: open-stack-machine-template
   colorIcon: assets/img/integrations/cluster-api-provider-openstack/components/open-stack-machine-template/icons/color/open-stack-machine-template-color.svg

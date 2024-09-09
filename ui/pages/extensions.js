@@ -200,10 +200,51 @@ const MesheryDockerExtension = ({ classes }) => {
   );
 };
 
+const MesheryDesignEmbedLogo = withStyles(MesheryPerformacneLogoStyles)(({ classes }) => {
+  return <img className={classes.img} src="/static/img/meshmap.svg" />;
+});
+
+const MesheryDesignEmbedExtension = ({ classes }) => {
+  const handleLearnMore = (e) => {
+    window.open('https://docs.layer5.io/meshmap/designer/embedding-designs/', '_blank');
+    e.stopPropagation();
+  };
+
+  return (
+    <Grid item {...LARGE_6_MED_12_GRID_STYLE}>
+      <div className={classes.card}>
+        <Typography className={classes.frontContent} variant="h5" component="div">
+          Meshery Design Embed
+        </Typography>
+
+        <Typography className={classes.frontSideDescription} variant="body">
+          <MesheryDesignEmbedLogo />
+          Meshery Design Embedding lets you export designs in an interactive format that seamlessly
+          integrates with websites, blogs, and platforms using HTML, CSS, and JavaScript, making it
+          easy to share with stakeholders.
+        </Typography>
+        {
+          <div style={{ textAlign: 'right' }}>
+            <Button
+              variant="contained"
+              color="primary"
+              className={classes.button}
+              onClick={(e) => handleLearnMore(e)}
+            >
+              Learn More
+            </Button>
+          </div>
+        }
+      </div>
+    </Grid>
+  );
+};
+
 export const WrappedMeshMapSignupCard = withStyles(styles)(MeshMapSignUpcard);
 export const WrappedMeshMapSnapShopCard = withStyles(styles)(MeshMapSnapShotCard);
 export const WrappedMesheryPerformanceAction = withStyles(styles)(MesheryPerformanceAction);
 export const WrappedMesheryDockerExtension = withStyles(styles)(MesheryDockerExtension);
+export const WrappedMesheryEmbedDesignExtension = withStyles(styles)(MesheryDesignEmbedExtension);
 const Extensions = ({ classes, toggleCatalogContent, capabilitiesRegistry }) => {
   const [catalogContent, setCatalogContent] = useState(true);
   const [extensionPreferences, setExtensionPreferences] = useState({});
@@ -271,6 +312,7 @@ const Extensions = ({ classes, toggleCatalogContent, capabilitiesRegistry }) => 
           <WrappedMesheryPerformanceAction githubActionEnabled={false} />
           <WrappedMeshMapSignupCard hasAccessToMeshMap={hasAccessToMeshMap} />
           <WrappedMesheryDockerExtension />
+          <WrappedMesheryEmbedDesignExtension />
           <Grid item {...INITIAL_GRID_SIZE}>
             <div className={classes.card}>
               <Typography className={classes.frontContent} variant="h5" component="div">

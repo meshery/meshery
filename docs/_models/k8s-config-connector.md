@@ -7,7 +7,7 @@ permalink: extensibility/integrations/k8s-config-connector
 docURL: https://docs.meshery.io/extensibility/integrations/k8s-config-connector
 description: 
 integrations-category: Orchestration & Management
-integrations-subcategory: Google Cloud Platform
+integrations-subcategory: Provisioning
 registrant: GitHub
 components: 
 - name: access-context-manager-access-level-condition
