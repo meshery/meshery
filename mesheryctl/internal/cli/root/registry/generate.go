@@ -439,7 +439,6 @@ func GenerateDefsForCoreRegistrant(model utils.ModelCSV, ComponentCSVHelper *uti
 						utils.Log.Error(ErrUpdateComponent(err, modelName, comp.Component))
 						continue
 					}
-					componentDef.Version = comp.Version
 					componentDef.Model = *modelDef
 					alreadyExists, err = componentDef.WriteComponentDefinition(compDirPath)
 					if err != nil {

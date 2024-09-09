@@ -60,8 +60,9 @@ func (c *ComponentCSV) CreateComponentDefinition(isModelPublished bool, defVersi
 			Published: isModelPublished,
 		},
 		Component: component.Component{
-			Kind:   c.Component,
-			Schema: c.Schema,
+			Kind:    c.Component,
+			Schema:  c.Schema,
+			Version: c.Version,
 		},
 	}
 	if c.Description != "" {
