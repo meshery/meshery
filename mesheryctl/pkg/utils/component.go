@@ -42,6 +42,7 @@ type ComponentCSV struct {
 	LogoURL            string `json:"logoURL" csv:"logoURL"`
 	Genealogy          string `json:"genealogy" csv:"genealogy"`
 	IsAnnotation       string `json:"isAnnotation" csv:"isAnnotation"`
+	Version            string `json:"version" csv:"version"`
 
 	ModelDisplayName string `json:"modelDisplayName" csv:"-"`
 	Category         string `json:"category" csv:"-"`
@@ -84,6 +85,9 @@ func (c *ComponentCSV) UpdateCompDefinition(compDef *component.ComponentDefiniti
 	}
 	if c.Schema != "" {
 		compDef.Component.Schema = c.Schema
+	}
+	if c.Version != "" {
+		compDef.Version = c.Version
 	}
 	if compDef.Metadata.AdditionalProperties != nil {
 		existingAddditionalProperties = compDef.Metadata.AdditionalProperties
