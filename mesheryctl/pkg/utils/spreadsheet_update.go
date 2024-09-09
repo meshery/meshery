@@ -3,10 +3,6 @@ package utils
 import (
 	"bytes"
 	"context"
-	"encoding/xml"
-	"io"
-	"strconv"
-	"strings"
 	"sync"
 
 	cuecsv "cuelang.org/go/pkg/encoding/csv"
@@ -28,8 +24,6 @@ var (
 	ComponentsSheetAppendRange = "Components!A4"
 	ModelsSheetAppendRange     = "Models!A4"
 )
-
-const XMLTAG = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><!DOCTYPE svg>"
 
 // registrant:model:component:[true/false]
 // Tracks if component sheet requires update
@@ -81,10 +75,8 @@ func addEntriesInModelUpdateList(modelEntry *ModelCSV, modelList []*ModelCSV) []
 	if RegistrantToModelsMap[registrant] == nil {
 		RegistrantToModelsMap[registrant] = make(map[string]bool)
 	}
-	if registrant != "meshery" {
-		RegistrantToModelsMap[registrant][modelEntry.Model] = true
-		modelBatchSize--
-	}
+	RegistrantToModelsMap[registrant][modelEntry.Model] = true
+	modelBatchSize--
 
 	return modelList
 }
@@ -232,50 +224,4 @@ func marshalStructToCSValues[K any](data []*K) ([][]interface{}, error) {
 	}
 
 	return results, nil
-}
-
-func DecodeAndProcessSVGString(escapedSVG string) (string, error) {
-	decodedSVG, err := strconv.Unquote(`"` + escapedSVG + `"`)
-	if err != nil {
-		return "", err
-	}
-
-	r := strings.NewReader(decodedSVG)
-	// Create a decoder for the SVG string.
-	d := xml.NewDecoder(r)
-
-	var b bytes.Buffer
-
-	e := xml.NewEncoder(&b)
-
-	for {
-		t, err := d.Token()
-		if err != nil {
-			if err == io.EOF {
-				break
-			}
-			return "", err
-		}
-
-		if se, ok := t.(xml.StartElement); ok {
-			for i, a := range se.Attr {
-				if a.Name.Local == "someAttribute" {
-					se.Attr[i].Value = "newValue"
-				}
-			}
-			t = se
-		}
-
-		// Write the modified token to the buffer.
-		if err := e.EncodeToken(t); err != nil {
-			return "", err
-		}
-	}
-
-	// Flush the encoder's buffer to the buffer.
-	if err := e.Flush(); err != nil {
-		return "", err
-	}
-
-	return XMLTAG + b.String(), nil
 }
