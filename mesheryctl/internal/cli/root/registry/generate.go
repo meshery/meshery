@@ -405,7 +405,7 @@ func GenerateDefsForCoreRegistrant(model utils.ModelCSV, ComponentCSVHelper *uti
 	// Assuming the URL is always of the format "protocol://github.com/owner/repo/tree/definitions/{model-name}/version/components"
 	// We know the version is the 7th element (0-indexed) in the split URL
 	if len(parts) >= 8 {
-		version = parts[7] // Fetch the version from the expected position
+		version = parts[8] // Fetch the version from the expected position
 	} else {
 		return fmt.Errorf("invalid SourceURL format: %s", model.SourceURL)
 	}
