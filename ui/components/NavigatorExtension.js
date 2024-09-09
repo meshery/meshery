@@ -36,6 +36,7 @@ import { DryRunDesign } from './DesignLifeCycle/DryRun';
 import { DeployStepper, UnDeployStepper } from './DesignLifeCycle/DeployStepper';
 import { designValidationMachine } from 'machines/validator/designValidator';
 import Troubleshoot from './TroubleshootingComponent';
+import CAN from '@/utils/can';
 
 const requires = createRequires(getDependencies);
 const useRemoteComponent = createUseRemoteComponent({ requires });
@@ -130,6 +131,7 @@ function NavigatorExtension({
         UnDeployStepper,
         designValidationMachine,
         hooks: {
+          CAN: CAN,
           useFilterK8sContexts,
           useDynamicComponent,
         },
