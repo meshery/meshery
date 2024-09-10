@@ -1,0 +1,129 @@
+{
+  "capabilities": [
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Add text to nodes body",
+    "displayName": "Body Text",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "body-text",
+    "type": "style",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "GCP Administration",
+   "schema": "",
+   "version": "core.meshery.io/v1alpha1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "GCP Administration",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": true,
+   "isNamespaced": false,
+   "published": true
+  },
+  "model": {
+   "category": {
+    "name": "Provisioning"
+   },
+   "displayName": "Google Cloud Platform",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "isAnnotation": true,
+    "primaryColor": "#3C494F",
+    "shape": "circle",
+    "styleOverrides": "",
+    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" id=\"Layer_1\" width=\"20\" height=\"20\" viewBox=\"0 0 512 512\"\u003e\u003cstyle xmlns=\"http://www.w3.org/2000/svg\"\u003e.st0{fill:#f8bb16}.st1{fill:#ea4334}.st2{fill:#0074bc}.st3{fill:#e2e3e4}\u003c/style\u003e\u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Layer_1_1_\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"path22\" class=\"st0\" d=\"M322.4 140.9l-44.1-76.8H162.6c-10.3 0-19.9 5.5-24.9 14.5L44.1 241.7c-5.1 8.9-5.1 19.7 0 28.7l35.6 62.1 44-76.4 66.2-115.2h132.5z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"path26\" class=\"st1\" d=\"M468.2 241.7L374.6 78.6c-5.2-8.9-14.7-14.5-24.9-14.5h-71.4l44.1 76.8 66.2 115.2-66.2 115.2h88l57.8-100.9c5-8.9 5-19.8 0-28.7\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"path30\" class=\"st2\" d=\"M410.3 371.2H189.7L123.5 256l-44 76.4 58 101c5.2 8.9 14.7 14.5 24.9 14.5h187.1c10.3 0 19.9-5.5 24.9-14.5l35.9-62.2z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"st3\" d=\"M322.2 371.2H189.6L123.5 256l66.2-115.2h132.5L388.6 256l-66.4 115.2zM256 198.5c-31.9 0-57.6 25.7-57.6 57.6s25.7 57.6 57.6 57.6 57.6-25.7 57.6-57.6-25.8-57.6-57.6-57.6z\"\u003e\u003c/path\u003e\u003c/g\u003e\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 25 22\" fill=\"none\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M19.0571 1.31425C18.9391 1.11285 18.7703 0.945566 18.5672 0.828955C18.3642 0.712344 18.134 0.650454 17.8995 0.649414L10.855 0.658722V0.650744L7.26718 0.66404C7.03246 0.664981 6.80206 0.726817 6.59879 0.843427C6.39552 0.960036 6.22643 1.12737 6.10826 1.32887L2.89648 6.8563L5.06443 10.6139L8.68705 4.40573H20.8798L19.0571 1.31425Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M14.3535 21.69L17.9668 21.6727C18.201 21.672 18.4309 21.6103 18.6336 21.4936C18.8363 21.3769 19.0046 21.2095 19.1217 21.0079L22.6386 14.9433V14.9513L24.4211 11.8531C24.5375 11.6507 24.5987 11.4215 24.5987 11.1883C24.5987 10.9551 24.5375 10.726 24.4211 10.5235L21.1986 4.9668H16.8467L20.4519 11.2043L16.8386 17.4112H16.8547L14.3535 21.69Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M6.08719 21.0185C6.20515 21.2199 6.37401 21.3872 6.57705 21.5038C6.78008 21.6204 7.01026 21.6823 7.24477 21.6834L13.7004 21.7007L15.8858 17.9616L8.64189 17.935L8.5616 17.7954L2.57565 7.43066L0.777057 10.5368C0.660768 10.7393 0.599609 10.9684 0.599609 11.2016C0.599609 11.4348 0.660768 11.6639 0.777057 11.8664L4.28994 17.9271H4.28057L6.08719 21.0185Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M12.6006 14.4683C14.4306 14.4683 15.9141 12.9944 15.9141 11.1761C15.9141 9.35779 14.4306 7.88379 12.6006 7.88379C10.7706 7.88379 9.28711 9.35779 9.28711 11.1761C9.28711 12.9944 10.7706 14.4683 12.6006 14.4683Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003c/svg\u003e\n"
+   },
+   "model": {
+    "version": "0.7.2"
+   },
+   "name": "gcp",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "meshery",
+    "name": "meshery",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "enabled",
+   "subCategory": "Cloud Provider",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
+   "primaryColor": "#4285F4",
+   "shape": "rectangle",
+   "svgColor": "\u003csvg version=\"1.1\" baseProfile=\"tiny\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"\n         x=\"0px\" y=\"0px\" width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\" overflow=\"visible\" xml:space=\"preserve\"\u003e\n\u003cg \u003e\n        \u003crect y=\"0\" fill=\"none\" width=\"24\" height=\"24\"/\u003e\n        \u003cg transform=\"translate(2.000000, 2.000000)\"\u003e\n                \u003cpath fill-rule=\"evenodd\" fill=\"#85A4E6\" d=\"M-0.5-0.5v21H10v-21H-0.5z M4,5.5H1.8V3.2H4V5.5L4,5.5z M4,9.2H1.8V7H4V9.2L4,9.2z\n                         M4,13H1.8v-2.2H4V13L4,13z M4,16.8H1.8v-2.2H4V16.8L4,16.8z M7.8,5.5H5.5V3.2h2.2V5.5L7.8,5.5z M7.8,9.2H5.5V7h2.2V9.2L7.8,9.2z\n                         M7.8,13H5.5v-2.2h2.2V13L7.8,13z M7.8,16.8H5.5v-2.2h2.2V16.8L7.8,16.8z\"/\u003e\n                \u003cpath fill-rule=\"evenodd\" fill=\"#5C85DE\" d=\"M4.8-0.5v21H10v-21H4.8z M7.8,5.5H5.5V3.2h2.2V5.5L7.8,5.5z M7.8,9.2H5.5V7h2.2V9.2\n                        L7.8,9.2z M7.8,13H5.5v-2.2h2.2V13L7.8,13z M7.8,16.8H5.5v-2.2h2.2V16.8L7.8,16.8z\"/\u003e\n                \u003cpath fill-rule=\"evenodd\" fill=\"#85A4E6\" d=\"M10,8.5v12h10.5v-12H10z M14.5,13h-2.2v-2.2h2.2V13L14.5,13z M14.5,16.8h-2.2v-2.2\n                        h2.2V16.8L14.5,16.8z M18.2,13H16v-2.2h2.2V13L18.2,13z M18.2,16.8H16v-2.2h2.2V16.8L18.2,16.8z\"/\u003e\n                \u003cpath fill-rule=\"evenodd\" fill=\"#5C85DE\" d=\"M15.2,8.5v12h5.2v-12H15.2z M18.2,13H16v-2.2h2.2V13L18.2,13z M18.2,16.8H16v-2.2h2.2\n                        V16.8L18.2,16.8z\"/\u003e\n                \u003crect x=\"10\" y=\"6.2\" fill-rule=\"evenodd\" fill=\"#85A4E6\" width=\"10.5\" height=\"2.2\"/\u003e\n                        \u003crect x=\"10\" y=\"8.5\" fill-rule=\"evenodd\" fill=\"#5C85DE\" width=\"10.5\" height=\"0.8\"/\u003e\n                        \u003crect x=\"10\" y=\"6.2\" fill-rule=\"evenodd\" fill=\"#3367D6\" width=\"0.8\" height=\"2.2\"/\u003e\n                        \u003crect x=\"10\" y=\"8.5\" fill-rule=\"evenodd\" fill=\"#3367D6\" width=\"0.8\" height=\"12\"/\u003e\n        \u003c/g\u003e\n\u003c/g\u003e\n\u003c/svg\u003e\n",
+   "svgWhite": "\u003csvg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M1.5 1.5V22.5H12V1.5H1.5ZM6 7.5H3.8V5.2H6V7.5ZM6 11.2H3.8V9H6V11.2ZM6 15H3.8V12.8H6V15ZM6 18.8H3.8V16.6H6V18.8ZM9.8 7.5H7.5V5.2H9.7V7.5H9.8ZM9.8 11.2H7.5V9H9.7V11.2H9.8ZM9.8 15H7.5V12.8H9.7V15H9.8ZM9.8 18.8H7.5V16.6H9.7V18.8H9.8Z\" fill=\"white\"/\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M6.80005 1.5V22.5H12V1.5H6.80005ZM9.80005 7.5H7.50005V5.2H9.70005V7.5H9.80005ZM9.80005 11.2H7.50005V9H9.70005V11.2H9.80005ZM9.80005 15H7.50005V12.8H9.70005V15H9.80005ZM9.80005 18.8H7.50005V16.6H9.70005V18.8H9.80005Z\" fill=\"#F0F0F0\"/\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M12 10.5V22.5H22.5V10.5H12ZM16.5 15H14.3V12.8H16.5V15ZM16.5 18.8H14.3V16.6H16.5V18.8ZM20.2 15H18V12.8H20.2V15ZM20.2 18.8H18V16.6H20.2V18.8Z\" fill=\"white\"/\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M17.2 10.5V22.5H22.4V10.5H17.2ZM20.2 15H18V12.8H20.2V15ZM20.2 18.8H18V16.6H20.2V18.8Z\" fill=\"#F0F0F0\"/\u003e\n\u003cpath d=\"M22.5 8.2002H12V10.4002H22.5V8.2002Z\" fill=\"white\"/\u003e\n\u003cpath d=\"M22.5 10.5H12V11.3H22.5V10.5Z\" fill=\"#F0F0F0\"/\u003e\n\u003cpath d=\"M12.8 8.2002H12V10.4002H12.8V8.2002Z\" fill=\"#DDDDDD\"/\u003e\n\u003cpath d=\"M12.8 10.5H12V22.5H12.8V10.5Z\" fill=\"#DDDDDD\"/\u003e\n\u003c/svg\u003e\n"
+  },
+  "version": "v1.0.0"
+ }

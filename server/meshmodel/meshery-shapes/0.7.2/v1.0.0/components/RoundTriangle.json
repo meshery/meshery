@@ -67,7 +67,7 @@
    "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "A triangular shape with rounded corners, providing a softer look while still indicating hierarchy or direction.",
   "displayName": "RoundTriangle",
   "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",

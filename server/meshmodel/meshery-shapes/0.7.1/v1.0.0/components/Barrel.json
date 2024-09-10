@@ -67,7 +67,7 @@
    "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "A shape resembling a 3D barrel, with both the top and bottom edges appearing rounded. This shape can be used to represent data storage, such as databases or repositories.",
   "displayName": "Barrel",
   "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",

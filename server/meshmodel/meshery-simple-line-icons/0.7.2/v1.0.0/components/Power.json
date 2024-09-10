@@ -1,0 +1,126 @@
+{
+  "capabilities": [
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Add text to nodes body",
+    "displayName": "Body Text",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "body-text",
+    "type": "style",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "Power",
+   "schema": "",
+   "version": "core.meshery.io/v1alpha1"
+  },
+  "configuration": null,
+  "description": "Represents a power symbol, used for turning devices on or off.",
+  "displayName": "",
+  "format": "",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": true,
+   "isNamespaced": false,
+   "published": false
+  },
+  "model": {
+   "category": {
+    "name": ""
+   },
+   "displayName": "",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "model": {
+    "version": "0.7.2"
+   },
+   "name": "",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "",
+    "name": "",
+    "status": "",
+    "sub_type": "",
+    "type": "",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "",
+   "status": "",
+   "version": "",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "",
+  "status": null,
+  "styles": {
+   "background-image": "none",
+   "background-opacity": 0.1,
+   "border-style": "solid",
+   "border-width": 1,
+   "height": 30,
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "svgColor": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1024 1024\"\u003e\u003cpath d=\"M701.552 164.096c-16-7.456-35.025-.59-42.53 15.425-7.519 16-.591 35.04 15.409 42.544 162.336 76 250.496 251.952 214.353 427.872-42.912 208.88-247.664 343.808-456.56 301.023-101.168-20.785-184.208-79.712-241.056-165.936-56.864-86.256-76.736-189.504-55.952-290.672 24.704-120.224 102.624-219.328 213.76-271.904 15.968-7.552 22.8-26.624 15.231-42.609-7.552-15.952-26.592-22.736-42.592-15.232C192.111 225.87 101.327 341.342 72.527 481.47c-24.223 117.936-1.07 238.256 65.185 338.784 66.272 100.48 163.696 169.169 281.632 193.409a450.431 450.431 0 0 0 90.751 9.248c209.456 0 397.648-147.12 441.376-360.112 42.112-205.008-60.655-410.096-249.919-498.704zM512.015 416.001c17.664 0 32-14.336 32-32v-352c0-17.664-14.336-32-32-32s-32 14.336-32 32v352c0 17.664 14.336 32 32 32z\"/\u003e\u003c/svg\u003e",
+   "svgWhite": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1024 1024\"\u003e\u003cpath d=\"M701.552 164.096c-16-7.456-35.025-.59-42.53 15.425-7.519 16-.591 35.04 15.409 42.544 162.336 76 250.496 251.952 214.353 427.872-42.912 208.88-247.664 343.808-456.56 301.023-101.168-20.785-184.208-79.712-241.056-165.936-56.864-86.256-76.736-189.504-55.952-290.672 24.704-120.224 102.624-219.328 213.76-271.904 15.968-7.552 22.8-26.624 15.231-42.609-7.552-15.952-26.592-22.736-42.592-15.232C192.111 225.87 101.327 341.342 72.527 481.47c-24.223 117.936-1.07 238.256 65.185 338.784 66.272 100.48 163.696 169.169 281.632 193.409a450.431 450.431 0 0 0 90.751 9.248c209.456 0 397.648-147.12 441.376-360.112 42.112-205.008-60.655-410.096-249.919-498.704zM512.015 416.001c17.664 0 32-14.336 32-32v-352c0-17.664-14.336-32-32-32s-32 14.336-32 32v352c0 17.664 14.336 32 32 32z\"/\u003e\u003c/svg\u003e",
+   "width": 30
+  },
+  "version": "v1.0.0"
+ }

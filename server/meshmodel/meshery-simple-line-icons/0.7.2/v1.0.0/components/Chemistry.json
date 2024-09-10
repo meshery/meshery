@@ -1,0 +1,126 @@
+{
+  "capabilities": [
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Add text to nodes body",
+    "displayName": "Body Text",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "body-text",
+    "type": "style",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "Chemistry",
+   "schema": "",
+   "version": "core.meshery.io/v1alpha1"
+  },
+  "configuration": null,
+  "description": "Represents a chemistry-related theme, often depicted as a flask or beaker.",
+  "displayName": "",
+  "format": "",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": true,
+   "isNamespaced": false,
+   "published": false
+  },
+  "model": {
+   "category": {
+    "name": ""
+   },
+   "displayName": "",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "model": {
+    "version": "0.7.2"
+   },
+   "name": "",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "",
+    "name": "",
+    "status": "",
+    "sub_type": "",
+    "type": "",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "",
+   "status": "",
+   "version": "",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "",
+  "status": null,
+  "styles": {
+   "background-image": "none",
+   "background-opacity": 0.1,
+   "border-style": "solid",
+   "border-width": 1,
+   "height": 30,
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "svgColor": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1024 1024\"\u003e\u003cpath d=\"M810.416 970.72L640.015 769.056V415.552h21.312c17.68 0 32-14.32 32-32s-14.32-32-32-32h-53.312c-17.68 0-32 14.32-32 32v397.824a31.944 31.944 0 0 0 8.256 21.44l130.368 157.343h-405.28l130.368-157.344a31.944 31.944 0 0 0 8.256-21.44V383.553c0-17.68-14.32-32-32-32H362.67c-17.68 0-32 14.32-32 32s14.32 32 32 32h21.312v353.504l-170.4 201.664a32.039 32.039 0 0 0-5.504 34.431 32.001 32.001 0 0 0 29.249 19.01h549.344a32.001 32.001 0 0 0 29.249-19.01c5.12-11.551 2.976-25.055-5.504-34.431zM479.999 319.68c35.264 0 63.84-28.592 63.84-63.84 0-35.216-28.576-63.807-63.84-63.807-35.28 0-63.84 28.591-63.84 63.807 0 35.248 28.56 63.84 63.84 63.84zm208.48-94.992c62.368 0 112.928-50.336 112.928-112.416S750.863-.144 688.479-.144c-62.352 0-112.928 50.336-112.928 112.416s50.576 112.416 112.928 112.416zm-.496-161.025c26.656 0 48.336 21.584 48.336 48.128 0 26.528-21.68 48.128-48.336 48.128s-48.336-21.6-48.336-48.128c.016-26.544 21.68-48.128 48.336-48.128z\"/\u003e\u003c/svg\u003e",
+   "svgWhite": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1024 1024\"\u003e\u003cpath d=\"M810.416 970.72L640.015 769.056V415.552h21.312c17.68 0 32-14.32 32-32s-14.32-32-32-32h-53.312c-17.68 0-32 14.32-32 32v397.824a31.944 31.944 0 0 0 8.256 21.44l130.368 157.343h-405.28l130.368-157.344a31.944 31.944 0 0 0 8.256-21.44V383.553c0-17.68-14.32-32-32-32H362.67c-17.68 0-32 14.32-32 32s14.32 32 32 32h21.312v353.504l-170.4 201.664a32.039 32.039 0 0 0-5.504 34.431 32.001 32.001 0 0 0 29.249 19.01h549.344a32.001 32.001 0 0 0 29.249-19.01c5.12-11.551 2.976-25.055-5.504-34.431zM479.999 319.68c35.264 0 63.84-28.592 63.84-63.84 0-35.216-28.576-63.807-63.84-63.807-35.28 0-63.84 28.591-63.84 63.807 0 35.248 28.56 63.84 63.84 63.84zm208.48-94.992c62.368 0 112.928-50.336 112.928-112.416S750.863-.144 688.479-.144c-62.352 0-112.928 50.336-112.928 112.416s50.576 112.416 112.928 112.416zm-.496-161.025c26.656 0 48.336 21.584 48.336 48.128 0 26.528-21.68 48.128-48.336 48.128s-48.336-21.6-48.336-48.128c.016-26.544 21.68-48.128 48.336-48.128z\"/\u003e\u003c/svg\u003e",
+   "width": 30
+  },
+  "version": "v1.0.0"
+ }

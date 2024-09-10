@@ -11,7 +11,6 @@ const CATEGORIES_ENDPOINT = '/api/meshmodels/categories';
 
 /**
  * @typedef {{
- * paginated: Boolean;
  * pageSize: (Number|"all");
  * page: Number;
  * trim: Boolean
@@ -20,7 +19,6 @@ const CATEGORIES_ENDPOINT = '/api/meshmodels/categories';
 
 /** @type {pageOptions} */
 const defaultOptions = {
-  paginated: false,
   pageSize: 'all',
   page: 0,
   trim: true,
@@ -147,17 +145,6 @@ export async function getMeshModelComponent(model, component, version, apiVersio
 export async function getMeshModelComponentByName(component) {
   return promisifiedDataFetch(`${MESHMODEL_COMPONENT_ENDPOINT}/components/${component}`);
 }
-// export async function queryMeshModel(modelQueryString, paginated = true) {
-//   // Note: returns paginated response
-//   if (paginated) {
-//     return promisifiedDataFetch(`${MESHMODEL_ENDPOINT}/${modelQueryString}?search=true&trim=true`);
-//   }
-
-//   // to get full response
-//   return promisifiedDataFetch(
-//     `${MESHMODEL_ENDPOINT}/${modelQueryString}?search=true&page=1&pagesize=all&trim=true`
-//   );
-// }
 
 export async function fetchCategories() {
   return promisifiedDataFetch(`${CATEGORIES_ENDPOINT}`);

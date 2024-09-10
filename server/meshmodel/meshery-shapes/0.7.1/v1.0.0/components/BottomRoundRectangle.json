@@ -67,7 +67,7 @@
    "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "A unique shape where only the bottom corners are rounded. This can be useful to indicate hierarchical relationships or to create a visual distinction from other rounded shapes.\n",
   "displayName": "BottomRoundRectangle",
   "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",

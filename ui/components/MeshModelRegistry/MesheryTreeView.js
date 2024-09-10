@@ -191,6 +191,8 @@ const ComponentTree = ({
   handleSelect,
   data,
   setShowDetailsData,
+  lastComponentRef,
+  isComponentFetching,
 }) => {
   return (
     <TreeView
@@ -219,6 +221,8 @@ const ComponentTree = ({
           }}
         />
       ))}
+      <div ref={lastComponentRef} style={{ height: '3rem' }}></div>
+      {isComponentFetching ? <CircularProgress color="inherit" /> : null}
     </TreeView>
   );
 };
@@ -232,6 +236,8 @@ const RelationshipTree = ({
   setShowDetailsData,
   view = RELATIONSHIPS,
   idForKindAsProp,
+  lastRegistrantRef,
+  isRelationshipFetching,
 }) => {
   return (
     <TreeView
@@ -283,6 +289,8 @@ const RelationshipTree = ({
           </StyledTreeItem>
         );
       })}
+      <div ref={lastRegistrantRef} style={{ height: '3rem' }}></div>
+      {isRelationshipFetching ? <CircularProgress color="inherit" /> : null}
     </TreeView>
   );
 };
@@ -516,6 +524,7 @@ const MesheryTreeViewWrapper = styled('div')(() => ({
   display: 'flex',
   flexDirection: 'column',
 }));
+
 const MesheryTreeView = ({
   data,
   view,
@@ -830,9 +839,10 @@ const MesheryTreeView = ({
             data={data}
             setExpanded={setExpanded}
             setSelected={setSelected}
-            handleScroll={handleScroll}
             setSearchText={setSearchText}
             setShowDetailsData={setShowDetailsData}
+            lastComponentRef={lastItemRef[COMPONENTS]}
+            isComponentFetching={isFetching[COMPONENTS]}
           />,
           COMPONENTS,
         )}
@@ -845,6 +855,8 @@ const MesheryTreeView = ({
             selected={selected}
             data={data}
             setShowDetailsData={setShowDetailsData}
+            lastRegistrantRef={lastItemRef[RELATIONSHIPS]}
+            isRelationshipFetching={isFetching[RELATIONSHIPS]}
           />,
           RELATIONSHIPS,
         )}

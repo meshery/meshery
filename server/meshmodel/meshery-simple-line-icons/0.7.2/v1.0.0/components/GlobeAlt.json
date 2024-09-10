@@ -1,0 +1,126 @@
+{
+  "capabilities": [
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Add text to nodes body",
+    "displayName": "Body Text",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "body-text",
+    "type": "style",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "GlobeAlt",
+   "schema": "",
+   "version": "core.meshery.io/v1alpha1"
+  },
+  "configuration": null,
+  "description": "An alternative globe icon, often used for different global-related functions.",
+  "displayName": "",
+  "format": "",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": true,
+   "isNamespaced": false,
+   "published": false
+  },
+  "model": {
+   "category": {
+    "name": ""
+   },
+   "displayName": "",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "model": {
+    "version": "0.7.2"
+   },
+   "name": "",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "",
+    "name": "",
+    "status": "",
+    "sub_type": "",
+    "type": "",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "",
+   "status": "",
+   "version": "",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "",
+  "status": null,
+  "styles": {
+   "background-image": "none",
+   "background-opacity": 0.1,
+   "border-style": "solid",
+   "border-width": 1,
+   "height": 30,
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "svgColor": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1024 1024\"\u003e\u003cpath d=\"M929.504 414.416c0-168.784-88.978-321.873-237.97-409.569-15.248-9.008-34.88-3.872-43.808 11.376-8.944 15.216-3.872 34.848 11.376 43.808 129.248 76.032 206.4 208.528 206.4 354.368 0 242.368-175.936 418.288-418.319 418.288-54.192 0-106.784-10.16-156.32-30.16-16.368-6.657-35.056 1.279-41.665 17.662-6.624 16.4 1.28 35.057 17.664 41.665 57.216 23.12 117.872 34.848 180.32 34.848.193 0 .385-.015.578-.015v63.007h-92.928c-18.464 0-33.44 14.304-33.44 31.952s14.976 31.937 33.44 31.937H607.68c18.464 0 33.44-14.304 33.44-31.936 0-17.664-14.976-31.952-33.44-31.952h-96.384v-66.8c245.808-28.559 418.208-220.91 418.208-478.478zm-130.13 2.879c0-194.656-157.744-353.408-352.4-353.408-194.688 0-352.465 158.752-352.465 353.408s157.776 351.44 352.465 351.44c194.656 0 352.4-156.784 352.4-351.44zm-640.88 0c0-159.024 129.408-289.408 288.464-289.408 159.024 0 288.4 130.368 288.4 289.408s-129.376 287.44-288.4 287.44c-159.056 0-288.464-128.4-288.464-287.44z\"/\u003e\u003c/svg\u003e",
+   "svgWhite": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1024 1024\"\u003e\u003cpath d=\"M929.504 414.416c0-168.784-88.978-321.873-237.97-409.569-15.248-9.008-34.88-3.872-43.808 11.376-8.944 15.216-3.872 34.848 11.376 43.808 129.248 76.032 206.4 208.528 206.4 354.368 0 242.368-175.936 418.288-418.319 418.288-54.192 0-106.784-10.16-156.32-30.16-16.368-6.657-35.056 1.279-41.665 17.662-6.624 16.4 1.28 35.057 17.664 41.665 57.216 23.12 117.872 34.848 180.32 34.848.193 0 .385-.015.578-.015v63.007h-92.928c-18.464 0-33.44 14.304-33.44 31.952s14.976 31.937 33.44 31.937H607.68c18.464 0 33.44-14.304 33.44-31.936 0-17.664-14.976-31.952-33.44-31.952h-96.384v-66.8c245.808-28.559 418.208-220.91 418.208-478.478zm-130.13 2.879c0-194.656-157.744-353.408-352.4-353.408-194.688 0-352.465 158.752-352.465 353.408s157.776 351.44 352.465 351.44c194.656 0 352.4-156.784 352.4-351.44zm-640.88 0c0-159.024 129.408-289.408 288.464-289.408 159.024 0 288.4 130.368 288.4 289.408s-129.376 287.44-288.4 287.44c-159.056 0-288.464-128.4-288.464-287.44z\"/\u003e\u003c/svg\u003e",
+   "width": 30
+  },
+  "version": "v1.0.0"
+ }
