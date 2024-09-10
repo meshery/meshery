@@ -81,6 +81,22 @@ const (
 	refURLCookie      = "meshery_ref"
 )
 
+type Name struct {
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
+}
+
+type Payload struct {
+	Name                   Name     `json:"name"`
+	Email                  string   `json:"email"`
+	Roles                  []string `json:"roles"`
+	OrganizationsWithRoles struct {
+		Organizations []string `json:"organizations"`
+		Roles         []string `json:"roles"`
+	} `json:"organizations_with_roles"`
+	SkipUserFlows bool `json:"skip_user_flows"`
+}
+
 // Initialize function will initialize the RemoteProvider instance with the metadata
 // fetched from the remote providers capabilities endpoint
 func (l *RemoteProvider) Initialize() {
@@ -310,7 +326,95 @@ func (l *RemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _
 			"meshery_version":  []string{mesheryVersion},
 			"ref":              refURL,
 		}
+		if viper.GetBool("PLAYGROUND") {
+			id, _ := uuid.NewV4()
 
+			email := fmt.Sprintf("noreply%s@layer5.io", id.String())
+			firstName := fmt.Sprintf("Anonymous_%s", id.String())
+			lastName := "User"
+			payload := Payload{
+				Name:          Name{FirstName: firstName, LastName: lastName},
+				Email:         email,
+				Roles:         []string{"meshmap"},
+				SkipUserFlows: true,
+			}
+			payload.OrganizationsWithRoles.Organizations = []string{}
+			payload.OrganizationsWithRoles.Roles = []string{}
+
+			jsonData, err := json.Marshal(payload)
+			if err != nil {
+				fmt.Println("Error marshaling JSON:", err)
+				return
+			}
+			url1 := fmt.Sprintf("%s%s", l.RemoteProviderURL, "/api/admin/identity")
+			client := &http.Client{Timeout: 10 * time.Second}
+			req, err := http.NewRequest("POST", url1, bytes.NewBuffer(jsonData))
+			if err != nil {
+				fmt.Println("Error creating request:", err)
+				return
+			}
+			req.Header.Set("Content-Type", "application/json")
+			resp, err := client.Do(req)
+			if err != nil {
+				fmt.Println("Error sending request:", err)
+				return
+			}
+			fmt.Println("response Status:", resp)
+			defer resp.Body.Close()
+			if resp.StatusCode == 201 {
+				fmt.Println("First request succeeded, hitting the second route.")
+				provider := "meshery-cloud" //what should this be @MUzair
+				url2 := fmt.Sprintf("%s/identity/tokens?user_id=%s&provider=%s&name=%s&purpose=anonymous",
+					l.RemoteProviderURL, email, provider, TokenCookieName)
+				req2, err := http.NewRequest("POST", url2, nil)
+				if err != nil {
+					fmt.Println("Error creating second request:", err)
+				}
+
+				req2.Header.Set("Content-Type", "application/json")
+
+				resp2, err := client.Do(req2)
+				if err != nil {
+					fmt.Println("Error do request:", err)
+
+				}
+				defer resp2.Body.Close()
+
+				body, err := io.ReadAll(resp2.Body)
+				if err != nil {
+					fmt.Println("Error reading request:", err)
+
+				}
+
+				type TokenResponse struct {
+					Tokens []struct {
+						AccessToken string `json:"access_token"`
+					} `json:"tokens"`
+				}
+
+				// Parse the JSON response
+				var tokenResponse TokenResponse
+				err = json.Unmarshal(body, &tokenResponse)
+				if err != nil {
+					fmt.Println("Error parsing JSON response:", err)
+					return
+				}
+
+				// Check if tokens exist and extract the access token
+				if len(tokenResponse.Tokens) > 0 {
+					accessToken := tokenResponse.Tokens[0].AccessToken
+
+					// Set the access token in the JWT cookie
+					l.SetJWTCookie(w, accessToken)
+
+					fmt.Println("Access token set in cookie:", resp2)
+					http.Redirect(w, r, "http://localhost:9081"+"/extension/meshmap?", http.StatusFound)
+					return
+				}
+			} else {
+				fmt.Printf("Request failed with status code: %d\n", resp.StatusCode)
+			}
+		}
 		http.Redirect(w, r, l.RemoteProviderURL+"/login?"+queryParams.Encode(), http.StatusFound)
 		return
 	}

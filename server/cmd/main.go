@@ -242,9 +242,7 @@ func main() {
 		Log:                             log,
 	}
 	lProv.Initialize()
-	if viper.GetBool("PLAYGROUND") {
-		lProv.DownloadProviderExtensionPackage()
-	}
+
 	hc := &models.HandlerConfig{
 		Providers:              provs,
 		ProviderCookieName:     "meshery-provider",

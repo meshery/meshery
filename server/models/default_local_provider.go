@@ -12,7 +12,6 @@ import (
 	"net/http"
 	"net/url"
 	"os"
-	"path"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -34,7 +33,6 @@ import (
 	"github.com/spf13/viper"
 	"gopkg.in/yaml.v2"
 	"gorm.io/gorm"
-	"k8s.io/client-go/util/homedir"
 )
 
 // DefaultLocalProvider - represents a local provider
@@ -62,13 +60,6 @@ type DefaultLocalProvider struct {
 	KubeClient       *mesherykube.Client
 	Log              logger.Handler
 }
-type CapabilitiesENV struct {
-	NavigatorExtension    NavigatorExtension    `json:"NAVIGATOR_EXTENSION"`
-	UserPrefsExtension    UserPrefsExtension    `json:"USER_PREFS_EXTENSION"`
-	GraphQLExtension      GraphQLExtension      `json:"GRAPHQL_EXTENSION"`
-	CollaboratorExtension CollaboratorExtension `json:"COLLABORATOR_EXTENSION"`
-	RestrictedAccess      RestrictedAccess      `json:"RESTRICTED_ACCESS"`
-}
 
 // Initialize will initialize the local provider
 func (l *DefaultLocalProvider) Initialize() {
@@ -80,110 +71,14 @@ func (l *DefaultLocalProvider) Initialize() {
 		"Free Use",
 	}
 	l.ProviderType = LocalProviderType
-	l.IntializePackage()
-	l.InitializeExtension()
-	l.InitializeCapabilities()
-	l.InitializeAccess()
-}
-
-func (l *DefaultLocalProvider) InitializeAccess() {
-	if viper.GetBool("PLAYGROUND") {
-		var config CapabilitiesENV
-		capabilities := viper.GetString("CAPABILITIES")
-		if err := json.Unmarshal([]byte(capabilities), &config); err != nil {
-			l.Log.Error(ErrUnmarshal(err, "CAPABILITIES Env"))
-		}
-		l.RestrictedAccess = config.RestrictedAccess
-	}
-}
-func (l *DefaultLocalProvider) IntializePackage() {
 	l.PackageVersion = viper.GetString("BUILD")
 	l.PackageURL = ""
-	playground := viper.GetBool("PLAYGROUND")
-	if playground {
-		version := viper.GetString("BUILD")
-		os := viper.GetString("OS")
-		finalURL := fmt.Sprintf("%s/%s/capabilities?os=%s&playground=%s", l.ProviderBaseURL, version, os, strconv.FormatBool(playground))
-		finalURL = strings.TrimSuffix(finalURL, "\n")
-		remoteProviderURL, err := url.Parse(finalURL)
-		if err != nil {
-			l.Log.Error(ErrUrlParse(err))
-			return
-		}
-		req, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
-
-		c := &http.Client{}
-		resp, err := c.Do(req)
-
-		if err != nil && resp == nil {
-			l.Log.Error(ErrUnreachableRemoteProvider(err))
-			return
-		}
-		if err != nil || resp.StatusCode != http.StatusOK {
-			l.Log.Error(ErrFetch(err, "Capabilities", resp.StatusCode))
-			return
-		}
-		defer func() {
-			err := resp.Body.Close()
-			if err != nil {
-				err := ErrCloseIoReader(err)
-				l.Log.Error(err)
-			}
-		}()
-		var providerProperties ProviderProperties
-		decoder := json.NewDecoder(resp.Body)
-		if err := decoder.Decode(&providerProperties); err != nil {
-			err = ErrUnmarshal(err, "provider properties")
-			l.Log.Error(err)
-			return
-		}
-		l.PackageVersion = providerProperties.PackageVersion
-		l.PackageURL = providerProperties.PackageURL
-	}
-
-}
-func (l *DefaultLocalProvider) InitializeExtension() {
-	if viper.GetBool("PLAYGROUND") {
-		var extentsion Extensions
-		var config CapabilitiesENV
-		capabilities := viper.GetString("CAPABILITIES")
-		if err := json.Unmarshal([]byte(capabilities), &config); err != nil {
-			l.Log.Error(ErrUnmarshal(err, "CAPABILITIES Env"))
-		}
-		extentsion.GraphQL = append(extentsion.GraphQL, config.GraphQLExtension)
-		extentsion.Navigator = append(extentsion.Navigator, config.NavigatorExtension)
-		extentsion.UserPrefs = append(extentsion.UserPrefs, config.UserPrefsExtension)
-		extentsion.Collaborator = append(extentsion.Collaborator, config.CollaboratorExtension)
-		l.Extensions = extentsion
-		return
-	}
 	l.Extensions = Extensions{}
-
-}
-
-// assign default value for capabilities for local provider
-func (l *DefaultLocalProvider) InitializeCapabilities() {
 	l.Capabilities = Capabilities{
 		{Feature: PersistMesheryPatterns},
 		{Feature: PersistMesheryApplications},
 		{Feature: PersistMesheryFilters},
 		{Feature: PersistCredentials},
-	}
-}
-func (l *DefaultLocalProvider) DownloadProviderExtensionPackage() {
-	// Location for the package to be stored
-	loc := l.PackageLocation()
-
-	// Skip download if the file is already present
-	if _, err := os.Stat(loc); err == nil {
-		l.Log.Debug(fmt.Sprintf("[Initialize]: Package found at %s skipping download", loc))
-		return
-	}
-
-	l.Log.Debug(fmt.Sprintf("[Initialize]: Package not found at %s proceeding to download", loc))
-	// logrus the provider package
-	if err := TarXZF(l.PackageURL, loc, l.Log); err != nil {
-		l.Log.Error(ErrDownloadPackage(err, "provider package"))
 	}
 }
 
@@ -210,9 +105,6 @@ func (l *DefaultLocalProvider) GetProviderProperties() ProviderProperties {
 // PackageLocation returns an empty string as there is no extension package for
 // the local provider
 func (l *DefaultLocalProvider) PackageLocation() string {
-	if viper.GetBool("PLAYGROUND") {
-		return path.Join(homedir.HomeDir(), ".meshery", "provider", "Playground", l.PackageVersion)
-	}
 	return ""
 }
 

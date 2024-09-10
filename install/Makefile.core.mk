@@ -53,8 +53,3 @@ APPLICATIONCONFIGPATH="./apps.json"
 # Build
 #-----------------------------------------------------------------------------
 RELEASE_CHANNEL="edge"
-
-#-----------------------------------------------------------------------------
-# Playground Build CAPABILITIES
-#-----------------------------------------------------------------------------
-CAPABILITIES := '{"NAVIGATOR_EXTENSION":{"title":"Meshmap","on_click_callback":1,"href":{"uri":"/meshmap"},"component":"/provider/navigator/meshmap/index.js","icon":"/provider/navigator/img/meshmap-icon.svg","link":true,"show":true,"type":"full_page","allowedTo":{"designer":{"design":true,"application":true,"filter":true,"save":true,"new":true,"saveAs":true}},"isBeta":true},"USER_PREFS_EXTENSION":{"component":"/provider/userpref/meshmap_userpref/index.js","type":"component"},"GRAPHQL_EXTENSION":{"component":"meshmap","path":"provider/navigator/meshmap/graphql/plugin.so","type":"backend"},"COLLABORATOR_EXTENSION":{"component":"/provider/collaborator/avatar/index.js","type":"component"},"RESTRICTED_ACCESS":{"isMesheryUiRestricted":true,"allowedComponents":{"navigator_components":{"dashboard":true,"performance":true,"conformance":true,"extensions":true,"toggler":true,"help":true},"header_components":{"contextSwitcher":true,"notifications":true,"profile":true,"settings":true}}}}'
