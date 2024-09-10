@@ -61,7 +61,6 @@ jobs:
             /home/runner/.cache
             !~/cache/exclude
             **/node_modules
-            /home/runner/.cache/Cypress
             ~/.npm
             ${{ github.workspace }}/.next/cache
           key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
@@ -157,7 +156,6 @@ jobs:
             /home/runner/.cache
             !~/cache/exclude
             **/node_modules
-            /home/runner/.cache/Cypress
             ~/.npm
             ${{ github.workspace }}/.next/cache
           key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}

@@ -124,13 +124,9 @@ Refer to [Contributing to Meshery Server](contributing-server), if needed.
 
 Any UI changes made now will _automatically_ be rebuilt and served in your browser.
 
-### Running Cypress integration tests
+### Running end-to-end integration tests
 
-To run cypress integration tests, a convenience make target called `ui-integration-tests` that installs dependencies in `/ui` and `/provider-ui` folders as prerequisite and invokes `ci-test-integration` npm script found in [/ui/package.json](https://github.com/meshery/meshery/blob/master/ui/package.json)
-{% include code.html code="make ui-integration-tests" %}
-{% include alert.html type="info" title="Above command must be run from Meshery repository's root folder." %}
-
-Refer to [Meshery Cypress Testing](contributing-cypress) for details of how to contribute and benefit from Meshery Cypress (integration & end-to-end) testing.
+Refer to [Meshery UI Testing](contributing-ui-tests) for details of how to contribute and benefit from Meshery UI testing.
 
 ### Static Files, Icons and Images
 
