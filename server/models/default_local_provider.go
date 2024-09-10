@@ -1508,7 +1508,9 @@ func getSeededComponents(comp string, log logger.Handler) ([]string, []string, e
 			return nil, nil, er
 		}
 	}
-	if !viper.GetBool("SKIP_DOWNLOAD_CONTENT") {
+	if comp == "Application" && viper.GetBool("SKIP_DOWNLOAD_APPLICATIONS") {
+		log.Info("Skipping seeding sample applications")
+	} else if !viper.GetBool("SKIP_DOWNLOAD_CONTENT") {
 		err = downloadContent(comp, wd)
 		if err != nil {
 			log.Error(ErrDownloadingSeededComponents(err, comp))
