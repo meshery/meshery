@@ -67,7 +67,7 @@
    "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "A shape with multiple points radiating outwards, typically used for highlighting special or notable nodes. It draws immediate attention, making it ideal for critical data points or focal nodes.",
   "displayName": "Star",
   "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",

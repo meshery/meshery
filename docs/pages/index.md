@@ -141,7 +141,7 @@ list: exclude
       <ul class="section-title">
         {% assign sorted_tutorials = site.pages | where: "type","guides" %}
         {% for item in sorted_tutorials %}
-        {% if item.type=="guides" and item.category=="tutorials" and item.language=="en" -%}
+        {% if item.type=="guides" and item.category=="tutorials" and item.list=="include" and item.language=="en" -%}
           <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
           {% if item.abstract != " " %}
             - {{ item.abstract }}

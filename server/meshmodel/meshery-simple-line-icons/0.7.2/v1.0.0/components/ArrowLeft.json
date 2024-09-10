@@ -1,0 +1,126 @@
+{
+  "capabilities": [
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Add text to nodes body",
+    "displayName": "Body Text",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "body-text",
+    "type": "style",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "ArrowLeft",
+   "schema": "",
+   "version": "core.meshery.io/v1alpha1"
+  },
+  "configuration": null,
+  "description": "A leftward-pointing arrow indicating a move or navigation to the left.",
+  "displayName": "",
+  "format": "",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": true,
+   "isNamespaced": false,
+   "published": false
+  },
+  "model": {
+   "category": {
+    "name": ""
+   },
+   "displayName": "",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "model": {
+    "version": "0.7.2"
+   },
+   "name": "",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "",
+    "name": "",
+    "status": "",
+    "sub_type": "",
+    "type": "",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "",
+   "status": "",
+   "version": "",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "",
+  "status": null,
+  "styles": {
+   "background-image": "none",
+   "background-opacity": 0.1,
+   "border-style": "solid",
+   "border-width": 1,
+   "height": 30,
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "svgColor": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1024 1024\"\u003e\u003cpath d=\"M752.145 0c8.685 0 17.572 3.434 24.237 10.099 13.33 13.33 13.33 35.143 0 48.473L320.126 515.03l449.591 449.591c13.33 13.33 13.33 35.144 0 48.474-13.33 13.33-35.142 13.33-48.472 0L247.418 539.268c-13.33-13.33-13.33-35.144 0-48.474L727.91 10.1C734.575 3.435 743.46.002 752.146.002z\"/\u003e\u003c/svg\u003e",
+   "svgWhite": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1024 1024\"\u003e\u003cpath d=\"M752.145 0c8.685 0 17.572 3.434 24.237 10.099 13.33 13.33 13.33 35.143 0 48.473L320.126 515.03l449.591 449.591c13.33 13.33 13.33 35.144 0 48.474-13.33 13.33-35.142 13.33-48.472 0L247.418 539.268c-13.33-13.33-13.33-35.144 0-48.474L727.91 10.1C734.575 3.435 743.46.002 752.146.002z\"/\u003e\u003c/svg\u003e",
+   "width": 30
+  },
+  "version": "v1.0.0"
+ }

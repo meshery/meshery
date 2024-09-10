@@ -1,0 +1,126 @@
+{
+  "capabilities": [
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Add text to nodes body",
+    "displayName": "Body Text",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "body-text",
+    "type": "style",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "Login",
+   "schema": "",
+   "version": "core.meshery.io/v1alpha1"
+  },
+  "configuration": null,
+  "description": "An icon for logging into an account or system.",
+  "displayName": "",
+  "format": "",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": true,
+   "isNamespaced": false,
+   "published": false
+  },
+  "model": {
+   "category": {
+    "name": ""
+   },
+   "displayName": "",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "model": {
+    "version": "0.7.2"
+   },
+   "name": "",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "",
+    "name": "",
+    "status": "",
+    "sub_type": "",
+    "type": "",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "",
+   "status": "",
+   "version": "",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "",
+  "status": null,
+  "styles": {
+   "background-image": "none",
+   "background-opacity": 0.1,
+   "border-style": "solid",
+   "border-width": 1,
+   "height": 30,
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "svgColor": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1024 1024\"\u003e\u003cpath d=\"M532.528 661.408c-12.512 12.496-12.513 32.752-.001 45.248 6.256 6.256 14.432 9.376 22.624 9.376s16.368-3.12 22.624-9.376l189.008-194L577.775 318.64c-12.496-12.496-32.752-12.496-45.248 0-12.512 12.496-12.512 32.752 0 45.248l115.744 115.76H31.839c-17.68 0-32 14.336-32 32s14.32 32 32 32h618.448zM960.159 0h-576c-35.36 0-64.017 28.656-64.017 64v288h64.432V103.024c0-21.376 17.344-38.72 38.72-38.72h496.704c21.408 0 38.72 17.344 38.72 38.72l1.007 818.288c0 21.376-17.311 38.72-38.72 38.72H423.31c-21.376 0-38.72-17.344-38.72-38.72V670.944l-64.432.08V960c0 35.344 28.656 64 64.017 64h576c35.344 0 64-28.656 64-64V64c-.016-35.344-28.672-64-64.016-64z\"/\u003e\u003c/svg\u003e",
+   "svgWhite": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1024 1024\"\u003e\u003cpath d=\"M532.528 661.408c-12.512 12.496-12.513 32.752-.001 45.248 6.256 6.256 14.432 9.376 22.624 9.376s16.368-3.12 22.624-9.376l189.008-194L577.775 318.64c-12.496-12.496-32.752-12.496-45.248 0-12.512 12.496-12.512 32.752 0 45.248l115.744 115.76H31.839c-17.68 0-32 14.336-32 32s14.32 32 32 32h618.448zM960.159 0h-576c-35.36 0-64.017 28.656-64.017 64v288h64.432V103.024c0-21.376 17.344-38.72 38.72-38.72h496.704c21.408 0 38.72 17.344 38.72 38.72l1.007 818.288c0 21.376-17.311 38.72-38.72 38.72H423.31c-21.376 0-38.72-17.344-38.72-38.72V670.944l-64.432.08V960c0 35.344 28.656 64 64.017 64h576c35.344 0 64-28.656 64-64V64c-.016-35.344-28.672-64-64.016-64z\"/\u003e\u003c/svg\u003e",
+   "width": 30
+  },
+  "version": "v1.0.0"
+ }

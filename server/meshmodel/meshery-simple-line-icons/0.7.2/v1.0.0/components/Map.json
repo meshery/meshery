@@ -1,0 +1,126 @@
+{
+  "capabilities": [
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Add text to nodes body",
+    "displayName": "Body Text",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "body-text",
+    "type": "style",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "Map",
+   "schema": "",
+   "version": "core.meshery.io/v1alpha1"
+  },
+  "configuration": null,
+  "description": "Represents a map icon, used for navigation or location-based information.",
+  "displayName": "",
+  "format": "",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": true,
+   "isNamespaced": false,
+   "published": false
+  },
+  "model": {
+   "category": {
+    "name": ""
+   },
+   "displayName": "",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "model": {
+    "version": "0.7.2"
+   },
+   "name": "",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "",
+    "name": "",
+    "status": "",
+    "sub_type": "",
+    "type": "",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "",
+   "status": "",
+   "version": "",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "",
+  "status": null,
+  "styles": {
+   "background-image": "none",
+   "background-opacity": 0.1,
+   "border-style": "solid",
+   "border-width": 1,
+   "height": 30,
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "svgColor": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1024 1024\"\u003e\u003cpath d=\"M993.184 135.008L672.223 1.939l-319.44 126.432L30.815 2.003c-2.752-.816-5.44-1.12-7.968-1.12C9.712.818 0 10.626 0 25.378v830c0 17.568 13.872 35.872 30.816 40.56l322.336 127.184L672.16 893.618l321.024 126.128c2.752.752 5.44 1.12 7.969 1.12 13.12 0 22.847-9.744 22.847-24.495V175.635c0-17.569-13.872-35.89-30.816-40.625zm-609.185 46.131l256-100.304v761.504l-256 101.184V181.139zm-320-94.448l256 94.577v761.76l-256-104.272V86.692zm896 851.314l-256-96.384V81.797l256 110.384v745.824z\"/\u003e\u003c/svg\u003e",
+   "svgWhite": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1024 1024\"\u003e\u003cpath d=\"M993.184 135.008L672.223 1.939l-319.44 126.432L30.815 2.003c-2.752-.816-5.44-1.12-7.968-1.12C9.712.818 0 10.626 0 25.378v830c0 17.568 13.872 35.872 30.816 40.56l322.336 127.184L672.16 893.618l321.024 126.128c2.752.752 5.44 1.12 7.969 1.12 13.12 0 22.847-9.744 22.847-24.495V175.635c0-17.569-13.872-35.89-30.816-40.625zm-609.185 46.131l256-100.304v761.504l-256 101.184V181.139zm-320-94.448l256 94.577v761.76l-256-104.272V86.692zm896 851.314l-256-96.384V81.797l256 110.384v745.824z\"/\u003e\u003c/svg\u003e",
+   "width": 30
+  },
+  "version": "v1.0.0"
+ }

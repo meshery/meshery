@@ -67,7 +67,7 @@
    "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "A rhomboid where one angle is a right angle, offering a distinctive look for special types of data connections or relationships.",
   "displayName": "RightRhomboid",
   "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",

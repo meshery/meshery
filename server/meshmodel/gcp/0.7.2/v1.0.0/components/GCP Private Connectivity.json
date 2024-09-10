@@ -1,0 +1,129 @@
+{
+  "capabilities": [
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Add text to nodes body",
+    "displayName": "Body Text",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "body-text",
+    "type": "style",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "GCP Private Connectivity",
+   "schema": "",
+   "version": "core.meshery.io/v1alpha1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "GCP Private Connectivity",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": true,
+   "isNamespaced": false,
+   "published": true
+  },
+  "model": {
+   "category": {
+    "name": "Provisioning"
+   },
+   "displayName": "Google Cloud Platform",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "isAnnotation": true,
+    "primaryColor": "#3C494F",
+    "shape": "circle",
+    "styleOverrides": "",
+    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" id=\"Layer_1\" width=\"20\" height=\"20\" viewBox=\"0 0 512 512\"\u003e\u003cstyle xmlns=\"http://www.w3.org/2000/svg\"\u003e.st0{fill:#f8bb16}.st1{fill:#ea4334}.st2{fill:#0074bc}.st3{fill:#e2e3e4}\u003c/style\u003e\u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Layer_1_1_\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"path22\" class=\"st0\" d=\"M322.4 140.9l-44.1-76.8H162.6c-10.3 0-19.9 5.5-24.9 14.5L44.1 241.7c-5.1 8.9-5.1 19.7 0 28.7l35.6 62.1 44-76.4 66.2-115.2h132.5z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"path26\" class=\"st1\" d=\"M468.2 241.7L374.6 78.6c-5.2-8.9-14.7-14.5-24.9-14.5h-71.4l44.1 76.8 66.2 115.2-66.2 115.2h88l57.8-100.9c5-8.9 5-19.8 0-28.7\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"path30\" class=\"st2\" d=\"M410.3 371.2H189.7L123.5 256l-44 76.4 58 101c5.2 8.9 14.7 14.5 24.9 14.5h187.1c10.3 0 19.9-5.5 24.9-14.5l35.9-62.2z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"st3\" d=\"M322.2 371.2H189.6L123.5 256l66.2-115.2h132.5L388.6 256l-66.4 115.2zM256 198.5c-31.9 0-57.6 25.7-57.6 57.6s25.7 57.6 57.6 57.6 57.6-25.7 57.6-57.6-25.8-57.6-57.6-57.6z\"\u003e\u003c/path\u003e\u003c/g\u003e\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 25 22\" fill=\"none\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M19.0571 1.31425C18.9391 1.11285 18.7703 0.945566 18.5672 0.828955C18.3642 0.712344 18.134 0.650454 17.8995 0.649414L10.855 0.658722V0.650744L7.26718 0.66404C7.03246 0.664981 6.80206 0.726817 6.59879 0.843427C6.39552 0.960036 6.22643 1.12737 6.10826 1.32887L2.89648 6.8563L5.06443 10.6139L8.68705 4.40573H20.8798L19.0571 1.31425Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M14.3535 21.69L17.9668 21.6727C18.201 21.672 18.4309 21.6103 18.6336 21.4936C18.8363 21.3769 19.0046 21.2095 19.1217 21.0079L22.6386 14.9433V14.9513L24.4211 11.8531C24.5375 11.6507 24.5987 11.4215 24.5987 11.1883C24.5987 10.9551 24.5375 10.726 24.4211 10.5235L21.1986 4.9668H16.8467L20.4519 11.2043L16.8386 17.4112H16.8547L14.3535 21.69Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M6.08719 21.0185C6.20515 21.2199 6.37401 21.3872 6.57705 21.5038C6.78008 21.6204 7.01026 21.6823 7.24477 21.6834L13.7004 21.7007L15.8858 17.9616L8.64189 17.935L8.5616 17.7954L2.57565 7.43066L0.777057 10.5368C0.660768 10.7393 0.599609 10.9684 0.599609 11.2016C0.599609 11.4348 0.660768 11.6639 0.777057 11.8664L4.28994 17.9271H4.28057L6.08719 21.0185Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M12.6006 14.4683C14.4306 14.4683 15.9141 12.9944 15.9141 11.1761C15.9141 9.35779 14.4306 7.88379 12.6006 7.88379C10.7706 7.88379 9.28711 9.35779 9.28711 11.1761C9.28711 12.9944 10.7706 14.4683 12.6006 14.4683Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003c/svg\u003e\n"
+   },
+   "model": {
+    "version": "0.7.2"
+   },
+   "name": "gcp",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "meshery",
+    "name": "meshery",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "enabled",
+   "subCategory": "Cloud Provider",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
+   "primaryColor": "#4285f4",
+   "shape": "rectangle",
+   "svgColor": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" width=\"24px\" height=\"24px\"\u003e\u003crect x=\"2.25\" y=\"11.03\" width=\"19.5\" height=\"1.95\" style=\"fill:#aecbfa\"/\u003e\u003ccircle cx=\"12\" cy=\"12\" r=\"6.82\" style=\"fill:#669df6\"/\u003e\u003cpath d=\"M14.44,10.05V9.56a2.44,2.44,0,1,0-4.88,0v.49a1,1,0,0,0-1,1v3.89a1,1,0,0,0,1,1h4.88a1,1,0,0,0,1-1V11A1,1,0,0,0,14.44,10.05Z\" style=\"fill:#fff\"/\u003e\u003cpath d=\"M13.66,10.05H10.34V9.56a1.66,1.66,0,0,1,3.32,0Z\" style=\"fill:#669df6\"/\u003e\u003ccircle cx=\"12\" cy=\"12.97\" r=\"0.97\" style=\"fill:#4285f4\"/\u003e\u003c/svg\u003e",
+   "svgWhite": "\u003csvg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M21.75 11.0303H2.25V12.9803H21.75V11.0303Z\" fill=\"#DDDDDD\"/\u003e\n\u003cpath d=\"M11.9999 18.8197C15.7665 18.8197 18.8199 15.7663 18.8199 11.9997C18.8199 8.23311 15.7665 5.17969 11.9999 5.17969C8.23335 5.17969 5.17993 8.23311 5.17993 11.9997C5.17993 15.7663 8.23335 18.8197 11.9999 18.8197Z\" fill=\"white\"/\u003e\n\u003cpath d=\"M14.4401 10.0501V9.56012C14.4401 8.91299 14.183 8.29237 13.7254 7.83478C13.2678 7.37719 12.6472 7.12012 12.0001 7.12012C11.3529 7.12012 10.7323 7.37719 10.2747 7.83478C9.81713 8.29237 9.56006 8.91299 9.56006 9.56012V10.0501C9.29484 10.0501 9.04049 10.1555 8.85295 10.343C8.66541 10.5305 8.56006 10.7849 8.56006 11.0501V14.9401C8.56006 15.2053 8.66541 15.4597 8.85295 15.6472C9.04049 15.8348 9.29484 15.9401 9.56006 15.9401H14.4401C14.7053 15.9401 14.9596 15.8348 15.1472 15.6472C15.3347 15.4597 15.4401 15.2053 15.4401 14.9401V11.0001C15.4272 10.7437 15.3162 10.502 15.1301 10.3251C14.9439 10.1483 14.6968 10.0498 14.4401 10.0501Z\" fill=\"#4285F4\"/\u003e\n\u003cpath d=\"M13.6601 10.0504H10.3401V9.56039C10.3401 9.12013 10.515 8.6979 10.8263 8.38659C11.1376 8.07528 11.5598 7.90039 12.0001 7.90039C12.4403 7.90039 12.8626 8.07528 13.1739 8.38659C13.4852 8.6979 13.6601 9.12013 13.6601 9.56039V10.0504Z\" fill=\"white\"/\u003e\n\u003cpath d=\"M12 13.94C12.5357 13.94 12.97 13.5057 12.97 12.97C12.97 12.4343 12.5357 12 12 12C11.4643 12 11.03 12.4343 11.03 12.97C11.03 13.5057 11.4643 13.94 12 13.94Z\" fill=\"white\"/\u003e\n\u003c/svg\u003e\n"
+  },
+  "version": "v1.0.0"
+ }

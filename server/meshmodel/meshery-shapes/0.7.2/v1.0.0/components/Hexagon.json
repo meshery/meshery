@@ -67,7 +67,7 @@
    "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "A six-sided polygon, often used to represent complex data types or multi-faceted entities. This shape is popular in visualizations that require a compact, yet distinct, representation.",
   "displayName": "Hexagon",
   "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",
