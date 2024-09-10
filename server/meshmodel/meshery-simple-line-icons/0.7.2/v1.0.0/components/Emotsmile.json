@@ -64,10 +64,10 @@
   "component": {
    "kind": "Emotsmile",
    "schema": "",
-   "version": ""
+   "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "A smiling emoticon, indicating happiness or satisfaction.",
   "displayName": "",
   "format": "",
   "id": "00000000-0000-0000-0000-000000000000",

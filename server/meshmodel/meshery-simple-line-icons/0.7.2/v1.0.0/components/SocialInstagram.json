@@ -64,10 +64,10 @@
   "component": {
    "kind": "SocialInstagram",
    "schema": "",
-   "version": ""
+   "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "An icon for Instagram, a social media platform focused on photos and videos.",
   "displayName": "",
   "format": "",
   "id": "00000000-0000-0000-0000-000000000000",

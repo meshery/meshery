@@ -67,7 +67,7 @@
    "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "A four-sided shape with opposite sides parallel, used to represent data processing steps or functions with directional flow.",
   "displayName": "Parallelogram",
   "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",

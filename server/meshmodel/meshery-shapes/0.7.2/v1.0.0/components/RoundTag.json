@@ -67,7 +67,7 @@
    "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "A tag shape with rounded edges, offering a softer visual cue for categorized nodes.",
   "displayName": "RoundTag",
   "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",

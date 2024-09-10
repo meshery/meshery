@@ -67,7 +67,7 @@
    "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "A four-sided shape with opposite sides parallel but slanted, creating a dynamic appearance often used to indicate processes or flows that have a directional aspect.",
   "displayName": "SlantedParallelogram",
   "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",

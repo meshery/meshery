@@ -64,10 +64,10 @@
   "component": {
    "kind": "SocialStumbleupon",
    "schema": "",
-   "version": ""
+   "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "An icon for StumbleUpon, a discovery and bookmarking site.",
   "displayName": "",
   "format": "",
   "id": "00000000-0000-0000-0000-000000000000",

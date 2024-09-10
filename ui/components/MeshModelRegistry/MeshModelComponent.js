@@ -137,21 +137,29 @@ const MeshModelComponent_ = ({
   const [checked, setChecked] = useState(false);
   const [modelFilters, setModelsFilters] = useState({ page: 0 });
   const [registrantFilters, setRegistrantsFilters] = useState({ page: 0 });
+  const [componentsFilters, setComponentsFilters] = useState({ page: 0 });
+  const [relationshipsFilters, setRelationshipsFilters] = useState({ page: 0 });
 
   /**
    * RTK Lazy Queries
    */
   const [getMeshModelsData, modelsRes] = useLazyGetMeshModelsQuery();
-  const [getComponentsData] = useLazyGetComponentsQuery();
-  const [getRelationshipsData] = useLazyGetRelationshipsQuery();
+  const [getComponentsData, componentsRes] = useLazyGetComponentsQuery();
+  const [getRelationshipsData, relationshipsRes] = useLazyGetRelationshipsQuery();
   const [getRegistrantsData, registrantsRes] = useLazyGetRegistrantsQuery();
 
   const modelsData = modelsRes.data;
   const registrantsData = registrantsRes.data;
+  const componentsData = componentsRes.data;
+  const relationshipsData = relationshipsRes.data;
 
   const hasMoreModels = modelsData?.total_count > modelsData?.page_size * modelsData?.page;
   const hasMoreRegistrants =
     registrantsData?.total_count > registrantsData?.page_size * registrantsData?.page;
+  const hasMoreComponents =
+    componentsData?.total_count > componentsData?.page_size * componentsData?.page;
+  const hasMoreRelationships =
+    componentsData?.total_count > relationshipsData?.page_size * relationshipsData?.page;
 
   const loadNextModelsPage = useCallback(() => {
     if (modelsRes.isLoading || modelsRes.isFetching || !hasMoreModels) {
@@ -167,12 +175,24 @@ const MeshModelComponent_ = ({
     setRegistrantsFilters((prev) => ({ ...prev, page: prev.page + 1 }));
   }, [registrantsRes, hasMoreRegistrants]);
 
+  const loadNextComponentsPage = useCallback(() => {
+    if (componentsRes.isLoading || componentsRes.isFetching || !hasMoreComponents) {
+      return;
+    }
+    setComponentsFilters((prev) => ({ ...prev, page: prev.page + 1 }));
+  }, [componentsRes, hasMoreComponents]);
+
+  const loadNextRelationshipsPage = useCallback(() => {
+    if (relationshipsRes.isLoading || relationshipsRes.isFetching || !hasMoreRelationships) {
+      return;
+    }
+  }, [relationshipsRes, hasMoreRelationships]);
   /**
    * IntersectionObservers
    */
   const lastModelRef = useInfiniteScrollRef(loadNextModelsPage);
-  // const lastComponentRef = useInfiniteScrollRef();
-  // const lastRelationshipRef = useInfiniteScrollRef();
+  const lastComponentRef = useInfiniteScrollRef(loadNextComponentsPage);
+  const lastRelationshipRef = useInfiniteScrollRef(loadNextRelationshipsPage);
   const lastRegistrantRef = useInfiniteScrollRef(loadNextRegistrantsPage);
 
   const fetchData = useCallback(async () => {
@@ -197,7 +217,7 @@ const MeshModelComponent_ = ({
           response = await getComponentsData(
             {
               params: {
-                page: searchText ? 0 : page.Components,
+                page: searchText ? 0 : componentsFilters.page,
                 pagesize: searchText ? 'all' : rowsPerPage,
                 search: searchText || '',
                 trim: true,
@@ -210,9 +230,8 @@ const MeshModelComponent_ = ({
           response = await getRelationshipsData(
             {
               params: {
-                page: 0,
+                page: searchText ? 0 : relationshipsFilters.page,
                 pagesize: 'all',
-                paginated: true,
                 search: searchText || '',
               },
             },
@@ -322,6 +341,8 @@ const MeshModelComponent_ = ({
     }
     setModelsFilters({ page: 0 });
     setRegistrantsFilters({ page: 0 });
+    setComponentsFilters({ page: 0 });
+    setRelationshipsFilters({ page: 0 });
     setPage({
       Models: 0,
       Components: 0,
@@ -438,10 +459,17 @@ const MeshModelComponent_ = ({
                 setShowDetailsData={setShowDetailsData}
                 showDetailsData={showDetailsData}
                 setResourcesDetail={setResourcesDetail}
-                lastItemRef={{ [MODELS]: lastModelRef, [REGISTRANTS]: lastRegistrantRef }}
+                lastItemRef={{
+                  [MODELS]: lastModelRef,
+                  [REGISTRANTS]: lastRegistrantRef,
+                  [COMPONENTS]: lastComponentRef,
+                  [RELATIONSHIPS]: lastRelationshipRef,
+                }}
                 isFetching={{
                   [MODELS]: modelsRes.isFetching,
                   [REGISTRANTS]: registrantsRes.isFetching,
+                  [COMPONENTS]: componentsRes.isFetching,
+                  [RELATIONSHIPS]: relationshipsRes.isFetching,
                 }}
               />
             </Paper>

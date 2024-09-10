@@ -64,10 +64,10 @@
   "component": {
    "kind": "SizeFullscreen",
    "schema": "",
-   "version": ""
+   "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "Indicates fullscreen mode, often used for maximizing content display.",
   "displayName": "",
   "format": "",
   "id": "00000000-0000-0000-0000-000000000000",

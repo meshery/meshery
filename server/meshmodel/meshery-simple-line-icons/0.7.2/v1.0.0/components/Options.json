@@ -64,10 +64,10 @@
   "component": {
    "kind": "Options",
    "schema": "",
-   "version": ""
+   "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "An icon representing options or settings, often depicted with gears or sliders.",
   "displayName": "",
   "format": "",
   "id": "00000000-0000-0000-0000-000000000000",

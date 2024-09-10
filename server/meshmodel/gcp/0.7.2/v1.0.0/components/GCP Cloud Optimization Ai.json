@@ -1,0 +1,129 @@
+{
+  "capabilities": [
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Add text to nodes body",
+    "displayName": "Body Text",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "body-text",
+    "type": "style",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "GCP Cloud Optimization Ai",
+   "schema": "",
+   "version": "core.meshery.io/v1alpha1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "GCP Cloud Optimization Ai",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": true,
+   "isNamespaced": false,
+   "published": true
+  },
+  "model": {
+   "category": {
+    "name": "Provisioning"
+   },
+   "displayName": "Google Cloud Platform",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "isAnnotation": true,
+    "primaryColor": "#3C494F",
+    "shape": "circle",
+    "styleOverrides": "",
+    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" id=\"Layer_1\" width=\"20\" height=\"20\" viewBox=\"0 0 512 512\"\u003e\u003cstyle xmlns=\"http://www.w3.org/2000/svg\"\u003e.st0{fill:#f8bb16}.st1{fill:#ea4334}.st2{fill:#0074bc}.st3{fill:#e2e3e4}\u003c/style\u003e\u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Layer_1_1_\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"path22\" class=\"st0\" d=\"M322.4 140.9l-44.1-76.8H162.6c-10.3 0-19.9 5.5-24.9 14.5L44.1 241.7c-5.1 8.9-5.1 19.7 0 28.7l35.6 62.1 44-76.4 66.2-115.2h132.5z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"path26\" class=\"st1\" d=\"M468.2 241.7L374.6 78.6c-5.2-8.9-14.7-14.5-24.9-14.5h-71.4l44.1 76.8 66.2 115.2-66.2 115.2h88l57.8-100.9c5-8.9 5-19.8 0-28.7\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"path30\" class=\"st2\" d=\"M410.3 371.2H189.7L123.5 256l-44 76.4 58 101c5.2 8.9 14.7 14.5 24.9 14.5h187.1c10.3 0 19.9-5.5 24.9-14.5l35.9-62.2z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"st3\" d=\"M322.2 371.2H189.6L123.5 256l66.2-115.2h132.5L388.6 256l-66.4 115.2zM256 198.5c-31.9 0-57.6 25.7-57.6 57.6s25.7 57.6 57.6 57.6 57.6-25.7 57.6-57.6-25.8-57.6-57.6-57.6z\"\u003e\u003c/path\u003e\u003c/g\u003e\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 25 22\" fill=\"none\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M19.0571 1.31425C18.9391 1.11285 18.7703 0.945566 18.5672 0.828955C18.3642 0.712344 18.134 0.650454 17.8995 0.649414L10.855 0.658722V0.650744L7.26718 0.66404C7.03246 0.664981 6.80206 0.726817 6.59879 0.843427C6.39552 0.960036 6.22643 1.12737 6.10826 1.32887L2.89648 6.8563L5.06443 10.6139L8.68705 4.40573H20.8798L19.0571 1.31425Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M14.3535 21.69L17.9668 21.6727C18.201 21.672 18.4309 21.6103 18.6336 21.4936C18.8363 21.3769 19.0046 21.2095 19.1217 21.0079L22.6386 14.9433V14.9513L24.4211 11.8531C24.5375 11.6507 24.5987 11.4215 24.5987 11.1883C24.5987 10.9551 24.5375 10.726 24.4211 10.5235L21.1986 4.9668H16.8467L20.4519 11.2043L16.8386 17.4112H16.8547L14.3535 21.69Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M6.08719 21.0185C6.20515 21.2199 6.37401 21.3872 6.57705 21.5038C6.78008 21.6204 7.01026 21.6823 7.24477 21.6834L13.7004 21.7007L15.8858 17.9616L8.64189 17.935L8.5616 17.7954L2.57565 7.43066L0.777057 10.5368C0.660768 10.7393 0.599609 10.9684 0.599609 11.2016C0.599609 11.4348 0.660768 11.6639 0.777057 11.8664L4.28994 17.9271H4.28057L6.08719 21.0185Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M12.6006 14.4683C14.4306 14.4683 15.9141 12.9944 15.9141 11.1761C15.9141 9.35779 14.4306 7.88379 12.6006 7.88379C10.7706 7.88379 9.28711 9.35779 9.28711 11.1761C9.28711 12.9944 10.7706 14.4683 12.6006 14.4683Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003c/svg\u003e\n"
+   },
+   "model": {
+    "version": "0.7.2"
+   },
+   "name": "gcp",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "meshery",
+    "name": "meshery",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "enabled",
+   "subCategory": "Cloud Provider",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
+   "primaryColor": "#4285f4",
+   "shape": "rectangle",
+   "svgColor": "\u003csvg version=\"1.1\" id=\"Artwork\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\n         width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\" style=\"enable-background:new 0 0 24 24;\" xml:space=\"preserve\"\u003e\n\u003cstyle type=\"text/css\"\u003e\n        .st0{fill:#669DF6;}\n        .st1{fill:#AECBFA;}\n        .st2{fill:#4285F4;}\n\u003c/style\u003e\n\u003cpath class=\"st0\" d=\"M10.48,6.35c0-0.203,0.04-0.404,0.12-0.591C7.743,6.4,5.6,8.953,5.6,12c0,0.414,0.336,0.75,0.75,0.75\n        S7.1,12.414,7.1,12c0-2.283,1.571-4.2,3.688-4.742C10.589,6.997,10.481,6.678,10.48,6.35z M17.65,11.25\n        c-0.414,0-0.75,0.336-0.75,0.75c0,2.283-1.571,4.2-3.688,4.742c0.328,0.43,0.4,1.003,0.188,1.5C16.257,17.6,18.4,15.047,18.4,12\n        C18.4,11.586,18.064,11.25,17.65,11.25z\"/\u003e\n\u003cpath class=\"st1\" d=\"M20.605,10.48c0.221,0.001,0.438,0.05,0.638,0.145C20.573,6.118,16.69,2.645,12,2.645\n        c-0.414,0-0.75,0.336-0.75,0.75s0.336,0.75,0.75,0.75c3.904,0,7.143,2.866,7.745,6.603C19.998,10.573,20.298,10.48,20.605,10.48z\n         M12,19.855c-3.904,0-7.143-2.866-7.745-6.603c-0.441,0.307-1.012,0.354-1.497,0.123c0.669,4.507,4.555,7.98,9.242,7.98\n        c0.414,0,0.75-0.336,0.75-0.75C12.75,20.191,12.414,19.855,12,19.855z\"/\u003e\n\u003cpath class=\"st2\" d=\"M12,15.543c-1.957,0-3.543-1.586-3.543-3.543S10.043,8.457,12,8.457s3.543,1.586,3.543,3.543c0,0,0,0,0,0\n        C15.54,13.956,13.956,15.54,12,15.543z M12,9.957c-1.128,0-2.043,0.915-2.043,2.043s0.915,2.043,2.043,2.043\n        s2.043-0.915,2.043-2.043C14.041,10.872,13.128,9.959,12,9.957L12,9.957z M20.605,11.23c-0.425,0-0.77,0.345-0.77,0.77\n        c0,0.425,0.345,0.77,0.77,0.77c0.425,0,0.77-0.345,0.77-0.77C21.374,11.575,21.03,11.23,20.605,11.23L20.605,11.23z M12,5.578\n        c-0.425,0-0.77,0.345-0.77,0.77s0.345,0.77,0.77,0.77c0.425,0,0.77-0.345,0.77-0.77v0C12.77,5.923,12.425,5.579,12,5.578z\n         M3.395,11.23c-0.425,0-0.77,0.345-0.77,0.77s0.345,0.77,0.77,0.77s0.77-0.345,0.77-0.77l0,0C4.165,11.575,3.82,11.23,3.395,11.23z\n         M12,16.88c-0.425,0-0.77,0.345-0.77,0.77c0,0.425,0.345,0.77,0.77,0.77c0.425,0,0.77-0.345,0.77-0.77c0,0,0,0,0,0\n        C12.77,17.225,12.425,16.88,12,16.88z\"/\u003e\n\u003c/svg\u003e\n",
+   "svgWhite": "\u003csvg version=\"1.1\" id=\"Artwork\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\" style=\"enable-background:new 0 0 24 24;\" xml:space=\"preserve\"\u003e\u003cstyle type=\"text/css\"\u003e.st0{fill:#fff;}.st1{fill:#fff;}.st2{fill:#fff;}\u003c/style\u003e\u003cpath class=\"st0\" d=\"M10.48,6.35c0-0.203,0.04-0.404,0.12-0.591C7.743,6.4,5.6,8.953,5.6,12c0,0.414,0.336,0.75,0.75,0.75S7.1,12.414,7.1,12c0-2.283,1.571-4.2,3.688-4.742C10.589,6.997,10.481,6.678,10.48,6.35z M17.65,11.25c-0.414,0-0.75,0.336-0.75,0.75c0,2.283-1.571,4.2-3.688,4.742c0.328,0.43,0.4,1.003,0.188,1.5C16.257,17.6,18.4,15.047,18.4,12C18.4,11.586,18.064,11.25,17.65,11.25z\"/\u003e\u003cpath class=\"st1\" d=\"M20.605,10.48c0.221,0.001,0.438,0.05,0.638,0.145C20.573,6.118,16.69,2.645,12,2.645c-0.414,0-0.75,0.336-0.75,0.75s0.336,0.75,0.75,0.75c3.904,0,7.143,2.866,7.745,6.603C19.998,10.573,20.298,10.48,20.605,10.48z M12,19.855c-3.904,0-7.143-2.866-7.745-6.603c-0.441,0.307-1.012,0.354-1.497,0.123c0.669,4.507,4.555,7.98,9.242,7.98c0.414,0,0.75-0.336,0.75-0.75C12.75,20.191,12.414,19.855,12,19.855z\"/\u003e\u003cpath class=\"st2\" d=\"M12,15.543c-1.957,0-3.543-1.586-3.543-3.543S10.043,8.457,12,8.457s3.543,1.586,3.543,3.543c0,0,0,0,0,0C15.54,13.956,13.956,15.54,12,15.543z M12,9.957c-1.128,0-2.043,0.915-2.043,2.043s0.915,2.043,2.043,2.043s2.043-0.915,2.043-2.043C14.041,10.872,13.128,9.959,12,9.957L12,9.957z M20.605,11.23c-0.425,0-0.77,0.345-0.77,0.77c0,0.425,0.345,0.77,0.77,0.77c0.425,0,0.77-0.345,0.77-0.77C21.374,11.575,21.03,11.23,20.605,11.23L20.605,11.23z M12,5.578c-0.425,0-0.77,0.345-0.77,0.77s0.345,0.77,0.77,0.77c0.425,0,0.77-0.345,0.77-0.77v0C12.77,5.923,12.425,5.579,12,5.578z M3.395,11.23c-0.425,0-0.77,0.345-0.77,0.77s0.345,0.77,0.77,0.77s0.77-0.345,0.77-0.77l0,0C4.165,11.575,3.82,11.23,3.395,11.23z M12,16.88c-0.425,0-0.77,0.345-0.77,0.77c0,0.425,0.345,0.77,0.77,0.77c0.425,0,0.77-0.345,0.77-0.77c0,0,0,0,0,0C12.77,17.225,12.425,16.88,12,16.88z\"/\u003e\u003c/svg\u003e"
+  },
+  "version": "v1.0.0"
+ }

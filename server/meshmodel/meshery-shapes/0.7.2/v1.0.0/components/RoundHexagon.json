@@ -67,7 +67,7 @@
    "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "A six-sided polygon with rounded corners, providing a less angular look for complex data types.",
   "displayName": "RoundHexagon",
   "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",

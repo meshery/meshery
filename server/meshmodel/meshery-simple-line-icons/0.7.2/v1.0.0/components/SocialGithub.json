@@ -64,10 +64,10 @@
   "component": {
    "kind": "SocialGithub",
    "schema": "",
-   "version": ""
+   "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "An icon for GitHub, a platform for version control and collaboration.",
   "displayName": "",
   "format": "",
   "id": "00000000-0000-0000-0000-000000000000",

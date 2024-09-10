@@ -64,10 +64,10 @@
   "component": {
    "kind": "ArrowUpCircle",
    "schema": "",
-   "version": ""
+   "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "An upward arrow enclosed within a circle, often used for upload actions or scrolling up.",
   "displayName": "",
   "format": "",
   "id": "00000000-0000-0000-0000-000000000000",

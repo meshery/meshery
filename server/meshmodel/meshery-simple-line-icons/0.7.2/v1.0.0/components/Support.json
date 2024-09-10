@@ -64,10 +64,10 @@
   "component": {
    "kind": "Support",
    "schema": "",
-   "version": ""
+   "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "An icon indicating support or help, often depicted with a question mark or headset.",
   "displayName": "",
   "format": "",
   "id": "00000000-0000-0000-0000-000000000000",

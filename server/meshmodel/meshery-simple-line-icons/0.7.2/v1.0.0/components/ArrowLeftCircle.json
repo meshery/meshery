@@ -64,10 +64,10 @@
   "component": {
    "kind": "ArrowLeftCircle",
    "schema": "",
-   "version": ""
+   "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "A leftward arrow enclosed within a circle, typically used for navigation or previous actions.",
   "displayName": "",
   "format": "",
   "id": "00000000-0000-0000-0000-000000000000",

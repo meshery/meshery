@@ -136,7 +136,7 @@
    "primaryColor": "#00B39F",
    "secondaryColor": "#00D3A9",
    "shape": "polygon",
-   "shape-polygon-points": "-1 -0.6923076923076923 1 -0.6923076923076923 1 0.3076923076923077 0.6923076923076923 0.3076923076923077 0.5384615384615384 0.6923076923076923 0.3076923076923077 0.3076923076923077 -1 0.3076923076923077",
+   "shape-polygon-points": "-1 -0.69 1 -0.69 1 0.31 0.69 0.30 0.54 0.69 0.31 0.31 -1 0.31",
    "svgColor": "\u003csvg width=\"40\" height=\"40\" viewBox=\"0 0 40 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M1 5.00001L39.0732 5L39.0732 25.5L32.0549 25.5L29.0366 35L26.0366 25.5L1 25.5L1 5.00001Z\" fill=\"#00B39F\" fill-opacity=\"0.1\" stroke=\"#00B39F\" stroke-miterlimit=\"10\"/\u003e\n\u003c/svg",
    "svgWhite": "\u003csvg width=\"40\" height=\"40\" viewBox=\"0 0 40 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M1 5.00001L39.0732 5L39.0732 25.5L32.0549 25.5L29.0366 35L26.0366 25.5L1 25.5L1 5.00001Z\" fill=\"#fff\" fill-opacity=\"0.1\" stroke=\"#fff\" stroke-miterlimit=\"10\"/\u003e\n\u003c/svg\n",
    "width": 30

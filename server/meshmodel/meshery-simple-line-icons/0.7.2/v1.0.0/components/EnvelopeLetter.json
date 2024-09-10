@@ -64,10 +64,10 @@
   "component": {
    "kind": "EnvelopeLetter",
    "schema": "",
-   "version": ""
+   "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "An envelope with a letter icon, often used for messaging or letters.",
   "displayName": "",
   "format": "",
   "id": "00000000-0000-0000-0000-000000000000",

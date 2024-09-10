@@ -64,10 +64,10 @@
   "component": {
    "kind": "SizeActual",
    "schema": "",
-   "version": ""
+   "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "Represents the actual size of an item, often used in scaling or resizing contexts.",
   "displayName": "",
   "format": "",
   "id": "00000000-0000-0000-0000-000000000000",

@@ -64,10 +64,10 @@
   "component": {
    "kind": "CursorMove",
    "schema": "",
-   "version": ""
+   "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "Represents the action of moving or dragging items with a cursor.",
   "displayName": "",
   "format": "",
   "id": "00000000-0000-0000-0000-000000000000",

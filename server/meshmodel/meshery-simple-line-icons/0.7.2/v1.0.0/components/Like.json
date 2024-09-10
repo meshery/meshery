@@ -64,10 +64,10 @@
   "component": {
    "kind": "Like",
    "schema": "",
-   "version": ""
+   "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "A symbol indicating approval or liking something, often represented with a thumbs-up.",
   "displayName": "",
   "format": "",
   "id": "00000000-0000-0000-0000-000000000000",

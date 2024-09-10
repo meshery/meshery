@@ -64,10 +64,10 @@
   "component": {
    "kind": "Wrench",
    "schema": "",
-   "version": ""
+   "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "An icon of a wrench, used for tools or settings adjustments.",
   "displayName": "",
   "format": "",
   "id": "00000000-0000-0000-0000-000000000000",

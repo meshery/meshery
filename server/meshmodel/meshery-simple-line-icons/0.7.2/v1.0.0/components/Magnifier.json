@@ -64,10 +64,10 @@
   "component": {
    "kind": "Magnifier",
    "schema": "",
-   "version": ""
+   "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "Represents a magnifying glass, used for searching or zooming in.",
   "displayName": "",
   "format": "",
   "id": "00000000-0000-0000-0000-000000000000",

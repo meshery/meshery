@@ -64,10 +64,10 @@
   "component": {
    "kind": "Plus",
    "schema": "",
-   "version": ""
+   "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "A plus sign, often used for adding or increasing.",
   "displayName": "",
   "format": "",
   "id": "00000000-0000-0000-0000-000000000000",

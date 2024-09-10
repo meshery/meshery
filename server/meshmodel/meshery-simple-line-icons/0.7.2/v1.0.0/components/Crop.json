@@ -64,10 +64,10 @@
   "component": {
    "kind": "Crop",
    "schema": "",
-   "version": ""
+   "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "Represents the action of cropping an image or element.",
   "displayName": "",
   "format": "",
   "id": "00000000-0000-0000-0000-000000000000",

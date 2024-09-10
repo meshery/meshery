@@ -64,10 +64,10 @@
   "component": {
    "kind": "Mouse",
    "schema": "",
-   "version": ""
+   "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "Represents a computer mouse, used for navigation",
   "displayName": "",
   "format": "",
   "id": "00000000-0000-0000-0000-000000000000",

@@ -64,10 +64,10 @@
   "component": {
    "kind": "BasketLoaded",
    "schema": "",
-   "version": ""
+   "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "A basket filled with items, typically used for indicating a full shopping cart or inventory.",
   "displayName": "",
   "format": "",
   "id": "00000000-0000-0000-0000-000000000000",

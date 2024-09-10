@@ -67,7 +67,7 @@
    "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "A four-sided shape with straight edges and right-angle corners. It is a versatile shape often used to represent data types like documents, processes, or simple entities.",
   "displayName": "Rectangle",
   "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",

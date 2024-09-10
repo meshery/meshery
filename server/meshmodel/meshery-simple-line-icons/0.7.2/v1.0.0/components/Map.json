@@ -64,10 +64,10 @@
   "component": {
    "kind": "Map",
    "schema": "",
-   "version": ""
+   "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "Represents a map icon, used for navigation or location-based information.",
   "displayName": "",
   "format": "",
   "id": "00000000-0000-0000-0000-000000000000",

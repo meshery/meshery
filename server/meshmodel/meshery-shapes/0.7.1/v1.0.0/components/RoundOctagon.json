@@ -67,7 +67,7 @@
    "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "An eight-sided polygon with rounded corners, offering another distinct and less angular representation for complex data.\n",
   "displayName": "RoundOctagon",
   "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",
