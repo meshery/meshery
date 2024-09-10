@@ -201,6 +201,8 @@ jobs:
       - build
     name: Deploy CNCF Extensions Playground
     uses: layer5labs/meshery-extensions-packages/.github/workflows/deploy-meshery-extensions-playground.yml@master
+    with:
+      image: ${{ secrets.IMAGE_NAME }}:playground-${GITHUB_REF/refs\/tags\//}
     secrets: inherit
   
   email-on-failure:
