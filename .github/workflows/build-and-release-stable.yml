@@ -192,6 +192,8 @@ jobs:
       - build
     name: Deploy CNCF Playground
     uses: meshery/meshery/.github/workflows/cncf-playground-deploy-meshery.yaml@master
+    with:
+      image: ${{ secrets.IMAGE_NAME }}:playground-${GITHUB_REF/refs\/tags\//}
     secrets: inherit
   
   call-meshery-extensions-playground-rollout:
