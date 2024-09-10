@@ -75,7 +75,7 @@
    "genealogy": "",
    "isAnnotation": true,
    "isNamespaced": false,
-   "published": true
+   "published": false
   },
   "model": {
    "category": {
@@ -85,7 +85,6 @@
    "displayName": "Simple Line Icons",
    "id": "00000000-0000-0000-0000-000000000000",
    "metadata": {
-    "capabilities": null,
     "isAnnotation": true,
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
