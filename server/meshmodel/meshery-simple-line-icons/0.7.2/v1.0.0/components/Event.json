@@ -64,10 +64,10 @@
   "component": {
    "kind": "Event",
    "schema": "",
-   "version": ""
+   "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "An icon representing an event or calendar item.",
   "displayName": "",
   "format": "",
   "id": "00000000-0000-0000-0000-000000000000",

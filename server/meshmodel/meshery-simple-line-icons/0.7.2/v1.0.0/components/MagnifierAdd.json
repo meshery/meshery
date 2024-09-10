@@ -64,10 +64,10 @@
   "component": {
    "kind": "MagnifierAdd",
    "schema": "",
-   "version": ""
+   "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "A magnifying glass with a plus sign, used for zooming in or enlarging.",
   "displayName": "",
   "format": "",
   "id": "00000000-0000-0000-0000-000000000000",

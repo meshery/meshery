@@ -64,10 +64,10 @@
   "component": {
    "kind": "Home",
    "schema": "",
-   "version": ""
+   "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "Represents a home or house, often used for returning to a main page or section.",
   "displayName": "",
   "format": "",
   "id": "00000000-0000-0000-0000-000000000000",

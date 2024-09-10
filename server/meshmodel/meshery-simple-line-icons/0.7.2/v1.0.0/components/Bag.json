@@ -64,10 +64,10 @@
   "component": {
    "kind": "Bag",
    "schema": "",
-   "version": ""
+   "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "Represents a general bag or tote, used for shopping or carrying items.",
   "displayName": "",
   "format": "",
   "id": "00000000-0000-0000-0000-000000000000",

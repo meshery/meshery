@@ -64,10 +64,10 @@
   "component": {
    "kind": "Plane",
    "schema": "",
-   "version": ""
+   "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "Represents an airplane, often used for travel or aviation themes.",
   "displayName": "",
   "format": "",
   "id": "00000000-0000-0000-0000-000000000000",

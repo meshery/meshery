@@ -64,10 +64,10 @@
   "component": {
    "kind": "Disc",
    "schema": "",
-   "version": ""
+   "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "A circular disc icon, often used for media like CDs or DVDs.",
   "displayName": "",
   "format": "",
   "id": "00000000-0000-0000-0000-000000000000",

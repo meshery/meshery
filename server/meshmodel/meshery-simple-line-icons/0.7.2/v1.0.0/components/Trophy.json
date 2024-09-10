@@ -64,10 +64,10 @@
   "component": {
    "kind": "Trophy",
    "schema": "",
-   "version": ""
+   "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "Represents a trophy, often used for awards or achievements.",
   "displayName": "",
   "format": "",
   "id": "00000000-0000-0000-0000-000000000000",

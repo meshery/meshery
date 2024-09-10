@@ -64,10 +64,10 @@
   "component": {
    "kind": "SocialReddit",
    "schema": "",
-   "version": ""
+   "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "Represents Reddit, a social news aggregation and discussion site.",
   "displayName": "",
   "format": "",
   "id": "00000000-0000-0000-0000-000000000000",

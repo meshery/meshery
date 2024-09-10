@@ -64,10 +64,10 @@
   "component": {
    "kind": "Ban",
    "schema": "",
-   "version": ""
+   "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "Indicates prohibition or restriction, commonly used for 'no' or 'forbidden' actions.",
   "displayName": "",
   "format": "",
   "id": "00000000-0000-0000-0000-000000000000",

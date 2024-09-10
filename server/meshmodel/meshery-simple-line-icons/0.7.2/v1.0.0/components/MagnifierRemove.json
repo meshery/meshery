@@ -64,10 +64,10 @@
   "component": {
    "kind": "MagnifierRemove",
    "schema": "",
-   "version": ""
+   "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "A magnifying glass with a minus sign, used for zooming out or reducing size.",
   "displayName": "",
   "format": "",
   "id": "00000000-0000-0000-0000-000000000000",

@@ -64,10 +64,10 @@
   "component": {
    "kind": "Bubbles",
    "schema": "",
-   "version": ""
+   "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "Multiple speech bubbles, often used to represent a conversation or multiple messages.",
   "displayName": "",
   "format": "",
   "id": "00000000-0000-0000-0000-000000000000",

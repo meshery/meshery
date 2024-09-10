@@ -64,10 +64,10 @@
   "component": {
    "kind": "Star",
    "schema": "",
-   "version": ""
+   "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "Represents a star, often used for ratings or highlighting important items.",
   "displayName": "",
   "format": "",
   "id": "00000000-0000-0000-0000-000000000000",

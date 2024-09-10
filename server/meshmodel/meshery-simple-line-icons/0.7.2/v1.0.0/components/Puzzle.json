@@ -64,10 +64,10 @@
   "component": {
    "kind": "Puzzle",
    "schema": "",
-   "version": ""
+   "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "An icon representing a puzzle piece, often used for games or problem-solving.",
   "displayName": "",
   "format": "",
   "id": "00000000-0000-0000-0000-000000000000",

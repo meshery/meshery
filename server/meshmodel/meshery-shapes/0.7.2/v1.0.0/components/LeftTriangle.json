@@ -67,7 +67,7 @@
    "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "A triangular shape pointing to the left, often used to indicate directional flow or hierarchical steps in processes or data sequences.",
   "displayName": "LeftTriangle",
   "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",

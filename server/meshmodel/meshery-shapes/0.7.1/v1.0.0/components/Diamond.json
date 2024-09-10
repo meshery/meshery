@@ -67,7 +67,7 @@
    "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "A four-sided shape oriented at 45 degrees, resembling a diamond. It is typically used for decision points in flowcharts or to represent special conditions or states.",
   "displayName": "Diamond",
   "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",

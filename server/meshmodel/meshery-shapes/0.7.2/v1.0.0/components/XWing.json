@@ -67,7 +67,7 @@
    "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "This shape resembles the Star Wars X-Wing fighter, potentially useful for visually representing nodes that have multiple connections or interactions, symbolizing complexity and centrality.\n",
   "displayName": "XWing",
   "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",

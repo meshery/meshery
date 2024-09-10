@@ -64,10 +64,10 @@
   "component": {
    "kind": "Present",
    "schema": "",
-   "version": ""
+   "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "An icon of a present or gift, often used for celebrations or events.",
   "displayName": "",
   "format": "",
   "id": "00000000-0000-0000-0000-000000000000",

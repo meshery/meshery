@@ -67,7 +67,7 @@
    "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "A rectangle with corners that are cut off or beveled. This shape gives a more modern and distinct appearance, often used to highlight important nodes or different types of data.",
   "displayName": "CutRectangle",
   "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",

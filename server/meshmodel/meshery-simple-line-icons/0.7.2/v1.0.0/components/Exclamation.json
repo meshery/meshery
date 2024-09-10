@@ -64,10 +64,10 @@
   "component": {
    "kind": "Exclamation",
    "schema": "",
-   "version": ""
+   "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "A symbol indicating caution or important information, typically an exclamation mark.",
   "displayName": "",
   "format": "",
   "id": "00000000-0000-0000-0000-000000000000",

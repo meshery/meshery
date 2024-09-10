@@ -67,7 +67,7 @@
    "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "A four-sided shape with one pair of parallel sides, used to indicate hierarchical relationships or steps in a process.",
   "displayName": "Trapezoid",
   "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",

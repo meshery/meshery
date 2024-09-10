@@ -64,10 +64,10 @@
   "component": {
    "kind": "Diamond",
    "schema": "",
-   "version": ""
+   "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "A diamond shape, often used to represent high value or quality.",
   "displayName": "",
   "format": "",
   "id": "00000000-0000-0000-0000-000000000000",

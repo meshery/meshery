@@ -64,10 +64,10 @@
   "component": {
    "kind": "Badge",
    "schema": "",
-   "version": ""
+   "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "A symbol often representing a badge or award, typically used for highlighting achievements or status.",
   "displayName": "",
   "format": "",
   "id": "00000000-0000-0000-0000-000000000000",

@@ -64,10 +64,10 @@
   "component": {
    "kind": "Clock",
    "schema": "",
-   "version": ""
+   "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "An icon depicting a clock, used for time-related functions.",
   "displayName": "",
   "format": "",
   "id": "00000000-0000-0000-0000-000000000000",

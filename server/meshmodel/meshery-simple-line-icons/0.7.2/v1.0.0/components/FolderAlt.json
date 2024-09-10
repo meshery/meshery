@@ -64,10 +64,10 @@
   "component": {
    "kind": "FolderAlt",
    "schema": "",
-   "version": ""
+   "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "An alternative folder icon, often used for different types of file organization.",
   "displayName": "",
   "format": "",
   "id": "00000000-0000-0000-0000-000000000000",

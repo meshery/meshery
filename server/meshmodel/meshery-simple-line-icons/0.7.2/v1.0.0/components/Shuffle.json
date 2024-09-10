@@ -64,10 +64,10 @@
   "component": {
    "kind": "Shuffle",
    "schema": "",
-   "version": ""
+   "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "An icon indicating shuffle or randomization, often used in media playback.",
   "displayName": "",
   "format": "",
   "id": "00000000-0000-0000-0000-000000000000",

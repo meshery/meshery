@@ -64,10 +64,10 @@
   "component": {
    "kind": "ArrowDownCircle",
    "schema": "",
-   "version": ""
+   "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "A downward arrow enclosed within a circle, often used for download actions or dropdown menus.",
   "displayName": "",
   "format": "",
   "id": "00000000-0000-0000-0000-000000000000",

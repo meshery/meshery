@@ -64,10 +64,10 @@
   "component": {
    "kind": "Heart",
    "schema": "",
-   "version": ""
+   "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "A heart icon, symbolizing love or affection.",
   "displayName": "",
   "format": "",
   "id": "00000000-0000-0000-0000-000000000000",

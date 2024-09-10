@@ -64,10 +64,10 @@
   "component": {
    "kind": "ArrowUp",
    "schema": "",
-   "version": ""
+   "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "An upward-pointing arrow indicating a rise or upward movement.",
   "displayName": "",
   "format": "",
   "id": "00000000-0000-0000-0000-000000000000",

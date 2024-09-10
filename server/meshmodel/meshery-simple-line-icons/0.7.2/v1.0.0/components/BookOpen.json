@@ -64,10 +64,10 @@
   "component": {
    "kind": "BookOpen",
    "schema": "",
-   "version": ""
+   "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "An open book icon, often used to represent reading or educational content.",
   "displayName": "",
   "format": "",
   "id": "00000000-0000-0000-0000-000000000000",
