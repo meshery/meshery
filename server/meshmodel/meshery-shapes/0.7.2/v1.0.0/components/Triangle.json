@@ -67,7 +67,7 @@
    "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "A simple three-sided shape, often used to represent hierarchical data or directional flows. It is useful for indicating movement, direction, or hierarchical relationships within a network.",
   "displayName": "Triangle",
   "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",

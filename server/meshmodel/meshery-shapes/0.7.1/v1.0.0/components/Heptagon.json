@@ -67,7 +67,7 @@
    "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "A polygon with seven straight sides and angles. This shape is less common but can be used to represent specific or unique data types that require distinction from other polygonal shapes.\n",
   "displayName": "Heptagon",
   "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",

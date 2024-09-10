@@ -67,7 +67,7 @@
    "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "A quadrilateral with opposite sides parallel but not perpendicular, creating a skewed rectangle look. Useful for depicting relationships that aren't straightforward or direct.",
   "displayName": "Rhomboid",
   "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",

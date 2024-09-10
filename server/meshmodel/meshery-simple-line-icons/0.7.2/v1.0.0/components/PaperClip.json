@@ -64,10 +64,10 @@
   "component": {
    "kind": "PaperClip",
    "schema": "",
-   "version": ""
+   "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "A paper clip icon, used for attaching or clipping files.",
   "displayName": "",
   "format": "",
   "id": "00000000-0000-0000-0000-000000000000",

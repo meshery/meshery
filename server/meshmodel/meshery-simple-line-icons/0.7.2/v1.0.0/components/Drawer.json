@@ -64,10 +64,10 @@
   "component": {
    "kind": "Drawer",
    "schema": "",
-   "version": ""
+   "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "A drawer icon, representing a pull-out drawer or storage unit.",
   "displayName": "",
   "format": "",
   "id": "00000000-0000-0000-0000-000000000000",

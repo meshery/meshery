@@ -64,10 +64,10 @@
   "component": {
    "kind": "ArrowRightCircle",
    "schema": "",
-   "version": ""
+   "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "A rightward arrow within a circle, commonly used for moving forward or next actions.",
   "displayName": "",
   "format": "",
   "id": "00000000-0000-0000-0000-000000000000",

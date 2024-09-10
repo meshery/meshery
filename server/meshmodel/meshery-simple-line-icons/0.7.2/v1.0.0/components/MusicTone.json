@@ -64,10 +64,10 @@
   "component": {
    "kind": "MusicTone",
    "schema": "",
-   "version": ""
+   "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "An icon depicting a music note or tone, used for audio or musical content.",
   "displayName": "",
   "format": "",
   "id": "00000000-0000-0000-0000-000000000000",

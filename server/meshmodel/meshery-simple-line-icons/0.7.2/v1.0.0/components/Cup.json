@@ -64,10 +64,10 @@
   "component": {
    "kind": "Cup",
    "schema": "",
-   "version": ""
+   "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "A cup icon, often used to represent drinks or beverages.",
   "displayName": "",
   "format": "",
   "id": "00000000-0000-0000-0000-000000000000",

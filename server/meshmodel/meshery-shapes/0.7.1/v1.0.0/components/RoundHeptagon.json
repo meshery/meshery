@@ -67,7 +67,7 @@
    "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "A seven-sided polygon with rounded corners, less common but useful for unique data representations that require distinction.",
   "displayName": "RoundHeptagon",
   "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",

@@ -97,7 +97,6 @@ func VerifyandUpdateSpreadsheet(cred string, wg *sync.WaitGroup, srv *sheets.Ser
 		for _, comp := range data.Components {
 			existingModels, ok := RegistrantToModelsToComponentsMap[data.Model.Registrant] // replace with registrantr
 			if ok {
-
 				existingComps, ok := existingModels[data.Model.Model]
 
 				if ok {
@@ -112,7 +111,6 @@ func VerifyandUpdateSpreadsheet(cred string, wg *sync.WaitGroup, srv *sheets.Ser
 					entriesToBeAddedInCompSheet = addEntriesInCompUpdateList(data.Model, data.Components, entriesToBeAddedInCompSheet)
 				}
 			} else {
-
 				RegistrantToModelsToComponentsMap[data.Model.Registrant] = make(map[string]map[string]bool)
 				entriesToBeAddedInCompSheet = addEntriesInCompUpdateList(data.Model, data.Components, entriesToBeAddedInCompSheet)
 			}

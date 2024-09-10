@@ -64,10 +64,10 @@
   "component": {
    "kind": "Fire",
    "schema": "",
-   "version": ""
+   "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "Represents fire, often used to indicate something hot or trending.",
   "displayName": "",
   "format": "",
   "id": "00000000-0000-0000-0000-000000000000",

@@ -64,10 +64,10 @@
   "component": {
    "kind": "Docs",
    "schema": "",
-   "version": ""
+   "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "Multiple documents, often used to represent a collection or suite of files.",
   "displayName": "",
   "format": "",
   "id": "00000000-0000-0000-0000-000000000000",

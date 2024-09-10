@@ -64,10 +64,10 @@
   "component": {
    "kind": "Film",
    "schema": "",
-   "version": ""
+   "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "A film reel icon, used for movies or video content.",
   "displayName": "",
   "format": "",
   "id": "00000000-0000-0000-0000-000000000000",

@@ -64,10 +64,10 @@
   "component": {
    "kind": "ShareAlt",
    "schema": "",
-   "version": ""
+   "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "An alternative share icon, often used for different sharing methods or platforms.",
   "displayName": "",
   "format": "",
   "id": "00000000-0000-0000-0000-000000000000",

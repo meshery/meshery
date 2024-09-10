@@ -64,10 +64,10 @@
   "component": {
    "kind": "OptionsVertical",
    "schema": "",
-   "version": ""
+   "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "A vertical version of the options icon, often used for settings or menu items.",
   "displayName": "",
   "format": "",
   "id": "00000000-0000-0000-0000-000000000000",

@@ -67,7 +67,7 @@
    "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "A diamond shape with rounded corners, used to indicate special conditions or decision points while maintaining a softer visual appeal.",
   "displayName": "RoundDiamond",
   "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",

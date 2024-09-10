@@ -67,7 +67,7 @@
    "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "A polygonal shape with any number of points, allowing for highly customizable node representations to fit specific data needs.\n",
   "displayName": "Plus",
   "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",

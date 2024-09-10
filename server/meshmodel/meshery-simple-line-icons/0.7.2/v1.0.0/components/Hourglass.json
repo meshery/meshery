@@ -64,10 +64,10 @@
   "component": {
    "kind": "Hourglass",
    "schema": "",
-   "version": ""
+   "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "An icon of an hourglass, representing time or waiting periods.",
   "displayName": "",
   "format": "",
   "id": "00000000-0000-0000-0000-000000000000",

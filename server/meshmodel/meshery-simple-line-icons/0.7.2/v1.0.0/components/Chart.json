@@ -64,10 +64,10 @@
   "component": {
    "kind": "Chart",
    "schema": "",
-   "version": ""
+   "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "A chart icon, often used to display data or statistics.",
   "displayName": "",
   "format": "",
   "id": "00000000-0000-0000-0000-000000000000",

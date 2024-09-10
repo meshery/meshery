@@ -64,10 +64,10 @@
   "component": {
    "kind": "ArrowRight",
    "schema": "",
-   "version": ""
+   "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "A rightward-pointing arrow indicating a move or navigation to the right.",
   "displayName": "",
   "format": "",
   "id": "00000000-0000-0000-0000-000000000000",

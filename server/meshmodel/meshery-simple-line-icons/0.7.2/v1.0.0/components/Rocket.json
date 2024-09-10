@@ -64,10 +64,10 @@
   "component": {
    "kind": "Rocket",
    "schema": "",
-   "version": ""
+   "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "Represents a rocket, often used for themes related to space, progress, or launching.",
   "displayName": "",
   "format": "",
   "id": "00000000-0000-0000-0000-000000000000",

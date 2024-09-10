@@ -67,7 +67,7 @@
    "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "A shape resembling a label or tag, useful for categorized or labeled data nodes.",
   "displayName": "Tag",
   "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",
