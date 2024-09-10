@@ -10,9 +10,6 @@
     "start": "NODE_ENV=production node server.js",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
-    "cy:run": "cypress run",
-    "cy:open": "cypress open",
-    "test": "start-server-and-test dev http://localhost:3001 cy:run && next lint",
     "clean": "rm -rf .next,out"
   },
   "keywords": [],
@@ -20,9 +17,9 @@
   "repository": "https://github.com/meshery/meshery",
   "license": "Apache-2.0",
   "dependencies": {
-    "@babel/eslint-parser": "^7.23.10",
+    "@babel/eslint-parser": "^7.25.1",
     "@emotion/cache": "^11.10.5",
-    "@emotion/react": "^11.11.3",
+    "@emotion/react": "^11.13.0",
     "@emotion/server": "^11.11.0",
     "@emotion/styled": "^11.11.5",
     "@mui/icons-material": "^5.15.16",
@@ -36,12 +33,9 @@
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
-    "@cypress/code-coverage": "^3.12.39",
-    "cypress": "^13.8.1",
     "eslint": "^8.57.0",
-    "eslint-config-next": "^14.1.4",
-    "eslint-plugin-cypress": "^3.3.0",
-    "start-server-and-test": "^2.0.3"
+    "eslint-config-next": "^14.2.7",
+    "start-server-and-test": "^2.0.5"
   },
   "engines": {
     "node": "^16 || ^18"

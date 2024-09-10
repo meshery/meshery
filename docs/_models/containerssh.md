@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Containerssh
-subtitle: Collaborative and visual infrastructure as code for Containerssh
+subtitle: Collaborative and visual infrastructure as design for Containerssh
 image: /assets/img/integrations/containerssh/icons/color/containerssh-color.svg
 permalink: extensibility/integrations/containerssh
 docURL: https://docs.meshery.io/extensibility/integrations/containerssh
@@ -11,12 +11,12 @@ integrations-subcategory: Security & Compliance
 registrant: Artifact Hub
 components: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Secure shell (SSH) access to containers or VMsMulti-factor authentication (MFA) supportCustomizable authentication and authorizationManages ContainerSSHSecure and flexible SSH access to Kubernetes resources",
+  "Secure shell (SSH) access to containers or VMs",
+  "Multi-factor authentication (MFA) support"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Collaborative Infrastructure as Design"
+howItWorksDetails: "Secure and flexible SSH access to Kubernetes resources"
 language: en
 list: include
 type: extensibility

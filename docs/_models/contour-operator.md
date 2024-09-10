@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Contour
-subtitle: Collaborative and visual infrastructure as code for Contour
+subtitle: Collaborative and visual infrastructure as design for Contour
 image: /assets/img/integrations/contour-operator/icons/color/contour-operator-color.svg
 permalink: extensibility/integrations/contour-operator
 docURL: https://docs.meshery.io/extensibility/integrations/contour-operator
@@ -63,7 +63,7 @@ featureList: [
   "Introduces a new ingress API (HTTPProxy) which is implemented via a Custom Resource Definition (CRD).",
   "Solves shortcomings in the original design."
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Builds upon the basic Kubernetes resource and controller concepts, but includes domain-specific knowledge to automate the entire lifecycle of Contour."
 language: en
 list: include

@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Mattermost Operator
-subtitle: Collaborative and visual infrastructure as code for Mattermost Operator
+subtitle: Collaborative and visual infrastructure as design for Mattermost Operator
 image: /assets/img/integrations/mattermost-operator/icons/color/mattermost-operator-color.svg
 permalink: extensibility/integrations/mattermost-operator
 docURL: https://docs.meshery.io/extensibility/integrations/mattermost-operator
@@ -23,9 +23,9 @@ components:
   whiteIcon: assets/img/integrations/mattermost-operator/components/mattermost/icons/white/mattermost-white.svg
   description: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Automates Mattermost deployment and management",
+  "Simplifies configuration and updates",
+  "Integrates with Kubernetes resources"
 ]
 howItWorks: "Connect Mattermost with any of your favorite cloud native apps in just a few clicks. Design, build, and automate anything for your work by integrating apps like Mattermost to create visual automated workflows. Choose from thousands of ready-made apps or use our no-code toolkit to connect to apps not yet in our library."
 howItWorksDetails: "Configuring your own Mattermost environment

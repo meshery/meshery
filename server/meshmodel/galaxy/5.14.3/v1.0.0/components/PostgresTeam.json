@@ -1,0 +1,196 @@
+{
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "PostgresTeam",
+   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"additionalMembers\": {\n     \"additionalProperties\": {\n      \"description\": \"List of users who will also be added to the Postgres cluster\",\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"nullable\": true,\n      \"type\": \"array\"\n     },\n     \"description\": \"Map for teamId and associated additional users\",\n     \"type\": \"object\"\n    },\n    \"additionalSuperuserTeams\": {\n     \"additionalProperties\": {\n      \"description\": \"List of teams to become Postgres superusers\",\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"nullable\": true,\n      \"type\": \"array\"\n     },\n     \"description\": \"Map for teamId and associated additional superuser teams\",\n     \"type\": \"object\"\n    },\n    \"additionalTeams\": {\n     \"additionalProperties\": {\n      \"description\": \"List of teams whose members will also be added to the Postgres cluster\",\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"nullable\": true,\n      \"type\": \"array\"\n     },\n     \"description\": \"Map for teamId and associated additional teams\",\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"kind\",\n  \"apiVersion\",\n  \"spec\"\n ],\n \"title\": \"Postgres Team\",\n \"type\": \"object\"\n}",
+   "version": "acid.zalan.do/v1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "Postgres Team",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "published": false
+  },
+  "model": {
+   "category": {
+    "name": "Uncategorized"
+   },
+   "displayName": "Galaxy",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "defaultData": "",
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "svgColor": "\u003csvg width=\"506\" height=\"397\" viewBox=\"0 0 506 397\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003crect width=\"377\" height=\"109\" rx=\"8\" fill=\"#58585A\"/\u003e\n\u003crect y=\"149\" width=\"377\" height=\"109\" rx=\"8\" fill=\"#58585A\"/\u003e\n\u003crect x=\"129\" y=\"288\" width=\"377\" height=\"109\" rx=\"8\" fill=\"url(#paint0_linear_27226_21870)\"/\u003e\n\u003cdefs\u003e\n\u003clinearGradient id=\"paint0_linear_27226_21870\" x1=\"129\" y1=\"342.5\" x2=\"506\" y2=\"342.5\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop stop-color=\"#D1BE06\"/\u003e\n\u003cstop offset=\"1\" stop-color=\"#E7E5DE\"/\u003e\n\u003c/linearGradient\u003e\n\u003c/defs\u003e\n\u003c/svg\u003e\n",
+    "svgComplete": "",
+    "svgWhite": "\u003csvg width=\"506\" height=\"397\" viewBox=\"0 0 506 397\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003crect width=\"377\" height=\"109\" rx=\"8\" fill=\"white\"/\u003e\n\u003crect y=\"149\" width=\"377\" height=\"109\" rx=\"8\" fill=\"white\"/\u003e\n\u003crect x=\"129\" y=\"288\" width=\"377\" height=\"109\" rx=\"8\" fill=\"white\"/\u003e\n\u003c/svg\u003e\n"
+   },
+   "model": {
+    "version": "5.14.3"
+   },
+   "name": "galaxy",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "subCategory": "Uncategorized",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "ignored",
+  "styles": {
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "svgColor": "\u003csvg width=\"506\" height=\"397\" viewBox=\"0 0 506 397\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003crect width=\"377\" height=\"109\" rx=\"8\" fill=\"#58585A\"/\u003e\n\u003crect y=\"149\" width=\"377\" height=\"109\" rx=\"8\" fill=\"#58585A\"/\u003e\n\u003crect x=\"129\" y=\"288\" width=\"377\" height=\"109\" rx=\"8\" fill=\"url(#paint0_linear_27226_21870)\"/\u003e\n\u003cdefs\u003e\n\u003clinearGradient id=\"paint0_linear_27226_21870\" x1=\"129\" y1=\"342.5\" x2=\"506\" y2=\"342.5\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop stop-color=\"#D1BE06\"/\u003e\n\u003cstop offset=\"1\" stop-color=\"#E7E5DE\"/\u003e\n\u003c/linearGradient\u003e\n\u003c/defs\u003e\n\u003c/svg\u003e\n",
+   "svgWhite": "\u003csvg width=\"506\" height=\"397\" viewBox=\"0 0 506 397\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003crect width=\"377\" height=\"109\" rx=\"8\" fill=\"white\"/\u003e\n\u003crect y=\"149\" width=\"377\" height=\"109\" rx=\"8\" fill=\"white\"/\u003e\n\u003crect x=\"129\" y=\"288\" width=\"377\" height=\"109\" rx=\"8\" fill=\"white\"/\u003e\n\u003c/svg\u003e\n"
+  },
+  "version": "v1.0.0"
+ }

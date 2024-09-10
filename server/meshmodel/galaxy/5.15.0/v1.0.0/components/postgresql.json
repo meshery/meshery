@@ -1,0 +1,196 @@
+{
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "postgresql",
+   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"additionalVolumes\": {\n     \"items\": {\n      \"properties\": {\n       \"mountPath\": {\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"type\": \"string\"\n       },\n       \"subPath\": {\n        \"type\": \"string\"\n       },\n       \"targetContainers\": {\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"nullable\": true,\n        \"type\": \"array\"\n       },\n       \"volumeSource\": {\n        \"format\": \"textarea\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"name\",\n       \"mountPath\",\n       \"volumeSource\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"allowedSourceRanges\": {\n     \"items\": {\n      \"pattern\": \"^(\\\\d|[1-9]\\\\d|1\\\\d\\\\d|2[0-4]\\\\d|25[0-5])\\\\.(\\\\d|[1-9]\\\\d|1\\\\d\\\\d|2[0-4]\\\\d|25[0-5])\\\\.(\\\\d|[1-9]\\\\d|1\\\\d\\\\d|2[0-4]\\\\d|25[0-5])\\\\.(\\\\d|[1-9]\\\\d|1\\\\d\\\\d|2[0-4]\\\\d|25[0-5])\\\\/(\\\\d|[1-2]\\\\d|3[0-2])$\",\n      \"type\": \"string\"\n     },\n     \"nullable\": true,\n     \"type\": \"array\"\n    },\n    \"clone\": {\n     \"properties\": {\n      \"cluster\": {\n       \"type\": \"string\"\n      },\n      \"s3_access_key_id\": {\n       \"type\": \"string\"\n      },\n      \"s3_endpoint\": {\n       \"type\": \"string\"\n      },\n      \"s3_force_path_style\": {\n       \"type\": \"boolean\"\n      },\n      \"s3_secret_access_key\": {\n       \"type\": \"string\"\n      },\n      \"s3_wal_path\": {\n       \"type\": \"string\"\n      },\n      \"timestamp\": {\n       \"pattern\": \"^([0-9]+)-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])[Tt]([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9]|60)(\\\\.[0-9]+)?(([+-]([01][0-9]|2[0-3]):[0-5][0-9]))$\",\n       \"type\": \"string\"\n      },\n      \"uid\": {\n       \"format\": \"uuid\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"cluster\"\n     ],\n     \"type\": \"object\"\n    },\n    \"connectionPooler\": {\n     \"properties\": {\n      \"dockerImage\": {\n       \"type\": \"string\"\n      },\n      \"maxDBConnections\": {\n       \"type\": \"integer\"\n      },\n      \"mode\": {\n       \"enum\": [\n        \"session\",\n        \"transaction\"\n       ],\n       \"type\": \"string\"\n      },\n      \"numberOfInstances\": {\n       \"minimum\": 1,\n       \"type\": \"integer\"\n      },\n      \"resources\": {\n       \"properties\": {\n        \"limits\": {\n         \"properties\": {\n          \"cpu\": {\n           \"pattern\": \"^(\\\\d+m|\\\\d+(\\\\.\\\\d{1,3})?)$\",\n           \"type\": \"string\"\n          },\n          \"memory\": {\n           \"pattern\": \"^(\\\\d+(e\\\\d+)?|\\\\d+(\\\\.\\\\d+)?(e\\\\d+)?[EPTGMK]i?)$\",\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"requests\": {\n         \"properties\": {\n          \"cpu\": {\n           \"pattern\": \"^(\\\\d+m|\\\\d+(\\\\.\\\\d{1,3})?)$\",\n           \"type\": \"string\"\n          },\n          \"memory\": {\n           \"pattern\": \"^(\\\\d+(e\\\\d+)?|\\\\d+(\\\\.\\\\d+)?(e\\\\d+)?[EPTGMK]i?)$\",\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"schema\": {\n       \"type\": \"string\"\n      },\n      \"user\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"databases\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"object\"\n    },\n    \"dockerImage\": {\n     \"type\": \"string\"\n    },\n    \"enableConnectionPooler\": {\n     \"type\": \"boolean\"\n    },\n    \"enableLogicalBackup\": {\n     \"type\": \"boolean\"\n    },\n    \"enableMasterLoadBalancer\": {\n     \"type\": \"boolean\"\n    },\n    \"enableMasterPoolerLoadBalancer\": {\n     \"type\": \"boolean\"\n    },\n    \"enableReplicaConnectionPooler\": {\n     \"type\": \"boolean\"\n    },\n    \"enableReplicaLoadBalancer\": {\n     \"type\": \"boolean\"\n    },\n    \"enableReplicaPoolerLoadBalancer\": {\n     \"type\": \"boolean\"\n    },\n    \"enableShmVolume\": {\n     \"type\": \"boolean\"\n    },\n    \"env\": {\n     \"items\": {\n      \"format\": \"textarea\",\n      \"type\": \"string\"\n     },\n     \"nullable\": true,\n     \"type\": \"array\"\n    },\n    \"initContainers\": {\n     \"items\": {\n      \"format\": \"textarea\",\n      \"type\": \"string\"\n     },\n     \"nullable\": true,\n     \"type\": \"array\"\n    },\n    \"init_containers\": {\n     \"description\": \"deprecated\",\n     \"items\": {\n      \"format\": \"textarea\",\n      \"type\": \"string\"\n     },\n     \"nullable\": true,\n     \"type\": \"array\"\n    },\n    \"logicalBackupSchedule\": {\n     \"pattern\": \"^(\\\\d+|\\\\*)(/\\\\d+)?(\\\\s+(\\\\d+|\\\\*)(/\\\\d+)?){4}$\",\n     \"type\": \"string\"\n    },\n    \"maintenanceWindows\": {\n     \"items\": {\n      \"pattern\": \"^\\\\ *((Mon|Tue|Wed|Thu|Fri|Sat|Sun):(2[0-3]|[01]?\\\\d):([0-5]?\\\\d)|(2[0-3]|[01]?\\\\d):([0-5]?\\\\d))-((Mon|Tue|Wed|Thu|Fri|Sat|Sun):(2[0-3]|[01]?\\\\d):([0-5]?\\\\d)|(2[0-3]|[01]?\\\\d):([0-5]?\\\\d))\\\\ *$\",\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"masterServiceAnnotations\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"object\"\n    },\n    \"nodeAffinity\": {\n     \"properties\": {\n      \"preferredDuringSchedulingIgnoredDuringExecution\": {\n       \"items\": {\n        \"properties\": {\n         \"preference\": {\n          \"properties\": {\n           \"matchExpressions\": {\n            \"items\": {\n             \"properties\": {\n              \"key\": {\n               \"type\": \"string\"\n              },\n              \"operator\": {\n               \"type\": \"string\"\n              },\n              \"values\": {\n               \"items\": {\n                \"type\": \"string\"\n               },\n               \"type\": \"array\"\n              }\n             },\n             \"required\": [\n              \"key\",\n              \"operator\"\n             ],\n             \"type\": \"object\"\n            },\n            \"type\": \"array\"\n           },\n           \"matchFields\": {\n            \"items\": {\n             \"properties\": {\n              \"key\": {\n               \"type\": \"string\"\n              },\n              \"operator\": {\n               \"type\": \"string\"\n              },\n              \"values\": {\n               \"items\": {\n                \"type\": \"string\"\n               },\n               \"type\": \"array\"\n              }\n             },\n             \"required\": [\n              \"key\",\n              \"operator\"\n             ],\n             \"type\": \"object\"\n            },\n            \"type\": \"array\"\n           }\n          },\n          \"type\": \"object\"\n         },\n         \"weight\": {\n          \"format\": \"int32\",\n          \"type\": \"integer\"\n         }\n        },\n        \"required\": [\n         \"preference\",\n         \"weight\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"requiredDuringSchedulingIgnoredDuringExecution\": {\n       \"properties\": {\n        \"nodeSelectorTerms\": {\n         \"items\": {\n          \"properties\": {\n           \"matchExpressions\": {\n            \"items\": {\n             \"properties\": {\n              \"key\": {\n               \"type\": \"string\"\n              },\n              \"operator\": {\n               \"type\": \"string\"\n              },\n              \"values\": {\n               \"items\": {\n                \"type\": \"string\"\n               },\n               \"type\": \"array\"\n              }\n             },\n             \"required\": [\n              \"key\",\n              \"operator\"\n             ],\n             \"type\": \"object\"\n            },\n            \"type\": \"array\"\n           },\n           \"matchFields\": {\n            \"items\": {\n             \"properties\": {\n              \"key\": {\n               \"type\": \"string\"\n              },\n              \"operator\": {\n               \"type\": \"string\"\n              },\n              \"values\": {\n               \"items\": {\n                \"type\": \"string\"\n               },\n               \"type\": \"array\"\n              }\n             },\n             \"required\": [\n              \"key\",\n              \"operator\"\n             ],\n             \"type\": \"object\"\n            },\n            \"type\": \"array\"\n           }\n          },\n          \"type\": \"object\"\n         },\n         \"type\": \"array\"\n        }\n       },\n       \"required\": [\n        \"nodeSelectorTerms\"\n       ],\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"numberOfInstances\": {\n     \"minimum\": 0,\n     \"type\": \"integer\"\n    },\n    \"patroni\": {\n     \"properties\": {\n      \"failsafe_mode\": {\n       \"type\": \"boolean\"\n      },\n      \"initdb\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"object\"\n      },\n      \"loop_wait\": {\n       \"type\": \"integer\"\n      },\n      \"maximum_lag_on_failover\": {\n       \"type\": \"integer\"\n      },\n      \"pg_hba\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"retry_timeout\": {\n       \"type\": \"integer\"\n      },\n      \"slots\": {\n       \"additionalProperties\": {\n        \"additionalProperties\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"object\"\n      },\n      \"synchronous_mode\": {\n       \"type\": \"boolean\"\n      },\n      \"synchronous_mode_strict\": {\n       \"type\": \"boolean\"\n      },\n      \"synchronous_node_count\": {\n       \"type\": \"integer\"\n      },\n      \"ttl\": {\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"podAnnotations\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"object\"\n    },\n    \"podPriorityClassName\": {\n     \"type\": \"string\"\n    },\n    \"pod_priority_class_name\": {\n     \"description\": \"deprecated\",\n     \"type\": \"string\"\n    },\n    \"postgresql\": {\n     \"properties\": {\n      \"parameters\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"object\"\n      },\n      \"version\": {\n       \"enum\": [\n        \"10\",\n        \"11\",\n        \"12\",\n        \"13\",\n        \"14\",\n        \"15\"\n       ],\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"version\"\n     ],\n     \"type\": \"object\"\n    },\n    \"preparedDatabases\": {\n     \"additionalProperties\": {\n      \"properties\": {\n       \"defaultUsers\": {\n        \"type\": \"boolean\"\n       },\n       \"extensions\": {\n        \"additionalProperties\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"object\"\n       },\n       \"schemas\": {\n        \"additionalProperties\": {\n         \"properties\": {\n          \"defaultRoles\": {\n           \"type\": \"boolean\"\n          },\n          \"defaultUsers\": {\n           \"type\": \"boolean\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"type\": \"object\"\n       },\n       \"secretNamespace\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"object\"\n    },\n    \"replicaLoadBalancer\": {\n     \"description\": \"deprecated\",\n     \"type\": \"boolean\"\n    },\n    \"replicaServiceAnnotations\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"object\"\n    },\n    \"resources\": {\n     \"properties\": {\n      \"limits\": {\n       \"properties\": {\n        \"cpu\": {\n         \"pattern\": \"^(\\\\d+m|\\\\d+(\\\\.\\\\d{1,3})?)$\",\n         \"type\": \"string\"\n        },\n        \"memory\": {\n         \"pattern\": \"^(\\\\d+(e\\\\d+)?|\\\\d+(\\\\.\\\\d+)?(e\\\\d+)?[EPTGMK]i?)$\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"requests\": {\n       \"properties\": {\n        \"cpu\": {\n         \"pattern\": \"^(\\\\d+m|\\\\d+(\\\\.\\\\d{1,3})?)$\",\n         \"type\": \"string\"\n        },\n        \"memory\": {\n         \"pattern\": \"^(\\\\d+(e\\\\d+)?|\\\\d+(\\\\.\\\\d+)?(e\\\\d+)?[EPTGMK]i?)$\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"schedulerName\": {\n     \"type\": \"string\"\n    },\n    \"serviceAnnotations\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"object\"\n    },\n    \"sidecars\": {\n     \"items\": {\n      \"format\": \"textarea\",\n      \"type\": \"string\"\n     },\n     \"nullable\": true,\n     \"type\": \"array\"\n    },\n    \"spiloFSGroup\": {\n     \"type\": \"integer\"\n    },\n    \"spiloRunAsGroup\": {\n     \"type\": \"integer\"\n    },\n    \"spiloRunAsUser\": {\n     \"type\": \"integer\"\n    },\n    \"standby\": {\n     \"oneOf\": [\n      {\n       \"required\": [\n        \"s3_wal_path\"\n       ]\n      },\n      {\n       \"required\": [\n        \"gs_wal_path\"\n       ]\n      },\n      {\n       \"required\": [\n        \"standby_host\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"gs_wal_path\": {\n       \"type\": \"string\"\n      },\n      \"s3_wal_path\": {\n       \"type\": \"string\"\n      },\n      \"standby_host\": {\n       \"type\": \"string\"\n      },\n      \"standby_port\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"streams\": {\n     \"items\": {\n      \"properties\": {\n       \"applicationId\": {\n        \"type\": \"string\"\n       },\n       \"batchSize\": {\n        \"type\": \"integer\"\n       },\n       \"database\": {\n        \"type\": \"string\"\n       },\n       \"filter\": {\n        \"additionalProperties\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"object\"\n       },\n       \"tables\": {\n        \"additionalProperties\": {\n         \"properties\": {\n          \"eventType\": {\n           \"type\": \"string\"\n          },\n          \"idColumn\": {\n           \"type\": \"string\"\n          },\n          \"payloadColumn\": {\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"eventType\"\n         ],\n         \"type\": \"object\"\n        },\n        \"type\": \"object\"\n       }\n      },\n      \"required\": [\n       \"applicationId\",\n       \"database\",\n       \"tables\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"teamId\": {\n     \"type\": \"string\"\n    },\n    \"tls\": {\n     \"properties\": {\n      \"caFile\": {\n       \"type\": \"string\"\n      },\n      \"caSecretName\": {\n       \"type\": \"string\"\n      },\n      \"certificateFile\": {\n       \"type\": \"string\"\n      },\n      \"privateKeyFile\": {\n       \"type\": \"string\"\n      },\n      \"secretName\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"secretName\"\n     ],\n     \"type\": \"object\"\n    },\n    \"tolerations\": {\n     \"items\": {\n      \"properties\": {\n       \"effect\": {\n        \"enum\": [\n         \"NoExecute\",\n         \"NoSchedule\",\n         \"PreferNoSchedule\"\n        ],\n        \"type\": \"string\"\n       },\n       \"key\": {\n        \"type\": \"string\"\n       },\n       \"operator\": {\n        \"enum\": [\n         \"Equal\",\n         \"Exists\"\n        ],\n        \"type\": \"string\"\n       },\n       \"tolerationSeconds\": {\n        \"type\": \"integer\"\n       },\n       \"value\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"useLoadBalancer\": {\n     \"description\": \"deprecated\",\n     \"type\": \"boolean\"\n    },\n    \"users\": {\n     \"additionalProperties\": {\n      \"items\": {\n       \"enum\": [\n        \"bypassrls\",\n        \"BYPASSRLS\",\n        \"nobypassrls\",\n        \"NOBYPASSRLS\",\n        \"createdb\",\n        \"CREATEDB\",\n        \"nocreatedb\",\n        \"NOCREATEDB\",\n        \"createrole\",\n        \"CREATEROLE\",\n        \"nocreaterole\",\n        \"NOCREATEROLE\",\n        \"inherit\",\n        \"INHERIT\",\n        \"noinherit\",\n        \"NOINHERIT\",\n        \"login\",\n        \"LOGIN\",\n        \"nologin\",\n        \"NOLOGIN\",\n        \"replication\",\n        \"REPLICATION\",\n        \"noreplication\",\n        \"NOREPLICATION\",\n        \"superuser\",\n        \"SUPERUSER\",\n        \"nosuperuser\",\n        \"NOSUPERUSER\"\n       ],\n       \"type\": \"string\"\n      },\n      \"nullable\": true,\n      \"type\": \"array\"\n     },\n     \"type\": \"object\"\n    },\n    \"usersWithInPlaceSecretRotation\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"nullable\": true,\n     \"type\": \"array\"\n    },\n    \"usersWithSecretRotation\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"nullable\": true,\n     \"type\": \"array\"\n    },\n    \"volume\": {\n     \"properties\": {\n      \"iops\": {\n       \"type\": \"integer\"\n      },\n      \"selector\": {\n       \"properties\": {\n        \"matchExpressions\": {\n         \"items\": {\n          \"properties\": {\n           \"key\": {\n            \"type\": \"string\"\n           },\n           \"operator\": {\n            \"enum\": [\n             \"DoesNotExist\",\n             \"Exists\",\n             \"In\",\n             \"NotIn\"\n            ],\n            \"type\": \"string\"\n           },\n           \"values\": {\n            \"items\": {\n             \"type\": \"string\"\n            },\n            \"type\": \"array\"\n           }\n          },\n          \"required\": [\n           \"key\",\n           \"operator\"\n          ],\n          \"type\": \"object\"\n         },\n         \"type\": \"array\"\n        },\n        \"matchLabels\": {\n         \"format\": \"textarea\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"size\": {\n       \"pattern\": \"^(\\\\d+(e\\\\d+)?|\\\\d+(\\\\.\\\\d+)?(e\\\\d+)?[EPTGMK]i?)$\",\n       \"type\": \"string\"\n      },\n      \"storageClass\": {\n       \"type\": \"string\"\n      },\n      \"subPath\": {\n       \"type\": \"string\"\n      },\n      \"throughput\": {\n       \"type\": \"integer\"\n      }\n     },\n     \"required\": [\n      \"size\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"numberOfInstances\",\n    \"teamId\",\n    \"postgresql\",\n    \"volume\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"kind\",\n  \"apiVersion\",\n  \"spec\"\n ],\n \"title\": \"postgresql\",\n \"type\": \"object\"\n}",
+   "version": "acid.zalan.do/v1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "postgresql",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "published": false
+  },
+  "model": {
+   "category": {
+    "name": "Uncategorized"
+   },
+   "displayName": "Galaxy",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "defaultData": "",
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "svgColor": "\u003csvg width=\"506\" height=\"397\" viewBox=\"0 0 506 397\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003crect width=\"377\" height=\"109\" rx=\"8\" fill=\"#58585A\"/\u003e\n\u003crect y=\"149\" width=\"377\" height=\"109\" rx=\"8\" fill=\"#58585A\"/\u003e\n\u003crect x=\"129\" y=\"288\" width=\"377\" height=\"109\" rx=\"8\" fill=\"url(#paint0_linear_27226_21870)\"/\u003e\n\u003cdefs\u003e\n\u003clinearGradient id=\"paint0_linear_27226_21870\" x1=\"129\" y1=\"342.5\" x2=\"506\" y2=\"342.5\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop stop-color=\"#D1BE06\"/\u003e\n\u003cstop offset=\"1\" stop-color=\"#E7E5DE\"/\u003e\n\u003c/linearGradient\u003e\n\u003c/defs\u003e\n\u003c/svg\u003e\n",
+    "svgComplete": "",
+    "svgWhite": "\u003csvg width=\"506\" height=\"397\" viewBox=\"0 0 506 397\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003crect width=\"377\" height=\"109\" rx=\"8\" fill=\"white\"/\u003e\n\u003crect y=\"149\" width=\"377\" height=\"109\" rx=\"8\" fill=\"white\"/\u003e\n\u003crect x=\"129\" y=\"288\" width=\"377\" height=\"109\" rx=\"8\" fill=\"white\"/\u003e\n\u003c/svg\u003e\n"
+   },
+   "model": {
+    "version": "5.15.0"
+   },
+   "name": "galaxy",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "subCategory": "Uncategorized",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "ignored",
+  "styles": {
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "svgColor": "\u003csvg width=\"506\" height=\"397\" viewBox=\"0 0 506 397\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003crect width=\"377\" height=\"109\" rx=\"8\" fill=\"#58585A\"/\u003e\n\u003crect y=\"149\" width=\"377\" height=\"109\" rx=\"8\" fill=\"#58585A\"/\u003e\n\u003crect x=\"129\" y=\"288\" width=\"377\" height=\"109\" rx=\"8\" fill=\"url(#paint0_linear_27226_21870)\"/\u003e\n\u003cdefs\u003e\n\u003clinearGradient id=\"paint0_linear_27226_21870\" x1=\"129\" y1=\"342.5\" x2=\"506\" y2=\"342.5\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop stop-color=\"#D1BE06\"/\u003e\n\u003cstop offset=\"1\" stop-color=\"#E7E5DE\"/\u003e\n\u003c/linearGradient\u003e\n\u003c/defs\u003e\n\u003c/svg\u003e\n",
+   "svgWhite": "\u003csvg width=\"506\" height=\"397\" viewBox=\"0 0 506 397\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003crect width=\"377\" height=\"109\" rx=\"8\" fill=\"white\"/\u003e\n\u003crect y=\"149\" width=\"377\" height=\"109\" rx=\"8\" fill=\"white\"/\u003e\n\u003crect x=\"129\" y=\"288\" width=\"377\" height=\"109\" rx=\"8\" fill=\"white\"/\u003e\n\u003c/svg\u003e\n"
+  },
+  "version": "v1.0.0"
+ }

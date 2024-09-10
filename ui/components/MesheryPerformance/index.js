@@ -23,7 +23,7 @@ import {
   ExpansionPanelSummary,
   ExpansionPanelDetails,
 } from '@material-ui/core';
-import { CustomTooltip } from '@layer5/sistent';
+import { CustomTooltip, ModalBody, ModalFooter } from '@layer5/sistent';
 import TextField from '@material-ui/core/TextField';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -52,6 +52,9 @@ import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import DefaultError from '@/components/General/error-404/index';
 import { CustomTextTooltip } from '../MesheryMeshInterface/PatternService/CustomTextTooltip';
+import { useGetUserPrefWithContextQuery } from '@/rtk-query/user';
+import { useSavePerformanceProfileMutation } from '@/rtk-query/performance-profile';
+import { useGetMeshQuery } from '@/rtk-query/mesh';
 
 // =============================== HELPER FUNCTIONS ===========================
 
@@ -121,7 +124,6 @@ const styles = (theme) => ({
   },
   buttons: { display: 'flex', justifyContent: 'flex-end' },
   spacing: {
-    marginTop: theme.spacing(3),
     marginLeft: theme.spacing(1),
   },
   button: {
@@ -138,7 +140,7 @@ const styles = (theme) => ({
     paddingLeft: '0.7rem',
     paddingTop: '8px',
   },
-  expansionPanel: { boxShadow: 'none', border: '1px solid rgb(196,196,196)' },
+  expansionPanel: { boxShadow: 'none', border: '1px solid rgb(196,196,196)', background: 'none' },
   margin: { margin: theme.spacing(1) },
   chartTitle: { textAlign: 'center' },
   chartTitleGraf: {
@@ -276,6 +278,18 @@ const MesheryPerformanceComponent = (props) => {
   const [staticPrometheusBoardConfigState, setStaticPrometheusBoardConfig] = useState(
     staticPrometheusBoardConfig,
   );
+
+  const { data: userData, isSuccess: isUserDataFetched } = useGetUserPrefWithContextQuery(
+    props?.selectedK8sContexts,
+  );
+
+  const [savePerformanceProfile] = useSavePerformanceProfileMutation();
+  const {
+    data: smpMeshes,
+    isSuccess: isSMPMeshesFetched,
+    isError: isSMPMeshError,
+  } = useGetMeshQuery();
+
   const handleChange = (name) => (event) => {
     const { value } = event.target;
     if (name === 'caCertificate') {
@@ -468,12 +482,10 @@ const MesheryPerformanceComponent = (props) => {
 
   const handleProfileUpload = (body, generateNotif, cb) => {
     if (generateNotif) props.updateProgress({ showProgress: true });
-
-    dataFetch(
-      '/api/user/performance/profiles',
-      { method: 'POST', credentials: 'include', body: JSON.stringify(body) },
-      (result) => {
-        if (typeof result !== 'undefined') {
+    savePerformanceProfile({ body: body })
+      .unwrap()
+      .then((result) => {
+        if (result) {
           props.updateProgress({ showProgress: false });
           setPerformanceProfileID(result.id);
           if (cb) cb(result);
@@ -485,8 +497,8 @@ const MesheryPerformanceComponent = (props) => {
             });
           }
         }
-      },
-      (err) => {
+      })
+      .catch((err) => {
         console.error(err);
         props.updateProgress({ showProgress: false });
         const notify = props.notify;
@@ -495,8 +507,7 @@ const MesheryPerformanceComponent = (props) => {
           event_type: EVENT_TYPES.ERROR,
           details: err.toString(),
         });
-      },
-    );
+      });
   };
 
   const submitLoadTest = (id) => {
@@ -610,22 +621,15 @@ const MesheryPerformanceComponent = (props) => {
     getLoadTestPrefs();
     getSMPMeshes();
     if (props.runTestOnMount) handleSubmit();
-  }, []);
+  }, [userData, isUserDataFetched, smpMeshes]);
 
   const getLoadTestPrefs = () => {
-    dataFetch(
-      ctxUrl('/api/user/prefs', props?.selectedK8sContexts),
-      { credentials: 'same-origin', method: 'GET' },
-      (result) => {
-        if (typeof result !== 'undefined') {
-          setQps(result.loadTestPrefs.qps);
-          setC(result.loadTestPrefs.c);
-          setT(result.loadTestPrefs.t);
-          setLoadGenerator(result.loadTestPrefs.gen);
-        }
-      },
-      () => {},
-    ); //error is already captured from the handler, also we have a redux-store for same & hence it's not needed here.
+    if (isUserDataFetched && userData && userData.loadTestPref) {
+      setQps(userData.loadTestPrefs.qps);
+      setC(userData.loadTestPrefs.c);
+      setT(userData.loadTestPrefs.t);
+      setLoadGenerator(userData.loadTestPrefs.gen);
+    }
   };
 
   const getStaticPrometheusBoardConfig = () => {
@@ -708,16 +712,11 @@ const MesheryPerformanceComponent = (props) => {
   };
 
   const getSMPMeshes = () => {
-    dataFetch(
-      '/api/mesh',
-      { credentials: 'include' },
-      (result) => {
-        if (result && Array.isArray(result.available_meshes)) {
-          setAvailableSMPMeshes(result.available_meshes.sort((m1, m2) => m1.localeCompare(m2)));
-        }
-      },
-      handleError('unable to fetch SMP meshes'),
-    );
+    if (isSMPMeshesFetched && smpMeshes) {
+      setAvailableSMPMeshes([...smpMeshes.available_meshes].sort((m1, m2) => m1.localeCompare(m2))); // shallow copy of the array to sort it
+    } else if (isSMPMeshError) {
+      handleError('unable to fetch SMP meshes');
+    }
   };
 
   function handleError(msg) {
@@ -836,7 +835,8 @@ const MesheryPerformanceComponent = (props) => {
       {CAN(keys.VIEW_PERFORMANCE_PROFILES.action, keys.VIEW_PERFORMANCE_PROFILES.subject) ? (
         <>
           <React.Fragment>
-            <div className={classes.wrapperClss} style={props.style || {}}>
+            {/* <div className={classes.wrapperClss} style={props.style || {}}> */}
+            <ModalBody>
               <Grid container spacing={1}>
                 <Grid item xs={12} md={6}>
                   <TextField
@@ -1196,6 +1196,8 @@ const MesheryPerformanceComponent = (props) => {
                   </FormControl>
                 </Grid>
               </Grid>
+            </ModalBody>
+            <ModalFooter variant="filled">
               <React.Fragment>
                 <div className={classes.buttons}>
                   <Button
@@ -1238,46 +1240,47 @@ const MesheryPerformanceComponent = (props) => {
                   </Button>
                 </div>
               </React.Fragment>
+            </ModalFooter>
 
-              {timerDialogOpenState ? (
-                <div className={classes.centerTimer}>
-                  <LoadTestTimerDialog
-                    open={timerDialogOpenState}
-                    t={tState}
-                    onClose={handleTimerDialogClose}
-                    countDownComplete={handleTimerDialogClose}
+            {timerDialogOpenState ? (
+              <div className={classes.centerTimer}>
+                <LoadTestTimerDialog
+                  open={timerDialogOpenState}
+                  t={tState}
+                  onClose={handleTimerDialogClose}
+                  countDownComplete={handleTimerDialogClose}
+                />
+              </div>
+            ) : null}
+
+            {result && result.runner_results && (
+              <div>
+                <Typography
+                  variant="h6"
+                  gutterBottom
+                  className={classes.chartTitle}
+                  id="timerAnchor"
+                >
+                  Test Results
+                  <IconButton
+                    key="download"
+                    aria-label="download"
+                    color="inherit"
+                    // onClick={() => self.props.closeSnackbar(key) }
+                    href={`/api/perf/profile/result/${encodeURIComponent(result.meshery_id)}`}
+                  >
+                    <GetAppIcon style={iconMedium} />
+                  </IconButton>
+                </Typography>
+                <div className={classes.chartContent} style={chartStyle}>
+                  <MesheryChart
+                    rawdata={[result && result.runner_results ? result : {}]}
+                    data={[result && result.runner_results ? result.runner_results : {}]}
                   />
                 </div>
-              ) : null}
-
-              {result && result.runner_results && (
-                <div>
-                  <Typography
-                    variant="h6"
-                    gutterBottom
-                    className={classes.chartTitle}
-                    id="timerAnchor"
-                  >
-                    Test Results
-                    <IconButton
-                      key="download"
-                      aria-label="download"
-                      color="inherit"
-                      // onClick={() => self.props.closeSnackbar(key) }
-                      href={`/api/perf/profile/result/${encodeURIComponent(result.meshery_id)}`}
-                    >
-                      <GetAppIcon style={iconMedium} />
-                    </IconButton>
-                  </Typography>
-                  <div className={classes.chartContent} style={chartStyle}>
-                    <MesheryChart
-                      rawdata={[result && result.runner_results ? result : {}]}
-                      data={[result && result.runner_results ? result.runner_results : {}]}
-                    />
-                  </div>
-                </div>
-              )}
-            </div>
+              </div>
+            )}
+            {/* </div> */}
           </React.Fragment>
 
           {displayStaticCharts}

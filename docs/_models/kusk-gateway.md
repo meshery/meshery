@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Kusk Gateway
-subtitle: Collaborative and visual infrastructure as code for Kusk Gateway
+subtitle: Collaborative and visual infrastructure as design for Kusk Gateway
 image: /assets/img/integrations/kusk-gateway/icons/color/kusk-gateway-color.svg
 permalink: extensibility/integrations/kusk-gateway
 docURL: https://docs.meshery.io/extensibility/integrations/kusk-gateway
@@ -27,8 +27,8 @@ featureList: [
   " Protect your endpoints with automatic request and response validations",
   "Configure critical policies like request timeouts and CORS with no coding required."
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Manages Kusk Gateway configurations"
+howItWorksDetails: "Simplified API gateway management and enhanced customization in Kubernetes"
 language: en
 list: include
 type: extensibility

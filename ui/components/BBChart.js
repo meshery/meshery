@@ -12,7 +12,7 @@ const BBChart = ({ options }) => {
     };
   }, [options]);
 
-  return <div ref={chartRef}></div>;
+  return <div ref={chartRef} onClick={(e) => e.stopPropagation()}></div>;
 };
 
 // Memoize the component to prevent unnecessary re-renders

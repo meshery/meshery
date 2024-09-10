@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Couchbase Operator
-subtitle: Collaborative and visual infrastructure as code for Couchbase Operator
+subtitle: Collaborative and visual infrastructure as design for Couchbase Operator
 image: /assets/img/integrations/couchbase-operator/icons/color/couchbase-operator-color.svg
 permalink: extensibility/integrations/couchbase-operator
 docURL: https://docs.meshery.io/extensibility/integrations/couchbase-operator
@@ -75,12 +75,12 @@ components:
   whiteIcon: assets/img/integrations/couchbase-operator/components/couchbase-user/icons/white/couchbase-user-white.svg
   description: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Automates Couchbase cluster deployment",
+  "Manages Couchbase configuration",
+  "Simplifies Couchbase operations"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Deploys and manages Couchbase"
+howItWorksDetails: "Streamlined Couchbase management in Kubernetes"
 language: en
 list: include
 type: extensibility

@@ -29,6 +29,10 @@ jobs:
         run: npm install -g @redocly/openapi-cli
       - name: Generate documentation
         run: npx @redocly/cli build-docs ./docs/_data/swagger.yml --config='redocly.yaml'
+
+      - name: Pull changes from remote
+        run: git pull origin master
+
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:

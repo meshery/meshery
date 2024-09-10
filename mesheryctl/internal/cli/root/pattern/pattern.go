@@ -16,6 +16,7 @@ package pattern
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
@@ -52,7 +53,16 @@ mesheryctl pattern list
 			return cmd.Help()
 		}
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return errors.New(utils.PatternError(fmt.Sprintf("'%s' is an invalid command.  Use 'mesheryctl pattern --help' to display usage guide.\n", args[0])))
+			suggestions := make([]string, 0)
+			for _, subcmd := range availableSubcommands {
+				if strings.HasPrefix(subcmd.Name(), args[0]) {
+					suggestions = append(suggestions, subcmd.Name())
+				}
+			}
+			if len(suggestions) > 0 {
+				return errors.New(utils.PatternError(fmt.Sprintf("'%s' is an invalid command. \nDid you mean %v? \nUse 'mesheryctl pattern --help' to display usage guide.\n", args[0], suggestions)))
+			}
+			return errors.New(utils.PatternError(fmt.Sprintf("'%s' is an invalid command. Use 'mesheryctl pattern --help' to display usage guide.\n", args[0])))
 		}
 		return nil
 	},
@@ -61,6 +71,6 @@ mesheryctl pattern list
 func init() {
 	PatternCmd.PersistentFlags().StringVarP(&utils.TokenFlag, "token", "t", "", "Path to token file default from current context")
 
-	availableSubcommands = []*cobra.Command{applyCmd, deleteCmd, viewCmd, listCmd, importCmd, onboardCmd, offboardCmd}
+	availableSubcommands = []*cobra.Command{applyCmd, deleteCmd, viewCmd, listCmd, importCmd, onboardCmd, offboardCmd, exportCmd}
 	PatternCmd.AddCommand(availableSubcommands...)
 }

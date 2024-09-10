@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Kommander
-subtitle: Collaborative and visual infrastructure as code for Kommander
+subtitle: Collaborative and visual infrastructure as design for Kommander
 image: /assets/img/integrations/kommander/icons/color/kommander-color.svg
 permalink: extensibility/integrations/kommander
 docURL: https://docs.meshery.io/extensibility/integrations/kommander
@@ -187,12 +187,12 @@ components:
   whiteIcon: assets/img/integrations/kommander/components/replica-scheduling-preference/icons/white/replica-scheduling-preference-white.svg
   description: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Simplifies management of multiple clusters",
+  "Provides a unified control plane",
+  "Centralized policy and configuration management"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Integrates Kommander clusters"
+howItWorksDetails: "Streamlined multi-cluster management and governance"
 language: en
 list: include
 type: extensibility

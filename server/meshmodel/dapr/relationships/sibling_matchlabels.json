@@ -1,0 +1,95 @@
+{
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "version": "*",
+  "kind": "hierarchical",
+  "metadata": {
+    "description": "Sibling relationships represent connections between components that are at the same hierarchical level or share a common parent. An example of this relationship is a Service and a Pod in Kubernetes. With the components target defined in Resiliency resource, you can apply retry, timeout and circuitBreaker policies to Component operations."
+  },
+  "model": {
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "*",
+    "name": "dapr",
+    "model": {
+      "version": "*"
+    },
+    "displayName": "Dapr",
+    "category": {
+      "name": "Serverless",
+      "metadata": null
+    },
+    "metadata": {}
+  },
+  "subType": "matchLabels",
+  "type": "sibling",
+  "status": "enabled",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "Resiliency",
+            "model": {
+              "name": "dapr",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
+            "match": {
+              "refs": [
+                []
+              ]
+            }
+          },
+          {
+            "kind": "Subscription",
+            "model": {
+              "name": "dapr",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
+            "match": {
+              "refs": [
+                []
+              ]
+            }
+          },
+          {
+            "kind": "Configuration",
+            "model": {
+              "name": "dapr",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
+            "match": {
+              "refs": [
+                []
+              ]
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "Component",
+            "model": {
+              "name": "dapr",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
+            "match": {
+              "refs": [
+                []
+              ]
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }
+  ]
+}

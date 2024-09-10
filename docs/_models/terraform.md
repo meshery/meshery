@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Terraform
-subtitle: Collaborative and visual infrastructure as code for Terraform
+subtitle: Collaborative and visual infrastructure as design for Terraform
 image: /assets/img/integrations/terraform/icons/color/terraform-color.svg
 permalink: extensibility/integrations/terraform
 docURL: https://docs.meshery.io/extensibility/integrations/terraform
@@ -15,12 +15,12 @@ components:
   whiteIcon: assets/img/integrations/terraform/components/workspace/icons/white/workspace-white.svg
   description: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Declarative infrastructure configuration",
+  "Multi-cloud support",
+  "Infrastructure automation"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Integrates Terraform configurations"
+howItWorksDetails: "Infrastructure as code management within Kubernetes"
 language: en
 list: include
 type: extensibility

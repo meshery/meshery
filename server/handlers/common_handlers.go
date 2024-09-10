@@ -2,6 +2,7 @@
 package handlers
 
 import (
+	"encoding/base64"
 	"fmt"
 	"io"
 	"net/http"
@@ -55,7 +56,7 @@ func (h *Handler) LogoutHandler(w http.ResponseWriter, req *http.Request, p mode
 		p.HandleUnAuthenticated(w, req)
 		return
 	}
-	h.log.Info(fmt.Sprintf("successfully logged out from %v provider", p.Name()))
+	h.log.Info(fmt.Sprintf("logged out from %v provider", p.Name()))
 	http.Redirect(w, req, "/provider", http.StatusFound)
 }
 
@@ -150,4 +151,16 @@ func (h *Handler) DownloadHandler(responseWriter http.ResponseWriter, request *h
 		http.Error(responseWriter, err.Error(), http.StatusInternalServerError)
 		return
 	}
+}
+
+// Deep-link and redirect support to land user on their originally requested page post authentication instead of dropping user on the root (home) page.
+func GetRefURL(req *http.Request) string {
+	refURL := req.URL.Path + "?" + req.URL.RawQuery
+	// If the source is "/", and doesn't include any path or param, set refURL as empty string.
+	// Even if this isn't handle, it doesn't lead to issues but adds an extra /? after login in the URL.
+	if refURL == "?" || refURL == "/?" {
+		return ""
+	}
+	refURLB64 := base64.RawURLEncoding.EncodeToString([]byte(refURL))
+	return refURLB64
 }

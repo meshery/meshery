@@ -132,6 +132,8 @@ import (
 
 	meshkitErrors "github.com/layer5io/meshkit/errors"
 	"github.com/layer5io/meshkit/logger"
+	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 )
 
 var (
@@ -140,9 +142,13 @@ var (
 )
 
 func main() {
+	logLevel := viper.GetInt("LOG_LEVEL")
+	if viper.GetBool("DEBUG") {
+		logLevel = int(logrus.DebugLevel)
+	}
 	log, err := logger.New("test", logger.Options{
-		Format:     logger.SyslogLogFormat,
-		DebugLevel: true,
+		Format:   logger.SyslogLogFormat,
+		LogLevel: logLevel,
 	})
 	if err != nil {
 		fmt.Println(err)
@@ -155,7 +161,10 @@ func main() {
 		log.Error(err)
 	}
 	// OUTPUT
-	// ERRO[2021-11-10T17:31:28+05:30] open some.txt: no such file or directory      app=test code=1001 probable-cause="empty string passed as argument .file with this name doesn't exist" severity=2 short-description="unable to open file" suggested-remediation="pass a non-empty string as filename .create file before opening it"
+	// ERRO[2021-11-10T17:31:28+05:30] open some.txt: no such file or directory
+	// app=test code=1001 probable-cause="empty string passed as argument .file with this name doesn't exist"
+	// severity=2 short-description="unable to open file" suggested-remediation="pass a non-empty string as
+	// filename .create file before opening it"
 
 	// logging non meshkit error
 	err = openFile("some.txt")
@@ -163,15 +172,8 @@ func main() {
 		log.Error(err)
 	}
 	// OUTPUT
-	// panic: interface conversion: error is *fs.PathError, not *errors.Error
-	// goroutine 1 [running]:
-	// github.com/layer5io/meshkit/errors.GetCode({0x50dfc0, 0xc000068450})
-	//         /home/rudraksh/go/pkg/mod/github.com/layer5io/meshkit@v0.2.33/errors/errors.go:90 +0x90
-	// github.com/layer5io/meshkit/logger.(*Logger).Error(0xc00000e040, {0x50dfc0, 0xc000068450})
-	//         /home/rudraksh/go/pkg/mod/github.com/layer5io/meshkit@v0.2.33/logger/logger.go:57 +0xbb
-	// main.main()
-	//         /home/rudraksh/trash/meshkitplay/main.go:32 +0xe2
-	// exit status 2
+	// ERRO[2024-07-01T19:09:09+05:30] open some.txt: no such file or directory
+	// app=test code= probable-cause= severity=0 short-description= suggested-remediation=
 
 }
 
@@ -189,9 +191,9 @@ func openFileWithMeshkitError(name string) error {
 
 func ErrOpeningFile(err error) error {
 	return meshkitErrors.New(ErrOpeningFileCode, meshkitErrors.Alert, []string{"unable to open file"},
-	[]string{err.Error()},
-	[]string{"empty string passed as argument ", "file with this name doesn't exist"},
-	[]string{"pass a non-empty string as filename ", "create file before opening it"})
+		[]string{err.Error()},
+		[]string{"empty string passed as argument ", "file with this name doesn't exist"},
+		[]string{"pass a non-empty string as filename ", "create file before opening it"})
 }{% endcapture %}
 {% include code.html code=code_content %}
 

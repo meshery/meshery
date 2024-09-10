@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Kubedb CRDs
-subtitle: Collaborative and visual infrastructure as code for Kubedb CRDs
+subtitle: Collaborative and visual infrastructure as design for Kubedb CRDs
 image: /assets/img/integrations/kubedb-crds/icons/color/kubedb-crds-color.svg
 permalink: extensibility/integrations/kubedb-crds
 docURL: https://docs.meshery.io/extensibility/integrations/kubedb-crds
@@ -390,12 +390,60 @@ components:
   colorIcon: assets/img/integrations/kubedb-crds/components/singlestore-ops-request/icons/color/singlestore-ops-request-color.svg
   whiteIcon: assets/img/integrations/kubedb-crds/components/singlestore-ops-request/icons/white/singlestore-ops-request-white.svg
   description: 
+- name: solr-ops-request
+  colorIcon: assets/img/integrations/kubedb-crds/components/solr-ops-request/icons/color/solr-ops-request-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/solr-ops-request/icons/white/solr-ops-request-white.svg
+  description: 
+- name: click-house-autoscaler
+  colorIcon: assets/img/integrations/kubedb-crds/components/click-house-autoscaler/icons/color/click-house-autoscaler-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/click-house-autoscaler/icons/white/click-house-autoscaler-white.svg
+  description: 
+- name: ferret-db-autoscaler
+  colorIcon: assets/img/integrations/kubedb-crds/components/ferret-db-autoscaler/icons/color/ferret-db-autoscaler-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/ferret-db-autoscaler/icons/white/ferret-db-autoscaler-white.svg
+  description: 
+- name: mssql-server-autoscaler
+  colorIcon: assets/img/integrations/kubedb-crds/components/mssql-server-autoscaler/icons/color/mssql-server-autoscaler-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/mssql-server-autoscaler/icons/white/mssql-server-autoscaler-white.svg
+  description: 
+- name: solr-autoscaler
+  colorIcon: assets/img/integrations/kubedb-crds/components/solr-autoscaler/icons/color/solr-autoscaler-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/solr-autoscaler/icons/white/solr-autoscaler-white.svg
+  description: 
+- name: zoo-keeper-autoscaler
+  colorIcon: assets/img/integrations/kubedb-crds/components/zoo-keeper-autoscaler/icons/color/zoo-keeper-autoscaler-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/zoo-keeper-autoscaler/icons/white/zoo-keeper-autoscaler-white.svg
+  description: 
+- name: rest-proxy
+  colorIcon: assets/img/integrations/kubedb-crds/components/rest-proxy/icons/color/rest-proxy-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/rest-proxy/icons/white/rest-proxy-white.svg
+  description: 
+- name: ferret-db-ops-request
+  colorIcon: assets/img/integrations/kubedb-crds/components/ferret-db-ops-request/icons/color/ferret-db-ops-request-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/ferret-db-ops-request/icons/white/ferret-db-ops-request-white.svg
+  description: 
+- name: mssql-server-archiver
+  colorIcon: assets/img/integrations/kubedb-crds/components/mssql-server-archiver/icons/color/mssql-server-archiver-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/mssql-server-archiver/icons/white/mssql-server-archiver-white.svg
+  description: 
+- name: click-house-ops-request
+  colorIcon: assets/img/integrations/kubedb-crds/components/click-house-ops-request/icons/color/click-house-ops-request-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/click-house-ops-request/icons/white/click-house-ops-request-white.svg
+  description: 
+- name: mssql-server-ops-request
+  colorIcon: assets/img/integrations/kubedb-crds/components/mssql-server-ops-request/icons/color/mssql-server-ops-request-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/mssql-server-ops-request/icons/white/mssql-server-ops-request-white.svg
+  description: 
+- name: zoo-keeper-ops-request
+  colorIcon: assets/img/integrations/kubedb-crds/components/zoo-keeper-ops-request/icons/color/zoo-keeper-ops-request-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/zoo-keeper-ops-request/icons/white/zoo-keeper-ops-request-white.svg
+  description: 
 featureList: [
   "KubeDB simplifies many of the difficult or tedious management tasks of running a production grade databases on private and public clouds. Maintain one stack for all your stateless and stateful applications and simplify the operational complexity.",
   "Standard Kubernetes is all you need. If you can run Kubernetes, you can provision and manage databases using KubeDB. Use standard Kubernetes CLI and API to provision and manage databases.",
   "KubeDB uses Persistent Volume Claims (PVC) to dynamically provision disks for database instances. Using appropriately defined StorageClasses, KubeDB provisioned database instances are designed to scale from small development workloads up to performance-intensive workloads on private and public cloud environments."
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

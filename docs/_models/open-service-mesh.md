@@ -10,6 +10,18 @@ integrations-category: Cloud Native Network
 integrations-subcategory: Service Mesh
 registrant: Artifact Hub
 components: 
+- name: mesh-deployment
+  colorIcon: assets/img/integrations/open-service-mesh/components/mesh-deployment/icons/color/mesh-deployment-color.svg
+  whiteIcon: assets/img/integrations/open-service-mesh/components/mesh-deployment/icons/white/mesh-deployment-white.svg
+  description: 
+- name: mesh
+  colorIcon: assets/img/integrations/open-service-mesh/components/mesh/icons/color/mesh-color.svg
+  whiteIcon: assets/img/integrations/open-service-mesh/components/mesh/icons/white/mesh-white.svg
+  description: 
+- name: mesh-federation
+  colorIcon: assets/img/integrations/open-service-mesh/components/mesh-federation/icons/color/mesh-federation-color.svg
+  whiteIcon: assets/img/integrations/open-service-mesh/components/mesh-federation/icons/white/mesh-federation-white.svg
+  description: 
 featureList: [
   "Configuration an simplier understanding of your Open Service Mesh deployments and microservices",
   "Configure and chain Envoy WASM filters",

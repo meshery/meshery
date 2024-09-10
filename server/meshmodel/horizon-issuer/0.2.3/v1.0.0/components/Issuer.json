@@ -1,0 +1,195 @@
+{
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "Issuer",
+   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"IssuerSpec defines the desired state of Issuer\",\n   \"properties\": {\n    \"authSecretName\": {\n     \"description\": \"A reference to a Secret in the same namespace as the referent. If the referent is a ClusterIssuer, the reference instead refers to the resource with the given name in the configured 'cluster resource namespace', which is set as a flag on the controller component (and defaults to the namespace that the controller runs in).\",\n     \"type\": \"string\"\n    },\n    \"caBundle\": {\n     \"description\": \"CaBundle contains the CA bundle required to trust the Horizon endpoint certificate\",\n     \"type\": \"string\"\n    },\n    \"labels\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"Labels is a map of labels that will override labels set at the Certificate or Ingress levels.\",\n     \"type\": \"object\"\n    },\n    \"owner\": {\n     \"description\": \"Owner will override the owner value set at the Certificate or Ingress levels.\",\n     \"type\": \"string\"\n    },\n    \"profile\": {\n     \"description\": \"The Horizon Profile that will be used to enroll certificates. Your authenticated principal should have rights over this Profile.\",\n     \"type\": \"string\"\n    },\n    \"revokeCertificates\": {\n     \"default\": false,\n     \"description\": \"RevokeCertificates controls whether this issuer should revoke certificates that have been issued through it when their Kubernetes object is deleted.\",\n     \"type\": \"boolean\"\n    },\n    \"skipTLSVerify\": {\n     \"default\": false,\n     \"description\": \"SkipTLSVerify indicates if untrusted certificates should be allowed when connecting to the Horizon instance.\",\n     \"type\": \"boolean\"\n    },\n    \"team\": {\n     \"description\": \"Team will override the team value set at the Certificate or Ingress levels.\",\n     \"type\": \"string\"\n    },\n    \"url\": {\n     \"description\": \"URL is the base URL of your Horizon instance, for instance: \\\"https://horizon.yourcompany.com\\\".\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"authSecretName\",\n    \"profile\",\n    \"url\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Issuer\",\n \"type\": \"object\"\n}",
+   "version": "horizon.evertrust.io/v1alpha1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "Issuer",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "published": false,
+   "source_uri": "https://repo.evertrust.io/repository/charts/horizon-issuer-0.0.1.tgz"
+  },
+  "model": {
+   "category": {
+    "name": "Uncategorized"
+   },
+   "displayName": "Horizon Issuer",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "source_uri": "https://repo.evertrust.io/repository/charts/horizon-issuer-0.0.1.tgz",
+    "styleOverrides": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "model": {
+    "version": "0.2.3"
+   },
+   "name": "horizon-issuer",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "subCategory": "Uncategorized",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "ignored",
+  "styles": {
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "svgColor": "",
+   "svgWhite": ""
+  },
+  "version": "v1.0.0"
+ }

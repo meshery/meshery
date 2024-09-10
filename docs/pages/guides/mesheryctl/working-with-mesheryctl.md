@@ -112,7 +112,7 @@ Guides to using Meshery's various features and components.
 
 {% capture tag %}
 
-<li><a href="{{ site.baseurl }}/guides/upgrade#upgrading-meshery-cli">Upgrading mesheryctl</a></li>
+<li><a href="{{ site.baseurl }}/installation/upgrades#upgrading-meshery-cli">Upgrading mesheryctl</a></li>
 
 {% endcapture %}
 
@@ -136,7 +136,7 @@ Guides to using Meshery's various features and components.
 </div>
 
 <div>
-  <a href="{{ site.baseurl }}/guides/upgrade">
+  <a href="{{ site.baseurl }}/installation/upgrades">
     <div class="overview">Upgrade Guide</div>
   </a>
   <p>To upgrade <code>mesheryctl</code>, refer to the Upgrade Guide.</p>

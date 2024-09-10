@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Nirmata Venafi Adapter
-subtitle: Collaborative and visual infrastructure as code for NGINX Service Mesh
+subtitle: Collaborative and visual infrastructure as design for Nirmata Venafi Adapter
 image: /assets/img/integrations/nirmata-venafi-adapter/icons/color/nirmata-venafi-adapter-color.svg
 permalink: extensibility/integrations/nirmata-venafi-adapter
 docURL: https://docs.meshery.io/extensibility/integrations/nirmata-venafi-adapter
@@ -15,12 +15,12 @@ components:
   whiteIcon: assets/img/integrations/nirmata-venafi-adapter/components/image-key/icons/white/image-key-white.svg
   description: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Automates certificate issuance and renewal",
+  "Integrates with Venafi Trust Protection Platform",
+  "Enhances security for Kubernetes clusters"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Manages certificates within Meshery"
+howItWorksDetails: "Streamlined certificate management and improved security in Kubernetes"
 language: en
 list: include
 type: extensibility

@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: AWS Applilcation Autoscaling
-subtitle: Collaborative and visual infrastructure as code for AWS Applilcation Autoscaling
+subtitle: Collaborative and visual infrastructure as design for AWS Applilcation Autoscaling
 image: /assets/img/integrations/aws-applicationautoscaling-controller/icons/color/aws-applicationautoscaling-controller-color.svg
 permalink: extensibility/integrations/aws-applicationautoscaling-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-applicationautoscaling-controller
@@ -31,12 +31,12 @@ components:
   whiteIcon: assets/img/integrations/aws-applicationautoscaling-controller/components/scaling-policy/icons/white/scaling-policy-white.svg
   description: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Dynamically scales EC2 instances and other AWS resources",
+  "Provides target tracking scaling policies",
+  "Integrates with various AWS services"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Integrates with Application Autoscaling"
+howItWorksDetails: "Automated scaling of resources for Kubernetes applications on AWS"
 language: en
 list: include
 type: extensibility

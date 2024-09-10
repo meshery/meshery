@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: AWS Kinesis
-subtitle: Collaborative and visual infrastructure as code for AWS Kinesis
+subtitle: Collaborative and visual infrastructure as design for AWS Kinesis
 image: /assets/img/integrations/aws-kinesis-controller/icons/color/aws-kinesis-controller-color.svg
 permalink: extensibility/integrations/aws-kinesis-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-kinesis-controller
@@ -23,12 +23,12 @@ components:
   whiteIcon: assets/img/integrations/aws-kinesis-controller/components/stream/icons/white/stream-white.svg
   description: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Collects, processes, and analyzes streaming data",
+  "Scalable and durable",
+  "Integrates with various AWS services"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Integrates with Kinesis Data Streams"
+howItWorksDetails: "Real-time data processing and analytics in AWS"
 language: en
 list: include
 type: extensibility

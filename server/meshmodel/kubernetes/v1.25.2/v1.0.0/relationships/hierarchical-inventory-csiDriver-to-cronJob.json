@@ -1,0 +1,87 @@
+{
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "version": "v1.0.0",
+  "kind": "hierarchical",
+  "type": "parent",
+  "subType": "inventory",
+  "metadata": {
+    "description": "A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component."
+  },
+  "model": {
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "kubernetes",
+    "registrant": {
+      "kind": "artifacthub"
+    },
+    "model": {
+      "version": "v1.25.2"
+    },
+    "displayName": "Kubernetes",
+    "category": {
+      "name": "Orchestration \u0026 Management",
+      "metadata": null
+    },
+    "metadata": {}
+  },
+  "status": "enabled",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "CSIDriver",
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  "displayName"
+                ]
+              ],
+              "description": "CSI drivers are responsible for the actual operations of a CSI volume. They are responsible for communicating with the external storage provider and exposing the volume to the kubelet.\n\nCSI drivers are installed on the cluster as a CustomResourceDefinition (CRD) and a DaemonSet. The CRD is used to create a CSIDriver object, which is used to configure the CSI driver. The DaemonSet is used to deploy the CSI driver to each node in the cluster."
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "CronJob",
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "jobTemplate",
+                  "spec",
+                  "template",
+                  "spec",
+                  "volumes",
+                  "_",
+                  "csi",
+                  "driver"
+                ]
+              ],
+              "description": "CSI drivers are used to provide persistent storage to Pods. The CSI driver is configured in the Pod specification.\n\nThe CSI driver is configured in the Pod specification using the csi.volume.kubernetes.io annotation. The CSI driver is configured in the Pod specification using the csi.volume.kubernetes.io annotation."
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }
+  ]
+}

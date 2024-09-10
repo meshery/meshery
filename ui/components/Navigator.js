@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
 import Divider from '@material-ui/core/Divider';
@@ -393,14 +392,14 @@ const getNavigatorComponents = (/** @type {CapabilitiesRegistry} */ capabilityRe
       },
       {
         id: SERVICE_MESH,
-        href: '/management/service-mesh',
+        href: '/management/adapter',
         title: 'Adapters',
         link: true,
         icon: <ServiceMeshIcon style={{ ...drawerIconsStyle }} />,
         show: true,
         permission: {
-          action: keys.VIEW_SERVICE_MESH.action,
-          subject: keys.VIEW_SERVICE_MESH.subject,
+          action: keys.VIEW_CLOUD_NATIVE_INFRASTRUCTURE.action,
+          subject: keys.VIEW_CLOUD_NATIVE_INFRASTRUCTURE.subject,
         },
       },
     ],
@@ -545,7 +544,7 @@ const externlinks = [
   },
 ];
 
-class Navigator extends React.Component {
+class Navigator_ extends React.Component {
   constructor(props) {
     super(props);
     const { meshAdapters } = props;
@@ -1434,11 +1433,6 @@ class Navigator extends React.Component {
   }
 }
 
-Navigator.propTypes = {
-  classes: PropTypes.object.isRequired,
-  onCollapseDrawer: PropTypes.func.isRequired,
-};
-
 const mapDispatchToProps = (dispatch) => ({
   updatepagetitle: bindActionCreators(updatepagetitle, dispatch),
   updatebetabadge: bindActionCreators(updatebetabadge, dispatch),
@@ -1468,6 +1462,10 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default withStyles(styles)(
-  connect(mapStateToProps, mapDispatchToProps)(withRouter(Navigator)),
+export const NavigatorWithRedux = withStyles(styles)(
+  connect(mapStateToProps, mapDispatchToProps)(withRouter(Navigator_)),
 );
+
+export const Navigator = NavigatorWithRedux;
+
+export default Navigator;

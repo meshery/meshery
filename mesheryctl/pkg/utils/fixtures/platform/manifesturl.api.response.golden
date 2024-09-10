@@ -5509,7 +5509,7 @@
 "url": "https://api.github.com/repos/meshery/meshery/git/blobs/d4ce12591a4b5a5b05a9cd2e3ea33d26b4e25bf8"
 },
 {
-"path": "docs/pages/guides/upgrade.md",
+"path": "docs/pages/installation/upgrades.md",
 "mode": "100644",
 "type": "blob",
 "sha": "de57b4e5e7bcf54aceb5ac73b4174d875a9b62ae",

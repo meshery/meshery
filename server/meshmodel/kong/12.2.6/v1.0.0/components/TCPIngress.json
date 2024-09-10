@@ -1,0 +1,195 @@
+{
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "TCPIngress",
+   "schema": "{\n \"description\": \"TCPIngress is the Schema for the tcpingresses API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Spec is the TCPIngress specification.\",\n   \"properties\": {\n    \"rules\": {\n     \"description\": \"A list of rules used to configure the Ingress.\",\n     \"items\": {\n      \"description\": \"IngressRule represents a rule to apply against incoming requests.\\nMatching is performed based on an (optional) SNI and port.\",\n      \"properties\": {\n       \"backend\": {\n        \"description\": \"Backend defines the referenced service endpoint to which the traffic\\nwill be forwarded to.\",\n        \"properties\": {\n         \"serviceName\": {\n          \"description\": \"Specifies the name of the referenced service.\",\n          \"minLength\": 1,\n          \"type\": \"string\"\n         },\n         \"servicePort\": {\n          \"description\": \"Specifies the port of the referenced service.\",\n          \"format\": \"int32\",\n          \"maximum\": 65535,\n          \"minimum\": 1,\n          \"type\": \"integer\"\n         }\n        },\n        \"required\": [\n         \"serviceName\",\n         \"servicePort\"\n        ],\n        \"type\": \"object\"\n       },\n       \"host\": {\n        \"description\": \"Host is the fully qualified domain name of a network host, as defined\\nby RFC 3986.\\nIf a Host is not specified, then port-based TCP routing is performed. Kong\\ndoesn't care about the content of the TCP stream in this case.\\nIf a Host is specified, the protocol must be TLS over TCP.\\nA plain-text TCP request cannot be routed based on Host. It can only\\nbe routed based on Port.\",\n        \"type\": \"string\"\n       },\n       \"port\": {\n        \"description\": \"Port is the port on which to accept TCP or TLS over TCP sessions and\\nroute. It is a required field. If a Host is not specified, the requested\\nare routed based only on Port.\",\n        \"format\": \"int32\",\n        \"maximum\": 65535,\n        \"minimum\": 1,\n        \"type\": \"integer\"\n       }\n      },\n      \"required\": [\n       \"backend\",\n       \"port\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"tls\": {\n     \"description\": \"TLS configuration. This is similar to the `tls` section in the\\nIngress resource in networking.v1beta1 group.\\nThe mapping of SNIs to TLS cert-key pair defined here will be\\nused for HTTP Ingress rules as well. Once can define the mapping in\\nthis resource or the original Ingress resource, both have the same\\neffect.\",\n     \"items\": {\n      \"description\": \"IngressTLS describes the transport layer security.\",\n      \"properties\": {\n       \"hosts\": {\n        \"description\": \"Hosts are a list of hosts included in the TLS certificate. The values in\\nthis list must match the name/s used in the tlsSecret. Defaults to the\\nwildcard host setting for the loadbalancer controller fulfilling this\\nIngress, if left unspecified.\",\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       },\n       \"secretName\": {\n        \"description\": \"SecretName is the name of the secret used to terminate SSL traffic.\",\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"TCP Ingress\",\n \"type\": \"object\"\n}",
+   "version": "configuration.konghq.com/v1beta1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "TCP Ingress",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "published": false
+  },
+  "model": {
+   "category": {
+    "name": "Cloud Native Network"
+   },
+   "displayName": "Kong API Gateway",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "defaultData": "",
+    "isAnnotation": false,
+    "primaryColor": "#003459",
+    "secondaryColor": "",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "svgColor": "\u003csvg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\n         viewBox=\"0 0 45.3 40.8\" style=\"enable-background:new 0 0 45.3 40.8;\" xml:space=\"preserve\"\u003e\n\u003cstyle type=\"text/css\"\u003e\n        .st0{fill-rule:evenodd;clip-rule:evenodd;fill:#003459;}\n\u003c/style\u003e\n\u003cpath class=\"st0\" d=\"M14.9,33.6h8.3l4.3,5.4l-0.7,1.9H16l0.3-1.9l-2.5-4L14.9,33.6z M20.8,9.7h4.5l20,23.9l-1.6,7.3h-8.6l0.5-2\n        L17,16.5L20.8,9.7z M28.7,0L38,7.3l-1.2,1.2l1.6,2.2v2.4L33.8,17L26,7.8h-4.5l1.8-3.4L28.7,0z M9.1,23.4l6.5-5.6l8.6,10.4L21.8,32\n        h-7.9l-5.5,7.2l-1.3,1.7H0V32l6.6-8.6H9.1z\"/\u003e\n\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003csvg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\n\t viewBox=\"0 0 45.3 40.8\" style=\"enable-background:new 0 0 45.3 40.8;\" xml:space=\"preserve\"\u003e\n\u003cstyle type=\"text/css\"\u003e\n\t.st0{fill:#FFFFFF;}\n\u003c/style\u003e\n\u003cpath class=\"st0\" d=\"M14.9,33.6h8.3l4.3,5.4l-0.7,1.9H16l0.3-1.9l-2.5-4L14.9,33.6z M20.8,9.7h4.5l20,23.9l-1.6,7.3h-8.6l0.5-2\n\tL17,16.5L20.8,9.7z M28.7,0L38,7.3l-1.2,1.2l1.6,2.2v2.4L33.8,17L26,7.8h-4.5l1.8-3.4L28.7,0z M9.1,23.4l6.5-5.6l8.6,10.4L21.8,32\n\th-7.9l-5.5,7.2l-1.3,1.7H0V32l6.6-8.6H9.1z\"/\u003e\n\u003c/svg\u003e"
+   },
+   "model": {
+    "version": "12.2.6"
+   },
+   "name": "kong",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "enabled",
+   "subCategory": "API Gateway",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
+   "primaryColor": "#003459",
+   "shape": "circle",
+   "svgColor": "\u003csvg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\n\t viewBox=\"0 0 45.3 40.8\" style=\"enable-background:new 0 0 45.3 40.8;\" xml:space=\"preserve\"\u003e\n\u003cstyle type=\"text/css\"\u003e\n\t.st0{fill-rule:evenodd;clip-rule:evenodd;fill:#003459;}\n\u003c/style\u003e\n\u003cpath class=\"st0\" d=\"M14.9,33.6h8.3l4.3,5.4l-0.7,1.9H16l0.3-1.9l-2.5-4L14.9,33.6z M20.8,9.7h4.5l20,23.9l-1.6,7.3h-8.6l0.5-2\n\tL17,16.5L20.8,9.7z M28.7,0L38,7.3l-1.2,1.2l1.6,2.2v2.4L33.8,17L26,7.8h-4.5l1.8-3.4L28.7,0z M9.1,23.4l6.5-5.6l8.6,10.4L21.8,32\n\th-7.9l-5.5,7.2l-1.3,1.7H0V32l6.6-8.6H9.1z\"/\u003e\n\u003c/svg\u003e",
+   "svgWhite": "\u003csvg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\n\t viewBox=\"0 0 45.3 40.8\" style=\"enable-background:new 0 0 45.3 40.8;\" xml:space=\"preserve\" width='45.3' height='40.8'\u003e\n\u003cstyle type=\"text/css\"\u003e\n\t.st0{fill:#FFFFFF;}\n\u003c/style\u003e\n\u003cpath class=\"st0\" d=\"M14.9,33.6h8.3l4.3,5.4l-0.7,1.9H16l0.3-1.9l-2.5-4L14.9,33.6z M20.8,9.7h4.5l20,23.9l-1.6,7.3h-8.6l0.5-2\n\tL17,16.5L20.8,9.7z M28.7,0L38,7.3l-1.2,1.2l1.6,2.2v2.4L33.8,17L26,7.8h-4.5l1.8-3.4L28.7,0z M9.1,23.4l6.5-5.6l8.6,10.4L21.8,32\n\th-7.9l-5.5,7.2l-1.3,1.7H0V32l6.6-8.6H9.1z\"/\u003e\n\u003c/svg\u003e"
+  },
+  "version": "v1.0.0"
+ }

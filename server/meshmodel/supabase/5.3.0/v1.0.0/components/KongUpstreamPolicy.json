@@ -1,0 +1,196 @@
+{
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "KongUpstreamPolicy",
+   "schema": "{\n \"description\": \"KongUpstreamPolicy allows configuring algorithm that should be used for load balancing traffic between Kong\\nUpstream's Targets. It also allows configuring health checks for Kong Upstream's Targets.\\n\\n\\nIts configuration is similar to Kong Upstream object (https://docs.konghq.com/gateway/latest/admin-api/#upstream-object),\\nand it is applied to Kong Upstream objects created by the controller.\\n\\n\\nIt can be attached to Services. To attach it to a Service, it has to be annotated with\\n`konghq.com/upstream-policy: \\u003cname\\u003e`, where `\\u003cname\\u003e` is the name of the KongUpstreamPolicy\\nobject in the same namespace as the Service.\\n\\n\\nWhen attached to a Service, it will affect all Kong Upstreams created for the Service.\\n\\n\\nWhen attached to a Service used in a Gateway API *Route rule with multiple BackendRefs, all of its Services MUST\\nbe configured with the same KongUpstreamPolicy. Otherwise, the controller will *ignore* the KongUpstreamPolicy.\\n\\n\\nNote: KongUpstreamPolicy doesn't implement Gateway API's GEP-713 strictly.\\nIn particular, it doesn't use the TargetRef for attaching to Services and Gateway API *Routes - annotations are\\nused instead. This is to allow reusing the same KongUpstreamPolicy for multiple Services and Gateway API *Routes.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Spec contains the configuration of the Kong upstream.\",\n   \"properties\": {\n    \"algorithm\": {\n     \"description\": \"Algorithm is the load balancing algorithm to use.\\nAccepted values are: \\\"round-robin\\\", \\\"consistent-hashing\\\", \\\"least-connections\\\", \\\"latency\\\".\",\n     \"enum\": [\n      \"round-robin\",\n      \"consistent-hashing\",\n      \"least-connections\",\n      \"latency\"\n     ],\n     \"type\": \"string\"\n    },\n    \"hashOn\": {\n     \"description\": \"HashOn defines how to calculate hash for consistent-hashing load balancing algorithm.\\nAlgorithm must be set to \\\"consistent-hashing\\\" for this field to have effect.\",\n     \"properties\": {\n      \"cookie\": {\n       \"description\": \"Cookie is the name of the cookie to use as hash input.\",\n       \"type\": \"string\"\n      },\n      \"cookiePath\": {\n       \"description\": \"CookiePath is cookie path to set in the response headers.\",\n       \"type\": \"string\"\n      },\n      \"header\": {\n       \"description\": \"Header is the name of the header to use as hash input.\",\n       \"type\": \"string\"\n      },\n      \"input\": {\n       \"description\": \"Input allows using one of the predefined inputs (ip, consumer, path).\\nFor other parametrized inputs, use one of the fields below.\",\n       \"enum\": [\n        \"ip\",\n        \"consumer\",\n        \"path\"\n       ],\n       \"type\": \"string\"\n      },\n      \"queryArg\": {\n       \"description\": \"QueryArg is the name of the query argument to use as hash input.\",\n       \"type\": \"string\"\n      },\n      \"uriCapture\": {\n       \"description\": \"URICapture is the name of the URI capture group to use as hash input.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"hashOnFallback\": {\n     \"description\": \"HashOnFallback defines how to calculate hash for consistent-hashing load balancing algorithm if the primary hash\\nfunction fails.\\nAlgorithm must be set to \\\"consistent-hashing\\\" for this field to have effect.\",\n     \"properties\": {\n      \"cookie\": {\n       \"description\": \"Cookie is the name of the cookie to use as hash input.\",\n       \"type\": \"string\"\n      },\n      \"cookiePath\": {\n       \"description\": \"CookiePath is cookie path to set in the response headers.\",\n       \"type\": \"string\"\n      },\n      \"header\": {\n       \"description\": \"Header is the name of the header to use as hash input.\",\n       \"type\": \"string\"\n      },\n      \"input\": {\n       \"description\": \"Input allows using one of the predefined inputs (ip, consumer, path).\\nFor other parametrized inputs, use one of the fields below.\",\n       \"enum\": [\n        \"ip\",\n        \"consumer\",\n        \"path\"\n       ],\n       \"type\": \"string\"\n      },\n      \"queryArg\": {\n       \"description\": \"QueryArg is the name of the query argument to use as hash input.\",\n       \"type\": \"string\"\n      },\n      \"uriCapture\": {\n       \"description\": \"URICapture is the name of the URI capture group to use as hash input.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"healthchecks\": {\n     \"description\": \"Healthchecks defines the health check configurations in Kong.\",\n     \"properties\": {\n      \"active\": {\n       \"description\": \"Active configures active health check probing.\",\n       \"properties\": {\n        \"concurrency\": {\n         \"description\": \"Concurrency is the number of targets to check concurrently.\",\n         \"minimum\": 1,\n         \"type\": \"integer\"\n        },\n        \"headers\": {\n         \"additionalProperties\": {\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         },\n         \"description\": \"Headers is a list of HTTP headers to add to the probe request.\",\n         \"type\": \"object\"\n        },\n        \"healthy\": {\n         \"description\": \"Healthy configures thresholds and HTTP status codes to mark targets healthy for an upstream.\",\n         \"properties\": {\n          \"httpStatuses\": {\n           \"description\": \"HTTPStatuses is a list of HTTP status codes that Kong considers a success.\",\n           \"items\": {\n            \"description\": \"HTTPStatus is an HTTP status code.\",\n            \"maximum\": 599,\n            \"minimum\": 100,\n            \"type\": \"integer\"\n           },\n           \"type\": \"array\"\n          },\n          \"interval\": {\n           \"description\": \"Interval is the interval between active health checks for an upstream in seconds when in a healthy state.\",\n           \"minimum\": 0,\n           \"type\": \"integer\"\n          },\n          \"successes\": {\n           \"description\": \"Successes is the number of successes to consider a target healthy.\",\n           \"minimum\": 0,\n           \"type\": \"integer\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"httpPath\": {\n         \"description\": \"HTTPPath is the path to use in GET HTTP request to run as a probe.\",\n         \"pattern\": \"^/.*$\",\n         \"type\": \"string\"\n        },\n        \"httpsSni\": {\n         \"description\": \"HTTPSSNI is the SNI to use in GET HTTPS request to run as a probe.\",\n         \"type\": \"string\"\n        },\n        \"httpsVerifyCertificate\": {\n         \"description\": \"HTTPSVerifyCertificate is a boolean value that indicates if the certificate should be verified.\",\n         \"type\": \"boolean\"\n        },\n        \"timeout\": {\n         \"description\": \"Timeout is the probe timeout in seconds.\",\n         \"minimum\": 0,\n         \"type\": \"integer\"\n        },\n        \"type\": {\n         \"description\": \"Type determines whether to perform active health checks using HTTP or HTTPS, or just attempt a TCP connection.\\nAccepted values are \\\"http\\\", \\\"https\\\", \\\"tcp\\\", \\\"grpc\\\", \\\"grpcs\\\".\",\n         \"enum\": [\n          \"http\",\n          \"https\",\n          \"tcp\",\n          \"grpc\",\n          \"grpcs\"\n         ],\n         \"type\": \"string\"\n        },\n        \"unhealthy\": {\n         \"description\": \"Unhealthy configures thresholds and HTTP status codes to mark targets unhealthy for an upstream.\",\n         \"properties\": {\n          \"httpFailures\": {\n           \"description\": \"HTTPFailures is the number of failures to consider a target unhealthy.\",\n           \"minimum\": 0,\n           \"type\": \"integer\"\n          },\n          \"httpStatuses\": {\n           \"description\": \"HTTPStatuses is a list of HTTP status codes that Kong considers a failure.\",\n           \"items\": {\n            \"description\": \"HTTPStatus is an HTTP status code.\",\n            \"maximum\": 599,\n            \"minimum\": 100,\n            \"type\": \"integer\"\n           },\n           \"type\": \"array\"\n          },\n          \"interval\": {\n           \"description\": \"Interval is the interval between active health checks for an upstream in seconds when in an unhealthy state.\",\n           \"minimum\": 0,\n           \"type\": \"integer\"\n          },\n          \"tcpFailures\": {\n           \"description\": \"TCPFailures is the number of TCP failures in a row to consider a target unhealthy.\",\n           \"minimum\": 0,\n           \"type\": \"integer\"\n          },\n          \"timeouts\": {\n           \"description\": \"Timeouts is the number of timeouts in a row to consider a target unhealthy.\",\n           \"minimum\": 0,\n           \"type\": \"integer\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"passive\": {\n       \"description\": \"Passive configures passive health check probing.\",\n       \"properties\": {\n        \"healthy\": {\n         \"description\": \"Healthy configures thresholds and HTTP status codes to mark targets healthy for an upstream.\",\n         \"properties\": {\n          \"httpStatuses\": {\n           \"description\": \"HTTPStatuses is a list of HTTP status codes that Kong considers a success.\",\n           \"items\": {\n            \"description\": \"HTTPStatus is an HTTP status code.\",\n            \"maximum\": 599,\n            \"minimum\": 100,\n            \"type\": \"integer\"\n           },\n           \"type\": \"array\"\n          },\n          \"interval\": {\n           \"description\": \"Interval is the interval between active health checks for an upstream in seconds when in a healthy state.\",\n           \"minimum\": 0,\n           \"type\": \"integer\"\n          },\n          \"successes\": {\n           \"description\": \"Successes is the number of successes to consider a target healthy.\",\n           \"minimum\": 0,\n           \"type\": \"integer\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"type\": {\n         \"description\": \"Type determines whether to perform passive health checks interpreting HTTP/HTTPS statuses,\\nor just check for TCP connection success.\\nAccepted values are \\\"http\\\", \\\"https\\\", \\\"tcp\\\", \\\"grpc\\\", \\\"grpcs\\\".\",\n         \"enum\": [\n          \"http\",\n          \"https\",\n          \"tcp\",\n          \"grpc\",\n          \"grpcs\"\n         ],\n         \"type\": \"string\"\n        },\n        \"unhealthy\": {\n         \"description\": \"Unhealthy configures thresholds and HTTP status codes to mark targets unhealthy.\",\n         \"properties\": {\n          \"httpFailures\": {\n           \"description\": \"HTTPFailures is the number of failures to consider a target unhealthy.\",\n           \"minimum\": 0,\n           \"type\": \"integer\"\n          },\n          \"httpStatuses\": {\n           \"description\": \"HTTPStatuses is a list of HTTP status codes that Kong considers a failure.\",\n           \"items\": {\n            \"description\": \"HTTPStatus is an HTTP status code.\",\n            \"maximum\": 599,\n            \"minimum\": 100,\n            \"type\": \"integer\"\n           },\n           \"type\": \"array\"\n          },\n          \"interval\": {\n           \"description\": \"Interval is the interval between active health checks for an upstream in seconds when in an unhealthy state.\",\n           \"minimum\": 0,\n           \"type\": \"integer\"\n          },\n          \"tcpFailures\": {\n           \"description\": \"TCPFailures is the number of TCP failures in a row to consider a target unhealthy.\",\n           \"minimum\": 0,\n           \"type\": \"integer\"\n          },\n          \"timeouts\": {\n           \"description\": \"Timeouts is the number of timeouts in a row to consider a target unhealthy.\",\n           \"minimum\": 0,\n           \"type\": \"integer\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"threshold\": {\n       \"description\": \"Threshold is the minimum percentage of the upstream’s targets’ weight that must be available for the whole\\nupstream to be considered healthy.\",\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"slots\": {\n     \"description\": \"Slots is the number of slots in the load balancer algorithm.\\nIf not set, the default value in Kong for the algorithm is used.\",\n     \"maximum\": 65536,\n     \"minimum\": 10,\n     \"type\": \"integer\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Kong Upstream Policy\",\n \"type\": \"object\",\n \"x-kubernetes-validations\": [\n  {\n   \"message\": \"Only one of spec.hashOn.(input|cookie|header|uriCapture|queryArg) can be set.\",\n   \"rule\": \"has(self.spec.hashOn) ? [has(self.spec.hashOn.input), has(self.spec.hashOn.cookie), has(self.spec.hashOn.header), has(self.spec.hashOn.uriCapture), has(self.spec.hashOn.queryArg)].filter(fieldSet, fieldSet == true).size() \\u003c= 1 : true\"\n  },\n  {\n   \"message\": \"When spec.hashOn.cookie is set, spec.hashOn.cookiePath is required.\",\n   \"rule\": \"has(self.spec.hashOn) \\u0026\\u0026 has(self.spec.hashOn.cookie) ? has(self.spec.hashOn.cookiePath) : true\"\n  },\n  {\n   \"message\": \"When spec.hashOn.cookiePath is set, spec.hashOn.cookie is required.\",\n   \"rule\": \"has(self.spec.hashOn) \\u0026\\u0026 has(self.spec.hashOn.cookiePath) ? has(self.spec.hashOn.cookie) : true\"\n  },\n  {\n   \"message\": \"spec.algorithm must be set to \\\"consistent-hashing\\\" when spec.hashOn is set.\",\n   \"rule\": \"has(self.spec.hashOn) ? has(self.spec.algorithm) \\u0026\\u0026 self.spec.algorithm == \\\"consistent-hashing\\\" : true\"\n  },\n  {\n   \"message\": \"Only one of spec.hashOnFallback.(input|header|uriCapture|queryArg) can be set.\",\n   \"rule\": \"has(self.spec.hashOnFallback) ? [has(self.spec.hashOnFallback.input), has(self.spec.hashOnFallback.header), has(self.spec.hashOnFallback.uriCapture), has(self.spec.hashOnFallback.queryArg)].filter(fieldSet, fieldSet == true).size() \\u003c= 1 : true\"\n  },\n  {\n   \"message\": \"spec.algorithm must be set to \\\"consistent-hashing\\\" when spec.hashOnFallback is set.\",\n   \"rule\": \"has(self.spec.hashOnFallback) ? has(self.spec.algorithm) \\u0026\\u0026 self.spec.algorithm == \\\"consistent-hashing\\\" : true\"\n  },\n  {\n   \"message\": \"spec.hashOnFallback.cookie must not be set.\",\n   \"rule\": \"has(self.spec.hashOnFallback) ? !has(self.spec.hashOnFallback.cookie) : true\"\n  },\n  {\n   \"message\": \"spec.hashOnFallback.cookiePath must not be set.\",\n   \"rule\": \"has(self.spec.hashOnFallback) ? !has(self.spec.hashOnFallback.cookiePath) : true\"\n  },\n  {\n   \"message\": \"spec.healthchecks.passive.healthy.interval must not be set.\",\n   \"rule\": \"has(self.spec.healthchecks) \\u0026\\u0026 has(self.spec.healthchecks.passive) \\u0026\\u0026 has(self.spec.healthchecks.passive.healthy) ? !has(self.spec.healthchecks.passive.healthy.interval) : true\"\n  },\n  {\n   \"message\": \"spec.healthchecks.passive.unhealthy.interval must not be set.\",\n   \"rule\": \"has(self.spec.healthchecks) \\u0026\\u0026 has(self.spec.healthchecks.passive) \\u0026\\u0026 has(self.spec.healthchecks.passive.unhealthy) ? !has(self.spec.healthchecks.passive.unhealthy.interval) : true\"\n  },\n  {\n   \"message\": \"spec.hashOnFallback must not be set when spec.hashOn.cookie is set.\",\n   \"rule\": \"has(self.spec.hashOn) \\u0026\\u0026 has(self.spec.hashOn.cookie) ? !has(self.spec.hashOnFallback) : true\"\n  }\n ]\n}",
+   "version": "configuration.konghq.com/v1beta1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "Kong Upstream Policy",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "published": false
+  },
+  "model": {
+   "category": {
+    "name": "Provisioning"
+   },
+   "displayName": "supabase",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "defaultData": "",
+    "isAnnotation": false,
+    "primaryColor": "#1988d9",
+    "secondaryColor": "#54aef0",
+    "shape": "rectangle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "svgColor": "\u003csvg id=\"bdb56329-4717-4410-aa13-4505ecaa4e46\" xmlns=\"http://www.w3.org/2000/svg\" width=\"18\" height=\"18\" viewBox=\"0 0 18 18\"\u003e\u003cdefs\u003e\u003clinearGradient id=\"ba2610c3-a45a-4e7e-a0c0-285cfd7e005d\" x1=\"13.25\" y1=\"13.02\" x2=\"8.62\" y2=\"4.25\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop offset=\"0\" stop-color=\"#1988d9\" /\u003e\u003cstop offset=\"0.9\" stop-color=\"#54aef0\" /\u003e\u003c/linearGradient\u003e\u003clinearGradient id=\"bd8f618b-4f2f-4cb7-aff0-2fd2d211326d\" x1=\"11.26\" y1=\"10.47\" x2=\"14.46\" y2=\"15.99\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop offset=\"0.1\" stop-color=\"#54aef0\" /\u003e\u003cstop offset=\"0.29\" stop-color=\"#4fabee\" /\u003e\u003cstop offset=\"0.51\" stop-color=\"#41a2e9\" /\u003e\u003cstop offset=\"0.74\" stop-color=\"#2a93e0\" /\u003e\u003cstop offset=\"0.88\" stop-color=\"#1988d9\" /\u003e\u003c/linearGradient\u003e\u003c/defs\u003e\u003ctitle\u003eIcon-identity-221\u003c/title\u003e\u003cpolygon points=\"1.01 10.19 8.93 15.33 16.99 10.17 18 11.35 8.93 17.19 0 11.35 1.01 10.19\" fill=\"#50e6ff\" /\u003e\u003cpolygon points=\"1.61 9.53 8.93 0.81 16.4 9.54 8.93 14.26 1.61 9.53\" fill=\"#fff\" /\u003e\u003cpolygon points=\"8.93 0.81 8.93 14.26 1.61 9.53 8.93 0.81\" fill=\"#50e6ff\" /\u003e\u003cpolygon points=\"8.93 0.81 8.93 14.26 16.4 9.54 8.93 0.81\" fill=\"url(#ba2610c3-a45a-4e7e-a0c0-285cfd7e005d)\" /\u003e\u003cpolygon points=\"8.93 7.76 16.4 9.54 8.93 14.26 8.93 7.76\" fill=\"#53b1e0\" /\u003e\u003cpolygon points=\"8.93 14.26 1.61 9.53 8.93 7.76 8.93 14.26\" fill=\"#9cebff\" /\u003e\u003cpolygon points=\"8.93 17.19 18 11.35 16.99 10.17 8.93 15.33 8.93 17.19\" fill=\"url(#bd8f618b-4f2f-4cb7-aff0-2fd2d211326d)\" /\u003e\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003csvg id=\"bdb56329-4717-4410-aa13-4505ecaa4e46\" xmlns=\"http://www.w3.org/2000/svg\" width=\"18\" height=\"18\" viewBox=\"0 0 18 18\"\u003e \u003cdefs\u003e \u003clinearGradient id=\"ba2610c3-a45a-4e7e-a0c0-285cfd7e005d\" x1=\"13.25\" y1=\"13.02\" x2=\"8.62\" y2=\"4.25\" gradientUnits=\"userSpaceOnUse\"\u003e \u003cstop offset=\"0\" stop-color=\"#FFF\" /\u003e \u003cstop offset=\"0.9\" stop-color=\"#FFF\" /\u003e \u003c/linearGradient\u003e \u003clinearGradient id=\"bd8f618b-4f2f-4cb7-aff0-2fd2d211326d\" x1=\"11.26\" y1=\"10.47\" x2=\"14.46\" y2=\"15.99\" gradientUnits=\"userSpaceOnUse\"\u003e \u003cstop offset=\"0.1\" stop-color=\"#FFF\" /\u003e \u003cstop offset=\"0.29\" stop-color=\"#FFF\" /\u003e \u003cstop offset=\"0.51\" stop-color=\"#FFF\" /\u003e \u003cstop offset=\"0.74\" stop-color=\"#FFF\" /\u003e \u003cstop offset=\"0.88\" stop-color=\"#FFF\" /\u003e \u003c/linearGradient\u003e \u003c/defs\u003e \u003ctitle\u003eIcon-identity-221\u003c/title\u003e \u003cpolygon points=\"1.01 10.19 8.93 15.33 16.99 10.17 18 11.35 8.93 17.19 0 11.35 1.01 10.19\" fill=\"#FFF\" /\u003e \u003cpolygon points=\"1.61 9.53 8.93 0.81 16.4 9.54 8.93 14.26 1.61 9.53\" fill=\"#fff\" /\u003e \u003cpolygon points=\"8.93 0.81 8.93 14.26 1.61 9.53 8.93 0.81\" fill=\"#FFF\" /\u003e \u003cpolygon points=\"8.93 0.81 8.93 14.26 16.4 9.54 8.93 0.81\" fill=\"url(#ba2610c3-a45a-4e7e-a0c0-285cfd7e005d)\" /\u003e \u003cpolygon points=\"8.93 7.76 16.4 9.54 8.93 14.26 8.93 7.76\" fill=\"#FFF\" /\u003e \u003cpolygon points=\"8.93 14.26 1.61 9.53 8.93 7.76 8.93 14.26\" fill=\"#FFF\" /\u003e \u003cpolygon points=\"8.93 17.19 18 11.35 16.99 10.17 8.93 15.33 8.93 17.19\" fill=\"url(#bd8f618b-4f2f-4cb7-aff0-2fd2d211326d)\" /\u003e \u003c/svg\u003e"
+   },
+   "model": {
+    "version": "5.3.0"
+   },
+   "name": "supabase",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "enabled",
+   "subCategory": "Security \u0026 Compliance",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
+   "primaryColor": "#1988d9",
+   "secondaryColor": "#54aef0",
+   "shape": "rectangle",
+   "svgColor": "\u003csvg id=\"bdb56329-4717-4410-aa13-4505ecaa4e46\" xmlns=\"http://www.w3.org/2000/svg\" width=\"18\" height=\"18\" viewBox=\"0 0 18 18\"\u003e\u003cdefs\u003e\u003clinearGradient id=\"ba2610c3-a45a-4e7e-a0c0-285cfd7e005d\" x1=\"13.25\" y1=\"13.02\" x2=\"8.62\" y2=\"4.25\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop offset=\"0\" stop-color=\"#1988d9\" /\u003e\u003cstop offset=\"0.9\" stop-color=\"#54aef0\" /\u003e\u003c/linearGradient\u003e\u003clinearGradient id=\"bd8f618b-4f2f-4cb7-aff0-2fd2d211326d\" x1=\"11.26\" y1=\"10.47\" x2=\"14.46\" y2=\"15.99\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop offset=\"0.1\" stop-color=\"#54aef0\" /\u003e\u003cstop offset=\"0.29\" stop-color=\"#4fabee\" /\u003e\u003cstop offset=\"0.51\" stop-color=\"#41a2e9\" /\u003e\u003cstop offset=\"0.74\" stop-color=\"#2a93e0\" /\u003e\u003cstop offset=\"0.88\" stop-color=\"#1988d9\" /\u003e\u003c/linearGradient\u003e\u003c/defs\u003e\u003ctitle\u003eIcon-identity-221\u003c/title\u003e\u003cpolygon points=\"1.01 10.19 8.93 15.33 16.99 10.17 18 11.35 8.93 17.19 0 11.35 1.01 10.19\" fill=\"#50e6ff\" /\u003e\u003cpolygon points=\"1.61 9.53 8.93 0.81 16.4 9.54 8.93 14.26 1.61 9.53\" fill=\"#fff\" /\u003e\u003cpolygon points=\"8.93 0.81 8.93 14.26 1.61 9.53 8.93 0.81\" fill=\"#50e6ff\" /\u003e\u003cpolygon points=\"8.93 0.81 8.93 14.26 16.4 9.54 8.93 0.81\" fill=\"url(#ba2610c3-a45a-4e7e-a0c0-285cfd7e005d)\" /\u003e\u003cpolygon points=\"8.93 7.76 16.4 9.54 8.93 14.26 8.93 7.76\" fill=\"#53b1e0\" /\u003e\u003cpolygon points=\"8.93 14.26 1.61 9.53 8.93 7.76 8.93 14.26\" fill=\"#9cebff\" /\u003e\u003cpolygon points=\"8.93 17.19 18 11.35 16.99 10.17 8.93 15.33 8.93 17.19\" fill=\"url(#bd8f618b-4f2f-4cb7-aff0-2fd2d211326d)\" /\u003e\u003c/svg\u003e",
+   "svgWhite": "\u003csvg id=\"bdb56329-4717-4410-aa13-4505ecaa4e46\" xmlns=\"http://www.w3.org/2000/svg\" width=\"18\" height=\"18\" viewBox=\"0 0 18 18\"\u003e \u003cdefs\u003e \u003clinearGradient id=\"ba2610c3-a45a-4e7e-a0c0-285cfd7e005d\" x1=\"13.25\" y1=\"13.02\" x2=\"8.62\" y2=\"4.25\" gradientUnits=\"userSpaceOnUse\"\u003e \u003cstop offset=\"0\" stop-color=\"#FFF\" /\u003e \u003cstop offset=\"0.9\" stop-color=\"#FFF\" /\u003e \u003c/linearGradient\u003e \u003clinearGradient id=\"bd8f618b-4f2f-4cb7-aff0-2fd2d211326d\" x1=\"11.26\" y1=\"10.47\" x2=\"14.46\" y2=\"15.99\" gradientUnits=\"userSpaceOnUse\"\u003e \u003cstop offset=\"0.1\" stop-color=\"#FFF\" /\u003e \u003cstop offset=\"0.29\" stop-color=\"#FFF\" /\u003e \u003cstop offset=\"0.51\" stop-color=\"#FFF\" /\u003e \u003cstop offset=\"0.74\" stop-color=\"#FFF\" /\u003e \u003cstop offset=\"0.88\" stop-color=\"#FFF\" /\u003e \u003c/linearGradient\u003e \u003c/defs\u003e \u003ctitle\u003eIcon-identity-221\u003c/title\u003e \u003cpolygon points=\"1.01 10.19 8.93 15.33 16.99 10.17 18 11.35 8.93 17.19 0 11.35 1.01 10.19\" fill=\"#FFF\" /\u003e \u003cpolygon points=\"1.61 9.53 8.93 0.81 16.4 9.54 8.93 14.26 1.61 9.53\" fill=\"#fff\" /\u003e \u003cpolygon points=\"8.93 0.81 8.93 14.26 1.61 9.53 8.93 0.81\" fill=\"#FFF\" /\u003e \u003cpolygon points=\"8.93 0.81 8.93 14.26 16.4 9.54 8.93 0.81\" fill=\"url(#ba2610c3-a45a-4e7e-a0c0-285cfd7e005d)\" /\u003e \u003cpolygon points=\"8.93 7.76 16.4 9.54 8.93 14.26 8.93 7.76\" fill=\"#FFF\" /\u003e \u003cpolygon points=\"8.93 14.26 1.61 9.53 8.93 7.76 8.93 14.26\" fill=\"#FFF\" /\u003e \u003cpolygon points=\"8.93 17.19 18 11.35 16.99 10.17 8.93 15.33 8.93 17.19\" fill=\"url(#bd8f618b-4f2f-4cb7-aff0-2fd2d211326d)\" /\u003e \u003c/svg\u003e"
+  },
+  "version": "v1.0.0"
+ }

@@ -1,0 +1,196 @@
+{
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "PerconaXtraDBClusterRestore",
+   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"backupName\": {\n     \"type\": \"string\"\n    },\n    \"backupSource\": {\n     \"properties\": {\n      \"azure\": {\n       \"properties\": {\n        \"container\": {\n         \"type\": \"string\"\n        },\n        \"credentialsSecret\": {\n         \"type\": \"string\"\n        },\n        \"endpointUrl\": {\n         \"type\": \"string\"\n        },\n        \"storageClass\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"completed\": {\n       \"format\": \"date-time\",\n       \"type\": \"string\"\n      },\n      \"conditions\": {\n       \"items\": {\n        \"properties\": {\n         \"lastTransitionTime\": {\n          \"format\": \"date-time\",\n          \"type\": \"string\"\n         },\n         \"message\": {\n          \"maxLength\": 32768,\n          \"type\": \"string\"\n         },\n         \"observedGeneration\": {\n          \"format\": \"int64\",\n          \"minimum\": 0,\n          \"type\": \"integer\"\n         },\n         \"reason\": {\n          \"maxLength\": 1024,\n          \"minLength\": 1,\n          \"pattern\": \"^[A-Za-z]([A-Za-z0-9_,:]*[A-Za-z0-9_])?$\",\n          \"type\": \"string\"\n         },\n         \"status\": {\n          \"enum\": [\n           \"True\",\n           \"False\",\n           \"Unknown\"\n          ],\n          \"type\": \"string\"\n         },\n         \"type\": {\n          \"maxLength\": 316,\n          \"pattern\": \"^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\\\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$\",\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"lastTransitionTime\",\n         \"message\",\n         \"reason\",\n         \"status\",\n         \"type\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"destination\": {\n       \"type\": \"string\"\n      },\n      \"image\": {\n       \"type\": \"string\"\n      },\n      \"lastscheduled\": {\n       \"format\": \"date-time\",\n       \"type\": \"string\"\n      },\n      \"latestRestorableTime\": {\n       \"format\": \"date-time\",\n       \"type\": \"string\"\n      },\n      \"s3\": {\n       \"properties\": {\n        \"bucket\": {\n         \"type\": \"string\"\n        },\n        \"credentialsSecret\": {\n         \"type\": \"string\"\n        },\n        \"endpointUrl\": {\n         \"type\": \"string\"\n        },\n        \"region\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"sslInternalSecretName\": {\n       \"type\": \"string\"\n      },\n      \"sslSecretName\": {\n       \"type\": \"string\"\n      },\n      \"state\": {\n       \"type\": \"string\"\n      },\n      \"storageName\": {\n       \"type\": \"string\"\n      },\n      \"storage_type\": {\n       \"type\": \"string\"\n      },\n      \"vaultSecretName\": {\n       \"type\": \"string\"\n      },\n      \"verifyTLS\": {\n       \"type\": \"boolean\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"containerOptions\": {\n     \"properties\": {\n      \"args\": {\n       \"properties\": {\n        \"xbcloud\": {\n         \"items\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"array\"\n        },\n        \"xbstream\": {\n         \"items\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"array\"\n        },\n        \"xtrabackup\": {\n         \"items\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"array\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"env\": {\n       \"items\": {\n        \"properties\": {\n         \"name\": {\n          \"type\": \"string\"\n         },\n         \"value\": {\n          \"type\": \"string\"\n         },\n         \"valueFrom\": {\n          \"properties\": {\n           \"configMapKeyRef\": {\n            \"properties\": {\n             \"key\": {\n              \"type\": \"string\"\n             },\n             \"name\": {\n              \"type\": \"string\"\n             },\n             \"optional\": {\n              \"type\": \"boolean\"\n             }\n            },\n            \"required\": [\n             \"key\"\n            ],\n            \"type\": \"object\"\n           },\n           \"fieldRef\": {\n            \"properties\": {\n             \"apiVersion\": {\n              \"type\": \"string\"\n             },\n             \"fieldPath\": {\n              \"type\": \"string\"\n             }\n            },\n            \"required\": [\n             \"fieldPath\"\n            ],\n            \"type\": \"object\"\n           },\n           \"resourceFieldRef\": {\n            \"properties\": {\n             \"containerName\": {\n              \"type\": \"string\"\n             },\n             \"divisor\": {\n              \"anyOf\": [\n               {\n                \"type\": \"integer\"\n               },\n               {\n                \"type\": \"string\"\n               }\n              ],\n              \"pattern\": \"^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$\",\n              \"x-kubernetes-int-or-string\": true\n             },\n             \"resource\": {\n              \"type\": \"string\"\n             }\n            },\n            \"required\": [\n             \"resource\"\n            ],\n            \"type\": \"object\"\n           },\n           \"secretKeyRef\": {\n            \"properties\": {\n             \"key\": {\n              \"type\": \"string\"\n             },\n             \"name\": {\n              \"type\": \"string\"\n             },\n             \"optional\": {\n              \"type\": \"boolean\"\n             }\n            },\n            \"required\": [\n             \"key\"\n            ],\n            \"type\": \"object\"\n           }\n          },\n          \"type\": \"object\"\n         }\n        },\n        \"required\": [\n         \"name\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"pitr\": {\n     \"properties\": {\n      \"backupSource\": {\n       \"properties\": {\n        \"azure\": {\n         \"properties\": {\n          \"container\": {\n           \"type\": \"string\"\n          },\n          \"credentialsSecret\": {\n           \"type\": \"string\"\n          },\n          \"endpointUrl\": {\n           \"type\": \"string\"\n          },\n          \"storageClass\": {\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"completed\": {\n         \"format\": \"date-time\",\n         \"type\": \"string\"\n        },\n        \"conditions\": {\n         \"items\": {\n          \"properties\": {\n           \"lastTransitionTime\": {\n            \"format\": \"date-time\",\n            \"type\": \"string\"\n           },\n           \"message\": {\n            \"maxLength\": 32768,\n            \"type\": \"string\"\n           },\n           \"observedGeneration\": {\n            \"format\": \"int64\",\n            \"minimum\": 0,\n            \"type\": \"integer\"\n           },\n           \"reason\": {\n            \"maxLength\": 1024,\n            \"minLength\": 1,\n            \"pattern\": \"^[A-Za-z]([A-Za-z0-9_,:]*[A-Za-z0-9_])?$\",\n            \"type\": \"string\"\n           },\n           \"status\": {\n            \"enum\": [\n             \"True\",\n             \"False\",\n             \"Unknown\"\n            ],\n            \"type\": \"string\"\n           },\n           \"type\": {\n            \"maxLength\": 316,\n            \"pattern\": \"^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\\\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$\",\n            \"type\": \"string\"\n           }\n          },\n          \"required\": [\n           \"lastTransitionTime\",\n           \"message\",\n           \"reason\",\n           \"status\",\n           \"type\"\n          ],\n          \"type\": \"object\"\n         },\n         \"type\": \"array\"\n        },\n        \"destination\": {\n         \"type\": \"string\"\n        },\n        \"image\": {\n         \"type\": \"string\"\n        },\n        \"lastscheduled\": {\n         \"format\": \"date-time\",\n         \"type\": \"string\"\n        },\n        \"latestRestorableTime\": {\n         \"format\": \"date-time\",\n         \"type\": \"string\"\n        },\n        \"s3\": {\n         \"properties\": {\n          \"bucket\": {\n           \"type\": \"string\"\n          },\n          \"credentialsSecret\": {\n           \"type\": \"string\"\n          },\n          \"endpointUrl\": {\n           \"type\": \"string\"\n          },\n          \"region\": {\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"sslInternalSecretName\": {\n         \"type\": \"string\"\n        },\n        \"sslSecretName\": {\n         \"type\": \"string\"\n        },\n        \"state\": {\n         \"type\": \"string\"\n        },\n        \"storageName\": {\n         \"type\": \"string\"\n        },\n        \"storage_type\": {\n         \"type\": \"string\"\n        },\n        \"vaultSecretName\": {\n         \"type\": \"string\"\n        },\n        \"verifyTLS\": {\n         \"type\": \"boolean\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"date\": {\n       \"type\": \"string\"\n      },\n      \"gtid\": {\n       \"type\": \"string\"\n      },\n      \"type\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"pxcCluster\": {\n     \"type\": \"string\"\n    },\n    \"resources\": {\n     \"properties\": {\n      \"claims\": {\n       \"items\": {\n        \"properties\": {\n         \"name\": {\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"name\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\",\n       \"x-kubernetes-list-map-keys\": [\n        \"name\"\n       ],\n       \"x-kubernetes-list-type\": \"map\"\n      },\n      \"limits\": {\n       \"additionalProperties\": {\n        \"anyOf\": [\n         {\n          \"type\": \"integer\"\n         },\n         {\n          \"type\": \"string\"\n         }\n        ],\n        \"pattern\": \"^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$\",\n        \"x-kubernetes-int-or-string\": true\n       },\n       \"type\": \"object\"\n      },\n      \"requests\": {\n       \"additionalProperties\": {\n        \"anyOf\": [\n         {\n          \"type\": \"integer\"\n         },\n         {\n          \"type\": \"string\"\n         }\n        ],\n        \"pattern\": \"^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$\",\n        \"x-kubernetes-int-or-string\": true\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Percona Xtra DB Cluster Restore\",\n \"type\": \"object\"\n}",
+   "version": "pxc.percona.com/v1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "Percona Xtra DB Cluster Restore",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "published": false
+  },
+  "model": {
+   "category": {
+    "name": "Uncategorized"
+   },
+   "displayName": "Pxc Operator",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "defaultData": "",
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "model": {
+    "version": "1.14.2"
+   },
+   "name": "pxc-operator",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "subCategory": "Uncategorized",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "ignored",
+  "styles": {
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "svgColor": "",
+   "svgWhite": ""
+  },
+  "version": "v1.0.0"
+ }

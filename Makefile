@@ -18,7 +18,7 @@ include install/Makefile.show-help.mk
 #-----------------------------------------------------------------------------
 # Docker-based Builds
 #-----------------------------------------------------------------------------
-.PHONY: docker-build docker-local-cloud docker-cloud docker-playground-build
+.PHONY: docker-build docker-local-cloud docker-cloud docker-playground-build docker-testing-env-build docker-testing-env 
 
 ## Build Meshery Server and UI container.
 docker-build:
@@ -30,7 +30,13 @@ docker-build:
 docker-playground-build:
 	# `make docker-playground-build` builds Meshery inside of a multi-stage Docker container.
 	# This method does NOT require that you have Go, NPM, etc. installed locally.
-	DOCKER_BUILDKIT=1 docker build -f install/docker/Dockerfile -t layer5/meshery --build-arg TOKEN=$(GLOBAL_TOKEN) --build-arg GIT_COMMITSHA=$(GIT_COMMITSHA) --build-arg GIT_VERSION=$(GIT_VERSION) --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} --build-arg PROVIDER=$(LOCAL_PROVIDER) --build-arg PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) .
+	DOCKER_BUILDKIT=1 docker build -f install/docker/Dockerfile -t layer5/meshery --build-arg TOKEN=$(GLOBAL_TOKEN) --build-arg GIT_COMMITSHA=$(GIT_COMMITSHA) --build-arg GIT_VERSION=$(GIT_VERSION) --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} --build-arg PROVIDER=$(LOCAL_PROVIDER) --build-arg PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) --build-arg PLAYGROUND=true .
+
+## Build Meshery Server and UI container for e2e testing.
+docker-testing-env-build:
+	# `make docker-build` builds Meshery inside of a multi-stage Docker container.
+	# This method does NOT require that you have Go, NPM, etc. installed locally.
+	DOCKER_BUILDKIT=1 docker build -f install/docker/testing/Dockerfile -t layer5/meshery-testing-env --build-arg GIT_VERSION=$(GIT_VERSION) .
 
 ## Meshery Cloud for user authentication.
 ## Runs Meshery in a container locally and points to locally-running
@@ -59,10 +65,23 @@ docker-cloud:
 	-p 9081:8080 \
 	layer5/meshery ./meshery
 
+## Runs Meshery in a container locally and points to remote
+## Remote Provider for user authentication.
+docker-testing-env:
+	docker run --rm --name mesherytesting  -d \
+	-e PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
+	-e DEBUG=true \
+	-e ADAPTER_URLS=$(ADAPTER_URLS) \
+	-e KEYS_PATH=$(KEYS_PATH) \
+	-v meshery-config:/home/appuser/.meshery/config \
+  -v $(HOME)/.kube:/home/appuser/.kube:ro \
+	-p 9081:8080 \
+	layer5/meshery-testing-env ./meshery
+
 #-----------------------------------------------------------------------------
 # Meshery Server Native Builds
 #-----------------------------------------------------------------------------
-.PHONY: server wrk2-setup nighthawk-setup server-local server-skip-compgen server-no-content golangci proto-build error
+.PHONY: server wrk2-setup nighthawk-setup server-local server-skip-compgen server-no-content golangci proto-build error build-server server-binary
 ## Setup wrk2 for local development.
 wrk2-setup:
 	echo "setup-wrk does not work on Mac Catalina at the moment"
@@ -98,8 +117,12 @@ build-server: dep-check
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	KEYS_PATH=$(KEYS_PATH) \
-	GOPROXY=https://proxy.golang.org,direct GOSUMDB=off GO111MODULE=on go build ./server/cmd/main.go ./server/cmd/error.go
+	GOPROXY=https://proxy.golang.org,direct GO111MODULE=on go build ./server/cmd/main.go ./server/cmd/error.go
 	chmod +x ./main
+
+## Running the meshery server using binary.
+server-binary:
+	cd server/cmd; BUILD="$(GIT_VERSION)" PROVIDER_BASE_URLS=$(MESHERY_CLOUD_STAGING) ../../main; cd ../../
 
 ## Build and run Meshery Server on your local machine
 ## and point to Remote Provider in staging environment
@@ -298,7 +321,7 @@ ui-meshery-build:
 ui-provider-build:
 	cd provider-ui; npm run build && npm run export; cd ..
 
-## Run Meshery Cypress Integration Tests against your local Meshery UI (cypress runs in non-interactive mode).
+## Run Meshery End-to-End Integration Tests against your local Meshery UI (runs in non-interactive mode).
 ui-integration-tests: ui-setup
 	cd ui; npm run ci-test-integration; cd ..
 
@@ -392,7 +415,7 @@ graphql-build: dep-check
 
 ## testing
 test-setup-ui:
-	cd meshmap; npm ci ; npx playwright install --with-deps; cd ..
+	cd ui; npm ci; npx playwright install --with-deps; cd ..
 
 test-ui:
 	cd ui; npm run test:e2e; cd ..

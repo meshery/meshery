@@ -112,12 +112,12 @@ export const FormattedMetadata = ({ event }) => {
     error: (value) => <ErrorMetadataFormatter metadata={value} event={event} />,
     dryRunResponse: (value) => <DryRunResponse response={value} />,
     DownloadLink: (value) => (
-      <TitleLink href={`api/system/fileDownload?file=${encodeURIComponent(value)}`}>
+      <TitleLink href={'/api/system/fileDownload?file=' + encodeURIComponent(value)}>
         Download
       </TitleLink>
     ),
     ViewLink: (value) => (
-      <TitleLink href={`api/system/fileView?file=${encodeURIComponent(value)}`}>View</TitleLink>
+      <TitleLink href={'/api/system/fileView?file=' + encodeURIComponent(value)}>View</TitleLink>
     ),
   };
 

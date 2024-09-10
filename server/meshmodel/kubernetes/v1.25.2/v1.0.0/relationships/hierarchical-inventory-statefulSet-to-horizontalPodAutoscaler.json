@@ -1,0 +1,101 @@
+{
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "version": "v1.0.0",
+  "kind": "hierarchical",
+  "type": "parent",
+  "subType": "inventory",
+  "metadata": {
+    "description": "A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component."
+  },
+  "model": {
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "kubernetes",
+    "registrant": {
+      "kind": "artifacthub"
+    },
+    "model": {
+      "version": "v1.25.2"
+    },
+    "displayName": "Kubernetes",
+    "category": {
+      "name": "Orchestration \u0026 Management",
+      "metadata": null
+    },
+    "metadata": {}
+  },
+  "status": "enabled",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "StatefulSet",
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  "component",
+                  "version"
+                ],
+                [
+                  "displayName"
+                ],
+                [
+                  "component",
+                  "kind"
+                ]
+              ],
+              "description": "Allow Horizontal Pod Autoscaler to scale based on observed metrics for StatefulSet."
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "HorizontalPodAutoscaler",
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "scaleTargetRef",
+                  "apiVersion"
+                ],
+                [
+                  "configuration",
+                  "spec",
+                  "scaleTargetRef",
+                  "name"
+                ],
+                [
+                  "configuration",
+                  "spec",
+                  "scaleTargetRef",
+                  "kind"
+                ]
+              ],
+              "description": "Horizontal Pod Autoscaler automatically scales the number of pods in a replication controller, deployment, replica set or stateful set based on observed CPU utilization (or, with custom metrics support, on some other application-provided metrics). Horizontal Pod Autoscaling does not apply to objects that can't be scaled, for example, DaemonSets."
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }
+  ]
+}

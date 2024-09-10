@@ -61,7 +61,7 @@ jobs:
       - name: Deploy Service Mesh
         run: |
           cat ~/auth.json
-          echo | mesheryctl mesh deploy meshery-istio --namespace istio-system -t ~/auth.json ISTIO
+          echo | mesheryctl adapter deploy meshery-istio --namespace istio-system -t ~/auth.json ISTIO
           sleep 50
         shell: '/bin/bash {0}'
 
@@ -72,7 +72,7 @@ jobs:
           platform: ${{ matrix.platform }}
           pattern_url: ${{ github.event.inputs.pattern_url }}
           pattern_file: ${{ github.event.inputs.pattern_file }}
-  
+
   scheduled-test:
     name: Scheduled e2e Test
     runs-on: ubuntu-22.04
@@ -111,10 +111,10 @@ jobs:
           profile_name: integration-e2e-workflow
           profile_filename: integration-test-config.yaml
           test_name: '${{ steps.date.outputs.date }}'
-      
+
       - name: Deploy Service Mesh
         run: |
-          echo | mesheryctl mesh deploy meshery-istio --namespace istio-system -t ~/auth.json ISTIO
+          echo | mesheryctl adapter deploy meshery-istio --namespace istio-system -t ~/auth.json ISTIO
           sleep 50
         shell: '/bin/bash {0}'
 
@@ -137,4 +137,4 @@ jobs:
         with:
           provider_token: ${{ secrets.PROVIDER_TOKEN }}
           platform: ${{ matrix.platform }}
-          pattern_url: https://raw.githubusercontent.com/meshery/meshery.io/master/catalog/9d3b33bf-eaf6-4d06-9dd6-64aa725ab383.yaml 
+          pattern_url: https://raw.githubusercontent.com/meshery/meshery.io/master/catalog/9d3b33bf-eaf6-4d06-9dd6-64aa725ab383.yaml

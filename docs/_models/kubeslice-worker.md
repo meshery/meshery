@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Kubeslice Worker
-subtitle: Collaborative and visual infrastructure as code for Kubeslice Worker
+subtitle: Collaborative and visual infrastructure as design for Kubeslice Worker
 image: /assets/img/integrations/kubeslice-worker/icons/color/kubeslice-worker-color.svg
 permalink: extensibility/integrations/kubeslice-worker
 docURL: https://docs.meshery.io/extensibility/integrations/kubeslice-worker
@@ -45,9 +45,9 @@ components:
 featureList: [
   "KubeSlice enables Kubernetes pods and services to communicate seamlessly across clusters, clouds, edges, and data centers by creating logical application boundaries known as Slices.",
   "It combines network, application, and deployment services in a framework to accelerate application deployment in a multi-cluster, multi-tenant environment.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Isolate workloads from each other on different slices of a Kubernetes cluster"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

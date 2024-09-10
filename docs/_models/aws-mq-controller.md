@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: AWS MQ
-subtitle: Collaborative and visual infrastructure as code for AWS MQ
+subtitle: Collaborative and visual infrastructure as design for AWS MQ
 image: /assets/img/integrations/aws-mq-controller/icons/color/aws-mq-controller-color.svg
 permalink: extensibility/integrations/aws-mq-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-mq-controller
@@ -23,12 +23,12 @@ components:
   whiteIcon: assets/img/integrations/aws-mq-controller/components/broker/icons/white/broker-white.svg
   description: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Reliable and scalable message brokering",
+  "Supports various messaging protocols",
+  "Integrates with other AWS services"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Integrates with AWS MQ"
+howItWorksDetails: "Simplified message brokering for Kubernetes applications on AWS"
 language: en
 list: include
 type: extensibility

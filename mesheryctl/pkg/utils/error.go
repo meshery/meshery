@@ -142,6 +142,8 @@ func SystemModelSubError(msg string, cmd string) string {
 		return formatError(msg, cmdModelList)
 	case "view":
 		return formatError(msg, cmdModelView)
+	case "import":
+		return formatError(msg, cmdModelImport)
 	default:
 		return formatError(msg, cmdModel)
 	}
@@ -188,6 +190,8 @@ func RelationshipsError(msg string, cmd string) string {
 		return formatError(msg, cmdRelationshipView)
 	case "generate":
 		return formatError(msg, cmdRelationshipGenerateDocs)
+	case "search":
+		return formatError(msg, cmdRelationshipSearch)
 	case "list":
 		return formatError(msg, cmdRelationshipList)
 	default:
@@ -244,102 +248,132 @@ func PatternViewError(msg string) string {
 func formatError(msg string, cmd cmdType) string {
 	switch cmd {
 	case cmdRoot:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, rootUsageURL)
+		return formatUsageDetails(msg, rootUsageURL)
 	case cmdPerf:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, perfUsageURL)
+		return formatUsageDetails(msg, perfUsageURL)
 	case cmdMesh:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, meshUsageURL)
+		return formatUsageDetails(msg, meshUsageURL)
 	case cmdSystem:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, systemUsageURL)
+		return formatUsageDetails(msg, systemUsageURL)
 	case cmdSystemStop:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, systemStopURL)
+		return formatUsageDetails(msg, systemStopURL)
 	case cmdSystemUpdate:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, systemUpdateURL)
+		return formatUsageDetails(msg, systemUpdateURL)
 	case cmdSystemReset:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, systemResetURL)
+		return formatUsageDetails(msg, systemResetURL)
 	case cmdSystemStatus:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, systemStatusURL)
+		return formatUsageDetails(msg, systemStatusURL)
 	case cmdSystemRestart:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, systemRestartURL)
+		return formatUsageDetails(msg, systemRestartURL)
 	case cmdExp:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, expUsageURL)
+		return formatUsageDetails(msg, expUsageURL)
 	case cmdFilter:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, filterUsageURL)
+		return formatUsageDetails(msg, filterUsageURL)
 	case cmdFilterImport:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, filterImportURL)
+		return formatUsageDetails(msg, filterImportURL)
 	case cmdFilterDelete:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, filterDeleteURL)
+		return formatUsageDetails(msg, filterDeleteURL)
 	case cmdFilterList:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, filterListURL)
+		return formatUsageDetails(msg, filterListURL)
 	case cmdFilterView:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, filterViewURL)
+		return formatUsageDetails(msg, filterViewURL)
 	case cmdPattern:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, patternUsageURL)
+		return formatUsageDetails(msg, patternUsageURL)
 	case cmdPatternView:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, patternViewURL)
+		return formatUsageDetails(msg, patternViewURL)
+	case cmdPatternExport:
+		return formatUsageDetails(msg, patternExportURL)
 	case cmdContextDelete:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, contextDeleteURL)
+		return formatUsageDetails(msg, contextDeleteURL)
 	case cmdContextCreate:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, contextCreateURL)
+		return formatUsageDetails(msg, contextCreateURL)
 	case cmdContextView:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, contextViewURL)
+		return formatUsageDetails(msg, contextViewURL)
 	case cmdContext:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, contextUsageURL)
+		return formatUsageDetails(msg, contextUsageURL)
 	case cmdChannelSwitch:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, channelSwitchURL)
+		return formatUsageDetails(msg, channelSwitchURL)
 	case cmdChannelView:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, channelViewURL)
+		return formatUsageDetails(msg, channelViewURL)
 	case cmdChannelSet:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, channelSetURL)
+		return formatUsageDetails(msg, channelSetURL)
 	case cmdChannel:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, channelUsageURL)
+		return formatUsageDetails(msg, channelUsageURL)
 	case cmdProviderView:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, providerViewURL)
+		return formatUsageDetails(msg, providerViewURL)
 	case cmdProviderList:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, providerListURL)
+		return formatUsageDetails(msg, providerListURL)
 	case cmdProviderSet:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, providerSetURL)
+		return formatUsageDetails(msg, providerSetURL)
 	case cmdProviderSwitch:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, providerSwitchURL)
+		return formatUsageDetails(msg, providerSwitchURL)
 	case cmdProviderReset:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, providerResetURL)
+		return formatUsageDetails(msg, providerResetURL)
 	case cmdProvider:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, providerUsageURL)
+		return formatUsageDetails(msg, providerUsageURL)
 	case cmdToken:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, tokenUsageURL)
+		return formatUsageDetails(msg, tokenUsageURL)
 	case cmdModel:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, modelUsageURL)
+		return formatUsageDetails(msg, modelUsageURL)
 	case cmdModelList:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, modelListURL)
+		return formatUsageDetails(msg, modelListURL)
+	case cmdModelImport:
+		return formatUsageDetails(msg, modelImportURl)
 	case cmdModelView:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, modelViewURL)
+		return formatUsageDetails(msg, modelViewURL)
 	case cmdRegistry:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, registryUsageURL)
+		return formatUsageDetails(msg, registryUsageURL)
 	case cmdEnvironment:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, environmentUsageURL)
+		return formatUsageDetails(msg, environmentUsageURL)
 	case cmdEnvironmentCreate:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, environmentCreateURL)
+		return formatUsageDetails(msg, environmentCreateURL)
 	case cmdEnvironmentDelete:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, environmentDeleteURL)
+		return formatUsageDetails(msg, environmentDeleteURL)
 	case cmdEnvironmentList:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, environmentListURL)
+		return formatUsageDetails(msg, environmentListURL)
 	case cmdEnvironmentView:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, environmentViewURL)
+		return formatUsageDetails(msg, environmentViewURL)
 	case cmdWorkspace:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, workspaceUsageURL)
+		return formatUsageDetails(msg, workspaceUsageURL)
 	case cmdWorkspaceCreate:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, workspaceCreateURL)
+		return formatUsageDetails(msg, workspaceCreateURL)
 	case cmdWorkspaceList:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, workspaceListURL)
+		return formatUsageDetails(msg, workspaceListURL)
 	case cmdRelationshipView:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, relationshipViewURL)
+		return formatUsageDetails(msg, relationshipViewURL)
 	case cmdRelationships:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, relationshipUsageURL)
+		return formatUsageDetails(msg, relationshipUsageURL)
 	case cmdRelationshipGenerateDocs:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, cmdRelationshipGenerateDocs)
+		return formatUsageDetails(msg, cmdRelationshipGenerateDocsURL)
+	case cmdComponent:
+		return formatUsageDetails(msg, componentUsageURL)
+	case cmdComponentList:
+		return formatUsageDetails(msg, componentListURL)
+	case cmdComponentSearch:
+		return formatUsageDetails(msg, componentSearchURL)
+	case cmdComponentView:
+		return formatUsageDetails(msg, componentViewURL)
+	case cmdConnection:
+		return formatUsageDetails(msg, connectionUsageURL)
+	case cmdConnectionDelete:
+		return formatUsageDetails(msg, connectionDeleteURL)
+	case cmdConnectionList:
+		return formatUsageDetails(msg, connectionListURL)
+	case cmdExpRelationship:
+		return formatUsageDetails(msg, expRelationshipUsageURL)
+	case cmdExpRelationshipGenerate:
+		return formatUsageDetails(msg, expRelationshipGenerateURL)
+	case cmdExpRelationshipView:
+		return formatUsageDetails(msg, expRelationshipViewURL)
+	case cmdExpRelationshipList:
+		return formatUsageDetails(msg, expRelationshipListURL)
 	default:
 		return fmt.Sprintf("%s\n", msg)
 	}
+}
+
+func formatUsageDetails(msg string, docURL string) string {
+	return fmt.Sprintf("%s\nSee %s for usage details\n", msg, docURL)
 }
 
 func ErrFailRequest(err error) error {

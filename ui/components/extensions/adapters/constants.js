@@ -109,3 +109,8 @@ export const adaptersList = {
     url: '',
   },
 };
+
+export const ADAPTER_STATUS = {
+  ENABLED: 'ENABLED',
+  DISABLED: 'DISABLED',
+};

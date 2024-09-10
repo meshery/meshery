@@ -7,7 +7,6 @@ import (
 	"path"
 
 	"github.com/layer5io/meshery/server/internal/graphql/model"
-	"github.com/layer5io/meshery/server/meshmodel"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/broker"
 	"github.com/layer5io/meshkit/models/meshmodel/registry"
@@ -117,13 +116,12 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 			if err != nil {
 				return "", err
 			}
-			ch := meshmodel.NewEntityRegistrationHelper(r.Config, rm, r.Log)
 
 			go func() {
-				ch.SeedComponents()
+				models.SeedComponents(r.Log, r.Config, rm)
 				krh.SeedKeys(viper.GetString("KEYS_PATH"))
 			}()
-			r.Log.Info("Hard reset successfully completed")
+			r.Log.Info("Hard reset complete.")
 		} else { //Delete meshsync objects coming from a particular cluster
 			k8sctxs, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
 			if !ok || len(k8sctxs) == 0 {

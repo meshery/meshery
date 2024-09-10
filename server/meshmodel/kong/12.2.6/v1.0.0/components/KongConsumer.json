@@ -1,0 +1,195 @@
+{
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "KongConsumer",
+   "schema": "{\n \"description\": \"KongConsumer is the Schema for the kongconsumers API.\",\n \"properties\": {\n  \"consumerGroups\": {\n   \"description\": \"ConsumerGroups are references to consumer groups (that consumer wants to be part of)\\nprovisioned in Kong.\",\n   \"items\": {\n    \"type\": \"string\"\n   },\n   \"type\": \"array\",\n   \"x-kubernetes-list-type\": \"set\"\n  },\n  \"credentials\": {\n   \"description\": \"Credentials are references to secrets containing a credential to be\\nprovisioned in Kong.\",\n   \"items\": {\n    \"type\": \"string\"\n   },\n   \"type\": \"array\",\n   \"x-kubernetes-list-type\": \"set\"\n  },\n  \"custom_id\": {\n   \"description\": \"CustomID is a Kong cluster-unique existing ID for the consumer - useful for mapping\\nKong with users in your existing database.\",\n   \"type\": \"string\"\n  },\n  \"username\": {\n   \"description\": \"Username is a Kong cluster-unique username of the consumer.\",\n   \"type\": \"string\"\n  }\n },\n \"title\": \"Kong Consumer\",\n \"type\": \"object\",\n \"x-kubernetes-validations\": [\n  {\n   \"message\": \"Need to provide either username or custom_id\",\n   \"rule\": \"has(self.username) || has(self.custom_id)\"\n  }\n ]\n}",
+   "version": "configuration.konghq.com/v1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "Kong Consumer",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "published": false
+  },
+  "model": {
+   "category": {
+    "name": "Cloud Native Network"
+   },
+   "displayName": "Kong API Gateway",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "defaultData": "",
+    "isAnnotation": false,
+    "primaryColor": "#003459",
+    "secondaryColor": "",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "svgColor": "\u003csvg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\n         viewBox=\"0 0 45.3 40.8\" style=\"enable-background:new 0 0 45.3 40.8;\" xml:space=\"preserve\"\u003e\n\u003cstyle type=\"text/css\"\u003e\n        .st0{fill-rule:evenodd;clip-rule:evenodd;fill:#003459;}\n\u003c/style\u003e\n\u003cpath class=\"st0\" d=\"M14.9,33.6h8.3l4.3,5.4l-0.7,1.9H16l0.3-1.9l-2.5-4L14.9,33.6z M20.8,9.7h4.5l20,23.9l-1.6,7.3h-8.6l0.5-2\n        L17,16.5L20.8,9.7z M28.7,0L38,7.3l-1.2,1.2l1.6,2.2v2.4L33.8,17L26,7.8h-4.5l1.8-3.4L28.7,0z M9.1,23.4l6.5-5.6l8.6,10.4L21.8,32\n        h-7.9l-5.5,7.2l-1.3,1.7H0V32l6.6-8.6H9.1z\"/\u003e\n\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003csvg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\n\t viewBox=\"0 0 45.3 40.8\" style=\"enable-background:new 0 0 45.3 40.8;\" xml:space=\"preserve\"\u003e\n\u003cstyle type=\"text/css\"\u003e\n\t.st0{fill:#FFFFFF;}\n\u003c/style\u003e\n\u003cpath class=\"st0\" d=\"M14.9,33.6h8.3l4.3,5.4l-0.7,1.9H16l0.3-1.9l-2.5-4L14.9,33.6z M20.8,9.7h4.5l20,23.9l-1.6,7.3h-8.6l0.5-2\n\tL17,16.5L20.8,9.7z M28.7,0L38,7.3l-1.2,1.2l1.6,2.2v2.4L33.8,17L26,7.8h-4.5l1.8-3.4L28.7,0z M9.1,23.4l6.5-5.6l8.6,10.4L21.8,32\n\th-7.9l-5.5,7.2l-1.3,1.7H0V32l6.6-8.6H9.1z\"/\u003e\n\u003c/svg\u003e"
+   },
+   "model": {
+    "version": "12.2.6"
+   },
+   "name": "kong",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "enabled",
+   "subCategory": "API Gateway",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
+   "primaryColor": "#003459",
+   "shape": "circle",
+   "svgColor": "\u003csvg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\n\t viewBox=\"0 0 45.3 40.8\" style=\"enable-background:new 0 0 45.3 40.8;\" xml:space=\"preserve\"\u003e\n\u003cstyle type=\"text/css\"\u003e\n\t.st0{fill-rule:evenodd;clip-rule:evenodd;fill:#003459;}\n\u003c/style\u003e\n\u003cpath class=\"st0\" d=\"M14.9,33.6h8.3l4.3,5.4l-0.7,1.9H16l0.3-1.9l-2.5-4L14.9,33.6z M20.8,9.7h4.5l20,23.9l-1.6,7.3h-8.6l0.5-2\n\tL17,16.5L20.8,9.7z M28.7,0L38,7.3l-1.2,1.2l1.6,2.2v2.4L33.8,17L26,7.8h-4.5l1.8-3.4L28.7,0z M9.1,23.4l6.5-5.6l8.6,10.4L21.8,32\n\th-7.9l-5.5,7.2l-1.3,1.7H0V32l6.6-8.6H9.1z\"/\u003e\n\u003c/svg\u003e",
+   "svgWhite": "\u003csvg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\n\t viewBox=\"0 0 45.3 40.8\" style=\"enable-background:new 0 0 45.3 40.8;\" xml:space=\"preserve\" width='45.3' height='40.8'\u003e\n\u003cstyle type=\"text/css\"\u003e\n\t.st0{fill:#FFFFFF;}\n\u003c/style\u003e\n\u003cpath class=\"st0\" d=\"M14.9,33.6h8.3l4.3,5.4l-0.7,1.9H16l0.3-1.9l-2.5-4L14.9,33.6z M20.8,9.7h4.5l20,23.9l-1.6,7.3h-8.6l0.5-2\n\tL17,16.5L20.8,9.7z M28.7,0L38,7.3l-1.2,1.2l1.6,2.2v2.4L33.8,17L26,7.8h-4.5l1.8-3.4L28.7,0z M9.1,23.4l6.5-5.6l8.6,10.4L21.8,32\n\th-7.9l-5.5,7.2l-1.3,1.7H0V32l6.6-8.6H9.1z\"/\u003e\n\u003c/svg\u003e"
+  },
+  "version": "v1.0.0"
+ }

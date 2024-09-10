@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: AWS Route 53 Resolver
-subtitle: Collaborative and visual infrastructure as code for AWS Route 53 Resolver
+subtitle: Collaborative and visual infrastructure as design for AWS Route 53 Resolver
 image: /assets/img/integrations/aws-route53resolver-controller/icons/color/aws-route53resolver-controller-color.svg
 permalink: extensibility/integrations/aws-route53resolver-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-route53resolver-controller
@@ -34,7 +34,7 @@ featureList: [
   "For public domain names, Route 53 Resolver performs recursive lookups against public name servers on the internet.
 "
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

@@ -115,20 +115,7 @@ mesheryctl system start --provider Meshery
 		return nil
 	},
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		latestVersions, err := meshkitutils.GetLatestReleaseTagsSorted(pkgconstants.GetMesheryGitHubOrg(), pkgconstants.GetMesheryGitHubRepo())
-		version := constants.GetMesheryctlVersion()
-		if err == nil {
-			if len(latestVersions) == 0 {
-				log.Warn("no versions found for Meshery")
-				return
-			}
-			latest := latestVersions[len(latestVersions)-1]
-			if latest != version {
-				log.Printf("A new release of mesheryctl is available: %s → %s", version, latest)
-				log.Printf("https://github.com/meshery/meshery/releases/tag/%s", latest)
-				log.Print("Check https://docs.meshery.io/guides/upgrade#upgrading-meshery-cli for instructions on how to update mesheryctl\n")
-			}
-		}
+		utils.CheckMesheryctlClientVersion(constants.GetMesheryctlVersion())
 	},
 }
 
@@ -189,6 +176,7 @@ func start() error {
 	}
 
 	callbackURL := viper.GetString(pkgconstants.CallbackURLENV)
+	providerURL := viper.GetString(pkgconstants.ProviderURLsENV)
 	// deploy to platform specified in the config.yaml
 	switch currCtx.GetPlatform() {
 	case "docker":
@@ -430,7 +418,7 @@ func start() error {
 		}
 
 		// Applying Meshery Helm charts for installing Meshery
-		if err = applyHelmCharts(kubeClient, currCtx, mesheryImageVersion, false, meshkitkube.INSTALL, callbackURL); err != nil {
+		if err = applyHelmCharts(kubeClient, currCtx, mesheryImageVersion, false, meshkitkube.INSTALL, callbackURL, providerURL); err != nil {
 			return err
 		}
 
@@ -467,9 +455,9 @@ func init() {
 }
 
 // Apply Meshery helm charts
-func applyHelmCharts(kubeClient *meshkitkube.Client, currCtx *config.Context, mesheryImageVersion string, dryRun bool, act meshkitkube.HelmChartAction, callbackURL string) error {
+func applyHelmCharts(kubeClient *meshkitkube.Client, currCtx *config.Context, mesheryImageVersion string, dryRun bool, act meshkitkube.HelmChartAction, callbackURL, providerURL string) error {
 	// get value overrides to install the helm chart
-	overrideValues := utils.SetOverrideValues(currCtx, mesheryImageVersion, callbackURL)
+	overrideValues := utils.SetOverrideValues(currCtx, mesheryImageVersion, callbackURL, providerURL)
 
 	// install the helm charts with specified override values
 	var chartVersion string

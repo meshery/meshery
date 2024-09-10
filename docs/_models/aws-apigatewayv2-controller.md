@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: AWS API Gateway v2
-subtitle: Collaborative and visual infrastructure as code for AWS API Gateway v2
+subtitle: Collaborative and visual infrastructure as design for AWS API Gateway v2
 image: /assets/img/integrations/aws-apigatewayv2-controller/icons/color/aws-apigatewayv2-controller-color.svg
 permalink: extensibility/integrations/aws-apigatewayv2-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-apigatewayv2-controller
@@ -46,13 +46,21 @@ components:
   colorIcon: assets/img/integrations/aws-apigatewayv2-controller/components/vpc-link/icons/color/vpc-link-color.svg
   whiteIcon: assets/img/integrations/aws-apigatewayv2-controller/components/vpc-link/icons/white/vpc-link-white.svg
   description: 
+- name: api-mapping
+  colorIcon: assets/img/integrations/aws-apigatewayv2-controller/components/api-mapping/icons/color/api-mapping-color.svg
+  whiteIcon: assets/img/integrations/aws-apigatewayv2-controller/components/api-mapping/icons/white/api-mapping-white.svg
+  description: 
+- name: domain-name
+  colorIcon: assets/img/integrations/aws-apigatewayv2-controller/components/domain-name/icons/color/domain-name-color.svg
+  whiteIcon: assets/img/integrations/aws-apigatewayv2-controller/components/domain-name/icons/white/domain-name-white.svg
+  description: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Handles API requests and responses",
+  "Supports RESTful and WebSocket APIs",
+  "Provides authentication and authorization"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Integrates with API Gateway"
+howItWorksDetails: "Simplified API management and governance in AWS"
 language: en
 list: include
 type: extensibility

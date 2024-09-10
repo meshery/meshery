@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Argo CD Operator
-subtitle: Collaborative and visual infrastructure as code for Argo CD Operator
+subtitle: Collaborative and visual infrastructure as design for Argo CD Operator
 image: /assets/img/integrations/argocd-operator/icons/color/argocd-operator-color.svg
 permalink: extensibility/integrations/argocd-operator
 docURL: https://docs.meshery.io/extensibility/integrations/argocd-operator
@@ -35,8 +35,8 @@ featureList: [
   "Application definitions, configurations, and environments can be declarative and version controlled.",
   "Application deployment and lifecycle management can be automated, auditable, and easy to understand."
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Deploys and manages Argo CD"
+howItWorksDetails: "Simplified Argo CD management within Kubernetes"
 language: en
 list: include
 type: extensibility

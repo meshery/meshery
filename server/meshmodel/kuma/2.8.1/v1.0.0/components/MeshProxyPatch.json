@@ -1,0 +1,196 @@
+{
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "MeshProxyPatch",
+   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Spec is the specification of the Kuma MeshProxyPatch resource.\",\n   \"properties\": {\n    \"default\": {\n     \"description\": \"Default is a configuration specific to the group of destinations\\nreferenced in 'targetRef'.\",\n     \"properties\": {\n      \"appendModifications\": {\n       \"description\": \"AppendModifications is a list of modifications applied on the selected proxy.\",\n       \"items\": {\n        \"properties\": {\n         \"cluster\": {\n          \"description\": \"Cluster is a modification of Envoy's Cluster resource.\",\n          \"properties\": {\n           \"jsonPatches\": {\n            \"description\": \"JsonPatches specifies list of jsonpatches to apply to on Envoy's Cluster\\nresource\",\n            \"items\": {\n             \"description\": \"JsonPatchBlock is one json patch operation block.\",\n             \"properties\": {\n              \"from\": {\n               \"description\": \"From is a jsonpatch from string, used by move and copy operations.\",\n               \"type\": \"string\"\n              },\n              \"op\": {\n               \"description\": \"Op is a jsonpatch operation string.\",\n               \"enum\": [\n                \"add\",\n                \"remove\",\n                \"replace\",\n                \"move\",\n                \"copy\"\n               ],\n               \"type\": \"string\"\n              },\n              \"path\": {\n               \"description\": \"Path is a jsonpatch path string.\",\n               \"type\": \"string\"\n              },\n              \"value\": {\n               \"description\": \"Value must be a valid json value used by replace and add operations.\",\n               \"format\": \"textarea\",\n               \"type\": \"string\"\n              }\n             },\n             \"required\": [\n              \"op\",\n              \"path\"\n             ],\n             \"type\": \"object\"\n            },\n            \"type\": \"array\"\n           },\n           \"match\": {\n            \"description\": \"Match is a set of conditions that have to be matched for modification operation to happen.\",\n            \"properties\": {\n             \"name\": {\n              \"description\": \"Name of the cluster to match.\",\n              \"type\": \"string\"\n             },\n             \"origin\": {\n              \"description\": \"Origin is the name of the component or plugin that generated the resource.\\n\\n\\nHere is the list of well-known origins:\\ninbound - resources generated for handling incoming traffic.\\noutbound - resources generated for handling outgoing traffic.\\ntransparent - resources generated for transparent proxy functionality.\\nprometheus - resources generated when Prometheus metrics are enabled.\\ndirect-access - resources generated for Direct Access functionality.\\ningress - resources generated for Zone Ingress.\\negress - resources generated for Zone Egress.\\ngateway - resources generated for MeshGateway.\\n\\n\\nThe list is not complete, because policy plugins can introduce new resources.\\nFor example MeshTrace plugin can create Cluster with \\\"mesh-trace\\\" origin.\",\n              \"type\": \"string\"\n             }\n            },\n            \"type\": \"object\"\n           },\n           \"operation\": {\n            \"description\": \"Operation to execute on matched cluster.\",\n            \"enum\": [\n             \"Add\",\n             \"Remove\",\n             \"Patch\"\n            ],\n            \"type\": \"string\"\n           },\n           \"value\": {\n            \"description\": \"Value of xDS resource in YAML format to add or patch.\",\n            \"type\": \"string\"\n           }\n          },\n          \"required\": [\n           \"operation\"\n          ],\n          \"type\": \"object\"\n         },\n         \"httpFilter\": {\n          \"description\": \"HTTPFilter is a modification of Envoy HTTP Filter\\navailable in HTTP Connection Manager in a Listener resource.\",\n          \"properties\": {\n           \"jsonPatches\": {\n            \"description\": \"JsonPatches specifies list of jsonpatches to apply to on Envoy's\\nHTTP Filter available in HTTP Connection Manager in a Listener resource.\",\n            \"items\": {\n             \"description\": \"JsonPatchBlock is one json patch operation block.\",\n             \"properties\": {\n              \"from\": {\n               \"description\": \"From is a jsonpatch from string, used by move and copy operations.\",\n               \"type\": \"string\"\n              },\n              \"op\": {\n               \"description\": \"Op is a jsonpatch operation string.\",\n               \"enum\": [\n                \"add\",\n                \"remove\",\n                \"replace\",\n                \"move\",\n                \"copy\"\n               ],\n               \"type\": \"string\"\n              },\n              \"path\": {\n               \"description\": \"Path is a jsonpatch path string.\",\n               \"type\": \"string\"\n              },\n              \"value\": {\n               \"description\": \"Value must be a valid json value used by replace and add operations.\",\n               \"format\": \"textarea\",\n               \"type\": \"string\"\n              }\n             },\n             \"required\": [\n              \"op\",\n              \"path\"\n             ],\n             \"type\": \"object\"\n            },\n            \"type\": \"array\"\n           },\n           \"match\": {\n            \"description\": \"Match is a set of conditions that have to be matched for modification operation to happen.\",\n            \"properties\": {\n             \"listenerName\": {\n              \"description\": \"Name of the listener to match.\",\n              \"type\": \"string\"\n             },\n             \"listenerTags\": {\n              \"additionalProperties\": {\n               \"type\": \"string\"\n              },\n              \"description\": \"Listener tags available in Listener#Metadata#FilterMetadata[io.kuma.tags]\",\n              \"type\": \"object\"\n             },\n             \"name\": {\n              \"description\": \"Name of the HTTP filter. For example \\\"envoy.filters.http.local_ratelimit\\\"\",\n              \"type\": \"string\"\n             },\n             \"origin\": {\n              \"description\": \"Origin is the name of the component or plugin that generated the resource.\\n\\n\\nHere is the list of well-known origins:\\ninbound - resources generated for handling incoming traffic.\\noutbound - resources generated for handling outgoing traffic.\\ntransparent - resources generated for transparent proxy functionality.\\nprometheus - resources generated when Prometheus metrics are enabled.\\ndirect-access - resources generated for Direct Access functionality.\\ningress - resources generated for Zone Ingress.\\negress - resources generated for Zone Egress.\\ngateway - resources generated for MeshGateway.\\n\\n\\nThe list is not complete, because policy plugins can introduce new resources.\\nFor example MeshTrace plugin can create Cluster with \\\"mesh-trace\\\" origin.\",\n              \"type\": \"string\"\n             }\n            },\n            \"type\": \"object\"\n           },\n           \"operation\": {\n            \"description\": \"Operation to execute on matched listener.\",\n            \"enum\": [\n             \"Remove\",\n             \"Patch\",\n             \"AddFirst\",\n             \"AddBefore\",\n             \"AddAfter\",\n             \"AddLast\"\n            ],\n            \"type\": \"string\"\n           },\n           \"value\": {\n            \"description\": \"Value of xDS resource in YAML format to add or patch.\",\n            \"type\": \"string\"\n           }\n          },\n          \"required\": [\n           \"operation\"\n          ],\n          \"type\": \"object\"\n         },\n         \"listener\": {\n          \"description\": \"Listener is a modification of Envoy's Listener resource.\",\n          \"properties\": {\n           \"jsonPatches\": {\n            \"description\": \"JsonPatches specifies list of jsonpatches to apply to on Envoy's Listener\\nresource\",\n            \"items\": {\n             \"description\": \"JsonPatchBlock is one json patch operation block.\",\n             \"properties\": {\n              \"from\": {\n               \"description\": \"From is a jsonpatch from string, used by move and copy operations.\",\n               \"type\": \"string\"\n              },\n              \"op\": {\n               \"description\": \"Op is a jsonpatch operation string.\",\n               \"enum\": [\n                \"add\",\n                \"remove\",\n                \"replace\",\n                \"move\",\n                \"copy\"\n               ],\n               \"type\": \"string\"\n              },\n              \"path\": {\n               \"description\": \"Path is a jsonpatch path string.\",\n               \"type\": \"string\"\n              },\n              \"value\": {\n               \"description\": \"Value must be a valid json value used by replace and add operations.\",\n               \"format\": \"textarea\",\n               \"type\": \"string\"\n              }\n             },\n             \"required\": [\n              \"op\",\n              \"path\"\n             ],\n             \"type\": \"object\"\n            },\n            \"type\": \"array\"\n           },\n           \"match\": {\n            \"description\": \"Match is a set of conditions that have to be matched for modification operation to happen.\",\n            \"properties\": {\n             \"name\": {\n              \"description\": \"Name of the listener to match.\",\n              \"type\": \"string\"\n             },\n             \"origin\": {\n              \"description\": \"Origin is the name of the component or plugin that generated the resource.\\n\\n\\nHere is the list of well-known origins:\\ninbound - resources generated for handling incoming traffic.\\noutbound - resources generated for handling outgoing traffic.\\ntransparent - resources generated for transparent proxy functionality.\\nprometheus - resources generated when Prometheus metrics are enabled.\\ndirect-access - resources generated for Direct Access functionality.\\ningress - resources generated for Zone Ingress.\\negress - resources generated for Zone Egress.\\ngateway - resources generated for MeshGateway.\\n\\n\\nThe list is not complete, because policy plugins can introduce new resources.\\nFor example MeshTrace plugin can create Cluster with \\\"mesh-trace\\\" origin.\",\n              \"type\": \"string\"\n             },\n             \"tags\": {\n              \"additionalProperties\": {\n               \"type\": \"string\"\n              },\n              \"description\": \"Tags available in Listener#Metadata#FilterMetadata[io.kuma.tags]\",\n              \"type\": \"object\"\n             }\n            },\n            \"type\": \"object\"\n           },\n           \"operation\": {\n            \"description\": \"Operation to execute on matched listener.\",\n            \"enum\": [\n             \"Add\",\n             \"Remove\",\n             \"Patch\"\n            ],\n            \"type\": \"string\"\n           },\n           \"value\": {\n            \"description\": \"Value of xDS resource in YAML format to add or patch.\",\n            \"type\": \"string\"\n           }\n          },\n          \"required\": [\n           \"operation\"\n          ],\n          \"type\": \"object\"\n         },\n         \"networkFilter\": {\n          \"description\": \"NetworkFilter is a modification of Envoy Listener's filter.\",\n          \"properties\": {\n           \"jsonPatches\": {\n            \"description\": \"JsonPatches specifies list of jsonpatches to apply to on Envoy Listener's\\nfilter.\",\n            \"items\": {\n             \"description\": \"JsonPatchBlock is one json patch operation block.\",\n             \"properties\": {\n              \"from\": {\n               \"description\": \"From is a jsonpatch from string, used by move and copy operations.\",\n               \"type\": \"string\"\n              },\n              \"op\": {\n               \"description\": \"Op is a jsonpatch operation string.\",\n               \"enum\": [\n                \"add\",\n                \"remove\",\n                \"replace\",\n                \"move\",\n                \"copy\"\n               ],\n               \"type\": \"string\"\n              },\n              \"path\": {\n               \"description\": \"Path is a jsonpatch path string.\",\n               \"type\": \"string\"\n              },\n              \"value\": {\n               \"description\": \"Value must be a valid json value used by replace and add operations.\",\n               \"format\": \"textarea\",\n               \"type\": \"string\"\n              }\n             },\n             \"required\": [\n              \"op\",\n              \"path\"\n             ],\n             \"type\": \"object\"\n            },\n            \"type\": \"array\"\n           },\n           \"match\": {\n            \"description\": \"Match is a set of conditions that have to be matched for modification operation to happen.\",\n            \"properties\": {\n             \"listenerName\": {\n              \"description\": \"Name of the listener to match.\",\n              \"type\": \"string\"\n             },\n             \"listenerTags\": {\n              \"additionalProperties\": {\n               \"type\": \"string\"\n              },\n              \"description\": \"Listener tags available in Listener#Metadata#FilterMetadata[io.kuma.tags]\",\n              \"type\": \"object\"\n             },\n             \"name\": {\n              \"description\": \"Name of the network filter. For example \\\"envoy.filters.network.ratelimit\\\"\",\n              \"type\": \"string\"\n             },\n             \"origin\": {\n              \"description\": \"Origin is the name of the component or plugin that generated the resource.\\n\\n\\nHere is the list of well-known origins:\\ninbound - resources generated for handling incoming traffic.\\noutbound - resources generated for handling outgoing traffic.\\ntransparent - resources generated for transparent proxy functionality.\\nprometheus - resources generated when Prometheus metrics are enabled.\\ndirect-access - resources generated for Direct Access functionality.\\ningress - resources generated for Zone Ingress.\\negress - resources generated for Zone Egress.\\ngateway - resources generated for MeshGateway.\\n\\n\\nThe list is not complete, because policy plugins can introduce new resources.\\nFor example MeshTrace plugin can create Cluster with \\\"mesh-trace\\\" origin.\",\n              \"type\": \"string\"\n             }\n            },\n            \"type\": \"object\"\n           },\n           \"operation\": {\n            \"description\": \"Operation to execute on matched listener.\",\n            \"enum\": [\n             \"Remove\",\n             \"Patch\",\n             \"AddFirst\",\n             \"AddBefore\",\n             \"AddAfter\",\n             \"AddLast\"\n            ],\n            \"type\": \"string\"\n           },\n           \"value\": {\n            \"description\": \"Value of xDS resource in YAML format to add or patch.\",\n            \"type\": \"string\"\n           }\n          },\n          \"required\": [\n           \"operation\"\n          ],\n          \"type\": \"object\"\n         },\n         \"virtualHost\": {\n          \"description\": \"VirtualHost is a modification of Envoy's VirtualHost\\nreferenced in HTTP Connection Manager in a Listener resource.\",\n          \"properties\": {\n           \"jsonPatches\": {\n            \"description\": \"JsonPatches specifies list of jsonpatches to apply to on Envoy's\\nVirtualHost resource\",\n            \"items\": {\n             \"description\": \"JsonPatchBlock is one json patch operation block.\",\n             \"properties\": {\n              \"from\": {\n               \"description\": \"From is a jsonpatch from string, used by move and copy operations.\",\n               \"type\": \"string\"\n              },\n              \"op\": {\n               \"description\": \"Op is a jsonpatch operation string.\",\n               \"enum\": [\n                \"add\",\n                \"remove\",\n                \"replace\",\n                \"move\",\n                \"copy\"\n               ],\n               \"type\": \"string\"\n              },\n              \"path\": {\n               \"description\": \"Path is a jsonpatch path string.\",\n               \"type\": \"string\"\n              },\n              \"value\": {\n               \"description\": \"Value must be a valid json value used by replace and add operations.\",\n               \"format\": \"textarea\",\n               \"type\": \"string\"\n              }\n             },\n             \"required\": [\n              \"op\",\n              \"path\"\n             ],\n             \"type\": \"object\"\n            },\n            \"type\": \"array\"\n           },\n           \"match\": {\n            \"description\": \"Match is a set of conditions that have to be matched for modification operation to happen.\",\n            \"properties\": {\n             \"name\": {\n              \"description\": \"Name of the VirtualHost to match.\",\n              \"type\": \"string\"\n             },\n             \"origin\": {\n              \"description\": \"Origin is the name of the component or plugin that generated the resource.\\n\\n\\nHere is the list of well-known origins:\\ninbound - resources generated for handling incoming traffic.\\noutbound - resources generated for handling outgoing traffic.\\ntransparent - resources generated for transparent proxy functionality.\\nprometheus - resources generated when Prometheus metrics are enabled.\\ndirect-access - resources generated for Direct Access functionality.\\ningress - resources generated for Zone Ingress.\\negress - resources generated for Zone Egress.\\ngateway - resources generated for MeshGateway.\\n\\n\\nThe list is not complete, because policy plugins can introduce new resources.\\nFor example MeshTrace plugin can create Cluster with \\\"mesh-trace\\\" origin.\",\n              \"type\": \"string\"\n             },\n             \"routeConfigurationName\": {\n              \"description\": \"Name of the RouteConfiguration resource to match.\",\n              \"type\": \"string\"\n             }\n            },\n            \"type\": \"object\"\n           },\n           \"operation\": {\n            \"description\": \"Operation to execute on matched listener.\",\n            \"enum\": [\n             \"Add\",\n             \"Remove\",\n             \"Patch\"\n            ],\n            \"type\": \"string\"\n           },\n           \"value\": {\n            \"description\": \"Value of xDS resource in YAML format to add or patch.\",\n            \"type\": \"string\"\n           }\n          },\n          \"required\": [\n           \"match\",\n           \"operation\"\n          ],\n          \"type\": \"object\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"required\": [\n      \"appendModifications\"\n     ],\n     \"type\": \"object\"\n    },\n    \"targetRef\": {\n     \"description\": \"TargetRef is a reference to the resource the policy takes an effect on.\\nThe resource could be either a real store object or virtual resource\\ndefined inplace.\",\n     \"properties\": {\n      \"kind\": {\n       \"description\": \"Kind of the referenced resource\",\n       \"enum\": [\n        \"Mesh\",\n        \"MeshSubset\",\n        \"MeshGateway\",\n        \"MeshService\",\n        \"MeshExternalService\",\n        \"MeshServiceSubset\",\n        \"MeshHTTPRoute\"\n       ],\n       \"type\": \"string\"\n      },\n      \"labels\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"Labels are used to select group of MeshServices that match labels. Either Labels or\\nName and Namespace can be used.\",\n       \"type\": \"object\"\n      },\n      \"mesh\": {\n       \"description\": \"Mesh is reserved for future use to identify cross mesh resources.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referenced resource. Can only be used with kinds: `MeshService`,\\n`MeshServiceSubset` and `MeshGatewayRoute`\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace specifies the namespace of target resource. If empty only resources in policy namespace\\nwill be targeted.\",\n       \"type\": \"string\"\n      },\n      \"proxyTypes\": {\n       \"description\": \"ProxyTypes specifies the data plane types that are subject to the policy. When not specified,\\nall data plane types are targeted by the policy.\",\n       \"items\": {\n        \"enum\": [\n         \"Sidecar\",\n         \"Gateway\"\n        ],\n        \"type\": \"string\"\n       },\n       \"minItems\": 1,\n       \"type\": \"array\"\n      },\n      \"sectionName\": {\n       \"description\": \"SectionName is used to target specific section of resource.\\nFor example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.\",\n       \"type\": \"string\"\n      },\n      \"tags\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"Tags used to select a subset of proxies by tags. Can only be used with kinds\\n`MeshSubset` and `MeshServiceSubset`\",\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"default\",\n    \"targetRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Mesh Proxy Patch\",\n \"type\": \"object\"\n}",
+   "version": "kuma.io/v1alpha1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "Mesh Proxy Patch",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "published": false
+  },
+  "model": {
+   "category": {
+    "name": "Cloud Native Network"
+   },
+   "displayName": "Kuma",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "defaultData": "",
+    "isAnnotation": false,
+    "primaryColor": "#291953",
+    "secondaryColor": "#6942c9",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "svgColor": "\u003csvg id=\"Layer_1\" data-name=\"Layer 1\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1173.18 1173.18\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#291953;}.cls-2{fill:none;}\u003c/style\u003e\u003c/defs\u003e\u003cg id=\"Layer_2\" data-name=\"Layer 2\"\u003e\u003cg id=\"Layer_1-2\" data-name=\"Layer 1-2\"\u003e\u003cpath class=\"cls-1\" d=\"M887.62,422.54a6.21,6.21,0,0,1,1-5.9c24.85-31.37,47.4-67.46,47.4-95.14C936,260,900.91,210,824.51,210c-37.85,0-65.61,12.3-83.86,32.11a6.39,6.39,0,0,1-6.68,1.8,570.26,570.26,0,0,0-89.24-21.12,6.24,6.24,0,0,0-7,5.35,6.14,6.14,0,0,0,.16,2.45c6.31,23.66,44.2,174,74.71,288.44,18.45,69.26-29.36,137.3-101,137.09H567.19c-72.42,0-116.38-68.28-99.69-136.35,28.17-115,66.76-264.17,73-288.77a6.19,6.19,0,0,0-4.37-7.59,6,6,0,0,0-2.39-.16,486.69,486.69,0,0,0-103.38,23.66,6.37,6.37,0,0,1-7-1.93c-18.24-21.45-46.7-34.86-86.11-34.86-76.4,0-111.5,49.91-111.5,111.5,0,32.28,30.67,76,59.87,110.31a6.36,6.36,0,0,1,1.15,6.07l-49.7,144.35a1.14,1.14,0,0,0,0,.45c-1.31,5-20.51,90.22,125.32,225.79C406,849.23,558,995.66,585.35,1021.83a6.16,6.16,0,0,0,8.49,0c28.09-26.13,185.77-172.48,229.65-213.24,157.55-146.93,120-226.24,120-226.24Z\"/\u003e\u003cpath class=\"cls-1\" d=\"M619.23,560.53H559.85a17.8,17.8,0,0,1-17.8-17.79v-.09l-7.38-73.11a17.8,17.8,0,0,1,17.8-17.8h73.85a17.8,17.8,0,0,1,17.84,17.76v0l-7.09,73.11a17.8,17.8,0,0,1-17.72,17.88Z\"/\u003e\u003crect class=\"cls-2\" width=\"1173.18\" height=\"1173.18\"/\u003e\u003c/g\u003e\u003c/g\u003e\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003csvg id=\"Layer_1\" data-name=\"Layer 1\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1173.18 1173.18\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#fff;}.cls-2{fill:none;}\u003c/style\u003e\u003c/defs\u003e\u003cg id=\"Layer_2\" data-name=\"Layer 2\"\u003e\u003cg id=\"Layer_1-2\" data-name=\"Layer 1-2\"\u003e\u003cpath class=\"cls-1\" d=\"M887.62,422.54a6.21,6.21,0,0,1,1-5.9c24.85-31.37,47.4-67.46,47.4-95.14C936,260,900.91,210,824.51,210c-37.85,0-65.61,12.3-83.86,32.11a6.39,6.39,0,0,1-6.68,1.8,570.26,570.26,0,0,0-89.24-21.12,6.24,6.24,0,0,0-7,5.35,6.14,6.14,0,0,0,.16,2.45c6.31,23.66,44.2,174,74.71,288.44,18.45,69.26-29.36,137.3-101,137.09H567.19c-72.42,0-116.38-68.28-99.69-136.35,28.17-115,66.76-264.17,73-288.77a6.19,6.19,0,0,0-4.37-7.59,6,6,0,0,0-2.39-.16,486.69,486.69,0,0,0-103.38,23.66,6.37,6.37,0,0,1-7-1.93c-18.24-21.45-46.7-34.86-86.11-34.86-76.4,0-111.5,49.91-111.5,111.5,0,32.28,30.67,76,59.87,110.31a6.36,6.36,0,0,1,1.15,6.07l-49.7,144.35a1.14,1.14,0,0,0,0,.45c-1.31,5-20.51,90.22,125.32,225.79C406,849.23,558,995.66,585.35,1021.83a6.16,6.16,0,0,0,8.49,0c28.09-26.13,185.77-172.48,229.65-213.24,157.55-146.93,120-226.24,120-226.24Z\"/\u003e\u003cpath class=\"cls-1\" d=\"M619.23,560.53H559.85a17.8,17.8,0,0,1-17.8-17.79v-.09l-7.38-73.11a17.8,17.8,0,0,1,17.8-17.8h73.85a17.8,17.8,0,0,1,17.84,17.76v0l-7.09,73.11a17.8,17.8,0,0,1-17.72,17.88Z\"/\u003e\u003crect class=\"cls-2\" width=\"1173.18\" height=\"1173.18\"/\u003e\u003c/g\u003e\u003c/g\u003e\u003c/svg\u003e\n"
+   },
+   "model": {
+    "version": "2.8.1"
+   },
+   "name": "kuma",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "enabled",
+   "subCategory": "Service Mesh",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
+   "primaryColor": "#291953",
+   "secondaryColor": "#6942c9",
+   "shape": "circle",
+   "svgColor": "\u003csvg id=\"Layer_1\" data-name=\"Layer 1\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1173.18 1173.18\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#291953;}.cls-2{fill:none;}\u003c/style\u003e\u003c/defs\u003e\u003cg id=\"Layer_2\" data-name=\"Layer 2\"\u003e\u003cg id=\"Layer_1-2\" data-name=\"Layer 1-2\"\u003e\u003cpath class=\"cls-1\" d=\"M887.62,422.54a6.21,6.21,0,0,1,1-5.9c24.85-31.37,47.4-67.46,47.4-95.14C936,260,900.91,210,824.51,210c-37.85,0-65.61,12.3-83.86,32.11a6.39,6.39,0,0,1-6.68,1.8,570.26,570.26,0,0,0-89.24-21.12,6.24,6.24,0,0,0-7,5.35,6.14,6.14,0,0,0,.16,2.45c6.31,23.66,44.2,174,74.71,288.44,18.45,69.26-29.36,137.3-101,137.09H567.19c-72.42,0-116.38-68.28-99.69-136.35,28.17-115,66.76-264.17,73-288.77a6.19,6.19,0,0,0-4.37-7.59,6,6,0,0,0-2.39-.16,486.69,486.69,0,0,0-103.38,23.66,6.37,6.37,0,0,1-7-1.93c-18.24-21.45-46.7-34.86-86.11-34.86-76.4,0-111.5,49.91-111.5,111.5,0,32.28,30.67,76,59.87,110.31a6.36,6.36,0,0,1,1.15,6.07l-49.7,144.35a1.14,1.14,0,0,0,0,.45c-1.31,5-20.51,90.22,125.32,225.79C406,849.23,558,995.66,585.35,1021.83a6.16,6.16,0,0,0,8.49,0c28.09-26.13,185.77-172.48,229.65-213.24,157.55-146.93,120-226.24,120-226.24Z\"/\u003e\u003cpath class=\"cls-1\" d=\"M619.23,560.53H559.85a17.8,17.8,0,0,1-17.8-17.79v-.09l-7.38-73.11a17.8,17.8,0,0,1,17.8-17.8h73.85a17.8,17.8,0,0,1,17.84,17.76v0l-7.09,73.11a17.8,17.8,0,0,1-17.72,17.88Z\"/\u003e\u003crect class=\"cls-2\" width=\"1173.18\" height=\"1173.18\"/\u003e\u003c/g\u003e\u003c/g\u003e\u003c/svg\u003e",
+   "svgWhite": "\u003csvg id=\"Layer_1\" data-name=\"Layer 1\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1173.18 1173.18\" width='1173.18' height='1173.18'\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#fff;}.cls-2{fill:none;}\u003c/style\u003e\u003c/defs\u003e\u003cg id=\"Layer_2\" data-name=\"Layer 2\"\u003e\u003cg id=\"Layer_1-2\" data-name=\"Layer 1-2\"\u003e\u003cpath class=\"cls-1\" d=\"M887.62,422.54a6.21,6.21,0,0,1,1-5.9c24.85-31.37,47.4-67.46,47.4-95.14C936,260,900.91,210,824.51,210c-37.85,0-65.61,12.3-83.86,32.11a6.39,6.39,0,0,1-6.68,1.8,570.26,570.26,0,0,0-89.24-21.12,6.24,6.24,0,0,0-7,5.35,6.14,6.14,0,0,0,.16,2.45c6.31,23.66,44.2,174,74.71,288.44,18.45,69.26-29.36,137.3-101,137.09H567.19c-72.42,0-116.38-68.28-99.69-136.35,28.17-115,66.76-264.17,73-288.77a6.19,6.19,0,0,0-4.37-7.59,6,6,0,0,0-2.39-.16,486.69,486.69,0,0,0-103.38,23.66,6.37,6.37,0,0,1-7-1.93c-18.24-21.45-46.7-34.86-86.11-34.86-76.4,0-111.5,49.91-111.5,111.5,0,32.28,30.67,76,59.87,110.31a6.36,6.36,0,0,1,1.15,6.07l-49.7,144.35a1.14,1.14,0,0,0,0,.45c-1.31,5-20.51,90.22,125.32,225.79C406,849.23,558,995.66,585.35,1021.83a6.16,6.16,0,0,0,8.49,0c28.09-26.13,185.77-172.48,229.65-213.24,157.55-146.93,120-226.24,120-226.24Z\"/\u003e\u003cpath class=\"cls-1\" d=\"M619.23,560.53H559.85a17.8,17.8,0,0,1-17.8-17.79v-.09l-7.38-73.11a17.8,17.8,0,0,1,17.8-17.8h73.85a17.8,17.8,0,0,1,17.84,17.76v0l-7.09,73.11a17.8,17.8,0,0,1-17.72,17.88Z\"/\u003e\u003crect class=\"cls-2\" width=\"1173.18\" height=\"1173.18\"/\u003e\u003c/g\u003e\u003c/g\u003e\u003c/svg\u003e\n"
+  },
+  "version": "v1.0.0"
+ }

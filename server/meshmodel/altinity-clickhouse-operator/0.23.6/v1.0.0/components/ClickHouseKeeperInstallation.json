@@ -1,0 +1,196 @@
+{
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "ClickHouseKeeperInstallation",
+   "schema": "{\n \"description\": \"define a set of Kubernetes resources (StatefulSet, PVC, Service, ConfigMap) which describe behavior one ClickHouse Keeper cluster\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"KeeperSpec defines the desired state of a Keeper cluster\",\n   \"properties\": {\n    \"configuration\": {\n     \"description\": \"allows configure multiple aspects and behavior for `clickhouse-server` instance and also allows describe multiple `clickhouse-server` clusters inside one `chi` resource\",\n     \"properties\": {\n      \"clusters\": {\n       \"description\": \"describes ClickHouseKeeper clusters layout and allows change settings on cluster-level and replica-level\\n\",\n       \"items\": {\n        \"properties\": {\n         \"layout\": {\n          \"description\": \"describe current cluster layout, how many replicas\\n\",\n          \"properties\": {\n           \"replicasCount\": {\n            \"description\": \"how many replicas in ClickHouseKeeper cluster\",\n            \"type\": \"integer\"\n           }\n          },\n          \"type\": \"object\"\n         },\n         \"name\": {\n          \"description\": \"cluster name, used to identify set of ClickHouseKeeper servers and wide used during generate names of related Kubernetes resources\",\n          \"maxLength\": 15,\n          \"minLength\": 1,\n          \"pattern\": \"^[a-zA-Z0-9-]{0,15}$\",\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"settings\": {\n       \"description\": \"allows configure multiple aspects and behavior for `clickhouse-keeper` instance\",\n       \"format\": \"textarea\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"namespaceDomainPattern\": {\n     \"description\": \"Custom domain pattern which will be used for DNS names of `Service` or `Pod`.\\nTypical use scenario - custom cluster domain in Kubernetes cluster\\nExample: %s.svc.my.test\\n\",\n     \"type\": \"string\"\n    },\n    \"replicas\": {\n     \"description\": \"Replicas is the expected size of the keeper cluster.\\nThe valid range of size is from 1 to 7.\\n\",\n     \"format\": \"int32\",\n     \"maximum\": 7,\n     \"minimum\": 1,\n     \"type\": \"integer\"\n    },\n    \"templates\": {\n     \"description\": \"allows define templates which will use for render Kubernetes resources like StatefulSet, ConfigMap, Service, PVC, by default, clickhouse-operator have own templates, but you can override it\",\n     \"properties\": {\n      \"podTemplates\": {\n       \"description\": \"podTemplate will use during render `Pod` inside `StatefulSet.spec` and allows define rendered `Pod.spec`, pod scheduling distribution and pod zone\\nMore information: https://github.com/Altinity/clickhouse-operator/blob/master/docs/custom_resource_explained.md#spectemplatespodtemplates\\n\",\n       \"items\": {\n        \"properties\": {\n         \"metadata\": {\n          \"description\": \"allows pass standard object's metadata from template to Pod\\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata\\n\",\n          \"format\": \"textarea\",\n          \"type\": \"string\"\n         },\n         \"name\": {\n          \"description\": \"template name, could use to link inside top-level `chi.spec.defaults.templates.podTemplate`, cluster-level `chi.spec.configuration.clusters.templates.podTemplate`, shard-level `chi.spec.configuration.clusters.layout.shards.temlates.podTemplate`, replica-level `chi.spec.configuration.clusters.layout.replicas.templates.podTemplate`\",\n          \"type\": \"string\"\n         },\n         \"spec\": {\n          \"description\": \"allows define whole Pod.spec inside StaefulSet.spec, look to https://kubernetes.io/docs/concepts/workloads/pods/#pod-templates for details\",\n          \"format\": \"textarea\",\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"serviceTemplates\": {\n       \"description\": \"allows define template for rendering `Service` which would get endpoint from Pods which scoped chi-wide, cluster-wide, shard-wide, replica-wide level\\n\",\n       \"items\": {\n        \"properties\": {\n         \"metadata\": {\n          \"description\": \"allows pass standard object's metadata from template to Service\\nCould be use for define specificly for Cloud Provider metadata which impact to behavior of service\\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata\\n\",\n          \"format\": \"textarea\",\n          \"type\": \"string\"\n         },\n         \"name\": {\n          \"description\": \"template name, could use to link inside\\nchi-level `chi.spec.defaults.templates.serviceTemplate`\\ncluster-level `chi.spec.configuration.clusters.templates.clusterServiceTemplate`\\nshard-level `chi.spec.configuration.clusters.layout.shards.temlates.shardServiceTemplate`\\nreplica-level `chi.spec.configuration.clusters.layout.replicas.templates.replicaServiceTemplate` or `chi.spec.configuration.clusters.layout.shards.replicas.replicaServiceTemplate`\\n\",\n          \"type\": \"string\"\n         },\n         \"spec\": {\n          \"description\": \"describe behavior of generated Service\\nMore info: https://kubernetes.io/docs/concepts/services-networking/service/\\n\",\n          \"format\": \"textarea\",\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"volumeClaimTemplates\": {\n       \"description\": \"allows define template for rendering `PVC` kubernetes resource, which would use inside `Pod` for mount clickhouse `data`, clickhouse `logs` or something else\",\n       \"items\": {\n        \"properties\": {\n         \"metadata\": {\n          \"description\": \"allows to pass standard object's metadata from template to PVC\\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata\\n\",\n          \"format\": \"textarea\",\n          \"type\": \"string\"\n         },\n         \"name\": {\n          \"description\": \"template name, could use to link inside\\ntop-level `chi.spec.defaults.templates.dataVolumeClaimTemplate` or `chi.spec.defaults.templates.logVolumeClaimTemplate`,\\ncluster-level `chi.spec.configuration.clusters.templates.dataVolumeClaimTemplate` or `chi.spec.configuration.clusters.templates.logVolumeClaimTemplate`,\\nshard-level `chi.spec.configuration.clusters.layout.shards.temlates.dataVolumeClaimTemplate` or `chi.spec.configuration.clusters.layout.shards.temlates.logVolumeClaimTemplate`\\nreplica-level `chi.spec.configuration.clusters.layout.replicas.templates.dataVolumeClaimTemplate` or `chi.spec.configuration.clusters.layout.replicas.templates.logVolumeClaimTemplate`\\n\",\n          \"type\": \"string\"\n         },\n         \"spec\": {\n          \"description\": \"allows define all aspects of `PVC` resource\\nMore info: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistentvolumeclaims\\n\",\n          \"format\": \"textarea\",\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Click House Keeper Installation\",\n \"type\": \"object\"\n}",
+   "version": "clickhouse-keeper.altinity.com/v1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "Click House Keeper Installation",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "published": false
+  },
+  "model": {
+   "category": {
+    "name": "Database"
+   },
+   "displayName": "Altinity ClickHouse",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "defaultData": "",
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "svgColor": "\u003csvg width=\"150\" height=\"150\" viewBox=\"0 0 150 150\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cg clip-path=\"url(#clip0_27227_10424)\"\u003e\n\u003cpath d=\"M18.7204 72.33L101.38 24.24L75.4104 9.23999V9.28999L18.6104 42.09L18.7204 42.16V72.33Z\" fill=\"#199DCF\"/\u003e\n\u003cpath d=\"M23.8203 75.09L47.0103 88.57V61.59L23.8203 75.09Z\" fill=\"#199DCF\"/\u003e\n\u003cpath d=\"M72.7697 109.26L18.7197 78.0601V140.46L72.7697 109.26Z\" fill=\"#199DCF\"/\u003e\n\u003cpath d=\"M101.3 56.84L129.55 40.4L106.41 27.04L78.0703 43.53L101.3 56.84Z\" fill=\"#199DCF\"/\u003e\n\u003cpath d=\"M103.67 63.96V123.77L132.09 140.18V80.49L103.67 63.96Z\" fill=\"#199DCF\"/\u003e\n\u003cpath d=\"M106.23 59.7L132.09 74.67V44.66L106.23 59.7Z\" fill=\"#199DCF\"/\u003e\n\u003c/g\u003e\n\u003cdefs\u003e\n\u003cclipPath id=\"clip0_27227_10424\"\u003e\n\u003crect width=\"150\" height=\"150\" fill=\"white\"/\u003e\n\u003c/clipPath\u003e\n\u003c/defs\u003e\n\u003c/svg\u003e\n",
+    "svgComplete": "",
+    "svgWhite": "\u003csvg width=\"150\" height=\"150\" viewBox=\"0 0 150 150\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cg clip-path=\"url(#clip0_27227_10413)\"\u003e\n\u003cpath d=\"M18.7204 72.33L101.38 24.24L75.4104 9.23999V9.28999L18.6104 42.09L18.7204 42.16V72.33Z\" fill=\"white\"/\u003e\n\u003cpath d=\"M23.8203 75.09L47.0103 88.57V61.59L23.8203 75.09Z\" fill=\"white\"/\u003e\n\u003cpath d=\"M72.7697 109.26L18.7197 78.0601V140.46L72.7697 109.26Z\" fill=\"white\"/\u003e\n\u003cpath d=\"M101.3 56.84L129.55 40.4L106.41 27.04L78.0703 43.53L101.3 56.84Z\" fill=\"white\"/\u003e\n\u003cpath d=\"M103.67 63.96V123.77L132.09 140.18V80.49L103.67 63.96Z\" fill=\"white\"/\u003e\n\u003cpath d=\"M106.23 59.7L132.09 74.67V44.66L106.23 59.7Z\" fill=\"white\"/\u003e\n\u003c/g\u003e\n\u003cdefs\u003e\n\u003cclipPath id=\"clip0_27227_10413\"\u003e\n\u003crect width=\"150\" height=\"150\" fill=\"white\"/\u003e\n\u003c/clipPath\u003e\n\u003c/defs\u003e\n\u003c/svg\u003e\r"
+   },
+   "model": {
+    "version": "0.23.6"
+   },
+   "name": "altinity-clickhouse-operator",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "enabled",
+   "subCategory": "Application Definition \u0026 Image Build",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "svgColor": "\u003csvg width=\"150\" height=\"150\" viewBox=\"0 0 150 150\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cg clip-path=\"url(#clip0_27227_10424)\"\u003e\n\u003cpath d=\"M18.7204 72.33L101.38 24.24L75.4104 9.23999V9.28999L18.6104 42.09L18.7204 42.16V72.33Z\" fill=\"#199DCF\"/\u003e\n\u003cpath d=\"M23.8203 75.09L47.0103 88.57V61.59L23.8203 75.09Z\" fill=\"#199DCF\"/\u003e\n\u003cpath d=\"M72.7697 109.26L18.7197 78.0601V140.46L72.7697 109.26Z\" fill=\"#199DCF\"/\u003e\n\u003cpath d=\"M101.3 56.84L129.55 40.4L106.41 27.04L78.0703 43.53L101.3 56.84Z\" fill=\"#199DCF\"/\u003e\n\u003cpath d=\"M103.67 63.96V123.77L132.09 140.18V80.49L103.67 63.96Z\" fill=\"#199DCF\"/\u003e\n\u003cpath d=\"M106.23 59.7L132.09 74.67V44.66L106.23 59.7Z\" fill=\"#199DCF\"/\u003e\n\u003c/g\u003e\n\u003cdefs\u003e\n\u003cclipPath id=\"clip0_27227_10424\"\u003e\n\u003crect width=\"150\" height=\"150\" fill=\"white\"/\u003e\n\u003c/clipPath\u003e\n\u003c/defs\u003e\n\u003c/svg\u003e\n",
+   "svgWhite": "\u003csvg width=\"150\" height=\"150\" viewBox=\"0 0 150 150\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cg clip-path=\"url(#clip0_27227_10413)\"\u003e\n\u003cpath d=\"M18.7204 72.33L101.38 24.24L75.4104 9.23999V9.28999L18.6104 42.09L18.7204 42.16V72.33Z\" fill=\"white\"/\u003e\n\u003cpath d=\"M23.8203 75.09L47.0103 88.57V61.59L23.8203 75.09Z\" fill=\"white\"/\u003e\n\u003cpath d=\"M72.7697 109.26L18.7197 78.0601V140.46L72.7697 109.26Z\" fill=\"white\"/\u003e\n\u003cpath d=\"M101.3 56.84L129.55 40.4L106.41 27.04L78.0703 43.53L101.3 56.84Z\" fill=\"white\"/\u003e\n\u003cpath d=\"M103.67 63.96V123.77L132.09 140.18V80.49L103.67 63.96Z\" fill=\"white\"/\u003e\n\u003cpath d=\"M106.23 59.7L132.09 74.67V44.66L106.23 59.7Z\" fill=\"white\"/\u003e\n\u003c/g\u003e\n\u003cdefs\u003e\n\u003cclipPath id=\"clip0_27227_10413\"\u003e\n\u003crect width=\"150\" height=\"150\" fill=\"white\"/\u003e\n\u003c/clipPath\u003e\n\u003c/defs\u003e\n\u003c/svg\u003e\r"
+  },
+  "version": "v1.0.0"
+ }

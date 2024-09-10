@@ -1,0 +1,81 @@
+{
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "version": "v1.0.0",
+  "kind": "hierarchical",
+  "type": "parent",
+  "subType": "inventory",
+  "metadata": {
+    "description": "A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component."
+  },
+  "model": {
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "kubernetes",
+    "registrant": {
+      "kind": "artifacthub"
+    },
+    "model": {
+      "version": "v1.25.2"
+    },
+    "displayName": "Kubernetes",
+    "category": {
+      "name": "Orchestration \u0026 Management",
+      "metadata": null
+    },
+    "metadata": {}
+  },
+  "status": "enabled",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "PodTemplate",
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "template"
+                ]
+              ],
+              "description": "A Pod template is a blueprint defining the configuration for creating Kubernetes pods, encapsulating specifications for containers, volumes, and other settings"
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "Job",
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "template"
+                ]
+              ],
+              "description": "Jobs use pod templates to specify the container images, commands, and resources required for executing batch processing tasks reliably within Kubernetes clusters, ensuring consistency and repeatability in job execution."
+            }
+          }
+        ],
+        "deny": {
+          "from": [],
+          "to": []
+        }
+      }
+    }
+  ]
+}

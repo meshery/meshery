@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Falco
-subtitle: Collaborative and visual infrastructure as code for Falco
+subtitle: Collaborative and visual infrastructure as design for Falco
 image: /assets/img/integrations/falco/icons/color/falco-color.svg
 permalink: extensibility/integrations/falco
 docURL: https://docs.meshery.io/extensibility/integrations/falco
@@ -11,12 +11,12 @@ integrations-subcategory: Security & Compliance
 registrant: Artifact Hub
 components: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Real-time threat detection for containers",
+  "Runtime security for Kubernetes",
+  "Customizable rules and alerts"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Integrates Falco alerts"
+howItWorksDetails: "Enhanced security and threat detection for Kubernetes environments"
 language: en
 list: include
 type: extensibility

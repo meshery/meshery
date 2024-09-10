@@ -1,0 +1,129 @@
+{
+  "capabilities": [
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Add text to nodes body",
+    "displayName": "Body Text",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "body-text",
+    "type": "style",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "GCP Game Servers",
+   "schema": "",
+   "version": "core.meshery.io/v1alpha1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "GCP Game Servers",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": true,
+   "isNamespaced": false,
+   "published": true
+  },
+  "model": {
+   "category": {
+    "name": "Provisioning"
+   },
+   "displayName": "Google Cloud Platform",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "isAnnotation": true,
+    "primaryColor": "#3C494F",
+    "shape": "circle",
+    "styleOverrides": "",
+    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" id=\"Layer_1\" width=\"20\" height=\"20\" viewBox=\"0 0 512 512\"\u003e\u003cstyle xmlns=\"http://www.w3.org/2000/svg\"\u003e.st0{fill:#f8bb16}.st1{fill:#ea4334}.st2{fill:#0074bc}.st3{fill:#e2e3e4}\u003c/style\u003e\u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Layer_1_1_\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"path22\" class=\"st0\" d=\"M322.4 140.9l-44.1-76.8H162.6c-10.3 0-19.9 5.5-24.9 14.5L44.1 241.7c-5.1 8.9-5.1 19.7 0 28.7l35.6 62.1 44-76.4 66.2-115.2h132.5z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"path26\" class=\"st1\" d=\"M468.2 241.7L374.6 78.6c-5.2-8.9-14.7-14.5-24.9-14.5h-71.4l44.1 76.8 66.2 115.2-66.2 115.2h88l57.8-100.9c5-8.9 5-19.8 0-28.7\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"path30\" class=\"st2\" d=\"M410.3 371.2H189.7L123.5 256l-44 76.4 58 101c5.2 8.9 14.7 14.5 24.9 14.5h187.1c10.3 0 19.9-5.5 24.9-14.5l35.9-62.2z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"st3\" d=\"M322.2 371.2H189.6L123.5 256l66.2-115.2h132.5L388.6 256l-66.4 115.2zM256 198.5c-31.9 0-57.6 25.7-57.6 57.6s25.7 57.6 57.6 57.6 57.6-25.7 57.6-57.6-25.8-57.6-57.6-57.6z\"\u003e\u003c/path\u003e\u003c/g\u003e\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 25 22\" fill=\"none\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M19.0571 1.31425C18.9391 1.11285 18.7703 0.945566 18.5672 0.828955C18.3642 0.712344 18.134 0.650454 17.8995 0.649414L10.855 0.658722V0.650744L7.26718 0.66404C7.03246 0.664981 6.80206 0.726817 6.59879 0.843427C6.39552 0.960036 6.22643 1.12737 6.10826 1.32887L2.89648 6.8563L5.06443 10.6139L8.68705 4.40573H20.8798L19.0571 1.31425Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M14.3535 21.69L17.9668 21.6727C18.201 21.672 18.4309 21.6103 18.6336 21.4936C18.8363 21.3769 19.0046 21.2095 19.1217 21.0079L22.6386 14.9433V14.9513L24.4211 11.8531C24.5375 11.6507 24.5987 11.4215 24.5987 11.1883C24.5987 10.9551 24.5375 10.726 24.4211 10.5235L21.1986 4.9668H16.8467L20.4519 11.2043L16.8386 17.4112H16.8547L14.3535 21.69Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M6.08719 21.0185C6.20515 21.2199 6.37401 21.3872 6.57705 21.5038C6.78008 21.6204 7.01026 21.6823 7.24477 21.6834L13.7004 21.7007L15.8858 17.9616L8.64189 17.935L8.5616 17.7954L2.57565 7.43066L0.777057 10.5368C0.660768 10.7393 0.599609 10.9684 0.599609 11.2016C0.599609 11.4348 0.660768 11.6639 0.777057 11.8664L4.28994 17.9271H4.28057L6.08719 21.0185Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M12.6006 14.4683C14.4306 14.4683 15.9141 12.9944 15.9141 11.1761C15.9141 9.35779 14.4306 7.88379 12.6006 7.88379C10.7706 7.88379 9.28711 9.35779 9.28711 11.1761C9.28711 12.9944 10.7706 14.4683 12.6006 14.4683Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003c/svg\u003e\n"
+   },
+   "model": {
+    "version": "0.7.2"
+   },
+   "name": "gcp",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "meshery",
+    "name": "meshery",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "enabled",
+   "subCategory": "Cloud Provider",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
+   "primaryColor": "#4285F4",
+   "shape": "rectangle",
+   "svgColor": "\u003csvg width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" jetwayHooks=\"{}\"\u003e\n    \u003cg jetwayHookID=\"366692D3-B1F2-4C00-B619-21BE6F7C8C98\" id=\"cloud-game-servers-24-colored\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e\n        \u003crect jetwayHookID=\"36CB1E00-ACE1-4F46-A7A5-F569E64BEB84\" x=\"0\" y=\"0\" width=\"24\" height=\"24\"\u003e\u003c/rect\u003e\n        \u003cg jetwayHookID=\"1DF457AD-487C-4EB7-8D73-501E58CA30AA\" transform=\"translate(3.000000, 3.000000)\"\u003e\n            \u003cpath d=\"M0.76,17.48 L17.48,17.48 C17.8997364,17.48 18.24,17.8202636 18.24,18.24 C18.24,18.6597364 17.8997364,19 17.48,19 L0.76,19 L0.76,19 L0.76,17.48 Z\" jetwayHookID=\"A1386B53-136B-4FDE-B39C-E8B23CC4E105\" fill=\"#3367D6\"\u003e\u003c/path\u003e\n            \u003cpath d=\"M18.24,0 L18.24,0 L18.24,0 L18.24,7.6 C18.24,8.01973641 17.8997364,8.36 17.48,8.36 C17.0602636,8.36 16.72,8.01973641 16.72,7.6 L16.72,1.52 C16.72,0.68052718 17.4005272,1.54208655e-16 18.24,0 Z\" jetwayHookID=\"8A5FA304-E2C1-45B3-B491-6E8444A2429C\" fill=\"#3367D6\" transform=\"translate(17.480000, 4.180000) scale(-1, 1) translate(-17.480000, -4.180000) \"\u003e\u003c/path\u003e\n            \u003cpath d=\"M11.4,0 L15.96,0 C16.3797364,1.44940277e-16 16.72,0.34026359 16.72,0.76 C16.72,1.17973641 16.3797364,1.52 15.96,1.52 L11.4,1.52 L11.4,1.52 L11.4,0 Z\" jetwayHookID=\"DA985DDD-E55A-4384-BEE8-A4BB2235A434\" fill=\"#5C85DE\" transform=\"translate(14.060000, 0.760000) scale(-1, 1) translate(-14.060000, -0.760000) \"\u003e\u003c/path\u003e\n            \u003cpath d=\"M11.4,6.84 L17.48,6.84 C17.8997364,6.84 18.24,7.18026359 18.24,7.6 C18.24,8.01973641 17.8997364,8.36 17.48,8.36 L11.4,8.36 L11.4,8.36 L11.4,6.84 Z\" jetwayHookID=\"076CBF64-54ED-45F7-B7C1-FB729FE6CEB6\" fill=\"#3367D6\" transform=\"translate(14.820000, 7.600000) scale(-1, 1) translate(-14.820000, -7.600000) \"\u003e\u003c/path\u003e\n            \u003cpath d=\"M0,6.84 L6.08,6.84 C6.49973641,6.84 6.84,7.18026359 6.84,7.6 C6.84,8.01973641 6.49973641,8.36 6.08,8.36 L0,8.36 L0,8.36 L0,6.84 Z\" jetwayHookID=\"9D7490DB-3E00-48F3-9F67-3A8484F6479D\" fill=\"#3367D6\"\u003e\u003c/path\u003e\n            \u003cpath d=\"M1.52,0 L1.52,0 L1.52,0 L1.52,7.6 C1.52,8.01973641 1.17973641,8.36 0.76,8.36 C0.34026359,8.36 1.05060361e-15,8.01973641 0,7.6 L0,1.52 C-1.0280577e-16,0.68052718 0.68052718,1.54208655e-16 1.52,0 Z\" jetwayHookID=\"8A85673F-D7EF-46DF-A9B9-C06B2CA4C8DE\" fill=\"#3367D6\"\u003e\u003c/path\u003e\n            \u003cpath d=\"M1.52,0 L6.08,0 C6.49973641,3.39179748e-17 6.84,0.34026359 6.84,0.76 C6.84,1.17973641 6.49973641,1.52 6.08,1.52 L1.52,1.52 L1.52,1.52 L1.52,0 Z\" jetwayHookID=\"81A39E20-6B50-4A6C-BB70-8E390C348701\" fill=\"#5C85DE\"\u003e\u003c/path\u003e\n            \u003cg jetwayHookID=\"0824AAAC-7FBF-431A-A45C-51709E950122\" transform=\"translate(14.820000, 14.440000) scale(-1, 1) translate(-14.820000, -14.440000) translate(11.400000, 9.880000)\"\u003e\n                \u003cpath d=\"M1.71,-1.17820905e-14 L1.71,-1.17820905e-14 L1.71,-1.17820905e-14 L1.71,8.265 C1.71,8.73720346 1.32720346,9.12 0.855,9.12 C0.382796539,9.12 1.16805127e-15,8.73720346 0,8.265 L0,1.71 C-1.15656491e-16,0.765593078 0.765593078,-1.16086057e-14 1.71,-1.17820905e-14 Z\" jetwayHookID=\"5142CCCE-FF3E-4E8F-AE47-789A9DDC3642\" fill=\"#3367D6\"\u003e\u003c/path\u003e\n                \u003cpath d=\"M1.71,0 L6.01090909,0 C6.46880336,5.08395105e-16 6.84,0.371196644 6.84,0.829090909 C6.84,1.28698517 6.46880336,1.65818182 6.01090909,1.65818182 L1.71,1.65818182 L1.71,1.65818182 L1.71,0 Z\" jetwayHookID=\"5A28F64E-1331-40C4-B901-8E3C7B78DC05\" fill=\"#5C85DE\"\u003e\u003c/path\u003e\n            \u003c/g\u003e\n            \u003cg jetwayHookID=\"A0E769E5-1774-4CDF-8721-E7D659D2CF3B\" transform=\"translate(0.000000, 9.880000)\"\u003e\n                \u003cpath d=\"M1.71,0 L1.71,0 L1.71,0 L1.71,8.265 C1.71,8.73720346 1.32720346,9.12 0.855,9.12 C0.382796539,9.12 -3.86260964e-16,8.73720346 0,8.265 L0,1.71 C-1.15656491e-16,0.765593078 0.765593078,1.73484737e-16 1.71,0 Z\" jetwayHookID=\"F0FB98A6-D291-4BB0-86D2-8A5EA62D6574\" fill=\"#3367D6\"\u003e\u003c/path\u003e\n                \u003cpath d=\"M1.71,0 L6.01090909,0 C6.46880336,2.69084905e-17 6.84,0.371196644 6.84,0.829090909 C6.84,1.28698517 6.46880336,1.65818182 6.01090909,1.65818182 L1.71,1.65818182 L1.71,1.65818182 L1.71,0 Z\" jetwayHookID=\"8DBDB72D-D9BC-4329-814E-42F7C8CE44A5\" fill=\"#5C85DE\"\u003e\u003c/path\u003e\n            \u003c/g\u003e\n            \u003cpolygon jetwayHookID=\"335B7DD7-A866-4092-B323-091474842FFC\" fill=\"#3367D6\" points=\"13.68 5.016 10.336 5.016 10.336 8.36 8.664 8.36 8.664 5.016 5.32 5.016 5.32 3.344 8.664 3.344 8.664 0 10.336 0 10.336 3.344 13.68 3.344\"\u003e\u003c/polygon\u003e\n            \u003cpath d=\"M12.4938062,14.0138062 C12.9388812,13.5687313 13.6611188,13.5687313 14.1061938,14.0138062 C14.5512687,14.4588812 14.5512687,15.1811188 14.1061938,15.6261938 C13.6611188,16.0712687 12.9388812,16.0712687 12.4938062,15.6261938 C12.0487313,15.1811188 12.0487313,14.4588812 12.4938062,14.0138062 Z\" jetwayHookID=\"B7E0ABCA-9878-41FD-BA02-74A25C5E0101\" fill=\"#3367D6\"\u003e\u003c/path\u003e\n            \u003cpath d=\"M8.31380621,15.6261938 C7.86873126,15.1811188 7.86873126,14.4588812 8.31380621,14.0138062 C8.75888115,13.5687313 9.48111885,13.5687313 9.92619379,14.0138062 C10.3712687,14.4588812 10.3712687,15.1811188 9.92619379,15.6261938 C9.48111885,16.0712687 8.75888115,16.0712687 8.31380621,15.6261938\" jetwayHookID=\"77B82BE9-0886-4564-A038-8EB1D5F9F271\" fill=\"#3367D6\"\u003e\u003c/path\u003e\n            \u003cpath d=\"M8.31380621,11.8261938 C7.86873126,11.3811188 7.86873126,10.6588812 8.31380621,10.2138062 C8.75888115,9.76873126 9.48111885,9.76873126 9.92619379,10.2138062 C10.3712687,10.6588812 10.3712687,11.3811188 9.92619379,11.8261938 C9.48111885,12.2712687 8.75888115,12.2712687 8.31380621,11.8261938\" jetwayHookID=\"E588DF94-00F8-4EF2-8F4A-966EF5F61F1F\" fill=\"#5C85DE\"\u003e\u003c/path\u003e\n            \u003cpath d=\"M4.13380621,15.6261938 C3.68873126,15.1811188 3.68873126,14.4588812 4.13380621,14.0138062 C4.57888115,13.5687313 5.30111885,13.5687313 5.74619379,14.0138062 C6.19126874,14.4588812 6.19126874,15.1811188 5.74619379,15.6261938 C5.30111885,16.0712687 4.57888115,16.0712687 4.13380621,15.6261938\" jetwayHookID=\"E0808619-CFA9-46EA-802C-2478869022F4\" fill=\"#3367D6\"\u003e\u003c/path\u003e\n        \u003c/g\u003e\n    \u003c/g\u003e\n\u003c/svg\u003e",
+   "svgWhite": "\u003csvg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cg clip-path=\"url(#clip0_24126_23125)\"\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M3.76001 20.4805H20.48C20.8997 20.4805 21.24 20.8207 21.24 21.2405C21.24 21.6602 20.8997 22.0005 20.48 22.0005H3.76001V20.4805Z\" fill=\"white\"/\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M19.72 3V10.6C19.72 11.0197 20.0603 11.36 20.48 11.36C20.8997 11.36 21.24 11.0197 21.24 10.6V4.52C21.24 3.68053 20.5595 3 19.72 3Z\" fill=\"white\"/\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M19.72 3H15.16C14.7402 3 14.4 3.34026 14.4 3.76C14.4 4.17974 14.7402 4.52 15.16 4.52H19.72V3Z\" fill=\"#CCCCCC\"/\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M21.24 9.83984H15.16C14.7403 9.83984 14.4 10.1801 14.4 10.5998C14.4 11.0196 14.7403 11.3598 15.16 11.3598H21.24V9.83984Z\" fill=\"white\"/\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M3 9.83984H9.08C9.49974 9.83984 9.84 10.1801 9.84 10.5998C9.84 11.0196 9.49974 11.3598 9.08 11.3598H3V9.83984Z\" fill=\"white\"/\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M4.52 3V10.6C4.52 11.0197 4.17974 11.36 3.76 11.36C3.34026 11.36 3 11.0197 3 10.6V4.52C3 3.68053 3.68053 3 4.52 3Z\" fill=\"white\"/\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M4.52002 3H9.08002C9.49976 3 9.84002 3.34026 9.84002 3.76C9.84002 4.17974 9.49976 4.52 9.08002 4.52H4.52002V3Z\" fill=\"#CCCCCC\"/\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M19.53 12.8799V21.1449C19.53 21.6171 19.9128 21.9999 20.385 21.9999C20.8572 21.9999 21.24 21.6171 21.24 21.1449V14.5899C21.24 13.6455 20.4744 12.8799 19.53 12.8799Z\" fill=\"white\"/\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M19.53 12.8799H15.2291C14.7712 12.8799 14.4 13.2511 14.4 13.709C14.4 14.1669 14.7712 14.5381 15.2291 14.5381H19.53V12.8799Z\" fill=\"#CCCCCC\"/\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M4.71 12.8799V21.1449C4.71 21.6171 4.3272 21.9999 3.855 21.9999C3.3828 21.9999 3 21.6171 3 21.1449V14.5899C3 13.6455 3.76559 12.8799 4.71 12.8799Z\" fill=\"white\"/\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M4.70996 12.8799H9.01087C9.46876 12.8799 9.83996 13.2511 9.83996 13.709C9.83996 14.1669 9.46876 14.5381 9.01087 14.5381H4.70996V12.8799Z\" fill=\"#CCCCCC\"/\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M16.6801 8.016H13.3361V11.36H11.6641V8.016H8.32007V6.344H11.6641V3H13.3361V6.344H16.6801V8.016Z\" fill=\"white\"/\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M15.4937 17.0135C15.9388 16.5684 16.661 16.5684 17.1061 17.0135C17.5512 17.4586 17.5512 18.1808 17.1061 18.6259C16.661 19.071 15.9388 19.071 15.4937 18.6259C15.0486 18.1808 15.0486 17.4586 15.4937 17.0135Z\" fill=\"white\"/\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M11.3138 18.6259C10.8687 18.1808 10.8687 17.4586 11.3138 17.0135C11.7589 16.5684 12.4811 16.5684 12.9262 17.0135C13.3712 17.4586 13.3712 18.1808 12.9262 18.6259C12.4811 19.071 11.7589 19.071 11.3138 18.6259Z\" fill=\"white\"/\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M11.3138 14.8261C10.8687 14.381 10.8687 13.6588 11.3138 13.2137C11.7589 12.7686 12.4811 12.7686 12.9262 13.2137C13.3712 13.6588 13.3712 14.381 12.9262 14.8261C12.4811 15.2712 11.7589 15.2712 11.3138 14.8261Z\" fill=\"#CCCCCC\"/\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M7.13386 18.6259C6.68878 18.1808 6.68878 17.4586 7.13386 17.0135C7.57893 16.5684 8.30117 16.5684 8.74624 17.0135C9.19132 17.4586 9.19132 18.1808 8.74624 18.6259C8.30117 19.071 7.57893 19.071 7.13386 18.6259Z\" fill=\"white\"/\u003e\n\u003c/g\u003e\n\u003cdefs\u003e\n\u003cclipPath id=\"clip0_24126_23125\"\u003e\n\u003crect width=\"24\" height=\"24\" fill=\"white\"/\u003e\n\u003c/clipPath\u003e\n\u003c/defs\u003e\n\u003c/svg\u003e\n"
+  },
+  "version": "v1.0.0"
+ }

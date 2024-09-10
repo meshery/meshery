@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: SPIFFE
-subtitle: Collaborative and visual infrastructure as code for SPIFFE
+subtitle: Collaborative and visual infrastructure as design for SPIFFE
 image: /assets/img/integrations/spiffe/icons/color/spiffe-color.svg
 permalink: extensibility/integrations/spiffe
 docURL: https://docs.meshery.io/extensibility/integrations/spiffe

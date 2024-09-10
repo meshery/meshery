@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Couchbase Monitor Stack
-subtitle: Collaborative and visual infrastructure as code for Couchbase Monitor Stack
+subtitle: Collaborative and visual infrastructure as design for Couchbase Monitor Stack
 image: /assets/img/integrations/couchbase-monitor-stack/icons/color/couchbase-monitor-stack-color.svg
 permalink: extensibility/integrations/couchbase-monitor-stack
 docURL: https://docs.meshery.io/extensibility/integrations/couchbase-monitor-stack
@@ -43,12 +43,12 @@ components:
   whiteIcon: assets/img/integrations/couchbase-monitor-stack/components/thanos-ruler/icons/white/thanos-ruler-white.svg
   description: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Centralized monitoring and alerting",
+  "Integration with Prometheus and Grafana",
+  "Customizable dashboards and alerts"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Integrates monitoring stack"
+howItWorksDetails: "Enhanced observability of Couchbase clusters in Kubernetes"
 language: en
 list: include
 type: extensibility

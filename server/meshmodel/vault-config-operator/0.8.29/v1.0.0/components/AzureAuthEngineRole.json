@@ -1,0 +1,194 @@
+{
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "AzureAuthEngineRole",
+   "schema": "{\n \"description\": \"AzureAuthEngineRole is the Schema for the azureauthengineroles API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"AzureAuthEngineRoleSpec defines the desired state of AzureAuthEngineRole\",\n   \"properties\": {\n    \"authentication\": {\n     \"description\": \"Authentication is the kube auth configuraiton to be used to execute this request\",\n     \"properties\": {\n      \"namespace\": {\n       \"description\": \"Namespace is the Vault namespace to be used in all the operations withing this connection/authentication. Only available in Vault Enterprise.\",\n       \"type\": \"string\"\n      },\n      \"path\": {\n       \"default\": \"kubernetes\",\n       \"description\": \"Path is the path of the role used for this kube auth authentication. The operator will try to authenticate at {[namespace/]}auth/{spec.path}\",\n       \"pattern\": \"^(?:/?[\\\\w;:@\\u0026=\\\\$-\\\\.\\\\+]*)+/?\",\n       \"type\": \"string\"\n      },\n      \"role\": {\n       \"description\": \"Role the role to be used during authentication\",\n       \"type\": \"string\"\n      },\n      \"serviceAccount\": {\n       \"default\": {\n        \"name\": \"default\"\n       },\n       \"description\": \"ServiceAccount is the service account used for the kube auth authentication\",\n       \"properties\": {\n        \"name\": {\n         \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\",\n       \"x-kubernetes-map-type\": \"atomic\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"boundGroupIDs\": {\n     \"description\": \"The list of group ids that login is restricted to. kubebuilder:validation:UniqueItems=true\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\",\n     \"x-kubernetes-list-type\": \"set\"\n    },\n    \"boundLocations\": {\n     \"description\": \"The list of locations that login is restricted to. kubebuilder:validation:UniqueItems=true\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\",\n     \"x-kubernetes-list-type\": \"set\"\n    },\n    \"boundResourceGroups\": {\n     \"description\": \"The list of resource groups that login is restricted to. kubebuilder:validation:UniqueItems=true\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\",\n     \"x-kubernetes-list-type\": \"set\"\n    },\n    \"boundScaleSets\": {\n     \"description\": \"The list of scale set names that the login is restricted to. kubebuilder:validation:UniqueItems=true\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\",\n     \"x-kubernetes-list-type\": \"set\"\n    },\n    \"boundServicePrincipalIDs\": {\n     \"description\": \"The list of Service Principal IDs that login is restricted to. kubebuilder:validation:UniqueItems=true\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\",\n     \"x-kubernetes-list-type\": \"set\"\n    },\n    \"boundSubscriptionIDs\": {\n     \"description\": \"The list of subscription IDs that login is restricted to. kubebuilder:validation:UniqueItems=true\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\",\n     \"x-kubernetes-list-type\": \"set\"\n    },\n    \"connection\": {\n     \"description\": \"Connection represents the information needed to connect to Vault. This operator uses the standard Vault environment variables to connect to Vault. If you need to override those settings and for example connect to a different Vault instance, you can do with this section of the CR.\",\n     \"properties\": {\n      \"address\": {\n       \"description\": \"Address Address of the Vault server expressed as a URL and port, for example: https://127.0.0.1:8200/\",\n       \"type\": \"string\"\n      },\n      \"maxRetries\": {\n       \"description\": \"MaxRetries Maximum number of retries when certain error codes are encountered. The default is 2, for three total attempts. Set this to 0 or less to disable retrying. Error codes that are retried are 412 (client consistency requirement not satisfied) and all 5xx except for 501 (not implemented).\",\n       \"type\": \"integer\"\n      },\n      \"tLSConfig\": {\n       \"properties\": {\n        \"cacert\": {\n         \"description\": \"Cacert Path to a PEM-encoded CA certificate file on the local disk. This file is used to verify the Vault server's SSL certificate. This environment variable takes precedence over a cert passed via the secret.\",\n         \"type\": \"string\"\n        },\n        \"skipVerify\": {\n         \"description\": \"SkipVerify Do not verify Vault's presented certificate before communicating with it. Setting this variable is not recommended and voids Vault's security model.\",\n         \"type\": \"boolean\"\n        },\n        \"tlsSecret\": {\n         \"description\": \"TLSSecret namespace-local secret containing the tls material for the connection. the expected keys for the secret are: ca bundle -\\u003e \\\"ca.crt\\\", certificate -\\u003e \\\"tls.crt\\\", key -\\u003e \\\"tls.key\\\"\",\n         \"properties\": {\n          \"name\": {\n           \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?\",\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\",\n         \"x-kubernetes-map-type\": \"atomic\"\n        },\n        \"tlsServerName\": {\n         \"description\": \"TLSServerName Name to use as the SNI host when connecting via TLS.\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"timeOut\": {\n       \"description\": \"Timeout Timeout variable. The default value is 60s.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"name\": {\n     \"description\": \"Name of the role.\",\n     \"type\": \"string\"\n    },\n    \"path\": {\n     \"description\": \"Path at which to make the configuration. The final path in Vault will be {[spec.authentication.namespace]}/auth/{spec.path}/groups/{metadata.name}. The authentication role must have the following capabilities = [ \\\"create\\\", \\\"read\\\", \\\"update\\\", \\\"delete\\\"] on that path.\",\n     \"pattern\": \"^(?:/?[\\\\w;:@\\u0026=\\\\$-\\\\.\\\\+]*)+/?\",\n     \"type\": \"string\"\n    },\n    \"policies\": {\n     \"description\": \"DEPRECATED: Please use the token_policies parameter instead. List of token policies to encode onto generated tokens. Depending on the auth method, this list may be supplemented by user/group/other values. kubebuilder:validation:UniqueItems=true\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\",\n     \"x-kubernetes-list-type\": \"set\"\n    },\n    \"tokenBoundCIDRs\": {\n     \"description\": \"List of CIDR blocks. If set, specifies blocks of IP addresses which can authenticate successfully, and ties the resulting token to these blocks as well. kubebuilder:validation:UniqueItems=true\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\",\n     \"x-kubernetes-list-type\": \"set\"\n    },\n    \"tokenExplicitMaxTTL\": {\n     \"default\": \"\",\n     \"description\": \"If set, will encode an explicit max TTL onto the token. This is a hard cap even if token_ttl and token_max_ttl would otherwise allow a renewal.\",\n     \"type\": \"string\"\n    },\n    \"tokenMaxTTL\": {\n     \"default\": \"\",\n     \"description\": \"The maximum lifetime for generated tokens. This current value of this will be referenced at renewal time.\",\n     \"type\": \"string\"\n    },\n    \"tokenNoDefaultPolicy\": {\n     \"default\": false,\n     \"description\": \"If set, the default policy will not be set on generated tokens; otherwise it will be added to the policies set in token_policies.\",\n     \"type\": \"boolean\"\n    },\n    \"tokenNumUses\": {\n     \"default\": 0,\n     \"description\": \"The maximum number of times a generated token may be used (within its lifetime); 0 means unlimited. If you require the token to have the ability to create child tokens, you will need to set this value to 0.\",\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"tokenPeriod\": {\n     \"default\": 0,\n     \"description\": \"The maximum allowed period value when a periodic token is requested from this role.\",\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"tokenPolicies\": {\n     \"description\": \"List of token policies to encode onto generated tokens. Depending on the auth method, this list may be supplemented by user/group/other values. kubebuilder:validation:UniqueItems=true\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\",\n     \"x-kubernetes-list-type\": \"set\"\n    },\n    \"tokenTTL\": {\n     \"default\": \"\",\n     \"description\": \"The incremental lifetime for generated tokens. This current value of this will be referenced at renewal time.\",\n     \"type\": \"string\"\n    },\n    \"tokenType\": {\n     \"default\": \"\",\n     \"description\": \"The type of token that should be generated. Can be service, batch, or default to use the mount's tuned default (which unless changed will be service tokens). For token store roles, there are two additional possibilities: default-service and default-batch which specify the type to return unless the client requests a different type at generation time. For machine based authentication cases, you should use batch type tokens.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"name\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Azure Auth Engine Role\",\n \"type\": \"object\"\n}",
+   "version": "redhatcop.redhat.io/v1alpha1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "Azure Auth Engine Role",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "published": false
+  },
+  "model": {
+   "category": {
+    "name": "Provisioning"
+   },
+   "displayName": "Vault Config Operator",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "isAnnotation": false,
+    "primaryColor": "#FFD814",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "source_uri": "https://redhat-cop.github.io/vault-config-operator/vault-config-operator/vault-config-operator-v0.8.29.tgz",
+    "styleOverrides": "",
+    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" xmlns:_xmlns=\"xmlns\" _xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewBox=\"0 0 73.6 72\" width=\"20\" height=\"20\"\u003e\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill=\"#FFD814\" id=\"a\" d=\"M37.6 36.8c1.2 0 2.1-1 2.1-2.1s-.9-2.1-2.1-2.1-2.1 1-2.1 2.1.9 2.1 2.1 2.1zM31.3 31c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1s-2.1 1-2.1 2.1c0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2 1 2.1 2.1 2.1zm-12.6-5.7c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1s-2.1 1-2.1 2.1c0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2 1 2.1 2.1 2.1zm-6.3-5.7c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1s-2.1 1-2.1 2.1.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1s1 2.1 2.1 2.1zm-12.6 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1s.9 2.1 2.1 2.1zM36.8 72L0 0h73.6L36.8 72z\"\u003e\u003c/path\u003e\u003c/defs\u003e\u003cuse xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"#a\" overflow=\"visible\" fill-rule=\"evenodd\" clip-rule=\"evenodd\"\u003e\u003c/use\u003e\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" xmlns:_xmlns=\"xmlns\" _xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewBox=\"0 0 73.6 72\" width=\"20\" height=\"20\"\u003e\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill=\"#fff\" id=\"a\" d=\"M37.6 36.8c1.2 0 2.1-1 2.1-2.1s-.9-2.1-2.1-2.1-2.1 1-2.1 2.1.9 2.1 2.1 2.1zM31.3 31c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1s-2.1 1-2.1 2.1c0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2 1 2.1 2.1 2.1zm-12.6-5.7c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1s-2.1 1-2.1 2.1c0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2 1 2.1 2.1 2.1zm-6.3-5.7c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1s-2.1 1-2.1 2.1.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1s1 2.1 2.1 2.1zm-12.6 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1s.9 2.1 2.1 2.1zM36.8 72L0 0h73.6L36.8 72z\"\u003e\u003c/path\u003e\u003c/defs\u003e\u003cuse xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"#a\" overflow=\"visible\" fill-rule=\"evenodd\" clip-rule=\"evenodd\"\u003e\u003c/use\u003e\u003c/svg\u003e"
+   },
+   "model": {
+    "version": "0.8.29"
+   },
+   "name": "vault-config-operator",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "enabled",
+   "subCategory": "Key Management",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
+   "primaryColor": "#FFD814",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "svgColor": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewBox=\"0 0 73.6 72\" width=\"2500\" height=\"2446\"\u003e\u003cdefs\u003e\u003cpath fill=\"#FFD814\" id=\"a\" d=\"M37.6 36.8c1.2 0 2.1-1 2.1-2.1s-.9-2.1-2.1-2.1-2.1 1-2.1 2.1.9 2.1 2.1 2.1zM31.3 31c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1s-2.1 1-2.1 2.1c0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2 1 2.1 2.1 2.1zm-12.6-5.7c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1s-2.1 1-2.1 2.1c0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2 1 2.1 2.1 2.1zm-6.3-5.7c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1s-2.1 1-2.1 2.1.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1s1 2.1 2.1 2.1zm-12.6 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1s.9 2.1 2.1 2.1zM36.8 72L0 0h73.6L36.8 72z\"/\u003e\u003c/defs\u003e\u003cuse xlink:href=\"#a\" overflow=\"visible\" fill-rule=\"evenodd\" clip-rule=\"evenodd\"/\u003e\u003c/svg\u003e",
+   "svgWhite": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewBox=\"0 0 73.6 72\" width=\"2500\" height=\"2446\"\u003e\u003cdefs\u003e\u003cpath fill=\"#fff\" id=\"a\" d=\"M37.6 36.8c1.2 0 2.1-1 2.1-2.1s-.9-2.1-2.1-2.1-2.1 1-2.1 2.1.9 2.1 2.1 2.1zM31.3 31c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1s-2.1 1-2.1 2.1c0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2 1 2.1 2.1 2.1zm-12.6-5.7c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1s-2.1 1-2.1 2.1c0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2 1 2.1 2.1 2.1zm-6.3-5.7c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1s-2.1 1-2.1 2.1.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1s1 2.1 2.1 2.1zm-12.6 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1s.9 2.1 2.1 2.1zM36.8 72L0 0h73.6L36.8 72z\"/\u003e\u003c/defs\u003e\u003cuse xlink:href=\"#a\" overflow=\"visible\" fill-rule=\"evenodd\" clip-rule=\"evenodd\"/\u003e\u003c/svg\u003e"
+  },
+  "version": "v1.0.0"
+ }

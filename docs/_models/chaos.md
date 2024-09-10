@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Chaos
-subtitle: Collaborative and visual infrastructure as code for Chaos
+subtitle: Collaborative and visual infrastructure as design for Chaos
 image: /assets/img/integrations/chaos/icons/color/chaos-color.svg
 permalink: extensibility/integrations/chaos
 docURL: https://docs.meshery.io/extensibility/integrations/chaos
@@ -103,12 +103,12 @@ components:
   whiteIcon: assets/img/integrations/chaos/components/remote-cluster/icons/white/remote-cluster-white.svg
   description: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Simulates various failure scenarios",
+  "Tests application resilience",
+  "Integrates with Kubernetes resources"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Integrates chaos experiments"
+howItWorksDetails: "Enhanced resilience testing and validation of Kubernetes applications"
 language: en
 list: include
 type: extensibility
