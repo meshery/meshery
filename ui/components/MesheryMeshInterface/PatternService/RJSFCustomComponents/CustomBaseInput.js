@@ -93,6 +93,7 @@ const BaseInput = (props) => {
               prettifiedName === 'name' || prettifiedName === 'namespace' || isFocused
                 ? classes.customInputLabel
                 : '',
+            shrink: prettifiedName === 'name' || prettifiedName === 'namespace' || isFocused,
           }}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
