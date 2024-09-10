@@ -173,6 +173,13 @@
         url: guides/tutorials/exploring-kubernetes-cronjobs
       - title: Understanding Kubernetes ConfigMaps and Secrets
         url: guides/tutorials/kubernetes-configmaps-secrets
+      - title: Deploying PHP Guestbook application with Redis in Meshery
+        url: guides/tutorials/deploying-php-app-with-redis
+    - title: Upgrading Meshery ↆ
+      url: installation/upgrades
+      children:
+        - title: Meshery CLI
+          url: installation/upgrades#upgrading-meshery-cli
 # - title: ⚙️ Tasks
 #   url: tasks
 #   links:
