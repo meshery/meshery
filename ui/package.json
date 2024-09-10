@@ -4,9 +4,9 @@
     "description": "collaborative management plane",
     "main": "index.js",
     "scripts": {
-        "dev": "next lint --fix && node ui_dev_server.js",
-        "lint": "next lint",
-        "lint:fix": "next lint --fix",
+        "dev": "eslint . --fix && node ui_dev_server.js",
+        "lint": "eslint . --max-warnings 0",
+        "lint:fix": "eslint . --fix --max-warnings 0",
         "format": "npx prettier --write \"**/*.{ts,tsx,js,jsx,md,json}\"",
         "build": "npm run clean && cross-env next build",
         "start": "NODE_ENV=production node ui_dev_server.js",
