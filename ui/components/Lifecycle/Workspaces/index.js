@@ -1,4 +1,5 @@
-import { Box, Button, Grid, NoSsr, Typography, withStyles } from '@material-ui/core';
+import { withStyles } from '@material-ui/core';
+import { NoSsr } from '@mui/material';
 import { Provider, connect } from 'react-redux';
 import { withRouter } from 'next/router';
 import { Pagination, PaginationItem } from '@material-ui/lab';
@@ -18,6 +19,11 @@ import {
   PrimaryActionButtons,
   createAndEditWorkspaceSchema,
   createAndEditWorkspaceUiSchema,
+  Box,
+  Button,
+  Grid,
+  Typography,
+  DeleteIcon,
 } from '@layer5/sistent';
 import useStyles from '../../../assets/styles/general/tool.styles';
 import styles from '../Environments/styles';
@@ -44,7 +50,6 @@ import PromptComponent, { PROMPT_VARIANTS } from '../../PromptComponent';
 import { debounce } from 'lodash';
 import { EVENT_TYPES } from '../../../lib/event-types';
 import EnvironmentIcon from '../../../assets/icons/Environment';
-import { DeleteIcon } from '@layer5/sistent';
 import theme from '../../../themes/app';
 import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
@@ -574,7 +579,7 @@ const Workspaces = ({ organization, classes }) => {
     <NoSsr>
       {CAN(keys.VIEW_WORKSPACE.action, keys.VIEW_WORKSPACE.subject) ? (
         <>
-          <div className={StyleClass.toolWrapper} style={{ marginBottom: '20px', display: 'flex' }}>
+          <div className={StyleClass.toolWrapper} sx={{ marginBottom: '20px', display: 'flex' }}>
             <div className={classes.createButtonWrapper}>
               <Button
                 type="submit"
@@ -582,19 +587,21 @@ const Workspaces = ({ organization, classes }) => {
                 color="primary"
                 size="large"
                 onClick={(e) => handleWorkspaceModalOpen(e, ACTION_TYPES.CREATE)}
-                style={{
+                sx={{
+                  backgroundColor: '#607d8b',
                   padding: '8px',
-                  borderRadius: 5,
+                  borderRadius: '5px',
                   marginRight: '2rem',
                 }}
                 disabled={!CAN(keys.CREATE_WORKSPACE.action, keys.CREATE_WORKSPACE.subject)}
                 data-cy="btnResetDatabase"
               >
-                <AddIconCircleBorder style={{ width: '20px', height: '20px' }} />
+                <AddIconCircleBorder sx={{ width: '20px', height: '20px' }} />
                 <Typography
-                  style={{
+                  sx={{
                     paddingLeft: '4px',
                     marginRight: '4px',
+                    textTransform: 'none',
                   }}
                 >
                   Create
@@ -651,8 +658,7 @@ const Workspaces = ({ organization, classes }) => {
               </Grid>
               <Grid
                 container
-                sx={{ padding: '2rem 0' }}
-                style={{ marginTop: '20px' }}
+                sx={{ padding: '2rem 0', marginTop: '20px' }}
                 flex
                 justifyContent="center"
                 spacing={2}
