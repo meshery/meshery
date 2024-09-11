@@ -46,6 +46,3 @@ type UserKeys struct {
 	Updated_at  string `json:"updated_at,omitempty"`
 	Deleted_at  string `json:"deleted_at,omitempty"`
 }
-type AnonymousTokenResponse struct {
-	AccessToken string `json:"access_token"`
-}

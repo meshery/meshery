@@ -6,6 +6,7 @@ import (
 	"compress/gzip"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -19,12 +20,9 @@ import (
 	"sync"
 	"time"
 
-	"errors"
-
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/models/connections"
 	"github.com/layer5io/meshkit/database"
-	"github.com/layer5io/meshkit/encoding"
 	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/models/events"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
@@ -326,19 +324,20 @@ func (l *RemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _
 				return
 			}
 			defer resp.Body.Close()
-			body, err := io.ReadAll(resp.Body)
-			if err != nil {
-				l.Log.Error(ErrDataRead(err, "response body"))
-				return
-			}
 
-			var tokenResp AnonymousTokenResponse
-			err = encoding.Unmarshal(body, &tokenResp)
-			if err != nil {
-				l.Log.Error(err)
+			var token string
+			cookies := resp.Cookies()
+			for _, cookie := range cookies {
+				if cookie.Name == TokenCookieName {
+					token = cookie.Value
+					break
+				}
+			}
+			if token == "" {
+				l.Log.Error(ErrGetToken(fmt.Errorf("token not found in the response")))
 				return
 			}
-			l.SetJWTCookie(w, tokenResp.AccessToken)
+			l.SetJWTCookie(w, token)
 			redirectURL := "/extension/meshmap"
 			http.Redirect(w, r, redirectURL, http.StatusFound)
 			return
