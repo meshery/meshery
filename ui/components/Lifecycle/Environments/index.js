@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Button, Grid, NoSsr, Typography, Box } from '@material-ui/core';
-import { connect } from 'react-redux';
+import { Provider, connect } from 'react-redux';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { withStyles } from '@material-ui/core/styles';
@@ -29,7 +29,6 @@ import {
   PrimaryActionButtons,
   createAndEditEnvironmentSchema,
   createAndEditEnvironmentUiSchema,
-  ErrorBoundary,
 } from '@layer5/sistent';
 import ConnectionIcon from '../../../assets/icons/Connection';
 import { TRANSFER_COMPONENT } from '../../../utils/Enum';
@@ -42,6 +41,7 @@ import {
   useUpdateEnvironmentMutation,
   useDeleteEnvironmentMutation,
 } from '../../../rtk-query/environments';
+import { store } from '../../../store';
 import styles from './styles';
 import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
@@ -653,16 +653,12 @@ const mapStateToProps = (state) => {
   };
 };
 
-const EnvironmentsPageWithErrorBoundary = (props) => {
-  return (
-    <NoSsr>
-      <ErrorBoundary>
-        <Environments {...props} />
-      </ErrorBoundary>
-    </NoSsr>
-  );
-};
-
 export default withStyles(styles)(
-  connect(mapStateToProps)(withRouter(EnvironmentsPageWithErrorBoundary)),
+  connect(mapStateToProps)(
+    withRouter((props) => (
+      <Provider store={store}>
+        <Environments {...props} />
+      </Provider>
+    )),
+  ),
 );
