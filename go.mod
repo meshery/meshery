@@ -1,8 +1,6 @@
 module github.com/layer5io/meshery
 
-go 1.22
-
-toolchain go1.23.0
+go 1.21
 
 replace (
 	github.com/docker/cli => github.com/docker/cli v23.0.6+incompatible
@@ -66,7 +64,7 @@ require (
 	golang.org/x/oauth2 v0.22.0
 	golang.org/x/sync v0.8.0
 	golang.org/x/text v0.18.0
-	gonum.org/v1/gonum v0.15.1
+	gonum.org/v1/gonum v0.15.0
 	google.golang.org/api v0.195.0
 	google.golang.org/grpc v1.66.0
 	google.golang.org/protobuf v1.34.2
