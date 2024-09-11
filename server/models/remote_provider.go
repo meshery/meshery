@@ -82,22 +82,6 @@ const (
 	refURLCookie      = "meshery_ref"
 )
 
-type Name struct {
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name"`
-}
-
-type Payload struct {
-	Name                   Name     `json:"name"`
-	Email                  string   `json:"email"`
-	Roles                  []string `json:"roles"`
-	OrganizationsWithRoles struct {
-		Organizations []string `json:"organizations"`
-		Roles         []string `json:"roles"`
-	} `json:"organizations_with_roles"`
-	SkipUserFlows bool `json:"skip_user_flows"`
-}
-
 // Initialize function will initialize the RemoteProvider instance with the metadata
 // fetched from the remote providers capabilities endpoint
 func (l *RemoteProvider) Initialize() {
