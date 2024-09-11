@@ -150,7 +150,7 @@ export function MeshMapEarlyAccessCard({
     const isMeshMapUser = isMeshMapRegisteredUser(capabilitiesRegistry);
     if (isMeshMapUser) {
       setTitle('Collaborative management enabled');
-      setButtonText('Open MeshMap');
+      setButtonText('Open Kanvas');
     } else {
       setTitle(signupHeader);
       setButtonText(signUpText);
