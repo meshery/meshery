@@ -24,6 +24,7 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/models/connections"
 	"github.com/layer5io/meshkit/database"
+	"github.com/layer5io/meshkit/encoding"
 	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/models/events"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
@@ -80,6 +81,22 @@ const (
 	remoteDownloadURL = "/download"
 	refURLCookie      = "meshery_ref"
 )
+
+type Name struct {
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
+}
+
+type Payload struct {
+	Name                   Name     `json:"name"`
+	Email                  string   `json:"email"`
+	Roles                  []string `json:"roles"`
+	OrganizationsWithRoles struct {
+		Organizations []string `json:"organizations"`
+		Roles         []string `json:"roles"`
+	} `json:"organizations_with_roles"`
+	SkipUserFlows bool `json:"skip_user_flows"`
+}
 
 // Initialize function will initialize the RemoteProvider instance with the metadata
 // fetched from the remote providers capabilities endpoint
@@ -310,7 +327,38 @@ func (l *RemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _
 			"meshery_version":  []string{mesheryVersion},
 			"ref":              refURL,
 		}
+		if viper.GetBool("PLAYGROUND") {
+			ep, exists := l.Capabilities.GetEndpointForFeature(PersistAnonymousUser)
+			if !exists {
+				l.Log.Warn(ErrInvalidCapability("PersistAnonymousUser", l.ProviderName))
+				return
+			}
+			client := &http.Client{}
+			req, _ := http.NewRequest("GET", l.RemoteProviderURL+ep, nil)
+			req.Header.Set("X-API-Key", GlobalTokenForAnonymousResults)
+			resp, err := client.Do(req)
+			if err != nil {
+				l.Log.Error(ErrDoRequest(err, "GET", l.RemoteProviderURL+ep))
+				return
+			}
+			defer resp.Body.Close()
+			body, err := io.ReadAll(resp.Body)
+			if err != nil {
+				l.Log.Error(ErrDataRead(err, "response body"))
+				return
+			}
 
+			var tokenResp AnonymousTokenResponse
+			err = encoding.Unmarshal(body, &tokenResp)
+			if err != nil {
+				l.Log.Error(err)
+				return
+			}
+			l.SetJWTCookie(w, tokenResp.AccessToken)
+			redirectURL := "/extension/meshmap"
+			http.Redirect(w, r, redirectURL, http.StatusFound)
+			return
+		}
 		http.Redirect(w, r, l.RemoteProviderURL+"/login?"+queryParams.Encode(), http.StatusFound)
 		return
 	}

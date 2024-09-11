@@ -285,6 +285,8 @@ const (
 	PersistEnvironments Feature = "environments"
 
 	PersistWorkspaces Feature = "workspaces"
+
+	PersistAnonymousUser Feature = "persist-anonymous-user"
 )
 
 const (
