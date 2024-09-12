@@ -1,4 +1,4 @@
-name: MeshMap Screenshot Service
+name: Meshery Snapshot Service
 on: # rebuild any PRs and main branch changes
   pull_request_target:
     types: [opened, synchronize, reopened]
