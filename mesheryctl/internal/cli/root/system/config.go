@@ -324,6 +324,14 @@ mesheryctl system config minikube
 			log.Fatal("Error flattening config:", err)
 			return err
 		}
+
+		// Minify the config file 
+		err = clientcmdapi.MinifyConfig(config)
+		if err != nil {
+			log.Fatal("Error minifying config:", err)
+			return err
+		}
+		
 		// write the flattened config to kubeconfig.yaml file
 		err = clientcmd.WriteToFile(*config, utils.ConfigPath)
 		if err != nil {
