@@ -42,13 +42,13 @@ In order to pull in these environment metrics, you can also manually configure M
 
   </section>
     
-  <section id="content3">
+  <section class="tabbed" id="content3">
     <p>
       Static Boards capture the standard performance metrics included in every Meshery performance test irrespective of which load generator is used. A set calculations are made using statistical analysis of the metrics gathered in the static boards. Static Boards Queries Prometheus SDK directly.
     </p>
   </section>
     
-  <section id="content4">
+  <section class="tabbed" id="content4">
     <p>
       Dynamic Boards can be generated from Prometheus or Grafana. These boards are defined by the user. Grafana SDK is used for these boards.
     </p>
@@ -225,7 +225,6 @@ After successfully setting up a connection between your metric service and Meshe
 
 <a href="{{ site.baseurl }}/assets/img/performance-management/meshery-and-grafana.png"><img style="width:450px;padding-top:5px;" src="{{ site.baseurl }}/assets/img/performance-management/meshery-and-grafana.png" /></a> -->
 
-##### Suggested Reading
+<!-- ##### Suggested Reading
 
-- Guide: [Interpreting Performance Test Results]({{ site.baseurl }}/guides/interpreting-performance-test-results)
-
+- Guide: [Interpreting Performance Test Results]({{ site.baseurl }}/guides/interpreting-performance-test-results) -->
