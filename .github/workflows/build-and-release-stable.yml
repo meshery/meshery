@@ -193,18 +193,16 @@ jobs:
     name: Deploy CNCF Playground
     uses: meshery/meshery/.github/workflows/cncf-playground-deploy-meshery.yaml@master
     with:
-      image: layer5/meshery:playground-${GITHUB_REF/refs\/tags\//}
+      image: ${{ secrets.IMAGE_NAME }}:playground-${GITHUB_REF/refs\/tags\//}
     secrets: inherit
-  
   call-meshery-extensions-playground-rollout:
     needs:
       - build
     name: Deploy CNCF Extensions Playground
     uses: layer5labs/meshery-extensions-packages/.github/workflows/deploy-meshery-extensions-playground.yml@master
     with:
-      image: layer5/meshery:playground-${GITHUB_REF/refs\/tags\//}
+      image: ${{ secrets.IMAGE_NAME }}:playground-${GITHUB_REF/refs\/tags\//}
     secrets: inherit
-  
   email-on-failure:
     needs: [update-rest-api-docs, update-graphql-docs, build, ctlrelease, call-dde-release-workflow, call-helm-chart-releaser, email-meshery-release-notes-workflow, call-cncf-playground-rollout]
     if: ${{ failure() }}
