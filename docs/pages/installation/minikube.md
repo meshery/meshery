@@ -51,13 +51,13 @@ Read through the following considerations prior to deploying Meshery on Minikube
 
 ### Preflight: Cluster Connectivity
 
-Start the minikube, if not started using the following command:
+Start Minikube using the following command if it is not already running:
 {% capture code_content %}minikube start --cpus 4 --memory 8192 --kubernetes-version=v1.14.1{% endcapture %}
 {% include code.html code=code_content %}
-Check up on your minikube cluster :
+Check the status of your Minikube cluster by running:
 {% capture code_content %}minikube status{% endcapture %}
 {% include code.html code=code_content %}
-Verify your kubeconfig's current context.
+Verify that the current context is set to Minikube by running:
 {% capture code_content %}kubectl config current-context{% endcapture %}
 {% include code.html code=code_content %}
 
@@ -73,17 +73,27 @@ Meshery should now be running in your Minikube cluster and Meshery UI should be 
 
 ## Installation: Using `mesheryctl`
 
-Use Meshery's CLI to streamline your connection to your Minikube cluster. Configure Meshery to connect to your Minikube cluster by executing:
+Ensure you are logged in and authenticated by running the following command:
 
-{% capture code_content %}$ mesheryctl system config minikube{% endcapture %}
+{% capture code_content %}$ mesheryctl system login{% endcapture %}
 {% include code.html code=code_content %}
 
-Once configured, execute the following command to start Meshery.
+Start Meshery using the command:
 
 {% capture code_content %}$ mesheryctl system start{% endcapture %}
 {% include code.html code=code_content %}
 
-If you encounter any authentication issues, you can use `mesheryctl system login`. For more information, click [here](/guides/mesheryctl/authenticate-with-meshery-via-cli) to learn more.
+or use the command:
+
+{% capture code_content %}$ mesheryctl system start -p kubernetes{% endcapture %}
+{% include code.html code=code_content %}
+
+For more information on authentication, See [Authenticating with Meshery via CLI](/guides/mesheryctl/authenticate-with-meshery-via-cli).
+
+Use Meshery's CLI to streamline your connection to your Minikube cluster. Configure Meshery to connect to your Minikube cluster by executing:
+
+{% capture code_content %}$ mesheryctl system config minikube{% endcapture %}
+{% include code.html code=code_content %}
 
 ## Installation: Using Helm
 
@@ -127,35 +137,6 @@ _Note_: Make sure _current-context_ is set to _minikube_.
 <br />
 Meshery should now be connected with your managed Kubernetes instance. Take a look at the [Meshery guides]({{ site.baseurl }}/guides) for advanced usage tips.
 
-## Installation: Docker Driver Users
-
-Follow the [installation steps](/installation/quick-start) to setup the mesheryctl CLI and install Meshery.
-
-**Users using docker driver**:
-After completing the Meshery installation, execute the following commands to establish connectivity between Meshery Server and Kubernetes cluster:
-
- <pre class="codeblock-pre"><div class="codeblock">
- <div class="clipboardjs">docker network connect bridge meshery_meshery_1</div></div>
- </pre>
-
-<br/>
-
-<pre class="codeblock-pre"><div class="codeblock">
- <div class="clipboardjs">docker network connect minikube meshery_meshery_1</div></div>
- </pre>
-
-To establish connectivity between a particular Meshery Adapter and Kubernetes server, use _"docker ps"_ to identify the name of the desired container, and execute the following commands:
-
-<pre class="codeblock-pre"><div class="codeblock">
- <div class="clipboardjs">docker network connect bridge &#60; container name of the desired adapter &#62;</div></div>
- </pre>
-
-<br/>
-
- <pre class="codeblock-pre"><div class="codeblock">
- <div class="clipboardjs">docker network connect minikube &#60; container name of the desired adapter &#62;</div></div>
- </pre>
-
 # Out-of-cluster Installation
 
 Install Meshery on Docker (out-of-cluster) and connect it to your Minikube cluster.
@@ -172,15 +153,44 @@ Configure Meshery to connect to your cluster by executing:
 
 Once you have verified that all the services are up and running, Meshery UI will be accessible on your local machine on port 9081. Open your browser and access Meshery at [`http://localhost:9081`](http://localhost:9081).
 
+## Installation: Docker Driver Users
+
+Follow the [installation steps](/installation/quick-start) to setup the mesheryctl CLI and install Meshery.
+
+**Users using docker driver**:
+After completing the Meshery installation, execute the following commands to establish connectivity between Meshery Server and Kubernetes cluster:
+
+ <pre class="codeblock-pre"><div class="codeblock">
+ <div class="clipboardjs">docker network connect bridge meshery-meshery-1</div></div>
+ </pre>
+
+<br/>
+
+<pre class="codeblock-pre"><div class="codeblock">
+ <div class="clipboardjs">docker network connect minikube meshery-meshery-1</div></div>
+ </pre>
+
+To establish connectivity between a particular Meshery Adapter and Kubernetes server, use _"docker ps"_ to identify the name of the desired container, and execute the following commands:
+
+<pre class="codeblock-pre"><div class="codeblock">
+ <div class="clipboardjs">docker network connect bridge &#60; container name of the desired adapter &#62;</div></div>
+ </pre>
+
+<br/>
+
+ <pre class="codeblock-pre"><div class="codeblock">
+ <div class="clipboardjs">docker network connect minikube &#60; container name of the desired adapter &#62;</div></div>
+ </pre>
+
 ## Installation: Upload Config File in Meshery Web UI
 
 - Run the below command to generate the _"config_minikube.yaml"_ file for your cluster:
 
  <pre class="codeblock-pre"><div class="codeblock">
- <div class="clipboardjs">kubectl config view --minify --flatten > config_minikube.yaml</div></div>
+ <div class="clipboardjs">kubectl config view > config_minikube.yaml</div></div>
  </pre>
 
-- Upload the generated config file by navigating to _Settings > Environment > Out of Cluster Deployment_ in the Web UI and using the _"Upload kubeconfig"_ option.
+- Upload the generated config file on the UI by navigating to _Lifecycle > Connections_ and using the _"Add Cluster"_ option.
 
 ## Post-Installation Steps
 
