@@ -121,14 +121,18 @@
     - title: Configuring Kubernetes Infrastructure ↆ
       url: guides/configuration-management
       children:
+      - title: Configuring your Cloud Native Infrastructure and Applications
+        url: guides/configuration-management/working-with-designs
       - title: Creating a Meshery Design
         url: guides/creating-a-meshery-design
-      - title: Working with Designs
-        url: guides/configuration-management/working-with-designs
+      - title: Envoy WASM Filter Management
+        url: guides/configuration-management/filter-management
       - title: Importing Designs
         url: guides/configuration-management/importing-designs
-      - title: Working with design patterns
+      - title: Cloud Native Design Patterns
         url: guides/configuration-management/pattern-management
+      - title: Push or Pull a Model Image
+        url: guides/configuration-management/push-pull-model-image
     - title: Managing Events with Notification Center
       url: guides/events-management
     - title: GitOps with Meshery
@@ -136,25 +140,29 @@
     - title: Performance Management ↆ
       url: guides/performance-management
       children:
-        - title: Performance Management with Meshery 
-          url: guides/performance-management/performance-management
-        - title: Using Metrics in Meshery
-          url: guides/performance-management/meshery-metrics
         - title: Interpreting Performance Test Results 
           url: guides/performance-management/interpreting-performance-test-results
-        - title: Performance Profiles and Tests #should go under concepts
+        - title: Managing Performance #should go under concepts
           url: guides/performance-management/managing-performance
+        - title: Using Metrics in Meshery
+          url: guides/performance-management/meshery-metrics
+        - title: Performance Management with Meshery 
+          url: guides/performance-management/performance-management  
     - title: Using Meshery CLI Guides ↆ
       url: guides/mesheryctl
       children:
-        - title: Using mesheryctl
-          url: guides/mesheryctl/working-with-mesheryctl
-        - title: Configure autocompletion for mesheryctl
-          url: guides/mesheryctl/configuring-autocompletion-for-mesheryctl
-        - title: Authenticate via Meshery CLI
+        - title: Authenticating with Meshery via CLI
           url: guides/mesheryctl/authenticate-with-meshery-via-cli
+        - title: Configuring Autocompletion for `mesheryctl`
+          url: guides/mesheryctl/configuring-autocompletion-for-mesheryctl
         - title: Running system checks using Meshery CLI
           url: guides/mesheryctl/running-system-checks-using-mesheryctl
+        - title: Mesheryctl system commands
+          url: guides/mesheryctl/system-commands
+        - title: Using meshery CLI
+          url: guides/mesheryctl/working-with-mesheryctl
+        - title: Upgrading Meshery CLI
+          url: installation/upgrades#upgrading-mesheryctl-using-homebrew
     - title: Troubleshooting Guides ↆ
       url: guides/troubleshooting
       children:
