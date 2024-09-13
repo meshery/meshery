@@ -206,20 +206,6 @@ type K8sContextPersistResponse struct {
 	Inserted   bool       `json:"inserted,omitempty"`
 }
 
-type ConnectionPayload struct {
-	ID                         uuid.UUID                    `json:"id,omitempty"`
-	Kind                       string                       `json:"kind,omitempty"`
-	SubType                    string                       `json:"sub_type,omitempty"`
-	Type                       string                       `json:"type,omitempty"`
-	MetaData                   map[string]interface{}       `json:"metadata,omitempty"`
-	Status                     connections.ConnectionStatus `json:"status,omitempty"`
-	CredentialSecret           map[string]interface{}       `json:"credential_secret,omitempty"`
-	Name                       string                       `json:"name,omitempty"`
-	CredentialID               *uuid.UUID                   `json:"credential_id,omitempty"`
-	Model                      string                       `json:"model,omitempty"`
-	SkipCredentialVerification bool                         `json:"skip_credential_verification"`
-}
-
 type ExtensionProxyResponse struct {
 	Body       []byte `json:"body,omitempty"`
 	StatusCode int    `json:"status_code,omitempty"`
@@ -476,14 +462,14 @@ type Provider interface {
 
 	ExtensionProxy(req *http.Request) (*ExtensionProxyResponse, error)
 
-	SaveConnection(conn *ConnectionPayload, token string, skipTokenCheck bool) (*connections.Connection, error)
+	SaveConnection(conn *connections.ConnectionPayload, token string, skipTokenCheck bool) (*connections.Connection, error)
 	GetConnections(req *http.Request, userID string, page, pageSize int, search, order string, filter string, status []string, kind []string) (*connections.ConnectionPage, error)
 	GetConnectionByIDAndKind(token string, connectionID uuid.UUID, kind string) (*connections.Connection, int, error)
 	GetConnectionByID(token string, connectionID uuid.UUID) (*connections.Connection, int, error)
 	GetConnectionsByKind(req *http.Request, userID string, page, pageSize int, search, order, connectionKind string) (*map[string]interface{}, error)
 	GetConnectionsStatus(req *http.Request, userID string) (*connections.ConnectionsStatusPage, error)
 	UpdateConnection(req *http.Request, conn *connections.Connection) (*connections.Connection, error)
-	UpdateConnectionById(req *http.Request, conn *ConnectionPayload, connId string) (*connections.Connection, error)
+	UpdateConnectionById(req *http.Request, conn *connections.ConnectionPayload, connId string) (*connections.Connection, error)
 	UpdateConnectionStatusByID(token string, connectionID uuid.UUID, connectionStatus connections.ConnectionStatus) (*connections.Connection, int, error)
 	DeleteConnection(req *http.Request, connID uuid.UUID) (*connections.Connection, error)
 	DeleteMesheryConnection() error

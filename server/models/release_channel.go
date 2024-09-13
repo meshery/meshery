@@ -1,10 +1,13 @@
 package models
 
 import (
+	"bytes"
 	"fmt"
 	"net/http"
 	"net/url"
 
+	"github.com/layer5io/meshery/server/models/connections"
+	"github.com/layer5io/meshkit/encoding"
 	"github.com/layer5io/meshkit/logger"
 )
 
@@ -64,10 +67,17 @@ func (k *Kanvas) Intercept(req *http.Request, res http.ResponseWriter) {
 		return
 	}
 
+	credential := make(map[string]interface{}, 0)
+	connectionPayload := connections.BuildMesheryConnectionPayload(req.Context().Value(MesheryServerURL).(string), credential)
+
 	providerURL = providerURL.JoinPath(ep)
 
+	buf := []byte{}
+	data := bytes.NewReader(buf)
+	buf, _ = encoding.Marshal(connectionPayload)
+
 	client := &http.Client{}
-	newReq, _ := http.NewRequest("GET", providerURL.String(), nil)
+	newReq, _ := http.NewRequest("GET", providerURL.String(), data)
 
 	newReq.Header.Set("X-API-Key", GlobalTokenForAnonymousResults)
 

@@ -699,7 +699,7 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext) (co
 		"cluster": k8sContext.Cluster,
 	}
 
-	conn := &ConnectionPayload{
+	conn := &connections.ConnectionPayload{
 		Kind:    "kubernetes",
 		Type:    "platform",
 		SubType: "orchestrator",
@@ -3457,30 +3457,13 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ 
 	}
 
 	go func() {
-		_metadata := map[string]string{
-			"server_id":        viper.GetString("INSTANCE_ID"),
-			"server_version":   viper.GetString("BUILD"),
-			"server_build_sha": viper.GetString("COMMITSHA"),
-			"server_location":  r.Context().Value(MesheryServerURL).(string),
-		}
-		metadata := make(map[string]interface{}, len(_metadata))
-		for k, v := range _metadata {
-			metadata[k] = v
-		}
-		cred := make(map[string]interface{}, 0)
+		credential := make(map[string]interface{}, 0)
 		var temp *uuid.UUID
-		cred["token"] = temp
+		credential["token"] = temp
 
-		conn := &ConnectionPayload{
-			Kind:             "meshery",
-			Type:             "platform",
-			SubType:          "management",
-			MetaData:         metadata,
-			Status:           connections.CONNECTED,
-			CredentialSecret: cred,
-		}
-
-		_, err := l.SaveConnection(conn, tokenString, true)
+		connectionPayload := connections.BuildMesheryConnectionPayload(r.Context().Value(MesheryServerURL).(string), credential)
+		
+		_, err := l.SaveConnection(connectionPayload, tokenString, true)
 		if err != nil {
 			l.Log.Error(ErrSaveConnection(err))
 		}
@@ -3763,7 +3746,7 @@ func (l *RemoteProvider) ExtensionProxy(req *http.Request) (*ExtensionProxyRespo
 	return nil, ErrFetch(fmt.Errorf("failed to request to remote provider"), fmt.Sprint(bdr), resp.StatusCode)
 }
 
-func (l *RemoteProvider) SaveConnection(conn *ConnectionPayload, token string, skipTokenCheck bool) (*connections.Connection, error) {
+func (l *RemoteProvider) SaveConnection(conn *connections.ConnectionPayload, token string, skipTokenCheck bool) (*connections.Connection, error) {
 	if !l.Capabilities.IsSupported(PersistConnection) {
 		l.Log.Error(ErrOperationNotAvaibale)
 		return nil, ErrInvalidCapability("PersistConnection", l.ProviderName)
@@ -4095,7 +4078,7 @@ func (l *RemoteProvider) UpdateConnection(req *http.Request, connection *connect
 }
 
 // UpdateConnectionById - to update an existing connection using the connection id
-func (l *RemoteProvider) UpdateConnectionById(req *http.Request, connection *ConnectionPayload, connId string) (*connections.Connection, error) {
+func (l *RemoteProvider) UpdateConnectionById(req *http.Request, connection *connections.ConnectionPayload, connId string) (*connections.Connection, error) {
 	if !l.Capabilities.IsSupported(PersistConnection) {
 		l.Log.Error(ErrOperationNotAvaibale)
 		return nil, ErrInvalidCapability("PersistConnection", l.ProviderName)
