@@ -195,7 +195,7 @@ function ThemeToggler({ theme, themeSetter, classes }) {
   const themeToggler = () => {
     if (isExtensionOpen()) {
       notify({
-        message: 'Toggling between themes is not supported in MeshMap',
+        message: 'Toggling between themes is not supported in d',
         event_type: EVENT_TYPES.INFO,
       });
       return;

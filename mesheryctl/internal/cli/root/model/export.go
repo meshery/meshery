@@ -21,6 +21,7 @@ var exportModal = &cobra.Command{
 mesheryctl model export [model-name] -o [oci/json/yaml] (default is oci)
 mesheryctl model export [model-name] -l /home/meshery/
 mesheryctl model export [model-name] --discard-components --discard-relationships
+mesheryctl model export [model-name] --version v0.7.3
     `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
@@ -57,6 +58,9 @@ mesheryctl model export [model-name] --discard-components --discard-relationship
 		baseUrl := mctlCfg.GetBaseMesheryURL()
 		modelName := args[0]
 		url := fmt.Sprintf("%s/api/meshmodels/models/%s?components=%t&relationships=%t&%s", baseUrl, modelName, !discardComponentsFlag, !discardRelationshipsFlag, utils.GetPageQueryParameter(cmd, pageNumberFlag))
+		if versionFlag != "" {
+			url += fmt.Sprintf("&version=%s", versionFlag)
+		}
 		return exportModel(args[0], cmd, url, false)
 	},
 }

@@ -255,7 +255,7 @@ const ExportModal = (props) => {
         <CustomTextTooltip
           placement="top"
           interactive={true}
-          title="MeshMap Designer offers multiple export options, allowing you to choose the format that suits your needs. [Learn more](https://docs.layer5.io/meshmap/designer/export-designs/)"
+          title="Kanvas Designer offers multiple export options, allowing you to choose the format that suits your needs. [Learn more](https://docs.layer5.io/kanvas/designer/export-designs/)"
         >
           <IconButton className={classes.infoIconButton} color="primary">
             <InfoOutlinedIcon height={24} width={24} className={classes.infoIcon} />

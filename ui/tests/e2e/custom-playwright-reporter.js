@@ -122,7 +122,7 @@ class MyReporter {
       return '⚠️';
     }
     if (status === 'skipped') {
-      return '➖';
+      return '⏩';
     }
   }
 
