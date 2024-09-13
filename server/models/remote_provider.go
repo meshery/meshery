@@ -338,7 +338,8 @@ func (l *RemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _
 				return
 			}
 			l.SetJWTCookie(w, token)
-			redirectURL := "/extension/meshmap"
+			redirectURL := getRedirectURLForNavigatorExtension(&l.ProviderProperties)
+			
 			http.Redirect(w, r, redirectURL, http.StatusFound)
 			return
 		}
@@ -3470,7 +3471,7 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ 
 	redirectURL := "/"
 	isPlayGround, _ := strconv.ParseBool(viper.GetString("PLAYGROUND"))
 	if isPlayGround {
-		redirectURL = "/extension/meshmap"
+		redirectURL = getRedirectURLForNavigatorExtension(&providerProperties)
 	}
 
 	refQueryParam := r.URL.Query().Get("ref")
