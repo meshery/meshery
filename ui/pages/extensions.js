@@ -22,7 +22,7 @@ const INITIAL_GRID_SIZE = { lg: 6, md: 12, xs: 12 };
 
 const MeshMapSignUpcard = ({ classes, hasAccessToMeshMap = false }) => {
   const handleSignUp = (e) => {
-    window.open('https://docs.layer5.io/meshmap', '_blank');
+    window.open('https://docs.layer5.io/kanvas', '_blank');
     e.stopPropagation();
   };
 
@@ -30,13 +30,13 @@ const MeshMapSignUpcard = ({ classes, hasAccessToMeshMap = false }) => {
     <Grid item {...LARGE_6_MED_12_GRID_STYLE}>
       <div className={classes.card}>
         <Typography className={classes.frontContent} variant="h5" component="div">
-          MeshMap
+          Kanvas
         </Typography>
 
         <Typography className={classes.frontSideDescription} variant="body">
           <img className={classes.img} src="/static/img/meshmap.svg" />
           Collaboratively design and manage your Kubernetes clusters, service mesh deployments, and
-          cloud native apps. MeshMap is now in public beta.{' '}
+          cloud native apps. Kanvas is now in public beta.{' '}
           {!hasAccessToMeshMap && 'Sign-up today to for early access!'}
         </Typography>
         {
@@ -81,13 +81,13 @@ const MeshMapSnapShotCard = ({ classes, githubActionEnabled = false }) => {
     <Grid item {...LARGE_6_MED_12_GRID_STYLE}>
       <div className={classes.card}>
         <Typography className={classes.frontContent} variant="h5" component="div">
-          GitHub Action: MeshMap Snapshot
+          GitHub Action: Kanvas Snapshot
         </Typography>
 
         <Typography className={classes.frontSideDescription} variant="body">
           <MeshMapSnapShotLogo />
-          Connect MeshMap to your GitHub repo and see changes pull request-to-pull request. Get
-          snapshots of your infrastructure directly in your PRs
+          Connect Kanvas to your GitHub repo and see changes pull request-to-pull request. Get
+          snapshots of your infrastructure directly in your PRs.
         </Typography>
         {
           <div style={{ textAlign: 'right' }}>
@@ -206,7 +206,7 @@ const MesheryDesignEmbedLogo = withStyles(MesheryPerformacneLogoStyles)(({ class
 
 const MesheryDesignEmbedExtension = ({ classes }) => {
   const handleLearnMore = (e) => {
-    window.open('https://docs.layer5.io/meshmap/designer/embedding-designs/', '_blank');
+    window.open('https://docs.layer5.io/kanvas/designer/embedding-designs/', '_blank');
     e.stopPropagation();
   };
 
