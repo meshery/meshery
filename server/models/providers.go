@@ -370,6 +370,7 @@ type Provider interface {
 	Initialize()
 
 	Name() string
+	GetProviderURL() string
 
 	// Returns ProviderType
 	GetProviderType() ProviderType
@@ -390,6 +391,8 @@ type Provider interface {
 	GetUsersKeys(token, page, pageSize, search, order, filter string, orgID string) ([]byte, error)
 	GetProviderToken(req *http.Request) (string, error)
 	UpdateToken(http.ResponseWriter, *http.Request) string
+	SetJWTCookie(w http.ResponseWriter, token string)
+	UnSetJWTCookie(w http.ResponseWriter)
 	Logout(http.ResponseWriter, *http.Request) error
 	HandleUnAuthenticated(w http.ResponseWriter, req *http.Request)
 	FetchResults(tokenVal string, page, pageSize, search, order, profileID string) ([]byte, error)

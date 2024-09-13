@@ -87,6 +87,10 @@ func (l *DefaultLocalProvider) Name() string {
 	return l.ProviderName
 }
 
+func (l *DefaultLocalProvider) GetProviderURL() string {
+	return l.ProviderBaseURL
+}
+
 // Description - returns a short description of the provider for display in the Provider UI
 func (l *DefaultLocalProvider) Description() []string {
 	return l.ProviderDescription
@@ -106,6 +110,12 @@ func (l *DefaultLocalProvider) GetProviderProperties() ProviderProperties {
 // the local provider
 func (l *DefaultLocalProvider) PackageLocation() string {
 	return ""
+}
+
+func (l *DefaultLocalProvider) SetJWTCookie(_ http.ResponseWriter, _ string) {
+}
+
+func (l *DefaultLocalProvider) UnSetJWTCookie(_ http.ResponseWriter) {
 }
 
 // GetProviderCapabilities returns all of the provider properties

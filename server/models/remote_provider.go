@@ -179,6 +179,10 @@ func (l *RemoteProvider) Name() string {
 	return l.ProviderName
 }
 
+func (l *RemoteProvider) GetProviderURL() string {
+	return l.ProviderURL
+}
+
 // Description - returns a short description of the provider for display in the Provider UI
 func (l *RemoteProvider) Description() []string {
 	return l.ProviderDescription
@@ -296,7 +300,7 @@ func (l *RemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _
 		})
 
 		var refURL []string
-		// If refURL is empty, generate the refURL based on the current requests path and query param.
+		// If refURL is empty, generate the refURL based on the current request path and query param.
 		if refURLqueryParam == "" {
 			refURL = []string{base64.RawURLEncoding.EncodeToString([]byte(strings.TrimPrefix(callbackURL.String(), baseCallbackURL)))}
 		} else {
@@ -309,40 +313,13 @@ func (l *RemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _
 			"meshery_version":  []string{mesheryVersion},
 			"ref":              refURL,
 		}
-		if viper.GetBool("PLAYGROUND") {
-			ep, exists := l.Capabilities.GetEndpointForFeature(PersistAnonymousUser)
-			if !exists {
-				l.Log.Warn(ErrInvalidCapability("PersistAnonymousUser", l.ProviderName))
-				return
-			}
-			client := &http.Client{}
-			req, _ := http.NewRequest("GET", l.RemoteProviderURL+ep, nil)
-			req.Header.Set("X-API-Key", GlobalTokenForAnonymousResults)
-			resp, err := client.Do(req)
-			if err != nil {
-				l.Log.Error(ErrDoRequest(err, "GET", l.RemoteProviderURL+ep))
-				return
-			}
-			defer resp.Body.Close()
 
-			var token string
-			cookies := resp.Cookies()
-			for _, cookie := range cookies {
-				if cookie.Name == TokenCookieName {
-					token = cookie.Value
-					break
-				}
-			}
-			if token == "" {
-				l.Log.Error(ErrGetToken(fmt.Errorf("token not found in the response")))
-				return
-			}
-			l.SetJWTCookie(w, token)
-			redirectURL := getRedirectURLForNavigatorExtension(&l.ProviderProperties)
-			
-			http.Redirect(w, r, redirectURL, http.StatusFound)
+		releaseChannel := NewReleaseChannelInterceptor(viper.GetString("RELEASE_CHANNEL"), l, l.Log)
+		if releaseChannel != nil {
+			releaseChannel.Intercept(r, w)
 			return
 		}
+
 		http.Redirect(w, r, l.RemoteProviderURL+"/login?"+queryParams.Encode(), http.StatusFound)
 		return
 	}
