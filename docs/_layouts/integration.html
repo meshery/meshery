@@ -37,6 +37,12 @@ layout: default
     </section>
 </div>
 <!-- components end -->
+
+
+<section class="related-designs-links" data-doc-url="{{ page.docURL }}"></section>
+
+</section>
+
 {% include_cached integration/models-components.html %}
 {% include_cached integration/meshery-registry.html %}
 
@@ -45,3 +51,5 @@ layout: default
 {% include_cached suggested-reading.html reading=related_models_by_category h2_text="Related Models" title=page.title type=page.type category=page.category
 url=page.url language="en" %}
 {% endif %}
+
+<script src="{{ site.baseurl }}/assets/js/related-design.js"></script>
