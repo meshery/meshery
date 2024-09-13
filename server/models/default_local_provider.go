@@ -261,7 +261,7 @@ func (l *DefaultLocalProvider) SaveK8sContext(_ string, k8sContext K8sContext) (
 		"cluster": k8sContext.Cluster,
 	}
 
-	conn := &ConnectionPayload{
+	conn := &connections.ConnectionPayload{
 		ID:      connID,
 		Kind:    "kubernetes",
 		Name:    k8sContext.Name,
@@ -1065,7 +1065,7 @@ func (l *DefaultLocalProvider) ExtensionProxy(_ *http.Request) (*ExtensionProxyR
 	return nil, ErrLocalProviderSupport
 }
 
-func (l *DefaultLocalProvider) SaveConnection(conn *ConnectionPayload, _ string, _ bool) (*connections.Connection, error) {
+func (l *DefaultLocalProvider) SaveConnection(conn *connections.ConnectionPayload, _ string, _ bool) (*connections.Connection, error) {
 	id := uuid.Nil
 	if conn.ID != uuid.Nil {
 		id = conn.ID
@@ -1134,7 +1134,7 @@ func (l *DefaultLocalProvider) UpdateConnectionStatusByID(token string, connecti
 	return updatedConnection, http.StatusOK, nil
 }
 
-func (l *DefaultLocalProvider) UpdateConnectionById(req *http.Request, conn *ConnectionPayload, _ string) (*connections.Connection, error) {
+func (l *DefaultLocalProvider) UpdateConnectionById(req *http.Request, conn*connections.ConnectionPayload, _ string) (*connections.Connection, error) {
 	connection := connections.Connection{
 		ID:           conn.ID,
 		Name:         conn.Name,
