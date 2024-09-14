@@ -364,7 +364,7 @@ type Provider interface {
 
 	PackageLocation() string
 
-	GetProviderCapabilities(http.ResponseWriter, *http.Request)
+	GetProviderCapabilities(http.ResponseWriter, *http.Request, string)
 
 	GetProviderProperties() ProviderProperties
 	// InitiateLogin - does the needed check, returns a true to indicate "return" or false to continue

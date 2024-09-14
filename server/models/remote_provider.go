@@ -220,10 +220,14 @@ func (l *RemoteProvider) SyncPreferences() {
 }
 
 // GetProviderCapabilities returns all of the provider properties
-func (l *RemoteProvider) GetProviderCapabilities(w http.ResponseWriter, req *http.Request) {
+func (l *RemoteProvider) GetProviderCapabilities(w http.ResponseWriter, req *http.Request, userID string) {
 	tokenString := req.Context().Value(TokenCtxKey).(string)
 
 	providerProperties := l.loadCapabilities(tokenString)
+	if err := l.WriteCapabilitiesForUser(userID, &providerProperties); err != nil {
+		l.Log.Error(ErrDBPut(errors.Join(err, fmt.Errorf("failed to write capabilities for the user %s to the server store", userID))))
+	}
+
 	encoder := json.NewEncoder(w)
 	if err := encoder.Encode(providerProperties); err != nil {
 		http.Error(w, ErrEncoding(err, "Provider Capablity").Error(), http.StatusInternalServerError)

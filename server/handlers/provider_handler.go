@@ -109,7 +109,9 @@ func (h *Handler) ProviderCapabilityHandler(
 	if err != nil {
 		err = ErrGetCapabilities(err, user.ID)
 		h.log.Error(err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		
+		h.log.Infof("Failed to fetch capabilities from the server store, trying to fetch the capabilities from the remote provider for the user_id: ", user.ID)
+		provider.GetProviderCapabilities(w, r, user.ID)
 		return
 	}
 
