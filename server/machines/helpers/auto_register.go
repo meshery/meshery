@@ -12,6 +12,7 @@ import (
 	helpers "github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/machines"
 	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshery/server/models/connections"
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/models/events"
@@ -135,7 +136,7 @@ func (arh *AutoRegistrationHelper) processRegistration() {
 	}
 }
 
-func getConnectionPayload(connType, objName, objID string, identifier interface{}, userID uuid.UUID, connectionDef *component.ComponentDefinition, connMetadata map[string]interface{}) (models.ConnectionPayload, uuid.UUID) {
+func getConnectionPayload(connType, objName, objID string, identifier interface{}, userID uuid.UUID, connectionDef *component.ComponentDefinition, connMetadata map[string]interface{}) (connections.ConnectionPayload, uuid.UUID) {
 
 	id, _ := generateUUID(map[string]interface{}{
 		"name":       objName,
@@ -144,7 +145,7 @@ func getConnectionPayload(connType, objName, objID string, identifier interface{
 	})
 
 	subCategory := connectionDef.Model.SubCategory
-	return models.ConnectionPayload{
+	return connections.ConnectionPayload{
 		Kind:                       connType,
 		Name:                       objName,
 		Type:                       connectionDef.Model.Category.Name,

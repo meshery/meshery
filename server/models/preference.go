@@ -87,6 +87,13 @@ type PreferencePersister interface {
 	// ClosePersister()
 }
 
+// CapabilitiesPersister defines methods for a capability persister
+type CapabilitiesPersister interface {
+	ReadCapabilitiesForUser(userID string) (*ProviderProperties, error)
+	WriteCapabilitiesForUser(userID string, data *ProviderProperties) error
+	DeleteCapabilitiesForUser(userID string) error
+}
+
 // Parameters to save Grafana configuration
 type GrafanaConfigParams struct {
 	GrafanaURL    string `json:"grafanaURL,omitempty"`
