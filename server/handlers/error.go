@@ -145,7 +145,7 @@ const (
 	ErrFailToLoadK8sContextCode            = "meshery-server-1331"
 	ErrEmptyOCIImageCode                   = "meshery-server-1360"
 	ErrGetComponentDefinitionCode          = "meshery-server-1362"
-	ErrGetCapabilitiesCode                 = ""
+	ErrGetCapabilitiesCode                 = "meshery-server-1363"
 )
 
 var (
