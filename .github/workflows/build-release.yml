@@ -10,9 +10,6 @@ jobs:
       RELEASE_CHANNEL: "kanvas"
     runs-on: ubuntu-22.04
     steps:
-      - name: Fetch latest tag
-        run: |
-          echo "LATEST_TAG=$(curl --silent "https://api.github.com/repos/meshery/meshery/releases" | jq ' .[] | ."tag_name"' | sed -n 1p$'\n' | tr -d '"')" >> $GITHUB_ENV
       - name: Check out code
         uses: actions/checkout@v4
         with:
