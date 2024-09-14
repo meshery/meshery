@@ -10,6 +10,7 @@ import (
 	"github.com/layer5io/meshery/server/models/connections"
 	"github.com/layer5io/meshkit/encoding"
 	"github.com/layer5io/meshkit/logger"
+	"github.com/pkg/errors"
 )
 
 type ReleaseChannel interface {
@@ -108,7 +109,8 @@ func (k *Kanvas) Intercept(req *http.Request, res http.ResponseWriter) {
 
 	err = k.Provider.WriteCapabilitiesForUser(flowResponse.UserID.String(), &flowResponse.Capabilities)
 	if err != nil {
-		k.log.Debug("User session not found in cache trying to create new user from remote session")
+		err = ErrDBPut(errors.Wrapf(err, "failed to write capabilities for the user %s", flowResponse.UserID.String()))
+		k.log.Error(err)
 		http.Redirect(res, req, errorUI, http.StatusFound)
 
 		return
