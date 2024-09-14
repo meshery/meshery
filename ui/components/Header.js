@@ -45,6 +45,7 @@ import CAN, { CanShow } from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import SpaceSwitcher from './SpacesSwitcher/SpaceSwitcher';
 import { UsesSistent } from './SistentWrapper';
+import Router from 'next/router';
 
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 const styles = (theme) => ({
@@ -306,11 +307,6 @@ function K8sContextMenu({
     transform: showFullContextMenu ? `translateY(${transformProperty}%)` : 'translateY(0)',
   };
 
-  const ctxStyle = {
-    ...disabledStyle,
-    marginRight: '0.5rem',
-  };
-
   const handleKubernetesDelete = async (name, connectionID) => {
     let responseOfDeleteK8sCtx = await deleteCtxtRef.current.show({
       title: `Delete ${name} context ?`,
@@ -365,7 +361,9 @@ function K8sContextMenu({
             }}
             aria-owns={open ? 'menu-list-grow' : undefined}
             aria-haspopup="true"
-            style={ctxStyle}
+            style={{
+              marginRight: '0.5rem',
+            }}
           >
             <div className={classes.cbadgeContainer}>
               <img
@@ -387,9 +385,7 @@ function K8sContextMenu({
             </div>
           </IconButton>
         </CanShow>
-      </div>
 
-      <CanShow Key={keys.VIEW_ALL_KUBERNETES_CLUSTERS} invert_action={['hide']}>
         <Slide
           direction="down"
           style={styleSlider}
@@ -399,89 +395,90 @@ function K8sContextMenu({
           unmountOnExit
         >
           <div>
-            <ClickAwayListener
-              onClickAway={(e) => {
-                if (
-                  typeof e.target.className == 'string' &&
-                  !e.target.className?.includes('cbadge') &&
-                  e.target?.className != 'k8s-image' &&
-                  !e.target.className.includes('k8s-icon-button')
-                ) {
-                  setAnchorEl(false);
-                  setShowFullContextMenu(false);
-                }
-              }}
-            >
-              <Paper className={classes.cMenuContainer}>
-                <div>
-                  <TextField
-                    id="search-ctx"
-                    label="Search"
-                    size="small"
-                    variant="outlined"
-                    onChange={(ev) => searchContexts(ev.target.value)}
-                    style={{
-                      width: '100%',
-                      backgroundColor: 'rgba(102, 102, 102, 0.12)',
-                      margin: '1px 0px',
-                    }}
-                    InputProps={{
-                      endAdornment: <Search className={classes.searchIcon} style={iconMedium} />,
-                    }}
-                  />
-                </div>
-                <div>
-                  {contexts?.total_count ? (
-                    <>
-                      <UsesSistent>
-                        <Checkbox
-                          checked={activeContexts.includes('all')}
-                          onChange={() =>
-                            activeContexts.includes('all')
-                              ? setActiveContexts([])
-                              : setActiveContexts('all')
-                          }
+            <CanShow Key={keys.VIEW_ALL_KUBERNETES_CLUSTERS} invert_action={['hide']}>
+              <ClickAwayListener
+                onClickAway={(e) => {
+                  if (
+                    typeof e.target.className == 'string' &&
+                    !e.target.className?.includes('cbadge') &&
+                    e.target?.className != 'k8s-image' &&
+                    !e.target.className.includes('k8s-icon-button')
+                  ) {
+                    setAnchorEl(false);
+                    setShowFullContextMenu(false);
+                  }
+                }}
+              >
+                <Paper className={classes.cMenuContainer}>
+                  <div>
+                    <TextField
+                      id="search-ctx"
+                      label="Search"
+                      size="small"
+                      variant="outlined"
+                      onChange={(ev) => searchContexts(ev.target.value)}
+                      style={{
+                        width: '100%',
+                        backgroundColor: 'rgba(102, 102, 102, 0.12)',
+                        margin: '1px 0px',
+                      }}
+                      InputProps={{
+                        endAdornment: <Search className={classes.searchIcon} style={iconMedium} />,
+                      }}
+                    />
+                  </div>
+                  <div>
+                    {contexts?.total_count ? (
+                      <>
+                        <UsesSistent>
+                          <Checkbox
+                            checked={activeContexts.includes('all')}
+                            onChange={() =>
+                              activeContexts.includes('all')
+                                ? setActiveContexts([])
+                                : setActiveContexts('all')
+                            }
+                            color="primary"
+                          />
+                        </UsesSistent>
+                        <span style={{ fontWeight: 'bolder' }}>select all</span>
+                      </>
+                    ) : (
+                      <Link href="/management/connections">
+                        <Button
+                          type="submit"
+                          variant="contained"
                           color="primary"
+                          size="large"
+                          style={{ margin: '0.5rem 0.5rem', whiteSpace: 'nowrap' }}
+                        >
+                          <AddIcon className={classes.AddIcon} style={iconMedium} />
+                          Connect Clusters
+                        </Button>
+                      </Link>
+                    )}
+                    {contexts?.contexts?.map((ctx) => {
+                      return (
+                        <K8sContextConnectionChip
+                          key={ctx.id}
+                          classes={classes}
+                          ctx={ctx}
+                          selectable
+                          onDelete={handleKubernetesDelete}
+                          selected={activeContexts.includes(ctx.id)}
+                          onSelectChange={() => setActiveContexts(ctx.id)}
+                          meshsyncControllerState={meshsyncControllerState}
+                          connectionMetadataState={connectionMetadataState}
                         />
-                      </UsesSistent>
-                      <span style={{ fontWeight: 'bolder' }}>select all</span>
-                    </>
-                  ) : (
-                    <Link href="/management/connections">
-                      <Button
-                        type="submit"
-                        variant="contained"
-                        color="primary"
-                        size="large"
-                        style={{ margin: '0.5rem 0.5rem', whiteSpace: 'nowrap' }}
-                      >
-                        <AddIcon className={classes.AddIcon} style={iconMedium} />
-                        Connect Clusters
-                      </Button>
-                    </Link>
-                  )}
-                  {contexts?.contexts?.map((ctx) => {
-                    return (
-                      <K8sContextConnectionChip
-                        key={ctx.id}
-                        classes={classes}
-                        ctx={ctx}
-                        selectable
-                        onDelete={handleKubernetesDelete}
-                        selected={activeContexts.includes(ctx.id)}
-                        onSelectChange={() => setActiveContexts(ctx.id)}
-                        meshsyncControllerState={meshsyncControllerState}
-                        connectionMetadataState={connectionMetadataState}
-                      />
-                    );
-                  })}
-                </div>
-              </Paper>
-            </ClickAwayListener>
+                      );
+                    })}
+                  </div>
+                </Paper>
+              </ClickAwayListener>
+            </CanShow>
           </div>
         </Slide>
-      </CanShow>
-
+      </div>
       <PromptComponent ref={deleteCtxtRef} />
     </>
   );
@@ -596,27 +593,10 @@ class Header extends React.PureComponent {
                     />
                   </div>
 
-                  <div
-                    data-test="settings-button"
-                    aria-describedby={abilityUpdated}
-                    style={
-                      !this.state.capabilityregistryObj?.isHeaderComponentEnabled([SETTINGS])
-                        ? cursorNotAllowed
-                        : {}
-                    }
-                  >
-                    <Link href="/settings">
-                      <IconButton
-                        style={
-                          !this.state.capabilityregistryObj?.isHeaderComponentEnabled([SETTINGS])
-                            ? disabledStyle
-                            : {}
-                        }
-                        color="inherit"
-                        disabled={!CAN(keys.VIEW_SETTINGS.action, keys.VIEW_SETTINGS.subject)}
-                      >
+                  <div data-test="settings-button" aria-describedby={abilityUpdated}>
+                    <CanShow Key={keys.VIEW_SETTINGS}>
+                      <IconButton onClick={() => Router.push('/settings')} color="inherit">
                         <OutlinedSettingsIcon
-                          // fill={WHITE}
                           className={
                             classes.headerIcons +
                             ' ' +
@@ -625,7 +605,7 @@ class Header extends React.PureComponent {
                           style={iconMedium}
                         />
                       </IconButton>
-                    </Link>
+                    </CanShow>
                   </div>
 
                   <div data-test="notification-button">
@@ -642,9 +622,6 @@ class Header extends React.PureComponent {
                       updateExtensionType={this.props.updateExtensionType}
                     />
                   </span>
-                  {/* <div className="dark-theme-toggle">
-                      <input id="toggle" className="toggle" type="checkbox" onChange={themeToggler} checked={!themeToggle} />
-                    </div> */}
                 </Grid>
               </Grid>
             </Toolbar>
