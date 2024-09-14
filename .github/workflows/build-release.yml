@@ -35,7 +35,7 @@ jobs:
           docker push ${{ secrets.IMAGE_NAME }}:kanvas-latest
           docker push ${{ secrets.IMAGE_NAME }}:kanvas-${GITHUB_SHA::8}
           docker push ${{ secrets.IMAGE_NAME }}:kanvas-${{ env.LATEST_TAG }}
-  call-meshery-extensions-playground-rollout:
+  call-meshery-extensions-playground-rollout:      
     needs:
       - docker-build-push
     name: Deploy CNCF Extensions Playground
@@ -43,5 +43,5 @@ jobs:
     with:
       # should we use SHA? 
       # As if meshery is not released but we want to deploy changes from the master branch, the release/latest tag will be same and hence the rollout will be skipped.
-      image: layer5/meshery:kanvas-${{ env.LATEST_TAG }} 
+      image: layer5/meshery:kanvas-${ GITHUB_SHA::8 } 
     secrets: inherit

@@ -294,8 +294,8 @@ func (l *RemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _
 	callbackURL = callbackURL.JoinPath(r.URL.EscapedPath())
 	callbackURL.RawQuery = r.URL.RawQuery
 
-	_, err := r.Cookie(TokenCookieName)
-	if err != nil {
+	ck, err := r.Cookie(TokenCookieName)
+	if err != nil || ck.Value == "" {
 		http.SetCookie(w, &http.Cookie{
 			Name:     l.RefCookieName,
 			Value:    "/",
