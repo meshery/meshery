@@ -202,6 +202,7 @@ func main() {
 		&models.PatternResource{},
 		&models.MesheryApplication{},
 		&models.UserPreference{},
+		&models.UserCapabilities{},
 		&models.PerformanceTestConfig{},
 		&models.SmiResultWithID{},
 		models.K8sContext{},
@@ -221,8 +222,9 @@ func main() {
 	}
 
 	lProv := &models.DefaultLocalProvider{
-		ProviderBaseURL:                 DefaultProviderURL,
-		MapPreferencePersister:          preferencePersister,
+		ProviderBaseURL:           DefaultProviderURL,
+		MapPreferencePersister:    preferencePersister,
+		UserCapabilitiesPersister: &models.UserCapabilitiesPersister{DB: dbHandler},
 		ResultPersister:                 &models.MesheryResultsPersister{DB: dbHandler},
 		SmiResultPersister:              &models.SMIResultsPersister{DB: dbHandler},
 		TestProfilesPersister:           &models.TestProfilesPersister{DB: dbHandler},
@@ -283,7 +285,7 @@ func main() {
 		} else {
 			rego = *r
 		}
-		
+
 		krh.SeedKeys(viper.GetString("KEYS_PATH"))
 		hc.MeshModelSummaryChannel.Publish()
 	}()

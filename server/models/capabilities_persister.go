@@ -9,7 +9,7 @@ type UserCapabilitiesPersister struct {
 	DB *database.Handler
 }
 type UserCapabilities struct {
-	ID                string       `json:"id"`
+	ID           string             `json:"id"`
 	Capabilities ProviderProperties `json:"capabilities" gorm:"type:bytes;serializer:json" db:"capabilities"`
 }
 
@@ -43,10 +43,11 @@ func (u *UserCapabilitiesPersister) WriteCapabilitiesForUser(userID string, data
 	}
 
 	userCapabilities := &UserCapabilities{
-		ID: userID,
+		ID:           userID,
 		Capabilities: *data,
 	}
-	err := u.DB.Model(&UserCapabilities{}).Save(userCapabilities).Error
+
+	err := u.DB.Model(&UserCapabilities{}).Where("id = ?", userID).Save(userCapabilities).Error
 	if err != nil {
 		return err
 	}
