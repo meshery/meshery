@@ -21,6 +21,8 @@ import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
+import { Button } from '@material-ui/core';
+import { Colors } from '@/themes/app';
 
 const LinkDiv = styled('div')(() => ({
   display: 'inline-flex',
@@ -160,6 +162,28 @@ const User = (props) => {
   const { color, iconButtonClassName, avatarClassName, classes } = props;
 
   const open = Boolean(anchorEl);
+
+  if (!userData || userData?.status == 'anonymous') {
+    const url =
+      userData?.status === 'anonymous'
+        ? `/extensions/user/login?anonymousUserID=${userData?.user_id}&redirect=${window.location.pathname}`
+        : `/extensions/user/login?redirect=${window.location.pathname}`;
+    return (
+      <Link href={url}>
+        <Button
+          variant="contained"
+          onClick={handleLogout}
+          style={{
+            backgroundColor: Colors.keppelGreen,
+            color: '#ffff',
+          }}
+        >
+          Sign In
+        </Button>
+      </Link>
+    );
+  }
+
   return (
     <div>
       <NoSsr>
