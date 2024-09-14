@@ -4,18 +4,18 @@ import (
 	"github.com/layer5io/meshkit/database"
 )
 
-// PreferencePersister assists with persisting session in store
-type CapabilitiesPersister struct {
+// UserCapabilitiesPersister assists with persisting user capabilities in the store
+type UserCapabilitiesPersister struct {
 	DB *database.Handler
 }
 type UserCapabilities struct {
 	ID                string       `json:"id"`
-	CapabilitiesBytes Capabilities `json:"capabilities" gorm:"type:bytes;serializer:json" db:"capabilities"`
+	Capabilities ProviderProperties `json:"capabilities" gorm:"type:bytes;serializer:json" db:"capabilities"`
 }
 
-// ReadFromPersister - reads the session data for the given userID
-func (s *CapabilitiesPersister) ReadFromPersister(userID string) (*Capabilities, error) {
-	if s.DB == nil {
+// ReadFromPersister - reads the capabilities for the given userID
+func (u *UserCapabilitiesPersister) ReadCapabilitiesForUser(userID string) (*ProviderProperties, error) {
+	if u.DB == nil {
 		return nil, ErrDBConnection
 	}
 
@@ -23,18 +23,18 @@ func (s *CapabilitiesPersister) ReadFromPersister(userID string) (*Capabilities,
 		return nil, ErrUserID
 	}
 
-	capabilities := &Capabilities{}
-	err := s.DB.Model(&UserCapabilities{}).Where("id = ?", userID).First(capabilities).Error
+	capabilities := &UserCapabilities{}
+	err := u.DB.Model(capabilities).Where("id = ?", userID).First(capabilities).Error
 	if err != nil {
 		return nil, err
 	}
 
-	return capabilities, nil
+	return &capabilities.Capabilities, nil
 }
 
-// WriteToPersister persists session for the user
-func (s *CapabilitiesPersister) WriteToPersister(userID string, data *Capabilities) error {
-	if s.DB == nil {
+// WriteToPersister persists the capabilities for the user
+func (u *UserCapabilitiesPersister) WriteCapabilitiesForUser(userID string, data *ProviderProperties) error {
+	if u.DB == nil {
 		return ErrDBConnection
 	}
 
@@ -42,7 +42,11 @@ func (s *CapabilitiesPersister) WriteToPersister(userID string, data *Capabiliti
 		return ErrUserID
 	}
 
-	err := s.DB.Model(&UserCapabilities{}).Save(data).Error
+	userCapabilities := &UserCapabilities{
+		ID: userID,
+		Capabilities: *data,
+	}
+	err := u.DB.Model(&UserCapabilities{}).Save(userCapabilities).Error
 	if err != nil {
 		return err
 	}
@@ -50,9 +54,9 @@ func (s *CapabilitiesPersister) WriteToPersister(userID string, data *Capabiliti
 	return nil
 }
 
-// DeleteFromPersister removes the session for the user
-func (s *CapabilitiesPersister) DeleteFromPersister(userID string) error {
-	if s.DB == nil {
+// DeleteFromPersister removes the capabilities for the user
+func (u *UserCapabilitiesPersister) DeleteCapabilitiesForUser(userID string) error {
+	if u.DB == nil {
 		return ErrDBConnection
 	}
 
@@ -60,5 +64,5 @@ func (s *CapabilitiesPersister) DeleteFromPersister(userID string) error {
 		return ErrUserID
 	}
 
-	return s.DB.Delete(&UserCapabilities{ID: userID}).Error
+	return u.DB.Delete(&UserCapabilities{ID: userID}).Error
 }

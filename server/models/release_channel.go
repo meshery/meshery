@@ -2,13 +2,15 @@ package models
 
 import (
 	"bytes"
-	"fmt"
+	"encoding/json"
 	"net/http"
 	"net/url"
 
+	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/models/connections"
 	"github.com/layer5io/meshkit/encoding"
 	"github.com/layer5io/meshkit/logger"
+	"github.com/pkg/errors"
 )
 
 type ReleaseChannel interface {
@@ -57,13 +59,20 @@ func (Kanvas) String() string {
 	return "kanvas"
 }
 
+type AnonymousFlowResponse struct {
+	AccessToken  string             `json:"access_token"`
+	Capabilities ProviderProperties `json:"capability,omitempty"`
+	UserID       uuid.UUID          `json:"user_id,omitempty"`
+}
+
 func (k *Kanvas) Intercept(req *http.Request, res http.ResponseWriter) {
 	providerProperties := k.Provider.GetProviderProperties()
 	providerURL, _ := url.Parse(k.Provider.GetProviderURL())
-
+	errorUI := "/error"
 	ep, exists := providerProperties.Capabilities.GetEndpointForFeature(PersistAnonymousUser)
 	if !exists {
-		k.log.Warn(ErrInvalidCapability("PersistAnonymousUser", k.Provider.Name()))
+		k.log.Error(ErrInvalidCapability("PersistAnonymousUser", k.Provider.Name()))
+		http.Redirect(res, req, errorUI, http.StatusFound)
 		return
 	}
 
@@ -72,9 +81,8 @@ func (k *Kanvas) Intercept(req *http.Request, res http.ResponseWriter) {
 
 	providerURL = providerURL.JoinPath(ep)
 
-	buf := []byte{}
+	buf, _ := encoding.Marshal(connectionPayload)
 	data := bytes.NewReader(buf)
-	buf, _ = encoding.Marshal(connectionPayload)
 
 	client := &http.Client{}
 	newReq, _ := http.NewRequest("GET", providerURL.String(), data)
@@ -83,26 +91,30 @@ func (k *Kanvas) Intercept(req *http.Request, res http.ResponseWriter) {
 
 	resp, err := client.Do(newReq)
 	if err != nil {
-		k.log.Error(ErrDoRequest(err, "GET", providerURL.String()))
+		k.log.Error(ErrUnreachableRemoteProvider(err))
+		http.Redirect(res, req, errorUI, http.StatusFound)
 		return
 	}
 	defer resp.Body.Close()
 
-	var token string
-	cookies := resp.Cookies()
-	for _, cookie := range cookies {
-		if cookie.Name == TokenCookieName {
-			token = cookie.Value
-			break
-		}
-	}
-
-	if token == "" {
-		k.log.Error(ErrGetToken(fmt.Errorf("token not found in the response")))
+	flowResponse := AnonymousFlowResponse{}
+	err = json.NewDecoder(resp.Body).Decode(&flowResponse)
+	if err != nil {
+		k.log.Error(ErrUnmarshal(err, "user flow response"))
+		http.Redirect(res, req, errorUI, http.StatusFound)
 		return
 	}
 
-	k.Provider.SetJWTCookie(res, token)
+	k.Provider.SetJWTCookie(res, flowResponse.AccessToken)
+
+	err = k.Provider.WriteCapabilitiesForUser(flowResponse.UserID.String(), &flowResponse.Capabilities)
+	if err != nil {
+		err = ErrDBPut(errors.Wrapf(err, "failed to write capabilities for the user %s", flowResponse.UserID.String()))
+		k.log.Error(err)
+		http.Redirect(res, req, errorUI, http.StatusFound)
+		return
+	}
+
 	redirectURL := getRedirectURLForNavigatorExtension(&providerProperties)
 
 	http.Redirect(res, req, redirectURL, http.StatusFound)

@@ -37,7 +37,8 @@ type RemoteProvider struct {
 	ProviderProperties
 	*SessionPreferencePersister
 	*EventsPersister
-
+	*UserCapabilitiesPersister
+	
 	SaaSTokenName     string
 	RemoteProviderURL string
 
@@ -3462,7 +3463,7 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ 
 		credential["token"] = temp
 
 		connectionPayload := connections.BuildMesheryConnectionPayload(r.Context().Value(MesheryServerURL).(string), credential)
-		
+
 		_, err := l.SaveConnection(connectionPayload, tokenString, true)
 		if err != nil {
 			l.Log.Error(ErrSaveConnection(err))

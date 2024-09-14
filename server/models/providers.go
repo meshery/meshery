@@ -349,6 +349,7 @@ func VerifyMesheryProvider(provider string, supportedProviders map[string]Provid
 // Provider - interface for providers
 type Provider interface {
 	PreferencePersister
+	CapabilitiesPersister
 	MesheryEvents
 
 	// Initialize will initialize a provider instance
