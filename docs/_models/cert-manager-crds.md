@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: cert-manager CRDs
-subtitle: Collaborative and visual infrastructure as code for cert-manager CRDs
+subtitle: Collaborative and visual infrastructure as design for cert-manager CRDs
 image: /assets/img/integrations/cert-manager-crds/icons/color/cert-manager-crds-color.svg
 permalink: extensibility/integrations/cert-manager-crds
 docURL: https://docs.meshery.io/extensibility/integrations/cert-manager-crds

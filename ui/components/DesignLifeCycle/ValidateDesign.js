@@ -25,6 +25,7 @@ const styles = (theme) => {
   const saffron = NOTIFICATIONCOLORS.WARNING;
   return {
     singleErrorRoot: {
+      gap: '0.5rem',
       backgroundColor: theme.palette.secondary.mainBackground2,
       cursor: 'pointer',
       '&:hover': {
@@ -109,7 +110,7 @@ const ComponentErrorList = ({ component, classes, errors, validatorActor }) => {
           <ListItemText
             primary={message(error)}
             disableTypography
-            className={classes.singleError}
+            className={classes.nested}
           ></ListItemText>
         </ListItem>
       ))}
@@ -129,10 +130,12 @@ const ValidationResults_ = (props) => {
   } = props;
 
   const componentsWithErrors = Object.values(validationResults).filter(
-    (result) => result.errors?.length && !result?.componentDefinition?.metatadata?.isAnnotation,
+    (result) => result.errors?.length && !result?.component?.metatadata?.isAnnotation,
   );
 
-  const isCurrentComponent = (err) => err.component.traits.meshmap.id == currentNodeId;
+  console.log('componentsWithErrors', componentsWithErrors);
+
+  const isCurrentComponent = (err) => err.component.id == currentNodeId;
   const [open, setOpen] = React.useState(componentsWithErrors.map(isCurrentComponent));
 
   const currentComponentErrorRef = useRef();
@@ -198,10 +201,8 @@ const ValidationResults_ = (props) => {
             {/*  Errors For A Component */}
             <ListItem button onClick={() => handleClick(index)} className={classes.componentLabel}>
               {/* key can be error id?? */}
-              <ComponentIcon
-                iconSrc={getSvgWhiteForComponent(componentResult.componentDefinition)}
-              />
-              <ListItemText primary={componentResult.component.name} disableTypography />(
+              <ComponentIcon iconSrc={getSvgWhiteForComponent(componentResult.component)} />
+              <ListItemText primary={componentResult.component.displayName} disableTypography />(
               {componentResult?.errors?.length}){open[index] ? <ExpandLess /> : <ExpandMore />}
             </ListItem>
             <Collapse in={open[index]} timeout="auto" unmountOnExit className={classes.errorList}>
@@ -221,6 +222,11 @@ const ValidationResults_ = (props) => {
 
 const ValidationResults = withStyles(styles)(ValidationResults_);
 
+/**
+ *
+ * @param {Design} design is the design file to be validated
+ * @returns
+ */
 export const ValidateDesign = ({ design, currentNodeId, validationMachine }) => {
   const validationResults = useDesignSchemaValidationResults(validationMachine);
   const isValidating = useIsValidatingDesignSchema(validationMachine);

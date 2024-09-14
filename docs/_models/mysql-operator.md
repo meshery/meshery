@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: MySQL Operator
-subtitle: Collaborative and visual infrastructure as code for Mongodb Operator
+subtitle: Collaborative and visual infrastructure as design for MySQL Operator
 image: /assets/img/integrations/mysql-operator/icons/color/mysql-operator-color.svg
 permalink: extensibility/integrations/mysql-operator
 docURL: https://docs.meshery.io/extensibility/integrations/mysql-operator

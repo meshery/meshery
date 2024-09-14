@@ -1,0 +1,195 @@
+{
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "Telemetry",
+   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Telemetry configuration for workloads. See more details at: https://istio.io/docs/reference/config/telemetry.html\",\n   \"properties\": {\n    \"accessLogging\": {\n     \"description\": \"Optional.\",\n     \"items\": {\n      \"properties\": {\n       \"disabled\": {\n        \"description\": \"Controls logging.\",\n        \"nullable\": true,\n        \"type\": \"boolean\"\n       },\n       \"filter\": {\n        \"description\": \"Optional.\",\n        \"properties\": {\n         \"expression\": {\n          \"description\": \"CEL expression for selecting when requests/connections should be logged.\",\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"match\": {\n        \"description\": \"Allows tailoring of logging behavior to specific conditions.\",\n        \"properties\": {\n         \"mode\": {\n          \"description\": \"This determines whether or not to apply the access logging configuration based on the direction of traffic relative to the proxied workload.\\n\\nValid Options: CLIENT_AND_SERVER, CLIENT, SERVER\",\n          \"enum\": [\n           \"CLIENT_AND_SERVER\",\n           \"CLIENT\",\n           \"SERVER\"\n          ],\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"providers\": {\n        \"description\": \"Optional.\",\n        \"items\": {\n         \"properties\": {\n          \"name\": {\n           \"description\": \"Required.\",\n           \"minLength\": 1,\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"name\"\n         ],\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"metrics\": {\n     \"description\": \"Optional.\",\n     \"items\": {\n      \"properties\": {\n       \"overrides\": {\n        \"description\": \"Optional.\",\n        \"items\": {\n         \"properties\": {\n          \"disabled\": {\n           \"description\": \"Optional.\",\n           \"nullable\": true,\n           \"type\": \"boolean\"\n          },\n          \"match\": {\n           \"description\": \"Match allows providing the scope of the override.\",\n           \"oneOf\": [\n            {\n             \"not\": {\n              \"anyOf\": [\n               {\n                \"required\": [\n                 \"metric\"\n                ]\n               },\n               {\n                \"required\": [\n                 \"customMetric\"\n                ]\n               }\n              ]\n             }\n            },\n            {\n             \"required\": [\n              \"metric\"\n             ]\n            },\n            {\n             \"required\": [\n              \"customMetric\"\n             ]\n            }\n           ],\n           \"properties\": {\n            \"customMetric\": {\n             \"description\": \"Allows free-form specification of a metric.\",\n             \"minLength\": 1,\n             \"type\": \"string\"\n            },\n            \"metric\": {\n             \"description\": \"One of the well-known [Istio Standard Metrics](https://istio.io/latest/docs/reference/config/metrics/).\\n\\nValid Options: ALL_METRICS, REQUEST_COUNT, REQUEST_DURATION, REQUEST_SIZE, RESPONSE_SIZE, TCP_OPENED_CONNECTIONS, TCP_CLOSED_CONNECTIONS, TCP_SENT_BYTES, TCP_RECEIVED_BYTES, GRPC_REQUEST_MESSAGES, GRPC_RESPONSE_MESSAGES\",\n             \"enum\": [\n              \"ALL_METRICS\",\n              \"REQUEST_COUNT\",\n              \"REQUEST_DURATION\",\n              \"REQUEST_SIZE\",\n              \"RESPONSE_SIZE\",\n              \"TCP_OPENED_CONNECTIONS\",\n              \"TCP_CLOSED_CONNECTIONS\",\n              \"TCP_SENT_BYTES\",\n              \"TCP_RECEIVED_BYTES\",\n              \"GRPC_REQUEST_MESSAGES\",\n              \"GRPC_RESPONSE_MESSAGES\"\n             ],\n             \"type\": \"string\"\n            },\n            \"mode\": {\n             \"description\": \"Controls which mode of metrics generation is selected: `CLIENT`, `SERVER`, or `CLIENT_AND_SERVER`.\\n\\nValid Options: CLIENT_AND_SERVER, CLIENT, SERVER\",\n             \"enum\": [\n              \"CLIENT_AND_SERVER\",\n              \"CLIENT\",\n              \"SERVER\"\n             ],\n             \"type\": \"string\"\n            }\n           },\n           \"type\": \"object\"\n          },\n          \"tagOverrides\": {\n           \"additionalProperties\": {\n            \"properties\": {\n             \"operation\": {\n              \"description\": \"Operation controls whether or not to update/add a tag, or to remove it.\\n\\nValid Options: UPSERT, REMOVE\",\n              \"enum\": [\n               \"UPSERT\",\n               \"REMOVE\"\n              ],\n              \"type\": \"string\"\n             },\n             \"value\": {\n              \"description\": \"Value is only considered if the operation is `UPSERT`.\",\n              \"type\": \"string\"\n             }\n            },\n            \"type\": \"object\",\n            \"x-kubernetes-validations\": [\n             {\n              \"message\": \"value must be set when operation is UPSERT\",\n              \"rule\": \"((has(self.operation) ? self.operation : '') == 'UPSERT') ? self.value != '' : true\"\n             },\n             {\n              \"message\": \"value must not be set when operation is REMOVE\",\n              \"rule\": \"((has(self.operation) ? self.operation : '') == 'REMOVE') ? !has(self.value) : true\"\n             }\n            ]\n           },\n           \"description\": \"Optional.\",\n           \"type\": \"object\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       },\n       \"providers\": {\n        \"description\": \"Optional.\",\n        \"items\": {\n         \"properties\": {\n          \"name\": {\n           \"description\": \"Required.\",\n           \"minLength\": 1,\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"name\"\n         ],\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       },\n       \"reportingInterval\": {\n        \"description\": \"Optional.\",\n        \"type\": \"string\",\n        \"x-kubernetes-validations\": [\n         {\n          \"message\": \"must be a valid duration greater than 1ms\",\n          \"rule\": \"duration(self) \\u003e= duration('1ms')\"\n         }\n        ]\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"selector\": {\n     \"description\": \"Optional.\",\n     \"properties\": {\n      \"matchLabels\": {\n       \"additionalProperties\": {\n        \"maxLength\": 63,\n        \"type\": \"string\",\n        \"x-kubernetes-validations\": [\n         {\n          \"message\": \"wildcard not allowed in label value match\",\n          \"rule\": \"!self.contains('*')\"\n         }\n        ]\n       },\n       \"description\": \"One or more labels that indicate a specific set of pods/VMs on which a policy should be applied.\",\n       \"maxProperties\": 4096,\n       \"type\": \"object\",\n       \"x-kubernetes-validations\": [\n        {\n         \"message\": \"wildcard not allowed in label key match\",\n         \"rule\": \"self.all(key, !key.contains('*'))\"\n        },\n        {\n         \"message\": \"key must not be empty\",\n         \"rule\": \"self.all(key, key.size() != 0)\"\n        }\n       ]\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"targetRef\": {\n     \"properties\": {\n      \"group\": {\n       \"description\": \"group is the group of the target resource.\",\n       \"maxLength\": 253,\n       \"pattern\": \"^$|^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$\",\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"description\": \"kind is kind of the target resource.\",\n       \"maxLength\": 63,\n       \"minLength\": 1,\n       \"pattern\": \"^[a-zA-Z]([-a-zA-Z0-9]*[a-zA-Z0-9])?$\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"name is the name of the target resource.\",\n       \"maxLength\": 253,\n       \"minLength\": 1,\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"namespace is the namespace of the referent.\",\n       \"type\": \"string\",\n       \"x-kubernetes-validations\": [\n        {\n         \"message\": \"cross namespace referencing is not currently supported\",\n         \"rule\": \"self.size() == 0\"\n        }\n       ]\n      }\n     },\n     \"required\": [\n      \"kind\",\n      \"name\"\n     ],\n     \"type\": \"object\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"Support kinds are core/Service and gateway.networking.k8s.io/Gateway\",\n       \"rule\": \"[self.group, self.kind] in [['core','Service'], ['','Service'], ['gateway.networking.k8s.io','Gateway']]\"\n      }\n     ]\n    },\n    \"targetRefs\": {\n     \"description\": \"Optional.\",\n     \"items\": {\n      \"properties\": {\n       \"group\": {\n        \"description\": \"group is the group of the target resource.\",\n        \"maxLength\": 253,\n        \"pattern\": \"^$|^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$\",\n        \"type\": \"string\"\n       },\n       \"kind\": {\n        \"description\": \"kind is kind of the target resource.\",\n        \"maxLength\": 63,\n        \"minLength\": 1,\n        \"pattern\": \"^[a-zA-Z]([-a-zA-Z0-9]*[a-zA-Z0-9])?$\",\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"description\": \"name is the name of the target resource.\",\n        \"maxLength\": 253,\n        \"minLength\": 1,\n        \"type\": \"string\"\n       },\n       \"namespace\": {\n        \"description\": \"namespace is the namespace of the referent.\",\n        \"type\": \"string\",\n        \"x-kubernetes-validations\": [\n         {\n          \"message\": \"cross namespace referencing is not currently supported\",\n          \"rule\": \"self.size() == 0\"\n         }\n        ]\n       }\n      },\n      \"required\": [\n       \"kind\",\n       \"name\"\n      ],\n      \"type\": \"object\",\n      \"x-kubernetes-validations\": [\n       {\n        \"message\": \"Support kinds are core/Service and gateway.networking.k8s.io/Gateway\",\n        \"rule\": \"[self.group, self.kind] in [['core','Service'], ['','Service'], ['gateway.networking.k8s.io','Gateway']]\"\n       }\n      ]\n     },\n     \"type\": \"array\"\n    },\n    \"tracing\": {\n     \"description\": \"Optional.\",\n     \"items\": {\n      \"properties\": {\n       \"customTags\": {\n        \"additionalProperties\": {\n         \"oneOf\": [\n          {\n           \"not\": {\n            \"anyOf\": [\n             {\n              \"required\": [\n               \"literal\"\n              ]\n             },\n             {\n              \"required\": [\n               \"environment\"\n              ]\n             },\n             {\n              \"required\": [\n               \"header\"\n              ]\n             }\n            ]\n           }\n          },\n          {\n           \"required\": [\n            \"literal\"\n           ]\n          },\n          {\n           \"required\": [\n            \"environment\"\n           ]\n          },\n          {\n           \"required\": [\n            \"header\"\n           ]\n          }\n         ],\n         \"properties\": {\n          \"environment\": {\n           \"description\": \"Environment adds the value of an environment variable to each span.\",\n           \"properties\": {\n            \"defaultValue\": {\n             \"description\": \"Optional.\",\n             \"type\": \"string\"\n            },\n            \"name\": {\n             \"description\": \"Name of the environment variable from which to extract the tag value.\",\n             \"minLength\": 1,\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"name\"\n           ],\n           \"type\": \"object\"\n          },\n          \"header\": {\n           \"description\": \"RequestHeader adds the value of an header from the request to each span.\",\n           \"properties\": {\n            \"defaultValue\": {\n             \"description\": \"Optional.\",\n             \"type\": \"string\"\n            },\n            \"name\": {\n             \"description\": \"Name of the header from which to extract the tag value.\",\n             \"minLength\": 1,\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"name\"\n           ],\n           \"type\": \"object\"\n          },\n          \"literal\": {\n           \"description\": \"Literal adds the same, hard-coded value to each span.\",\n           \"properties\": {\n            \"value\": {\n             \"description\": \"The tag value to use.\",\n             \"minLength\": 1,\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"value\"\n           ],\n           \"type\": \"object\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"description\": \"Optional.\",\n        \"type\": \"object\"\n       },\n       \"disableSpanReporting\": {\n        \"description\": \"Controls span reporting.\",\n        \"nullable\": true,\n        \"type\": \"boolean\"\n       },\n       \"match\": {\n        \"description\": \"Allows tailoring of behavior to specific conditions.\",\n        \"properties\": {\n         \"mode\": {\n          \"description\": \"This determines whether or not to apply the tracing configuration based on the direction of traffic relative to the proxied workload.\\n\\nValid Options: CLIENT_AND_SERVER, CLIENT, SERVER\",\n          \"enum\": [\n           \"CLIENT_AND_SERVER\",\n           \"CLIENT\",\n           \"SERVER\"\n          ],\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"providers\": {\n        \"description\": \"Optional.\",\n        \"items\": {\n         \"properties\": {\n          \"name\": {\n           \"description\": \"Required.\",\n           \"minLength\": 1,\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"name\"\n         ],\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       },\n       \"randomSamplingPercentage\": {\n        \"description\": \"Controls the rate at which traffic will be selected for tracing if no prior sampling decision has been made.\",\n        \"format\": \"double\",\n        \"maximum\": 100,\n        \"minimum\": 0,\n        \"nullable\": true,\n        \"type\": \"number\"\n       },\n       \"useRequestIdForTraceSampling\": {\n        \"nullable\": true,\n        \"type\": \"boolean\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Telemetry\",\n \"type\": \"object\"\n}",
+   "version": "telemetry.istio.io/v1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "Telemetry",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "published": false,
+   "source_uri": "https://istio-release.storage.googleapis.com/charts/base-1.23.1.tgz"
+  },
+  "model": {
+   "category": {
+    "name": "Uncategorized"
+   },
+   "displayName": "base",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "source_uri": "https://istio-release.storage.googleapis.com/charts/base-1.23.1.tgz",
+    "styleOverrides": "",
+    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 160 240\" fill=\"none\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M0 210H160L60 240L0 210Z\" fill=\"#466BB0\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M0 200L60 190V80L0 200Z\" fill=\"#466BB0\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M70 190L160 200L70 0V190Z\" fill=\"#466BB0\"\u003e\u003c/path\u003e\n\u003c/svg\u003e\n",
+    "svgComplete": "",
+    "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"6.386270046234131 3.7419400215148926 18.227430820465088 25.258059978485107\" fill=\"none\" height=\"20\" width=\"20\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M6.38627 24.7904L13.2215 23.738V12.1613L6.38627 24.7904Z\" fill=\"white\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M6.38627 25.8427H24.6137L13.2215 29L6.38627 25.8427Z\" fill=\"white\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M14.3608 23.7379L24.6137 24.7904L14.3608 3.74194V23.7379Z\" fill=\"white\"\u003e\u003c/path\u003e\u003c/svg\u003e"
+   },
+   "model": {
+    "version": "1.23.1"
+   },
+   "name": "base",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "subCategory": "Uncategorized",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "ignored",
+  "styles": {
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "svgColor": "\u003csvg width=\"160\" height=\"240\" viewBox=\"0 0 160 240\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M0 210H160L60 240L0 210Z\" fill=\"#466BB0\"/\u003e\n\u003cpath d=\"M0 200L60 190V80L0 200Z\" fill=\"#466BB0\"/\u003e\n\u003cpath d=\"M70 190L160 200L70 0V190Z\" fill=\"#466BB0\"/\u003e\n\u003c/svg\u003e\n",
+   "svgWhite": "\u003csvg viewBox=\"6.386270046234131 3.7419400215148926 18.227430820465088 25.258059978485107\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cpath d=\"M6.38627 24.7904L13.2215 23.738V12.1613L6.38627 24.7904Z\" fill=\"white\"/\u003e\u003cpath d=\"M6.38627 25.8427H24.6137L13.2215 29L6.38627 25.8427Z\" fill=\"white\"/\u003e\u003cpath d=\"M14.3608 23.7379L24.6137 24.7904L14.3608 3.74194V23.7379Z\" fill=\"white\"/\u003e\u003c/svg\u003e"
+  },
+  "version": "v1.0.0"
+ }

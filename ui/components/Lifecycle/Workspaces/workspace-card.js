@@ -21,6 +21,7 @@ import {
 } from '../../../rtk-query/workspace';
 import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
+import { UsesSistent } from '@/components/SistentWrapper';
 
 export const formattoLongDate = (date) => {
   return new Date(date).toLocaleDateString('en-US', {
@@ -257,7 +258,9 @@ const CardBack = ({
       <Grid xs={12}>
         <Grid xs={12} style={{ display: 'flex', flexDirection: 'row' }}>
           <Grid xs={6} style={{ display: 'flex', alignItems: 'flex-start' }}>
-            <BulkSelectCheckbox onClick={(e) => e.stopPropagation()} onChange={onSelect} />
+            <UsesSistent>
+              <BulkSelectCheckbox onClick={(e) => e.stopPropagation()} onChange={onSelect} />
+            </UsesSistent>
             <CardTitle
               style={{ color: theme.palette.secondary.white }}
               variant="body2"

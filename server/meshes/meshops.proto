@@ -11,7 +11,7 @@ service MeshService {
     rpc SupportedOperations(SupportedOperationsRequest) returns (SupportedOperationsResponse) {}
     rpc StreamEvents(EventsRequest) returns (stream EventsResponse) {}
 
-    rpc ProcessOAM(ProcessOAMRequest) returns (ProcessOAMResponse) {}
+    rpc Provision(ProvisionRequest) returns (ProvisionResponse) {}
 
     rpc ComponentInfo(ComponentInfoRequest) returns(ComponentInfoResponse) {}
 }
@@ -81,16 +81,15 @@ message EventsResponse {
     string component_name = 9;
 }
 
-message ProcessOAMRequest {
+message ProvisionRequest {
     string username = 1;
     bool delete_op = 2;
     
-    repeated string oam_comps = 3;
-    string oam_config = 4;
-    repeated string kube_configs=7;
+    repeated string declarations = 3;
+    repeated string kube_configs=4;
 }
 
-message ProcessOAMResponse {
+message ProvisionResponse {
     string message = 1;
 }
 

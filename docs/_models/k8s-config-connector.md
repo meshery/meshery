@@ -1,13 +1,13 @@
 ---
 layout: integration
 title: Google Cloud Platform
-subtitle: Collaborative and visual infrastructure as code for Google Cloud Platform
+subtitle: Collaborative and visual infrastructure as design for Google Cloud Platform
 image: /assets/img/integrations/k8s-config-connector/icons/color/k8s-config-connector-color.svg
 permalink: extensibility/integrations/k8s-config-connector
 docURL: https://docs.meshery.io/extensibility/integrations/k8s-config-connector
 description: 
 integrations-category: Orchestration & Management
-integrations-subcategory: Google Cloud Platform
+integrations-subcategory: Provisioning
 registrant: GitHub
 components: 
 - name: access-context-manager-access-level-condition
@@ -1377,6 +1377,22 @@ components:
 - name: workstations-workstation-cluster
   colorIcon: assets/img/integrations/k8s-config-connector/components/workstations-workstation-cluster/icons/color/workstations-workstation-cluster-color.svg
   whiteIcon: assets/img/integrations/k8s-config-connector/components/workstations-workstation-cluster/icons/white/workstations-workstation-cluster-white.svg
+  description: 
+- name: cloud-build-worker-pool
+  colorIcon: assets/img/integrations/k8s-config-connector/components/cloud-build-worker-pool/icons/color/cloud-build-worker-pool-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/cloud-build-worker-pool/icons/white/cloud-build-worker-pool-white.svg
+  description: 
+- name: secure-source-manager-instance
+  colorIcon: assets/img/integrations/k8s-config-connector/components/secure-source-manager-instance/icons/color/secure-source-manager-instance-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/secure-source-manager-instance/icons/white/secure-source-manager-instance-white.svg
+  description: 
+- name: network-connectivity-service-connection-policy
+  colorIcon: assets/img/integrations/k8s-config-connector/components/network-connectivity-service-connection-policy/icons/color/network-connectivity-service-connection-policy-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/network-connectivity-service-connection-policy/icons/white/network-connectivity-service-connection-policy-white.svg
+  description: 
+- name: redis-cluster
+  colorIcon: assets/img/integrations/k8s-config-connector/components/redis-cluster/icons/color/redis-cluster-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/redis-cluster/icons/white/redis-cluster-white.svg
   description: 
 featureList: [
   "Provides a wide range of cloud services",

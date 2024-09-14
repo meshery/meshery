@@ -2,7 +2,15 @@ import React from 'react';
 import useStyles from '../../assets/styles/general/tool.styles';
 import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../../constants/navigator';
 import { FormatStructuredData, reorderObjectProperties } from '../DataFormatter';
-import { FormControl, Select, MenuItem, Chip, CircularProgress, useTheme } from '@material-ui/core';
+import {
+  FormControl,
+  Select,
+  MenuItem,
+  Chip,
+  CircularProgress,
+  useTheme,
+  Paper,
+} from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import styles from '../connections/styles';
 import { REGISTRY_ITEM_STATES, REGISTRY_ITEM_STATES_TO_TRANSITION_MAP } from '../../utils/Enum';
@@ -215,7 +223,7 @@ const ComponentContents = withSuppressedErrorBoundary(({ componentDef }) => {
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <TitleWithImg
               displayName={componentData?.displayName}
-              iconSrc={componentData?.metadata?.svgColor}
+              iconSrc={componentData?.styles?.svgColor}
             />
           </div>
           <Description description={JSON.parse(componentData?.component?.schema)?.description} />
@@ -237,14 +245,7 @@ const ComponentContents = withSuppressedErrorBoundary(({ componentDef }) => {
   );
 });
 
-const RelationshipContents = withSuppressedErrorBoundary(({ relationshipDef, view }) => {
-  let metadata = {};
-  if (view !== RELATIONSHIPS) {
-    metadata = JSON.parse(atob(relationshipDef.metadata));
-  } else {
-    metadata = relationshipDef.metadata;
-  }
-
+const RelationshipContents = withSuppressedErrorBoundary(({ relationshipDef }) => {
   const PropertyFormattersLeft = {
     version: (value) => <KeyValue property="API Version" value={value} />,
     modelName: (value) => <KeyValue property="Model Name" value={value} />,
@@ -276,7 +277,7 @@ const RelationshipContents = withSuppressedErrorBoundary(({ relationshipDef, vie
     <div>
       <div style={{ display: 'flex', flexDirection: 'column' }}>
         <Title title={relationshipDef?.subType} />
-        <Description description={metadata?.description} />
+        <Description description={relationshipDef?.metadata?.description} />
       </div>
       <RenderContents
         metaDataLeft={metaDataLeft}
@@ -451,7 +452,7 @@ const MeshModelDetails = ({ view, showDetailsData }) => {
       case MODELS:
         return <ModelContents modelDef={showDetailsData.data} />;
       case RELATIONSHIPS:
-        return <RelationshipContents relationshipDef={showDetailsData.data} view={view} />;
+        return <RelationshipContents relationshipDef={showDetailsData.data} />;
       case COMPONENTS:
         return <ComponentContents componentDef={showDetailsData.data} />;
       case REGISTRANTS:
@@ -462,11 +463,11 @@ const MeshModelDetails = ({ view, showDetailsData }) => {
   };
 
   return (
-    <div
+    <Paper
       className={isEmptyDetails ? StyleClass.emptyDetailsContainer : StyleClass.detailsContainer}
     >
       {isEmptyDetails ? renderEmptyDetails() : getContent(showDetailsData.type)}
-    </div>
+    </Paper>
   );
 };
 

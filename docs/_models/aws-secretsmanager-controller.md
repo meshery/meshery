@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: AWS Secrets Manager
-subtitle: Collaborative and visual infrastructure as code for AWS Secrets Manager
+subtitle: Collaborative and visual infrastructure as design for AWS Secrets Manager
 image: /assets/img/integrations/aws-secretsmanager-controller/icons/color/aws-secretsmanager-controller-color.svg
 permalink: extensibility/integrations/aws-secretsmanager-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-secretsmanager-controller
@@ -27,7 +27,7 @@ featureList: [
   "Use AWS Identity and Access Management (IAM) permissions policies to manage access to your secrets.",
   "Rotate secrets on demand or on a schedule, without redeploying or disrupting active applications."
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

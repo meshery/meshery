@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: HAProxy Kubernetes Ingress
-subtitle: Collaborative and visual infrastructure as code for NGINX Service Mesh
+subtitle: Collaborative and visual infrastructure as design for HAProxy Kubernetes Ingress
 image: /assets/img/integrations/kubernetes-ingress/icons/color/kubernetes-ingress-color.svg
 permalink: extensibility/integrations/kubernetes-ingress
 docURL: https://docs.meshery.io/extensibility/integrations/kubernetes-ingress

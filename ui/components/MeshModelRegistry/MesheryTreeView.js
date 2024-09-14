@@ -10,7 +10,7 @@ import DotSquare from '../../assets/icons/DotSquare';
 import { useWindowDimensions } from '../../utils/dimension';
 import StyledTreeItem from './StyledTreeItem';
 import { useRouter } from 'next/router';
-import { getFilteredDataForDetailsComponent } from './helper';
+import { getFilteredDataForDetailsComponent, groupRelationshipsByKind } from './helper';
 import { CustomTextTooltip } from '../MesheryMeshInterface/PatternService/CustomTextTooltip';
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import _ from 'lodash';
@@ -20,6 +20,169 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { Colors } from '../../themes/app';
 import { JustifyAndAlignCenter } from './MeshModel.style';
 import { styled } from '@mui/styles';
+import {
+  useGetComponentsFromModalQuery,
+  useGetRelationshipsFromModalQuery,
+} from '@/rtk-query/meshModel';
+import { useNotification } from '@/utils/hooks/useNotification';
+import { EVENT_TYPES } from 'lib/event-types';
+
+const VersionedModelComponentTree = ({
+  registrantID,
+  modelDef,
+  versionedModelDef,
+  setShowDetailsData,
+  showDetailsData,
+}) => {
+  const { notify } = useNotification();
+  const {
+    data: componentsData,
+    isLoading,
+    isError,
+    error,
+  } = useGetComponentsFromModalQuery({
+    model: versionedModelDef.name,
+    params: { version: versionedModelDef.model.version },
+  });
+  const { selectedItemUUID } = useRegistryRouter();
+
+  useEffect(() => {
+    if (componentsData && componentsData.components && componentsData.components.length > 0) {
+      const selectedIdArr = selectedItemUUID.split('.');
+      // Check if selected item is a component
+      if (
+        selectedIdArr.length > 0 &&
+        selectedIdArr[0] === modelDef.id &&
+        selectedIdArr[1] === versionedModelDef.id
+      ) {
+        const showData = getFilteredDataForDetailsComponent(
+          componentsData.components,
+          selectedIdArr[selectedIdArr.length - 1],
+        );
+        if (JSON.stringify(showData) !== JSON.stringify(showDetailsData)) {
+          setShowDetailsData(showData);
+        }
+      }
+    }
+  }, [componentsData, showDetailsData]);
+
+  useEffect(() => {
+    if (isError) {
+      notify({
+        message: `There was an error fetching components data: ${error?.data}`,
+        event_type: EVENT_TYPES.ERROR,
+      });
+    }
+  }, [error, isError]);
+
+  return (
+    <>
+      {isLoading ? (
+        <CircularProgress color="inherit" />
+      ) : (
+        <StyledTreeItem
+          nodeId={`${registrantID ? `${registrantID}.1.` : ''}${modelDef.id}.${
+            versionedModelDef.id
+          }.1`}
+          data-id={`${registrantID ? `${registrantID}.1.` : ''}${modelDef.id}.${
+            versionedModelDef.id
+          }.1`}
+          labelText={`Components (${
+            componentsData.components ? componentsData.components.length : 0
+          })`}
+        >
+          {componentsData.components &&
+            componentsData.components.map((component, subIndex) => {
+              return (
+                <StyledTreeItem
+                  key={subIndex}
+                  nodeId={`${registrantID ? `${registrantID}.1.` : ''}${modelDef.id}.${
+                    versionedModelDef.id
+                  }.1.${component.id}`}
+                  data-id={`${registrantID ? `${registrantID}.1.` : ''}${modelDef.id}.${
+                    versionedModelDef.id
+                  }.1.${component.id}`}
+                  labelText={component.displayName}
+                  onClick={() => {
+                    setShowDetailsData({
+                      type: COMPONENTS,
+                      data: component,
+                    });
+                  }}
+                />
+              );
+            })}
+        </StyledTreeItem>
+      )}
+    </>
+  );
+};
+
+const VersionedModelRelationshipTree = ({
+  registrantID,
+  modelDef,
+  versionedModelDef,
+  setShowDetailsData,
+  handleToggle,
+  handleSelect,
+  selected,
+  expanded,
+}) => {
+  const { notify } = useNotification();
+  const {
+    data: relationshipsData,
+    isLoading,
+    isError,
+    error,
+  } = useGetRelationshipsFromModalQuery({
+    model: versionedModelDef.name,
+    params: { version: versionedModelDef.model.version },
+  });
+
+  useEffect(() => {
+    if (isError) {
+      notify({
+        message: `There was an error fetching relationships data: ${error?.data}`,
+        event_type: EVENT_TYPES.ERROR,
+      });
+    }
+  }, [error, isError]);
+
+  return (
+    <>
+      {isLoading ? (
+        <CircularProgress color="inherit" />
+      ) : (
+        <StyledTreeItem
+          nodeId={`${registrantID ? `${registrantID}.1.` : ''}${modelDef.id}.${
+            versionedModelDef.id
+          }.2`}
+          data-id={`${registrantID ? `${registrantID}.1.` : ''}${modelDef.id}.${
+            versionedModelDef.id
+          }.2`}
+          labelText={`Relationships (${
+            relationshipsData.relationships ? relationshipsData.relationships.length : 0
+          })`}
+        >
+          {relationshipsData.relationships.length > 0 && (
+            <RelationshipTree
+              handleToggle={handleToggle}
+              handleSelect={handleSelect}
+              expanded={expanded}
+              selected={selected}
+              data={groupRelationshipsByKind(relationshipsData.relationships)}
+              view={MODELS}
+              setShowDetailsData={setShowDetailsData}
+              idForKindAsProp={`${registrantID ? `${registrantID}.1.` : ''}${modelDef.id}.${
+                versionedModelDef.id
+              }.2`}
+            />
+          )}
+        </StyledTreeItem>
+      )}
+    </>
+  );
+};
 
 const ComponentTree = ({
   expanded,
@@ -28,6 +191,8 @@ const ComponentTree = ({
   handleSelect,
   data,
   setShowDetailsData,
+  lastComponentRef,
+  isComponentFetching,
 }) => {
   return (
     <TreeView
@@ -56,6 +221,8 @@ const ComponentTree = ({
           }}
         />
       ))}
+      <div ref={lastComponentRef} style={{ height: '3rem' }}></div>
+      {isComponentFetching ? <CircularProgress color="inherit" /> : null}
     </TreeView>
   );
 };
@@ -69,6 +236,8 @@ const RelationshipTree = ({
   setShowDetailsData,
   view = RELATIONSHIPS,
   idForKindAsProp,
+  lastRegistrantRef,
+  isRelationshipFetching,
 }) => {
   return (
     <TreeView
@@ -120,6 +289,8 @@ const RelationshipTree = ({
           </StyledTreeItem>
         );
       })}
+      <div ref={lastRegistrantRef} style={{ height: '3rem' }}></div>
+      {isRelationshipFetching ? <CircularProgress color="inherit" /> : null}
     </TreeView>
   );
 };
@@ -128,18 +299,31 @@ const MesheryTreeViewItem = ({
   modelDef,
   registrantID,
   setShowDetailsData,
+  showDetailsData,
   handleToggle,
   handleSelect,
   selected,
   expanded,
 }) => {
+  const imgSrc = modelDef?.metadata?.svgColor;
   return (
     <StyledTreeItem
       key={modelDef.id}
       nodeId={`${registrantID ? `${registrantID}.1.` : ''}${modelDef.id}`}
       data-id={`${registrantID ? `${registrantID}.1.` : ''}${modelDef.id}`}
       top
-      labelText={modelDef.displayName}
+      labelText={
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '1rem',
+          }}
+        >
+          {imgSrc ? <img src={imgSrc} style={{ height: '1.5rem', width: '1.5rem' }} /> : null}
+          <span>{modelDef.displayName ? modelDef.displayName : modelDef.name}</span>
+        </div>
+      }
       onClick={() => {
         setShowDetailsData({
           type: MODELS,
@@ -158,9 +342,9 @@ const MesheryTreeViewItem = ({
               versionedModelDef.id
             }`}
             labelText={
-              versionedModelDef.model.version[0] == 'v'
-                ? versionedModelDef.model.version
-                : `v${versionedModelDef.model.version}`
+              versionedModelDef?.model?.version?.[0] == 'v'
+                ? versionedModelDef?.model?.version
+                : `v${versionedModelDef?.model?.version}`
             }
             check={true}
             onClick={() => {
@@ -170,64 +354,23 @@ const MesheryTreeViewItem = ({
               });
             }}
           >
-            <StyledTreeItem
-              nodeId={`${registrantID ? `${registrantID}.1.` : ''}${modelDef.id}.${
-                versionedModelDef.id
-              }.1`}
-              data-id={`${registrantID ? `${registrantID}.1.` : ''}${modelDef.id}.${
-                versionedModelDef.id
-              }.1`}
-              labelText={`Components (${
-                versionedModelDef.components ? versionedModelDef.components.length : 0
-              })`}
-            >
-              {versionedModelDef.components &&
-                versionedModelDef.components.map((component, subIndex) => {
-                  // console.log("component", component);
-                  return (
-                    <StyledTreeItem
-                      key={subIndex}
-                      nodeId={`${registrantID ? `${registrantID}.1.` : ''}${modelDef.id}.${
-                        versionedModelDef.id
-                      }.1.${component.id}`}
-                      data-id={`${registrantID ? `${registrantID}.1.` : ''}${modelDef.id}.${
-                        versionedModelDef.id
-                      }.1.${component.id}`}
-                      labelText={component.displayName}
-                      onClick={() => {
-                        setShowDetailsData({
-                          type: COMPONENTS,
-                          data: component,
-                        });
-                      }}
-                    />
-                  );
-                })}
-            </StyledTreeItem>
-            <StyledTreeItem
-              nodeId={`${registrantID ? `${registrantID}.1.` : ''}${modelDef.id}.${
-                versionedModelDef.id
-              }.2`}
-              data-id={`${registrantID ? `${registrantID}.1.` : ''}${modelDef.id}.${
-                versionedModelDef.id
-              }.2`}
-              labelText={`Relationships (${
-                versionedModelDef.relationships ? versionedModelDef.relationships.length : 0
-              })`}
-            >
-              <RelationshipTree
-                handleToggle={handleToggle}
-                handleSelect={handleSelect}
-                expanded={expanded}
-                selected={selected}
-                data={versionedModelDef.relationships}
-                view={MODELS}
-                setShowDetailsData={setShowDetailsData}
-                idForKindAsProp={`${registrantID ? `${registrantID}.1.` : ''}${modelDef.id}.${
-                  versionedModelDef.id
-                }.2`}
-              />
-            </StyledTreeItem>
+            <VersionedModelComponentTree
+              registrantID={registrantID}
+              modelDef={modelDef}
+              versionedModelDef={versionedModelDef}
+              setShowDetailsData={setShowDetailsData}
+              showDetailsData={showDetailsData}
+            />
+            <VersionedModelRelationshipTree
+              registrantID={registrantID}
+              modelDef={modelDef}
+              versionedModelDef={versionedModelDef}
+              setShowDetailsData={setShowDetailsData}
+              handleToggle={handleToggle}
+              handleSelect={handleSelect}
+              selected={selected}
+              expanded={expanded}
+            />
           </StyledTreeItem>
         ))}
     </StyledTreeItem>
@@ -241,6 +384,9 @@ const MesheryTreeViewModel = ({
   expanded,
   selected,
   setShowDetailsData,
+  lastModelRef,
+  isModelFetching,
+  showDetailsData,
 }) => {
   return (
     <TreeView
@@ -263,8 +409,11 @@ const MesheryTreeViewModel = ({
           expanded={expanded}
           selected={selected}
           setShowDetailsData={setShowDetailsData}
+          showDetailsData={showDetailsData}
         />
       ))}
+      <div ref={lastModelRef} style={{ height: '3rem' }}></div>
+      {isModelFetching ? <CircularProgress color="inherit" /> : null}
     </TreeView>
   );
 };
@@ -277,6 +426,9 @@ const MesheryTreeViewRegistrants = ({
   expanded,
   selected,
   setShowDetailsData,
+  lastRegistrantRef,
+  isRegistrantFetching,
+  showDetailsData,
 }) => {
   return (
     <TreeView
@@ -297,7 +449,7 @@ const MesheryTreeViewRegistrants = ({
           nodeId={registrant.id}
           data-id={registrant.id}
           top
-          labelText={registrant?.hostname}
+          labelText={registrant?.name}
           newParentId={registrant.id}
           onClick={() => {
             setShowDetailsData({
@@ -310,7 +462,7 @@ const MesheryTreeViewRegistrants = ({
             <StyledTreeItem
               nodeId={`${registrant.id}.1`}
               data-id={`${registrant.id}.1`}
-              labelText={`Models (${registrant?.models.length})`}
+              labelText={`Models (${registrant?.models?.length})`}
             >
               {registrant?.models.map((modelDef, index) => (
                 <MesheryTreeViewItem
@@ -323,12 +475,15 @@ const MesheryTreeViewRegistrants = ({
                   setShow={setShow}
                   registrantID={registrant.id}
                   setShowDetailsData={setShowDetailsData}
+                  showDetailsData={showDetailsData}
                 />
               ))}
             </StyledTreeItem>
           </div>
         </StyledTreeItem>
       ))}
+      <div ref={lastRegistrantRef} style={{ height: '3rem' }}></div>
+      {isRegistrantFetching && <CircularProgress color="inherit" />}
     </TreeView>
   );
 };
@@ -366,11 +521,10 @@ const useRegistryRouter = () => {
 };
 
 const MesheryTreeViewWrapper = styled('div')(() => ({
-  width: '100%',
-  height: '100%',
   display: 'flex',
   flexDirection: 'column',
 }));
+
 const MesheryTreeView = ({
   data,
   view,
@@ -382,12 +536,15 @@ const MesheryTreeView = ({
   setShowDetailsData,
   showDetailsData,
   setResourcesDetail,
+  lastItemRef,
+  isFetching,
 }) => {
   const { handleUpdateSelectedRoute, selectedItemUUID } = useRegistryRouter();
   const [expanded, setExpanded] = React.useState([]);
   const [selected, setSelected] = React.useState([]);
   const { width } = useWindowDimensions();
   const [isSearchExpanded, setIsSearchExpanded] = useState(searchText ? true : false);
+  const [prevState, setPrevState] = useState({ data: [], uuid: '' });
   const scrollRef = useRef();
 
   const handleScroll = (scrollingView) => (event) => {
@@ -423,8 +580,15 @@ const MesheryTreeView = ({
         // parent id will be same as relationships[0].id
         // so we can use that id for expanding first level tree for relationships
         arr.push(parent.relationships[0].id);
+      } else if (view === REGISTRANTS) {
+        arr.push(parent.id);
+        arr.push(`${parent.id}.1`);
       } else {
         arr.push(parent.id);
+        parent.versionBasedData.map((child) => {
+          arr.push(`${parent.id}.${child.id}`);
+          arr.push(`${parent.id}.${child.id}.1`);
+        });
       }
     });
     setExpanded(arr);
@@ -453,20 +617,42 @@ const MesheryTreeView = ({
   };
 
   useEffect(() => {
+    // Compare previous data with current data and uuid
+    if (
+      prevState.data &&
+      JSON.stringify(prevState.data) === JSON.stringify(data) &&
+      prevState.uuid === selectedItemUUID
+    ) {
+      return;
+    }
+
+    // Update the state with the current data and uuid
+    setPrevState({ data, uuid: selectedItemUUID });
+
+    // No data present then return
+    if (data.length === 0) {
+      return;
+    }
+
     let selectedIdArr = selectedItemUUID.split('.');
     if (selectedIdArr.length >= 0) {
       // Check if showDetailsData data matches with item from route
       // This will prevent unnecessary state update
       if (showDetailsData.data.id !== selectedIdArr[selectedIdArr.length - 1]) {
-        setExpanded(
-          selectedIdArr.reduce(
-            (acc, id, index) => [...acc, index > 0 ? `${acc[index - 1]}.${id}` : id],
-            [],
-          ),
+        const newExpanded = selectedIdArr.reduce(
+          (acc, id, index) => [...acc, index > 0 ? `${acc[index - 1]}.${id}` : id],
+          [],
         );
-        setSelected([selectedItemUUID]);
+        if (JSON.stringify(newExpanded) !== JSON.stringify(expanded)) {
+          setExpanded(newExpanded);
+        }
+        if (JSON.stringify([selectedItemUUID]) !== JSON.stringify(selected)) {
+          setSelected([selectedItemUUID]);
+        }
         const showData = getFilteredDataForDetailsComponent(data, selectedItemUUID);
-        setShowDetailsData(showData);
+        if (JSON.stringify(showData) !== JSON.stringify(showDetailsData)) {
+          setShowDetailsData(showData);
+        }
       }
     } else {
       setExpanded([]);
@@ -476,7 +662,7 @@ const MesheryTreeView = ({
         data: {},
       });
     }
-  }, [view, selectedItemUUID]);
+  }, [selectedItemUUID, data, showDetailsData]);
 
   useEffect(() => {
     let selectedIdArr = selectedItemUUID.split('.');
@@ -503,6 +689,8 @@ const MesheryTreeView = ({
         flexDirection: 'row',
         justifyContent: 'space-between',
         borderBottom: '1px solid #d2d3d4',
+        width: '100%',
+        height: '2.55rem',
       }}
     >
       <div>
@@ -610,7 +798,7 @@ const MesheryTreeView = ({
   );
 
   return (
-    <MesheryTreeViewWrapper>
+    <MesheryTreeViewWrapper style={{ width: '100%', height: '100%' }}>
       {view === MODELS &&
         renderTree(
           <MesheryTreeViewModel
@@ -620,6 +808,9 @@ const MesheryTreeView = ({
             expanded={expanded}
             selected={selected}
             setShowDetailsData={setShowDetailsData}
+            showDetailsData={showDetailsData}
+            lastModelRef={lastItemRef[MODELS]}
+            isModelFetching={isFetching[MODELS]}
           />,
           MODELS,
         )}
@@ -632,6 +823,9 @@ const MesheryTreeView = ({
             expanded={expanded}
             selected={selected}
             setShowDetailsData={setShowDetailsData}
+            showDetailsData={showDetailsData}
+            lastRegistrantRef={lastItemRef[REGISTRANTS]}
+            isRegistrantFetching={isFetching[REGISTRANTS]}
           />,
           REGISTRANTS,
         )}
@@ -645,9 +839,10 @@ const MesheryTreeView = ({
             data={data}
             setExpanded={setExpanded}
             setSelected={setSelected}
-            handleScroll={handleScroll}
             setSearchText={setSearchText}
             setShowDetailsData={setShowDetailsData}
+            lastComponentRef={lastItemRef[COMPONENTS]}
+            isComponentFetching={isFetching[COMPONENTS]}
           />,
           COMPONENTS,
         )}
@@ -660,6 +855,8 @@ const MesheryTreeView = ({
             selected={selected}
             data={data}
             setShowDetailsData={setShowDetailsData}
+            lastRegistrantRef={lastItemRef[RELATIONSHIPS]}
+            isRelationshipFetching={isFetching[RELATIONSHIPS]}
           />,
           RELATIONSHIPS,
         )}

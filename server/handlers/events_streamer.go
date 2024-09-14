@@ -1,4 +1,4 @@
-// Package handlers :collection of handlers (aka "HTTP middleware")
+
 package handlers
 
 import (
@@ -472,4 +472,60 @@ func closeAdapterConnections(localMeshAdaptersLock *sync.Mutex, localMeshAdapter
 	localMeshAdaptersLock.Unlock()
 
 	return map[string]*meshes.MeshClient{}
+}
+
+// swagger:route POST /api/events EventsAPI idClientEventHandler
+// Receives client-generated events bound for the Notification Center.
+// responses:
+// 200:
+
+func (h *Handler) ClientEventHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+	userID := uuid.FromStringOrNil(user.ID)
+
+	defer func() {
+		_ = req.Body.Close()
+	}()
+
+	var evt events.Event
+	body, err := io.ReadAll(req.Body)
+	if err != nil {
+		h.log.Error(ErrRequestBody(err))
+		http.Error(w, ErrRequestBody(err).Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = json.Unmarshal(body, &evt)
+	if err != nil {
+		h.log.Error(models.ErrUnmarshal(err, "event"))
+		http.Error(w, models.ErrUnmarshal(err, "event").Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if(evt.ActedUpon.IsNil() || evt.Action == "" || evt.Category == "" || evt.Severity == ""){
+		h.log.Error(models.ErrInvalidEventData())
+		http.Error(w, models.ErrInvalidEventData().Error(), http.StatusBadRequest)
+		return
+	}
+
+	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).
+		WithCategory(evt.Category).WithAction(evt.Action).WithSeverity(events.EventSeverity(evt.Severity)).
+		WithDescription(evt.Description).WithMetadata(evt.Metadata).ActedUpon(evt.ActedUpon)
+
+	event := eventBuilder.Build()
+	err = provider.PersistEvent(event)
+	if err != nil {
+		h.log.Error(models.ErrPersistEvent(err))
+		http.Error(w, models.ErrPersistEvent(err).Error(), http.StatusInternalServerError)
+		return
+
+	}
+	go h.config.EventBroadcaster.Publish(userID, event)
+
+	w.WriteHeader(http.StatusCreated)
+	err = json.NewEncoder(w).Encode(event)
+	if err != nil {
+		h.log.Error(models.ErrMarshal(err, "event response"))
+		http.Error(w, models.ErrMarshal(err, "event response").Error(), http.StatusInternalServerError)
+		return
+	}
 }

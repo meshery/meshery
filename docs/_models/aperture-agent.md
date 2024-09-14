@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Aperture Agent
-subtitle: Collaborative and visual infrastructure as code for Aperture Agent
+subtitle: Collaborative and visual infrastructure as design for Aperture Agent
 image: /assets/img/integrations/aperture-agent/icons/color/aperture-agent-color.svg
 permalink: extensibility/integrations/aperture-agent
 docURL: https://docs.meshery.io/extensibility/integrations/aperture-agent

@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Hybridnet
-subtitle: Collaborative and visual infrastructure as code for Hybridnet
+subtitle: Collaborative and visual infrastructure as design for Hybridnet
 image: /assets/img/integrations/hybridnet/icons/color/hybridnet-color.svg
 permalink: extensibility/integrations/hybridnet
 docURL: https://docs.meshery.io/extensibility/integrations/hybridnet

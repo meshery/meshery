@@ -5,11 +5,11 @@ import { bindActionCreators } from 'redux';
 import Head from 'next/head';
 import { getPath } from '../../lib/path';
 import { updatepagepath } from '../../lib/store';
-import MesheryPatterns from '@/components/MesheryPatterns';
 import { VISIBILITY } from '../../utils/Enum';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import DefaultError from '@/components/General/error-404';
+import MesheryPatterns from '@/components/MesheryPatterns';
 
 const styles = {
   paper: {

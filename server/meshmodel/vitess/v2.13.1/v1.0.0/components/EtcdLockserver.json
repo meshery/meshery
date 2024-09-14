@@ -1,0 +1,194 @@
+{
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "EtcdLockserver",
+   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"advertisePeerURLs\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"maxItems\": 3,\n     \"minItems\": 3,\n     \"type\": \"array\"\n    },\n    \"affinity\": {\n     \"format\": \"textarea\",\n     \"type\": \"string\"\n    },\n    \"annotations\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"object\"\n    },\n    \"clientService\": {\n     \"properties\": {\n      \"annotations\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"object\"\n      },\n      \"clusterIP\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"createClientService\": {\n     \"type\": \"boolean\"\n    },\n    \"createPDB\": {\n     \"type\": \"boolean\"\n    },\n    \"createPeerService\": {\n     \"type\": \"boolean\"\n    },\n    \"dataVolumeClaimTemplate\": {\n     \"properties\": {\n      \"accessModes\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"dataSource\": {\n       \"properties\": {\n        \"apiGroup\": {\n         \"type\": \"string\"\n        },\n        \"kind\": {\n         \"type\": \"string\"\n        },\n        \"name\": {\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"kind\",\n        \"name\"\n       ],\n       \"type\": \"object\",\n       \"x-kubernetes-map-type\": \"atomic\"\n      },\n      \"dataSourceRef\": {\n       \"properties\": {\n        \"apiGroup\": {\n         \"type\": \"string\"\n        },\n        \"kind\": {\n         \"type\": \"string\"\n        },\n        \"name\": {\n         \"type\": \"string\"\n        },\n        \"namespace\": {\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"kind\",\n        \"name\"\n       ],\n       \"type\": \"object\"\n      },\n      \"resources\": {\n       \"properties\": {\n        \"claims\": {\n         \"items\": {\n          \"properties\": {\n           \"name\": {\n            \"type\": \"string\"\n           }\n          },\n          \"required\": [\n           \"name\"\n          ],\n          \"type\": \"object\"\n         },\n         \"type\": \"array\",\n         \"x-kubernetes-list-map-keys\": [\n          \"name\"\n         ],\n         \"x-kubernetes-list-type\": \"map\"\n        },\n        \"limits\": {\n         \"additionalProperties\": {\n          \"anyOf\": [\n           {\n            \"type\": \"integer\"\n           },\n           {\n            \"type\": \"string\"\n           }\n          ],\n          \"pattern\": \"^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$\",\n          \"x-kubernetes-int-or-string\": true\n         },\n         \"type\": \"object\"\n        },\n        \"requests\": {\n         \"additionalProperties\": {\n          \"anyOf\": [\n           {\n            \"type\": \"integer\"\n           },\n           {\n            \"type\": \"string\"\n           }\n          ],\n          \"pattern\": \"^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$\",\n          \"x-kubernetes-int-or-string\": true\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"selector\": {\n       \"properties\": {\n        \"matchExpressions\": {\n         \"items\": {\n          \"properties\": {\n           \"key\": {\n            \"type\": \"string\"\n           },\n           \"operator\": {\n            \"type\": \"string\"\n           },\n           \"values\": {\n            \"items\": {\n             \"type\": \"string\"\n            },\n            \"type\": \"array\"\n           }\n          },\n          \"required\": [\n           \"key\",\n           \"operator\"\n          ],\n          \"type\": \"object\"\n         },\n         \"type\": \"array\"\n        },\n        \"matchLabels\": {\n         \"additionalProperties\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\",\n       \"x-kubernetes-map-type\": \"atomic\"\n      },\n      \"storageClassName\": {\n       \"type\": \"string\"\n      },\n      \"volumeMode\": {\n       \"type\": \"string\"\n      },\n      \"volumeName\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"extraEnv\": {\n     \"items\": {\n      \"properties\": {\n       \"name\": {\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"type\": \"string\"\n       },\n       \"valueFrom\": {\n        \"properties\": {\n         \"configMapKeyRef\": {\n          \"properties\": {\n           \"key\": {\n            \"type\": \"string\"\n           },\n           \"name\": {\n            \"type\": \"string\"\n           },\n           \"optional\": {\n            \"type\": \"boolean\"\n           }\n          },\n          \"required\": [\n           \"key\"\n          ],\n          \"type\": \"object\",\n          \"x-kubernetes-map-type\": \"atomic\"\n         },\n         \"fieldRef\": {\n          \"properties\": {\n           \"apiVersion\": {\n            \"type\": \"string\"\n           },\n           \"fieldPath\": {\n            \"type\": \"string\"\n           }\n          },\n          \"required\": [\n           \"fieldPath\"\n          ],\n          \"type\": \"object\",\n          \"x-kubernetes-map-type\": \"atomic\"\n         },\n         \"resourceFieldRef\": {\n          \"properties\": {\n           \"containerName\": {\n            \"type\": \"string\"\n           },\n           \"divisor\": {\n            \"anyOf\": [\n             {\n              \"type\": \"integer\"\n             },\n             {\n              \"type\": \"string\"\n             }\n            ],\n            \"pattern\": \"^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$\",\n            \"x-kubernetes-int-or-string\": true\n           },\n           \"resource\": {\n            \"type\": \"string\"\n           }\n          },\n          \"required\": [\n           \"resource\"\n          ],\n          \"type\": \"object\",\n          \"x-kubernetes-map-type\": \"atomic\"\n         },\n         \"secretKeyRef\": {\n          \"properties\": {\n           \"key\": {\n            \"type\": \"string\"\n           },\n           \"name\": {\n            \"type\": \"string\"\n           },\n           \"optional\": {\n            \"type\": \"boolean\"\n           }\n          },\n          \"required\": [\n           \"key\"\n          ],\n          \"type\": \"object\",\n          \"x-kubernetes-map-type\": \"atomic\"\n         }\n        },\n        \"type\": \"object\"\n       }\n      },\n      \"required\": [\n       \"name\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"extraFlags\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"object\"\n    },\n    \"extraLabels\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"object\"\n    },\n    \"extraVolumeMounts\": {\n     \"items\": {\n      \"properties\": {\n       \"mountPath\": {\n        \"type\": \"string\"\n       },\n       \"mountPropagation\": {\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"type\": \"string\"\n       },\n       \"readOnly\": {\n        \"type\": \"boolean\"\n       },\n       \"subPath\": {\n        \"type\": \"string\"\n       },\n       \"subPathExpr\": {\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"mountPath\",\n       \"name\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"extraVolumes\": {\n     \"format\": \"textarea\",\n     \"type\": \"string\"\n    },\n    \"image\": {\n     \"type\": \"string\"\n    },\n    \"imagePullPolicy\": {\n     \"type\": \"string\"\n    },\n    \"imagePullSecrets\": {\n     \"items\": {\n      \"properties\": {\n       \"name\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\",\n      \"x-kubernetes-map-type\": \"atomic\"\n     },\n     \"type\": \"array\"\n    },\n    \"initContainers\": {\n     \"format\": \"textarea\",\n     \"type\": \"string\"\n    },\n    \"localMemberIndex\": {\n     \"format\": \"int32\",\n     \"maximum\": 3,\n     \"minimum\": 1,\n     \"type\": \"integer\"\n    },\n    \"peerService\": {\n     \"properties\": {\n      \"annotations\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"object\"\n      },\n      \"clusterIP\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resources\": {\n     \"properties\": {\n      \"claims\": {\n       \"items\": {\n        \"properties\": {\n         \"name\": {\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"name\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\",\n       \"x-kubernetes-list-map-keys\": [\n        \"name\"\n       ],\n       \"x-kubernetes-list-type\": \"map\"\n      },\n      \"limits\": {\n       \"additionalProperties\": {\n        \"anyOf\": [\n         {\n          \"type\": \"integer\"\n         },\n         {\n          \"type\": \"string\"\n         }\n        ],\n        \"pattern\": \"^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$\",\n        \"x-kubernetes-int-or-string\": true\n       },\n       \"type\": \"object\"\n      },\n      \"requests\": {\n       \"additionalProperties\": {\n        \"anyOf\": [\n         {\n          \"type\": \"integer\"\n         },\n         {\n          \"type\": \"string\"\n         }\n        ],\n        \"pattern\": \"^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$\",\n        \"x-kubernetes-int-or-string\": true\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"sidecarContainers\": {\n     \"format\": \"textarea\",\n     \"type\": \"string\"\n    },\n    \"tolerations\": {\n     \"format\": \"textarea\",\n     \"type\": \"string\"\n    },\n    \"zone\": {\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Etcd Lockserver\",\n \"type\": \"object\"\n}",
+   "version": "planetscale.com/v2"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "Etcd Lockserver",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "published": false
+  },
+  "model": {
+   "category": {
+    "name": "App Definition and Development"
+   },
+   "displayName": "Vitess",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "isAnnotation": false,
+    "primaryColor": "#f16827",
+    "secondaryColor": "#FFAD6C",
+    "shape": "circle",
+    "source_uri": "git://github.com/planetscale/vitess-operator/main/deploy/crds",
+    "styleOverrides": "",
+    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" viewBox=\"-5.48 13.27 440.96 403.96\" height=\"20\" width=\"20\"\u003e\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cstyle xmlns=\"http://www.w3.org/2000/svg\"\u003e.cls-2{fill:#284e64}.cls-3{fill:#f16827}.cls-4{fill:#f48029}.cls-5{fill:#f89a2e}.cls-8{fill:#cd4e27}\u003c/style\u003e\u003c/defs\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" d=\"M76.774 158.098l-.011.012.011-.012z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M242.742 258.203l.04-.206 13.593-79.583-13.633 79.789zm98.18-79.977l-44.115 79.726-83.395 151.07.003.006 83.411-151.095 44.116-79.716 48.195-87.421-48.215 87.43zM342.43 21.85l-14.161 25.877 14.167-25.877h-.006zM76.774 158.098l54.081-58.039-54.081 58.039zm11.512 21.02l59.724-47.442-59.724 47.442zm0 0l-4.007-7.304 3.997 7.304 42.494 78.004 6.9 12.722-6.906-12.739-42.478-77.987z\" class=\"cls-2\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M103.185 151.448l27.67-51.389 17.155 31.617 33.263 61.357-33.244-61.366-17.169-31.634L88.096 21.85h-.009l42.768 78.209-27.67 51.389zm124.483 126.996l.196.361 8.008 14.721-8.204-15.082zm56.527-150.437l-27.835 50.39-30.963 57.017 30.978-57 27.82-50.407z\" class=\"cls-2\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M173.214 335.413l40.189 73.625 22.118-113.708-62.307 40.083z\" class=\"cls-3\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M235.872 293.526l-8.008-14.721-27.453-50.469-27.197 107.077 62.307-40.083.351-1.804z\" class=\"cls-4\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M130.764 257.105l6.906 12.739 35.544 65.569 27.197-107.077-69.647 28.769z\" class=\"cls-5\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M130.764 257.105l69.647-28.769-19.138-35.303-33.263-61.357-17.246 125.429z\" class=\"cls-3\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill=\"#f89921\" d=\"M242.742 258.203l13.633-79.789-30.978 57-10.562 19.436 12.833 23.594 8.204 15.082 6.87-35.323z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M88.286 179.118l42.478 77.987 17.246-125.429-59.724 47.442z\" class=\"cls-5\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M296.807 257.952l44.115-79.726-98.14 79.771 54.025-.045z\" class=\"cls-4\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill=\"#f4ae5c\" d=\"M130.855 100.059l-27.67 51.389-14.899 27.67 59.724-47.442-17.155-31.617zm111.927 157.938l56.555-157.423-15.142 27.433-27.82 50.407-13.593 79.583z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M88.286 179.118l14.899-27.67 27.67-51.389-54.081 58.039-.011.012 7.516 13.704 4.007 7.304z\" class=\"cls-8\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill=\"#f16938\" d=\"M340.922 178.226l-41.585-77.652-56.555 157.423 98.14-79.771zM76.774 158.098l54.081-58.039L88.087 21.85l-.006-.01-11.318 136.27.011-.012z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M340.922 178.226l1.519-156.376v-.01l-.005.01-14.167 25.877-28.932 52.847 41.585 77.652zM88.081 21.84H3l73.763 136.27L88.081 21.84z\" class=\"cls-5\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M342.441 21.84v.01l-1.519 156.376 48.215-87.43 38.028-68.956h-84.724zm-99.659 236.157l-.04.206-6.87 35.323-.351 1.804-22.118 113.708.009-.016 83.395-151.07-54.025.045z\" class=\"cls-8\"\u003e\u003c/path\u003e\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" viewBox=\"-2.27 9.48 364.78 334.28\" height=\"20\" width=\"20\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill=\"#fff\" d=\"M285.642 16.7l-11.668 21.446-23.994 43.715-12.489 22.679-23.008 41.661-25.637 47.165-8.708 16.101-11.917-21.935-15.859-29.17-27.527-50.782-14.215-26.13L75.286 16.7H4.866l61.053 112.738 6.163 11.339 3.369 6.081 35.086 64.504 5.752 10.517 29.417 54.233L178.903 337l69.023-124.981 36.484-65.901 39.852-72.31L355.734 16.7h-70.092z\"\u003e\u003c/path\u003e\u003c/svg\u003e"
+   },
+   "model": {
+    "version": "v2.13.1"
+   },
+   "name": "vitess",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "github",
+    "name": "Github",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "enabled",
+   "subCategory": "Database",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
+   "primaryColor": "#f16827",
+   "secondaryColor": "#FFAD6C",
+   "shape": "circle",
+   "svgColor": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" viewBox=\"-5.48 13.27 440.96 403.96\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-2{fill:#284e64}.cls-3{fill:#f16827}.cls-4{fill:#f48029}.cls-5{fill:#f89a2e}.cls-8{fill:#cd4e27}\u003c/style\u003e\u003c/defs\u003e\u003cpath fill=\"none\" d=\"M76.774 158.098l-.011.012.011-.012z\"/\u003e\u003cpath d=\"M242.742 258.203l.04-.206 13.593-79.583-13.633 79.789zm98.18-79.977l-44.115 79.726-83.395 151.07.003.006 83.411-151.095 44.116-79.716 48.195-87.421-48.215 87.43zM342.43 21.85l-14.161 25.877 14.167-25.877h-.006zM76.774 158.098l54.081-58.039-54.081 58.039zm11.512 21.02l59.724-47.442-59.724 47.442zm0 0l-4.007-7.304 3.997 7.304 42.494 78.004 6.9 12.722-6.906-12.739-42.478-77.987z\" class=\"cls-2\"/\u003e\u003cpath d=\"M103.185 151.448l27.67-51.389 17.155 31.617 33.263 61.357-33.244-61.366-17.169-31.634L88.096 21.85h-.009l42.768 78.209-27.67 51.389zm124.483 126.996l.196.361 8.008 14.721-8.204-15.082zm56.527-150.437l-27.835 50.39-30.963 57.017 30.978-57 27.82-50.407z\" class=\"cls-2\"/\u003e\u003cpath d=\"M173.214 335.413l40.189 73.625 22.118-113.708-62.307 40.083z\" class=\"cls-3\"/\u003e\u003cpath d=\"M235.872 293.526l-8.008-14.721-27.453-50.469-27.197 107.077 62.307-40.083.351-1.804z\" class=\"cls-4\"/\u003e\u003cpath d=\"M130.764 257.105l6.906 12.739 35.544 65.569 27.197-107.077-69.647 28.769z\" class=\"cls-5\"/\u003e\u003cpath d=\"M130.764 257.105l69.647-28.769-19.138-35.303-33.263-61.357-17.246 125.429z\" class=\"cls-3\"/\u003e\u003cpath fill=\"#f89921\" d=\"M242.742 258.203l13.633-79.789-30.978 57-10.562 19.436 12.833 23.594 8.204 15.082 6.87-35.323z\"/\u003e\u003cpath d=\"M88.286 179.118l42.478 77.987 17.246-125.429-59.724 47.442z\" class=\"cls-5\"/\u003e\u003cpath d=\"M296.807 257.952l44.115-79.726-98.14 79.771 54.025-.045z\" class=\"cls-4\"/\u003e\u003cpath fill=\"#f4ae5c\" d=\"M130.855 100.059l-27.67 51.389-14.899 27.67 59.724-47.442-17.155-31.617zm111.927 157.938l56.555-157.423-15.142 27.433-27.82 50.407-13.593 79.583z\"/\u003e\u003cpath d=\"M88.286 179.118l14.899-27.67 27.67-51.389-54.081 58.039-.011.012 7.516 13.704 4.007 7.304z\" class=\"cls-8\"/\u003e\u003cpath fill=\"#f16938\" d=\"M340.922 178.226l-41.585-77.652-56.555 157.423 98.14-79.771zM76.774 158.098l54.081-58.039L88.087 21.85l-.006-.01-11.318 136.27.011-.012z\"/\u003e\u003cpath d=\"M340.922 178.226l1.519-156.376v-.01l-.005.01-14.167 25.877-28.932 52.847 41.585 77.652zM88.081 21.84H3l73.763 136.27L88.081 21.84z\" class=\"cls-5\"/\u003e\u003cpath d=\"M342.441 21.84v.01l-1.519 156.376 48.215-87.43 38.028-68.956h-84.724zm-99.659 236.157l-.04.206-6.87 35.323-.351 1.804-22.118 113.708.009-.016 83.395-151.07-54.025.045z\" class=\"cls-8\"/\u003e\u003c/svg\u003e",
+   "svgWhite": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" viewBox=\"-2.27 9.48 364.78 334.28\"\u003e\u003cpath fill=\"#fff\" d=\"M285.642 16.7l-11.668 21.446-23.994 43.715-12.489 22.679-23.008 41.661-25.637 47.165-8.708 16.101-11.917-21.935-15.859-29.17-27.527-50.782-14.215-26.13L75.286 16.7H4.866l61.053 112.738 6.163 11.339 3.369 6.081 35.086 64.504 5.752 10.517 29.417 54.233L178.903 337l69.023-124.981 36.484-65.901 39.852-72.31L355.734 16.7h-70.092z\"/\u003e\u003c/svg\u003e"
+  },
+  "version": "v1.0.0"
+ }

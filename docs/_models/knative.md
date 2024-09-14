@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Knative
-subtitle: Collaborative and visual infrastructure as code for Knative
+subtitle: Collaborative and visual infrastructure as design for Knative
 image: /assets/img/integrations/knative/icons/color/knative-color.svg
 permalink: extensibility/integrations/knative
 docURL: https://docs.meshery.io/extensibility/integrations/knative

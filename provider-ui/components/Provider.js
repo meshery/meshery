@@ -107,7 +107,10 @@ export default function Provider() {
     setSelectedProvider(provider);
     setOpenMenu(false);
     setIsLoading(true);
-    window.location.href = `/api/provider?provider=${encodeURIComponent(provider)}`;
+    const existingQueryString = window.location.search;
+    const existingQueryParams = new URLSearchParams(existingQueryString);
+    existingQueryParams.append("provider", encodeURIComponent(provider))
+    window.location.href = `/api/provider?${existingQueryParams.toString()}`;
   };
 
   const handleModalOpen = () => {

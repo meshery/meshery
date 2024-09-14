@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Kommander
-subtitle: Collaborative and visual infrastructure as code for Kommander
+subtitle: Collaborative and visual infrastructure as design for Kommander
 image: /assets/img/integrations/kommander/icons/color/kommander-color.svg
 permalink: extensibility/integrations/kommander
 docURL: https://docs.meshery.io/extensibility/integrations/kommander

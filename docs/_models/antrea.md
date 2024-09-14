@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Antrea
-subtitle: Collaborative and visual infrastructure as code for Antrea
+subtitle: Collaborative and visual infrastructure as design for Antrea
 image: /assets/img/integrations/antrea/icons/color/antrea-color.svg
 permalink: extensibility/integrations/antrea
 docURL: https://docs.meshery.io/extensibility/integrations/antrea
@@ -69,6 +69,14 @@ components:
 - name: group
   colorIcon: assets/img/integrations/antrea/components/group/icons/color/group-color.svg
   whiteIcon: assets/img/integrations/antrea/components/group/icons/white/group-white.svg
+  description: 
+- name: bgp-policy
+  colorIcon: assets/img/integrations/antrea/components/bgp-policy/icons/color/bgp-policy-color.svg
+  whiteIcon: assets/img/integrations/antrea/components/bgp-policy/icons/white/bgp-policy-white.svg
+  description: 
+- name: node-latency-monitor
+  colorIcon: assets/img/integrations/antrea/components/node-latency-monitor/icons/color/node-latency-monitor-color.svg
+  whiteIcon: assets/img/integrations/antrea/components/node-latency-monitor/icons/white/node-latency-monitor-white.svg
   description: 
 featureList: [
   "Network policy enforcement",

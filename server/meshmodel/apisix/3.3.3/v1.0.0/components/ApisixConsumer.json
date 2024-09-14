@@ -1,0 +1,196 @@
+{
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "ApisixConsumer",
+   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"authParameter\": {\n     \"oneOf\": [\n      {\n       \"required\": [\n        \"basicAuth\"\n       ]\n      },\n      {\n       \"required\": [\n        \"keyAuth\"\n       ]\n      },\n      {\n       \"required\": [\n        \"wolfRBAC\"\n       ]\n      },\n      {\n       \"required\": [\n        \"jwtAuth\"\n       ]\n      },\n      {\n       \"required\": [\n        \"hmacAuth\"\n       ]\n      },\n      {\n       \"required\": [\n        \"ldapAuth\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"basicAuth\": {\n       \"oneOf\": [\n        {\n         \"required\": [\n          \"value\"\n         ]\n        },\n        {\n         \"required\": [\n          \"secretRef\"\n         ]\n        }\n       ],\n       \"properties\": {\n        \"secretRef\": {\n         \"properties\": {\n          \"name\": {\n           \"minLength\": 1,\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"name\"\n         ],\n         \"type\": \"object\"\n        },\n        \"value\": {\n         \"properties\": {\n          \"password\": {\n           \"minLength\": 1,\n           \"type\": \"string\"\n          },\n          \"username\": {\n           \"minLength\": 1,\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"username\",\n          \"password\"\n         ],\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"hmacAuth\": {\n       \"oneOf\": [\n        {\n         \"required\": [\n          \"value\"\n         ]\n        },\n        {\n         \"required\": [\n          \"secretRef\"\n         ]\n        }\n       ],\n       \"properties\": {\n        \"secretRef\": {\n         \"properties\": {\n          \"name\": {\n           \"minLength\": 1,\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"name\"\n         ],\n         \"type\": \"object\"\n        },\n        \"value\": {\n         \"properties\": {\n          \"access_key\": {\n           \"type\": \"string\"\n          },\n          \"algorithm\": {\n           \"type\": \"string\"\n          },\n          \"clock_skew\": {\n           \"type\": \"integer\"\n          },\n          \"encode_uri_params\": {\n           \"type\": \"boolean\"\n          },\n          \"keep_headers\": {\n           \"type\": \"boolean\"\n          },\n          \"max_req_body\": {\n           \"type\": \"integer\"\n          },\n          \"secret_key\": {\n           \"type\": \"string\"\n          },\n          \"signed_headers\": {\n           \"items\": {\n            \"type\": \"string\"\n           },\n           \"type\": \"array\"\n          },\n          \"validate_request_body\": {\n           \"type\": \"boolean\"\n          }\n         },\n         \"required\": [\n          \"access_key\",\n          \"secret_key\"\n         ],\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"jwtAuth\": {\n       \"oneOf\": [\n        {\n         \"required\": [\n          \"value\"\n         ]\n        },\n        {\n         \"required\": [\n          \"secretRef\"\n         ]\n        }\n       ],\n       \"properties\": {\n        \"secretRef\": {\n         \"properties\": {\n          \"name\": {\n           \"minLength\": 1,\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"name\"\n         ],\n         \"type\": \"object\"\n        },\n        \"value\": {\n         \"properties\": {\n          \"algorithm\": {\n           \"default\": \"HS256\",\n           \"type\": \"string\"\n          },\n          \"base64_secret\": {\n           \"default\": false,\n           \"type\": \"boolean\"\n          },\n          \"exp\": {\n           \"default\": 86400,\n           \"type\": \"integer\"\n          },\n          \"key\": {\n           \"minLength\": 1,\n           \"type\": \"string\"\n          },\n          \"lifetime_grace_period\": {\n           \"default\": 0,\n           \"type\": \"integer\"\n          },\n          \"public_key\": {\n           \"type\": \"string\"\n          },\n          \"secret\": {\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"key\"\n         ],\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"keyAuth\": {\n       \"oneOf\": [\n        {\n         \"required\": [\n          \"value\"\n         ]\n        },\n        {\n         \"required\": [\n          \"secretRef\"\n         ]\n        }\n       ],\n       \"properties\": {\n        \"secretRef\": {\n         \"properties\": {\n          \"name\": {\n           \"minLength\": 1,\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"name\"\n         ],\n         \"type\": \"object\"\n        },\n        \"value\": {\n         \"properties\": {\n          \"key\": {\n           \"minLength\": 1,\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"key\"\n         ],\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"ldapAuth\": {\n       \"oneOf\": [\n        {\n         \"required\": [\n          \"value\"\n         ]\n        },\n        {\n         \"required\": [\n          \"secretRef\"\n         ]\n        }\n       ],\n       \"properties\": {\n        \"secretRef\": {\n         \"properties\": {\n          \"name\": {\n           \"minLength\": 1,\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"name\"\n         ],\n         \"type\": \"object\"\n        },\n        \"value\": {\n         \"properties\": {\n          \"user_dn\": {\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"user_dn\"\n         ],\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"wolfRBAC\": {\n       \"oneOf\": [\n        {\n         \"required\": [\n          \"value\"\n         ]\n        },\n        {\n         \"required\": [\n          \"secretRef\"\n         ]\n        }\n       ],\n       \"properties\": {\n        \"secretRef\": {\n         \"properties\": {\n          \"name\": {\n           \"minLength\": 1,\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"name\"\n         ],\n         \"type\": \"object\"\n        },\n        \"value\": {\n         \"properties\": {\n          \"appid\": {\n           \"type\": \"string\"\n          },\n          \"header_prefix\": {\n           \"type\": \"string\"\n          },\n          \"server\": {\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"ingressClassName\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"authParameter\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Apisix Consumer\",\n \"type\": \"object\"\n}",
+   "version": "apisix.apache.org/v2"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "Apisix Consumer",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "published": false
+  },
+  "model": {
+   "category": {
+    "name": "Provisioning"
+   },
+   "displayName": "APISIX",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "defaultData": "",
+    "isAnnotation": false,
+    "primaryColor": "#1988d9",
+    "secondaryColor": "#54aef0",
+    "shape": "rectangle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "svgColor": "\u003csvg width=\"500\" height=\"500\" viewBox=\"0 0 500 500\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M129.636 433.668L248.069 261.869L210.742 203.435L101.642 332.912C65.4085 375.927 59.575 386.644 29.3203 437.093L129.673 433.668H129.636Z\" fill=\"url(#paint0_linear_27198_10652)\"/\u003e\n\u003cpath d=\"M423.663 437.093L471.67 436.911L255.911 62L360.091 437.093H423.7H423.663ZM255.874 62L201.305 152.183L212.276 134.067L255.874 62.0363V62Z\" fill=\"url(#paint1_linear_27198_10652)\"/\u003e\n\u003cpath d=\"M210.707 203.435L360.051 437.093L255.872 62L212.312 134.03L29.2852 437.093L210.707 203.435Z\" fill=\"url(#paint2_linear_27198_10652)\"/\u003e\n\u003cdefs\u003e\n\u003clinearGradient id=\"paint0_linear_27198_10652\" x1=\"203.423\" y1=\"210.642\" x2=\"79.6982\" y2=\"593.367\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop stop-color=\"#A92F33\"/\u003e\n\u003cstop offset=\"1\" stop-color=\"#E62129\"/\u003e\n\u003c/linearGradient\u003e\n\u003clinearGradient id=\"paint1_linear_27198_10652\" x1=\"272.934\" y1=\"100.165\" x2=\"400.081\" y2=\"398.957\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop stop-color=\"#A92F33\"/\u003e\n\u003cstop offset=\"1\" stop-color=\"#E8443F\"/\u003e\n\u003c/linearGradient\u003e\n\u003clinearGradient id=\"paint2_linear_27198_10652\" x1=\"127.832\" y1=\"330.488\" x2=\"261.533\" y2=\"168.633\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop stop-color=\"#E62129\"/\u003e\n\u003cstop offset=\"1\" stop-color=\"#E8443F\"/\u003e\n\u003c/linearGradient\u003e\n\u003c/defs\u003e\n\u003c/svg\u003e\n",
+    "svgComplete": "",
+    "svgWhite": "\u003csvg width=\"500\" height=\"500\" viewBox=\"0 0 500 500\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M129.636 433.668L248.069 261.869L210.742 203.435L101.642 332.912C65.4085 375.927 59.575 386.644 29.3203 437.093L129.673 433.668H129.636Z\" fill=\"url(#paint0_linear_27198_10658)\"/\u003e\n\u003cpath d=\"M423.663 437.093L471.67 436.911L255.911 62L360.091 437.093H423.7H423.663ZM255.874 62L201.305 152.183L212.276 134.067L255.874 62.0363V62Z\" fill=\"url(#paint1_linear_27198_10658)\"/\u003e\n\u003cpath d=\"M210.707 203.435L360.051 437.093L255.872 62L212.312 134.03L29.2852 437.093L210.707 203.435Z\" fill=\"url(#paint2_linear_27198_10658)\"/\u003e\n\u003cdefs\u003e\n\u003clinearGradient id=\"paint0_linear_27198_10658\" x1=\"203.423\" y1=\"210.642\" x2=\"79.6982\" y2=\"593.367\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop stop-color=\"white\"/\u003e\n\u003cstop offset=\"1\" stop-color=\"#F0F0F0\"/\u003e\n\u003c/linearGradient\u003e\n\u003clinearGradient id=\"paint1_linear_27198_10658\" x1=\"272.934\" y1=\"100.165\" x2=\"400.081\" y2=\"398.957\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop stop-color=\"white\"/\u003e\n\u003cstop offset=\"1\" stop-color=\"#F0F0F0\"/\u003e\n\u003c/linearGradient\u003e\n\u003clinearGradient id=\"paint2_linear_27198_10658\" x1=\"127.832\" y1=\"330.488\" x2=\"261.533\" y2=\"168.633\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop stop-color=\"white\"/\u003e\n\u003cstop offset=\"1\" stop-color=\"#F0F0F0\"/\u003e\n\u003c/linearGradient\u003e\n\u003c/defs\u003e\n\u003c/svg\u003e\n"
+   },
+   "model": {
+    "version": "3.3.3"
+   },
+   "name": "apisix",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "enabled",
+   "subCategory": "Security \u0026 Compliance",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "svgColor": "\u003csvg width=\"500\" height=\"500\" viewBox=\"0 0 500 500\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M129.636 433.668L248.069 261.869L210.742 203.435L101.642 332.912C65.4085 375.927 59.575 386.644 29.3203 437.093L129.673 433.668H129.636Z\" fill=\"url(#paint0_linear_27198_10652)\"/\u003e\n\u003cpath d=\"M423.663 437.093L471.67 436.911L255.911 62L360.091 437.093H423.7H423.663ZM255.874 62L201.305 152.183L212.276 134.067L255.874 62.0363V62Z\" fill=\"url(#paint1_linear_27198_10652)\"/\u003e\n\u003cpath d=\"M210.707 203.435L360.051 437.093L255.872 62L212.312 134.03L29.2852 437.093L210.707 203.435Z\" fill=\"url(#paint2_linear_27198_10652)\"/\u003e\n\u003cdefs\u003e\n\u003clinearGradient id=\"paint0_linear_27198_10652\" x1=\"203.423\" y1=\"210.642\" x2=\"79.6982\" y2=\"593.367\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop stop-color=\"#A92F33\"/\u003e\n\u003cstop offset=\"1\" stop-color=\"#E62129\"/\u003e\n\u003c/linearGradient\u003e\n\u003clinearGradient id=\"paint1_linear_27198_10652\" x1=\"272.934\" y1=\"100.165\" x2=\"400.081\" y2=\"398.957\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop stop-color=\"#A92F33\"/\u003e\n\u003cstop offset=\"1\" stop-color=\"#E8443F\"/\u003e\n\u003c/linearGradient\u003e\n\u003clinearGradient id=\"paint2_linear_27198_10652\" x1=\"127.832\" y1=\"330.488\" x2=\"261.533\" y2=\"168.633\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop stop-color=\"#E62129\"/\u003e\n\u003cstop offset=\"1\" stop-color=\"#E8443F\"/\u003e\n\u003c/linearGradient\u003e\n\u003c/defs\u003e\n\u003c/svg\u003e\n",
+   "svgWhite": "\u003csvg width=\"500\" height=\"500\" viewBox=\"0 0 500 500\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M129.636 433.668L248.069 261.869L210.742 203.435L101.642 332.912C65.4085 375.927 59.575 386.644 29.3203 437.093L129.673 433.668H129.636Z\" fill=\"url(#paint0_linear_27198_10658)\"/\u003e\n\u003cpath d=\"M423.663 437.093L471.67 436.911L255.911 62L360.091 437.093H423.7H423.663ZM255.874 62L201.305 152.183L212.276 134.067L255.874 62.0363V62Z\" fill=\"url(#paint1_linear_27198_10658)\"/\u003e\n\u003cpath d=\"M210.707 203.435L360.051 437.093L255.872 62L212.312 134.03L29.2852 437.093L210.707 203.435Z\" fill=\"url(#paint2_linear_27198_10658)\"/\u003e\n\u003cdefs\u003e\n\u003clinearGradient id=\"paint0_linear_27198_10658\" x1=\"203.423\" y1=\"210.642\" x2=\"79.6982\" y2=\"593.367\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop stop-color=\"white\"/\u003e\n\u003cstop offset=\"1\" stop-color=\"#F0F0F0\"/\u003e\n\u003c/linearGradient\u003e\n\u003clinearGradient id=\"paint1_linear_27198_10658\" x1=\"272.934\" y1=\"100.165\" x2=\"400.081\" y2=\"398.957\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop stop-color=\"white\"/\u003e\n\u003cstop offset=\"1\" stop-color=\"#F0F0F0\"/\u003e\n\u003c/linearGradient\u003e\n\u003clinearGradient id=\"paint2_linear_27198_10658\" x1=\"127.832\" y1=\"330.488\" x2=\"261.533\" y2=\"168.633\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop stop-color=\"white\"/\u003e\n\u003cstop offset=\"1\" stop-color=\"#F0F0F0\"/\u003e\n\u003c/linearGradient\u003e\n\u003c/defs\u003e\n\u003c/svg\u003e\n"
+  },
+  "version": "v1.0.0"
+ }

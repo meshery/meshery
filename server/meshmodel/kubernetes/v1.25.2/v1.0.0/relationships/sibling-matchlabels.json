@@ -1,7 +1,9 @@
 {
-  "schemaVersion": "relationships.meshery.io/v1alpha2",
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
   "version": "v1.0.0",
-  "kind": "Sibling",
+  "kind": "hierarchical",
+  "type": "sibling",
+  "subType": "matchLabels",
   "metadata": {
     "description": "A relationship between two objects that are siblings."
   },
@@ -9,6 +11,9 @@
     "schemaVersion": "models.meshery.io/v1beta1",
     "version": "v1.0.0",
     "name": "kubernetes",
+    "registrant": {
+      "kind": "artifacthub"
+    },
     "model": {
       "version": "v1.25.2"
     },
@@ -19,21 +24,44 @@
     },
     "metadata": {}
   },
-  "subType": "MatchLabels",
-  "evaluationQuery": "sibling_matchlabels_relationship",
+  "status": "enabled",
   "selectors": [
     {
       "allow": {
         "from": [
           {
-            "kind": "Service",
-            "model": "kubernetes"
+            "kind": "*",
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
+            "match": {
+              "refs": [
+                ["configuration", "metadata", "labels"]
+              ]
+            }
           }
         ],
         "to": [
           {
-            "kind": "Pod",
-            "model": "kubernetes"
+            "kind": "*",
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
+            "match": {
+              "refs": [
+                [
+                    "configuration",
+                    "metadata",
+                    "labels"
+                  ]
+              ]
+            }
           }
         ]
       },

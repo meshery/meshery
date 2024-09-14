@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Porter
-subtitle: Collaborative and visual infrastructure as code for Porter
+subtitle: Collaborative and visual infrastructure as design for Porter
 image: /assets/img/integrations/porter/icons/color/porter-color.svg
 permalink: extensibility/integrations/porter
 docURL: https://docs.meshery.io/extensibility/integrations/porter

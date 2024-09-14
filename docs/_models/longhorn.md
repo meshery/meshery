@@ -1,14 +1,14 @@
 ---
 layout: integration
 title: Longhorn
-subtitle: Collaborative and visual infrastructure as code for Longhorn
+subtitle: Collaborative and visual infrastructure as design for Longhorn
 image: /assets/img/integrations/longhorn/icons/color/longhorn-color.svg
 permalink: extensibility/integrations/longhorn
 docURL: https://docs.meshery.io/extensibility/integrations/longhorn
 description: 
 integrations-category: Cloud Native Storage
 integrations-subcategory: Cloud Native Storage
-registrant: Artifact Hub
+registrant: Github
 components: 
 featureList: [
   "Provides persistent storage for Kubernetes",

@@ -1,0 +1,195 @@
+{
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "KongIngress",
+   "schema": "{\n \"description\": \"KongIngress is the Schema for the kongingresses API.\",\n \"properties\": {\n  \"proxy\": {\n   \"description\": \"Proxy defines additional connection options for the routes to be configured in the\\nKong Gateway, e.g. `connection_timeout`, `retries`, etc.\",\n   \"properties\": {\n    \"connect_timeout\": {\n     \"description\": \"The timeout in milliseconds for\\testablishing a connection to the upstream server.\\nDeprecated: use Service's \\\"konghq.com/connect-timeout\\\" annotation instead.\",\n     \"minimum\": 0,\n     \"type\": \"integer\"\n    },\n    \"path\": {\n     \"description\": \"(optional) The path to be used in requests to the upstream server.\\nDeprecated: use Service's \\\"konghq.com/path\\\" annotation instead.\",\n     \"pattern\": \"^/.*$\",\n     \"type\": \"string\"\n    },\n    \"protocol\": {\n     \"description\": \"The protocol used to communicate with the upstream.\\nDeprecated: use Service's \\\"konghq.com/protocol\\\" annotation instead.\",\n     \"enum\": [\n      \"http\",\n      \"https\",\n      \"grpc\",\n      \"grpcs\",\n      \"tcp\",\n      \"tls\",\n      \"udp\"\n     ],\n     \"type\": \"string\"\n    },\n    \"read_timeout\": {\n     \"description\": \"The timeout in milliseconds between two successive read operations\\nfor transmitting a request to the upstream server.\\nDeprecated: use Service's \\\"konghq.com/read-timeout\\\" annotation instead.\",\n     \"minimum\": 0,\n     \"type\": \"integer\"\n    },\n    \"retries\": {\n     \"description\": \"The number of retries to execute upon failure to proxy.\\nDeprecated: use Service's \\\"konghq.com/retries\\\" annotation instead.\",\n     \"minimum\": 0,\n     \"type\": \"integer\"\n    },\n    \"write_timeout\": {\n     \"description\": \"The timeout in milliseconds between two successive write operations\\nfor transmitting a request to the upstream server.\\nDeprecated: use Service's \\\"konghq.com/write-timeout\\\" annotation instead.\",\n     \"minimum\": 0,\n     \"type\": \"integer\"\n    }\n   },\n   \"type\": \"object\"\n  },\n  \"route\": {\n   \"description\": \"Route define rules to match client requests.\\nEach Route is associated with a Service,\\nand a Service may have multiple Routes associated to it.\",\n   \"properties\": {\n    \"headers\": {\n     \"additionalProperties\": {\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"type\": \"array\"\n     },\n     \"description\": \"Headers contains one or more lists of values indexed by header name\\nthat will cause this Route to match if present in the request.\\nThe Host header cannot be used with this attribute.\\nDeprecated: use Ingress' \\\"konghq.com/headers\\\" annotation instead.\",\n     \"type\": \"object\"\n    },\n    \"https_redirect_status_code\": {\n     \"description\": \"HTTPSRedirectStatusCode is the status code Kong responds with\\nwhen all properties of a Route match except the protocol.\\nDeprecated: use Ingress' \\\"ingress.kubernetes.io/force-ssl-redirect\\\" or\\n\\\"konghq.com/https-redirect-status-code\\\" annotations instead.\",\n     \"type\": \"integer\"\n    },\n    \"methods\": {\n     \"description\": \"Methods is a list of HTTP methods that match this Route.\\nDeprecated: use Ingress' \\\"konghq.com/methods\\\" annotation instead.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"path_handling\": {\n     \"description\": \"PathHandling controls how the Service path, Route path and requested path\\nare combined when sending a request to the upstream.\\nDeprecated: use Ingress' \\\"konghq.com/path-handling\\\" annotation instead.\",\n     \"enum\": [\n      \"v0\",\n      \"v1\"\n     ],\n     \"type\": \"string\"\n    },\n    \"preserve_host\": {\n     \"description\": \"PreserveHost sets When matching a Route via one of the hosts domain names,\\nuse the request Host header in the upstream request headers.\\nIf set to false, the upstream Host header will be that of the Service’s host.\\nDeprecated: use Ingress' \\\"konghq.com/preserve-host\\\" annotation instead.\",\n     \"type\": \"boolean\"\n    },\n    \"protocols\": {\n     \"description\": \"Protocols is an array of the protocols this Route should allow.\\nDeprecated: use Ingress' \\\"konghq.com/protocols\\\" annotation instead.\",\n     \"items\": {\n      \"description\": \"KongProtocol is a valid Kong protocol.\\nThis alias is necessary to deal with https://github.com/kubernetes-sigs/controller-tools/issues/342\",\n      \"enum\": [\n       \"http\",\n       \"https\",\n       \"grpc\",\n       \"grpcs\",\n       \"tcp\",\n       \"tls\",\n       \"udp\"\n      ],\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"regex_priority\": {\n     \"description\": \"RegexPriority is a number used to choose which route resolves a given request\\nwhen several routes match it using regexes simultaneously.\\nDeprecated: use Ingress' \\\"konghq.com/regex-priority\\\" annotation instead.\",\n     \"type\": \"integer\"\n    },\n    \"request_buffering\": {\n     \"description\": \"RequestBuffering sets whether to enable request body buffering or not.\\nDeprecated: use Ingress' \\\"konghq.com/request-buffering\\\" annotation instead.\",\n     \"type\": \"boolean\"\n    },\n    \"response_buffering\": {\n     \"description\": \"ResponseBuffering sets whether to enable response body buffering or not.\\nDeprecated: use Ingress' \\\"konghq.com/response-buffering\\\" annotation instead.\",\n     \"type\": \"boolean\"\n    },\n    \"snis\": {\n     \"description\": \"SNIs is a list of SNIs that match this Route when using stream routing.\\nDeprecated: use Ingress' \\\"konghq.com/snis\\\" annotation instead.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"strip_path\": {\n     \"description\": \"StripPath sets When matching a Route via one of the paths\\nstrip the matching prefix from the upstream request URL.\\nDeprecated: use Ingress' \\\"konghq.com/strip-path\\\" annotation instead.\",\n     \"type\": \"boolean\"\n    }\n   },\n   \"type\": \"object\"\n  },\n  \"upstream\": {\n   \"description\": \"Upstream represents a virtual hostname and can be used to loadbalance\\nincoming requests over multiple targets (e.g. Kubernetes `Services` can\\nbe a target, OR `Endpoints` can be targets).\",\n   \"properties\": {\n    \"algorithm\": {\n     \"description\": \"Algorithm is the load balancing algorithm to use.\\nAccepted values are: \\\"round-robin\\\", \\\"consistent-hashing\\\", \\\"least-connections\\\", \\\"latency\\\".\",\n     \"enum\": [\n      \"round-robin\",\n      \"consistent-hashing\",\n      \"least-connections\",\n      \"latency\"\n     ],\n     \"type\": \"string\"\n    },\n    \"hash_fallback\": {\n     \"description\": \"HashFallback defines What to use as hashing input\\nif the primary hash_on does not return a hash.\\nAccepted values are: \\\"none\\\", \\\"consumer\\\", \\\"ip\\\", \\\"header\\\", \\\"cookie\\\".\",\n     \"type\": \"string\"\n    },\n    \"hash_fallback_header\": {\n     \"description\": \"HashFallbackHeader is the header name to take the value from as hash input.\\nOnly required when \\\"hash_fallback\\\" is set to \\\"header\\\".\",\n     \"type\": \"string\"\n    },\n    \"hash_fallback_query_arg\": {\n     \"description\": \"HashFallbackQueryArg is the \\\"hash_fallback\\\" version of HashOnQueryArg.\",\n     \"type\": \"string\"\n    },\n    \"hash_fallback_uri_capture\": {\n     \"description\": \"HashFallbackURICapture is the \\\"hash_fallback\\\" version of HashOnURICapture.\",\n     \"type\": \"string\"\n    },\n    \"hash_on\": {\n     \"description\": \"HashOn defines what to use as hashing input.\\nAccepted values are: \\\"none\\\", \\\"consumer\\\", \\\"ip\\\", \\\"header\\\", \\\"cookie\\\", \\\"path\\\", \\\"query_arg\\\", \\\"uri_capture\\\".\",\n     \"type\": \"string\"\n    },\n    \"hash_on_cookie\": {\n     \"description\": \"The cookie name to take the value from as hash input.\\nOnly required when \\\"hash_on\\\" or \\\"hash_fallback\\\" is set to \\\"cookie\\\".\",\n     \"type\": \"string\"\n    },\n    \"hash_on_cookie_path\": {\n     \"description\": \"The cookie path to set in the response headers.\\nOnly required when \\\"hash_on\\\" or \\\"hash_fallback\\\" is set to \\\"cookie\\\".\",\n     \"type\": \"string\"\n    },\n    \"hash_on_header\": {\n     \"description\": \"HashOnHeader defines the header name to take the value from as hash input.\\nOnly required when \\\"hash_on\\\" is set to \\\"header\\\".\",\n     \"type\": \"string\"\n    },\n    \"hash_on_query_arg\": {\n     \"description\": \"HashOnQueryArg is the query string parameter whose value is the hash input when \\\"hash_on\\\" is set to \\\"query_arg\\\".\",\n     \"type\": \"string\"\n    },\n    \"hash_on_uri_capture\": {\n     \"description\": \"HashOnURICapture is the name of the capture group whose value is the hash input when \\\"hash_on\\\" is set to\\n\\\"uri_capture\\\".\",\n     \"type\": \"string\"\n    },\n    \"healthchecks\": {\n     \"description\": \"Healthchecks defines the health check configurations in Kong.\",\n     \"properties\": {\n      \"active\": {\n       \"description\": \"ActiveHealthcheck configures active health check probing.\",\n       \"properties\": {\n        \"concurrency\": {\n         \"minimum\": 1,\n         \"type\": \"integer\"\n        },\n        \"headers\": {\n         \"additionalProperties\": {\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         },\n         \"type\": \"object\"\n        },\n        \"healthy\": {\n         \"description\": \"Healthy configures thresholds and HTTP status codes\\nto mark targets healthy for an upstream.\",\n         \"properties\": {\n          \"http_statuses\": {\n           \"items\": {\n            \"type\": \"integer\"\n           },\n           \"type\": \"array\"\n          },\n          \"interval\": {\n           \"minimum\": 0,\n           \"type\": \"integer\"\n          },\n          \"successes\": {\n           \"minimum\": 0,\n           \"type\": \"integer\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"http_path\": {\n         \"pattern\": \"^/.*$\",\n         \"type\": \"string\"\n        },\n        \"https_sni\": {\n         \"type\": \"string\"\n        },\n        \"https_verify_certificate\": {\n         \"type\": \"boolean\"\n        },\n        \"timeout\": {\n         \"minimum\": 0,\n         \"type\": \"integer\"\n        },\n        \"type\": {\n         \"type\": \"string\"\n        },\n        \"unhealthy\": {\n         \"description\": \"Unhealthy configures thresholds and HTTP status codes\\nto mark targets unhealthy.\",\n         \"properties\": {\n          \"http_failures\": {\n           \"minimum\": 0,\n           \"type\": \"integer\"\n          },\n          \"http_statuses\": {\n           \"items\": {\n            \"type\": \"integer\"\n           },\n           \"type\": \"array\"\n          },\n          \"interval\": {\n           \"minimum\": 0,\n           \"type\": \"integer\"\n          },\n          \"tcp_failures\": {\n           \"minimum\": 0,\n           \"type\": \"integer\"\n          },\n          \"timeouts\": {\n           \"minimum\": 0,\n           \"type\": \"integer\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"passive\": {\n       \"description\": \"PassiveHealthcheck configures passive checks around\\npassive health checks.\",\n       \"properties\": {\n        \"healthy\": {\n         \"description\": \"Healthy configures thresholds and HTTP status codes\\nto mark targets healthy for an upstream.\",\n         \"properties\": {\n          \"http_statuses\": {\n           \"items\": {\n            \"type\": \"integer\"\n           },\n           \"type\": \"array\"\n          },\n          \"interval\": {\n           \"minimum\": 0,\n           \"type\": \"integer\"\n          },\n          \"successes\": {\n           \"minimum\": 0,\n           \"type\": \"integer\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"type\": {\n         \"type\": \"string\"\n        },\n        \"unhealthy\": {\n         \"description\": \"Unhealthy configures thresholds and HTTP status codes\\nto mark targets unhealthy.\",\n         \"properties\": {\n          \"http_failures\": {\n           \"minimum\": 0,\n           \"type\": \"integer\"\n          },\n          \"http_statuses\": {\n           \"items\": {\n            \"type\": \"integer\"\n           },\n           \"type\": \"array\"\n          },\n          \"interval\": {\n           \"minimum\": 0,\n           \"type\": \"integer\"\n          },\n          \"tcp_failures\": {\n           \"minimum\": 0,\n           \"type\": \"integer\"\n          },\n          \"timeouts\": {\n           \"minimum\": 0,\n           \"type\": \"integer\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"threshold\": {\n       \"type\": \"number\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"host_header\": {\n     \"description\": \"HostHeader is The hostname to be used as Host header\\nwhen proxying requests through Kong.\",\n     \"type\": \"string\"\n    },\n    \"slots\": {\n     \"description\": \"Slots is the number of slots in the load balancer algorithm.\",\n     \"minimum\": 10,\n     \"type\": \"integer\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Kong Ingress\",\n \"type\": \"object\",\n \"x-kubernetes-validations\": [\n  {\n   \"message\": \"'proxy' field is no longer supported, use Service's annotations instead\",\n   \"rule\": \"!has(self.proxy)\"\n  },\n  {\n   \"message\": \"'route' field is no longer supported, use Ingress' annotations instead\",\n   \"rule\": \"!has(self.route)\"\n  }\n ]\n}",
+   "version": "configuration.konghq.com/v1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "Kong Ingress",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "published": false
+  },
+  "model": {
+   "category": {
+    "name": "Cloud Native Network"
+   },
+   "displayName": "Kong API Gateway",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "defaultData": "",
+    "isAnnotation": false,
+    "primaryColor": "#003459",
+    "secondaryColor": "",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "svgColor": "\u003csvg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\n         viewBox=\"0 0 45.3 40.8\" style=\"enable-background:new 0 0 45.3 40.8;\" xml:space=\"preserve\"\u003e\n\u003cstyle type=\"text/css\"\u003e\n        .st0{fill-rule:evenodd;clip-rule:evenodd;fill:#003459;}\n\u003c/style\u003e\n\u003cpath class=\"st0\" d=\"M14.9,33.6h8.3l4.3,5.4l-0.7,1.9H16l0.3-1.9l-2.5-4L14.9,33.6z M20.8,9.7h4.5l20,23.9l-1.6,7.3h-8.6l0.5-2\n        L17,16.5L20.8,9.7z M28.7,0L38,7.3l-1.2,1.2l1.6,2.2v2.4L33.8,17L26,7.8h-4.5l1.8-3.4L28.7,0z M9.1,23.4l6.5-5.6l8.6,10.4L21.8,32\n        h-7.9l-5.5,7.2l-1.3,1.7H0V32l6.6-8.6H9.1z\"/\u003e\n\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003csvg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\n\t viewBox=\"0 0 45.3 40.8\" style=\"enable-background:new 0 0 45.3 40.8;\" xml:space=\"preserve\"\u003e\n\u003cstyle type=\"text/css\"\u003e\n\t.st0{fill:#FFFFFF;}\n\u003c/style\u003e\n\u003cpath class=\"st0\" d=\"M14.9,33.6h8.3l4.3,5.4l-0.7,1.9H16l0.3-1.9l-2.5-4L14.9,33.6z M20.8,9.7h4.5l20,23.9l-1.6,7.3h-8.6l0.5-2\n\tL17,16.5L20.8,9.7z M28.7,0L38,7.3l-1.2,1.2l1.6,2.2v2.4L33.8,17L26,7.8h-4.5l1.8-3.4L28.7,0z M9.1,23.4l6.5-5.6l8.6,10.4L21.8,32\n\th-7.9l-5.5,7.2l-1.3,1.7H0V32l6.6-8.6H9.1z\"/\u003e\n\u003c/svg\u003e"
+   },
+   "model": {
+    "version": "12.2.7"
+   },
+   "name": "kong",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "enabled",
+   "subCategory": "API Gateway",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
+   "primaryColor": "#003459",
+   "shape": "circle",
+   "svgColor": "\u003csvg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\n\t viewBox=\"0 0 45.3 40.8\" style=\"enable-background:new 0 0 45.3 40.8;\" xml:space=\"preserve\"\u003e\n\u003cstyle type=\"text/css\"\u003e\n\t.st0{fill-rule:evenodd;clip-rule:evenodd;fill:#003459;}\n\u003c/style\u003e\n\u003cpath class=\"st0\" d=\"M14.9,33.6h8.3l4.3,5.4l-0.7,1.9H16l0.3-1.9l-2.5-4L14.9,33.6z M20.8,9.7h4.5l20,23.9l-1.6,7.3h-8.6l0.5-2\n\tL17,16.5L20.8,9.7z M28.7,0L38,7.3l-1.2,1.2l1.6,2.2v2.4L33.8,17L26,7.8h-4.5l1.8-3.4L28.7,0z M9.1,23.4l6.5-5.6l8.6,10.4L21.8,32\n\th-7.9l-5.5,7.2l-1.3,1.7H0V32l6.6-8.6H9.1z\"/\u003e\n\u003c/svg\u003e",
+   "svgWhite": "\u003csvg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\n\t viewBox=\"0 0 45.3 40.8\" style=\"enable-background:new 0 0 45.3 40.8;\" xml:space=\"preserve\" width='45.3' height='40.8'\u003e\n\u003cstyle type=\"text/css\"\u003e\n\t.st0{fill:#FFFFFF;}\n\u003c/style\u003e\n\u003cpath class=\"st0\" d=\"M14.9,33.6h8.3l4.3,5.4l-0.7,1.9H16l0.3-1.9l-2.5-4L14.9,33.6z M20.8,9.7h4.5l20,23.9l-1.6,7.3h-8.6l0.5-2\n\tL17,16.5L20.8,9.7z M28.7,0L38,7.3l-1.2,1.2l1.6,2.2v2.4L33.8,17L26,7.8h-4.5l1.8-3.4L28.7,0z M9.1,23.4l6.5-5.6l8.6,10.4L21.8,32\n\th-7.9l-5.5,7.2l-1.3,1.7H0V32l6.6-8.6H9.1z\"/\u003e\n\u003c/svg\u003e"
+  },
+  "version": "v1.0.0"
+ }

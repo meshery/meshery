@@ -103,4 +103,3 @@ jobs:
       #     password: ${{ secrets.DOCKER_PASSWORD }}
       #     repository: meshery/meshery-docker-extension
       #     readme-filepath: /install/docker-extension/README.md
-

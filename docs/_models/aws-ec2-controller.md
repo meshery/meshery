@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: AWS EC2
-subtitle: Collaborative and visual infrastructure as code for AWS EC2
+subtitle: Collaborative and visual infrastructure as design for AWS EC2
 image: /assets/img/integrations/aws-ec2-controller/icons/color/aws-ec2-controller-color.svg
 permalink: extensibility/integrations/aws-ec2-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-ec2-controller
@@ -84,7 +84,7 @@ featureList: [
   "High Precision Time with Amazon Time Sync Service
 "
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Postgres Operator
-subtitle: Collaborative and visual infrastructure as code for Postgres Operator
+subtitle: Collaborative and visual infrastructure as design for Postgres Operator
 image: /assets/img/integrations/postgres-operator/icons/color/postgres-operator-color.svg
 permalink: extensibility/integrations/postgres-operator
 docURL: https://docs.meshery.io/extensibility/integrations/postgres-operator

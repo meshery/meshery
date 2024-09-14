@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: OpenTelemetry Operator
-subtitle: Collaborative and visual infrastructure as code for OpenTelemetry Operator
+subtitle: Collaborative and visual infrastructure as design for OpenTelemetry Operator
 image: /assets/img/integrations/opentelemetry-operator/icons/color/opentelemetry-operator-color.svg
 permalink: extensibility/integrations/opentelemetry-operator
 docURL: https://docs.meshery.io/extensibility/integrations/opentelemetry-operator

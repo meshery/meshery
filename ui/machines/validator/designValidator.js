@@ -7,7 +7,7 @@ import {
   selectValidationResults,
 } from '@layer5/sistent';
 import { useSelector } from '@xstate/react';
-import { processDesign } from '@/utils/utils';
+import { encodeDesignFile, processDesign } from '@/utils/utils';
 import { designsApi } from '@/rtk-query/design';
 import { initiateQuery } from '@/rtk-query/utils';
 
@@ -102,6 +102,7 @@ export const formatDryRunResponse = (dryRunResponse) => {
         if (!errorAndMeta.success) {
           errorList.push({
             compName,
+            component: errorAndMeta.component,
             contextId: contextKey,
             errors: getErrors(errorAndMeta.error),
           });
@@ -115,15 +116,15 @@ export const formatDryRunResponse = (dryRunResponse) => {
 
 const DryRunDesignActor = fromPromise(async ({ input: { validationPayload } }) => {
   const { design, k8sContexts, dryRunType, includeDependencies } = validationPayload;
-  const { pattern_file, pattern_id } = design;
+  // const { pattern_file, pattern_id } = design;
   const dryRunEndpoint =
     dryRunType === DRY_RUN_TYPE.DEPLOY
       ? designsApi.endpoints.deployPattern
       : designsApi.endpoints.undeployPattern;
 
   const dryRunResults = await initiateQuery(dryRunEndpoint, {
-    pattern_file,
-    pattern_id,
+    pattern_file: encodeDesignFile(design),
+    pattern_id: design.id,
     skipCRD: !includeDependencies,
     selectedK8sContexts: k8sContexts,
     dryRun: true,
@@ -144,12 +145,11 @@ const dryRunValidatorMachine = dataValidatorMachine.provide({
 
 const getAllComponentsDefsInDesign = async (design) => {
   const { components } = processDesign(design);
-
   const componentDefs = (
     await Promise.allSettled(
       components.map(async (component) =>
-        getComponentDefinition(component.type, component.model, {
-          apiVersion: component.apiVersion,
+        getComponentDefinition(component.component.kind, component.model.name, {
+          apiVersion: component.component.version,
           annotations: 'include',
         }),
       ),
@@ -159,11 +159,7 @@ const getAllComponentsDefsInDesign = async (design) => {
     .map((result) => result.value);
 
   const componentStore = componentDefs.reduce((acc, componentDef) => {
-    const key = componentKey({
-      type: componentDef.component.kind,
-      model: componentDef.model.name,
-      apiVersion: componentDef.component.version,
-    });
+    const key = componentKey(componentDef);
     acc[key] = componentDef;
     return acc;
   }, {});
@@ -178,26 +174,29 @@ export const designValidationMachine = createMachine({
 
   states: {
     init: {
-      entry: assign({
-        schemaValidator: ({ spawn }) =>
-          spawn(
-            fromWorkerfiedActor(
-              new Worker(new URL('./schemaValidatorWorker', import.meta.url), { type: 'module' }),
+      entry: [
+        () => console.log('spawning design validation actor wooo'),
+        assign({
+          schemaValidator: ({ spawn }) =>
+            spawn(
+              fromWorkerfiedActor(
+                new Worker(new URL('./schemaValidatorWorker', import.meta.url), { type: 'module' }),
+              ),
+              {
+                name: 'schemaValidator',
+                id: 'schemaValidator',
+                syncSnapshot: true,
+              },
             ),
-            {
-              name: 'schemaValidator',
-              id: 'schemaValidator',
-              syncSnapshot: true,
-            },
-          ),
 
-        dryRunValidator: ({ spawn }) =>
-          spawn(dryRunValidatorMachine, {
-            name: 'dryRunValidator',
-            id: 'dryRunValidator',
-            syncSnapshot: true,
-          }),
-      }),
+          dryRunValidator: ({ spawn }) =>
+            spawn(dryRunValidatorMachine, {
+              name: 'dryRunValidator',
+              id: 'dryRunValidator',
+              syncSnapshot: true,
+            }),
+        }),
+      ],
       always: 'idle',
     },
 
@@ -229,10 +228,12 @@ export const designValidationMachine = createMachine({
         input: ({ context, event }) => ({ context, event }),
         src: fromPromise(async ({ input }) => {
           const { component } = input.event.data;
-          const def = await getComponentDefinition(component.type, component.model, {
-            apiVersion: component.apiVersion,
+
+          const def = await getComponentDefinition(component.component.kind, component.model.name, {
+            apiVersion: component.component.version,
             annotations: 'include',
           });
+
           return {
             validationPayload: {
               ...input.event.data,

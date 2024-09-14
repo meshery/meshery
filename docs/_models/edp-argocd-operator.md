@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: EDP Argocd Operator
-subtitle: Collaborative and visual infrastructure as code for EDP Argocd Operator
+subtitle: Collaborative and visual infrastructure as design for EDP Argocd Operator
 image: /assets/img/integrations/edp-argocd-operator/icons/color/edp-argocd-operator-color.svg
 permalink: extensibility/integrations/edp-argocd-operator
 docURL: https://docs.meshery.io/extensibility/integrations/edp-argocd-operator

@@ -1,0 +1,195 @@
+{
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "Submariner",
+   "schema": "{\n \"description\": \"Submariner is the Schema for the submariners API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"SubmarinerSpec defines the desired state of Submariner\",\n   \"properties\": {\n    \"broker\": {\n     \"type\": \"string\"\n    },\n    \"brokerK8sApiServer\": {\n     \"type\": \"string\"\n    },\n    \"brokerK8sApiServerToken\": {\n     \"type\": \"string\"\n    },\n    \"brokerK8sCA\": {\n     \"type\": \"string\"\n    },\n    \"brokerK8sInsecure\": {\n     \"type\": \"boolean\"\n    },\n    \"brokerK8sRemoteNamespace\": {\n     \"type\": \"string\"\n    },\n    \"cableDriver\": {\n     \"type\": \"string\"\n    },\n    \"ceIPSecDebug\": {\n     \"type\": \"boolean\"\n    },\n    \"ceIPSecForceUDPEncaps\": {\n     \"type\": \"boolean\"\n    },\n    \"ceIPSecIKEPort\": {\n     \"type\": \"integer\"\n    },\n    \"ceIPSecNATTPort\": {\n     \"type\": \"integer\"\n    },\n    \"ceIPSecPSK\": {\n     \"type\": \"string\"\n    },\n    \"ceIPSecPreferredServer\": {\n     \"type\": \"boolean\"\n    },\n    \"clusterCIDR\": {\n     \"type\": \"string\"\n    },\n    \"clusterID\": {\n     \"type\": \"string\"\n    },\n    \"colorCodes\": {\n     \"type\": \"string\"\n    },\n    \"connectionHealthCheck\": {\n     \"properties\": {\n      \"enabled\": {\n       \"type\": \"boolean\"\n      },\n      \"intervalSeconds\": {\n       \"description\": \"The interval at which health check pings are sent.\",\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"maxPacketLossCount\": {\n       \"description\": \"The maximum number of packets lost at which the health checker will mark the connection as down.\",\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"coreDNSCustomConfig\": {\n     \"properties\": {\n      \"configMapName\": {\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"customDomains\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\",\n     \"x-kubernetes-list-type\": \"set\"\n    },\n    \"debug\": {\n     \"type\": \"boolean\"\n    },\n    \"globalCIDR\": {\n     \"type\": \"string\"\n    },\n    \"imageOverrides\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"object\"\n    },\n    \"loadBalancerEnabled\": {\n     \"type\": \"boolean\"\n    },\n    \"namespace\": {\n     \"type\": \"string\"\n    },\n    \"natEnabled\": {\n     \"type\": \"boolean\"\n    },\n    \"repository\": {\n     \"type\": \"string\"\n    },\n    \"serviceCIDR\": {\n     \"type\": \"string\"\n    },\n    \"serviceDiscoveryEnabled\": {\n     \"type\": \"boolean\"\n    },\n    \"version\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"broker\",\n    \"brokerK8sApiServer\",\n    \"brokerK8sApiServerToken\",\n    \"brokerK8sCA\",\n    \"brokerK8sRemoteNamespace\",\n    \"ceIPSecDebug\",\n    \"ceIPSecPSK\",\n    \"clusterCIDR\",\n    \"clusterID\",\n    \"debug\",\n    \"namespace\",\n    \"natEnabled\",\n    \"serviceCIDR\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Submariner\",\n \"type\": \"object\"\n}",
+   "version": "submariner.io/v1alpha1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "Submariner",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "published": false,
+   "source_uri": "git://github.com/submariner-io/submariner-charts/devel/submariner-operator/crds"
+  },
+  "model": {
+   "category": {
+    "name": "App Definition and Development"
+   },
+   "displayName": "Schemahero",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "isAnnotation": false,
+    "primaryColor": "#1d4493",
+    "secondaryColor": "#34579e",
+    "shape": "circle",
+    "source_uri": "git://github.com/submariner-io/submariner-charts/devel/submariner-operator/crds",
+    "styleOverrides": "",
+    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 391 395\" fill=\"none\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M195.387 25.6297C193.303 24.5826 190.847 24.5826 188.764 25.6297L52.145 94.2978C50.1768 95.2871 48.7542 97.1046 48.2669 99.2524L15.0381 245.722C14.5436 247.902 15.0653 250.188 16.4566 251.938L110.02 369.614C111.418 371.373 113.543 372.399 115.791 372.399H268.36C270.608 372.399 272.733 371.373 274.131 369.614L367.694 251.938C369.085 250.188 369.607 247.902 369.113 245.722L335.884 99.2524C335.396 97.1046 333.974 95.2871 332.006 94.2978L195.387 25.6297ZM182.141 12.4602C188.391 9.31869 195.76 9.31869 202.01 12.4602L338.629 81.1283C344.533 84.0962 348.801 89.5485 350.263 95.9921L383.492 242.461C384.975 249.001 383.41 255.86 379.236 261.11L285.673 378.786C281.478 384.064 275.103 387.139 268.36 387.139H115.791C109.048 387.139 102.673 384.064 98.4774 378.786L4.91444 261.11C0.740681 255.86 -0.824562 249.001 0.659069 242.461L33.8879 95.9921C35.3497 89.5485 39.6174 84.0962 45.5221 81.1283L182.141 12.4602Z\" fill=\"#326DE6\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M200.24 18.1375L247.022 238.387L37.746 102.001L45.7978 89.6528L225.189 206.563L185.818 21.1993L200.24 18.1375Z\" fill=\"#326DE6\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M368.145 255.309L234.328 227.711L237.136 213.26L370.953 240.858L368.145 255.309Z\" fill=\"#326DE6\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M241.154 225.143L116.409 378.014L104.984 368.696L229.729 215.825L241.154 225.143Z\" fill=\"#326DE6\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M103.542 374.522L34.6176 97.6058L48.9256 94.0464L117.85 370.963L103.542 374.522Z\" fill=\"#326DE6\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M361.881 262.227L130.887 374.522L125.421 362.36L356.415 250.065L361.881 262.227Z\" fill=\"#326DE6\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M262.616 215.826C262.616 231.656 249.78 244.49 233.944 244.49C218.109 244.49 205.273 231.656 205.273 215.826C205.273 199.995 218.109 187.161 233.944 187.161C249.78 187.161 262.616 199.995 262.616 215.826Z\" fill=\"#1D4493\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M390.889 250.064C390.889 260.859 382.136 269.61 371.338 269.61C360.54 269.61 351.786 260.859 351.786 250.064C351.786 239.27 360.54 230.518 371.338 230.518C382.136 230.518 390.889 239.27 390.889 250.064Z\" fill=\"#1D4493\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M136.314 370.333C136.314 383.567 125.583 394.295 112.345 394.295C99.108 394.295 88.377 383.567 88.377 370.333C88.377 357.099 99.108 346.371 112.345 346.371C125.583 346.371 136.314 357.099 136.314 370.333Z\" fill=\"#1D4493\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M60.3448 95.8258C60.3448 106.081 52.0294 114.394 41.7717 114.394C31.5141 114.394 23.1986 106.081 23.1986 95.8258C23.1986 85.5709 31.5141 77.2577 41.7717 77.2577C52.0294 77.2577 60.3448 85.5709 60.3448 95.8258Z\" fill=\"#1D4493\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M209.512 18.1376C209.512 27.7652 201.706 35.5699 192.075 35.5699C182.445 35.5699 174.638 27.7652 174.638 18.1376C174.638 8.50997 182.445 0.705261 192.075 0.705261C201.706 0.705261 209.512 8.50997 209.512 18.1376Z\" fill=\"#1D4493\"\u003e\u003c/path\u003e\n\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 391 395\" fill=\"none\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M195.387 25.6297C193.303 24.5826 190.847 24.5826 188.764 25.6297L52.145 94.2978C50.1768 95.2871 48.7542 97.1046 48.2669 99.2524L15.0381 245.722C14.5436 247.902 15.0653 250.188 16.4566 251.938L110.02 369.614C111.418 371.373 113.543 372.399 115.791 372.399H268.36C270.608 372.399 272.733 371.373 274.131 369.614L367.694 251.938C369.085 250.188 369.607 247.902 369.113 245.722L335.884 99.2524C335.396 97.1046 333.974 95.2871 332.006 94.2978L195.387 25.6297ZM182.141 12.4602C188.391 9.31869 195.76 9.31869 202.01 12.4602L338.629 81.1283C344.533 84.0962 348.801 89.5485 350.263 95.9921L383.492 242.461C384.975 249.001 383.41 255.86 379.236 261.11L285.673 378.786C281.478 384.064 275.103 387.139 268.36 387.139H115.791C109.048 387.139 102.673 384.064 98.4774 378.786L4.91444 261.11C0.740681 255.86 -0.824562 249.001 0.659069 242.461L33.8879 95.9921C35.3497 89.5485 39.6174 84.0962 45.5221 81.1283L182.141 12.4602Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M200.24 18.1375L247.022 238.387L37.7461 102.001L45.7979 89.6528L225.189 206.563L185.818 21.1993L200.24 18.1375Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M368.146 255.309L234.329 227.711L237.136 213.26L370.953 240.858L368.146 255.309Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M241.154 225.143L116.409 378.014L104.984 368.696L229.729 215.825L241.154 225.143Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M103.542 374.522L34.6177 97.6058L48.9256 94.0464L117.85 370.963L103.542 374.522Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M361.881 262.227L130.887 374.522L125.421 362.36L356.415 250.065L361.881 262.227Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M262.616 215.826C262.616 231.656 249.779 244.49 233.944 244.49C218.109 244.49 205.272 231.656 205.272 215.826C205.272 199.995 218.109 187.161 233.944 187.161C249.779 187.161 262.616 199.995 262.616 215.826Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M390.889 250.064C390.889 260.859 382.135 269.61 371.338 269.61C360.54 269.61 351.786 260.859 351.786 250.064C351.786 239.27 360.54 230.518 371.338 230.518C382.135 230.518 390.889 239.27 390.889 250.064Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M136.314 370.333C136.314 383.567 125.583 394.295 112.345 394.295C99.108 394.295 88.377 383.567 88.377 370.333C88.377 357.099 99.108 346.371 112.345 346.371C125.583 346.371 136.314 357.099 136.314 370.333Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M60.3447 95.8258C60.3447 106.081 52.0292 114.394 41.7716 114.394C31.514 114.394 23.1985 106.081 23.1985 95.8258C23.1985 85.5709 31.514 77.2577 41.7716 77.2577C52.0292 77.2577 60.3447 85.5709 60.3447 95.8258Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M209.512 18.1376C209.512 27.7652 201.706 35.5699 192.075 35.5699C182.445 35.5699 174.638 27.7652 174.638 18.1376C174.638 8.50997 182.445 0.705261 192.075 0.705261C201.706 0.705261 209.512 8.50997 209.512 18.1376Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003c/svg\u003e"
+   },
+   "model": {
+    "version": "v0.19.0-m2"
+   },
+   "name": "schemahero",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "github",
+    "name": "Github",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "subCategory": "Database",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "ignored",
+  "styles": {
+   "primaryColor": "#1d4493",
+   "secondaryColor": "#34579e",
+   "shape": "circle",
+   "svgColor": "\u003csvg width=\"391\" height=\"395\" viewBox=\"0 0 391 395\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M195.387 25.6297C193.303 24.5826 190.847 24.5826 188.764 25.6297L52.145 94.2978C50.1768 95.2871 48.7542 97.1046 48.2669 99.2524L15.0381 245.722C14.5436 247.902 15.0653 250.188 16.4566 251.938L110.02 369.614C111.418 371.373 113.543 372.399 115.791 372.399H268.36C270.608 372.399 272.733 371.373 274.131 369.614L367.694 251.938C369.085 250.188 369.607 247.902 369.113 245.722L335.884 99.2524C335.396 97.1046 333.974 95.2871 332.006 94.2978L195.387 25.6297ZM182.141 12.4602C188.391 9.31869 195.76 9.31869 202.01 12.4602L338.629 81.1283C344.533 84.0962 348.801 89.5485 350.263 95.9921L383.492 242.461C384.975 249.001 383.41 255.86 379.236 261.11L285.673 378.786C281.478 384.064 275.103 387.139 268.36 387.139H115.791C109.048 387.139 102.673 384.064 98.4774 378.786L4.91444 261.11C0.740681 255.86 -0.824562 249.001 0.659069 242.461L33.8879 95.9921C35.3497 89.5485 39.6174 84.0962 45.5221 81.1283L182.141 12.4602Z\" fill=\"#326DE6\"/\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M200.24 18.1375L247.022 238.387L37.746 102.001L45.7978 89.6528L225.189 206.563L185.818 21.1993L200.24 18.1375Z\" fill=\"#326DE6\"/\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M368.145 255.309L234.328 227.711L237.136 213.26L370.953 240.858L368.145 255.309Z\" fill=\"#326DE6\"/\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M241.154 225.143L116.409 378.014L104.984 368.696L229.729 215.825L241.154 225.143Z\" fill=\"#326DE6\"/\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M103.542 374.522L34.6176 97.6058L48.9256 94.0464L117.85 370.963L103.542 374.522Z\" fill=\"#326DE6\"/\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M361.881 262.227L130.887 374.522L125.421 362.36L356.415 250.065L361.881 262.227Z\" fill=\"#326DE6\"/\u003e\n\u003cpath d=\"M262.616 215.826C262.616 231.656 249.78 244.49 233.944 244.49C218.109 244.49 205.273 231.656 205.273 215.826C205.273 199.995 218.109 187.161 233.944 187.161C249.78 187.161 262.616 199.995 262.616 215.826Z\" fill=\"#1D4493\"/\u003e\n\u003cpath d=\"M390.889 250.064C390.889 260.859 382.136 269.61 371.338 269.61C360.54 269.61 351.786 260.859 351.786 250.064C351.786 239.27 360.54 230.518 371.338 230.518C382.136 230.518 390.889 239.27 390.889 250.064Z\" fill=\"#1D4493\"/\u003e\n\u003cpath d=\"M136.314 370.333C136.314 383.567 125.583 394.295 112.345 394.295C99.108 394.295 88.377 383.567 88.377 370.333C88.377 357.099 99.108 346.371 112.345 346.371C125.583 346.371 136.314 357.099 136.314 370.333Z\" fill=\"#1D4493\"/\u003e\n\u003cpath d=\"M60.3448 95.8258C60.3448 106.081 52.0294 114.394 41.7717 114.394C31.5141 114.394 23.1986 106.081 23.1986 95.8258C23.1986 85.5709 31.5141 77.2577 41.7717 77.2577C52.0294 77.2577 60.3448 85.5709 60.3448 95.8258Z\" fill=\"#1D4493\"/\u003e\n\u003cpath d=\"M209.512 18.1376C209.512 27.7652 201.706 35.5699 192.075 35.5699C182.445 35.5699 174.638 27.7652 174.638 18.1376C174.638 8.50997 182.445 0.705261 192.075 0.705261C201.706 0.705261 209.512 8.50997 209.512 18.1376Z\" fill=\"#1D4493\"/\u003e\n\u003c/svg\u003e",
+   "svgWhite": "\u003csvg width=\"391\" height=\"395\" viewBox=\"0 0 391 395\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M195.387 25.6297C193.303 24.5826 190.847 24.5826 188.764 25.6297L52.145 94.2978C50.1768 95.2871 48.7542 97.1046 48.2669 99.2524L15.0381 245.722C14.5436 247.902 15.0653 250.188 16.4566 251.938L110.02 369.614C111.418 371.373 113.543 372.399 115.791 372.399H268.36C270.608 372.399 272.733 371.373 274.131 369.614L367.694 251.938C369.085 250.188 369.607 247.902 369.113 245.722L335.884 99.2524C335.396 97.1046 333.974 95.2871 332.006 94.2978L195.387 25.6297ZM182.141 12.4602C188.391 9.31869 195.76 9.31869 202.01 12.4602L338.629 81.1283C344.533 84.0962 348.801 89.5485 350.263 95.9921L383.492 242.461C384.975 249.001 383.41 255.86 379.236 261.11L285.673 378.786C281.478 384.064 275.103 387.139 268.36 387.139H115.791C109.048 387.139 102.673 384.064 98.4774 378.786L4.91444 261.11C0.740681 255.86 -0.824562 249.001 0.659069 242.461L33.8879 95.9921C35.3497 89.5485 39.6174 84.0962 45.5221 81.1283L182.141 12.4602Z\" fill=\"white\"/\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M200.24 18.1375L247.022 238.387L37.7461 102.001L45.7979 89.6528L225.189 206.563L185.818 21.1993L200.24 18.1375Z\" fill=\"white\"/\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M368.146 255.309L234.329 227.711L237.136 213.26L370.953 240.858L368.146 255.309Z\" fill=\"white\"/\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M241.154 225.143L116.409 378.014L104.984 368.696L229.729 215.825L241.154 225.143Z\" fill=\"white\"/\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M103.542 374.522L34.6177 97.6058L48.9256 94.0464L117.85 370.963L103.542 374.522Z\" fill=\"white\"/\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M361.881 262.227L130.887 374.522L125.421 362.36L356.415 250.065L361.881 262.227Z\" fill=\"white\"/\u003e\n\u003cpath d=\"M262.616 215.826C262.616 231.656 249.779 244.49 233.944 244.49C218.109 244.49 205.272 231.656 205.272 215.826C205.272 199.995 218.109 187.161 233.944 187.161C249.779 187.161 262.616 199.995 262.616 215.826Z\" fill=\"white\"/\u003e\n\u003cpath d=\"M390.889 250.064C390.889 260.859 382.135 269.61 371.338 269.61C360.54 269.61 351.786 260.859 351.786 250.064C351.786 239.27 360.54 230.518 371.338 230.518C382.135 230.518 390.889 239.27 390.889 250.064Z\" fill=\"white\"/\u003e\n\u003cpath d=\"M136.314 370.333C136.314 383.567 125.583 394.295 112.345 394.295C99.108 394.295 88.377 383.567 88.377 370.333C88.377 357.099 99.108 346.371 112.345 346.371C125.583 346.371 136.314 357.099 136.314 370.333Z\" fill=\"white\"/\u003e\n\u003cpath d=\"M60.3447 95.8258C60.3447 106.081 52.0292 114.394 41.7716 114.394C31.514 114.394 23.1985 106.081 23.1985 95.8258C23.1985 85.5709 31.514 77.2577 41.7716 77.2577C52.0292 77.2577 60.3447 85.5709 60.3447 95.8258Z\" fill=\"white\"/\u003e\n\u003cpath d=\"M209.512 18.1376C209.512 27.7652 201.706 35.5699 192.075 35.5699C182.445 35.5699 174.638 27.7652 174.638 18.1376C174.638 8.50997 182.445 0.705261 192.075 0.705261C201.706 0.705261 209.512 8.50997 209.512 18.1376Z\" fill=\"white\"/\u003e\n\u003c/svg\u003e"
+  },
+  "version": "v1.0.0"
+ }
