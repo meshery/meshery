@@ -306,6 +306,7 @@ func main() {
 			TokenStore:                 make(map[string]string),
 			LoginCookieDuration:        1 * time.Hour,
 			SessionPreferencePersister: &models.SessionPreferencePersister{DB: dbHandler},
+			UserCapabilitiesPersister:  &models.UserCapabilitiesPersister{DB: dbHandler},
 			ProviderVersion:            version,
 			SmiResultPersister:         &models.SMIResultsPersister{DB: dbHandler},
 			GenericPersister:           dbHandler,
