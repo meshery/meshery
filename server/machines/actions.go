@@ -42,7 +42,7 @@ func (da *DefaultConnectAction) Execute(ctx context.Context, machineCtx interfac
 
 	provider, _ := ctx.Value(models.ProviderCtxKey).(models.Provider)
 
-	payload, err := utils.Cast[models.ConnectionPayload](data)
+	payload, err := utils.Cast[connections.ConnectionPayload](data)
 	if err != nil {
 		return NoOp, eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{"error": err}).Build(), err
 	}
@@ -65,7 +65,7 @@ func (da *DefaultConnectAction) Execute(ctx context.Context, machineCtx interfac
 			WithSeverity(events.Error).WithMetadata(map[string]interface{}{"error": err}).Build(), _err
 	}
 
-	connection, err := provider.SaveConnection(&models.ConnectionPayload{
+	connection, err := provider.SaveConnection(&connections.ConnectionPayload{
 		ID:           payload.ID,
 		Kind:         payload.Kind,
 		Type:         payload.Type,
