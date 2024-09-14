@@ -41,7 +41,7 @@ import { CONNECTION_KINDS } from '../utils/Enum';
 import { Checkbox, OutlinedSettingsIcon } from '@layer5/sistent';
 import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomTextTooltip';
 import { Colors } from '@/themes/app';
-import CAN from '@/utils/can';
+import CAN, { CanShow } from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import SpaceSwitcher from './SpacesSwitcher/SpaceSwitcher';
 import { UsesSistent } from './SistentWrapper';
@@ -286,7 +286,6 @@ function K8sContextMenu({
   classes = {},
   contexts = {},
   activeContexts = [],
-  show,
   updateK8SConfig,
   setActiveContexts = () => {},
   searchContexts = () => {},
@@ -347,143 +346,147 @@ function K8sContextMenu({
 
   return (
     <>
-      <div style={show ? cursorNotAllowed : {}}>
-        <IconButton
-          aria-label="contexts"
-          className="k8s-icon-button"
-          disabled={
-            !CAN(
-              keys.VIEW_ALL_KUBERNETES_CLUSTERS.action,
-              keys.VIEW_ALL_KUBERNETES_CLUSTERS.subject,
-            )
-          }
-          onClick={(e) => {
-            e.preventDefault();
-            setShowFullContextMenu((prev) => !prev);
-          }}
-          onMouseOver={(e) => {
-            e.preventDefault();
-            setAnchorEl(true);
-          }}
-          onMouseLeave={(e) => {
-            e.preventDefault();
-            setAnchorEl(false);
-          }}
-          aria-owns={open ? 'menu-list-grow' : undefined}
-          aria-haspopup="true"
-          style={show ? ctxStyle : { marginRight: '0.5rem' }}
-        >
-          <div className={classes.cbadgeContainer}>
-            <img
-              className="k8s-image"
-              src={
-                connectionMetadataState &&
-                connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
-                  ? `/${connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon}`
-                  : '/static/img/kubernetes.svg'
-              }
-              onError={(e) => {
-                e.target.src = '/static/img/kubernetes.svg';
-              }}
-              width="24px"
-              height="24px"
-              style={{ objectFit: 'contain' }}
-            />
-            <div className={classes.cbadge}>{contexts?.total_count || 0}</div>
-          </div>
-        </IconButton>
+      <div>
+        <CanShow Key={keys.VIEW_ALL_KUBERNETES_CLUSTERS}>
+          <IconButton
+            aria-label="contexts"
+            className="k8s-icon-button"
+            disabled={
+              !CAN(
+                keys.VIEW_ALL_KUBERNETES_CLUSTERS.action,
+                keys.VIEW_ALL_KUBERNETES_CLUSTERS.subject,
+              )
+            }
+            onClick={(e) => {
+              e.preventDefault();
+              setShowFullContextMenu((prev) => !prev);
+            }}
+            onMouseOver={(e) => {
+              e.preventDefault();
+              setAnchorEl(true);
+            }}
+            onMouseLeave={(e) => {
+              e.preventDefault();
+              setAnchorEl(false);
+            }}
+            aria-owns={open ? 'menu-list-grow' : undefined}
+            aria-haspopup="true"
+            style={ctxStyle}
+          >
+            <div className={classes.cbadgeContainer}>
+              <img
+                className="k8s-image"
+                src={
+                  connectionMetadataState &&
+                  connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
+                    ? `/${connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon}`
+                    : '/static/img/kubernetes.svg'
+                }
+                onError={(e) => {
+                  e.target.src = '/static/img/kubernetes.svg';
+                }}
+                width="24px"
+                height="24px"
+                style={{ objectFit: 'contain' }}
+              />
+              <div className={classes.cbadge}>{contexts?.total_count || 0}</div>
+            </div>
+          </IconButton>
+        </CanShow>
       </div>
 
-      <Slide
-        direction="down"
-        style={styleSlider}
-        timeout={400}
-        in={open}
-        mountOnEnter
-        unmountOnExit
-      >
-        <div>
-          <ClickAwayListener
-            onClickAway={(e) => {
-              if (
-                typeof e.target.className == 'string' &&
-                !e.target.className?.includes('cbadge') &&
-                e.target?.className != 'k8s-image' &&
-                !e.target.className.includes('k8s-icon-button')
-              ) {
-                setAnchorEl(false);
-                setShowFullContextMenu(false);
-              }
-            }}
-          >
-            <Paper className={classes.cMenuContainer}>
-              <div>
-                <TextField
-                  id="search-ctx"
-                  label="Search"
-                  size="small"
-                  variant="outlined"
-                  onChange={(ev) => searchContexts(ev.target.value)}
-                  style={{
-                    width: '100%',
-                    backgroundColor: 'rgba(102, 102, 102, 0.12)',
-                    margin: '1px 0px',
-                  }}
-                  InputProps={{
-                    endAdornment: <Search className={classes.searchIcon} style={iconMedium} />,
-                  }}
-                />
-              </div>
-              <div>
-                {contexts?.total_count ? (
-                  <>
-                    <UsesSistent>
-                      <Checkbox
-                        checked={activeContexts.includes('all')}
-                        onChange={() =>
-                          activeContexts.includes('all')
-                            ? setActiveContexts([])
-                            : setActiveContexts('all')
-                        }
+      <CanShow Key={keys.VIEW_ALL_KUBERNETES_CLUSTERS} invert_action={['hide']}>
+        <Slide
+          direction="down"
+          style={styleSlider}
+          timeout={400}
+          in={open}
+          mountOnEnter
+          unmountOnExit
+        >
+          <div>
+            <ClickAwayListener
+              onClickAway={(e) => {
+                if (
+                  typeof e.target.className == 'string' &&
+                  !e.target.className?.includes('cbadge') &&
+                  e.target?.className != 'k8s-image' &&
+                  !e.target.className.includes('k8s-icon-button')
+                ) {
+                  setAnchorEl(false);
+                  setShowFullContextMenu(false);
+                }
+              }}
+            >
+              <Paper className={classes.cMenuContainer}>
+                <div>
+                  <TextField
+                    id="search-ctx"
+                    label="Search"
+                    size="small"
+                    variant="outlined"
+                    onChange={(ev) => searchContexts(ev.target.value)}
+                    style={{
+                      width: '100%',
+                      backgroundColor: 'rgba(102, 102, 102, 0.12)',
+                      margin: '1px 0px',
+                    }}
+                    InputProps={{
+                      endAdornment: <Search className={classes.searchIcon} style={iconMedium} />,
+                    }}
+                  />
+                </div>
+                <div>
+                  {contexts?.total_count ? (
+                    <>
+                      <UsesSistent>
+                        <Checkbox
+                          checked={activeContexts.includes('all')}
+                          onChange={() =>
+                            activeContexts.includes('all')
+                              ? setActiveContexts([])
+                              : setActiveContexts('all')
+                          }
+                          color="primary"
+                        />
+                      </UsesSistent>
+                      <span style={{ fontWeight: 'bolder' }}>select all</span>
+                    </>
+                  ) : (
+                    <Link href="/management/connections">
+                      <Button
+                        type="submit"
+                        variant="contained"
                         color="primary"
+                        size="large"
+                        style={{ margin: '0.5rem 0.5rem', whiteSpace: 'nowrap' }}
+                      >
+                        <AddIcon className={classes.AddIcon} style={iconMedium} />
+                        Connect Clusters
+                      </Button>
+                    </Link>
+                  )}
+                  {contexts?.contexts?.map((ctx) => {
+                    return (
+                      <K8sContextConnectionChip
+                        key={ctx.id}
+                        classes={classes}
+                        ctx={ctx}
+                        selectable
+                        onDelete={handleKubernetesDelete}
+                        selected={activeContexts.includes(ctx.id)}
+                        onSelectChange={() => setActiveContexts(ctx.id)}
+                        meshsyncControllerState={meshsyncControllerState}
+                        connectionMetadataState={connectionMetadataState}
                       />
-                    </UsesSistent>
-                    <span style={{ fontWeight: 'bolder' }}>select all</span>
-                  </>
-                ) : (
-                  <Link href="/management/connections">
-                    <Button
-                      type="submit"
-                      variant="contained"
-                      color="primary"
-                      size="large"
-                      style={{ margin: '0.5rem 0.5rem', whiteSpace: 'nowrap' }}
-                    >
-                      <AddIcon className={classes.AddIcon} style={iconMedium} />
-                      Connect Clusters
-                    </Button>
-                  </Link>
-                )}
-                {contexts?.contexts?.map((ctx) => {
-                  return (
-                    <K8sContextConnectionChip
-                      key={ctx.id}
-                      classes={classes}
-                      ctx={ctx}
-                      selectable
-                      onDelete={handleKubernetesDelete}
-                      selected={activeContexts.includes(ctx.id)}
-                      onSelectChange={() => setActiveContexts(ctx.id)}
-                      meshsyncControllerState={meshsyncControllerState}
-                      connectionMetadataState={connectionMetadataState}
-                    />
-                  );
-                })}
-              </div>
-            </Paper>
-          </ClickAwayListener>
-        </div>
-      </Slide>
+                    );
+                  })}
+                </div>
+              </Paper>
+            </ClickAwayListener>
+          </div>
+        </Slide>
+      </CanShow>
 
       <PromptComponent ref={deleteCtxtRef} />
     </>
@@ -587,7 +590,6 @@ class Header extends React.PureComponent {
                     <K8sContextMenu
                       classes={classes}
                       contexts={this.props.contexts}
-                      show={!this.state.capabilityregistryObj?.isHeaderComponentEnabled([SETTINGS])}
                       activeContexts={this.props.activeContexts}
                       setActiveContexts={this.props.setActiveContexts}
                       searchContexts={this.props.searchContexts}
