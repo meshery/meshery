@@ -170,14 +170,7 @@ const User = (props) => {
         : `/extensions/user/login?redirect=${window.location.pathname}`;
     return (
       <Link href={url}>
-        <Button
-          variant="contained"
-          onClick={handleLogout}
-          style={{
-            backgroundColor: Colors.keppelGreen,
-            color: '#ffff',
-          }}
-        >
+        <Button variant="contained" onClick={handleLogout} color="primary">
           Sign In
         </Button>
       </Link>
