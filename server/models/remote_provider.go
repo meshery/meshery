@@ -294,8 +294,8 @@ func (l *RemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _
 	callbackURL = callbackURL.JoinPath(r.URL.EscapedPath())
 	callbackURL.RawQuery = r.URL.RawQuery
 
-	_, err := r.Cookie(TokenCookieName)
-	if err != nil {
+	ck, err := r.Cookie(TokenCookieName)
+	if err != nil || ck.Value == "" {
 		http.SetCookie(w, &http.Cookie{
 			Name:     l.RefCookieName,
 			Value:    "/",
@@ -672,10 +672,6 @@ func (l *RemoteProvider) Logout(w http.ResponseWriter, req *http.Request) error 
 // Redirects to alert user of expired sesion
 func (l *RemoteProvider) HandleUnAuthenticated(w http.ResponseWriter, req *http.Request) {
 	_, err := req.Cookie("meshery-provider")
-	if viper.GetString("RELEASE_CHANNEL") == "kanvas" {
-		http.Redirect(w, req, "/api/user/login", http.StatusFound)
-		return
-	}
 	if err == nil {
 		// remove the cookie from the browser and redirect to inform about expired session.
 		l.UnSetJWTCookie(w)
