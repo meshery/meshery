@@ -28,6 +28,7 @@ import (
 	"time"
 
 	"github.com/layer5io/meshkit/encoding"
+	"github.com/layer5io/meshkit/models/meshmodel/entity"
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshkit/generators"
@@ -419,7 +420,11 @@ func GenerateDefsForCoreRegistrant(model utils.ModelCSV, ComponentCSVHelper *uti
 			version:    version,
 		})
 	}()
-
+	status := entity.Ignored
+	if isModelPublished {
+		status = entity.Enabled
+	}
+	_status := component.ComponentDefinitionStatus(status)
 	modelDirPath, compDirPath, err := createVersionedDirectoryForModelAndComp(version, model.Model)
 	if err != nil {
 		err = ErrGenerateModel(err, model.Model)
@@ -429,6 +434,7 @@ func GenerateDefsForCoreRegistrant(model utils.ModelCSV, ComponentCSVHelper *uti
 	if err != nil {
 		return ErrGenerateModel(err, model.Model)
 	}
+	isModelPublishToSite, _ := strconv.ParseBool(model.PublishToSites)
 	alreadyExist = alreadyExists
 	for registrant, models := range ComponentCSVHelper.Components {
 		if registrant != "meshery" {
@@ -440,11 +446,12 @@ func GenerateDefsForCoreRegistrant(model utils.ModelCSV, ComponentCSVHelper *uti
 					continue
 				}
 				var componentDef component.ComponentDefinition
-				componentDef, err = comp.CreateComponentDefinition(isModelPublished, "v1.0.0")
+				componentDef, err = comp.CreateComponentDefinition(isModelPublishToSite, "v1.0.0")
 				if err != nil {
 					utils.Log.Error(ErrUpdateComponent(err, modelName, comp.Component))
 					continue
 				}
+				componentDef.Status = &_status
 				componentDef.Model = *modelDef
 				alreadyExists, err = componentDef.WriteComponentDefinition(compDirPath)
 				if err != nil {

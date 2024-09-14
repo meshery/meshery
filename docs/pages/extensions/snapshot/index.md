@@ -130,9 +130,6 @@ githubToken:
 providerToken:
   description: "Meshery Authentication Provider Token"
   required: true
-cypressRecordKey:
-  description: "cypress record key"
-  required: false
 prNumber:
   description: "The Pull request on which comment has to be made"
   required: false

@@ -128,7 +128,7 @@ export function MeshMapEarlyAccessCard({
   capabilitiesRegistry,
 }) {
   const signUpText = 'Sign up';
-  const signupHeader = 'Get early access to MeshMap!';
+  const signupHeader = 'Get early access to Kanvas!';
   const classes = styles();
   const [buttonText, setButtonText] = useState(signUpText);
   const [title, setTitle] = useState(signupHeader);
@@ -139,7 +139,7 @@ export function MeshMapEarlyAccessCard({
 
   const handleButtonClick = (e) => {
     if (buttonText === signUpText) {
-      window.open('https://layer5.io/meshmap', '_blank');
+      window.open('https://layer5.io/kanvas', '_blank');
     } else {
       push(mesheryExtensionRoute);
     }
@@ -150,7 +150,7 @@ export function MeshMapEarlyAccessCard({
     const isMeshMapUser = isMeshMapRegisteredUser(capabilitiesRegistry);
     if (isMeshMapUser) {
       setTitle('Collaborative management enabled');
-      setButtonText('Open MeshMap');
+      setButtonText('Open Kanvas');
     } else {
       setTitle(signupHeader);
       setButtonText(signUpText);
