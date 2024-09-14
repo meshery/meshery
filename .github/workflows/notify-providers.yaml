@@ -10,8 +10,8 @@ on:
       - 'mesheryctl/**'
 
 jobs:
-  notify-meshmap-build:
-    name: Notify Meshmap Build
+  notify-remote-provider-build:
+    name: Notify Remote Providers of Release
     if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-22.04
     steps:

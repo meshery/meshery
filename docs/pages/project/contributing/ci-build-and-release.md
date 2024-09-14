@@ -39,7 +39,6 @@ Some portions of the workflow require secrets to accomplish their tasks. These s
 - `GO_VERSION`: As of March, 2024 is 1.21
 - `IMAGE_NAME`: appropriate image name for each of the Docker container images. All are under the `layer5io` org.
 - `SLACK_BOT_TOKEN`: Used for notification of new GitHub stars given to the Meshery repo.
-- `CYPRESS_RECORD_KEY`: Used for integration with the Layer5 account on Cypress.
 - `GLOBAL_TOKEN`: Used for securely transmitting performance test results for the None Provider.
 - `NPM_TOKEN`: npm authentication token, used to perform authentication against the npm registry in meshery deployment workflow.
 - `GH_ACCESS_TOKEN`: GitHub access token for various operations
