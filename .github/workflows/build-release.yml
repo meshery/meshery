@@ -41,5 +41,7 @@ jobs:
     name: Deploy CNCF Extensions Playground
     uses: layer5labs/meshery-extensions-packages/.github/workflows/deploy-meshery-extensions-playground.yml@master
     with:
-      image: layer5/meshery:kanvas-${GITHUB_REF/refs\/tags\//}
+      # should we use SHA? 
+      # As if meshery is not released but we want to deploy changes from the master branch, the release/latest tag will be same and hence the rollout will be skipped.
+      image: layer5/meshery:kanvas-${{ env.LATEST_TAG }} 
     secrets: inherit
