@@ -351,12 +351,6 @@ function K8sContextMenu({
           <IconButton
             aria-label="contexts"
             className="k8s-icon-button"
-            disabled={
-              !CAN(
-                keys.VIEW_ALL_KUBERNETES_CLUSTERS.action,
-                keys.VIEW_ALL_KUBERNETES_CLUSTERS.subject,
-              )
-            }
             onClick={(e) => {
               e.preventDefault();
               setShowFullContextMenu((prev) => !prev);
