@@ -394,7 +394,7 @@ function MesheryPatterns({
     pagesize: pageSize,
     search: search,
     order: sortOrder,
-    visibility: JSON.stringify([visibilityFilter]),
+    visibility: visibilityFilter ? JSON.stringify([visibilityFilter]) : '',
   });
   const [clonePattern] = useClonePatternMutation();
   const [publishCatalog] = usePublishPatternMutation();
