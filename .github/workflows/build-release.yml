@@ -23,6 +23,16 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Configure Meshery UI
+        run: |
+          cat << EOF > ui/ui.config.js
+          module.exports = {
+            components: {
+              navigator: false, // set false to disable the navigator component ( default: true )
+            },
+          };
+          EOF
       - name: Docker build & tag
         run: |
           DOCKER_BUILDKIT=1 docker build -f install/docker/Dockerfile --no-cache -t ${{ secrets.IMAGE_NAME }}:kanvas-latest --build-arg TOKEN=${{ secrets.GLOBAL_TOKEN }} --build-arg GIT_COMMITSHA=${GITHUB_SHA::8} --build-arg GIT_VERSION=${{ env.LATEST_TAG }} --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} .
