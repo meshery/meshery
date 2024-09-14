@@ -672,6 +672,10 @@ func (l *RemoteProvider) Logout(w http.ResponseWriter, req *http.Request) error 
 // Redirects to alert user of expired sesion
 func (l *RemoteProvider) HandleUnAuthenticated(w http.ResponseWriter, req *http.Request) {
 	_, err := req.Cookie("meshery-provider")
+	if viper.GetString("RELEASE_CHANNEL") == "kanvas" {
+		http.Redirect(w, req, "/api/user/login", http.StatusFound)
+		return
+	}
 	if err == nil {
 		// remove the cookie from the browser and redirect to inform about expired session.
 		l.UnSetJWTCookie(w)
