@@ -22,7 +22,6 @@ import { EVENT_TYPES } from 'lib/event-types';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { Button } from '@material-ui/core';
-import { Colors } from '@/themes/app';
 
 const LinkDiv = styled('div')(() => ({
   display: 'inline-flex',
@@ -163,11 +162,10 @@ const User = (props) => {
 
   const open = Boolean(anchorEl);
 
-  if (!userData || userData?.status == 'anonymous') {
+
+  if ( userData?.status == 'anonymous' ) {
     const url =
-      userData?.status === 'anonymous'
-        ? `https://meshery.layer5.io/user/login?anonymousUserID=${userData?.user_id}&redirect=${window.location.pathname}`
-        : `https://meshery.layer5.io/user/login?redirect=${window.location.pathname}`;
+         `${capabilitiesRegistry?.provider_url}/user/login?anonymousUserID=${userData?.user_id}&redirect=${window.location.pathname}`
         
     return (
       <Link href={url}>
