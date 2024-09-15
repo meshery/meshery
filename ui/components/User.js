@@ -166,8 +166,9 @@ const User = (props) => {
   if (!userData || userData?.status == 'anonymous') {
     const url =
       userData?.status === 'anonymous'
-        ? `/extensions/user/login?anonymousUserID=${userData?.user_id}&redirect=${window.location.pathname}`
-        : `/extensions/user/login?redirect=${window.location.pathname}`;
+        ? `https://meshery.layer5.io/user/login?anonymousUserID=${userData?.user_id}&redirect=${window.location.pathname}`
+        : `https://meshery.layer5.io/user/login?redirect=${window.location.pathname}`;
+        
     return (
       <Link href={url}>
         <Button variant="contained" onClick={handleLogout} color="primary">
