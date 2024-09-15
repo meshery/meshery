@@ -44,7 +44,7 @@ import {
   useUpdateUserPrefMutation,
   useUpdateUserPrefWithContextMutation,
 } from '@/rtk-query/user';
-import { ThemeTogglerCore, useThemePreference } from '@/themes/hooks';
+import { ThemeTogglerCore } from '@/themes/hooks';
 
 const styles = (theme) => ({
   statsWrapper: {

@@ -38,7 +38,7 @@ import {
   setConnectionMetadata,
   LegacyStoreContext,
 } from '../lib/store';
-import theme, { styles } from '../themes';
+import { styles } from '../themes';
 import { getConnectionIDsFromContextIds, getK8sConfigIdsFromK8sConfig } from '../utils/multi-ctx';
 import './../public/static/style/index.css';
 import subscribeK8sContext from '../components/graphql/subscriptions/K8sContextSubscription';

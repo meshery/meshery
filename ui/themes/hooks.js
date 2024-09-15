@@ -27,6 +27,7 @@ export const useThemePreference = () => {
 export const ThemeTogglerCore = ({ Component }) => {
   const themePref = useThemePreference();
   const [handleUpdateUserPref] = useUpdateUserPrefWithContextMutation();
+  const {data:userPrefs} = useGetUserPrefQuery()
   const [mode, setMode] = useState(themePref?.data?.mode);
 
   useEffect(() => {
@@ -36,7 +37,9 @@ export const ThemeTogglerCore = ({ Component }) => {
   const toggleTheme = () => {
     const newTheme = mode === 'light' ? 'dark' : 'light';
     setMode(newTheme);
-    handleUpdateUserPref('theme', newTheme);
+    handleUpdateUserPref({body:{
+      ...(userPrefs || {}),
+      theme : newTheme}});
   };
 
   return <Component mode={mode} toggleTheme={toggleTheme} />;
