@@ -21,8 +21,6 @@ import (
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 	"gopkg.in/yaml.v2"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/client-go/tools/clientcmd"
-	clientcmdapi "k8s.io/client-go/tools/clientcmd/api"
 )
 
 type K8sContext struct {
@@ -144,17 +142,8 @@ func NewK8sContextWithServerID(
 // kubernetes contexts from it
 func K8sContextsFromKubeconfig(provider Provider, userID string, _ *Broadcast, kubeconfig []byte, instanceID *uuid.UUID, eventMetadata map[string]interface{}, log logger.Handler) []*K8sContext {
 	kcs := []*K8sContext{}
-	parsed, err := clientcmd.Load(kubeconfig)
-	if err != nil {
-		return kcs
-	}
 
-	err = clientcmdapi.FlattenConfig(parsed)
-	if err != nil {
-		return kcs
-	}
-
-	err = clientcmdapi.MinifyConfig(parsed)
+	parsed, _, err := kubernetes.ProcessConfig(kubeconfig, "")
 	if err != nil {
 		return kcs
 	}
