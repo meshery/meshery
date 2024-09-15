@@ -210,22 +210,6 @@ async function loadActiveK8sContexts() {
   }
 }
 
-function LoadTheme({ themeSetter }) {
-  const defaultTheme = 'light';
-
-  useLayoutEffect(() => {
-    // disable dark mode in extension
-
-    if (localStorage.getItem('Theme') === null) {
-      themeSetter(defaultTheme);
-    } else {
-      themeSetter(localStorage.getItem('Theme'));
-    }
-  }, []);
-
-  return <></>;
-}
-
 const K8sContextConnectionChip_ = ({
   ctx,
   classes,
@@ -520,22 +504,12 @@ class Header extends React.PureComponent {
   };
 
   render() {
-    const {
-      classes,
-      title,
-      onDrawerToggle,
-      isBeta,
-      theme,
-      themeSetter,
-      onDrawerCollapse,
-      abilityUpdated,
-    } = this.props;
+    const { classes, title, onDrawerToggle, isBeta, onDrawerCollapse, abilityUpdated } = this.props;
     const loaderType = 'circular';
 
     return (
       <NoSsr>
         <React.Fragment>
-          <LoadTheme theme={theme} themeSetter={themeSetter} />
           <AppBar
             color="primary"
             position="sticky"
@@ -612,8 +586,6 @@ class Header extends React.PureComponent {
                   <span className={classes.userSpan}>
                     <User
                       classes={classes}
-                      theme={theme}
-                      themeSetter={themeSetter}
                       color="inherit"
                       iconButtonClassName={classes.iconButtonAvatar}
                       avatarClassName={classes.avatar}
