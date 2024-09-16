@@ -43,6 +43,10 @@ function exportToJsonFile(jsonData, filename) {
   linkElement.remove();
 }
 
+/**
+ * Extension Point: Avatar behavior for User Modes
+ * Insert custom logic here to handle Single User mode, Anonymous User mode, Multi User mode behavior.
+ */
 const User = (props) => {
   const [userLoaded, setUserLoaded] = useState(false);
   const [account, setAccount] = useState([]);
@@ -162,11 +166,9 @@ const User = (props) => {
 
   const open = Boolean(anchorEl);
 
+  if (userData?.status == 'anonymous') {
+    const url = `${capabilitiesRegistry?.provider_url}/user/login?anonymousUserID=${userData?.user_id}&redirect=${window.location.pathname}`;
 
-  if ( userData?.status == 'anonymous' ) {
-    const url =
-         `${capabilitiesRegistry?.provider_url}/user/login?anonymousUserID=${userData?.user_id}&redirect=${window.location.pathname}`
-        
     return (
       <Link href={url}>
         <Button variant="contained" onClick={handleLogout} color="primary">
@@ -224,17 +226,7 @@ const User = (props) => {
                           Get Token
                         </MenuItem>
                       )}
-                      <MenuItem
-                        onClick={handlePreference}
-                        // disabled={
-                        //   !CAN(
-                        //     keys.VIEW_MESHERY_USER_PREFERENCES.action,
-                        //     keys.VIEW_MESHERY_USER_PREFERENCES.subject,
-                        //   )
-                        // }
-                      >
-                        Preferences
-                      </MenuItem>
+                      <MenuItem onClick={handlePreference}>Preferences</MenuItem>
                       <MenuItem onClick={handleLogout}>Logout</MenuItem>
                     </MenuList>
                   </ClickAwayListener>
