@@ -36,8 +36,8 @@ const MeshMapSignUpcard = ({ classes, hasAccessToMeshMap = false }) => {
         <Typography className={classes.frontSideDescription} variant="body">
           <img className={classes.img} src="/static/img/meshmap.svg" />
           Collaboratively design and manage your Kubernetes clusters, service mesh deployments, and
-          cloud native apps. Kanvas is now in public beta.{' '}
-          {!hasAccessToMeshMap && 'Sign-up today to for early access!'}
+          cloud native apps. Kanvas is now publicly available.{' '}
+          {!hasAccessToMeshMap && 'Sign-up today to for access!'}
         </Typography>
         {
           <div style={{ textAlign: 'right' }}>
