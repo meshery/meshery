@@ -10,7 +10,7 @@ type: extensions
 category: meshmap
 ---
 
-# <img style="height: 4rem; width: 4rem;" src="{{site.baseurl}}/assets/img/meshmap-icon-color.svg" /> MeshMap Snapshot
+# <img style="height: 4rem; width: 4rem;" src="{{site.baseurl}}/assets/img/kanvas-icon-color.svg" /> MeshMap Snapshot
 
 Walks in application and takes a shot of your infrastructure using Meshery Extension MeshMap
 
@@ -148,7 +148,7 @@ application_url:
   required: false
 ```
 
-## Customizing Snapshot Workflow Triggers in MeshMap Snapshot
+## Customizing Snapshot Workflow Triggers in Kanvas Snapshot
 
 You can configure your workflows to run when specific activity on GitHub happens, at a scheduled time, or when an event outside of GitHub occurs.
 
@@ -158,7 +158,7 @@ GitHub Actions provides a variety of events that can trigger workflows, allowing
 
 ### Supported Events
 
-The MeshMap Snapshot Action supports all of the events listed in the GitHub documentation:
+The Kanvas Snapshot Action supports all of the events listed in the GitHub documentation:
 For detailed information about each event, including its properties and payloads, refer to the [GitHub Actions documentation](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows).
 
 ### Workflow Syntax for Event Filtering

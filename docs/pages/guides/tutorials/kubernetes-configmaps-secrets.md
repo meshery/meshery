@@ -40,9 +40,9 @@ Learn how to create and manage _Kubernetes ConfigMaps and Secrets_ within the co
 ### Access Meshery Playground
 
 - Log in to the [Meshery Playground](http://playground.meshery.io/) using your credentials. On successful login, you should be at the dashboard. Press the **X** on the _Where do you want to start?_ popup to close it (if required).
-- Click **MeshMap** in the navigation menu to navigate to _MeshMap_.
+- Click **Kanvas** in the navigation menu to navigate to _Kanvas_.
 
-> **_NOTE:_** MeshMap is still in beta.
+> **_NOTE:_** Kanvas is still in beta.
 
 ### Clone the starter design
 

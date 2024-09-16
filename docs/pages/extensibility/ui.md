@@ -12,7 +12,7 @@ Meshery UI has a number of extension points that allow users to customize their 
 
 ## Designing Custom Components for Meshery Extension Point
 
-The Meshery extension points are the way to extend meshery and derive the more custom use-cases out of it. We already have an extension point called MeshMap.
+The Meshery extension points are the way to extend meshery and derive the more custom use-cases out of it. We already have an extension point called Kanvas.
 Meshery can provide the extension point in various ways by providing the feature of custom-components. One of the example where these custom components are used is RJSF forms in meshery-extension
 
 ### Extensibility: RJSF Custom Component
