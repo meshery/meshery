@@ -134,7 +134,7 @@ function NavigatorExtension({
         designValidationMachine,
         mesheryEventBus: mesheryEventBus,
         ThemeTogglerCore,
-         hooks: {
+        hooks: {
           CAN: CAN,
           useFilterK8sContexts,
           useDynamicComponent,
