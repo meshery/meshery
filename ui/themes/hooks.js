@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useGetUserPrefQuery, useUpdateUserPrefWithContextMutation } from '@/rtk-query/user';
 import { useState } from 'react';
+import _ from 'lodash/fp';
 
 export const useGetSystemTheme = () => {
   const [theme, setTheme] = React.useState('dark');
@@ -14,7 +15,7 @@ export const useGetSystemTheme = () => {
 export const useThemePreference = () => {
   const { data, ...res } = useGetUserPrefQuery();
   const systemPref = useGetSystemTheme();
-  const mode = data?.theme || systemPref || 'dark';
+  const mode = data?.remoteProviderPreferences?.theme || systemPref || 'dark';
 
   return {
     data: {
@@ -27,7 +28,7 @@ export const useThemePreference = () => {
 export const ThemeTogglerCore = ({ Component }) => {
   const themePref = useThemePreference();
   const [handleUpdateUserPref] = useUpdateUserPrefWithContextMutation();
-  const {data:userPrefs} = useGetUserPrefQuery()
+  const { data: userPrefs } = useGetUserPrefQuery();
   const [mode, setMode] = useState(themePref?.data?.mode);
 
   useEffect(() => {
@@ -37,9 +38,11 @@ export const ThemeTogglerCore = ({ Component }) => {
   const toggleTheme = () => {
     const newTheme = mode === 'light' ? 'dark' : 'light';
     setMode(newTheme);
-    handleUpdateUserPref({body:{
-      ...(userPrefs || {}),
-      theme : newTheme}});
+    const updated = _.set('remoteProviderPreferences.theme', newTheme, userPrefs);
+    console.log('updated', updated);
+    handleUpdateUserPref({
+      body: updated,
+    });
   };
 
   return <Component mode={mode} toggleTheme={toggleTheme} />;

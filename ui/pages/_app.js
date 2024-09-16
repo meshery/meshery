@@ -43,7 +43,7 @@ import { getConnectionIDsFromContextIds, getK8sConfigIdsFromK8sConfig } from '..
 import './../public/static/style/index.css';
 import subscribeK8sContext from '../components/graphql/subscriptions/K8sContextSubscription';
 import { bindActionCreators } from 'redux';
-import { darkTheme } from '../themes/app';
+import { darkTheme, lightTheme } from '../themes/app';
 import './styles/AnimatedFilter.css';
 import './styles/AnimatedMeshery.css';
 import './styles/AnimatedMeshPattern.css';
@@ -803,9 +803,9 @@ const MesheryWithRedux = withStyles(styles)(
 );
 
 const MesheryThemeProvider = ({ children }) => {
-  const theme = useThemePreference();
-  const mode = theme.data?.mode || 'dark';
-  return <ThemeProvider theme={mode === 'dark' ? darkTheme : theme}>{children}</ThemeProvider>;
+  const themePref = useThemePreference();
+  const mode = themePref?.data?.mode || 'dark';
+  return <ThemeProvider theme={mode === 'dark' ? darkTheme : lightTheme}>{children}</ThemeProvider>;
 };
 
 const MesheryAppWrapper = (props) => {
