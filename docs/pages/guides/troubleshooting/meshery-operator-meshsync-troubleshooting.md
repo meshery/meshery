@@ -3,20 +3,22 @@ layout: default
 title: Meshery Operator, MeshSync, Broker Troubleshooting Guide
 permalink: guides/troubleshooting/meshery-operator-meshsync
 language: en
-abstract: This documentation provides comprehensive guidance on troubleshooting in Meshery Operator, MeshSync and Broker, ensuring you can address common issues efficiently.
+abstract: Comprehensive guidance for troubleshooting Meshery Operator, MeshSync and Broker deployments under various scenarios.
 type: guides
 category: troubleshooting
 ---
 
-{% include alert.html type="dark" title="Meshery Error Code Reference" content="Have specific error with an error code? See the <a href='/reference/error-codes'>Meshery Error Code Reference</a> for probable cause and suggested remediations." %}
+{% include alert.html type="info" title="What is Meshery Operator?" content="<a href='/concepts/architecture/operator'>Meshery Operator</a> controls and monitors the lifecycle of components deployed inside Meshery-managed Kubernetes clusters. Learn more about <a href='/concepts'>Meshery's architecture</a>." %}
 
-There are common issues Meshery users may face while operating the [Meshery Operator]({{site.baseurl}}/concepts/architecture/operator) and its custom controllers, [MeshSync]({{site.baseurl}}/concepts/architecture/meshsync) and [Broker]({{site.baseurl}}/concepts/architecture/broker), that can be resolved by performing specific actions. This documentation aims to empower users by providing a set of troubleshooting tools and actions.
+This guide offers comprehensive for troubleshooting instructions for [Meshery Operator]({{site.baseurl}}/concepts/architecture/operator) and its custom controllers, [MeshSync]({{site.baseurl}}/concepts/architecture/meshsync) and [Broker]({{site.baseurl}}/concepts/architecture/broker). Follow the steps outlined in this document to ensure a smooth Meshery deployment.
+
+{% include alert.html type="dark" title="Meshery Error Code Reference" content="Have specific error with an error code? See the <a href='/reference/error-codes'>Meshery Error Code Reference</a> for probable cause and suggested remediations." %}
 
 ## Understanding the Status of Meshery Operator, MeshSync, and Meshery Broker
 
-The following table describes the various states of MeshSync and Meshery Broker and their implications.
+Each Meshery Operator controller offers a health status that you can use to understand their current health in your deployment. Their health statuses and meanings are described below.of MeshSync and Meshery Broker 
 
-**MeshSync:**
+### MeshSync Health Status
 
 - **ENABLED:** Custom Resource present. MeshSync Controller is not connected to Broker.
 - **DEPLOYED:** Custom Resource present. MeshSync Controller is present but the state is not RUNNING or ERRDISABLE, though
@@ -24,10 +26,9 @@ The following table describes the various states of MeshSync and Meshery Broker 
 - **CONNECTED:** Deployed and connected to Broker.
 - **UNDEPLOYED:** Custom Resource not present.
 
-**Meshery Broker:**
+### Meshery Broker Health Status
 
 - **DEPLOYED:** External IP not exposed OR External IP exposed but Meshery Server is not connected as a client to Broker hence data is not being published.
-
 - **UNDEPLOYED:** Custom Resource not deployed.
 - **CONNECTED:** Deployed, sending data to Meshery Server.
 
