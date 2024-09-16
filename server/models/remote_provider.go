@@ -152,7 +152,7 @@ func (l *RemoteProvider) loadCapabilities(token string) ProviderProperties {
 
 // downloadProviderExtensionPackage will download the remote provider extensions
 // package
-func (l *RemoteProvider) downloadProviderExtensionPackage() {
+func (l *RemoteProvider) DownloadProviderExtensionPackage() {
 	// Location for the package to be stored
 	loc := l.PackageLocation()
 
@@ -3445,7 +3445,7 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ 
 
 	// Download the package for the user only if they have extension capability
 	if len(l.GetProviderProperties().Extensions.Navigator) > 0 {
-		l.downloadProviderExtensionPackage()
+		l.DownloadProviderExtensionPackage()
 	}
 
 	// Proceed to redirect once the capabilities has loaded
