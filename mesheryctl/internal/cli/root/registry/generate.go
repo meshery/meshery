@@ -21,7 +21,6 @@ import (
 	"io"
 	"os"
 	"path/filepath"
-	"reflect"
 	"strconv"
 	"strings"
 	"sync"
@@ -270,7 +269,7 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 				}
 				comp.Model = *modelDef
 
-				assignDefaultsForCompDefs(&comp, modelDef)
+				utils.AssignDefaultsForCompDefs(&comp, modelDef)
 				compAlreadyExist, err := comp.WriteComponentDefinition(compDirPath, "json")
 				if compAlreadyExist {
 					lengthOfComps--
@@ -309,93 +308,6 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 	close(spreadsheeetChan)
 	wgForSpreadsheetUpdate.Wait()
 	return nil
-}
-
-func assignDefaultsForCompDefs(componentDef *component.ComponentDefinition, modelDef *v1beta1Model.ModelDefinition) {
-	// Assign the status from the model to the component
-	compStatus := component.ComponentDefinitionStatus(modelDef.Status)
-	componentDef.Status = &compStatus
-
-	// Initialize AdditionalProperties and Styles if nil
-	if componentDef.Metadata.AdditionalProperties == nil {
-		componentDef.Metadata.AdditionalProperties = make(map[string]interface{})
-	}
-	if componentDef.Styles == nil {
-		componentDef.Styles = &component.Styles{}
-	}
-
-	// Use reflection to map model metadata to component styles
-	stylesValue := reflect.ValueOf(componentDef.Styles).Elem()
-
-	// Iterate through modelDef.Metadata
-	if modelDef.Metadata != nil {
-		if modelDef.Metadata.AdditionalProperties["styleOverrides"] != nil {
-			styleOverrides, ok := modelDef.Metadata.AdditionalProperties["styleOverrides"].(string)
-			if ok {
-				err := encoding.Unmarshal([]byte(styleOverrides), &componentDef.Styles)
-				if err != nil {
-					utils.LogError.Error(err)
-				}
-			}
-		}
-		if (modelDef.Metadata.Capabilities) != nil {
-			componentDef.Capabilities = modelDef.Metadata.Capabilities
-		}
-		if modelDef.Metadata.PrimaryColor != nil {
-			componentDef.Styles.PrimaryColor = *modelDef.Metadata.PrimaryColor
-		}
-		if modelDef.Metadata.SecondaryColor != nil {
-			componentDef.Styles.SecondaryColor = modelDef.Metadata.SecondaryColor
-		}
-		if modelDef.Metadata.SvgColor != "" {
-			componentDef.Styles.SvgColor = modelDef.Metadata.SvgColor
-		}
-		if modelDef.Metadata.SvgComplete != nil {
-			componentDef.Styles.SvgComplete = *modelDef.Metadata.SvgComplete
-		}
-		if modelDef.Metadata.SvgWhite != "" {
-			componentDef.Styles.SvgWhite = modelDef.Metadata.SvgWhite
-		}
-
-		// Iterate through AdditionalProperties and assign appropriately
-		for k, v := range modelDef.Metadata.AdditionalProperties {
-			if k == "styleOverrides" {
-				continue
-			}
-			// Check if the field exists in Styles
-			if field := stylesValue.FieldByNameFunc(func(name string) bool {
-				return strings.EqualFold(k, name)
-			}); field.IsValid() && field.CanSet() {
-				switch field.Kind() {
-				case reflect.Ptr:
-					ptrType := field.Type().Elem()
-					val := reflect.New(ptrType).Elem()
-
-					if val.Kind() == reflect.String {
-						val.SetString(v.(string))
-					} else if val.Kind() == reflect.Float32 {
-						val.SetFloat(v.(float64))
-					} else if val.Kind() == reflect.Int {
-						val.SetInt(int64(v.(int)))
-					} else {
-						val.Set(reflect.ValueOf(v))
-					}
-
-					field.Set(val.Addr())
-				case reflect.String:
-					field.SetString(v.(string))
-				case reflect.Float32:
-					field.SetFloat(v.(float64))
-				case reflect.Int:
-					field.SetInt(int64(v.(int)))
-				default:
-					field.Set(reflect.ValueOf(v))
-				}
-			} else {
-				componentDef.Metadata.AdditionalProperties[k] = v
-			}
-		}
-	}
 }
 
 // For registrants eg: meshery, whose components needs to be directly created by referencing meshery/schemas repo.

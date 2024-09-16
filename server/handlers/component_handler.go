@@ -11,11 +11,14 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
+	mesheryctlUtils "github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/helpers"
 	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/pattern/core"
+	"github.com/layer5io/meshkit/generators"
 	"github.com/layer5io/meshkit/models/events"
+
 	"github.com/layer5io/meshkit/models/oci"
 	"github.com/layer5io/meshkit/models/registration"
 	meshkitutils "github.com/layer5io/meshkit/utils"
@@ -1198,6 +1201,7 @@ func prettifyCompDefSchema(entities []entity.Entity) []component.ComponentDefini
 func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	var response models.RegistryAPIResponse
 	regErrorStore := models.NewRegistrationFailureLogHandler()
+	var tempFile *os.File
 	var mu sync.Mutex
 	defer func() {
 		_ = r.Body.Close()
@@ -1234,14 +1238,118 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		http.Error(rw, "Invalid base64 data", http.StatusBadRequest)
 		return
 	}
+	// Pass the temp file path to the RegistrationHelper
+	registrationHelper := registration.NewRegistrationHelper(
+		utils.UI,
+		h.registryManager,
+		regErrorStore,
+	)
 
 	switch importRequest.UploadType {
 	case "url":
-		// Future implementation
-		break
-	case "file":
+		fmt.Println("1")
 		// Create a temporary file and write the data
-		tempFile, err := os.CreateTemp("", importRequest.ImportBody.FileName)
+		tempFile, err := os.CreateTemp("", "templatefile-*.json")
+		if err != nil {
+			err = meshkitutils.ErrCreateFile(err, "Error creating temp file")
+			h.handleError(rw, err, err.Error())
+			h.sendErrorEvent(userID, provider, "Error creating temp file", err)
+			return
+		}
+		defer os.Remove(tempFile.Name())
+		_, err = tempFile.Write(decodedBytes)
+		if err != nil {
+			err = meshkitutils.ErrWriteFile(err, tempFile.Name())
+			h.handleError(rw, err, err.Error())
+			h.sendErrorEvent(userID, provider, "Error writing to temp file", err)
+			return
+		}
+		err = tempFile.Close()
+		if err != nil {
+			fmt.Println("1")
+		}
+
+		// Open the file to read and decode it into the ModelCSV struct
+		file, err := os.Open(tempFile.Name())
+		if err != nil {
+			fmt.Println("12")
+
+		}
+		defer file.Close()
+
+		var models mesheryctlUtils.ModelCSV
+
+		// Decode the JSON data from the file into the models object
+		decoder := json.NewDecoder(file)
+		err = decoder.Decode(&models)
+		if err != nil {
+			err = meshkitutils.ErrUnmarshal(err)
+			h.handleError(rw, err, "Error decoding JSON into ModelCSV")
+			h.sendErrorEvent(userID, provider, "Error decoding JSON into ModelCSV", err)
+			return
+		}
+		model, err := meshkitutils.Cast[string]("model")
+		if err != nil {
+			fmt.Println("123")
+
+		}
+		generator, err := generators.NewGenerator(importRequest.ImportBody.FileName, importRequest.ImportBody.URL, model)
+		if err != nil {
+			fmt.Println("12452")
+
+		}
+		pkg, err := generator.GetPackage()
+		if err != nil {
+			fmt.Println("1245222")
+
+		}
+		version := pkg.GetVersion()
+		modelDirPath, compDirPath, err := utils.CreateVersionedDirectoryForModelAndComp(version, model)
+		if err != nil {
+			fmt.Println("124522211")
+
+		}
+		filePath := filepath.Join(modelDirPath, "model.json")
+		modelDef := models.CreateModelDefinition(version, utils.DefVersion)
+		err = modelDef.WriteModelDefinition(filePath, "json")
+		if err != nil {
+			fmt.Println("124522211121321424124")
+
+		}
+		fmt.Println("pkg", pkg)
+		comps, err := pkg.GenerateComponents()
+		if err != nil {
+			fmt.Println("12452221112132142412412323131313131313131313131")
+
+		}
+		for _, comp := range comps {
+			fmt.Println("comp", comp.Component.Kind)
+			comp.Version = utils.DefVersion
+			if modelDef.Metadata == nil {
+				modelDef.Metadata = &_model.ModelDefinition_Metadata{}
+			}
+			if modelDef.Metadata.AdditionalProperties == nil {
+				modelDef.Metadata.AdditionalProperties = make(map[string]interface{})
+			}
+			if comp.Model.Metadata.AdditionalProperties != nil {
+				modelDef.Metadata.AdditionalProperties["source_uri"] = comp.Model.Metadata.AdditionalProperties["source_uri"]
+			}
+			comp.Model = modelDef
+
+			mesheryctlUtils.AssignDefaultsForCompDefs(&comp, &modelDef)
+			_, err := comp.WriteComponentDefinition(compDirPath, "json")
+			if err != nil {
+				fmt.Println("62452221112132142412412323131313131313131313131")
+
+			}
+		}
+
+		// Use modelDirPath for registration in the case of "url"
+		dir := registration.NewDir(modelDirPath)
+		registrationHelper.Register(dir)
+
+	case "file":
+		tempFile, err = os.CreateTemp("", importRequest.ImportBody.FileName)
 		if err != nil {
 			err = meshkitutils.ErrCreateFile(err, "Error creating temp file")
 			h.handleError(rw, err, err.Error())
@@ -1257,58 +1365,56 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 			h.sendErrorEvent(userID, provider, "Error writing to temp file", err)
 			return
 		}
-		tempFile.Close()
-		// Pass the temp file path to the RegistrationHelper
-		registrationHelper := registration.NewRegistrationHelper(
-			utils.UI,
-			h.registryManager,
-			regErrorStore,
-		)
 
+		// Use tempFile.Name() for registration in the case of "file"
 		dir := registration.NewDir(tempFile.Name())
 		registrationHelper.Register(dir)
-		for _, pkg := range registrationHelper.PkgUnits {
-			registeredModel := pkg.Model
-			for _, comp := range pkg.Components {
-				incrementCountersOnSuccess(&mu, entity.ComponentDefinition, &response.EntityCount.CompCount, &response.EntityCount.RelCount, &response.EntityCount.ModelCount)
-				componentBytes, _ := json.Marshal(comp)
-				addSuccessfulEntry(componentBytes, entity.ComponentDefinition, &response)
-			}
-			for _, rel := range pkg.Relationships {
-				incrementCountersOnSuccess(&mu, entity.ComponentDefinition, &response.EntityCount.CompCount, &response.EntityCount.RelCount, &response.EntityCount.ModelCount)
-				relationshipBytes, _ := json.Marshal(rel)
-				addSuccessfulEntry(relationshipBytes, entity.ComponentDefinition, &response)
-			}
-			modelBytes, _ := json.Marshal(registeredModel)
-			incrementCountersOnSuccess(&mu, entity.Model, &response.EntityCount.CompCount, &response.EntityCount.RelCount, &response.EntityCount.ModelCount)
-			addSuccessfulEntry(modelBytes, entity.Model, &response)
+		tempFile.Close()
 
-		}
-
-		if regErrorStore != nil {
-			// Process InvalidDefinitions
-			for _, errEntry := range regErrorStore.GetEntityRegErrors() {
-				// Increment error counters
-				if errEntry.EntityType == "Unknown" {
-					errEntry.EntityType = ""
-				}
-				incrementCountersOnErr(&mu, errEntry.EntityType, &response)
-				// Add unsuccessful entry
-				path := errEntry.EntityName
-				err := errEntry.Err
-				entityTypeStr := string(errEntry.EntityType)
-				addUnsuccessfulEntry(path, &response, err, entityTypeStr)
-			}
-		}
-		var errMsg string
-		// Construct the response message
-		message = writeMessageString(&response)
-		if response.EntityCount.TotalErrCount > 0 {
-			errMsg = ErrMsgContruct(&response)
-		}
-
-		h.sendSuccessResponse(rw, userID, provider, message, errMsg, &response)
 	}
+
+	for _, pkg := range registrationHelper.PkgUnits {
+		registeredModel := pkg.Model
+		for _, comp := range pkg.Components {
+			incrementCountersOnSuccess(&mu, entity.ComponentDefinition, &response.EntityCount.CompCount, &response.EntityCount.RelCount, &response.EntityCount.ModelCount)
+			componentBytes, _ := json.Marshal(comp)
+			addSuccessfulEntry(componentBytes, entity.ComponentDefinition, &response)
+		}
+		for _, rel := range pkg.Relationships {
+			incrementCountersOnSuccess(&mu, entity.RelationshipDefinition, &response.EntityCount.CompCount, &response.EntityCount.RelCount, &response.EntityCount.ModelCount)
+			relationshipBytes, _ := json.Marshal(rel)
+			addSuccessfulEntry(relationshipBytes, entity.RelationshipDefinition, &response)
+		}
+		modelBytes, _ := json.Marshal(registeredModel)
+		incrementCountersOnSuccess(&mu, entity.Model, &response.EntityCount.CompCount, &response.EntityCount.RelCount, &response.EntityCount.ModelCount)
+		addSuccessfulEntry(modelBytes, entity.Model, &response)
+
+	}
+
+	if regErrorStore != nil {
+		// Process InvalidDefinitions
+		for _, errEntry := range regErrorStore.GetEntityRegErrors() {
+			// Increment error counters
+			if errEntry.EntityType == "Unknown" {
+				errEntry.EntityType = ""
+			}
+			incrementCountersOnErr(&mu, errEntry.EntityType, &response)
+			// Add unsuccessful entry
+			path := errEntry.EntityName
+			err := errEntry.Err
+			entityTypeStr := string(errEntry.EntityType)
+			addUnsuccessfulEntry(path, &response, err, entityTypeStr)
+		}
+	}
+	var errMsg string
+	// Construct the response message
+	message = writeMessageString(&response)
+	if response.EntityCount.TotalErrCount > 0 {
+		errMsg = ErrMsgContruct(&response)
+	}
+
+	h.sendSuccessResponse(rw, userID, provider, message, errMsg, &response)
+
 }
 
 // swagger:route POST /api/meshmodel/export ExportModel idExportModel

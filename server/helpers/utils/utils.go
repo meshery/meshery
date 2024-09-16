@@ -31,6 +31,8 @@ const (
 	HelmChartOperatorName = "meshery-operator"
 	MesheryFolder         = ".meshery"
 	ManifestsFolder       = "manifests"
+	registryLocation      = ".meshery/models"
+	DefVersion            = "1.0.0"
 )
 
 // RecursiveCastMapStringInterfaceToMapStringInterface will convert a
@@ -134,7 +136,6 @@ func IsClosed[K any](ch chan K) bool {
 	}
 	return false
 }
-
 
 const UI = "../../ui/public/static/img/meshmodels" //Relative to cmd/main.go
 var UISVGPaths = make([]string, 1)
@@ -500,4 +501,17 @@ func ReplaceSVGData(model *model.ModelDefinition) error {
 	}
 	model.Components = components
 	return nil
+}
+func CreateVersionedDirectoryForModelAndComp(version, modelName string) (string, string, error) {
+	modelLocation := filepath.Join(os.Getenv("HOME"), registryLocation)
+	fmt.Println("modelLocation: ", modelLocation)
+	modelDirPath := filepath.Join(modelLocation, modelName, version, DefVersion)
+	err := utils.CreateDirectory(modelDirPath)
+	if err != nil {
+		return "", "", err
+	}
+
+	compDirPath := filepath.Join(modelDirPath, "components")
+	err = utils.CreateDirectory(compDirPath)
+	return modelDirPath, compDirPath, err
 }

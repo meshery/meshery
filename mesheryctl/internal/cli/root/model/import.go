@@ -31,20 +31,25 @@ type ImportRequestBody struct {
 	UploadType string `json:"uploadType"`
 }
 
-var location string
+var (
+	location     string
+	templateFile string
+	registrant   string
+)
 
 var importModelCmd = &cobra.Command{
 	Use:   "import",
 	Short: "Import models from mesheryctl command",
-	Long:  "Import models by specifying the directory or file. Use 'import model [filepath]' or 'import model [directory]'.",
+	Long:  "Import models by specifying the directory, file, or URL. You can also provide a template JSON file and registrant name.",
 	Example: `
-	import model -f /path/to/[file.yaml|file.json]
+	import model -f /path/to/[file.tar.gz|file.zip] --template /path/to/template.json --registrant someone
 	import model --file /path/to/models
+	import model --file http://example.com/model --template /path/to/template.json --registrant someone
 	`,
 	Args: func(_ *cobra.Command, args []string) error {
-		const errMsg = "Usage: mesheryctl model import [ file | filePath ]\nRun 'mesheryctl model import --help' to see detailed help message"
+		const errMsg = "Usage: mesheryctl model import [ file | filePath | URL ]\nRun 'mesheryctl model import --help' to see detailed help message"
 		if location == "" && len(args) == 0 {
-			return fmt.Errorf("[ file | filepath ] isn't specified\n\n%v", errMsg)
+			return fmt.Errorf("[ file | filepath | URL ] isn't specified\n\n%v", errMsg)
 		} else if len(args) > 1 {
 			return fmt.Errorf("too many arguments\n\n%v", errMsg)
 		}
@@ -58,6 +63,26 @@ var importModelCmd = &cobra.Command{
 			path = args[0]
 		}
 
+		validURL := strings.HasPrefix(path, "http://") || strings.HasPrefix(path, "https://") || strings.HasPrefix(path, "git://")
+		if validURL {
+			if templateFile == "" {
+				return fmt.Errorf("a template file must be specified when importing from a URL")
+			}
+
+			fileData, err := os.ReadFile(templateFile)
+			if err != nil {
+				return fmt.Errorf("could not read the specified template file: %v", err)
+			}
+
+			err = registerModel(fileData, registrant, "url")
+			if err != nil {
+				utils.Log.Error(err)
+				return nil
+			}
+			return nil
+		}
+
+		// Handle the case when the path is a file or directory
 		info, err := os.Stat(path)
 		if err != nil {
 			return fmt.Errorf("could not access the specified path: %v", err)
@@ -293,7 +318,8 @@ func displaySuccessfulRelationships(response *models.RegistryAPIResponse, model 
 				to := allow["to"].([]interface{})
 				fromComponent := fmt.Sprintf("%s", from[0].(map[string]interface{})["kind"])
 				toComponent := fmt.Sprintf("%s", to[0].(map[string]interface{})["kind"])
-				key := fmt.Sprintf("%s-%s-%s", kind, subtype, relationshipType)
+				key := fmt.Sprintf("%s/%s/%s", kind, subtype, relationshipType)
+				fmt.Println("key", key)
 				if seen[key+fromComponent+toComponent] {
 					continue
 				}
@@ -301,7 +327,6 @@ func displaySuccessfulRelationships(response *models.RegistryAPIResponse, model 
 				relationshipMap[key] = append(relationshipMap[key], []string{fromComponent, toComponent})
 			}
 		}
-
 		for key, rows := range relationshipMap {
 			if len(rows) > 0 {
 				fmt.Println("")
@@ -309,7 +334,7 @@ func displaySuccessfulRelationships(response *models.RegistryAPIResponse, model 
 				if len(rows) > 1 {
 					boldRelationships = utils.BoldString("RELATIONSHIPS:")
 				}
-				parts := strings.Split(key, "-")
+				parts := strings.Split(key, "/")
 				utils.Log.Infof("  %s Kind of %s, sub type %s and type %s", boldRelationships, parts[0], parts[1], parts[2])
 				utils.PrintToTable(header, rows)
 			}
@@ -451,4 +476,6 @@ func init() {
 	})
 
 	importModelCmd.Flags().StringVarP(&location, "file", "f", "", "Specify path to the file or directory")
+	importModelCmd.Flags().StringVar(&templateFile, "template", "", "Specify path to the template JSON file")
+	importModelCmd.Flags().StringVar(&registrant, "registrant", "", "Specify the registrant name")
 }

@@ -76,7 +76,7 @@ func addSuccessfulEntry(content []byte, entityType entity.EntityType, response *
 		var r relationship.RelationshipDefinition
 		if err := encoding.Unmarshal((content), &r); err == nil {
 			entry := map[string]interface{}{
-				"Model":            r.Model.DisplayName,
+				"Model":            r.Model.Name,
 				"Kind":             r.Kind,
 				"Subtype":          r.SubType,
 				"Selectors":        r.Selectors,
