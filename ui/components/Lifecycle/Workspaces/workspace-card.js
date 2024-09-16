@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { ArrowForward, Edit } from '@mui/icons-material';
-import { DeleteIcon, Box, Grid, Button } from '@layer5/sistent';
+import { DeleteIcon, Grid, Button } from '@layer5/sistent';
 import {
   BulkSelectCheckbox,
   CardTitle,
@@ -10,6 +10,8 @@ import {
   EmptyDescription,
   TabCount,
   TabTitle,
+  PopupButton,
+  AllocationButton,
 } from './styles';
 import theme from '../../../themes/app';
 import { FlipCard } from '../General';
@@ -30,14 +32,13 @@ export const formattoLongDate = (date) => {
   });
 };
 
-export const TransferButton = ({ title, count, onAssign, disabled, classes }) => {
+export const TransferButton = ({ title, count, onAssign, disabled }) => {
   return (
     <UsesSistent>
-      <Button
+      <PopupButton
         onClick={onAssign}
         disabled={disabled}
         color="primary"
-        className={classes.popupButton}
         sx={{
           color: '#3C494F',
           backgroundColor: '#ffffff',
@@ -54,21 +55,21 @@ export const TransferButton = ({ title, count, onAssign, disabled, classes }) =>
           <TabTitle>{title}</TabTitle>
           <SyncAltIcon sx={{ position: 'absolute', top: '10px', right: '10px' }} />
         </Grid>
-      </Button>
+      </PopupButton>
     </UsesSistent>
   );
 };
 
-export const RedirectButton = ({ title, count, disabled = true, classes }) => {
+export const RedirectButton = ({ title, count, disabled = true }) => {
   return (
     <UsesSistent>
-      <Button disabled={disabled} color="primary" className={classes.popupButton}>
+      <PopupButton disabled={disabled} color="primary">
         <Grid>
           <TabCount>{count}</TabCount>
           <TabTitle>{title}</TabTitle>
           <ArrowForward />
         </Grid>
-      </Button>
+      </PopupButton>
     </UsesSistent>
   );
 };
@@ -97,7 +98,6 @@ const WorkspaceCard = ({
   selectedWorkspaces,
   onAssignEnvironment,
   onAssignDesign,
-  classes,
 }) => {
   const [skip, setSkip] = useState(true);
 
@@ -145,7 +145,6 @@ const WorkspaceCard = ({
         }
         frontComponents={
           <CardFront
-            classes={classes}
             name={workspaceDetails?.name}
             description={workspaceDetails?.description}
             environmentsCount={environmentsOfWorkspaceCount}
@@ -156,7 +155,6 @@ const WorkspaceCard = ({
         }
         backComponents={
           <CardBack
-            classes={classes}
             name={workspaceDetails?.name}
             workspaceId={workspaceDetails?.id}
             onEdit={onEdit}
@@ -175,7 +173,6 @@ const WorkspaceCard = ({
 export default WorkspaceCard;
 
 const CardFront = ({
-  classes,
   name,
   description,
   environmentsCount,
@@ -231,24 +228,22 @@ const CardFront = ({
               gap: '10px',
             }}
           >
-            <Box className={classes.allocationButton} onClick={(e) => e.stopPropagation()}>
+            <AllocationButton onClick={(e) => e.stopPropagation()}>
               <TransferButton
                 title="Environments"
                 count={environmentsCount}
                 onAssign={onAssignEnvironment}
-                classes={classes}
                 disabled={!CAN(keys.VIEW_ENVIRONMENTS.action, keys.VIEW_ENVIRONMENTS.subject)}
               />
-            </Box>
-            <Box className={classes.allocationButton} onClick={(e) => e.stopPropagation()}>
+            </AllocationButton>
+            <AllocationButton onClick={(e) => e.stopPropagation()}>
               <TransferButton
                 title="Designs"
                 count={designsCount}
                 onAssign={onAssignDesign}
-                classes={classes}
                 disabled={!CAN(keys.VIEW_DESIGNS.action, keys.VIEW_DESIGNS.subject)}
               />
-            </Box>
+            </AllocationButton>
           </Grid>
         </Grid>
       </CardWrapper>
