@@ -1,6 +1,6 @@
 {
   "category": {
-   "name": "Uncategorized"
+   "name": "Orchestration \u0026 Management"
   },
   "displayName": "Vmware Tanzu",
   "id": "00000000-0000-0000-0000-000000000000",
@@ -35,7 +35,7 @@
   "connection_id": "00000000-0000-0000-0000-000000000000",
   "schemaVersion": "models.meshery.io/v1beta1",
   "status": "ignored",
-  "subCategory": "Uncategorized",
+  "subCategory": "Certified Kubernetes - Distribution",
   "version": "v1.0.0",
   "components": null,
   "relationships": null

@@ -146,6 +146,7 @@ const (
 	ErrNoTarInsideOCiCode                  = "replace_me"
 	ErrEmptyOCIImageCode                   = "meshery-server-1360"
 	ErrGetComponentDefinitionCode          = "meshery-server-1362"
+	ErrGetCapabilitiesCode                 = "meshery-server-1363"
 )
 
 var (
@@ -635,4 +636,8 @@ func ErrNoTarInsideOCi() error {
 }
 func ErrEmptyOCIImage(err error) error {
 	return errors.New(ErrEmptyOCIImageCode, errors.Alert, []string{}, []string{}, []string{}, []string{})
+}
+
+func ErrGetCapabilities(err error, userId string) error {
+	return errors.New(ErrGetCapabilitiesCode, errors.Alert, []string{fmt.Sprintf("failed to get capabilities for the user with id: \"%s\"", userId)}, []string{err.Error()}, []string{"Remote provider server may be down or not accepting requests."}, []string{"Make sure remote provider server is healthy and accepting requests."})
 }

@@ -11,14 +11,14 @@ const userPreferenceTests = [
   },
   {
     name: 'Toggle "Send Anonymous Usage Statistics"',
-    apiURL: `${ENV.MESHERY_SERVER_URL}/api/user/prefs?contexts=all`,
+    apiURL: `${ENV.MESHERY_SERVER_URL}/api/user/prefs`,
     switchLabel: 'Send Anonymous Usage Statistics',
     expectedMethod: 'POST',
     expectedStatus: 200,
   },
   {
     name: 'Toggle "Send Anonymous Performance Results"',
-    apiURL: `${ENV.MESHERY_SERVER_URL}/api/user/prefs?contexts=all`,
+    apiURL: `${ENV.MESHERY_SERVER_URL}/api/user/prefs`,
     switchLabel: 'Send Anonymous Performance Results',
     expectedMethod: 'POST',
     expectedStatus: 200,

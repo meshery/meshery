@@ -1,0 +1,195 @@
+{
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "CouchbaseCollection",
+   "schema": "{\n \"description\": \"CouchbaseCollection represent the finest grained size of data storage in Couchbase.\\nCollections contain all documents and indexes in the system.  Collections also form\\nthe finest grain basis for role-based access control (RBAC) and cross-datacenter\\nreplication (XDCR).  In order to be considered by the Operator, every collection\\nmust be referenced by a `CouchbaseScope` or `CouchbaseScopeGroup` resource.\",\n \"properties\": {\n  \"spec\": {\n   \"default\": {},\n   \"description\": \"Spec defines the desired state of the resource.\",\n   \"properties\": {\n    \"maxTTL\": {\n     \"description\": \"MaxTTL defines how long a document is permitted to exist for, without\\nmodification, until it is automatically deleted.  This field takes precedence over\\nany TTL defined at the bucket level.  This is a default, and maximum\\ntime-to-live and may be set to a lower value by the client.  If the client specifies\\na higher value, then it is truncated to the maximum durability.  Documents are\\nremoved by Couchbase, after they have expired, when either accessed, the expiry\\npager is run, or the bucket is compacted.  When set to 0, then documents are not\\nexpired by default.  This field must be a duration in the range 0-2147483648s,\\ndefaulting to 0.  More info:\\nhttps://golang.org/pkg/time/#ParseDuration\",\n     \"type\": \"string\"\n    },\n    \"name\": {\n     \"description\": \"Name specifies the name of the collection.  By default, the metadata.name is\\nused to define the collection name, however, due to the limited character set,\\nthis field can be used to override the default and provide the full functionality.\\nAdditionally the `metadata.name` field is a DNS label, and thus limited to 63\\ncharacters, this field must be used if the name is longer than this limit.\\nCollection names must be 1-251 characters in length, contain only [a-zA-Z0-9_-%]\\nand not start with either _ or %.\",\n     \"maxLength\": 251,\n     \"minLength\": 1,\n     \"pattern\": \"^[a-zA-Z0-9\\\\-][a-zA-Z0-9\\\\-%_]{0,250}$\",\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Couchbase Collection\",\n \"type\": \"object\"\n}",
+   "version": "couchbase.com/v2"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "Couchbase Collection",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "published": false,
+   "source_uri": "https://github.com/couchbase-partners/helm-charts/releases/download/couchbase-operator-2.70.0/couchbase-operator-2.70.0.tgz"
+  },
+  "model": {
+   "category": {
+    "name": "App Definition and Development"
+   },
+   "displayName": "Couchbase Operator",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "source_uri": "https://github.com/couchbase-partners/helm-charts/releases/download/couchbase-operator-2.70.0/couchbase-operator-2.70.0.tgz",
+    "styleOverrides": "",
+    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 575 575\" fill=\"none\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M287.5 0C128.984 0 0 128.55 0 287.5C0 446.016 128.55 575 287.5 575C446.016 575 575 446.45 575 287.5C575 128.55 446.016 0 287.5 0ZM481.628 337.878C481.628 355.249 471.639 370.449 452.096 373.924C418.221 379.999 346.998 383.478 287.5 383.478C228.002 383.478 156.779 379.999 122.904 373.924C103.361 370.449 93.3724 355.249 93.3724 337.878V225.831C93.3724 208.459 106.835 192.39 122.904 189.785C132.893 188.048 156.344 186.31 174.585 186.31C181.533 186.31 187.179 191.522 187.179 199.773V278.38L287.934 276.208L388.69 278.38V199.773C388.69 191.522 394.335 186.31 401.284 186.31C419.524 186.31 442.976 188.048 452.965 189.785C469.468 192.39 482.496 208.459 482.496 225.831C481.628 262.745 481.628 300.529 481.628 337.878Z\" fill=\"#ED2226\"\u003e\u003c/path\u003e\n\u003c/svg\u003e\n",
+    "svgComplete": "",
+    "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 575 575\" fill=\"none\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M287.5 0C128.984 0 0 128.55 0 287.5C0 446.016 128.55 575 287.5 575C446.016 575 575 446.45 575 287.5C575 128.55 446.016 0 287.5 0ZM481.628 337.878C481.628 355.249 471.639 370.449 452.096 373.924C418.221 379.999 346.998 383.478 287.5 383.478C228.002 383.478 156.779 379.999 122.904 373.924C103.361 370.449 93.3724 355.249 93.3724 337.878V225.831C93.3724 208.459 106.835 192.39 122.904 189.785C132.893 188.048 156.344 186.31 174.585 186.31C181.533 186.31 187.179 191.522 187.179 199.773V278.38L287.934 276.208L388.69 278.38V199.773C388.69 191.522 394.335 186.31 401.284 186.31C419.524 186.31 442.976 188.048 452.965 189.785C469.468 192.39 482.496 208.459 482.496 225.831C481.628 262.745 481.628 300.529 481.628 337.878Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003c/svg\u003e\n"
+   },
+   "model": {
+    "version": "2.70.0"
+   },
+   "name": "couchbase-operator",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "enabled",
+   "subCategory": "Database",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "svgColor": "\u003csvg width=\"575\" height=\"575\" viewBox=\"0 0 575 575\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M287.5 0C128.984 0 0 128.55 0 287.5C0 446.016 128.55 575 287.5 575C446.016 575 575 446.45 575 287.5C575 128.55 446.016 0 287.5 0ZM481.628 337.878C481.628 355.249 471.639 370.449 452.096 373.924C418.221 379.999 346.998 383.478 287.5 383.478C228.002 383.478 156.779 379.999 122.904 373.924C103.361 370.449 93.3724 355.249 93.3724 337.878V225.831C93.3724 208.459 106.835 192.39 122.904 189.785C132.893 188.048 156.344 186.31 174.585 186.31C181.533 186.31 187.179 191.522 187.179 199.773V278.38L287.934 276.208L388.69 278.38V199.773C388.69 191.522 394.335 186.31 401.284 186.31C419.524 186.31 442.976 188.048 452.965 189.785C469.468 192.39 482.496 208.459 482.496 225.831C481.628 262.745 481.628 300.529 481.628 337.878Z\" fill=\"#ED2226\"/\u003e\n\u003c/svg\u003e\r",
+   "svgWhite": "\u003csvg width=\"575\" height=\"575\" viewBox=\"0 0 575 575\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M287.5 0C128.984 0 0 128.55 0 287.5C0 446.016 128.55 575 287.5 575C446.016 575 575 446.45 575 287.5C575 128.55 446.016 0 287.5 0ZM481.628 337.878C481.628 355.249 471.639 370.449 452.096 373.924C418.221 379.999 346.998 383.478 287.5 383.478C228.002 383.478 156.779 379.999 122.904 373.924C103.361 370.449 93.3724 355.249 93.3724 337.878V225.831C93.3724 208.459 106.835 192.39 122.904 189.785C132.893 188.048 156.344 186.31 174.585 186.31C181.533 186.31 187.179 191.522 187.179 199.773V278.38L287.934 276.208L388.69 278.38V199.773C388.69 191.522 394.335 186.31 401.284 186.31C419.524 186.31 442.976 188.048 452.965 189.785C469.468 192.39 482.496 208.459 482.496 225.831C481.628 262.745 481.628 300.529 481.628 337.878Z\" fill=\"white\"/\u003e\n\u003c/svg\u003e\r"
+  },
+  "version": "v1.0.0"
+ }

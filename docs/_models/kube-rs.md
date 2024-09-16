@@ -10,6 +10,10 @@ integrations-category: Runtime
 integrations-subcategory: Scheduling & Orchestration
 registrant: Github
 components: 
+- name: document
+  colorIcon: assets/img/integrations/kube-rs/components/document/icons/color/document-color.svg
+  whiteIcon: assets/img/integrations/kube-rs/components/document/icons/white/document-white.svg
+  description: 
 featureList: [
   "Provides a Rust interface for Kubernetes API",
   "Enables building Kubernetes tools in Rust",

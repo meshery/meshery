@@ -19,7 +19,6 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"net/url"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -29,13 +28,12 @@ import (
 	"time"
 
 	"github.com/layer5io/meshkit/encoding"
+	"github.com/layer5io/meshkit/models/meshmodel/entity"
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshkit/generators"
-	"github.com/layer5io/meshkit/generators/github"
 	mutils "github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshkit/utils/store"
-	"github.com/layer5io/meshkit/utils/walker"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	v1beta1Model "github.com/meshery/schemas/models/v1beta1/model"
 
@@ -204,7 +202,6 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 		if err != nil {
 			break
 		}
-
 		wg.Add(1)
 		go func(model utils.ModelCSV) {
 			defer func() {
@@ -212,7 +209,7 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 				weightedSem.Release(1)
 			}()
 			if mutils.ReplaceSpacesAndConvertToLowercase(model.Registrant) == "meshery" {
-				err = GenerateDefsForCoreRegistrant(model)
+				err = GenerateDefsForCoreRegistrant(model, componentCSVHelper)
 				if err != nil {
 					utils.LogError.Error(err)
 				}
@@ -403,78 +400,92 @@ func assignDefaultsForCompDefs(componentDef *component.ComponentDefinition, mode
 
 // For registrants eg: meshery, whose components needs to be directly created by referencing meshery/schemas repo.
 // the sourceURL contains the path of models component definitions
-func GenerateDefsForCoreRegistrant(model utils.ModelCSV) error {
-	totalComps := 0
+func GenerateDefsForCoreRegistrant(model utils.ModelCSV, ComponentCSVHelper *utils.ComponentCSVHelper) error {
 	var version string
+	parts := strings.Split(model.SourceURL, "/")
+	// Assuming the URL is always of the format "protocol://github.com/owner/repo/tree/definitions/{model-name}/version/components"
+	// We know the version is the 7th element (0-indexed) in the split URL
+	if len(parts) >= 8 {
+		version = parts[8] // Fetch the version from the expected position
+	} else {
+		return fmt.Errorf("invalid SourceURL format: %s", model.SourceURL)
+	}
+	isModelPublished, _ := strconv.ParseBool(model.PublishToRegistry)
+	var compDefComps []component.ComponentDefinition
+	alreadyExist := false
+	actualCompCount := 0
 	defer func() {
 		modelToCompGenerateTracker.Set(model.Model, compGenerateTracker{
-			totalComps: totalComps,
+			totalComps: len(compDefComps) - actualCompCount,
 			version:    version,
 		})
 	}()
-
-	path, err := url.Parse(model.SourceURL)
-	if err != nil {
-		err = ErrGenerateModel(err, model.Model)
-		utils.LogError.Error(err)
-		return nil
-	}
-	gitRepo := github.GitRepo{
-		URL:         path,
-		PackageName: model.Model,
-	}
-	owner, repo, branch, root, err := gitRepo.ExtractRepoDetailsFromSourceURL()
-	if err != nil {
-		err = ErrGenerateModel(err, model.Model)
-		utils.LogError.Error(err)
-		return nil
-	}
-
-	isModelPublished, _ := strconv.ParseBool(model.PublishToRegistry)
-	//Initialize walker
-	gitWalker := walker.NewGit()
+	status := entity.Ignored
 	if isModelPublished {
-		gw := gitWalker.
-			Owner(owner).
-			Repo(repo).
-			Branch(branch).
-			Root(root).
-			RegisterFileInterceptor(func(f walker.File) error {
-				// Check if the file has a JSON extension
-				if filepath.Ext(f.Name) != ".json" {
-					return nil
+		status = entity.Enabled
+	}
+	_status := component.ComponentDefinitionStatus(status)
+	modelDirPath, compDirPath, err := createVersionedDirectoryForModelAndComp(version, model.Model)
+	if err != nil {
+		err = ErrGenerateModel(err, model.Model)
+		return err
+	}
+	modelDef, alreadyExists, err := writeModelDefToFileSystem(&model, version, modelDirPath)
+	if err != nil {
+		return ErrGenerateModel(err, model.Model)
+	}
+	isModelPublishToSite, _ := strconv.ParseBool(model.PublishToSites)
+	alreadyExist = alreadyExists
+	for registrant, models := range ComponentCSVHelper.Components {
+		if registrant != "meshery" {
+			continue
+		}
+		for _, comps := range models {
+			for _, comp := range comps {
+				if comp.Model != model.Model {
+					continue
 				}
-				contentBytes := []byte(f.Content)
 				var componentDef component.ComponentDefinition
-				if err := encoding.Unmarshal(contentBytes, &componentDef); err != nil {
-					return err
-				}
-				version = componentDef.Model.Model.Version
-				modelDirPath, compDirPath, err := createVersionedDirectoryForModelAndComp(version, model.Model)
+				componentDef, err = comp.CreateComponentDefinition(isModelPublishToSite, "v1.0.0")
 				if err != nil {
-					err = ErrGenerateModel(err, model.Model)
-					return err
+					utils.Log.Error(ErrUpdateComponent(err, modelName, comp.Component))
+					continue
 				}
-				modelDef, alreadyExist, err := writeModelDefToFileSystem(&model, version, modelDirPath) // how to infer this? @Beginner86 any idea? new column?
-				if err != nil {
-					return ErrGenerateModel(err, model.Model)
-				}
-				if alreadyExist {
-					utils.Log.Info("Model already exists: ", model.Model)
-				}
+				componentDef.Status = &_status
 				componentDef.Model = *modelDef
-				_, err = componentDef.WriteComponentDefinition(compDirPath)
-
+				alreadyExists, err = componentDef.WriteComponentDefinition(compDirPath)
 				if err != nil {
-					err = ErrGenerateComponent(err, model.Model, componentDef.DisplayName)
+					err = ErrGenerateComponent(err, comp.Model, componentDef.DisplayName)
 					utils.LogError.Error(err)
 				}
+				if alreadyExists {
+					actualCompCount++
+				}
+				compDefComps = append(compDefComps, componentDef)
+			}
+		}
+	}
 
-				return nil
-			})
-		err = gw.Walk()
-		if err != nil {
-			return err
+	if !alreadyExist {
+		if len(compDefComps) == 0 {
+			utils.LogError.Error(ErrGenerateModel(fmt.Errorf("no components found for model "), model.Model))
+		} else if len(compDefComps)-actualCompCount == 0 {
+			utils.Log.Info("Current model: ", model.Model)
+			utils.Log.Info(" no change in components for ", model.ModelDisplayName, " (", model.Model, ")")
+		} else {
+			utils.Log.Info("Current model: ", model.Model)
+			utils.Log.Info(" extracted ", len(compDefComps)-actualCompCount, " components for ", model.ModelDisplayName, " (", model.Model, ")")
+		}
+	} else {
+		if len(compDefComps) > 0 {
+			if len(compDefComps)-actualCompCount == 0 {
+				utils.Log.Info("Model already exists: ", model.Model)
+			} else {
+				utils.Log.Info("Current model: ", model.Model)
+				utils.Log.Info(" extracted ", len(compDefComps)-actualCompCount, " components for ", model.ModelDisplayName, " (", model.Model, ")")
+			}
+		} else {
+			utils.LogError.Error(ErrGenerateModel(fmt.Errorf("no components found for model "), model.Model))
 		}
 	}
 

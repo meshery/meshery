@@ -67,7 +67,7 @@
    "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "The default shape for nodes, displayed as an oval. This shape is useful for general-purpose nodes where no special distinction is required.",
   "displayName": "Circle",
   "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",

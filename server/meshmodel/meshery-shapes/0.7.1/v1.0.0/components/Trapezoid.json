@@ -67,7 +67,7 @@
    "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "A four-sided shape with one pair of parallel sides, used to indicate hierarchical relationships or steps in a process.",
   "displayName": "Trapezoid",
   "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",
@@ -126,7 +126,7 @@
    "secondaryColor": "#00D3A9",
    "shape": "polygon",
    "svgColor": "\u003csvg width=\"41\" height=\"40\" viewBox=\"0 0 41 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M8.5 3H32.5L39.5 37H1.5L8.5 3Z\" fill=\"#00B39F\" fill-opacity=\"0.1\" stroke=\"#00B39F\" stroke-miterlimit=\"10\" stroke-width=\"1\"/\u003e\n\u003c/svg\u003e",
-   "svgWhite": "\u003csvg width=\"41\" height=\"40\" viewBox=\"0 0 41 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M8.5 3H32.5L39.5 37H1.5L8.5 3Z\" fill=\"white\" fill-opacity=\"0.1\" stroke=\"white\" stroke-miterlimit=\"10\"/\u003e\n\u003c/svg\u003e\n",
+   "svgWhite": "\u003csvg width=\"41\" height=\"40\" viewBox=\"0 0 41 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M8.5 3H32.5L39.5 37H1.5L8.5 3Z\" fill=\"white\" fill-opacity=\"0.1\" stroke=\"white\" stroke-miterlimit=\"10\"/\u003e\n\u003c/svg\u003e",
    "width": 30
   },
   "version": "v1.0.0"

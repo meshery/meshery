@@ -22,17 +22,17 @@ const (
 )
 
 type ComponentCSV struct {
-	Registrant     string `json:"registrant" csv:"registrant"`
-	Model          string `json:"model" csv:"model"`
-	Component      string `json:"component" csv:"component"`
-	Description    string `json:"description" csv:"description"`
-	Shape          string `json:"shape" csv:"shape"`
-	PrimaryColor   string `json:"primaryColor" csv:"primaryColor"`
-	SecondaryColor string `json:"secondaryColor" csv:"secondaryColor"`
-	SVGColor       string `json:"svgColor" csv:"svgColor"`
-	SVGWhite       string `json:"svgWhite" csv:"svgWhite"`
-	SVGComplete    string `json:"svgComplete" csv:"svgComplete"`
-	// HasSchema          string `json:"hasSchema" csv:"hasSchema"` No column in the CSV
+	Registrant         string `json:"registrant" csv:"registrant"`
+	Model              string `json:"model" csv:"model"`
+	Component          string `json:"component" csv:"component"`
+	Description        string `json:"description" csv:"description"`
+	Shape              string `json:"shape" csv:"shape"`
+	PrimaryColor       string `json:"primaryColor" csv:"primaryColor"`
+	SecondaryColor     string `json:"secondaryColor" csv:"secondaryColor"`
+	SVGColor           string `json:"svgColor" csv:"svgColor"`
+	SVGWhite           string `json:"svgWhite" csv:"svgWhite"`
+	SVGComplete        string `json:"svgComplete" csv:"svgComplete"`
+	Schema             string `json:"schema" csv:"schema"`
 	Docs               string `json:"docs" csv:"docs"`
 	StyleOverrides     string `json:"styleOverrides" csv:"styleOverrides"`
 	Styles             string `json:"styles" csv:"styles"`
@@ -42,6 +42,7 @@ type ComponentCSV struct {
 	LogoURL            string `json:"logoURL" csv:"logoURL"`
 	Genealogy          string `json:"genealogy" csv:"genealogy"`
 	IsAnnotation       string `json:"isAnnotation" csv:"isAnnotation"`
+	Version            string `json:"version" csv:"version"`
 
 	ModelDisplayName string `json:"modelDisplayName" csv:"-"`
 	Category         string `json:"category" csv:"-"`
@@ -50,23 +51,23 @@ type ComponentCSV struct {
 
 // The Component Definition generated assumes or is only for components which have registrant as "meshery"
 func (c *ComponentCSV) CreateComponentDefinition(isModelPublished bool, defVersion string) (component.ComponentDefinition, error) {
-	var capabilities []capability.Capability
-	if c.Capabilities != "" {
-		err := encoding.Unmarshal([]byte(c.Capabilities), &capabilities)
-		if err != nil {
-			Log.Error(err)
-		}
-	}
+
 	componentDefinition := &component.ComponentDefinition{
 		SchemaVersion: schmeaVersion.ComponentSchemaVersion,
-		Capabilities:  &capabilities,
 		DisplayName:   c.Component,
 		Format:        "JSON",
 		Version:       defVersion,
 		Metadata: component.ComponentDefinition_Metadata{
 			Published: isModelPublished,
 		},
-		Component: component.Component{},
+		Component: component.Component{
+			Kind:    c.Component,
+			Schema:  c.Schema,
+			Version: c.Version,
+		},
+	}
+	if c.Description != "" {
+		componentDefinition.Description = c.Description
 	}
 	err := c.UpdateCompDefinition(componentDefinition)
 	return *componentDefinition, err
@@ -81,7 +82,15 @@ var compStyleValues = []string{
 
 func (c *ComponentCSV) UpdateCompDefinition(compDef *component.ComponentDefinition) error {
 	var existingAddditionalProperties map[string]interface{}
-
+	if c.Description != "" {
+		compDef.Description = c.Description
+	}
+	if c.Schema != "" {
+		compDef.Component.Schema = c.Schema
+	}
+	if c.Version != "" {
+		compDef.Component.Version = c.Version
+	}
 	if compDef.Metadata.AdditionalProperties != nil {
 		existingAddditionalProperties = compDef.Metadata.AdditionalProperties
 	}

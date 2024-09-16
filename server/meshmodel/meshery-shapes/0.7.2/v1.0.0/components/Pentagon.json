@@ -67,7 +67,7 @@
    "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "A five-sided polygon often used for specific classifications of data. Its unique shape helps to quickly distinguish it from other polygonal shapes.",
   "displayName": "Pentagon",
   "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",

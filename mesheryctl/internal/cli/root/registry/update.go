@@ -49,6 +49,8 @@ mesheryctl registry update --spreadsheet-id [id] --spreadsheet-cred [base64 enco
 
 // Updating models in the meshery/meshery repo
 mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw --spreadsheet-cred $CRED
+// Updating models in the meshery/meshery repo based on flag 
+mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw --spreadsheet-cred $CRED --model "[model-name]"
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 
@@ -134,7 +136,6 @@ func InvokeCompUpdate() error {
 	pwd, _ := os.Getwd()
 
 	// var wg sync.WaitGroup
-
 	for registrant, model := range componentCSVHelper.Components {
 		if registrant == "" {
 			continue
@@ -172,7 +173,6 @@ func InvokeCompUpdate() error {
 					utils.Log.Info("Updating component of model ", modelName, " with version: ", content.Name())
 
 					for _, component := range components {
-						utils.Log.Info("Updating ", component.Component)
 						compPath := filepath.Join(versionPath, "components", fmt.Sprintf("%s.json", component.Component))
 						componentByte, err := os.ReadFile(compPath)
 						if err != nil {
@@ -197,39 +197,41 @@ func InvokeCompUpdate() error {
 						defer func() {
 							_ = os.Remove(tmpFilePath)
 						}()
+
 						if _, err := os.Stat(compPath); err == nil {
 							existingData, err := os.ReadFile(compPath)
 							if err != nil {
 								utils.Log.Error(err)
-								goto NewGen
+								continue
 							}
 
 							err = mutils.WriteJSONToFile[comp.ComponentDefinition](tmpFilePath, componentDef)
 							if err != nil {
 								utils.Log.Error(err)
-								goto NewGen
+								continue
 							}
 
 							newData, err := os.ReadFile(tmpFilePath)
 							if err != nil {
 								utils.Log.Error(err)
-								goto NewGen
+								continue
 							}
 
 							if bytes.Equal(existingData, newData) {
 								utils.Log.Info("No changes detected for ", componentDef.Component.Kind)
 								continue
+							} else {
+								err = mutils.WriteJSONToFile[comp.ComponentDefinition](compPath, componentDef)
+								if err != nil {
+									utils.Log.Error(err)
+									continue
+								}
+								totalCompsUpdatedPerModelPerVersion++
+
 							}
 						}
-					NewGen:
-						err = mutils.WriteJSONToFile[comp.ComponentDefinition](compPath, componentDef)
-						if err != nil {
-							utils.Log.Error(err)
-							continue
-						}
-						totalCompsUpdatedPerModelPerVersion++
-
 					}
+
 					compUpdateArray = append(compUpdateArray, compUpdateTracker{
 						totalComps:        availableComponentsPerModelPerVersion,
 						totalCompsUpdated: totalCompsUpdatedPerModelPerVersion,
@@ -255,7 +257,7 @@ func logModelUpdateSummary(modelToCompUpdateTracker *store.GenerticThreadSafeSto
 		}
 	}
 
-	utils.Log.Info(fmt.Sprintf("Updated %d models and %d components", len(values), totalAggregateComponents))
+	utils.Log.Info(fmt.Sprintf("For %d models updated %d components", len(values), totalAggregateComponents))
 }
 
 func init() {
@@ -264,6 +266,7 @@ func init() {
 
 	updateCmd.PersistentFlags().StringVar(&spreadsheeetID, "spreadsheet-id", "", "spreadsheet it for the integration spreadsheet")
 	updateCmd.PersistentFlags().StringVar(&spreadsheeetCred, "spreadsheet-cred", "", "base64 encoded credential to download the spreadsheet")
+	updateCmd.PersistentFlags().StringVarP(&modelName, "model", "m", "", "specific model name to be generated")
 
 	updateCmd.MarkFlagsRequiredTogether("spreadsheet-id", "spreadsheet-cred")
 

@@ -53,6 +53,7 @@ import Router from 'next/router';
 import { RelayEnvironmentProvider } from 'react-relay';
 import { createRelayEnvironment } from '../lib/relayEnvironment';
 import './styles/charts.css';
+import uiConfig from '../ui.config';
 
 import { ErrorBoundary } from '../components/General/ErrorBoundary';
 import { NotificationCenterProvider } from '../components/NotificationCenter';
@@ -184,7 +185,7 @@ class MesheryApp extends App {
 
     dataFetch(
       `/api/integrations/connections?page=0&pagesize=2&status=${encodeURIComponent(
-        JSON.stringify([CONNECTION_STATES.CONNECTED]),
+        JSON.stringify([CONNECTION_STATES.CONNECTED, CONNECTION_STATES.REGISTERED]),
       )}&kind=${encodeURIComponent(
         JSON.stringify([CONNECTION_KINDS.PROMETHEUS, CONNECTION_KINDS.GRAFANA]),
       )}`,
@@ -666,6 +667,8 @@ class MesheryApp extends App {
       );
     });
 
+    const canShowNav = !this.state.isFullScreenMode && uiConfig?.components?.navigator !== false;
+
     return (
       <DynamicComponentProvider>
         <RelayEnvironmentProvider environment={relayEnvironment}>
@@ -674,7 +677,7 @@ class MesheryApp extends App {
               <ErrorBoundary>
                 <div className={classes.root}>
                   <CssBaseline />
-                  {!this.state.isFullScreenMode && (
+                  {canShowNav && (
                     <nav
                       className={isDrawerCollapsed ? classes.drawerCollapsed : classes.drawer}
                       data-test="navigation"

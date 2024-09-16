@@ -1,5 +1,5 @@
 import { Box, Button, Grid, NoSsr, Typography, withStyles } from '@material-ui/core';
-import { Provider, connect } from 'react-redux';
+import { connect } from 'react-redux';
 import { withRouter } from 'next/router';
 import { Pagination, PaginationItem } from '@material-ui/lab';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
@@ -7,7 +7,6 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import DesignsIcon from '../../../assets/icons/DesignIcon';
 import classNames from 'classnames';
 
-import { store } from '../../../store';
 import WorkspaceIcon from '../../../assets/icons/Workspace';
 import { EmptyState, GenericModal } from '../General';
 import {
@@ -18,6 +17,7 @@ import {
   PrimaryActionButtons,
   createAndEditWorkspaceSchema,
   createAndEditWorkspaceUiSchema,
+  ErrorBoundary,
 } from '@layer5/sistent';
 import useStyles from '../../../assets/styles/general/tool.styles';
 import styles from '../Environments/styles';
@@ -832,12 +832,16 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default withStyles(styles)(
-  connect(mapStateToProps)(
-    withRouter((props) => (
-      <Provider store={store}>
+const WorkspacesPageWithErrorBoundary = (props) => {
+  return (
+    <NoSsr>
+      <ErrorBoundary>
         <Workspaces {...props} />
-      </Provider>
-    )),
-  ),
+      </ErrorBoundary>
+    </NoSsr>
+  );
+};
+
+export default withStyles(styles)(
+  connect(mapStateToProps)(withRouter(WorkspacesPageWithErrorBoundary)),
 );

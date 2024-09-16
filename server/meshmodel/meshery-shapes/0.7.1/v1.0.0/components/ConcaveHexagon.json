@@ -67,7 +67,7 @@
    "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
-  "description": "",
+  "description": "A six-sided shape with one or more inward curves, creating a star-like appearance, useful for special types of nodes that need to stand out distinctly.",
   "displayName": "ConcaveHexagon",
   "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",
