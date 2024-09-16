@@ -7,7 +7,7 @@ abstract: Screenshot service provided via Meshmap to capture a snapshot of your 
 display-title: "false"
 list: include
 type: extensions
-category: meshmap
+category: kanvas
 ---
 
 # <img style="height: 4rem; width: 4rem;" src="{{site.baseurl}}/assets/img/kanvas-icon-color.svg" /> MeshMap Snapshot
@@ -21,7 +21,7 @@ MeshMap Snapshot is a screenshot service provided via MeshMap for your designs. 
 
 <h3>Functional Sequence Diagram</h3>
 
-<img src="{{site.baseurl}}/assets/img/meshmap/meshmap-snapshot.png" />
+<img src="{{site.baseurl}}/assets/img/meshmap/kanvas-snapshot.png" />
 </details>
 
 <h3>Installing Meshmap Snapshot: Github Pull Request</h3>
