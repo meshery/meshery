@@ -24,10 +24,11 @@ import {
   Grid,
   Typography,
   DeleteIcon,
+  SearchBar,
 } from '@layer5/sistent';
 import useStyles from '../../../assets/styles/general/tool.styles';
 import styles from '../Environments/styles';
-import SearchBar from '../../../utils/custom-search';
+// import SearchBar from '../../../utils/custom-search';
 import AddIconCircleBorder from '../../../assets/icons/AddIconCircleBorder';
 import { useEffect, useRef, useState } from 'react';
 import {
@@ -608,14 +609,16 @@ const Workspaces = ({ organization, classes }) => {
                 </Typography>
               </Button>
             </div>
-            <SearchBar
-              onSearch={(value) => {
-                setSearch(value);
-              }}
-              placeholder="Search Workspaces..."
-              expanded={isSearchExpanded}
-              setExpanded={setIsSearchExpanded}
-            />
+            <UsesSistent>
+              <SearchBar
+                onSearch={(value) => {
+                  setSearch(value);
+                }}
+                placeholder="Search Workspaces..."
+                expanded={isSearchExpanded}
+                setExpanded={setIsSearchExpanded}
+              />
+            </UsesSistent>
           </div>
           {selectedWorkspaces.length > 0 && (
             <Box className={classNames(classes.bulkActionWrapper, StyleClass.toolWrapper)}>
