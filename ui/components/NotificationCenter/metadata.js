@@ -100,8 +100,8 @@ const checkImageExists = async (url) => {
 };
 
 const ComponentWithIcon = ({ component }) => {
-  const { DisplayName, Metadata, Model } = component;
-  const modelname = Model.name;
+  const { DisplayName, Metadata, Model, Version } = component;
+  const modelname = Model;
   const kind = Metadata.toLowerCase();
 
   const paths = [
@@ -135,10 +135,10 @@ const ComponentWithIcon = ({ component }) => {
     loadImages();
   }, [modelname, paths]);
 
-  const version = Model.model
-    ? Model.model.version.startsWith('v')
-      ? Model.model.version
-      : `v${Model.model.version}`
+  const version = Version
+    ? Version.startsWith('v')
+      ? Version
+      : `v${Version}`
     : 'Version not available';
 
   return (
@@ -174,7 +174,7 @@ const ComponentWithIcon = ({ component }) => {
 };
 
 const RelationshipDetail = ({ relationship }) => {
-  const { Kind, Subtype, Selectors } = relationship;
+  const { Kind, Subtype, Selectors, RelationshipType } = relationship;
 
   const renderSelectors = (selectors) => {
     return selectors.map((selector, index) => {
@@ -182,7 +182,7 @@ const RelationshipDetail = ({ relationship }) => {
         <div key={index} style={{ marginLeft: '2rem', marginTop: '0.5rem' }}>
           <React.Fragment key={index}>
             <Typography variant="body1">
-              Kind of {Kind} and sub type {Subtype}
+              Kind of {Kind}, sub type {Subtype} and type {RelationshipType}
             </Typography>
             <Grid container>
               <Grid item xs={6}>
