@@ -15,6 +15,7 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/handlers"
 	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshkit/encoding"
 	meshkitutils "github.com/layer5io/meshkit/utils"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -83,7 +84,7 @@ var importModelCmd = &cobra.Command{
 		err = registerModel(tarData, fileName, "file")
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 		return nil
 	},
@@ -184,7 +185,7 @@ func registerModel(data []byte, name string, dataType string) error {
 	}
 	var response models.RegistryAPIResponse
 
-	if err := meshkitutils.Unmarshal(string(bodyBytes), &response); err != nil {
+	if err := encoding.Unmarshal((bodyBytes), &response); err != nil {
 		err = models.ErrUnmarshal(err, "response body")
 		return err
 	}
@@ -193,11 +194,11 @@ func registerModel(data []byte, name string, dataType string) error {
 }
 
 func displayEntities(response *models.RegistryAPIResponse) {
+	displaySummary(response)
 	ok := displayEmtpyModel(response)
 	if !ok {
 		return
 	}
-	displaySummary(response)
 	displayEntitisIfModel(response)
 }
 func displayEmtpyModel(response *models.RegistryAPIResponse) bool {
@@ -256,10 +257,9 @@ func displaySuccessfulComponents(response *models.RegistryAPIResponse, modelName
 
 		for _, comp := range response.EntityTypeSummary.SuccessfulComponents {
 			displayName, _ := comp["DisplayName"].(string)
-			modelData, _ := comp["Model"].(map[string]interface{})
-			modelDisplayName, _ := modelData["name"].(string)
-			category, _ := modelData["category"].(map[string]interface{})["name"].(string)
-			modelVersion, _ := modelData["model"].(map[string]interface{})["version"].(string)
+			modelDisplayName, _ := comp["Model"].(string)
+			category, _ := comp["Category"].(string)
+			modelVersion, _ := comp["Version"].(string)
 			if modelDisplayName == modelName {
 				rows = append(rows, []string{displayName, category, modelVersion})
 
@@ -280,7 +280,8 @@ func displaySuccessfulRelationships(response *models.RegistryAPIResponse, model 
 		for _, rel := range response.EntityTypeSummary.SuccessfulRelationships {
 			kind := rel["Kind"].(string)
 			subtype := rel["Subtype"].(string)
-			modelName := rel["Model"].(map[string]interface{})["name"].(string)
+			relationshipType := rel["RelationshipType"].(string)
+			modelName := rel["Model"].(string)
 			if modelName != model {
 				continue
 			}
@@ -292,7 +293,7 @@ func displaySuccessfulRelationships(response *models.RegistryAPIResponse, model 
 				to := allow["to"].([]interface{})
 				fromComponent := fmt.Sprintf("%s", from[0].(map[string]interface{})["kind"])
 				toComponent := fmt.Sprintf("%s", to[0].(map[string]interface{})["kind"])
-				key := fmt.Sprintf("%s-%s", kind, subtype)
+				key := fmt.Sprintf("%s-%s-%s", kind, subtype, relationshipType)
 				if seen[key+fromComponent+toComponent] {
 					continue
 				}
@@ -309,7 +310,7 @@ func displaySuccessfulRelationships(response *models.RegistryAPIResponse, model 
 					boldRelationships = utils.BoldString("RELATIONSHIPS:")
 				}
 				parts := strings.Split(key, "-")
-				utils.Log.Infof("  %s Kind of %s and sub type %s", boldRelationships, parts[0], parts[1])
+				utils.Log.Infof("  %s Kind of %s, sub type %s and type %s", boldRelationships, parts[0], parts[1], parts[2])
 				utils.PrintToTable(header, rows)
 			}
 		}
@@ -350,6 +351,7 @@ func displayUnsuccessfulEntities(response *models.RegistryAPIResponse, modelName
 				fmt.Println("")
 				utils.Log.Infof("  %s: Import did not occur for%s error: \n  %s", utils.BoldString("ERROR"), EntityTypeLine, longDescription)
 			}
+
 		}
 	}
 }
@@ -391,7 +393,7 @@ func buildEntityTypeLine(names, entityTypes []interface{}, longDescription, mode
 				continue
 			}
 		}
-		if entityType == "Unknown" {
+		if entityType == "unknown" {
 			utils.Log.Infof("\n%s: Import process for file %s encountered error: \n    %s", utils.BoldString("ERROR"), name.(string), longDescription)
 		} else if entityType == "component" {
 			compCount++

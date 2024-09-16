@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"strings"
 	"sync"
 
 	"github.com/gofrs/uuid"
@@ -18,7 +17,7 @@ import (
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshkit/models/events"
 	"github.com/layer5io/meshkit/models/oci"
-	meshkitoci "github.com/layer5io/meshkit/models/oci"
+	"github.com/layer5io/meshkit/models/registration"
 	meshkitutils "github.com/layer5io/meshkit/utils"
 
 	_models "github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
@@ -1198,12 +1197,13 @@ func prettifyCompDefSchema(entities []entity.Entity) []component.ComponentDefini
 
 func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	var response models.RegistryAPIResponse
+	regErrorStore := models.NewRegistrationFailureLogHandler()
+	var mu sync.Mutex
 	defer func() {
 		_ = r.Body.Close()
 	}()
-	var mu sync.Mutex
 	userID := uuid.FromStringOrNil(user.ID)
-	var message strings.Builder
+	var message string
 
 	var importRequest struct {
 		ImportBody struct {
@@ -1226,7 +1226,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		return
 	}
 	base64String := string(base64Data)
-	//remove double quotes
+	// Remove double quotes
 	base64String = base64String[1 : len(base64String)-1]
 
 	decodedBytes, err := base64.StdEncoding.DecodeString(base64String)
@@ -1237,13 +1237,15 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 
 	switch importRequest.UploadType {
 	case "url":
-		//future implementation
+		// Future implementation
 		break
 	case "file":
+		// Create a temporary file and write the data
 		tempFile, err := os.CreateTemp("", importRequest.ImportBody.FileName)
 		if err != nil {
 			err = meshkitutils.ErrCreateFile(err, "Error creating temp file")
 			h.handleError(rw, err, err.Error())
+			h.sendErrorEvent(userID, provider, "Error creating temp file", err)
 			return
 		}
 		defer os.Remove(tempFile.Name())
@@ -1252,83 +1254,61 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		if err != nil {
 			err = meshkitutils.ErrWriteFile(err, importRequest.ImportBody.FileName)
 			h.handleError(rw, err, err.Error())
+			h.sendErrorEvent(userID, provider, "Error writing to temp file", err)
 			return
 		}
 		tempFile.Close()
-		isYaml := meshkitutils.IsYaml(tempFile.Name())
-		if isYaml {
-			processFileToRegistry(&response, decodedBytes, &mu, importRequest.ImportBody.FileName, h)
-			if response.EntityCount.TotalErrCount > 0 {
-				response.ErrMsg = ErrMsgContruct(&response)
-			}
-			break
-		}
-		isOci := meshkitoci.IsOCIArtifact((decodedBytes))
-		if isOci {
-			tempFile, err := os.CreateTemp("", "oci-artifact-*.tar")
-			if err != nil {
-				err = meshkitutils.ErrCreateFile(err, "Error creating temp file")
-				h.handleError(rw, err, err.Error())
-				return
-			}
-			defer os.Remove(tempFile.Name())
+		// Pass the temp file path to the RegistrationHelper
+		registrationHelper := registration.NewRegistrationHelper(
+			utils.UI,
+			h.registryManager,
+			regErrorStore,
+		)
 
-			if _, err := tempFile.Write(decodedBytes); err != nil {
-				err = meshkitutils.ErrWriteFile(err, importRequest.ImportBody.FileName)
-				h.handleError(rw, err, err.Error())
+		dir := registration.NewDir(tempFile.Name())
+		registrationHelper.Register(dir)
+		for _, pkg := range registrationHelper.PkgUnits {
+			registeredModel := pkg.Model
+			for _, comp := range pkg.Components {
+				incrementCountersOnSuccess(&mu, entity.ComponentDefinition, &response.EntityCount.CompCount, &response.EntityCount.RelCount, &response.EntityCount.ModelCount)
+				componentBytes, _ := json.Marshal(comp)
+				addSuccessfulEntry(componentBytes, entity.ComponentDefinition, &response)
+			}
+			for _, rel := range pkg.Relationships {
+				incrementCountersOnSuccess(&mu, entity.ComponentDefinition, &response.EntityCount.CompCount, &response.EntityCount.RelCount, &response.EntityCount.ModelCount)
+				relationshipBytes, _ := json.Marshal(rel)
+				addSuccessfulEntry(relationshipBytes, entity.ComponentDefinition, &response)
+			}
+			modelBytes, _ := json.Marshal(registeredModel)
+			incrementCountersOnSuccess(&mu, entity.Model, &response.EntityCount.CompCount, &response.EntityCount.RelCount, &response.EntityCount.ModelCount)
+			addSuccessfulEntry(modelBytes, entity.Model, &response)
 
-				return
-			}
-
-			extractedDir, err := os.MkdirTemp("", "oci-extracted-")
-			if err != nil {
-				err = meshkitutils.ErrCreateDir(err, "Error creating temp directory")
-				h.handleError(rw, err, err.Error())
-				return
-			}
-			defer os.RemoveAll(extractedDir)
-			if err := meshkitoci.UnCompressOCIArtifact(tempFile.Name(), extractedDir); err != nil {
-				h.handleError(rw, err, err.Error())
-				return
-			}
-
-			if err := processUploadedFile(tempFile.Name(), extractedDir, h, &response, provider, true); err != nil {
-				h.handleError(rw, err, err.Error())
-				return
-			}
-
-			if response.EntityCount.TotalErrCount > 0 {
-				response.ErrMsg = ErrMsgContruct(&response)
-			}
-		} else {
-			if tempFile, err := createTempFile(string(decodedBytes)); err != nil {
-				h.sendErrorEvent(userID, provider, "Failed to create temp file", err)
-				h.handleError(rw, err, err.Error())
-				return
-			} else {
-				defer os.Remove(tempFile.Name())
-				tempDir, err := os.MkdirTemp("", "extracted-")
-				if err != nil {
-					err = meshkitutils.ErrCreateDir(err, "Error creating temp directory")
-					h.handleError(rw, err, err.Error())
-					http.Error(rw, err.Error(), http.StatusInternalServerError)
-					return
-				}
-				defer os.RemoveAll(tempDir)
-				if err := processUploadedFile(tempFile.Name(), tempDir, h, &response, provider, false); err != nil {
-					h.handleError(rw, err, err.Error())
-					return
-				}
-
-				if response.EntityCount.TotalErrCount > 0 {
-					response.ErrMsg = ErrMsgContruct(&response)
-				}
-			}
 		}
 
+		if regErrorStore != nil {
+			// Process InvalidDefinitions
+			for _, errEntry := range regErrorStore.GetEntityRegErrors() {
+				// Increment error counters
+				if errEntry.EntityType == "Unknown" {
+					errEntry.EntityType = ""
+				}
+				incrementCountersOnErr(&mu, errEntry.EntityType, &response)
+				// Add unsuccessful entry
+				path := errEntry.EntityName
+				err := errEntry.Err
+				entityTypeStr := string(errEntry.EntityType)
+				addUnsuccessfulEntry(path, &response, err, entityTypeStr)
+			}
+		}
+		var errMsg string
+		// Construct the response message
+		message = writeMessageString(&response)
+		if response.EntityCount.TotalErrCount > 0 {
+			errMsg = ErrMsgContruct(&response)
+		}
+
+		h.sendSuccessResponse(rw, userID, provider, message, errMsg, &response)
 	}
-	message = writeMessageString(&response)
-	h.sendSuccessResponse(rw, userID, provider, message.String(), response.ErrMsg, &response)
 }
 
 // swagger:route POST /api/meshmodel/export ExportModel idExportModel
@@ -1401,7 +1381,7 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Set("Content-Length", fmt.Sprintf("%d", len(byt))) // Correctly format the Content-Length header
 	_, err = rw.Write(byt)
 	if err != nil {
-		h.log.Error(ErrGetMeshModels(err)) 
+		h.log.Error(ErrGetMeshModels(err))
 		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
 	}
 }

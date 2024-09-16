@@ -4,22 +4,19 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"os"
 	"path/filepath"
 	"strings"
 	"sync"
 
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/models"
+
+	"github.com/layer5io/meshkit/encoding"
 	"github.com/layer5io/meshkit/models/events"
 	"github.com/layer5io/meshkit/models/meshmodel/entity"
-	"github.com/layer5io/meshkit/models/registration"
-	meshkitutils "github.com/layer5io/meshkit/utils"
 	"github.com/meshery/schemas/models/v1alpha3/relationship"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/model"
-	"gopkg.in/yaml.v2"
 )
 
 func (h *Handler) handleError(rw http.ResponseWriter, err error, logMsg string) {
@@ -48,105 +45,6 @@ func (h *Handler) sendSuccessResponse(rw http.ResponseWriter, userID uuid.UUID, 
 	}
 }
 
-func createTempFile(dirPath string) (*os.File, error) {
-	tempFile, err := os.CreateTemp("", "upload-*.tar.gz")
-	if err != nil {
-		return nil, ErrCreateFile(err, "/tmp/upload-*.tar.gz")
-	}
-
-	if _, err = tempFile.Write([]byte(dirPath)); err != nil {
-		return nil, meshkitutils.ErrWriteFile(err, tempFile.Name())
-	}
-	return tempFile, nil
-}
-
-func processUploadedFile(filePath string, tempDir string, h *Handler, response *models.RegistryAPIResponse, provider models.Provider, checkOCI bool) error {
-
-	if !checkOCI {
-		if err := utils.ExtractFile(filePath, tempDir); err != nil {
-			h.sendErrorEvent(uuid.Nil, provider, "Error creating temp directory", err)
-			return err
-		}
-	}
-	var wg sync.WaitGroup
-	var mu sync.Mutex
-	if err := filepath.Walk(tempDir, func(path string, info os.FileInfo, err error) error {
-		if err != nil {
-			return meshkitutils.ErrFileWalkDir(err, path)
-		}
-		if !info.IsDir() {
-			wg.Add(1)
-			go func(path string) {
-				defer wg.Done()
-				processFile(path, h, &mu, response, provider)
-			}(path)
-		}
-		return nil
-	}); err != nil {
-		return err
-	}
-	wg.Wait()
-	return nil
-}
-
-func processFile(path string, h *Handler, mu *sync.Mutex, response *models.RegistryAPIResponse, provider models.Provider) {
-	if meshkitutils.IsZip(path) || meshkitutils.IsTarGz(path) {
-		newTempDir, err := os.MkdirTemp("", "nested-extracted-")
-		if err != nil {
-			incrementCounter(mu, &response.EntityCount.TotalErrCount)
-			h.log.Error(meshkitutils.ErrCreateDir(err, "Error creating nested temp directory"))
-			addUnsuccessfulEntry(path, response, meshkitutils.ErrCreateDir(err, "Error creating nested temp directory"), "")
-			return
-		}
-		defer os.RemoveAll(newTempDir)
-		if err := processUploadedFile(path, newTempDir, h, response, provider, false); err != nil {
-			incrementCounter(mu, &response.EntityCount.TotalErrCount)
-			h.log.Error(err)
-			addUnsuccessfulEntry(path, response, err, "")
-			return
-		}
-		return
-	}
-
-	content, err := os.ReadFile(path)
-	if err != nil {
-		incrementCounter(mu, &response.EntityCount.TotalErrCount)
-		h.log.Error(meshkitutils.ErrReadFile(err, path))
-		addUnsuccessfulEntry(path, response, meshkitutils.ErrReadFile(err, path), "")
-		return
-	}
-	processFileToRegistry(response, content, mu, path, h)
-}
-
-func processFileToRegistry(response *models.RegistryAPIResponse, content []byte, mu *sync.Mutex, path string, h *Handler) {
-	var jsonData interface{}
-	if err := yaml.Unmarshal(content, &jsonData); err == nil {
-		jsonData = utils.ConvertToJSONCompatible(jsonData)
-		convertedContent, err := json.Marshal(jsonData)
-		if err == nil {
-			content = convertedContent
-		}
-	}
-	entityType, err := meshkitutils.FindEntityType(content)
-	if err != nil {
-		incrementCounter(mu, &response.EntityCount.TotalErrCount)
-		addUnsuccessfulEntry(path, response, err, "")
-	}
-	if entityType != "" {
-		path, err := RegisterEntityForImport(content, entityType, h, response, mu)
-		if err != nil {
-			incrementCountersOnErr(mu, entityType, response)
-			h.log.Error(err)
-			addUnsuccessfulEntry(path, response, err, string(entityType))
-		} else {
-			if path != "" {
-				incrementCountersOnSuccess(mu, entityType, &response.EntityCount.CompCount, &response.EntityCount.RelCount, &response.EntityCount.ModelCount)
-				addSuccessfulEntry(content, entityType, response)
-			}
-
-		}
-	}
-}
 func addSuccessfulEntry(content []byte, entityType entity.EntityType, response *models.RegistryAPIResponse) {
 	// Helper function to check if a display name is already present
 	isDisplayNamePresent := func(displayName string) bool {
@@ -161,9 +59,10 @@ func addSuccessfulEntry(content []byte, entityType entity.EntityType, response *
 	switch entityType {
 	case entity.ComponentDefinition:
 		var c component.ComponentDefinition
-		if err := meshkitutils.Unmarshal(string(content), &c); err == nil {
+		if err := encoding.Unmarshal((content), &c); err == nil {
 			entry := map[string]interface{}{
-				"Model":       c.Model,
+				"Model":       c.Model.Name,
+				"Category":    c.Model.Category,
 				"Metadata":    c.Component.Kind,
 				"DisplayName": c.DisplayName,
 				"Version":     c.Model.Version,
@@ -175,13 +74,13 @@ func addSuccessfulEntry(content []byte, entityType entity.EntityType, response *
 		}
 	case entity.RelationshipDefinition:
 		var r relationship.RelationshipDefinition
-		if err := meshkitutils.Unmarshal(string(content), &r); err == nil {
+		if err := encoding.Unmarshal((content), &r); err == nil {
 			entry := map[string]interface{}{
-				"Model":     r.Model,
-				"Kind":      r.Kind,
-				"Subtype":   r.SubType,
-				"Selectors": r.Selectors,
-				// "RelationshipType": r.RelationshipType, //future when we support type
+				"Model":            r.Model.DisplayName,
+				"Kind":             r.Kind,
+				"Subtype":          r.SubType,
+				"Selectors":        r.Selectors,
+				"RelationshipType": r.RelationshipType, //future when we support type
 			}
 			response.EntityTypeSummary.SuccessfulRelationships = append(response.EntityTypeSummary.SuccessfulRelationships, entry)
 			if !isDisplayNamePresent(r.Model.Name) {
@@ -190,10 +89,9 @@ func addSuccessfulEntry(content []byte, entityType entity.EntityType, response *
 		}
 	case entity.Model:
 		var m model.ModelDefinition
-		if err := meshkitutils.Unmarshal(string(content), &m); err == nil {
+		if err := encoding.Unmarshal((content), &m); err == nil {
 			entry := map[string]interface{}{
-				"Model":       m.Model,
-				"Metadata":    m.Metadata,
+				"Model":       m.Name,
 				"DisplayName": m.DisplayName,
 				"Version":     m.Model.Version,
 			}
@@ -254,12 +152,6 @@ func addUnsuccessfulEntry(path string, response *models.RegistryAPIResponse, err
 	if !isDisplayNamePresent(filename) {
 		response.ModelName = append(response.ModelName, filename)
 	}
-}
-
-func incrementCounter(mu *sync.Mutex, counter *int) {
-	mu.Lock()
-	defer mu.Unlock()
-	*counter++
 }
 
 func incrementCountersOnErr(mu *sync.Mutex, entityType entity.EntityType, response *models.RegistryAPIResponse) {
@@ -329,13 +221,13 @@ func (h *Handler) sendFileEvent(userID uuid.UUID, provider models.Provider, resp
 		}
 
 		for _, component := range response.EntityTypeSummary.SuccessfulComponents {
-			if component["Model"].(model.ModelDefinition).Name == modelName {
+			if component["Model"] == modelName {
 				modelData["Components"] = append(modelData["Components"].([]interface{}), component)
 			}
 		}
 
 		for _, relationship := range response.EntityTypeSummary.SuccessfulRelationships {
-			if relationship["Model"].(model.ModelDefinition).Name == modelName {
+			if relationship["Model"] == modelName {
 				modelData["Relationships"] = append(modelData["Relationships"].([]interface{}), relationship)
 			}
 		}
@@ -359,14 +251,16 @@ func (h *Handler) sendFileEvent(userID uuid.UUID, provider models.Provider, resp
 		eventType = events.Error
 	} else if response.EntityCount.TotalErrCount > 0 && (response.EntityCount.CompCount > 0 || response.EntityCount.RelCount > 0 || response.EntityCount.ModelCount > 0) {
 		eventType = events.Warning
+	} else if response.EntityCount.ModelCount > 0 {
+		eventType = events.Warning
+	} else if response.EntityCount.TotalErrCount == 0 {
+		eventType = events.Success
 	}
 	description := getFirst42Chars(response.ErrMsg)
 	if len(description) == 42 {
 		description = description + "..."
 	}
-	if response.EntityCount.TotalErrCount == 0 {
-		eventType = events.Success
-	}
+
 	event := events.NewEvent().
 		ActedUpon(userID).
 		FromUser(userID).
@@ -386,233 +280,46 @@ func getFirst42Chars(s string) string {
 	}
 	return s
 }
-func RegisterEntityForImport(content []byte, entityType entity.EntityType, h *Handler, response *models.RegistryAPIResponse, mu *sync.Mutex) (string, error) {
-	switch entityType {
-	case entity.ComponentDefinition:
-		svgBaseDir := utils.UI
-		var comp component.ComponentDefinition
-		if err := meshkitutils.Unmarshal(string(content), &comp); err != nil {
-			return "", err
-		}
-		if comp.Styles != nil {
-			comp.Styles.SvgColor, comp.Styles.SvgWhite, comp.Styles.SvgComplete = registration.WriteAndReplaceSVGWithFileSystemPath(
-				comp.Styles.SvgColor,
-				comp.Styles.SvgWhite,
-				comp.Styles.SvgComplete,
-				svgBaseDir,
-				comp.Model.Name,
-				comp.Component.Kind,
-			)
-		}
-		err := RegisterEntity(content, entity.ComponentDefinition, h)
-		return comp.DisplayName, err
-	case entity.RelationshipDefinition:
-		var r relationship.RelationshipDefinition
-		if err := meshkitutils.Unmarshal(string(content), &r); err != nil {
-			return "", meshkitutils.ErrUnmarshal(err)
-		}
-		err := RegisterEntity(content, entity.RelationshipDefinition, h)
-		kind := r.Kind
-		return string(kind), err
-	case entity.Model:
-		var m model.ModelDefinition
-		svgBaseDir := utils.UI
-		checkBool := false
-		if err := meshkitutils.Unmarshal(string(content), &m); err != nil {
-			err = meshkitutils.ErrUnmarshal(err)
-			return "", err
-		}
-		if m.Metadata != nil {
-			svgComplete := ""
-			if m.Metadata.SvgComplete != nil {
-				svgComplete = *m.Metadata.SvgComplete
-			}
 
-			var svgCompletePath string
-			m.Metadata.SvgColor, m.Metadata.SvgWhite, svgCompletePath = registration.WriteAndReplaceSVGWithFileSystemPath(m.Metadata.SvgColor,
-				m.Metadata.SvgWhite,
-				svgComplete, svgBaseDir,
-				m.Name,
-				m.Name,
-			)
-			if svgCompletePath != "" {
-				m.Metadata.SvgComplete = &svgCompletePath
-			}
-
-		}
-		var rels []relationship.RelationshipDefinition
-		var components []component.ComponentDefinition
-		if m.Components != nil {
-			slice, ok := m.Components.([]interface{})
-			if !ok {
-				return "", meshkitutils.ErrUnmarshal(meshkitutils.ErrInvalidSchemaVersion)
-			}
-			components = make([]component.ComponentDefinition, len(slice))
-			for i, v := range slice {
-				bytes, err := json.Marshal(v)
-				if err != nil {
-					continue
-				}
-				var comp component.ComponentDefinition
-				err = json.Unmarshal(bytes, &comp)
-				if err != nil {
-					continue
-				}
-				components[i] = comp
-			}
-		}
-		if m.Relationships != nil {
-			slice, ok := m.Relationships.([]interface{})
-			if !ok {
-				return "", meshkitutils.ErrUnmarshal(meshkitutils.ErrInvalidSchemaVersion)
-			}
-			rels = make([]relationship.RelationshipDefinition, len(slice))
-			for i, v := range slice {
-				bytes, err := json.Marshal(v)
-				if err != nil {
-					continue
-				}
-				var rel relationship.RelationshipDefinition
-				err = json.Unmarshal(bytes, &rel)
-				if err != nil {
-					continue
-				}
-				rels[i] = rel
-			}
-		}
-
-		if len(components) > 0 || len(rels) > 0 {
-			checkBool = true
-		}
-		for _, comp := range components {
-			comp.Model = m
-			compBytes, _ := json.Marshal(comp)
-			_, err := meshkitutils.FindEntityType([]byte(compBytes))
-			if err != nil {
-				incrementCountersOnErr(mu, entity.ComponentDefinition, response)
-				addUnsuccessfulEntry(m.Name, response, err, string(entity.ComponentDefinition))
-				continue
-			}
-			if comp.Styles != nil {
-				comp.Styles.SvgColor, comp.Styles.SvgWhite, comp.Styles.SvgComplete = registration.WriteAndReplaceSVGWithFileSystemPath(
-					comp.Styles.SvgColor,
-					comp.Styles.SvgWhite,
-					comp.Styles.SvgComplete,
-					svgBaseDir,
-					comp.Model.Name,
-					comp.Component.Kind,
-				)
-			}
-			err = RegisterEntity(compBytes, entity.ComponentDefinition, h)
-			if err != nil {
-				incrementCountersOnErr(mu, entity.ComponentDefinition, response)
-				addUnsuccessfulEntry(m.Name, response, err, string(entity.ComponentDefinition))
-				continue
-			}
-			incrementCountersOnSuccess(mu, entity.ComponentDefinition, &response.EntityCount.CompCount, &response.EntityCount.RelCount, &response.EntityCount.ModelCount)
-
-			addSuccessfulEntry(compBytes, entity.ComponentDefinition, response)
-
-		}
-		for _, r := range rels {
-			r.Model = m
-			relBytes, _ := json.Marshal(r)
-			_, err := meshkitutils.FindEntityType([]byte(relBytes))
-			if err != nil {
-				incrementCountersOnErr(mu, entity.RelationshipDefinition, response)
-				addUnsuccessfulEntry(m.Name, response, err, string(entity.RelationshipDefinition))
-				continue
-			}
-			err = RegisterEntity(relBytes, entity.RelationshipDefinition, h)
-			if err != nil {
-				incrementCountersOnErr(mu, entity.RelationshipDefinition, response)
-				addUnsuccessfulEntry(m.Name, response, err, string(entity.RelationshipDefinition))
-				continue
-			}
-			incrementCountersOnSuccess(mu, entity.RelationshipDefinition, &response.EntityCount.CompCount, &response.EntityCount.RelCount, &response.EntityCount.ModelCount)
-			addSuccessfulEntry(relBytes, entity.RelationshipDefinition, response)
-
-		}
-		if checkBool {
-			if response.EntityCount.CompCount == 0 && response.EntityCount.RelCount == 0 {
-				return "", nil
-			}
-		}
-
-		return m.DisplayName, nil
-	case entity.PolicyDefinition:
-		//future when we support policy
-		return "", nil
-	}
-	return "", meshkitutils.ErrInvalidSchemaVersion
-}
-
-func writeMessageString(response *models.RegistryAPIResponse) strings.Builder {
+func writeMessageString(response *models.RegistryAPIResponse) string {
 	var message strings.Builder
 	if response.EntityCount.ModelCount > 0 {
 		if response.EntityCount.CompCount == 0 && response.EntityCount.RelCount == 0 && response.EntityCount.TotalErrCount == 0 {
-			message.WriteString("Model won't be registered because there was no Component(s) or Relationship(s).")
-			return message
+			message.WriteString("Model won't be registered because there was no Component or Relationship.")
+			return message.String()
 		}
 		modelName := ModelNames(response)
-		model := "model"
-		if response.EntityCount.ModelCount > 1 {
-			model = "models"
-		}
-		message.WriteString(fmt.Sprintf("Imported %s %s ", model, modelName))
+		modelWord := determinePluralWord(response.EntityCount.ModelCount, "model")
+		message.WriteString(fmt.Sprintf("Imported %s %s ", modelWord, modelName))
 	}
 	if response.EntityCount.CompCount > 0 || response.EntityCount.RelCount > 0 {
 		message.WriteString("(")
 	}
 	if response.EntityCount.CompCount > 0 {
-		component := "component"
-		if response.EntityCount.CompCount > 1 {
-			component = "components"
-		}
-		message.WriteString(fmt.Sprintf("%d %s", response.EntityCount.CompCount, component))
+		componentWord := determinePluralWord(response.EntityCount.CompCount, "component")
+		message.WriteString(fmt.Sprintf("%d %s", response.EntityCount.CompCount, componentWord))
 	}
 	if response.EntityCount.RelCount > 0 && response.EntityCount.CompCount > 0 {
 		if message.Len() > 0 {
 			message.WriteString(" and ")
 		}
-		relationship := "relationship"
-		if response.EntityCount.RelCount > 1 {
-			relationship = "relationships"
-		}
-		message.WriteString(fmt.Sprintf("%d %s", response.EntityCount.RelCount, relationship))
+		relationshipWord := determinePluralWord(response.EntityCount.RelCount, "relationship")
+		message.WriteString(fmt.Sprintf("%d %s", response.EntityCount.RelCount, relationshipWord))
 	}
 	if response.EntityCount.CompCount == 0 && response.EntityCount.RelCount > 0 {
-		relationship := "relationship"
-		if response.EntityCount.RelCount > 1 {
-			relationship = "relationships"
-		}
-		message.WriteString(fmt.Sprintf("%d %s", response.EntityCount.RelCount, relationship))
+		relationshipWord := determinePluralWord(response.EntityCount.RelCount, "relationship")
+		message.WriteString(fmt.Sprintf("%d %s", response.EntityCount.RelCount, relationshipWord))
 	}
 	if response.EntityCount.CompCount > 0 || response.EntityCount.RelCount > 0 {
 		message.WriteString(")")
 	}
-	return message
+	return message.String()
 }
 
 func ErrMsgContruct(response *models.RegistryAPIResponse) string {
-	component := "component"
-	if response.EntityCount.ErrCompCount > 1 {
-		component = "components"
-	}
-	relationship := "relationship"
-	if response.EntityCount.ErrRelCount > 1 {
-		relationship = "relationships"
-	}
-	model := "model"
-	if response.EntityCount.ErrModelCount > 1 {
-		model = "models"
-	}
-	entity := "entity"
-	if response.EntityCount.TotalErrCount > 1 {
-		entity = "entities"
-	}
+	entityWord := determinePluralWord(response.EntityCount.TotalErrCount, "entity")
 
-	msg := fmt.Sprintf("encountered error for %d %s (", response.EntityCount.TotalErrCount, entity)
+	msg := fmt.Sprintf("encountered error for %d %s (", response.EntityCount.TotalErrCount, entityWord)
 	componentsPresent := response.EntityCount.ErrCompCount > 0
 	relationshipsPresent := response.EntityCount.ErrRelCount > 0
 	modelsPresent := response.EntityCount.ErrModelCount > 0
@@ -622,20 +329,20 @@ func ErrMsgContruct(response *models.RegistryAPIResponse) string {
 	// Collect errors in a slice for dynamic message construction
 	errors := []string{}
 	if modelsPresent {
-		errors = append(errors, fmt.Sprintf("%d %s", response.EntityCount.ErrModelCount, model))
+		modelWord := determinePluralWord(response.EntityCount.ErrModelCount, "model")
+		errors = append(errors, fmt.Sprintf("%d %s", response.EntityCount.ErrModelCount, modelWord))
 	}
 	if componentsPresent {
-		errors = append(errors, fmt.Sprintf("%d %s", response.EntityCount.ErrCompCount, component))
+		componentWord := determinePluralWord(response.EntityCount.ErrCompCount, "component")
+		errors = append(errors, fmt.Sprintf("%d %s", response.EntityCount.ErrCompCount, componentWord))
 	}
 	if relationshipsPresent {
-		errors = append(errors, fmt.Sprintf("%d %s", response.EntityCount.ErrRelCount, relationship))
+		relationshipWord := determinePluralWord(response.EntityCount.ErrRelCount, "relationship")
+		errors = append(errors, fmt.Sprintf("%d %s", response.EntityCount.ErrRelCount, relationshipWord))
 	}
 	if unknownErrors > 0 {
-		unknownEntity := "entity"
-		if unknownErrors > 1 {
-			unknownEntity = "entities"
-		}
-		errors = append(errors, fmt.Sprintf("%d unknown %s", unknownErrors, unknownEntity))
+		unknownEntityWord := determinePluralWord(unknownErrors, "unknown entity")
+		errors = append(errors, fmt.Sprintf("%d %s", unknownErrors, unknownEntityWord))
 	}
 	if len(errors) > 1 {
 		msg += fmt.Sprintf("%s and %s", strings.Join(errors[:len(errors)-1], ", "), errors[len(errors)-1])
@@ -644,4 +351,15 @@ func ErrMsgContruct(response *models.RegistryAPIResponse) string {
 	}
 	msg += ")"
 	return msg
+}
+func determinePluralWord(count int, word string) string {
+	if count > 1 {
+		if strings.HasSuffix(word, "y") {
+			return word[:len(word)-1] + "ies"
+		} else if strings.HasSuffix(word, "s") {
+			return word + "es"
+		}
+		return word + "s"
+	}
+	return word
 }
