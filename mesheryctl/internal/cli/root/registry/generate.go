@@ -271,7 +271,7 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 				comp.Model = *modelDef
 
 				assignDefaultsForCompDefs(&comp, modelDef)
-				compAlreadyExist, err := comp.WriteComponentDefinition(compDirPath)
+				compAlreadyExist, err := comp.WriteComponentDefinition(compDirPath, "json")
 				if compAlreadyExist {
 					lengthOfComps--
 				}
@@ -453,7 +453,7 @@ func GenerateDefsForCoreRegistrant(model utils.ModelCSV, ComponentCSVHelper *uti
 				}
 				componentDef.Status = &_status
 				componentDef.Model = *modelDef
-				alreadyExists, err = componentDef.WriteComponentDefinition(compDirPath)
+				alreadyExists, err = componentDef.WriteComponentDefinition(compDirPath, "json")
 				if err != nil {
 					err = ErrGenerateComponent(err, comp.Model, componentDef.DisplayName)
 					utils.LogError.Error(err)

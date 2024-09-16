@@ -27,10 +27,12 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/handlers"
+	meshkitutils "github.com/layer5io/meshkit/utils"
 
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/models/oci"
 	"github.com/manifoldco/promptui"
+	"github.com/meshery/schemas/models/v1alpha3/relationship"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/model"
 	"github.com/pkg/errors"
@@ -130,6 +132,7 @@ func init() {
 	listModelCmd.Flags().IntVarP(&pageNumberFlag, "page", "p", 1, "(optional) List next set of models with --page (default = 1)")
 	viewModelCmd.Flags().StringVarP(&outFormatFlag, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
 
+	exportModal.Flags().StringVarP(&outFormatFlag, "output-format", "t", "yaml", "(optional) format to display in [json|yaml] (default = yaml)")
 	exportModal.Flags().StringVarP(&outLocationFlag, "output-location", "l", "./", "(optional) output location (default = current directory)")
 	exportModal.Flags().StringVarP(&outTypeFlag, "output-type", "o", "oci", "(optional) format to display in [oci|json|yaml] (default = oci)")
 	exportModal.Flags().BoolVarP(&discardComponentsFlag, "discard-components", "c", false, "(optional) whether to discard components in the exported model definition (default = false)")
@@ -199,13 +202,13 @@ func listModel(cmd *cobra.Command, url string, displayCountOnly bool) error {
 	req, err := utils.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		utils.Log.Error(err)
-		return err
+		return nil
 	}
 
 	resp, err := utils.MakeRequest(req)
 	if err != nil {
 		utils.Log.Error(err)
-		return err
+		return nil
 	}
 
 	// defers the closing of the response body after its use, ensuring that the resources are properly released.
@@ -214,14 +217,14 @@ func listModel(cmd *cobra.Command, url string, displayCountOnly bool) error {
 	data, err := io.ReadAll(resp.Body)
 	if err != nil {
 		utils.Log.Error(err)
-		return err
+		return nil
 	}
 
 	modelsResponse := &models.MeshmodelsAPIResponse{}
 	err = json.Unmarshal(data, modelsResponse)
 	if err != nil {
 		utils.Log.Error(err)
-		return err
+		return nil
 	}
 
 	header := []string{"Model", "Category", "Version"}
@@ -259,18 +262,18 @@ func listModel(cmd *cobra.Command, url string, displayCountOnly bool) error {
 	return nil
 }
 
-func exportModel(modelName string, cmd *cobra.Command, url string, displayCountOnly bool) error {
+func exportModel(modelName string, _ *cobra.Command, url string, _ bool) error {
 	// Find the entity with the model name
 	req, err := utils.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		utils.Log.Error(err)
-		return err
+		return nil
 	}
 
 	resp, err := utils.MakeRequest(req)
 	if err != nil {
 		utils.Log.Error(err)
-		return err
+		return nil
 	}
 
 	// ensure proper cleaning of resources
@@ -279,37 +282,129 @@ func exportModel(modelName string, cmd *cobra.Command, url string, displayCountO
 	data, err := io.ReadAll(resp.Body)
 	if err != nil {
 		utils.Log.Error(err)
-		return err
+		return nil
 	}
 
 	modelsResponse := &models.MeshmodelsAPIResponse{}
 	err = json.Unmarshal(data, modelsResponse)
 	if err != nil {
 		utils.Log.Error(err)
-		return err
+		return nil
 	}
 	if len(modelsResponse.Models) < 1 {
-		return ErrExportModel(fmt.Errorf("Model with the given name could not be found in the registry"), modelName)
+		return ErrExportModel(fmt.Errorf("model with the given name could not be found in the registry"), modelName)
 	}
 	model := modelsResponse.Models[0]
-	_ = ReplaceSVGData(&model)
+	_ = model.ReplaceSVGData("../")
 
+	var rels []relationship.RelationshipDefinition
+	var components []component.ComponentDefinition
+	if model.Components != nil {
+		slice, ok := model.Components.([]interface{})
+		if !ok {
+			err = meshkitutils.ErrUnmarshal(meshkitutils.ErrInvalidSchemaVersion)
+			utils.Log.Error(err)
+			return nil
+
+		}
+		components = make([]component.ComponentDefinition, len(slice))
+		for i, v := range slice {
+			bytes, err := json.Marshal(v)
+			if err != nil {
+				continue
+			}
+			var comp component.ComponentDefinition
+			err = json.Unmarshal(bytes, &comp)
+			if err != nil {
+				continue
+			}
+			_ = comp.ReplaceSVGData("../")
+			components[i] = comp
+		}
+	}
+	if model.Relationships != nil {
+		slice, ok := model.Relationships.([]interface{})
+		if !ok {
+			err = meshkitutils.ErrUnmarshal(meshkitutils.ErrInvalidSchemaVersion)
+			utils.Log.Error(err)
+			return nil
+		}
+		rels = make([]relationship.RelationshipDefinition, len(slice))
+		for i, v := range slice {
+			bytes, err := json.Marshal(v)
+			if err != nil {
+				continue
+			}
+			var rel relationship.RelationshipDefinition
+			err = json.Unmarshal(bytes, &rel)
+			if err != nil {
+				continue
+			}
+			rels[i] = rel
+		}
+	}
+	model.Relationships = nil
+	model.Components = nil
+	temp := os.TempDir()
+	tempModelDir := filepath.Join(temp, model.Name)
+	versionDir := filepath.Join(tempModelDir, model.Model.Version, model.Version)
+	dirs := []string{
+		versionDir,
+		filepath.Join(versionDir, "components"),
+		filepath.Join(versionDir, "relationships"),
+	}
+
+	for _, dir := range dirs {
+		err = os.MkdirAll(dir, 0700)
+		if err != nil {
+			err = meshkitutils.ErrCreateDir(err, "Error creating temp directory")
+			return err
+		}
+	}
+	defer os.RemoveAll(tempModelDir)
 	var exportedModelPath string
-	// Convert it to the required output type and write it
-	if outTypeFlag == "yaml" {
-		exportedModelPath = filepath.Join(outLocationFlag, modelName, "model.yaml")
-		err = model.WriteModelDefinition(exportedModelPath, "yaml")
+	fileType := "yaml"
+	if outFormatFlag == "json" {
+		fileType = "json"
 	}
-	if outTypeFlag == "json" {
-		exportedModelPath = filepath.Join(outLocationFlag, modelName, "model.json")
-		err = model.WriteModelDefinition(exportedModelPath, "json")
+	err = model.WriteModelDefinition(filepath.Join(versionDir, fmt.Sprintf("model.%s", fileType)), fileType)
+	if err != nil {
+		utils.Log.Error(err)
+		return nil
 	}
-	if outTypeFlag == "oci" {
-		// write model as yaml temporarily
-		modelDir := filepath.Join(outLocationFlag, modelName)
-		err = model.WriteModelDefinition(filepath.Join(modelDir, "model.json"), "json")
+	componentsDir := filepath.Join(versionDir, "components")
+	relationshipsDir := filepath.Join(versionDir, "relationships")
+
+	for _, comp := range components {
+		_, err := comp.WriteComponentDefinition(componentsDir, fileType)
+		if err != nil {
+			utils.Log.Error(err)
+		}
+
+	}
+	for _, rel := range rels {
+		err := rel.WriteRelationshipDefinition(relationshipsDir, fileType)
+		if err != nil {
+			utils.Log.Error(err)
+		}
+
+	}
+
+	if outTypeFlag != "oci" {
+		exportedModelPath = filepath.Join(outLocationFlag, modelName+"."+"tar.gz")
+		tarData, err := compressDirectory(tempModelDir)
+		if err != nil {
+			return err
+		}
+
+		// Write the compressed data to a tar.gz file
+		err = os.WriteFile(exportedModelPath, tarData, 0644)
+		if err != nil {
+			return err
+		}
+	} else {
 		// build oci image for the model
-		img, err := oci.BuildImage(modelDir)
+		img, err := oci.BuildImage(tempModelDir)
 		if err != nil {
 			utils.Log.Error(err)
 			return nil
@@ -318,67 +413,10 @@ func exportModel(modelName string, cmd *cobra.Command, url string, displayCountO
 		err = oci.SaveOCIArtifact(img, outLocationFlag+modelName+".tar", modelName)
 		if err != nil {
 			utils.Log.Error(handlers.ErrSaveOCIArtifact(err))
+			return nil
 		}
-		os.RemoveAll(modelDir)
 	}
-	if err != nil {
-		utils.Log.Error(err)
-		return err
-	}
+
 	utils.Log.Infof("Exported model to %s", exportedModelPath)
-	return nil
-}
-func ReplaceSVGData(model *model.ModelDefinition) error {
-	// Function to read SVG data from file
-	readSVGData := func(path string) (string, error) {
-		path = "../" + path // adjust path as needed
-		svgData, err := os.ReadFile(path)
-		if err != nil {
-			return "", err
-		}
-		return string(svgData), nil
-	}
-	// Replace SVG paths with actual data in metadata
-	metadata := model.Metadata
-	if metadata.SvgColor != "" {
-		svgData, err := readSVGData(metadata.SvgColor)
-		if err == nil {
-			metadata.SvgColor = svgData
-		} else {
-			return err
-		}
-	}
-	if metadata.SvgWhite != "" {
-		svgData, err := readSVGData(metadata.SvgWhite)
-		if err == nil {
-			metadata.SvgWhite = svgData
-		} else {
-			return err
-		}
-	}
-	components, ok := model.Components.([]component.ComponentDefinition)
-	if !ok {
-		return fmt.Errorf("invalid type for Components field")
-	}
-	// Replace SVG paths with actual data in components
-	for i := range components {
-		compStyle := components[i].Styles
-		if compStyle != nil {
-			svgColor, err := readSVGData(compStyle.SvgColor)
-			if err == nil {
-				compStyle.SvgColor = svgColor
-			} else {
-				return err
-			}
-			svgWhite, err := readSVGData(compStyle.SvgWhite)
-			if err == nil {
-				compStyle.SvgWhite = svgWhite
-			} else {
-				return err
-			}
-		}
-		components[i].Styles = compStyle
-	}
-	model.Components = components
 	return nil
 }

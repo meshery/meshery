@@ -1322,6 +1322,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 // responses:
 //
 //	200: []byte
+
 func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 	modelId := r.URL.Query().Get("id")
 
@@ -1330,61 +1331,110 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 		Id:            modelId,
 		Components:    true,
 		Relationships: true,
+		Greedy:        true,
 	}
 	e, _, _, err := h.registryManager.GetEntities(modelFilter)
 	if err != nil {
 		h.log.Error(ErrGetMeshModels(err))
 		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
-		return // Ensure the function returns after handling the error
+		return
 	}
 
 	model := e[0].(*model.ModelDefinition)
-
+	err = model.ReplaceSVGData("../../")
+	if err != nil {
+		h.log.Error(err)
+	}
 	// 2. Convert it to oci
 	temp := os.TempDir()
 	modelDir := filepath.Join(temp, model.Name)
-	err = os.Mkdir(modelDir, 0700)
+	versionDir := filepath.Join(modelDir, model.Model.Version, model.Version)
+
+	// Create necessary directories: {modelName}/v1.0.0/1.0.0/{components, relationships}
+	dirs := []string{
+		versionDir,
+		filepath.Join(versionDir, "components"),
+		filepath.Join(versionDir, "relationships"),
+	}
+
+	for _, dir := range dirs {
+		err = os.MkdirAll(dir, 0700)
+		if err != nil {
+			err = meshkitutils.ErrCreateDir(err, "Error creating temp directory")
+			h.log.Error(err)
+			http.Error(rw, err.Error(), http.StatusInternalServerError)
+			return
+		}
+	}
+	defer os.RemoveAll(modelDir)
+
+	components := model.Components.([]component.ComponentDefinition)
+	rels := model.Relationships.([]relationship.RelationshipDefinition)
+
+	model.Relationships = nil
+	model.Components = nil
+	// Write model.json to {modelname}/v1.0.0/1.0.0/model.json
+	err = model.WriteModelDefinition(filepath.Join(versionDir, "model.json"), "json")
 	if err != nil {
-		err = meshkitutils.ErrCreateDir(err, "Error creating temp directory")
 		h.log.Error(err)
 		http.Error(rw, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	defer os.RemoveAll(modelDir)
-	_ = utils.ReplaceSVGData(model)
+	componentsDir := filepath.Join(versionDir, "components")
+	relationshipsDir := filepath.Join(versionDir, "relationships")
 
-	err = model.WriteModelDefinition(filepath.Join(modelDir, "model.json"), "json")
-	if err != nil {
-		h.log.Error(err)
-		http.Error(rw, err.Error(), http.StatusInternalServerError)
-		return // Ensure the function returns after handling the error
+	for _, comp := range components {
+		comp.ReplaceSVGData("../../")
+		_, err := comp.WriteComponentDefinition(componentsDir, "json")
+		if err != nil {
+			h.log.Error(err)
+		}
+
+	}
+	for _, rel := range rels {
+		err := rel.WriteRelationshipDefinition(relationshipsDir, "json")
+		if err != nil {
+			h.log.Error(err)
+		}
+
 	}
 
-	// build oci image for the model
+	// Write components into {modelname}/v1.0.0/1.0.0/components
+
+	// At this point, the data has been written to the directories:
+	// {modelname}/v1.0.0/1.0.0/model.json
+	// {modelname}/v1.0.0/1.0.0/components/*.json
+	// {modelname}/v1.0.0/1.0.0/relationships/*.json
+
+	// Build OCI image for the model from the modelDir
 	img, err := oci.BuildImage(modelDir)
 	if err != nil {
 		h.log.Error(err) // TODO: Add appropriate meshkit error
 		http.Error(rw, err.Error(), http.StatusInternalServerError)
-		return // Ensure the function returns after handling the error
+		return
 	}
+
+	// Save OCI artifact into a tar file
 	tarfileName := filepath.Join(modelDir, "model.tar")
 	err = oci.SaveOCIArtifact(img, tarfileName, model.Name)
 	if err != nil {
 		h.log.Error(err)
 		http.Error(rw, err.Error(), http.StatusInternalServerError)
-		return // Ensure the function returns after handling the error
+		return
 	}
+
 	// 3. Send response
 	byt, _ := os.ReadFile(tarfileName)
 	rw.Header().Add("Content-Type", "application/x-tar")
 	rw.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s.tar\"", model.Name))
-	rw.Header().Set("Content-Length", fmt.Sprintf("%d", len(byt))) // Correctly format the Content-Length header
+	rw.Header().Set("Content-Length", fmt.Sprintf("%d", len(byt)))
 	_, err = rw.Write(byt)
 	if err != nil {
 		h.log.Error(ErrGetMeshModels(err))
 		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
 	}
 }
+
 func RegisterEntity(content []byte, entityType entity.EntityType, h *Handler) error {
 	switch entityType {
 	case entity.ComponentDefinition:

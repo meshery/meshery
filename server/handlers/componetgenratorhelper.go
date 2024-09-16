@@ -80,7 +80,7 @@ func addSuccessfulEntry(content []byte, entityType entity.EntityType, response *
 				"Kind":             r.Kind,
 				"Subtype":          r.SubType,
 				"Selectors":        r.Selectors,
-				"RelationshipType": r.RelationshipType, //future when we support type
+				"RelationshipType": r.RelationshipType,
 			}
 			response.EntityTypeSummary.SuccessfulRelationships = append(response.EntityTypeSummary.SuccessfulRelationships, entry)
 			if !isDisplayNamePresent(r.Model.Name) {
