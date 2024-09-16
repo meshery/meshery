@@ -38,6 +38,7 @@ import { designValidationMachine } from 'machines/validator/designValidator';
 import Troubleshoot from './TroubleshootingComponent';
 import CAN from '@/utils/can';
 import { mesheryEventBus } from '@/utils/can';
+import { ThemeTogglerCore } from '@/themes/hooks';
 
 const requires = createRequires(getDependencies);
 const useRemoteComponent = createUseRemoteComponent({ requires });
@@ -132,7 +133,8 @@ function NavigatorExtension({
         UnDeployStepper,
         designValidationMachine,
         mesheryEventBus: mesheryEventBus,
-        hooks: {
+        ThemeTogglerCore,
+         hooks: {
           CAN: CAN,
           useFilterK8sContexts,
           useDynamicComponent,
