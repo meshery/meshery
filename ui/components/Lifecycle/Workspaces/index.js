@@ -1,4 +1,3 @@
-import { withStyles } from '@material-ui/core';
 import { NoSsr } from '@mui/material';
 import { Provider, connect } from 'react-redux';
 import { withRouter } from 'next/router';
@@ -6,7 +5,7 @@ import { Pagination, PaginationItem } from '@material-ui/lab';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import DesignsIcon from '../../../assets/icons/DesignIcon';
-import classNames from 'classnames';
+import { styled } from '@mui/material/styles';
 
 import { store } from '../../../store';
 import WorkspaceIcon from '../../../assets/icons/Workspace';
@@ -19,16 +18,12 @@ import {
   PrimaryActionButtons,
   createAndEditWorkspaceSchema,
   createAndEditWorkspaceUiSchema,
-  Box,
   Button,
   Grid,
   Typography,
   DeleteIcon,
   SearchBar,
 } from '@layer5/sistent';
-import useStyles from '../../../assets/styles/general/tool.styles';
-import styles from '../Environments/styles';
-// import SearchBar from '../../../utils/custom-search';
 import AddIconCircleBorder from '../../../assets/icons/AddIconCircleBorder';
 import { useEffect, useRef, useState } from 'react';
 import {
@@ -57,12 +52,44 @@ import CAN from '@/utils/can';
 import DefaultError from '@/components/General/error-404/index';
 import { UsesSistent } from '@/components/SistentWrapper';
 
+export const CreateButtonWrapper = styled('div')({
+  display: 'flex',
+  justifyContent: 'flex-start',
+  alignItems: 'center',
+  whiteSpace: 'nowrap',
+});
+
+export const ToolWrapper = styled('div')(({ theme }) => ({
+  marginBottom: '3rem',
+  display: 'flex',
+  justifyContent: 'space-between',
+  backgroundColor: theme.palette.mode === 'dark' ? '#464646' : '#FFFFFF',
+  boxShadow: '0px 2px 4px -1px rgba(0,0,0,0.2)',
+  height: '4rem',
+  padding: '0.68rem',
+  borderRadius: '0.5rem',
+  position: 'relative',
+  zIndex: 101,
+}));
+
+export const BulkActionWrapper = styled(`div`)({
+  width: '100%',
+  padding: '0.8rem',
+  justifyContent: 'space-between',
+  marginTop: '0.18rem',
+  marginBottom: '1rem',
+  borderRadius: '.25rem',
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'center',
+});
+
 const ACTION_TYPES = {
   CREATE: 'create',
   EDIT: 'edit',
 };
 
-const Workspaces = ({ organization, classes }) => {
+const Workspaces = ({ organization }) => {
   const [workspaceModal, setWorkspaceModal] = useState({
     open: false,
     schema: {},
@@ -102,7 +129,6 @@ const Workspaces = ({ organization, classes }) => {
 
   const ref = useRef(null);
   const { notify } = useNotification();
-  const StyleClass = useStyles();
 
   const {
     data: workspacesData,
@@ -580,8 +606,8 @@ const Workspaces = ({ organization, classes }) => {
     <NoSsr>
       {CAN(keys.VIEW_WORKSPACE.action, keys.VIEW_WORKSPACE.subject) ? (
         <>
-          <div className={StyleClass.toolWrapper} sx={{ marginBottom: '20px', display: 'flex' }}>
-            <div className={classes.createButtonWrapper}>
+          <ToolWrapper>
+            <CreateButtonWrapper>
               <Button
                 type="submit"
                 variant="contained"
@@ -608,7 +634,7 @@ const Workspaces = ({ organization, classes }) => {
                   Create
                 </Typography>
               </Button>
-            </div>
+            </CreateButtonWrapper>
             <UsesSistent>
               <SearchBar
                 onSearch={(value) => {
@@ -619,15 +645,15 @@ const Workspaces = ({ organization, classes }) => {
                 setExpanded={setIsSearchExpanded}
               />
             </UsesSistent>
-          </div>
+          </ToolWrapper>
           {selectedWorkspaces.length > 0 && (
-            <Box className={classNames(classes.bulkActionWrapper, StyleClass.toolWrapper)}>
+            <BulkActionWrapper>
               <Typography>
                 {selectedWorkspaces.length > 1
                   ? `${selectedWorkspaces.length} workspaces selected`
                   : `${selectedWorkspaces.length} workspace selected`}
               </Typography>
-              <Button className={classes.iconButton}>
+              <Button>
                 <DeleteIcon
                   fill={theme.palette.secondary.error}
                   onClick={handleDeleteWorkspacesModalOpen}
@@ -639,7 +665,7 @@ const Workspaces = ({ organization, classes }) => {
                   }
                 />
               </Button>
-            </Box>
+            </BulkActionWrapper>
           )}
           {workspaces.length > 0 ? (
             <>
@@ -654,7 +680,6 @@ const Workspaces = ({ organization, classes }) => {
                       selectedWorkspaces={selectedWorkspaces}
                       onAssignEnvironment={(e) => handleAssignEnvironmentModalOpen(e, workspace)}
                       onAssignDesign={(e) => handleAssignDesignModalOpen(e, workspace)}
-                      classes={classes}
                     />
                   </Grid>
                 ))}
@@ -841,12 +866,10 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default withStyles(styles)(
-  connect(mapStateToProps)(
-    withRouter((props) => (
-      <Provider store={store}>
-        <Workspaces {...props} />
-      </Provider>
-    )),
-  ),
+export default connect(mapStateToProps)(
+  withRouter((props) => (
+    <Provider store={store}>
+      <Workspaces {...props} />
+    </Provider>
+  )),
 );
