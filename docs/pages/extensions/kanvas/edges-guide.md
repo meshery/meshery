@@ -3,7 +3,7 @@ layout: default
 title: Edges Style Guide
 permalink: extensions/edges-shape-guide
 language: en
-abstract: Visualize and manage complex cloud-native relationships with Kanvas's dynamic edge styling in Kubernetes architecture.
+abstract: Visualize and manage complex cloud-native relationships with Kanvas' dynamic edge styling in Kubernetes architecture.
 display-title: "false"
 list: include
 type: extensions
