@@ -7,7 +7,7 @@ abstract: Import your existing applications into Meshery.
 display-title: "false"
 list: include
 type: extensions
-category: meshmap
+category: kanvas
 ---
 
 ## Import existing applications into Meshery
@@ -25,14 +25,14 @@ Note: You can import three types of application: Docker Compose, Helm Chart, Kub
 
 Once you have accessed the Extension's UI, navigate to the Applications tab. In this tab you can see all your application with their "<b>Name</b>" and "<b>Date Modified</b>". From the top right of the table click on import application which opens import modal.
 
-<a href="{{ site.baseurl }}/assets/img/meshmap/application-tab.png"><img style="border-radius: 0.5%;" alt="Import-Application" style="width:800px;height:auto;" src="{{ site.baseurl }}/assets/img/meshmap/application-tab.png" /></a>
+<a href="{{ site.baseurl }}/assets/img/kanvas/application-tab.png"><img style="border-radius: 0.5%;" alt="Import-Application" style="width:800px;height:auto;" src="{{ site.baseurl }}/assets/img/kanvas/application-tab.png" /></a>
 
 
 **Step 3: Import the Application**
 
 You can import your application by select File Type from the options and clicking on the “Browse” button and selecting the file from your local machine or import in through URL Once you have selected the file, click on the “Import” button to import app into Meshery Extension. When you import a app into Extensions, it will create a Meshery App based on definition. This Meshery App will include all of the services, ports, and other parameters defined in the File.
 
-<a href="{{ site.baseurl }}/assets/img/meshmap/apps-modal.png"><img style="border-radius: 0.5%;" alt="Import-Application" style="width:800px;height:auto;" src="{{ site.baseurl }}/assets/img/meshmap/apps-modal.png" /></a>
+<a href="{{ site.baseurl }}/assets/img/kanvas/apps-modal.png"><img style="border-radius: 0.5%;" alt="Import-Application" style="width:800px;height:auto;" src="{{ site.baseurl }}/assets/img/kanvas/apps-modal.png" /></a>
 
 Once the Meshery Application has been created, you can use Meshery Extension to manage, operate and observe your cloud native infrastructure. You can also use Meshery Extension to deploy your Meshery Application to your infrastructure.
 
