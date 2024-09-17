@@ -107,7 +107,7 @@ func (h *Handler) ProviderCapabilityHandler(
 	// change it to use fethc from the meshery server cache
 	providerCapabilities, err := provider.ReadCapabilitiesForUser(user.ID)
 	if err != nil {
-		h.log.Debug("User capabilities not found in server store for user_id: %s, trying to fetch capabilities from the remote provider", user.ID)
+		h.log.Debugf("User capabilities not found in server store for user_id: %s, trying to fetch capabilities from the remote provider", user.ID)
 		provider.GetProviderCapabilities(w, r, user.ID)
 		return
 	}
