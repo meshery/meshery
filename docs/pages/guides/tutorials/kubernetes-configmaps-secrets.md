@@ -50,7 +50,11 @@ For this tutorial we will start with an existing design and later add _ConfigMap
 
 Select the **Catalog** tab and search for the word _'tutorial'_ (1). Click on the **[Tutorial] Simple MySQL Pod** (2) design and when prompted click **Clone** (3).
 
+<<<<<<< HEAD
 ![Configure the ConfigMap](./kubernetes-configmaps-secrets/2024-04-17_20-01.png)
+=======
+![Configure the ConfigMap](./screenshots/kubernetes-configmaps-secrets/2024-04-17_20-01.png)
+>>>>>>> 8d96cfe825 (Migrated all screenshots to separate folders in tutorials)
 
 Label the pod with a unique key-value pair for easier filtering later. For example, _user:johndoe_. Use the same key-value pair fot labelling all the other resources. The tutorial uses _environment:tutorial_, do not use the same.
 
@@ -59,19 +63,31 @@ Label the pod with a unique key-value pair for easier filtering later. For examp
 
 Click Kubernetes from the dock and select Config Map from the list. This will put the ConfigMap component on the canvas.  
 
+<<<<<<< HEAD
 ![Configure the ConfigMap](./kubernetes-configmaps-secrets/2024-04-16_18-03.png)
+=======
+![Configure the ConfigMap](./screenshots/kubernetes-configmaps-secrets/2024-04-16_18-03.png)
+>>>>>>> 8d96cfe825 (Migrated all screenshots to separate folders in tutorials)
 
 Click the _ConfigMap_ component to load the configuration window.
 
  1. Change the **Name** if required. (Using a unique name helps with easier identification later)
  2. Click **+** next to Data and set the ConfigMap data as a key value pair. In this example, the _Key_ is **CREATEDB** and the _Value_ is **myDB**.
 
+<<<<<<< HEAD
     ![Configure the ConfigMap](./kubernetes-configmaps-secrets/2024-04-16_00-13.png)
+=======
+    ![Configure the ConfigMap](./screenshots/kubernetes-configmaps-secrets/2024-04-16_00-13.png)
+>>>>>>> 8d96cfe825 (Migrated all screenshots to separate folders in tutorials)
 
  3. Click on the **label**.
  4. Set a label for easier filtering later during Visualization.
 
+<<<<<<< HEAD
     ![Configure the ConfigMap](./kubernetes-configmaps-secrets/2024-04-16_00-18.png)
+=======
+    ![Configure the ConfigMap](./screenshots/kubernetes-configmaps-secrets/2024-04-16_00-18.png)
+>>>>>>> 8d96cfe825 (Migrated all screenshots to separate folders in tutorials)
 
  5. Click outside the window to close it. 
 
@@ -84,7 +100,11 @@ Make a note of the ConfigMap component _name_ and _key_ for use later.
 
 Click Kubernetes from the dock and select Secret from the list. This will put the Secret component on the canvas.  
 
+<<<<<<< HEAD
 ![Configure the ConfigMap](./kubernetes-configmaps-secrets/2024-04-16_18-19.png)
+=======
+![Configure the ConfigMap](./screenshots/kubernetes-configmaps-secrets/2024-04-16_18-19.png)
+>>>>>>> 8d96cfe825 (Migrated all screenshots to separate folders in tutorials)
 
 Click on the _Secret_ component to load the configuration window.
 
@@ -92,13 +112,21 @@ Click on the _Secret_ component to load the configuration window.
  2. Set _Type_ as **Opaque**.
  3. Click **+** next to _Data_ and add the secret as a key value pair. For this tutorial, the _Key_ is **SUPERSECRETPASSWORD** and the _Value_ is **c3Ryb25ncGFzc3dvcmQ=**.
 
+<<<<<<< HEAD
     ![Configure the ConfigMap](./kubernetes-configmaps-secrets/2024-04-16_18-25.png)
+=======
+    ![Configure the ConfigMap](./screenshots/kubernetes-configmaps-secrets/2024-04-16_18-25.png)
+>>>>>>> 8d96cfe825 (Migrated all screenshots to separate folders in tutorials)
 
  4. Click **Labels**.
  5. Set the same label as used earlier in the ConfigMap.
  6. Click outside the window to close it.
 
+<<<<<<< HEAD
     ![Configure the ConfigMap](./kubernetes-configmaps-secrets/2024-04-16_18-26.png)
+=======
+    ![Configure the ConfigMap](./screenshots/kubernetes-configmaps-secrets/2024-04-16_18-26.png)
+>>>>>>> 8d96cfe825 (Migrated all screenshots to separate folders in tutorials)
 
 ### Configure the Pod to use the ConfigMap and Secret
 
@@ -106,22 +134,38 @@ Click on the _Pod_ component to load its configuration window. We will set the S
 
  1. Scroll down to _Container_ and expand _Containers-0_.
 
+<<<<<<< HEAD
     ![Configure the ConfigMap](./kubernetes-configmaps-secrets/2024-04-16_00-42.png)
+=======
+    ![Configure the ConfigMap](./screenshots/kubernetes-configmaps-secrets/2024-04-16_00-42.png)
+>>>>>>> 8d96cfe825 (Migrated all screenshots to separate folders in tutorials)
 
  2. Scroll down to _Env_. An existing environment variable for the MySQL root password is already set. We will modify this to retrieve the password from the Secret.
  3. Expand _Env-0_ and delete the contents of _Value_.
  4. Expand _Value From_, expand _Secret Key Ref_ and set the _Key_ to the name of the key in the Secret and the _Name_ to the name of the Secret which in this example is **SUPERSECRETPASSWORD** and **mysql-secret-eb**.
 
+<<<<<<< HEAD
     ![Configure the ConfigMap](./kubernetes-configmaps-secrets/2024-04-16_00-56.png)
 
  5. Next, click **+** next to Env to add a second environment variable. 
 
     ![Configure the ConfigMap](./kubernetes-configmaps-secrets/2024-04-16_00-57.png)
+=======
+    ![Configure the ConfigMap](./screenshots/kubernetes-configmaps-secrets/2024-04-16_00-56.png)
+
+ 5. Next, click **+** next to Env to add a second environment variable. 
+
+    ![Configure the ConfigMap](./screenshots/kubernetes-configmaps-secrets/2024-04-16_00-57.png)
+>>>>>>> 8d96cfe825 (Migrated all screenshots to separate folders in tutorials)
 
  6. Expand _Env-1_ and set _Name_ to **MYSQL_DATABASE**.
  7. Expand _Value From_, expand _Secret Key Ref_ and set the _Key_ to the name of the key in the ConfigMap and the _Name_ to the name of the ConfigMap which in this example is **CREATEDB** and **mysql-config-map-by**.
 
+<<<<<<< HEAD
     ![Configure the ConfigMap](./kubernetes-configmaps-secrets/2024-04-16_01-00.png)
+=======
+    ![Configure the ConfigMap](./screenshots/kubernetes-configmaps-secrets/2024-04-16_01-00.png)
+>>>>>>> 8d96cfe825 (Migrated all screenshots to separate folders in tutorials)
 
 
 ### Validate and Deploy the Design
@@ -134,23 +178,39 @@ Move to the Visualize tab.
 
 Filter to show the resources pod, configmap and secret and use the lables set earlier to display only your resources. In this example, that is _environment:tutorials_.
 
+<<<<<<< HEAD
 ![Configure the ConfigMap](./kubernetes-configmaps-secrets/2024-04-16_01-19.png)
 
 Select the Pod (1) and then choose Actions (2) to the right. Click Open Interactive Terminal (3) to open the terminal to the container.
 
 ![Configure the ConfigMap](./kubernetes-configmaps-secrets/2024-04-16_01-25.png)
+=======
+![Configure the ConfigMap](./screenshots/kubernetes-configmaps-secrets/2024-04-16_01-19.png)
+
+Select the Pod (1) and then choose Actions (2) to the right. Click Open Interactive Terminal (3) to open the terminal to the container.
+
+![Configure the ConfigMap](./screenshots/kubernetes-configmaps-secrets/2024-04-16_01-25.png)
+>>>>>>> 8d96cfe825 (Migrated all screenshots to separate folders in tutorials)
 
 Run the following command in the terminal to verify that you are able to use the MySQL root password set as secret to login to MySQL. When prompted enter the root password (in plain text), i.e. _strongpassword_ for this tutorial.
 
 `mysql -uroot -p` 
 
+<<<<<<< HEAD
 ![Configure the ConfigMap](./kubernetes-configmaps-secrets/2024-04-16_01-27.png)
+=======
+![Configure the ConfigMap](./screenshots/kubernetes-configmaps-secrets/2024-04-16_01-27.png)
+>>>>>>> 8d96cfe825 (Migrated all screenshots to separate folders in tutorials)
 
 Run the following MySQL command to verify that the database set as a ConfigMap was indeed created.
 
 `show databases;`
 
+<<<<<<< HEAD
 ![Configure the ConfigMap](./kubernetes-configmaps-secrets/2024-04-16_01-29.png)
+=======
+![Configure the ConfigMap](./screenshots/kubernetes-configmaps-secrets/2024-04-16_01-29.png)
+>>>>>>> 8d96cfe825 (Migrated all screenshots to separate folders in tutorials)
 
 ### Deleting the resources
 
