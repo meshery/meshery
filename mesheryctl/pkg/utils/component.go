@@ -187,7 +187,7 @@ type ComponentCSVHelper struct {
 	Components     map[string]map[string][]ComponentCSV
 }
 
-func NewComponentCSVHelper(sheetURL, spreadsheetName string, spreadsheetID int64) (*ComponentCSVHelper, error) {
+func NewComponentSheetHelper(sheetURL, spreadsheetName string, spreadsheetID int64) (*ComponentCSVHelper, error) {
 	sheetURL = sheetURL + "/pub?output=csv" + "&gid=" + strconv.FormatInt(spreadsheetID, 10)
 	Log.Info("Downloading CSV from: ", sheetURL)
 	dirPath := filepath.Join(utils.GetHome(), ".meshery", "content")
@@ -202,6 +202,22 @@ func NewComponentCSVHelper(sheetURL, spreadsheetName string, spreadsheetID int64
 		SpreadsheetID:  spreadsheetID,
 		SpreadsheetURL: sheetURL,
 		Title:          spreadsheetName,
+		CSVPath:        csvPath,
+		Components:     make(map[string]map[string][]ComponentCSV),
+	}, nil
+}
+
+func NewComponentCSVHelper(csvPath string) (*ComponentCSVHelper, error) {
+	if csvPath == "" {
+		return nil, fmt.Errorf("CSV path cannot be empty")
+	}
+	Log.Info("Using provided CSV path: ", csvPath)
+
+	// Return the initialized ComponentCSVHelper with the CSV path
+	return &ComponentCSVHelper{
+		SpreadsheetID:  0,
+		SpreadsheetURL: "",
+		Title:          "",
 		CSVPath:        csvPath,
 		Components:     make(map[string]map[string][]ComponentCSV),
 	}, nil

@@ -112,23 +112,25 @@ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tu
 		}
 		var err error
 
-		srv, err = mutils.NewSheetSRV(spreadsheeetCred)
-		if err != nil {
-			utils.LogError.Error(ErrUpdateRegistry(err, modelLocation))
-			return err
+		isCsvPathPresent := modelCSVFilePath != "" && componentCSVFilePath != ""
+		if !isCsvPathPresent {
+			srv, err = mutils.NewSheetSRV(spreadsheeetCred)
+			if err != nil {
+				utils.LogError.Error(ErrUpdateRegistry(err, modelLocation))
+				return err
+			}
+
+			resp, err := srv.Spreadsheets.Get(spreadsheeetID).Fields().Do()
+			if err != nil || resp.HTTPStatusCode != 200 {
+				utils.LogError.Error(ErrUpdateRegistry(err, outputLocation))
+				return err
+			}
+
+			// Collect list of Models by name from spreadsheet
+			sheetGID = GetSheetIDFromTitle(resp, "Models")
+			// Collect list of corresponding Components by name from spreadsheet
+			componentSpredsheetGID = GetSheetIDFromTitle(resp, "Components")
 		}
-
-		resp, err := srv.Spreadsheets.Get(spreadsheeetID).Fields().Do()
-		if err != nil || resp.HTTPStatusCode != 200 {
-			utils.LogError.Error(ErrUpdateRegistry(err, outputLocation))
-			return err
-		}
-
-		// Collect list of Models by name from spreadsheet
-		sheetGID = GetSheetIDFromTitle(resp, "Models")
-		// Collect list of corresponding Components by name from spreadsheet
-		componentSpredsheetGID = GetSheetIDFromTitle(resp, "Components")
-
 		err = InvokeGenerationFromSheet(&wg)
 		if err != nil {
 			// meshkit
@@ -148,7 +150,6 @@ type compGenerateTracker struct {
 var modelToCompGenerateTracker = store.NewGenericThreadSafeStore[compGenerateTracker]()
 
 func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
-
 	weightedSem := semaphore.NewWeighted(20)
 	url := GoogleSpreadSheetURL + spreadsheeetID
 	totalAvailableModels := 0
@@ -185,9 +186,10 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 	utils.LogError.UpdateLogOutput(multiErrorWriter)
 	var wgForSpreadsheetUpdate sync.WaitGroup
 	wgForSpreadsheetUpdate.Add(1)
+
 	go func() {
 		utils.ProcessModelToComponentsMap(componentCSVHelper.Components)
-		utils.VerifyandUpdateSpreadsheet(spreadsheeetCred, &wgForSpreadsheetUpdate, srv, spreadsheeetChan, spreadsheeetID)
+		utils.VerifyandUpdateSpreadsheet(spreadsheeetCred, &wgForSpreadsheetUpdate, srv, spreadsheeetChan, spreadsheeetID, modelCSVFilePath, componentCSVFilePath) // write another for csv
 	}()
 	// Iterate models from the spreadsheet
 	for _, model := range modelCSVHelper.Models {
@@ -405,9 +407,18 @@ func GenerateDefsForCoreRegistrant(model utils.ModelCSV, ComponentCSVHelper *uti
 }
 
 func parseModelSheet(url string) (*utils.ModelCSVHelper, error) {
-	modelCSVHelper, err := utils.NewModelCSVHelper(url, "Models", sheetGID)
-	if err != nil {
-		return nil, err
+	var modelCSVHelper *utils.ModelCSVHelper
+	var err error
+	if modelCSVFilePath != "" {
+		modelCSVHelper, err = utils.NewModelCSVHelper(modelCSVFilePath)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		modelCSVHelper, err = utils.NewModelSheetHelper(url, "Models", sheetGID)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	err = modelCSVHelper.ParseModelsSheet(false, modelName)
@@ -427,10 +438,20 @@ func rateLimitArtifactHub() {
 	artifactHubCount++
 }
 func parseComponentSheet(url string) (*utils.ComponentCSVHelper, error) {
-	compCSVHelper, err := utils.NewComponentCSVHelper(url, "Components", componentSpredsheetGID)
-	if err != nil {
-		return nil, err
+	var compCSVHelper *utils.ComponentCSVHelper
+	var err error
+	if componentCSVFilePath != "" {
+		compCSVHelper, err = utils.NewComponentCSVHelper(componentCSVFilePath)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		compCSVHelper, err = utils.NewComponentSheetHelper(url, "Components", componentSpredsheetGID)
+		if err != nil {
+			return nil, err
+		}
 	}
+
 	err = compCSVHelper.ParseComponentsSheet(modelName)
 	if err != nil {
 		return nil, ErrGenerateModel(err, "unable to start model generation")
@@ -528,4 +549,9 @@ func init() {
 	generateCmd.MarkFlagsMutuallyExclusive("spreadsheet-cred", "registrant-cred")
 	generateCmd.PersistentFlags().StringVarP(&modelName, "model", "m", "", "specific model name to be generated")
 	generateCmd.PersistentFlags().StringVarP(&outputLocation, "output", "o", "../server/meshmodel", "location to output generated models, defaults to ../server/meshmodels")
+
+	generateCmd.PersistentFlags().StringVar(&modelCSVFilePath, "model-csv", "", "Path to the Model CSV file")
+	generateCmd.PersistentFlags().StringVar(&componentCSVFilePath, "component-csv", "", "Path to the Component CSV file")
+	generateCmd.MarkFlagsRequiredTogether("model-csv", "component-csv")
+
 }

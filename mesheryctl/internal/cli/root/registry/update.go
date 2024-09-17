@@ -117,7 +117,7 @@ func InvokeCompUpdate() error {
 	modelToCompUpdateTracker := store.NewGenericThreadSafeStore[[]compUpdateTracker]()
 
 	url := GoogleSpreadSheetURL + spreadsheeetID
-	componentCSVHelper, err := utils.NewComponentCSVHelper(url, "Components", sheetGID)
+	componentCSVHelper, err := utils.NewComponentSheetHelper(url, "Components", sheetGID)
 	if err != nil {
 		return err
 	}
