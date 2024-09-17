@@ -1,16 +1,13 @@
 import React, { useState, useRef } from 'react';
-import { List, ListItem } from '@material-ui/core';
 import { Avatar } from '@layer5/sistent';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import Grow from '@material-ui/core/Grow';
 import IconButton from '@material-ui/core/IconButton';
-import ListItemText from '@material-ui/core/ListItemText';
 import MenuItem from '@material-ui/core/MenuItem';
 import MenuList from '@material-ui/core/MenuList';
 import NoSsr from '@material-ui/core/NoSsr';
 import Paper from '@material-ui/core/Paper';
 import Popper from '@material-ui/core/Popper';
-import classNames from 'classnames';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { Provider, connect } from 'react-redux';
@@ -24,6 +21,7 @@ import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
+import { Button } from '@material-ui/core';
 
 const LinkDiv = styled('div')(() => ({
   display: 'inline-flex',
@@ -45,6 +43,10 @@ function exportToJsonFile(jsonData, filename) {
   linkElement.remove();
 }
 
+/**
+ * Extension Point: Avatar behavior for User Modes
+ * Insert custom logic here to handle Single User mode, Anonymous User mode, Multi User mode behavior.
+ */
 const User = (props) => {
   const [userLoaded, setUserLoaded] = useState(false);
   const [account, setAccount] = useState([]);
@@ -129,41 +131,30 @@ const User = (props) => {
   function renderAccountExtension(children) {
     if (children && children.length > 0) {
       return (
-        <List disablePadding>
+        <>
           {children.map(({ id, href, title, show: showc }) => {
             if (typeof showc !== 'undefined' && !showc) {
               return '';
             }
             return (
               <React.Fragment key={id}>
-                <ListItem button key={id}>
+                <MenuItem button key={id}>
                   {extensionPointContent(href, title)}
-                </ListItem>
+                </MenuItem>
               </React.Fragment>
             );
           })}
-        </List>
+        </>
       );
     }
   }
 
   function extensionPointContent(href, name) {
-    const { classes } = props;
-
-    const content = (
-      <LinkDiv>
-        <ListItemText classes={{ primary: classes.itemPrimary }}>{name}</ListItemText>
-      </LinkDiv>
-    );
+    const content = <LinkDiv>{name}</LinkDiv>;
     if (href) {
       return (
-        <Link href={href}>
-          <span
-            className={classNames(classes.link)}
-            onClick={() => props.updateExtensionType(name)}
-          >
-            {content}
-          </span>
+        <Link onClick={() => props.updateExtensionType(name)} href={href}>
+          {content}
         </Link>
       );
     }
@@ -174,6 +165,19 @@ const User = (props) => {
   const { color, iconButtonClassName, avatarClassName, classes } = props;
 
   const open = Boolean(anchorEl);
+
+  if (userData?.status == 'anonymous') {
+    const url = `${capabilitiesRegistry?.provider_url}/user/login?anonymousUserID=${userData?.user_id}&redirect=${window.location.pathname}`;
+
+    return (
+      <Link href={url}>
+        <Button variant="contained" onClick={handleLogout} color="primary">
+          Sign In
+        </Button>
+      </Link>
+    );
+  }
+
   return (
     <div>
       <NoSsr>
@@ -222,17 +226,7 @@ const User = (props) => {
                           Get Token
                         </MenuItem>
                       )}
-                      <MenuItem
-                        onClick={handlePreference}
-                        // disabled={
-                        //   !CAN(
-                        //     keys.VIEW_MESHERY_USER_PREFERENCES.action,
-                        //     keys.VIEW_MESHERY_USER_PREFERENCES.subject,
-                        //   )
-                        // }
-                      >
-                        Preferences
-                      </MenuItem>
+                      <MenuItem onClick={handlePreference}>Preferences</MenuItem>
                       <MenuItem onClick={handleLogout}>Logout</MenuItem>
                     </MenuList>
                   </ClickAwayListener>

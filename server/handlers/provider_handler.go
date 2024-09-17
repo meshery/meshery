@@ -101,10 +101,26 @@ func (h *Handler) ProviderCapabilityHandler(
 	w http.ResponseWriter,
 	r *http.Request,
 	_ *models.Preference,
-	_ *models.User,
+	user *models.User,
 	provider models.Provider,
 ) {
-	provider.GetProviderCapabilities(w, r)
+	// change it to use fethc from the meshery server cache
+	providerCapabilities, err := provider.ReadCapabilitiesForUser(user.ID)
+	if err != nil {
+		err = ErrGetCapabilities(err, user.ID)
+		h.log.Error(err)
+		
+		h.log.Infof("Failed to fetch capabilities from the server store, trying to fetch the capabilities from the remote provider for the user_id: ", user.ID)
+		provider.GetProviderCapabilities(w, r, user.ID)
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(providerCapabilities)
+	if err != nil {
+		h.log.Error(models.ErrMarshal(err, "provider capabilities"))
+		http.Error(w, models.ErrMarshal(err, "provider capabilities").Error(), http.StatusInternalServerError)
+		return
+	}
 }
 
 // swagger:route GET /api/provider/extension ProvidersAPI idReactComponents

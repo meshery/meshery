@@ -33,12 +33,13 @@ When a connection has been discovered, it will be listed in the MeshSync browser
 
 The connection in this state have been verified for its use and reachability but not yet being used. Almost all reachable connections will auto transition to Registered state from [Discovered](#state-discovered) state and it is upto the user what to do with this connection (i.e. User needs to administratively process the connection). It can be transitioned to [Connected](#state-connected), [Maintenance](#state-maintenance) and [Not Found](#state-not-found).
 
-> EExampleg: User manually selects the registered Prometheus connection and transition to the [connected](#state-connected) state (i.e. User administratively processes the connection).
+> Example: User manually selects the registered Prometheus connection and transition to the [connected](#state-connected) state (i.e. User administratively processes the connection).
 
 ### State: Connected
 
-The connection in this state is administratively processed and being actively managed by Meshery. User can interface and invoke set of actions with the connection.</br>
-From this state the transition can happen to either [Maintenance](#state-maintenance) or [Ignore](#state-ignored) state. </br> Auto transition to [Disconnected](#state-disconnected) state will occur if Meshery can no longer communicate with the connection, which can occur due to connectivity issue/AuthN-AuthZ/connection was deleted outside Meshery or any other issue.
+The connection in this state is administratively processed and being actively managed by Meshery. User can interface and invoke set of actions with the connection.<br>
+From this state the transition can happen to either [Maintenance](#state-maintenance) or [Ignore](#state-ignored) state.<br>
+Auto transition to [Disconnected](#state-disconnected) state will occur if Meshery can no longer communicate with the connection, which can occur due to connectivity issue/AuthN-AuthZ/connection was deleted outside Meshery or any other issue.
 
 > Example: Meshery is communicating with Prometheus APIs to scrape metrics and present it in the UI.
 

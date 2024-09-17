@@ -61,7 +61,6 @@ jobs:
             /home/runner/.cache
             !~/cache/exclude
             **/node_modules
-            /home/runner/.cache/Cypress
             ~/.npm
             ${{ github.workspace }}/.next/cache
           key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
@@ -118,11 +117,11 @@ jobs:
         with:
           repository: layer5io/meshery-istio
           path: ./meshery-istio
-      - name: Check out meshery-consul code
-        uses: actions/checkout@v4
-        with:
-          repository: layer5io/meshery-consul
-          path: ./meshery-consul
+      # - name: Check out meshery-consul code
+      #   uses: actions/checkout@v4
+      #   with:
+      #     repository: layer5io/meshery-consul
+      #     path: ./meshery-consul
       - name: Create k8s Kind Cluster
         uses: helm/kind-action@v1.8.0
         with:
@@ -137,12 +136,12 @@ jobs:
           cd ./meshery-istio
           go run main.go &
           sleep 60
-      - name: Run meshery-consul
-        run: |
-          mkdir -p /home/runner/.meshery/bin
-          cd ./meshery-consul
-          go run main.go &
-          sleep 60
+      # - name: Run meshery-consul
+      #   run: |
+      #     mkdir -p /home/runner/.meshery/bin
+      #     cd ./meshery-consul
+      #     go run main.go &
+      #     sleep 60
       - name: Setup node
         uses: actions/setup-node@v4
         with:
@@ -157,7 +156,6 @@ jobs:
             /home/runner/.cache
             !~/cache/exclude
             **/node_modules
-            /home/runner/.cache/Cypress
             ~/.npm
             ${{ github.workspace }}/.next/cache
           key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
@@ -233,11 +231,10 @@ jobs:
       - name: Docker Hub Description
         if: github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/') && success()
         uses: peter-evans/dockerhub-description@v4
-        env:
-          DOCKERHUB_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          DOCKERHUB_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-          DOCKERHUB_REPOSITORY: ${{ secrets.IMAGE_NAME }}
-
+        with:
+            username: ${{ secrets.DOCKERHUB_USERNAME }}
+            password: ${{ secrets.DOCKERHUB_PASSWORD }}
+            repository: ${{ secrets.IMAGE_NAME }}
   # validate the swagger docs
   swaggerci:
     if: github.repository == 'meshery/meshery'

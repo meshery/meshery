@@ -14,7 +14,7 @@ abstract: Learn how to create a Meshery design from scratch or from a template.
 
 {% include alert.html type="info" title="Learn about Designs" content="Learn more about <a href='/concepts/logical/designs'>what a Meshery Design</a> is and how it fits into Meshery's approach to cloud native management." %}
 
-## Creating a Meshery Design
+## Ways to create a Meshery Design
 
 You can create a Meshery design in two ways:
 

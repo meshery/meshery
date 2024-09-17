@@ -6,6 +6,7 @@ import (
 	"compress/gzip"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -18,8 +19,6 @@ import (
 	"strings"
 	"sync"
 	"time"
-
-	"errors"
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/models/connections"
@@ -38,7 +37,8 @@ type RemoteProvider struct {
 	ProviderProperties
 	*SessionPreferencePersister
 	*EventsPersister
-
+	*UserCapabilitiesPersister
+	
 	SaaSTokenName     string
 	RemoteProviderURL string
 
@@ -131,7 +131,7 @@ func (l *RemoteProvider) loadCapabilities(token string) ProviderProperties {
 		return providerProperties
 	}
 	if err != nil || resp.StatusCode != http.StatusOK {
-		l.Log.Error(ErrFetch(err, "Capabilities", resp.StatusCode))
+		l.Log.Error(ErrFetch(err, "Capabilities", http.StatusInternalServerError))
 		return providerProperties
 	}
 	defer func() {
@@ -152,7 +152,7 @@ func (l *RemoteProvider) loadCapabilities(token string) ProviderProperties {
 
 // downloadProviderExtensionPackage will download the remote provider extensions
 // package
-func (l *RemoteProvider) downloadProviderExtensionPackage() {
+func (l *RemoteProvider) DownloadProviderExtensionPackage() {
 	// Location for the package to be stored
 	loc := l.PackageLocation()
 
@@ -178,6 +178,10 @@ func (l *RemoteProvider) PackageLocation() string {
 // Name - Returns Provider's friendly name
 func (l *RemoteProvider) Name() string {
 	return l.ProviderName
+}
+
+func (l *RemoteProvider) GetProviderURL() string {
+	return l.ProviderURL
 }
 
 // Description - returns a short description of the provider for display in the Provider UI
@@ -216,10 +220,16 @@ func (l *RemoteProvider) SyncPreferences() {
 }
 
 // GetProviderCapabilities returns all of the provider properties
-func (l *RemoteProvider) GetProviderCapabilities(w http.ResponseWriter, req *http.Request) {
+func (l *RemoteProvider) GetProviderCapabilities(w http.ResponseWriter, req *http.Request, userID string) {
 	tokenString := req.Context().Value(TokenCtxKey).(string)
 
 	providerProperties := l.loadCapabilities(tokenString)
+	fmt.Println("TEST_------------------------__ line 227")
+	if err := l.WriteCapabilitiesForUser(userID, &providerProperties); err != nil {
+		fmt.Println("TEST_------------------------__ line 229", err)
+		l.Log.Error(ErrDBPut(errors.Join(err, fmt.Errorf("failed to write capabilities for the user %s to the server store", userID))))
+	}
+
 	encoder := json.NewEncoder(w)
 	if err := encoder.Encode(providerProperties); err != nil {
 		http.Error(w, ErrEncoding(err, "Provider Capablity").Error(), http.StatusInternalServerError)
@@ -286,8 +296,8 @@ func (l *RemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _
 	callbackURL = callbackURL.JoinPath(r.URL.EscapedPath())
 	callbackURL.RawQuery = r.URL.RawQuery
 
-	_, err := r.Cookie(TokenCookieName)
-	if err != nil {
+	ck, err := r.Cookie(TokenCookieName)
+	if err != nil || ck.Value == "" {
 		http.SetCookie(w, &http.Cookie{
 			Name:     l.RefCookieName,
 			Value:    "/",
@@ -297,7 +307,7 @@ func (l *RemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _
 		})
 
 		var refURL []string
-		// If refURL is empty, generate the refURL based on the current requests path and query param.
+		// If refURL is empty, generate the refURL based on the current request path and query param.
 		if refURLqueryParam == "" {
 			refURL = []string{base64.RawURLEncoding.EncodeToString([]byte(strings.TrimPrefix(callbackURL.String(), baseCallbackURL)))}
 		} else {
@@ -309,6 +319,12 @@ func (l *RemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _
 			"provider_version": []string{l.ProviderVersion},
 			"meshery_version":  []string{mesheryVersion},
 			"ref":              refURL,
+		}
+
+		releaseChannel := NewReleaseChannelInterceptor(viper.GetString("RELEASE_CHANNEL"), l, l.Log)
+		if releaseChannel != nil {
+			releaseChannel.Intercept(r, w)
+			return
 		}
 
 		http.Redirect(w, r, l.RemoteProviderURL+"/login?"+queryParams.Encode(), http.StatusFound)
@@ -690,7 +706,7 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext) (co
 		"cluster": k8sContext.Cluster,
 	}
 
-	conn := &ConnectionPayload{
+	conn := &connections.ConnectionPayload{
 		Kind:    "kubernetes",
 		Type:    "platform",
 		SubType: "orchestrator",
@@ -3431,7 +3447,7 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ 
 
 	// Download the package for the user only if they have extension capability
 	if len(l.GetProviderProperties().Extensions.Navigator) > 0 {
-		l.downloadProviderExtensionPackage()
+		l.DownloadProviderExtensionPackage()
 	}
 
 	// Proceed to redirect once the capabilities has loaded
@@ -3439,7 +3455,7 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ 
 	redirectURL := "/"
 	isPlayGround, _ := strconv.ParseBool(viper.GetString("PLAYGROUND"))
 	if isPlayGround {
-		redirectURL = "/extension/meshmap"
+		redirectURL = getRedirectURLForNavigatorExtension(&providerProperties)
 	}
 
 	refQueryParam := r.URL.Query().Get("ref")
@@ -3448,30 +3464,13 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ 
 	}
 
 	go func() {
-		_metadata := map[string]string{
-			"server_id":        viper.GetString("INSTANCE_ID"),
-			"server_version":   viper.GetString("BUILD"),
-			"server_build_sha": viper.GetString("COMMITSHA"),
-			"server_location":  r.Context().Value(MesheryServerURL).(string),
-		}
-		metadata := make(map[string]interface{}, len(_metadata))
-		for k, v := range _metadata {
-			metadata[k] = v
-		}
-		cred := make(map[string]interface{}, 0)
+		credential := make(map[string]interface{}, 0)
 		var temp *uuid.UUID
-		cred["token"] = temp
+		credential["token"] = temp
 
-		conn := &ConnectionPayload{
-			Kind:             "meshery",
-			Type:             "platform",
-			SubType:          "management",
-			MetaData:         metadata,
-			Status:           connections.CONNECTED,
-			CredentialSecret: cred,
-		}
+		connectionPayload := connections.BuildMesheryConnectionPayload(r.Context().Value(MesheryServerURL).(string), credential)
 
-		_, err := l.SaveConnection(conn, tokenString, true)
+		_, err := l.SaveConnection(connectionPayload, tokenString, true)
 		if err != nil {
 			l.Log.Error(ErrSaveConnection(err))
 		}
@@ -3754,7 +3753,7 @@ func (l *RemoteProvider) ExtensionProxy(req *http.Request) (*ExtensionProxyRespo
 	return nil, ErrFetch(fmt.Errorf("failed to request to remote provider"), fmt.Sprint(bdr), resp.StatusCode)
 }
 
-func (l *RemoteProvider) SaveConnection(conn *ConnectionPayload, token string, skipTokenCheck bool) (*connections.Connection, error) {
+func (l *RemoteProvider) SaveConnection(conn *connections.ConnectionPayload, token string, skipTokenCheck bool) (*connections.Connection, error) {
 	if !l.Capabilities.IsSupported(PersistConnection) {
 		l.Log.Error(ErrOperationNotAvaibale)
 		return nil, ErrInvalidCapability("PersistConnection", l.ProviderName)
@@ -4086,7 +4085,7 @@ func (l *RemoteProvider) UpdateConnection(req *http.Request, connection *connect
 }
 
 // UpdateConnectionById - to update an existing connection using the connection id
-func (l *RemoteProvider) UpdateConnectionById(req *http.Request, connection *ConnectionPayload, connId string) (*connections.Connection, error) {
+func (l *RemoteProvider) UpdateConnectionById(req *http.Request, connection *connections.ConnectionPayload, connId string) (*connections.Connection, error) {
 	if !l.Capabilities.IsSupported(PersistConnection) {
 		l.Log.Error(ErrOperationNotAvaibale)
 		return nil, ErrInvalidCapability("PersistConnection", l.ProviderName)

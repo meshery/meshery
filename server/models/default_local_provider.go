@@ -38,6 +38,7 @@ import (
 // DefaultLocalProvider - represents a local provider
 type DefaultLocalProvider struct {
 	*MapPreferencePersister
+	*UserCapabilitiesPersister
 	*EventsPersister
 	ProviderProperties
 	ProviderBaseURL                 string
@@ -87,6 +88,10 @@ func (l *DefaultLocalProvider) Name() string {
 	return l.ProviderName
 }
 
+func (l *DefaultLocalProvider) GetProviderURL() string {
+	return l.ProviderBaseURL
+}
+
 // Description - returns a short description of the provider for display in the Provider UI
 func (l *DefaultLocalProvider) Description() []string {
 	return l.ProviderDescription
@@ -95,6 +100,9 @@ func (l *DefaultLocalProvider) Description() []string {
 // GetProviderType - Returns ProviderType
 func (l *DefaultLocalProvider) GetProviderType() ProviderType {
 	return l.ProviderType
+}
+
+func (l *DefaultLocalProvider) DownloadProviderExtensionPackage() {
 }
 
 // GetProviderProperties - Returns all the provider properties required
@@ -108,8 +116,14 @@ func (l *DefaultLocalProvider) PackageLocation() string {
 	return ""
 }
 
+func (l *DefaultLocalProvider) SetJWTCookie(_ http.ResponseWriter, _ string) {
+}
+
+func (l *DefaultLocalProvider) UnSetJWTCookie(_ http.ResponseWriter) {
+}
+
 // GetProviderCapabilities returns all of the provider properties
-func (l *DefaultLocalProvider) GetProviderCapabilities(w http.ResponseWriter, _ *http.Request) {
+func (l *DefaultLocalProvider) GetProviderCapabilities(w http.ResponseWriter, _ *http.Request, _ string) {
 	encoder := json.NewEncoder(w)
 	if err := encoder.Encode(l.ProviderProperties); err != nil {
 		http.Error(w, "failed to encode provider capabilities", http.StatusInternalServerError)
@@ -251,7 +265,7 @@ func (l *DefaultLocalProvider) SaveK8sContext(_ string, k8sContext K8sContext) (
 		"cluster": k8sContext.Cluster,
 	}
 
-	conn := &ConnectionPayload{
+	conn := &connections.ConnectionPayload{
 		ID:      connID,
 		Kind:    "kubernetes",
 		Name:    k8sContext.Name,
@@ -1055,7 +1069,7 @@ func (l *DefaultLocalProvider) ExtensionProxy(_ *http.Request) (*ExtensionProxyR
 	return nil, ErrLocalProviderSupport
 }
 
-func (l *DefaultLocalProvider) SaveConnection(conn *ConnectionPayload, _ string, _ bool) (*connections.Connection, error) {
+func (l *DefaultLocalProvider) SaveConnection(conn *connections.ConnectionPayload, _ string, _ bool) (*connections.Connection, error) {
 	id := uuid.Nil
 	if conn.ID != uuid.Nil {
 		id = conn.ID
@@ -1124,7 +1138,7 @@ func (l *DefaultLocalProvider) UpdateConnectionStatusByID(token string, connecti
 	return updatedConnection, http.StatusOK, nil
 }
 
-func (l *DefaultLocalProvider) UpdateConnectionById(req *http.Request, conn *ConnectionPayload, _ string) (*connections.Connection, error) {
+func (l *DefaultLocalProvider) UpdateConnectionById(req *http.Request, conn *connections.ConnectionPayload, _ string) (*connections.Connection, error) {
 	connection := connections.Connection{
 		ID:           conn.ID,
 		Name:         conn.Name,

@@ -2,15 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
-import {
-  Checkbox,
-  MenuItem,
-  ListItemText,
-  Select,
-  Typography,
-  Grid,
-  Button,
-} from '@material-ui/core';
+import { Checkbox, MenuItem, ListItemText, Select, Typography } from '@material-ui/core';
 
 import {
   ConnectionDetailContent,
@@ -24,6 +16,7 @@ import dataFetch from '../../../../lib/data-fetch';
 import { Box } from '@mui/material';
 import { selectCompSchema } from '../../../RJSFUtils/common';
 import { JsonParse, randomPatternNameGenerator } from '../../../../utils/utils';
+import Notification from './Notification';
 
 const CONNECTION_TYPES = ['Prometheus Connection', 'Grafana Connection'];
 
@@ -233,6 +226,9 @@ export const CredentialDetails = ({ sharedData, handleNext, handleRegistrationCo
       (result) => {
         setExistingCredentials(result?.credentials);
       },
+      (error) => {
+        console.error('Error fetching existing credentials:', error);
+      },
     );
   };
 
@@ -258,7 +254,7 @@ export const CredentialDetails = ({ sharedData, handleNext, handleRegistrationCo
           kind: sharedData?.kind, // this is "kind" column of the current row which is selected in the meshsync table. i.e. the entry against which registration process has been invoked.
           name: sharedData?.componentForm?.name, // This name is from the name field in schema
           type: sharedData?.connection?.connection?.model?.category?.name?.toLowerCase(),
-          sub_type: sharedData?.connection?.connection?.metadata?.subCategory.toLowerCase(),
+          sub_type: sharedData?.connection?.connection?.model?.subCategory?.toLowerCase(),
           metadata: sharedData?.componentForm,
           credential_secret: credential,
           id: sharedData?.connection?.id,
@@ -273,11 +269,9 @@ export const CredentialDetails = ({ sharedData, handleNext, handleRegistrationCo
           setIsSuccess(false);
         }
       },
-      (err) => {
-        if (err != '') {
-          console.error(err);
-          setIsSuccess(false);
-        }
+      (error) => {
+        console.error('Error verifying connection:', error);
+        setIsSuccess(false);
       },
     );
   };
@@ -303,7 +297,7 @@ export const CredentialDetails = ({ sharedData, handleNext, handleRegistrationCo
           kind: sharedData?.kind, // this is "kind" column of the current row which is selected in the meshsync table. i.e. the entry against which registration process has been invoked.
           name: sharedData?.componentForm?.name, // This name is from the name field in schema
           type: sharedData?.connection?.connection?.model?.category?.name?.toLowerCase(),
-          sub_type: sharedData?.connection?.connection?.metadata?.subCategory.toLowerCase(),
+          sub_type: sharedData?.connection?.connection?.model?.subCategory?.toLowerCase(),
           metadata: sharedData?.componentForm,
           credential_secret: credential,
           id: sharedData?.connection?.id,
@@ -311,11 +305,15 @@ export const CredentialDetails = ({ sharedData, handleNext, handleRegistrationCo
         }),
       },
       (result) => {
-        if (result === '') {
+        if (result !== undefined && result !== null && result === '') {
           setIsSuccess(true);
         } else {
           setIsSuccess(false);
         }
+      },
+      (error) => {
+        console.error('Error connecting to connection:', error);
+        setIsSuccess(false);
       },
     );
   };
@@ -367,9 +365,9 @@ export const CredentialDetails = ({ sharedData, handleNext, handleRegistrationCo
       disabled={disableVerify}
       btnText={isSuccess === null || isSuccess === false ? 'Verify Connection' : 'Next'}
     >
-      <p className={{ paddingLeft: '16px' }}>
+      <Typography variant="body2" style={{ paddingLeft: '16px' }}>
         Select an existing credential to use for this connection
-      </p>
+      </Typography>
       <FormControl sx={{ width: '100%' }} size="small">
         <InputLabel fontSize="20" id="credential-checkbox-label">
           Select existing credential
@@ -446,65 +444,15 @@ export const CredentialDetails = ({ sharedData, handleNext, handleRegistrationCo
           </label>
         </Typography>
       </Box>
-      {isSuccess === false && (
-        <div
-          style={{
-            background: '#ff000010',
-            borderRadius: '0.5rem',
-            padding: '0.5rem',
-            display: 'flex',
-            marginBottom: '1rem',
-          }}
-        >
-          <Grid style={{ width: '80%' }}>
-            <Typography variant="body2">
-              <b>Verification Failed</b>
-            </Typography>
-            <Typography variant="body2" sx={{ color: '#00000020' }}>
-              {`Unable to establish a connection using ${sharedData?.kind}`}
-            </Typography>
-          </Grid>
-          <Grid
-            style={{
-              width: '20%',
-              display: 'flex',
-              justifyContent: 'flex-end',
-              alignItems: 'center',
-            }}
-          >
-            <Button
-              style={{
-                backgroundColor: '#ff0000',
-                padding: '0.5rem',
-                borderRadius: '0.5rem',
-                border: '0',
-                color: '#fff',
-                height: '2rem',
-              }}
-              onClick={() => verifyConnection()}
-            >
-              <Typography variant="body2">Retry</Typography>
-            </Button>
-          </Grid>
-        </div>
-      )}
-      {isSuccess === true && (
-        <div
-          style={{
-            background: '#00B39F40',
-            borderRadius: '0.5rem',
-            padding: '0.5rem',
-            display: 'flex',
-            marginBottom: '1rem',
-          }}
-        >
-          <Grid>
-            <Typography variant="body2" sx={{ color: '#00000020' }}>
-              {`Credential for ${sharedData?.kind} created.`}
-            </Typography>
-          </Grid>
-          <Grid style={{ width: '10%' }}></Grid>
-        </div>
+      {isSuccess !== null && (
+        <Notification
+          type={isSuccess ? 'success' : 'error'}
+          message={`Credential for ${sharedData?.kind} ${
+            isSuccess ? 'created' : 'verification failed'
+          }`}
+          retry={!isSuccess}
+          onRetry={() => verifyConnection()}
+        />
       )}
     </StepperContent>
   );

@@ -111,15 +111,15 @@ Let's get familiar with mesheryctl system commands. The syntax of the mesheryctl
 
 ## Main_command : system channel
 ### channel
-`mesheyctl system channel set [stable|stable-version|edge|edge-version]` : Used to set the channel.
+`mesheryctl system channel set [stable|stable-version|edge|edge-version]` : Used to set the channel.
 
-`mesheyctl system channel switch [stable|stable-version|edge|edge-version]` : Used to switch between channels.
+`mesheryctl system channel switch [stable|stable-version|edge|edge-version]` : Used to switch between channels.
 
 <a href="{{ site.baseurl }}/assets/img/syscmd/channel set.png"><img alt="skip-browser" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/syscmd/channel set.png" /></a>
 
-`mesheyctl system channel view --all` : Displays all available channels.
+`mesheryctl system channel view --all` : Displays all available channels.
 
-`mesheyctl system channel view` : Displays the current channel.
+`mesheryctl system channel view` : Displays the current channel.
 
 <a href="{{ site.baseurl }}/assets/img/syscmd/channel view.png"><img alt="skip-browser" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/syscmd/channel view.png" /></a>
 

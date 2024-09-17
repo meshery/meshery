@@ -1,5 +1,5 @@
 import { NoSsr } from '@mui/material';
-import { Provider, connect } from 'react-redux';
+import { connect } from 'react-redux';
 import { withRouter } from 'next/router';
 import { Pagination, PaginationItem } from '@material-ui/lab';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
@@ -7,7 +7,6 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import DesignsIcon from '../../../assets/icons/DesignIcon';
 import { styled } from '@mui/material/styles';
 
-import { store } from '../../../store';
 import WorkspaceIcon from '../../../assets/icons/Workspace';
 import { EmptyState, GenericModal } from '../General';
 import {
@@ -23,6 +22,7 @@ import {
   Typography,
   DeleteIcon,
   SearchBar,
+  ErrorBoundary,
 } from '@layer5/sistent';
 import AddIconCircleBorder from '../../../assets/icons/AddIconCircleBorder';
 import { useEffect, useRef, useState } from 'react';
@@ -866,10 +866,14 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps)(
-  withRouter((props) => (
-    <Provider store={store}>
-      <Workspaces {...props} />
-    </Provider>
-  )),
-);
+const WorkspacesPageWithErrorBoundary = (props) => {
+  return (
+    <NoSsr>
+      <ErrorBoundary>
+        <Workspaces {...props} />
+      </ErrorBoundary>
+    </NoSsr>
+  );
+};
+
+export default connect(mapStateToProps)(withRouter(WorkspacesPageWithErrorBoundary));
