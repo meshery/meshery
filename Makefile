@@ -148,7 +148,7 @@ server: dep-check
 	KEYS_PATH=$(KEYS_PATH) \
 	go run main.go error.go;
 
-## Build and run Meshery Server on your local machine.
+## Build and run Meshery Server with some Meshery Adapters on your local machine.
 server-with-adapters: dep-check
 	cd server; cd cmd; go mod tidy; \
 	BUILD="$(GIT_VERSION)" \
