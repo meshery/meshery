@@ -367,6 +367,7 @@ type Provider interface {
 	GetProviderCapabilities(http.ResponseWriter, *http.Request, string)
 
 	GetProviderProperties() ProviderProperties
+	DownloadProviderExtensionPackage()
 	// InitiateLogin - does the needed check, returns a true to indicate "return" or false to continue
 	InitiateLogin(http.ResponseWriter, *http.Request, bool)
 	TokenHandler(http.ResponseWriter, *http.Request, bool)
