@@ -112,6 +112,7 @@ func (k *Kanvas) Intercept(req *http.Request, res http.ResponseWriter) {
 		err = ErrDBPut(errors.Wrapf(err, "failed to write capabilities for the user %s", flowResponse.UserID.String()))
 		k.log.Error(err)
 		http.Redirect(res, req, errorUI, http.StatusFound)
+
 		return
 	}
 
