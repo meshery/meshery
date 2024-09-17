@@ -6,5 +6,11 @@ jobs:
   notfiy-build:
     name: Notify providers for Meshery Extensions channel build
     if: github.repository == 'meshery/meshery'
-    uses: layer5labs/meshery-extensions-packages/.github/workflows/build-and-deploy-meshery-extensions-playground.yml@master
-    secrets: inherit
+    runs-on: ubuntu-22.04
+    steps:
+    - name: trigger plugins for edge
+      uses: layer5io/trigger-remote-provider-action@master
+      with:
+        name: "Build and Rollout Kanvas"
+        repo: layer5labs/meshery-extensions-packages
+        token: ${{ secrets.GH_ACCESS_TOKEN }}
