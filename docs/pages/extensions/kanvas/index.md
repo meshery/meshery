@@ -2,6 +2,7 @@
 layout: default
 title: Kanvas
 permalink: extensions/kanvas
+redirect_from: extensions/meshmap
 abstract: Collaborative cloud native visual designer to design and manage infrastructure and applications.
 language: en
 display-title: "false"
