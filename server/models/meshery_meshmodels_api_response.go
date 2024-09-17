@@ -3,8 +3,8 @@ package models
 import (
 	models "github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	"github.com/layer5io/meshkit/models/meshmodel/entity"
-	"github.com/meshery/schemas/models/v1beta1/model"
 	"github.com/meshery/schemas/models/v1beta1/component"
+	"github.com/meshery/schemas/models/v1beta1/model"
 )
 
 // API response model for meshmodel models API
@@ -25,10 +25,20 @@ type MeshmodelsDuplicateAPIResponse struct {
 
 // API response model for meshmodel components API
 type MeshmodelComponentsAPIResponse struct {
-	Page       int                         `json:"page"`
-	PageSize   int                         `json:"page_size"`
-	Count      int64                       `json:"total_count"`
+	Page       int                             `json:"page"`
+	PageSize   int                             `json:"page_size"`
+	Count      int64                           `json:"total_count"`
 	Components []component.ComponentDefinition `json:"components"`
+}
+type ImportRequest struct {
+	ImportBody ImportBody `json:"importBody"`
+	UploadType string     `json:"uploadType"`
+	Register   bool       `json:"register,omitempty"`
+}
+type ImportBody struct {
+	ModelFile []byte `json:"model_file"`
+	URL       string `json:"url,omitempty"`
+	FileName  string `json:"file_name,omitempty"`
 }
 
 // API response model for meshmodel components API that contains the number of duplicates for each component

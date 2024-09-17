@@ -22,19 +22,10 @@ import (
 	"github.com/spf13/viper"
 )
 
-type ImportRequestBody struct {
-	ImportBody struct {
-		ModelFile []byte `json:"model_file"`
-		URL       string `json:"url,omitempty"`
-		FileName  string `json:"file_name,omitempty"`
-	} `json:"importBody"`
-	UploadType string `json:"uploadType"`
-}
-
 var (
 	location     string
 	templateFile string
-	registrant   string
+	register     bool
 )
 
 var importModelCmd = &cobra.Command{
@@ -42,9 +33,9 @@ var importModelCmd = &cobra.Command{
 	Short: "Import models from mesheryctl command",
 	Long:  "Import models by specifying the directory, file, or URL. You can also provide a template JSON file and registrant name.",
 	Example: `
-	import model -f /path/to/[file.tar.gz|file.zip] --template /path/to/template.json --registrant someone
+	import model -f /path/to/[file.tar.gz|file.zip] --template /path/to/template.json -r (default is true if flag is used registration is skipped)
 	import model --file /path/to/models
-	import model --file http://example.com/model --template /path/to/template.json --registrant someone
+	import model --file http://example.com/model --template /path/to/template.json 
 	`,
 	Args: func(_ *cobra.Command, args []string) error {
 		const errMsg = "Usage: mesheryctl model import [ file | filePath | URL ]\nRun 'mesheryctl model import --help' to see detailed help message"
@@ -73,12 +64,13 @@ var importModelCmd = &cobra.Command{
 			if err != nil {
 				return fmt.Errorf("could not read the specified template file: %v", err)
 			}
-
-			err = registerModel(fileData, registrant, "url")
+			err = registerModel(fileData, "", "url", path, !register)
 			if err != nil {
 				utils.Log.Error(err)
 				return nil
 			}
+			locationForModel := utils.MesheryFolder + "/Models"
+			utils.Log.Info("Model can be accessed from ", locationForModel)
 			return nil
 		}
 
@@ -106,7 +98,7 @@ var importModelCmd = &cobra.Command{
 			fileName = filepath.Base(path)
 		}
 
-		err = registerModel(tarData, fileName, "file")
+		err = registerModel(tarData, fileName, "file", "", !register)
 		if err != nil {
 			utils.Log.Error(err)
 			return nil
@@ -168,7 +160,7 @@ func compressDirectory(dirpath string) ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-func registerModel(data []byte, name string, dataType string) error {
+func registerModel(data []byte, filename string, dataType string, sourceURI string, register bool) error {
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
 		return err
@@ -176,12 +168,12 @@ func registerModel(data []byte, name string, dataType string) error {
 
 	baseURL := mctlCfg.GetBaseMesheryURL()
 	url := baseURL + "/api/meshmodels/register"
-	importRequest := ImportRequestBody{
-		UploadType: dataType,
-	}
+	var importRequest models.ImportRequest
+	importRequest.UploadType = dataType
 	importRequest.ImportBody.ModelFile = data
-	importRequest.ImportBody.FileName = name
-
+	importRequest.ImportBody.URL = sourceURI
+	importRequest.ImportBody.FileName = filename
+	importRequest.Register = register
 	requestBody, err := json.Marshal(importRequest)
 	if err != nil {
 		return err
@@ -319,7 +311,6 @@ func displaySuccessfulRelationships(response *models.RegistryAPIResponse, model 
 				fromComponent := fmt.Sprintf("%s", from[0].(map[string]interface{})["kind"])
 				toComponent := fmt.Sprintf("%s", to[0].(map[string]interface{})["kind"])
 				key := fmt.Sprintf("%s/%s/%s", kind, subtype, relationshipType)
-				fmt.Println("key", key)
 				if seen[key+fromComponent+toComponent] {
 					continue
 				}
@@ -450,6 +441,9 @@ func buildEntityTypeLine(names, entityTypes []interface{}, longDescription, mode
 }
 
 func displaySummary(response *models.RegistryAPIResponse) {
+	if response.EntityCount.ModelCount == 0 {
+		return
+	}
 	boldSummary := utils.BoldString("SUMMARY")
 	utils.Log.Infof("%s: %s", boldSummary, response.ErrMsg)
 }
@@ -476,6 +470,7 @@ func init() {
 	})
 
 	importModelCmd.Flags().StringVarP(&location, "file", "f", "", "Specify path to the file or directory")
-	importModelCmd.Flags().StringVar(&templateFile, "template", "", "Specify path to the template JSON file")
-	importModelCmd.Flags().StringVar(&registrant, "registrant", "", "Specify the registrant name")
+	importModelCmd.Flags().StringVarP(&templateFile, "template", "t", "", "Specify path to the template JSON file")
+	importModelCmd.Flags().BoolVarP(&register, "register", "r", false, "Skip registration of the model")
+
 }

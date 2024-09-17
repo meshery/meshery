@@ -715,7 +715,7 @@ func unCompressOCIArtifactIntoDesign(artifact []byte) (*models.MesheryPattern, e
 	// TODO: Add support to merge multiple designs into one
 	// Currently, assumes to save only the first design
 	if len(files) == 0 {
-		return nil, ErrEmptyOCIImage(fmt.Errorf("No design file detected in the imported OCI image"))
+		return nil, ErrEmptyOCIImage(fmt.Errorf("no design file detected in the imported OCI image"))
 	}
 	design := files[0]
 
@@ -2084,8 +2084,7 @@ func mapModelRelatedData(reg *meshmodel.RegistryManager, patternFile *pattern.Pa
 			// if model is one of those defined in the slice above as meshery, and no matching defs were found,
 			// try to find the component just by name, this ensures the component is upgraded to newer model.
 			// Eg: Some old designs contains "Comment" component under "meshery" model instead of "meshery-core"
-			
-			
+
 			// Update the component kind to reflect the current registry.
 			// Eg: The Connection component for k8s, had "kind" updated to "KuberntesConnection",hence any designs which has model k8s and kind "Connection" will fail, to ensure it gets converted, update the kind
 			if comp.Model.Name == "kubernetes" && comp.Component.Kind == "Connection" {

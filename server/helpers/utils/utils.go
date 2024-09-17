@@ -16,10 +16,8 @@ import (
 
 	"github.com/layer5io/meshkit/encoding"
 	"github.com/layer5io/meshkit/utils"
-
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/model"
-
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 	"gorm.io/gorm"
@@ -31,7 +29,7 @@ const (
 	HelmChartOperatorName = "meshery-operator"
 	MesheryFolder         = ".meshery"
 	ManifestsFolder       = "manifests"
-	registryLocation      = ".meshery/models"
+	registryLocation      = ".meshery/Models"
 	DefVersion            = "1.0.0"
 )
 
@@ -504,7 +502,6 @@ func ReplaceSVGData(model *model.ModelDefinition) error {
 }
 func CreateVersionedDirectoryForModelAndComp(version, modelName string) (string, string, error) {
 	modelLocation := filepath.Join(os.Getenv("HOME"), registryLocation)
-	fmt.Println("modelLocation: ", modelLocation)
 	modelDirPath := filepath.Join(modelLocation, modelName, version, DefVersion)
 	err := utils.CreateDirectory(modelDirPath)
 	if err != nil {

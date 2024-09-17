@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 	"path/filepath"
 	"strings"
 	"sync"
@@ -14,6 +15,8 @@ import (
 	"github.com/layer5io/meshkit/encoding"
 	"github.com/layer5io/meshkit/models/events"
 	"github.com/layer5io/meshkit/models/meshmodel/entity"
+	"github.com/layer5io/meshkit/models/registration"
+	meshkitutils "github.com/layer5io/meshkit/utils"
 	"github.com/meshery/schemas/models/v1alpha3/relationship"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/model"
@@ -204,7 +207,58 @@ func ModelNames(response *models.RegistryAPIResponse) string {
 	}
 	return builder.String()
 }
+func CreateTemp(filename string, data []byte) (*os.File, error) {
+	tempFile, err := os.CreateTemp("", filename)
+	if err != nil {
+		err = meshkitutils.ErrCreateFile(err, "Error creating temp file")
+		return nil, err
+	}
 
+	_, err = tempFile.Write(data)
+	if err != nil {
+		err = meshkitutils.ErrWriteFile(err, filename)
+		return nil, err
+	}
+	err = tempFile.Close()
+	if err != nil {
+		err = meshkitutils.ErrCloseFile(err)
+		return nil, err
+	}
+	return tempFile, nil
+}
+func handleRegistrationAndError(registrationHelper registration.RegistrationHelper, mu *sync.Mutex, response *models.RegistryAPIResponse, regErrorStore *models.RegistrationFailureLog) error {
+	for _, pkg := range registrationHelper.PkgUnits {
+		registeredModel := pkg.Model
+		for _, comp := range pkg.Components {
+			incrementCountersOnSuccess(mu, entity.ComponentDefinition, &response.EntityCount.CompCount, &response.EntityCount.RelCount, &response.EntityCount.ModelCount)
+			componentBytes, _ := json.Marshal(comp)
+			addSuccessfulEntry(componentBytes, entity.ComponentDefinition, response)
+		}
+		for _, rel := range pkg.Relationships {
+			incrementCountersOnSuccess(mu, entity.RelationshipDefinition, &response.EntityCount.CompCount, &response.EntityCount.RelCount, &response.EntityCount.ModelCount)
+			relationshipBytes, _ := json.Marshal(rel)
+			addSuccessfulEntry(relationshipBytes, entity.RelationshipDefinition, response)
+		}
+		modelBytes, _ := json.Marshal(registeredModel)
+		incrementCountersOnSuccess(mu, entity.Model, &response.EntityCount.CompCount, &response.EntityCount.RelCount, &response.EntityCount.ModelCount)
+		addSuccessfulEntry(modelBytes, entity.Model, response)
+
+	}
+
+	if regErrorStore != nil {
+		for _, errEntry := range regErrorStore.GetEntityRegErrors() {
+			if errEntry.EntityType == "Unknown" {
+				errEntry.EntityType = ""
+			}
+			incrementCountersOnErr(mu, errEntry.EntityType, response)
+			path := errEntry.EntityName
+			err := errEntry.Err
+			entityTypeStr := string(errEntry.EntityType)
+			addUnsuccessfulEntry(path, response, err, entityTypeStr)
+		}
+	}
+	return nil
+}
 func (h *Handler) sendFileEvent(userID uuid.UUID, provider models.Provider, response *models.RegistryAPIResponse) {
 	// Initialize metadata map
 	metadata := map[string]interface{}{
@@ -251,7 +305,7 @@ func (h *Handler) sendFileEvent(userID uuid.UUID, provider models.Provider, resp
 		eventType = events.Error
 	} else if response.EntityCount.TotalErrCount > 0 && (response.EntityCount.CompCount > 0 || response.EntityCount.RelCount > 0 || response.EntityCount.ModelCount > 0) {
 		eventType = events.Warning
-	} else if response.EntityCount.ModelCount > 0 {
+	} else if response.EntityCount.ModelCount > 0 && response.EntityCount.RelCount == 0 && response.EntityCount.CompCount == 0 {
 		eventType = events.Warning
 	} else if response.EntityCount.TotalErrCount == 0 {
 		eventType = events.Success
@@ -280,7 +334,25 @@ func getFirst42Chars(s string) string {
 	}
 	return s
 }
-
+func (h *Handler) sendEventForImport(userID uuid.UUID, provider models.Provider, compsCount int, modelName string) {
+	description := fmt.Sprintf("Imported %d components for model %s", compsCount, modelName)
+	componentWord := determinePluralWord(compsCount, "component")
+	metadata := map[string]interface{}{
+		"Custom Text": fmt.Sprintf("Extracted %v %s for model %s", compsCount, componentWord, modelName),
+		"Custome 2":   "Model can be accessed from `.meshery/Models`",
+	}
+	event := events.NewEvent().
+		ActedUpon(userID).
+		FromUser(userID).
+		FromSystem(*h.SystemID).
+		WithAction("generate").
+		WithDescription(description).
+		WithSeverity(events.Informational).
+		WithMetadata(metadata).
+		Build()
+	_ = provider.PersistEvent(event)
+	go h.config.EventBroadcaster.Publish(userID, event)
+}
 func writeMessageString(response *models.RegistryAPIResponse) string {
 	var message strings.Builder
 	if response.EntityCount.ModelCount > 0 {

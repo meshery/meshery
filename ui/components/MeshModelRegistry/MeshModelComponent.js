@@ -176,6 +176,7 @@ const MeshModelComponent_ = ({
               filename: fileName,
             },
             uploadType: 'file',
+            register: true,
           };
         } else {
           console.error('Error: File data is empty or invalid');

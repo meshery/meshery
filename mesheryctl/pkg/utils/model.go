@@ -9,6 +9,8 @@ import (
 	"strings"
 
 	"github.com/layer5io/meshkit/encoding"
+	"github.com/layer5io/meshkit/generators"
+	"github.com/layer5io/meshkit/generators/models"
 
 	"github.com/layer5io/meshkit/models/meshmodel/entity"
 	"github.com/layer5io/meshkit/utils"
@@ -518,4 +520,46 @@ func AssignDefaultsForCompDefs(componentDef *component.ComponentDefinition, mode
 			}
 		}
 	}
+}
+func GenerateComponentsFromPkg(pkg models.Package, compDirPath string, defVersion string, modelDef model.ModelDefinition) (int, int, error) {
+	comps, err := pkg.GenerateComponents()
+	if err != nil {
+		return 0, 0, err
+	}
+	lengthOfComps := len(comps)
+	for _, comp := range comps {
+		comp.Version = defVersion
+		if modelDef.Metadata == nil {
+			modelDef.Metadata = &model.ModelDefinition_Metadata{}
+		}
+		if modelDef.Metadata.AdditionalProperties == nil {
+			modelDef.Metadata.AdditionalProperties = make(map[string]interface{})
+		}
+		if comp.Model.Metadata.AdditionalProperties != nil {
+			modelDef.Metadata.AdditionalProperties["source_uri"] = comp.Model.Metadata.AdditionalProperties["source_uri"]
+		}
+		comp.Model = modelDef
+
+		AssignDefaultsForCompDefs(&comp, &modelDef)
+		alreadyExists, err := comp.WriteComponentDefinition(compDirPath, "json")
+		if err != nil {
+			return 0, 0, err
+		}
+		if alreadyExists {
+			lengthOfComps--
+		}
+	}
+	return len(comps), lengthOfComps, nil
+}
+func GenerateModels(registrant string, sourceURl string, modelName string) (models.Package, string, error) {
+	generator, err := generators.NewGenerator(registrant, sourceURl, modelName)
+	if err != nil {
+		return nil, "", err
+	}
+	pkg, err := generator.GetPackage()
+	if err != nil {
+		return nil, "", err
+	}
+	version := pkg.GetVersion()
+	return pkg, version, nil
 }
