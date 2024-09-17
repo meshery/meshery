@@ -100,6 +100,10 @@ By default, Meshery auto-detects your Minikube cluster and establishes a connect
 {% capture code_content %}$  mesheryctl system config minikube {% endcapture %}
 {% include code.html code=code_content %}
 
+The `mesheryctl system config minikube` command properly configures and uploads your kubeconfig file to the Meshery UI.
+
+<a href="{{ site.baseurl }}/assets/img/applications/minikube-upload.png"><img alt="Minikube KubeConfig Upload" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/applications/minikube-upload.png" /></a>
+
 ## Installation: Using Helm
 
 You can deploy Meshery directly using the Helm CLI.
@@ -175,7 +179,9 @@ Next run this command to configure Meshery to access your cluster.
 
 **Note**:  If you encounter a connections refused error while uploading your kubeconfig, try changing your cluster server URL to the external API address of minikube. To do this follow the steps listed in the [Minikube Docker Driver Users Section](#docker-driver-update-the-kubernetes-api-server-address-for-meshery-access).
 
+#### Troubleshooting Meshery Installation
 
+If you experience any issues during installation, refer to the [Troubleshooting Meshery Installations](https://docs.meshery.io/guides/troubleshooting/installation#setting-up-meshery-using-kind-or-minikube) guide for help.
 
 # Post-Installation Steps
 

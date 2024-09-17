@@ -42,6 +42,10 @@ After installing Meshery, regardless of the installation type, it is important t
 </p>
 
 <p>
+  <b>Note</b>: For production deployments, it is important to preselect the choice of <code>Remote Provider</code> in order to control which identity providers authorized. Learn more about this in the <a href="/extensibility/providers">Extensibility: Providers</a> guide.
+</p>
+
+<p>
   Define a custom callback URL by setting up the <code>MESHERY_SERVER_CALLBACK_URL</code> environment variable before installing Meshery.
 </p>
 
