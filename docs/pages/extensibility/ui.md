@@ -39,8 +39,94 @@ Meshery leverages remote providers for identity management. These providers can 
 
 The user avatar behavior, which changes based on the user's status, can be customized by extending the [User Component](https://github.com/meshery/meshery/blob/7de49ef4928f114080f923f2ad261f4433ca91d6/ui/components/User.js#L46).
 
+### Extensibility: Permissions (CASL)
 
-###  Build-Time UI Extensibility
+Meshery UI uses [CASL.js](https://casl.js.org/v6/en/) to implement it's permissions framework. CASL is an isomorphic authorization JavaScript library which restricts what resources a given client is allowed to access.
+It has been designed to be very customizable and robust.
+It uses keys as it's unit checks to see if a permission to perform or action or not.
+
+#### Implementation
+
+Once a user has logged in, the backend will send a response with the permissions that the user has. Those permissions will be used to check abilities on the frontend.
+
+```JSON
+Example keys response
+
+{"keys": [
+    {
+      "id": "382da488-9a92-4a5b-958d-c4bfe1e80253",
+      "function": "View All Users",
+    },
+    {
+      "id": "fa7de118-2d08-4b07-b9d7-3e0baead6d04",
+      "function": "View Profile",
+    },
+]}
+```
+
+Meshery UI uses `permissions_constants.js` file to keep record of all the keys to check against (fully customizable if self hosting meshery). The keys are accessible using monikers (properties) of the keys object and have been setup this way to make devEx better. Anytime any key
+needs to be added to an action, it needs to be added in this file with an appropriate moniker.
+
+```
+meshery
+└── ui
+    └── utils
+        ├── ...
+        └── permission_constants.js
+```
+
+```JavaScript
+export const keys = {
+  VIEW_ALL_ORGANIZATIONS: {
+    subject: 'View All Organizations',
+    action: 'e996c998-a50f-4cb8-ae7b-f2f1b523c971',
+  },
+  ...
+  RESET_DATABASE: {
+    subject: 'Reset database',
+    action: '84fc402c-f33e-4a21-a0e3-e14f9e20b125',
+  },
+};
+```
+
+Along with it, we export the `ability.can(action, subject)` provided by CASL as `CAN(action, subject)` for better devEx.
+
+```JavaScript
+export default function CAN(action, subject) {
+  return ability.can(action, _.lowerCase(subject));
+}
+```
+
+Now the required actions can be easily disabled using the CAN utility.
+
+```JavaScript
+<Button
+  type="submit"
+  variant="contained"
+  color="primary"
+  size="large"
+  onClick={(e) => handleEnvironmentModalOpen(e, ACTION_TYPES.CREATE)}
+  style={ {
+    padding: '8px',
+    borderRadius: 5,
+    marginRight: '2rem',
+  } }
+  disabled={!CAN(keys.CREATE_ENVIRONMENT.action, keys.CREATE_ENVIRONMENT.subject)}
+  data-cy="btnResetDatabase"
+>
+  <AddIconCircleBorder style={ { width: '20px', height: '20px' } } />
+  <Typography
+    style={ {
+      paddingLeft: '4px',
+      marginRight: '4px',
+    } }
+  >
+    Create
+  </Typography>
+</Button>
+```
+
+### Build-Time UI Extensibility
 
 Meshery offers powerful customization options for its web application user interface at build time. This feature allows developers to tailor the UI to specific needs by modifying component behavior, managing routes, and applying custom themes.
 
@@ -50,7 +136,7 @@ The build-time UI customization is controlled through the `ui.config.js` file. T
 
 ##### Current Features
 
-*Component Management*
+_Component Management_
 
 You can control the visibility and behavior of various UI components. For example:
 
@@ -63,7 +149,7 @@ module.exports = {
 };
 ```
 
-*Upcoming Features*
+_Upcoming Features_
 
 Meshery is continuously expanding its UI extensibility capabilities. The following features are planned for future releases:
 
@@ -78,7 +164,6 @@ To customize the Meshery UI:
 1. Locate the `ui.config.js` file in your Meshery project.
 1. Modify the configuration options according to your requirements.
 1. Rebuild the Meshery application to apply your changes.
-
 
 #### Passing new custom prop to forms:
 
@@ -145,4 +230,3 @@ With both of these props, Remote Providers can customize the wrapper and can als
 
 from _ui/components/MesheryMeshInterface/PatternService/index.js_
 {% include code.html code="function PatternService({ formData, jsonSchema, onChange, type, onSubmit, onDelete, RJSFWrapperComponent, RJSFFormChildComponent })" %}
-
