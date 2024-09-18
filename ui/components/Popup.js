@@ -80,7 +80,7 @@ const isMesheryExtensionRegisteredUser = (capabilitiesRegistry) => {
 
   return (
     capabilitiesRegistry.extensions?.navigator?.length > 0 &&
-    capabilitiesRegistry.extensions.navigator.find((ext) => ext.title === 'MeshMap')
+    capabilitiesRegistry.extensions.navigator.find((ext) => ext.title === 'Kanvas')
   );
 };
 
