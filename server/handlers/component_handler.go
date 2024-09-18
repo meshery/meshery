@@ -1239,6 +1239,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		h.registryManager,
 		regErrorStore,
 	)
+
 	var dir registration.Dir
 	switch importRequest.UploadType {
 	//Case when it is URL and them the model is generated from the URL
@@ -1261,10 +1262,10 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		}
 		defer file.Close()
 
-		var models mesheryctlUtils.ModelCSV
+		var model mesheryctlUtils.ModelCSV
 
 		decoder := json.NewDecoder(file)
-		err = decoder.Decode(&models)
+		err = decoder.Decode(&model)
 		if err != nil {
 			err = meshkitutils.ErrUnmarshal(err)
 			h.handleError(rw, err, "Error decoding JSON into ModelCSV")
@@ -1273,22 +1274,22 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		}
 
 		//Model generation strats from here
-		models.Model = strings.ToLower(models.Model)
+		model.Model = strings.ToLower(model.Model)
 
-		pkg, version, err := mesheryctlUtils.GenerateModels(models.Model, importRequest.ImportBody.URL, models.Model)
+		pkg, version, err := mesheryctlUtils.GenerateModels(model.Model, importRequest.ImportBody.URL, model.Model)
 		if err != nil {
 			h.handleError(rw, err, "Error generating model")
 			h.sendErrorEvent(userID, provider, "Error generating model", err)
 			return
 		}
-		modelDirPath, compDirPath, err := utils.CreateVersionedDirectoryForModelAndComp(version, models.Model)
+		modelDirPath, compDirPath, err := utils.CreateVersionedDirectoryForModelAndComp(version, model.Model)
 		if err != nil {
 			h.handleError(rw, err, "Error decoding JSON into ModelCSV")
 			h.sendErrorEvent(userID, provider, "Error decoding JSON into ModelCSV", err)
 			return
 		}
-		filePath := filepath.Join(modelDirPath, models.Model+".json")
-		modelDef := models.CreateModelDefinition(version, utils.DefVersion)
+		filePath := filepath.Join(modelDirPath, model.Model+".json")
+		modelDef := model.CreateModelDefinition(version, utils.DefVersion)
 		err = modelDef.WriteModelDefinition(filePath, "json")
 		if err != nil {
 			h.handleError(rw, err, "Error decoding JSON into ModelCSV")
@@ -1305,7 +1306,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		}
 
 		//Event when the URL is used to show that we g
-		h.sendEventForImport(userID, provider, lengthofComps, models.Model)
+		h.sendEventForImport(userID, provider, lengthofComps, model.Model)
 		if importRequest.Register {
 			dir = registration.NewDir(modelDirPath)
 			registrationHelper.Register(dir)
