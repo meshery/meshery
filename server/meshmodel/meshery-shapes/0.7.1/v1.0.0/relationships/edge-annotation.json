@@ -1,11 +1,11 @@
 {
     "schemaVersion": "relationships.meshery.io/v1alpha3",
-    "version": "v1.0.0",
+    "version": "v1.0.1",
     "kind": "edge",
-    "subType": "annotation",
     "type": "non-binding",
+    "subType": "annotation",
     "metadata": {
-        "description": "A relationship that defines annotation edges between components",
+        "description": "A relationship that provide valuable context for users, controllers, and third-party tools within the Meshery ecosystem.",
         "styles": {
             "line-style": "solid",
             "line-color": "#00B39F",

@@ -1,6 +1,6 @@
 {
   "schemaVersion": "relationships.meshery.io/v1alpha3",
-  "version": "v1.0.0",
+  "version": "v1.0.1",
   "kind": "edge",
   "type": "binding",
   "subType": "firewall",

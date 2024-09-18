@@ -1,11 +1,11 @@
 {
   "schemaVersion": "relationships.meshery.io/v1alpha3",
-  "version": "v1.0.0",
+  "version": "v1.0.1",
   "kind": "hierarchical",
   "type": "sibling",
   "subType": "matchLabels",
   "metadata": {
-    "description": "A relationship between two objects that are siblings."
+    "description": "Match label relationships offer a dynamic association between one or more components and are a flexible way to group and manage related components in Meshery."
   },
   "model": {
     "schemaVersion": "models.meshery.io/v1beta1",
