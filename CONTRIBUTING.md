@@ -88,7 +88,65 @@ and how it works [here](https://github.com/probot/dco#how-it-works).
 To signify that you agree to the DCO for contributions, you simply add a line to each of your
 git commit messages:
 
-```
+```Contributing to Meshery Policies
+
+This guide outlines the process for contributing to Meshery Policies, including modifying existing policies, creating new ones, and testing your changes.
+Understanding Meshery Policies
+
+Meshery uses OPA (Open Policy Agent) and the Rego language for policy evaluation. Policies are primarily stored in the policies/wasm folder of the Meshery codebase. These policies govern relationships between components and other aspects of Meshery's behavior.
+Setting Up Your Development Environment
+
+    Fork and clone the Meshery repository.
+    Ensure you have the necessary dependencies installed (Go, Docker, etc.).
+    Familiarize yourself with the Rego language and OPA concepts.
+
+Locating and Modifying Existing Policies
+
+    Navigate to the policies/wasm folder in the Meshery codebase.
+    Identify the policy file you want to modify (e.g., namespace_discovery_relationship_policy.rego).
+    Open the file and make your changes, ensuring you follow Rego syntax and Meshery conventions.
+
+Creating New Policies
+
+    In the policies/wasm folder, create a new .rego file for your policy.
+    Start with the package declaration and any necessary imports.
+    Implement your policy rules using Rego language.
+    Ensure your policy aligns with Meshery's existing policy structure and naming conventions.
+
+Testing Rego Policies for Relationships
+
+    Code: Make changes to Rego files in their respective Meshery model folder.
+    Build: Build Meshery Server, which loads all available policies.
+
+    make server
+
+    Test: a. Verify that the policy loaded successfully by opening Meshery UI and visiting Settings → Registry. b. Alternatively, verify by reviewing registration logs found under ~/.meshery/logs/*.log.
+    Verify Visually (Optional): Use the MeshMap extension. a. Drag and drop the implicated components onto the canvas. b. Click on each component and visit the "Relationships" tab menu. Verify the presence of "Available Relationship". c. Attempt to visually form the relationship by clicking and dragging either the component or edges between components. d. If a component is to be mutated by relationship formation, attest specific changes.
+
+Best Practices
+
+    Keep policies modular and focused on specific concerns.
+    Use clear and descriptive names for rules and variables.
+    Comment your code to explain complex logic or intentions.
+    Ensure policies are performant and don't introduce unnecessary complexity.
+
+Submitting Your Changes
+
+    Commit your changes with a clear and descriptive commit message.
+    Push your changes to your fork.
+    Open a pull request against the main Meshery repository.
+    Provide a detailed description of your changes and their purpose.
+    Be prepared to address feedback and make revisions as necessary.
+
+Additional Resources
+
+    Rego Language Documentation
+    Meshery Documentation
+    Open Policy Agent Documentation
+
+Remember, contributing to policies requires careful consideration of the impact on existing systems and workflows. Always test thoroughly and seek feedback from the community when in doubt.
+Last edited 12 minutes ago
+
 Signed-off-by: Jane Smith <jane.smith@example.com>
 ```
 
@@ -412,6 +470,67 @@ const IncorrectUsage = () => (
 1. Gradually migrate components to use Sistent instead of MUI v4 or v5.
 2. Always wrap Sistent components or custom components using Sistent with `UseSistent`.
 3. Keep MUI v4 components separate from Sistent components to avoid theme conflicts.
+
+
+## <a href="#contributing-policies">Contributing to Meshery Policies</a>
+
+
+## <a name="contributing-policies">Contributing to Meshery Policies</a>
+
+Meshery uses OPA (Open Policy Agent) and the Rego language for policy evaluation. Policies are primarily stored in the `policies/wasm` folder of the Meshery codebase. This guide will help you contribute to Meshery Policies effectively.
+
+### Understanding Meshery Policies
+
+Meshery Policies govern relationships between components and other aspects of Meshery's behavior. They are written in Rego, a declarative query language used for expressing policies.
+
+### Setting Up Your Environment
+
+1. Ensure you have forked and cloned the Meshery repository.
+2. Familiarize yourself with the Rego language and OPA concepts.
+3. Navigate to the `policies/wasm` folder in the Meshery codebase.
+
+### Modifying Existing Policies
+
+1. Identify the policy file you want to modify (e.g., `namespace_discovery_relationship_policy.rego`).
+2. Open the file and make your changes, ensuring you follow Rego syntax and Meshery conventions.
+3. Test your changes thoroughly (see Testing section below).
+
+### Creating New Policies
+
+1. In the `policies/wasm` folder, create a new `.rego` file for your policy.
+2. Start with the package declaration and any necessary imports.
+3. Implement your policy rules using Rego language.
+4. Ensure your policy aligns with Meshery's existing policy structure and naming conventions.
+
+### Testing Rego Policies for Relationships
+
+1. **Code:** Make changes to Rego files in their respective Meshery model folder.
+2. **Build:** Build Meshery Server, which loads all available policies.
+3. **Test:**
+- Verify that the policy loaded successfully by opening Meshery UI and visiting Settings → Registry.
+- Alternatively, verify by reviewing registration logs found under `~/.meshery/logs/*.log`.
+4. **Verify Visually (Optional):** Use the MeshMap extension.
+- Drag and drop the implicated components onto the canvas.
+- Click on each component and visit the "Relationships" tab menu. Verify the presence of "Available Relationship".
+- Attempt to visually form the relationship by clicking and dragging either the component or edges between components.
+- If a component is to be mutated by relationship formation, attest specific changes.
+
+### Best Practices
+
+- Keep policies modular and focused on specific concerns.
+- Use clear and descriptive names for rules and variables.
+- Comment your code to explain complex logic or intentions.
+- Ensure policies are performant and don't introduce unnecessary complexity.
+
+### Submitting Your Changes
+
+1. Commit your changes with a clear and descriptive commit message.
+2. Push your changes to your fork.
+3. Open a pull request against the main Meshery repository.
+4. Provide a detailed description of your changes and their purpose.
+5. Be prepared to address feedback and make revisions as necessary.
+
+Remember, contributing to policies requires careful consideration of the impact on existing systems and workflows. Always test thoroughly and seek feedback from the community when in doubt.
 
 
 
