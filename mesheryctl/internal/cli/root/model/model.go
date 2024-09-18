@@ -26,14 +26,9 @@ import (
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/layer5io/meshery/server/handlers"
-	meshkitutils "github.com/layer5io/meshkit/utils"
 
 	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/models/oci"
 	"github.com/manifoldco/promptui"
-	"github.com/meshery/schemas/models/v1alpha3/relationship"
-	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/model"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
@@ -285,136 +280,16 @@ func exportModel(modelName string, _ *cobra.Command, url string, _ bool) error {
 		return nil
 	}
 
-	modelsResponse := &models.MeshmodelsAPIResponse{}
-	err = json.Unmarshal(data, modelsResponse)
-	if err != nil {
-		utils.Log.Error(err)
-		return nil
-	}
-	if len(modelsResponse.Models) < 1 {
-		return ErrExportModel(fmt.Errorf("model with the given name could not be found in the registry"), modelName)
-	}
-	model := modelsResponse.Models[0]
-	_ = model.ReplaceSVGData("../")
-
-	var rels []relationship.RelationshipDefinition
-	var components []component.ComponentDefinition
-	if model.Components != nil {
-		slice, ok := model.Components.([]interface{})
-		if !ok {
-			err = meshkitutils.ErrUnmarshal(meshkitutils.ErrInvalidSchemaVersion)
-			utils.Log.Error(err)
-			return nil
-
-		}
-		components = make([]component.ComponentDefinition, len(slice))
-		for i, v := range slice {
-			bytes, err := json.Marshal(v)
-			if err != nil {
-				continue
-			}
-			var comp component.ComponentDefinition
-			err = json.Unmarshal(bytes, &comp)
-			if err != nil {
-				continue
-			}
-			_ = comp.ReplaceSVGData("../")
-			components[i] = comp
-		}
-	}
-	if model.Relationships != nil {
-		slice, ok := model.Relationships.([]interface{})
-		if !ok {
-			err = meshkitutils.ErrUnmarshal(meshkitutils.ErrInvalidSchemaVersion)
-			utils.Log.Error(err)
-			return nil
-		}
-		rels = make([]relationship.RelationshipDefinition, len(slice))
-		for i, v := range slice {
-			bytes, err := json.Marshal(v)
-			if err != nil {
-				continue
-			}
-			var rel relationship.RelationshipDefinition
-			err = json.Unmarshal(bytes, &rel)
-			if err != nil {
-				continue
-			}
-			rels[i] = rel
-		}
-	}
-	model.Relationships = nil
-	model.Components = nil
-	temp := os.TempDir()
-	tempModelDir := filepath.Join(temp, model.Name)
-	versionDir := filepath.Join(tempModelDir, model.Model.Version, model.Version)
-	dirs := []string{
-		versionDir,
-		filepath.Join(versionDir, "components"),
-		filepath.Join(versionDir, "relationships"),
-	}
-
-	for _, dir := range dirs {
-		err = os.MkdirAll(dir, 0700)
-		if err != nil {
-			err = meshkitutils.ErrCreateDir(err, "Error creating temp directory")
-			return err
-		}
-	}
-	defer os.RemoveAll(tempModelDir)
 	var exportedModelPath string
-	fileType := "yaml"
-	if outFormatFlag == "json" {
-		fileType = "json"
-	}
-	err = model.WriteModelDefinition(filepath.Join(versionDir, fmt.Sprintf("model.%s", fileType)), fileType)
-	if err != nil {
-		utils.Log.Error(err)
-		return nil
-	}
-	componentsDir := filepath.Join(versionDir, "components")
-	relationshipsDir := filepath.Join(versionDir, "relationships")
-
-	for _, comp := range components {
-		_, err := comp.WriteComponentDefinition(componentsDir, fileType)
-		if err != nil {
-			utils.Log.Error(err)
-		}
-
-	}
-	for _, rel := range rels {
-		err := rel.WriteRelationshipDefinition(relationshipsDir, fileType)
-		if err != nil {
-			utils.Log.Error(err)
-		}
-
-	}
-
 	if outTypeFlag != "oci" {
 		exportedModelPath = filepath.Join(outLocationFlag, modelName+"."+"tar.gz")
-		tarData, err := compressDirectory(tempModelDir)
-		if err != nil {
-			return err
-		}
-
-		// Write the compressed data to a tar.gz file
-		err = os.WriteFile(exportedModelPath, tarData, 0644)
-		if err != nil {
-			return err
-		}
 	} else {
-		// build oci image for the model
-		img, err := oci.BuildImage(tempModelDir)
-		if err != nil {
-			utils.Log.Error(err)
-			return nil
-		}
 		exportedModelPath = outLocationFlag + modelName + ".tar"
-		err = oci.SaveOCIArtifact(img, outLocationFlag+modelName+".tar", modelName)
-		if err != nil {
-			utils.Log.Error(handlers.ErrSaveOCIArtifact(err))
-			return nil
-		}
+	}
+	err = os.WriteFile(exportedModelPath, data, 0644)
+	if err != nil {
+		utils.Log.Error(err)
+		return nil
 	}
 
 	utils.Log.Infof("Exported model to %s", exportedModelPath)

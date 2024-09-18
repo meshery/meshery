@@ -1,12 +1,14 @@
 package handlers
 
 import (
+	"bytes"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"sync"
 
@@ -1339,7 +1341,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 
 }
 
-// swagger:route POST /api/meshmodel/export ExportModel idExportModel
+// swagger:route GET /api/meshmodels/export ExportModel idExportModel
 // Handle GET request for exporting a model.
 //
 // # Export model with the given id in the output format specified
@@ -1353,13 +1355,35 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 
 func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 	modelId := r.URL.Query().Get("id")
+	name := r.URL.Query().Get("name")
+	version := r.URL.Query().Get("version")
+	outputFormat := r.URL.Query().Get("output_format")
+	fileTypes := r.URL.Query().Get("file_type")
+	fmt.Println("fileTypes", fileTypes, modelId, name, version, outputFormat)
+	if fileTypes == "" {
+		fileTypes = "oci"
+	}
+	if outputFormat == "" {
+		outputFormat = "json"
+	}
+	hasComponents, err := strconv.ParseBool(r.URL.Query().Get("components"))
+	if err != nil {
+		hasComponents = true
+	}
+
+	hasRelationships, err := strconv.ParseBool(r.URL.Query().Get("relationships"))
+	if err != nil {
+		hasRelationships = true
+	}
 
 	// 1. Get the model data
 	modelFilter := &regv1beta1.ModelFilter{
 		Id:            modelId,
-		Components:    true,
-		Relationships: true,
+		Name:          name,
+		Components:    hasComponents,
+		Relationships: hasRelationships,
 		Greedy:        true,
+		Version:       version,
 	}
 	e, _, _, err := h.registryManager.GetEntities(modelFilter)
 	if err != nil {
@@ -1367,7 +1391,10 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
 		return
 	}
-
+	if len(e) == 0 {
+		h.log.Error(ErrGetMeshModels(err))
+		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+	}
 	model := e[0].(*_model.ModelDefinition)
 	//This path is used to so that the function can be aware of where the svg file is
 	//This is for relative path as we are inside meshery/server/cmd/main.go
@@ -1406,7 +1433,7 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 	model.Relationships = nil
 	model.Components = nil
 	// Write model.json to {modelname}/v1.0.0/1.0.0/model.json
-	err = model.WriteModelDefinition(filepath.Join(versionDir, "model.json"), "json")
+	err = model.WriteModelDefinition(filepath.Join(versionDir, fmt.Sprintf("model.%s", outputFormat)), outputFormat)
 	if err != nil {
 		h.log.Error(err)
 		http.Error(rw, err.Error(), http.StatusInternalServerError)
@@ -1417,14 +1444,16 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 
 	for _, comp := range components {
 		comp.ReplaceSVGData("../../")
-		_, err := comp.WriteComponentDefinition(componentsDir, "json")
+		comp.Model = *model
+		_, err := comp.WriteComponentDefinition(componentsDir, outputFormat)
 		if err != nil {
 			h.log.Error(err)
 		}
 
 	}
 	for _, rel := range rels {
-		err := rel.WriteRelationshipDefinition(relationshipsDir, "json")
+		rel.Model = *model
+		err := rel.WriteRelationshipDefinition(relationshipsDir, outputFormat)
 		if err != nil {
 			h.log.Error(err)
 		}
@@ -1439,26 +1468,52 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 	// {modelname}/v1.0.0/1.0.0/relationships/*.json
 
 	// Build OCI image for the model from the modelDir
-	img, err := oci.BuildImage(modelDir)
-	if err != nil {
-		h.log.Error(err) // TODO: Add appropriate meshkit error
-		http.Error(rw, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	var tarfileName string
+	var byt []byte
+	if fileTypes == "oci" {
+		img, err := oci.BuildImage(modelDir)
+		if err != nil {
+			h.log.Error(err) // TODO: Add appropriate meshkit error
+			http.Error(rw, err.Error(), http.StatusInternalServerError)
+			return
+		}
 
-	// Save OCI artifact into a tar file
-	tarfileName := filepath.Join(modelDir, "model.tar")
-	err = oci.SaveOCIArtifact(img, tarfileName, model.Name)
-	if err != nil {
-		h.log.Error(err)
-		http.Error(rw, err.Error(), http.StatusInternalServerError)
-		return
+		// Save OCI artifact into a tar file
+		tarfileName := filepath.Join(modelDir, "model.tar")
+		err = oci.SaveOCIArtifact(img, tarfileName, model.Name)
+		if err != nil {
+			h.log.Error(err)
+			http.Error(rw, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		// 3. Send response
+		byt, _ = os.ReadFile(tarfileName)
+		rw.Header().Add("Content-Type", "application/x-tar")
+		rw.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s.tar\"", model.Name))
+		rw.Header().Set("Content-Length", fmt.Sprintf("%d", len(byt)))
+	} else {
+		var tarData bytes.Buffer
+		err := meshkitutils.Compress(modelDir, &tarData)
+		if err != nil {
+			h.log.Error(err)
+			http.Error(rw, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		tarfileName = filepath.Join(modelDir, "model.tar.gz")
+		err = os.WriteFile(tarfileName, tarData.Bytes(), 0644)
+		if err != nil {
+			h.log.Error(err)
+			http.Error(rw, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		byt, _ = os.ReadFile(tarfileName)
+		rw.Header().Add("Content-Type", "application/gzip")
+		rw.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s.tar.gz\"", model.Name))
+
 	}
 
 	// 3. Send response
-	byt, _ := os.ReadFile(tarfileName)
-	rw.Header().Add("Content-Type", "application/x-tar")
-	rw.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s.tar\"", model.Name))
 	rw.Header().Set("Content-Length", fmt.Sprintf("%d", len(byt)))
 	_, err = rw.Write(byt)
 	if err != nil {

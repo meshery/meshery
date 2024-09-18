@@ -2,7 +2,6 @@ package model
 
 import (
 	"bytes"
-	"compress/gzip"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -13,7 +12,6 @@ import (
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/layer5io/meshery/server/handlers"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/encoding"
 	meshkitutils "github.com/layer5io/meshkit/utils"
@@ -84,10 +82,12 @@ var importModelCmd = &cobra.Command{
 		var fileName string
 
 		if info.IsDir() {
-			tarData, err = compressDirectory(path)
+			var buf bytes.Buffer
+			err = meshkitutils.Compress(path, &buf)
 			if err != nil {
 				return err
 			}
+			tarData = buf.Bytes()
 			fileName = filepath.Base(path) + ".tar.gz"
 		} else {
 			fileData, err := os.ReadFile(path)
@@ -105,59 +105,6 @@ var importModelCmd = &cobra.Command{
 		}
 		return nil
 	},
-}
-
-func compressDirectory(dirpath string) ([]byte, error) {
-	tw := meshkitutils.NewTarWriter()
-	defer tw.Close()
-
-	err := filepath.Walk(dirpath, func(path string, info os.FileInfo, err error) error {
-		if err != nil {
-			return meshkitutils.ErrFileWalkDir(err, path)
-		}
-
-		if info.IsDir() {
-			return nil
-		}
-
-		file, err := os.Open(path)
-		if err != nil {
-			return handlers.ErrOpenFile(path)
-		}
-		defer file.Close()
-
-		fileData, err := io.ReadAll(file)
-		if err != nil {
-			return meshkitutils.ErrReadFile(err, path)
-		}
-
-		relPath, err := filepath.Rel(filepath.Dir(dirpath), path)
-		if err != nil {
-			return meshkitutils.ErrRelPath(err, path)
-		}
-
-		if err := tw.Compress(relPath, fileData); err != nil {
-			return err
-		}
-
-		return nil
-	})
-
-	if err != nil {
-		return nil, err
-	}
-
-	var buf bytes.Buffer
-	gzipWriter := gzip.NewWriter(&buf)
-	_, err = io.Copy(gzipWriter, tw.Buffer)
-	if err != nil {
-		return nil, meshkitutils.ErrCopyFile(err)
-	}
-	if err := gzipWriter.Close(); err != nil {
-		return nil, meshkitutils.ErrCloseFile(err)
-	}
-
-	return buf.Bytes(), nil
 }
 
 func registerModel(data []byte, filename string, dataType string, sourceURI string, register bool) error {

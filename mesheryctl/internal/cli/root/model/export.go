@@ -39,7 +39,15 @@ mesheryctl model export [model-name] --version v0.7.3
 		}
 		baseUrl := mctlCfg.GetBaseMesheryURL()
 		modelName := args[0]
-		url := fmt.Sprintf("%s/api/meshmodels/models/%s?components=%t&relationships=%t&%s", baseUrl, modelName, !discardComponentsFlag, !discardRelationshipsFlag, utils.GetPageQueryParameter(cmd, pageNumberFlag))
+		outFormat := "yaml"
+		if outFormatFlag == "json" {
+			outFormat = "json"
+		}
+		outfileType := "oci"
+		if outTypeFlag == "tar" {
+			outfileType = "tar"
+		}
+		url := fmt.Sprintf("%s/api/meshmodels/export?name=%s&output_format=%s&file_type=%s&components=%t&relationships=%t&%s", baseUrl, modelName, outFormat, outfileType, !discardComponentsFlag, !discardRelationshipsFlag, utils.GetPageQueryParameter(cmd, pageNumberFlag))
 		if versionFlag != "" {
 			url += fmt.Sprintf("&version=%s", versionFlag)
 		}
