@@ -102,7 +102,7 @@ Generating Models and Components
 Component Generator (Meshery Server) using MeshKit’s functions
 Meshery Server is scheduled to run on schedule, generate components, and persist components in the local database.
 
-As a user of MeshMap, I would like to mark some categories and components as displayed or not.
+As a user of Kanvas, I would like to mark some categories and components as displayed or not.
 Prioritize component generation for “Official” repos first.
 
 Generating Models does not require Meshery Server
@@ -158,11 +158,11 @@ Generating Models does not require Meshery Server
     2. “Ignored” - Not shown in the UI.
     3. “DuplicatedBy”: Shown in the UI, with (below “Preferred” model), the preference can be changed from Settings/
 
-The default behavior will be to expose all components, with the exception of a few, such as those components which have invalid schema or components which cannot be configured on MeshMap, such components will be marked as disabled in the Integrations spreadsheet.
+The default behavior will be to expose all components, with the exception of a few, such as those components which have invalid schema or components which cannot be configured on Kanvas, such components will be marked as disabled in the Integrations spreadsheet.
 
 The presence of schema will take precedence over the user’s preference, i.e. if a component is enabled by the user but has an invalid/empty schema such components will not be available (unless explicitly requested by the user).
 
-Considering the current situation of Meshmap, Kubernetes CRD is not configurable and we experience a crash. Adding granular control for MeshModels will ensure that, by default such components are disabled. This in no sense means that UI should be allowed to crash, instead, UI should handle it gracefully with appropriate fallback mechanisms.
+Considering the current situation of Kanvas, Kubernetes CRD is not configurable and we experience a crash. Adding granular control for MeshModels will ensure that, by default such components are disabled. This in no sense means that UI should be allowed to crash, instead, UI should handle it gracefully with appropriate fallback mechanisms.
 
 Categories, Models and Components each will have an attribute which specifies whether it is enabled / disabled.[d]
 
