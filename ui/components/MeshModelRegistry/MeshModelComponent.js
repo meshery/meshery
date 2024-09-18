@@ -586,7 +586,19 @@ const ImportModal = React.memo((props) => {
         <SistentModal open={true} closeModal={handleClose} maxWidth="sm" title="Import Model(s)">
           <RJSFModalWrapper
             schema={importFormSchema.rjsfSchema}
-            uiSchema={importFormSchema.uiSchema}
+            uiSchema={{
+              ...importFormSchema.uiSchema,
+              // open the model property by default
+              model: {
+                'ui:options': {
+                  expand: true,
+                },
+                styles: {
+                  padding: 0,
+                  margin: 0,
+                },
+              },
+            }}
             handleSubmit={handleImportModel}
             submitBtnText="Import"
             handleClose={handleClose}
