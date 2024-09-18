@@ -359,6 +359,8 @@ func formatError(msg string, cmd cmdType) string {
 		return formatUsageDetails(msg, connectionDeleteURL)
 	case cmdConnectionList:
 		return formatUsageDetails(msg, connectionListURL)
+	case cmdConnectionView:
+		return formatUsageDetails(msg, connectionViewURL)
 	case cmdExpRelationship:
 		return formatUsageDetails(msg, expRelationshipUsageURL)
 	case cmdExpRelationshipGenerate:

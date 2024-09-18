@@ -14,8 +14,7 @@ import (
 var deleteConnectionCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Delete a connection",
-	Long: `Delete
-a connection`,
+	Long:  `Delete a connection by providing the connection ID.`,
 
 	Example: `
 // Delete a connection
@@ -47,8 +46,6 @@ mesheryctl exp connections delete [connection_id]
 		if err != nil {
 			return err
 		}
-
-		// defers the closing of the response body after its use, ensuring that the resources are properly released.
 		defer resp.Body.Close()
 
 		// Check if the response status code is 200
