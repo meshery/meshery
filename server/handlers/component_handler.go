@@ -27,6 +27,7 @@ import (
 
 	_models "github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	"github.com/meshery/schemas/models/v1alpha3/relationship"
+	schemav1beta1 "github.com/meshery/schemas/models/v1beta1"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/connection"
 	_model "github.com/meshery/schemas/models/v1beta1/model"
@@ -1189,7 +1190,7 @@ func prettifyCompDefSchema(entities []entity.Entity) []component.ComponentDefini
 	return comps
 }
 
-// swagger:route POST /api/meshmodel/register RegisterMeshmodels idRegisterMeshmodels
+// swagger:route POST /api/meshmodels/register RegisterMeshmodels idRegisterMeshmodels
 // Handle POST request for registering entites like components and relationships model.
 //
 // Register model based on thier Schema Version.
@@ -1211,7 +1212,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 	var message string
 
 	//Here the codes handles to decode and store the data from the payload
-	var importRequest models.ImportRequest
+	var importRequest schemav1beta1.ImportRequest
 
 	err := json.NewDecoder(r.Body).Decode(&importRequest)
 	if err != nil {
@@ -1276,7 +1277,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		//Model generation strats from here
 		model.Model = strings.ToLower(model.Model)
 
-		pkg, version, err := mesheryctlUtils.GenerateModels(model.Model, importRequest.ImportBody.URL, model.Model)
+		pkg, version, err := mesheryctlUtils.GenerateModels(model.Model, importRequest.ImportBody.Url, model.Model)
 		if err != nil {
 			h.handleError(rw, err, "Error generating model")
 			h.sendErrorEvent(userID, provider, "Error generating model", err)

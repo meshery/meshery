@@ -30,16 +30,6 @@ type MeshmodelComponentsAPIResponse struct {
 	Count      int64                           `json:"total_count"`
 	Components []component.ComponentDefinition `json:"components"`
 }
-type ImportRequest struct {
-	ImportBody ImportBody `json:"importBody"`
-	UploadType string     `json:"uploadType"`
-	Register   bool       `json:"register,omitempty"`
-}
-type ImportBody struct {
-	ModelFile []byte `json:"model_file"`
-	URL       string `json:"url,omitempty"`
-	FileName  string `json:"file_name,omitempty"`
-}
 
 // API response model for meshmodel components API that contains the number of duplicates for each component
 type MeshmodelComponentsDuplicateAPIResponse struct {

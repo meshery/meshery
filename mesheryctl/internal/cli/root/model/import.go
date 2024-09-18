@@ -15,6 +15,7 @@ import (
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/encoding"
 	meshkitutils "github.com/layer5io/meshkit/utils"
+	schemav1beta1 "github.com/meshery/schemas/models/v1beta1"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
@@ -115,10 +116,10 @@ func registerModel(data []byte, filename string, dataType string, sourceURI stri
 
 	baseURL := mctlCfg.GetBaseMesheryURL()
 	url := baseURL + "/api/meshmodels/register"
-	var importRequest models.ImportRequest
+	var importRequest schemav1beta1.ImportRequest
 	importRequest.UploadType = dataType
 	importRequest.ImportBody.ModelFile = data
-	importRequest.ImportBody.URL = sourceURI
+	importRequest.ImportBody.Url = sourceURI
 	importRequest.ImportBody.FileName = filename
 	importRequest.Register = register
 	requestBody, err := json.Marshal(importRequest)
