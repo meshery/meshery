@@ -79,7 +79,7 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3 
       - name: Create k8s Kind Cluster
-        uses: helm/kind-action@v1.9.0
+        uses: helm/kind-action@v1.10.0
         with:
           cluster_name: "kind-cluster"
       - name: Run coverage
@@ -104,7 +104,7 @@ jobs:
           
       - name: Upload coverage to Codecov
         if: github.repository == 'meshery/meshery'
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
         with:
           files: ./coverage.txt
           flags: gointegrationtests     
