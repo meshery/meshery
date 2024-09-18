@@ -221,8 +221,8 @@
     - title: "🦾 Extensions ↆ"
       url: extensions
       children:
-        - title: "Plugin: MeshMap"
-          url: extensions/meshmap
+        - title: "Plugin: Kanvas"
+          url: extensions/kanvas
           # grandchildren:
           # - title: "Sharing a Design"
           #   url: extensions/sharing-a-design
