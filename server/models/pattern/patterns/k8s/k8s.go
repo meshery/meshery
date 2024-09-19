@@ -7,8 +7,8 @@ import (
 	"strings"
 
 	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshkit/converter"
+	"github.com/layer5io/meshkit/utils"
 	"github.com/meshery/schemas/models/v1beta1/component"
 
 	meshkube "github.com/layer5io/meshkit/utils/kubernetes"

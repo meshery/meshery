@@ -1,4 +1,3 @@
-
 package handlers
 
 import (
@@ -501,7 +500,7 @@ func (h *Handler) ClientEventHandler(w http.ResponseWriter, req *http.Request, p
 		return
 	}
 
-	if(evt.ActedUpon.IsNil() || evt.Action == "" || evt.Category == "" || evt.Severity == ""){
+	if evt.ActedUpon.IsNil() || evt.Action == "" || evt.Category == "" || evt.Severity == "" {
 		h.log.Error(models.ErrInvalidEventData())
 		http.Error(w, models.ErrInvalidEventData().Error(), http.StatusBadRequest)
 		return
