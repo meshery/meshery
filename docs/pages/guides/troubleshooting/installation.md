@@ -55,7 +55,7 @@ The env variable DISABLE_OPERATOR=true can be used to signal Meshery server to n
 
 Example of a healthy Meshery Broker server with an actively connected (subscribed) Meshery Server:
 
-```
+```shell
 ➜  ~ kubectl logs -n meshery meshery-broker-0 nats
 [8] 2021/09/08 21:46:03.070952 [INF] Starting nats-server version 2.1.9
 [8] 2021/09/08 21:46:03.070982 [INF] Git commit [7c76626]

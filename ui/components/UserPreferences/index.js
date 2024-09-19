@@ -5,6 +5,7 @@ import { bindActionCreators } from 'redux';
 import { withRouter } from 'next/router';
 import { withStyles } from '@material-ui/core/styles';
 import CopyIcon from '../../assets/icons/CopyIcon';
+import _ from 'lodash';
 import {
   Typography,
   Grid,
@@ -34,8 +35,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTachometerAlt } from '@fortawesome/free-solid-svg-icons';
 import MesherySettingsPerformanceComponent from '../MesherySettingsPerformanceComponent';
 import { iconMedium } from '../../css/icons.styles';
-import { getTheme, setTheme } from '../../utils/theme';
-import { isExtensionOpen } from '../../pages/_app';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { useWindowDimensions } from '@/utils/dimension';
@@ -45,6 +44,7 @@ import {
   useUpdateUserPrefMutation,
   useUpdateUserPrefWithContextMutation,
 } from '@/rtk-query/user';
+import { ThemeTogglerCore } from '@/themes/hooks';
 
 const styles = (theme) => ({
   statsWrapper: {
@@ -166,60 +166,28 @@ const styles = (theme) => ({
   },
 });
 
-function ThemeToggler({ theme, themeSetter, classes }) {
-  const [themeToggle, setthemeToggle] = useState(false);
-  const defaultTheme = 'light';
-  const { notify } = useNotification();
-  const handle = () => {
-    if (isExtensionOpen()) {
-      return;
-    }
-
-    theme === 'dark' ? setthemeToggle(true) : setthemeToggle(false);
-    setTheme(theme);
+const ThemeToggler = ({ classes }) => {
+  const Component = ({ mode, toggleTheme }) => {
+    return (
+      <div>
+        <Switch
+          color="primary"
+          classes={{
+            switchBase: classes.switchBase,
+            track: classes.track,
+            checked: classes.checked,
+            font: classes.checked,
+          }}
+          checked={mode === 'dark'}
+          onChange={toggleTheme}
+        />
+        Dark Mode
+      </div>
+    );
   };
 
-  useEffect(() => {
-    if (isExtensionOpen()) {
-      if (getTheme() && getTheme() !== defaultTheme) {
-        themeSetter(defaultTheme);
-      }
-      return;
-    }
-
-    themeSetter(getTheme() || defaultTheme);
-  }, []);
-
-  useEffect(handle, [theme]);
-
-  const themeToggler = () => {
-    if (isExtensionOpen()) {
-      notify({
-        message: 'Toggling between themes is not supported in MeshMap',
-        event_type: EVENT_TYPES.INFO,
-      });
-      return;
-    }
-    theme === 'light' ? themeSetter('dark') : themeSetter('light');
-  };
-
-  return (
-    <div onClick={themeToggler}>
-      <Switch
-        color="primary"
-        classes={{
-          switchBase: classes.switchBase,
-          track: classes.track,
-          checked: classes.checked,
-          font: classes.checked,
-        }}
-        checked={themeToggle}
-        onChange={themeToggler}
-      />{' '}
-      Dark Mode
-    </div>
-  );
-}
+  return <ThemeTogglerCore Component={Component}></ThemeTogglerCore>;
+};
 
 const UserPreference = (props) => {
   const [anonymousStats, setAnonymousStats] = useState(props.anonymousStats);
@@ -629,6 +597,10 @@ const UserPreference = (props) => {
     );
   };
 
+  const handleUpdateUserPref = (key, value) => {
+    const updates = _.set(_.cloneDeep(userData), key, value);
+    updateUserPrefWithContext(updates);
+  };
   return (
     <NoSsr>
       <Paper square className={props.classes.paperRoot}>
@@ -756,13 +728,11 @@ const UserPreference = (props) => {
                     key="ThemePreference"
                     control={
                       <ThemeToggler
+                        handleUpdateUserPref={handleUpdateUserPref}
                         classes={props.classes}
-                        theme={props.theme}
-                        themeSetter={props.themeSetter}
                       />
                     }
                     labelPlacement="end"
-                    // label="Theme"
                   />
                 </FormGroup>
               </FormControl>

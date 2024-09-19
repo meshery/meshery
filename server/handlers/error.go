@@ -145,6 +145,8 @@ const (
 	ErrFailToLoadK8sContextCode            = "meshery-server-1331"
 	ErrEmptyOCIImageCode                   = "meshery-server-1360"
 	ErrGetComponentDefinitionCode          = "meshery-server-1362"
+	ErrGetCapabilitiesCode                 = "meshery-server-1363"
+	ErrExportPatternInFormatCode           = "meshery-server-1364"
 )
 
 var (
@@ -632,4 +634,12 @@ func ErrPersistEventToRemoteProvider(err error) error {
 
 func ErrEmptyOCIImage(err error) error {
 	return errors.New(ErrEmptyOCIImageCode, errors.Alert, []string{}, []string{}, []string{}, []string{})
+}
+
+func ErrGetCapabilities(err error, userId string) error {
+	return errors.New(ErrGetCapabilitiesCode, errors.Alert, []string{fmt.Sprintf("failed to get capabilities for the user with id: \"%s\"", userId)}, []string{err.Error()}, []string{"Remote provider server may be down or not accepting requests."}, []string{"Make sure remote provider server is healthy and accepting requests."})
+}
+
+func ErrExportPatternInFormat(err error, format, designName string) error {
+	return errors.New(ErrExportPatternInFormatCode, errors.Alert, []string{fmt.Sprintf("Failed to export design file \"%s\" as \"%s\"", designName, format)}, []string{err.Error()}, []string{fmt.Sprintf("Current version of Meshery does not support exporting in \"%s\" format", format)}, []string{"Export design in one of the supported format."})
 }

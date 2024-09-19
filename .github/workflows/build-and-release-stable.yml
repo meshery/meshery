@@ -140,12 +140,12 @@ jobs:
         with:
           go-version: "1.21"
       - name: goreleaser with tag
-        uses: goreleaser/goreleaser-action@v5
+        uses: goreleaser/goreleaser-action@v6
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_NOTES_PAT }}
           RELEASE_CHANNEL: "stable"
         with:
-          version: latest
+          version: '~> v2'
           args: release --clean --skip=validate
       - name: bump homebrew-core formula
         uses: mislav/bump-homebrew-formula-action@v3
@@ -192,8 +192,9 @@ jobs:
       - build
     name: Deploy CNCF Playground
     uses: meshery/meshery/.github/workflows/cncf-playground-deploy-meshery.yaml@master
+    with:
+      image: layer5/meshery:playground-${GITHUB_REF/refs\/tags\//}
     secrets: inherit
-
   email-on-failure:
     needs: [update-rest-api-docs, update-graphql-docs, build, ctlrelease, call-dde-release-workflow, call-helm-chart-releaser, email-meshery-release-notes-workflow, call-cncf-playground-rollout]
     if: ${{ failure() }}

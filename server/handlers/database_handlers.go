@@ -192,7 +192,7 @@ func (h *Handler) ResetSystemDatabase(w http.ResponseWriter, r *http.Request, _ 
 			return
 		}
 		go func() {
-			models.SeedComponents( h.log, h.config, h.registryManager)
+			models.SeedComponents(h.log, h.config, h.registryManager)
 			krh.SeedKeys(viper.GetString("KEYS_PATH"))
 		}()
 		w.Header().Set("Content-Type", "application/json")

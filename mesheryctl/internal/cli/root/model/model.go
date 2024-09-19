@@ -50,6 +50,8 @@ var (
 	discardComponentsFlag bool
 	// flag used to specify whether to discard relationships in the model
 	discardRelationshipsFlag bool
+	// flag used to specify the version of the model
+	versionFlag string
 
 	// Maximum number of rows to be displayed in a page
 	maxRowsPerPage = 25
@@ -129,6 +131,7 @@ func init() {
 	exportModal.Flags().StringVarP(&outTypeFlag, "output-type", "o", "oci", "(optional) format to display in [oci|json|yaml] (default = oci)")
 	exportModal.Flags().BoolVarP(&discardComponentsFlag, "discard-components", "c", false, "(optional) whether to discard components in the exported model definition (default = false)")
 	exportModal.Flags().BoolVarP(&discardRelationshipsFlag, "discard-relationships", "r", false, "(optional) whether to discard relationships in the exported model definition (default = false)")
+	exportModal.Flags().StringVarP(&versionFlag, "version", "", "", "(optional) model version to export (default = \"\")")
 
 	ModelCmd.AddCommand(availableSubcommands...)
 	ModelCmd.Flags().BoolVarP(&countFlag, "count", "", false, "(optional) Get the number of models in total")

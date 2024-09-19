@@ -144,6 +144,17 @@ server: dep-check
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
 	PORT=9081 \
 	DEBUG=true \
+	APP_PATH=$(APPLICATIONCONFIGPATH) \
+	KEYS_PATH=$(KEYS_PATH) \
+	go run main.go error.go;
+
+## Build and run Meshery Server with some Meshery Adapters on your local machine.
+server-with-adapters: dep-check
+	cd server; cd cmd; go mod tidy; \
+	BUILD="$(GIT_VERSION)" \
+	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
+	PORT=9081 \
+	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	KEYS_PATH=$(KEYS_PATH) \
@@ -321,7 +332,7 @@ ui-meshery-build:
 ui-provider-build:
 	cd provider-ui; npm run build && npm run export; cd ..
 
-## Run Meshery Cypress Integration Tests against your local Meshery UI (cypress runs in non-interactive mode).
+## Run Meshery End-to-End Integration Tests against your local Meshery UI (runs in non-interactive mode).
 ui-integration-tests: ui-setup
 	cd ui; npm run ci-test-integration; cd ..
 

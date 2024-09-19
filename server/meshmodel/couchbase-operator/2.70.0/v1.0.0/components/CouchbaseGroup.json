@@ -1,0 +1,195 @@
+{
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "CouchbaseGroup",
+   "schema": "{\n \"description\": \"CouchbaseGroup allows the automation of Couchbase group management.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"CouchbaseGroupSpec allows the specification of Couchbase group configuration.\",\n   \"properties\": {\n    \"ldapGroupRef\": {\n     \"description\": \"LDAPGroupRef is a reference to an LDAP group.\",\n     \"type\": \"string\"\n    },\n    \"roles\": {\n     \"description\": \"Roles is a list of roles that this group is granted.\",\n     \"items\": {\n      \"properties\": {\n       \"bucket\": {\n        \"description\": \"Bucket name for bucket admin roles.  When not specified for a role that can be scoped\\nto a specific bucket, the role will apply to all buckets in the cluster.\\nDeprecated:  Couchbase Autonomous Operator 2.3\",\n        \"pattern\": \"^\\\\*$|^[a-zA-Z0-9-_%\\\\.]+$\",\n        \"type\": \"string\"\n       },\n       \"buckets\": {\n        \"description\": \"Bucket level access to apply to specified role. The bucket must exist.  When not specified,\\nthe bucket field will be checked. If both are empty and the role can be scoped to a specific bucket, the role\\nwill apply to all buckets in the cluster\",\n        \"properties\": {\n         \"resources\": {\n          \"description\": \"Resources is an explicit list of named bucket resources that will be considered\\nfor inclusion in this role.  If a resource reference doesn't\\nmatch a resource, then no error conditions are raised due to undefined\\nresource creation ordering and eventual consistency.\",\n          \"items\": {\n           \"properties\": {\n            \"kind\": {\n             \"default\": \"CouchbaseBucket\",\n             \"description\": \"Kind indicates the kind of resource that is being referenced.  A Role\\ncan only reference `CouchbaseBucket` kind.  This field defaults\\nto `CouchbaseBucket` if not specified.\",\n             \"enum\": [\n              \"CouchbaseBucket\"\n             ],\n             \"type\": \"string\"\n            },\n            \"name\": {\n             \"description\": \"Name is the name of the Kubernetes resource name that is being referenced.\",\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"name\"\n           ],\n           \"type\": \"object\"\n          },\n          \"type\": \"array\"\n         },\n         \"selector\": {\n          \"description\": \"Selector allows resources to be implicitly considered for inclusion in this\\nrole.  More info:\\nhttps://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#labelselector-v1-meta\",\n          \"properties\": {\n           \"matchExpressions\": {\n            \"description\": \"matchExpressions is a list of label selector requirements. The requirements are ANDed.\",\n            \"items\": {\n             \"description\": \"A label selector requirement is a selector that contains values, a key, and an operator that\\nrelates the key and values.\",\n             \"properties\": {\n              \"key\": {\n               \"description\": \"key is the label key that the selector applies to.\",\n               \"type\": \"string\"\n              },\n              \"operator\": {\n               \"description\": \"operator represents a key's relationship to a set of values.\\nValid operators are In, NotIn, Exists and DoesNotExist.\",\n               \"type\": \"string\"\n              },\n              \"values\": {\n               \"description\": \"values is an array of string values. If the operator is In or NotIn,\\nthe values array must be non-empty. If the operator is Exists or DoesNotExist,\\nthe values array must be empty. This array is replaced during a strategic\\nmerge patch.\",\n               \"items\": {\n                \"type\": \"string\"\n               },\n               \"type\": \"array\"\n              }\n             },\n             \"required\": [\n              \"key\",\n              \"operator\"\n             ],\n             \"type\": \"object\"\n            },\n            \"type\": \"array\"\n           },\n           \"matchLabels\": {\n            \"additionalProperties\": {\n             \"type\": \"string\"\n            },\n            \"description\": \"matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels\\nmap is equivalent to an element of matchExpressions, whose key field is \\\"key\\\", the\\noperator is \\\"In\\\", and the values array contains only \\\"value\\\". The requirements are ANDed.\",\n            \"type\": \"object\"\n           }\n          },\n          \"type\": \"object\",\n          \"x-kubernetes-map-type\": \"atomic\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"collections\": {\n        \"description\": \"Collection level access to apply to the specified role.  The collection must exist.\\nWhen not specified, the role is subject to scope or bucket level access.\",\n        \"properties\": {\n         \"resources\": {\n          \"description\": \"Resources is an explicit list of named resources that will be considered\\nfor inclusion in this collection or collections.  If a resource reference doesn't\\nmatch a resource, then no error conditions are raised due to undefined\\nresource creation ordering and eventual consistency.\",\n          \"items\": {\n           \"properties\": {\n            \"kind\": {\n             \"default\": \"CouchbaseCollection\",\n             \"description\": \"Kind indicates the kind of resource that is being referenced.  A scope\\ncan only reference `CouchbaseCollection` and `CouchbaseCollectionGroup`\\nresource kinds.  This field defaults to `CouchbaseCollection` if not\\nspecified.\",\n             \"enum\": [\n              \"CouchbaseCollection\",\n              \"CouchbaseCollectionGroup\"\n             ],\n             \"type\": \"string\"\n            },\n            \"name\": {\n             \"description\": \"Name is the name of the Kubernetes resource name that is being referenced.\\nLegal collection names have a maximum length of 251\\ncharacters and may be composed of any character from \\\"a-z\\\", \\\"A-Z\\\", \\\"0-9\\\" and \\\"_-%\\\".\",\n             \"maxLength\": 251,\n             \"minLength\": 1,\n             \"pattern\": \"^[a-zA-Z0-9\\\\-][a-zA-Z0-9\\\\-%_]{0,250}$\",\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"name\"\n           ],\n           \"type\": \"object\"\n          },\n          \"type\": \"array\"\n         },\n         \"selector\": {\n          \"description\": \"Selector allows resources to be implicitly considered for inclusion in this\\ncollection or collections.  More info:\\nhttps://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#labelselector-v1-meta\",\n          \"properties\": {\n           \"matchExpressions\": {\n            \"description\": \"matchExpressions is a list of label selector requirements. The requirements are ANDed.\",\n            \"items\": {\n             \"description\": \"A label selector requirement is a selector that contains values, a key, and an operator that\\nrelates the key and values.\",\n             \"properties\": {\n              \"key\": {\n               \"description\": \"key is the label key that the selector applies to.\",\n               \"type\": \"string\"\n              },\n              \"operator\": {\n               \"description\": \"operator represents a key's relationship to a set of values.\\nValid operators are In, NotIn, Exists and DoesNotExist.\",\n               \"type\": \"string\"\n              },\n              \"values\": {\n               \"description\": \"values is an array of string values. If the operator is In or NotIn,\\nthe values array must be non-empty. If the operator is Exists or DoesNotExist,\\nthe values array must be empty. This array is replaced during a strategic\\nmerge patch.\",\n               \"items\": {\n                \"type\": \"string\"\n               },\n               \"type\": \"array\"\n              }\n             },\n             \"required\": [\n              \"key\",\n              \"operator\"\n             ],\n             \"type\": \"object\"\n            },\n            \"type\": \"array\"\n           },\n           \"matchLabels\": {\n            \"additionalProperties\": {\n             \"type\": \"string\"\n            },\n            \"description\": \"matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels\\nmap is equivalent to an element of matchExpressions, whose key field is \\\"key\\\", the\\noperator is \\\"In\\\", and the values array contains only \\\"value\\\". The requirements are ANDed.\",\n            \"type\": \"object\"\n           }\n          },\n          \"type\": \"object\",\n          \"x-kubernetes-map-type\": \"atomic\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"name\": {\n        \"description\": \"Name of role.\",\n        \"enum\": [\n         \"admin\",\n         \"analytics_admin\",\n         \"analytics_manager\",\n         \"analytics_reader\",\n         \"analytics_select\",\n         \"backup_admin\",\n         \"bucket_admin\",\n         \"bucket_full_access\",\n         \"cluster_admin\",\n         \"data_backup\",\n         \"data_dcp_reader\",\n         \"data_monitoring\",\n         \"data_reader\",\n         \"data_writer\",\n         \"eventing_admin\",\n         \"external_stats_reader\",\n         \"fts_admin\",\n         \"fts_searcher\",\n         \"mobile_sync_gateway\",\n         \"mobile_sync_gateway_application\",\n         \"mobile_sync_gateway_application_read_only\",\n         \"mobile_sync_gateway_architect\",\n         \"mobile_sync_gateway_dev_ops\",\n         \"mobile_sync_gateway_replicator\",\n         \"query_delete\",\n         \"query_execute_external_functions\",\n         \"query_execute_functions\",\n         \"query_execute_global_external_functions\",\n         \"query_execute_global_functions\",\n         \"query_external_access\",\n         \"query_insert\",\n         \"query_manage_external_functions\",\n         \"query_manage_functions\",\n         \"query_manage_global_external_functions\",\n         \"query_manage_global_functions\",\n         \"query_manage_index\",\n         \"query_select\",\n         \"query_system_catalog\",\n         \"query_update\",\n         \"replication_admin\",\n         \"replication_target\",\n         \"ro_admin\",\n         \"scope_admin\",\n         \"security_admin\",\n         \"security_admin_external\",\n         \"security_admin_local\",\n         \"views_admin\",\n         \"views_reader\",\n         \"eventing_manage_functions\"\n        ],\n        \"type\": \"string\"\n       },\n       \"scopes\": {\n        \"description\": \"Scope level access to apply to specified role.  The scope must exist.  When not specified,\\nthe role will apply to selected bucket or all buckets in the cluster.\",\n        \"properties\": {\n         \"resources\": {\n          \"description\": \"Resources is an explicit list of named resources that will be considered\\nfor inclusion in this scope or scopes.  If a resource reference doesn't\\nmatch a resource, then no error conditions are raised due to undefined\\nresource creation ordering and eventual consistency.\",\n          \"items\": {\n           \"properties\": {\n            \"kind\": {\n             \"default\": \"CouchbaseScope\",\n             \"description\": \"Kind indicates the kind of resource that is being referenced.  A scope\\ncan only reference `CouchbaseScope` and `CouchbaseScopeGroup`\\nresource kinds.  This field defaults to `CouchbaseScope` if not\\nspecified.\",\n             \"enum\": [\n              \"CouchbaseScope\",\n              \"CouchbaseScopeGroup\"\n             ],\n             \"type\": \"string\"\n            },\n            \"name\": {\n             \"description\": \"Name is the name of the Kubernetes resource name that is being referenced.\\nLegal scope names have a maximum length of 251\\ncharacters and may be composed of any character from \\\"a-z\\\", \\\"A-Z\\\", \\\"0-9\\\" and \\\"_-%\\\".\",\n             \"maxLength\": 251,\n             \"minLength\": 1,\n             \"pattern\": \"^[a-zA-Z0-9\\\\-][a-zA-Z0-9\\\\-%_]{0,250}$\",\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"name\"\n           ],\n           \"type\": \"object\"\n          },\n          \"type\": \"array\"\n         },\n         \"selector\": {\n          \"description\": \"Selector allows resources to be implicitly considered for inclusion in this\\nscope or scopes.  More info:\\nhttps://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#labelselector-v1-meta\",\n          \"properties\": {\n           \"matchExpressions\": {\n            \"description\": \"matchExpressions is a list of label selector requirements. The requirements are ANDed.\",\n            \"items\": {\n             \"description\": \"A label selector requirement is a selector that contains values, a key, and an operator that\\nrelates the key and values.\",\n             \"properties\": {\n              \"key\": {\n               \"description\": \"key is the label key that the selector applies to.\",\n               \"type\": \"string\"\n              },\n              \"operator\": {\n               \"description\": \"operator represents a key's relationship to a set of values.\\nValid operators are In, NotIn, Exists and DoesNotExist.\",\n               \"type\": \"string\"\n              },\n              \"values\": {\n               \"description\": \"values is an array of string values. If the operator is In or NotIn,\\nthe values array must be non-empty. If the operator is Exists or DoesNotExist,\\nthe values array must be empty. This array is replaced during a strategic\\nmerge patch.\",\n               \"items\": {\n                \"type\": \"string\"\n               },\n               \"type\": \"array\"\n              }\n             },\n             \"required\": [\n              \"key\",\n              \"operator\"\n             ],\n             \"type\": \"object\"\n            },\n            \"type\": \"array\"\n           },\n           \"matchLabels\": {\n            \"additionalProperties\": {\n             \"type\": \"string\"\n            },\n            \"description\": \"matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels\\nmap is equivalent to an element of matchExpressions, whose key field is \\\"key\\\", the\\noperator is \\\"In\\\", and the values array contains only \\\"value\\\". The requirements are ANDed.\",\n            \"type\": \"object\"\n           }\n          },\n          \"type\": \"object\",\n          \"x-kubernetes-map-type\": \"atomic\"\n         }\n        },\n        \"type\": \"object\"\n       }\n      },\n      \"required\": [\n       \"name\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"roles\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Couchbase Group\",\n \"type\": \"object\"\n}",
+   "version": "couchbase.com/v2"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "Couchbase Group",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "published": false,
+   "source_uri": "https://github.com/couchbase-partners/helm-charts/releases/download/couchbase-operator-2.70.0/couchbase-operator-2.70.0.tgz"
+  },
+  "model": {
+   "category": {
+    "name": "App Definition and Development"
+   },
+   "displayName": "Couchbase Operator",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "source_uri": "https://github.com/couchbase-partners/helm-charts/releases/download/couchbase-operator-2.70.0/couchbase-operator-2.70.0.tgz",
+    "styleOverrides": "",
+    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 575 575\" fill=\"none\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M287.5 0C128.984 0 0 128.55 0 287.5C0 446.016 128.55 575 287.5 575C446.016 575 575 446.45 575 287.5C575 128.55 446.016 0 287.5 0ZM481.628 337.878C481.628 355.249 471.639 370.449 452.096 373.924C418.221 379.999 346.998 383.478 287.5 383.478C228.002 383.478 156.779 379.999 122.904 373.924C103.361 370.449 93.3724 355.249 93.3724 337.878V225.831C93.3724 208.459 106.835 192.39 122.904 189.785C132.893 188.048 156.344 186.31 174.585 186.31C181.533 186.31 187.179 191.522 187.179 199.773V278.38L287.934 276.208L388.69 278.38V199.773C388.69 191.522 394.335 186.31 401.284 186.31C419.524 186.31 442.976 188.048 452.965 189.785C469.468 192.39 482.496 208.459 482.496 225.831C481.628 262.745 481.628 300.529 481.628 337.878Z\" fill=\"#ED2226\"\u003e\u003c/path\u003e\n\u003c/svg\u003e\n",
+    "svgComplete": "",
+    "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 575 575\" fill=\"none\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M287.5 0C128.984 0 0 128.55 0 287.5C0 446.016 128.55 575 287.5 575C446.016 575 575 446.45 575 287.5C575 128.55 446.016 0 287.5 0ZM481.628 337.878C481.628 355.249 471.639 370.449 452.096 373.924C418.221 379.999 346.998 383.478 287.5 383.478C228.002 383.478 156.779 379.999 122.904 373.924C103.361 370.449 93.3724 355.249 93.3724 337.878V225.831C93.3724 208.459 106.835 192.39 122.904 189.785C132.893 188.048 156.344 186.31 174.585 186.31C181.533 186.31 187.179 191.522 187.179 199.773V278.38L287.934 276.208L388.69 278.38V199.773C388.69 191.522 394.335 186.31 401.284 186.31C419.524 186.31 442.976 188.048 452.965 189.785C469.468 192.39 482.496 208.459 482.496 225.831C481.628 262.745 481.628 300.529 481.628 337.878Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003c/svg\u003e\n"
+   },
+   "model": {
+    "version": "2.70.0"
+   },
+   "name": "couchbase-operator",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "enabled",
+   "subCategory": "Database",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "svgColor": "\u003csvg width=\"575\" height=\"575\" viewBox=\"0 0 575 575\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M287.5 0C128.984 0 0 128.55 0 287.5C0 446.016 128.55 575 287.5 575C446.016 575 575 446.45 575 287.5C575 128.55 446.016 0 287.5 0ZM481.628 337.878C481.628 355.249 471.639 370.449 452.096 373.924C418.221 379.999 346.998 383.478 287.5 383.478C228.002 383.478 156.779 379.999 122.904 373.924C103.361 370.449 93.3724 355.249 93.3724 337.878V225.831C93.3724 208.459 106.835 192.39 122.904 189.785C132.893 188.048 156.344 186.31 174.585 186.31C181.533 186.31 187.179 191.522 187.179 199.773V278.38L287.934 276.208L388.69 278.38V199.773C388.69 191.522 394.335 186.31 401.284 186.31C419.524 186.31 442.976 188.048 452.965 189.785C469.468 192.39 482.496 208.459 482.496 225.831C481.628 262.745 481.628 300.529 481.628 337.878Z\" fill=\"#ED2226\"/\u003e\n\u003c/svg\u003e\r",
+   "svgWhite": "\u003csvg width=\"575\" height=\"575\" viewBox=\"0 0 575 575\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M287.5 0C128.984 0 0 128.55 0 287.5C0 446.016 128.55 575 287.5 575C446.016 575 575 446.45 575 287.5C575 128.55 446.016 0 287.5 0ZM481.628 337.878C481.628 355.249 471.639 370.449 452.096 373.924C418.221 379.999 346.998 383.478 287.5 383.478C228.002 383.478 156.779 379.999 122.904 373.924C103.361 370.449 93.3724 355.249 93.3724 337.878V225.831C93.3724 208.459 106.835 192.39 122.904 189.785C132.893 188.048 156.344 186.31 174.585 186.31C181.533 186.31 187.179 191.522 187.179 199.773V278.38L287.934 276.208L388.69 278.38V199.773C388.69 191.522 394.335 186.31 401.284 186.31C419.524 186.31 442.976 188.048 452.965 189.785C469.468 192.39 482.496 208.459 482.496 225.831C481.628 262.745 481.628 300.529 481.628 337.878Z\" fill=\"white\"/\u003e\n\u003c/svg\u003e\r"
+  },
+  "version": "v1.0.0"
+ }

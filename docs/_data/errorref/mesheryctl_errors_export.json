@@ -3260,6 +3260,24 @@
         "short_description": "component definition not found",
         "probable_cause": "Component might not have been registered\nThe component might not be supported by default, in the version of Meshery you are currently using.",
         "suggested_remediation": "Ensure component definition is valid JSON/YAML.\nImport the model and try again."
+      },
+      "1363": {
+        "name": "ErrGetCapabilitiesCode",
+        "code": "1363",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "Remote provider server may be down or not accepting requests.",
+        "suggested_remediation": "Make sure remote provider server is healthy and accepting requests."
+      },
+      "1364": {
+        "name": "ErrExportPatternInFormatCode",
+        "code": "1364",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": "Export design in one of the supported format."
       }
     }
   }
