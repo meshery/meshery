@@ -48,7 +48,6 @@ export const componentKey = (component) =>
 
 const validateDesign = (design, componentDefsStore) => {
   const configurableComponents = design.components;
-
   const validationResults = {};
 
   for (const configurableComponent of configurableComponents) {
@@ -61,7 +60,7 @@ const validateDesign = (design, componentDefsStore) => {
       );
       validationResults[configurableComponent.id] = componentValidationResults;
     } catch (error) {
-      console.error('Error validating component', error);
+      console.log('Error validating component', error, design, componentDefsStore);
     }
   }
 
