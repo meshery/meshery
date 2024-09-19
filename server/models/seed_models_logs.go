@@ -2,7 +2,7 @@ package models
 
 import (
 	"fmt"
-	"strings"
+
 
 	gofrs "github.com/gofrs/uuid"
 	"github.com/layer5io/meshkit/logger"
@@ -12,6 +12,8 @@ import (
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 	mutils "github.com/layer5io/meshkit/utils"
 	"github.com/spf13/viper"
+	"strings"
+
 )
 
 var TAB = "    "
@@ -207,6 +209,7 @@ func RegistryLog(log logger.Handler, handlerConfig *HandlerConfig, regManager *m
 		log.Error(err)
 	}
 }
+
 func (rfl *RegistrationFailureLog) GetEntityRegErrors() []EntityRegError {
 	var errors []EntityRegError
 	for host, modelData := range rfl.failureData {
@@ -227,3 +230,4 @@ func (rfl *RegistrationFailureLog) GetEntityRegErrors() []EntityRegError {
 	}
 	return errors
 }
+

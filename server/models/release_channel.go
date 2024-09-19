@@ -112,9 +112,15 @@ func (k *Kanvas) Intercept(req *http.Request, res http.ResponseWriter) {
 		err = ErrDBPut(errors.Wrapf(err, "failed to write capabilities for the user %s", flowResponse.UserID.String()))
 		k.log.Error(err)
 		http.Redirect(res, req, errorUI, http.StatusFound)
+
 		return
 	}
 
+	// Download the package for the user only if they have extension capability
+	// The download is skipped if package already exists.
+	if len(flowResponse.Capabilities.Extensions.Navigator) > 0 {
+		k.Provider.DownloadProviderExtensionPackage()
+	}
 	redirectURL := getRedirectURLForNavigatorExtension(&providerProperties)
 
 	http.Redirect(res, req, redirectURL, http.StatusFound)

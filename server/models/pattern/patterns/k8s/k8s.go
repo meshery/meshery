@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshkit/converter"
 	"github.com/layer5io/meshkit/utils"
 	"github.com/meshery/schemas/models/v1beta1/component"
 
@@ -18,7 +19,7 @@ import (
 
 func Deploy(kubeClient *meshkube.Client, comp component.ComponentDefinition, isDel bool) error {
 
-	resource := createK8sResourceStructure(comp)
+	resource := converter.CreateK8sResourceStructure(&comp)
 	manifest, err := yaml.Marshal(resource)
 	if err != nil {
 		return err
@@ -45,7 +46,7 @@ func Deploy(kubeClient *meshkube.Client, comp component.ComponentDefinition, isD
 }
 
 func DryRunHelper(client *meshkube.Client, comp component.ComponentDefinition) (st map[string]interface{}, success bool, err error) {
-	resource := createK8sResourceStructure(comp)
+	resource := converter.CreateK8sResourceStructure(&comp)
 	// Define a function to extract namesapce, labels and annotations in the componetn definiotn
 	namespace := getNamespaceForComponent(&comp)
 	return dryRun(client.KubeClient.RESTClient(), resource, namespace)
@@ -93,50 +94,6 @@ func dryRun(rClient rest.Interface, k8sResource map[string]interface{}, namespac
 
 func kindToResource(kind string) string {
 	return strings.ToLower(kind) + "s"
-}
-
-func createK8sResourceStructure(comp component.ComponentDefinition) map[string]interface{} {
-	annotations := map[string]interface{}{}
-	labels := map[string]interface{}{}
-
-	_confMetadata, ok := comp.Configuration["metadata"]
-	if ok {
-		confMetadata, err := utils.Cast[map[string]interface{}](_confMetadata)
-		if err == nil {
-
-			_annotations, ok := confMetadata["annotations"]
-			if ok {
-				annotations, _ = utils.Cast[map[string]interface{}](_annotations)
-			}
-
-			_label, ok := confMetadata["labels"]
-
-			if ok {
-				labels, _ = utils.Cast[map[string]interface{}](_label)
-			}
-		}
-	}
-
-	component := map[string]interface{}{
-		"apiVersion": comp.Component.Version,
-		"kind":       comp.Component.Kind,
-		"metadata": map[string]interface{}{
-			"name":        comp.DisplayName,
-			"annotations": annotations,
-			"labels":      labels,
-		},
-	}
-
-	// was/is this required, since previosuly in settings we stored kind, apiversion and metadata and namespace differently and now as well?
-
-	for k, v := range comp.Configuration {
-		if k == "apiVersion" || k == "kind" || k == "metadata" {
-			continue
-		}
-
-		component[k] = v
-	}
-	return component
 }
 
 func formatDryRunResponse(resp []byte, err error) (status map[string]interface{}, success bool, meshkiterr error) {

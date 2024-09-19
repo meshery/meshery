@@ -190,7 +190,7 @@ func processEvaluationResponse(registry *registry.RegistryManager, evalPayload p
 
 	for _, cmp := range designComponents {
 		_c := cmp
-		
+
 		for _, c := range cmps {
 			if c.Id == _c.Id {
 				_c = &c

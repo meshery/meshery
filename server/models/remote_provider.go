@@ -38,7 +38,7 @@ type RemoteProvider struct {
 	*SessionPreferencePersister
 	*EventsPersister
 	*UserCapabilitiesPersister
-	
+
 	SaaSTokenName     string
 	RemoteProviderURL string
 
@@ -131,7 +131,7 @@ func (l *RemoteProvider) loadCapabilities(token string) ProviderProperties {
 		return providerProperties
 	}
 	if err != nil || resp.StatusCode != http.StatusOK {
-		l.Log.Error(ErrFetch(err, "Capabilities", resp.StatusCode))
+		l.Log.Error(ErrFetch(err, "Capabilities", http.StatusInternalServerError))
 		return providerProperties
 	}
 	defer func() {
@@ -152,7 +152,7 @@ func (l *RemoteProvider) loadCapabilities(token string) ProviderProperties {
 
 // downloadProviderExtensionPackage will download the remote provider extensions
 // package
-func (l *RemoteProvider) downloadProviderExtensionPackage() {
+func (l *RemoteProvider) DownloadProviderExtensionPackage() {
 	// Location for the package to be stored
 	loc := l.PackageLocation()
 
@@ -224,7 +224,9 @@ func (l *RemoteProvider) GetProviderCapabilities(w http.ResponseWriter, req *htt
 	tokenString := req.Context().Value(TokenCtxKey).(string)
 
 	providerProperties := l.loadCapabilities(tokenString)
+	fmt.Println("TEST_------------------------__ line 227")
 	if err := l.WriteCapabilitiesForUser(userID, &providerProperties); err != nil {
+		fmt.Println("TEST_------------------------__ line 229", err)
 		l.Log.Error(ErrDBPut(errors.Join(err, fmt.Errorf("failed to write capabilities for the user %s to the server store", userID))))
 	}
 
@@ -3445,7 +3447,7 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ 
 
 	// Download the package for the user only if they have extension capability
 	if len(l.GetProviderProperties().Extensions.Navigator) > 0 {
-		l.downloadProviderExtensionPackage()
+		l.DownloadProviderExtensionPackage()
 	}
 
 	// Proceed to redirect once the capabilities has loaded
