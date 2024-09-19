@@ -1217,23 +1217,11 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 	err := json.NewDecoder(r.Body).Decode(&importRequest)
 	if err != nil {
 		h.log.Info("Error in unmarshalling request body")
+		h.sendErrorEvent(userID, provider, "Error in unmarshalling request body", err)
 		http.Error(rw, "Invalid request format", http.StatusBadRequest)
 		return
 	}
-	base64Data, err := json.Marshal(importRequest.ImportBody.ModelFile)
-	if err != nil {
-		http.Error(rw, "Internal server error", http.StatusInternalServerError)
-		return
-	}
-	base64String := string(base64Data)
-	// Remove double quotes
-	base64String = base64String[1 : len(base64String)-1]
 
-	decodedBytes, err := base64.StdEncoding.DecodeString(base64String)
-	if err != nil {
-		http.Error(rw, "Invalid base64 data", http.StatusBadRequest)
-		return
-	}
 	// Pass the temp file path to the RegistrationHelper
 	registrationHelper := registration.NewRegistrationHelper(
 		utils.UI,
@@ -1245,39 +1233,28 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 	switch importRequest.UploadType {
 	//Case when it is URL and them the model is generated from the URL
 	case "url":
-		tempFile, err = CreateTemp("templatefile-*.json", decodedBytes)
-		if err != nil {
-			err = meshkitutils.ErrCreateFile(err, "Error creating temp file")
-			h.handleError(rw, err, err.Error())
-			h.sendErrorEvent(userID, provider, "Error creating temp file", err)
-			return
+
+		model := &mesheryctlUtils.ModelCSV{
+			Model:            importRequest.ImportBody.Model.Model,
+			ModelDisplayName: importRequest.ImportBody.Model.ModelDisplayName,
+			PrimaryColor:     importRequest.ImportBody.Model.PrimaryColor,
+			SecondaryColor:   importRequest.ImportBody.Model.SecondaryColor,
+			Category:         importRequest.ImportBody.Model.Category,
+
+			Registrant:        importRequest.ImportBody.Model.Registrant,
+			Shape:             importRequest.ImportBody.Model.Shape,
+			SubCategory:       importRequest.ImportBody.Model.SubCategory,
+			SVGColor:          importRequest.ImportBody.Model.SvgColor,
+			SVGWhite:          importRequest.ImportBody.Model.SvgWhite,
+			SVGComplete:       importRequest.ImportBody.Model.SvgComplete,
+			IsAnnotation:      strconv.FormatBool(importRequest.ImportBody.Model.IsAnnotation),
+			PublishToRegistry: strconv.FormatBool(importRequest.ImportBody.Model.PublishToRegistry),
 		}
-		defer os.Remove(tempFile.Name())
-
-		file, err := os.Open(tempFile.Name())
-		if err != nil {
-			err = ErrOpenFile(tempFile.Name())
-			h.handleError(rw, err, err.Error())
-			h.sendErrorEvent(userID, provider, "Error opening temp file", err)
-			return
-		}
-		defer file.Close()
-
-		var model mesheryctlUtils.ModelCSV
-
-		decoder := json.NewDecoder(file)
-		err = decoder.Decode(&model)
-		if err != nil {
-			err = meshkitutils.ErrUnmarshal(err)
-			h.handleError(rw, err, "Error decoding JSON into ModelCSV")
-			h.sendErrorEvent(userID, provider, "Error decoding JSON into ModelCSV", err)
-			return
-		}
-
+		setDefaultValues(model)
 		//Model generation strats from here
 		model.Model = strings.ToLower(model.Model)
 
-		pkg, version, err := mesheryctlUtils.GenerateModels(model.Model, importRequest.ImportBody.Url, model.Model)
+		pkg, version, err := mesheryctlUtils.GenerateModels(model.Registrant, importRequest.ImportBody.Url, model.Model)
 		if err != nil {
 			h.handleError(rw, err, "Error generating model")
 			h.sendErrorEvent(userID, provider, "Error generating model", err)
@@ -1316,6 +1293,20 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		}
 
 	case "file":
+		base64Data, err := json.Marshal(importRequest.ImportBody.ModelFile)
+		if err != nil {
+			http.Error(rw, "Internal server error", http.StatusInternalServerError)
+			return
+		}
+		base64String := string(base64Data)
+		// Remove double quotes
+		base64String = base64String[1 : len(base64String)-1]
+
+		decodedBytes, err := base64.StdEncoding.DecodeString(base64String)
+		if err != nil {
+			http.Error(rw, "Invalid base64 data", http.StatusBadRequest)
+			return
+		}
 		tempFile, err = CreateTemp(importRequest.ImportBody.FileName, decodedBytes)
 		if err != nil {
 			err = meshkitutils.ErrCreateFile(err, "Error creating temp file")

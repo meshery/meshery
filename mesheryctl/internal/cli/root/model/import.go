@@ -32,9 +32,12 @@ var importModelCmd = &cobra.Command{
 	Short: "Import models from mesheryctl command",
 	Long:  "Import models by specifying the directory, file, or URL. You can also provide a template JSON file and registrant name.",
 	Example: `
-	import model -f /path/to/[file.tar.gz|file.zip] --template /path/to/template.json -r (default is true if flag is used registration is skipped)
+	import model -f [ path to oci|tar.gz|directory|URL ]
+	import model -f [ path to oci|tar.gz|directory|URL ] -t [ path to template file] ( only required in case of URL )
+	import model -f [ path to oci|tar.gz|directory|URL ] -t [ path to template file] -r ( to skip registration by default registration is true)
+
 	import model --file /path/to/models
-	import model --file http://example.com/model --template /path/to/template.json 
+	import model --file http://example.com/model --t /path/to/template.json 
 	`,
 	Args: func(_ *cobra.Command, args []string) error {
 		const errMsg = "Usage: mesheryctl model import [ file | filePath | URL ]\nRun 'mesheryctl model import --help' to see detailed help message"
@@ -118,7 +121,14 @@ func registerModel(data []byte, filename string, dataType string, sourceURI stri
 	url := baseURL + "/api/meshmodels/register"
 	var importRequest schemav1beta1.ImportRequest
 	importRequest.UploadType = dataType
-	importRequest.ImportBody.ModelFile = data
+	if dataType == "file" {
+		importRequest.ImportBody.ModelFile = data
+	} else {
+		err = encoding.Unmarshal(data, &importRequest.ImportBody.Model)
+		if err != nil {
+			return err
+		}
+	}
 	importRequest.ImportBody.Url = sourceURI
 	importRequest.ImportBody.FileName = filename
 	importRequest.Register = register

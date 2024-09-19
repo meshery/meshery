@@ -1,6 +1,6 @@
 {
     "modelDisplayName": "Harmonizer",
-    "registrant": "github",
+    "registrant": "apple",
     "model": "harmonizer",
     "category": "Provisioning",
     "subCategory": "Security & Compliance",
@@ -10,7 +10,7 @@
     "svgColor": "",
     "svgWhite": "",
     "svgComplete": "",
-    "isAnnotation": "FALSE",
-    "publishToRegistry": "TRUE"
+    "isAnnotation": false,
+    "publishToRegistry": true
   }
   

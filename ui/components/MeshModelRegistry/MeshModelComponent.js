@@ -159,14 +159,14 @@ const MeshModelComponent_ = ({
   };
 
   const handleImportModel = async (data) => {
-    const { uploadType, url, file } = data;
+    const { uploadType, url, file, model } = data;
     let requestBody = null;
 
     const fileElement = document.getElementById('root_file');
-    const fileName = fileElement.files[0].name;
 
     switch (uploadType) {
       case 'File Upload': {
+        const fileName = fileElement.files[0].name;
         const fileData = getUnit8ArrayDecodedFile(file);
         if (fileData) {
           requestBody = {
@@ -189,8 +189,10 @@ const MeshModelComponent_ = ({
           requestBody = {
             importBody: {
               url: url,
+              model: model,
             },
             uploadType: 'url',
+            register: true,
           };
         } else {
           console.error('Error: URL is empty');
