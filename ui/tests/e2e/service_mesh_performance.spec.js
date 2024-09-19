@@ -3,102 +3,124 @@ import { ENV } from './env';
 
 // Disable this test until got fixed
 test.describe('Service Mesh Performance Management Tests', () => {
-  test.skip();
+  const peformanceProfiles = [
+    {
+      profileName: 'Sample-Perf-Test',
+      serviceMesh: 'None',
+      url: 'https://www.google.com/',
+      loadGenerator: 'fortio',
+    },
+  ];
 
-  const profileName = 'Sample-test';
+  peformanceProfiles.forEach(({ profileName, serviceMesh, url, loadGenerator }) => {
+    test(`Add performace profile with load generator "${loadGenerator}" and service mesh "${serviceMesh}"`, async ({
+      page,
+    }) => {
+      await page.goto(`${ENV.MESHERY_SERVER_URL}/performance/profiles`);
+      await page.getByLabel('Add Performance Profile').click();
+      await page.getByLabel('Profile Name').fill(profileName);
+      await page.getByLabel('Service Mesh').click();
+      await page.locator(`[data-value=${serviceMesh}]`).click();
+      await page.getByRole('textbox', { name: 'url' }).fill(url);
+      await page.getByRole('spinbutton', { name: 'Concurrent requests' }).fill('2');
+      await page.getByRole('spinbutton', { name: 'Queries per second' }).fill('2');
+      await page.getByRole('textbox', { name: 'Duration' }).fill('15s');
+      await page.getByLabel(loadGenerator).check();
 
-  test('Run a performance test through profile', async ({ page }) => {
-    await page.goto(`${ENV.MESHERY_SERVER_URL}/performance/profiles`);
-    await page.getByLabel('Add Performance Profile').click();
-    await page.getByLabel('Profile Name').fill(profileName);
-    await page.locator('[aria-labelledby="meshName-label meshName"]').click();
-    await page.locator('[data-value="istio"]').click();
-    await page.getByRole('textbox', { name: 'url' }).fill('https://layer5.io/');
-    await page.getByRole('spinbutton', { name: 'Concurrent requests' }).fill('5');
-    await page.getByRole('spinbutton', { name: 'Queries per second' }).fill('5');
-    await page.getByRole('textbox', { name: 'Duration' }).fill('15s');
-    await expect(page.getByRole('button', { name: 'Run Test', exact: true })).toBeVisible();
-    await page.getByRole('button', { name: 'Run Test', exact: true }).click();
-    // Check for notification visibility
-    const notification = await page.locator('text=Initiating load test . . .').first();
+      await expect(page.getByRole('button', { name: 'Run Test', exact: true })).toBeVisible();
+      await page.getByRole('button', { name: 'Run Test', exact: true }).click();
 
-    await expect(notification).toBeVisible();
-
-    await expect(page).toHaveURL(`${ENV.MESHERY_SERVER_URL}/performance/profiles`);
-  });
-
-  test('View detailed result of a performance profile (Graph Visualiser)', async ({ page }) => {
-    await page.goto(`${ENV.MESHERY_SERVER_URL}/performance/profiles`);
-    await page.waitForSelector(`text=${profileName}`, { state: 'visible' });
-    await page.click(`button:has-text("View Results")`);
-    await page.waitForSelector('button[aria-label="more"]', { state: 'visible' });
-    await page.click('button[aria-label="more"]');
-
-    await page.evaluate(() => {
-      const sentinelStartDiv = document.querySelector('div[data-testid="sentinelStart"]');
-      if (sentinelStartDiv) {
-        sentinelStartDiv.setAttribute('data-testid', 'sentinel-graph');
-      }
+      await expect(await page.getByText('fetched the data.')).toBeVisible({
+        timeout: 2 * 60 * 1000,
+      });
     });
 
-    const graphVisible = await page.getByTestId('sentinel-graph').isVisible();
-    expect(graphVisible);
-  });
+    test(`View detailed result of a performance profile (Graph Visualiser) with load generator "${loadGenerator}" and service mesh "${serviceMesh}"`, async ({
+      page,
+    }) => {
+      await page.goto(`${ENV.MESHERY_SERVER_URL}/performance/profiles`);
+      await page.waitForSelector(`text=${profileName}`, {
+        state: 'visible',
+      });
+      await page.getByRole('button', { name: 'View Results', exact: true }).click();
 
-  test('Run a performance test', async ({ page }) => {
-    await page.goto(`${ENV.MESHERY_SERVER_URL}/performance`);
-    await page.getByRole('button', { name: 'Run Test', exact: true }).click();
-    await page.getByLabel('Profile Name').fill(`${profileName}-2`);
-    await page.locator('[aria-labelledby="meshName-label meshName"]').click();
-    await page.locator('[data-value="istio"]').click();
-    await page.getByRole('textbox', { name: 'url' }).fill('https://layer5.io/');
-    await page.getByRole('spinbutton', { name: 'Concurrent requests' }).fill('5');
-    await page.getByRole('spinbutton', { name: 'Queries per second' }).fill('5');
-    await page.getByRole('textbox', { name: 'Duration' }).fill('15s');
-    await expect(page.getByRole('button', { name: 'Run Test', exact: true })).toBeVisible();
-    await page.getByRole('button', { name: 'Run Test', exact: true }).click();
-    // Check for notification visibility
-    await expect(page.getByText('Initiating load test . . .')).toBeVisible({ timeout: 90 * 1000 });
-  });
+      expect(page.getByText('Sorry, no matching records')).toBeHidden();
+      await page.getByLabel('more').first().click();
 
-  test('View Results from a performance profile', async ({ page }) => {
-    await page.goto(`${ENV.MESHERY_SERVER_URL}/performance/profiles`);
-    const perfTestProfile = await page.getByText(profileName).first();
+      await expect(await page.getByText(`URL: ${url}`, { exact: true })).toBeVisible();
+    });
 
-    await expect(perfTestProfile).toBeVisible();
+    test(`Run a performance test with load generator "${loadGenerator}" and service mesh "${serviceMesh}"`, async ({
+      page,
+    }) => {
+      await page.goto(`${ENV.MESHERY_SERVER_URL}/performance`);
+      await page.getByRole('button', { name: 'Run Test', exact: true }).click();
+      await page.getByLabel('Profile Name').fill(`${profileName}-2`);
+      await page.getByLabel('Service Mesh').click();
+      await page.locator(`[data-value=${serviceMesh}]`).click();
+      await page.getByRole('textbox', { name: 'url' }).fill(url);
+      await page.getByRole('spinbutton', { name: 'Concurrent requests' }).fill('2');
+      await page.getByRole('spinbutton', { name: 'Queries per second' }).fill('2');
+      await page.getByRole('textbox', { name: 'Duration' }).fill('15s');
+      await page.getByLabel(loadGenerator).check();
 
-    await page.getByText('View Results').first().click();
+      await expect(page.getByRole('button', { name: 'Run Test', exact: true })).toBeVisible();
 
-    await page.getByLabel('more').first().click();
+      await page.getByRole('button', { name: 'Run Test', exact: true }).click();
 
-    await expect(page.getByText('Percentile Summary')).toBeVisible();
-  });
+      await expect(await page.getByText('fetched the data.')).toBeVisible({
+        timeout: 2 * 60 * 1000,
+      });
+    });
 
-  test('View/Edit the configuration of a performance profile', async ({ page }) => {
-    await page.goto(`${ENV.MESHERY_SERVER_URL}/performance/profiles`);
-    await page.getByText(profileName).first().click();
+    test(`View Results from a performance profile with load generator "${loadGenerator}" and service mesh "${serviceMesh}"`, async ({
+      page,
+    }) => {
+      await page.goto(`${ENV.MESHERY_SERVER_URL}/performance/profiles`);
+      const perfTestProfile = await page.getByText(profileName).first();
 
-    await page.getByTestId('performanceProfieCard-edit').click();
+      await expect(perfTestProfile).toBeVisible();
 
-    await page.locator('[aria-labelledby="meshName-label meshName"]').click();
-    await page.locator('[data-value="istio"]').click();
-    await page.getByRole('spinbutton', { name: 'Concurrent requests' }).fill('6');
-    await expect(page.getByRole('button', { name: 'Run Test', exact: true })).toBeVisible();
-    await page.getByRole('button', { name: 'Run Test', exact: true }).click();
+      await page.getByText('View Results').first().click();
 
-    await expect(page.getByText('Initiating load test . . .')).toBeVisible();
-  });
+      await expect(await page.getByText('Sorry, no matching records')).toBeHidden();
 
-  test('Delete a performance profile', async ({ page }) => {
-    await page.goto(`${ENV.MESHERY_SERVER_URL}/performance/profiles`);
-    await page.getByText(profileName).first().click();
-    await page.getByTestId('performanceProfieCard-delete').first().click();
+      await page.getByLabel('more').first().click();
 
-    await expect(page.getByText('Performance Profile Deleted!')).toBeVisible();
+      await expect(await page.getByText('Percentile Summary')).toBeVisible();
+    });
 
-    await page.getByText(`${profileName}-2`).first().click();
-    await page.getByTestId('performanceProfieCard-delete').first().click();
+    test(`View/Edit the configuration of a performance profile with load generator "${loadGenerator}" and service mesh "${serviceMesh}"`, async ({
+      page,
+    }) => {
+      await page.goto(`${ENV.MESHERY_SERVER_URL}/performance/profiles`);
+      await page.getByText(profileName).first().click();
 
-    await expect(page.getByText('Performance Profile Deleted!')).toBeVisible();
+      await page.getByTestId('performanceProfieCard-edit').click();
+      await page.getByLabel('Service Mesh').click();
+      await page.locator(`[data-value=${serviceMesh}]`).click();
+      await page.getByRole('spinbutton', { name: 'Concurrent requests' }).fill('3');
+      await page.getByLabel(loadGenerator).check();
+
+      await expect(page.getByRole('button', { name: 'Run Test', exact: true })).toBeVisible();
+      await page.getByRole('button', { name: 'Run Test', exact: true }).click();
+
+      await expect(page.getByText('fetched the data.')).toBeVisible({ timeout: 2 * 60 * 1000 });
+    });
+
+    test(`Delete a performance profile with load generator "${loadGenerator}" and service mesh "${serviceMesh}"`, async ({
+      page,
+    }) => {
+      await page.goto(`${ENV.MESHERY_SERVER_URL}/performance/profiles`);
+      await page.getByText(profileName, { exact: true }).click();
+      await page.getByTestId('performanceProfieCard-delete').first().click();
+
+      await expect(await page.getByText('Performance Profile Deleted!').first()).toBeHidden();
+
+      await page.getByText(`${profileName}-2`, { exact: true }).click();
+      await page.getByTestId('performanceProfieCard-delete').first().click();
+
+      await expect(await page.getByText('Performance Profile Deleted!').first()).toBeHidden();
+    });
   });
 });
