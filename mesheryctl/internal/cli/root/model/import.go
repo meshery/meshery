@@ -32,12 +32,12 @@ var importModelCmd = &cobra.Command{
 	Short: "Import models from mesheryctl command",
 	Long:  "Import models by specifying the directory, file, or URL. You can also provide a template JSON file and registrant name.",
 	Example: `
-	import model -f [ path to oci|tar.gz|directory|URL ]
-	import model -f [ path to oci|tar.gz|directory|URL ] -t [ path to template file] ( only required in case of URL )
-	import model -f [ path to oci|tar.gz|directory|URL ] -t [ path to template file] -r ( to skip registration by default registration is true)
+	model import -f [ path to oci|tar.gz|directory|URL ]
+	model import-f [ path to oci|tar.gz|directory|URL ] -t [ path to template file] ( only required in case of URL )
+	model import  -f [ path to oci|tar.gz|directory|URL ] -t [ path to template file] -r ( to skip registration by default registration is true)
 
-	import model --file /path/to/models
-	import model --file http://example.com/model --t /path/to/template.json 
+	model import --file /path/to/models
+    model import--file http://example.com/model --t /path/to/template.json 
 	`,
 	Args: func(_ *cobra.Command, args []string) error {
 		const errMsg = "Usage: mesheryctl model import [ file | filePath | URL ]\nRun 'mesheryctl model import --help' to see detailed help message"
