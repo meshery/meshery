@@ -30,6 +30,7 @@ import (
 	patternutils "github.com/layer5io/meshery/server/models/pattern/utils"
 	"github.com/layer5io/meshkit/encoding"
 	"github.com/layer5io/meshkit/errors"
+	"github.com/layer5io/meshkit/models/converter"
 	_errors "github.com/pkg/errors"
 
 	"github.com/layer5io/meshkit/logger"
@@ -1020,6 +1021,8 @@ func (h *Handler) DeleteMesheryPatternHandler(
 // Handle GET request for Meshery Pattern with the given id
 //
 // ?oci={true|false} - If true, returns the pattern in OCI Artifact format
+// ?export={Kubernetes Manifest} - exports the pattern file in the specified design format
+// ?pkg={true|false} - If true, returns the artifact hub pkg and pattern file in zip file. If "oci" is true, "pkg" is ignored and the export always contains the artifact hub pkg.
 //
 // Get the pattern with the given id
 // responses:
@@ -1037,6 +1040,16 @@ func (h *Handler) DownloadMesheryPatternHandler(
 
 	userID := uuid.FromStringOrNil(user.ID)
 	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction("download").ActedUpon(userID).WithSeverity(events.Informational)
+
+	exportFormat := r.URL.Query().Get("export")
+
+	formatConverter, errConvert := converter.NewFormatConverter(converter.DesignFormat(exportFormat))
+	if errConvert != nil {
+		err := ErrExportPatternInFormat(errConvert, exportFormat, "")
+		h.log.Error(err)
+		http.Error(rw, err.Error(), http.StatusBadRequest)
+		return
+	}
 
 	patternID := mux.Vars(r)["id"]
 	ociFormat, _ := strconv.ParseBool(r.URL.Query().Get("oci"))
@@ -1106,6 +1119,26 @@ func (h *Handler) DownloadMesheryPatternHandler(
 		}
 
 		pattern.PatternFile = patternFileStr
+	}
+
+	if formatConverter != nil {
+		patternFile, err := formatConverter.Convert(pattern.PatternFile)
+		if err != nil {
+			err = ErrExportPatternInFormat(err, exportFormat, pattern.Name)
+			h.log.Error(err)
+			http.Error(rw, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		rw.Header().Add("Content-Disposition", fmt.Sprintf("attachment;filename=%s.yml", pattern.Name))
+		rw.Header().Set("Content-Type", "application/yaml")
+		_, err = fmt.Fprint(rw, patternFile)
+		if err != nil {
+			err = ErrWriteResponse(err)
+			h.log.Error(err)
+			http.Error(rw, _errors.Wrapf(err, "failed to export design \"%s\" in %s format", pattern.Name, exportFormat).Error(), http.StatusInternalServerError)
+			return
+		}
+		return
 	}
 
 	if ociFormat {
@@ -2084,8 +2117,7 @@ func mapModelRelatedData(reg *meshmodel.RegistryManager, patternFile *pattern.Pa
 			// if model is one of those defined in the slice above as meshery, and no matching defs were found,
 			// try to find the component just by name, this ensures the component is upgraded to newer model.
 			// Eg: Some old designs contains "Comment" component under "meshery" model instead of "meshery-core"
-			
-			
+
 			// Update the component kind to reflect the current registry.
 			// Eg: The Connection component for k8s, had "kind" updated to "KuberntesConnection",hence any designs which has model k8s and kind "Connection" will fail, to ensure it gets converted, update the kind
 			if comp.Model.Name == "kubernetes" && comp.Component.Kind == "Connection" {

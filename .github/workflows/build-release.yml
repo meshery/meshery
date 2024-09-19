@@ -1,57 +1,18 @@
-name: Meshery Build and Releaser (meshery-extensions channel)
+name: Notify Meshery Extensions channel build
 on:
   workflow_dispatch:
-
+  push:
+    tags:
+      - 'v*'
 jobs:
-  docker-build-push:
-    name: Docker build and push
-    if: github.repository == 'meshery/meshery' && github.event_name != 'pull_request' && success()
-    env:
-      RELEASE_CHANNEL: "kanvas"
+  notfiy-build:
+    name: Notify providers for Meshery Extensions channel build
+    if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-22.04
     steps:
-      - name: Fetch latest tag
-        run: |
-          echo "LATEST_TAG=$(curl --silent "https://api.github.com/repos/meshery/meshery/releases" | jq ' .[] | ."tag_name"' | sed -n 1p$'\n' | tr -d '"')" >> $GITHUB_ENV
-      - name: Check out code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-          ref: ${{ inputs.branch }}
-      - name: Docker login
-        uses: azure/docker-login@v1
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-
-      - name: Configure Meshery UI
-        run: |
-          cat << EOF > ui/ui.config.js
-          module.exports = {
-            components: {
-              navigator: false, // set false to disable the navigator component ( default: true )
-            },
-          };
-          EOF
-      - name: Docker build & tag
-        run: |
-          DOCKER_BUILDKIT=1 docker build -f install/docker/Dockerfile --no-cache -t ${{ secrets.IMAGE_NAME }}:kanvas-latest --build-arg TOKEN=${{ secrets.GLOBAL_TOKEN }} --build-arg GIT_COMMITSHA=${GITHUB_SHA::8} --build-arg GIT_VERSION=${{ env.LATEST_TAG }} --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} .
-
-          docker tag ${{ secrets.IMAGE_NAME }}:kanvas-latest ${{ secrets.IMAGE_NAME }}:kanvas-${GITHUB_SHA::8}
-
-          docker tag ${{ secrets.IMAGE_NAME }}:kanvas-latest ${{ secrets.IMAGE_NAME }}:kanvas-${{ env.LATEST_TAG }}
-      - name: Docker push
-        run: |
-          docker push ${{ secrets.IMAGE_NAME }}:kanvas-latest
-          docker push ${{ secrets.IMAGE_NAME }}:kanvas-${GITHUB_SHA::8}
-          docker push ${{ secrets.IMAGE_NAME }}:kanvas-${{ env.LATEST_TAG }}
-  call-meshery-extensions-playground-rollout:      
-    needs:
-      - docker-build-push
-    name: Deploy CNCF Extensions Playground
-    uses: layer5labs/meshery-extensions-packages/.github/workflows/deploy-meshery-extensions-playground.yml@master
-    with:
-      # should we use SHA? 
-      # As if meshery is not released but we want to deploy changes from the master branch, the release/latest tag will be same and hence the rollout will be skipped.
-      image: layer5/meshery:kanvas-${ GITHUB_SHA::8 } 
-    secrets: inherit
+    - name: trigger plugins for edge
+      uses: layer5io/trigger-remote-provider-action@master
+      with:
+        name: "Build and Rollout Kanvas"
+        repo: layer5labs/meshery-extensions-packages
+        token: ${{ secrets.GH_ACCESS_TOKEN }}
