@@ -43,7 +43,7 @@ type statusIDs struct {
 // ```?severity=[eventseverity] Returns events belonging to provided severities ```
 // ```?sort={field} order the records based on passed field, defaults to updated_at```
 // ```?order={[asc/desc]}``` Default behavior is desc
-// ```?page={page-number}``` Default page number is 1
+// ```?page={page-number}``` Default page number is 0
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 // responses:
 // 	200: eventsResponseWrapper
