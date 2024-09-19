@@ -18,8 +18,8 @@ import (
 
 	"github.com/layer5io/meshkit/models/events"
 	_models "github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
-	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1alpha3/relationship"
+	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/connection"
 	_model "github.com/meshery/schemas/models/v1beta1/model"
 
