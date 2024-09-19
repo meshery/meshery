@@ -1045,8 +1045,10 @@ func (h *Handler) DownloadMesheryPatternHandler(
 
 	formatConverter, errConvert := converter.NewFormatConverter(converter.DesignFormat(exportFormat))
 	if errConvert != nil {
-		h.log.Error(errConvert)
-		h.log.Info("Falling back to design file format")
+		err := ErrExportPatternInFormat(errConvert, exportFormat, "")
+		h.log.Error(err)
+		http.Error(rw, err.Error(), http.StatusBadRequest)
+		return
 	}
 
 	patternID := mux.Vars(r)["id"]
@@ -1122,8 +1124,9 @@ func (h *Handler) DownloadMesheryPatternHandler(
 	if formatConverter != nil {
 		patternFile, err := formatConverter.Convert(pattern.PatternFile)
 		if err != nil {
-			h.log.Error(ErrConvertPattern(err))
-			http.Error(rw, ErrConvertPattern(err).Error(), http.StatusInternalServerError)
+			err = ErrExportPatternInFormat(err, exportFormat, pattern.Name)
+			h.log.Error(err)
+			http.Error(rw, err.Error(), http.StatusInternalServerError)
 			return
 		}
 		rw.Header().Add("Content-Disposition", fmt.Sprintf("attachment;filename=%s.yml", pattern.Name))
