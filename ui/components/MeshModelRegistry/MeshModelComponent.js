@@ -37,6 +37,7 @@ import { Modal as SistentModal } from '@layer5/sistent';
 import { UsesSistent } from '../SistentWrapper';
 import { RJSFModalWrapper } from '../Modal';
 import { useRef } from 'react';
+import { updateProgress } from 'lib/store';
 
 const meshmodelStyles = (theme) => ({
   wrapperClss: {
@@ -205,7 +206,9 @@ const MeshModelComponent_ = ({
         return;
       }
     }
-    importModelReq({ importBody: requestBody }).unwrap();
+    updateProgress({ showProgress: true });
+    await importModelReq({ importBody: requestBody });
+    updateProgress({ showProgress: false });
   };
   const [modelFilters, setModelsFilters] = useState({ page: 0 });
   const [registrantFilters, setRegistrantsFilters] = useState({ page: 0 });

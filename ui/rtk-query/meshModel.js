@@ -114,7 +114,6 @@ const meshModelApi = api
       }),
       importMeshModel: builder.mutation({
         query: (queryArgs) => {
-          console.log('Query Arguments Body:', queryArgs);
           return {
             url: `meshmodels/register`,
             method: 'POST',
