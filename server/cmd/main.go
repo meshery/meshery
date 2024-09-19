@@ -222,9 +222,9 @@ func main() {
 	}
 
 	lProv := &models.DefaultLocalProvider{
-		ProviderBaseURL:           DefaultProviderURL,
-		MapPreferencePersister:    preferencePersister,
-		UserCapabilitiesPersister: &models.UserCapabilitiesPersister{DB: dbHandler},
+		ProviderBaseURL:                 DefaultProviderURL,
+		MapPreferencePersister:          preferencePersister,
+		UserCapabilitiesPersister:       &models.UserCapabilitiesPersister{DB: dbHandler},
 		ResultPersister:                 &models.MesheryResultsPersister{DB: dbHandler},
 		SmiResultPersister:              &models.SMIResultsPersister{DB: dbHandler},
 		TestProfilesPersister:           &models.TestProfilesPersister{DB: dbHandler},
