@@ -32,11 +32,11 @@ The supported registrant for importing from URL is `github` and `artifacthub`.Th
 
 Registrant `Artifacthub`:
 - https://artifacthub.io/packages/search?ts_query_web={ model-name } 
-- https://www.google.com/url?q=https://istio-release.storage.googleapis.com/charts/base-1.19.0-alpha.1.tgz&sa=D&source=editors&ust=1726839249773905&usg=AOvVaw0j88gkt6FOS1LLSRCYq95X 
+- https://istio-release.storage.googleapis.com/charts/base-1.19.0-alpha.1.tgz&sa=D&source=editors&ust=1726839249773905&usg=AOvVaw0j88gkt6FOS1LLSRCYq95X 
 
 Registrant `Github`:
 - git:://github.com/cert-manager/cert-manager/master/deploy/crds
-- https://www.google.com/url?q=https://github.com/UffizziCloud/uffizzi_controller/releases/download/uffizzi-controller-2.0.1/uffizzi-controller-2.0.1.tgz&sa=D&source=editors&ust=1726839320133140&usg=AOvVaw2AryFwXIPKFnWRjRRTApzp
+- https://github.com/UffizziCloud/uffizzi_controller/releases/download/uffizzi-controller-2.0.1/uffizzi-controller-2.0.1.tgz&sa=D&source=editors&ust=1726839320133140&usg=AOvVaw2AryFwXIPKFnWRjRRTApzp
 
 
 **Example :**
@@ -51,7 +51,7 @@ Registrant `Github`:
 
 
 **Note:** A `-r` flag is present to skip registaration. If the flag is used then no new model would be registered though they would be generated and stored inside `.meshery/models` directory.
-The `template.json` can be viewed [here](#).
+The `template.json` can be viewed [here](#).In template.json if the field `isAnnotaion` is true then we would only consider that component as an annotation (svg icon) rather than a normal component.
 
 
 
