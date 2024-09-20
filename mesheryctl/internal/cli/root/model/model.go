@@ -129,7 +129,7 @@ func init() {
 
 	exportModal.Flags().StringVarP(&outFormatFlag, "output-format", "t", "yaml", "(optional) format to display in [json|yaml] (default = yaml)")
 	exportModal.Flags().StringVarP(&outLocationFlag, "output-location", "l", "./", "(optional) output location (default = current directory)")
-	exportModal.Flags().StringVarP(&outTypeFlag, "output-type", "o", "oci", "(optional) format to display in [oci|json|yaml] (default = oci)")
+	exportModal.Flags().StringVarP(&outTypeFlag, "output-type", "o", "oci", "(optional) format to display in [oci|tar] (default = oci)")
 	exportModal.Flags().BoolVarP(&discardComponentsFlag, "discard-components", "c", false, "(optional) whether to discard components in the exported model definition (default = false)")
 	exportModal.Flags().BoolVarP(&discardRelationshipsFlag, "discard-relationships", "r", false, "(optional) whether to discard relationships in the exported model definition (default = false)")
 	exportModal.Flags().StringVarP(&versionFlag, "version", "", "", "(optional) model version to export (default = \"\")")

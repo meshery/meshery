@@ -1352,7 +1352,6 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 	version := r.URL.Query().Get("version")
 	outputFormat := r.URL.Query().Get("output_format")
 	fileTypes := r.URL.Query().Get("file_type")
-	fmt.Println("fileTypes", fileTypes, modelId, name, version, outputFormat)
 	if fileTypes == "" {
 		fileTypes = "oci"
 	}

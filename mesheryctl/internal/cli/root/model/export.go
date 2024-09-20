@@ -18,7 +18,7 @@ var exportModal = &cobra.Command{
 	Long:  "export the registered model to the specified output type",
 	Example: `
 // Export a model by name
-mesheryctl model export [model-name] -o [oci/tar]  (default is oci)
+mesheryctl model export [model-name] -o [oci|tar]  (default is oci)
 mesheryctl model export [model-name] -t json (default is yaml)
 mesheryctl model export [model-name] -l /home/meshery/
 mesheryctl model export [model-name] --discard-components --discard-relationships
