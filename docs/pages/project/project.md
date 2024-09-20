@@ -20,7 +20,7 @@ Kubernetes-centric. Kubernetes not required.
 
 Infrastructure diversity is a reality for any enterprise. Whether you're running a single Kubernetes cluster or multiple Kubernetes clusters, on one cloud or multiple clouds, you'll find that Meshery supports your infrastructure diversity (or lack thereof).
 
-## Meshery's Functionality
+### Meshery's Functionality
 
 Meshery supports all Kubernetes-based infrastructure including many cloud services of AWS and GCP platforms. Meshery features can be categorized by:
 
