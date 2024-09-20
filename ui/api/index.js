@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const instance = axios.create({
-  withCredentials: true, // for pushing client-cookies in all requests to server
+  withCredentials: true, //for pushing client-cookies in all requests to server
 });
 
 instance.interceptors.response.use((response) => {
