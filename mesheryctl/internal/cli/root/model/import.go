@@ -71,7 +71,7 @@ var importModelCmd = &cobra.Command{
 				utils.Log.Error(err)
 				return nil
 			}
-			locationForModel := utils.MesheryFolder + "/Models"
+			locationForModel := utils.MesheryFolder + "/models"
 			utils.Log.Info("Model can be accessed from ", locationForModel)
 			return nil
 		}

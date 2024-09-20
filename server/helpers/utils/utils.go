@@ -29,7 +29,7 @@ const (
 	HelmChartOperatorName = "meshery-operator"
 	MesheryFolder         = ".meshery"
 	ManifestsFolder       = "manifests"
-	registryLocation      = ".meshery/Models"
+	registryLocation      = ".meshery/models"
 	DefVersion            = "1.0.0"
 )
 
