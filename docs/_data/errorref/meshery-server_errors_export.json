@@ -3269,6 +3269,15 @@
         "short_description": "",
         "probable_cause": "Remote provider server may be down or not accepting requests.",
         "suggested_remediation": "Make sure remote provider server is healthy and accepting requests."
+      },
+      "1364": {
+        "name": "ErrExportPatternInFormatCode",
+        "code": "1364",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": "Export design in one of the supported format."
       }
     }
   }

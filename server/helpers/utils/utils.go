@@ -134,7 +134,6 @@ func IsClosed[K any](ch chan K) bool {
 	return false
 }
 
-
 const UI = "../../ui/public/static/img/meshmodels" //Relative to cmd/main.go
 var UISVGPaths = make([]string, 1)
 var hashCheckSVG = make(map[string]string)

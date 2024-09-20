@@ -38,7 +38,7 @@ type RemoteProvider struct {
 	*SessionPreferencePersister
 	*EventsPersister
 	*UserCapabilitiesPersister
-	
+
 	SaaSTokenName     string
 	RemoteProviderURL string
 
