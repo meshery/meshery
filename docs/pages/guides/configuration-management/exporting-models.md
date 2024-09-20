@@ -10,7 +10,7 @@ language: en
 
 Export existing Meshery [Models](/concepts/logical/models) or your custom infrastructure crd imported as [Models](/concepts/logical/models) in Meshery. The platform supports a variety of application definition formats, and you can export designs using either the Meshery CLI or the Meshery UI.
 
-## Import Designs Using Meshery CLI
+## Import Models Using Meshery CLI
 
 **Step 1: Install Meshery CLI**
 
@@ -43,7 +43,7 @@ Different file type and output type can be set using flags `-o` for oci and tar 
 
 
 
-## Import Designs Using Meshery UI
+## Import Models Using Meshery UI
 
 **Step 1: Access the Meshery UI**
 
@@ -55,7 +55,7 @@ Once you have accessed the Meshery UI, navigate to the Registry under Settings. 
 
 <a href="{{ site.baseurl }}/assets/img/export/Registry.png"><img alt="Registry-Navigator" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/export/Registry.png" /></a>
 
-**Step 3: Upload the Model**
+**Step 3: Upload the Models**
 
 On the Registry page, you can upload your model by select File Type from the options and clicking on the "Browse" button and selecting the file (tar.gz or OCI) from your local machine or uploading in through URL. If you choose URL you need to provide in some fields like registrant, model name, model displayname and category. Once you have selected the file or entered the URL and filled the form, click on the "Import" button to import model into Meshery.
 

@@ -12,7 +12,7 @@ Import your existing Models and existing custom resource definition (CRD) into M
 
 **Note:** A [Model](/concepts/logical/models) can be only imported if it contains atleast a valid [Component](/concepts/logical/components) or [Relationship](/concepts/logical/relationships).
 
-## Import Designs Using Meshery CLI
+## Import Models Using Meshery CLI
 
 **Step 1: Install Meshery CLI**
 
@@ -55,7 +55,7 @@ The `template.json` can be viewed [here](#).
 
 
 
-## Import Designs Using Meshery UI
+## Import Models Using Meshery UI
 
 **Step 1: Access the Meshery UI**
 
