@@ -341,7 +341,7 @@ func (h *Handler) sendEventForImport(userID uuid.UUID, provider models.Provider,
 	description := fmt.Sprintf("Generated %d %s for model %s", compsCount, componentWord, modelName)
 
 	metadata := map[string]interface{}{
-		"Description": fmt.Sprintf("Extracted %v %s for model %s\nModel can be accessed from `.meshery/Models`", compsCount, componentWord, modelName),
+		"Description": fmt.Sprintf("Extracted %v %s for model %s\nModel can be accessed from `.meshery/models`", compsCount, componentWord, modelName),
 	}
 	event := events.NewEvent().
 		ActedUpon(userID).
