@@ -588,7 +588,7 @@ const ImportModal = React.memo((props) => {
   return (
     <>
       <UsesSistent>
-        <SistentModal open={true} closeModal={handleClose} maxWidth="sm" title="Import Model(s)">
+        <SistentModal open={true} closeModal={handleClose} maxWidth="sm" title="Import Model">
           <RJSFModalWrapper
             schema={importFormSchema.rjsfSchema}
             uiSchema={{
