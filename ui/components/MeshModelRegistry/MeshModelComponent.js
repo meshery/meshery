@@ -593,16 +593,6 @@ const ImportModal = React.memo((props) => {
             schema={importFormSchema.rjsfSchema}
             uiSchema={{
               ...importFormSchema.uiSchema,
-              // open the model property by default
-              model: {
-                'ui:options': {
-                  expand: true,
-                },
-                styles: {
-                  padding: 0,
-                  margin: 0,
-                },
-              },
             }}
             handleSubmit={handleImportModel}
             submitBtnText="Import"
