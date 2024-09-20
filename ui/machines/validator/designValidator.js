@@ -155,7 +155,7 @@ const getAllComponentsDefsInDesign = async (design) => {
       ),
     )
   )
-    .filter((result) => result.status === 'fulfilled')
+    .filter((result) => result.status === 'fulfilled' && result.value)
     .map((result) => result.value);
 
   const componentStore = componentDefs.reduce((acc, componentDef) => {
