@@ -152,26 +152,26 @@ func (l *RemoteProvider) loadCapabilities(token string) ProviderProperties {
 
 // downloadProviderExtensionPackage will download the remote provider extensions
 // package
-func (l *RemoteProvider) DownloadProviderExtensionPackage() {
+func (l *ProviderProperties) DownloadProviderExtensionPackage(log logger.Handler) {
 	// Location for the package to be stored
 	loc := l.PackageLocation()
 
 	// Skip download if the file is already present
 	if _, err := os.Stat(loc); err == nil {
-		l.Log.Debug(fmt.Sprintf("[Initialize]: Package found at %s skipping download", loc))
+		log.Debug(fmt.Sprintf("[Initialize]: Package found at %s skipping download", loc))
 		return
 	}
 
-	l.Log.Debug(fmt.Sprintf("[Initialize]: Package not found at %s proceeding to download", loc))
+	log.Debug(fmt.Sprintf("[Initialize]: Package not found at %s proceeding to download", loc))
 	// logrus the provider package
-	if err := TarXZF(l.PackageURL, loc, l.Log); err != nil {
-		l.Log.Error(ErrDownloadPackage(err, "provider package"))
+	if err := TarXZF(l.PackageURL, loc, log); err != nil {
+		log.Error(ErrDownloadPackage(err, "provider package"))
 	}
 }
 
 // PackageLocation returns the location of where the package for the current
 // provider is located
-func (l *RemoteProvider) PackageLocation() string {
+func (l *ProviderProperties) PackageLocation() string {
 	return path.Join(homedir.HomeDir(), ".meshery", "provider", l.ProviderName, l.PackageVersion)
 }
 
@@ -3447,7 +3447,7 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ 
 
 	// Download the package for the user only if they have extension capability
 	if len(l.GetProviderProperties().Extensions.Navigator) > 0 {
-		l.DownloadProviderExtensionPackage()
+		l.DownloadProviderExtensionPackage(l.Log)
 	}
 
 	// Proceed to redirect once the capabilities has loaded
