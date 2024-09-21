@@ -143,7 +143,7 @@ const (
 	ErrReadSessionPersistorCode            = "meshery-server-1329"
 	ErrFailToGetK8SContextCode             = "meshery-server-1330"
 	ErrFailToLoadK8sContextCode            = "meshery-server-1331"
-	ErrNoTarInsideOCiCode                  = "replace_me"
+	ErrNoTarInsideOCiCode                  = "meshery-server-1365"
 	ErrEmptyOCIImageCode                   = "meshery-server-1360"
 	ErrGetComponentDefinitionCode          = "meshery-server-1362"
 	ErrGetCapabilitiesCode                 = "meshery-server-1363"
