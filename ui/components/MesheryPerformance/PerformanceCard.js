@@ -24,6 +24,7 @@ import { iconMedium } from '../../css/icons.styles';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { useGetUserByIdQuery } from '@/rtk-query/user';
+import useTestIDsGenerator from '@/components/hooks/useTestIDs';
 
 const useStyles = makeStyles((theme) => ({
   cardButtons: {
@@ -82,6 +83,7 @@ function PerformanceCard({
     isSuccess: isUserDataFetched,
     isError: userError,
   } = useGetUserByIdQuery(profile.user_id);
+  const testIDs = useTestIDsGenerator('performanceProfileCard');
 
   useEffect(() => {
     if (isUserDataFetched && userData && userData.avatar_url) {
@@ -307,6 +309,7 @@ function PerformanceCard({
               <CustomTooltip title="Edit">
                 <IconButton
                   onClick={(ev) => genericClickHandler(ev, handleEdit)}
+                  data-testid={testIDs('edit')}
                   disabled={
                     !CAN(keys.EDIT_PERFORMANCE_TEST.action, keys.EDIT_PERFORMANCE_TEST.subject)
                   }
@@ -317,6 +320,7 @@ function PerformanceCard({
               <CustomTooltip title="Delete">
                 <IconButton
                   onClick={(ev) => genericClickHandler(ev, handleDelete)}
+                  data-testid={testIDs('delete')}
                   disabled={
                     !CAN(keys.DELETE_PERFORMANCE_TEST.action, keys.DELETE_PERFORMANCE_TEST.subject)
                   }

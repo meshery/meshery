@@ -58,6 +58,7 @@ export const useNotification = () => {
     customEvent = null,
     showInNotificationCenter = false,
     pushToServer = false,
+    dataTestID = 'notify',
   }) => {
     timestamp = timestamp ?? moment.utc().valueOf();
     id = id || v4();
@@ -67,7 +68,7 @@ export const useNotification = () => {
       variant: typeof event_type === 'string' ? event_type : event_type?.type,
       action: function Action(key) {
         return (
-          <ToggleButtonGroup>
+          <ToggleButtonGroup data-testid={dataTestID}>
             {showInNotificationCenter && (
               <AddClassRecursively className={NOTIFICATION_CENTER_TOGGLE_CLASS}>
                 <IconButton
