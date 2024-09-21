@@ -228,7 +228,7 @@ func CreateTemp(filename string, data []byte) (*os.File, error) {
 	}
 	return tempFile, nil
 }
-func handleRegistrationAndError(registrationHelper registration.RegistrationHelper, mu *sync.Mutex, response *models.RegistryAPIResponse, regErrorStore *models.RegistrationFailureLog) error {
+func handleRegistrationAndError(registrationHelper registration.RegistrationHelper, mu *sync.Mutex, response *models.RegistryAPIResponse, regErrorStore *models.RegistrationFailureLog) {
 	for _, pkg := range registrationHelper.PkgUnits {
 		registeredModel := pkg.Model
 		for _, comp := range pkg.Components {
@@ -259,7 +259,6 @@ func handleRegistrationAndError(registrationHelper registration.RegistrationHelp
 			addUnsuccessfulEntry(path, response, err, entityTypeStr)
 		}
 	}
-	return nil
 }
 func (h *Handler) sendFileEvent(userID uuid.UUID, provider models.Provider, response *models.RegistryAPIResponse) {
 	// Initialize metadata map

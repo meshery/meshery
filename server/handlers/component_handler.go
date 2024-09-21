@@ -1435,7 +1435,7 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 	relationshipsDir := filepath.Join(versionDir, "relationships")
 
 	for _, comp := range components {
-		comp.ReplaceSVGData("../../")
+		_ = comp.ReplaceSVGData("../../")
 		comp.Model = *model
 		_, err := comp.WriteComponentDefinition(componentsDir, outputFormat)
 		if err != nil {
