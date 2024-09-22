@@ -119,7 +119,7 @@ func (k *Kanvas) Intercept(req *http.Request, res http.ResponseWriter) {
 	// Download the package for the user only if they have extension capability
 	// The download is skipped if package already exists.
 	if len(flowResponse.Capabilities.Extensions.Navigator) > 0 {
-		k.Provider.DownloadProviderExtensionPackage()
+		flowResponse.Capabilities.DownloadProviderExtensionPackage(k.log)
 	}
 	redirectURL := getRedirectURLForNavigatorExtension(&providerProperties)
 

@@ -553,6 +553,9 @@ func TruncateID(id string) string {
 	ShortenedID := id[0:8]
 	return ShortenedID
 }
+func BoldString(s string) string {
+	return fmt.Sprintf("\033[1m%s\033[0m", s)
+}
 
 // PrintToTable prints the given data into a table format
 func PrintToTable(header []string, data [][]string) {
@@ -568,7 +571,14 @@ func PrintToTable(header []string, data [][]string) {
 	table.SetHeaderLine(false)
 	table.SetBorder(false)
 	table.SetTablePadding("\t")
-	table.SetNoWhiteSpace(true)
+	table.SetNoWhiteSpace(false)
+
+	boldHeader := make([]tablewriter.Colors, len(header))
+	for i := range header {
+		boldHeader[i] = tablewriter.Colors{tablewriter.Bold}
+	}
+	table.SetHeaderColor(boldHeader...)
+
 	table.AppendBulk(data) // The data in the table
 	table.Render()         // Render the table
 }
@@ -588,6 +598,13 @@ func PrintToTableWithFooter(header []string, data [][]string, footer []string) {
 	table.SetBorder(false)
 	table.SetTablePadding("\t")
 	table.SetNoWhiteSpace(true)
+
+	boldHeader := make([]tablewriter.Colors, len(header))
+	for i := range header {
+		boldHeader[i] = tablewriter.Colors{tablewriter.Bold}
+	}
+	table.SetHeaderColor(boldHeader...)
+
 	table.AppendBulk(data) // The data in the table
 	table.SetFooter(footer)
 	table.Render() // Render the table

@@ -19,6 +19,7 @@ import CustomTextAreaWidget from './RJSFCustomComponents/CustomTextAreaWidget';
 import CustomFileWidget from './RJSFCustomComponents/CustomFileWidget';
 import CustomURLWidget from './RJSFCustomComponents/CustomURLWidget';
 import ErrorBoundary from '../../ErrorBoundary';
+import CustomColorWidget from './RJSFCustomComponents/CustomColorWidget';
 
 const MuiRJSFForm = withTheme(MaterialUITheme);
 
@@ -95,6 +96,7 @@ function RJSFForm({
             TextWidget: CustomTextWidget,
             DateTimeWidget: CustomDateTimeWidget,
             SelectWidget,
+            ColorWidget: CustomColorWidget,
             CheckboxWidget: CustomCheckboxWidget,
             TextareaWidget: CustomTextAreaWidget,
             FileWidget: CustomFileWidget,

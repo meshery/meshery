@@ -84,7 +84,7 @@ const isMesheryExtensionRegisteredUser = (capabilitiesRegistry) => {
   );
 };
 
-function MesheryExtensionEarlyAccessCardPopup({ capabilitiesRegistry }) {
+export function MesheryExtensionEarlyAccessCardPopup({ capabilitiesRegistry }) {
   const [isOpen, setIsOpen] = useState(false);
   const cookies = new Cookies('registered');
 
