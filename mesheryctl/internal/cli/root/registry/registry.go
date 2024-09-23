@@ -31,6 +31,7 @@ var (
 	modelName            string
 	modelCSVFilePath     string
 	componentCSVFilePath string
+	csvDirectory         string
 )
 
 // PublishCmd represents the publish command to publish Meshery Models to Websites, Remote Provider, Meshery

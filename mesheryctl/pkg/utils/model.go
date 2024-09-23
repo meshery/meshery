@@ -265,26 +265,6 @@ func copyFile(src, dst string) error {
 	return nil
 }
 
-// NewModelCSVHelperFromFile reads the data from a CSV file (instead of downloading a spreadsheet)
-func NewModelCSVHelperFromFile(csvPath string) (*ModelCSVHelper, error) {
-	Log.Info("Reading CSV from file: ", csvPath)
-
-	csvHelper := &ModelCSVHelper{
-		SpreadsheetID:  0, // No Spreadsheet ID in this case
-		SpreadsheetURL: "",
-		CSVPath:        csvPath,
-		Models:         []ModelCSV{},
-	}
-
-	// Parse the CSV file
-	err := csvHelper.ParseModelsSheet(false, "")
-	if err != nil {
-		return nil, err
-	}
-
-	return csvHelper, nil
-}
-
 func (mch *ModelCSVHelper) ParseModelsSheet(parseForDocs bool, modelName string) error {
 	ch := make(chan ModelCSV, 1)
 	errorChan := make(chan error, 1)

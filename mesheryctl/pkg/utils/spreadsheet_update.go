@@ -121,13 +121,7 @@ func VerifyandUpdateSpreadsheet(cred string, wg *sync.WaitGroup, srv *sheets.Ser
 		}
 
 		if modelBatchSize <= 0 {
-			var err error
-			// update model spreadsheet
-			if modelCSVFilePath != "" {
-				err = updateModelsCSV(modelCSVFilePath, entriesToBeAddedInModelSheet)
-			} else {
-				err = updateModelsSheet(srv, cred, sheetId, entriesToBeAddedInModelSheet)
-			}
+			err := updateModelsSheet(srv, cred, sheetId, entriesToBeAddedInModelSheet)
 			// Reset the list
 			entriesToBeAddedInModelSheet = []*ModelCSV{}
 			if err != nil {
@@ -136,12 +130,7 @@ func VerifyandUpdateSpreadsheet(cred string, wg *sync.WaitGroup, srv *sheets.Ser
 		}
 
 		if compBatchSize <= 0 {
-			var err error
-			if modelCSVFilePath != "" {
-				err = updateComponentsCSV(componentCSVFilePath, entriesToBeAddedInCompSheet)
-			} else {
-				err = updateComponentsSheet(srv, cred, sheetId, entriesToBeAddedInCompSheet)
-			}
+			err := updateComponentsSheet(srv, cred, sheetId, entriesToBeAddedInCompSheet, componentCSVFilePath)
 			// update comp spreadsheet
 
 			// Reset the list
@@ -161,7 +150,7 @@ func VerifyandUpdateSpreadsheet(cred string, wg *sync.WaitGroup, srv *sheets.Ser
 	}
 
 	if len(entriesToBeAddedInCompSheet) > 0 {
-		err := updateComponentsSheet(srv, cred, sheetId, entriesToBeAddedInCompSheet)
+		err := updateComponentsSheet(srv, cred, sheetId, entriesToBeAddedInCompSheet, componentCSVFilePath)
 		if err != nil {
 			Log.Error(err)
 		}
@@ -180,103 +169,66 @@ func updateModelsSheet(srv *sheets.Service, cred, sheetId string, values []*Mode
 	return err
 }
 
-func updateComponentsCSV(csvPath string, values []*ComponentCSV) error {
-	// Marshal the ComponentCSV structs to CSV rows
-	marshalledValues, err := marshalStructToCSValues[ComponentCSV](values)
-	if err != nil {
-		return err
-	}
-
-	Log.Info("Appending", len(marshalledValues), "in the components CSV file")
-
-	// Append the marshaled values to the CSV file
-	err = appendToCSV(csvPath, marshalledValues)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func updateModelsCSV(csvPath string, values []*ModelCSV) error {
-	// Marshal the ModelCSV structs to CSV rows
-	marshalledValues, err := marshalStructToCSValues[ModelCSV](values)
-	if err != nil {
-		return err
-	}
-
-	Log.Info("Appending", len(marshalledValues), "in the models CSV file")
-
-	// Append the marshaled values to the CSV file
-	err = appendToCSV(csvPath, marshalledValues)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func updateComponentsSheet(srv *sheets.Service, cred, sheetId string, values []*ComponentCSV) error {
+func updateComponentsSheet(srv *sheets.Service, cred, sheetId string, values []*ComponentCSV, csvPath string) error {
 	marshalledValues, err := marshalStructToCSValues[ComponentCSV](values)
 	Log.Info("Appending", len(marshalledValues), "in the components sheet")
 	if err != nil {
 		return err
 	}
-	err = appendSheet(srv, cred, sheetId, ComponentsSheetAppendRange, marshalledValues)
+	err = appendSheet(srv, cred, sheetId, ComponentsSheetAppendRange, marshalledValues, csvPath)
 
 	return err
 }
 
-func appendSheet(srv *sheets.Service, cred, sheetId, appendRange string, values [][]interface{}) error {
-
-	if len(values) == 0 {
-		return nil
-	}
-	_, err := srv.Spreadsheets.Values.Append(sheetId, appendRange, &sheets.ValueRange{
-		MajorDimension: "ROWS",
-		Range:          appendRange,
-		Values:         values,
-	}).InsertDataOption("INSERT_ROWS").ValueInputOption("RAW").Context(context.Background()).Do()
-
-	if err != nil {
-		return ErrAppendToSheet(err, sheetId)
-	}
-	return nil
-}
-
-func appendToCSV(csvPath string, values [][]interface{}) error {
-	// Open the CSV file in append mode, create if it doesn't exist
-	file, err := os.OpenFile(csvPath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-
-	// Create a new CSV writer
-	writer := csv.NewWriter(file)
-
-	// Write each row to the CSV
-	for _, row := range values {
-		stringRow := make([]string, len(row))
-		for i, val := range row {
-			stringRow[i] = fmt.Sprintf("%v", val) // Convert each value to a string
-		}
-
-		err := writer.Write(stringRow)
+func appendSheet(srv *sheets.Service, cred, sheetId, appendRange string, values [][]interface{}, csvPaths ...string) error {
+	csvPath := csvPaths[0]
+	if csvPath != "" {
+		// Open the CSV file in append mode, create if it doesn't exist
+		file, err := os.OpenFile(csvPath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 		if err != nil {
 			return err
 		}
+		defer file.Close()
+		// Create a new CSV writer
+		writer := csv.NewWriter(file)
+
+		// Write each row to the CSV
+		for _, row := range values {
+			stringRow := make([]string, len(row))
+			for i, val := range row {
+				stringRow[i] = fmt.Sprintf("%v", val) // Convert each value to a string
+			}
+
+			err := writer.Write(stringRow)
+			if err != nil {
+				return err
+			}
+		}
+
+		// Flush the writer to ensure all data is written to the file
+		writer.Flush()
+
+		// Check for any error during flush
+		if err := writer.Error(); err != nil {
+			return err
+		}
+
+		return nil
+	} else {
+		if len(values) == 0 {
+			return nil
+		}
+		_, err := srv.Spreadsheets.Values.Append(sheetId, appendRange, &sheets.ValueRange{
+			MajorDimension: "ROWS",
+			Range:          appendRange,
+			Values:         values,
+		}).InsertDataOption("INSERT_ROWS").ValueInputOption("USER_ENTERED").Context(context.Background()).Do()
+
+		if err != nil {
+			return ErrAppendToSheet(err, sheetId)
+		}
+		return nil
 	}
-
-	// Flush the writer to ensure all data is written to the file
-	writer.Flush()
-
-	// Check for any error during flush
-	if err := writer.Error(); err != nil {
-		return err
-	}
-
-	return nil
 }
 
 func marshalStructToCSValues[K any](data []*K) ([][]interface{}, error) {

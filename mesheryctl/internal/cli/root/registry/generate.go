@@ -17,6 +17,7 @@ package registry
 import (
 	"bytes"
 	"context"
+	"encoding/csv"
 	"fmt"
 	"io"
 	"os"
@@ -69,13 +70,13 @@ var generateCmd = &cobra.Command{
 	Long:  "Prerequisite: Excecute this command from the root of a meshery/meshery repo fork.\n\nGiven a Google Sheet with a list of model names and source locations, generate models and components any Registrant (e.g. GitHub, Artifact Hub) repositories.\n\nGenerated Model files are written to local filesystem under `/server/models/<model-name>`.",
 	Example: `
 // Generate Meshery Models from a Google Spreadsheet (i.e. "Meshery Integrations" spreadsheet).
-mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred 
+mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred
 // Directly generate models from one of the supported registrants by using Registrant Connection Definition and (optional) Registrant Credential Definition
 mesheryctl registry generate --registrant-def [path to connection definition] --registrant-cred [path to credential definition]
 // Generate a specific Model from a Google Spreadsheet (i.e. "Meshery Integrations" spreadsheet).
 mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred --model "[model-name]"
-// Generate Meshery Models and Component from a local csv files.
- mesheryctl registry generate --model-csv <MODEL_CSV_PATH> --component-csv <COMPONENT_CSV_PATH>
+// Generate Meshery Models and Component from csv files in a local directory.
+  registry generate -d <DIRECTORY_PATH>
     `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		// Prerequisite check is needed - https://github.com/meshery/meshery/issues/10369
@@ -113,8 +114,8 @@ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tu
 		}
 		var err error
 
-		isCsvPathPresent := modelCSVFilePath != "" && componentCSVFilePath != ""
-		if !isCsvPathPresent {
+		// isCsvPathPresent := modelCSVFilePath != "" && componentCSVFilePath != ""
+		if csvDirectory == "" {
 			srv, err = mutils.NewSheetSRV(spreadsheeetCred)
 			if err != nil {
 				utils.LogError.Error(ErrUpdateRegistry(err, modelLocation))
@@ -132,6 +133,32 @@ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tu
 			// Collect list of corresponding Components by name from spreadsheet
 			componentSpredsheetGID = GetSheetIDFromTitle(resp, "Components")
 		}
+		// Get all files in the directory
+		files, err := os.ReadDir(csvDirectory)
+		if err != nil {
+			return fmt.Errorf("error reading the directory: %v", err)
+		}
+		for _, file := range files {
+			filePath := filepath.Join(csvDirectory, file.Name())
+			if !file.IsDir() && strings.HasSuffix(file.Name(), ".csv") {
+				headers, secondRow, err := getCSVHeader(filePath)
+				if Contains(headers, "modelDisplayName") || Contains(secondRow, "modelDisplayName") {
+					modelCSVFilePath = filePath
+				} else if Contains(headers, "component") || Contains(secondRow, "component") { // Check if the file matches the ComponentCSV structure
+					componentCSVFilePath = filePath
+					continue
+				}
+				if err != nil {
+					return fmt.Errorf("error checking file %s: %v", file.Name(), err)
+				}
+
+			}
+		}
+
+		if modelCSVFilePath == "" || componentCSVFilePath == "" {
+			return fmt.Errorf("both ModelCSV and ComponentCSV files must be present in the directory")
+		}
+
 		err = InvokeGenerationFromSheet(&wg)
 		if err != nil {
 			// meshkit
@@ -441,8 +468,8 @@ func rateLimitArtifactHub() {
 func parseComponentSheet(url string) (*utils.ComponentCSVHelper, error) {
 	var compCSVHelper *utils.ComponentCSVHelper
 	var err error
-	if componentCSVFilePath != "" {
-		compCSVHelper, err = utils.NewComponentCSVHelper(componentCSVFilePath)
+	if modelCSVFilePath != "" {
+		compCSVHelper, err = utils.NewComponentCSVHelper(modelCSVFilePath)
 		if err != nil {
 			return nil, err
 		}
@@ -535,6 +562,37 @@ func logModelGenerationSummary(modelToCompGenerateTracker *store.GenerticThreadS
 	utils.Log.Info(fmt.Sprintf("-----------------------------\n-----------------------------\nGenerated %d models and %d components", totalAggregateModel, totalAggregateComponents))
 }
 
+func getCSVHeader(filePath string) (headers, secondRow []string, err error) {
+	file, err := os.Open(filePath)
+	if err != nil {
+		return headers, secondRow, err
+	}
+	defer file.Close()
+
+	reader := csv.NewReader(file)
+	headers, err = reader.Read() // Read the first line
+	// log.Println("Logging messages:", headers)
+
+	if err != nil {
+		return headers, secondRow, err
+	}
+
+	secondRow, err = reader.Read()
+	if err != nil {
+		return headers, secondRow, err
+	}
+	return headers, secondRow, nil
+}
+
+func Contains(slice []string, value string) bool {
+	for _, v := range slice {
+		if v == value {
+			return true
+		}
+	}
+	return false
+}
+
 func init() {
 	generateCmd.PersistentFlags().StringVar(&spreadsheeetID, "spreadsheet-id", "", "spreadsheet ID for the integration spreadsheet")
 	generateCmd.PersistentFlags().StringVar(&spreadsheeetCred, "spreadsheet-cred", "", "base64 encoded credential to download the spreadsheet")
@@ -551,8 +609,6 @@ func init() {
 	generateCmd.PersistentFlags().StringVarP(&modelName, "model", "m", "", "specific model name to be generated")
 	generateCmd.PersistentFlags().StringVarP(&outputLocation, "output", "o", "../server/meshmodel", "location to output generated models, defaults to ../server/meshmodels")
 
-	generateCmd.PersistentFlags().StringVar(&modelCSVFilePath, "model-csv", "", "Path to the Model CSV file")
-	generateCmd.PersistentFlags().StringVar(&componentCSVFilePath, "component-csv", "", "Path to the Component CSV file")
-	generateCmd.MarkFlagsRequiredTogether("model-csv", "component-csv")
+	generateCmd.PersistentFlags().StringVarP(&csvDirectory, "directory", "d", "", "Directory containing the Model and Component CSV files")
 
 }
