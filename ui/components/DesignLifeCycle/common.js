@@ -48,7 +48,7 @@ export const Loading = ({ message }) => {
 };
 
 export const getSvgWhiteForComponent = (component) => {
-  return `/${component.metadata.svgWhite}`;
+  return `/${component.styles.svgWhite}`;
 };
 
 export const CheckBoxField = ({

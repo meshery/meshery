@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/accurate
 description: 
 integrations-category: Provisioning
 integrations-subcategory: Security & Compliance
-registrant: Artifact Hub
+registrant: GitHub
 components: 
 - name: sub-namespace
   colorIcon: assets/img/integrations/accurate/components/sub-namespace/icons/color/sub-namespace-color.svg

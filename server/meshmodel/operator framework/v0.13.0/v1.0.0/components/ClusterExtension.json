@@ -1,0 +1,195 @@
+{
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "ClusterExtension",
+   "schema": "{\n \"description\": \"ClusterExtension is the Schema for the clusterextensions API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ClusterExtensionSpec defines the desired state of ClusterExtension\",\n   \"properties\": {\n    \"channel\": {\n     \"description\": \"Channel constraint definition\",\n     \"maxLength\": 48,\n     \"pattern\": \"^[a-z0-9]+([\\\\.-][a-z0-9]+)*$\",\n     \"type\": \"string\"\n    },\n    \"installNamespace\": {\n     \"description\": \"installNamespace is the namespace where the bundle should be installed. However, note that\\nthe bundle may contain resources that are cluster-scoped or that are\\ninstalled in a different namespace. This namespace is expected to exist.\",\n     \"maxLength\": 63,\n     \"pattern\": \"^[a-z0-9]([-a-z0-9]*[a-z0-9])?$\",\n     \"type\": \"string\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"installNamespace is immutable\",\n       \"rule\": \"self == oldSelf\"\n      }\n     ]\n    },\n    \"packageName\": {\n     \"maxLength\": 48,\n     \"pattern\": \"^[a-z0-9]+(-[a-z0-9]+)*$\",\n     \"type\": \"string\"\n    },\n    \"preflight\": {\n     \"description\": \"Preflight defines the configuration of preflight checks.\",\n     \"properties\": {\n      \"crdUpgradeSafety\": {\n       \"description\": \"CRDUpgradeSafety holds necessary configuration for the CRD Upgrade Safety preflight checks.\",\n       \"properties\": {\n        \"disabled\": {\n         \"description\": \"Disabled represents the state of the CRD upgrade safety preflight check being disabled/enabled.\",\n         \"type\": \"boolean\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"serviceAccount\": {\n     \"description\": \"ServiceAccount is used to install and manage resources.\\nThe service account is expected to exist in the InstallNamespace.\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"name is the metadata.name of the referenced serviceAccount object.\",\n       \"maxLength\": 253,\n       \"pattern\": \"^[a-z0-9]+([.|-][a-z0-9]+)*$\",\n       \"type\": \"string\",\n       \"x-kubernetes-validations\": [\n        {\n         \"message\": \"name is immutable\",\n         \"rule\": \"self == oldSelf\"\n        }\n       ]\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"upgradeConstraintPolicy\": {\n     \"default\": \"Enforce\",\n     \"description\": \"Defines the policy for how to handle upgrade constraints\",\n     \"enum\": [\n      \"Enforce\",\n      \"Ignore\"\n     ],\n     \"type\": \"string\"\n    },\n    \"version\": {\n     \"description\": \"Version is an optional semver constraint on the package version. If not specified, the latest version available of the package will be installed.\\nIf specified, the specific version of the package will be installed so long as it is available in any of the content sources available.\\nExamples: 1.2.3, 1.0.0-alpha, 1.0.0-rc.1\\n\\n\\nFor more information on semver, please see https://semver.org/\",\n     \"maxLength\": 64,\n     \"pattern\": \"^(\\\\s*(=||!=|\\u003e|\\u003c|\\u003e=|=\\u003e|\\u003c=|=\\u003c|~|~\\u003e|\\\\^)\\\\s*(v?(0|[1-9]\\\\d*|[x|X|\\\\*])(\\\\.(0|[1-9]\\\\d*|x|X|\\\\*]))?(\\\\.(0|[1-9]\\\\d*|x|X|\\\\*))?(-([0-9A-Za-z\\\\-]+(\\\\.[0-9A-Za-z\\\\-]+)*))?(\\\\+([0-9A-Za-z\\\\-]+(\\\\.[0-9A-Za-z\\\\-]+)*))?)\\\\s*)((?:\\\\s+|,\\\\s*|\\\\s*\\\\|\\\\|\\\\s*)(=||!=|\\u003e|\\u003c|\\u003e=|=\\u003e|\\u003c=|=\\u003c|~|~\\u003e|\\\\^)\\\\s*(v?(0|[1-9]\\\\d*|x|X|\\\\*])(\\\\.(0|[1-9]\\\\d*|x|X|\\\\*))?(\\\\.(0|[1-9]\\\\d*|x|X|\\\\*]))?(-([0-9A-Za-z\\\\-]+(\\\\.[0-9A-Za-z\\\\-]+)*))?(\\\\+([0-9A-Za-z\\\\-]+(\\\\.[0-9A-Za-z\\\\-]+)*))?)\\\\s*)*$\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"installNamespace\",\n    \"packageName\",\n    \"serviceAccount\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Cluster Extension\",\n \"type\": \"object\"\n}",
+   "version": "olm.operatorframework.io/v1alpha1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "Cluster Extension",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": false,
+   "published": false,
+   "source_uri": "git://github.com/operator-framework/operator-controller/main/config/base/crd/bases"
+  },
+  "model": {
+   "category": {
+    "name": "App Definition and Development"
+   },
+   "displayName": "Operator Framework",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "isAnnotation": false,
+    "primaryColor": "#cc0000",
+    "secondaryColor": "#FF4545\n",
+    "shape": "circle",
+    "source_uri": "git://github.com/operator-framework/operator-controller/main/config/base/crd/bases",
+    "styleOverrides": "",
+    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" id=\"Layer_1\" data-name=\"Layer 1\" viewBox=\"0 0 360 360\" height=\"20\" width=\"20\"\u003e\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cstyle xmlns=\"http://www.w3.org/2000/svg\"\u003e.cls-1{fill:#c00;}.cls-2{fill:#fff;}\u003c/style\u003e\u003c/defs\u003e\u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Page-1\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"Fill-1\" class=\"cls-1\" d=\"M179.432,5.88043A173.22942,173.22942,0,1,1,6.20259,179.10984,173.22942,173.22942,0,0,1,179.432,5.88043\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"Fill-5\" class=\"cls-2\" d=\"M77.65462,205.60375,218.48,26.26036c3.13849,6.1955,0,9.70085-1.22281,13.41-12.7986,35.09424-25.39341,70.433-38.80338,105.32348-3.30154,8.8449-1.87495,10.92365,7.4183,10.92365H276.522c2.44559,0,5.74716-1.2228,7.21448,1.46736s-1.67117,4.72814-3.09775,6.80688L165.20682,317.00046c-1.8342,2.48636-3.6684,6.19549-7.0107,4.36131s-1.2228-5.58411,0-8.68184c8.88565-32.60789,17.32294-64.849,26.61618-97.253,2.32331-7.62211,0-9.29325-6.96993-9.08947H91.71678Z\"\u003e\u003c/path\u003e\u003c/g\u003e\u003c/svg\u003e\n",
+    "svgComplete": "",
+    "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" id=\"Layer_1\" data-name=\"Layer 1\" viewBox=\"0 0 360 360\" height=\"20\" width=\"20\"\u003e\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cstyle xmlns=\"http://www.w3.org/2000/svg\"\u003e.cls-1{fill:#fff;}\u003c/style\u003e\u003c/defs\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"cls-1\" d=\"M179.432,5.88044A173.2294,173.2294,0,1,0,352.66146,179.10987,173.27011,173.27011,0,0,0,179.432,5.88044ZM280.63875,164.19172,165.20687,317.00044c-1.83423,2.48639-3.66846,6.19549-7.01074,4.36132s-1.22278-5.5841,0-8.68182c8.88562-32.60791,17.323-64.849,26.61621-97.253,2.32324-7.62207,0-9.29321-6.97-9.08948H91.71676l-14.06214-.73364L218.47994,26.26039c3.13855,6.19549,0,9.7008-1.22278,13.41-12.79858,35.09424-25.39343,70.433-38.80347,105.32348-3.30151,8.84491-1.87487,10.92365,7.41846,10.92365h90.6499c2.44556,0,5.74707-1.22278,7.21436,1.46735S282.06527,162.113,280.63875,164.19172Z\"\u003e\u003c/path\u003e\u003c/svg\u003e"
+   },
+   "model": {
+    "version": "v0.13.0"
+   },
+   "name": "operator framework",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "github",
+    "name": "Github",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "subCategory": "Application Definition \u0026 Image Build",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "ignored",
+  "styles": {
+   "primaryColor": "#cc0000",
+   "secondaryColor": "#FF4545\n",
+   "shape": "circle",
+   "svgColor": "\u003csvg id=\"Layer_1\" data-name=\"Layer 1\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 360 360\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#c00;}.cls-2{fill:#fff;}\u003c/style\u003e\u003c/defs\u003e\u003cg id=\"Page-1\"\u003e\u003cpath id=\"Fill-1\" class=\"cls-1\" d=\"M179.432,5.88043A173.22942,173.22942,0,1,1,6.20259,179.10984,173.22942,173.22942,0,0,1,179.432,5.88043\"/\u003e\u003cpath id=\"Fill-5\" class=\"cls-2\" d=\"M77.65462,205.60375,218.48,26.26036c3.13849,6.1955,0,9.70085-1.22281,13.41-12.7986,35.09424-25.39341,70.433-38.80338,105.32348-3.30154,8.8449-1.87495,10.92365,7.4183,10.92365H276.522c2.44559,0,5.74716-1.2228,7.21448,1.46736s-1.67117,4.72814-3.09775,6.80688L165.20682,317.00046c-1.8342,2.48636-3.6684,6.19549-7.0107,4.36131s-1.2228-5.58411,0-8.68184c8.88565-32.60789,17.32294-64.849,26.61618-97.253,2.32331-7.62211,0-9.29325-6.96993-9.08947H91.71678Z\"/\u003e\u003c/g\u003e\u003c/svg\u003e\n",
+   "svgWhite": "\u003csvg id=\"Layer_1\" data-name=\"Layer 1\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 360 360\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#fff;}\u003c/style\u003e\u003c/defs\u003e\u003cpath class=\"cls-1\" d=\"M179.432,5.88044A173.2294,173.2294,0,1,0,352.66146,179.10987,173.27011,173.27011,0,0,0,179.432,5.88044ZM280.63875,164.19172,165.20687,317.00044c-1.83423,2.48639-3.66846,6.19549-7.01074,4.36132s-1.22278-5.5841,0-8.68182c8.88562-32.60791,17.323-64.849,26.61621-97.253,2.32324-7.62207,0-9.29321-6.97-9.08948H91.71676l-14.06214-.73364L218.47994,26.26039c3.13855,6.19549,0,9.7008-1.22278,13.41-12.79858,35.09424-25.39343,70.433-38.80347,105.32348-3.30151,8.84491-1.87487,10.92365,7.41846,10.92365h90.6499c2.44556,0,5.74707-1.22278,7.21436,1.46735S282.06527,162.113,280.63875,164.19172Z\"/\u003e\u003c/svg\u003e"
+  },
+  "version": "v1.0.0"
+ }

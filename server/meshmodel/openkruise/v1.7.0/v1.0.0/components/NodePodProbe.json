@@ -1,0 +1,195 @@
+{
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "NodePodProbe",
+   "schema": "{\n \"description\": \"NodePodProbe is the Schema for the NodePodProbe API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"NodePodProbeSpec defines the desired state of NodePodProbe\",\n   \"properties\": {\n    \"podProbes\": {\n     \"items\": {\n      \"properties\": {\n       \"IP\": {\n        \"description\": \"pod ip\",\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"description\": \"pod name\",\n        \"type\": \"string\"\n       },\n       \"namespace\": {\n        \"description\": \"pod namespace\",\n        \"type\": \"string\"\n       },\n       \"probes\": {\n        \"description\": \"Custom container probe, supports Exec, Tcp, and returns the result to Pod yaml\",\n        \"items\": {\n         \"properties\": {\n          \"containerName\": {\n           \"description\": \"container name\",\n           \"type\": \"string\"\n          },\n          \"name\": {\n           \"description\": \"Name is podProbeMarker.Name#probe.Name\",\n           \"type\": \"string\"\n          },\n          \"probe\": {\n           \"description\": \"container probe spec\",\n           \"properties\": {\n            \"exec\": {\n             \"description\": \"Exec specifies the action to take.\",\n             \"properties\": {\n              \"command\": {\n               \"description\": \"Command is the command line to execute inside the container, the working directory for the\\ncommand  is root ('/') in the container's filesystem. The command is simply exec'd, it is\\nnot run inside a shell, so traditional shell instructions ('|', etc) won't work. To use\\na shell, you need to explicitly call out to that shell.\\nExit status of 0 is treated as live/healthy and non-zero is unhealthy.\",\n               \"items\": {\n                \"type\": \"string\"\n               },\n               \"type\": \"array\"\n              }\n             },\n             \"type\": \"object\"\n            },\n            \"failureThreshold\": {\n             \"description\": \"Minimum consecutive failures for the probe to be considered failed after having succeeded.\\nDefaults to 3. Minimum value is 1.\",\n             \"format\": \"int32\",\n             \"type\": \"integer\"\n            },\n            \"grpc\": {\n             \"description\": \"GRPC specifies an action involving a GRPC port.\",\n             \"properties\": {\n              \"port\": {\n               \"description\": \"Port number of the gRPC service. Number must be in the range 1 to 65535.\",\n               \"format\": \"int32\",\n               \"type\": \"integer\"\n              },\n              \"service\": {\n               \"description\": \"Service is the name of the service to place in the gRPC HealthCheckRequest\\n(see https://github.com/grpc/grpc/blob/master/doc/health-checking.md).\\n\\n\\nIf this is not specified, the default behavior is defined by gRPC.\",\n               \"type\": \"string\"\n              }\n             },\n             \"required\": [\n              \"port\"\n             ],\n             \"type\": \"object\"\n            },\n            \"httpGet\": {\n             \"description\": \"HTTPGet specifies the http request to perform.\",\n             \"properties\": {\n              \"host\": {\n               \"description\": \"Host name to connect to, defaults to the pod IP. You probably want to set\\n\\\"Host\\\" in httpHeaders instead.\",\n               \"type\": \"string\"\n              },\n              \"httpHeaders\": {\n               \"description\": \"Custom headers to set in the request. HTTP allows repeated headers.\",\n               \"items\": {\n                \"description\": \"HTTPHeader describes a custom header to be used in HTTP probes\",\n                \"properties\": {\n                 \"name\": {\n                  \"description\": \"The header field name.\\nThis will be canonicalized upon output, so case-variant names will be understood as the same header.\",\n                  \"type\": \"string\"\n                 },\n                 \"value\": {\n                  \"description\": \"The header field value\",\n                  \"type\": \"string\"\n                 }\n                },\n                \"required\": [\n                 \"name\",\n                 \"value\"\n                ],\n                \"type\": \"object\"\n               },\n               \"type\": \"array\"\n              },\n              \"path\": {\n               \"description\": \"Path to access on the HTTP server.\",\n               \"type\": \"string\"\n              },\n              \"port\": {\n               \"anyOf\": [\n                {\n                 \"type\": \"integer\"\n                },\n                {\n                 \"type\": \"string\"\n                }\n               ],\n               \"description\": \"Name or number of the port to access on the container.\\nNumber must be in the range 1 to 65535.\\nName must be an IANA_SVC_NAME.\",\n               \"x-kubernetes-int-or-string\": true\n              },\n              \"scheme\": {\n               \"description\": \"Scheme to use for connecting to the host.\\nDefaults to HTTP.\",\n               \"type\": \"string\"\n              }\n             },\n             \"required\": [\n              \"port\"\n             ],\n             \"type\": \"object\"\n            },\n            \"initialDelaySeconds\": {\n             \"description\": \"Number of seconds after the container has started before liveness probes are initiated.\\nMore info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes\",\n             \"format\": \"int32\",\n             \"type\": \"integer\"\n            },\n            \"periodSeconds\": {\n             \"description\": \"How often (in seconds) to perform the probe.\\nDefault to 10 seconds. Minimum value is 1.\",\n             \"format\": \"int32\",\n             \"type\": \"integer\"\n            },\n            \"successThreshold\": {\n             \"description\": \"Minimum consecutive successes for the probe to be considered successful after having failed.\\nDefaults to 1. Must be 1 for liveness and startup. Minimum value is 1.\",\n             \"format\": \"int32\",\n             \"type\": \"integer\"\n            },\n            \"tcpSocket\": {\n             \"description\": \"TCPSocket specifies an action involving a TCP port.\",\n             \"properties\": {\n              \"host\": {\n               \"description\": \"Optional: Host name to connect to, defaults to the pod IP.\",\n               \"type\": \"string\"\n              },\n              \"port\": {\n               \"anyOf\": [\n                {\n                 \"type\": \"integer\"\n                },\n                {\n                 \"type\": \"string\"\n                }\n               ],\n               \"description\": \"Number or name of the port to access on the container.\\nNumber must be in the range 1 to 65535.\\nName must be an IANA_SVC_NAME.\",\n               \"x-kubernetes-int-or-string\": true\n              }\n             },\n             \"required\": [\n              \"port\"\n             ],\n             \"type\": \"object\"\n            },\n            \"terminationGracePeriodSeconds\": {\n             \"description\": \"Optional duration in seconds the pod needs to terminate gracefully upon probe failure.\\nThe grace period is the duration in seconds after the processes running in the pod are sent\\na termination signal and the time when the processes are forcibly halted with a kill signal.\\nSet this value longer than the expected cleanup time for your process.\\nIf this value is nil, the pod's terminationGracePeriodSeconds will be used. Otherwise, this\\nvalue overrides the value provided by the pod spec.\\nValue must be non-negative integer. The value zero indicates stop immediately via\\nthe kill signal (no opportunity to shut down).\\nThis is a beta field and requires enabling ProbeTerminationGracePeriod feature gate.\\nMinimum value is 1. spec.terminationGracePeriodSeconds is used if unset.\",\n             \"format\": \"int64\",\n             \"type\": \"integer\"\n            },\n            \"timeoutSeconds\": {\n             \"description\": \"Number of seconds after which the probe times out.\\nDefaults to 1 second. Minimum value is 1.\\nMore info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes\",\n             \"format\": \"int32\",\n             \"type\": \"integer\"\n            }\n           },\n           \"type\": \"object\"\n          }\n         },\n         \"required\": [\n          \"containerName\",\n          \"name\",\n          \"probe\"\n         ],\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       },\n       \"uid\": {\n        \"description\": \"pod uid\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"IP\",\n       \"name\",\n       \"namespace\",\n       \"uid\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Node Pod Probe\",\n \"type\": \"object\"\n}",
+   "version": "apps.kruise.io/v1alpha1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "Node Pod Probe",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": false,
+   "published": false,
+   "source_uri": "git://github.com/openkruise/kruise/master/config/crd/bases"
+  },
+  "model": {
+   "category": {
+    "name": "App Definition and Development"
+   },
+   "displayName": "Openkruise",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "isAnnotation": false,
+    "primaryColor": "#0090ff",
+    "secondaryColor": "#1a9bff",
+    "shape": "circle",
+    "source_uri": "git://github.com/openkruise/kruise/master/config/crd/bases",
+    "styleOverrides": "",
+    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" id=\"图层_1\" data-name=\"图层 1\" xmlns:_xmlns=\"xmlns\" _xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewBox=\"0 0 56.69 56.69\" height=\"20\" width=\"20\"\u003e\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cstyle xmlns=\"http://www.w3.org/2000/svg\"\u003e.cls-1{fill:url(#未命名的渐变_60);}.cls-2{fill:url(#未命名的渐变_89);}.cls-3{fill:url(#未命名的渐变_43);}\u003c/style\u003e\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"未命名的渐变_60\" x1=\"28.35\" y1=\"54.33\" x2=\"28.35\" y2=\"2\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"0\" stop-color=\"#0071ff\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"1\" stop-color=\"#009bff\"\u003e\u003c/stop\u003e\u003c/linearGradient\u003e\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"未命名的渐变_89\" x1=\"11.77\" y1=\"35.48\" x2=\"44.79\" y2=\"35.48\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"0\" stop-color=\"#0050fa\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"1\" stop-color=\"#00a0ff\" stop-opacity=\"0\"\u003e\u003c/stop\u003e\u003c/linearGradient\u003e\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"未命名的渐变_43\" x1=\"35.73\" y1=\"41.11\" x2=\"35.73\" y2=\"7.93\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"0\" stop-color=\"#00a0dc\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"1\" stop-color=\"#3cfaff\"\u003e\u003c/stop\u003e\u003c/linearGradient\u003e\u003c/defs\u003e\u003ctitle xmlns=\"http://www.w3.org/2000/svg\"\u003eopenkruise\u003c/title\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"cls-1\" d=\"M28.35,2A26.17,26.17,0,1,0,54.51,28.16,26.17,26.17,0,0,0,28.35,2Zm0,35.46a9.3,9.3,0,1,1,9.29-9.3A9.3,9.3,0,0,1,28.36,37.46Z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"cls-2\" d=\"M43,38.88A16.58,16.58,0,0,1,20.3,32.81l0,0A9.25,9.25,0,0,1,27.6,18.91,16.57,16.57,0,1,0,44.79,37.64,15.58,15.58,0,0,1,43,38.88Z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"cls-3\" d=\"M49,16.23a16.57,16.57,0,0,0-20.67-7,14.38,14.38,0,0,1,2,1A16.58,16.58,0,0,1,36.4,32.81,6.86,6.86,0,0,1,35.58,34a9.22,9.22,0,0,1-15.37-1.36,1.45,1.45,0,0,0,.09.22A16.58,16.58,0,0,0,49,16.23Z\"\u003e\u003c/path\u003e\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" id=\"图层_1\" data-name=\"图层 1\" xmlns:_xmlns=\"xmlns\" _xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewBox=\"0 0 56.69 56.69\" height=\"20\" width=\"20\"\u003e\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cstyle xmlns=\"http://www.w3.org/2000/svg\"\u003e.cls-1,.cls-2{fill:#fff;}.cls-2{opacity:0.7;}.cls-3{fill:url(#未命名的渐变_5);}\u003c/style\u003e\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"未命名的渐变_5\" x1=\"11.77\" y1=\"35.48\" x2=\"44.79\" y2=\"35.48\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"0\" stop-color=\"#fff\" stop-opacity=\"0\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"1\" stop-color=\"#fff\"\u003e\u003c/stop\u003e\u003c/linearGradient\u003e\u003c/defs\u003e\u003ctitle xmlns=\"http://www.w3.org/2000/svg\"\u003eopenkruise\u003c/title\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"cls-1\" d=\"M28.35,2A26.17,26.17,0,1,0,54.51,28.16,26.17,26.17,0,0,0,28.35,2ZM44.79,37.64A16.58,16.58,0,1,1,27.27,18.91a7.83,7.83,0,0,1,1.09,0,9.28,9.28,0,0,1,8.51,13,16.56,16.56,0,0,0-6.55-21.72,14.38,14.38,0,0,0-2-1A16.58,16.58,0,0,1,44.79,37.64Z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"cls-2\" d=\"M49,16.16a16.53,16.53,0,0,0-20.69-7,14.38,14.38,0,0,1,2,1A16.54,16.54,0,0,1,36.4,32.79a6.21,6.21,0,0,1-.81,1.13A9.21,9.21,0,0,1,20.2,32.56a2.18,2.18,0,0,0,.09.23A16.61,16.61,0,1,0,49,16.16Z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"cls-3\" d=\"M43,38.88A16.58,16.58,0,0,1,20.3,32.81s0,0,0,0a9.28,9.28,0,0,1,7.3-13.9A16.57,16.57,0,1,0,44.79,37.64,15.58,15.58,0,0,1,43,38.88Z\"\u003e\u003c/path\u003e\u003c/svg\u003e"
+   },
+   "model": {
+    "version": "v1.7.0"
+   },
+   "name": "openkruise",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "github",
+    "name": "Github",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "subCategory": "Continuous Integration \u0026 Delivery",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "ignored",
+  "styles": {
+   "primaryColor": "#0090ff",
+   "secondaryColor": "#1a9bff",
+   "shape": "circle",
+   "svgColor": "\u003csvg id=\"图层_1\" data-name=\"图层 1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewBox=\"0 0 56.69 56.69\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:url(#未命名的渐变_60);}.cls-2{fill:url(#未命名的渐变_89);}.cls-3{fill:url(#未命名的渐变_43);}\u003c/style\u003e\u003clinearGradient id=\"未命名的渐变_60\" x1=\"28.35\" y1=\"54.33\" x2=\"28.35\" y2=\"2\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop offset=\"0\" stop-color=\"#0071ff\"/\u003e\u003cstop offset=\"1\" stop-color=\"#009bff\"/\u003e\u003c/linearGradient\u003e\u003clinearGradient id=\"未命名的渐变_89\" x1=\"11.77\" y1=\"35.48\" x2=\"44.79\" y2=\"35.48\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop offset=\"0\" stop-color=\"#0050fa\"/\u003e\u003cstop offset=\"1\" stop-color=\"#00a0ff\" stop-opacity=\"0\"/\u003e\u003c/linearGradient\u003e\u003clinearGradient id=\"未命名的渐变_43\" x1=\"35.73\" y1=\"41.11\" x2=\"35.73\" y2=\"7.93\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop offset=\"0\" stop-color=\"#00a0dc\"/\u003e\u003cstop offset=\"1\" stop-color=\"#3cfaff\"/\u003e\u003c/linearGradient\u003e\u003c/defs\u003e\u003ctitle\u003eopenkruise\u003c/title\u003e\u003cpath class=\"cls-1\" d=\"M28.35,2A26.17,26.17,0,1,0,54.51,28.16,26.17,26.17,0,0,0,28.35,2Zm0,35.46a9.3,9.3,0,1,1,9.29-9.3A9.3,9.3,0,0,1,28.36,37.46Z\"/\u003e\u003cpath class=\"cls-2\" d=\"M43,38.88A16.58,16.58,0,0,1,20.3,32.81l0,0A9.25,9.25,0,0,1,27.6,18.91,16.57,16.57,0,1,0,44.79,37.64,15.58,15.58,0,0,1,43,38.88Z\"/\u003e\u003cpath class=\"cls-3\" d=\"M49,16.23a16.57,16.57,0,0,0-20.67-7,14.38,14.38,0,0,1,2,1A16.58,16.58,0,0,1,36.4,32.81,6.86,6.86,0,0,1,35.58,34a9.22,9.22,0,0,1-15.37-1.36,1.45,1.45,0,0,0,.09.22A16.58,16.58,0,0,0,49,16.23Z\"/\u003e\u003c/svg\u003e",
+   "svgWhite": "\u003csvg id=\"图层_1\" data-name=\"图层 1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewBox=\"0 0 56.69 56.69\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1,.cls-2{fill:#fff;}.cls-2{opacity:0.7;}.cls-3{fill:url(#未命名的渐变_5);}\u003c/style\u003e\u003clinearGradient id=\"未命名的渐变_5\" x1=\"11.77\" y1=\"35.48\" x2=\"44.79\" y2=\"35.48\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop offset=\"0\" stop-color=\"#fff\" stop-opacity=\"0\"/\u003e\u003cstop offset=\"1\" stop-color=\"#fff\"/\u003e\u003c/linearGradient\u003e\u003c/defs\u003e\u003ctitle\u003eopenkruise\u003c/title\u003e\u003cpath class=\"cls-1\" d=\"M28.35,2A26.17,26.17,0,1,0,54.51,28.16,26.17,26.17,0,0,0,28.35,2ZM44.79,37.64A16.58,16.58,0,1,1,27.27,18.91a7.83,7.83,0,0,1,1.09,0,9.28,9.28,0,0,1,8.51,13,16.56,16.56,0,0,0-6.55-21.72,14.38,14.38,0,0,0-2-1A16.58,16.58,0,0,1,44.79,37.64Z\"/\u003e\u003cpath class=\"cls-2\" d=\"M49,16.16a16.53,16.53,0,0,0-20.69-7,14.38,14.38,0,0,1,2,1A16.54,16.54,0,0,1,36.4,32.79a6.21,6.21,0,0,1-.81,1.13A9.21,9.21,0,0,1,20.2,32.56a2.18,2.18,0,0,0,.09.23A16.61,16.61,0,1,0,49,16.16Z\"/\u003e\u003cpath class=\"cls-3\" d=\"M43,38.88A16.58,16.58,0,0,1,20.3,32.81s0,0,0,0a9.28,9.28,0,0,1,7.3-13.9A16.57,16.57,0,1,0,44.79,37.64,15.58,15.58,0,0,1,43,38.88Z\"/\u003e\u003c/svg\u003e"
+  },
+  "version": "v1.0.0"
+ }

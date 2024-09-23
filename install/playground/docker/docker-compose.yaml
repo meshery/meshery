@@ -56,5 +56,3 @@ services:
         ports:
             - 10012:10012
         restart: always
-
-version: "3"

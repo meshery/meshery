@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/integrations/longhorn
 description: 
 integrations-category: Cloud Native Storage
 integrations-subcategory: Cloud Native Storage
-registrant: Artifact Hub
+registrant: Github
 components: 
 featureList: [
   "Provides persistent storage for Kubernetes",

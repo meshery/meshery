@@ -1,0 +1,129 @@
+{
+  "capabilities": [
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Add text to nodes body",
+    "displayName": "Body Text",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "body-text",
+    "type": "style",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "GCP Cloud Tpu",
+   "schema": "",
+   "version": "core.meshery.io/v1alpha1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "GCP Cloud Tpu",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": true,
+   "isNamespaced": false,
+   "published": true
+  },
+  "model": {
+   "category": {
+    "name": "Provisioning"
+   },
+   "displayName": "Google Cloud Platform",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "isAnnotation": true,
+    "primaryColor": "#3C494F",
+    "shape": "circle",
+    "styleOverrides": "",
+    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" id=\"Layer_1\" width=\"20\" height=\"20\" viewBox=\"0 0 512 512\"\u003e\u003cstyle xmlns=\"http://www.w3.org/2000/svg\"\u003e.st0{fill:#f8bb16}.st1{fill:#ea4334}.st2{fill:#0074bc}.st3{fill:#e2e3e4}\u003c/style\u003e\u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Layer_1_1_\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"path22\" class=\"st0\" d=\"M322.4 140.9l-44.1-76.8H162.6c-10.3 0-19.9 5.5-24.9 14.5L44.1 241.7c-5.1 8.9-5.1 19.7 0 28.7l35.6 62.1 44-76.4 66.2-115.2h132.5z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"path26\" class=\"st1\" d=\"M468.2 241.7L374.6 78.6c-5.2-8.9-14.7-14.5-24.9-14.5h-71.4l44.1 76.8 66.2 115.2-66.2 115.2h88l57.8-100.9c5-8.9 5-19.8 0-28.7\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"path30\" class=\"st2\" d=\"M410.3 371.2H189.7L123.5 256l-44 76.4 58 101c5.2 8.9 14.7 14.5 24.9 14.5h187.1c10.3 0 19.9-5.5 24.9-14.5l35.9-62.2z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"st3\" d=\"M322.2 371.2H189.6L123.5 256l66.2-115.2h132.5L388.6 256l-66.4 115.2zM256 198.5c-31.9 0-57.6 25.7-57.6 57.6s25.7 57.6 57.6 57.6 57.6-25.7 57.6-57.6-25.8-57.6-57.6-57.6z\"\u003e\u003c/path\u003e\u003c/g\u003e\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 25 22\" fill=\"none\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M19.0571 1.31425C18.9391 1.11285 18.7703 0.945566 18.5672 0.828955C18.3642 0.712344 18.134 0.650454 17.8995 0.649414L10.855 0.658722V0.650744L7.26718 0.66404C7.03246 0.664981 6.80206 0.726817 6.59879 0.843427C6.39552 0.960036 6.22643 1.12737 6.10826 1.32887L2.89648 6.8563L5.06443 10.6139L8.68705 4.40573H20.8798L19.0571 1.31425Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M14.3535 21.69L17.9668 21.6727C18.201 21.672 18.4309 21.6103 18.6336 21.4936C18.8363 21.3769 19.0046 21.2095 19.1217 21.0079L22.6386 14.9433V14.9513L24.4211 11.8531C24.5375 11.6507 24.5987 11.4215 24.5987 11.1883C24.5987 10.9551 24.5375 10.726 24.4211 10.5235L21.1986 4.9668H16.8467L20.4519 11.2043L16.8386 17.4112H16.8547L14.3535 21.69Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M6.08719 21.0185C6.20515 21.2199 6.37401 21.3872 6.57705 21.5038C6.78008 21.6204 7.01026 21.6823 7.24477 21.6834L13.7004 21.7007L15.8858 17.9616L8.64189 17.935L8.5616 17.7954L2.57565 7.43066L0.777057 10.5368C0.660768 10.7393 0.599609 10.9684 0.599609 11.2016C0.599609 11.4348 0.660768 11.6639 0.777057 11.8664L4.28994 17.9271H4.28057L6.08719 21.0185Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M12.6006 14.4683C14.4306 14.4683 15.9141 12.9944 15.9141 11.1761C15.9141 9.35779 14.4306 7.88379 12.6006 7.88379C10.7706 7.88379 9.28711 9.35779 9.28711 11.1761C9.28711 12.9944 10.7706 14.4683 12.6006 14.4683Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003c/svg\u003e\n"
+   },
+   "model": {
+    "version": "0.7.2"
+   },
+   "name": "gcp",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "meshery",
+    "name": "meshery",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "enabled",
+   "subCategory": "Cloud Provider",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
+   "primaryColor": "#4285f4",
+   "shape": "rectangle",
+   "svgColor": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#4285f4;}.cls-2{fill:#669df6;}\u003c/style\u003e\u003c/defs\u003e\u003cg data-name=\"Product Icons\"\u003e\u003cg data-name=\"colored-32/TPU\"\u003e\u003cg \u003e\u003cpath class=\"cls-1\" d=\"M6.48,9.62a.37.37,0,1,1-.05-.74l2.3-.32a.37.37,0,0,1,.42.32.38.38,0,0,1-.32.43l-2.3.31Z\"/\u003e\u003crect class=\"cls-1\" x=\"11.11\" y=\"7.43\" width=\"0.75\" height=\"4.36\" transform=\"translate(-1.21 17.55) rotate(-71.93)\"/\u003e\u003cpath id=\"Shape-2\" data-name=\"Shape\" class=\"cls-1\" d=\"M9.18,9.16H9.07a.37.37,0,0,1-.24-.46l.83-2.84a.37.37,0,0,1,.46-.24.36.36,0,0,1,.26.45L9.54,8.88A.38.38,0,0,1,9.18,9.16Z\"/\u003e\u003cpath id=\"Shape-3\" data-name=\"Shape\" class=\"cls-1\" d=\"M14.31,10.56a.36.36,0,0,1-.31-.17A.36.36,0,0,1,14,10l1.67-4.23a.38.38,0,0,1,.47-.18.38.38,0,0,1,.23.45l-1.68,4.24A.39.39,0,0,1,14.31,10.56Z\"/\u003e\u003crect id=\"Rectangle-path-2\" data-name=\"Rectangle-path\" class=\"cls-1\" x=\"5.35\" y=\"14.95\" width=\"5.03\" height=\"0.75\" transform=\"translate(-7.84 8.26) rotate(-38.61)\"/\u003e\u003cpolygon id=\"Rectangle-path-3\" data-name=\"Rectangle-path\" class=\"cls-1\" points=\"14.12 10.71 14.41 10.02 18.05 11.61 17.75 12.29 14.12 10.71\"/\u003e\u003cpolygon id=\"Rectangle-path-4\" data-name=\"Rectangle-path\" class=\"cls-1\" points=\"13.99 14.59 14.51 14.04 17.74 17.09 17.22 17.63 13.99 14.59\"/\u003e\u003crect id=\"Rectangle-path-5\" data-name=\"Rectangle-path\" class=\"cls-1\" x=\"9.18\" y=\"9\" width=\"0.75\" height=\"4.06\" transform=\"translate(-2 2.12) rotate(-11.48)\"/\u003e\u003cpolygon id=\"Rectangle-path-6\" data-name=\"Rectangle-path\" class=\"cls-1\" points=\"9.96 13.6 14.06 10 14.56 10.56 10.46 14.16 9.96 13.6\"/\u003e\u003cpolygon id=\"Rectangle-path-7\" data-name=\"Rectangle-path\" class=\"cls-1\" points=\"13.75 14.22 13.99 10.25 14.74 10.3 14.49 14.27 13.75 14.22\"/\u003e\u003ccircle id=\"Oval\" class=\"cls-1\" cx=\"10.01\" cy=\"13.82\" r=\"1.36\"/\u003e\u003ccircle id=\"Oval-2\" data-name=\"Oval\" class=\"cls-1\" cx=\"14.37\" cy=\"10.36\" r=\"1.61\"/\u003e\u003ccircle id=\"Oval-3\" data-name=\"Oval\" class=\"cls-1\" cx=\"14.36\" cy=\"14.54\" r=\"0.84\"/\u003e\u003ccircle id=\"Oval-4\" data-name=\"Oval\" class=\"cls-1\" cx=\"9.04\" cy=\"8.67\" r=\"0.99\"/\u003e\u003c/g\u003e\u003c/g\u003e\u003cpolygon class=\"cls-2\" points=\"13 3 11 3 11 7 13 7 13 3 13 3\"/\u003e\u003cpolygon class=\"cls-2\" points=\"17 3 15 3 15 7 17 7 17 3 17 3\"/\u003e\u003cpolygon class=\"cls-2\" points=\"9 3 7 3 7 7 9 7 9 3 9 3\"/\u003e\u003cpolygon class=\"cls-2\" points=\"13 17 11 17 11 21 13 21 13 17 13 17\"/\u003e\u003cpolygon class=\"cls-2\" points=\"17 17 15 17 15 21 17 21 17 17 17 17\"/\u003e\u003cpolygon class=\"cls-2\" points=\"9 17 7 17 7 21 9 21 9 17 9 17\"/\u003e\u003cpolygon class=\"cls-2\" points=\"7 11 3 11 3 13 7 13 7 11 7 11\"/\u003e\u003cpolygon class=\"cls-2\" points=\"7 7 3 7 3 9 7 9 7 7 7 7\"/\u003e\u003cpolygon class=\"cls-2\" points=\"7 15 3 15 3 17 7 17 7 15 7 15\"/\u003e\u003cpolygon class=\"cls-2\" points=\"21 11 17 11 17 13 21 13 21 11 21 11\"/\u003e\u003cpolygon class=\"cls-2\" points=\"21 7 17 7 17 9 21 9 21 7 21 7\"/\u003e\u003cpolygon class=\"cls-2\" points=\"21 15 17 15 17 17 21 17 21 15 21 15\"/\u003e\u003cpath class=\"cls-2\" d=\"M18,5H6A1,1,0,0,0,5,6V18a1,1,0,0,0,1,1H18a1,1,0,0,0,1-1V6A1,1,0,0,0,18,5ZM17,16.47a.53.53,0,0,1-.53.53H7.53A.53.53,0,0,1,7,16.47V7.53A.53.53,0,0,1,7.53,7h8.94a.53.53,0,0,1,.53.53Z\"/\u003e\u003c/g\u003e\u003c/svg\u003e",
+   "svgWhite": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#fff;}.cls-2{fill:#fff;}\u003c/style\u003e\u003c/defs\u003e\u003cg data-name=\"Product Icons\"\u003e\u003cg data-name=\"colored-32/TPU\"\u003e\u003cg \u003e\u003cpath class=\"cls-1\" d=\"M6.48,9.62a.37.37,0,1,1-.05-.74l2.3-.32a.37.37,0,0,1,.42.32.38.38,0,0,1-.32.43l-2.3.31Z\"/\u003e\u003crect class=\"cls-1\" x=\"11.11\" y=\"7.43\" width=\"0.75\" height=\"4.36\" transform=\"translate(-1.21 17.55) rotate(-71.93)\"/\u003e\u003cpath id=\"Shape-2\" data-name=\"Shape\" class=\"cls-1\" d=\"M9.18,9.16H9.07a.37.37,0,0,1-.24-.46l.83-2.84a.37.37,0,0,1,.46-.24.36.36,0,0,1,.26.45L9.54,8.88A.38.38,0,0,1,9.18,9.16Z\"/\u003e\u003cpath id=\"Shape-3\" data-name=\"Shape\" class=\"cls-1\" d=\"M14.31,10.56a.36.36,0,0,1-.31-.17A.36.36,0,0,1,14,10l1.67-4.23a.38.38,0,0,1,.47-.18.38.38,0,0,1,.23.45l-1.68,4.24A.39.39,0,0,1,14.31,10.56Z\"/\u003e\u003crect id=\"Rectangle-path-2\" data-name=\"Rectangle-path\" class=\"cls-1\" x=\"5.35\" y=\"14.95\" width=\"5.03\" height=\"0.75\" transform=\"translate(-7.84 8.26) rotate(-38.61)\"/\u003e\u003cpolygon id=\"Rectangle-path-3\" data-name=\"Rectangle-path\" class=\"cls-1\" points=\"14.12 10.71 14.41 10.02 18.05 11.61 17.75 12.29 14.12 10.71\"/\u003e\u003cpolygon id=\"Rectangle-path-4\" data-name=\"Rectangle-path\" class=\"cls-1\" points=\"13.99 14.59 14.51 14.04 17.74 17.09 17.22 17.63 13.99 14.59\"/\u003e\u003crect id=\"Rectangle-path-5\" data-name=\"Rectangle-path\" class=\"cls-1\" x=\"9.18\" y=\"9\" width=\"0.75\" height=\"4.06\" transform=\"translate(-2 2.12) rotate(-11.48)\"/\u003e\u003cpolygon id=\"Rectangle-path-6\" data-name=\"Rectangle-path\" class=\"cls-1\" points=\"9.96 13.6 14.06 10 14.56 10.56 10.46 14.16 9.96 13.6\"/\u003e\u003cpolygon id=\"Rectangle-path-7\" data-name=\"Rectangle-path\" class=\"cls-1\" points=\"13.75 14.22 13.99 10.25 14.74 10.3 14.49 14.27 13.75 14.22\"/\u003e\u003ccircle id=\"Oval\" class=\"cls-1\" cx=\"10.01\" cy=\"13.82\" r=\"1.36\"/\u003e\u003ccircle id=\"Oval-2\" data-name=\"Oval\" class=\"cls-1\" cx=\"14.37\" cy=\"10.36\" r=\"1.61\"/\u003e\u003ccircle id=\"Oval-3\" data-name=\"Oval\" class=\"cls-1\" cx=\"14.36\" cy=\"14.54\" r=\"0.84\"/\u003e\u003ccircle id=\"Oval-4\" data-name=\"Oval\" class=\"cls-1\" cx=\"9.04\" cy=\"8.67\" r=\"0.99\"/\u003e\u003c/g\u003e\u003c/g\u003e\u003cpolygon class=\"cls-2\" points=\"13 3 11 3 11 7 13 7 13 3 13 3\"/\u003e\u003cpolygon class=\"cls-2\" points=\"17 3 15 3 15 7 17 7 17 3 17 3\"/\u003e\u003cpolygon class=\"cls-2\" points=\"9 3 7 3 7 7 9 7 9 3 9 3\"/\u003e\u003cpolygon class=\"cls-2\" points=\"13 17 11 17 11 21 13 21 13 17 13 17\"/\u003e\u003cpolygon class=\"cls-2\" points=\"17 17 15 17 15 21 17 21 17 17 17 17\"/\u003e\u003cpolygon class=\"cls-2\" points=\"9 17 7 17 7 21 9 21 9 17 9 17\"/\u003e\u003cpolygon class=\"cls-2\" points=\"7 11 3 11 3 13 7 13 7 11 7 11\"/\u003e\u003cpolygon class=\"cls-2\" points=\"7 7 3 7 3 9 7 9 7 7 7 7\"/\u003e\u003cpolygon class=\"cls-2\" points=\"7 15 3 15 3 17 7 17 7 15 7 15\"/\u003e\u003cpolygon class=\"cls-2\" points=\"21 11 17 11 17 13 21 13 21 11 21 11\"/\u003e\u003cpolygon class=\"cls-2\" points=\"21 7 17 7 17 9 21 9 21 7 21 7\"/\u003e\u003cpolygon class=\"cls-2\" points=\"21 15 17 15 17 17 21 17 21 15 21 15\"/\u003e\u003cpath class=\"cls-2\" d=\"M18,5H6A1,1,0,0,0,5,6V18a1,1,0,0,0,1,1H18a1,1,0,0,0,1-1V6A1,1,0,0,0,18,5ZM17,16.47a.53.53,0,0,1-.53.53H7.53A.53.53,0,0,1,7,16.47V7.53A.53.53,0,0,1,7.53,7h8.94a.53.53,0,0,1,.53.53Z\"/\u003e\u003c/g\u003e\u003c/svg\u003e"
+  },
+  "version": "v1.0.0"
+ }

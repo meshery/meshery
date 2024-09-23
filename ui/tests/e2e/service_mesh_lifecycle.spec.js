@@ -2,10 +2,7 @@ import { expect, test } from '@playwright/test';
 import { ENV } from './env';
 
 test.describe('Service Mesh Lifecycle Tests', () => {
-  const mesheryAdapters = [
-    { adapterName: 'Istio', adapterPort: '10000', deploy: false },
-    { adapterName: 'Consul', adapterPort: '10002', deploy: false },
-  ];
+  const mesheryAdapters = [{ adapterName: 'Istio', adapterPort: '10000', deploy: false }];
 
   mesheryAdapters.forEach(({ adapterName, adapterPort }) => {
     const ADAPTER_LOCATION = `localhost:${adapterPort}`;
@@ -34,7 +31,7 @@ test.describe('Service Mesh Lifecycle Tests', () => {
       await expect(page.getByText('Adapter was configured!')).toBeVisible();
 
       // Visit Lifecycle > Service Mesh Page
-      await page.goto(`${ENV.MESHERY_SERVER_URL}/management/service-mesh`);
+      await page.goto(`${ENV.MESHERY_SERVER_URL}/management/adapter`);
 
       // Open "Select Meshery Adapter" Dropdown
       const dropdown = page
@@ -52,7 +49,7 @@ test.describe('Service Mesh Lifecycle Tests', () => {
 
     test(`Ping ${adapterName} Adapter`, async ({ page }) => {
       // Visit Lifecycle > Service Mesh Page
-      await page.goto(`${ENV.MESHERY_SERVER_URL}/management/service-mesh`);
+      await page.goto(`${ENV.MESHERY_SERVER_URL}/management/adapter`);
 
       // Open "Select Meshery Adapter" Dropdown
       const dropdown = page

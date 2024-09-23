@@ -110,9 +110,7 @@ const ExpandableComponentErrors = withStyles(styles)(({
   validationMachine,
   currentComponentName, // if dry run is initiated by clicking on node's error badge
 }) => {
-  const componentIcon = component
-    ? `/${component?.traits?.meshmap?.['meshmodel-metadata'].svgWhite}`
-    : null;
+  const componentIcon = component ? `/${component?.styles?.svgWhite}` : null;
 
   const isCurrentComponent = (name) => name == currentComponentName;
   const [isComponentAccordionOpen, setIsComponentAccordionOpen] = useState(
@@ -231,7 +229,6 @@ const ExpandableComponentErrors = withStyles(styles)(({
 
 export const FormatDryRunResponse = withStyles(styles)(({
   dryRunErrors,
-  designJson,
   configurableComponentsCount,
   annotationComponentsCount,
   validationMachine,
@@ -284,7 +281,7 @@ export const FormatDryRunResponse = withStyles(styles)(({
         dryRunErrors?.map((err) => (
           <ExpandableComponentErrors
             key={`${err.compName}`}
-            component={designJson && designJson.services[err.compName]}
+            component={err.component}
             componentName={err.compName}
             validationMachine={validationMachine}
             currentComponentName={currentComponentName}
@@ -312,7 +309,7 @@ const DryRunComponent = (props) => {
 
   const dryRunErrors = useDryRunValidationResults(validationMachine);
   const isLoading = useIsValidatingDryRun(validationMachine);
-  const { designJson, configurableComponents, annotationComponents } = processDesign(design);
+  const { configurableComponents, annotationComponents } = processDesign(design);
 
   useEffect(() => {
     const dryRunCommand =
@@ -349,7 +346,6 @@ const DryRunComponent = (props) => {
   return (
     <FormatDryRunResponse
       dryRunErrors={dryRunErrors}
-      designJson={designJson}
       annotationComponentsCount={annotationComponents.length}
       configurableComponentsCount={configurableComponents.length}
       validationMachine={validationMachine}
@@ -367,7 +363,7 @@ export const DryRunDesign = ({
   deployment_type,
   includeDependencies,
 }) => {
-  if (!design?.pattern_file) {
+  if (!design) {
     return null;
   }
 

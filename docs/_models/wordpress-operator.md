@@ -7,7 +7,7 @@ permalink: extensibility/integrations/wordpress-operator
 docURL: https://docs.meshery.io/extensibility/integrations/wordpress-operator
 description: 
 integrations-category: Tools
-integrations-subcategory: Uncategorized
+integrations-subcategory: Installable Platform
 registrant: Artifact Hub
 components: 
 - name: wordpress

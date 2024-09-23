@@ -4,13 +4,23 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"reflect"
 	"strconv"
 	"strings"
 
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
+	"github.com/layer5io/meshkit/encoding"
+	"github.com/layer5io/meshkit/generators"
+	"github.com/layer5io/meshkit/generators/models"
+
 	"github.com/layer5io/meshkit/models/meshmodel/entity"
 	"github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshkit/utils/csv"
+	"github.com/meshery/schemas/models/v1alpha1/capability"
+	"github.com/meshery/schemas/models/v1beta1"
+	"github.com/meshery/schemas/models/v1beta1/category"
+	"github.com/meshery/schemas/models/v1beta1/component"
+	"github.com/meshery/schemas/models/v1beta1/connection"
+	"github.com/meshery/schemas/models/v1beta1/model"
 )
 
 var (
@@ -56,65 +66,100 @@ type ModelCSV struct {
 }
 
 var modelMetadataValues = []string{
-	"primaryColor", "secondaryColor", "svgColor", "svgWhite", "svgComplete", "styleOverrides", "styles", "shapePolygonPoints", "defaultData", "capabilities", "isAnnotation", "shape",
+	"primaryColor", "secondaryColor", "svgColor", "svgWhite", "svgComplete", "styleOverrides", "capabilities", "isAnnotation", "shape",
 }
 
-func (m *ModelCSV) UpdateModelDefinition(modelDef *v1beta1.Model) error {
-
-	metadata := map[string]interface{}{}
+func (m *ModelCSV) UpdateModelDefinition(modelDef *model.ModelDefinition) error {
+	metadata := modelDef.Metadata
+	if metadata == nil {
+		metadata = &model.ModelDefinition_Metadata{}
+	}
+	if metadata.AdditionalProperties == nil {
+		metadata.AdditionalProperties = make(map[string]interface{})
+	}
 	modelMetadata, err := utils.MarshalAndUnmarshal[ModelCSV, map[string]interface{}](*m)
 	if err != nil {
 		return err
 	}
-	metadata = utils.MergeMaps(metadata, modelDef.Metadata)
-
 	for _, key := range modelMetadataValues {
-		if key == "svgColor" || key == "svgWhite" {
-			svg, err := utils.Cast[string](modelMetadata[key])
+		switch key {
+		case "primaryColor":
+			if m.PrimaryColor != "" {
+				metadata.PrimaryColor = &m.PrimaryColor
+			}
+		case "secondaryColor":
+			if m.SecondaryColor != "" {
+				metadata.SecondaryColor = &m.SecondaryColor
+			}
+		case "svgColor", "svgWhite", "svgComplete":
+			var svg string
+			if key == "svgColor" {
+				svg = m.SVGColor
+			} else if key == "svgWhite" {
+				svg = m.SVGWhite
+			} else {
+				svg = m.SVGComplete
+			}
+			// Attempt to update the SVG string
+			updatedSvg, err := utils.UpdateSVGString(svg, SVG_WIDTH, SVG_HEIGHT, false)
 			if err == nil {
-				metadata[key], err = utils.UpdateSVGString(svg, SVG_WIDTH, SVG_HEIGHT)
+				if key == "svgColor" {
+					metadata.SvgColor = updatedSvg
+				} else if key == "svgWhite" {
+					metadata.SvgWhite = updatedSvg
+				} else {
+					metadata.SvgComplete = &updatedSvg
+				}
+			} else {
+				// If SVG update fails, use the original SVG value
+				metadata.AdditionalProperties[key] = svg
+			}
+		case "capabilities":
+			var capabilities []capability.Capability
+			if m.Capabilities != "" {
+				err := encoding.Unmarshal([]byte(m.Capabilities), &capabilities)
 				if err != nil {
-					// If svg cannot be updated, assign the svg value as it is
-					metadata[key] = modelMetadata[key]
+					return err
 				}
 			}
+			metadata.Capabilities = &capabilities
+		case "isAnnotation":
+			isAnnotation := false
+			if strings.ToLower(m.IsAnnotation) == "true" {
+				isAnnotation = true
+			}
+			metadata.IsAnnotation = &isAnnotation
+		default:
+			// For keys that do not have a direct mapping, store them in AdditionalProperties
+			metadata.AdditionalProperties[key] = modelMetadata[key]
 		}
-		metadata[key] = modelMetadata[key]
 	}
-
-	isAnnotation := false
-	if strings.ToLower(m.IsAnnotation) == "true" {
-		isAnnotation = true
-	}
-	metadata["isAnnotation"] = isAnnotation
 	modelDef.Metadata = metadata
 	return nil
 }
-
-func (mcv *ModelCSV) CreateModelDefinition(version, defVersion string) v1beta1.Model {
+func (mcv *ModelCSV) CreateModelDefinition(version, defVersion string) model.ModelDefinition {
 	status := entity.Ignored
 	if strings.ToLower(mcv.PublishToRegistry) == "true" {
 		status = entity.Enabled
 	}
+	var catname category.CategoryDefinition
+	catname.Name = mcv.Category
+	registrant := createNewRegistrant(mcv.Registrant)
 
-	model := v1beta1.Model{
-		VersionMeta: v1beta1.VersionMeta{
-			Version:       defVersion,
-			SchemaVersion: v1beta1.ModelSchemaVersion,
-		},
-		Name:        mcv.Model,
+	model := model.ModelDefinition{
+		Category:    catname,
+		Description: mcv.Description,
 		DisplayName: mcv.ModelDisplayName,
-		Status:      status,
-		Registrant: v1beta1.Host{
-			Hostname: utils.ReplaceSpacesAndConvertToLowercase(mcv.Registrant),
-		},
-		Category: v1beta1.Category{
-			Name: mcv.Category,
-		},
-		SubCategory: mcv.SubCategory,
-		Model: v1beta1.ModelEntity{
+
+		SchemaVersion: v1beta1.ModelSchemaVersion,
+		Name:          mcv.Model,
+		Status:        model.ModelDefinitionStatus(status),
+		Registrant:    registrant,
+		SubCategory:   mcv.SubCategory,
+		Model: model.Model{
 			Version: version,
 		},
+		Version: defVersion,
 	}
 	err := mcv.UpdateModelDefinition(&model)
 	if err != nil {
@@ -154,7 +199,7 @@ func NewModelCSVHelper(sheetURL, spreadsheetName string, spreadsheetID int64) (*
 	}, nil
 }
 
-func (mch *ModelCSVHelper) ParseModelsSheet(parseForDocs bool) error {
+func (mch *ModelCSVHelper) ParseModelsSheet(parseForDocs bool, modelName string) error {
 	ch := make(chan ModelCSV, 1)
 	errorChan := make(chan error, 1)
 	csvReader, err := csv.NewCSVParser[ModelCSV](mch.CSVPath, rowIndex, nil, func(columns []string, currentRow []string) bool {
@@ -189,6 +234,9 @@ func (mch *ModelCSVHelper) ParseModelsSheet(parseForDocs bool) error {
 		select {
 
 		case data := <-ch:
+			if modelName != "" && data.Model != modelName {
+				continue
+			}
 			mch.Models = append(mch.Models, data)
 			Log.Info(fmt.Sprintf("Reading registrant [%s] model [%s]", data.Registrant, data.Model))
 		case err := <-errorChan:
@@ -273,8 +321,8 @@ published: %s
 		m.Feature1,
 		m.Feature2,
 		m.Feature3,
-		`../_images/meshmap-visualizer.png`,
-		`../_images/meshmap-designer.png`,
+		`../_images/kanvas-visualizer.png`,
+		`../_images/kanvas-designer.png`,
 		m.HowItWorks,
 		m.HowItWorksDetails,
 		m.PublishToSites,
@@ -283,6 +331,26 @@ published: %s
 	)
 	markdown = strings.ReplaceAll(markdown, "\r", "\n")
 	return markdown
+}
+func createNewRegistrant(registrantName string) connection.Connection {
+	kind := utils.ReplaceSpacesAndConvertToLowercase(registrantName)
+	switch kind {
+	case "artifacthub":
+		registrantName = "Artifact Hub"
+	case "github":
+		registrantName = "Github"
+	case "meshery":
+		registrantName = "meshery"
+	case "kubernetes":
+		registrantName = "Kubernetes"
+	}
+	newRegistrant := connection.Connection{
+		Name:   registrantName,
+		Status: connection.Discovered,
+		Type:   "registry",
+		Kind:   kind,
+	}
+	return newRegistrant
 }
 
 // Creates JSON formatted meshmodel attribute item for JSON Style docs
@@ -366,4 +434,132 @@ func (m ModelCSVHelper) Cleanup() error {
 	}
 
 	return nil
+}
+func AssignDefaultsForCompDefs(componentDef *component.ComponentDefinition, modelDef *model.ModelDefinition) {
+	// Assign the status from the model to the component
+	compStatus := component.ComponentDefinitionStatus(modelDef.Status)
+	componentDef.Status = &compStatus
+
+	// Initialize AdditionalProperties and Styles if nil
+	if componentDef.Metadata.AdditionalProperties == nil {
+		componentDef.Metadata.AdditionalProperties = make(map[string]interface{})
+	}
+	if componentDef.Styles == nil {
+		componentDef.Styles = &component.Styles{}
+	}
+
+	// Use reflection to map model metadata to component styles
+	stylesValue := reflect.ValueOf(componentDef.Styles).Elem()
+
+	// Iterate through modelDef.Metadata
+	if modelDef.Metadata != nil {
+		if modelDef.Metadata.AdditionalProperties["styleOverrides"] != nil {
+			styleOverrides, ok := modelDef.Metadata.AdditionalProperties["styleOverrides"].(string)
+			if ok {
+				err := encoding.Unmarshal([]byte(styleOverrides), &componentDef.Styles)
+				if err != nil {
+					LogError.Error(err)
+				}
+			}
+		}
+		if (modelDef.Metadata.Capabilities) != nil {
+			componentDef.Capabilities = modelDef.Metadata.Capabilities
+		}
+		if modelDef.Metadata.PrimaryColor != nil {
+			componentDef.Styles.PrimaryColor = *modelDef.Metadata.PrimaryColor
+		}
+		if modelDef.Metadata.SecondaryColor != nil {
+			componentDef.Styles.SecondaryColor = modelDef.Metadata.SecondaryColor
+		}
+		if modelDef.Metadata.SvgColor != "" {
+			componentDef.Styles.SvgColor = modelDef.Metadata.SvgColor
+		}
+		if modelDef.Metadata.SvgComplete != nil {
+			componentDef.Styles.SvgComplete = *modelDef.Metadata.SvgComplete
+		}
+		if modelDef.Metadata.SvgWhite != "" {
+			componentDef.Styles.SvgWhite = modelDef.Metadata.SvgWhite
+		}
+
+		// Iterate through AdditionalProperties and assign appropriately
+		for k, v := range modelDef.Metadata.AdditionalProperties {
+			if k == "styleOverrides" {
+				continue
+			}
+			// Check if the field exists in Styles
+			if field := stylesValue.FieldByNameFunc(func(name string) bool {
+				return strings.EqualFold(k, name)
+			}); field.IsValid() && field.CanSet() {
+				switch field.Kind() {
+				case reflect.Ptr:
+					ptrType := field.Type().Elem()
+					val := reflect.New(ptrType).Elem()
+
+					if val.Kind() == reflect.String {
+						val.SetString(v.(string))
+					} else if val.Kind() == reflect.Float32 {
+						val.SetFloat(v.(float64))
+					} else if val.Kind() == reflect.Int {
+						val.SetInt(int64(v.(int)))
+					} else {
+						val.Set(reflect.ValueOf(v))
+					}
+
+					field.Set(val.Addr())
+				case reflect.String:
+					field.SetString(v.(string))
+				case reflect.Float32:
+					field.SetFloat(v.(float64))
+				case reflect.Int:
+					field.SetInt(int64(v.(int)))
+				default:
+					field.Set(reflect.ValueOf(v))
+				}
+			} else {
+				componentDef.Metadata.AdditionalProperties[k] = v
+			}
+		}
+	}
+}
+func GenerateComponentsFromPkg(pkg models.Package, compDirPath string, defVersion string, modelDef model.ModelDefinition) (int, int, error) {
+	comps, err := pkg.GenerateComponents()
+	if err != nil {
+		return 0, 0, err
+	}
+	lengthOfComps := len(comps)
+	for _, comp := range comps {
+		comp.Version = defVersion
+		if modelDef.Metadata == nil {
+			modelDef.Metadata = &model.ModelDefinition_Metadata{}
+		}
+		if modelDef.Metadata.AdditionalProperties == nil {
+			modelDef.Metadata.AdditionalProperties = make(map[string]interface{})
+		}
+		if comp.Model.Metadata.AdditionalProperties != nil {
+			modelDef.Metadata.AdditionalProperties["source_uri"] = comp.Model.Metadata.AdditionalProperties["source_uri"]
+		}
+		comp.Model = modelDef
+
+		AssignDefaultsForCompDefs(&comp, &modelDef)
+		alreadyExists, err := comp.WriteComponentDefinition(compDirPath, "json")
+		if err != nil {
+			return 0, 0, err
+		}
+		if alreadyExists {
+			lengthOfComps--
+		}
+	}
+	return len(comps), lengthOfComps, nil
+}
+func GenerateModels(registrant string, sourceURl string, modelName string) (models.Package, string, error) {
+	generator, err := generators.NewGenerator(registrant, sourceURl, modelName)
+	if err != nil {
+		return nil, "", err
+	}
+	pkg, err := generator.GetPackage()
+	if err != nil {
+		return nil, "", err
+	}
+	version := pkg.GetVersion()
+	return pkg, version, nil
 }

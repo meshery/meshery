@@ -1,8 +1,9 @@
 import { withStyles } from '@material-ui/core';
 import React, { useState, useEffect, useCallback } from 'react';
-import { Paper } from '@material-ui/core';
+import { Paper, Button } from '@material-ui/core';
 import UploadIcon from '@mui/icons-material/Upload';
 import DoNotDisturbOnIcon from '@mui/icons-material/DoNotDisturbOn';
+import { getUnit8ArrayDecodedFile } from '../../utils/utils';
 import {
   OVERVIEW,
   MODELS,
@@ -27,10 +28,16 @@ import {
   useLazyGetComponentsQuery,
   useLazyGetRelationshipsQuery,
   useLazyGetRegistrantsQuery,
+  useImportMeshModelMutation,
 } from '@/rtk-query/meshModel';
 import NoSsr from '@material-ui/core/NoSsr';
 import { groupRelationshipsByKind, removeDuplicateVersions } from './helper';
 import _ from 'lodash';
+import { Modal as SistentModal } from '@layer5/sistent';
+import { UsesSistent } from '../SistentWrapper';
+import { RJSFModalWrapper } from '../Modal';
+import { useRef } from 'react';
+import { updateProgress } from 'lib/store';
 
 const meshmodelStyles = (theme) => ({
   wrapperClss: {
@@ -73,6 +80,39 @@ const useMeshModelComponentRouter = () => {
   return { searchQuery, selectedTab, selectedPageSize };
 };
 
+const useInfiniteScrollRef = (callback) => {
+  const observerRef = useRef(null);
+  const triggerRef = useRef(null);
+
+  useEffect(() => {
+    // setTimeout gives the browser time to finish rendering the DOM elements before executing the callback function.
+    const timeoutId = setTimeout(() => {
+      if (!triggerRef.current) {
+        return () => observerRef.current && observerRef.current.disconnect();
+      }
+
+      observerRef.current = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              callback();
+            }
+          });
+        },
+        { threshold: 0.01 },
+      );
+      observerRef.current.observe(triggerRef.current);
+    }, 0);
+
+    return () => {
+      observerRef.current && observerRef.current.disconnect();
+      clearTimeout(timeoutId);
+    };
+  }, [callback, triggerRef.current]);
+
+  return triggerRef;
+};
+
 const MeshModelComponent_ = ({
   modelsCount,
   componentsCount,
@@ -83,7 +123,6 @@ const MeshModelComponent_ = ({
   const router = useRouter();
   const { handleChangeSelectedTab } = settingsRouter(router);
   const [resourcesDetail, setResourcesDetail] = useState([]);
-  const [, setCount] = useState();
   const { selectedTab, searchQuery, selectedPageSize } = useMeshModelComponentRouter();
   const [page, setPage] = useState({
     Models: 0,
@@ -96,20 +135,140 @@ const MeshModelComponent_ = ({
   const StyleClass = useStyles();
   const [view, setView] = useState(OVERVIEW);
   const [convert, setConvert] = useState(false);
+  const [importSchema, setImportSchema] = useState({});
+  const [importModal, setImportModal] = useState({
+    open: false,
+  });
   const [showDetailsData, setShowDetailsData] = useState({
     type: '', // Type of selected data eg. (models, components)
     data: {},
   });
   const [animate, setAnimate] = useState(false);
   const [checked, setChecked] = useState(false);
+  const [importModelReq] = useImportMeshModelMutation();
+
+  const handleUploadImport = () => {
+    setImportModal({
+      open: true,
+    });
+  };
+
+  const handleUploadImportClose = () => {
+    setImportModal({
+      open: false,
+    });
+  };
+
+  const handleImportModel = async (data) => {
+    const { uploadType, url, file, model } = data;
+    let requestBody = null;
+
+    const fileElement = document.getElementById('root_file');
+
+    switch (uploadType) {
+      case 'File Upload': {
+        const fileName = fileElement.files[0].name;
+        const fileData = getUnit8ArrayDecodedFile(file);
+        if (fileData) {
+          requestBody = {
+            importBody: {
+              model_file: fileData,
+              url: '',
+              filename: fileName,
+            },
+            uploadType: 'file',
+            register: true,
+          };
+        } else {
+          console.error('Error: File data is empty or invalid');
+          return;
+        }
+        break;
+      }
+      case 'URL Import': {
+        if (url) {
+          requestBody = {
+            importBody: {
+              url: url,
+              model: model,
+            },
+            uploadType: 'url',
+            register: true,
+          };
+        } else {
+          console.error('Error: URL is empty');
+          return;
+        }
+        break;
+      }
+      default: {
+        console.error('Error: Invalid upload type');
+        return;
+      }
+    }
+    updateProgress({ showProgress: true });
+    await importModelReq({ importBody: requestBody });
+    updateProgress({ showProgress: false });
+  };
+  const [modelFilters, setModelsFilters] = useState({ page: 0 });
+  const [registrantFilters, setRegistrantsFilters] = useState({ page: 0 });
+  const [componentsFilters, setComponentsFilters] = useState({ page: 0 });
+  const [relationshipsFilters, setRelationshipsFilters] = useState({ page: 0 });
 
   /**
    * RTK Lazy Queries
    */
-  const [getMeshModelsData] = useLazyGetMeshModelsQuery();
-  const [getComponentsData] = useLazyGetComponentsQuery();
-  const [getRelationshipsData] = useLazyGetRelationshipsQuery();
-  const [getRegistrantsData] = useLazyGetRegistrantsQuery();
+  const [getMeshModelsData, modelsRes] = useLazyGetMeshModelsQuery();
+  const [getComponentsData, componentsRes] = useLazyGetComponentsQuery();
+  const [getRelationshipsData, relationshipsRes] = useLazyGetRelationshipsQuery();
+  const [getRegistrantsData, registrantsRes] = useLazyGetRegistrantsQuery();
+
+  const modelsData = modelsRes.data;
+  const registrantsData = registrantsRes.data;
+  const componentsData = componentsRes.data;
+  const relationshipsData = relationshipsRes.data;
+
+  const hasMoreModels = modelsData?.total_count > modelsData?.page_size * modelsData?.page;
+  const hasMoreRegistrants =
+    registrantsData?.total_count > registrantsData?.page_size * registrantsData?.page;
+  const hasMoreComponents =
+    componentsData?.total_count > componentsData?.page_size * componentsData?.page;
+  const hasMoreRelationships =
+    componentsData?.total_count > relationshipsData?.page_size * relationshipsData?.page;
+
+  const loadNextModelsPage = useCallback(() => {
+    if (modelsRes.isLoading || modelsRes.isFetching || !hasMoreModels) {
+      return;
+    }
+    setModelsFilters((prev) => ({ ...prev, page: prev.page + 1 }));
+  }, [modelsRes, hasMoreModels]);
+
+  const loadNextRegistrantsPage = useCallback(() => {
+    if (registrantsRes.isLoading || registrantsRes.isFetching || !hasMoreRegistrants) {
+      return;
+    }
+    setRegistrantsFilters((prev) => ({ ...prev, page: prev.page + 1 }));
+  }, [registrantsRes, hasMoreRegistrants]);
+
+  const loadNextComponentsPage = useCallback(() => {
+    if (componentsRes.isLoading || componentsRes.isFetching || !hasMoreComponents) {
+      return;
+    }
+    setComponentsFilters((prev) => ({ ...prev, page: prev.page + 1 }));
+  }, [componentsRes, hasMoreComponents]);
+
+  const loadNextRelationshipsPage = useCallback(() => {
+    if (relationshipsRes.isLoading || relationshipsRes.isFetching || !hasMoreRelationships) {
+      return;
+    }
+  }, [relationshipsRes, hasMoreRelationships]);
+  /**
+   * IntersectionObservers
+   */
+  const lastModelRef = useInfiniteScrollRef(loadNextModelsPage);
+  const lastComponentRef = useInfiniteScrollRef(loadNextComponentsPage);
+  const lastRelationshipRef = useInfiniteScrollRef(loadNextRelationshipsPage);
+  const lastRegistrantRef = useInfiniteScrollRef(loadNextRegistrantsPage);
 
   const fetchData = useCallback(async () => {
     try {
@@ -119,10 +278,10 @@ const MeshModelComponent_ = ({
           response = await getMeshModelsData(
             {
               params: {
-                page: searchText ? 0 : page.Models,
-                pagesize: 'all',
-                components: true,
-                relationships: true,
+                page: searchText ? 0 : modelFilters.page,
+                pagesize: searchText ? 'all' : 25,
+                components: false,
+                relationships: false,
                 search: searchText || '',
               },
             },
@@ -133,7 +292,7 @@ const MeshModelComponent_ = ({
           response = await getComponentsData(
             {
               params: {
-                page: searchText ? 0 : page.Components,
+                page: searchText ? 0 : componentsFilters.page,
                 pagesize: searchText ? 'all' : rowsPerPage,
                 search: searchText || '',
                 trim: true,
@@ -141,21 +300,18 @@ const MeshModelComponent_ = ({
             },
             true,
           );
-          setCount(response.total_count);
           break;
         case RELATIONSHIPS:
           response = await getRelationshipsData(
             {
               params: {
-                page: 0,
+                page: searchText ? 0 : relationshipsFilters.page,
                 pagesize: 'all',
-                paginated: true,
                 search: searchText || '',
               },
             },
             true,
           );
-          setCount(response?.total_count);
           break;
         case REGISTRANTS:
           response = await getRegistrants();
@@ -164,7 +320,7 @@ const MeshModelComponent_ = ({
           break;
       }
 
-      if (response.data) {
+      if (response.data && response.data[view.toLowerCase()]) {
         // When search or "show duplicates" functionality is active:
         // Avoid appending data to the previous dataset.
         // preventing duplicate entries and ensuring the UI reflects the API's response accurately.
@@ -172,7 +328,7 @@ const MeshModelComponent_ = ({
         let newData = [];
         if (response.data[view.toLowerCase()]) {
           newData =
-            searchText || checked || view === RELATIONSHIPS
+            searchText || view === RELATIONSHIPS
               ? [...response.data[view.toLowerCase()]]
               : [...resourcesDetail, ...response.data[view.toLowerCase()]];
         }
@@ -195,6 +351,8 @@ const MeshModelComponent_ = ({
     getComponentsData,
     getRelationshipsData,
     getRegistrantsData,
+    modelFilters,
+    registrantFilters,
     view,
     page,
     rowsPerPage,
@@ -209,8 +367,8 @@ const MeshModelComponent_ = ({
     registrantResponse = await getRegistrantsData(
       {
         params: {
-          page: searchText ? 0 : page.Registrants,
-          pagesize: searchText ? 'all' : rowsPerPage,
+          page: searchText ? 0 : registrantFilters.page,
+          pagesize: searchText ? 'all' : 25,
           search: searchText || '',
         },
       },
@@ -228,8 +386,8 @@ const MeshModelComponent_ = ({
               page: page?.Models,
               pagesize: 'all',
               registrant: hostname,
-              components: true,
-              relationships: true,
+              components: false,
+              relationships: false,
             },
           },
           true,
@@ -246,7 +404,6 @@ const MeshModelComponent_ = ({
         },
       };
     }
-    setCount(response.total_count);
     setRowsPerPage(25);
     return response;
   };
@@ -257,6 +414,10 @@ const MeshModelComponent_ = ({
       setSearchText(null);
       setResourcesDetail([]);
     }
+    setModelsFilters({ page: 0 });
+    setRegistrantsFilters({ page: 0 });
+    setComponentsFilters({ page: 0 });
+    setRelationshipsFilters({ page: 0 });
     setPage({
       Models: 0,
       Components: 0,
@@ -306,11 +467,34 @@ const MeshModelComponent_ = ({
 
   useEffect(() => {
     fetchData();
-  }, [view, page, rowsPerPage, checked, searchText]);
+  }, [view, page, rowsPerPage, checked, searchText, modelFilters, registrantFilters]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('/api/schema/resource/model', {
+          method: 'GET',
+          credentials: 'include',
+        });
+        const result = await response.json();
+        setImportSchema(result);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <div data-test="workloads">
-      <TabBar animate={animate} />
+      <TabBar animate={animate} handleUploadImport={handleUploadImport} />
+      {importModal.open && (
+        <ImportModal
+          importFormSchema={importSchema}
+          handleClose={handleUploadImportClose}
+          handleImportModel={handleImportModel}
+        />
+      )}
       <div
         className={`${StyleClass.mainContainer} ${animate ? StyleClass.mainContainerAnimate : ''}`}
       >
@@ -373,6 +557,18 @@ const MeshModelComponent_ = ({
                 setShowDetailsData={setShowDetailsData}
                 showDetailsData={showDetailsData}
                 setResourcesDetail={setResourcesDetail}
+                lastItemRef={{
+                  [MODELS]: lastModelRef,
+                  [REGISTRANTS]: lastRegistrantRef,
+                  [COMPONENTS]: lastComponentRef,
+                  [RELATIONSHIPS]: lastRelationshipRef,
+                }}
+                isFetching={{
+                  [MODELS]: modelsRes.isFetching,
+                  [REGISTRANTS]: registrantsRes.isFetching,
+                  [COMPONENTS]: componentsRes.isFetching,
+                  [RELATIONSHIPS]: relationshipsRes.isFetching,
+                }}
               />
             </Paper>
             <MeshModelDetails
@@ -386,24 +582,50 @@ const MeshModelComponent_ = ({
     </div>
   );
 };
+const ImportModal = React.memo((props) => {
+  const { importFormSchema, handleClose, handleImportModel } = props;
 
-const TabBar = ({ animate }) => {
+  return (
+    <>
+      <UsesSistent>
+        <SistentModal open={true} closeModal={handleClose} maxWidth="sm" title="Import Model">
+          <RJSFModalWrapper
+            schema={importFormSchema.rjsfSchema}
+            uiSchema={{
+              ...importFormSchema.uiSchema,
+            }}
+            handleSubmit={handleImportModel}
+            submitBtnText="Import"
+            handleClose={handleClose}
+          />
+        </SistentModal>
+      </UsesSistent>
+    </>
+  );
+});
+
+ImportModal.displayName = 'ImportModal';
+
+const TabBar = ({ animate, handleUploadImport }) => {
   const StyleClass = useStyles();
+
   return (
     <div
       className={`${StyleClass.meshModelToolbar} ${animate ? StyleClass.toolWrapperAnimate : ''}`}
     >
-      <DisableButton
-        disabled
+      <Button
+        aria-label="Add Pattern"
         variant="contained"
-        style={{
-          visibility: `${animate ? 'visible' : 'hidden'}`,
-        }}
+        color="primary"
         size="large"
-        startIcon={<UploadIcon />}
+        onClick={handleUploadImport}
+        style={{ display: 'flex', visibility: `${animate ? 'visible' : 'hidden'}` }}
+        disabled={false} //TODO: Need to make key for this component
       >
+        <UploadIcon />
         Import
-      </DisableButton>
+      </Button>
+
       <DisableButton
         disabled
         variant="contained"
@@ -457,5 +679,4 @@ const MeshModelComponent = (props) => {
     </NoSsr>
   );
 };
-
 export default withStyles(meshmodelStyles)(MeshModelComponent);

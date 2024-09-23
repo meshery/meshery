@@ -10,6 +10,14 @@ integrations-category: Cloud Native Network
 integrations-subcategory: CNI
 registrant: GitHub
 components: 
+- name: ip-pool
+  colorIcon: assets/img/integrations/whereabouts/components/ip-pool/icons/color/ip-pool-color.svg
+  whiteIcon: assets/img/integrations/whereabouts/components/ip-pool/icons/white/ip-pool-white.svg
+  description: 
+- name: overlapping-range-ip-reservation
+  colorIcon: assets/img/integrations/whereabouts/components/overlapping-range-ip-reservation/icons/color/overlapping-range-ip-reservation-color.svg
+  whiteIcon: assets/img/integrations/whereabouts/components/overlapping-range-ip-reservation/icons/white/overlapping-range-ip-reservation-white.svg
+  description: 
 featureList: [
   "Automates IP address allocation",
   "Supports IPv4 and IPv6",

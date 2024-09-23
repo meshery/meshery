@@ -8,8 +8,12 @@ docURL: https://docs.meshery.io/extensibility/integrations/karmada
 description: 
 integrations-category: Orchestration & Management
 integrations-subcategory: Scheduling & Orchestration
-registrant: Artifact Hub
+registrant: GitHub
 components: 
+- name: karmada
+  colorIcon: assets/img/integrations/karmada/components/karmada/icons/color/karmada-color.svg
+  whiteIcon: assets/img/integrations/karmada/components/karmada/icons/white/karmada-white.svg
+  description: 
 featureList: [
   "Simplifies multi-cluster management",
   "Provides a unified control plane",

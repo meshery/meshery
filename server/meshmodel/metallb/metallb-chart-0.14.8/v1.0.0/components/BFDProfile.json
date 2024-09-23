@@ -1,0 +1,72 @@
+{
+  "capabilities": null,
+  "component": {
+   "kind": "BFDProfile",
+   "schema": "{\n \"description\": \"BFDProfile represents the settings of the bfd session that can be\\noptionally associated with a BGP session.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"BFDProfileSpec defines the desired state of BFDProfile.\",\n   \"properties\": {\n    \"detectMultiplier\": {\n     \"description\": \"Configures the detection multiplier to determine\\npacket loss. The remote transmission interval will be multiplied\\nby this value to determine the connection loss detection timer.\",\n     \"format\": \"int32\",\n     \"maximum\": 255,\n     \"minimum\": 2,\n     \"type\": \"integer\"\n    },\n    \"echoInterval\": {\n     \"description\": \"Configures the minimal echo receive transmission\\ninterval that this system is capable of handling in milliseconds.\\nDefaults to 50ms\",\n     \"format\": \"int32\",\n     \"maximum\": 60000,\n     \"minimum\": 10,\n     \"type\": \"integer\"\n    },\n    \"echoMode\": {\n     \"description\": \"Enables or disables the echo transmission mode.\\nThis mode is disabled by default, and not supported on multi\\nhops setups.\",\n     \"type\": \"boolean\"\n    },\n    \"minimumTtl\": {\n     \"description\": \"For multi hop sessions only: configure the minimum\\nexpected TTL for an incoming BFD control packet.\",\n     \"format\": \"int32\",\n     \"maximum\": 254,\n     \"minimum\": 1,\n     \"type\": \"integer\"\n    },\n    \"passiveMode\": {\n     \"description\": \"Mark session as passive: a passive session will not\\nattempt to start the connection and will wait for control packets\\nfrom peer before it begins replying.\",\n     \"type\": \"boolean\"\n    },\n    \"receiveInterval\": {\n     \"description\": \"The minimum interval that this system is capable of\\nreceiving control packets in milliseconds.\\nDefaults to 300ms.\",\n     \"format\": \"int32\",\n     \"maximum\": 60000,\n     \"minimum\": 10,\n     \"type\": \"integer\"\n    },\n    \"transmitInterval\": {\n     \"description\": \"The minimum transmission interval (less jitter)\\nthat this system wants to use to send BFD control packets in\\nmilliseconds. Defaults to 300ms\",\n     \"format\": \"int32\",\n     \"maximum\": 60000,\n     \"minimum\": 10,\n     \"type\": \"integer\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"BFD Profile\",\n \"type\": \"object\"\n}",
+   "version": "metallb.io/v1beta1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "BFD Profile",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "published": false,
+   "source_uri": "git://github.com/metallb/metallb/main/config/crd/bases"
+  },
+  "model": {
+   "category": {
+    "name": "Cloud Native Network"
+   },
+   "displayName": "Metallb",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "isAnnotation": false,
+    "primaryColor": "#3f51b4",
+    "secondaryColor": "#5262bc",
+    "shape": "circle",
+    "source_uri": "git://github.com/metallb/metallb/main/config/crd/bases",
+    "styleOverrides": "",
+    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" id=\"Layer_1\" data-name=\"Layer 1\" viewBox=\"0 0 300 300\" height=\"20\" width=\"20\"\u003e\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cstyle xmlns=\"http://www.w3.org/2000/svg\"\u003e.cls-1{fill:#3f51b4;}\u003c/style\u003e\u003c/defs\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"cls-1\" d=\"M231.63,227.93943c-30.00761-17.33146-58.71143-33.90746-87.41141-50.48988-13.24879-7.65529-26.41962-15.45247-39.78346-22.8994-3.77076-2.10267-4.28206-3.84618-2.49894-7.8777,12.37322-27.98289,24.41409-56.11279,36.579-84.18772,2.10779-4.86236,3.76309-10.03406,10.67062-10.1197,6.91263-.08564,8.62929,4.87643,10.78438,9.85q34.57854,79.80981,69.25677,159.57614C229.88525,223.3097,230.43617,224.87552,231.63,227.93943ZM96.151,159.98133c1.7665-4.15423,3.184-4.77673,7.24753-2.30975,13.72174,8.33146,27.7413,16.17465,42.547,24.72343L68.27675,227.31566\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"cls-1\" d=\"M149.86967,293.90734A143.95368,143.95368,0,1,1,293.82335,149.95366,143.95367,143.95367,0,0,1,149.86967,293.90734Zm0-272.56865a128.615,128.615,0,1,0,128.615,128.615A128.615,128.615,0,0,0,149.86967,21.33869Z\"\u003e\u003c/path\u003e\u003c/svg\u003e\n",
+    "svgComplete": "",
+    "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" id=\"Layer_1\" data-name=\"Layer 1\" viewBox=\"0 0 300 300\" height=\"20\" width=\"20\"\u003e\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cstyle xmlns=\"http://www.w3.org/2000/svg\"\u003e.cls-1{fill:#fff;}\u003c/style\u003e\u003c/defs\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"cls-1\" d=\"M231.63,227.93943c-30.00761-17.33146-58.71143-33.90746-87.41141-50.48988-13.24879-7.65529-26.41962-15.45247-39.78346-22.8994-3.77076-2.10267-4.28206-3.84618-2.49894-7.8777,12.37322-27.98289,24.41409-56.11279,36.579-84.18772,2.10779-4.86236,3.76309-10.03406,10.67062-10.1197,6.91263-.08564,8.62929,4.87643,10.78438,9.85q34.57854,79.80981,69.25677,159.57614C229.88525,223.3097,230.43617,224.87552,231.63,227.93943ZM96.151,159.98133c1.7665-4.15423,3.184-4.77673,7.24753-2.30975,13.72174,8.33146,27.7413,16.17465,42.547,24.72343L68.27675,227.31566\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"cls-1\" d=\"M149.86967,293.90734A143.95368,143.95368,0,1,1,293.82335,149.95366,143.95367,143.95367,0,0,1,149.86967,293.90734Zm0-272.56865a128.615,128.615,0,1,0,128.615,128.615A128.615,128.615,0,0,0,149.86967,21.33869Z\"\u003e\u003c/path\u003e\u003c/svg\u003e"
+   },
+   "model": {
+    "version": "metallb-chart-0.14.8"
+   },
+   "name": "metallb",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "github",
+    "name": "Github",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "subCategory": "Service Proxy",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "ignored",
+  "styles": {
+   "primaryColor": "#3f51b4",
+   "secondaryColor": "#5262bc",
+   "shape": "circle",
+   "svgColor": "\u003csvg id=\"Layer_1\" data-name=\"Layer 1\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 300 300\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#3f51b4;}\u003c/style\u003e\u003c/defs\u003e\u003cpath class=\"cls-1\" d=\"M231.63,227.93943c-30.00761-17.33146-58.71143-33.90746-87.41141-50.48988-13.24879-7.65529-26.41962-15.45247-39.78346-22.8994-3.77076-2.10267-4.28206-3.84618-2.49894-7.8777,12.37322-27.98289,24.41409-56.11279,36.579-84.18772,2.10779-4.86236,3.76309-10.03406,10.67062-10.1197,6.91263-.08564,8.62929,4.87643,10.78438,9.85q34.57854,79.80981,69.25677,159.57614C229.88525,223.3097,230.43617,224.87552,231.63,227.93943ZM96.151,159.98133c1.7665-4.15423,3.184-4.77673,7.24753-2.30975,13.72174,8.33146,27.7413,16.17465,42.547,24.72343L68.27675,227.31566\"/\u003e\u003cpath class=\"cls-1\" d=\"M149.86967,293.90734A143.95368,143.95368,0,1,1,293.82335,149.95366,143.95367,143.95367,0,0,1,149.86967,293.90734Zm0-272.56865a128.615,128.615,0,1,0,128.615,128.615A128.615,128.615,0,0,0,149.86967,21.33869Z\"/\u003e\u003c/svg\u003e\n",
+   "svgWhite": "\u003csvg id=\"Layer_1\" data-name=\"Layer 1\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 300 300\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#fff;}\u003c/style\u003e\u003c/defs\u003e\u003cpath class=\"cls-1\" d=\"M231.63,227.93943c-30.00761-17.33146-58.71143-33.90746-87.41141-50.48988-13.24879-7.65529-26.41962-15.45247-39.78346-22.8994-3.77076-2.10267-4.28206-3.84618-2.49894-7.8777,12.37322-27.98289,24.41409-56.11279,36.579-84.18772,2.10779-4.86236,3.76309-10.03406,10.67062-10.1197,6.91263-.08564,8.62929,4.87643,10.78438,9.85q34.57854,79.80981,69.25677,159.57614C229.88525,223.3097,230.43617,224.87552,231.63,227.93943ZM96.151,159.98133c1.7665-4.15423,3.184-4.77673,7.24753-2.30975,13.72174,8.33146,27.7413,16.17465,42.547,24.72343L68.27675,227.31566\"/\u003e\u003cpath class=\"cls-1\" d=\"M149.86967,293.90734A143.95368,143.95368,0,1,1,293.82335,149.95366,143.95367,143.95367,0,0,1,149.86967,293.90734Zm0-272.56865a128.615,128.615,0,1,0,128.615,128.615A128.615,128.615,0,0,0,149.86967,21.33869Z\"/\u003e\u003c/svg\u003e"
+  },
+  "version": "v1.0.0"
+ }

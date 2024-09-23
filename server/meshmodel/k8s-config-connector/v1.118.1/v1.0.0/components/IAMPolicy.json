@@ -1,29 +1,151 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "displayName": "IAM Policy",
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "IAMPolicy",
+   "schema": "{\n \"description\": \"IAMPolicy is the Schema for the iampolicies API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"IAMPolicySpec defines the desired state of IAMPolicy\",\n   \"properties\": {\n    \"auditConfigs\": {\n     \"description\": \"Optional. The list of IAM audit configs.\",\n     \"items\": {\n      \"description\": \"Specifies the Cloud Audit Logs configuration for the IAM policy.\",\n      \"properties\": {\n       \"auditLogConfigs\": {\n        \"description\": \"Required. The configuration for logging of each type of permission.\",\n        \"items\": {\n         \"properties\": {\n          \"exemptedMembers\": {\n           \"description\": \"Identities that do not cause logging for this type of permission. The format is the same as that for 'members' in IAMPolicy/IAMPolicyMember.\",\n           \"items\": {\n            \"type\": \"string\"\n           },\n           \"type\": \"array\"\n          },\n          \"logType\": {\n           \"description\": \"Permission type for which logging is to be configured. Must be one of 'DATA_READ', 'DATA_WRITE', or 'ADMIN_READ'.\",\n           \"pattern\": \"^(DATA_READ|DATA_WRITE|ADMIN_READ)$\",\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"logType\"\n         ],\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       },\n       \"service\": {\n        \"description\": \"Required. The service for which to enable Data Access audit logs. The special value 'allServices' covers all services. Note that if there are audit configs covering both 'allServices' and a specific service, then the union of the two audit configs is used for that service: the 'logTypes' specified in each 'auditLogConfig' are enabled, and the 'exemptedMembers' in each 'auditLogConfg' are exempted.\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"auditLogConfigs\",\n       \"service\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"bindings\": {\n     \"description\": \"Optional. The list of IAM bindings.\",\n     \"items\": {\n      \"description\": \"Specifies the members to bind to an IAM role.\",\n      \"properties\": {\n       \"condition\": {\n        \"description\": \"Optional. The condition under which the binding applies.\",\n        \"properties\": {\n         \"description\": {\n          \"type\": \"string\"\n         },\n         \"expression\": {\n          \"type\": \"string\"\n         },\n         \"title\": {\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"expression\",\n         \"title\"\n        ],\n        \"type\": \"object\"\n       },\n       \"members\": {\n        \"description\": \"Optional. The list of IAM users to be bound to the role.\",\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       },\n       \"role\": {\n        \"description\": \"Required. The role to bind the users to.\",\n        \"pattern\": \"^((projects|organizations)/[^/]+/)?roles/[\\\\w_\\\\.]+$\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"role\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"resourceRef\": {\n     \"description\": \"Immutable. Required. The GCP resource to set the IAM policy on.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         },\n         {\n          \"required\": [\n           \"apiVersion\"\n          ]\n         },\n         {\n          \"required\": [\n           \"external\"\n          ]\n         }\n        ]\n       }\n      }\n     ],\n     \"properties\": {\n      \"apiVersion\": {\n       \"type\": \"string\"\n      },\n      \"external\": {\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"kind\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"resourceRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"IAM Policy\",\n \"type\": \"object\"\n}",
+   "version": "iam.cnrm.cloud.google.com/v1beta1"
+  },
+  "configuration": null,
   "description": "",
+  "displayName": "IAM Policy",
   "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "published": false
+  },
   "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "version": "v1.0.0",
-   "name": "k8s-config-connector",
-   "displayName": "Google Cloud Platform",
-   "description": "",
-   "status": "enabled",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "registrant": {
-    "hostname": "github"
-   },
    "category": {
-    "name": "Orchestration \u0026 Management",
-    "metadata": null
+    "name": "Orchestration \u0026 Management"
    },
-   "subCategory": "Google Cloud Platform",
+   "displayName": "Google Cloud Platform",
+   "id": "00000000-0000-0000-0000-000000000000",
    "metadata": {
-    "capabilities": "",
     "defaultData": "",
     "isAnnotation": false,
     "primaryColor": "#4285F4",
@@ -39,30 +161,35 @@
    "model": {
     "version": "v1.118.1"
    },
+   "name": "k8s-config-connector",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "github",
+    "name": "Github",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "enabled",
+   "subCategory": "Google Cloud Platform",
+   "version": "v1.0.0",
    "components": null,
    "relationships": null
   },
-  "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
    "primaryColor": "#4285F4",
-   "secondaryColor": "",
    "shape": "rectangle",
-   "shapePolygonPoints": "",
-   "status": "enabled",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
    "svgColor": "\u003csvg width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"\u003e\n    \u003cg stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e\n        \u003cpath d=\"M12.3008862,4.00003179 L18.9908678,7.90329279 L19,11.4442164 L14.973309,9.0680926 L14.973309,10.8562526 L16.9806355,12.0276231 L16.9918433,15.1064843 L14.973309,13.9136004 L14.973309,18.415105 L12.3008862,20 L12.3008862,4.00003179 Z M11.6991138,4 L11.6991138,19.9999682 L9.02669102,18.4150732 L9.02669102,9.06816678 L5,11.4441846 L5.00913223,7.903261 L11.6991138,4 Z\" fill=\"#4285F4\"\u003e\u003c/path\u003e\n    \u003c/g\u003e\n\u003c/svg\u003e",
-   "svgComplete": "",
    "svgWhite": "\u003csvg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M12.3009 4.00003L18.9909 7.90329L19 11.4442L14.9733 9.06809V10.8563L16.9806 12.0276L16.9918 15.1065L14.9733 13.9136V18.4151L12.3009 20V4.00003ZM11.6991 4V20L9.02669 18.4151V9.06817L5 11.4442L5.00913 7.90326L11.6991 4Z\" fill=\"white\"/\u003e\n\u003c/svg\u003e\n"
   },
-  "component": {
-   "kind": "IAMPolicy",
-   "version": "iam.cnrm.cloud.google.com/v1beta1",
-   "schema": "{\n \"description\": \"IAMPolicy is the Schema for the iampolicies API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"IAMPolicySpec defines the desired state of IAMPolicy\",\n   \"properties\": {\n    \"auditConfigs\": {\n     \"description\": \"Optional. The list of IAM audit configs.\",\n     \"items\": {\n      \"description\": \"Specifies the Cloud Audit Logs configuration for the IAM policy.\",\n      \"properties\": {\n       \"auditLogConfigs\": {\n        \"description\": \"Required. The configuration for logging of each type of permission.\",\n        \"items\": {\n         \"properties\": {\n          \"exemptedMembers\": {\n           \"description\": \"Identities that do not cause logging for this type of permission. The format is the same as that for 'members' in IAMPolicy/IAMPolicyMember.\",\n           \"items\": {\n            \"type\": \"string\"\n           },\n           \"type\": \"array\"\n          },\n          \"logType\": {\n           \"description\": \"Permission type for which logging is to be configured. Must be one of 'DATA_READ', 'DATA_WRITE', or 'ADMIN_READ'.\",\n           \"pattern\": \"^(DATA_READ|DATA_WRITE|ADMIN_READ)$\",\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"logType\"\n         ],\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       },\n       \"service\": {\n        \"description\": \"Required. The service for which to enable Data Access audit logs. The special value 'allServices' covers all services. Note that if there are audit configs covering both 'allServices' and a specific service, then the union of the two audit configs is used for that service: the 'logTypes' specified in each 'auditLogConfig' are enabled, and the 'exemptedMembers' in each 'auditLogConfg' are exempted.\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"auditLogConfigs\",\n       \"service\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"bindings\": {\n     \"description\": \"Optional. The list of IAM bindings.\",\n     \"items\": {\n      \"description\": \"Specifies the members to bind to an IAM role.\",\n      \"properties\": {\n       \"condition\": {\n        \"description\": \"Optional. The condition under which the binding applies.\",\n        \"properties\": {\n         \"description\": {\n          \"type\": \"string\"\n         },\n         \"expression\": {\n          \"type\": \"string\"\n         },\n         \"title\": {\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"expression\",\n         \"title\"\n        ],\n        \"type\": \"object\"\n       },\n       \"members\": {\n        \"description\": \"Optional. The list of IAM users to be bound to the role.\",\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       },\n       \"role\": {\n        \"description\": \"Required. The role to bind the users to.\",\n        \"pattern\": \"^((projects|organizations)/[^/]+/)?roles/[\\\\w_\\\\.]+$\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"role\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"resourceRef\": {\n     \"description\": \"Immutable. Required. The GCP resource to set the IAM policy on.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         },\n         {\n          \"required\": [\n           \"apiVersion\"\n          ]\n         },\n         {\n          \"required\": [\n           \"external\"\n          ]\n         }\n        ]\n       }\n      }\n     ],\n     \"properties\": {\n      \"apiVersion\": {\n       \"type\": \"string\"\n      },\n      \"external\": {\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"kind\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"resourceRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"IAM Policy\",\n \"type\": \"object\"\n}"
-  }
+  "version": "v1.0.0"
  }

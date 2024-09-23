@@ -155,16 +155,28 @@ class PrometheusComponent extends Component {
 
   handleChange = (name) => (data) => {
     if (name === 'prometheusURL' && !!data) {
-      this.setState({ urlError: false });
+      const prometheusURL = data.value;
+      const isInvalidURL = !(
+        prometheusURL.toLowerCase().startsWith('http://') ||
+        prometheusURL.toLowerCase().startsWith('https://')
+      );
+
+      if (isInvalidURL) {
+        this.setState({ urlError: true, [name]: '' });
+        return;
+      }
+
+      this.setState({ urlError: false, [name]: prometheusURL });
     }
+
     const promCfg = {
       prometheusURL: data?.value || '',
-      selectedPrometheusBoardsConfigs: data?.metadata['prometheus_boards'] || [],
+      selectedPrometheusBoardsConfigs: data?.metadata?.['prometheus_boards'] || [],
       connectionID: data?.id,
       connectionName: data?.name,
     };
+
     this.props.updatePrometheusConfig({ prometheus: promCfg });
-    // this.setState({ [name]: value });
   };
 
   handlePrometheusConfigure = () => {

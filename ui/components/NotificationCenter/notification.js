@@ -13,7 +13,6 @@ import {
   Typography,
   alpha,
   useTheme,
-  Checkbox,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core';
 import { SEVERITY_STYLE, STATUS } from './constants';
@@ -47,6 +46,8 @@ import {
 import { FormattedMetadata } from './metadata';
 import theme from '../../themes/app';
 import { truncate } from 'lodash';
+import { Checkbox } from '@layer5/sistent';
+import { UsesSistent } from '../SistentWrapper';
 
 const useStyles = makeStyles(() => ({
   root: (props) => ({
@@ -392,13 +393,14 @@ export const Notification = withErrorBoundary(({ event_id }) => {
               gap: '0.25rem',
             }}
           >
-            <Checkbox
-              onClick={eventstopPropagation}
-              checked={Boolean(event.checked)}
-              onChange={handleSelectEvent}
-              style={{ margin: '0rem', padding: '0rem' }}
-              color="primary"
-            />
+            <UsesSistent>
+              <Checkbox
+                onClick={eventstopPropagation}
+                checked={Boolean(event.checked)}
+                onChange={handleSelectEvent}
+                style={{ margin: '0rem', padding: '0rem' }}
+              />
+            </UsesSistent>
             <severityStyles.icon {...iconLarge} fill={severityStyles?.color} />
           </Grid>
           <Grid item xs={8} sm={6} className={classes.gridItem}>

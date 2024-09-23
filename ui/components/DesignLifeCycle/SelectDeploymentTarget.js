@@ -103,7 +103,11 @@ const EnvironmentCard = ({ environment }) => {
     <StyledEnvironmentCard>
       <StyledEnvironmentHeader>
         <Box gap={1} display="flex" alignItems="center">
-          <Checkbox checked={isEnvSelected} onChange={toggleEnv} />
+          <Checkbox
+            data-testid={`env-${environment.id}`}
+            checked={isEnvSelected}
+            onChange={toggleEnv}
+          />
           <Typography variant="textB2SemiBold" color={theme.palette.text.default}>
             {environment.name}
           </Typography>
