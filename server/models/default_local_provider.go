@@ -1100,7 +1100,7 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 							log.Error(ErrGettingSeededComponents(err, comp+"s"))
 						}
 						*seededUUIDs = append(*seededUUIDs, id)
-					
+
 					}
 				}
 			}
@@ -1495,9 +1495,6 @@ func getSeededComponents(comp string, log logger.Handler) ([]string, []string, e
 		wd = filepath.Join(wd, ".meshery", "content", "filters", "binaries")
 
 	}
-	if comp == "Application" {
-        return nil, nil, nil
-    }
 	_, err := os.Stat(wd)
 	if err != nil && !os.IsNotExist(err) {
 		return nil, nil, err
@@ -1508,9 +1505,7 @@ func getSeededComponents(comp string, log logger.Handler) ([]string, []string, e
 			return nil, nil, er
 		}
 	}
-	if comp == "Application" && viper.GetBool("SKIP_DOWNLOAD_APPLICATIONS") {
-		log.Info("Skipping seeding sample applications")
-	} else if !viper.GetBool("SKIP_DOWNLOAD_CONTENT") {
+	if !viper.GetBool("SKIP_DOWNLOAD_CONTENT") {
 		err = downloadContent(comp, wd)
 		if err != nil {
 			log.Error(ErrDownloadingSeededComponents(err, comp))
@@ -1565,7 +1560,7 @@ func downloadContent(comp string, downloadpath string) error {
 		}).Walk()
 	case "Filter":
 		return getFiltersFromWasmFiltersRepo(downloadpath)
-	
+
 	}
 	return nil
 }
