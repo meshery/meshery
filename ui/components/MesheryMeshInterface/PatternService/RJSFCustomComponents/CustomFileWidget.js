@@ -38,7 +38,7 @@ const CustomFileWidget = (props) => {
             paddingBlock: '0',
             minWidth: '50%',
             position: 'absolute',
-            bottom: '0.5rem',
+            bottom: '10px',
             left: '6rem',
             backgroundColor: Colors.keppelGreen,
           }}
