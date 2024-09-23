@@ -142,11 +142,10 @@ mesheryctl registry generate -directory <DIRECTORY_PATH>
 				filePath := filepath.Join(csvDirectory, file.Name())
 				if !file.IsDir() && strings.HasSuffix(file.Name(), ".csv") {
 					headers, secondRow, err := getCSVHeader(filePath)
-					if utils.Contains("modelDisplayName", headers) != -1 || utils.Contains("modelDisplayName", secondRow) != 1 {
+					if utils.Contains("modelDisplayName", headers) != -1 || utils.Contains("modelDisplayName", secondRow) != -1 {
 						modelCSVFilePath = filePath
-					} else if utils.Contains("component", headers) != -1 || utils.Contains("component", secondRow) != 1 { // Check if the file matches the ComponentCSV structure
+					} else if utils.Contains("component", headers) != -1 || utils.Contains("component", secondRow) != -1 { // Check if the file matches the ComponentCSV structure
 						componentCSVFilePath = filePath
-						continue
 					}
 					if err != nil {
 						return fmt.Errorf("error checking file %s: %v", file.Name(), err)
