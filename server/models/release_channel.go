@@ -115,7 +115,7 @@ func (k *Kanvas) Intercept(req *http.Request, res http.ResponseWriter) {
 
 		return
 	}
-
+	flowResponse.Capabilities.ProviderURL = k.Provider.GetProviderURL()
 	k.Provider.SetProviderProperties(flowResponse.Capabilities)
 	// Download the package for the user only if they have extension capability
 	// The download is skipped if package already exists.
