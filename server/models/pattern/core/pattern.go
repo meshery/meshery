@@ -8,8 +8,8 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/models/pattern/utils"
-	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/encoding"
+	"github.com/layer5io/meshkit/logger"
 	registry "github.com/layer5io/meshkit/models/meshmodel/registry"
 	regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
 	mutils "github.com/layer5io/meshkit/utils"
@@ -359,8 +359,8 @@ func NewPatternFileFromK8sManifest(data string, fileName string, ignoreErrors bo
 
 	pattern := pattern.PatternFile{
 		SchemaVersion: v1beta1.DesignSchemaVersion,
-		Name:       fileName,
-		Components: []*component.ComponentDefinition{},
+		Name:          fileName,
+		Components:    []*component.ComponentDefinition{},
 	}
 
 	buffer := bytes.NewBufferString(data)

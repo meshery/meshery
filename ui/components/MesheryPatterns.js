@@ -394,7 +394,7 @@ function MesheryPatterns({
     pagesize: pageSize,
     search: search,
     order: sortOrder,
-    visibility: JSON.stringify([visibilityFilter]),
+    visibility: visibilityFilter ? JSON.stringify([visibilityFilter]) : '',
   });
   const [clonePattern] = useClonePatternMutation();
   const [publishCatalog] = usePublishPatternMutation();
@@ -578,7 +578,7 @@ function MesheryPatterns({
       (result) => {
         // stillLoading(false);
         setPage(result.configuration?.patterns?.page || 0);
-        setPageSize(result.configuration?.patterns?.page_size || 0);
+        setPageSize(result.configuration?.patterns?.page_size || 10);
         setCount(result.configuration?.patterns?.total_count || 0);
         handleSetPatterns(result.configuration?.patterns?.patterns);
       },
@@ -1530,7 +1530,7 @@ function MesheryPatterns({
           <div className={StyleClass.toolWrapper}>
             {width < 600 && isSearchExpanded ? null : (
               <div style={{ display: 'flex' }}>
-                {!selectedPattern.show && (patterns.length > 0 || viewType === 'table') && (
+                {!selectedPattern.show && (patterns.length >= 0 || viewType === 'table') && (
                   <div className={classes.createButton}>
                     {disableCreateImportDesignButton ? null : (
                       <div style={{ display: 'flex', order: '1' }}>

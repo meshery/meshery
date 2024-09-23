@@ -6,7 +6,7 @@ import { getMeshModels } from '../../api/meshmodel';
 import { modifyRJSFSchema } from '../../utils/utils';
 import dataFetch from '../../lib/data-fetch';
 
-// This modal is used in MeshMap also
+// This modal is used in Meshery Extensions also
 export default function PublishModal(props) {
   const { open, title, handleClose, handleSubmit } = props;
   const [publishSchema, setPublishSchema] = useState({});
