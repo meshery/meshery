@@ -217,7 +217,7 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 
 	go func() {
 		utils.ProcessModelToComponentsMap(componentCSVHelper.Components)
-		utils.VerifyandUpdateSpreadsheet(spreadsheeetCred, &wgForSpreadsheetUpdate, srv, spreadsheeetChan, spreadsheeetID, modelCSVFilePath, componentCSVFilePath) // write another for csv
+		utils.VerifyandUpdateSpreadsheet(spreadsheeetCred, &wgForSpreadsheetUpdate, srv, spreadsheeetChan, spreadsheeetID, modelCSVFilePath, componentCSVFilePath)
 	}()
 	// Iterate models from the spreadsheet
 	for _, model := range modelCSVHelper.Models {
@@ -571,7 +571,6 @@ func getCSVHeader(filePath string) (headers, secondRow []string, err error) {
 
 	reader := csv.NewReader(file)
 	headers, err = reader.Read() // Read the first line
-	// log.Println("Logging messages:", headers)
 
 	if err != nil {
 		return headers, secondRow, err
