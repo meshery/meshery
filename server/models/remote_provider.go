@@ -91,6 +91,10 @@ func (l *RemoteProvider) Initialize() {
 	l.ProviderProperties = providerProperties
 }
 
+func (l *RemoteProvider) SetProviderProperties(providerProperties ProviderProperties) {
+	l.ProviderProperties = providerProperties
+}
+
 // loadCapabilities loads the capabilities of the remote provider
 //
 // It takes in "token" string of the user for loading the capbilities

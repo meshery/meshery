@@ -105,6 +105,10 @@ func (l *DefaultLocalProvider) GetProviderType() ProviderType {
 func (l *DefaultLocalProvider) DownloadProviderExtensionPackage() {
 }
 
+func (l *DefaultLocalProvider) SetProviderProperties(providerProperties ProviderProperties) {
+	l.ProviderProperties = providerProperties
+}
+
 // GetProviderProperties - Returns all the provider properties required
 func (l *DefaultLocalProvider) GetProviderProperties() ProviderProperties {
 	return l.ProviderProperties
