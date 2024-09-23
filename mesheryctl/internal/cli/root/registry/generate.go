@@ -142,9 +142,9 @@ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tu
 				filePath := filepath.Join(csvDirectory, file.Name())
 				if !file.IsDir() && strings.HasSuffix(file.Name(), ".csv") {
 					headers, secondRow, err := getCSVHeader(filePath)
-					if Contains(headers, "modelDisplayName") || Contains(secondRow, "modelDisplayName") {
+					if utils.Contains("modelDisplayName", headers) != -1 || utils.Contains("modelDisplayName", secondRow) != 1 {
 						modelCSVFilePath = filePath
-					} else if Contains(headers, "component") || Contains(secondRow, "component") { // Check if the file matches the ComponentCSV structure
+					} else if utils.Contains("component", headers) != -1 || utils.Contains("component", secondRow) != 1 { // Check if the file matches the ComponentCSV structure
 						componentCSVFilePath = filePath
 						continue
 					}
@@ -564,15 +564,6 @@ func getCSVHeader(filePath string) (headers, secondRow []string, err error) {
 		return headers, secondRow, err
 	}
 	return headers, secondRow, nil
-}
-
-func Contains(slice []string, value string) bool {
-	for _, v := range slice {
-		if v == value {
-			return true
-		}
-	}
-	return false
 }
 
 func init() {
