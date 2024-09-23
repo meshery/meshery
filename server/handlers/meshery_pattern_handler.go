@@ -1395,6 +1395,8 @@ func (h *Handler) DownloadMesheryPatternHandler(
 	}
 
 	rw.Header().Set("Content-Type", "application/yaml")
+	rw.Header().Add("Content-Disposition", fmt.Sprintf("attachment;filename=%s.yml", pattern.Name))
+
 	err = yaml.NewEncoder(rw).Encode(unmarshalledPatternFile)
 	if err != nil {
 		err = ErrEncodePattern(err)
