@@ -38,7 +38,7 @@ func (h *Handler) LoginHandler(w http.ResponseWriter, r *http.Request, p models.
 // 	200:
 
 // LogoutHandler destroys the session and redirects to home.
-func (h *Handler) LogoutHandler(w http.ResponseWriter, req *http.Request, p models.Provider) {
+func (h *Handler) LogoutHandler(w http.ResponseWriter, req *http.Request, user *models.User, p models.Provider) {
 	if req.Method != http.MethodGet {
 		w.WriteHeader(http.StatusNotFound)
 		return
@@ -50,6 +50,7 @@ func (h *Handler) LogoutHandler(w http.ResponseWriter, req *http.Request, p mode
 		Path:     "/",
 		HttpOnly: true,
 	})
+	_ = p.DeleteCapabilitiesForUser(user.ID)
 	err := p.Logout(w, req)
 	if err != nil {
 		h.log.Error(models.ErrLogout(err))
