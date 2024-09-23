@@ -137,7 +137,7 @@
    "background-opacity": 0,
    "height": 22,
    "menu-forground-color": "#424242",
-   "padding": 10,
+   "padding": 2,
    "primaryColor": "#FFDE00",
    "secondaryColor": "#FFDE00",
    "shape": "tag",
