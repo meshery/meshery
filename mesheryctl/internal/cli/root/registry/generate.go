@@ -132,31 +132,32 @@ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tu
 			sheetGID = GetSheetIDFromTitle(resp, "Models")
 			// Collect list of corresponding Components by name from spreadsheet
 			componentSpredsheetGID = GetSheetIDFromTitle(resp, "Components")
-		}
-		// Get all files in the directory
-		files, err := os.ReadDir(csvDirectory)
-		if err != nil {
-			return fmt.Errorf("error reading the directory: %v", err)
-		}
-		for _, file := range files {
-			filePath := filepath.Join(csvDirectory, file.Name())
-			if !file.IsDir() && strings.HasSuffix(file.Name(), ".csv") {
-				headers, secondRow, err := getCSVHeader(filePath)
-				if Contains(headers, "modelDisplayName") || Contains(secondRow, "modelDisplayName") {
-					modelCSVFilePath = filePath
-				} else if Contains(headers, "component") || Contains(secondRow, "component") { // Check if the file matches the ComponentCSV structure
-					componentCSVFilePath = filePath
-					continue
-				}
-				if err != nil {
-					return fmt.Errorf("error checking file %s: %v", file.Name(), err)
-				}
-
+		} else {
+			// Get all files in the directory
+			files, err := os.ReadDir(csvDirectory)
+			if err != nil {
+				return fmt.Errorf("error reading the directory: %v", err)
 			}
-		}
+			for _, file := range files {
+				filePath := filepath.Join(csvDirectory, file.Name())
+				if !file.IsDir() && strings.HasSuffix(file.Name(), ".csv") {
+					headers, secondRow, err := getCSVHeader(filePath)
+					if Contains(headers, "modelDisplayName") || Contains(secondRow, "modelDisplayName") {
+						modelCSVFilePath = filePath
+					} else if Contains(headers, "component") || Contains(secondRow, "component") { // Check if the file matches the ComponentCSV structure
+						componentCSVFilePath = filePath
+						continue
+					}
+					if err != nil {
+						return fmt.Errorf("error checking file %s: %v", file.Name(), err)
+					}
 
-		if modelCSVFilePath == "" || componentCSVFilePath == "" {
-			return fmt.Errorf("both ModelCSV and ComponentCSV files must be present in the directory")
+				}
+			}
+
+			if modelCSVFilePath == "" || componentCSVFilePath == "" {
+				return fmt.Errorf("both ModelCSV and ComponentCSV files must be present in the directory")
+			}
 		}
 
 		err = InvokeGenerationFromSheet(&wg)
@@ -435,18 +436,9 @@ func GenerateDefsForCoreRegistrant(model utils.ModelCSV, ComponentCSVHelper *uti
 }
 
 func parseModelSheet(url string) (*utils.ModelCSVHelper, error) {
-	var modelCSVHelper *utils.ModelCSVHelper
-	var err error
-	if modelCSVFilePath != "" {
-		modelCSVHelper, err = utils.NewModelCSVHelper(modelCSVFilePath)
-		if err != nil {
-			return nil, err
-		}
-	} else {
-		modelCSVHelper, err = utils.NewModelSheetHelper(url, "Models", sheetGID)
-		if err != nil {
-			return nil, err
-		}
+	modelCSVHelper, err := utils.NewModelCSVHelper(url, "Models", sheetGID, modelCSVFilePath)
+	if err != nil {
+		return nil, err
 	}
 
 	err = modelCSVHelper.ParseModelsSheet(false, modelName)
@@ -466,18 +458,9 @@ func rateLimitArtifactHub() {
 	artifactHubCount++
 }
 func parseComponentSheet(url string) (*utils.ComponentCSVHelper, error) {
-	var compCSVHelper *utils.ComponentCSVHelper
-	var err error
-	if modelCSVFilePath != "" {
-		compCSVHelper, err = utils.NewComponentCSVHelper(modelCSVFilePath)
-		if err != nil {
-			return nil, err
-		}
-	} else {
-		compCSVHelper, err = utils.NewComponentSheetHelper(url, "Components", componentSpredsheetGID)
-		if err != nil {
-			return nil, err
-		}
+	compCSVHelper, err := utils.NewComponentCSVHelper(url, "Components", componentSpredsheetGID, componentCSVFilePath)
+	if err != nil {
+		return nil, err
 	}
 
 	err = compCSVHelper.ParseComponentsSheet(modelName)

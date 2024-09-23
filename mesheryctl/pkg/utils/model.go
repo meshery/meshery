@@ -2,7 +2,6 @@ package utils
 
 import (
 	"fmt"
-	"io"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -177,25 +176,28 @@ type ModelCSVHelper struct {
 	Models         []ModelCSV
 }
 
-func NewModelSheetHelper(sheetURL, spreadsheetName string, spreadsheetID int64) (*ModelCSVHelper, error) {
-	// Construct the full URL to download the CSV
-	sheetURL = sheetURL + "/pub?output=csv" + "&gid=" + strconv.FormatInt(spreadsheetID, 10)
-	Log.Info("Downloading CSV from: ", sheetURL)
-
-	// Set the directory path for storing the downloaded CSV
-	dirPath := filepath.Join(utils.GetHome(), ".meshery", "content")
-	err := os.MkdirAll(dirPath, 0755)
-	if err != nil {
-		return nil, utils.ErrCreateDir(err, dirPath)
-	}
-
-	// Set the CSV file path
-	csvPath := filepath.Join(dirPath, "models.csv")
-
+func NewModelCSVHelper(sheetURL, spreadsheetName string, spreadsheetID int64, localCsvPath string) (*ModelCSVHelper, error) {
+	var csvPath string
 	// Download the CSV file from the spreadsheet URL
-	err = utils.DownloadFile(csvPath, sheetURL)
-	if err != nil {
-		return nil, utils.ErrReadingRemoteFile(err)
+	if localCsvPath == "" {
+		// Set the directory path for storing the downloaded CSV
+		dirPath := filepath.Join(utils.GetHome(), ".meshery", "content")
+		err := os.MkdirAll(dirPath, 0755)
+		if err != nil {
+			return nil, utils.ErrCreateDir(err, dirPath)
+		}
+
+		// Set the CSV file path
+		csvPath = filepath.Join(dirPath, "models.csv")
+		sheetURL = sheetURL + "/pub?output=csv" + "&gid=" + strconv.FormatInt(spreadsheetID, 10)
+		Log.Info("Downloading CSV from: ", sheetURL, csvPath)
+		err = utils.DownloadFile(csvPath, sheetURL)
+		if err != nil {
+			return nil, utils.ErrReadingRemoteFile(err)
+		}
+
+	} else {
+		csvPath = localCsvPath
 	}
 
 	// Return the initialized ModelCSVHelper with the appropriate CSV path
@@ -206,63 +208,6 @@ func NewModelSheetHelper(sheetURL, spreadsheetName string, spreadsheetID int64) 
 		CSVPath:        csvPath,
 		Title:          spreadsheetName,
 	}, nil
-}
-
-func NewModelCSVHelper(csvPath string) (*ModelCSVHelper, error) {
-	// Ensure the provided CSV path exists
-	if csvPath == "" {
-		return nil, fmt.Errorf("CSV path cannot be empty")
-	}
-
-	// Set the destination directory path
-	dirPath := filepath.Join(utils.GetHome(), ".meshery", "content")
-	err := os.MkdirAll(dirPath, 0755) // Create the directory if it doesn't exist
-	if err != nil {
-		return nil, utils.ErrCreateDir(err, dirPath)
-	}
-
-	// Set the destination CSV file path
-	destCSVPath := filepath.Join(dirPath, "models.csv")
-
-	// Copy the CSV file from the provided path to the new directory
-	err = copyFile(csvPath, destCSVPath)
-	if err != nil {
-		return nil, fmt.Errorf("failed to copy CSV file from %s to %s: %w", csvPath, destCSVPath, err)
-	}
-
-	// Return the initialized ModelCSVHelper with the copied CSV path
-	return &ModelCSVHelper{
-		SpreadsheetID:  0,  // No spreadsheet ID since it's from a local CSV
-		SpreadsheetURL: "", // No spreadsheet URL since it's local
-		Models:         []ModelCSV{},
-		CSVPath:        destCSVPath,
-		Title:          "",
-	}, nil
-}
-
-// Helper function to copy a file from src to dst
-func copyFile(src, dst string) error {
-	// Open the source file
-	sourceFile, err := os.Open(src)
-	if err != nil {
-		return err
-	}
-	defer sourceFile.Close()
-
-	// Create the destination file
-	destFile, err := os.Create(dst)
-	if err != nil {
-		return err
-	}
-	defer destFile.Close()
-
-	// Copy the contents from the source file to the destination file
-	_, err = io.Copy(destFile, sourceFile)
-	if err != nil {
-		return err
-	}
-
-	return nil
 }
 
 func (mch *ModelCSVHelper) ParseModelsSheet(parseForDocs bool, modelName string) error {
