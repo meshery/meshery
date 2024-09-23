@@ -304,7 +304,7 @@ function MesheryFilters({
     pagesize: pageSize,
     search: search,
     order: sortOrder,
-    visibility: JSON.stringify([visibilityFilter]),
+    visibility: visibilityFilter ? JSON.stringify([visibilityFilter]) : '',
   });
 
   const { data: capabilitiesData } = useGetProviderCapabilitiesQuery();
