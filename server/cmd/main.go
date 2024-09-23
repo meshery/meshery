@@ -112,7 +112,6 @@ func main() {
 	viper.SetDefault(constants.ProviderENV, "")
 	viper.SetDefault("REGISTER_STATIC_K8S", true)
 	viper.SetDefault("SKIP_DOWNLOAD_CONTENT", false)
-	viper.SetDefault("SKIP_DOWNLOAD_APPLICATIONS", true)
 	viper.SetDefault("SKIP_COMP_GEN", false)
 	viper.SetDefault("PLAYGROUND", false)
 	store.Initialize()
