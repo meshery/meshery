@@ -41,7 +41,7 @@ The user avatar behavior, which changes based on the user's status, can be custo
 
 ### Extensibility: Permissions (CASL)
 
-#### Design
+#### Functionality
 
 Meshery UI uses [CASL.js](https://casl.js.org/v6/en/) to implement it's permissions framework. CASL is an isomorphic authorization JavaScript library which restricts what resources a given client is allowed to access.
 Meshery's permissions framework has been designed to be very customizable and robust.
@@ -50,9 +50,9 @@ Meshery's permissions framework has been designed to be very customizable and ro
 - These keys are bundled together in keychains. Keychains are collections of similar permissions, which can themselves be grouped together and assigned to roles.
 - Roles map permissions to users. Roles contain any number of keychains, which contain any number of keys (permissions). Meshery uses roles to assign permissions to users.
 
-{% include alert.html type="info" title="Learn more" content="To learn more about how permissions work in Meshery Provider in terms of Roles, keychains and keys, head over to <a href='https://docs.layer5.io/cloud/security/'>Layer5 documentation</a>." %}
+{% include alert.html type="info" title="Example extension" content="Meshery Provider is an extension to Meshery UI. To learn more about how permissions work in Meshery Provider in terms of Roles, keychains and keys, head over to <a href='https://docs.layer5.io/cloud/security/'>Layer5 documentation</a>." %}
 
-#### Implementation
+#### Behavior
 
 - Once a user has logged in, the backend will send a response with the permissions that the user has, based on the role assigned to them. Those permissions will be used to check abilities on the frontend.
 
