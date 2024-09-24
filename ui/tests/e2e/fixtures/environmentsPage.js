@@ -10,7 +10,6 @@ export class EnvironmentPage {
   }
   async navigate() {
     await this.page.goto(`${ENV.MESHERY_SERVER_URL}/management/environments`);
-    await expect(this.page).toHaveURL(`${ENV.MESHERY_SERVER_URL}/management/environments`);
   }
   async fillInput(locator, value) {
     await locator.fill(value);
@@ -47,14 +46,24 @@ export class EnvironmentPage {
       await expect(notification).toBeVisible();
       await this.page.waitForTimeout(8000);
     } else {
-      console.log(`Profile “${environmentName}” already exists.`);
+      console.log(`Profile "${environmentName}" already exists.`);
     }
   }
 
   async assignConnections(environmentName) {
     await expect(this.page).toHaveURL(`${ENV.MESHERY_SERVER_URL}/management/environments`);
     await this.page.waitForSelector(`text=${environmentName}`, { state: 'visible' });
-    await this.page.click(`button:has-text("Assigned Connections")`);
+    await this.page.evaluate(() => {
+      const button = [...document.querySelectorAll('button')].find((b) =>
+        b.textContent.includes('Assigned Connections'),
+      );
+      if (button) {
+        button.setAttribute('data-testid', 'assigned-connections-button');
+      }
+    });
+
+    // Click the button using the newly added data-testid
+    await this.page.getByTestId('assigned-connections-button').click();
 
     // Wait for and locate the dialog
     const dialog = await this.page.locator('[aria-labelledby="alert-dialog-slide-title"]');
@@ -85,7 +94,17 @@ export class EnvironmentPage {
   async moveAssignedConnectionsToAvailable(environmentName) {
     await expect(this.page).toHaveURL(`${ENV.MESHERY_SERVER_URL}/management/environments`);
     await this.page.waitForSelector(`text=${environmentName}`, { state: 'visible' });
-    await this.page.click(`button:has-text("Assigned Connections")`);
+    await this.page.evaluate(() => {
+      const button = [...document.querySelectorAll('button')].find((b) =>
+        b.textContent.includes('Assigned Connections'),
+      );
+      if (button) {
+        button.setAttribute('data-testid', 'assigned-connections-button');
+      }
+    });
+
+    // Click the button using the newly added data-testid
+    await this.page.getByTestId('assigned-connections-button').click();
 
     // Wait for and locate the dialog
     const dialog = await this.page.locator('[aria-labelledby="alert-dialog-slide-title"]');
@@ -168,37 +187,35 @@ export class EnvironmentPage {
     }
   }
 
-  async editEnvironmentCard() {
+  async editEnvironmentCard(environmentName) {
     await expect(this.page).toHaveURL(`${ENV.MESHERY_SERVER_URL}/management/environments`);
-    await this.page.click('.MuiCard-root:has-text("Sample-playwright-test") >> :not(:has-text("Assigned Connections"))');
+    await this.page.click(
+      `.MuiCard-root:has-text("${environmentName}") >> :not(:has-text("Assigned Connections"))`,
+    );
 
-    await this.page.evaluate(() => {
-      const editIcon = document.querySelector(
-        'svg path[d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"]',
-      );
-      if (editIcon) {
-        editIcon.closest('svg').setAttribute('data-testid', 'edit-icon');
-      }
-    });
-    await this.page.getByTestId('edit-icon').click();
+    await this.page.click(
+      `.MuiCard-root:has-text("${environmentName}") >> :not(:has-text("Assigned Connections")) >> [data-testid="envCard-edit-button"]`,
+    );
     await this.page.waitForSelector('#Environment_name');
     await this.fillInput(this.page.locator('#Environment_name'), 'Sample-playwright-test-edited');
     await this.page.getByRole('button', { name: 'Update', exact: true }).click();
+    const notification = await this.page.getByText(
+      'Environment "Sample-playwright-test-edited" updated',
+    );
+    await expect(notification).toBeVisible();
   }
 
   async deleteEnvironmentCard() {
     await expect(this.page).toHaveURL(`${ENV.MESHERY_SERVER_URL}/management/environments`);
-    await this.page.click('.MuiCard-root:has-text("Sample-playwright-test") >> :not(:has-text("Assigned Connections"))');
+    await this.page.click(
+      '.MuiCard-root:has-text("Sample-playwright-test-edited") >> :not(:has-text("Assigned Connections"))',
+    );
 
-    await this.page.evaluate(() => {
-      const editIcon = document.querySelector(
-        'svg path[d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"]',
-      );
-      if (editIcon) {
-        editIcon.closest('svg').setAttribute('data-testid', 'delete-icon');
-      }
-    });
-    await this.page.getByTestId('delete-icon').click();
+    await this.page.click(
+      `.MuiCard-root:has-text("Sample-playwright-test-edited") >> :not(:has-text("Assigned Connections")) >> [data-testid="envCard-delete-button"]`,
+    );
     await this.page.getByRole('button', { name: 'DELETE', exact: true }).click();
+    const notification = await this.page.getByText('Environment deleted');
+    await expect(notification).toBeVisible();
   }
 }

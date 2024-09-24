@@ -14,7 +14,6 @@ test.describe('Lifecycle Environments Tests', () => {
   const environmentName = 'Sample-playwright-test';
 
   test('Create a Environment', async ({ environmentPage }) => {
-    await environmentPage.navigate();
     await environmentPage.createEnvironmentProfile(environmentName);
     await expect(environmentPage.page).toHaveURL(
       `${ENV.MESHERY_SERVER_URL}/management/environments`,
@@ -22,7 +21,6 @@ test.describe('Lifecycle Environments Tests', () => {
   });
 
   test('Assign Connections', async ({ environmentPage }) => {
-    await environmentPage.navigate();
     await environmentPage.assignConnections(environmentName);
     await expect(environmentPage.page).toHaveURL(
       `${ENV.MESHERY_SERVER_URL}/management/environments`,
@@ -30,7 +28,6 @@ test.describe('Lifecycle Environments Tests', () => {
   });
 
   test('Move Connections From Assigned To Available', async ({ environmentPage }) => {
-    await environmentPage.navigate();
     await environmentPage.moveAssignedConnectionsToAvailable(environmentName);
     await expect(environmentPage.page).toHaveURL(
       `${ENV.MESHERY_SERVER_URL}/management/environments`,
@@ -46,7 +43,6 @@ test.describe('Lifecycle Environments Tests', () => {
   });
 
   test('Edit Environment Card', async ({ environmentPage }) => {
-    await environmentPage.navigate();
     await environmentPage.editEnvironmentCard(environmentName);
     await expect(environmentPage.page).toHaveURL(
       `${ENV.MESHERY_SERVER_URL}/management/environments`,
@@ -54,7 +50,6 @@ test.describe('Lifecycle Environments Tests', () => {
   });
 
   test('Delete Enviroment profile', async ({ environmentPage }) => {
-    await environmentPage.navigate();
     await environmentPage.deleteEnvironmentCard(environmentName);
     await expect(environmentPage.page).toHaveURL(
       `${ENV.MESHERY_SERVER_URL}/management/environments`,
