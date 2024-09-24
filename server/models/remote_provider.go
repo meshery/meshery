@@ -91,6 +91,10 @@ func (l *RemoteProvider) Initialize() {
 	l.ProviderProperties = providerProperties
 }
 
+func (l *RemoteProvider) SetProviderProperties(providerProperties ProviderProperties) {
+	l.ProviderProperties = providerProperties
+}
+
 // loadCapabilities loads the capabilities of the remote provider
 //
 // It takes in "token" string of the user for loading the capbilities
@@ -224,9 +228,8 @@ func (l *RemoteProvider) GetProviderCapabilities(w http.ResponseWriter, req *htt
 	tokenString := req.Context().Value(TokenCtxKey).(string)
 
 	providerProperties := l.loadCapabilities(tokenString)
-	fmt.Println("TEST_------------------------__ line 227")
+	providerProperties.ProviderURL = l.RemoteProviderURL
 	if err := l.WriteCapabilitiesForUser(userID, &providerProperties); err != nil {
-		fmt.Println("TEST_------------------------__ line 229", err)
 		l.Log.Error(ErrDBPut(errors.Join(err, fmt.Errorf("failed to write capabilities for the user %s to the server store", userID))))
 	}
 
