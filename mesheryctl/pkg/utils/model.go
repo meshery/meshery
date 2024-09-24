@@ -176,20 +176,31 @@ type ModelCSVHelper struct {
 	Models         []ModelCSV
 }
 
-func NewModelCSVHelper(sheetURL, spreadsheetName string, spreadsheetID int64) (*ModelCSVHelper, error) {
-	sheetURL = sheetURL + "/pub?output=csv" + "&gid=" + strconv.FormatInt(spreadsheetID, 10)
-	Log.Info("Downloading CSV from: ", sheetURL)
-	dirPath := filepath.Join(utils.GetHome(), ".meshery", "content")
-	err := os.MkdirAll(dirPath, 0755)
-	if err != nil {
-		return nil, utils.ErrCreateDir(err, dirPath)
-	}
-	csvPath := filepath.Join(dirPath, "models.csv")
-	err = utils.DownloadFile(csvPath, sheetURL)
-	if err != nil {
-		return nil, utils.ErrReadingRemoteFile(err)
+func NewModelCSVHelper(sheetURL, spreadsheetName string, spreadsheetID int64, localCsvPath string) (*ModelCSVHelper, error) {
+	var csvPath string
+	// Download the CSV file from the spreadsheet URL
+	if localCsvPath == "" {
+		// Set the directory path for storing the downloaded CSV
+		dirPath := filepath.Join(utils.GetHome(), ".meshery", "content")
+		err := os.MkdirAll(dirPath, 0755)
+		if err != nil {
+			return nil, utils.ErrCreateDir(err, dirPath)
+		}
+
+		// Set the CSV file path
+		csvPath = filepath.Join(dirPath, "models.csv")
+		sheetURL = sheetURL + "/pub?output=csv" + "&gid=" + strconv.FormatInt(spreadsheetID, 10)
+		Log.Info("Downloading CSV from: ", sheetURL, csvPath)
+		err = utils.DownloadFile(csvPath, sheetURL)
+		if err != nil {
+			return nil, utils.ErrReadingRemoteFile(err)
+		}
+
+	} else {
+		csvPath = localCsvPath
 	}
 
+	// Return the initialized ModelCSVHelper with the appropriate CSV path
 	return &ModelCSVHelper{
 		SpreadsheetID:  spreadsheetID,
 		SpreadsheetURL: sheetURL,
