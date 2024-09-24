@@ -5,6 +5,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -15,6 +16,7 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	mesheryctlUtils "github.com/layer5io/meshery/mesheryctl/pkg/utils"
+
 	"github.com/layer5io/meshery/server/helpers"
 	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/models"
@@ -22,6 +24,7 @@ import (
 	"github.com/layer5io/meshkit/models/events"
 
 	"github.com/layer5io/meshkit/models/oci"
+	meshkitOci "github.com/layer5io/meshkit/models/oci"
 	"github.com/layer5io/meshkit/models/registration"
 	meshkitutils "github.com/layer5io/meshkit/utils"
 
@@ -1228,9 +1231,91 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		h.registryManager,
 		regErrorStore,
 	)
-
 	var dir registration.Dir
 	switch importRequest.UploadType {
+	case "csv":
+		err := mesheryctlUtils.SetLogger(false)
+		if err != nil {
+			h.handleError(rw, err, "Error setting logger")
+			h.sendErrorEvent(userID, provider, "Error setting logger", err)
+		}
+		fetchBase64DataFromDataURL := func(dataURL string) ([]byte, error) {
+			if strings.HasPrefix(dataURL, "data:text/csv;base64,") {
+				base64Data := strings.TrimPrefix(dataURL, "data:text/csv;base64,")
+				return base64.StdEncoding.DecodeString(base64Data)
+			}
+			return nil, ErrFileType("file is not of type csv")
+		}
+		modelCSVData, err := fetchBase64DataFromDataURL(importRequest.ImportBody.ModelCsv)
+		if err != nil {
+			h.handleError(rw, err, "Error fetching or decoding Model CSV")
+			h.sendErrorEvent(userID, provider, "Error fetching or decoding Model CSV", err)
+			return
+		}
+		modelCsvFile, err := os.CreateTemp("", "model-*.csv")
+		if err != nil {
+			err = ErrCreateFile(err, "Error creating temp file for Model CSV")
+			h.handleError(rw, err, "Error creating temp file for Model CSV")
+			h.sendErrorEvent(userID, provider, "Error creating temp file for Model CSV", err)
+			return
+		}
+		defer modelCsvFile.Close()
+
+		_, err = modelCsvFile.Write(modelCSVData)
+		if err != nil {
+			err = ErrWritingIntoFile(err, "Error writing Model CSV to temp file")
+			h.handleError(rw, err, "Error writing Model CSV to temp file")
+			h.sendErrorEvent(userID, provider, "Error writing Model CSV to temp file", err)
+			return
+		}
+
+		componentCSVData, err := fetchBase64DataFromDataURL(importRequest.ImportBody.ComponentCsv)
+		if err != nil {
+			h.handleError(rw, err, "Error fetching or decoding Component CSV")
+			h.sendErrorEvent(userID, provider, "Error fetching or decoding Component CSV", err)
+			return
+		}
+
+		componentCsvFile, err := os.CreateTemp("", "component-*.csv")
+		if err != nil {
+			err = ErrCreateFile(err, "Error creating temp file for Component CSV")
+			h.handleError(rw, err, "Error creating temp file for Component CSV")
+			h.sendErrorEvent(userID, provider, "Error creating temp file for Component CSV", err)
+			return
+		}
+		defer componentCsvFile.Close()
+
+		_, err = componentCsvFile.Write(componentCSVData)
+		if err != nil {
+			err = ErrWritingIntoFile(err, "Error writing Component CSV to temp file")
+			h.handleError(rw, err, "Error writing Component CSV to temp file")
+			h.sendErrorEvent(userID, provider, "Error writing Component CSV to temp file", err)
+			return
+		}
+		var wg sync.WaitGroup
+		modelLocation := filepath.Join(os.Getenv("HOME"), utils.RegistryLocation)
+		if _, err := os.Stat(modelLocation); os.IsNotExist(err) {
+			_ = os.MkdirAll(modelLocation, 0755)
+		}
+		err = mesheryctlUtils.InvokeGenerationFromSheet(&wg, modelLocation, 0, 0, "", "", modelCsvFile.Name(), componentCsvFile.Name(), "")
+		if err != nil {
+			h.handleError(rw, err, "Error invoking generation from sheet")
+			h.sendErrorEvent(userID, provider, "Error invoking generation from sheet", err)
+			return
+		}
+		h.sendEventForImport(userID, provider, 0, "", true)
+		modelDirPaths, err := models.GetModelDirectoryPaths(modelLocation)
+		if importRequest.Register {
+			if err != nil {
+				h.log.Error(models.ErrSeedingComponents(err))
+			}
+			for _, dirPath := range modelDirPaths {
+				dir := registration.NewDir(dirPath)
+				registrationHelper.Register(dir)
+			}
+		} else {
+			return
+		}
 	//Case when it is URL and them the model is generated from the URL
 	case "url":
 
@@ -1284,7 +1369,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		}
 
 		//Event when the URL is used to show that we g
-		h.sendEventForImport(userID, provider, lengthofComps, model.Model)
+		h.sendEventForImport(userID, provider, lengthofComps, model.Model, false)
 		if importRequest.Register {
 			dir = registration.NewDir(modelDirPath)
 			registrationHelper.Register(dir)
@@ -1311,6 +1396,54 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		if err != nil {
 			err = meshkitutils.ErrCreateFile(err, "Error creating temp file")
 			h.handleError(rw, err, err.Error())
+			h.sendErrorEvent(userID, provider, "Error creating temp file", err)
+			return
+		}
+		defer os.Remove(tempFile.Name())
+
+		dir = registration.NewDir(tempFile.Name())
+		if importRequest.Register {
+			registrationHelper.Register(dir)
+			tempFile.Close()
+		}
+	case "urlImport":
+		downloadFile := func(url string) ([]byte, error) {
+			resp, err := http.Get(url)
+			if err != nil {
+				return nil, fmt.Errorf("error downloading file from URL: %v", err)
+			}
+			defer resp.Body.Close()
+
+			if resp.StatusCode != http.StatusOK {
+				return nil, fmt.Errorf("failed to download file, status code: %d", resp.StatusCode)
+			}
+
+			fileData, err := io.ReadAll(resp.Body)
+			if err != nil {
+				return nil, fmt.Errorf("error reading downloaded file: %v", err)
+			}
+
+			return fileData, nil
+		}
+
+		// Download the file from the provided URL
+		fileData, err := downloadFile(importRequest.ImportBody.Url)
+		if err != nil {
+			h.handleError(rw, err, "Error downloading file from URL")
+			h.sendErrorEvent(userID, provider, "Error downloading file from URL", err)
+			return
+		}
+		isOCI := meshkitOci.IsOCIArtifact(fileData)
+		fileType := ".tar"
+		if !isOCI {
+			fileType = detectFileType(fileData)
+		}
+		name := "model" + fileType
+		//write the file to a temp file
+		tempFile, err = CreateTemp(name, fileData)
+		if err != nil {
+			err = meshkitutils.ErrCreateFile(err, "Error creating temp file")
+			h.handleError(rw, err, "Error creating temp file")
 			h.sendErrorEvent(userID, provider, "Error creating temp file", err)
 			return
 		}

@@ -14,6 +14,7 @@ import (
 
 	mesheryctlUtils "github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshkit/encoding"
+	"github.com/layer5io/meshkit/utils"
 
 	"github.com/layer5io/meshkit/models/events"
 	"github.com/layer5io/meshkit/models/meshmodel/entity"
@@ -335,12 +336,19 @@ func getFirst42Chars(s string) string {
 	}
 	return s
 }
-func (h *Handler) sendEventForImport(userID uuid.UUID, provider models.Provider, compsCount int, modelName string) {
-	componentWord := determinePluralWord(compsCount, "component")
-	description := fmt.Sprintf("Generated %d %s for model %s", compsCount, componentWord, modelName)
+func (h *Handler) sendEventForImport(userID uuid.UUID, provider models.Provider, compsCount int, modelName string, isCsv bool) {
 
-	metadata := map[string]interface{}{
-		"Description": fmt.Sprintf("Extracted %v %s for model %s\nModel can be accessed from `.meshery/models`", compsCount, componentWord, modelName),
+	var description string
+	var componentWord string
+	metadata := map[string]interface{}{}
+	if isCsv {
+		description = "Generated components for the csv"
+		metadata["Summary"] = "Generation logs for the extracted model can be accessed at `.meshery/logs/registry/model-generation.log` and `.meshery/logs/registry/registry-errors.log`"
+		metadata["ViewLink"] = utils.GetHome() + "/.meshery/logs/registry/model-generation.log"
+	} else {
+		componentWord = determinePluralWord(compsCount, "component")
+		metadata["Description"] = fmt.Sprintf("Extracted %v %s for model %s\nModel can be accessed from `.meshery/models`", compsCount, componentWord, modelName)
+		description = fmt.Sprintf("Generated %d %s for model %s", compsCount, componentWord, modelName)
 	}
 	event := events.NewEvent().
 		ActedUpon(userID).
@@ -451,5 +459,28 @@ func setDefaultValues(model *mesheryctlUtils.ModelCSV) {
 func setIfEmpty(field *string, defaultValue string) {
 	if *field == "" {
 		*field = defaultValue
+	}
+}
+func detectFileType(fileData []byte) string {
+	// Extract the first 512 bytes (or fewer if the file is smaller)
+	var bufSize int
+	if len(fileData) < 512 {
+		bufSize = len(fileData)
+	} else {
+		bufSize = 512
+	}
+	contentType := http.DetectContentType(fileData[:bufSize])
+
+	// Determine the file type based on the content type
+	switch {
+	case contentType == "application/x-gzip":
+		return ".tar.gz"
+	case contentType == "application/zip":
+		return ".zip"
+	case strings.Contains(contentType, "text/plain"):
+		// Assuming plain text could be YAML
+		return ".yaml"
+	default:
+		return "unknown"
 	}
 }

@@ -88,8 +88,6 @@ const UnsuccessfulEntityWithError = ({ modelName, error }) => {
   );
 };
 
-const imageCache = {};
-
 const checkImageExists = async (url) => {
   try {
     const response = await fetch(url);
@@ -105,35 +103,37 @@ const ComponentWithIcon = ({ component }) => {
   const kind = Metadata.toLowerCase();
 
   const paths = [
-    `ui/public/static/img/meshmodels/${modelname}/color/${modelname}-color.svg`,
-    `ui/public/static/img/meshmodels/${modelname}/white/${modelname}-white.svg`,
     `ui/public/static/img/meshmodels/${modelname}/color/${kind}-color.svg`,
     `ui/public/static/img/meshmodels/${modelname}/white/${kind}-white.svg`,
+    `ui/public/static/img/meshmodels/${modelname}/color/${modelname}-color.svg`,
+    `ui/public/static/img/meshmodels/${modelname}/white/${modelname}-white.svg`,
   ];
 
-  const [finalPath, setFinalPath] = useState(
-    'ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg',
-  );
+  const defaultPath = 'ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg';
+
+  const [finalPath, setFinalPath] = useState(defaultPath);
 
   useEffect(() => {
     const loadImages = async () => {
-      if (imageCache[modelname]) {
-        setFinalPath(imageCache[modelname]);
-        return;
+      for (let i = 0; i < 2; i++) {
+        const exists = await checkImageExists(paths[i]);
+        if (exists) {
+          setFinalPath(paths[i]);
+          return;
+        }
       }
 
-      for (const path of paths) {
-        const exists = await checkImageExists(path);
+      for (let i = 2; i < 4; i++) {
+        const exists = await checkImageExists(paths[i]);
         if (exists) {
-          imageCache[modelname] = path;
-          setFinalPath(path);
+          setFinalPath(paths[i]);
           return;
         }
       }
     };
 
     loadImages();
-  }, [modelname, paths]);
+  }, [modelname, kind, paths]);
 
   const version = Version
     ? Version.startsWith('v')

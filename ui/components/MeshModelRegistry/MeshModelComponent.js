@@ -2,6 +2,7 @@ import { withStyles } from '@material-ui/core';
 import React, { useState, useEffect, useCallback } from 'react';
 import { Paper, Button } from '@material-ui/core';
 import UploadIcon from '@mui/icons-material/Upload';
+import DriveFolderUploadIcon from '@mui/icons-material/DriveFolderUpload';
 import DoNotDisturbOnIcon from '@mui/icons-material/DoNotDisturbOn';
 import { getUnit8ArrayDecodedFile } from '../../utils/utils';
 import {
@@ -139,6 +140,10 @@ const MeshModelComponent_ = ({
   const [importModal, setImportModal] = useState({
     open: false,
   });
+  const [generateModal, setGenerateModal] = useState({
+    open: false,
+  });
+  const [generateSchema, setGenerateSchema] = useState({});
   const [showDetailsData, setShowDetailsData] = useState({
     type: '', // Type of selected data eg. (models, components)
     data: {},
@@ -160,13 +165,13 @@ const MeshModelComponent_ = ({
   };
 
   const handleImportModel = async (data) => {
-    const { uploadType, url, file, model } = data;
+    const { uploadType, url, file } = data;
     let requestBody = null;
 
     const fileElement = document.getElementById('root_file');
 
     switch (uploadType) {
-      case 'File Upload': {
+      case 'File Import': {
         const fileName = fileElement.files[0].name;
         const fileData = getUnit8ArrayDecodedFile(file);
         if (fileData) {
@@ -190,9 +195,8 @@ const MeshModelComponent_ = ({
           requestBody = {
             importBody: {
               url: url,
-              model: model,
             },
-            uploadType: 'url',
+            uploadType: 'urlImport',
             register: true,
           };
         } else {
@@ -210,6 +214,60 @@ const MeshModelComponent_ = ({
     await importModelReq({ importBody: requestBody });
     updateProgress({ showProgress: false });
   };
+
+  const handleGenerateModel = () => {
+    setGenerateModal({
+      open: true,
+    });
+  };
+  const handleGenerateModelClose = () => {
+    setGenerateModal({
+      open: false,
+    });
+  };
+
+  const handleGenerateModal = async (data) => {
+    const { uploadType, url, model, component_csv, model_csv, register } = data;
+    let requestBody = null;
+
+    switch (uploadType) {
+      case 'CSV Import': {
+        requestBody = {
+          importBody: {
+            model_csv: model_csv,
+            component_csv: component_csv,
+          },
+          uploadType: 'csv',
+          register: register,
+        };
+        break;
+      }
+      case 'URL Import': {
+        if (url) {
+          requestBody = {
+            importBody: {
+              url: url,
+              model: model,
+            },
+            uploadType: 'url',
+            register: register,
+          };
+        } else {
+          console.error('Error: URL is empty');
+          return;
+        }
+        break;
+      }
+      default: {
+        console.error('Error: Invalid upload type');
+        return;
+      }
+    }
+    updateProgress({ showProgress: true });
+    await importModelReq({ importBody: requestBody });
+    updateProgress({ showProgress: false });
+  };
+
   const [modelFilters, setModelsFilters] = useState({ page: 0 });
   const [registrantFilters, setRegistrantsFilters] = useState({ page: 0 });
   const [componentsFilters, setComponentsFilters] = useState({ page: 0 });
@@ -485,14 +543,42 @@ const MeshModelComponent_ = ({
     fetchData();
   }, []);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('/api/schema/resource/generate', {
+          method: 'GET',
+          credentials: 'include',
+        });
+        const result = await response.json();
+        setGenerateSchema(result);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   return (
     <div data-test="workloads">
-      <TabBar animate={animate} handleUploadImport={handleUploadImport} />
+      <TabBar
+        animate={animate}
+        handleUploadImport={handleUploadImport}
+        handleGenerateModel={handleGenerateModel}
+      />
       {importModal.open && (
         <ImportModal
           importFormSchema={importSchema}
           handleClose={handleUploadImportClose}
           handleImportModel={handleImportModel}
+        />
+      )}
+      {generateModal.open && (
+        <GenerateModal
+          generateFormSchema={generateSchema}
+          handleClose={handleGenerateModelClose}
+          handleGenerateModel={handleGenerateModal}
         />
       )}
       <div
@@ -606,26 +692,72 @@ const ImportModal = React.memo((props) => {
 
 ImportModal.displayName = 'ImportModal';
 
-const TabBar = ({ animate, handleUploadImport }) => {
+const GenerateModal = React.memo((props) => {
+  const { generateFormSchema, handleClose, handleGenerateModel } = props;
+
+  return (
+    <>
+      <UsesSistent>
+        <SistentModal open={true} closeModal={handleClose} maxWidth="sm" title="Generate Model">
+          <RJSFModalWrapper
+            schema={generateFormSchema.rjsfSchema}
+            uiSchema={{
+              ...generateFormSchema.uiSchema,
+            }}
+            handleSubmit={handleGenerateModel}
+            submitBtnText="Generate"
+            handleClose={handleClose}
+          />
+        </SistentModal>
+      </UsesSistent>
+    </>
+  );
+});
+
+GenerateModal.displayName = 'GenerateModal';
+
+const TabBar = ({ animate, handleUploadImport, handleGenerateModel }) => {
   const StyleClass = useStyles();
 
   return (
     <div
       className={`${StyleClass.meshModelToolbar} ${animate ? StyleClass.toolWrapperAnimate : ''}`}
     >
-      <Button
-        aria-label="Add Pattern"
-        variant="contained"
-        color="primary"
-        size="large"
-        onClick={handleUploadImport}
-        style={{ display: 'flex', visibility: `${animate ? 'visible' : 'hidden'}` }}
-        disabled={false} //TODO: Need to make key for this component
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          gap: '1rem', // Add some space between buttons
+          visibility: `${animate ? 'visible' : 'hidden'}`,
+        }}
       >
-        <UploadIcon />
-        Import
-      </Button>
+        <Button
+          aria-label="Add Pattern"
+          variant="contained"
+          color="primary"
+          size="large"
+          onClick={handleUploadImport}
+          style={{ display: 'flex', visibility: `${animate ? 'visible' : 'hidden'}` }}
+          disabled={false} //TODO: Need to make key for this component
+        >
+          <UploadIcon />
+          Import
+        </Button>
 
+        <Button
+          aria-label="Add Pattern"
+          variant="contained"
+          color="primary"
+          size="large"
+          onClick={handleGenerateModel}
+          style={{ display: 'flex', visibility: `${animate ? 'visible' : 'hidden'}` }}
+          disabled={false} //TODO: Need to make key for this component
+        >
+          <DriveFolderUploadIcon />
+          Generate
+        </Button>
+      </div>
       <DisableButton
         disabled
         variant="contained"

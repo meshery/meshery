@@ -29,7 +29,7 @@ const (
 	HelmChartOperatorName = "meshery-operator"
 	MesheryFolder         = ".meshery"
 	ManifestsFolder       = "manifests"
-	registryLocation      = ".meshery/models"
+	RegistryLocation      = ".meshery/models"
 	DefVersion            = "1.0.0"
 )
 
@@ -501,7 +501,7 @@ func ReplaceSVGData(model *model.ModelDefinition) error {
 	return nil
 }
 func CreateVersionedDirectoryForModelAndComp(version, modelName string) (string, string, error) {
-	modelLocation := filepath.Join(os.Getenv("HOME"), registryLocation)
+	modelLocation := filepath.Join(os.Getenv("HOME"), RegistryLocation)
 	modelDirPath := filepath.Join(modelLocation, modelName, version, DefVersion)
 	err := utils.CreateDirectory(modelDirPath)
 	if err != nil {

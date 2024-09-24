@@ -148,6 +148,7 @@ const (
 	ErrGetComponentDefinitionCode          = "meshery-server-1362"
 	ErrGetCapabilitiesCode                 = "meshery-server-1363"
 	ErrExportPatternInFormatCode           = "meshery-server-1364"
+	ErrFileTypeCode                        = "replace_me"
 )
 
 var (
@@ -600,7 +601,9 @@ func ErrBuildOCIImg(err error) error {
 func ErrSaveOCIArtifact(err error) error {
 	return errors.New(ErrSaveOCIArtifactCode, errors.Alert, []string{"Failed to persist OCI artifact"}, []string{err.Error()}, []string{"unable to read source directory", "source directory is corrupted", "unable to persist in requested location", "OCI img may be corrupted"}, []string{"check if the source directory is valid and has sufficient permissions", "check if the source directory is not corrupted", "check if sufficient permissions are available to write in requested location", "check if the OCI img is not corrupted"})
 }
-
+func ErrFileType(obj string) error {
+	return errors.New(ErrFileTypeCode, errors.Alert, []string{"Error: ", obj, " is not a valid file type"}, []string{fmt.Sprintf("file is not the expected type %splease verify the file type", obj)}, []string{"The provided file type is wrong"}, []string{"Verify the file type"})
+}
 func ErrIOReader(err error) error {
 	return errors.New(ErrIOReaderCode, errors.Alert, []string{"Failed to read from io.Reader"}, []string{err.Error()}, []string{"unable to read from io.Reader"}, []string{"check if the io.Reader is valid"})
 }
