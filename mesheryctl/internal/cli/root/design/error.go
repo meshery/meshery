@@ -67,7 +67,7 @@ func ErrPatternInvalidNameOrID(err error) error {
 		[]string{"Run `mesheryctl design view -a` to view all available designs."})
 }
 
-func ErrImportPattern(err error) error {
+func ErrImportDesign(err error) error {
 	return errors.New(ErrImportDesignCode, errors.Fatal,
 		[]string{"Unable to import design"},
 		[]string{err.Error()},
@@ -83,7 +83,7 @@ func ErrInValidSource(invalidSourceType string, validSourceTypes []string) error
 		[]string{"Ensure you pass a valid source type. \nAllowed source types: %s", strings.Join(validSourceTypes, ", ")})
 }
 
-func ErrPatternManifest() error {
+func ErrDesignManifest() error {
 	return errors.New(ErrDesignManifestCode, errors.Alert,
 		[]string{"No file path detected"},
 		[]string{"No manifest file path detected"},
@@ -91,7 +91,7 @@ func ErrPatternManifest() error {
 		[]string{"Provide the path to the design manifest. \n\n%v", errPatternMsg})
 }
 
-func ErrOnboardPattern() error {
+func ErrOnboardDesign() error {
 	return errors.New(ErrOnboardDesignCode, errors.Alert,
 		[]string{"Error Onboarding design"},
 		[]string{"Unable to onboard design due to empty path"},
@@ -99,7 +99,7 @@ func ErrOnboardPattern() error {
 		[]string{"Provide a file path/design name. \n\n%v", errOnboardMsg})
 }
 
-func ErrPatternSourceType() error {
+func ErrDesignSourceType() error {
 	return errors.New(ErrPatternSourceTypeCode, errors.Alert,
 		[]string{"Source type for the design to import not specified"},
 		[]string{"Empty  source type detected"},
