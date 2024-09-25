@@ -5,6 +5,7 @@
   "displayName": "Intel Device Plugins Operator",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://github.com/intel/helm-charts/releases/download/intel-device-plugins-operator-0.29.0/intel-device-plugins-operator-0.29.0.tgz", 
     "isAnnotation": false,
     "published": true,
     "subCategory": "Container Runtime",

@@ -62,7 +62,7 @@ const ObjectFieldTemplate = ({
   const rawErrors = getRawErrors(errorSchema);
 
   // If the parent type is an `array`, then expand the current object.
-  const [show, setShow] = React.useState(false);
+  const [show, setShow] = React.useState(uiSchema['ui:options']?.expand || false);
   properties.forEach((property, index) => {
     if (schema.properties[property.name].type) {
       properties[index].type = schema.properties[property.name].type;
@@ -165,7 +165,11 @@ const ObjectFieldTemplate = ({
       container={true}
       spacing={2}
       className={classes.objectFieldGrid}
-      style={Object.keys(properties).length === 0 || schema['$schema'] ? { border: 'none' } : null}
+      style={
+        Object.keys(properties).length === 0 || schema['$schema']
+          ? { border: 'none', ...(uiSchema['styles'] || {}) }
+          : uiSchema['styles']
+      }
     >
       {properties.map((element, index) => {
         return element.hidden ? (

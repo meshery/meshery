@@ -5,6 +5,7 @@
   "displayName": "JSpolicy",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://charts.loft.sh/charts/jspolicy-0.3.0-beta.4.tgz", 
     "isAnnotation": false,
     "published": false,
     "subCategory": "Uncategorized",

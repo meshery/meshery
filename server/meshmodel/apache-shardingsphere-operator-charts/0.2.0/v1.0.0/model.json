@@ -5,6 +5,7 @@
   "displayName": "Apache Shardingsphere Operator Charts",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://github.com/apache/shardingsphere-on-cloud/releases/download/0.3.0/apache-shardingsphere-operator-charts-0.3.0.tgz", 
     "isAnnotation": false,
     "published": true,
     "subCategory": "Database",

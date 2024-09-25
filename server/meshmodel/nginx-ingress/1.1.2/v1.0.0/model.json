@@ -5,6 +5,7 @@
   "displayName": "NGINX Ingress Controller",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://helm.nginx.com/stable/nginx-ingress-1.1.2.tgz", 
     "isAnnotation": false,
     "published": true,
     "subCategory": "Service Proxy",

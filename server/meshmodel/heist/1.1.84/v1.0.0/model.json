@@ -5,6 +5,7 @@
   "displayName": "Heist",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://github.com/youniqx/helm-charts/releases/download/heist-1.1.155/heist-1.1.155.tgz", 
     "isAnnotation": false,
     "published": false,
     "subCategory": "Uncategorized",

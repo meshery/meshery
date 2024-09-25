@@ -54,10 +54,14 @@ export const _ConnectionChip = ({ handlePing, onDelete, iconSrc, status, title, 
                 : theme.palette.secondary.penColorSecondary
             }
           >
-            <Avatar src={iconSrc} className={classes.icon} style={status ? {} : { opacity: 0.2 }} />
+            <Avatar src={iconSrc} className={classes.icon} style={status ? {} : { opacity: 0.2 }}>
+              <img className={classes.icon} src="/static/img/kubernetes.svg" />
+            </Avatar>
           </BadgeAvatars>
         ) : (
-          <Avatar src={iconSrc} className={classes.icon} />
+          <Avatar src={iconSrc} className={classes.icon}>
+            <img className={classes.icon} src="/static/img/kubernetes.svg" />
+          </Avatar>
         )
       }
       variant="filled"

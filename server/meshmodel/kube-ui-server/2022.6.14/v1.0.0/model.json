@@ -5,6 +5,7 @@
   "displayName": "Kubernetes UI Server",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://charts.appscode.com/stable/kube-ui-server/kube-ui-server-v2023.12.20.tgz", 
     "isAnnotation": false,
     "published": true,
     "subCategory": "Automation \u0026 Configuration",

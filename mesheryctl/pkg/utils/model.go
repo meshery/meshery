@@ -1,12 +1,16 @@
 package utils
 
 import (
-	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
+	"reflect"
 	"strconv"
 	"strings"
+
+	"github.com/layer5io/meshkit/encoding"
+	"github.com/layer5io/meshkit/generators"
+	"github.com/layer5io/meshkit/generators/models"
 
 	"github.com/layer5io/meshkit/models/meshmodel/entity"
 	"github.com/layer5io/meshkit/utils"
@@ -14,6 +18,7 @@ import (
 	"github.com/meshery/schemas/models/v1alpha1/capability"
 	"github.com/meshery/schemas/models/v1beta1"
 	"github.com/meshery/schemas/models/v1beta1/category"
+	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/connection"
 	"github.com/meshery/schemas/models/v1beta1/model"
 )
@@ -61,7 +66,7 @@ type ModelCSV struct {
 }
 
 var modelMetadataValues = []string{
-	"primaryColor", "secondaryColor", "svgColor", "svgWhite", "svgComplete", "styleOverrides", "styles", "shapePolygonPoints", "defaultData", "capabilities", "isAnnotation", "shape",
+	"primaryColor", "secondaryColor", "svgColor", "svgWhite", "svgComplete", "styleOverrides", "capabilities", "isAnnotation", "shape",
 }
 
 func (m *ModelCSV) UpdateModelDefinition(modelDef *model.ModelDefinition) error {
@@ -112,7 +117,7 @@ func (m *ModelCSV) UpdateModelDefinition(modelDef *model.ModelDefinition) error 
 		case "capabilities":
 			var capabilities []capability.Capability
 			if m.Capabilities != "" {
-				err := json.Unmarshal([]byte(m.Capabilities), &capabilities)
+				err := encoding.Unmarshal([]byte(m.Capabilities), &capabilities)
 				if err != nil {
 					return err
 				}
@@ -171,20 +176,31 @@ type ModelCSVHelper struct {
 	Models         []ModelCSV
 }
 
-func NewModelCSVHelper(sheetURL, spreadsheetName string, spreadsheetID int64) (*ModelCSVHelper, error) {
-	sheetURL = sheetURL + "/pub?output=csv" + "&gid=" + strconv.FormatInt(spreadsheetID, 10)
-	Log.Info("Downloading CSV from: ", sheetURL)
-	dirPath := filepath.Join(utils.GetHome(), ".meshery", "content")
-	err := os.MkdirAll(dirPath, 0755)
-	if err != nil {
-		return nil, utils.ErrCreateDir(err, dirPath)
-	}
-	csvPath := filepath.Join(dirPath, "models.csv")
-	err = utils.DownloadFile(csvPath, sheetURL)
-	if err != nil {
-		return nil, utils.ErrReadingRemoteFile(err)
+func NewModelCSVHelper(sheetURL, spreadsheetName string, spreadsheetID int64, localCsvPath string) (*ModelCSVHelper, error) {
+	var csvPath string
+	// Download the CSV file from the spreadsheet URL
+	if localCsvPath == "" {
+		// Set the directory path for storing the downloaded CSV
+		dirPath := filepath.Join(utils.GetHome(), ".meshery", "content")
+		err := os.MkdirAll(dirPath, 0755)
+		if err != nil {
+			return nil, utils.ErrCreateDir(err, dirPath)
+		}
+
+		// Set the CSV file path
+		csvPath = filepath.Join(dirPath, "models.csv")
+		sheetURL = sheetURL + "/pub?output=csv" + "&gid=" + strconv.FormatInt(spreadsheetID, 10)
+		Log.Info("Downloading CSV from: ", sheetURL, csvPath)
+		err = utils.DownloadFile(csvPath, sheetURL)
+		if err != nil {
+			return nil, utils.ErrReadingRemoteFile(err)
+		}
+
+	} else {
+		csvPath = localCsvPath
 	}
 
+	// Return the initialized ModelCSVHelper with the appropriate CSV path
 	return &ModelCSVHelper{
 		SpreadsheetID:  spreadsheetID,
 		SpreadsheetURL: sheetURL,
@@ -316,8 +332,8 @@ published: %s
 		m.Feature1,
 		m.Feature2,
 		m.Feature3,
-		`../_images/meshmap-visualizer.png`,
-		`../_images/meshmap-designer.png`,
+		`../_images/kanvas-visualizer.png`,
+		`../_images/kanvas-designer.png`,
 		m.HowItWorks,
 		m.HowItWorksDetails,
 		m.PublishToSites,
@@ -429,4 +445,132 @@ func (m ModelCSVHelper) Cleanup() error {
 	}
 
 	return nil
+}
+func AssignDefaultsForCompDefs(componentDef *component.ComponentDefinition, modelDef *model.ModelDefinition) {
+	// Assign the status from the model to the component
+	compStatus := component.ComponentDefinitionStatus(modelDef.Status)
+	componentDef.Status = &compStatus
+
+	// Initialize AdditionalProperties and Styles if nil
+	if componentDef.Metadata.AdditionalProperties == nil {
+		componentDef.Metadata.AdditionalProperties = make(map[string]interface{})
+	}
+	if componentDef.Styles == nil {
+		componentDef.Styles = &component.Styles{}
+	}
+
+	// Use reflection to map model metadata to component styles
+	stylesValue := reflect.ValueOf(componentDef.Styles).Elem()
+
+	// Iterate through modelDef.Metadata
+	if modelDef.Metadata != nil {
+		if modelDef.Metadata.AdditionalProperties["styleOverrides"] != nil {
+			styleOverrides, ok := modelDef.Metadata.AdditionalProperties["styleOverrides"].(string)
+			if ok {
+				err := encoding.Unmarshal([]byte(styleOverrides), &componentDef.Styles)
+				if err != nil {
+					LogError.Error(err)
+				}
+			}
+		}
+		if (modelDef.Metadata.Capabilities) != nil {
+			componentDef.Capabilities = modelDef.Metadata.Capabilities
+		}
+		if modelDef.Metadata.PrimaryColor != nil {
+			componentDef.Styles.PrimaryColor = *modelDef.Metadata.PrimaryColor
+		}
+		if modelDef.Metadata.SecondaryColor != nil {
+			componentDef.Styles.SecondaryColor = modelDef.Metadata.SecondaryColor
+		}
+		if modelDef.Metadata.SvgColor != "" {
+			componentDef.Styles.SvgColor = modelDef.Metadata.SvgColor
+		}
+		if modelDef.Metadata.SvgComplete != nil {
+			componentDef.Styles.SvgComplete = *modelDef.Metadata.SvgComplete
+		}
+		if modelDef.Metadata.SvgWhite != "" {
+			componentDef.Styles.SvgWhite = modelDef.Metadata.SvgWhite
+		}
+
+		// Iterate through AdditionalProperties and assign appropriately
+		for k, v := range modelDef.Metadata.AdditionalProperties {
+			if k == "styleOverrides" {
+				continue
+			}
+			// Check if the field exists in Styles
+			if field := stylesValue.FieldByNameFunc(func(name string) bool {
+				return strings.EqualFold(k, name)
+			}); field.IsValid() && field.CanSet() {
+				switch field.Kind() {
+				case reflect.Ptr:
+					ptrType := field.Type().Elem()
+					val := reflect.New(ptrType).Elem()
+
+					if val.Kind() == reflect.String {
+						val.SetString(v.(string))
+					} else if val.Kind() == reflect.Float32 {
+						val.SetFloat(v.(float64))
+					} else if val.Kind() == reflect.Int {
+						val.SetInt(int64(v.(int)))
+					} else {
+						val.Set(reflect.ValueOf(v))
+					}
+
+					field.Set(val.Addr())
+				case reflect.String:
+					field.SetString(v.(string))
+				case reflect.Float32:
+					field.SetFloat(v.(float64))
+				case reflect.Int:
+					field.SetInt(int64(v.(int)))
+				default:
+					field.Set(reflect.ValueOf(v))
+				}
+			} else {
+				componentDef.Metadata.AdditionalProperties[k] = v
+			}
+		}
+	}
+}
+func GenerateComponentsFromPkg(pkg models.Package, compDirPath string, defVersion string, modelDef model.ModelDefinition) (int, int, error) {
+	comps, err := pkg.GenerateComponents()
+	if err != nil {
+		return 0, 0, err
+	}
+	lengthOfComps := len(comps)
+	for _, comp := range comps {
+		comp.Version = defVersion
+		if modelDef.Metadata == nil {
+			modelDef.Metadata = &model.ModelDefinition_Metadata{}
+		}
+		if modelDef.Metadata.AdditionalProperties == nil {
+			modelDef.Metadata.AdditionalProperties = make(map[string]interface{})
+		}
+		if comp.Model.Metadata.AdditionalProperties != nil {
+			modelDef.Metadata.AdditionalProperties["source_uri"] = comp.Model.Metadata.AdditionalProperties["source_uri"]
+		}
+		comp.Model = modelDef
+
+		AssignDefaultsForCompDefs(&comp, &modelDef)
+		alreadyExists, err := comp.WriteComponentDefinition(compDirPath, "json")
+		if err != nil {
+			return 0, 0, err
+		}
+		if alreadyExists {
+			lengthOfComps--
+		}
+	}
+	return len(comps), lengthOfComps, nil
+}
+func GenerateModels(registrant string, sourceURl string, modelName string) (models.Package, string, error) {
+	generator, err := generators.NewGenerator(registrant, sourceURl, modelName)
+	if err != nil {
+		return nil, "", err
+	}
+	pkg, err := generator.GetPackage()
+	if err != nil {
+		return nil, "", err
+	}
+	version := pkg.GetVersion()
+	return pkg, version, nil
 }

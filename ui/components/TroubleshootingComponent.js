@@ -1,8 +1,8 @@
 import * as React from 'react';
 import Button from '@material-ui/core/Button';
 import TroubleshootingModal from './TroubleshootingModalComponent';
-import Modal, { RJSFModalWrapper } from './Modal';
-import { helpAndSupportModalSchema, helpAndSupportModalUiSchema } from '@layer5/sistent';
+import { RJSFModalWrapper } from './Modal';
+import { Modal, helpAndSupportModalSchema, helpAndSupportModalUiSchema } from '@layer5/sistent';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { useGetLoggedInUserQuery } from '@/rtk-query/user';
 import SupportIcon from '@/assets/icons/support';

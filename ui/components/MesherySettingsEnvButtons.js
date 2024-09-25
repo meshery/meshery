@@ -22,6 +22,7 @@ import { CONNECTION_STATES } from '../utils/Enum';
 import { TootltipWrappedConnectionChip, ConnectionStateChip } from './connections/ConnectionChip';
 import useKubernetesHook from './hooks/useKubernetesHook';
 import { keys } from '@/utils/permission_constants';
+import useTestIDsGenerator from './hooks/useTestIDs';
 import CAN from '@/utils/can';
 
 const styles = makeStyles((theme) => ({
@@ -47,6 +48,8 @@ const MesherySettingsEnvButtons = () => {
   const { notify } = useNotification();
 
   let contextsRef = useRef();
+
+  const testIDs = useTestIDsGenerator('connection');
 
   const handleConfigSnackbars = (ctxs) => {
     updateProgress({ showProgress: false });
@@ -111,6 +114,7 @@ const MesherySettingsEnvButtons = () => {
             connectedContexts={connectedContexts}
             ignoredContexts={ignoredContexts}
             allContextsRef={contextsRef}
+            dataTestid={testIDs('discoveredModal')}
           />
         </>
       ),
@@ -124,7 +128,7 @@ const MesherySettingsEnvButtons = () => {
       title: 'Add Kubernetes Cluster(s)',
       subtitle: (
         <>
-          <div style={{ overflow: 'hidden' }}>
+          <div style={{ overflow: 'hidden' }} data-testid={testIDs('addKubernetesModal')}>
             <Typography variant="h6">Upload your kubeconfig</Typography>
             <Typography variant="body2">commonly found at ~/.kube/config</Typography>
             <FormGroup>
@@ -135,7 +139,6 @@ const MesherySettingsEnvButtons = () => {
                 onChange={handleChange}
                 style={{ display: 'none' }}
               />
-
               <TextField
                 id="k8sfileLabelText"
                 name="k8sfileLabelText"
@@ -146,6 +149,7 @@ const MesherySettingsEnvButtons = () => {
                 onClick={() => {
                   document.querySelector('#k8sfile')?.click();
                 }}
+                data-testid={testIDs('uploadKubeConfig')}
                 margin="normal"
                 InputProps={{
                   readOnly: true,
@@ -214,6 +218,7 @@ const MesherySettingsEnvButtons = () => {
             paddingLeft: '4px',
             marginRight: '4px',
           }}
+          data-testid={testIDs('addCluster')}
         >
           {' '}
           Add Cluster
@@ -224,7 +229,12 @@ const MesherySettingsEnvButtons = () => {
   );
 };
 
-const ShowDiscoveredContexts = ({ registeredContexts, connectedContexts, ignoredContexts }) => {
+const ShowDiscoveredContexts = ({
+  registeredContexts,
+  connectedContexts,
+  ignoredContexts,
+  dataTestid,
+}) => {
   const ping = useKubernetesHook();
 
   return (
@@ -235,6 +245,7 @@ const ShowDiscoveredContexts = ({ registeredContexts, connectedContexts, ignored
       spacing={2}
       columns={1}
       xs={16}
+      data-testid={dataTestid}
     >
       {registeredContexts.length > 0 && (
         <K8sConnectionItems

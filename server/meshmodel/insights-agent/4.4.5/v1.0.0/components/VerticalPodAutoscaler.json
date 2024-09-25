@@ -134,13 +134,10 @@
   "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
-   "defaultData": "",
    "genealogy": "",
    "isAnnotation": false,
-   "published": false,
-   "shapePolygonPoints": "",
-   "styleOverrides": "",
-   "styles": ""
+   "isNamespaced": true,
+   "published": false
   },
   "model": {
    "category": {
@@ -155,6 +152,7 @@
     "secondaryColor": "#00D3A9",
     "shape": "circle",
     "shapePolygonPoints": "",
+    "source_uri": "https://charts.fairwinds.com/stable/insights-agent-4.4.5.tgz",
     "styleOverrides": "",
     "styles": "",
     "svgColor": "",

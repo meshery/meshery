@@ -5,6 +5,7 @@
   "displayName": "Capsule Proxy",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://projectcapsule.github.io/charts/capsule-proxy-0.5.3.tgz", 
     "isAnnotation": false,
     "published": true,
     "subCategory": "Uncategorized",

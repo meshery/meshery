@@ -5,6 +5,7 @@
   "displayName": "Gpu Operator",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://nvidia.github.io/gpu-operator/stable/gpu-operator-v23.9.1.tgz", 
     "isAnnotation": false,
     "published": false,
     "subCategory": "Uncategorized",

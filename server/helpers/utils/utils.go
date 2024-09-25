@@ -14,9 +14,10 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/layer5io/meshkit/encoding"
 	"github.com/layer5io/meshkit/utils"
 	"github.com/meshery/schemas/models/v1beta1/component"
-
+	"github.com/meshery/schemas/models/v1beta1/model"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 	"gorm.io/gorm"
@@ -28,6 +29,8 @@ const (
 	HelmChartOperatorName = "meshery-operator"
 	MesheryFolder         = ".meshery"
 	ManifestsFolder       = "manifests"
+	registryLocation      = ".meshery/models"
+	DefVersion            = "1.0.0"
 )
 
 // RecursiveCastMapStringInterfaceToMapStringInterface will convert a
@@ -120,7 +123,7 @@ func ToMapStringInterface(mp interface{}) map[string]interface{} {
 	return res
 }
 
-func IsClosed(ch chan struct{}) bool {
+func IsClosed[K any](ch chan K) bool {
 	if ch == nil {
 		return true
 	}
@@ -362,7 +365,7 @@ func MarshalAndUnmarshal[k any, v any](val k) (unmarshalledvalue v, err error) {
 		return
 	}
 
-	err = utils.Unmarshal(data, &unmarshalledvalue)
+	err = encoding.Unmarshal([]byte(data), &unmarshalledvalue)
 	if err != nil {
 		return
 	}
@@ -419,10 +422,93 @@ func FormatToTitleCase(s string) string {
 	return c.String(s)
 }
 func ExtractFile(filePath string, destDir string) error {
+
 	if utils.IsTarGz(filePath) {
 		return utils.ExtractTarGz(destDir, filePath)
 	} else if utils.IsZip(filePath) {
 		return utils.ExtractZip(destDir, filePath)
 	}
 	return utils.ErrExtractType
+}
+func ConvertToJSONCompatible(data interface{}) interface{} {
+	switch v := data.(type) {
+	case map[interface{}]interface{}:
+		m := make(map[string]interface{})
+		for key, value := range v {
+			m[key.(string)] = ConvertToJSONCompatible(value)
+		}
+		return m
+	case []interface{}:
+		for i, item := range v {
+			v[i] = ConvertToJSONCompatible(item)
+		}
+	}
+	return data
+}
+func ReplaceSVGData(model *model.ModelDefinition) error {
+	// Function to read SVG data from file
+	readSVGData := func(path string) (string, error) {
+		path = "../../" + path
+		svgData, err := os.ReadFile(path)
+		if err != nil {
+			return "", err
+		}
+		return string(svgData), nil
+	}
+
+	// Replace SVG paths with actual data in metadata
+	metadata := model.Metadata
+	if metadata.SvgColor != "" {
+		svgData, err := readSVGData(metadata.SvgColor)
+		if err == nil {
+			metadata.SvgColor = svgData
+		} else {
+			return err
+		}
+	}
+	if metadata.SvgWhite != "" {
+		svgData, err := readSVGData(metadata.SvgWhite)
+		if err == nil {
+			metadata.SvgWhite = svgData
+		} else {
+			return err
+		}
+	}
+	components, ok := model.Components.([]component.ComponentDefinition)
+	if !ok {
+		return fmt.Errorf("invalid type for Components field")
+	}
+	// Replace SVG paths with actual data in components
+	for i := range components {
+		compStyle := components[i].Styles
+		if compStyle != nil {
+			svgColor, err := readSVGData(compStyle.SvgColor)
+			if err == nil {
+				compStyle.SvgColor = svgColor
+			} else {
+				return err
+			}
+			svgWhite, err := readSVGData(compStyle.SvgWhite)
+			if err == nil {
+				compStyle.SvgWhite = svgWhite
+			} else {
+				return err
+			}
+		}
+		components[i].Styles = compStyle
+	}
+	model.Components = components
+	return nil
+}
+func CreateVersionedDirectoryForModelAndComp(version, modelName string) (string, string, error) {
+	modelLocation := filepath.Join(os.Getenv("HOME"), registryLocation)
+	modelDirPath := filepath.Join(modelLocation, modelName, version, DefVersion)
+	err := utils.CreateDirectory(modelDirPath)
+	if err != nil {
+		return "", "", err
+	}
+
+	compDirPath := filepath.Join(modelDirPath, "components")
+	err = utils.CreateDirectory(compDirPath)
+	return modelDirPath, compDirPath, err
 }

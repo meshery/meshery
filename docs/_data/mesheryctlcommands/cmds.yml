@@ -911,16 +911,17 @@ model:
       description: Import models using a file or filepath directly to the meshery registry
       usage: mesheryctl model import [ file | filepath ]
       examples:
-         - import model /path/to/[file.yaml|file.json]
-         - import model /path/to/models
+         - mesheryctl import model /path/to/[file.yaml|file.json]
+         - mesheryctl import model /path/to/models
     export:
       name: export
       description: Export a model by name to the given output type (default is oci).
-      usage: mesheryctl model export [ model-name ]
+      usage: mesheryctl model export [model-name]
       examples:
-         - model export [model-name] -l /home/meshery
-         - model export [model-name] --discard-components
-         - model export [model-name] -o yaml
+         - mesheryctl model export [model-name] -l /home/meshery
+         - mesheryctl model export [model-name] --discard-components
+         - mesheryctl model export [model-name] -o yaml
+         - mesheryctl model export [model-name] --version v0.7.3
 
 components:
   name: components

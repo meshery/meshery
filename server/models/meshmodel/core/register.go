@@ -72,9 +72,12 @@ func RegisterK8sMeshModelComponents(provider *models.Provider, _ context.Context
 		var isRegistranError bool
 		var isModelError bool
 		writeK8sMetadata(&c, reg)
+		if models.K8sMeshModelMetadata.Capabilities != nil {
+			c.Capabilities = models.K8sMeshModelMetadata.Capabilities
+		}
 		isRegistranError, isModelError, err = reg.RegisterEntity(connection.Connection{
-			Kind: "kubernetes",
-			Type: "registry",
+			Kind:     "kubernetes",
+			Type:     "registry",
 			Metadata: k8sContext,
 		}, &c)
 		helpers.HandleError(connection.Connection{
@@ -106,12 +109,12 @@ func writeK8sMetadata(comp *component.ComponentDefinition, reg *registry.Registr
 	})
 	// If component was not available in the registry, then use the generic model level metadata
 	if len(ent) == 0 {
-		comp.Styles = &models.K8sMeshModelMetadata
+		comp.Styles = &models.K8sMeshModelMetadata.Styles
 		mesheryutils.WriteSVGsOnFileSystem(comp)
 	} else {
 		existingComp, ok := ent[0].(*component.ComponentDefinition)
 		if !ok {
-			comp.Styles = &models.K8sMeshModelMetadata
+			comp.Styles = &models.K8sMeshModelMetadata.Styles
 			return
 		}
 		comp.Metadata = existingComp.Metadata

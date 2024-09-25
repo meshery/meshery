@@ -2,7 +2,8 @@ package relationship_evaluation_policy
 
 import rego.v1
 
-# performs the evaluation to mutate the declaration according to the selectors defined inside the relationship definition.
+# performs the evaluation to mutate the declaration according to the
+# selectors defined inside the relationship definition.
 perform_eval(
 	design_file,
 	relationship,

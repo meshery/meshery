@@ -37,6 +37,9 @@ export const NodeTableConfig = (
         label: 'ID',
         options: {
           display: false,
+          customHeadRender: function CustomHead({ ...column }) {
+            return <DefaultTableCell columnData={column} />;
+          },
           customBodyRender: (value) => <FormatId id={value} />,
         },
       },

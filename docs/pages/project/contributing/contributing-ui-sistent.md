@@ -32,7 +32,7 @@ Sistent leverages Material UI libraries and provides a custom theme on top of it
 **Table of Contents**
 
 - [Usage](#usage)
-- [How to use Sistent tokens/theme colors](#How to use `Tokens/Colors` from Sistent theme)
+- [How to use Sistent tokens/theme colors](#how-to-use-tokenscolors-from-sistent-theme)
 - [Examples](#examples)
 
 The Sistent design system includes a variety of base components such as `Button`, `Textfield`, `Checkbox`, and more, which can be found [here](https://github.com/layer5io/sistent/tree/master/src/base)
@@ -43,13 +43,13 @@ The Sistent design system includes a variety of base components such as `Button`
 - **Import any base or custom component from `@layer5/sistent`**. Here's how you can do it:
 
 ```javascript
-import {Button} from `@layer/sistent`
+import {Button} from `@layer5/sistent`
 
 function MyComponent() {
     return (
     <div>
       <Button
-        variant="filled"
+        variant="contained"
         onClick={onClick}
       >
       {/* Text to display */}
@@ -73,7 +73,7 @@ function MyComponent() {
     <div>
     <UsesSistent>
       <Button
-        variant="filled"
+        variant="contained"
         onClick={onClick}
       >
       {/* Text to display */}
@@ -109,7 +109,7 @@ Roles specify the context for applying colors. Different roles can share the sam
 
 ```javascript
 import { UsesSistent } from '<path>/SistentWrapper';
-import {Button, useTheme} from `@layer/sistent`
+import {Button, useTheme} from `@layer5/sistent`
 
 function MyComponent() {
  const theme = useTheme()
@@ -118,7 +118,7 @@ function MyComponent() {
     <UsesSistent>
     {% raw %}
       <Button
-        variant="filled"
+        variant="contained"
         onClick={onClick}
         style = {{
             background: theme.palette.background.default,

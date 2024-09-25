@@ -5,6 +5,7 @@
   "displayName": "Cluster Registry",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://cisco-open.github.io/cluster-registry-controller/cluster-registry-0.2.12.tgz", 
     "isAnnotation": false,
     "published": false,
     "subCategory": "Uncategorized",

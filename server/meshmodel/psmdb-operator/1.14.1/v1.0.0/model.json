@@ -5,6 +5,7 @@
   "displayName": "Percona Operator for MongoDB",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://github.com/percona/percona-helm-charts/releases/download/psmdb-operator-1.15.0/psmdb-operator-1.15.0.tgz", 
     "isAnnotation": false,
     "published": true,
     "subCategory": "App Definition and Development",

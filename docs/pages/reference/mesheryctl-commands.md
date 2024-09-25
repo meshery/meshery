@@ -27,8 +27,8 @@ Meshery CLI commands are categorized by function, which are:
 - `mesheryctl registry` - Model Database: Manage the state and contents of Meshery's internal registry of capabilities.
 - `mesheryctl exp` - Experimental features
 
-## Global Commands and Flags
 
+## Global Commands and Flags
 <table>
 <thead>
   <tr>
@@ -81,7 +81,6 @@ Meshery CLI commands are categorized by function, which are:
 ## Meshery Lifecycle Management and Troubleshooting
 
 Installation, troubleshooting and debugging of Meshery and its adapters
-
 <table>
 <thead>
   <tr>
@@ -392,9 +391,9 @@ Installation, troubleshooting and debugging of Meshery and its adapters
 </thead>
 </table>
 
-## Cloud Native Performance Management
 
-<table>
+## Cloud Native Performance Management
+<table class="table-wrapper">
 <thead>
   <tr>
     <th>Main Command</th>
@@ -456,7 +455,6 @@ Installation, troubleshooting and debugging of Meshery and its adapters
 </table>
 
 ## Cloud Native Lifecycle and Configuration Management
-
 <table>
 <thead>
   <tr>
@@ -611,7 +609,6 @@ Installation, troubleshooting and debugging of Meshery and its adapters
 </table>
  
 ## Data Plane Intelligence
-
 <table>
 <thead>
   <tr>
@@ -741,7 +738,6 @@ Installation, troubleshooting and debugging of Meshery and its adapters
 </table>
 
 ## Meshery Models
-
 <table>
 <thead>
   <tr>
@@ -781,7 +777,6 @@ Installation, troubleshooting and debugging of Meshery and its adapters
 </table>
 
 ## Meshery Components
-
 <table>
 <thead>
   <tr>
@@ -821,7 +816,6 @@ Installation, troubleshooting and debugging of Meshery and its adapters
 </table>
 
 ## Experimental Features(exp)
-
 <table>
 <thead>
   <tr>
@@ -870,3 +864,4 @@ Installation, troubleshooting and debugging of Meshery and its adapters
 </table>
 
 {% include related-discussions.html tag="mesheryctl" %}
+

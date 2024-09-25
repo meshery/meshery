@@ -5,6 +5,7 @@
   "displayName": "Antrea",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://github.com/antrea-io/antrea/releases/download/v1.14.1/antrea-chart.tgz", 
     "isAnnotation": false,
     "published": true,
     "subCategory": "Cloud Native Network",
