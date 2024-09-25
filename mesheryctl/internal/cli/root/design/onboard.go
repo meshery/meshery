@@ -58,7 +58,7 @@ mesheryctl design onboard -f ./pattern.yml -s "Kubernetes Manifest"
 	Args: func(_ *cobra.Command, args []string) error {
 
 		if file == "" && len(args) == 0 {
-			return ErrOnboardPattern()
+			return ErrOnboardDesign()
 		}
 		return nil
 	},

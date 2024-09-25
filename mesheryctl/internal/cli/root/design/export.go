@@ -132,7 +132,7 @@ func fetchPatternIDByName(baseUrl, patternName string) (string, error) {
 	}
 
 	if response.TotalCount == 0 {
-		return "", ErrPatternFound()
+		return "", ErrDesignNotFound()
 	} else if response.TotalCount == 1 {
 		return response.Patterns[0].ID.String(), nil
 	}

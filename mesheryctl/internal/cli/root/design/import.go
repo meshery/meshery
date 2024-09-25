@@ -52,12 +52,12 @@ mesheryctl design import -f [file/URL] -s [source-type] -n [name]
 	Args: func(_ *cobra.Command, args []string) error {
 		if file == "" {
 			utils.Log.Debug("manifest path not provided")
-			return ErrPatternManifest()
+			return ErrDesignManifest()
 		}
 
 		if sourceType == "" {
 			utils.Log.Debug("source-type not provided")
-			return ErrPatternSourceType()
+			return ErrDesignSourceType()
 		}
 
 		return nil

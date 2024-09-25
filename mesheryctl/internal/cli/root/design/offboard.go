@@ -44,7 +44,7 @@ mesheryctl design offboard -f [filepath]
 	Args: func(cmd *cobra.Command, args []string) error {
 		if cmd.Flags().Changed("file") && file == "" {
 			errMsg := `Usage: mesheryctl design offboard -f [filepath]`
-			return ErrOffboardPattern(errors.New(errMsg))
+			return ErrOffboardDesign(errors.New(errMsg))
 		}
 		return nil
 	},

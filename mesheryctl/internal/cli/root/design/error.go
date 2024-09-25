@@ -107,15 +107,6 @@ func ErrDesignSourceType() error {
 		[]string{"Provide one of the supported source type for the design to import. \n\n%v", errPatternMsg})
 }
 
-func ErrDesignNotFound() error {
-	return errors.New(ErrDesignFoundCode, errors.Alert,
-		[]string{"design not found"},
-		[]string{"No design found with a given name"},
-		[]string{"design name not provided"},
-		[]string{"Provide an design name. Use `mesheryctl design list`to display list of designs"},
-	)
-}
-
 func ErrViewDesignFlag() error {
 	return errors.New(ErrDesignFlagCode, errors.Alert,
 		[]string{"Invalid command"},
