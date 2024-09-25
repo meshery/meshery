@@ -1197,12 +1197,22 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 				log.Info("seeding sample ", comp, "s")
 				switch comp {
 				case "Pattern":
-					for i, name := range names {
+					for i := range names {
 						id, _ := uuid.NewV4()
-
+				
+						// Get the pattern content for the current name
+						content := content[i] // Assuming content is defined elsewhere
+				
+						// Get the pattern name from the content
+						patternName, err := GetPatternName(string(content))
+						if err != nil {
+							log.Error( err)
+							continue // Skip if there's an error
+						}
+				
 						var pattern = &MesheryPattern{
-							PatternFile: content[i],
-							Name:        name,
+							PatternFile: content,
+							Name:        patternName, // Set the name without the extension
 							ID:          &id,
 							UserID:      &nilUserID,
 							Visibility:  Published,
@@ -1213,13 +1223,14 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 								"branch": "",
 							},
 						}
-						log.Debug("seeding "+comp+": ", name)
-						_, err := l.MesheryPatternPersister.SaveMesheryPattern(pattern)
+						log.Debug("seeding "+comp+": ", patternName)
+						_, err = l.MesheryPatternPersister.SaveMesheryPattern(pattern)
 						if err != nil {
 							log.Error(ErrGettingSeededComponents(err, comp+"s"))
 						}
 						*seededUUIDs = append(*seededUUIDs, id)
 					}
+				
 				case "Filter":
 					for i, name := range names {
 						id, _ := uuid.NewV4()
