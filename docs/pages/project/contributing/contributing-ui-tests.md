@@ -18,8 +18,8 @@ Before diving into Meshery's testing environment, certain prerequisites are nece
 - A verified account in your choosen provider which integrate with Meshery.
 - A compatible browser such as Chromium, Chrome, or Firefox.
 - Installations of Golang, NodeJS, and Makefiles for Native OS build (Optional for docker based build).
-- Kubernetes clusters (Required for several test cases)
-- Already have [Meshery Adapters](https://docs.meshery.io/concepts/architecture/adapters) up and running (Required for several test cases)
+- Kubernetes clusters (Required for connection to kubernetets test cases)
+- Already have [Meshery Adapters](https://docs.meshery.io/concepts/architecture/adapters) up and running (Required for adapters test cases)
 
 ## Setting up environment variable
 
@@ -40,26 +40,18 @@ There are a few ways to set up the Meshery UI and server, but for end-to-end tes
 
 {% include alert.html type="warning" content="Some test cases required you to have kubernetes cluster and build meshery adapter as well, be aware of that. Which is out of scope for this documentation" %}
 
-### Native OS
+### Meshery CLI (Recommended)
+
+There is also Meshery CLI which can help you run the UI and Server, for more detail, you go to [Meshery CLI documentation](https://docs.meshery.io/project/contributing/contributing-cli-guide#process)
+
+### Native OS (Recommended)
 
 This approach is very quick to build, but also dependent on your operating system, so you need to have all dependencies necessary to be able compile and running the server.
 
 - Install & Build the NextJS static site generator application for both the UI and UI Provider
 
 ```bash
-make ui-build
-```
-
-- Compile golang server
-
-```bash
-make build-server
-```
-
-- Run the server locally on port 8080
-
-```bash
-make server-binary
+make ui-build; make ui-server
 ```
 
 ### Docker Based
@@ -78,15 +70,11 @@ make docker-testing-env-build
 make docker-testing-env
 ```
 
-### Meshery CLI
-
-There is also Meshery CLI which can help you run the UI and Server, for more detail, you go to [Meshery CLI documentation](https://docs.meshery.io/project/contributing/contributing-cli-guide#process)
-
 ## Setup playwright & Run the test cases
 
 For playwrights always try to use a Native OS as possible, the docker based approach is for unsupported OS only and always not recommended because it runs on top of Ubuntu images, which is very washed if you were already running Ubuntu or Windows.
 
-### Native OS
+### Native OS (Recommended)
 
 Setup playwright:
 
@@ -124,8 +112,12 @@ docker run --rm --network host --init -it mcr.microsoft.com/playwright:v1.44.0-j
 
 {% include alert.html type="warning" content="Keep in mind this is just for development purposes inside your local system and don’t try to expose your container network to the host system using --network host on production or CI" %}
 
-In the last step, run this command to run the test cases:
+In the last step go to ui folder, 
+```bash
+cd ui;
+```
 
+And run this command for running the test cases:
 ```bash
 PW_TEST_CONNECT_WS_ENDPOINT=ws://localhost:8080/ npx playwright test
 ```
