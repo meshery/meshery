@@ -107,7 +107,7 @@ func ErrDesignSourceType() error {
 		[]string{"Provide one of the supported source type for the design to import. \n\n%v", errPatternMsg})
 }
 
-func ErrPatternFound() error {
+func ErrDesignNotFound() error {
 	return errors.New(ErrDesignFoundCode, errors.Alert,
 		[]string{"design not found"},
 		[]string{"No design found with a given name"},
@@ -116,7 +116,7 @@ func ErrPatternFound() error {
 	)
 }
 
-func ErrViewPatternFlag() error {
+func ErrViewDesignFlag() error {
 	return errors.New(ErrDesignFlagCode, errors.Alert,
 		[]string{"Invalid command"},
 		[]string{"Wrong use of command flags"},
@@ -124,7 +124,7 @@ func ErrViewPatternFlag() error {
 		[]string{"-a/-all cannot be used when [design name|id] is specified"})
 }
 
-func ErrOffboardPattern(err error) error {
+func ErrOffboardDesign(err error) error {
 	return errors.New(ErrOffboardDesignCode, errors.Alert,
 		[]string{"Error Offboarding design"},
 		[]string{"Unable to offboard design due to empty path"},
