@@ -110,7 +110,7 @@ mesheryctl registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwiz
 		for _, v := range resp.Sheets {
 			switch v.Properties.Title {
 			case "Models":
-				modelCSVHelper, err = utils.NewModelCSVHelper(GoogleSpreadSheetURL, v.Properties.Title, v.Properties.SheetId)
+				modelCSVHelper, err = utils.NewModelCSVHelper(GoogleSpreadSheetURL, v.Properties.Title, v.Properties.SheetId, modelCSVFilePath)
 				if err != nil {
 					utils.Log.Error(err)
 					return nil
@@ -121,7 +121,7 @@ mesheryctl registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwiz
 					return nil
 				}
 			case "Components":
-				componentCSVHelper, err = utils.NewComponentCSVHelper(GoogleSpreadSheetURL, v.Properties.Title, v.Properties.SheetId)
+				componentCSVHelper, err = utils.NewComponentCSVHelper(GoogleSpreadSheetURL, v.Properties.Title, v.Properties.SheetId, componentCSVFilePath)
 				if err != nil {
 					utils.Log.Error(err)
 					return nil

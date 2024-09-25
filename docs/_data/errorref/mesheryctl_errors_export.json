@@ -3278,6 +3278,15 @@
         "short_description": "",
         "probable_cause": "",
         "suggested_remediation": "Export design in one of the supported format."
+      },
+      "1365": {
+        "name": "ErrNoTarInsideOCiCode",
+        "code": "1365",
+        "severity": "Alert",
+        "long_description": "Unable to locate the compressed file(.tar.gz) inside the OCI image.",
+        "short_description": "No tar file found inside OCI image",
+        "probable_cause": "The OCI image does not contain a ziped file.",
+        "suggested_remediation": "Verify that the OCI image contains a ziped file."
       }
     }
   }

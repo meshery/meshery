@@ -716,7 +716,7 @@ func unCompressOCIArtifactIntoDesign(artifact []byte) (*models.MesheryPattern, e
 	// TODO: Add support to merge multiple designs into one
 	// Currently, assumes to save only the first design
 	if len(files) == 0 {
-		return nil, ErrEmptyOCIImage(fmt.Errorf("No design file detected in the imported OCI image"))
+		return nil, ErrEmptyOCIImage(fmt.Errorf("no design file detected in the imported OCI image"))
 	}
 	design := files[0]
 

@@ -2,6 +2,8 @@ package models
 
 import (
 	"fmt"
+
+
 	gofrs "github.com/gofrs/uuid"
 	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/models/events"
@@ -11,6 +13,7 @@ import (
 	mutils "github.com/layer5io/meshkit/utils"
 	"github.com/spf13/viper"
 	"strings"
+
 )
 
 var TAB = "    "
@@ -25,6 +28,13 @@ type RegistrationFailureLog struct {
 
 	// invalid definitions while parsing the given input (oci, tar, dir) into meshmodel entities
 	invalidDefinitions map[string](error)
+}
+type EntityRegError struct {
+	HostName   string
+	ModelName  string
+	EntityType entity.EntityType
+	EntityName string
+	Err        error
 }
 
 func NewRegistrationFailureLogHandler() *RegistrationFailureLog {
@@ -199,3 +209,25 @@ func RegistryLog(log logger.Handler, handlerConfig *HandlerConfig, regManager *m
 		log.Error(err)
 	}
 }
+
+func (rfl *RegistrationFailureLog) GetEntityRegErrors() []EntityRegError {
+	var errors []EntityRegError
+	for host, modelData := range rfl.failureData {
+		for modelName, entityTypeData := range modelData {
+			for entityTypeStr, entityNameData := range entityTypeData {
+				entityType := entity.EntityType(entityTypeStr)
+				for entityName, err := range entityNameData {
+					errors = append(errors, EntityRegError{
+						HostName:   host,
+						ModelName:  modelName,
+						EntityType: entityType,
+						EntityName: entityName,
+						Err:        err,
+					})
+				}
+			}
+		}
+	}
+	return errors
+}
+

@@ -304,7 +304,7 @@ function MesheryFilters({
     pagesize: pageSize,
     search: search,
     order: sortOrder,
-    visibility: JSON.stringify([visibilityFilter]),
+    visibility: visibilityFilter ? JSON.stringify([visibilityFilter]) : '',
   });
 
   const { data: capabilitiesData } = useGetProviderCapabilitiesQuery();
@@ -625,7 +625,7 @@ function MesheryFilters({
     const configurationSubscription = ConfigurationSubscription(
       (result) => {
         setPage(result.configuration?.filters?.page || 0);
-        setPageSize(result.configuration?.filters?.page_size || 0);
+        setPageSize(result.configuration?.filters?.page_size || 10);
         setCount(result.configuration?.filters?.total_count || 0);
         handleSetFilters(result.configuration?.filters?.filters);
       },
