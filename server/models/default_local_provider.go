@@ -16,7 +16,6 @@ import (
 	"strings"
 	"sync"
 	"time"
-	"runtime"
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/models/connections"
