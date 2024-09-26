@@ -27,6 +27,7 @@ import (
 	"strings"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/pattern/core"
@@ -57,10 +58,48 @@ mesheryctl pattern apply -f [file | URL]
 mesheryctl pattern apply [pattern-name]
 	`,
 	Annotations: linkDocPatternApply,
-	Args:        cobra.MinimumNArgs(0),
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		//Check prerequisite
+
+		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+		if err != nil {
+			return utils.ErrLoadConfig(err)
+		}
+		ctx, err := mctlCfg.GetCurrentContext()
+		if err != nil {
+			return system.ErrGetCurrentContext(err)
+		}
+		err = ctx.ValidateVersion()
+		if err != nil {
+			return err
+		}
+		return nil
+	},
+	Args: func(cmd *cobra.Command, args []string) error {
+		const errMsg = "Provide a pattern name or use the --file flag\nRun 'mesheryctl pattern apply --help' to see detailed help message"
+
+		// Check if the file flag is set
+		fileFlagSet := cmd.Flags().Changed("file")
+
+		// Ensure only one of the pattern name or file flag is set
+		if len(args) == 1 && !fileFlagSet {
+			return nil
+		}
+		if len(args) == 0 && fileFlagSet {
+			return nil
+		}
+
+		return utils.ErrInvalidArgument(errors.New(errMsg))
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var req *http.Request
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+		if err != nil {
+			utils.Log.Error(err)
+			return nil
+		}
+
+		contextID, err := getContextID(mctlCfg)
 		if err != nil {
 			utils.Log.Error(err)
 			return nil
@@ -209,7 +248,7 @@ mesheryctl pattern apply [pattern-name]
 
 				resp, err := utils.MakeRequest(req)
 				if err != nil {
-					utils.Log.Error(err)
+					utils.Log.Error(utils.ErrFailRequest(err))
 					return nil
 				}
 				utils.Log.Debug("remote hosted pattern request success")
@@ -239,11 +278,11 @@ mesheryctl pattern apply [pattern-name]
 
 		payloadBytes, err := json.Marshal(payload)
 		if err != nil {
-			utils.Log.Error(err)
+			utils.Log.Error(utils.ErrMarshal(err))
 			return nil
 		}
 
-		req, err = utils.NewRequest("POST", deployURL, bytes.NewBuffer(payloadBytes))
+		req, err = utils.NewRequest("POST", deployURL+"?contexts="+contextID, bytes.NewBuffer(payloadBytes))
 		if err != nil {
 			utils.Log.Error(err)
 			return nil
@@ -259,7 +298,7 @@ mesheryctl pattern apply [pattern-name]
 		s.Start()
 		res, err := utils.MakeRequest(req)
 		if err != nil {
-			utils.Log.Error(err)
+			utils.Log.Error(utils.ErrFailRequest(err))
 			return nil
 		}
 
