@@ -1037,18 +1037,20 @@ func (h *Handler) DownloadMesheryPatternHandler(
 	user *models.User,
 	provider models.Provider,
 ) {
-
+	var formatConverter converter.ConvertFormat
 	userID := uuid.FromStringOrNil(user.ID)
 	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction("download").ActedUpon(userID).WithSeverity(events.Informational)
 
 	exportFormat := r.URL.Query().Get("export")
-
-	formatConverter, errConvert := converter.NewFormatConverter(converter.DesignFormat(exportFormat))
-	if errConvert != nil {
-		err := ErrExportPatternInFormat(errConvert, exportFormat, "")
-		h.log.Error(err)
-		http.Error(rw, err.Error(), http.StatusBadRequest)
-		return
+	if exportFormat != "" {
+		var errConvert error
+		formatConverter, errConvert = converter.NewFormatConverter(converter.DesignFormat(exportFormat))
+		if errConvert != nil {
+			err := ErrExportPatternInFormat(errConvert, exportFormat, "")
+			h.log.Error(err)
+			http.Error(rw, err.Error(), http.StatusBadRequest)
+			return
+		}
 	}
 
 	patternID := mux.Vars(r)["id"]
@@ -1393,6 +1395,8 @@ func (h *Handler) DownloadMesheryPatternHandler(
 	}
 
 	rw.Header().Set("Content-Type", "application/yaml")
+	rw.Header().Add("Content-Disposition", fmt.Sprintf("attachment;filename=%s.yml", pattern.Name))
+
 	err = yaml.NewEncoder(rw).Encode(unmarshalledPatternFile)
 	if err != nil {
 		err = ErrEncodePattern(err)
