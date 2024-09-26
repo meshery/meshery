@@ -1193,7 +1193,6 @@ func GetCurrentFilePath() string {
 // getLocalSeededComponents - Walks through dir to get and return files
 func LocalPathWalker(catalogDir string, log logger.Handler, file string) ([][]byte, error) {
 	var contents [][]byte
-	// Walk through the entire directory tree to find design.yml files
 	err := filepath.Walk(catalogDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			log.Error(err)
