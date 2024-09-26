@@ -511,6 +511,7 @@ class Header extends React.PureComponent {
       <NoSsr>
         <React.Fragment>
           <AppBar
+            id="top-navigation-bar"
             color="primary"
             position="sticky"
             // elevation={1}
