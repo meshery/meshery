@@ -195,7 +195,6 @@ func prettifyJson(model model.ModelDefinition) error {
 func listModel(cmd *cobra.Command, url string, displayCountOnly bool) error {
 	req, err := utils.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
-		utils.Log.Error(err)
 		return err
 	}
 
