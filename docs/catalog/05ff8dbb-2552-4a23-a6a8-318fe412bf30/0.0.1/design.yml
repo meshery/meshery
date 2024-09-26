@@ -1,0 +1,64 @@
+name: Pod Resource Request
+version: 0.0.15
+services:
+  resource-request-pod:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: resource-request-pod
+    namespace: default
+    settings:
+      spec:
+        containers:
+        - args:
+          - sleep
+          - "600"
+          image: busybox
+          liveness Probe:
+            exec:
+              command:
+              - cat
+              - /tmp/healthy
+            initial Delay Seconds: 5
+            period Seconds: 5
+          name: resource-request-container
+          resources:
+            requests:
+              cpu: 99999m
+              memory: 20000Mi
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: b55b0066-c980-4e7a-a82e-e17f66ca23c5
+        meshmodel-metadata:
+          capabilities: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-rectangle
+          styleOverrides: ""
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
+        position:
+          posX: 310
+          posY: 310
+        whiteboardData:
+          style:
+            z-index: 3
+    type: Pod
+    version: ""
