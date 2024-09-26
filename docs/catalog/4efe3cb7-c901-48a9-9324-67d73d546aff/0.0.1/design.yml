@@ -1,0 +1,403 @@
+name: ArgoCD application controller
+version: 0.0.3
+services:
+  NodeGroupInventoryWallet:
+    annotations: {}
+    apiVersion: core.meshery.io/v1alpha1
+    dependsOn:
+    - argocd-application-controller
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: meshery-core
+    name: NodeGroupInventoryWallet
+    namespace: ""
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: bf17fc6d-6354-42ab-9632-c416ce918dff
+        label: NodeGroupInventoryWallet
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          components: null
+          description: ""
+          displayName: Meshery Core
+          hostID: 26e64aa8-2d86-57bd-92b3-2a73160d27b4
+          id: 3e2db384-d3af-5fac-8af2-684fc3c29446
+          metadata:
+            isAnnotation: false
+            subCategory: App Definition and Development
+            svgColor: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+            svgComplete: ""
+            svgWhite: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+          model:
+            version: 0.7.1
+          name: meshery-core
+          registrant:
+            hostname: artifacthub
+          relationships: null
+          schemaVersion: core.meshery.io/v1beta1
+          status: enabled
+          subCategory: App Definition and Development
+          version: v1.0.0
+        meshmodel-metadata:
+          capabilities: |-
+            {
+              "designer": {
+                "pass-events-to": "parent", "supportsCompoundDragAndDrop":false,
+                "edit": {
+                  "config": false,
+                  "copy": false,
+                  "delete": false,
+                  "duplicate": false,
+                  "reset-styles": false,
+                  "resolve": false,
+                  "lock": false,
+                  "shape": {
+                    "convert-shape": false
+                  },
+                  "style": false
+                },
+                "label": {
+                  "edit": false,
+                  "show": false,
+                  "sync-with-config-property": "none"
+                }
+              }
+            }
+          defaultData: '{"label":""}'
+          genealogy: parent
+          hasInvalidSchema: true
+          isAnnotation: true
+          primaryColor: '#00B39F'
+          secondaryColor: '#00D3A9'
+          shape: round-rectangle
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides:
+            background-image: none
+            background-opacity: 0
+            border-style: dashed
+            border-width: 0
+            data:
+              label: ""
+            height: 30px
+            width: 30px
+            z-index: 3
+          styles: '{"height":"30px","width":"30px", "background-image":"none","border-width":0,"border-style":"dashed","background-opacity":0}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/meshery-core/color/anchornode-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/meshery-core/white/anchornode-white.svg
+        parent: f9a6b5ec-cc53-4538-9589-094c8142efa5
+        position:
+          posX: 50
+          posY: 50
+        whiteboardData: {}
+    type: NodeGroupInventoryWallet
+    version: 0.7.1
+  argocd-application-controller:
+    annotations: {}
+    apiVersion: apps/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels:
+      app.kubernetes.io/component: application-controller
+      app.kubernetes.io/name: argocd-application-controller
+      app.kubernetes.io/part-of: argocd
+    model: kubernetes
+    name: argocd-application-controller
+    namespace: default
+    settings:
+      spec:
+        replicas: 1
+        selector:
+          match Labels:
+            app.kubernetes.io/name: argocd-application-controller
+        template:
+          metadata:
+            labels:
+              app.kubernetes.io/name: argocd-application-controller
+          spec:
+            affinity:
+              pod Anti Affinity:
+                preferred During Scheduling Ignored During Execution:
+                - pod Affinity Term:
+                    label Selector:
+                      match Labels:
+                        app.kubernetes.io/name: argocd-application-controller
+                    topology Key: kubernetes.io/hostname
+                  weight: 100
+                - pod Affinity Term:
+                    label Selector:
+                      match Labels:
+                        app.kubernetes.io/part-of: argocd
+                    topology Key: kubernetes.io/hostname
+                  weight: 5
+            containers:
+            - args:
+              - /usr/local/bin/argocd-application-controller
+              env:
+              - name: ARGOCD_RECONCILIATION_TIMEOUT
+                value From:
+                  config Map Key Ref:
+                    key: timeout.reconciliation
+                    name: argocd-cm
+                    optional: true
+              - name: ARGOCD_HARD_RECONCILIATION_TIMEOUT
+                value From:
+                  config Map Key Ref:
+                    key: timeout.hard.reconciliation
+                    name: argocd-cm
+                    optional: true
+              - name: ARGOCD_RECONCILIATION_JITTER
+                value From:
+                  config Map Key Ref:
+                    key: timeout.reconciliation.jitter
+                    name: argocd-cm
+                    optional: true
+              - name: ARGOCD_REPO_ERROR_GRACE_PERIOD_SECONDS
+                value From:
+                  config Map Key Ref:
+                    key: controller.repo.error.grace.period.seconds
+                    name: argocd-cmd-params-cm
+                    optional: true
+              - name: ARGOCD_APPLICATION_CONTROLLER_REPO_SERVER
+                value From:
+                  config Map Key Ref:
+                    key: repo.server
+                    name: argocd-cmd-params-cm
+                    optional: true
+              - name: ARGOCD_APPLICATION_CONTROLLER_REPO_SERVER_TIMEOUT_SECONDS
+                value From:
+                  config Map Key Ref:
+                    key: controller.repo.server.timeout.seconds
+                    name: argocd-cmd-params-cm
+                    optional: true
+              - name: ARGOCD_APPLICATION_CONTROLLER_STATUS_PROCESSORS
+                value From:
+                  config Map Key Ref:
+                    key: controller.status.processors
+                    name: argocd-cmd-params-cm
+                    optional: true
+              - name: ARGOCD_APPLICATION_CONTROLLER_OPERATION_PROCESSORS
+                value From:
+                  config Map Key Ref:
+                    key: controller.operation.processors
+                    name: argocd-cmd-params-cm
+                    optional: true
+              - name: ARGOCD_APPLICATION_CONTROLLER_LOGFORMAT
+                value From:
+                  config Map Key Ref:
+                    key: controller.log.format
+                    name: argocd-cmd-params-cm
+                    optional: true
+              - name: ARGOCD_APPLICATION_CONTROLLER_LOGLEVEL
+                value From:
+                  config Map Key Ref:
+                    key: controller.log.level
+                    name: argocd-cmd-params-cm
+                    optional: true
+              - name: ARGOCD_APPLICATION_CONTROLLER_METRICS_CACHE_EXPIRATION
+                value From:
+                  config Map Key Ref:
+                    key: controller.metrics.cache.expiration
+                    name: argocd-cmd-params-cm
+                    optional: true
+              - name: ARGOCD_APPLICATION_CONTROLLER_SELF_HEAL_TIMEOUT_SECONDS
+                value From:
+                  config Map Key Ref:
+                    key: controller.self.heal.timeout.seconds
+                    name: argocd-cmd-params-cm
+                    optional: true
+              - name: ARGOCD_APPLICATION_CONTROLLER_REPO_SERVER_PLAINTEXT
+                value From:
+                  config Map Key Ref:
+                    key: controller.repo.server.plaintext
+                    name: argocd-cmd-params-cm
+                    optional: true
+              - name: ARGOCD_APPLICATION_CONTROLLER_REPO_SERVER_STRICT_TLS
+                value From:
+                  config Map Key Ref:
+                    key: controller.repo.server.strict.tls
+                    name: argocd-cmd-params-cm
+                    optional: true
+              - name: ARGOCD_APPLICATION_CONTROLLER_PERSIST_RESOURCE_HEALTH
+                value From:
+                  config Map Key Ref:
+                    key: controller.resource.health.persist
+                    name: argocd-cmd-params-cm
+                    optional: true
+              - name: ARGOCD_APP_STATE_CACHE_EXPIRATION
+                value From:
+                  config Map Key Ref:
+                    key: controller.app.state.cache.expiration
+                    name: argocd-cmd-params-cm
+                    optional: true
+              - name: REDIS_SERVER
+                value From:
+                  config Map Key Ref:
+                    key: redis.server
+                    name: argocd-cmd-params-cm
+                    optional: true
+              - name: REDIS_COMPRESSION
+                value From:
+                  config Map Key Ref:
+                    key: redis.compression
+                    name: argocd-cmd-params-cm
+                    optional: true
+              - name: REDISDB
+                value From:
+                  config Map Key Ref:
+                    key: redis.db
+                    name: argocd-cmd-params-cm
+                    optional: true
+              - name: ARGOCD_DEFAULT_CACHE_EXPIRATION
+                value From:
+                  config Map Key Ref:
+                    key: controller.default.cache.expiration
+                    name: argocd-cmd-params-cm
+                    optional: true
+              - name: ARGOCD_APPLICATION_CONTROLLER_OTLP_ADDRESS
+                value From:
+                  config Map Key Ref:
+                    key: otlp.address
+                    name: argocd-cmd-params-cm
+                    optional: true
+              - name: ARGOCD_APPLICATION_CONTROLLER_OTLP_INSECURE
+                value From:
+                  config Map Key Ref:
+                    key: otlp.insecure
+                    name: argocd-cmd-params-cm
+                    optional: true
+              - name: ARGOCD_APPLICATION_CONTROLLER_OTLP_HEADERS
+                value From:
+                  config Map Key Ref:
+                    key: otlp.headers
+                    name: argocd-cmd-params-cm
+                    optional: true
+              - name: ARGOCD_APPLICATION_NAMESPACES
+                value From:
+                  config Map Key Ref:
+                    key: application.namespaces
+                    name: argocd-cmd-params-cm
+                    optional: true
+              - name: ARGOCD_CONTROLLER_SHARDING_ALGORITHM
+                value From:
+                  config Map Key Ref:
+                    key: controller.sharding.algorithm
+                    name: argocd-cmd-params-cm
+                    optional: true
+              - name: ARGOCD_APPLICATION_CONTROLLER_KUBECTL_PARALLELISM_LIMIT
+                value From:
+                  config Map Key Ref:
+                    key: controller.kubectl.parallelism.limit
+                    name: argocd-cmd-params-cm
+                    optional: true
+              - name: ARGOCD_K8SCLIENT_RETRY_MAX
+                value From:
+                  config Map Key Ref:
+                    key: controller.k8sclient.retry.max
+                    name: argocd-cmd-params-cm
+                    optional: true
+              - name: ARGOCD_K8SCLIENT_RETRY_BASE_BACKOFF
+                value From:
+                  config Map Key Ref:
+                    key: controller.k8sclient.retry.base.backoff
+                    name: argocd-cmd-params-cm
+                    optional: true
+              - name: ARGOCD_APPLICATION_CONTROLLER_SERVER_SIDE_DIFF
+                value From:
+                  config Map Key Ref:
+                    key: controller.diff.server.side
+                    name: argocd-cmd-params-cm
+                    optional: true
+              image: quay.io/argoproj/argocd:latest
+              image Pull Policy: Always
+              name: argocd-application-controller
+              ports:
+              - container Port: 8082
+              readiness Probe:
+                http Get:
+                  path: /healthz
+                  port: 8082
+                initial Delay Seconds: 5
+                period Seconds: 10
+              security Context:
+                allow Privilege Escalation: false
+                capabilities:
+                  drop:
+                  - ALL
+                read Only Root Filesystem: true
+                run As Non Root: true
+                seccomp Profile:
+                  type: RuntimeDefault
+              volume Mounts:
+              - mount Path: /app/config/controller/tls
+                name: argocd-repo-server-tls
+              - mount Path: /home/argocd
+                name: argocd-home
+              working Dir: /home/argocd
+            service Account Name: argocd-application-controller
+            volumes:
+            - empty Dir: {}
+              name: argocd-home
+            - name: argocd-repo-server-tls
+              secret:
+                items:
+                - key: tls.crt
+                  path: tls.crt
+                - key: tls.key
+                  path: tls.key
+                - key: ca.crt
+                  path: ca.crt
+                optional: true
+                secret Name: argocd-repo-server-tls
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: f9a6b5ec-cc53-4538-9589-094c8142efa5
+        meshmodel-metadata:
+          capabilities: |2-
+             {
+              "designer": {
+                "edit": {
+                  "shape": {
+                    "convert-shape": false
+                  }
+                }
+              }
+            }
+          defaultData: ""
+          genealogy: parent
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: Created by Meshery Authors
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          secondaryColor: '#7aa1f0'
+          shape: round-pentagon
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides: '{"border-width":2,"background-opacity":0.5}'
+          styles: '{"border-width":2,"background-opacity":0.5}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg
+          svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/deployment-complete.svg
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/deployment-white.svg
+        position:
+          posX: 50
+          posY: 50
+        whiteboardData:
+          style: {}
+    type: Deployment
+    version: ""
