@@ -23,7 +23,6 @@ import (
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshkit/models/events"
 
-	"github.com/layer5io/meshkit/models/oci"
 	meshkitOci "github.com/layer5io/meshkit/models/oci"
 	"github.com/layer5io/meshkit/models/registration"
 	meshkitutils "github.com/layer5io/meshkit/utils"
@@ -1225,7 +1224,6 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		return
 	}
 
-	// Pass the temp file path to the RegistrationHelper
 	registrationHelper := registration.NewRegistrationHelper(
 		utils.UI,
 		h.registryManager,
@@ -1297,18 +1295,28 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		if _, err := os.Stat(modelLocation); os.IsNotExist(err) {
 			_ = os.MkdirAll(modelLocation, 0755)
 		}
-		err = mesheryctlUtils.InvokeGenerationFromSheet(&wg, modelLocation, 0, 0, "", "", modelCsvFile.Name(), componentCsvFile.Name(), "")
+
+		tempDir, err := os.MkdirTemp("", "tempData")
+		if err != nil {
+			h.handleError(rw, err, "Error creating temporary directory")
+			h.sendErrorEvent(userID, provider, "Error creating temporary directory", err)
+			return
+		}
+		defer os.RemoveAll(tempDir)
+
+		err = mesheryctlUtils.InvokeGenerationFromSheet(&wg, tempDir, 0, 0, "", "", modelCsvFile.Name(), componentCsvFile.Name(), "")
 		if err != nil {
 			h.handleError(rw, err, "Error invoking generation from sheet")
 			h.sendErrorEvent(userID, provider, "Error invoking generation from sheet", err)
 			return
 		}
+
 		h.sendEventForImport(userID, provider, 0, "", true)
-		modelDirPaths, err := models.GetModelDirectoryPaths(modelLocation)
+		modelDirPaths, err := models.GetModelDirectoryPaths(tempDir)
+		if err != nil {
+			h.log.Error(models.ErrSeedingComponents(err))
+		}
 		if importRequest.Register {
-			if err != nil {
-				h.log.Error(models.ErrSeedingComponents(err))
-			}
 			for _, dirPath := range modelDirPaths {
 				dir := registration.NewDir(dirPath)
 				registrationHelper.Register(dir)
@@ -1316,6 +1324,18 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		} else {
 			return
 		}
+
+		if _, err := os.Stat(modelLocation); os.IsNotExist(err) {
+			_ = os.MkdirAll(modelLocation, 0755)
+		}
+
+		err = utils.CopyDirectory(tempDir, modelLocation)
+		if err != nil {
+			h.handleError(rw, err, "Error copying data to model location")
+			h.sendErrorEvent(userID, provider, "Error copying data to model location", err)
+			return
+		}
+
 	//Case when it is URL and them the model is generated from the URL
 	case "url":
 
@@ -1456,7 +1476,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		}
 	}
 
-	handleRegistrationAndError(registrationHelper, &mu, &response, regErrorStore)
+	h.handleRegistrationAndError(registrationHelper, &mu, &response, regErrorStore)
 	var errMsg string
 	message = writeMessageString(&response)
 	if response.EntityCount.TotalErrCount > 0 {
@@ -1596,7 +1616,7 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 	var tarfileName string
 	var byt []byte
 	if fileTypes == "oci" {
-		img, err := oci.BuildImage(modelDir)
+		img, err := meshkitOci.BuildImage(modelDir)
 		if err != nil {
 			h.log.Error(err) // TODO: Add appropriate meshkit error
 			http.Error(rw, err.Error(), http.StatusInternalServerError)
@@ -1605,7 +1625,7 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 
 		// Save OCI artifact into a tar file
 		tarfileName := filepath.Join(modelDir, "model.tar")
-		err = oci.SaveOCIArtifact(img, tarfileName, model.Name)
+		err = meshkitOci.SaveOCIArtifact(img, tarfileName, model.Name)
 		if err != nil {
 			h.log.Error(err)
 			http.Error(rw, err.Error(), http.StatusInternalServerError)

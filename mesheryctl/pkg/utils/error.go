@@ -484,10 +484,10 @@ func ErrAttachAuthToken(err error) error {
 		[]string{"Log in with `mesheryctl system login` or supply a valid user token using the --token (or -t) flag."})
 }
 
-func ErrFailReqStatus(statusCode int) error {
+func ErrFailReqStatus(statusCode int, obj string) error {
 	return errors.New(ErrFailReqStatusCode, errors.Alert,
 		[]string{"Failed response server error"},
-		[]string{"Response Status Code " + strconv.Itoa(statusCode) + ", possibly Server error"},
+		[]string{"Response Status Code " + strconv.Itoa(statusCode) + ". Server emitted an error: " + obj},
 		[]string{"Invalid API call"},
 		[]string{"Check your network connection and the status of Meshery Server via `mesheryctl system status`."})
 }

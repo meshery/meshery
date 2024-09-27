@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
@@ -57,7 +56,7 @@ var importModelCmd = &cobra.Command{
 		} else {
 			path = args[0]
 		}
-		if isValidUrl(path) {
+		if utils.IsValidUrl(path) {
 			err := registerModel(nil, nil, "", "urlImport", path, true)
 			if err != nil {
 				utils.Log.Error(err)
@@ -422,11 +421,4 @@ func init() {
 
 	importModelCmd.Flags().StringVarP(&location, "file", "f", "", "Specify path to the file or directory")
 
-}
-func isValidUrl(path string) bool {
-	u, err := url.Parse(path)
-	if err != nil {
-		return false
-	}
-	return u.Scheme != "" && u.Host != ""
 }

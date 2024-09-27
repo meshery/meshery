@@ -12,6 +12,8 @@ import (
 
 var ModelsPath = "../meshmodel"
 
+const PoliciesPath = "../meshmodel/kubernetes/v1.25.2/v1.0.0/policies"
+
 func GetModelDirectoryPaths(modelPath string) ([]string, error) {
 	dirEntries := make([]string, 0)
 	modelsDirs, err := os.ReadDir(modelPath)

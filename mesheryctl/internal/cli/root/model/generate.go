@@ -40,7 +40,7 @@ var generateModelCmd = &cobra.Command{
 		} else {
 			path = args[0]
 		}
-		isUrl := isValidUrl(path)
+		isUrl := utils.IsValidUrl(path)
 
 		if isUrl {
 			if templateFile == "" {

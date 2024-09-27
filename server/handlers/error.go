@@ -149,6 +149,7 @@ const (
 	ErrGetCapabilitiesCode                 = "meshery-server-1363"
 	ErrExportPatternInFormatCode           = "meshery-server-1364"
 	ErrFileTypeCode                        = "replace_me"
+	ErrCreatingOPAInstanceCode             = "replace_me"
 )
 
 var (
@@ -648,4 +649,7 @@ func ErrGetCapabilities(err error, userId string) error {
 
 func ErrExportPatternInFormat(err error, format, designName string) error {
 	return errors.New(ErrExportPatternInFormatCode, errors.Alert, []string{fmt.Sprintf("Failed to export design file \"%s\" as \"%s\"", designName, format)}, []string{err.Error()}, []string{fmt.Sprintf("Current version of Meshery does not support exporting in \"%s\" format", format)}, []string{"Export design in one of the supported format."})
+}
+func ErrCreatingOPAInstance(err error) error {
+	return errors.New(ErrCreatingOPAInstanceCode, errors.Alert, []string{"Error creating OPA Instance."}, []string{err.Error()}, []string{"Unable to create OPA instance, policies will not be evaluated."}, []string{"Ensure relationships are registered"})
 }
