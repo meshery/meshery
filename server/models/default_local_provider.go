@@ -284,6 +284,9 @@ func (l *DefaultLocalProvider) SaveK8sContext(_ string, k8sContext K8sContext) (
 	if err != nil {
 		return connections.Connection{}, fmt.Errorf("error in saving k8s context %v", err)
 	}
+
+	k8sContext.ConnectionID = connID.String()
+
 	_, _ = l.MesheryK8sContextPersister.SaveMesheryK8sContext(k8sContext)
 	return *connectionCreated, nil
 }
