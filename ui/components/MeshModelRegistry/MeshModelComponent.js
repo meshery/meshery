@@ -1425,6 +1425,7 @@ const CsvStepper = React.memo(({ handleClose, handleGenerateModal }) => {
                   <input
                     required
                     id="model-csv-file"
+                    type="file"
                     accept=".csv"
                     onChange={handleModelCsvFileChange}
                     style={{ marginTop: '1rem' }}
