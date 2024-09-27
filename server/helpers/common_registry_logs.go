@@ -10,8 +10,8 @@ import (
 	gofrs "github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/models"
 	mutils "github.com/layer5io/meshkit/utils"
-	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1alpha3/relationship"
+	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/connection"
 
 	"github.com/spf13/viper"

@@ -1,0 +1,75 @@
+name: Mattermost Cluster Install
+version: 0.0.6
+services:
+  cluster-installation:
+    annotations: {}
+    apiVersion: mattermost.com/v1alpha1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: mattermost-operator
+    name: cluster-installation
+    namespace: default
+    settings:
+      spec:
+        affinity:
+          node Affinity:
+            preferred During Scheduling Ignored During Execution: []
+            required During Scheduling Ignored During Execution:
+              node Selector Terms: []
+          pod Affinity:
+            preferred During Scheduling Ignored During Execution: []
+            required During Scheduling Ignored During Execution: []
+          pod Anti Affinity:
+            preferred During Scheduling Ignored During Execution: []
+            required During Scheduling Ignored During Execution: []
+        liveness Probe:
+          exec:
+            command: []
+          http Get:
+            http Headers: []
+        mattermost Env: []
+        readiness Probe:
+          exec:
+            command: []
+          http Get:
+            http Headers: []
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: bab0a3c0-2fe7-4d34-a383-ec8e10787fa6
+        label: cluster-installation
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Tools
+          displayName: Mattermost Operator
+          metadata:
+            svgColor: ui/public/static/img/meshmodels/mattermost-operator/color/clusterinstallation-color.svg
+            svgWhite: ui/public/static/img/meshmodels/mattermost-operator/white/clusterinstallation-white.svg
+          name: mattermost-operator
+          version: 0.3.3
+        meshmodel-metadata:
+          genealogy: ""
+          logoURL: ""
+          model: mattermost-operator
+          modelDisplayName: Mattermost Operator
+          primaryColor: '#0058cc'
+          published: true
+          secondaryColor: '#00D3A9'
+          shape: circle
+          styleOverrides: ""
+          subCategory: Uncategorized
+          svgColor: ui/public/static/img/meshmodels/mattermost-operator/color/clusterinstallation-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/mattermost-operator/white/clusterinstallation-white.svg
+        position:
+          posX: 430
+          posY: 270
+        whiteboardData:
+          style:
+            z-index: 3
+    type: ClusterInstallation
+    version: 0.3.3

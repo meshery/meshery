@@ -1,7 +1,9 @@
 name: Notify Meshery Extensions channel build
 on:
   workflow_dispatch:
-
+  push:
+    tags:
+      - 'v*'
 jobs:
   notfiy-build:
     name: Notify providers for Meshery Extensions channel build

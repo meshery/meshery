@@ -12,11 +12,11 @@ subcommand: import
 
 # mesheryctl model import
 
-import models from mesheryctl command
+Import models from mesheryctl command
 
 ## Synopsis
 
-import model by specifying the directory, file. Use 'import model [filepath]' or 'import model  [directory]'.
+Import models by specifying the directory, file, or URL. You can also provide a template JSON file and registrant name.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl model import [flags]
@@ -28,14 +28,56 @@ mesheryctl model import [flags]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-	import model  /path/to/[file.yaml|file.json]
+	mesehryctl model import -f [ URI ]
 
 </div>
 </pre> 
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-	import model  /path/to/models
+	mesehryctl model import -f [ URI ] -t [ path to template file ] ( only required in case of URL )
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+	mesehryctl model import -f [ URI ] -t [ path to template file ] -r ( to skip registration by default registration is true)
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+	mesehryctl model import -f OCI 
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+	mesehryctl model import -f model.tar.gz 
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+	mesehryctl model import --f /path/to/models
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+    mesehryctl model import --f http://example.com/model -t /path/to/template.json 
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+	mesehryctl model import --f http://example.com/model -t /path/to/template.json -r
 
 </div>
 </pre> 
@@ -44,7 +86,10 @@ mesheryctl model import [flags]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -h, --help   help for import
+  -f, --file string       Specify path to the file or directory
+  -h, --help              help for import
+  -r, --register          Skip registration of the model
+  -t, --template string   Specify path to the template JSON file
 
 </div>
 </pre>
