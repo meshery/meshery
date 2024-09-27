@@ -38,7 +38,7 @@ Meshery Operator chart.
 | kubeRbac.args[2] | string | `"--logtostderr=false"` |  |
 | kubeRbac.args[3] | string | `"--v=10"` |  |
 | kubeRbac.image.pullPolicy | string | `"Always"` |  |
-| kubeRbac.image.repository | string | `"gcr.io/kubebuilder/kube-rbac-proxy:v0.5.0"` |  |
+| kubeRbac.image.repository | string | `"gcr.io/kubebuilder/kube-rbac-proxy:v0.16.0"` |  |
 | kubeRbac.name | string | `"kube-rbac-proxy"` |  |
 | meshery-broker.enabled | bool | `true` |  |
 | meshery-broker.fullnameOverride | string | `"meshery-broker"` |  |

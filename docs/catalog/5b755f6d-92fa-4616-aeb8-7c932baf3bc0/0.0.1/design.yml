@@ -1,0 +1,618 @@
+name: prometheus-opencost-exporter
+version: 0.0.3
+services:
+  NodeGroupInventoryWallet:
+    annotations: {}
+    apiVersion: core.meshery.io/v1alpha1
+    dependsOn:
+    - prometheus-opencost-exporter-xyygr
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: meshery-core
+    name: NodeGroupInventoryWallet
+    namespace: ""
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 7a2c6f89-2dcb-4cf5-bfce-fbba4bd0639e
+        label: NodeGroupInventoryWallet
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          components: null
+          description: ""
+          displayName: Meshery Core
+          hostID: 26e64aa8-2d86-57bd-92b3-2a73160d27b4
+          id: 3e2db384-d3af-5fac-8af2-684fc3c29446
+          metadata:
+            isAnnotation: false
+            subCategory: App Definition and Development
+            svgColor: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+            svgComplete: ""
+            svgWhite: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+          model:
+            version: 0.7.1
+          name: meshery-core
+          registrant:
+            hostname: artifacthub
+          relationships: null
+          schemaVersion: core.meshery.io/v1beta1
+          status: enabled
+          subCategory: App Definition and Development
+          version: v1.0.0
+        meshmodel-metadata:
+          capabilities: |-
+            {
+              "designer": {
+                "pass-events-to": "parent",
+                "edit": {
+                  "config": false,
+                  "copy": false,
+                  "delete": false,
+                  "duplicate": false,
+                  "reset-styles": false,
+                  "resolve": false,
+                  "lock": false,
+                  "shape": {
+                    "convert-shape": false
+                  },
+                  "style": false
+                },
+                "label": {
+                  "edit": false,
+                  "show": false,
+                  "sync-with-config-property": "none"
+                }
+              }
+            }
+          defaultData: '{"label":""}'
+          genealogy: parent
+          hasInvalidSchema: true
+          isAnnotation: true
+          primaryColor: '#00B39F'
+          secondaryColor: '#00D3A9'
+          shape: round-rectangle
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides:
+            background-image: none
+            background-opacity: 0.1
+            border-style: dashed
+            border-width: 0
+            data:
+              label: ""
+            height: 30px
+            width: 30px
+            z-index: 1003
+          styles: '{"height":"30px","width":"30px", "background-image":"none","border-width":0,"border-style":"dashed","background-opacity":0.1}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/meshery-core/color/anchornode-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/meshery-core/white/anchornode-white.svg
+        parent: 3c587ae5-b1b3-438a-9307-afbd42865d93
+        position:
+          posX: 10
+          posY: 90
+        whiteboardData: {}
+    type: NodeGroupInventoryWallet
+    version: 0.7.1
+  prometheus-opencost-exporter-cvedo:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels:
+      app.kubernetes.io/instance: prometheus-opencost-exporter
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: prometheus-opencost-exporter
+      app.kubernetes.io/version: 1.108.0
+      helm.sh/chart: prometheus-opencost-exporter-0.1.1
+    model: kubernetes
+    name: prometheus-opencost-exporter
+    namespace: default
+    settings:
+      automount Service Account Token: true
+      image Pull Secrets: []
+      secrets: []
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: 43a12ca0-7f6f-447f-84df-b054a7811432
+            metadata:
+              binded_by: 68bf4f36-4220-409b-9a1b-1f34b3b2681e
+            source: 741804c6-216e-4c26-a7aa-185a5224fad7
+            subType: Permission
+            target: 14579353-5f25-440b-ac1b-9809e06f402b
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: 14579353-5f25-440b-ac1b-9809e06f402b
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          secondaryColor: '#7aa1f0'
+          shape: bottom-round-rectangle
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides: ""
+          styles: ""
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/serviceaccount-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/serviceaccount-white.svg
+        position:
+          posX: 90
+          posY: 70
+        whiteboardData:
+          style: {}
+    type: ServiceAccount
+    version: ""
+  prometheus-opencost-exporter-kexmn:
+    annotations: {}
+    apiVersion: rbac.authorization.k8s.io/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels:
+      app.kubernetes.io/instance: prometheus-opencost-exporter
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: prometheus-opencost-exporter
+      app.kubernetes.io/version: 1.108.0
+      helm.sh/chart: prometheus-opencost-exporter-0.1.1
+    model: kubernetes
+    name: prometheus-opencost-exporter
+    namespace: ""
+    settings:
+      role Ref:
+        api Group: rbac.authorization.k8s.io
+        kind: ClusterRole
+        name: prometheus-opencost-exporter
+      subjects:
+      - kind: ServiceAccount
+        name: prometheus-opencost-exporter
+        namespace: default
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 68bf4f36-4220-409b-9a1b-1f34b3b2681e
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: false
+          logoURL: Created by Meshery Authors
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          secondaryColor: '#7aa1f0'
+          shape: round-rectangle
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides:
+            height: 25px
+            width: 25px
+            x: "7"
+            "y": "7"
+            z-index: 3
+          styles: '{"height":"25px","width":"25px","x":"7", "y":"7"}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/clusterrolebinding-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/clusterrolebinding-white.svg
+        position:
+          posX: 30
+          posY: 90
+        whiteboardData:
+          style:
+            height: 10.5
+            width: 10.5
+            z-index: 1000
+    type: ClusterRoleBinding
+    version: ""
+  prometheus-opencost-exporter-tkpma:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels:
+      app.kubernetes.io/instance: prometheus-opencost-exporter
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: prometheus-opencost-exporter
+      app.kubernetes.io/version: 1.108.0
+      helm.sh/chart: prometheus-opencost-exporter-0.1.1
+    model: kubernetes
+    name: prometheus-opencost-exporter
+    namespace: default
+    settings:
+      spec:
+        ports:
+        - name: http
+          port: 9003
+          target Port: 9003
+        selector:
+          app.kubernetes.io/instance: prometheus-opencost-exporter
+          app.kubernetes.io/name: prometheus-opencost-exporter
+        type: ClusterIP
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: efa93fe6-8bd8-49eb-948e-1559b5ebd2b5
+            metadata:
+              port: 9003
+              protocol: TCP
+            source: 0f51f884-abe0-4818-bf59-d5e873de3a84
+            subType: Network
+            target: 3c587ae5-b1b3-438a-9307-afbd42865d93
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: 0f51f884-abe0-4818-bf59-d5e873de3a84
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          secondaryColor: '#7aa1f0'
+          shape: round-triangle
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides:
+            background-position-y: 4.5
+            height: 20
+            padding: 12
+            width: 20
+            x: 10px
+            "y": 12px
+            z-index: 1001
+          styles: '{"height":20,"width":20,"padding":12,"background-position-y":4.5,"x":"10px","y":"12px"}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/service-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/service-white.svg
+        position:
+          posX: 90
+          posY: -10
+        whiteboardData:
+          style: {}
+    type: Service
+    version: ""
+  prometheus-opencost-exporter-wlydd:
+    annotations: {}
+    apiVersion: rbac.authorization.k8s.io/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels:
+      app.kubernetes.io/instance: prometheus-opencost-exporter
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: prometheus-opencost-exporter
+      app.kubernetes.io/version: 1.108.0
+      helm.sh/chart: prometheus-opencost-exporter-0.1.1
+    model: kubernetes
+    name: prometheus-opencost-exporter
+    namespace: ""
+    settings:
+      rules:
+      - api Groups:
+        - ""
+        resources:
+        - configmaps
+        - deployments
+        - nodes
+        - pods
+        - services
+        - resourcequotas
+        - replicationcontrollers
+        - limitranges
+        - persistentvolumeclaims
+        - persistentvolumes
+        - namespaces
+        - endpoints
+        verbs:
+        - get
+        - list
+        - watch
+      - api Groups:
+        - extensions
+        resources:
+        - daemonsets
+        - deployments
+        - replicasets
+        verbs:
+        - get
+        - list
+        - watch
+      - api Groups:
+        - apps
+        resources:
+        - statefulsets
+        - deployments
+        - daemonsets
+        - replicasets
+        verbs:
+        - list
+        - watch
+      - api Groups:
+        - batch
+        resources:
+        - cronjobs
+        - jobs
+        verbs:
+        - get
+        - list
+        - watch
+      - api Groups:
+        - autoscaling
+        resources:
+        - horizontalpodautoscalers
+        verbs:
+        - get
+        - list
+        - watch
+      - api Groups:
+        - policy
+        resources:
+        - poddisruptionbudgets
+        verbs:
+        - get
+        - list
+        - watch
+      - api Groups:
+        - storage.k8s.io
+        resources:
+        - storageclasses
+        verbs:
+        - get
+        - list
+        - watch
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: 43a12ca0-7f6f-447f-84df-b054a7811432
+            metadata:
+              binded_by: 68bf4f36-4220-409b-9a1b-1f34b3b2681e
+            source: 741804c6-216e-4c26-a7aa-185a5224fad7
+            subType: Permission
+            target: 14579353-5f25-440b-ac1b-9809e06f402b
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: 741804c6-216e-4c26-a7aa-185a5224fad7
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: false
+          logoURL: Created by Meshery Authors
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          secondaryColor: '#7aa1f0'
+          shape: round-rectangle
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides:
+            height: 22px
+            width: 22px
+            x: "8.5"
+            "y": "7.5"
+            z-index: 3
+          styles: '{"height":"22px", "width":"22px", "x":"8.5", "y":"7.5"}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/clusterrole-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/clusterrole-white.svg
+        position:
+          posX: -50
+          posY: 110
+        whiteboardData:
+          style: {}
+    type: ClusterRole
+    version: ""
+  prometheus-opencost-exporter-xyygr:
+    annotations: {}
+    apiVersion: apps/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels:
+      app.kubernetes.io/instance: prometheus-opencost-exporter
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: prometheus-opencost-exporter
+      app.kubernetes.io/version: 1.108.0
+      helm.sh/chart: prometheus-opencost-exporter-0.1.1
+    model: kubernetes
+    name: prometheus-opencost-exporter
+    namespace: default
+    settings:
+      spec:
+        replicas: 1
+        selector:
+          match Labels:
+            app.kubernetes.io/instance: prometheus-opencost-exporter
+            app.kubernetes.io/name: prometheus-opencost-exporter
+        strategy:
+          rolling Update:
+            max Surge: 1
+            max Unavailable: 1
+          type: RollingUpdate
+        template:
+          metadata:
+            labels:
+              app.kubernetes.io/instance: prometheus-opencost-exporter
+              app.kubernetes.io/name: prometheus-opencost-exporter
+          spec:
+            containers:
+            - env:
+              - name: PROMETHEUS_SERVER_ENDPOINT
+                value: http://my-prometheus.opencost.svc:9090
+              - name: CLUSTER_ID
+                value: default-cluster
+              image: quay.io/kubecost1/kubecost-cost-model:prod-1.108.0
+              image Pull Policy: IfNotPresent
+              liveness Probe:
+                failure Threshold: 3
+                http Get:
+                  path: /healthz
+                  port: 9003
+                initial Delay Seconds: 120
+                period Seconds: 10
+              name: prometheus-opencost-exporter
+              ports:
+              - container Port: 9003
+                name: http
+              readiness Probe:
+                failure Threshold: 3
+                http Get:
+                  path: /healthz
+                  port: 9003
+                initial Delay Seconds: 120
+                period Seconds: 10
+              resources:
+                limits:
+                  cpu: 999m
+                  memory: 1Gi
+                requests:
+                  cpu: 10m
+                  memory: 55Mi
+            service Account Name: prometheus-opencost-exporter
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: efa93fe6-8bd8-49eb-948e-1559b5ebd2b5
+            metadata:
+              port: 9003
+              protocol: TCP
+            source: 0f51f884-abe0-4818-bf59-d5e873de3a84
+            subType: Network
+            target: 3c587ae5-b1b3-438a-9307-afbd42865d93
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: 3c587ae5-b1b3-438a-9307-afbd42865d93
+        meshmodel-metadata:
+          capabilities: |2-
+             {
+              "designer": {
+                "edit": {
+                  "shape": {
+                    "convert-shape": false
+                  }
+                }
+              }
+            }
+          defaultData: ""
+          genealogy: parent
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: Created by Meshery Authors
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          secondaryColor: '#7aa1f0'
+          shape: round-pentagon
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides:
+            background-opacity: 0.5
+            border-width: 2
+            z-index: 1002
+          styles: '{"border-width":2,"background-opacity":0.5}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg
+          svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/deployment-complete.svg
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/deployment-white.svg
+        position:
+          posX: 10
+          posY: 90
+        whiteboardData:
+          style: {}
+    type: Deployment
+    version: ""

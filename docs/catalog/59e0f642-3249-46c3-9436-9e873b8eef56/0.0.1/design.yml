@@ -1,0 +1,146 @@
+name: prometheus.yaml
+version: 0.0.6
+services:
+  main:
+    annotations: {}
+    apiVersion: monitoring.coreos.com/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels:
+      prometheus: main
+    model: kube-prometheus-stack
+    name: main
+    namespace: default
+    settings:
+      spec:
+        additional Args: []
+        affinity:
+          node Affinity:
+            preferred During Scheduling Ignored During Execution: []
+            required During Scheduling Ignored During Execution:
+              node Selector Terms: []
+          pod Affinity:
+            preferred During Scheduling Ignored During Execution: []
+            required During Scheduling Ignored During Execution: []
+          pod Anti Affinity:
+            preferred During Scheduling Ignored During Execution: []
+            required During Scheduling Ignored During Execution: []
+        alerting:
+          alertmanagers:
+          - name: alertmanager
+            namespace: default
+            port: web
+        config Maps: []
+        containers: []
+        enable Features: []
+        evaluation Interval: 30s
+        excluded From Enforcement: []
+        host Aliases: []
+        image Pull Secrets: []
+        init Containers: []
+        pod Monitor Namespace Selector:
+          match Expressions: []
+        pod Monitor Selector:
+          match Expressions: []
+        pod Target Labels: []
+        port Name: web
+        probe Namespace Selector:
+          match Expressions: []
+        probe Selector:
+          match Expressions: []
+        prometheus Rules Excluded From Enforce: []
+        remote Read: []
+        remote Write: []
+        replicas: 2
+        resources:
+          claims: []
+        rule Namespace Selector:
+          match Expressions: []
+        rule Selector:
+          match Expressions: []
+        scrape Config Namespace Selector:
+          match Expressions: []
+        scrape Config Selector:
+          match Expressions: []
+        scrape Interval: 30s
+        secrets: []
+        security Context:
+          supplemental Groups: []
+          sysctls: []
+        service Monitor Namespace Selector:
+          match Expressions: []
+        service Monitor Selector:
+          match Expressions:
+          - key: app
+            operator: In
+            values:
+            - node-exporter
+            - example-app
+        storage:
+          ephemeral:
+            volume Claim Template:
+              spec:
+                access Modes: []
+                resources:
+                  claims: []
+                selector:
+                  match Expressions: []
+          volume Claim Template:
+            spec:
+              access Modes: []
+              resources:
+                claims: []
+              selector:
+                match Expressions: []
+            status:
+              access Modes: []
+              conditions: []
+        thanos:
+          additional Args: []
+          block Size: 2h
+          resources:
+            claims: []
+          volume Mounts: []
+        tolerations: []
+        topology Spread Constraints: []
+        volume Mounts: []
+        volumes: []
+        web:
+          tls Config:
+            cert: {}
+            cipher Suites: []
+            curve Preferences: []
+            key Secret: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 8bdadbd6-5019-416d-990b-73cdd8589efc
+        label: main
+        meshmodel-metadata:
+          capabilities: ""
+          genealogy: ""
+          isAnnotation: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/examples/graduated.md#prometheus-logos
+          model: kube-prometheus-stack
+          modelDisplayName: Kube Prometheus Stack
+          primaryColor: '#e75225'
+          published: true
+          secondaryColor: '#ec7551'
+          shape: circle
+          styleOverrides: ""
+          subCategory: Monitoring
+          svgColor: ui/public/static/img/meshmodels/kube-prometheus-stack/color/alertmanager-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kube-prometheus-stack/white/alertmanager-white.svg
+        position:
+          posX: 190
+          posY: 250
+        whiteboardData:
+          style:
+            z-index: 3
+    type: Prometheus
+    version: ""

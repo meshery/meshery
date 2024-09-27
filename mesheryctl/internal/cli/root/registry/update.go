@@ -49,7 +49,7 @@ mesheryctl registry update --spreadsheet-id [id] --spreadsheet-cred [base64 enco
 
 // Updating models in the meshery/meshery repo
 mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw --spreadsheet-cred $CRED
-// Updating models in the meshery/meshery repo based on flag 
+// Updating models in the meshery/meshery repo based on flag
 mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw --spreadsheet-cred $CRED --model "[model-name]"
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
@@ -117,7 +117,7 @@ func InvokeCompUpdate() error {
 	modelToCompUpdateTracker := store.NewGenericThreadSafeStore[[]compUpdateTracker]()
 
 	url := GoogleSpreadSheetURL + spreadsheeetID
-	componentCSVHelper, err := utils.NewComponentCSVHelper(url, "Components", sheetGID)
+	componentCSVHelper, err := utils.NewComponentCSVHelper(url, "Components", sheetGID, componentCSVFilePath)
 	if err != nil {
 		return err
 	}
@@ -126,7 +126,7 @@ func InvokeCompUpdate() error {
 	if err != nil {
 		err = ErrUpdateRegistry(err, modelLocation)
 		utils.Log.Error(err)
-		return err
+		return nil
 	}
 
 	utils.Log.Info("Total Registrants: ", len(componentCSVHelper.Components))

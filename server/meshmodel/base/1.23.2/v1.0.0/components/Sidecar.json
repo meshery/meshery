@@ -1,0 +1,195 @@
+{
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "Sidecar",
+   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Configuration affecting network reachability of a sidecar. See more details at: https://istio.io/docs/reference/config/networking/sidecar.html\",\n   \"properties\": {\n    \"egress\": {\n     \"description\": \"Egress specifies the configuration of the sidecar for processing outbound traffic from the attached workload instance to other services in the mesh.\",\n     \"items\": {\n      \"properties\": {\n       \"bind\": {\n        \"description\": \"The IP(IPv4 or IPv6) or the Unix domain socket to which the listener should be bound to.\",\n        \"type\": \"string\"\n       },\n       \"captureMode\": {\n        \"description\": \"When the bind address is an IP, the captureMode option dictates how traffic to the listener is expected to be captured (or not).\\n\\nValid Options: DEFAULT, IPTABLES, NONE\",\n        \"enum\": [\n         \"DEFAULT\",\n         \"IPTABLES\",\n         \"NONE\"\n        ],\n        \"type\": \"string\"\n       },\n       \"hosts\": {\n        \"description\": \"One or more service hosts exposed by the listener in `namespace/dnsName` format.\",\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       },\n       \"port\": {\n        \"description\": \"The port associated with the listener.\",\n        \"properties\": {\n         \"name\": {\n          \"description\": \"Label assigned to the port.\",\n          \"type\": \"string\"\n         },\n         \"number\": {\n          \"description\": \"A valid non-negative integer port number.\",\n          \"maximum\": 4294967295,\n          \"minimum\": 0,\n          \"type\": \"integer\"\n         },\n         \"protocol\": {\n          \"description\": \"The protocol exposed on the port.\",\n          \"type\": \"string\"\n         },\n         \"targetPort\": {\n          \"maximum\": 4294967295,\n          \"minimum\": 0,\n          \"type\": \"integer\"\n         }\n        },\n        \"type\": \"object\"\n       }\n      },\n      \"required\": [\n       \"hosts\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"inboundConnectionPool\": {\n     \"description\": \"Settings controlling the volume of connections Envoy will accept from the network.\",\n     \"properties\": {\n      \"http\": {\n       \"description\": \"HTTP connection pool settings.\",\n       \"properties\": {\n        \"h2UpgradePolicy\": {\n         \"description\": \"Specify if http1.1 connection should be upgraded to http2 for the associated destination.\\n\\nValid Options: DEFAULT, DO_NOT_UPGRADE, UPGRADE\",\n         \"enum\": [\n          \"DEFAULT\",\n          \"DO_NOT_UPGRADE\",\n          \"UPGRADE\"\n         ],\n         \"type\": \"string\"\n        },\n        \"http1MaxPendingRequests\": {\n         \"description\": \"Maximum number of requests that will be queued while waiting for a ready connection pool connection.\",\n         \"format\": \"int32\",\n         \"type\": \"integer\"\n        },\n        \"http2MaxRequests\": {\n         \"description\": \"Maximum number of active requests to a destination.\",\n         \"format\": \"int32\",\n         \"type\": \"integer\"\n        },\n        \"idleTimeout\": {\n         \"description\": \"The idle timeout for upstream connection pool connections.\",\n         \"type\": \"string\",\n         \"x-kubernetes-validations\": [\n          {\n           \"message\": \"must be a valid duration greater than 1ms\",\n           \"rule\": \"duration(self) \\u003e= duration('1ms')\"\n          }\n         ]\n        },\n        \"maxConcurrentStreams\": {\n         \"description\": \"The maximum number of concurrent streams allowed for a peer on one HTTP/2 connection.\",\n         \"format\": \"int32\",\n         \"type\": \"integer\"\n        },\n        \"maxRequestsPerConnection\": {\n         \"description\": \"Maximum number of requests per connection to a backend.\",\n         \"format\": \"int32\",\n         \"type\": \"integer\"\n        },\n        \"maxRetries\": {\n         \"description\": \"Maximum number of retries that can be outstanding to all hosts in a cluster at a given time.\",\n         \"format\": \"int32\",\n         \"type\": \"integer\"\n        },\n        \"useClientProtocol\": {\n         \"description\": \"If set to true, client protocol will be preserved while initiating connection to backend.\",\n         \"type\": \"boolean\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"tcp\": {\n       \"description\": \"Settings common to both HTTP and TCP upstream connections.\",\n       \"properties\": {\n        \"connectTimeout\": {\n         \"description\": \"TCP connection timeout.\",\n         \"type\": \"string\",\n         \"x-kubernetes-validations\": [\n          {\n           \"message\": \"must be a valid duration greater than 1ms\",\n           \"rule\": \"duration(self) \\u003e= duration('1ms')\"\n          }\n         ]\n        },\n        \"idleTimeout\": {\n         \"description\": \"The idle timeout for TCP connections.\",\n         \"type\": \"string\",\n         \"x-kubernetes-validations\": [\n          {\n           \"message\": \"must be a valid duration greater than 1ms\",\n           \"rule\": \"duration(self) \\u003e= duration('1ms')\"\n          }\n         ]\n        },\n        \"maxConnectionDuration\": {\n         \"description\": \"The maximum duration of a connection.\",\n         \"type\": \"string\",\n         \"x-kubernetes-validations\": [\n          {\n           \"message\": \"must be a valid duration greater than 1ms\",\n           \"rule\": \"duration(self) \\u003e= duration('1ms')\"\n          }\n         ]\n        },\n        \"maxConnections\": {\n         \"description\": \"Maximum number of HTTP1 /TCP connections to a destination host.\",\n         \"format\": \"int32\",\n         \"type\": \"integer\"\n        },\n        \"tcpKeepalive\": {\n         \"description\": \"If set then set SO_KEEPALIVE on the socket to enable TCP Keepalives.\",\n         \"properties\": {\n          \"interval\": {\n           \"description\": \"The time duration between keep-alive probes.\",\n           \"type\": \"string\",\n           \"x-kubernetes-validations\": [\n            {\n             \"message\": \"must be a valid duration greater than 1ms\",\n             \"rule\": \"duration(self) \\u003e= duration('1ms')\"\n            }\n           ]\n          },\n          \"probes\": {\n           \"description\": \"Maximum number of keepalive probes to send without response before deciding the connection is dead.\",\n           \"maximum\": 4294967295,\n           \"minimum\": 0,\n           \"type\": \"integer\"\n          },\n          \"time\": {\n           \"description\": \"The time duration a connection needs to be idle before keep-alive probes start being sent.\",\n           \"type\": \"string\",\n           \"x-kubernetes-validations\": [\n            {\n             \"message\": \"must be a valid duration greater than 1ms\",\n             \"rule\": \"duration(self) \\u003e= duration('1ms')\"\n            }\n           ]\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"ingress\": {\n     \"description\": \"Ingress specifies the configuration of the sidecar for processing inbound traffic to the attached workload instance.\",\n     \"items\": {\n      \"properties\": {\n       \"bind\": {\n        \"description\": \"The IP(IPv4 or IPv6) to which the listener should be bound.\",\n        \"type\": \"string\"\n       },\n       \"captureMode\": {\n        \"description\": \"The captureMode option dictates how traffic to the listener is expected to be captured (or not).\\n\\nValid Options: DEFAULT, IPTABLES, NONE\",\n        \"enum\": [\n         \"DEFAULT\",\n         \"IPTABLES\",\n         \"NONE\"\n        ],\n        \"type\": \"string\"\n       },\n       \"connectionPool\": {\n        \"description\": \"Settings controlling the volume of connections Envoy will accept from the network.\",\n        \"properties\": {\n         \"http\": {\n          \"description\": \"HTTP connection pool settings.\",\n          \"properties\": {\n           \"h2UpgradePolicy\": {\n            \"description\": \"Specify if http1.1 connection should be upgraded to http2 for the associated destination.\\n\\nValid Options: DEFAULT, DO_NOT_UPGRADE, UPGRADE\",\n            \"enum\": [\n             \"DEFAULT\",\n             \"DO_NOT_UPGRADE\",\n             \"UPGRADE\"\n            ],\n            \"type\": \"string\"\n           },\n           \"http1MaxPendingRequests\": {\n            \"description\": \"Maximum number of requests that will be queued while waiting for a ready connection pool connection.\",\n            \"format\": \"int32\",\n            \"type\": \"integer\"\n           },\n           \"http2MaxRequests\": {\n            \"description\": \"Maximum number of active requests to a destination.\",\n            \"format\": \"int32\",\n            \"type\": \"integer\"\n           },\n           \"idleTimeout\": {\n            \"description\": \"The idle timeout for upstream connection pool connections.\",\n            \"type\": \"string\",\n            \"x-kubernetes-validations\": [\n             {\n              \"message\": \"must be a valid duration greater than 1ms\",\n              \"rule\": \"duration(self) \\u003e= duration('1ms')\"\n             }\n            ]\n           },\n           \"maxConcurrentStreams\": {\n            \"description\": \"The maximum number of concurrent streams allowed for a peer on one HTTP/2 connection.\",\n            \"format\": \"int32\",\n            \"type\": \"integer\"\n           },\n           \"maxRequestsPerConnection\": {\n            \"description\": \"Maximum number of requests per connection to a backend.\",\n            \"format\": \"int32\",\n            \"type\": \"integer\"\n           },\n           \"maxRetries\": {\n            \"description\": \"Maximum number of retries that can be outstanding to all hosts in a cluster at a given time.\",\n            \"format\": \"int32\",\n            \"type\": \"integer\"\n           },\n           \"useClientProtocol\": {\n            \"description\": \"If set to true, client protocol will be preserved while initiating connection to backend.\",\n            \"type\": \"boolean\"\n           }\n          },\n          \"type\": \"object\"\n         },\n         \"tcp\": {\n          \"description\": \"Settings common to both HTTP and TCP upstream connections.\",\n          \"properties\": {\n           \"connectTimeout\": {\n            \"description\": \"TCP connection timeout.\",\n            \"type\": \"string\",\n            \"x-kubernetes-validations\": [\n             {\n              \"message\": \"must be a valid duration greater than 1ms\",\n              \"rule\": \"duration(self) \\u003e= duration('1ms')\"\n             }\n            ]\n           },\n           \"idleTimeout\": {\n            \"description\": \"The idle timeout for TCP connections.\",\n            \"type\": \"string\",\n            \"x-kubernetes-validations\": [\n             {\n              \"message\": \"must be a valid duration greater than 1ms\",\n              \"rule\": \"duration(self) \\u003e= duration('1ms')\"\n             }\n            ]\n           },\n           \"maxConnectionDuration\": {\n            \"description\": \"The maximum duration of a connection.\",\n            \"type\": \"string\",\n            \"x-kubernetes-validations\": [\n             {\n              \"message\": \"must be a valid duration greater than 1ms\",\n              \"rule\": \"duration(self) \\u003e= duration('1ms')\"\n             }\n            ]\n           },\n           \"maxConnections\": {\n            \"description\": \"Maximum number of HTTP1 /TCP connections to a destination host.\",\n            \"format\": \"int32\",\n            \"type\": \"integer\"\n           },\n           \"tcpKeepalive\": {\n            \"description\": \"If set then set SO_KEEPALIVE on the socket to enable TCP Keepalives.\",\n            \"properties\": {\n             \"interval\": {\n              \"description\": \"The time duration between keep-alive probes.\",\n              \"type\": \"string\",\n              \"x-kubernetes-validations\": [\n               {\n                \"message\": \"must be a valid duration greater than 1ms\",\n                \"rule\": \"duration(self) \\u003e= duration('1ms')\"\n               }\n              ]\n             },\n             \"probes\": {\n              \"description\": \"Maximum number of keepalive probes to send without response before deciding the connection is dead.\",\n              \"maximum\": 4294967295,\n              \"minimum\": 0,\n              \"type\": \"integer\"\n             },\n             \"time\": {\n              \"description\": \"The time duration a connection needs to be idle before keep-alive probes start being sent.\",\n              \"type\": \"string\",\n              \"x-kubernetes-validations\": [\n               {\n                \"message\": \"must be a valid duration greater than 1ms\",\n                \"rule\": \"duration(self) \\u003e= duration('1ms')\"\n               }\n              ]\n             }\n            },\n            \"type\": \"object\"\n           }\n          },\n          \"type\": \"object\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"defaultEndpoint\": {\n        \"description\": \"The IP endpoint or Unix domain socket to which traffic should be forwarded to.\",\n        \"type\": \"string\"\n       },\n       \"port\": {\n        \"description\": \"The port associated with the listener.\",\n        \"properties\": {\n         \"name\": {\n          \"description\": \"Label assigned to the port.\",\n          \"type\": \"string\"\n         },\n         \"number\": {\n          \"description\": \"A valid non-negative integer port number.\",\n          \"maximum\": 4294967295,\n          \"minimum\": 0,\n          \"type\": \"integer\"\n         },\n         \"protocol\": {\n          \"description\": \"The protocol exposed on the port.\",\n          \"type\": \"string\"\n         },\n         \"targetPort\": {\n          \"maximum\": 4294967295,\n          \"minimum\": 0,\n          \"type\": \"integer\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"tls\": {\n        \"description\": \"Set of TLS related options that will enable TLS termination on the sidecar for requests originating from outside the mesh.\",\n        \"properties\": {\n         \"caCertificates\": {\n          \"description\": \"REQUIRED if mode is `MUTUAL` or `OPTIONAL_MUTUAL`.\",\n          \"type\": \"string\"\n         },\n         \"caCrl\": {\n          \"description\": \"OPTIONAL: The path to the file containing the certificate revocation list (CRL) to use in verifying a presented client side certificate.\",\n          \"type\": \"string\"\n         },\n         \"cipherSuites\": {\n          \"description\": \"Optional: If specified, only support the specified cipher list.\",\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         },\n         \"credentialName\": {\n          \"description\": \"For gateways running on Kubernetes, the name of the secret that holds the TLS certs including the CA certificates.\",\n          \"type\": \"string\"\n         },\n         \"httpsRedirect\": {\n          \"description\": \"If set to true, the load balancer will send a 301 redirect for all http connections, asking the clients to use HTTPS.\",\n          \"type\": \"boolean\"\n         },\n         \"maxProtocolVersion\": {\n          \"description\": \"Optional: Maximum TLS protocol version.\\n\\nValid Options: TLS_AUTO, TLSV1_0, TLSV1_1, TLSV1_2, TLSV1_3\",\n          \"enum\": [\n           \"TLS_AUTO\",\n           \"TLSV1_0\",\n           \"TLSV1_1\",\n           \"TLSV1_2\",\n           \"TLSV1_3\"\n          ],\n          \"type\": \"string\"\n         },\n         \"minProtocolVersion\": {\n          \"description\": \"Optional: Minimum TLS protocol version.\\n\\nValid Options: TLS_AUTO, TLSV1_0, TLSV1_1, TLSV1_2, TLSV1_3\",\n          \"enum\": [\n           \"TLS_AUTO\",\n           \"TLSV1_0\",\n           \"TLSV1_1\",\n           \"TLSV1_2\",\n           \"TLSV1_3\"\n          ],\n          \"type\": \"string\"\n         },\n         \"mode\": {\n          \"description\": \"Optional: Indicates whether connections to this port should be secured using TLS.\\n\\nValid Options: PASSTHROUGH, SIMPLE, MUTUAL, AUTO_PASSTHROUGH, ISTIO_MUTUAL, OPTIONAL_MUTUAL\",\n          \"enum\": [\n           \"PASSTHROUGH\",\n           \"SIMPLE\",\n           \"MUTUAL\",\n           \"AUTO_PASSTHROUGH\",\n           \"ISTIO_MUTUAL\",\n           \"OPTIONAL_MUTUAL\"\n          ],\n          \"type\": \"string\"\n         },\n         \"privateKey\": {\n          \"description\": \"REQUIRED if mode is `SIMPLE` or `MUTUAL`.\",\n          \"type\": \"string\"\n         },\n         \"serverCertificate\": {\n          \"description\": \"REQUIRED if mode is `SIMPLE` or `MUTUAL`.\",\n          \"type\": \"string\"\n         },\n         \"subjectAltNames\": {\n          \"description\": \"A list of alternate names to verify the subject identity in the certificate presented by the client.\",\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         },\n         \"verifyCertificateHash\": {\n          \"description\": \"An optional list of hex-encoded SHA-256 hashes of the authorized client certificates.\",\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         },\n         \"verifyCertificateSpki\": {\n          \"description\": \"An optional list of base64-encoded SHA-256 hashes of the SPKIs of authorized client certificates.\",\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         }\n        },\n        \"type\": \"object\"\n       }\n      },\n      \"required\": [\n       \"port\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"outboundTrafficPolicy\": {\n     \"description\": \"Configuration for the outbound traffic policy.\",\n     \"properties\": {\n      \"egressProxy\": {\n       \"properties\": {\n        \"host\": {\n         \"description\": \"The name of a service from the service registry.\",\n         \"type\": \"string\"\n        },\n        \"port\": {\n         \"description\": \"Specifies the port on the host that is being addressed.\",\n         \"properties\": {\n          \"number\": {\n           \"maximum\": 4294967295,\n           \"minimum\": 0,\n           \"type\": \"integer\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"subset\": {\n         \"description\": \"The name of a subset within the service.\",\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"host\"\n       ],\n       \"type\": \"object\"\n      },\n      \"mode\": {\n       \"description\": \"\\n\\nValid Options: REGISTRY_ONLY, ALLOW_ANY\",\n       \"enum\": [\n        \"REGISTRY_ONLY\",\n        \"ALLOW_ANY\"\n       ],\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"workloadSelector\": {\n     \"description\": \"Criteria used to select the specific set of pods/VMs on which this `Sidecar` configuration should be applied.\",\n     \"properties\": {\n      \"labels\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"One or more labels that indicate a specific set of pods/VMs on which the configuration should be applied.\",\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Sidecar\",\n \"type\": \"object\"\n}",
+   "version": "networking.istio.io/v1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "Sidecar",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "published": false,
+   "source_uri": "https://istio-release.storage.googleapis.com/charts/base-1.23.2.tgz"
+  },
+  "model": {
+   "category": {
+    "name": "Uncategorized"
+   },
+   "displayName": "base",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "source_uri": "https://istio-release.storage.googleapis.com/charts/base-1.23.2.tgz",
+    "styleOverrides": "",
+    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 160 240\" fill=\"none\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M0 210H160L60 240L0 210Z\" fill=\"#466BB0\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M0 200L60 190V80L0 200Z\" fill=\"#466BB0\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M70 190L160 200L70 0V190Z\" fill=\"#466BB0\"\u003e\u003c/path\u003e\n\u003c/svg\u003e\n",
+    "svgComplete": "",
+    "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"6.386270046234131 3.7419400215148926 18.227430820465088 25.258059978485107\" fill=\"none\" height=\"20\" width=\"20\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M6.38627 24.7904L13.2215 23.738V12.1613L6.38627 24.7904Z\" fill=\"white\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M6.38627 25.8427H24.6137L13.2215 29L6.38627 25.8427Z\" fill=\"white\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M14.3608 23.7379L24.6137 24.7904L14.3608 3.74194V23.7379Z\" fill=\"white\"\u003e\u003c/path\u003e\u003c/svg\u003e"
+   },
+   "model": {
+    "version": "1.23.2"
+   },
+   "name": "base",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "subCategory": "Uncategorized",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "ignored",
+  "styles": {
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "svgColor": "\u003csvg width=\"160\" height=\"240\" viewBox=\"0 0 160 240\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M0 210H160L60 240L0 210Z\" fill=\"#466BB0\"/\u003e\n\u003cpath d=\"M0 200L60 190V80L0 200Z\" fill=\"#466BB0\"/\u003e\n\u003cpath d=\"M70 190L160 200L70 0V190Z\" fill=\"#466BB0\"/\u003e\n\u003c/svg\u003e\n",
+   "svgWhite": "\u003csvg viewBox=\"6.386270046234131 3.7419400215148926 18.227430820465088 25.258059978485107\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cpath d=\"M6.38627 24.7904L13.2215 23.738V12.1613L6.38627 24.7904Z\" fill=\"white\"/\u003e\u003cpath d=\"M6.38627 25.8427H24.6137L13.2215 29L6.38627 25.8427Z\" fill=\"white\"/\u003e\u003cpath d=\"M14.3608 23.7379L24.6137 24.7904L14.3608 3.74194V23.7379Z\" fill=\"white\"/\u003e\u003c/svg\u003e"
+  },
+  "version": "v1.0.0"
+ }

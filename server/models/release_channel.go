@@ -106,19 +106,21 @@ func (k *Kanvas) Intercept(req *http.Request, res http.ResponseWriter) {
 	}
 
 	k.Provider.SetJWTCookie(res, flowResponse.AccessToken)
+	flowResponse.Capabilities.ProviderURL = k.Provider.GetProviderURL()
 
 	err = k.Provider.WriteCapabilitiesForUser(flowResponse.UserID.String(), &flowResponse.Capabilities)
 	if err != nil {
 		err = ErrDBPut(errors.Wrapf(err, "failed to write capabilities for the user %s", flowResponse.UserID.String()))
 		k.log.Error(err)
 		http.Redirect(res, req, errorUI, http.StatusFound)
+
 		return
 	}
-
+	k.Provider.SetProviderProperties(flowResponse.Capabilities)
 	// Download the package for the user only if they have extension capability
 	// The download is skipped if package already exists.
 	if len(flowResponse.Capabilities.Extensions.Navigator) > 0 {
-		k.Provider.DownloadProviderExtensionPackage()
+		flowResponse.Capabilities.DownloadProviderExtensionPackage(k.log)
 	}
 	redirectURL := getRedirectURLForNavigatorExtension(&providerProperties)
 

@@ -894,8 +894,8 @@ github.com/containerd/console v0.0.0-20180822173158-c12b1e7919c1/go.mod h1:Tj/on
 github.com/containerd/containerd v1.3.0-beta.2.0.20190828155532-0293cbd26c69/go.mod h1:bC6axHOhabU15QhwfG7w5PipXdVtMXFTttgp+kVtyUA=
 github.com/containerd/containerd v1.3.2/go.mod h1:bC6axHOhabU15QhwfG7w5PipXdVtMXFTttgp+kVtyUA=
 github.com/containerd/containerd v1.3.4/go.mod h1:bC6axHOhabU15QhwfG7w5PipXdVtMXFTttgp+kVtyUA=
-github.com/containerd/containerd v1.7.20 h1:Sl6jQYk3TRavaU83h66QMbI2Nqg9Jm6qzwX57Vsn1SQ=
-github.com/containerd/containerd v1.7.20/go.mod h1:52GsS5CwquuqPuLncsXwG0t2CiUce+KsNHJZQJvAgR0=
+github.com/containerd/containerd v1.7.21 h1:USGXRK1eOC/SX0L195YgxTHb0a00anxajOzgfN0qrCA=
+github.com/containerd/containerd v1.7.21/go.mod h1:e3Jz1rYRUZ2Lt51YrH9Rz0zPyJBOlSvB3ghr2jbVD8g=
 github.com/containerd/continuity v0.0.0-20190426062206-aaeac12a7ffc/go.mod h1:GL3xCUCBDV3CZiTSEKksMWbLE66hEyuu9qyDOOqM47Y=
 github.com/containerd/continuity v0.0.0-20200107194136-26c1120b8d41/go.mod h1:Dq467ZllaHgAtVp4p1xUQWBrFXR9s/wyoTpG8zOJGkY=
 github.com/containerd/continuity v0.4.2 h1:v3y/4Yz5jwnvqPKJJ+7Wf93fyWoCB3F5EclWG023MDM=
@@ -1618,8 +1618,8 @@ github.com/layer5io/gowrk2 v0.6.1/go.mod h1:ugxQ23+HwQ8dmZYJd1LScw/TLKbdgfN6OOtg
 github.com/layer5io/meshery-operator v0.7.0 h1:YXlnsx2Xy5duM+W99vts2fFV4C1KnOCytQi2fxdQTUc=
 github.com/layer5io/meshery-operator v0.7.0/go.mod h1:mVMpSrvSH1zgSmcjzk+/astXV5L34NlL/PcZMH6s2IU=
 github.com/layer5io/meshkit v0.2.7/go.mod h1:QvEKV8wIEOabiFlUgiu+s78GpJTsRpoRw5pgvEX077Y=
-github.com/layer5io/meshkit v0.7.73 h1:pLDTbx1rZi6tOoqGqz7xugOx47GiUAZEcoO+K9jVeUQ=
-github.com/layer5io/meshkit v0.7.73/go.mod h1:0IMlPFaSzWZ93QpLdaQfHgaoF9vecr1r0Aa9FXNIjdc=
+github.com/layer5io/meshkit v0.7.76 h1:uXivwO2oo3RSPe/61u7LqvqEDvgqVQjqoAuiLl7ZRCc=
+github.com/layer5io/meshkit v0.7.76/go.mod h1:fK7eqynmZm/2+JSOIM/UIfPt4KfwzM8C3HPlNd67iRo=
 github.com/layer5io/meshsync v0.6.24 h1:ui/u89NW2yHyCtdVaJuuzrag5a1CbhVB8Lp70/9Y+lw=
 github.com/layer5io/meshsync v0.6.24/go.mod h1:0qI6ATBvkVx10C1ymH62NaGPy85ALFF3T9Dx/IEXfy0=
 github.com/layer5io/nighthawk-go v1.0.3 h1:AGhip7TM8FjaDJ58jU/7BoPx+O45S7UNImfw7vC2Z0U=
@@ -1697,8 +1697,8 @@ github.com/maxatome/go-testdeep v1.12.0 h1:Ql7Go8Tg0C1D/uMMX59LAoYK7LffeJQ6X2T04
 github.com/maxatome/go-testdeep v1.12.0/go.mod h1:lPZc/HAcJMP92l7yI6TRz1aZN5URwUBUAfUNvrclaNM=
 github.com/meshery/kompose v1.26.2-0.20230425025309-3bb778d54007 h1:JuykLcZhoffc0qkstUou6sFuPvJS+HBmypIFcLDbGkI=
 github.com/meshery/kompose v1.26.2-0.20230425025309-3bb778d54007/go.mod h1:UA0RzM2vfEZAW3DDWXy+ozaXBofKFRnyumBksXHz6Nw=
-github.com/meshery/schemas v0.7.31 h1:FfVR+oErAiiEomt6sTZI5uKhoyU26QXawT6UDZHbthI=
-github.com/meshery/schemas v0.7.31/go.mod h1:UfiO+zm92yLkaJP0aroNwVnjuozoh793AWDXrKDYmT0=
+github.com/meshery/schemas v0.7.33 h1:hlWHIFof7piu97fFHFz0Ijtk0H1lZ6jVozVpBjjs0qU=
+github.com/meshery/schemas v0.7.33/go.mod h1:UfiO+zm92yLkaJP0aroNwVnjuozoh793AWDXrKDYmT0=
 github.com/miekg/dns v1.0.14/go.mod h1:W1PPwlIAgtquWBMBEV9nkV9Cazfe8ScdGz/Lj7v3Nrg=
 github.com/miekg/dns v1.1.57 h1:Jzi7ApEIzwEPLHWRcafCN9LZSBbqQpxjt/wpgvg7wcM=
 github.com/miekg/dns v1.1.57/go.mod h1:uqRjCRUuEAA6qsOiJvDd+CFo/vW+y5WR6SNmHE55hZk=
@@ -1739,6 +1739,8 @@ github.com/moby/sys/mountinfo v0.6.2 h1:BzJjoreD5BMFNmD9Rus6gdd1pLuecOFPt8wC+Vyg
 github.com/moby/sys/mountinfo v0.6.2/go.mod h1:IJb6JQeOklcdMU9F5xQ8ZALD+CUr5VlGpwtX+VE0rpI=
 github.com/moby/sys/sequential v0.5.0 h1:OPvI35Lzn9K04PBbCLW0g4LcFAJgHsvXsRyewg5lXtc=
 github.com/moby/sys/sequential v0.5.0/go.mod h1:tH2cOOs5V9MlPiXcQzRC+eEyab644PWKGRYaaV5ZZlo=
+github.com/moby/sys/userns v0.1.0 h1:tVLXkFOxVu9A64/yh59slHVv9ahO9UIev4JZusOLG/g=
+github.com/moby/sys/userns v0.1.0/go.mod h1:IHUYgu/kao6N8YZlp9Cf444ySSvCmDlmzUcYfDHOl28=
 github.com/moby/term v0.0.0-20221205130635-1aeaba878587/go.mod h1:8FzsFHVUBGZdbDsJw/ot+X+d5HLUbvklYLJ9uGfcI3Y=
 github.com/moby/term v0.5.0 h1:xt8Q1nalod/v7BqbG21f8mQPqH+xAaC9C3N3wfWbVP0=
 github.com/moby/term v0.5.0/go.mod h1:8FzsFHVUBGZdbDsJw/ot+X+d5HLUbvklYLJ9uGfcI3Y=
@@ -1842,8 +1844,8 @@ github.com/onsi/gomega v1.27.6/go.mod h1:PIQNjfQwkP3aQAH7lf7j87O/5FiNr+ZR8+ipb+q
 github.com/onsi/gomega v1.30.0 h1:hvMK7xYz4D3HapigLTeGdId/NcfQx1VHMJc60ew99+8=
 github.com/onsi/gomega v1.30.0/go.mod h1:9sxs+SwGrKI0+PWe4Fxa9tFQQBG5xSsSbMXOI8PPpoQ=
 github.com/op/go-logging v0.0.0-20160315200505-970db520ece7/go.mod h1:HzydrMdWErDVzsI23lYNej1Htcns9BCg93Dk0bBINWk=
-github.com/open-policy-agent/opa v0.67.1 h1:rzy26J6g1X+CKknAcx0Vfbt41KqjuSzx4E0A8DAZf3E=
-github.com/open-policy-agent/opa v0.67.1/go.mod h1:aqKlHc8E2VAAylYE9x09zJYr/fYzGX+JKne89UGqFzk=
+github.com/open-policy-agent/opa v0.68.0 h1:Jl3U2vXRjwk7JrHmS19U3HZO5qxQRinQbJ2eCJYSqJQ=
+github.com/open-policy-agent/opa v0.68.0/go.mod h1:5E5SvaPwTpwt2WM177I9Z3eT7qUpmOGjk1ZdHs+TZ4w=
 github.com/opencontainers/go-digest v0.0.0-20170106003457-a6d0ee40d420/go.mod h1:cMLVZDEM3+U2I4VmLI6N8jQYUd2OVphdqWwCJHrFt2s=
 github.com/opencontainers/go-digest v0.0.0-20180430190053-c9281466c8b2/go.mod h1:cMLVZDEM3+U2I4VmLI6N8jQYUd2OVphdqWwCJHrFt2s=
 github.com/opencontainers/go-digest v1.0.0-rc1/go.mod h1:cMLVZDEM3+U2I4VmLI6N8jQYUd2OVphdqWwCJHrFt2s=
@@ -1926,8 +1928,8 @@ github.com/prometheus/client_golang v1.12.1/go.mod h1:3Z9XVyYiZYEO+YQWt3RD2R3jrb
 github.com/prometheus/client_golang v1.14.0/go.mod h1:8vpkKitgIVNcqrRBWh1C4TIUQgYNtG/XQE4E/Zae36Y=
 github.com/prometheus/client_golang v1.15.1/go.mod h1:e9yaBhRPU2pPNsZwE+JdQl0KEt1N9XgF6zxWmaC0xOk=
 github.com/prometheus/client_golang v1.16.0/go.mod h1:Zsulrv/L9oM40tJ7T815tM89lFEugiJ9HzIqaAx4LKc=
-github.com/prometheus/client_golang v1.20.0 h1:jBzTZ7B099Rg24tny+qngoynol8LtVYlA2bqx3vEloI=
-github.com/prometheus/client_golang v1.20.0/go.mod h1:PIEt8X02hGcP8JWbeHyeZ53Y/jReSnHgO035n//V5WE=
+github.com/prometheus/client_golang v1.20.2 h1:5ctymQzZlyOON1666svgwn3s6IKWgfbjsejTMiXIyjg=
+github.com/prometheus/client_golang v1.20.2/go.mod h1:PIEt8X02hGcP8JWbeHyeZ53Y/jReSnHgO035n//V5WE=
 github.com/prometheus/client_model v0.0.0-20171117100541-99fa1f4be8e5/go.mod h1:MbSGuTsp3dbXC40dX6PRTWyKYBIrTGTE9sqQNg2J8bo=
 github.com/prometheus/client_model v0.0.0-20180712105110-5c3871d89910/go.mod h1:MbSGuTsp3dbXC40dX6PRTWyKYBIrTGTE9sqQNg2J8bo=
 github.com/prometheus/client_model v0.0.0-20190115171406-56726106282f/go.mod h1:MbSGuTsp3dbXC40dX6PRTWyKYBIrTGTE9sqQNg2J8bo=
