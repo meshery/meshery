@@ -69,6 +69,7 @@ import classNames from 'classnames';
 import { forwardRef } from 'react';
 import { formatToTitleCase } from '@/utils/utils';
 import { useThemePreference } from '@/themes/hooks';
+import { CircularProgress } from '@layer5/sistent';
 
 if (typeof window !== 'undefined') {
   require('codemirror/mode/yaml/yaml');
@@ -634,6 +635,8 @@ class MesheryApp extends App {
             [classes.notifWarn]: variant === 'warning' && this.state.theme !== 'dark',
             [classes.darknotifError]: variant === 'error' && this.state.theme === 'dark',
             [classes.notifError]: variant === 'error' && this.state.theme !== 'dark',
+            [classes.notifInfo]: variant === 'loading' && this.state.theme !== 'dark',
+            [classes.darknotifInfo]: variant === 'loading' && this.state.theme === 'dark',
           })}
           style={{
             borderRadius: '0.3rem',
@@ -654,6 +657,8 @@ class MesheryApp extends App {
               <Warning style={{ marginRight: '0.5rem' }} />
             ) : variant === 'info' ? (
               <Info style={{ marginRight: '0.5rem' }} />
+            ) : variant === 'loading' ? (
+              <CircularProgress size={24} style={{ marginRight: '0.5rem' }} />
             ) : null}
             <div className={classes.message}>{message}</div>
 
@@ -723,6 +728,7 @@ class MesheryApp extends App {
                         success: ThemeResponsiveSnackbar,
                         error: ThemeResponsiveSnackbar,
                         warning: ThemeResponsiveSnackbar,
+                        loading: ThemeResponsiveSnackbar,
                       }}
                       maxSnack={10}
                     >
