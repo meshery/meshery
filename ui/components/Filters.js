@@ -508,10 +508,6 @@ function MesheryFilters({
   // };
 
   useEffect(() => {
-    handleSetFilters(filters);
-  }, [catalogVisibility]);
-
-  useEffect(() => {
     catalogVisibilityRef.current = catalogVisibility;
     const fetchCatalogFilters = fetchCatalogFilter({
       selector: {
