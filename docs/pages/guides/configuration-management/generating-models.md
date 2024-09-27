@@ -79,7 +79,7 @@ On the **Registry** page, you can generate your model by clicking the **Generate
 #### **From CSV**
 1. **Upload CSV Files**: You can generate your model by uploading a **components model CSV**. Uploading a **relationships CSV** is optional.
    
-2. **Template CSV**: If you don’t have a CSV file ready, you can use our [Spreasheet template](https://docs.google.com/spreadsheets/d/136NOS05vru8_vgN-cLV_911OZ359C4Y66UHbo3rVv4M) to create one. Simply  fill in your details, download the template as csv, and upload it to generate your model.
+2. **Template CSV**: If you don’t have a CSV file ready, you can use our [Spreasheet template](https://docs.google.com/spreadsheets/d/19JEpqvHrG8UL-Bc-An9UIcubf1NVhlfnQSN1TD7JOZ4/) to create one. Simply  fill in your details, download the template as csv, and upload it to generate your model.
 
 ---
 <a href="{{ site.baseurl }}/assets/img/generate/CsvTemplate.gif"><img alt="Import-Model" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/generate/CsvTemplate.gif" /></a>
