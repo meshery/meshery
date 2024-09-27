@@ -40,7 +40,7 @@ Registrant `Github`:
 **Example :**
 
 <pre class="codeblock-pre">
-<div class="codeblock"><div class="clipboardjs">mesheryctl model import -f "git:://github.com/cert-manager/cert-manager/master/deploy/crds" -t template.json</div></div>
+<div class="codeblock"><div class="clipboardjs">mesheryctl model generate -f "git:://github.com/cert-manager/cert-manager/master/deploy/crds" -t template.json</div></div>
 </pre>
 
 
