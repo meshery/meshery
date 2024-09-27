@@ -1,0 +1,66 @@
+name: ZooKeeper Cluster
+version: 0.0.12
+services:
+  my-zookeeper-cluster:
+    annotations: {}
+    apiVersion: apps/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: my-zookeeper-cluster
+    namespace: default
+    settings:
+      spec:
+        replicas: 3
+        selector:
+          match Labels:
+            app: my-zookeeper-cluster
+        template:
+          metadata:
+            labels:
+              app: my-zookeeper-cluster
+          spec:
+            containers:
+            - image: bitnami/zookeeper:latest
+              name: my-zookeeper
+              ports:
+              - container Port: 2181
+              volume Mounts:
+              - mount Path: /zookeeper/data
+                name: zookeeper-data
+            volumes:
+            - name: zookeeper-data
+              persistent Volume Claim:
+                claim Name: my-zookeeper-cluster-pvc
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: a74d57b1-d257-42e9-a72f-b074e1b648ac
+        label: my-zookeeper-cluster
+        meshmodel-metadata:
+          genealogy: ""
+          isCustomResource: false
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: cylinder
+          styleOverrides: '{"height":"15","width":"15","x":"12","y":"20","background-opacity":"0"}'
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
+          svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/persistentvolume-complete.svg
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
+        position:
+          posX: 290
+          posY: 290
+        whiteboardData:
+          style:
+            z-index: 3
+    type: StatefulSet
+    version: ""

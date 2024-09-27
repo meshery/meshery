@@ -1,0 +1,670 @@
+name: prometheus_kubernetes
+version: 0.0.6
+services:
+  Generic Node:
+    annotations: {}
+    apiVersion: core.meshery.io/v1alpha1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: meshery-core
+    name: Generic Node
+    namespace: default
+    settings:
+      user Messages: []
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 0c854cd5-8837-4d0f-88f5-99093c779ea9
+        label: Generic Node
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          components: []
+          displayName: Meshery Core
+          hostID: 00000000-0000-0000-0000-000000000000
+          id: abf31830-2ad6-54c4-90e1-d4c52807deef
+          metadata:
+            isAnnotation: false
+            svgColor: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+            svgWhite: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+          name: meshery-core
+          relationships: []
+          status: registered
+          version: v1.0.0
+        meshmodel-metadata:
+          capabilities: '{"designer":{"edit":{"config":false,"lock":true,"shape":{"convert-shape":false},"style":false},"label":{"edit":true,"show":false,"sync-with-config-property":"none"}}}'
+          defaultData: '{"label":""}'
+          genealogy: ""
+          isAnnotation: true
+          isModelAnnotation: "TRUE"
+          isNamespaced: false
+          logoURL: ""
+          model: meshery-core
+          modelDisplayName: Meshery Core
+          primaryColor: '#00B39F'
+          published: true
+          secondaryColor: '#00D3A9'
+          shape: circle
+          shapePolygonPoints: ""
+          styleOverrides:
+            background-image: none
+            border-style: dashed
+            border-width: 0
+            data:
+              label: ""
+            height: 30px
+            width: 30px
+            z-index: 9
+          styles: '{"height":"30px","width":"30px", "background-image":"none","border-width":0,"border-style":"dashed"}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/meshery-core/color/genericnode-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/meshery-core/white/genericnode-white.svg
+        parent: de446104-d42b-482c-a7ec-369b447f0530
+        position:
+          posX: 430
+          posY: 370
+        whiteboardData:
+          style:
+            backgroundOpacity: 0
+            visibility: hidden
+            z-index: 17
+    type: GenericNode
+    version: v1.0.0
+  Node Group Inventory Wallet:
+    annotations: {}
+    apiVersion: core.meshery.io/v1alpha1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: meshery-core
+    name: Node Group Inventory Wallet
+    namespace: default
+    settings:
+      user Messages: []
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 1941f26e-c58b-42c5-b2a2-d06ff5b9a747
+        label: Node Group Inventory Wallet
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          components: []
+          displayName: Meshery Core
+          hostID: 00000000-0000-0000-0000-000000000000
+          id: abf31830-2ad6-54c4-90e1-d4c52807deef
+          metadata:
+            isAnnotation: false
+            svgColor: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+            svgWhite: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+          name: meshery-core
+          relationships: []
+          status: registered
+          version: v1.0.0
+        meshmodel-metadata:
+          capabilities: '{"designer":{"edit":{"config":false,"lock":true,"shape":{"convert-shape":true},"style":false},"label":{"edit":true,"show":false,"sync-with-config-property":"label"}}}'
+          defaultData: '{"label":""}'
+          genealogy: parent
+          isAnnotation: true
+          isModelAnnotation: "TRUE"
+          isNamespaced: false
+          logoURL: ""
+          model: meshery-core
+          modelDisplayName: Meshery Core
+          primaryColor: '#00B39F'
+          published: true
+          secondaryColor: '#00D3A9'
+          shape: round-rectangle
+          shapePolygonPoints: ""
+          styleOverrides:
+            background-image: none
+            background-opacity: 0.1
+            border-style: dashed
+            border-width: 1
+            data:
+              label: ""
+            height: 30px
+            width: 30px
+            z-index: 10
+          styles: '{"height":"30px","width":"30px", "background-image":"none","border-width":1,"border-style":"dashed","background-opacity":0.1}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/meshery-core/color/genericnode-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/meshery-core/white/genericnode-white.svg
+        parent: de446104-d42b-482c-a7ec-369b447f0530
+        position:
+          posX: 310
+          posY: 250
+        whiteboardData:
+          style:
+            z-index: 16
+    type: NodeGroupInventoryWallet
+    version: v1.0.0
+  prometheus-jkcaz:
+    annotations: {}
+    apiVersion: rbac.authorization.k8s.io/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: prometheus
+    namespace: default
+    settings:
+      role Ref:
+        api Group: rbac.authorization.k8s.io
+        kind: ClusterRole
+        name: prometheus
+      subjects:
+      - kind: ServiceAccount
+        name: default
+        namespace: monitoring
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: d9b3fa77-9ad6-41ca-9d41-5b7105657d59
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: false
+          logoURL: Created by Meshery Authors
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-rectangle
+          shapePolygonPoints: ""
+          styleOverrides:
+            height: 25px
+            width: 25px
+            x: "7"
+            "y": "7"
+            z-index: 4
+          styles: '{"height":"25px","width":"25px","x":"7", "y":"7"}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/clusterrolebinding-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/clusterrolebinding-white.svg
+        position:
+          posX: 270
+          posY: 230
+        whiteboardData:
+          style:
+            z-index: 7
+    type: ClusterRoleBinding
+    version: ""
+  prometheus-laqnu:
+    annotations: {}
+    apiVersion: rbac.authorization.k8s.io/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: prometheus
+    namespace: default
+    settings:
+      rules:
+      - api Groups:
+        - ""
+        resources:
+        - nodes
+        - nodes/proxy
+        - services
+        - endpoints
+        - pods
+        verbs:
+        - get
+        - list
+        - watch
+      - api Groups:
+        - extensions
+        resources:
+        - ingresses
+        verbs:
+        - get
+        - list
+        - watch
+      - non Resource URLs:
+        - /metrics
+        verbs:
+        - get
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: fc0fa4d6-de9d-4ec8-a3c6-5c14a8c2a974
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: false
+          logoURL: Created by Meshery Authors
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-rectangle
+          shapePolygonPoints: ""
+          styleOverrides:
+            height: 22px
+            width: 22px
+            x: "8.5"
+            "y": "7.5"
+            z-index: 3
+          styles: '{"height":"22px", "width":"22px", "x":"8.5", "y":"7.5"}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/clusterrole-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/clusterrole-white.svg
+        position:
+          posX: 170
+          posY: 270
+        whiteboardData:
+          style:
+            z-index: 9
+    type: ClusterRole
+    version: ""
+  prometheus-secret:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: prometheus-secret
+    namespace: monitoring
+    settings:
+      data:
+        tls.crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUZpVENDQkhHZ0F3SUJBZ0lCQVRBTkJna3Foa2lHOXcwQkFRc0ZBRENCd0RFak1DRUdBMVVFQXhNYWFXNTAKWlhKdFpXUnBZWFJsTG5Ob1lXdGxjakkwTWk1c1lXSXhDekFKQmdOVkJBWVRBbFZUTVJFd0R3WURWUVFJRXdoVwphWEpuYVc1cFlURVFNQTRHQTFVRUJ4TUhRbkpwYzNSdmR6RXNNQ29HQTFVRUNoTWpVMGhCUzBWU01qUXlJRXhoCllpQkRaWEowYVdacFkyRjBaU0JCZFhSb2IzSnBkSGt4T1RBM0JnTlZCQXNUTUZOSVFVdEZVakkwTWlCTVlXSWcKU1c1MFpYSnRaV1JwWVhSbElFTmxjblJwWm1sallYUmxJRUYxZEdodmNtbDBlVEFlRncweE9URXdNVGN4TmpFMgpNekZhRncweU1URXdNVFl4TmpFMk16RmFNSUdBTVIwd0d3WURWUVFERkJRcUxtRndjSE11YzJoaGEyVnlNalF5CkxteGhZakVMTUFrR0ExVUVCaE1DVlZNeEVUQVBCZ05WQkFnVENGWnBjbWRwYm1saE1SQXdEZ1lEVlFRSEV3ZEMKY21semRHOTNNUll3RkFZRFZRUUtFdzFUU0VGTFJWSXlORElnVEdGaU1SVXdFd1lEVlFRTEV3eE1ZV0lnVjJWaQpjMmwwWlhNd2dnRWlNQTBHQ1NxR1NJYjNEUUVCQVFVQUE0SUJEd0F3Z2dFS0FvSUJBUURsRm16QVd0U09JcXZNCkpCV3Vuc0VIUmxraXozUmpSK0p1NTV0K0hCUG95YnZwVkJJeXMxZ3prby9INlkxa2Zxa1JCUzZZYVFHM2lYRFcKaDgzNlNWc3pNVUNVS3BtNXlZQXJRNzB4YlpPTXRJcjc1VEcrejFaRGJaeFUzbnh6RXdHdDN3U3c5OVJ0bjhWbgo5dEpTVXI0MHBHUytNemMzcnZOUFZRMjJoYTlhQTdGL2NVcGxtZUpkUnZEVnJ3Q012UklEcndXVEZjZkU3bUtxCjFSUkRxVDhETnlydlJmeUlubytmSkUxTmRuVEVMY0dTYVZlajhZVVFONHY0WFRnLzJncmxIN1pFT1VXNy9oYm8KUXh6NVllejVSam1wOWVPVUpvdVdmWk5FNEJBbGRZeVYxd2NPRXhRTmswck5BOU45ZXBjNWtUVVZQR3pOTWRucgovVXQxOWMweEFnTUJBQUdqZ2dIS01JSUJ4akFKQmdOVkhSTUVBakFBTUJFR0NXQ0dTQUdHK0VJQkFRUUVBd0lHClFEQUxCZ05WSFE4RUJBTUNCYUF3TXdZSllJWklBWWI0UWdFTkJDWVdKRTl3Wlc1VFUwd2dSMlZ1WlhKaGRHVmsKSUZObGNuWmxjaUJEWlhKMGFXWnBZMkYwWlRBZEJnTlZIUTRFRmdRVWRhYy94MTR6dXl3RVZPSi9vTjdQeU82bApDZ2N3Z2RzR0ExVWRJd1NCMHpDQjBJQVVzZFM1WWxuWEpWTk5mRVpkTEQvL2RyNE5mV3FoZ2JTa2diRXdnYTR4CkdUQVhCZ05WQkFNVEVHTmhMbk5vWVd0bGNqSTBNaTVzWVdJeEN6QUpCZ05WQkFZVEFsVlRNUkV3RHdZRFZRUUkKRXdoV2FYSm5hVzVwWVRFUU1BNEdBMVVFQnhNSFFuSnBjM1J2ZHpFc01Db0dBMVVFQ2hNalUwaEJTMFZTTWpReQpJRXhoWWlCRFpYSjBhV1pwWTJGMFpTQkJkWFJvYjNKcGRIa3hNVEF2QmdOVkJBc1RLRk5JUVV0RlVqSTBNaUJNCllXSWdVbTl2ZENCRFpYSjBhV1pwWTJGMFpTQkJkWFJvYjNKcGRIbUNBUUV3SFFZRFZSMGxCQll3RkFZSUt3WUIKQlFVSEF3RUdDQ3NHQVFVRkNBSUNNRWdHQTFVZEVRUkJNRCtDRFhOb1lXdGxjakkwTWk1c1lXS0NFbUZ3Y0hNdQpjMmhoYTJWeU1qUXlMbXhoWW9JVUtpNWhjSEJ6TG5Ob1lXdGxjakkwTWk1c1lXS0hCTUNvQ3hBd0RRWUpLb1pJCmh2Y05BUUVMQlFBRGdnRUJBRzA3ZHFNdFZYdVQrckduQlN4SkVTNjNSa2pHaWd0c3ZtNTk4NSsrbjZjRW5kSDIKb2hjaGdmRUo5V0UxYUFWSDR4QlJSdVRIUFVJOFcvd3N1OFBxQ1o4NHpRQ2U2elAyeThEcmEwbjFzK2lIeHFwRAorS3BwZS91NkNLVTFEL0VWRU9MakpZd3pRYlFLSUlPL2Y1Q0JVbUpGWjBuZ1VIUEtvUDNyTXordTlBOWFvRkVrCnF3dDBadHFHcWpjMkh3Q09UOTlOVmFsZ29ISXljOElxQXJXdjNSWklraUlyaW9kSUdDMS94MVQ2dHhKcEUyRisKQzZ0Tzk0U0FVSUJwc2VORjNFbGNLNUsyTW44YVAzR3NnNFRHeElPN2Q1eUIvb3YwNGhOV2Q1S2QwWGorL1BvQgpLOU43cFQ1SVU2citLekNoeGlSdmRvZlAzV0VYN1ZkNEtLWG94K0U9Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K
+        tls.key: LS0tLS1CRUdJTiBQUklWQVRFIEtFWS0tLS0tCk1JSUV2d0lCQURBTkJna3Foa2lHOXcwQkFRRUZBQVNDQktrd2dnU2xBZ0VBQW9JQkFRRGxGbXpBV3RTT0lxdk0KSkJXdW5zRUhSbGtpejNSalIrSnU1NXQrSEJQb3lidnBWQkl5czFnemtvL0g2WTFrZnFrUkJTNllhUUczaVhEVwpoODM2U1Zzek1VQ1VLcG01eVlBclE3MHhiWk9NdElyNzVURyt6MVpEYlp4VTNueHpFd0d0M3dTdzk5UnRuOFZuCjl0SlNVcjQwcEdTK016YzNydk5QVlEyMmhhOWFBN0YvY1VwbG1lSmRSdkRWcndDTXZSSURyd1dURmNmRTdtS3EKMVJSRHFUOEROeXJ2UmZ5SW5vK2ZKRTFOZG5URUxjR1NhVmVqOFlVUU40djRYVGcvMmdybEg3WkVPVVc3L2hibwpReHo1WWV6NVJqbXA5ZU9VSm91V2ZaTkU0QkFsZFl5VjF3Y09FeFFOazByTkE5TjllcGM1a1RVVlBHek5NZG5yCi9VdDE5YzB4QWdNQkFBRUNnZ0VCQU5zOHRjRDBiQnpHZzRFdk8yek0wMUJoKzZYN3daZk4wSjV3bW5kNjZYYkwKc1VEZ1N6WW9PbzNJZ2o5QWZTY2lyQ3YwdUozMVNFWmNpeGRVQ2tTdjlVNnRvTzdyUWdqeUZPM1N1dm5Wc3ZKaQpTZXc5Y0hqNk5jVDczak8rWkgxQVFFZ2tlWG5mQTNZU0JEcTFsSnhpUVZOaHpHUFY0Yzh4Wi9xUkhEbUVBTWR6CmwyaTB6dHJtcWRqSng4aTQxOXpGL1pVektoa2JtcVZVb3JjZ1lNdEt5QVloSENMYms2RFZtQ1FhbDlndEUrNjUKTmFTOEwxUW9yVWNVS0FoSTNKT2Q2TTRwbWRPaExITjZpZ0VwWFdVWGxBZjRITUZicHd5M1oxejNqZzVqTE9ragp6SWNDSVRaai9CYVZvSVc4QzJUb0pieUJKWkN6UDVjUVJTdkJOOGV4aUFFQ2dZRUEvV0Nxb2xVUWtOQkQrSnlPCklXOUJIRVlPS3oxRFZxNWxHRFhoNFMyTStpOU1pck5nUlcvL0NFRGhRUVVMZmtBTDgxMERPQmxsMXRRRUpGK3cKb1V6dWt6U1lkK1hTSnhicTM5YTF1ZGJldTNZU1ljeC8wTEEweGFQOW1sN1l1NXUraUZ4NGhwcnYyL2UrVklZQQpzTWV4WkZSODA3Q3M5YXN5MkdFT1l2aEdKb0VDZ1lFQTUzVm1weFlQbDFOYTVTMElJbEpuYm40dTl0RHpwYm5TCnpsMjBVQ3Q0d0N4STR6YjY1S1o4V1VaYlFzVTVaZ0VqTmxJWURXUisrd3kwVXh2SmNxUG5nS0xuOEdoSzhvOVEKeVJuR2dSYXAxWmNuUEdsbGdCeHQzM0s5TDNWMmJzMXBPcGJKMGlpOVdySWM4MU1wUVFpQjZ1RDRSZ216M0ZWSQpnUk5Ec2ZHS0xyRUNnWUVBbWY5ZXRqc3RUbGJHZVJ2dDVyUlB4bmR0dFNvTysyZ1RXWnVtSmM0aG1RMldYOWFWCjlKNFZTMWJqa1RrWHV5d0NGMis0dlNmeWxaZFd6U1M3bmMyOFV3dnNmekxYZjVxV05tV3hIYnBTdFcwVnp3c1QKeENyVWFDczd2ODlWdXZEMTVMc1BKZ0NWT0FSalVjd0FMM0d2aDJNeVd4ZE9pQ0g5VFRYd0lJYjFYQUVDZ1lBMwp4ZUptZ0xwaERJVHFsRjlSWmVubWhpRnErQTY5OEhrTG9TakI2TGZBRnV1NVZKWkFZcDIwSlcvNE51NE4xbGhWCnpwSmRKOG94Vkc1ZldHTENiUnhyc3RXUTZKQ213a0lGTTJEUjJsUXlVNm53dExUd21la2YzdFlYaVlad1RLNysKbnpjaW5RNkR2RWVkbW54bVgxWnU4cWJndVpYTmtmOVdtdjNFOHg4SkFRS0JnUUNNeDFWNHJIcUpwVXJMdkRVVQo4RzhXVGNrT2VFM2o2anhlcHMwcnExdEd1cE9XWW5saFlNYyt5VkMzMDZUc2dXUmJ5R1Y4YWNaRkF4WS9Ub2N5CmxpcXlUS1NGNUloYXhZQVpRTzVkOU1oTmN0bTRReDNaOUtTekZ5ZG01QlZVL0grMFFmUnRwM29TeFVneXRZNXkKV3ZDTFZ5bmNGZlZpL0VkaTdaZHM2aW82QVE9PQotLS0tLUVORCBQUklWQVRFIEtFWS0tLS0tCg==
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 9466f34a-06b9-4c8d-99c3-a703597e56ea
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: Created by Meshery Authors
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: sheild
+          shapePolygonPoints: ""
+          styleOverrides:
+            background-clip: node
+            background-image-containment: over
+            background-opacity: "0"
+            height: 32
+            padding: 1
+            width: 32
+            z-index: 6
+          styles: '{"height":32,"width":32,"background-clip":"node","background-image-containment":"over","padding":1,"background-opacity":"0"}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/secret-color.svg
+          svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/secret-complete.svg
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/secret-white.svg
+        position:
+          posX: 210
+          posY: 270
+        whiteboardData:
+          style:
+            z-index: 11
+    type: Secret
+    version: ""
+  prometheus-server-conf:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels:
+      name: prometheus-server-conf
+    model: kubernetes
+    name: prometheus-server-conf
+    namespace: default
+    settings:
+      data:
+        prometheus.rules: |-
+          groups:
+          - name: devopscube demo alert
+            rules:
+            - alert: High Pod Memory
+              expr: sum(container_memory_usage_bytes) > 1
+              for: 1m
+              labels:
+                severity: slack
+              annotations:
+                summary: High Memory Usage
+        prometheus.yml: |-
+          global:
+            scrape_interval: 5s
+            evaluation_interval: 5s
+          rule_files:
+            - /etc/prometheus/prometheus.rules
+          alerting:
+            alertmanagers:
+            - scheme: http
+              static_configs:
+              - targets:
+                - "alertmanager.monitoring.svc:9093"
+          scrape_configs:
+            - job_name: 'node-exporter'
+              kubernetes_sd_configs:
+                - role: endpoints
+              relabel_configs:
+              - source_labels: [__meta_kubernetes_endpoints_name]
+                regex: 'node-exporter'
+                action: keep
+            - job_name: 'kubernetes-apiservers'
+              kubernetes_sd_configs:
+              - role: endpoints
+              scheme: https
+              tls_config:
+                ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+              bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+              relabel_configs:
+              - source_labels: [__meta_kubernetes_namespace, __meta_kubernetes_service_name, __meta_kubernetes_endpoint_port_name]
+                action: keep
+                regex: default;kubernetes;https
+            - job_name: 'kubernetes-nodes'
+              scheme: https
+              tls_config:
+                ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+              bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+              kubernetes_sd_configs:
+              - role: node
+              relabel_configs:
+              - action: labelmap
+                regex: __meta_kubernetes_node_label_(.+)
+              - target_label: __address__
+                replacement: kubernetes.default.svc:443
+              - source_labels: [__meta_kubernetes_node_name]
+                regex: (.+)
+                target_label: __metrics_path__
+                replacement: /api/v1/nodes/${1}/proxy/metrics
+            - job_name: 'kubernetes-pods'
+              kubernetes_sd_configs:
+              - role: pod
+              relabel_configs:
+              - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+                action: keep
+                regex: true
+              - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+                action: replace
+                target_label: __metrics_path__
+                regex: (.+)
+              - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
+                action: replace
+                regex: ([^:]+)(?::\d+)?;(\d+)
+                replacement: $1:$2
+                target_label: __address__
+              - action: labelmap
+                regex: __meta_kubernetes_pod_label_(.+)
+              - source_labels: [__meta_kubernetes_namespace]
+                action: replace
+                target_label: kubernetes_namespace
+              - source_labels: [__meta_kubernetes_pod_name]
+                action: replace
+                target_label: kubernetes_pod_name
+            - job_name: 'kube-state-metrics'
+              static_configs:
+                - targets: ['kube-state-metrics.kube-system.svc.cluster.local:8080']
+            - job_name: 'kubernetes-cadvisor'
+              scheme: https
+              tls_config:
+                ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+              bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+              kubernetes_sd_configs:
+              - role: node
+              relabel_configs:
+              - action: labelmap
+                regex: __meta_kubernetes_node_label_(.+)
+              - target_label: __address__
+                replacement: kubernetes.default.svc:443
+              - source_labels: [__meta_kubernetes_node_name]
+                regex: (.+)
+                target_label: __metrics_path__
+                replacement: /api/v1/nodes/${1}/proxy/metrics/cadvisor
+            - job_name: 'kubernetes-service-endpoints'
+              kubernetes_sd_configs:
+              - role: endpoints
+              relabel_configs:
+              - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_scrape]
+                action: keep
+                regex: true
+              - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_scheme]
+                action: replace
+                target_label: __scheme__
+                regex: (https?)
+              - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_path]
+                action: replace
+                target_label: __metrics_path__
+                regex: (.+)
+              - source_labels: [__address__, __meta_kubernetes_service_annotation_prometheus_io_port]
+                action: replace
+                target_label: __address__
+                regex: ([^:]+)(?::\d+)?;(\d+)
+                replacement: $1:$2
+              - action: labelmap
+                regex: __meta_kubernetes_service_label_(.+)
+              - source_labels: [__meta_kubernetes_namespace]
+                action: replace
+                target_label: kubernetes_namespace
+              - source_labels: [__meta_kubernetes_service_name]
+                action: replace
+                target_label: kubernetes_name
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 6442fcca-d80f-4b5f-981c-3e640756df56
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: bottom-round-rectangle
+          shapePolygonPoints: ""
+          styleOverrides:
+            z-index: 5
+          styles: ""
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/configmap-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/configmap-white.svg
+        position:
+          posX: 170
+          posY: 230
+        whiteboardData:
+          style:
+            z-index: 3
+    type: ConfigMap
+    version: ""
+  prometheus-service:
+    annotations:
+      prometheus.io/port: "9090"
+      prometheus.io/scrape: "true"
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: prometheus-service
+    namespace: monitoring
+    settings:
+      spec:
+        ports:
+        - node Port: 30000
+          port: 8080
+          protocol: TCP
+          target Port: 9090
+        selector:
+          app: prometheus-server
+        type: NodePort
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: bd7000f1-3367-4189-8f00-672911dea824
+            metadata:
+              port: 8080
+              protocol: TCP
+            source: b2e2a852-201f-41c1-b4e6-1f78ded3807b
+            subType: Network
+            target: de446104-d42b-482c-a7ec-369b447f0530
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: b2e2a852-201f-41c1-b4e6-1f78ded3807b
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-triangle
+          shapePolygonPoints: ""
+          styleOverrides:
+            background-position-y: 4.5
+            height: 20
+            padding: 12
+            width: 20
+            x: 10px
+            "y": 12px
+            z-index: 7
+          styles: '{"height":20,"width":20,"padding":12,"background-position-y":4.5,"x":"10px","y":"12px"}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/service-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/service-white.svg
+        position:
+          posX: 190
+          posY: 170
+        whiteboardData:
+          style:
+            z-index: 13
+    type: Service
+    version: ""
+  prometheus-ui:
+    annotations:
+      kubernetes.io/ingress.class: nginx
+    apiVersion: networking.k8s.io/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: prometheus-ui
+    namespace: default
+    settings:
+      spec:
+        rules:
+        - host: prometheus.example.com
+          http:
+            paths:
+            - backend:
+                service:
+                  name: prometheus-service
+                  port:
+                    number: 8080
+              path: /
+              path Type: Prefix
+        tls:
+        - hosts:
+          - prometheus.apps.shaker242.lab
+          secret Name: prometheus-secret
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 0edaf726-745a-4278-b29b-00d49fe175c4
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: circle
+          shapePolygonPoints: ""
+          styleOverrides:
+            z-index: 8
+          styles: ""
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/ingress-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/ingress-white.svg
+        position:
+          posX: 230
+          posY: 230
+        whiteboardData:
+          style:
+            z-index: 15
+    type: Ingress
+    version: ""

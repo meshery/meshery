@@ -684,6 +684,7 @@ class MesheryApp extends App {
                     <nav
                       className={isDrawerCollapsed ? classes.drawerCollapsed : classes.drawer}
                       data-test="navigation"
+                      id="left-navigation-bar"
                       style={{ height: '100%', overflow: 'visible' }}
                     >
                       <Hidden smUp implementation="js">
