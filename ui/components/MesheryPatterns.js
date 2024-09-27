@@ -565,9 +565,6 @@ function MesheryPatterns({
     }
   }, [viewType]);
 
-  console.log('yash data patterns', patterns);
-  console.log('yash data patternsData', patternsData);
-  console.log('yash data visibilityFilter', visibilityFilter);
   const initPatternsSubscription = (
     pageNo = page.toString(),
     pagesize = pageSize.toString(),
