@@ -4,7 +4,6 @@ import (
 	"archive/tar"
 	"bytes"
 	"compress/gzip"
-	"database/sql"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
@@ -100,6 +99,13 @@ func (l *DefaultLocalProvider) Description() []string {
 // GetProviderType - Returns ProviderType
 func (l *DefaultLocalProvider) GetProviderType() ProviderType {
 	return l.ProviderType
+}
+
+func (l *DefaultLocalProvider) DownloadProviderExtensionPackage() {
+}
+
+func (l *DefaultLocalProvider) SetProviderProperties(providerProperties ProviderProperties) {
+	l.ProviderProperties = providerProperties
 }
 
 // GetProviderProperties - Returns all the provider properties required
@@ -1180,7 +1186,7 @@ func (l *DefaultLocalProvider) GetKubeClient() *mesherykube.Client {
 // SeedContent- to seed various contents with local provider-like patterns, filters, and applications
 func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 	seededUUIDs := make([]uuid.UUID, 0)
-	seedContents := []string{"Pattern", "Application", "Filter"}
+	seedContents := []string{"Pattern", "Filter"}
 	nilUserID := ""
 	for _, seedContent := range seedContents {
 		go func(comp string, log logger.Handler, seededUUIDs *[]uuid.UUID) {
@@ -1236,46 +1242,7 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 							log.Error(ErrGettingSeededComponents(err, comp+"s"))
 						}
 						*seededUUIDs = append(*seededUUIDs, id)
-					}
-				case "Application":
-					mapNameToTypeToContent := make(map[string]map[string]string)
-					for i, name := range names {
-						ss := strings.Split(name, "_")
-						if len(ss) < 2 {
-							continue
-						}
-						if mapNameToTypeToContent[ss[0]] == nil {
-							mapNameToTypeToContent[ss[0]] = make(map[string]string)
-						}
-						mapNameToTypeToContent[ss[0]][ss[1]] = content[i]
-					}
-					for name, contents := range mapNameToTypeToContent {
-						id, _ := uuid.NewV4()
-						var k8sfile string
-						var patternfile string
-						for typ, content := range contents {
-							if strings.Contains(typ, "k8s") {
-								k8sfile = content
-							} else {
-								patternfile = content
-							}
-						}
-						var app = &MesheryApplication{
-							ApplicationFile: patternfile,
-							Type: sql.NullString{
-								String: string(K8sManifest),
-								Valid:  true,
-							},
-							SourceContent: []byte(k8sfile),
-							Name:          name,
-							ID:            &id,
-						}
-						log.Debug("seeding "+comp+": ", name)
-						_, err := l.MesheryApplicationPersister.SaveMesheryApplication(app)
-						if err != nil {
-							log.Error(ErrGettingSeededComponents(err, comp+"s"))
-						}
-						*seededUUIDs = append(*seededUUIDs, id)
+
 					}
 				}
 			}
@@ -1704,8 +1671,7 @@ func getSeededComponents(comp string, log logger.Handler) ([]string, []string, e
 		wd = filepath.Join(wd, ".meshery", "content", "patterns")
 	case "Filter":
 		wd = filepath.Join(wd, ".meshery", "content", "filters", "binaries")
-	case "Application":
-		wd = filepath.Join(wd, ".meshery", "content", "applications")
+
 	}
 	_, err := os.Stat(wd)
 	if err != nil && !os.IsNotExist(err) {
@@ -1772,25 +1738,7 @@ func downloadContent(comp string, downloadpath string) error {
 		}).Walk()
 	case "Filter":
 		return getFiltersFromWasmFiltersRepo(downloadpath)
-	case "Application":
-		walk := walker.NewGit()
-		return walk.Owner("service-mesh-patterns").Repo("service-mesh-patterns").Root("samples/applications/").Branch("master").RegisterDirInterceptor(func(d walker.Directory) error {
-			err := os.Mkdir(downloadpath, 0777)
-			if err != nil && !os.IsExist(err) {
-				return err
-			}
-			walkfile := walker.NewGit()
-			return walkfile.Owner("service-mesh-patterns").Repo("service-mesh-patterns").Root("samples/applications/" + d.Name).Branch("master").RegisterFileInterceptor(func(f walker.File) error {
-				path := filepath.Join(downloadpath, d.Name+"_"+f.Name)
-				file, err := os.Create(path)
-				if err != nil {
-					return err
-				}
-				defer file.Close()
-				fmt.Fprintf(file, "%s", f.Content)
-				return nil
-			}).Walk()
-		}).Walk()
+
 	}
 	return nil
 }

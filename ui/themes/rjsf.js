@@ -63,6 +63,7 @@ export const rjsfTheme = createTheme({
     MuiFormControlLabel: {
       root: {
         textTransform: 'capitalize',
+        padding: '3px',
       },
     },
     MuiBox: {
@@ -262,6 +263,7 @@ const darkRjsfTheme = createTheme({
     MuiFormControlLabel: {
       root: {
         textTransform: 'capitalize',
+        padding: '3px',
       },
     },
     MuiInputLabel: {

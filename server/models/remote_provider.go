@@ -38,7 +38,7 @@ type RemoteProvider struct {
 	*SessionPreferencePersister
 	*EventsPersister
 	*UserCapabilitiesPersister
-	
+
 	SaaSTokenName     string
 	RemoteProviderURL string
 
@@ -91,6 +91,10 @@ func (l *RemoteProvider) Initialize() {
 	l.ProviderProperties = providerProperties
 }
 
+func (l *RemoteProvider) SetProviderProperties(providerProperties ProviderProperties) {
+	l.ProviderProperties = providerProperties
+}
+
 // loadCapabilities loads the capabilities of the remote provider
 //
 // It takes in "token" string of the user for loading the capbilities
@@ -131,7 +135,7 @@ func (l *RemoteProvider) loadCapabilities(token string) ProviderProperties {
 		return providerProperties
 	}
 	if err != nil || resp.StatusCode != http.StatusOK {
-		l.Log.Error(ErrFetch(err, "Capabilities", resp.StatusCode))
+		l.Log.Error(ErrFetch(err, "Capabilities", http.StatusInternalServerError))
 		return providerProperties
 	}
 	defer func() {
@@ -152,26 +156,26 @@ func (l *RemoteProvider) loadCapabilities(token string) ProviderProperties {
 
 // downloadProviderExtensionPackage will download the remote provider extensions
 // package
-func (l *RemoteProvider) downloadProviderExtensionPackage() {
+func (l *ProviderProperties) DownloadProviderExtensionPackage(log logger.Handler) {
 	// Location for the package to be stored
 	loc := l.PackageLocation()
 
 	// Skip download if the file is already present
 	if _, err := os.Stat(loc); err == nil {
-		l.Log.Debug(fmt.Sprintf("[Initialize]: Package found at %s skipping download", loc))
+		log.Debug(fmt.Sprintf("[Initialize]: Package found at %s skipping download", loc))
 		return
 	}
 
-	l.Log.Debug(fmt.Sprintf("[Initialize]: Package not found at %s proceeding to download", loc))
+	log.Debug(fmt.Sprintf("[Initialize]: Package not found at %s proceeding to download", loc))
 	// logrus the provider package
-	if err := TarXZF(l.PackageURL, loc, l.Log); err != nil {
-		l.Log.Error(ErrDownloadPackage(err, "provider package"))
+	if err := TarXZF(l.PackageURL, loc, log); err != nil {
+		log.Error(ErrDownloadPackage(err, "provider package"))
 	}
 }
 
 // PackageLocation returns the location of where the package for the current
 // provider is located
-func (l *RemoteProvider) PackageLocation() string {
+func (l *ProviderProperties) PackageLocation() string {
 	return path.Join(homedir.HomeDir(), ".meshery", "provider", l.ProviderName, l.PackageVersion)
 }
 
@@ -224,6 +228,7 @@ func (l *RemoteProvider) GetProviderCapabilities(w http.ResponseWriter, req *htt
 	tokenString := req.Context().Value(TokenCtxKey).(string)
 
 	providerProperties := l.loadCapabilities(tokenString)
+	providerProperties.ProviderURL = l.RemoteProviderURL
 	if err := l.WriteCapabilitiesForUser(userID, &providerProperties); err != nil {
 		l.Log.Error(ErrDBPut(errors.Join(err, fmt.Errorf("failed to write capabilities for the user %s to the server store", userID))))
 	}
@@ -3445,7 +3450,7 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ 
 
 	// Download the package for the user only if they have extension capability
 	if len(l.GetProviderProperties().Extensions.Navigator) > 0 {
-		l.downloadProviderExtensionPackage()
+		l.DownloadProviderExtensionPackage(l.Log)
 	}
 
 	// Proceed to redirect once the capabilities has loaded

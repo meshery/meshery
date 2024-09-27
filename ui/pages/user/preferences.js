@@ -49,12 +49,7 @@ const UserPref = (props) => {
             <title>Preferences | Meshery</title>
           </Head>
           <Paper className={props.classes.paper}>
-            <UserPreferences
-              anonymousStats={anonymousStats}
-              perfResultStats={perfResultStats}
-              theme={props.theme}
-              themeSetter={props.themeSetter}
-            />
+            <UserPreferences anonymousStats={anonymousStats} perfResultStats={perfResultStats} />
           </Paper>
         </NoSsr>
       )}

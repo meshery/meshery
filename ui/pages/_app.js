@@ -38,12 +38,12 @@ import {
   setConnectionMetadata,
   LegacyStoreContext,
 } from '../lib/store';
-import theme, { styles } from '../themes';
+import { styles } from '../themes';
 import { getConnectionIDsFromContextIds, getK8sConfigIdsFromK8sConfig } from '../utils/multi-ctx';
 import './../public/static/style/index.css';
 import subscribeK8sContext from '../components/graphql/subscriptions/K8sContextSubscription';
 import { bindActionCreators } from 'redux';
-import { darkTheme } from '../themes/app';
+import { darkTheme, lightTheme } from '../themes/app';
 import './styles/AnimatedFilter.css';
 import './styles/AnimatedMeshery.css';
 import './styles/AnimatedMeshPattern.css';
@@ -68,6 +68,7 @@ import { RTKContext } from '@/store/hooks';
 import classNames from 'classnames';
 import { forwardRef } from 'react';
 import { formatToTitleCase } from '@/utils/utils';
+import { useThemePreference } from '@/themes/hooks';
 
 if (typeof window !== 'undefined') {
   require('codemirror/mode/yaml/yaml');
@@ -610,8 +611,10 @@ class MesheryApp extends App {
     const pageProps = Component.getInitialProps ? await Component.getInitialProps(ctx) : {};
     return { pageProps };
   }
-  themeSetter = (thememode) => {
-    this.setState({ theme: thememode });
+
+  themeSetter = () => {
+    console.log('using theme setter is no longer supported');
+    // this.setState({ theme: thememode });
   };
   render() {
     const { Component, pageProps, classes, isDrawerCollapsed, relayEnvironment } = this.props;
@@ -672,7 +675,7 @@ class MesheryApp extends App {
     return (
       <DynamicComponentProvider>
         <RelayEnvironmentProvider environment={relayEnvironment}>
-          <ThemeProvider theme={this.state.theme === 'dark' ? darkTheme : theme}>
+          <MesheryThemeProvider>
             <NoSsr>
               <ErrorBoundary>
                 <div className={classes.root}>
@@ -681,6 +684,7 @@ class MesheryApp extends App {
                     <nav
                       className={isDrawerCollapsed ? classes.drawerCollapsed : classes.drawer}
                       data-test="navigation"
+                      id="left-navigation-bar"
                       style={{ height: '100%', overflow: 'visible' }}
                     >
                       <Hidden smUp implementation="js">
@@ -733,8 +737,6 @@ class MesheryApp extends App {
                             setActiveContexts={this.setActiveContexts}
                             searchContexts={this.searchContexts}
                             updateExtensionType={this.updateExtensionType}
-                            theme={this.state.theme}
-                            themeSetter={this.themeSetter}
                             abilityUpdated={this.state.abilityUpdated}
                           />
                         )}
@@ -752,8 +754,6 @@ class MesheryApp extends App {
                                 activeContexts={this.state.activeK8sContexts}
                                 setActiveContexts={this.setActiveContexts}
                                 searchContexts={this.searchContexts}
-                                theme={this.state.theme}
-                                themeSetter={this.themeSetter}
                                 {...pageProps}
                               />
                             </ErrorBoundary>
@@ -774,7 +774,7 @@ class MesheryApp extends App {
                 />
               </ErrorBoundary>
             </NoSsr>
-          </ThemeProvider>
+          </MesheryThemeProvider>
         </RelayEnvironmentProvider>
       </DynamicComponentProvider>
     );
@@ -802,6 +802,12 @@ const mapDispatchToProps = (dispatch) => ({
 const MesheryWithRedux = withStyles(styles)(
   connect(mapStateToProps, mapDispatchToProps)(MesheryApp),
 );
+
+const MesheryThemeProvider = ({ children }) => {
+  const themePref = useThemePreference();
+  const mode = themePref?.data?.mode || 'dark';
+  return <ThemeProvider theme={mode === 'dark' ? darkTheme : lightTheme}>{children}</ThemeProvider>;
+};
 
 const MesheryAppWrapper = (props) => {
   return (
