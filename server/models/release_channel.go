@@ -106,6 +106,7 @@ func (k *Kanvas) Intercept(req *http.Request, res http.ResponseWriter) {
 	}
 
 	k.Provider.SetJWTCookie(res, flowResponse.AccessToken)
+	flowResponse.Capabilities.ProviderURL = k.Provider.GetProviderURL()
 
 	err = k.Provider.WriteCapabilitiesForUser(flowResponse.UserID.String(), &flowResponse.Capabilities)
 	if err != nil {
@@ -115,7 +116,6 @@ func (k *Kanvas) Intercept(req *http.Request, res http.ResponseWriter) {
 
 		return
 	}
-	flowResponse.Capabilities.ProviderURL = k.Provider.GetProviderURL()
 	k.Provider.SetProviderProperties(flowResponse.Capabilities)
 	// Download the package for the user only if they have extension capability
 	// The download is skipped if package already exists.

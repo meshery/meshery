@@ -1,0 +1,384 @@
+name: 'K8''s-Cluster-overprovisioner '
+version: 0.0.5
+services:
+  cluster-overprovisioner-default:
+    annotations: {}
+    apiVersion: apps/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels:
+      app.cluster-overprovisioner/deployment: default
+      app.kubernetes.io/instance: cluster-overprovisioner
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: cluster-overprovisioner
+      app.kubernetes.io/version: "3.9"
+      helm.sh/chart: cluster-overprovisioner-0.7.11
+    model: kubernetes
+    name: cluster-overprovisioner-default
+    namespace: default
+    settings:
+      spec:
+        replicas: 3
+        selector:
+          match Labels:
+            app.cluster-overprovisioner/deployment: default
+            app.kubernetes.io/instance: cluster-overprovisioner
+            app.kubernetes.io/name: cluster-overprovisioner
+        strategy:
+          type: Recreate
+        template:
+          metadata:
+            labels:
+              app.cluster-overprovisioner/deployment: default
+              app.kubernetes.io/instance: cluster-overprovisioner
+              app.kubernetes.io/managed-by: Helm
+              app.kubernetes.io/name: cluster-overprovisioner
+              app.kubernetes.io/version: "3.9"
+              helm.sh/chart: cluster-overprovisioner-0.7.11
+          spec:
+            containers:
+            - image: registry.k8s.io/pause:3.9
+              image Pull Policy: IfNotPresent
+              name: cluster-overprovisioner
+              resources:
+                limits:
+                  cpu: 1000m
+                  memory: 1000Mi
+                requests:
+                  cpu: 1000m
+                  memory: 1000Mi
+            priority Class Name: overprovisioning
+            security Context: {}
+            service Account Name: cluster-overprovisioner
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 2a8f1a47-def7-4f08-b5e1-49941f1265b6
+        meshmodel-metadata:
+          capabilities: |-
+            {
+              "fieldRefs": [
+                {
+                  "fieldPath": "spec.template.spec.containers",
+                  "jsonSchemaPath": "properties.spec.allOf[0].properties.template.allOf[0].properties.spec.allOf[0].properties.containers.items.allOf[0]",
+                  "component": {
+                    "kind": "Container",
+                    "model": "meshery-core"
+                  },
+                  "renderChildren": true
+                },
+                {
+                  "fieldPath": "spec.template.spec.init Containers",
+                  "jsonSchemaPath": "properties.spec.allOf[0].properties.template.allOf[0].properties.spec.allOf[0].properties.init Containers.items.allOf[0]",
+                  "component": {
+                    "kind": "Container",
+                    "model": "meshery-core"
+                  },
+                  "renderChildren": true
+                }
+              ],
+              "designer": {
+                "edit": {
+                  "shape": {
+                    "convert-shape": false
+                  }
+                }
+              }
+            }
+          defaultData: ""
+          genealogy: parent
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: Created by Meshery Authors
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          secondaryColor: '#7aa1f0'
+          shape: round-rectangle
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides:
+            background-opacity: 0.5
+            border-width: 2
+            z-index: 5
+          styles: '{"border-width":2,"background-opacity":0.5}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg
+          svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/deployment-complete.svg
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/deployment-white.svg
+        position:
+          posX: -52
+          posY: -24.5
+        whiteboardData:
+          style: {}
+    type: Deployment
+    version: ""
+  cluster-overprovisioner-tdztu:
+    annotations: {}
+    apiVersion: ""
+    dependsOn:
+    - cluster-overprovisioner-default
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: meshery-core
+    name: cluster-overprovisioner
+    namespace: ""
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        elementType: FIELD_REF_NODE
+        fieldRefData:
+          elementType: FIELD_REF_NODE
+          fieldPath: spec.template.spec.containers[0]
+          jsonSchemaPath: properties.spec.allOf[0].properties.template.allOf[0].properties.spec.allOf[0].properties.containers.items.allOf[0]
+        id: 6338d104-32cd-4272-9c9b-0aaab6ebd0a4
+        label: spec.template.spec.containers[0]
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          components: null
+          description: ""
+          displayName: Meshery Core
+          hostID: 26e64aa8-2d86-57bd-92b3-2a73160d27b4
+          id: 71af0d59-f11b-5151-924a-f9f805edb3df
+          metadata:
+            isAnnotation: false
+            subCategory: App Definition and Development
+            svgColor: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+            svgComplete: ""
+            svgWhite: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+          model:
+            version: 0.7.2
+          name: meshery-core
+          registrant:
+            hostname: artifacthub
+          relationships: null
+          schemaVersion: models.meshery.io/v1beta1
+          status: enabled
+          subCategory: App Definition and Development
+          version: v1.0.0
+        meshmodel-metadata:
+          capabilities: |-
+            {
+              "designer": {
+                "capabilities": {
+                  "config": true,
+                  "label": false,
+                  "policy": false,
+                  "relationships": true,
+                  "json-schema": false,
+                  "permissions": false,
+                  "workflow": false,
+                  "gitops": false,
+                  "history": false
+                },
+                "supportsCompoundDragAndDrop": false,
+                "edit": {
+                  "config": true,
+                  "copy": false,
+                  "delete": true,
+                  "duplicate": false,
+                  "reset-styles": false,
+                  "resolve": false,
+                  "lock": false,
+                  "shape": {
+                    "convert-shape": true
+                  },
+                  "style": true
+                },
+                "label": {
+                  "edit": false,
+                  "show": true,
+                  "sync-with-config-property": "name"
+                }
+              }
+            }
+          defaultData: ""
+          genealogy: ""
+          hasInvalidSchema: true
+          isAnnotation: true
+          primaryColor: '#326CE5'
+          secondaryColor: '#00D3A9'
+          shape: circle
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides:
+            z-index: 6
+          styles: ""
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/meshery-core/color/container-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/meshery-core/white/container-white.svg
+        parent: 2a8f1a47-def7-4f08-b5e1-49941f1265b6
+        position:
+          posX: -52
+          posY: -33.5
+        whiteboardData: {}
+    type: Container
+    version: ""
+  cluster-overprovisioner-wmrfh:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels:
+      app.kubernetes.io/instance: cluster-overprovisioner
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: cluster-overprovisioner
+      app.kubernetes.io/version: "3.9"
+      helm.sh/chart: cluster-overprovisioner-0.7.11
+    model: kubernetes
+    name: cluster-overprovisioner
+    namespace: default
+    settings:
+      automount Service Account Token: true
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 40804b34-a192-46cd-a00d-d0b6331624d5
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          secondaryColor: '#7aa1f0'
+          shape: bottom-round-rectangle
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides: ""
+          styles: ""
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/serviceaccount-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/serviceaccount-white.svg
+        position:
+          posX: 50
+          posY: -39.5
+        whiteboardData:
+          style: {}
+    type: ServiceAccount
+    version: ""
+  default:
+    annotations: {}
+    apiVersion: scheduling.k8s.io/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels:
+      app.kubernetes.io/instance: cluster-overprovisioner
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: cluster-overprovisioner
+      app.kubernetes.io/version: "3.9"
+      helm.sh/chart: cluster-overprovisioner-0.7.11
+    model: kubernetes
+    name: default
+    namespace: ""
+    settings:
+      description: Default priority class for all pods
+      global Default: true
+      value: 0
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 0f7f4bad-c30e-45cf-9703-d7869696c384
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: false
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          secondaryColor: '#7aa1f0'
+          shape: right-rhomboid
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides:
+            z-index: 3
+          styles: ""
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/priorityclass-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/priorityclass-white.svg
+        position:
+          posX: -4.5
+          posY: 51.5
+        whiteboardData:
+          style: {}
+    type: PriorityClass
+    version: ""
+  overprovisioning:
+    annotations: {}
+    apiVersion: scheduling.k8s.io/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels:
+      app.kubernetes.io/instance: cluster-overprovisioner
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: cluster-overprovisioner
+      app.kubernetes.io/version: "3.9"
+      helm.sh/chart: cluster-overprovisioner-0.7.11
+    model: kubernetes
+    name: overprovisioning
+    namespace: ""
+    settings:
+      description: Priority class used for overprovision pods
+      global Default: false
+      value: -1
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: fe542369-984c-43ee-8559-ad38bb3b5edf
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: false
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          secondaryColor: '#7aa1f0'
+          shape: right-rhomboid
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides:
+            z-index: 4
+          styles: ""
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/priorityclass-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/priorityclass-white.svg
+        position:
+          posX: -66.5
+          posY: 51.5
+        whiteboardData:
+          style: {}
+    type: PriorityClass
+    version: ""

@@ -1,0 +1,434 @@
+name: Fault-tolerant batch workloads on GKE
+version: 0.0.8
+services:
+  Generic Node:
+    annotations: {}
+    apiVersion: core.meshery.io/v1alpha1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: meshery-core
+    name: Generic Node
+    namespace: ""
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 2f4e32d3-dae6-4c53-9c03-419c311fdf35
+        label: Generic Node
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          components: []
+          displayName: Meshery Core
+          hostID: 00000000-0000-0000-0000-000000000000
+          id: abf31830-2ad6-54c4-90e1-d4c52807deef
+          metadata:
+            isAnnotation: false
+            svgColor: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+            svgWhite: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+          name: meshery-core
+          relationships: []
+          status: registered
+          version: v1.0.0
+        meshmodel-metadata:
+          capabilities: '{"designer":{"edit":{"config":false,"lock":true,"shape":{"convert-shape":false},"style":false},"label":{"edit":true,"show":false,"sync-with-config-property":"none"}}}'
+          defaultData: '{"label":""}'
+          genealogy: ""
+          isAnnotation: true
+          isModelAnnotation: "TRUE"
+          isNamespaced: false
+          logoURL: ""
+          model: meshery-core
+          modelDisplayName: Meshery Core
+          primaryColor: '#00B39F'
+          published: true
+          secondaryColor: '#00D3A9'
+          shape: circle
+          shapePolygonPoints: ""
+          styleOverrides:
+            background-image: none
+            border-style: dashed
+            border-width: 0
+            data:
+              label: ""
+            height: 30px
+            width: 30px
+            z-index: 1004
+          styles: '{"height":"30px","width":"30px", "background-image":"none","border-width":0,"border-style":"dashed"}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/meshery-core/color/genericnode-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/meshery-core/white/genericnode-white.svg
+        parent: ddf33de5-4dd4-4e4b-8143-9cbc7bcffa8f
+        position:
+          posX: 230
+          posY: 310
+        whiteboardData:
+          style:
+            backgroundOpacity: 0
+            visibility: hidden
+            z-index: 8
+    type: GenericNode
+    version: v1.0.0
+  Node Group Inventory Wallet:
+    annotations: {}
+    apiVersion: core.meshery.io/v1alpha1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: meshery-core
+    name: Node Group Inventory Wallet
+    namespace: redis-leader
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 9787ff13-aed2-48ed-aaf5-32de90770918
+        label: Node Group Inventory Wallet
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          components: []
+          displayName: Meshery Core
+          hostID: 00000000-0000-0000-0000-000000000000
+          id: abf31830-2ad6-54c4-90e1-d4c52807deef
+          metadata:
+            isAnnotation: false
+            svgColor: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+            svgWhite: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+          name: meshery-core
+          relationships: []
+          status: registered
+          version: v1.0.0
+        meshmodel-metadata:
+          capabilities: '{"designer":{"edit":{"config":false,"lock":true,"shape":{"convert-shape":false},"style":false},"label":{"edit":true,"show":false,"sync-with-config-property":"label"}}}'
+          defaultData: '{"label":""}'
+          genealogy: parent
+          isAnnotation: true
+          isModelAnnotation: "TRUE"
+          isNamespaced: false
+          logoURL: ""
+          model: meshery-core
+          modelDisplayName: Meshery Core
+          primaryColor: '#00B39F'
+          published: true
+          secondaryColor: '#00D3A9'
+          shape: round-rectangle
+          shapePolygonPoints: ""
+          styleOverrides:
+            background-image: none
+            background-opacity: 0.1
+            border-style: dashed
+            border-width: 1
+            data:
+              label: ""
+            height: 30px
+            width: 30px
+            z-index: 1005
+          styles: '{"height":"30px","width":"30px", "background-image":"none","border-width":1,"border-style":"dashed","background-opacity":0.1}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/meshery-core/color/genericnode-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/meshery-core/white/genericnode-white.svg
+        parent: ddf33de5-4dd4-4e4b-8143-9cbc7bcffa8f
+        position:
+          posX: 70
+          posY: 110
+        whiteboardData:
+          style:
+            z-index: 7
+    type: NodeGroupInventoryWallet
+    version: v1.0.0
+  fileserver:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: fileserver
+    namespace: default
+    settings:
+      spec:
+        access Modes:
+        - ReadWriteMany
+        capacity:
+          storage: 1T
+        nfs:
+          path: /NFSVol
+          server: <FILESTORE_IP_ADDRESS>
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: 4dbbd4ff-db92-4527-9a32-e3fd03a2e61b
+            metadata:
+              binded_by: ebdef460-d831-4231-97dc-6dde3b8cf9f9
+            source: ddf33de5-4dd4-4e4b-8143-9cbc7bcffa8f
+            subType: Mount
+            target: 6e6de066-b491-4c7e-90fd-264f9dc642d2
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: 6e6de066-b491-4c7e-90fd-264f9dc642d2
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: false
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-rectang
+          shapePolygonPoints: ""
+          styleOverrides:
+            background-opacity: "0"
+            height: "30"
+            width: "30"
+            x: "12"
+            "y": "20"
+            z-index: 1003
+          styles: '{"height":"30","width":"30","x":"12","y":"20","background-opacity":"0"}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/persistentvolume-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/persistentvolume-white.svg
+        position:
+          posX: 290
+          posY: 190
+        whiteboardData:
+          style:
+            z-index: 9
+    type: PersistentVolume
+    version: ""
+  fileserver-claim:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: fileserver-claim
+    namespace: default
+    settings:
+      spec:
+        access Modes:
+        - ReadWriteMany
+        resources:
+          requests:
+            storage: 1T
+        storage Class Name: ""
+        volume Name: fileserver
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: ebdef460-d831-4231-97dc-6dde3b8cf9f9
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-rectang
+          shapePolygonPoints: ""
+          styleOverrides: '{"height":"15","width":"15","x":"12","y":"20","background-opacity":"0"}'
+          styles: '{"height":"15","width":"15","x":"12","y":"20","background-opacity":"0"}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/persistentvolumeclaim-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/persistentvolumeclaim-white.svg
+        position:
+          posX: 250
+          posY: 190
+        whiteboardData:
+          style:
+            height: 68.625
+            width: 58.625
+            z-index: 1000
+    type: PersistentVolumeClaim
+    version: ""
+  redis:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: redis
+    namespace: default
+    settings:
+      spec:
+        ports:
+        - port: 6379
+          target Port: 6379
+        selector:
+          app: redis
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: ee566bab-714b-4f17-86c3-401f38d21fc5
+            metadata:
+              port: 6379
+              protocol: TCP
+            source: a095b1ce-8335-454c-8e5a-5ab510dc816f
+            subType: Network
+            target: ddf33de5-4dd4-4e4b-8143-9cbc7bcffa8f
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: a095b1ce-8335-454c-8e5a-5ab510dc816f
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-triangle
+          shapePolygonPoints: ""
+          styleOverrides:
+            background-position-y: 4.5
+            height: 20
+            padding: 12
+            width: 20
+            x: 10px
+            "y": 12px
+            z-index: 1002
+          styles: '{"height":20,"width":20,"padding":12,"background-position-y":4.5,"x":"10px","y":"12px"}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/service-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/service-white.svg
+        position:
+          posX: -30
+          posY: 150
+        whiteboardData:
+          style:
+            z-index: 4
+    type: Service
+    version: ""
+  workload:
+    annotations: {}
+    apiVersion: batch/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: workload
+    namespace: default
+    settings:
+      spec:
+        parallelism: 1
+        template:
+          metadata:
+            name: workload
+          spec:
+            containers:
+            - image: us-docker.pkg.dev/google-samples/containers/gke/batch-ml-workload
+              name: workload
+              volume Mounts:
+              - mount Path: /mnt/fileserver
+                name: workload-pvc
+            node Selector:
+              cloud.google.com/gke-spot: "true"
+            restart Policy: OnFailure
+            volumes:
+            - name: workload-pvc
+              persistent Volume Claim:
+                claim Name: fileserver-claim
+                read Only: false
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 97181ce2-35d9-4b82-84d7-e0aa5d81ef60
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: circle
+          shapePolygonPoints: ""
+          styleOverrides:
+            z-index: 1001
+          styles: ""
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/job-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/job-white.svg
+        position:
+          posX: 210
+          posY: 110
+        whiteboardData:
+          style:
+            z-index: 3
+    type: Job
+    version: ""
