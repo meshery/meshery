@@ -1,0 +1,42 @@
+{
+  "category": {
+   "name": "Tools"
+  },
+  "displayName": "Slack Operator",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "capabilities": null,
+   "isAnnotation": false,
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "styleOverrides": "",
+   "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 187 183\" fill=\"none\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M96 43.1205V86.6977L134.522 64.795L96 43.1205Z\" fill=\"#00D3A9\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M96 95.8217V139.741L134.871 117.838L96 95.8217Z\" fill=\"#00D3A9\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M90.4311 86.47V43.4632L52.375 64.9096L90.4311 86.47Z\" fill=\"#00B39F\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M13.9902 139.513C21.4386 151.263 31.5637 161.302 43.5509 168.717V122.744L13.9902 139.513Z\" fill=\"#00B39F\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M90.4226 139.514V96.165L52.25 117.84L90.4226 139.514Z\" fill=\"#00B39F\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M49.082 165.979L87.7199 144.304L49.082 122.402V165.979Z\" fill=\"#00D3A9\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M137.573 166.209V122.632L98.9355 144.306L137.573 166.209Z\" fill=\"#00B39F\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M175.398 134.495C182.032 122.403 185.756 109.056 186.338 95.3671L146.07 117.954L175.398 134.495Z\" fill=\"#00B39F\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M143.133 113.278L182.004 91.489L143.133 69.7004V113.278Z\" fill=\"#00D3A9\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M137.558 60.2307V16.9957L99.1523 38.5562L137.558 60.2307Z\" fill=\"#00B39F\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M137.551 113.05V69.4731L99.0293 91.2618L137.551 113.05Z\" fill=\"#00B39F\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M49.082 69.3577V113.391L87.9529 91.2604L49.082 69.3577Z\" fill=\"#00D3A9\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M90.4324 0C76.1177 0.342229 62.1522 3.99268 49.4668 10.6091L90.4324 33.6526V0Z\" fill=\"#00B39F\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M49.082 16.6542V60.4595L87.9529 38.5569L49.082 16.6542Z\" fill=\"#00D3A9\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M43.5509 14.0308C31.5637 21.4457 21.4386 31.3704 13.9902 43.2343L43.5509 60.0036V14.1448V14.0308Z\" fill=\"#00B39F\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M137.315 10.8373C124.629 4.10674 110.431 0.456306 96 0V33.9948L137.315 10.8373Z\" fill=\"#00D3A9\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M0 94.568C0.46552 108.713 4.30596 122.403 11.1724 134.837L41.0821 117.84L0 94.568Z\" fill=\"#00D3A9\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M11.1724 47.9097C4.30596 60.23 0.5819 74.0333 0 88.0647L41.0821 64.9071L11.0559 47.9097H11.1724Z\" fill=\"#00D3A9\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M49.4668 172.027C62.1522 178.644 76.1177 182.294 90.4324 182.637V148.984L49.4668 171.913V172.027Z\" fill=\"#00B39F\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M172.46 43.3476C165.012 31.5977 155.004 21.6731 143.133 14.2581V60.0028L172.46 43.3476Z\" fill=\"#00D3A9\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M143.133 168.605C155.12 161.19 165.129 151.151 172.577 139.287L143.133 122.632V168.719V168.605Z\" fill=\"#00D3A9\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M186.417 87.7237C185.835 73.8064 182.11 60.2313 175.36 48.0251L145.684 64.7943L186.417 87.7237Z\" fill=\"#00B39F\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M96 182.75C110.315 182.408 124.28 178.757 136.966 172.141L96 148.869V182.75Z\" fill=\"#00D3A9\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M43.5535 112.936V69.8147L5.38086 91.2611L43.5535 112.936Z\" fill=\"#00B39F\"\u003e\u003c/path\u003e\n\u003c/svg\u003e\n",
+   "svgComplete": "",
+   "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 32 32\" fill=\"none\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M16.405 8.732v6.57l5.694-3.297-5.694-3.273Zm0 7.942v6.602l5.747-3.285-5.747-3.317Z\" fill=\"#fff\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M15.586 15.256v-6.47l-5.622 3.225 5.622 3.245ZM4.307 23.252a13.809 13.809 0 0 0 4.362 4.39v-6.914l-4.362 2.524Zm11.279-.008v-6.52L9.95 19.985l5.636 3.258Z\" fill=\"#fff\" fill-opacity=\".8\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"m9.49 27.23 5.707-3.263-5.707-3.3v6.563Z\" fill=\"#fff\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M22.54 27.265v-6.553l-5.699 3.259 5.7 3.294Zm5.58-4.773a13.697 13.697 0 0 0 1.612-5.895l-5.934 3.397 4.323 2.498Z\" fill=\"#fff\" fill-opacity=\".8\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"m23.362 19.298 5.728-3.276-5.728-3.291v6.567Z\" fill=\"#fff\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M22.541 11.315V4.8l-5.673 3.253 5.673 3.262Zm0 7.955v-6.574l-5.685 3.292 5.685 3.281Z\" fill=\"#fff\" fill-opacity=\".8\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M9.49 12.684v6.622l5.728-3.316-5.728-3.306Z\" fill=\"#fff\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M15.586 2.25a13.69 13.69 0 0 0-6.037 1.595l6.037 3.463V2.25Z\" fill=\"#fff\" fill-opacity=\".8\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M9.49 4.756v6.583l5.732-3.288L9.49 4.756Z\" fill=\"#fff\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M8.669 4.356a13.83 13.83 0 0 0-4.362 4.39l4.362 2.518V4.356Z\" fill=\"#fff\" fill-opacity=\".8\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M22.504 3.88a13.695 13.695 0 0 0-6.099-1.63v5.123l6.1-3.493ZM2.25 16.483c.071 2.12.634 4.196 1.644 6.062l4.418-2.559-6.062-3.503Zm1.644-7.028a13.68 13.68 0 0 0-1.644 6.036l6.068-3.482-4.424-2.554Z\" fill=\"#fff\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M9.539 28.147a13.673 13.673 0 0 0 6.047 1.603v-5.062L9.54 28.147Z\" fill=\"#fff\" fill-opacity=\".8\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M27.697 8.768a13.83 13.83 0 0 0-4.335-4.383v6.889l4.335-2.506ZM23.362 27.62a13.851 13.851 0 0 0 4.351-4.417l-4.351-2.514v6.93Z\" fill=\"#fff\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M29.75 15.452a13.659 13.659 0 0 0-1.63-5.979l-4.381 2.53 6.011 3.45Z\" fill=\"#fff\" fill-opacity=\".8\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M16.405 29.75a13.673 13.673 0 0 0 6.036-1.595l-6.036-3.498v5.093Z\" fill=\"#fff\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M8.669 19.247v-6.494L3.03 15.986l5.639 3.261Z\" fill=\"#fff\" fill-opacity=\".8\"\u003e\u003c/path\u003e\u003c/svg\u003e"
+  },
+  "model": {
+   "version": "0.0.39"
+  },
+  "name": "slack-operator",
+  "registrant": {
+   "created_at": "0001-01-01T00:00:00Z",
+   "credential_id": "00000000-0000-0000-0000-000000000000",
+   "deleted_at": "0001-01-01T00:00:00Z",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "kind": "artifacthub",
+   "name": "Artifact Hub",
+   "status": "discovered",
+   "sub_type": "",
+   "type": "registry",
+   "updated_at": "0001-01-01T00:00:00Z",
+   "user_id": "00000000-0000-0000-0000-000000000000"
+  },
+  "connection_id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "models.meshery.io/v1beta1",
+  "status": "enabled",
+  "subCategory": "Uncategorized",
+  "version": "v1.0.0",
+  "components": null,
+  "relationships": null
+ }

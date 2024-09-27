@@ -18,7 +18,7 @@ Meshery CLI commands are categorized by function, which are:
 
 - `mesheryctl` - Global flags and CLI configuration
 - `mesheryctl system` - Meshery Lifecycle and Troubleshooting
-- `mesheryctl mesh` - Lifecycle & Configuration Management: provisioning and configuration best practices
+- `mesheryctl adapter` - Lifecycle & Configuration Management: provisioning and configuration best practices
 - `mesheryctl perf` - Performance Management: Workload and cloud native performance characterization
 - `mesheryctl pattern` - Design Patterns: cloud native patterns and best practices
 - `mesheryctl filter` - Data Plane Intelligence: Registry and configuration of WebAssembly filters for Envoy
@@ -27,8 +27,8 @@ Meshery CLI commands are categorized by function, which are:
 - `mesheryctl registry` - Model Database: Manage the state and contents of Meshery's internal registry of capabilities.
 - `mesheryctl exp` - Experimental features
 
-## Global Commands and Flags
 
+## Global Commands and Flags
 <table>
 <thead>
   <tr>
@@ -81,7 +81,6 @@ Meshery CLI commands are categorized by function, which are:
 ## Meshery Lifecycle Management and Troubleshooting
 
 Installation, troubleshooting and debugging of Meshery and its adapters
-
 <table>
 <thead>
   <tr>
@@ -392,9 +391,9 @@ Installation, troubleshooting and debugging of Meshery and its adapters
 </thead>
 </table>
 
-## Cloud Native Performance Management
 
-<table>
+## Cloud Native Performance Management
+<table class="table-wrapper">
 <thead>
   <tr>
     <th>Main Command</th>
@@ -456,7 +455,6 @@ Installation, troubleshooting and debugging of Meshery and its adapters
 </table>
 
 ## Cloud Native Lifecycle and Configuration Management
-
 <table>
 <thead>
   <tr>
@@ -494,9 +492,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters
 </thead>
 </table>
 
-
 ## Cloud Native Pattern Configuration and Management
-
 <table>
 <thead>
   <tr>
@@ -612,7 +608,6 @@ Installation, troubleshooting and debugging of Meshery and its adapters
 </table>
  
 ## Data Plane Intelligence
-
 <table>
 <thead>
   <tr>
@@ -742,7 +737,6 @@ Installation, troubleshooting and debugging of Meshery and its adapters
 </table>
 
 ## Meshery Models
-
 <table>
 <thead>
   <tr>
@@ -782,7 +776,6 @@ Installation, troubleshooting and debugging of Meshery and its adapters
 </table>
 
 ## Meshery Components
-
 <table>
 <thead>
   <tr>
@@ -822,7 +815,6 @@ Installation, troubleshooting and debugging of Meshery and its adapters
 </table>
 
 ## Experimental Features(exp)
-
 <table>
 <thead>
   <tr>
@@ -871,3 +863,4 @@ Installation, troubleshooting and debugging of Meshery and its adapters
 </table>
 
 {% include related-discussions.html tag="mesheryctl" %}
+

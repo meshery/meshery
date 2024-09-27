@@ -1,0 +1,195 @@
+{
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "PulsarConnection",
+   "schema": "{\n \"description\": \"PulsarConnection is the Schema for the pulsarconnections API\\nIt represents a connection to a Pulsar cluster and includes both the desired state (Spec)\\nand the observed state (Status) of the connection.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"PulsarConnectionSpec defines the desired state of PulsarConnection\\nIt specifies the configuration for connecting to a Pulsar cluster.\\n\\n\\nFor plaintext (non-TLS) Pulsar clusters:\\n- Set AdminServiceURL to \\\"http://\\u003cadmin-service-host\\u003e:\\u003cport\\u003e\\\"\\n- Set BrokerServiceURL to \\\"pulsar://\\u003cbroker-service-host\\u003e:\\u003cport\\u003e\\\"\\n\\n\\nFor TLS-enabled Pulsar clusters:\\n- Set AdminServiceSecureURL to \\\"https://\\u003cadmin-service-host\\u003e:\\u003cport\\u003e\\\"\\n- Set BrokerServiceSecureURL to \\\"pulsar+ssl://\\u003cbroker-service-host\\u003e:\\u003cport\\u003e\\\"\\n- Optionally set BrokerClientTrustCertsFilePath if using custom CA certificates\",\n   \"properties\": {\n    \"adminServiceSecureURL\": {\n     \"description\": \"AdminServiceSecureURL is the HTTPS URL for secure connections to the Pulsar admin service.\\nUse this for encrypted administrative operations.\",\n     \"pattern\": \"^https://.+$\",\n     \"type\": \"string\"\n    },\n    \"adminServiceURL\": {\n     \"description\": \"AdminServiceURL is the HTTP(S) URL for the Pulsar cluster's admin service.\\nThis URL is used for administrative operations.\",\n     \"pattern\": \"^https?://.+$\",\n     \"type\": \"string\"\n    },\n    \"authentication\": {\n     \"description\": \"Authentication defines the authentication configuration for connecting to the Pulsar cluster.\\nIt supports both token-based and OAuth2-based authentication methods.\",\n     \"properties\": {\n      \"oauth2\": {\n       \"description\": \"OAuth2 specifies the configuration for OAuth2-based authentication.\\nThis includes all necessary parameters for setting up OAuth2 authentication with Pulsar.\\nFor detailed information on the OAuth2 fields, refer to the PulsarAuthenticationOAuth2 struct.\",\n       \"properties\": {\n        \"audience\": {\n         \"description\": \"Audience is the intended recipient of the token. In Pulsar's context, this is usually\\nthe URL of your Pulsar cluster or a specific identifier for your Pulsar service.\",\n         \"type\": \"string\"\n        },\n        \"clientID\": {\n         \"description\": \"ClientID is the OAuth2 client identifier issued to the client during the registration process.\",\n         \"type\": \"string\"\n        },\n        \"issuerEndpoint\": {\n         \"description\": \"IssuerEndpoint is the URL of the OAuth2 authorization server.\\nThis is typically the base URL of your identity provider's OAuth2 service.\",\n         \"type\": \"string\"\n        },\n        \"key\": {\n         \"description\": \"Key is either the client secret or the path to a JSON credentials file.\\nFor confidential clients, this would be the client secret.\\nFor public clients using JWT authentication, this would be the path to the JSON credentials file.\",\n         \"properties\": {\n          \"secretRef\": {\n           \"description\": \"SecretKeyRef indicates a secret name and key\",\n           \"properties\": {\n            \"key\": {\n             \"type\": \"string\"\n            },\n            \"name\": {\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"key\",\n            \"name\"\n           ],\n           \"type\": \"object\"\n          },\n          \"value\": {\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"scope\": {\n         \"description\": \"Scope is an optional field to request specific permissions from the OAuth2 server.\\nIf not specified, the default scope defined by the OAuth2 server will be used.\",\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"audience\",\n        \"clientID\",\n        \"issuerEndpoint\",\n        \"key\"\n       ],\n       \"type\": \"object\"\n      },\n      \"token\": {\n       \"description\": \"Token specifies the configuration for token-based authentication.\\nThis can be either a direct token value or a reference to a secret containing the token.\\nIf using a secret, the token should be stored under the specified key in the secret.\",\n       \"properties\": {\n        \"secretRef\": {\n         \"description\": \"SecretKeyRef indicates a secret name and key\",\n         \"properties\": {\n          \"key\": {\n           \"type\": \"string\"\n          },\n          \"name\": {\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"key\",\n          \"name\"\n         ],\n         \"type\": \"object\"\n        },\n        \"value\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"brokerClientTrustCertsFilePath\": {\n     \"description\": \"BrokerClientTrustCertsFilePath is the file path to the trusted TLS certificate\\nfor outgoing connections to Pulsar brokers. This is used for TLS verification.\",\n     \"type\": \"string\"\n    },\n    \"brokerServiceSecureURL\": {\n     \"description\": \"BrokerServiceSecureURL is the TLS-enabled URL for secure connections to Pulsar brokers.\\nUse this for encrypted communications with the Pulsar cluster.\",\n     \"pattern\": \"^pulsar\\\\+ssl://.+$\",\n     \"type\": \"string\"\n    },\n    \"brokerServiceURL\": {\n     \"description\": \"BrokerServiceURL is the non-TLS URL for connecting to Pulsar brokers.\\nUse this for non-secure connections to the Pulsar cluster.\",\n     \"pattern\": \"^pulsar?://.+$\",\n     \"type\": \"string\"\n    },\n    \"clusterName\": {\n     \"description\": \"ClusterName specifies the name of the local Pulsar cluster.\\nWhen setting up Geo-Replication between Pulsar instances, this should be enabled to identify the cluster.\",\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Pulsar Connection\",\n \"type\": \"object\"\n}",
+   "version": "resource.streamnative.io/v1alpha1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "Pulsar Connection",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "published": false,
+   "source_uri": "https://github.com/streamnative/pulsar-resources-operator/releases/download/pulsar-resources-operator-v0.6.1/pulsar-resources-operator-v0.6.1.tgz"
+  },
+  "model": {
+   "category": {
+    "name": "App Definition and Development"
+   },
+   "displayName": "Pulsar Resources Operator",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "isAnnotation": false,
+    "primaryColor": "#448FF7",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "source_uri": "https://github.com/streamnative/pulsar-resources-operator/releases/download/pulsar-resources-operator-v0.6.1/pulsar-resources-operator-v0.6.1.tgz",
+    "styleOverrides": "",
+    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" id=\"Layer_1\" xmlns:_xmlns=\"xmlns\" _xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 800 565.1\" style=\"enable-background:new 0 0 800 565.1;\" xml:space=\"preserve\" height=\"20\" width=\"20\"\u003e\n\u003cstyle xmlns=\"http://www.w3.org/2000/svg\" type=\"text/css\"\u003e\n\u0026#x9;.st0{fill:#448FF7;}\n\u003c/style\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"st0\" d=\"M800,180.1H604.5C551.6,78.7,495.7,0,419.7,0c-99,0-145.6,86.4-190.6,170.5l-3.9,7.3H0v50h131.1\u0026#xA;\u0026#x9;c46.3,0,55.8,15.6,55.8,15.6c-36.3,56.4-80,112.1-152.8,112.1H0V408h34.3c141.1,0,202.8-114.5,252.2-206.4\u0026#xA;\u0026#x9;c45.4-84.7,77-136,133.1-136c58.2,0,119.5,126.7,173.4,238.6c7.9,16.3,15.9,32.9,24,49.4c-206.7,6.6-305.2,55-385.3,94.4\u0026#xA;\u0026#x9;c-58.6,28.9-104.9,64.7-181.1,64.7H0v52.5h50.2c91.8,0,149-28.3,209.8-58.4c84.3-41.4,179.9-88.4,405.2-88.4h130.2v-52.5H722\u0026#xA;\u0026#x9;c-12.3,0.9-24.2-3.9-32.4-13.1c-13.1-25.6-25.6-51.4-37.8-77.4l-17-34.9c0,0,12.2-13.1,46-13.1H800V180.1z\"\u003e\u003c/path\u003e\n\u003c/svg\u003e\n",
+    "svgComplete": "",
+    "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" id=\"Layer_1\" xmlns:_xmlns=\"xmlns\" _xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 800 565.1\" style=\"enable-background:new 0 0 800 565.1;\" xml:space=\"preserve\" height=\"20\" width=\"20\"\u003e\n\u003cstyle xmlns=\"http://www.w3.org/2000/svg\" type=\"text/css\"\u003e\n\u0026#x9;.st0{fill:#FFFFFF;}\n\u003c/style\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"st0\" d=\"M800,180.1H604.5C551.6,78.7,495.7,0,419.7,0c-99,0-145.6,86.4-190.6,170.5l-3.9,7.3H0v50h131.1\u0026#xA;\u0026#x9;c46.3,0,55.8,15.6,55.8,15.6c-36.3,56.4-80,112.1-152.8,112.1H0V408h34.3c141.1,0,202.8-114.5,252.2-206.4\u0026#xA;\u0026#x9;c45.4-84.7,77-136,133.1-136c58.2,0,119.5,126.7,173.4,238.6c7.9,16.3,15.9,32.9,24,49.4c-206.7,6.6-305.2,55-385.3,94.4\u0026#xA;\u0026#x9;c-58.6,28.9-104.9,64.7-181.1,64.7H0v52.5h50.2c91.8,0,149-28.3,209.8-58.4c84.3-41.4,179.9-88.4,405.2-88.4h130.2v-52.5H722\u0026#xA;\u0026#x9;c-12.3,0.9-24.2-3.9-32.4-13.1c-13.1-25.6-25.6-51.4-37.8-77.4l-17-34.9c0,0,12.2-13.1,46-13.1H800V180.1z\"\u003e\u003c/path\u003e\n\u003c/svg\u003e"
+   },
+   "model": {
+    "version": "0.6.1"
+   },
+   "name": "pulsar-resources-operator",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "enabled",
+   "subCategory": "Streaming \u0026 Messaging",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
+   "primaryColor": "#448FF7",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "svgColor": "\u003csvg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\n\t viewBox=\"0 0 800 565.1\" style=\"enable-background:new 0 0 800 565.1;\" xml:space=\"preserve\"\u003e\n\u003cstyle type=\"text/css\"\u003e\n\t.st0{fill:#448FF7;}\n\u003c/style\u003e\n\u003cpath class=\"st0\" d=\"M800,180.1H604.5C551.6,78.7,495.7,0,419.7,0c-99,0-145.6,86.4-190.6,170.5l-3.9,7.3H0v50h131.1\n\tc46.3,0,55.8,15.6,55.8,15.6c-36.3,56.4-80,112.1-152.8,112.1H0V408h34.3c141.1,0,202.8-114.5,252.2-206.4\n\tc45.4-84.7,77-136,133.1-136c58.2,0,119.5,126.7,173.4,238.6c7.9,16.3,15.9,32.9,24,49.4c-206.7,6.6-305.2,55-385.3,94.4\n\tc-58.6,28.9-104.9,64.7-181.1,64.7H0v52.5h50.2c91.8,0,149-28.3,209.8-58.4c84.3-41.4,179.9-88.4,405.2-88.4h130.2v-52.5H722\n\tc-12.3,0.9-24.2-3.9-32.4-13.1c-13.1-25.6-25.6-51.4-37.8-77.4l-17-34.9c0,0,12.2-13.1,46-13.1H800V180.1z\"/\u003e\n\u003c/svg\u003e\n",
+   "svgWhite": "\u003csvg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\n\t viewBox=\"0 0 800 565.1\" style=\"enable-background:new 0 0 800 565.1;\" xml:space=\"preserve\" width='800' height='565.1'\u003e\n\u003cstyle type=\"text/css\"\u003e\n\t.st0{fill:#FFFFFF;}\n\u003c/style\u003e\n\u003cpath class=\"st0\" d=\"M800,180.1H604.5C551.6,78.7,495.7,0,419.7,0c-99,0-145.6,86.4-190.6,170.5l-3.9,7.3H0v50h131.1\n\tc46.3,0,55.8,15.6,55.8,15.6c-36.3,56.4-80,112.1-152.8,112.1H0V408h34.3c141.1,0,202.8-114.5,252.2-206.4\n\tc45.4-84.7,77-136,133.1-136c58.2,0,119.5,126.7,173.4,238.6c7.9,16.3,15.9,32.9,24,49.4c-206.7,6.6-305.2,55-385.3,94.4\n\tc-58.6,28.9-104.9,64.7-181.1,64.7H0v52.5h50.2c91.8,0,149-28.3,209.8-58.4c84.3-41.4,179.9-88.4,405.2-88.4h130.2v-52.5H722\n\tc-12.3,0.9-24.2-3.9-32.4-13.1c-13.1-25.6-25.6-51.4-37.8-77.4l-17-34.9c0,0,12.2-13.1,46-13.1H800V180.1z\"/\u003e\n\u003c/svg\u003e"
+  },
+  "version": "v1.0.0"
+ }

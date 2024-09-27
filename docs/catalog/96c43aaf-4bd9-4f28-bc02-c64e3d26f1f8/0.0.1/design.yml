@@ -1,0 +1,422 @@
+name: fluentd deployment
+version: 0.0.4
+services:
+  NodeGroupInventoryWallet:
+    annotations: {}
+    apiVersion: core.meshery.io/v1alpha1
+    dependsOn:
+    - fluentd-es-v2.7.0
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: meshery-core
+    name: NodeGroupInventoryWallet
+    namespace: ""
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 30a6af62-c471-40c3-ac5f-f2b7bce7355d
+        label: NodeGroupInventoryWallet
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          components: null
+          description: ""
+          displayName: Meshery Core
+          hostID: 26e64aa8-2d86-57bd-92b3-2a73160d27b4
+          id: 3e2db384-d3af-5fac-8af2-684fc3c29446
+          metadata:
+            isAnnotation: false
+            subCategory: App Definition and Development
+            svgColor: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+            svgComplete: ""
+            svgWhite: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+          model:
+            version: 0.7.1
+          name: meshery-core
+          registrant:
+            hostname: artifacthub
+          relationships: null
+          schemaVersion: core.meshery.io/v1beta1
+          status: enabled
+          subCategory: App Definition and Development
+          version: v1.0.0
+        meshmodel-metadata:
+          capabilities: |-
+            {
+              "designer": {
+                "pass-events-to": "parent", "supportsCompoundDragAndDrop":false,
+                "edit": {
+                  "config": false,
+                  "copy": false,
+                  "delete": false,
+                  "duplicate": false,
+                  "reset-styles": false,
+                  "resolve": false,
+                  "lock": false,
+                  "shape": {
+                    "convert-shape": false
+                  },
+                  "style": false
+                },
+                "label": {
+                  "edit": false,
+                  "show": false,
+                  "sync-with-config-property": "none"
+                }
+              }
+            }
+          defaultData: '{"label":""}'
+          genealogy: parent
+          hasInvalidSchema: true
+          isAnnotation: true
+          primaryColor: '#00B39F'
+          secondaryColor: '#00D3A9'
+          shape: round-rectangle
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides:
+            background-image: none
+            background-opacity: 0
+            border-style: dashed
+            border-width: 0
+            data:
+              label: ""
+            height: 30px
+            width: 30px
+            z-index: 1002
+          styles: '{"height":"30px","width":"30px", "background-image":"none","border-width":0,"border-style":"dashed","background-opacity":0}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/meshery-core/color/anchornode-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/meshery-core/white/anchornode-white.svg
+        parent: 557ea984-0a5e-435d-8961-f03ec4829d99
+        position:
+          posX: 110
+          posY: 150
+        whiteboardData: {}
+    type: NodeGroupInventoryWallet
+    version: 0.7.1
+  fluentd-es-v2.7.0:
+    annotations: {}
+    apiVersion: apps/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels:
+      addonmanager.kubernetes.io/mode: Reconcile
+      k8s-app: fluentd-es
+      version: v2.7.0
+    model: kubernetes
+    name: fluentd-es-v2.7.0
+    namespace: efklog
+    settings:
+      spec:
+        selector:
+          match Labels:
+            k8s-app: fluentd-es
+            version: v2.7.0
+        template:
+          metadata:
+            annotations:
+              scheduler.alpha.kubernetes.io/critical-pod: ""
+            labels:
+              k8s-app: fluentd-es
+              version: v2.7.0
+          spec:
+            containers:
+            - env:
+              - name: FLUENTD_ARGS
+                value: --no-supervisor -q
+              image: quay.io/fluentd_elasticsearch/fluentd:v2.7.0
+              name: fluentd-es
+              resources:
+                limits:
+                  memory: 500Mi
+                requests:
+                  cpu: 100m
+                  memory: 200Mi
+              volume Mounts:
+              - mount Path: /var/log
+                name: varlog
+              - mount Path: /var/lib/docker/containers
+                name: varlibdockercontainers
+                read Only: true
+              - mount Path: /etc/fluent/config.d
+                name: config-volume
+            service Account Name: fluentd-es
+            termination Grace Period Seconds: 30
+            volumes:
+            - host Path:
+                path: /var/log
+              name: varlog
+            - host Path:
+                path: /var/lib/docker/containers
+              name: varlibdockercontainers
+            - config Map:
+                name: fluentd-es-config-v0.2.0
+              name: config-volume
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 557ea984-0a5e-435d-8961-f03ec4829d99
+        meshmodel-metadata:
+          capabilities: |2-
+             {
+              "designer": {
+                "edit": {
+                  "shape": {
+                    "convert-shape": false
+                  }
+                }
+              }
+            }
+          defaultData: ""
+          genealogy: parent
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: Created by Meshery Authors
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: circle
+          shapePolygonPoints: ""
+          styleOverrides:
+            background-opacity: 0.5
+            border-width: 2
+            z-index: 1001
+          styles: '{"border-width":2,"background-opacity":0.5}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/daemonset-color.svg
+          svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/daemonset-complete.svg
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/daemonset-white.svg
+        position:
+          posX: 110
+          posY: 150
+        whiteboardData:
+          style: {}
+    type: DaemonSet
+    version: ""
+  fluentd-es-vcbbi:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels:
+      addonmanager.kubernetes.io/mode: Reconcile
+      k8s-app: fluentd-es
+    model: kubernetes
+    name: fluentd-es
+    namespace: efklog
+    settings:
+      image Pull Secrets: []
+      secrets: []
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: 33c4b183-018e-4231-8946-78d4b81ad2a6
+            metadata:
+              binded_by: 543fcddf-9407-4688-8393-149219d88fb0
+            source: 7b017947-33eb-4ed0-8cc8-771e48ac99be
+            subType: Permission
+            target: 40d08a5b-287f-4623-ace8-5081b3b47065
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: 40d08a5b-287f-4623-ace8-5081b3b47065
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: bottom-round-rectangle
+          shapePolygonPoints: ""
+          styleOverrides:
+            z-index: 4
+          styles: ""
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/serviceaccount-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/serviceaccount-white.svg
+        position:
+          posX: 70
+          posY: 70
+        whiteboardData:
+          style: {}
+    type: ServiceAccount
+    version: ""
+  fluentd-es-xwdjf:
+    annotations: {}
+    apiVersion: rbac.authorization.k8s.io/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels:
+      addonmanager.kubernetes.io/mode: Reconcile
+      k8s-app: fluentd-es
+    model: kubernetes
+    name: fluentd-es
+    namespace: default
+    settings:
+      rules:
+      - api Groups:
+        - ""
+        resources:
+        - namespaces
+        - pods
+        verbs:
+        - get
+        - watch
+        - list
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: 33c4b183-018e-4231-8946-78d4b81ad2a6
+            metadata:
+              binded_by: 543fcddf-9407-4688-8393-149219d88fb0
+            source: 7b017947-33eb-4ed0-8cc8-771e48ac99be
+            subType: Permission
+            target: 40d08a5b-287f-4623-ace8-5081b3b47065
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: 7b017947-33eb-4ed0-8cc8-771e48ac99be
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: false
+          logoURL: Created by Meshery Authors
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-rectangle
+          shapePolygonPoints: ""
+          styleOverrides: '{"height":"22px", "width":"22px", "x":"8.5", "y":"7.5"}'
+          styles: '{"height":"22px", "width":"22px", "x":"8.5", "y":"7.5"}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/clusterrole-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/clusterrole-white.svg
+        position:
+          posX: 70
+          posY: 30
+        whiteboardData:
+          style: {}
+    type: ClusterRole
+    version: ""
+  fluentd-es-zlyig:
+    annotations: {}
+    apiVersion: rbac.authorization.k8s.io/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels:
+      addonmanager.kubernetes.io/mode: Reconcile
+      k8s-app: fluentd-es
+    model: kubernetes
+    name: fluentd-es
+    namespace: default
+    settings:
+      role Ref:
+        api Group: ""
+        kind: ClusterRole
+        name: fluentd-es
+      subjects:
+      - api Group: ""
+        kind: ServiceAccount
+        name: fluentd-es
+        namespace: efklog
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 543fcddf-9407-4688-8393-149219d88fb0
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: false
+          logoURL: Created by Meshery Authors
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-rectangle
+          shapePolygonPoints: ""
+          styleOverrides:
+            height: 25px
+            width: 25px
+            x: "7"
+            "y": "7"
+            z-index: 3
+          styles: '{"height":"25px","width":"25px","x":"7", "y":"7"}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/clusterrolebinding-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/clusterrolebinding-white.svg
+        position:
+          posX: 70
+          posY: 50.10625
+        whiteboardData:
+          style:
+            height: 10.5
+            width: 10.5
+            z-index: 1000
+    type: ClusterRoleBinding
+    version: ""

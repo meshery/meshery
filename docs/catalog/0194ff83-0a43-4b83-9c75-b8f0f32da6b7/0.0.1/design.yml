@@ -1,0 +1,59 @@
+name: Pod Readiness
+version: 0.0.19
+services:
+  pods-readiness-exec-pod:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: pods-readiness-exec-pod
+    namespace: default
+    settings:
+      spec:
+        containers:
+        - args:
+          - /bin/sh
+          - -c
+          - touch /tmp/healthy; sleep 30; rm -rf /tmp/healthy; sleep 600
+          image: busybox
+          name: pods-readiness-exec-container
+          readiness Probe:
+            exec:
+              command:
+              - cat
+              - /tmp/healthy
+            initial Delay Seconds: 5
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 583718ce-da5a-444e-ab2c-0dd0ee79ecdc
+        meshmodel-metadata:
+          capabilities: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-rectangle
+          styleOverrides: ""
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
+        position:
+          posX: 330
+          posY: 330
+        whiteboardData:
+          style: {}
+    type: Pod
+    version: ""

@@ -35,13 +35,13 @@ _The Meshery Playground is connected to live Kubernetes cluster(s) and allows us
 #### Question: Will I lose my Meshery designs in the Cloud Native Playground?
 **Answer:** _No, all of the designs that you have created in the Meshery Playground are saved to your user account and will be available to you each time you sign into your account. Your designs will be available in the Meshery Playground and any your other Meshery deployments, too._
 
-_In other words, all work done in MeshMap Designer is persisted to your user account._
+_In other words, all work done in Kanvas Designer is persisted to your user account._
 
 
 #### Question: Will I lose my Meshery deployments in the Cloud Native Playground?
 **Answer:** _Yes, the Meshery Playground clusters are reset on a daily basis. However, only deployments (not designs) that you may have created will be lost._
 
-_In other words, only MeshMap Visualizer is reset. All of your work in Meshery UI and MeshMap Designer will remain in your user account._
+_In other words, only Kanvas Visualizer is reset. All of your work in Meshery UI and Kanvas Designer will remain in your user account._
 
 #### Question: Is there a demo user account that everyone can use? 
 **Answer:** _It is imperative that each user has their own account to ensure seamless real-time collaboration within the Playground. The use of individual accounts is critical to enable multiple people to access and utilize the powerful collaboration features._

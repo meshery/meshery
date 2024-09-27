@@ -12,7 +12,7 @@ Meshery UI has a number of extension points that allow users to customize their 
 
 ## Designing Custom Components for Meshery Extension Point
 
-The Meshery extension points are the way to extend meshery and derive the more custom use-cases out of it. We already have an extension point called MeshMap.
+The Meshery extension points are the way to extend meshery and derive the more custom use-cases out of it. We already have an extension point called Kanvas.
 Meshery can provide the extension point in various ways by providing the feature of custom-components. One of the example where these custom components are used is RJSF forms in meshery-extension
 
 ### Extensibility: RJSF Custom Component
@@ -32,6 +32,53 @@ jsonSchema={jsonSchema}
 </RJSFWrapperComponent>{% endcapture %}
 {% include code.html code=code_content %}
 These props are received in the RJSF forms like this: [RJSF Component](https://github.com/meshery/meshery/blob/0bc68d1cd0ba80a565afa68bce80899c22db9a2e/ui/components/MesheryMeshInterface/PatternService/RJSF.js#L91)
+
+### Extensibility: User Accounts
+
+Meshery leverages remote providers for identity management. These providers can implement user_account extensions to handle custom user management scenarios.
+
+The user avatar behavior, which changes based on the user's status, can be customized by extending the [User Component](https://github.com/meshery/meshery/blob/7de49ef4928f114080f923f2ad261f4433ca91d6/ui/components/User.js#L46).
+
+
+###  Build-Time UI Extensibility
+
+Meshery offers powerful customization options for its web application user interface at build time. This feature allows developers to tailor the UI to specific needs by modifying component behavior, managing routes, and applying custom themes.
+
+##### Configuration File
+
+The build-time UI customization is controlled through the `ui.config.js` file. This file supports various configuration options to modify the Meshery UI.
+
+##### Current Features
+
+*Component Management*
+
+You can control the visibility and behavior of various UI components. For example:
+
+```javascript
+module.exports = {
+  components: {
+    navigator: true, // Set to false to disable the navigator component (default: true)
+    // Add other components here as needed
+  },
+};
+```
+
+*Upcoming Features*
+
+Meshery is continuously expanding its UI extensibility capabilities. The following features are planned for future releases:
+
+1. **Route Management**: Ability to disable or modify specific routes.
+1. **Redirect Configuration**: Set up custom redirects within the application.
+1. **Custom Theming**: Apply custom themes to personalize the look and feel of the Meshery UI.
+
+#### Usage
+
+To customize the Meshery UI:
+
+1. Locate the `ui.config.js` file in your Meshery project.
+1. Modify the configuration options according to your requirements.
+1. Rebuild the Meshery application to apply your changes.
+
 
 #### Passing new custom prop to forms:
 
