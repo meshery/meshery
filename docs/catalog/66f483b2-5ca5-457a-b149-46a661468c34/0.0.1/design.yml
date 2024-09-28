@@ -1,0 +1,576 @@
+name: webserver
+version: 0.0.2
+services:
+  comment-of:
+    annotations: {}
+    apiVersion: core.meshery.io/v1alpha1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: meshery
+    name: comment-of
+    namespace: ""
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: e25ef2f6-e673-4c63-8b6b-b6902d1855a5
+        label: comment-of
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          displayName: Meshery
+          displayhostname: ""
+          hostID: 00000000-0000-0000-0000-000000000000
+          hostname: ""
+          metadata:
+            svgColor: ui/public/static/img/meshmodels/meshery/color/broker-color.svg
+            svgWhite: ui/public/static/img/meshmodels/aws-node-termination-handler-2/white/terminator-white.svg
+          name: meshery
+          version: v1.0.0
+        meshmodel-metadata:
+          genealogy: ""
+          isAnnotation: true
+          isNamespaced: false
+          logoURL: ""
+          model: meshery
+          modelDisplayName: Meshery
+          primaryColor: '#FFDE00'
+          published: true
+          secondaryColor: '#FFDE00'
+          shape: tag
+          styleOverrides:
+            height: 22px
+            width: 22px
+            x: 3.5px
+            "y": 3.5px
+            z-index: 5
+          subCategory: App Definition and Development
+          svgColor: ui/public/static/img/meshmodels/meshery/color/comment-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/meshery/color/comment-color.svg
+        position:
+          posX: -50
+          posY: 150
+        whiteboardData:
+          style: {}
+    type: Comment
+    version: v1.0.0
+  comment-tx:
+    annotations: {}
+    apiVersion: core.meshery.io/v1alpha1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: meshery
+    name: comment-tx
+    namespace: ""
+    settings:
+      usersMessages:
+      - avatarUrl: https://avatars.githubusercontent.com/u/73700530?v=4
+        firstName: Pranav
+        lastName: Singh
+        message: hello
+        timestamp: "2023-09-28T17:51:24.445Z"
+        userid: a550f4d6-d3bd-44f1-9b4c-167114452062
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: d9d2ccd8-6020-4870-af46-46374c1f2b8b
+        label: comment-tx
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          displayName: Meshery
+          displayhostname: ""
+          hostID: 00000000-0000-0000-0000-000000000000
+          hostname: ""
+          metadata:
+            svgColor: ui/public/static/img/meshmodels/meshery/color/broker-color.svg
+            svgWhite: ui/public/static/img/meshmodels/aws-node-termination-handler-2/white/terminator-white.svg
+          name: meshery
+          version: v1.0.0
+        meshmodel-metadata:
+          genealogy: ""
+          isAnnotation: true
+          isNamespaced: false
+          logoURL: ""
+          model: meshery
+          modelDisplayName: Meshery
+          primaryColor: '#FFDE00'
+          published: true
+          secondaryColor: '#FFDE00'
+          shape: tag
+          styleOverrides:
+            height: 22px
+            width: 22px
+            x: 3.5px
+            "y": 3.5px
+            z-index: 6
+          subCategory: App Definition and Development
+          svgColor: ui/public/static/img/meshmodels/meshery/color/comment-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/meshery/color/comment-color.svg
+        position:
+          posX: 170
+          posY: 30
+        whiteboardData:
+          style: {}
+    type: Comment
+    version: v1.0.0
+  default:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: default
+    namespace: ""
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: ac22cbeb-1ad4-4cf2-80ff-68b04a36fcf0
+        label: default
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          displayName: Kubernetes
+          displayhostname: ""
+          hostID: 00000000-0000-0000-0000-000000000000
+          hostname: ""
+          metadata:
+            svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
+            svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
+          name: kubernetes
+          version: v1.25.2
+        meshmodel-metadata:
+          genealogy: parent
+          isCustomResource: false
+          isNamespaced: false
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: rectangle
+          styleOverrides: '{"background-image":"none","border-width":2,"border-style":"dashed","background-opacity":0.5}'
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/namespace-color.svg
+          svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/namespace-complete.svg
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/color/namespace-color.svg
+        position:
+          posX: 19
+          posY: 70.5
+        whiteboardData: {}
+    type: Namespace
+    version: v1.25.2
+  persistent-volume-bk:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: persistent-volume-bk
+    namespace: ""
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 8302afbb-e147-492b-9589-5d427c826e85
+        label: persistent-volume-bk
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          displayName: Kubernetes
+          displayhostname: ""
+          hostID: 00000000-0000-0000-0000-000000000000
+          hostname: ""
+          metadata:
+            svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
+            svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
+          name: kubernetes
+          version: v1.25.2
+        meshmodel-metadata:
+          genealogy: ""
+          isCustomResource: false
+          isNamespaced: false
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: cylinder
+          styleOverrides:
+            height: "15"
+            width: "15"
+            x: "12"
+            "y": "20"
+            z-index: 7
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/persistentvolume-color.svg
+          svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/persistentvolume-complete.svg
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/color/persistentvolume-color.svg
+        position:
+          posX: 150
+          posY: 230
+        whiteboardData:
+          style: {}
+    type: PersistentVolume
+    version: v1.25.2
+  persistent-volume-claim-bj:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: persistent-volume-claim-bj
+    namespace: default
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 943039ef-8937-466d-a22e-d98d8687b6fa
+        label: persistent-volume-claim-bj
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          displayName: Kubernetes
+          displayhostname: ""
+          hostID: 00000000-0000-0000-0000-000000000000
+          hostname: ""
+          metadata:
+            svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
+            svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
+          name: kubernetes
+          version: v1.25.2
+        meshmodel-metadata:
+          genealogy: ""
+          isCustomResource: false
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: cylinder
+          styleOverrides:
+            height: "15"
+            width: "15"
+            x: "12"
+            "y": "20"
+            z-index: 3
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/persistentvolume-color.svg
+          svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/persistentvolume-complete.svg
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/color/persistentvolume-color.svg
+        position:
+          posX: 150
+          posY: 230
+        whiteboardData:
+          style: {}
+    type: PersistentVolumeClaim
+    version: v1.25.2
+  persistent-volume-claim-nm:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: persistent-volume-claim-nm
+    namespace: default
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: c465e83a-7f32-46d0-9081-045129af516e
+        label: persistent-volume-claim-nm
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          displayName: Kubernetes
+          displayhostname: ""
+          hostID: 00000000-0000-0000-0000-000000000000
+          hostname: ""
+          metadata:
+            svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
+            svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
+          name: kubernetes
+          version: v1.25.2
+        meshmodel-metadata:
+          genealogy: ""
+          isCustomResource: false
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: cylinder
+          styleOverrides:
+            height: "15"
+            width: "15"
+            x: "12"
+            "y": "20"
+            z-index: 8
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/persistentvolume-color.svg
+          svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/persistentvolume-complete.svg
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/color/persistentvolume-color.svg
+        position:
+          posX: 150
+          posY: 230
+        whiteboardData:
+          style: {}
+    type: PersistentVolumeClaim
+    version: v1.25.2
+  pod-dl:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: pod-dl
+    namespace: default
+    settings:
+      spec:
+        volumes:
+        - persistent Volume Claim: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: b1b5caa0-cf94-47e8-9996-60cf91905941
+        label: pod-dl
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          displayName: Kubernetes
+          displayhostname: ""
+          hostID: 00000000-0000-0000-0000-000000000000
+          hostname: ""
+          metadata:
+            svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
+            svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
+          name: kubernetes
+          version: v1.25.2
+        meshmodel-metadata:
+          genealogy: ""
+          isCustomResource: false
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-rectangle
+          styleOverrides:
+            z-index: 4
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
+        position:
+          posX: 150
+          posY: 230
+        whiteboardData:
+          style: {}
+    type: Pod
+    version: v1.25.2
+  webserver-simple-deployment:
+    annotations: {}
+    apiVersion: apps/v1
+    dependsOn:
+    - default
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: webserver-simple-deployment
+    namespace: default
+    settings:
+      spec:
+        replicas: 2
+        selector:
+          match Labels:
+            app: webserver-simple-app
+        template:
+          metadata:
+            labels:
+              app: webserver-simple-app
+          spec:
+            containers:
+            - command:
+              - python
+              - -m
+              - http.server
+              image: python:3
+              name: webserver-simple-container
+              ports:
+              - container Port: 8000
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: 1fb5104d-36c8-4d2c-a6f1-d611662f5a14
+            metadata:
+              port: 80
+              protocol: TCP
+            source: 0693df3a-4c0e-4539-bb40-e2c4c7f620b8
+            subType: Network
+            target: 8476eb0c-092b-458b-8fa8-1a3ca1a2ca1d
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: 8476eb0c-092b-458b-8fa8-1a3ca1a2ca1d
+        label: webserver-simple-deployment
+        meshmodel-metadata:
+          genealogy: parent
+          isCustomResource: false
+          isNamespaced: true
+          logoURL: Created by leecalcote
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-pentagon
+          styleOverrides:
+            background-image: none
+            background-opacity: 0.5
+            border-width: 2
+            z-index: 9
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg
+          svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/deployment-complete.svg
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg
+        parent: ac22cbeb-1ad4-4cf2-80ff-68b04a36fcf0
+        position:
+          posX: 70
+          posY: 50
+        whiteboardData: {}
+    type: Deployment
+    version: ""
+  webserver-simple-service:
+    annotations: {}
+    apiVersion: v1
+    dependsOn:
+    - default
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: webserver-simple-service
+    namespace: default
+    settings:
+      spec:
+        ports:
+        - port: 80
+          protocol: TCP
+          target Port: 8000
+        - port: 80
+          protocol: TCP
+        selector:
+          app: webserver-simple-app
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: 1fb5104d-36c8-4d2c-a6f1-d611662f5a14
+            metadata:
+              port: 80
+              protocol: TCP
+            source: 0693df3a-4c0e-4539-bb40-e2c4c7f620b8
+            subType: Network
+            target: 8476eb0c-092b-458b-8fa8-1a3ca1a2ca1d
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: 0693df3a-4c0e-4539-bb40-e2c4c7f620b8
+        label: webserver-simple-service
+        meshmodel-metadata:
+          genealogy: ""
+          isCustomResource: false
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-triangle
+          styleOverrides:
+            background-fit: none
+            background-position-y: 4.5
+            height: 16
+            padding: 12
+            width: 17
+            z-index: 10
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
+        parent: ac22cbeb-1ad4-4cf2-80ff-68b04a36fcf0
+        position:
+          posX: -30
+          posY: 70
+        whiteboardData:
+          style: {}
+    type: Service
+    version: ""

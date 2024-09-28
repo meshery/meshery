@@ -1,0 +1,792 @@
+name: mTLS-handshake-acceleration-for-Istio
+version: 0.0.8
+services:
+  SA-istio-operator:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: SA-istio-operator
+    namespace: default
+    settings: {}
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: ac6981e1-f543-47d4-9058-6538aa7a4c8f
+            metadata: 9c875610-d786-4c38-929f-570916c6fb33
+            source: f9e95f4b-ffef-4523-917c-1442bb59b53b
+            subType: Permission
+            target: 9240267f-d393-4c5d-bdf9-596bacf0ebf0
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: 9240267f-d393-4c5d-bdf9-596bacf0ebf0
+        label: SA-istio-operator
+        meshmodel-metadata:
+          genealogy: ""
+          isCustomResource: false
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-rectangle
+          styleOverrides:
+            z-index: 10004
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/serviceaccount-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/color/serviceaccount-color.svg
+        position:
+          posX: 1050
+          posY: 530
+        whiteboardData:
+          style: {}
+    type: ServiceAccount
+    version: ""
+  cluster-role-binding-kubnj:
+    annotations: {}
+    apiVersion: rbac.authorization.k8s.io/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: cluster-role-binding
+    namespace: default
+    settings:
+      role Ref: {}
+      subjects:
+      - kind: Se
+        name: SA-istio-operator
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 9c875610-d786-4c38-929f-570916c6fb33
+        label: cluster-role-binding
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          displayName: Kubernetes
+          displayhostname: ""
+          hostID: 00000000-0000-0000-0000-000000000000
+          hostname: ""
+          metadata:
+            svgColor: ui/public/static/img/meshmodels/kubernetes/color/apiservice-color.svg
+            svgWhite: ui/public/static/img/meshmodels/kubernetes/white/apiservice-white.svg
+          name: kubernetes
+          version: v1.25.2
+        meshmodel-metadata:
+          genealogy: ""
+          isCustomResource: false
+          isNamespaced: false
+          logoURL: Created by leecalcote
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-rectangle
+          styleOverrides: '{"height":"22px","width":"16px","padding":"6px", "z-index":9999}'
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/clusterrolebinding-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/clusterrolebinding-white.svg
+        position:
+          posX: 830
+          posY: 590
+        whiteboardData:
+          style: {}
+    type: ClusterRoleBinding
+    version: v1.25.2
+  cluster-role-binding-zdmoj:
+    annotations: {}
+    apiVersion: rbac.authorization.k8s.io/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: cluster-role-binding
+    namespace: default
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 41f808f1-8598-44c3-8869-28465467c706
+        label: cluster-role-binding
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          displayName: Kubernetes
+          displayhostname: ""
+          hostID: 00000000-0000-0000-0000-000000000000
+          hostname: ""
+          metadata:
+            svgColor: ui/public/static/img/meshmodels/kubernetes/color/apiservice-color.svg
+            svgWhite: ui/public/static/img/meshmodels/kubernetes/white/apiservice-white.svg
+          name: kubernetes
+          version: v1.25.2
+        meshmodel-metadata:
+          genealogy: ""
+          isCustomResource: false
+          isNamespaced: false
+          logoURL: Created by leecalcote
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-rectangle
+          styleOverrides:
+            height: 22px
+            padding: 6px
+            width: 16px
+            z-index: 10000
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/clusterrolebinding-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/clusterrolebinding-white.svg
+        position:
+          posX: 890
+          posY: 650
+        whiteboardData:
+          style: {}
+    type: ClusterRoleBinding
+    version: v1.25.2
+  comment-hk:
+    annotations: {}
+    apiVersion: core.meshery.io/v1alpha1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: meshery
+    name: comment-hk
+    namespace: ""
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: d1078e2c-d7d6-4891-bc8f-b6f2655aef00
+        label: comment-hk
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          displayName: Meshery
+          displayhostname: ""
+          hostID: 00000000-0000-0000-0000-000000000000
+          hostname: ""
+          metadata:
+            svgColor: ui/public/static/img/meshmodels/meshery/color/broker-color.svg
+            svgWhite: ui/public/static/img/meshmodels/aws-node-termination-handler-2/white/terminator-white.svg
+          name: meshery
+          version: v1.0.0
+        meshmodel-metadata:
+          genealogy: ""
+          isAnnotation: true
+          isNamespaced: false
+          logoURL: ""
+          model: meshery
+          modelDisplayName: Meshery
+          primaryColor: '#FFDE00'
+          published: true
+          secondaryColor: '#FFDE00'
+          shape: tag
+          styleOverrides:
+            z-index: 10008
+          subCategory: App Definition and Development
+          svgColor: ui/public/static/img/meshmodels/meshery/color/comment-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/meshery/color/comment-color.svg
+        position:
+          posX: 770
+          posY: 650
+        whiteboardData:
+          style: {}
+    type: Comment
+    version: v1.0.0
+  comment-ns:
+    annotations: {}
+    apiVersion: core.meshery.io/v1alpha1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: meshery
+    name: comment-ns
+    namespace: ""
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 0c3e6990-6437-4c26-b1d7-293eef620020
+        label: comment-ns
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          displayName: Meshery
+          displayhostname: ""
+          hostID: 00000000-0000-0000-0000-000000000000
+          hostname: ""
+          metadata:
+            svgColor: ui/public/static/img/meshmodels/meshery/color/broker-color.svg
+            svgWhite: ui/public/static/img/meshmodels/aws-node-termination-handler-2/white/terminator-white.svg
+          name: meshery
+          version: v1.0.0
+        meshmodel-metadata:
+          genealogy: ""
+          isAnnotation: true
+          isNamespaced: false
+          logoURL: ""
+          model: meshery
+          modelDisplayName: Meshery
+          primaryColor: '#FFDE00'
+          published: true
+          secondaryColor: '#FFDE00'
+          shape: tag
+          styleOverrides: ""
+          subCategory: App Definition and Development
+          svgColor: ui/public/static/img/meshmodels/meshery/color/comment-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/meshery/color/comment-color.svg
+        position:
+          posX: 830
+          posY: 650
+        whiteboardData:
+          style: {}
+    type: Comment
+    version: v1.0.0
+  comment-oj:
+    annotations: {}
+    apiVersion: core.meshery.io/v1alpha1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: meshery
+    name: comment-oj
+    namespace: ""
+    settings:
+      user Messages: []
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 5466b7b3-cddd-48ed-a88b-ada16aa87b57
+        label: comment-oj
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          displayName: Meshery
+          displayhostname: ""
+          hostID: 00000000-0000-0000-0000-000000000000
+          hostname: ""
+          metadata:
+            svgColor: ui/public/static/img/meshmodels/meshery/color/broker-color.svg
+            svgWhite: ui/public/static/img/meshmodels/aws-node-termination-handler-2/white/terminator-white.svg
+          name: meshery
+          version: v1.0.0
+        meshmodel-metadata:
+          genealogy: ""
+          isAnnotation: true
+          isNamespaced: false
+          logoURL: ""
+          model: meshery
+          modelDisplayName: Meshery
+          primaryColor: '#FFDE00'
+          published: true
+          secondaryColor: '#FFDE00'
+          shape: tag
+          styleOverrides:
+            z-index: 10001
+          subCategory: App Definition and Development
+          svgColor: ui/public/static/img/meshmodels/meshery/color/comment-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/meshery/color/comment-color.svg
+        position:
+          posX: 890
+          posY: 590
+        whiteboardData:
+          style: {}
+    type: Comment
+    version: v1.0.0
+  comment-yj:
+    annotations: {}
+    apiVersion: core.meshery.io/v1alpha1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: meshery
+    name: comment-yj
+    namespace: ""
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 35281dd8-8065-4951-ac8d-8d7653802384
+        label: comment-yj
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          displayName: Meshery
+          displayhostname: ""
+          hostID: 00000000-0000-0000-0000-000000000000
+          hostname: ""
+          metadata:
+            svgColor: ui/public/static/img/meshmodels/meshery/color/broker-color.svg
+            svgWhite: ui/public/static/img/meshmodels/aws-node-termination-handler-2/white/terminator-white.svg
+          name: meshery
+          version: v1.0.0
+        meshmodel-metadata:
+          genealogy: ""
+          isAnnotation: true
+          isNamespaced: false
+          logoURL: ""
+          model: meshery
+          modelDisplayName: Meshery
+          primaryColor: '#FFDE00'
+          published: true
+          secondaryColor: '#FFDE00'
+          shape: tag
+          styleOverrides:
+            z-index: 10002
+          subCategory: App Definition and Development
+          svgColor: ui/public/static/img/meshmodels/meshery/color/comment-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/meshery/color/comment-color.svg
+        position:
+          posX: 770
+          posY: 710
+        whiteboardData:
+          style: {}
+    type: Comment
+    version: v1.0.0
+  intel-qat-plugin:
+    annotations: {}
+    apiVersion: apps/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: intel-qat-plugin
+    namespace: qat-device-plugin
+    settings:
+      spec:
+        revisionHistoryLimit: 10
+        selector:
+          matchLabels:
+            app: intel-qat-plugin
+        template:
+          metadata:
+            annotations:
+              container.apparmor.security.beta.kubernetes.io/intel-qat-plugin: unconfined
+            labels:
+              app: intel-qat-plugin
+          spec:
+            automountServiceAccountToken: false
+            containers:
+            - image: intel/intel-qat-plugin:0.25.0
+              imagePullPolicy: IfNotPresent
+              name: intel-qat-plugin
+              securityContext:
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+                seLinuxOptions:
+                  type: container_device_plugin_t
+              volumeMounts:
+              - mountPath: /dev/vfio
+                name: devdir
+                readOnly: true
+              - mountPath: /sys/kernel/debug
+                name: debugfsdir
+                readOnly: true
+              - mountPath: /sys/bus/pci
+                name: pcidir
+              - mountPath: /var/lib/kubelet/device-plugins
+                name: kubeletsockets
+            dnsPolicy: ClusterFirst
+            nodeSelector:
+              kubernetes.io/arch: amd64
+            restartPolicy: Always
+            schedulerName: default-scheduler
+            volumes:
+            - hostPath:
+                path: /dev/vfio
+                type: ""
+              name: devdir
+            - hostPath:
+                path: /sys/kernel/debug
+                type: ""
+              name: debugfsdir
+            - hostPath:
+                path: /sys/bus/pci
+                type: ""
+              name: pcidir
+            - hostPath:
+                path: /var/lib/kubelet/device-plugins
+                type: ""
+              name: kubeletsockets
+        updateStrategy:
+          rollingUpdate:
+            maxSurge: 0
+            maxUnavailable: 1
+          type: RollingUpdate
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 8e79be8c-da6a-49fe-8bc2-6decf12fd7c2
+        label: intel-qat-plugin
+        meshmodel-metadata:
+          genealogy: parent
+          isCustomResource: false
+          isNamespaced: true
+          logoURL: Created by Lee
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-pentagon
+          styleOverrides:
+            background-image: none
+            background-opacity: 0.5
+            border-width: 2
+            z-index: 10005
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/daemonset-color.svg
+          svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/daemonset-complete.svg
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/color/daemonset-color.svg
+        position:
+          posX: 770
+          posY: 590
+        whiteboardData: {}
+    type: DaemonSet
+    version: ""
+  istio-operator-dpxea:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: istio-operator
+    namespace: default
+    settings:
+      spec:
+        ports:
+        - name: http-metrics
+          node Port: 33285
+          port: 80
+          protocol: TCP
+          target Port: 8383
+        - node Port: 39238
+          port: 8080
+          protocol: TCP
+        - port: 8080
+          protocol: TCP
+        - port: 80
+          protocol: TCP
+        - port: 8080
+          protocol: TCP
+        - port: 80
+          protocol: TCP
+        selector:
+          name: istio-operator
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: d24ca3fc-fb37-40d6-86b7-a2665b24f120
+        label: istio-operator
+        meshmodel-metadata:
+          genealogy: ""
+          isCustomResource: false
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-triangle
+          styleOverrides:
+            background-fit: none
+            background-position-y: 4.5
+            height: 16
+            padding: 12
+            width: 17
+            z-index: 10006
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/apiservice-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/apiservice-white.svg
+        position:
+          posX: 1250
+          posY: 650
+        whiteboardData:
+          style: {}
+    type: Service
+    version: ""
+  istio-operator-ozuwe:
+    annotations: {}
+    apiVersion: rbac.authorization.k8s.io/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: istio-operator
+    namespace: default
+    settings:
+      rules:
+      - api Groups:
+        - authentication.istio.io
+        resources:
+        - ServiceAccount
+        verbs:
+        - get
+      - api Groups:
+        - config.istio.io
+        resources:
+        - '*'
+        verbs:
+        - '*'
+      - api Groups:
+        - install.istio.io
+        resources:
+        - '*'
+        verbs:
+        - '*'
+      - api Groups:
+        - networking.istio.io
+        resources:
+        - '*'
+        verbs:
+        - '*'
+      - api Groups:
+        - security.istio.io
+        resources:
+        - '*'
+        verbs:
+        - '*'
+      - api Groups:
+        - admissionregistration.k8s.io
+        resources:
+        - mutatingwebhookconfigurations
+        - validatingwebhookconfigurations
+        verbs:
+        - '*'
+      - api Groups:
+        - apiextensions.k8s.io
+        resources:
+        - customresourcedefinitions.apiextensions.k8s.io
+        - customresourcedefinitions
+        verbs:
+        - '*'
+      - api Groups:
+        - apps
+        - extensions
+        resources:
+        - daemonsets
+        - deployments
+        - deployments/finalizers
+        - replicasets
+        verbs:
+        - '*'
+      - api Groups:
+        - autoscaling
+        resources:
+        - horizontalpodautoscalers
+        verbs:
+        - '*'
+      - api Groups:
+        - monitoring.coreos.com
+        resources:
+        - servicemonitors
+        verbs:
+        - get
+        - create
+        - update
+      - api Groups:
+        - policy
+        resources:
+        - poddisruptionbudgets
+        verbs:
+        - '*'
+      - api Groups:
+        - rbac.authorization.k8s.io
+        resources:
+        - clusterrolebindings
+        - clusterroles
+        - roles
+        - rolebindings
+        verbs:
+        - '*'
+      - api Groups:
+        - coordination.k8s.io
+        resources:
+        - leases
+        verbs:
+        - get
+        - create
+        - update
+      - api Groups:
+        - ""
+        resources:
+        - configmaps
+        - endpoints
+        - events
+        - namespaces
+        - pods
+        - pods/proxy
+        - pods/portforward
+        - persistentvolumeclaims
+        - secrets
+        - services
+        - serviceaccounts
+        - resourcequotas
+        verbs:
+        - '*'
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: ac6981e1-f543-47d4-9058-6538aa7a4c8f
+            metadata: 9c875610-d786-4c38-929f-570916c6fb33
+            source: f9e95f4b-ffef-4523-917c-1442bb59b53b
+            subType: Permission
+            target: 9240267f-d393-4c5d-bdf9-596bacf0ebf0
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: f9e95f4b-ffef-4523-917c-1442bb59b53b
+        label: istio-operator
+        meshmodel-metadata:
+          genealogy: ""
+          isCustomResource: false
+          isNamespaced: false
+          logoURL: Created by Lee
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-rectangle
+          styleOverrides:
+            height: 22px
+            padding: 6px
+            width: 16px
+            z-index: 10003
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/clusterrole-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/clusterrole-white.svg
+        position:
+          posX: 1050
+          posY: 650
+        whiteboardData:
+          style: {}
+    type: ClusterRole
+    version: ""
+  pod:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: pod
+    namespace: default
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: f6522b87-94be-42d0-94c3-34c451d16154
+        label: pod
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          displayName: Kubernetes
+          displayhostname: ""
+          hostID: 00000000-0000-0000-0000-000000000000
+          hostname: ""
+          metadata:
+            svgColor: ui/public/static/img/meshmodels/kubernetes/color/apiservice-color.svg
+            svgWhite: ui/public/static/img/meshmodels/kubernetes/white/apiservice-white.svg
+          name: kubernetes
+          version: v1.25.2
+        meshmodel-metadata:
+          genealogy: ""
+          isCustomResource: false
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-rectangle
+          styleOverrides:
+            z-index: 10007
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/apiservice-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/apiservice-white.svg
+        position:
+          posX: 1150
+          posY: 650
+        whiteboardData:
+          style: {}
+    type: Pod
+    version: v1.25.2

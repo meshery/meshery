@@ -1,0 +1,177 @@
+name: Network(Service -> Endpoint)
+version: 0.0.5
+services:
+  endpoints-db:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: endpoints-db
+    namespace: default
+    settings:
+      subsets: []
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: c2710ff8-4c54-41b9-b804-dd398b72fadc
+            source: 71d0236b-1e4d-4272-9f69-ed66d1df14f4
+            subType: Network
+            target: 91688b98-6258-450d-959f-1dcff4e6c2f4
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: 91688b98-6258-450d-959f-1dcff4e6c2f4
+        label: endpoints-db
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          components: []
+          displayName: Kubernetes
+          hostID: 00000000-0000-0000-0000-000000000000
+          id: d247c4d8-3c7f-5e48-8158-2fba74f1c41c
+          metadata:
+            isAnnotation: false
+            svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
+            svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
+          name: kubernetes
+          relationships: []
+          status: registered
+          version: v1.25.2
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: vee
+          shapePolygonPoints: ""
+          styleOverrides: ""
+          styles: ""
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/endpoints-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/endpoints-white.svg
+        position:
+          posX: 330
+          posY: 70
+        whiteboardData:
+          style:
+            z-index: 7
+    type: Endpoints
+    version: v1.25.2
+  service-to:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: service-to
+    namespace: default
+    settings: {}
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: c2710ff8-4c54-41b9-b804-dd398b72fadc
+            source: 71d0236b-1e4d-4272-9f69-ed66d1df14f4
+            subType: Network
+            target: 91688b98-6258-450d-959f-1dcff4e6c2f4
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: 71d0236b-1e4d-4272-9f69-ed66d1df14f4
+        label: service-to
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          components: []
+          displayName: Kubernetes
+          hostID: 00000000-0000-0000-0000-000000000000
+          id: d247c4d8-3c7f-5e48-8158-2fba74f1c41c
+          metadata:
+            isAnnotation: false
+            svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
+            svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
+          name: kubernetes
+          relationships: []
+          status: registered
+          version: v1.25.2
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-triangle
+          shapePolygonPoints: ""
+          styleOverrides:
+            background-position-y: 4.5
+            height: 20
+            padding: 12
+            width: 20
+            x: 10px
+            "y": 12px
+            z-index: 3
+          styles: '{"height":20,"width":20,"padding":12,"background-position-y":4.5,"x":"10px","y":"12px"}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/service-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/service-white.svg
+        position:
+          posX: 210
+          posY: 70
+        whiteboardData:
+          style:
+            z-index: 8
+    type: Service
+    version: v1.25.2
