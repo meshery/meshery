@@ -474,7 +474,7 @@ func ErrInvalidNameOrID(err error) error {
 func ErrAttachAuthToken(err error) error {
 	return errors.New(ErrAttachAuthTokenCode, errors.Alert,
 		[]string{"Authentication token Not Found"},
-		[]string{"Authentication token not found: " + err.Error()},
+		[]string{"Authentication token not found: " + err.Error() + "\nLog in with `mesheryctl system login`"},
 		[]string{"The user is not logged in to generate a token."},
 		[]string{"Log in with `mesheryctl system login` or supply a valid user token using the --token (or -t) flag."})
 }

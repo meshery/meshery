@@ -1,0 +1,299 @@
+name: istio-ingress-service-web-api-v1-only
+version: 0.0.4
+services:
+  virtualservice-ingress-web-api-web-app:
+    annotations: {}
+    apiVersion: networking.istio.io/v1alpha3
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: istio-base
+    name: virtualservice-ingress-web-api-web-app
+    namespace: default
+    settings:
+      spec:
+        export To: []
+        gateways:
+        - default-gateway-ingress-http
+        hosts:
+        - '*'
+        http:
+        - cors Policy:
+            allow Headers: []
+            allow Methods: []
+            allow Origin: []
+            allow Origins: []
+            expose Headers: []
+          headers:
+            request:
+              remove: []
+            response:
+              remove: []
+          match:
+          - gateways: []
+            uri:
+              prefix: /kiali
+          route:
+          - destination:
+              host: kiali.istio-system.svc.cluster.local
+              port:
+                number: 20001
+            headers:
+              request:
+                remove: []
+              response:
+                remove: []
+        - cors Policy:
+            allow Headers: []
+            allow Methods: []
+            allow Origin: []
+            allow Origins: []
+            expose Headers: []
+          headers:
+            request:
+              remove: []
+            response:
+              remove: []
+          match:
+          - gateways: []
+            uri:
+              prefix: /web-api/v1/getmultiple
+          route:
+          - destination:
+              host: web-api
+              subset: v1
+            headers:
+              request:
+                remove: []
+              response:
+                remove: []
+        - cors Policy:
+            allow Headers: []
+            allow Methods: []
+            allow Origin: []
+            allow Origins: []
+            expose Headers: []
+          headers:
+            request:
+              remove: []
+            response:
+              remove: []
+          match:
+          - gateways: []
+            uri:
+              prefix: /web-api/v1/create
+          route:
+          - destination:
+              host: web-api
+              subset: v1
+            headers:
+              request:
+                remove: []
+              response:
+                remove: []
+        - cors Policy:
+            allow Headers: []
+            allow Methods: []
+            allow Origin: []
+            allow Origins: []
+            expose Headers: []
+          headers:
+            request:
+              remove: []
+            response:
+              remove: []
+          match:
+          - gateways: []
+            uri:
+              prefix: /web-api/v1/manage
+          route:
+          - destination:
+              host: web-api
+              subset: v1
+            headers:
+              request:
+                remove: []
+              response:
+                remove: []
+        - cors Policy:
+            allow Headers: []
+            allow Methods: []
+            allow Origin: []
+            allow Origins: []
+            expose Headers: []
+          headers:
+            request:
+              remove: []
+            response:
+              remove: []
+          match:
+          - gateways: []
+            uri:
+              prefix: /openapi/ui/
+          route:
+          - destination:
+              host: web-api
+              port:
+                number: 9080
+            headers:
+              request:
+                remove: []
+              response:
+                remove: []
+        - cors Policy:
+            allow Headers: []
+            allow Methods: []
+            allow Origin: []
+            allow Origins: []
+            expose Headers: []
+          headers:
+            request:
+              remove: []
+            response:
+              remove: []
+          match:
+          - gateways: []
+            uri:
+              prefix: /openapi
+          route:
+          - destination:
+              host: web-api
+              port:
+                number: 9080
+            headers:
+              request:
+                remove: []
+              response:
+                remove: []
+        - cors Policy:
+            allow Headers: []
+            allow Methods: []
+            allow Origin: []
+            allow Origins: []
+            expose Headers: []
+          headers:
+            request:
+              remove: []
+            response:
+              remove: []
+          match:
+          - gateways: []
+            uri:
+              prefix: /loginwithtoken
+          route:
+          - destination:
+              host: web-app
+              port:
+                number: 80
+            headers:
+              request:
+                remove: []
+              response:
+                remove: []
+        - cors Policy:
+            allow Headers: []
+            allow Methods: []
+            allow Origin: []
+            allow Origins: []
+            expose Headers: []
+          headers:
+            request:
+              remove: []
+            response:
+              remove: []
+          match:
+          - gateways: []
+            uri:
+              prefix: /login
+          route:
+          - destination:
+              host: authentication
+              port:
+                number: 3000
+            headers:
+              request:
+                remove: []
+              response:
+                remove: []
+        - cors Policy:
+            allow Headers: []
+            allow Methods: []
+            allow Origin: []
+            allow Origins: []
+            expose Headers: []
+          headers:
+            request:
+              remove: []
+            response:
+              remove: []
+          match:
+          - gateways: []
+            uri:
+              prefix: /callback
+          route:
+          - destination:
+              host: authentication
+              port:
+                number: 3000
+            headers:
+              request:
+                remove: []
+              response:
+                remove: []
+        - cors Policy:
+            allow Headers: []
+            allow Methods: []
+            allow Origin: []
+            allow Origins: []
+            expose Headers: []
+          headers:
+            request:
+              remove: []
+            response:
+              remove: []
+          match:
+          - gateways: []
+            uri:
+              prefix: /
+          route:
+          - destination:
+              host: web-app
+              port:
+                number: 80
+            headers:
+              request:
+                remove: []
+              response:
+                remove: []
+        tcp: []
+        tls: []
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: e53f38e9-6b09-46f7-99cd-aa9d5a40104d
+        label: virtualservice-ingress-web-api-web-app
+        meshmodel-metadata:
+          genealogy: ""
+          isNamespaced: true
+          logoURL: https://github.com/istio/istio/blob/master/logo/istio-bluelogo-whitebackground-unframed.svg
+          model: istio-base
+          modelDisplayName: Istio
+          primaryColor: '#466BB0'
+          published: true
+          secondaryColor: '#93b0e7'
+          shape: circle
+          styleOverrides: ""
+          subCategory: Service Mesh
+          svgColor: ui/public/static/img/meshmodels/istio-base/color/authorizationpolicy-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/istio-base/white/authorizationpolicy-white.svg
+        position:
+          posX: 130
+          posY: 130
+        whiteboardData:
+          style:
+            z-index: 3
+    type: VirtualService
+    version: ""

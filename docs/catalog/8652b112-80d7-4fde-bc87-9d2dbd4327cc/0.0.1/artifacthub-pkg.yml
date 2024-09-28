@@ -1,0 +1,20 @@
+version: 0.0.1
+name: pod-volume-mount-subpath-expr
+displayName: Pod Volume Mount SubPath-expr
+createdAt: "2024-01-17T05:40:40Z"
+description: This design demonstrates the usage of Kubernetes' subPathExpr feature to mount a specific sub-path of a volume into a container within a pod. This approach allows for more dynamic and flexible volume mounts, enabling containers to access different parts of a volume based on environment variables or pod metadata. By utilizing subPathExpr, Kubernetes administrators and developers can configure pods to mount unique directories tailored to the specific needs of each container, without needing to create multiple volume definitions. This design is particularly useful in scenarios where you need to differentiate storage paths for various instances of an application or manage data separation within shared volumes.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/8652b112-80d7-4fde-bc87-9d2dbd4327cc/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "1. Not all volume types support subPathExpr. Ensure that the volume plugin you are using is compatible with this feature. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: a7b465ad-21eb-4f3f-9c84-56de76aebe62
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

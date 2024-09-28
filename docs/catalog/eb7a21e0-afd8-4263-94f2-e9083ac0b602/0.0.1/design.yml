@@ -1,0 +1,687 @@
+name: GuestBook App (Copy)
+version: 0.0.10
+services:
+  default:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: default
+    namespace: ""
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 3e8540ea-0bc1-4d50-a2fe-1ca9688987d2
+        label: default
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          displayName: Kubernetes
+          metadata:
+            svgColor: ui/public/static/img/meshmodels/kubernetes/color/apiservice-color.svg
+            svgWhite: ui/public/static/img/meshmodels/kubernetes/white/apiservice-white.svg
+          name: kubernetes
+          version: v1.25.2
+        meshmodel-metadata:
+          genealogy: parent
+          isCustomResource: false
+          isNamespaced: false
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: rectangle
+          styleOverrides:
+            background-image: none
+            background-opacity: 0.5
+            border-style: dashed
+            border-width: 2
+            z-index: 3
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/namespace-color.svg
+          svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/namespace-complete.svg
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/color/namespace-color.svg
+        position:
+          posX: 650
+          posY: 199
+        whiteboardData: {}
+    type: Namespace
+    version: v1.25.2
+  frontend-jlxyn:
+    annotations: {}
+    apiVersion: apps/v1
+    dependsOn:
+    - guestbook
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: frontend
+    namespace: guestbook
+    settings:
+      spec:
+        replicas: 3
+        selector:
+          match Labels:
+            app: guestbook
+            tier: frontend
+        template:
+          metadata:
+            labels:
+              app: guestbook
+              tier: frontend
+          spec:
+            containers:
+            - env:
+              - name: GET_HOSTS_FROM
+                value: dns
+              image: gcr.io/google_samples/gb-frontend:v5
+              name: php-redis
+              ports:
+              - container Port: 80
+              resources:
+                requests:
+                  cpu: 100m
+                  memory: 100Mi
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: 059f28fb-67ba-4668-b1d7-3f4e7203a5d1
+            metadata:
+              port: 80
+              protocol: TCP
+            source: 4ae55da0-82eb-405e-9410-75623cee1043
+            subType: Network
+            target: 43a7b935-6109-4f5c-84fb-5e3454f9c6d1
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        - data:
+            id: 72196d7a-f560-43f3-941d-0e65c2535d5e
+            metadata:
+              port: 80
+              protocol: TCP
+            source: 7e403128-5022-409a-a1f2-26e0a5d25685
+            subType: Network
+            target: 43a7b935-6109-4f5c-84fb-5e3454f9c6d1
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: 43a7b935-6109-4f5c-84fb-5e3454f9c6d1
+        label: frontend
+        meshmodel-metadata:
+          genealogy: parent
+          isCustomResource: false
+          isNamespaced: true
+          logoURL: Created by Lee
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-pentagon
+          styleOverrides:
+            background-image: none
+            background-opacity: 0.5
+            border-width: 2
+            z-index: 9
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg
+          svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/deployment-complete.svg
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg
+        parent: 1e3a8397-8740-49ab-8591-d8276626c023
+        position:
+          posX: 570
+          posY: 290
+        whiteboardData: {}
+    type: Deployment
+    version: ""
+  frontend-oakkv:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: frontend
+    namespace: ""
+    settings:
+      spec:
+        ports:
+        - port: 80
+          protocol: TCP
+        selector:
+          app: guestbook
+          tier: frontend
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: 059f28fb-67ba-4668-b1d7-3f4e7203a5d1
+            metadata:
+              port: 80
+              protocol: TCP
+            source: 4ae55da0-82eb-405e-9410-75623cee1043
+            subType: Network
+            target: 43a7b935-6109-4f5c-84fb-5e3454f9c6d1
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        - data:
+            id: 4b8f77a0-1572-4624-ba5c-b9578237ef1f
+            metadata:
+              port: 80
+              protocol: TCP
+            source: 4ae55da0-82eb-405e-9410-75623cee1043
+            subType: Network
+            target: 9407d316-5e5a-4212-8767-2bcd60c9ac17
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: 4ae55da0-82eb-405e-9410-75623cee1043
+        label: frontend
+        meshmodel-metadata:
+          genealogy: ""
+          isCustomResource: false
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-triangle
+          styleOverrides:
+            background-fit: none
+            background-position-y: 4.5
+            height: 16
+            padding: 12
+            width: 17
+            z-index: 4
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/apiservice-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/apiservice-white.svg
+        position:
+          posX: 370
+          posY: 70
+        whiteboardData:
+          style: {}
+    type: Service
+    version: ""
+  guestbook:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: guestbook
+    namespace: default
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 1e3a8397-8740-49ab-8591-d8276626c023
+        label: guestbook
+        meshmodel-metadata:
+          genealogy: parent
+          isCustomResource: false
+          isNamespaced: false
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: rectangle
+          styleOverrides:
+            background-image: none
+            background-opacity: 0.5
+            border-style: dashed
+            border-width: 2
+            z-index: 5
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/namespace-color.svg
+          svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/namespace-complete.svg
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/color/namespace-color.svg
+        position:
+          posX: 570
+          posY: 298.5
+        whiteboardData: {}
+    type: Namespace
+    version: ""
+  redis-follower-bopra:
+    annotations: {}
+    apiVersion: apps/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: redis-follower
+    namespace: ""
+    settings:
+      spec:
+        replicas: 2
+        selector:
+          match Labels:
+            app: redis
+        template:
+          metadata:
+            labels:
+              app: redis
+              role: follower
+              tier: backend
+          spec:
+            containers:
+            - image: gcr.io/google_samples/gb-redis-follower:v2
+              name: follower
+              ports:
+              - container Port: 6379
+              resources:
+                requests:
+                  cpu: 100m
+                  memory: 100Mi
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: 4b8f77a0-1572-4624-ba5c-b9578237ef1f
+            metadata:
+              port: 80
+              protocol: TCP
+            source: 4ae55da0-82eb-405e-9410-75623cee1043
+            subType: Network
+            target: 9407d316-5e5a-4212-8767-2bcd60c9ac17
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        - data:
+            id: ce97458d-cdc7-418b-907a-ffd8c2c16c10
+            metadata:
+              port: 6379
+              protocol: TCP
+            source: 6badde68-595b-4e86-9be8-61318e52b476
+            subType: Network
+            target: 9407d316-5e5a-4212-8767-2bcd60c9ac17
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: 9407d316-5e5a-4212-8767-2bcd60c9ac17
+        label: redis-follower
+        meshmodel-metadata:
+          genealogy: parent
+          isCustomResource: false
+          isNamespaced: true
+          logoURL: Created by Lee
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-pentagon
+          styleOverrides:
+            background-image: none
+            background-opacity: 0.5
+            border-width: 2
+            z-index: 7
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg
+          svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/deployment-complete.svg
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg
+        position:
+          posX: 430
+          posY: 150
+        whiteboardData: {}
+    type: Deployment
+    version: ""
+  redis-follower-wvaqa:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: redis-follower
+    namespace: ""
+    settings:
+      spec:
+        ports:
+        - port: 80
+          protocol: TCP
+        selector:
+          app: redis
+          role: follower
+          tier: backend
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: 72196d7a-f560-43f3-941d-0e65c2535d5e
+            metadata:
+              port: 80
+              protocol: TCP
+            source: 7e403128-5022-409a-a1f2-26e0a5d25685
+            subType: Network
+            target: 43a7b935-6109-4f5c-84fb-5e3454f9c6d1
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: 7e403128-5022-409a-a1f2-26e0a5d25685
+        label: redis-follower
+        meshmodel-metadata:
+          genealogy: ""
+          isCustomResource: false
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-triangle
+          styleOverrides:
+            background-fit: none
+            background-position-y: 4.5
+            height: 16
+            padding: 12
+            width: 17
+            z-index: 6
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/apiservice-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/apiservice-white.svg
+        position:
+          posX: 470
+          posY: 70
+        whiteboardData:
+          style: {}
+    type: Service
+    version: ""
+  redis-leader-wkzqo:
+    annotations: {}
+    apiVersion: v1
+    dependsOn:
+    - default
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: redis-leader
+    namespace: default
+    settings:
+      spec:
+        ports:
+        - port: 6379
+          target Port: 6379
+        selector:
+          app: redis
+          role: leader
+          tier: backend
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: ce97458d-cdc7-418b-907a-ffd8c2c16c10
+            metadata:
+              port: 6379
+              protocol: TCP
+            source: 6badde68-595b-4e86-9be8-61318e52b476
+            subType: Network
+            target: 9407d316-5e5a-4212-8767-2bcd60c9ac17
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        - data:
+            id: bca8572a-2c3e-49c5-98d0-f2d22deabc67
+            metadata:
+              port: 6379
+              protocol: TCP
+            source: 6badde68-595b-4e86-9be8-61318e52b476
+            subType: Network
+            target: a6361bc8-7f4e-4e11-9406-e1bfd5578a53
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: 6badde68-595b-4e86-9be8-61318e52b476
+        label: redis-leader
+        meshmodel-metadata:
+          genealogy: ""
+          isCustomResource: false
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-triangle
+          styleOverrides:
+            background-fit: none
+            background-position-y: 4.5
+            height: 16
+            padding: 12
+            width: 17
+            z-index: 8
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/apiservice-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/apiservice-white.svg
+        parent: 3e8540ea-0bc1-4d50-a2fe-1ca9688987d2
+        position:
+          posX: 650
+          posY: 190
+        whiteboardData:
+          style: {}
+    type: Service
+    version: ""
+  redis-leader-yxsij:
+    annotations: {}
+    apiVersion: apps/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: redis-leader
+    namespace: ""
+    settings:
+      spec:
+        replicas: 1
+        selector:
+          match Labels:
+            app: redis
+        template:
+          metadata:
+            labels:
+              app: redis
+              role: leader
+              tier: backend
+          spec:
+            containers:
+            - image: docker.io/redis:6.0.5
+              name: leader
+              ports:
+              - container Port: 6379
+              resources:
+                requests:
+                  cpu: 100m
+                  memory: 100Mi
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: bca8572a-2c3e-49c5-98d0-f2d22deabc67
+            metadata:
+              port: 6379
+              protocol: TCP
+            source: 6badde68-595b-4e86-9be8-61318e52b476
+            subType: Network
+            target: a6361bc8-7f4e-4e11-9406-e1bfd5578a53
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: a6361bc8-7f4e-4e11-9406-e1bfd5578a53
+        label: redis-leader
+        meshmodel-metadata:
+          genealogy: parent
+          isCustomResource: false
+          isNamespaced: true
+          logoURL: Created by Lee
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-pentagon
+          styleOverrides: '{"background-image":"none","border-width":2,"background-opacity":0.5}'
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg
+          svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/deployment-complete.svg
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg
+        position:
+          posX: 670
+          posY: 70
+        whiteboardData: {}
+    type: Deployment
+    version: ""

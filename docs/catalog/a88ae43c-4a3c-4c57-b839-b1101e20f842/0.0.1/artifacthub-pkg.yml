@@ -1,0 +1,20 @@
+version: 0.0.1
+name: kubernetes-service-for-product-page-app
+displayName: Kubernetes Service for Product Page App
+createdAt: "2023-04-22T08:14:29Z"
+description: This design installs a namespace, a deployment and a service. Both deployment and service are deployed in my-bookinfo namespace. Service is exposed at port 9081.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/a88ae43c-4a3c-4c57-b839-b1101e20f842/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Ensure sufficient resources are available in the cluster and networking is exopsed properly. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 8f3bd5ce-f178-4a69-83ba-62341c74d492
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png
