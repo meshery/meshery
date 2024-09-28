@@ -16,7 +16,6 @@ package design
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 
 	"github.com/ghodss/yaml"
@@ -122,7 +121,6 @@ mesheryctl design view [design-name | ID]
 			arr := dat["patterns"].([]interface{})
 			if len(arr) == 0 {
 				utils.Log.Error(ErrDesignNotFound())
-				utils.Log.Info(fmt.Sprintf("design with name: %s not found. Enter a valid design name or ID \n", pattern))
 				return nil
 			}
 			if body, err = json.MarshalIndent(arr[0], "", "  "); err != nil {
