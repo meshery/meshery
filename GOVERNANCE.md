@@ -74,7 +74,7 @@ Maintainers can voluntarily step down from their role at any time.  If you decid
 
 Any maintainer who is unresponsive or non-participatory (across the various forms of communication used by the project) for a period of two months forfeits maintainer privileges and resumes a contributor role. While much communication is asynchronous, maintainers are required to attend a minimum of one meeting a month in order facilitate high-fidelity, synchronous communication, which is necessary for the quality collaboration, conveyance of complex topics, and real-time advancement of the project.
 
-##### Remeritus Maintainers
+##### Emeritus Maintainers
 
 ## Reviewers
 
