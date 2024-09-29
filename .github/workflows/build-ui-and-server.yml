@@ -33,13 +33,9 @@ jobs:
           node-version: 18
           cache: 'npm'
           cache-dependency-path: '**/package-lock.json'
-      - name: build meshery-ui
-        # if: steps.meshery-ui-cache.outputs.cache-hit != 'true'
+      - name: Build meshery-ui and provider-ui
         run: |
-          make ui-meshery-build
-      - name: build provider-ui
-        run: |
-          make ui-provider-build
+          make ui-build
       - name: Upload meshery-ui artifacts
         uses: actions/upload-artifact@v4
         with:
