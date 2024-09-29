@@ -1,0 +1,1323 @@
+name: Meshery v0.6.73
+version: 0.0.10
+services:
+  default:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: default
+    namespace: ""
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 2b9064aa-8de8-4832-9658-a172cd580f96
+        label: default
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          displayName: Kubernetes
+          metadata:
+            svgColor: ui/public/static/img/meshmodels/kubernetes/color/apdoslogconf-color.svg
+            svgWhite: ui/public/static/img/meshmodels/kubernetes/white/apdoslogconf-white.svg
+          name: kubernetes
+          version: v1.26.3
+        meshmodel-metadata:
+          background-color: '#326CE5'
+          background-image: none
+          background-opacity: 0.5
+          border-color: '#3c81ff'
+          border-style: dashed
+          border-width: 2
+          isNamespaced: false
+          primaryColor: '#326CE5'
+          shape: rectangle
+          styleOverrides:
+            z-index: 10006
+        position:
+          posX: 770
+          posY: 860.5
+        whiteboardData:
+          style: {}
+    type: Namespace
+    version: v1.26.3
+  meshery:
+    annotations: {}
+    apiVersion: apps/v1
+    dependsOn:
+    - default
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: meshery
+    namespace: ""
+    settings:
+      spec:
+        replicas: 1
+        selector:
+          match Labels:
+            app.kubernetes.io/instance: test-release
+            app.kubernetes.io/name: meshery
+        template:
+          metadata:
+            labels:
+              app.kubernetes.io/instance: test-release
+              app.kubernetes.io/name: meshery
+          spec:
+            containers:
+            - env:
+              - name: ADAPTER_URLS
+                value: meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002
+                  meshery-kuma:10007 meshery-osm:10009 meshery-nginx-sm:10010 meshery-nsm:10004
+                  meshery-app-mesh:10005 meshery-traefik-mesh:10006 meshery-cilium:10012
+              - name: EVENT
+                value: mesheryLocal
+              - name: PROVIDER_BASE_URLS
+                value: https://meshery.layer5.io
+              image: layer5/meshery:stable-latest
+              image Pull Policy: Always
+              name: meshery
+              ports:
+              - container Port: 8080
+                name: http
+                protocol: TCP
+              resources: {}
+              security Context: {}
+            restart Policy: Always
+            security Context: {}
+            service Account Name: meshery-server
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 4af46b22-983d-4f41-aff0-3265cedd2210
+        label: meshery
+        meshmodel-metadata:
+          genealogy: parent
+          isCustomResource: false
+          isNamespaced: true
+          logoURL: Created by Lee
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-pentagon
+          styleOverrides:
+            background-image: none
+            background-opacity: 0.5
+            border-width: 2
+            z-index: 10017
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg
+          svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/deployment-complete.svg
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg
+        parent: 2b9064aa-8de8-4832-9658-a172cd580f96
+        position:
+          posX: 770
+          posY: 790
+        whiteboardData: {}
+    type: Deployment
+    version: ""
+  meshery-app-mesh-gongc:
+    annotations: {}
+    apiVersion: apps/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: meshery-app-mesh-gongc
+    namespace: ""
+    settings:
+      spec:
+        replicas: 1
+        selector:
+          match Labels:
+            app.kubernetes.io/instance: test-release
+            app.kubernetes.io/name: meshery-app-mesh
+        template:
+          metadata:
+            labels:
+              app.kubernetes.io/instance: test-release
+              app.kubernetes.io/name: meshery-app-mesh
+          spec:
+            containers:
+            - env: null
+              image: layer5/meshery-app-mesh:stable-latest
+              image Pull Policy: Always
+              name: meshery-app-mesh
+              ports:
+              - container Port: 10005
+                name: http
+                protocol: TCP
+            service Account Name: meshery-server
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: 8d40e7ec-b97f-4b28-9bd5-76e461eed2e2
+            metadata:
+              port: 80
+              protocol: TCP
+            source: 25f4fc27-423d-47b8-af88-b289bc89ed52
+            subType: Network
+            target: dbe3998b-b6c9-4ae1-824a-b7f484411b1a
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: dbe3998b-b6c9-4ae1-824a-b7f484411b1a
+        label: meshery-app-mesh
+        meshmodel-metadata:
+          genealogy: parent
+          isCustomResource: false
+          isNamespaced: true
+          logoURL: Created by Lee
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-pentagon
+          styleOverrides:
+            background-image: none
+            background-opacity: 0.5
+            border-width: 2
+            z-index: 10011
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg
+          svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/deployment-complete.svg
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg
+        position:
+          posX: 910
+          posY: 470
+        whiteboardData: {}
+    type: Deployment
+    version: ""
+  meshery-app-mesh-mmpch:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: meshery-app-mesh-mmpch
+    namespace: ""
+    settings:
+      spec:
+        ports:
+        - name: http
+          port: 80
+          protocol: TCP
+          target Port: http
+        selector:
+          app.kubernetes.io/instance: test-release
+          app.kubernetes.io/name: meshery-app-mesh
+        type: ClusterIP
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: 8d40e7ec-b97f-4b28-9bd5-76e461eed2e2
+            metadata:
+              port: 80
+              protocol: TCP
+            source: 25f4fc27-423d-47b8-af88-b289bc89ed52
+            subType: Network
+            target: dbe3998b-b6c9-4ae1-824a-b7f484411b1a
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: 25f4fc27-423d-47b8-af88-b289bc89ed52
+        label: meshery-app-mesh
+        meshmodel-metadata:
+          genealogy: ""
+          isCustomResource: false
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-triangle
+          styleOverrides:
+            background-fit: none
+            background-position-y: 4
+            height: 16
+            padding: 12
+            width: 17
+            z-index: 10007
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/apdoslogconf-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/apdoslogconf-white.svg
+        position:
+          posX: 550
+          posY: 530
+        whiteboardData:
+          style: {}
+    type: Service
+    version: ""
+  meshery-cilium-chdwz:
+    annotations: {}
+    apiVersion: apps/v1
+    dependsOn:
+    - default
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: meshery-cilium-chdwz
+    namespace: ""
+    settings:
+      spec:
+        replicas: 1
+        selector:
+          match Labels:
+            app.kubernetes.io/instance: test-release
+            app.kubernetes.io/name: meshery-cilium
+        template:
+          metadata:
+            labels:
+              app.kubernetes.io/instance: test-release
+              app.kubernetes.io/name: meshery-cilium
+          spec:
+            containers:
+            - env: null
+              image: layer5/meshery-cilium:stable-latest
+              image Pull Policy: Always
+              name: meshery-cilium
+              ports:
+              - container Port: 10012
+                name: http
+                protocol: TCP
+              resources: {}
+              security Context: {}
+            security Context: {}
+            service Account Name: default
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 9a4120b7-3bbb-4e69-a370-0486262385e9
+        label: meshery-cilium
+        meshmodel-metadata:
+          genealogy: parent
+          isCustomResource: false
+          isNamespaced: true
+          logoURL: Created by Lee
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-pentagon
+          styleOverrides:
+            background-image: none
+            background-opacity: 0.5
+            border-width: 2
+            z-index: 10013
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg
+          svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/deployment-complete.svg
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg
+        parent: 2b9064aa-8de8-4832-9658-a172cd580f96
+        position:
+          posX: 810
+          posY: 850
+        whiteboardData: {}
+    type: Deployment
+    version: ""
+  meshery-cilium-mukie:
+    annotations: {}
+    apiVersion: v1
+    dependsOn:
+    - default
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: meshery-cilium-mukie
+    namespace: ""
+    settings:
+      spec:
+        ports:
+        - name: http
+          port: 80
+          protocol: TCP
+          target Port: http
+        selector:
+          app.kubernetes.io/instance: test-release
+          app.kubernetes.io/name: meshery-cilium
+        type: ClusterIP
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 9c5df7cc-610c-4d36-82cb-41efaa9bd9fc
+        label: meshery-cilium
+        meshmodel-metadata:
+          genealogy: ""
+          isCustomResource: false
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-triangle
+          styleOverrides:
+            background-fit: none
+            background-position-y: 4
+            height: 16
+            padding: 12
+            width: 17
+            z-index: 10016
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/apdoslogconf-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/apdoslogconf-white.svg
+        parent: 2b9064aa-8de8-4832-9658-a172cd580f96
+        position:
+          posX: 730
+          posY: 870
+        whiteboardData:
+          style: {}
+    type: Service
+    version: ""
+  meshery-consul:
+    annotations: {}
+    apiVersion: apps/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: meshery-consul
+    namespace: default
+    settings:
+      spec:
+        replicas: 1
+        selector:
+          match Labels:
+            app.kubernetes.io/instance: test-release
+            app.kubernetes.io/name: meshery-consul
+        template:
+          metadata:
+            labels:
+              app.kubernetes.io/instance: test-release
+              app.kubernetes.io/name: meshery-consul
+          spec:
+            containers:
+            - env: null
+              image: layer5/meshery-consul:stable-latest
+              image Pull Policy: Always
+              name: meshery-consul
+              ports:
+              - container Port: 10002
+                name: http
+                protocol: TCP
+              resources: {}
+              security Context: {}
+            security Context: {}
+            service Account Name: meshery-server
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 40c5a960-f088-40bb-b2f4-b49252335ce4
+        label: meshery-consul
+        meshmodel-metadata:
+          genealogy: parent
+          isCustomResource: false
+          isNamespaced: true
+          logoURL: Created by Lee
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-pentagon
+          styleOverrides:
+            background-image: none
+            background-opacity: 0.5
+            border-width: 2
+            z-index: 10002
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg
+          svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/deployment-complete.svg
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg
+        position:
+          posX: 790
+          posY: 910
+        whiteboardData: {}
+    type: Deployment
+    version: ""
+  meshery-istio-ablfa:
+    annotations: {}
+    apiVersion: apps/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: meshery-istio-ablfa
+    namespace: ""
+    settings:
+      spec:
+        replicas: 1
+        selector:
+          match Labels:
+            app.kubernetes.io/instance: test-release
+            app.kubernetes.io/name: meshery-istio
+        template:
+          metadata:
+            labels:
+              app.kubernetes.io/instance: test-release
+              app.kubernetes.io/name: meshery-istio
+          spec:
+            containers:
+            - env: null
+              image: layer5/meshery-istio:stable-latest
+              image Pull Policy: Always
+              name: meshery-istio
+              ports:
+              - container Port: 10000
+                name: http
+                protocol: TCP
+              resources: {}
+              security Context: {}
+            security Context: {}
+            service Account Name: meshery-server
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: f268432b-b45f-4f63-938c-aa14fdf9c25d
+        label: meshery-istio
+        meshmodel-metadata:
+          genealogy: parent
+          isCustomResource: false
+          isNamespaced: true
+          logoURL: Created by Lee
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-pentagon
+          styleOverrides:
+            background-image: none
+            background-opacity: 0.5
+            border-width: 2
+            z-index: 10003
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg
+          svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/deployment-complete.svg
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg
+        position:
+          posX: 990
+          posY: 770
+        whiteboardData: {}
+    type: Deployment
+    version: ""
+  meshery-istio-wvcpu:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: meshery-istio-wvcpu
+    namespace: ""
+    settings:
+      spec:
+        ports:
+        - name: http
+          port: 80
+          protocol: TCP
+          target Port: http
+        selector:
+          app.kubernetes.io/instance: test-release
+          app.kubernetes.io/name: meshery-istio
+        type: ClusterIP
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 0db4926c-03f6-4dc4-91a1-d7536066c081
+        label: meshery-istio
+        meshmodel-metadata:
+          genealogy: ""
+          isCustomResource: false
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-triangle
+          styleOverrides: '{"height":16,"width":17,"padding":12,"background-fit":"none","background-position-y":4}'
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/apdoslogconf-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/apdoslogconf-white.svg
+        position:
+          posX: 1010
+          posY: 610
+        whiteboardData:
+          style: {}
+    type: Service
+    version: ""
+  meshery-linkerd-olwdd:
+    annotations: {}
+    apiVersion: apps/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: meshery-linkerd-olwdd
+    namespace: ""
+    settings:
+      spec:
+        replicas: 1
+        selector:
+          match Labels:
+            app.kubernetes.io/instance: test-release
+            app.kubernetes.io/name: meshery-linkerd
+        template:
+          metadata:
+            labels:
+              app.kubernetes.io/instance: test-release
+              app.kubernetes.io/name: meshery-linkerd
+          spec:
+            containers:
+            - env: null
+              image: layer5/meshery-linkerd:stable-latest
+              image Pull Policy: Always
+              name: meshery-linkerd
+              ports:
+              - container Port: 10001
+                name: http
+                protocol: TCP
+              resources: {}
+              security Context: {}
+            security Context: {}
+            service Account Name: meshery-server
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 1f1187b7-b051-4794-91b0-0e3af8d652a4
+        label: meshery-linkerd
+        meshmodel-metadata:
+          genealogy: parent
+          isCustomResource: false
+          isNamespaced: true
+          logoURL: Created by Lee
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-pentagon
+          styleOverrides:
+            background-image: none
+            background-opacity: 0.5
+            border-width: 2
+            z-index: 10008
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg
+          svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/deployment-complete.svg
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg
+        position:
+          posX: 870
+          posY: 890
+        whiteboardData: {}
+    type: Deployment
+    version: ""
+  meshery-linkerd-qzpeq:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: meshery-linkerd-qzpeq
+    namespace: ""
+    settings:
+      spec:
+        ports:
+        - name: http
+          port: 80
+          protocol: TCP
+          target Port: http
+        selector:
+          app.kubernetes.io/instance: test-release
+          app.kubernetes.io/name: meshery-linkerd
+        type: ClusterIP
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 8e6af5e1-cb6d-4304-9c39-527f1452299c
+        label: meshery-linkerd
+        meshmodel-metadata:
+          genealogy: ""
+          isCustomResource: false
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-triangle
+          styleOverrides:
+            background-fit: none
+            background-position-y: 4
+            height: 16
+            padding: 12
+            width: 17
+            z-index: 10004
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/apdoslogconf-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/apdoslogconf-white.svg
+        position:
+          posX: 670
+          posY: 430
+        whiteboardData:
+          style: {}
+    type: Service
+    version: ""
+  meshery-nginx-sm-dtbef:
+    annotations: {}
+    apiVersion: apps/v1
+    dependsOn:
+    - default
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: meshery-nginx-sm-dtbef
+    namespace: default
+    settings:
+      spec:
+        replicas: 1
+        selector:
+          match Labels:
+            io.kompose.service: meshery-nginx-sm
+        template:
+          metadata:
+            labels:
+              io.kompose.service: meshery-nginx-sm
+          spec:
+            containers:
+            - env: null
+              image: layer5/meshery-nginx-sm:stable-latest
+              image Pull Policy: Always
+              name: meshery-nginx-sm
+              ports:
+              - container Port: 10010
+              resources: {}
+              security Context: {}
+            security Context: {}
+            service Account Name: meshery-server
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: e027029c-ae36-4e27-9864-8b2c0a212e2f
+            metadata:
+              port: 80
+              protocol: TCP
+            source: da5d0a0d-2062-48c0-92d5-de3a68cf055b
+            subType: Network
+            target: 7b46e90e-ee98-404b-b226-ad4fab80279e
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: 7b46e90e-ee98-404b-b226-ad4fab80279e
+        label: meshery-nginx-sm-dtbef
+        meshmodel-metadata:
+          genealogy: parent
+          isCustomResource: false
+          isNamespaced: true
+          logoURL: Created by Lee
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-pentagon
+          styleOverrides:
+            background-image: none
+            background-opacity: 0.5
+            border-width: 2
+            z-index: 10014
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg
+          svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/deployment-complete.svg
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg
+        parent: 2b9064aa-8de8-4832-9658-a172cd580f96
+        position:
+          posX: 810
+          posY: 910
+        whiteboardData: {}
+    type: Deployment
+    version: ""
+  meshery-nginx-sm-dvnsv:
+    annotations: {}
+    apiVersion: v1
+    dependsOn:
+    - default
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: meshery-nginx-sm-dvnsv
+    namespace: ""
+    settings:
+      spec:
+        ports:
+        - name: "10010"
+          port: 80
+          protocol: TCP
+          target Port: 10010
+        selector:
+          io.kompose.service: meshery-nginx-sm
+        type: ClusterIP
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: e027029c-ae36-4e27-9864-8b2c0a212e2f
+            metadata:
+              port: 80
+              protocol: TCP
+            source: da5d0a0d-2062-48c0-92d5-de3a68cf055b
+            subType: Network
+            target: 7b46e90e-ee98-404b-b226-ad4fab80279e
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: da5d0a0d-2062-48c0-92d5-de3a68cf055b
+        label: meshery-nginx-sm
+        meshmodel-metadata:
+          genealogy: ""
+          isCustomResource: false
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-triangle
+          styleOverrides:
+            background-fit: none
+            background-position-y: 4
+            height: 16
+            padding: 12
+            width: 17
+            z-index: 10015
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/apdoslogconf-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/apdoslogconf-white.svg
+        parent: 2b9064aa-8de8-4832-9658-a172cd580f96
+        position:
+          posX: 730
+          posY: 910
+        whiteboardData:
+          style: {}
+    type: Service
+    version: ""
+  meshery-nsm-vrejt:
+    annotations: {}
+    apiVersion: apps/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: meshery-nsm-vrejt
+    namespace: ""
+    settings:
+      spec:
+        replicas: 1
+        selector:
+          match Labels:
+            app.kubernetes.io/instance: test-release
+            app.kubernetes.io/name: meshery-nsm
+        template:
+          metadata:
+            labels:
+              app.kubernetes.io/instance: test-release
+              app.kubernetes.io/name: meshery-nsm
+          spec:
+            containers:
+            - env: null
+              image: layer5/meshery-nsm:stable-latest
+              image Pull Policy: Always
+              name: meshery-nsm
+              ports:
+              - container Port: 10004
+                name: http
+                protocol: TCP
+              resources: {}
+              security Context: {}
+            security Context: {}
+            service Account Name: meshery-server
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 7ec93557-fde3-449f-89ae-ac4aa8e985ad
+        label: meshery-nsm
+        meshmodel-metadata:
+          genealogy: parent
+          isCustomResource: false
+          isNamespaced: true
+          logoURL: Created by Lee
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-pentagon
+          styleOverrides:
+            background-image: none
+            background-opacity: 0.5
+            border-width: 2
+            z-index: 10009
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg
+          svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/deployment-complete.svg
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg
+        position:
+          posX: 590
+          posY: 470
+        whiteboardData: {}
+    type: Deployment
+    version: ""
+  meshery-nsm-zirdo:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: meshery-nsm-zirdo
+    namespace: ""
+    settings:
+      spec:
+        ports:
+        - name: http
+          port: 80
+          protocol: TCP
+          target Port: http
+        selector:
+          app.kubernetes.io/instance: test-release
+          app.kubernetes.io/name: meshery-nsm
+        type: ClusterIP
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 051dc0e2-806b-4c2d-8723-ccffba952b21
+        label: meshery-nsm
+        meshmodel-metadata:
+          genealogy: ""
+          isCustomResource: false
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-triangle
+          styleOverrides:
+            background-fit: none
+            background-position-y: 4
+            height: 16
+            padding: 12
+            width: 17
+            z-index: 10010
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/apdoslogconf-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/apdoslogconf-white.svg
+        position:
+          posX: 1010
+          posY: 690
+        whiteboardData:
+          style: {}
+    type: Service
+    version: ""
+  meshery-osm-bxcmi:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: meshery-osm-bxcmi
+    namespace: ""
+    settings:
+      spec:
+        ports:
+        - name: http
+          port: 80
+          protocol: TCP
+          target Port: http
+        selector:
+          app.kubernetes.io/instance: test-release
+          app.kubernetes.io/name: meshery-osm
+        type: ClusterIP
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 8aaf76d3-a226-4d13-8c77-51302ab6026b
+        label: meshery-osm
+        meshmodel-metadata:
+          genealogy: ""
+          isCustomResource: false
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-triangle
+          styleOverrides:
+            background-fit: none
+            background-position-y: 4
+            height: 16
+            padding: 12
+            width: 17
+            z-index: 10012
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/apdoslogconf-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/apdoslogconf-white.svg
+        position:
+          posX: 750
+          posY: 410
+        whiteboardData:
+          style: {}
+    type: Service
+    version: ""
+  meshery-osm-cften:
+    annotations: {}
+    apiVersion: apps/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: meshery-osm-cften
+    namespace: ""
+    settings:
+      spec:
+        replicas: 1
+        selector:
+          match Labels:
+            app.kubernetes.io/instance: test-release
+            app.kubernetes.io/name: meshery-osm
+        template:
+          metadata:
+            labels:
+              app.kubernetes.io/instance: test-release
+              app.kubernetes.io/name: meshery-osm
+          spec:
+            containers:
+            - env: null
+              image: layer5/meshery-osm:stable-latest
+              image Pull Policy: Always
+              name: meshery-osm
+              ports:
+              - container Port: 10009
+                name: http
+                protocol: TCP
+              resources: {}
+              security Context: {}
+            security Context: {}
+            service Account Name: meshery-server
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 89eda25b-4301-455e-98ce-7c4b4915254b
+        label: meshery-osm
+        meshmodel-metadata:
+          genealogy: parent
+          isCustomResource: false
+          isNamespaced: true
+          logoURL: Created by Lee
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-pentagon
+          styleOverrides:
+            background-image: none
+            background-opacity: 0.5
+            border-width: 2
+            z-index: 10000
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg
+          svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/deployment-complete.svg
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg
+        position:
+          posX: 710
+          posY: 910
+        whiteboardData: {}
+    type: Deployment
+    version: ""
+  meshery-server-bguua:
+    annotations: {}
+    apiVersion: rbac.authorization.k8s.io/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: meshery-server-bguua
+    namespace: ""
+    settings:
+      role Ref:
+        api Group: rbac.authorization.k8s.io
+        kind: ClusterRole
+        name: meshery-server
+      subjects:
+      - kind: ServiceAccount
+        name: meshery-server
+        namespace: default
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 5e6e4c87-748c-4499-87b0-a879c8f90125
+        label: meshery-server
+        meshmodel-metadata:
+          genealogy: ""
+          isCustomResource: false
+          isNamespaced: false
+          logoURL: Created by Lee
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-rectangle
+          styleOverrides: '{"height":"22px","width":"16px","padding":"6px", "z-index":9999}'
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/clusterrolebinding-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/clusterrolebinding-white.svg
+        position:
+          posX: 850
+          posY: 650
+        whiteboardData:
+          style: {}
+    type: ClusterRoleBinding
+    version: ""
+  meshery-server-hqxbm:
+    annotations: {}
+    apiVersion: rbac.authorization.k8s.io/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: meshery-server-hqxbm
+    namespace: ""
+    settings:
+      rules:
+      - api Groups:
+        - '*'
+        resources:
+        - '*'
+        verbs:
+        - '*'
+      - non Resource URLs:
+        - /metrics
+        - /health
+        - /ping
+        verbs:
+        - get
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: a80b728e-ac82-4527-ba70-e37571bbd23d
+        label: meshery-server
+        meshmodel-metadata:
+          genealogy: ""
+          isCustomResource: false
+          isNamespaced: false
+          logoURL: Created by Lee
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-rectangle
+          styleOverrides:
+            height: 22px
+            padding: 6px
+            width: 16px
+            z-index: 10001
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/clusterrole-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/clusterrole-white.svg
+        position:
+          posX: 910
+          posY: 710
+        whiteboardData:
+          style: {}
+    type: ClusterRole
+    version: ""
+  meshery-traefik-mesh:
+    annotations: {}
+    apiVersion: apps/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: meshery-traefik-mesh
+    namespace: ""
+    settings:
+      spec:
+        replicas: 1
+        selector:
+          match Labels:
+            app.kubernetes.io/instance: test-release
+            app.kubernetes.io/name: meshery-traefik-mesh
+        template:
+          metadata:
+            labels:
+              app.kubernetes.io/instance: test-release
+              app.kubernetes.io/name: meshery-traefik-mesh
+          spec:
+            containers:
+            - env: null
+              image: layer5/meshery-traefik-mesh:stable-latest
+              image Pull Policy: Always
+              name: meshery-traefik-mesh
+              ports:
+              - container Port: 10006
+                name: http
+                protocol: TCP
+              resources: {}
+              security Context: {}
+            security Context: {}
+            service Account Name: meshery-server
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 8f0f7d97-e584-4b0b-b22c-7460d1219e58
+        label: meshery-traefik-mesh
+        meshmodel-metadata:
+          genealogy: parent
+          isCustomResource: false
+          isNamespaced: true
+          logoURL: Created by Lee
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-pentagon
+          styleOverrides:
+            background-image: none
+            background-opacity: 0.5
+            border-width: 2
+            z-index: 10005
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg
+          svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/deployment-complete.svg
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg
+        position:
+          posX: 830
+          posY: 430
+        whiteboardData: {}
+    type: Deployment
+    version: ""

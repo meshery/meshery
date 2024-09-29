@@ -1,0 +1,103 @@
+name: Kubernetes cronjob
+version: 0.0.11
+services:
+  my-cron-job:
+    annotations:
+      source_url: https://meshery.layer5.io/catalog
+    apiVersion: batch/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels:
+      app: my-cron-job
+    model: kubernetes
+    name: my-cron-job
+    namespace: default
+    settings:
+      spec:
+        concurrency Policy: Forbid
+        failed Jobs History Limit: 2
+        job Template:
+          spec:
+            template:
+              metadata:
+                annotations:
+                  source_url: https://meshery.layer5.io/catalog
+                labels:
+                  app: my-cron-job
+              spec:
+                containers:
+                - args:
+                  - run
+                  - --dry-run
+                  command:
+                  - vendor/bin/codecept
+                  env:
+                  - name: CONTAINER_PURPOSE
+                    value: cron
+                  - name: MYSQL_PASSWORD
+                    value From:
+                      secret Key Ref:
+                        key: my_db_password
+                        name: my-app-secrets
+                  env From:
+                  - config Map Ref:
+                      name: my-app-config
+                  image: my-php-container:tag_name
+                  image Pull Policy: Always
+                  name: app-cron
+                  resources:
+                    limits:
+                      cpu: "1"
+                      memory: 1Gi
+                    requests:
+                      cpu: "1"
+                      memory: 256Mi
+                  volume Mounts:
+                  - mount Path: /stored_data
+                    name: project-data
+                node Selector:
+                  type: cron
+                restart Policy: Never
+                volumes:
+                - name: project-data
+                  nfs:
+                    path: /
+                    server: 1a2b3c4d.efs.eu-central-1.amazonaws.com
+                - name: uploads
+                  persistent Volume Claim:
+                    claim Name: uploaded-files
+        schedule: '*/10 * * * *'
+        starting Deadline Seconds: 120
+        successful Jobs History Limit: 0
+        suspend: false
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 10b3d4ae-726b-49b2-ad64-69bc28d24c9c
+        label: my-cron-job
+        meshmodel-metadata:
+          genealogy: ""
+          isCustomResource: false
+          isNamespaced: true
+          logoURL: Created by leecalcote
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: circle
+          styleOverrides: ""
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/cronjob-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/color/cronjob-color.svg
+        position:
+          posX: 390
+          posY: 390
+        whiteboardData:
+          style:
+            z-index: 3
+    type: CronJob
+    version: ""
