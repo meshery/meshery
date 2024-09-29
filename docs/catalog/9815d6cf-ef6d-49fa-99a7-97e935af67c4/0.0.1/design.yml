@@ -1,0 +1,685 @@
+name: fluentd-kubernetes-aws
+version: 0.0.9
+services:
+  NodeGroupInventoryWallet:
+    annotations: {}
+    apiVersion: core.meshery.io/v1alpha1
+    dependsOn:
+    - fluentd-kubernetes-aws-vfdex
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: meshery-core
+    name: NodeGroupInventoryWallet
+    namespace: ""
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: e48fcd9c-0d0a-4e3e-a471-01626bd6b0ce
+        label: NodeGroupInventoryWallet
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          components: null
+          description: ""
+          displayName: Meshery Core
+          hostID: 26e64aa8-2d86-57bd-92b3-2a73160d27b4
+          id: 3e2db384-d3af-5fac-8af2-684fc3c29446
+          metadata:
+            isAnnotation: false
+            subCategory: App Definition and Development
+            svgColor: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+            svgComplete: ""
+            svgWhite: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+          model:
+            version: 0.7.1
+          name: meshery-core
+          registrant:
+            hostname: artifacthub
+          relationships: null
+          schemaVersion: core.meshery.io/v1beta1
+          status: enabled
+          subCategory: App Definition and Development
+          version: v1.0.0
+        meshmodel-metadata:
+          capabilities: |-
+            {
+              "designer": {
+                "pass-events-to": "parent",
+                "edit": {
+                  "config": false,
+                  "copy": false,
+                  "delete": false,
+                  "duplicate": false,
+                  "reset-styles": false,
+                  "resolve": false,
+                  "lock": false,
+                  "shape": {
+                    "convert-shape": false
+                  },
+                  "style": false
+                },
+                "label": {
+                  "edit": false,
+                  "show": false,
+                  "sync-with-config-property": "none"
+                }
+              }
+            }
+          defaultData: '{"label":""}'
+          genealogy: parent
+          hasInvalidSchema: true
+          isAnnotation: true
+          primaryColor: '#00B39F'
+          secondaryColor: '#00D3A9'
+          shape: round-rectangle
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides: '{"height":"30px","width":"30px", "background-image":"none","border-width":0,"border-style":"dashed","background-opacity":0.1,"data":{"label":""}}'
+          styles: '{"height":"30px","width":"30px", "background-image":"none","border-width":0,"border-style":"dashed","background-opacity":0.1}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/meshery-core/color/anchornode-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/meshery-core/white/anchornode-white.svg
+        parent: 0bbd6078-bf2f-4b01-b522-41af34a47b7a
+        position:
+          posX: 170
+          posY: 230
+        whiteboardData: {}
+    type: NodeGroupInventoryWallet
+    version: 0.7.1
+  fluentd-kubernetes-aws-cdmlf:
+    annotations: {}
+    apiVersion: monitoring.coreos.com/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels:
+      app: prometheus-operator
+      app.kubernetes.io/instance: fluentd-kubernetes-aws
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: fluentd-kubernetes-aws
+      helm.sh/chart: fluentd-kubernetes-aws-0.2.1
+      release: prometheus-operator
+    model: contrail-analytics
+    name: fluentd-kubernetes-aws
+    namespace: default
+    settings:
+      spec:
+        groups:
+        - name: fluentd
+          rules:
+          - alert: FluentdNodeDown
+            annotations:
+              description: Prometheus could not scrape {{ $labels.job }} for more
+                than 10 minutes
+              summary: fluentd cannot be scraped
+            expr: |
+              up{job="fluentd-kubernetes-aws-prometheus"} == 0
+              or absent(up{job="fluentd-kubernetes-aws-prometheus"})
+            for: 10m
+            labels:
+              service: fluentd
+              severity: warning
+          - alert: FluentdNodeDown
+            annotations:
+              description: Prometheus could not scrape {{ $labels.job }} for more
+                than 30 minutes
+              summary: fluentd cannot be scraped
+            expr: |
+              up{job="fluentd-kubernetes-aws-prometheus"} == 0
+              or absent(up{job="fluentd-kubernetes-aws-prometheus"})
+            for: 30m
+            labels:
+              service: fluentd
+              severity: critical
+          - alert: FluentdQueueLength
+            annotations:
+              description: In the last 5 minutes, fluentd queues increased 30%. Current
+                value is {{ $value }}
+              summary: fluentd node are failing
+            expr: |
+              rate(fluentd_output_status_buffer_queue_length[5m]) > 0.3
+              or absent(fluentd_output_status_buffer_queue_length)
+            for: 1m
+            labels:
+              service: fluentd
+              severity: warning
+          - alert: FluentdQueueLength
+            annotations:
+              description: In the last 5 minutes, fluentd queues increased 50%. Current
+                value is {{ $value }}
+              summary: fluentd node are critical
+            expr: |
+              rate(fluentd_output_status_buffer_queue_length[5m]) > 0.5
+              or absent(fluentd_output_status_buffer_queue_length)
+            for: 1m
+            labels:
+              service: fluentd
+              severity: critical
+          - alert: FluentdRecordsCountsHigh
+            annotations:
+              description: In the last 5m, records counts increased 3 times, comparing
+                to the latest 15 min.
+              summary: fluentd records count are critical
+            expr: |
+              sum(rate(fluentd_output_status_emit_records{job="fluentd-kubernetes-aws-prometheus"}[5m])) BY (instance) >  (3 * sum(rate(fluentd_output_status_emit_records{job="fluentd-kubernetes-aws-prometheus"}[15m])) BY (instance))
+              or absent(fluentd_output_status_emit_records)
+            for: 1m
+            labels:
+              service: fluentd
+              severity: critical
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 4fcd0b4b-1566-4077-9c95-9664b43b0387
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isNamespaced: true
+          primaryColor: '#00B39F'
+          secondaryColor: '#00D3A9'
+          shape: circle
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides:
+            z-index: 1005
+          styles: ""
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/contrail-analytics/color/contrail-analytics-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/contrail-analytics/white/contrail-analytics-white.svg
+        position:
+          posX: -10
+          posY: 130
+        whiteboardData:
+          style: {}
+    type: PrometheusRule
+    version: ""
+  fluentd-kubernetes-aws-euljf:
+    annotations: {}
+    apiVersion: rbac.authorization.k8s.io/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels:
+      app: fluentd-kubernetes-aws
+      chart: fluentd-kubernetes-aws-0.2.1
+      heritage: Helm
+      release: fluentd-kubernetes-aws
+    model: kubernetes
+    name: fluentd-kubernetes-aws
+    namespace: ""
+    settings:
+      role Ref:
+        api Group: rbac.authorization.k8s.io
+        kind: ClusterRole
+        name: fluentd-kubernetes-aws
+      subjects:
+      - kind: ServiceAccount
+        name: fluentd-kubernetes-aws
+        namespace: default
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 8e6094c8-411c-446f-b67e-eecd3fc84971
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: false
+          logoURL: Created by Meshery Authors
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          secondaryColor: '#7aa1f0'
+          shape: round-rectangle
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides: '{"height":"25px","width":"25px","x":"7", "y":"7"}'
+          styles: '{"height":"25px","width":"25px","x":"7", "y":"7"}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/clusterrolebinding-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/clusterrolebinding-white.svg
+        position:
+          posX: 140.07248507200777
+          posY: 100.12080845334627
+        whiteboardData:
+          style:
+            height: 10.5
+            width: 10.5
+            z-index: 1000
+    type: ClusterRoleBinding
+    version: ""
+  fluentd-kubernetes-aws-pkayy:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels:
+      app: fluentd-kubernetes-aws
+      chart: fluentd-kubernetes-aws-0.2.1
+      heritage: Helm
+      release: fluentd-kubernetes-aws
+    model: kubernetes
+    name: fluentd-kubernetes-aws
+    namespace: default
+    settings:
+      image Pull Secrets: []
+      secrets: []
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: c7dcafbd-4e5f-4c80-9406-549e773e65b1
+            metadata:
+              binded_by: 8e6094c8-411c-446f-b67e-eecd3fc84971
+            source: cd14bf6d-dc52-40c7-b258-4f4d24ac4925
+            subType: Permission
+            target: edf88402-414a-4bb3-b763-b8fcf6c4f3bc
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: edf88402-414a-4bb3-b763-b8fcf6c4f3bc
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          secondaryColor: '#7aa1f0'
+          shape: bottom-round-rectangle
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides:
+            z-index: 1003
+          styles: ""
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/serviceaccount-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/serviceaccount-white.svg
+        position:
+          posX: 170
+          posY: 150
+        whiteboardData:
+          style: {}
+    type: ServiceAccount
+    version: ""
+  fluentd-kubernetes-aws-prometheus:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels:
+      app: fluentd-kubernetes-aws-prometheus
+      chart: fluentd-kubernetes-aws-0.2.1
+      heritage: Helm
+      release: fluentd-kubernetes-aws
+    model: kubernetes
+    name: fluentd-kubernetes-aws-prometheus
+    namespace: default
+    settings:
+      spec:
+        ports:
+        - name: prometheus
+          port: 9224
+          protocol: TCP
+          target Port: 24231
+        selector:
+          app: fluentd-kubernetes-aws
+          release: fluentd-kubernetes-aws
+        type: ClusterIP
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 845421eb-e1f9-4e22-9b21-f377a6527a41
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          secondaryColor: '#7aa1f0'
+          shape: round-triangle
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides:
+            background-position-y: 4.5
+            height: 20
+            padding: 12
+            width: 20
+            x: 10px
+            "y": 12px
+            z-index: 3
+          styles: '{"height":20,"width":20,"padding":12,"background-position-y":4.5,"x":"10px","y":"12px"}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/service-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/service-white.svg
+        position:
+          posX: 30
+          posY: 50
+        whiteboardData:
+          style: {}
+    type: Service
+    version: ""
+  fluentd-kubernetes-aws-qmuky:
+    annotations: {}
+    apiVersion: monitoring.coreos.com/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels:
+      app: prometheus-operator
+      chart: fluentd-kubernetes-aws-0.2.1
+      heritage: Helm
+      release: prometheus-operator
+    model: contrail-analytics
+    name: fluentd-kubernetes-aws
+    namespace: default
+    settings:
+      spec:
+        endpoints:
+        - metric Relabelings: []
+          oauth2:
+            client Id: {}
+            client Secret: {}
+            scopes: []
+          path: /metrics
+          port: prometheus
+          relabelings: []
+        namespace Selector:
+          match Names: []
+        pod Target Labels: []
+        selector:
+          match Expressions: []
+          match Labels:
+            app: fluentd-kubernetes-aws-prometheus
+            release: fluentd-kubernetes-aws
+          namespace Selector:
+            any: true
+        target Labels: []
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 332c5a33-a3a3-4528-af54-26feacf6daa9
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isNamespaced: true
+          primaryColor: '#00B39F'
+          secondaryColor: '#00D3A9'
+          shape: circle
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides:
+            z-index: 1004
+          styles: ""
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/contrail-analytics/color/contrail-analytics-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/contrail-analytics/white/contrail-analytics-white.svg
+        position:
+          posX: 170
+          posY: 90
+        whiteboardData:
+          style: {}
+    type: ServiceMonitor
+    version: ""
+  fluentd-kubernetes-aws-sibpa:
+    annotations: {}
+    apiVersion: rbac.authorization.k8s.io/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels:
+      app: fluentd-kubernetes-aws
+      chart: fluentd-kubernetes-aws-0.2.1
+      heritage: Helm
+      release: fluentd-kubernetes-aws
+    model: kubernetes
+    name: fluentd-kubernetes-aws
+    namespace: ""
+    settings:
+      rules:
+      - api Groups:
+        - ""
+        resources:
+        - pods
+        - namespaces
+        verbs:
+        - get
+        - list
+        - watch
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: c7dcafbd-4e5f-4c80-9406-549e773e65b1
+            metadata:
+              binded_by: 8e6094c8-411c-446f-b67e-eecd3fc84971
+            source: cd14bf6d-dc52-40c7-b258-4f4d24ac4925
+            subType: Permission
+            target: edf88402-414a-4bb3-b763-b8fcf6c4f3bc
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: cd14bf6d-dc52-40c7-b258-4f4d24ac4925
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: false
+          logoURL: Created by Meshery Authors
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          secondaryColor: '#7aa1f0'
+          shape: round-rectangle
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides:
+            height: 22px
+            width: 22px
+            x: "8.5"
+            "y": "7.5"
+            z-index: 1001
+          styles: '{"height":"22px", "width":"22px", "x":"8.5", "y":"7.5"}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/clusterrole-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/clusterrole-white.svg
+        position:
+          posX: 110
+          posY: 50
+        whiteboardData:
+          style: {}
+    type: ClusterRole
+    version: ""
+  fluentd-kubernetes-aws-vfdex:
+    annotations: {}
+    apiVersion: apps/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels:
+      app: fluentd-kubernetes-aws
+      chart: fluentd-kubernetes-aws-0.2.1
+      heritage: Helm
+      k8s-app: fluentd-logging
+      kubernetes.io/cluster-service: "true"
+      release: fluentd-kubernetes-aws
+      version: v1
+    model: kubernetes
+    name: fluentd-kubernetes-aws
+    namespace: default
+    settings:
+      spec:
+        selector:
+          match Labels:
+            app: fluentd-kubernetes-aws
+            k8s-app: fluentd-logging
+            release: fluentd-kubernetes-aws
+        template:
+          metadata:
+            annotations:
+              iam.amazonaws.com/role: elasticsearch-user
+            labels:
+              app: fluentd-kubernetes-aws
+              k8s-app: fluentd-logging
+              kubernetes.io/cluster-service: "true"
+              release: fluentd-kubernetes-aws
+              version: v1
+          spec:
+            containers:
+            - env:
+              - name: FLUENT_ELASTICSEARCH_HOST
+                value: localhost
+              - name: FLUENT_ELASTICSEARCH_PORT
+                value: "9200"
+              - name: FLUENT_ELASTICSEARCH_SCHEME
+                value: http
+              - name: FLUENTD_PROMETHEUS_PORT
+                value: "24231"
+              - name: FLUENT_ELASTICSEARCH_BUFFER_CHUNK_LIMIT_SIZE
+                value: 4M
+              - name: FLUENT_ELASTICSEARCH_BUFFER_QUEUE_LIMIT_LENGTH
+                value: "64"
+              image: fluent/fluentd-kubernetes-daemonset:v1.4.2-debian-elasticsearch-1.1
+              image Pull Policy: IfNotPresent
+              name: fluentd
+              resources: {}
+              volume Mounts:
+              - mount Path: /var/log
+                name: varlog
+              - mount Path: /var/lib/docker/containers
+                name: varlibdockercontainers
+                read Only: true
+            - args:
+              - -endpoint
+              - https://my-elasticsearch-jivhavxbcd5.us-east-1.es.amazonaws.com
+              - -listen
+              - 127.0.0.1:9200
+              image: abutaha/aws-es-proxy:0.9
+              image Pull Policy: IfNotPresent
+              name: signing-proxy
+              resources:
+                requests:
+                  cpu: 5m
+                  memory: 10Mi
+            service Account Name: fluentd-kubernetes-aws
+            termination Grace Period Seconds: 30
+            tolerations:
+            - effect: NoSchedule
+              key: node-role.kubernetes.io/master
+            volumes:
+            - host Path:
+                path: /var/log
+              name: varlog
+            - host Path:
+                path: /var/lib/docker/containers
+              name: varlibdockercontainers
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 0bbd6078-bf2f-4b01-b522-41af34a47b7a
+        meshmodel-metadata:
+          capabilities: |2-
+             {
+              "designer": {
+                "edit": {
+                  "shape": {
+                    "convert-shape": false
+                  }
+                }
+              }
+            }
+          defaultData: ""
+          genealogy: parent
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: Created by Meshery Authors
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          secondaryColor: '#7aa1f0'
+          shape: circle
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides:
+            background-opacity: 0.5
+            border-width: 2
+            z-index: 1002
+          styles: '{"border-width":2,"background-opacity":0.5}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/daemonset-color.svg
+          svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/daemonset-complete.svg
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/daemonset-white.svg
+        position:
+          posX: 170
+          posY: 230
+        whiteboardData:
+          style: {}
+    type: DaemonSet
+    version: ""
