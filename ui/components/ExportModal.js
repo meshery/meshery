@@ -187,6 +187,7 @@ const ExportModal = (props) => {
               </Typography>
               <div style={exportBtnStyles}>
                 <Button
+                  data-testid="export-original"
                   onClick={(e) =>
                     handleDesignDownload(
                       e,
@@ -211,7 +212,10 @@ const ExportModal = (props) => {
               Current
             </Typography>
             <div style={exportBtnStyles}>
-              <Button onClick={(e) => handleDesignDownload(e, downloadModal.content)}>
+              <Button
+                data-testid="export-current"
+                onClick={(e) => handleDesignDownload(e, downloadModal.content)}
+              >
                 <div style={exportWrpStyles}>
                   <ModifiedApplicationFileIcon width={75} height={82} />
                   <div style={{ display: 'flex', padding: '0.4rem' }}>
@@ -229,6 +233,7 @@ const ExportModal = (props) => {
 
             <div style={exportBtnStyles}>
               <Button
+                data-testid="export-oci"
                 onClick={(e) => handleDesignDownload(e, downloadModal.content, null, 'oci=true')}
               >
                 <div style={exportWrpStyles}>
@@ -241,14 +246,16 @@ const ExportModal = (props) => {
               </Button>
             </div>
           </div>
-          {ExtensibleButton && <ExtensibleButton {...props} closed={closed} />}
+          {ExtensibleButton && (
+            <ExtensibleButton {...props} data-testid="export-extensible" closed={closed} />
+          )}
         </Box>
       </DialogContent>
       <DialogActions className={classes.dialogAction}>
         <CustomTextTooltip
           placement="top"
           interactive={true}
-          title="MeshMap Designer offers multiple export options, allowing you to choose the format that suits your needs. [Learn more](https://docs.layer5.io/meshmap/designer/export-designs/)"
+          title="Kanvas Designer offers multiple export options, allowing you to choose the format that suits your needs. [Learn more](https://docs.layer5.io/kanvas/designer/export-designs/)"
         >
           <IconButton className={classes.infoIconButton} color="primary">
             <InfoOutlinedIcon height={24} width={24} className={classes.infoIcon} />

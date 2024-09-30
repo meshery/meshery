@@ -1,0 +1,298 @@
+name: doks-nginx-deployment
+version: 0.0.6
+services:
+  Comment:
+    annotations: {}
+    apiVersion: core.meshery.io/v1alpha1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: meshery-core
+    name: Comment
+    namespace: ""
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 8227873e-c99d-41d9-8000-74e16b34be16
+        label: Comment
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          components: []
+          displayName: Meshery Core
+          displayhostname: ""
+          hostID: 00000000-0000-0000-0000-000000000000
+          hostname: ""
+          metadata:
+            isAnnotation: false
+            svgColor: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+            svgWhite: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+          name: meshery-core
+          relationships: []
+          version: v1.0.0
+        meshmodel-metadata:
+          capabilities: ""
+          genealogy: ""
+          isAnnotation: true
+          isModelAnnotation: "FALSE"
+          isNamespaced: false
+          logoURL: ""
+          model: meshery-core
+          modelDisplayName: Meshery Core
+          primaryColor: '#FFDE00'
+          published: true
+          secondaryColor: '#FFDE00'
+          shape: tag
+          styleOverrides: '{"height":"22px","width":"22px","x":"3.5px","y":"7.5px"}'
+          subCategory: App Definition and Development
+          svgColor: ui/public/static/img/meshmodels/meshery-core/color/comment-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/meshery-core/color/comment-color.svg
+        position:
+          posX: 50
+          posY: 70
+        whiteboardData:
+          style:
+            z-index: 5
+    type: Comment
+    version: v1.0.0
+  comment-cq:
+    annotations: {}
+    apiVersion: core.meshery.io/v1alpha1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: meshery-core
+    name: comment-cq
+    namespace: default
+    settings:
+      user Messages: []
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: ce103755-d1b4-4393-bc57-63ab7c81484b
+        label: Comment
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          components: []
+          displayName: Meshery Core
+          displayhostname: ""
+          hostID: 00000000-0000-0000-0000-000000000000
+          hostname: ""
+          metadata:
+            isAnnotation: false
+            svgColor: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+            svgWhite: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+          name: meshery-core
+          relationships: []
+          version: v1.0.0
+        meshmodel-metadata:
+          capabilities: ""
+          genealogy: ""
+          isAnnotation: true
+          isModelAnnotation: "FALSE"
+          isNamespaced: false
+          logoURL: ""
+          model: meshery-core
+          modelDisplayName: Meshery Core
+          primaryColor: '#FFDE00'
+          published: true
+          secondaryColor: '#FFDE00'
+          shape: tag
+          styleOverrides:
+            height: 22px
+            width: 22px
+            x: 3.5px
+            "y": 7.5px
+            z-index: 3
+          subCategory: App Definition and Development
+          svgColor: ui/public/static/img/meshmodels/meshery-core/color/comment-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/meshery-core/color/comment-color.svg
+        position:
+          posX: 50
+          posY: 70
+        whiteboardData:
+          style:
+            z-index: 6
+    type: Comment
+    version: v1.0.0
+  doks-example-dcopr:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: doks-example
+    namespace: default
+    settings:
+      spec:
+        ports:
+        - name: http
+          port: 80
+          protocol: TCP
+          target Port: 80
+        selector:
+          app: doks-example
+        type: LoadBalancer
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: b10ef69b-a470-4573-8baf-01288c63631a
+            metadata:
+              port: 80
+              protocol: TCP
+            source: e3e103a1-3aec-4e6c-b2a2-0b33b2bc4af8
+            subType: Network
+            target: f06e4a4d-ae01-47ba-ada4-92c5575da61e
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: e3e103a1-3aec-4e6c-b2a2-0b33b2bc4af8
+        label: doks-example
+        meshmodel-metadata:
+          capabilities: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-triangle
+          styleOverrides:
+            background-fit: none
+            background-position-y: 4.5
+            height: 20
+            padding: 12
+            width: 20
+            x: 10px
+            "y": 12px
+            z-index: 5
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
+        position:
+          posX: 30
+          posY: 70
+        whiteboardData:
+          style:
+            z-index: 3
+    type: Service
+    version: ""
+  doks-example-lweot:
+    annotations: {}
+    apiVersion: apps/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: doks-example
+    namespace: default
+    settings:
+      spec:
+        replicas: 2
+        selector:
+          match Labels:
+            app: doks-example
+        template:
+          metadata:
+            labels:
+              app: doks-example
+          spec:
+            containers:
+            - image: digitalocean/doks-example
+              name: nginx
+              ports:
+              - container Port: 80
+                protocol: TCP
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: b10ef69b-a470-4573-8baf-01288c63631a
+            metadata:
+              port: 80
+              protocol: TCP
+            source: e3e103a1-3aec-4e6c-b2a2-0b33b2bc4af8
+            subType: Network
+            target: f06e4a4d-ae01-47ba-ada4-92c5575da61e
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: f06e4a4d-ae01-47ba-ada4-92c5575da61e
+        label: doks-example
+        meshmodel-metadata:
+          capabilities: ""
+          genealogy: parent
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: Created by Meshery Authors
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-pentagon
+          styleOverrides:
+            background-image: none
+            background-opacity: 0.5
+            border-width: 2
+            z-index: 4
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg
+          svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/deployment-complete.svg
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg
+        position:
+          posX: 90
+          posY: 50
+        whiteboardData:
+          style:
+            z-index: 4
+    type: Deployment
+    version: ""

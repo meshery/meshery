@@ -1,7 +1,15 @@
 name: Playground CNCF - Deploy
 on:
   workflow_call:
+    inputs:
+      image:
+        type: string
+        default: playground-latest
   workflow_dispatch:
+    inputs:
+      image:
+        type: string
+        default: playground-latest
 jobs:
     cncf-playground-rollout:
         name: Update Meshery on CNCF playground

@@ -1,0 +1,90 @@
+apiVersion: jaegertracing.io/v1
+kind: Jaeger
+metadata:
+  name: simplest
+---
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-a
+  labels:
+    app: service-a
+spec:
+  ports:
+    - port: 8080
+      name: http
+  selector:
+    app: service-a
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: service-a
+  labels:
+    app: service-a
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: service-a
+  template:
+    metadata:
+      labels:
+        app: service-a
+        version: v1
+    spec:
+      containers:
+        - name: app
+          image: csantanapr/service-a-nodejs
+          env:
+            - name: JAEGER_ENDPOINT
+              value: http://simplest-collector:14268/api/traces
+            - name: SERVICE_FORMATTER
+              value: service-b
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-b
+  labels:
+    app: service-b
+spec:
+  ports:
+    - port: 8081
+      name: http
+  selector:
+    app: service-b
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: service-b
+  labels:
+    app: service-b
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: service-b
+  template:
+    metadata:
+      labels:
+        app: service-b
+        version: v1
+    spec:
+      containers:
+        - name: app
+          image: csantanapr/service-b-nodejs
+          env:
+            - name: JAEGER_ENDPOINT
+              value: http://simplest-collector:14268/api/traces
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8081
+  

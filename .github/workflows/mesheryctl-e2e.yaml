@@ -26,13 +26,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        k8s_version: ['v1.29.2', 'v1.28.7']
+        k8s_version: ['v1.29.2', 'v1.31.1']
         platform: ['docker', 'kubernetes']
     steps:
       - name: Setup Kubernetes
-        uses: manusa/actions-setup-minikube@v2.10.0
+        uses: manusa/actions-setup-minikube@v2.11.0
         with:
-          minikube version: 'v1.32.0'
+          minikube version: 'v1.34.0'
           kubernetes version: ${{ matrix.k8s_version }}
           driver: docker
 

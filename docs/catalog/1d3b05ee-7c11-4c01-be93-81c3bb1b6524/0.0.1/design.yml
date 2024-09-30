@@ -1,0 +1,70 @@
+name: Emojivoto Application
+version: 0.0.11
+services:
+  round-pentagon-tp:
+    annotations: {}
+    apiVersion: core.meshery.io/v1alpha1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: meshery-shapes
+    name: round-pentagon-tp
+    namespace: default
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 62af7ebf-2505-41bd-858c-a05b7a489d03
+        label: ""
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          displayName: Meshery Shapes
+          displayhostname: ""
+          hostID: 00000000-0000-0000-0000-000000000000
+          hostname: ""
+          metadata:
+            isAnnotation: true
+            svgColor: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+            svgWhite: ui/public/static/img/meshmodels/amd-gpu/white/nodefeature-white.svg
+          name: meshery-shapes
+          version: 1.0.0
+        meshmodel-metadata:
+          capabilities:
+            designer:
+              edit:
+                config: false
+                lock: true
+                shape:
+                  convert-shape: true
+                style: true
+              label:
+                edit: true
+                show: true
+                sync-with-config-property: label
+          genealogy: ""
+          isAnnotation: true
+          isNamespaced: "false"
+          logoURL: ""
+          model: meshery-shapes
+          modelDisplayName: Meshery Shapes
+          primaryColor: '#00B39F'
+          published: true
+          secondaryColor: '#00D3A9'
+          shape: round-pentagon
+          styleOverrides: '{"height":"30px","width":"30px", "background-image":"none","border-width":1,"border-style":"solid","background-opacity":0.1,"data":{"label":""}}'
+          subCategory: App Definition and Development
+          svgColor: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/amd-gpu/white/nodefeature-white.svg
+        position:
+          posX: 110
+          posY: 370
+        whiteboardData:
+          style:
+            z-index: 4
+    type: RoundPentagon
+    version: 1.0.0

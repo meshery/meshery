@@ -8,15 +8,19 @@ docURL: https://docs.meshery.io/extensibility/integrations/redis-operator
 description: 
 integrations-category: Database
 integrations-subcategory: App Definition and Development
-registrant: Artifact Hub
+registrant: Github
 components: 
-- name: redis-failover
-  colorIcon: assets/img/integrations/redis-operator/components/redis-failover/icons/color/redis-failover-color.svg
-  whiteIcon: assets/img/integrations/redis-operator/components/redis-failover/icons/white/redis-failover-white.svg
-  description: 
 - name: redis-cluster
   colorIcon: assets/img/integrations/redis-operator/components/redis-cluster/icons/color/redis-cluster-color.svg
   whiteIcon: assets/img/integrations/redis-operator/components/redis-cluster/icons/white/redis-cluster-white.svg
+  description: 
+- name: redis-replication
+  colorIcon: assets/img/integrations/redis-operator/components/redis-replication/icons/color/redis-replication-color.svg
+  whiteIcon: assets/img/integrations/redis-operator/components/redis-replication/icons/white/redis-replication-white.svg
+  description: 
+- name: redis-sentinel
+  colorIcon: assets/img/integrations/redis-operator/components/redis-sentinel/icons/color/redis-sentinel-color.svg
+  whiteIcon: assets/img/integrations/redis-operator/components/redis-sentinel/icons/white/redis-sentinel-white.svg
   description: 
 - name: redis
   colorIcon: assets/img/integrations/redis-operator/components/redis/icons/color/redis-color.svg

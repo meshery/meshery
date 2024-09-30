@@ -1,11 +1,13 @@
 import { Button } from '@material-ui/core';
 import { ErrorBoundary as ReactErrorBoundary } from 'react-error-boundary';
+import useTestIDsGenerator from '../hooks/useTestIDs';
 
 function Fallback({ error, resetErrorBoundary }) {
   // Call resetErrorBoundary() to reset the error boundary and retry the render.
+  const generateTestIDs = useTestIDsGenerator('errorBoundary');
 
   return (
-    <div role="alert">
+    <div role="alert" data-testid={generateTestIDs('container')}>
       <h2>Uh-oh!😔 Please pardon the mesh.</h2>
       <div
         style={{
@@ -18,7 +20,12 @@ function Fallback({ error, resetErrorBoundary }) {
       >
         <code>{error.message}</code>
       </div>
-      <Button color="primary" variant="contained" onClick={resetErrorBoundary}>
+      <Button
+        color="primary"
+        variant="contained"
+        onClick={resetErrorBoundary}
+        data-testid={generateTestIDs('button')}
+      >
         Try again
       </Button>
     </div>

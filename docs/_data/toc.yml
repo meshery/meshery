@@ -44,8 +44,13 @@
         grandchildren: 
           - title: "Scoop"
             url: installation/windows/scoop
+      - title: Upgrading Meshery ↆ
+        url: installation/upgrades
+        children:
+          - title: Meshery CLI
+            url: installation/upgrades#upgrading-meshery-cli            
       - title: Using Multiple Meshery Adapters
-        url: guides/multiple-adapters
+        url: installation/multiple-adapters
       - title: Meshery Playground
         url: installation/playground
 - title: 🧠 Concepts
@@ -94,7 +99,7 @@
 #   links:
 #     - title: Meshery Playground
 #       url: features/playground
-- title: 📚 Guides
+- title: 📚 Guides & Tutorials
   url: guides
   links:
     # - title: Deploying Designs
@@ -128,17 +133,17 @@
       url: guides/events-management
     - title: GitOps with Meshery
       url: guides/infrastructure-management/gitops-with-meshery
-    - title: Using Metrics in Meshery ↆ
+    - title: Performance Management ↆ
       url: guides/performance-management
       children:
-        - title: Performance Management
-          url: guides/performance/managing-performance
-        - title: Integrating Prometheus and Grafana
+        - title: Performance Management with Meshery 
+          url: guides/performance-management/performance-management
+        - title: Using Metrics in Meshery
           url: guides/performance-management/meshery-metrics
         - title: Interpreting Performance Test Results 
           url: guides/performance-management/interpreting-performance-test-results
-        - title: Performance Management with Meshery 
-          url: guides/performance-management/performance-management
+        - title: Performance Profiles and Tests #should go under concepts
+          url: guides/performance-management/managing-performance
     - title: Using Meshery CLI Guides ↆ
       url: guides/mesheryctl
       children:
@@ -162,17 +167,14 @@
     - title: 🧑‍🔬 Tutorials ↆ
       url: guides/tutorials
       children:
-      - title: Exploring Kubernetes Pods
-        url: guides/tutorials/kubernetes-pods
-      - title: Exploring Kubernetes ConJobs
+      - title: Exploring Kubernetes CronJobs
         url: guides/tutorials/exploring-kubernetes-cronjobs
-      - title: Understanding Kubernetes ConfigMaps and Secrets
+      - title: Understanding Kubernetes ConfigMaps and Secrets with Meshery
         url: guides/tutorials/kubernetes-configmaps-secrets
-    - title: Upgrading Meshery ↆ
-      url: installation/upgrades
-      children:
-        - title: Meshery CLI
-          url: installation/upgrades#upgrading-meshery-cli
+      - title: Exploring Kubernetes Pods with Meshery
+        url: guides/tutorials/kubernetes-pods
+      - title: Deploying WordPress and MySQL with Persistent Volumes with Meshery
+        url: guides/tutorials/wordpress-mysql-persistentvolume
 # - title: ⚙️ Tasks
 #   url: tasks
 #   links:
@@ -219,8 +221,8 @@
     - title: "🦾 Extensions ↆ"
       url: extensions
       children:
-        - title: "Plugin: MeshMap"
-          url: extensions/meshmap
+        - title: "Plugin: Kanvas"
+          url: extensions/kanvas
           # grandchildren:
           # - title: "Sharing a Design"
           #   url: extensions/sharing-a-design

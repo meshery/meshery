@@ -52,6 +52,9 @@ import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import DefaultError from '@/components/General/error-404/index';
 import { CustomTextTooltip } from '../MesheryMeshInterface/PatternService/CustomTextTooltip';
+import { useGetUserPrefWithContextQuery } from '@/rtk-query/user';
+import { useSavePerformanceProfileMutation } from '@/rtk-query/performance-profile';
+import { useGetMeshQuery } from '@/rtk-query/mesh';
 
 // =============================== HELPER FUNCTIONS ===========================
 
@@ -275,6 +278,18 @@ const MesheryPerformanceComponent = (props) => {
   const [staticPrometheusBoardConfigState, setStaticPrometheusBoardConfig] = useState(
     staticPrometheusBoardConfig,
   );
+
+  const { data: userData, isSuccess: isUserDataFetched } = useGetUserPrefWithContextQuery(
+    props?.selectedK8sContexts,
+  );
+
+  const [savePerformanceProfile] = useSavePerformanceProfileMutation();
+  const {
+    data: smpMeshes,
+    isSuccess: isSMPMeshesFetched,
+    isError: isSMPMeshError,
+  } = useGetMeshQuery();
+
   const handleChange = (name) => (event) => {
     const { value } = event.target;
     if (name === 'caCertificate') {
@@ -467,12 +482,10 @@ const MesheryPerformanceComponent = (props) => {
 
   const handleProfileUpload = (body, generateNotif, cb) => {
     if (generateNotif) props.updateProgress({ showProgress: true });
-
-    dataFetch(
-      '/api/user/performance/profiles',
-      { method: 'POST', credentials: 'include', body: JSON.stringify(body) },
-      (result) => {
-        if (typeof result !== 'undefined') {
+    savePerformanceProfile({ body: body })
+      .unwrap()
+      .then((result) => {
+        if (result) {
           props.updateProgress({ showProgress: false });
           setPerformanceProfileID(result.id);
           if (cb) cb(result);
@@ -484,8 +497,8 @@ const MesheryPerformanceComponent = (props) => {
             });
           }
         }
-      },
-      (err) => {
+      })
+      .catch((err) => {
         console.error(err);
         props.updateProgress({ showProgress: false });
         const notify = props.notify;
@@ -494,8 +507,7 @@ const MesheryPerformanceComponent = (props) => {
           event_type: EVENT_TYPES.ERROR,
           details: err.toString(),
         });
-      },
-    );
+      });
   };
 
   const submitLoadTest = (id) => {
@@ -538,6 +550,7 @@ const MesheryPerformanceComponent = (props) => {
         notify({
           message: 'fetched the data.',
           event_type: EVENT_TYPES.SUCCESS,
+          dataTestID: 'notify-fetch-data',
         });
         props.updateLoadTestData({
           loadTest: {
@@ -609,22 +622,15 @@ const MesheryPerformanceComponent = (props) => {
     getLoadTestPrefs();
     getSMPMeshes();
     if (props.runTestOnMount) handleSubmit();
-  }, []);
+  }, [userData, isUserDataFetched, smpMeshes]);
 
   const getLoadTestPrefs = () => {
-    dataFetch(
-      ctxUrl('/api/user/prefs', props?.selectedK8sContexts),
-      { credentials: 'same-origin', method: 'GET' },
-      (result) => {
-        if (typeof result !== 'undefined') {
-          setQps(result.loadTestPrefs.qps);
-          setC(result.loadTestPrefs.c);
-          setT(result.loadTestPrefs.t);
-          setLoadGenerator(result.loadTestPrefs.gen);
-        }
-      },
-      () => {},
-    ); //error is already captured from the handler, also we have a redux-store for same & hence it's not needed here.
+    if (isUserDataFetched && userData && userData.loadTestPref) {
+      setQps(userData.loadTestPrefs.qps);
+      setC(userData.loadTestPrefs.c);
+      setT(userData.loadTestPrefs.t);
+      setLoadGenerator(userData.loadTestPrefs.gen);
+    }
   };
 
   const getStaticPrometheusBoardConfig = () => {
@@ -707,16 +713,11 @@ const MesheryPerformanceComponent = (props) => {
   };
 
   const getSMPMeshes = () => {
-    dataFetch(
-      '/api/mesh',
-      { credentials: 'include' },
-      (result) => {
-        if (result && Array.isArray(result.available_meshes)) {
-          setAvailableSMPMeshes(result.available_meshes.sort((m1, m2) => m1.localeCompare(m2)));
-        }
-      },
-      handleError('unable to fetch SMP meshes'),
-    );
+    if (isSMPMeshesFetched && smpMeshes) {
+      setAvailableSMPMeshes([...smpMeshes.available_meshes].sort((m1, m2) => m1.localeCompare(m2))); // shallow copy of the array to sort it
+    } else if (isSMPMeshError) {
+      handleError('unable to fetch SMP meshes');
+    }
   };
 
   function handleError(msg) {
@@ -1225,6 +1226,7 @@ const MesheryPerformanceComponent = (props) => {
                   </Button>
                   <Button
                     type="submit"
+                    data-testid="run-performance-test"
                     variant="contained"
                     color="primary"
                     size="large"

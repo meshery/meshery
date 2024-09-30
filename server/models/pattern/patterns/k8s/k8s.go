@@ -7,29 +7,37 @@ import (
 	"strings"
 
 	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
-	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
+	"github.com/layer5io/meshkit/converter"
+	"github.com/layer5io/meshkit/utils"
+	"github.com/meshery/schemas/models/v1beta1/component"
+
 	meshkube "github.com/layer5io/meshkit/utils/kubernetes"
+
 	"gopkg.in/yaml.v2"
-	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/client-go/rest"
 )
 
-func Deploy(kubeClient *meshkube.Client, comp v1beta1.Component, _ v1alpha1.Configuration, isDel bool) error {
-	resource := createK8sResourceStructure(comp)
+func Deploy(kubeClient *meshkube.Client, comp component.ComponentDefinition, isDel bool) error {
+
+	resource := converter.CreateK8sResourceStructure(&comp)
 	manifest, err := yaml.Marshal(resource)
 	if err != nil {
 		return err
 	}
+
+	// Define a function to extract namesapce, labels and annotations in the componetn definiotn
+	namespace := getNamespaceForComponent(&comp)
+
 	err = kubeClient.ApplyManifest(manifest, meshkube.ApplyOptions{
-		Namespace: comp.Namespace,
+		Namespace: namespace,
 		Update:    true,
 		Delete:    isDel,
 	})
+
 	if err != nil {
 		if isErrKubeStatusErr(err) {
 			status, _ := json.Marshal(err)
-			return formatKubeStatusErrToMeshkitErr(&status, comp.Name)
+			return formatKubeStatusErrToMeshkitErr(&status, comp.DisplayName)
 		} else {
 			return meshkube.ErrApplyManifest(err)
 		}
@@ -37,9 +45,11 @@ func Deploy(kubeClient *meshkube.Client, comp v1beta1.Component, _ v1alpha1.Conf
 	return nil
 }
 
-func DryRunHelper(client *meshkube.Client, comp v1beta1.Component) (st map[string]interface{}, success bool, err error) {
-	resource := createK8sResourceStructure(comp)
-	return dryRun(client.KubeClient.RESTClient(), resource, comp.Namespace)
+func DryRunHelper(client *meshkube.Client, comp component.ComponentDefinition) (st map[string]interface{}, success bool, err error) {
+	resource := converter.CreateK8sResourceStructure(&comp)
+	// Define a function to extract namesapce, labels and annotations in the componetn definiotn
+	namespace := getNamespaceForComponent(&comp)
+	return dryRun(client.KubeClient.RESTClient(), resource, namespace)
 }
 
 // does dry-run on the kubernetes server for the given k8s resource and returns the Status object returned by the k8s server
@@ -76,43 +86,14 @@ func dryRun(rClient rest.Interface, k8sResource map[string]interface{}, namespac
 
 	// ignoring the error since this client-go treats failure of dryRun as an error
 	resp, err := res.Raw()
-	switch err.(type) {
-	case *errors.StatusError:
-		st, success, err = formatDryRunResponse(resp, err)
-	case *errors.UnexpectedObjectError:
-		st, success, err = formatDryRunResponse(resp, err)
-	default:
-		return
-	}
+
+	st, success, err = formatDryRunResponse(resp, err)
+
 	return
 }
 
 func kindToResource(kind string) string {
 	return strings.ToLower(kind) + "s"
-}
-
-func createK8sResourceStructure(comp v1beta1.Component) map[string]interface{} {
-	apiVersion := v1beta1.GetAPIVersionFromComponent(comp)
-	kind := v1beta1.GetKindFromComponent(comp)
-
-	component := map[string]interface{}{
-		"apiVersion": apiVersion,
-		"kind":       kind,
-		"metadata": map[string]interface{}{
-			"name":        comp.ObjectMeta.Name,
-			"annotations": comp.ObjectMeta.Annotations,
-			"labels":      comp.ObjectMeta.Labels,
-		},
-	}
-
-	for k, v := range comp.Spec.Settings {
-		if k == "apiVersion" || k == "kind" || k == "metadata" {
-			continue
-		}
-
-		component[k] = v
-	}
-	return component
 }
 
 func formatDryRunResponse(resp []byte, err error) (status map[string]interface{}, success bool, meshkiterr error) {
@@ -122,6 +103,7 @@ func formatDryRunResponse(resp []byte, err error) (status map[string]interface{}
 		meshkiterr = models.ErrMarshal(err, fmt.Sprintf("cannot serialize Status object from the server: %s", e.Error()))
 		return
 	}
+
 	if status == nil || status["kind"] == nil {
 		meshkiterr = ErrDryRun(fmt.Errorf("nil response to dry run request to Kubernetes"), "")
 	}
@@ -131,4 +113,28 @@ func formatDryRunResponse(resp []byte, err error) (status map[string]interface{}
 	}
 	success = true
 	return
+}
+
+func getNamespaceForComponent(comp *component.ComponentDefinition) string {
+	namespace := ""
+	isNamespaced, ok := comp.Metadata.AdditionalProperties["isNamespaced"].(bool)
+	if ok && isNamespaced {
+		namespace = "default"
+	}
+
+	_metadata, ok := comp.Configuration["metadata"]
+	if ok {
+		metadata, err := utils.Cast[map[string]interface{}](_metadata)
+		if err == nil {
+			_namespace, ok := metadata["namespace"]
+			if ok {
+				ns, _ := utils.Cast[string](_namespace)
+				if ns != "" {
+					namespace = ns
+				}
+			}
+
+		}
+	}
+	return namespace
 }

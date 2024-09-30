@@ -47,7 +47,7 @@ func (r *Resolver) changeAdapterStatus(ctx context.Context, _ models.Provider, t
 	}
 
 	r.Log.Debug(fmt.Printf("changing adapter status for %s on port %s to %s \n", adapterName, targetPort, targetStatus))
-
+	var err error
 	adapter := models.Adapter{Name: adapterName, Location: fmt.Sprintf("%s:%s", adapterName, targetPort)}
 	var operation string
 	if deleteAdapter {

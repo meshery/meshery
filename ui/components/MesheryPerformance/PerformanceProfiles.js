@@ -1,44 +1,52 @@
 // @ts-nocheck
 import React, { useEffect, useState, useRef } from 'react';
-import PromptComponent, { PROMPT_VARIANTS } from '../PromptComponent';
-import PerformanceProfileGrid from './PerformanceProfileGrid';
-import dataFetch from '../../lib/data-fetch';
-import IconButton from '@material-ui/core/IconButton';
-import AddIcon from '@material-ui/icons/AddCircleOutline';
+import Moment from 'react-moment';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { updateProgress } from '../../lib/store';
-// import GenericModal from '../GenericModal';
-import MesheryPerformanceComponent from './index';
-import { Paper, Typography, Button, TableCell, TableRow } from '@material-ui/core';
-import fetchPerformanceProfiles from '../graphql/queries/PerformanceProfilesQuery';
-import { withStyles } from '@material-ui/core/styles';
-import { iconMedium } from '../../css/icons.styles';
-import subscribePerformanceProfiles from '../graphql/subscriptions/PerformanceProfilesSubscription';
-import { useNotification } from '@/utils/hooks/useNotification';
-import { EVENT_TYPES } from '../../lib/event-types';
+
+import {
+  Button,
+  IconButton,
+  Paper,
+  TableCell,
+  TableRow,
+  TableSortLabel,
+  Typography,
+  withStyles,
+} from '@material-ui/core';
+import AddIcon from '@material-ui/icons/AddCircleOutline';
+import EditIcon from '@material-ui/icons/Edit';
+import PlayArrowIcon from '@material-ui/icons/PlayArrow';
+
 import {
   CustomColumnVisibilityControl,
   Modal,
   ResponsiveDataTable,
   SearchBar,
 } from '@layer5/sistent';
-import Moment from 'react-moment';
-import TableSortLabel from '@material-ui/core/TableSortLabel';
+import MesheryPerformanceComponent from './index';
+import PerformanceProfileGrid from './PerformanceProfileGrid';
 import PerformanceResults from './PerformanceResults';
-import EditIcon from '@material-ui/icons/Edit';
-import PlayArrowIcon from '@material-ui/icons/PlayArrow';
-import ReusableTooltip from '../reusable-tooltip';
+import PromptComponent, { PROMPT_VARIANTS } from '../PromptComponent';
 import ViewSwitch from '../ViewSwitch';
+import { UsesSistent } from '../SistentWrapper';
+
+import { updateProgress } from '../../lib/store';
+import { EVENT_TYPES } from '../../lib/event-types';
+import fetchPerformanceProfiles from '../graphql/queries/PerformanceProfilesQuery';
+import subscribePerformanceProfiles from '../graphql/subscriptions/PerformanceProfilesSubscription';
 import useStyles from '../../assets/styles/general/tool.styles';
+import { iconMedium } from '../../css/icons.styles';
+
+import { useDeletePerformanceProfileMutation } from '@/rtk-query/performance-profile';
+import { useNotification } from '@/utils/hooks/useNotification';
+import ReusableTooltip from '../reusable-tooltip';
 import { updateVisibleColumns } from '@/utils/responsive-column';
 import { useWindowDimensions } from '@/utils/dimension';
 import { ConditionalTooltip } from '@/utils/utils';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
-import { UsesSistent } from '../SistentWrapper';
 
-const MESHERY_PERFORMANCE_URL = '/api/user/performance/profiles';
 const styles = (theme) => ({
   title: {
     textAlign: 'center',
@@ -130,12 +138,14 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
   const [search, setSearch] = useState('');
   const [sortOrder, setSortOrder] = useState('');
   const [count, setCount] = useState(0);
-  const [pageSize, setPageSize] = useState();
+  const [pageSize, setPageSize] = useState(10);
   const [testProfiles, setTestProfiles] = useState([]);
   const [profileForModal, setProfileForModal] = useState();
   const { notify } = useNotification();
   const { width } = useWindowDimensions();
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+
+  const [deletePerformanceProfile] = useDeletePerformanceProfileMutation();
   // const [loading, setLoading] = useState(false);
   /**
    * fetch performance profiles when the page loads
@@ -221,19 +231,14 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
   }
 
   function deleteProfile(id) {
-    dataFetch(
-      `${MESHERY_PERFORMANCE_URL}/${id}`,
-      {
-        method: 'DELETE',
-        credentials: 'include',
-      },
-      () => {
+    deletePerformanceProfile({ id: id })
+      .unwrap()
+      .then(() => {
         updateProgress({ showProgress: false });
         notify({ message: 'Performance Profile Deleted!', event_type: EVENT_TYPES.SUCCESS });
         fetchTestProfiles(page, pageSize, search, sortOrder);
-      },
-      handleError('Failed To Delete Profile'),
-    );
+      })
+      .catch(() => handleError('Failed To Delete Profile'));
   }
 
   function handleError(msg) {

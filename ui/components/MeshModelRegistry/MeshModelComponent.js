@@ -1,8 +1,9 @@
 import { withStyles } from '@material-ui/core';
 import React, { useState, useEffect, useCallback } from 'react';
-import { Paper } from '@material-ui/core';
+import { Paper, Button } from '@material-ui/core';
 import UploadIcon from '@mui/icons-material/Upload';
 import DoNotDisturbOnIcon from '@mui/icons-material/DoNotDisturbOn';
+import { getUnit8ArrayDecodedFile } from '../../utils/utils';
 import {
   OVERVIEW,
   MODELS,
@@ -27,11 +28,16 @@ import {
   useLazyGetComponentsQuery,
   useLazyGetRelationshipsQuery,
   useLazyGetRegistrantsQuery,
+  useImportMeshModelMutation,
 } from '@/rtk-query/meshModel';
 import NoSsr from '@material-ui/core/NoSsr';
 import { groupRelationshipsByKind, removeDuplicateVersions } from './helper';
 import _ from 'lodash';
+import { Modal as SistentModal } from '@layer5/sistent';
+import { UsesSistent } from '../SistentWrapper';
+import { RJSFModalWrapper } from '../Modal';
 import { useRef } from 'react';
+import { updateProgress } from 'lib/store';
 
 const meshmodelStyles = (theme) => ({
   wrapperClss: {
@@ -79,23 +85,28 @@ const useInfiniteScrollRef = (callback) => {
   const triggerRef = useRef(null);
 
   useEffect(() => {
-    if (!triggerRef.current) {
-      return () => observerRef.current && observerRef.current.disconnect();
-    }
+    // setTimeout gives the browser time to finish rendering the DOM elements before executing the callback function.
+    const timeoutId = setTimeout(() => {
+      if (!triggerRef.current) {
+        return () => observerRef.current && observerRef.current.disconnect();
+      }
 
-    observerRef.current = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            callback();
-          }
-        });
-      },
-      { threshold: 0.01 },
-    );
-    observerRef.current.observe(triggerRef.current);
+      observerRef.current = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              callback();
+            }
+          });
+        },
+        { threshold: 0.01 },
+      );
+      observerRef.current.observe(triggerRef.current);
+    }, 0);
+
     return () => {
       observerRef.current && observerRef.current.disconnect();
+      clearTimeout(timeoutId);
     };
   }, [callback, triggerRef.current]);
 
@@ -124,29 +135,106 @@ const MeshModelComponent_ = ({
   const StyleClass = useStyles();
   const [view, setView] = useState(OVERVIEW);
   const [convert, setConvert] = useState(false);
+  const [importSchema, setImportSchema] = useState({});
+  const [importModal, setImportModal] = useState({
+    open: false,
+  });
   const [showDetailsData, setShowDetailsData] = useState({
     type: '', // Type of selected data eg. (models, components)
     data: {},
   });
   const [animate, setAnimate] = useState(false);
   const [checked, setChecked] = useState(false);
+  const [importModelReq] = useImportMeshModelMutation();
+
+  const handleUploadImport = () => {
+    setImportModal({
+      open: true,
+    });
+  };
+
+  const handleUploadImportClose = () => {
+    setImportModal({
+      open: false,
+    });
+  };
+
+  const handleImportModel = async (data) => {
+    const { uploadType, url, file, model } = data;
+    let requestBody = null;
+
+    const fileElement = document.getElementById('root_file');
+
+    switch (uploadType) {
+      case 'File Upload': {
+        const fileName = fileElement.files[0].name;
+        const fileData = getUnit8ArrayDecodedFile(file);
+        if (fileData) {
+          requestBody = {
+            importBody: {
+              model_file: fileData,
+              url: '',
+              filename: fileName,
+            },
+            uploadType: 'file',
+            register: true,
+          };
+        } else {
+          console.error('Error: File data is empty or invalid');
+          return;
+        }
+        break;
+      }
+      case 'URL Import': {
+        if (url) {
+          requestBody = {
+            importBody: {
+              url: url,
+              model: model,
+            },
+            uploadType: 'url',
+            register: true,
+          };
+        } else {
+          console.error('Error: URL is empty');
+          return;
+        }
+        break;
+      }
+      default: {
+        console.error('Error: Invalid upload type');
+        return;
+      }
+    }
+    updateProgress({ showProgress: true });
+    await importModelReq({ importBody: requestBody });
+    updateProgress({ showProgress: false });
+  };
   const [modelFilters, setModelsFilters] = useState({ page: 0 });
   const [registrantFilters, setRegistrantsFilters] = useState({ page: 0 });
+  const [componentsFilters, setComponentsFilters] = useState({ page: 0 });
+  const [relationshipsFilters, setRelationshipsFilters] = useState({ page: 0 });
 
   /**
    * RTK Lazy Queries
    */
   const [getMeshModelsData, modelsRes] = useLazyGetMeshModelsQuery();
-  const [getComponentsData] = useLazyGetComponentsQuery();
-  const [getRelationshipsData] = useLazyGetRelationshipsQuery();
+  const [getComponentsData, componentsRes] = useLazyGetComponentsQuery();
+  const [getRelationshipsData, relationshipsRes] = useLazyGetRelationshipsQuery();
   const [getRegistrantsData, registrantsRes] = useLazyGetRegistrantsQuery();
 
   const modelsData = modelsRes.data;
   const registrantsData = registrantsRes.data;
+  const componentsData = componentsRes.data;
+  const relationshipsData = relationshipsRes.data;
 
   const hasMoreModels = modelsData?.total_count > modelsData?.page_size * modelsData?.page;
   const hasMoreRegistrants =
     registrantsData?.total_count > registrantsData?.page_size * registrantsData?.page;
+  const hasMoreComponents =
+    componentsData?.total_count > componentsData?.page_size * componentsData?.page;
+  const hasMoreRelationships =
+    componentsData?.total_count > relationshipsData?.page_size * relationshipsData?.page;
 
   const loadNextModelsPage = useCallback(() => {
     if (modelsRes.isLoading || modelsRes.isFetching || !hasMoreModels) {
@@ -162,12 +250,24 @@ const MeshModelComponent_ = ({
     setRegistrantsFilters((prev) => ({ ...prev, page: prev.page + 1 }));
   }, [registrantsRes, hasMoreRegistrants]);
 
+  const loadNextComponentsPage = useCallback(() => {
+    if (componentsRes.isLoading || componentsRes.isFetching || !hasMoreComponents) {
+      return;
+    }
+    setComponentsFilters((prev) => ({ ...prev, page: prev.page + 1 }));
+  }, [componentsRes, hasMoreComponents]);
+
+  const loadNextRelationshipsPage = useCallback(() => {
+    if (relationshipsRes.isLoading || relationshipsRes.isFetching || !hasMoreRelationships) {
+      return;
+    }
+  }, [relationshipsRes, hasMoreRelationships]);
   /**
    * IntersectionObservers
    */
   const lastModelRef = useInfiniteScrollRef(loadNextModelsPage);
-  // const lastComponentRef = useInfiniteScrollRef();
-  // const lastRelationshipRef = useInfiniteScrollRef();
+  const lastComponentRef = useInfiniteScrollRef(loadNextComponentsPage);
+  const lastRelationshipRef = useInfiniteScrollRef(loadNextRelationshipsPage);
   const lastRegistrantRef = useInfiniteScrollRef(loadNextRegistrantsPage);
 
   const fetchData = useCallback(async () => {
@@ -192,7 +292,7 @@ const MeshModelComponent_ = ({
           response = await getComponentsData(
             {
               params: {
-                page: searchText ? 0 : page.Components,
+                page: searchText ? 0 : componentsFilters.page,
                 pagesize: searchText ? 'all' : rowsPerPage,
                 search: searchText || '',
                 trim: true,
@@ -205,9 +305,8 @@ const MeshModelComponent_ = ({
           response = await getRelationshipsData(
             {
               params: {
-                page: 0,
+                page: searchText ? 0 : relationshipsFilters.page,
                 pagesize: 'all',
-                paginated: true,
                 search: searchText || '',
               },
             },
@@ -317,6 +416,8 @@ const MeshModelComponent_ = ({
     }
     setModelsFilters({ page: 0 });
     setRegistrantsFilters({ page: 0 });
+    setComponentsFilters({ page: 0 });
+    setRelationshipsFilters({ page: 0 });
     setPage({
       Models: 0,
       Components: 0,
@@ -367,10 +468,33 @@ const MeshModelComponent_ = ({
   useEffect(() => {
     fetchData();
   }, [view, page, rowsPerPage, checked, searchText, modelFilters, registrantFilters]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('/api/schema/resource/model', {
+          method: 'GET',
+          credentials: 'include',
+        });
+        const result = await response.json();
+        setImportSchema(result);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <div data-test="workloads">
-      <TabBar animate={animate} />
+      <TabBar animate={animate} handleUploadImport={handleUploadImport} />
+      {importModal.open && (
+        <ImportModal
+          importFormSchema={importSchema}
+          handleClose={handleUploadImportClose}
+          handleImportModel={handleImportModel}
+        />
+      )}
       <div
         className={`${StyleClass.mainContainer} ${animate ? StyleClass.mainContainerAnimate : ''}`}
       >
@@ -433,10 +557,17 @@ const MeshModelComponent_ = ({
                 setShowDetailsData={setShowDetailsData}
                 showDetailsData={showDetailsData}
                 setResourcesDetail={setResourcesDetail}
-                lastItemRef={{ [MODELS]: lastModelRef, [REGISTRANTS]: lastRegistrantRef }}
+                lastItemRef={{
+                  [MODELS]: lastModelRef,
+                  [REGISTRANTS]: lastRegistrantRef,
+                  [COMPONENTS]: lastComponentRef,
+                  [RELATIONSHIPS]: lastRelationshipRef,
+                }}
                 isFetching={{
                   [MODELS]: modelsRes.isFetching,
                   [REGISTRANTS]: registrantsRes.isFetching,
+                  [COMPONENTS]: componentsRes.isFetching,
+                  [RELATIONSHIPS]: relationshipsRes.isFetching,
                 }}
               />
             </Paper>
@@ -451,24 +582,50 @@ const MeshModelComponent_ = ({
     </div>
   );
 };
+const ImportModal = React.memo((props) => {
+  const { importFormSchema, handleClose, handleImportModel } = props;
 
-const TabBar = ({ animate }) => {
+  return (
+    <>
+      <UsesSistent>
+        <SistentModal open={true} closeModal={handleClose} maxWidth="sm" title="Import Model">
+          <RJSFModalWrapper
+            schema={importFormSchema.rjsfSchema}
+            uiSchema={{
+              ...importFormSchema.uiSchema,
+            }}
+            handleSubmit={handleImportModel}
+            submitBtnText="Import"
+            handleClose={handleClose}
+          />
+        </SistentModal>
+      </UsesSistent>
+    </>
+  );
+});
+
+ImportModal.displayName = 'ImportModal';
+
+const TabBar = ({ animate, handleUploadImport }) => {
   const StyleClass = useStyles();
+
   return (
     <div
       className={`${StyleClass.meshModelToolbar} ${animate ? StyleClass.toolWrapperAnimate : ''}`}
     >
-      <DisableButton
-        disabled
+      <Button
+        aria-label="Add Pattern"
         variant="contained"
-        style={{
-          visibility: `${animate ? 'visible' : 'hidden'}`,
-        }}
+        color="primary"
         size="large"
-        startIcon={<UploadIcon />}
+        onClick={handleUploadImport}
+        style={{ display: 'flex', visibility: `${animate ? 'visible' : 'hidden'}` }}
+        disabled={false} //TODO: Need to make key for this component
       >
+        <UploadIcon />
         Import
-      </DisableButton>
+      </Button>
+
       <DisableButton
         disabled
         variant="contained"
@@ -522,5 +679,4 @@ const MeshModelComponent = (props) => {
     </NoSsr>
   );
 };
-
 export default withStyles(meshmodelStyles)(MeshModelComponent);

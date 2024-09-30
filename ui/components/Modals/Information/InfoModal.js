@@ -447,6 +447,7 @@ const InfoModal_ = React.memo((props) => {
             </TooltipButton>
 
             <ModalButtonSecondary
+              data-testid="publish-button"
               variant="outlined"
               onClick={handlePublishController}
               className={classes.copyButton}

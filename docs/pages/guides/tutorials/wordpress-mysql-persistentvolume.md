@@ -3,7 +3,7 @@ layout: default
 title: Deploying WordPress and MySQL with Persistent Volumes with Meshery
 abstract: Learn how to deploy WordPress and MySQL on Kubernetes using Meshery.
 permalink: guides/tutorials/wordpress-mysql-persistentvolume
-model: Kubernetes
+model: kubernetes
 kind: deployments
 type: guides
 category: tutorials
@@ -51,7 +51,7 @@ These YAML files contain the Service definitions, Persistent Volume Claims, and 
 
 1. Log in to the [Meshery Playground](https://meshery.layer5.io/) using your credentials. On successful login, you should be at the dashboard. Press the **X** on the _Where do you want to start?_ popup to close it (if required).
 
-2. Click **Explore** in the Cloud Native Playground tile to navigate to _MeshMap_
+2. Click **Explore** in the Cloud Native Playground tile to navigate to _Kanvas_
 
 #### Import the Files to Meshery Playground
 
@@ -216,7 +216,7 @@ This functionality aids in visualizing the relationships between various resourc
 
 #### Visualizing the Deployed Resources
 
-To view the resources deployed we will use the Visualize section of the _MeshMap_. In this section, you can apply filters to display the specific resources you want to see.
+To view the resources deployed we will use the Visualize section of the _Kanvas_. In this section, you can apply filters to display the specific resources you want to see.
 
 1. Move to the Visualize tab.
 2. Click the filter icon and choose the appropriate filters

@@ -77,7 +77,6 @@ export default function LazyComponentForm({ component, disabled, ...otherprops }
       });
     }
   }
-
   return (
     <div className={classes.accordionRoot}>
       <Accordion elevation={0} expanded={expanded} onChange={() => !disabled && expand(!expanded)}>
@@ -93,7 +92,7 @@ export default function LazyComponentForm({ component, disabled, ...otherprops }
           ) : (
             <PatternServiceForm
               formData={{}}
-              color={component?.metadata?.primaryColor}
+              color={component?.styles?.primaryColor}
               {...otherprops}
               // @ts-ignore
               schemaSet={schemaSet}
