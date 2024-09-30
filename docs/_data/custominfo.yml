@@ -1,0 +1,5 @@
+- modelname: "Azure Active Directory (AAD)"
+  customfile: "aad-pod-identity.html"
+
+- modelname: "Cloud Custodian"
+  customfile: "cloud-custodian.html"
