@@ -110,6 +110,9 @@ jobs:
         run: |
           make server-stg &
           sleep 90
+      - name: Install Playwright
+        run: npm install @playwright/test
+        working-directory: ui
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
         working-directory: ui
