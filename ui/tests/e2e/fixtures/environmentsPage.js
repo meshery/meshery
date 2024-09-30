@@ -42,9 +42,11 @@ export class EnvironmentPage {
       );
       await this.page.getByRole('button', { name: 'Save', exact: true }).click();
       // Check for notification visibility
-      const notification = await this.page.locator(`text=Environment "${environmentName}" created`);
+      const notification = await this.page.getByTestId('notification-success-bar');
       await expect(notification).toBeVisible();
-      await this.page.waitForTimeout(8000);
+      await this.page.waitForSelector(`text=${environmentName}`, {
+        state: 'visible',
+      });
     } else {
       console.log(`Profile "${environmentName}" already exists.`);
     }
@@ -53,17 +55,9 @@ export class EnvironmentPage {
   async assignConnections(environmentName) {
     await expect(this.page).toHaveURL(`${ENV.MESHERY_SERVER_URL}/management/environments`);
     await this.page.waitForSelector(`text=${environmentName}`, { state: 'visible' });
-    await this.page.evaluate(() => {
-      const button = [...document.querySelectorAll('button')].find((b) =>
-        b.textContent.includes('Assigned Connections'),
-      );
-      if (button) {
-        button.setAttribute('data-testid', 'assigned-connections-button');
-      }
-    });
 
     // Click the button using the newly added data-testid
-    await this.page.getByTestId('assigned-connections-button').click();
+    await this.page.getByTestId(`assigned-conn-${environmentName}`).click();
 
     // Wait for and locate the dialog
     const dialog = await this.page.locator('[aria-labelledby="alert-dialog-slide-title"]');
@@ -87,24 +81,20 @@ export class EnvironmentPage {
     }
 
     await this.page.click('button[aria-label="move selected right"]');
-    await this.page.getByRole('button', { name: 'Save', exact: true }).isEnabled();
-    await this.page.getByRole('button', { name: 'Save', exact: true }).click();
+    const saveConnBtn = await this.page.getByTestId('assign-conn-save-button');
+    await expect(saveConnBtn).toBeVisible();
+    await saveConnBtn.click();
+    await expect(await this.page.getByTestId(`assigned-conn-${environmentName}`)).toBeVisible({
+      timeout: 5 * 60 * 1000,
+    });
   }
 
   async moveAssignedConnectionsToAvailable(environmentName) {
     await expect(this.page).toHaveURL(`${ENV.MESHERY_SERVER_URL}/management/environments`);
     await this.page.waitForSelector(`text=${environmentName}`, { state: 'visible' });
-    await this.page.evaluate(() => {
-      const button = [...document.querySelectorAll('button')].find((b) =>
-        b.textContent.includes('Assigned Connections'),
-      );
-      if (button) {
-        button.setAttribute('data-testid', 'assigned-connections-button');
-      }
-    });
 
     // Click the button using the newly added data-testid
-    await this.page.getByTestId('assigned-connections-button').click();
+    await this.page.getByTestId(`assigned-conn-${environmentName}`).click();
 
     // Wait for and locate the dialog
     const dialog = await this.page.locator('[aria-labelledby="alert-dialog-slide-title"]');
@@ -132,8 +122,12 @@ export class EnvironmentPage {
     await this.page.locator('button[aria-label="move selected left"]').click();
 
     // Wait for the Save button to be enabled and click it
-    await this.page.getByRole('button', { name: 'Save', exact: true }).isEnabled();
-    await this.page.getByRole('button', { name: 'Save', exact: true }).click();
+    const saveConnBtn = await this.page.getByTestId('assign-conn-save-button');
+    await expect(saveConnBtn).toBeVisible();
+    await saveConnBtn.click();
+    await expect(await this.page.getByTestId(`assigned-conn-${environmentName}`)).toBeVisible({
+      timeout: 2 * 60 * 1000,
+    });
   }
 
   async addEnvironmentsToConnection(environmentName) {
@@ -194,7 +188,7 @@ export class EnvironmentPage {
     );
 
     await this.page.click(
-      `.MuiCard-root:has-text("${environmentName}") >> :not(:has-text("Assigned Connections")) >> [data-testid="envCard-edit-button"]`,
+      `.MuiCard-root:has-text("Sample-playwright-test") >> :not(:has-text("Assigned Connections")) >> [data-testid="envCard-edit-button"]`,
     );
     await this.page.waitForSelector('#Environment_name');
     await this.fillInput(this.page.locator('#Environment_name'), 'Sample-playwright-test-edited');

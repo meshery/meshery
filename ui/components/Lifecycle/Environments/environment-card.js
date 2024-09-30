@@ -20,7 +20,7 @@ export const formattoLongDate = (date) => {
   });
 };
 
-export const TransferButton = ({ title, count, onAssign, classes, disabled }) => {
+export const TransferButton = ({ title, count, onAssign, classes, disabled, dataTestId }) => {
   return (
     <Button
       variant="contained"
@@ -28,6 +28,7 @@ export const TransferButton = ({ title, count, onAssign, classes, disabled }) =>
       disabled={disabled}
       className={classes.popupButton}
       onClick={onAssign}
+      data-testid={dataTestId}
     >
       <Grid>
         <Typography className={classes.tabCount}>{count}</Typography>
@@ -62,6 +63,7 @@ const EnvironmentCard = ({
   onSelect,
   onAssignConnection,
   classes,
+  dataTestId,
 }) => {
   const { data: environmentConnections } = useGetEnvironmentConnectionsQuery(
     {
@@ -76,6 +78,7 @@ const EnvironmentCard = ({
 
   return (
     <FlipCard
+      dataTestId={dataTestId(`-${environmentDetails.name}`)}
       disableFlip={
         selectedEnvironments?.filter((id) => id == environmentDetails.id).length === 1
           ? true
@@ -141,6 +144,7 @@ const EnvironmentCard = ({
                   onAssign={onAssignConnection}
                   classes={classes}
                   disabled={!CAN(keys.VIEW_CONNECTIONS.action, keys.VIEW_CONNECTIONS.subject)}
+                  dataTestId={`assigned-conn-${environmentDetails.name}`}
                 />
               </Box>
               {/* temporary disable workspace allocation button  */}
