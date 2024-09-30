@@ -26,7 +26,7 @@ Before diving into Meshery's testing environment, certain prerequisites are nece
 To run the tests successfully, three environment variables must be configured:  
 • `REMOTE_PROVIDER_USER_EMAIL`: The email associated with your account within your provider.  
 • `REMOTE_PROVIDER_USER_PASSWORD` : The password associated with your account within your provider.  
-• `PROVIDER_TOKEN`: You're provider token, can be generated from an account registered within your provider  
+• `PROVIDER_TOKEN`: Your provider token, can be generated from an account registered within your provider  
 
 {% include alert.html
     type="info"
@@ -88,7 +88,7 @@ make docker-testing-env
 
 ## Setup playwright & Run the test cases
 
-For playwrights, always try to use a native OS whenever possible. The Docker-based approach is intended only for unsupported OSes and is generally not recommended because it runs on top of Ubuntu images, which can be redundant if you're already using Ubuntu or Windows.
+For playwrights, always try to use a native OS whenever possible. The Docker-based approach is intended only for unsupported OSes and is generally not recommended because it runs on top of Ubuntu images, which can be redundant if you already using Ubuntu or Windows.
 
 ### Native OS (Recommended)
 
