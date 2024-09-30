@@ -36,6 +36,10 @@ spec:
             description: BrokerSpec defines the desired state of Broker
             properties:
               size:
+                description: Desired replica count of the Broker, will be an 
+                 integer value denoting the number of Broker instances that should be in one cluster, 
+                 currently it is adviced to have one Broker instance in a cluster but that can be scaled 
+                 up or down depending on load
                 format: int32
                 type: integer
             type: object
@@ -73,8 +77,21 @@ spec:
               endpoint:
                 properties:
                   external:
+                    description: The endpoint external to the cluster which the Broker 
+                     is exposed on and the Meshery Server will connect to, by default
+                     the Broker is deployed as type Kubernetes Service type `LoadBalancer`, 
+                     which requires that the Kubernetes cluster provides an external IP 
+                     address to the Meshery Broker service, exposing it external to the 
+                     Kubernetes cluster
+                     If you're running Kubernetes in Docker Desktop, an external IP address 
+                     of localhost is assigned which is `localhost:4222` 
+                     If you're running Minikube, execute `minikube tunnel` to gain access 
+                     to Meshery Broker's service, which is also `localhost:4222`
                     type: string
                   internal:
+                    description: The endpoint internal to the cluster within which the 
+                     Broker is running, will be a locally addressable IP address or DNS hostname 
+                     (e.g.`broker.busybox.svc.cluster-domain.example`)
                     type: string
                 type: object
             type: object
@@ -114,12 +131,14 @@ spec:
           apiVersion:
             description: 'APIVersion defines the versioned schema of this representation
               of an object. Servers should convert recognized schemas to the latest
-              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+              internal value, and may reject unrecognized values. 
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
             type: string
           kind:
             description: 'Kind is a string value representing the REST resource this
               object represents. Servers may infer this from the endpoint the client
-              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+              submits requests to. Cannot be updated. In CamelCase. 
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
             type: string
           metadata:
             type: object
@@ -131,31 +150,46 @@ spec:
                   custom:
                     properties:
                       url:
+                        description: This is the URL of an already running instance of the Broker, this is 
+                         alternative to specifying the native configuration of the Broker instance
                         type: string
                     type: object
                   native:
                     properties:
                       name:
+                        description: Name of the Broker instance to be deployed
                         type: string
                       namespace:
+                        description: Namespace within which the Broker instance to be deployed would run in
                         type: string
                     type: object
                 type: object
+              version:  
+                description: The current version of the Meshery application as from its release
+                type: string
               size:
+                description: Desired replica count of the MeshSync instance, will be an 
+                 integer value denoting the number of MeshSync instances that that should be in 
+                 one cluster, currently only one instance of MeshSync is supported
                 format: int32
                 type: integer
-              version:
-                type: string
               watch-list:
+                description: A ConfigMap that sets the resources e.g. pods,deployments and event types 
+                 e.g. ADDED, MODIFIED… that the MeshSync instance tracks or ignores in the Kubernetes cluster
                 type: object
                 properties:
                   data:
                     type: object
                     properties:
                       whitelist:
+                        description: 'Whitelist resources are resources that the MeshSync should track its changes, 
+                         More info: https://docs.meshery.io/reference/meshery-operator-crds#meshsync-crd-properties'
                         type: string
                       blacklist:
+                        description: 'Blacklist resources are resources that the MeshSync should ignore its changes, 
+                         More info: https://docs.meshery.io/reference/meshery-operator-crds#meshsync-crd-properties'
                         type: string
+
             type: object
           status:
             description: MeshSyncStatus defines the observed state of MeshSync
