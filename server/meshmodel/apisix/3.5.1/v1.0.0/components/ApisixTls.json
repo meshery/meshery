@@ -1,0 +1,195 @@
+{
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "ApisixTls",
+   "schema": "{\n \"description\": \"ApisixTls defines SSL resource in APISIX.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ApisixTlsSpec is the specification of ApisixSSL.\",\n   \"properties\": {\n    \"client\": {\n     \"description\": \"ApisixMutualTlsClientConfig describes the mutual TLS CA and verify depth\",\n     \"properties\": {\n      \"caSecret\": {\n       \"description\": \"ApisixSecret describes the Kubernetes Secret name and namespace.\",\n       \"properties\": {\n        \"name\": {\n         \"minLength\": 1,\n         \"type\": \"string\"\n        },\n        \"namespace\": {\n         \"minLength\": 1,\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"name\",\n        \"namespace\"\n       ],\n       \"type\": \"object\"\n      },\n      \"depth\": {\n       \"type\": \"integer\"\n      },\n      \"skip_mtls_uri_regex\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"hosts\": {\n     \"items\": {\n      \"pattern\": \"^\\\\*?[0-9a-zA-Z-.]+$\",\n      \"type\": \"string\"\n     },\n     \"minItems\": 1,\n     \"type\": \"array\"\n    },\n    \"ingressClassName\": {\n     \"type\": \"string\"\n    },\n    \"secret\": {\n     \"description\": \"ApisixSecret describes the Kubernetes Secret name and namespace.\",\n     \"properties\": {\n      \"name\": {\n       \"minLength\": 1,\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"minLength\": 1,\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\",\n      \"namespace\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"hosts\",\n    \"secret\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Apisix Tls\",\n \"type\": \"object\"\n}",
+   "version": "apisix.apache.org/v2"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "Apisix Tls",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "published": false,
+   "source_uri": "https://charts.bitnami.com/bitnami/apisix-3.5.1.tgz"
+  },
+  "model": {
+   "category": {
+    "name": "Provisioning"
+   },
+   "displayName": "APISIX",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "isAnnotation": false,
+    "primaryColor": "#1988d9",
+    "secondaryColor": "#54aef0",
+    "shape": "rectangle",
+    "source_uri": "https://charts.bitnami.com/bitnami/apisix-3.5.1.tgz",
+    "styleOverrides": "",
+    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 500 500\" fill=\"none\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M129.636 433.668L248.069 261.869L210.742 203.435L101.642 332.912C65.4085 375.927 59.575 386.644 29.3203 437.093L129.673 433.668H129.636Z\" fill=\"url(#paint0_linear_27198_10652)\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M423.663 437.093L471.67 436.911L255.911 62L360.091 437.093H423.7H423.663ZM255.874 62L201.305 152.183L212.276 134.067L255.874 62.0363V62Z\" fill=\"url(#paint1_linear_27198_10652)\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M210.707 203.435L360.051 437.093L255.872 62L212.312 134.03L29.2852 437.093L210.707 203.435Z\" fill=\"url(#paint2_linear_27198_10652)\"\u003e\u003c/path\u003e\n\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"paint0_linear_27198_10652\" x1=\"203.423\" y1=\"210.642\" x2=\"79.6982\" y2=\"593.367\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop xmlns=\"http://www.w3.org/2000/svg\" stop-color=\"#A92F33\"\u003e\u003c/stop\u003e\n\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"1\" stop-color=\"#E62129\"\u003e\u003c/stop\u003e\n\u003c/linearGradient\u003e\n\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"paint1_linear_27198_10652\" x1=\"272.934\" y1=\"100.165\" x2=\"400.081\" y2=\"398.957\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop xmlns=\"http://www.w3.org/2000/svg\" stop-color=\"#A92F33\"\u003e\u003c/stop\u003e\n\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"1\" stop-color=\"#E8443F\"\u003e\u003c/stop\u003e\n\u003c/linearGradient\u003e\n\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"paint2_linear_27198_10652\" x1=\"127.832\" y1=\"330.488\" x2=\"261.533\" y2=\"168.633\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop xmlns=\"http://www.w3.org/2000/svg\" stop-color=\"#E62129\"\u003e\u003c/stop\u003e\n\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"1\" stop-color=\"#E8443F\"\u003e\u003c/stop\u003e\n\u003c/linearGradient\u003e\n\u003c/defs\u003e\n\u003c/svg\u003e\n",
+    "svgComplete": "",
+    "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 500 500\" fill=\"none\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M129.636 433.668L248.069 261.869L210.742 203.435L101.642 332.912C65.4085 375.927 59.575 386.644 29.3203 437.093L129.673 433.668H129.636Z\" fill=\"url(#paint0_linear_27198_10658)\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M423.663 437.093L471.67 436.911L255.911 62L360.091 437.093H423.7H423.663ZM255.874 62L201.305 152.183L212.276 134.067L255.874 62.0363V62Z\" fill=\"url(#paint1_linear_27198_10658)\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M210.707 203.435L360.051 437.093L255.872 62L212.312 134.03L29.2852 437.093L210.707 203.435Z\" fill=\"url(#paint2_linear_27198_10658)\"\u003e\u003c/path\u003e\n\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"paint0_linear_27198_10658\" x1=\"203.423\" y1=\"210.642\" x2=\"79.6982\" y2=\"593.367\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop xmlns=\"http://www.w3.org/2000/svg\" stop-color=\"white\"\u003e\u003c/stop\u003e\n\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"1\" stop-color=\"#F0F0F0\"\u003e\u003c/stop\u003e\n\u003c/linearGradient\u003e\n\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"paint1_linear_27198_10658\" x1=\"272.934\" y1=\"100.165\" x2=\"400.081\" y2=\"398.957\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop xmlns=\"http://www.w3.org/2000/svg\" stop-color=\"white\"\u003e\u003c/stop\u003e\n\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"1\" stop-color=\"#F0F0F0\"\u003e\u003c/stop\u003e\n\u003c/linearGradient\u003e\n\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"paint2_linear_27198_10658\" x1=\"127.832\" y1=\"330.488\" x2=\"261.533\" y2=\"168.633\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop xmlns=\"http://www.w3.org/2000/svg\" stop-color=\"white\"\u003e\u003c/stop\u003e\n\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"1\" stop-color=\"#F0F0F0\"\u003e\u003c/stop\u003e\n\u003c/linearGradient\u003e\n\u003c/defs\u003e\n\u003c/svg\u003e\n"
+   },
+   "model": {
+    "version": "3.5.1"
+   },
+   "name": "apisix",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "enabled",
+   "subCategory": "Security \u0026 Compliance",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "svgColor": "\u003csvg width=\"500\" height=\"500\" viewBox=\"0 0 500 500\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M129.636 433.668L248.069 261.869L210.742 203.435L101.642 332.912C65.4085 375.927 59.575 386.644 29.3203 437.093L129.673 433.668H129.636Z\" fill=\"url(#paint0_linear_27198_10652)\"/\u003e\n\u003cpath d=\"M423.663 437.093L471.67 436.911L255.911 62L360.091 437.093H423.7H423.663ZM255.874 62L201.305 152.183L212.276 134.067L255.874 62.0363V62Z\" fill=\"url(#paint1_linear_27198_10652)\"/\u003e\n\u003cpath d=\"M210.707 203.435L360.051 437.093L255.872 62L212.312 134.03L29.2852 437.093L210.707 203.435Z\" fill=\"url(#paint2_linear_27198_10652)\"/\u003e\n\u003cdefs\u003e\n\u003clinearGradient id=\"paint0_linear_27198_10652\" x1=\"203.423\" y1=\"210.642\" x2=\"79.6982\" y2=\"593.367\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop stop-color=\"#A92F33\"/\u003e\n\u003cstop offset=\"1\" stop-color=\"#E62129\"/\u003e\n\u003c/linearGradient\u003e\n\u003clinearGradient id=\"paint1_linear_27198_10652\" x1=\"272.934\" y1=\"100.165\" x2=\"400.081\" y2=\"398.957\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop stop-color=\"#A92F33\"/\u003e\n\u003cstop offset=\"1\" stop-color=\"#E8443F\"/\u003e\n\u003c/linearGradient\u003e\n\u003clinearGradient id=\"paint2_linear_27198_10652\" x1=\"127.832\" y1=\"330.488\" x2=\"261.533\" y2=\"168.633\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop stop-color=\"#E62129\"/\u003e\n\u003cstop offset=\"1\" stop-color=\"#E8443F\"/\u003e\n\u003c/linearGradient\u003e\n\u003c/defs\u003e\n\u003c/svg\u003e\n",
+   "svgWhite": "\u003csvg width=\"500\" height=\"500\" viewBox=\"0 0 500 500\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M129.636 433.668L248.069 261.869L210.742 203.435L101.642 332.912C65.4085 375.927 59.575 386.644 29.3203 437.093L129.673 433.668H129.636Z\" fill=\"url(#paint0_linear_27198_10658)\"/\u003e\n\u003cpath d=\"M423.663 437.093L471.67 436.911L255.911 62L360.091 437.093H423.7H423.663ZM255.874 62L201.305 152.183L212.276 134.067L255.874 62.0363V62Z\" fill=\"url(#paint1_linear_27198_10658)\"/\u003e\n\u003cpath d=\"M210.707 203.435L360.051 437.093L255.872 62L212.312 134.03L29.2852 437.093L210.707 203.435Z\" fill=\"url(#paint2_linear_27198_10658)\"/\u003e\n\u003cdefs\u003e\n\u003clinearGradient id=\"paint0_linear_27198_10658\" x1=\"203.423\" y1=\"210.642\" x2=\"79.6982\" y2=\"593.367\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop stop-color=\"white\"/\u003e\n\u003cstop offset=\"1\" stop-color=\"#F0F0F0\"/\u003e\n\u003c/linearGradient\u003e\n\u003clinearGradient id=\"paint1_linear_27198_10658\" x1=\"272.934\" y1=\"100.165\" x2=\"400.081\" y2=\"398.957\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop stop-color=\"white\"/\u003e\n\u003cstop offset=\"1\" stop-color=\"#F0F0F0\"/\u003e\n\u003c/linearGradient\u003e\n\u003clinearGradient id=\"paint2_linear_27198_10658\" x1=\"127.832\" y1=\"330.488\" x2=\"261.533\" y2=\"168.633\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop stop-color=\"white\"/\u003e\n\u003cstop offset=\"1\" stop-color=\"#F0F0F0\"/\u003e\n\u003c/linearGradient\u003e\n\u003c/defs\u003e\n\u003c/svg\u003e\n"
+  },
+  "version": "v1.0.0"
+ }
