@@ -52,6 +52,7 @@ export const useNotification = () => {
   const notify = ({
     id = null,
     message,
+    dataTestID = 'notify',
     details = null,
     event_type,
     dataTestID = 'notify',
