@@ -241,11 +241,11 @@ GitHub release tags will contain a semantic version number. Semantic version num
 
 Documentation of Meshery releases contains a table of releases and release notes and should be updated with each release.
 
-# Layer5 Release Documents and Meshery Release Lead Responsibilities
+# Meshery Release Documents and Release Lead Responsibilities
 
-## Layer5 Release Documents
+## Meshery Release Documents
 
-Layer5 uses several types of release documents to standardize the purpose, style, and structure of release information for Meshery. These documents are crucial for maintaining clear communication about changes, updates, and new features in Meshery releases.
+Meshery uses several types of release documents to standardize the purpose, style, and structure of release information. These documents are crucial for maintaining clear communication about changes, updates, and new features in Meshery releases.
 
 ### Types of Release Documents
 
@@ -329,7 +329,7 @@ The Meshery Release Lead plays a crucial role in coordinating and executing the 
 
 ### Release Manager Qualifications and Selection
 
-- Must be an active Layer5 community member for at least 3 months
+- Must be an active community member for at least 3 months
 - Approved by majority vote of current maintainers
 - At least one release manager must meet requirements for vulnerability-related access
 
