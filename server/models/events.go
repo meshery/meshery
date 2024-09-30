@@ -6,7 +6,7 @@ import (
 )
 
 const (
-	Create = "create"
+	Import = "import"
 	Update = "update"
 )
 
