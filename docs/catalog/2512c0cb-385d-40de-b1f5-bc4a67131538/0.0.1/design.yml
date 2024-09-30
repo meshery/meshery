@@ -1,0 +1,223 @@
+name: my-sql-with-cinder-vol-plugin
+version: 0.0.13
+services:
+  default:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: default
+    namespace: ""
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 1594b098-1f41-4e8a-b2c5-56d0c92dcddc
+        label: default
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          displayName: Kubernetes
+          displayhostname: ""
+          hostID: 00000000-0000-0000-0000-000000000000
+          hostname: ""
+          metadata:
+            svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
+            svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
+          name: kubernetes
+          version: v1.25.2
+        meshmodel-metadata:
+          genealogy: parent
+          isCustomResource: false
+          isNamespaced: false
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: rectangle
+          styleOverrides: '{"background-image":"none","border-width":2,"border-style":"dashed","background-opacity":0.5}'
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/namespace-color.svg
+          svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/namespace-complete.svg
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/color/namespace-color.svg
+        position:
+          posX: 157.75
+          posY: 199
+        whiteboardData: {}
+    type: Namespace
+    version: v1.25.2
+  mysql-fvfqh:
+    annotations: {}
+    apiVersion: v1
+    dependsOn:
+    - default
+    id: null
+    isAnnotation: null
+    labels:
+      name: mysql
+    model: kubernetes
+    name: mysql
+    namespace: default
+    settings:
+      spec:
+        ports:
+        - port: 3306
+        selector:
+          name: mysql
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: e3fb2625-b171-4f00-91c5-e24d3f95b064
+            metadata:
+              port: 3306
+              protocol: TCP
+            source: 180c722f-28da-4999-9fb8-33fd95d22f73
+            subType: Network
+            target: 20f195ba-ccc0-4ab8-8d5b-e2f5cf123413
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: 180c722f-28da-4999-9fb8-33fd95d22f73
+        label: mysql
+        meshmodel-metadata:
+          genealogy: ""
+          isCustomResource: false
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-triangle
+          styleOverrides:
+            background-fit: none
+            background-position-y: 4.5
+            height: 16
+            padding: 12
+            width: 17
+            z-index: 4
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
+        parent: 1594b098-1f41-4e8a-b2c5-56d0c92dcddc
+        position:
+          posX: 130
+          posY: 190
+        whiteboardData:
+          style: {}
+    type: Service
+    version: ""
+  mysql-tydzg:
+    annotations: {}
+    apiVersion: v1
+    dependsOn:
+    - default
+    id: null
+    isAnnotation: null
+    labels:
+      name: mysql
+    model: kubernetes
+    name: mysql
+    namespace: default
+    settings:
+      spec:
+        containers:
+        - args:
+          - --ignore-db-dir
+          - lost+found
+          env:
+          - name: MYSQL_ROOT_PASSWORD
+            value: yourpassword
+          image: mysql
+          name: mysql
+          ports:
+          - container Port: 3306
+            name: mysql
+          resources:
+            limits:
+              cpu: 0.5
+          volume Mounts:
+          - mount Path: /var/lib/mysql
+            name: mysql-persistent-storage
+        volumes:
+        - cinder:
+            fs Type: ext4
+            volume ID: bd82f7e2-wece-4c01-a505-4acf60b07f4a
+          name: mysql-persistent-storage
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: e3fb2625-b171-4f00-91c5-e24d3f95b064
+            metadata:
+              port: 3306
+              protocol: TCP
+            source: 180c722f-28da-4999-9fb8-33fd95d22f73
+            subType: Network
+            target: 20f195ba-ccc0-4ab8-8d5b-e2f5cf123413
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: 20f195ba-ccc0-4ab8-8d5b-e2f5cf123413
+        label: mysql
+        meshmodel-metadata:
+          genealogy: ""
+          isCustomResource: false
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-rectangle
+          styleOverrides:
+            z-index: 3
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
+        parent: 1594b098-1f41-4e8a-b2c5-56d0c92dcddc
+        position:
+          posX: 190
+          posY: 190
+        whiteboardData:
+          style: {}
+    type: Pod
+    version: ""

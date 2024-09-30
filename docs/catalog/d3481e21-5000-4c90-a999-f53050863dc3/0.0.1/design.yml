@@ -1,0 +1,184 @@
+name: minIO Deployment
+version: 0.0.6
+services:
+  NodeGroupInventoryWallet:
+    annotations: {}
+    apiVersion: core.meshery.io/v1alpha1
+    dependsOn:
+    - minio
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: meshery-core
+    name: NodeGroupInventoryWallet
+    namespace: ""
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: a6c4a1cf-6b9f-4cec-bb2d-13d177777a54
+        label: NodeGroupInventoryWallet
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          components: []
+          displayName: Meshery Core
+          hostID: 00000000-0000-0000-0000-000000000000
+          id: 5400b823-94ee-543c-8877-4ca3e299fcc4
+          metadata:
+            isAnnotation: false
+            published: true
+            subCategory: App Definition and Development
+            svgColor: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+            svgComplete: ""
+            svgWhite: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+          name: meshery-core
+          relationships: []
+          status: registered
+          version: 0.7.1
+        meshmodel-metadata:
+          capabilities: '{"designer":{"edit":{"config":false,"lock":true,"shape":{"convert-shape":false},"style":false},"label":{"edit":true,"show":false,"sync-with-config-property":"label"}}}'
+          defaultData: '{"label":""}'
+          genealogy: parent
+          hasInvalidSchema: true
+          isAnnotation: true
+          primaryColor: '#00B39F'
+          published: true
+          secondaryColor: '#00D3A9'
+          shape: round-rectangle
+          shapePolygonPoints: ""
+          styleOverrides:
+            background-image: none
+            background-opacity: 0.1
+            border-style: dashed
+            border-width: 0
+            data:
+              label: ""
+            height: 30px
+            width: 30px
+            z-index: 3
+          styles: '{"height":"30px","width":"30px", "background-image":"none","border-width":1,"border-style":"dashed","background-opacity":0.1}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/meshery-core/color/anchornode-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/meshery-core/white/anchornode-white.svg
+        parent: 4ca17377-ad6c-4efb-b459-e62ad8e63ffd
+        position:
+          posX: 210
+          posY: 230
+        whiteboardData: {}
+    type: NodeGroupInventoryWallet
+    version: 0.7.1
+  minio:
+    annotations: {}
+    apiVersion: apps/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: minio
+    namespace: default
+    settings:
+      spec:
+        replicas: 1
+        selector:
+          match Labels:
+            app: minio
+        strategy:
+          rolling Update:
+            max Surge: 1
+            max Unavailable: 1
+          type: RollingUpdate
+        template:
+          metadata:
+            labels:
+              app: minio
+          spec:
+            containers:
+            - args:
+              - server
+              - /storage
+              env:
+              - name: MINIO_ACCESS_KEY
+                value: minio
+              - name: MINIO_SECRET_KEY
+                value: minio123
+              image: bsctl/minio:latest
+              lifecycle:
+                post Start:
+                  exec:
+                    command:
+                    - /bin/sh
+                    - -c
+                    - mkdir -p /storage/default
+              liveness Probe:
+                http Get:
+                  path: /minio/health/live
+                  port: 9000
+                  scheme: HTTP
+                initial Delay Seconds: 10
+                period Seconds: 20
+              name: minioc
+              ports:
+              - container Port: 9000
+                protocol: TCP
+              readiness Probe:
+                http Get:
+                  path: /minio/health/live
+                  port: 9000
+                  scheme: HTTP
+                initial Delay Seconds: 20
+                period Seconds: 50
+              volume Mounts:
+              - mount Path: /storage
+                name: data
+            volumes:
+            - name: data
+              persistent Volume Claim:
+                claim Name: minio
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 4ca17377-ad6c-4efb-b459-e62ad8e63ffd
+        label: minio
+        meshmodel-metadata:
+          capabilities: |2-
+             {
+              "designer": {
+                "edit": {
+                  "shape": {
+                    "convert-shape": false
+                  }
+                }
+              }
+            }
+          defaultData: ""
+          genealogy: parent
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: Created by Meshery Authors
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-pentagon
+          shapePolygonPoints: ""
+          styleOverrides: '{"border-width":2,"background-opacity":0.5}'
+          styles: '{"border-width":2,"background-opacity":0.5}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg
+          svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/deployment-complete.svg
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/deployment-white.svg
+        position:
+          posX: 210
+          posY: 230
+        whiteboardData: {}
+    type: Deployment
+    version: ""

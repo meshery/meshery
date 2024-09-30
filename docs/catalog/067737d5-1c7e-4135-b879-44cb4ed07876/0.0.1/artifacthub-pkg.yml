@@ -1,0 +1,24 @@
+version: 0.0.1
+name: nginx-with-init-container-and-vhost
+displayName: NGINX with init container and vhost
+createdAt: "2024-03-02T07:00:15Z"
+description: This design involves setting up NGINX using an init container to handle initialization tasks before the main NGINX container starts. The init container is responsible for configuration setup, such as generating or fetching configuration files. The Virtual Host (VHost) configuration allows NGINX to host multiple domains on a single server, each with its own configuration. This setup ensures a clean separation of initialization logic and main server functionality, enhancing modularity and maintainability.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/067737d5-1c7e-4135-b879-44cb4ed07876/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "1. Init Container Overhead: Using an init container adds a slight delay to the startup process, as it must complete its tasks before the main NGINX container can start.\n\n2.Configuration Management: Ensure that the init container correctly manages and updates the configuration files, as any errors can prevent NGINX from starting properly.\n\n3. Security: Validate and sanitize any external inputs or configurations handled by the init container to avoid security vulnerabilities.\n\n4. Resource Allocation: Allocate sufficient resources for both the init and main containers to prevent performance bottlenecks.\n\n5. Maintenance Complexity: This setup adds an extra layer of complexity, so proper documentation and monitoring are essential for ongoing maintenance.\n\n6.Compatibility: Ensure that the version of NGINX used is compatible with the init container's setup and the desired VHost configurations. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: e38890c8-1b66-4a72-ae40-a8ae4a64af6c
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/067737d5-1c7e-4135-b879-44cb4ed07876-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/067737d5-1c7e-4135-b879-44cb4ed07876-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

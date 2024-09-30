@@ -508,10 +508,6 @@ function MesheryFilters({
   // };
 
   useEffect(() => {
-    handleSetFilters(filters);
-  }, [catalogVisibility]);
-
-  useEffect(() => {
     catalogVisibilityRef.current = catalogVisibility;
     const fetchCatalogFilters = fetchCatalogFilter({
       selector: {
@@ -623,11 +619,15 @@ function MesheryFilters({
       disposeConfSubscriptionRef.current.dispose();
     }
     const configurationSubscription = ConfigurationSubscription(
-      (result) => {
-        setPage(result.configuration?.filters?.page || 0);
-        setPageSize(result.configuration?.filters?.page_size || 10);
-        setCount(result.configuration?.filters?.total_count || 0);
-        handleSetFilters(result.configuration?.filters?.filters);
+      () => {
+        /**
+         * We are not using filter subscription and this code is commented to prevent
+         * unnecessary state updates
+         */
+        // setPage(result.configuration?.filters?.page || 0);
+        // setPageSize(result.configuration?.filters?.page_size || 10);
+        // setCount(result.configuration?.filters?.total_count || 0);
+        // handleSetFilters(result.configuration?.filters?.filters);
       },
       {
         applicationSelector: {

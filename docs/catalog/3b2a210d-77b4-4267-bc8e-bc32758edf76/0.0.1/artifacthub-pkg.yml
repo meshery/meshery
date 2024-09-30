@@ -1,0 +1,20 @@
+version: 0.0.1
+name: meshery-cilium-deployment
+displayName: meshery-cilium-deployment
+createdAt: "2023-12-22T11:30:40Z"
+description: This is sample app for testing k8s deployment and cilium
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/3b2a210d-77b4-4267-bc8e-bc32758edf76/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Ensure networking is setup properly and correct annotation are applied to each resource for custom Intel configuration \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: a550f4d6-d3bd-44f1-9b4c-167114452062
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

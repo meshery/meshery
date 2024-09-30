@@ -575,12 +575,16 @@ function MesheryPatterns({
       disposeConfSubscriptionRef.current.dispose();
     }
     const configurationSubscription = ConfigurationSubscription(
-      (result) => {
+      () => {
         // stillLoading(false);
-        setPage(result.configuration?.patterns?.page || 0);
-        setPageSize(result.configuration?.patterns?.page_size || 10);
-        setCount(result.configuration?.patterns?.total_count || 0);
-        handleSetPatterns(result.configuration?.patterns?.patterns);
+        /**
+         * We are not using pattern subscription and this code is commented to prevent
+         * unnecessary state updates
+         */
+        // setPage(result.configuration?.patterns?.page || 0);
+        // setPageSize(result.configuration?.patterns?.page_size || 10);
+        // setCount(result.configuration?.patterns?.total_count || 0);
+        // handleSetPatterns(result.configuration?.patterns?.patterns);
       },
       {
         applicationSelector: {
