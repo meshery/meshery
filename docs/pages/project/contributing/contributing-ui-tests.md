@@ -44,10 +44,6 @@ There are a few ways to set up the Meshery UI and server, but for end-to-end tes
 {% include alert.html type="warning" title="Several Test may break" content='Some test cases required you to have kubernetes cluster and build meshery adapter as well, be aware of that. Which is out of scope for this documentation<ul><li><a href="https://docs.meshery.io/installation/kubernetes/minikube">Kubernetes Cluster</a>: Instalation of kubernetes cluster with Minikube.</li>
 <li><a href="https://docs.meshery.io/installation/multiple-adapters">Meshery Adapters</a>: Using Multiple Adapters</li></ul>' %}
 
-### Meshery CLI (Recommended)
-
-There is also Meshery CLI which can help you run the UI and Server, for more detail, you go to [Meshery CLI documentation](https://docs.meshery.io/project/contributing/contributing-cli-guide#process)
-
 ### Native OS (Recommended)
 
 This approach is very quick to build, but also dependent on your operating system, so you need to have all dependencies necessary to be able compile and running the server.
@@ -69,6 +65,10 @@ make build-server
 ```bash
 make server-binary
 ```
+
+### Meshery CLI
+
+There is also Meshery CLI which can help you run the UI and Server, for more detail, you go to [Meshery CLI documentation](https://docs.meshery.io/project/contributing/contributing-cli-guide#process)
 
 ### Docker Based
 
