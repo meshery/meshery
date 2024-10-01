@@ -1,0 +1,56 @@
+{
+    "schemaVersion": "relationships.meshery.io/v1alpha3",
+    "version": "v1.0.0",
+    "kind": "hierarchical",
+    "type": "sibling",
+    "subType": "backup",
+    "selectors": [
+      {
+        "allow": {
+          "from": [
+            {
+              "kind": "GlobalCluster",
+              "model": {
+                "name": "aws-rds-controller",
+                "registrant": {
+                 "name": "github"
+                }
+              },
+              "patch": {
+                "patchStrategy": "merge",
+                "mutatorRef": [
+                  [
+                    "spec",
+                    "globalClusterIdentifier"
+                  ]
+                ],
+                "description": "The GlobalCluster manages and can utilize DBClusterSnapshots across regions for backups and restoration."
+              }
+            }
+          ],
+          "to": [
+            {
+              "kind": "DBClusterSnapshot",
+              "model": {
+                "name": "aws-rds-controller",
+                "registrant": {
+                 "name": "github"
+                }
+              },
+              "patch": {
+                "patchStrategy": "replace",
+                "mutatedRef": [
+                  [
+                    "status",
+                    "dbClusterIdentifier"
+                  ]
+                ],
+                "description": "The DBClusterSnapshot can be associated with a GlobalCluster for cross-region restoration and backups."
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+  

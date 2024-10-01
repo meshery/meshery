@@ -58,7 +58,6 @@ func GetModelDirectoryPaths(modelPath string) ([]string, error) {
 		if len(sortedVersionDirs) == 0 {
 			continue
 		}
-
 		latestWithComponentsDirPath := ""
 		for _, versionDirPath := range sortedVersionDirs {
 			modelDefDirPath, err := getLatestModelDefDir(versionDirPath)
@@ -71,22 +70,28 @@ func GetModelDirectoryPaths(modelPath string) ([]string, error) {
 				break
 			}
 		}
-
-		if latestWithComponentsDirPath != "" {
+		isRelationshipFound := false
+		relationshipsDirPath := filepath.Join(latestWithComponentsDirPath, "relationships")
+		if meshkitUtils.IsDirectoryNonEmpty(relationshipsDirPath) {
 			dirEntries = append(dirEntries, latestWithComponentsDirPath)
-		}
-		for _, versionDirPath := range sortedVersionDirs {
-			modelDefDirPath, err := getLatestModelDefDir(versionDirPath)
-			if err != nil {
-				continue
-			}
-
-			relationshipsDirPath := filepath.Join(modelDefDirPath, "relationships")
-			if meshkitUtils.IsDirectoryNonEmpty(relationshipsDirPath) {
-				if modelDefDirPath != latestWithComponentsDirPath {
-					dirEntries = append(dirEntries, modelDefDirPath)
+			isRelationshipFound = true
+		} else {
+			for _, versionDirPath := range sortedVersionDirs {
+				modelDefDirPath, err := getLatestModelDefDir(versionDirPath)
+				if err != nil {
+					continue
 				}
+				relationshipsDirPath := filepath.Join(modelDefDirPath, "relationships")
+				if meshkitUtils.IsDirectoryNonEmpty(relationshipsDirPath) {
+					dirEntries = append(dirEntries, modelDefDirPath)
+					isRelationshipFound = true
+				}
+
 			}
+		}
+
+		if latestWithComponentsDirPath != "" && !isRelationshipFound {
+			dirEntries = append(dirEntries, latestWithComponentsDirPath)
 		}
 	}
 
