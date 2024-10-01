@@ -8,11 +8,7 @@ jobs:
     if: >-
       (github.repository == 'meshery/meshery') &&
       (github.event.action == 'opened') &&
-      (github.event.pull_request.author_association != 'COLLABORATOR') &&
-      (github.event.pull_request.author_association != 'CONTRIBUTOR') &&
-      (github.event.pull_request.author_association != 'MANNEQUIN') &&
-      (github.event.pull_request.author_association != 'MEMBER') &&
-      (github.event.pull_request.author_association != 'OWNER')
+      (github.event.pull_request.author_association == 'FIRST_TIME_CONTRIBUTOR')
     steps:
       - name: Leave Welcome Comment
         uses: actions/github-script@v6
