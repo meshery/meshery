@@ -6,7 +6,7 @@
 | Aadhitya Amarendiran    | alphaX86          | Citi        |
 | Jerod Culpepper         | cpepper96         | SAIC        |
 | Antonette Caldwell      | acald-creator     | Acquia      |
-| Matthieu Evrin          | lekaf974          | UEAT        |
+| Matthieu Evrin          | lekaf974          | Independent |
 
 ### UI Maintainers
 
