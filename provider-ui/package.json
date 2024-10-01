@@ -21,7 +21,7 @@
     "@emotion/cache": "^11.10.5",
     "@emotion/react": "^11.13.0",
     "@emotion/server": "^11.11.0",
-    "@emotion/styled": "^11.11.5",
+    "@emotion/styled": "^11.13.0",
     "@mui/icons-material": "^5.15.16",
     "@mui/material": "^5.15.11",
     "babel-plugin-istanbul": "^6.1.1",
