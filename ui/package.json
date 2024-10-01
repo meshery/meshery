@@ -61,7 +61,7 @@
     "axios": "^1.7.4",
     "babel-plugin-istanbul": "^6.0.0",
     "babel-plugin-relay": "^13.2.0",
-    "billboard.js": "^3.10.2",
+    "billboard.js": "^3.13.0",
     "classnames": "^2.3.1",
     "codemirror": "^5.65.8",
     "cross-env": "^7.0.3",
