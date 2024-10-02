@@ -71,6 +71,7 @@ import { formatToTitleCase } from '@/utils/utils';
 import { useThemePreference } from '@/themes/hooks';
 import { CircularProgress } from '@layer5/sistent';
 import LoadingScreen from '@/components/LoadingComponents/LoadingComponentServer';
+import { LoadSessionGuard } from '@/rtk-query/ability';
 
 if (typeof window !== 'undefined') {
   require('codemirror/mode/yaml/yaml');
@@ -758,14 +759,16 @@ class MesheryApp extends App {
                           >
                             <MuiPickersUtilsProvider utils={MomentUtils}>
                               <ErrorBoundary>
-                                <Component
-                                  pageContext={this.pageContext}
-                                  contexts={this.state.k8sContexts}
-                                  activeContexts={this.state.activeK8sContexts}
-                                  setActiveContexts={this.setActiveContexts}
-                                  searchContexts={this.searchContexts}
-                                  {...pageProps}
-                                />
+                                <LoadSessionGuard>
+                                  <Component
+                                    pageContext={this.pageContext}
+                                    contexts={this.state.k8sContexts}
+                                    activeContexts={this.state.activeK8sContexts}
+                                    setActiveContexts={this.setActiveContexts}
+                                    searchContexts={this.searchContexts}
+                                    {...pageProps}
+                                  />
+                                </LoadSessionGuard>
                               </ErrorBoundary>
                             </MuiPickersUtilsProvider>
                           </main>
@@ -802,6 +805,7 @@ const mapStateToProps = (state) => ({
   telemetryURLs: state.get('telemetryURLs'),
   connectionMetadata: state.get('connectionMetadata'),
   extensionType: state.get('extensionType'),
+  organization: state.get('organization'),
 });
 
 const mapDispatchToProps = (dispatch) => ({
