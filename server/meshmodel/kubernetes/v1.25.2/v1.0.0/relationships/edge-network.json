@@ -151,6 +151,49 @@
                 ]
               ]
             }
+          },
+          {
+            "kind": "Statefulset",
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "selectors",
+                  "matchLabels"
+                ],
+                [
+                  "configuration",
+                  "spec",
+                  "template",
+                  "spec",
+                  "containers",
+                  "_",
+                  "ports",
+                  "_",
+                  "containerPort",
+                  "name"
+                ],
+                [
+                  "configuration",
+                  "spec",
+                  "template",
+                  "spec",
+                  "containers",
+                  "_",
+                  "ports",
+                  "_",
+                  "protocol"
+                ]
+              ]
+            }
           }
         ]
       },
