@@ -42,6 +42,7 @@ var (
 	ErrInvalidArgumentCode    = "mesheryctl-1118"
 	ErrGeneratingIconsCode    = "mesheryctl-1119"
 	ErrClearLineCode          = "mesheryctl-1120"
+	ErrConnectionRefusedCode  = "mesheryctl-1121"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -620,4 +621,11 @@ func ErrClearLine(err error) error {
 		[]string{err.Error()},
 		[]string{"Error occurred while attempting to clear the command-line interface"},
 		[]string{"Check if the required clear commands ('clear' or 'cls') are available in the system's PATH"})
+}
+
+func ErrConnectionRefused() error {
+	return errors.New(ErrConnectionRefusedCode, errors.Alert, []string{"Meshery Server connection refused"},
+		[]string{"Meshery Server unavailable. Is your Meshery Server up and running?\n\nUse `mesheryctl system status` to confirm or switch contexts."},
+		[]string{"Error occured while attempting to connect to meshery server."},
+		[]string{"Check your network connection and the status of Meshery Server via `mesheryctl system status`."})
 }
