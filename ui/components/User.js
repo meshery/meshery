@@ -167,11 +167,11 @@ const User = (props) => {
   const open = Boolean(anchorEl);
 
   if (userData?.status == 'anonymous') {
-    const url = `${capabilitiesRegistry?.provider_url}/login?anonymousUserID=${userData?.id}&redirect=${window.location.pathname}`;
+    const url = `${capabilitiesRegistry?.provider_url}?anonymousUserID=${userData?.id}&redirect=${window.location.pathname}`;
 
     return (
       <Link href={url}>
-        <Button variant="contained" onClick={handleLogout} color="primary">
+        <Button variant="contained" color="primary">
           Sign In
         </Button>
       </Link>
