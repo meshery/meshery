@@ -239,7 +239,6 @@ export class EnvironmentPage {
     await expect(notification).toBeVisible();
   }
 
-  // AFTER EVERY THING IS DONE TEST THIS FUNCTION :# NOT TESTED
   async deleteEnvironmentCard() {
     await expect(this.page).toHaveURL(`${ENV.MESHERY_SERVER_URL}/management/environments`);
     await this.page.click(
