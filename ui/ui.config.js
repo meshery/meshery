@@ -1,6 +1,6 @@
 const {
   AnimatedMesheryDark,
-} = require('./components/LoadingComponents/Animations/AnimatedMeshery');
+} = require('./components/LoadingComponents/Animations/AnimatedMesheryCSS');
 const {
   default: AnimatedMeshery,
 } = require('./components/LoadingComponents/Animations/AnimatedMesheryCSS');
