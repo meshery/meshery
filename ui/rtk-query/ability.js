@@ -54,7 +54,7 @@ export const LoadSessionGuard = ({ children }) => {
   }
 
   return (
-    <LoadingScreen isLoading={isLoading || !org?.id} message="Setting up your session">
+    <LoadingScreen isLoading={isLoading || !org?.id} message="This loading screen is temporary. Your YAML-induced suffering is eternal.">
       {children}
     </LoadingScreen>
   );
