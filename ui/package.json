@@ -121,7 +121,7 @@
     "@storybook/addon-styling": "^1.0.8",
     "@storybook/manager-webpack5": "^6.5.16",
     "@storybook/react": "^7.0.26",
-    "@storybook/testing-library": "^0.0.13",
+    "@storybook/testing-library": "^0.2.2",
     "@types/node": "^20.12.12",
     "ajv": "^8.12.0",
     "babel-loader": "^9.1.2",
