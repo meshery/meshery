@@ -507,7 +507,9 @@ func AssignDefaultsForCompDefs(componentDef *component.ComponentDefinition, mode
 					val := reflect.New(ptrType).Elem()
 
 					if val.Kind() == reflect.String {
-						val.SetString(v.(string))
+						if v != nil {
+							val.SetString(v.(string))
+						}
 					} else if val.Kind() == reflect.Float32 {
 						val.SetFloat(v.(float64))
 					} else if val.Kind() == reflect.Int {
