@@ -42,9 +42,9 @@ export const LoadSessionGuard = ({ children }) => {
   // this assumes that the organization is already loaded at the app mount time
   // otherwise, this will not work
   const org = useLegacySelector((state) => state.get('organization'));
-  const { isLoading, error, isFetching } = useGetCurrentAbilities(org, () => {});
+  const { isLoading, error } = useGetCurrentAbilities(org, () => {});
 
-  if (!org?.id || isLoading || isFetching) {
+  if (!org?.id || isLoading) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
         <AnimatedMeshery />
