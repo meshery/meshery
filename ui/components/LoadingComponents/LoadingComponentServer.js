@@ -16,8 +16,8 @@ function LoadingScreen(props) {
           placeItems: 'center',
           minHeight: '100vh',
           textAlign: 'center',
-          backgroundColor: '#202020',
-          color: 'white',
+          backgroundColor: '#263238', // color of navigation menu
+          color: '#dedede', // soften the subtitle / message
         }}
       >
         <div>
