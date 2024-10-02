@@ -681,12 +681,10 @@ class MesheryApp extends App {
     const canShowNav = !this.state.isFullScreenMode && uiConfig?.components?.navigator !== false;
 
     return (
-      <DynamicComponentProvider>
-        <RelayEnvironmentProvider environment={relayEnvironment}>
-          <MesheryThemeProvider>
-            {this.state.isLoading ? (
-              <LoadingScreen message="Meshery Loading..." />
-            ) : (
+      <LoadingScreen message="Meshery Loading..." isLoading={this.state.isLoading}>
+        <DynamicComponentProvider>
+          <RelayEnvironmentProvider environment={relayEnvironment}>
+            <MesheryThemeProvider>
               <NoSsr>
                 <ErrorBoundary>
                   <div className={classes.root}>
@@ -786,10 +784,10 @@ class MesheryApp extends App {
                   />
                 </ErrorBoundary>
               </NoSsr>
-            )}
-          </MesheryThemeProvider>
-        </RelayEnvironmentProvider>
-      </DynamicComponentProvider>
+            </MesheryThemeProvider>
+          </RelayEnvironmentProvider>
+        </DynamicComponentProvider>
+      </LoadingScreen>
     );
   }
 }
