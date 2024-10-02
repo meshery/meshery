@@ -161,7 +161,7 @@ func IsMesheryRunning(currPlatform string) (bool, error) {
 			deploymentList, err := deploymentInterface.List(context.TODO(), metav1.ListOptions{})
 
 			if err != nil {
-				err = errors.New("Meshery Server unavailable at http://localhost:13021. Is your Meshery Server up and running?")
+				err = errors.New("Meshery Server unavailable. Is your Meshery Server up and running?\n\nUse `mesheryctl system status` to confirm or switch contexts.")
 				return false, err
 			}
 			for _, deployment := range deploymentList.Items {
