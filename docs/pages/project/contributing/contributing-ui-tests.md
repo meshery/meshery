@@ -18,7 +18,7 @@ Before diving into Meshery's testing environment, certain prerequisites are nece
 - A verified account in your choosen provider which integrate with Meshery.
 - A compatible browser such as Chromium, Chrome, or Firefox.
 - Installations of Golang, NodeJS, and Makefiles for Native OS build (Optional for docker based build).
-- Kubernetes clusters (Required for connection to kubernetets test cases)
+- Kubernetes clusters (Required for connection to Kubernetes test cases)
 - Already have [Meshery Adapters](https://docs.meshery.io/concepts/architecture/adapters) up and running (Required for adapters test cases)
 
 ## Setting up environment variable
