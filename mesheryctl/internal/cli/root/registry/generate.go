@@ -185,12 +185,8 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 	url := GoogleSpreadSheetURL + spreadsheeetID
 	totalAvailableModels := 0
 	spreadsheeetChan := make(chan utils.SpreadsheetData)
-	relationshipCSVHelper, err := parseRelationshipSheet(url)
-	if err != nil {
-		return err
-	}
+
 	defer func() {
-		utils.ProcessRelationships(relationshipCSVHelper)
 		logModelGenerationSummary(modelToCompGenerateTracker)
 
 		utils.Log.UpdateLogOutput(os.Stdout)
@@ -211,6 +207,11 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 	}
 
 	componentCSVHelper, err := parseComponentSheet(url)
+	if err != nil {
+		return err
+	}
+
+	relationshipCSVHelper, err := parseRelationshipSheet(url)
 	if err != nil {
 		return err
 	}
@@ -272,6 +273,19 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 			}
 
 			version := pkg.GetVersion()
+
+			comps, err := pkg.GenerateComponents()
+			if err != nil {
+				utils.LogError.Error(ErrGenerateModel(err, model.Model))
+				return
+			}
+			lengthOfComps := len(comps)
+			if len(comps) == 0 {
+				totalAvailableModels--
+				utils.LogError.Error(ErrGenerateModel(fmt.Errorf("no components found for model "), model.Model))
+				return
+			}
+
 			modelDirPath, compDirPath, err := createVersionedDirectoryForModelAndComp(version, model.Model)
 			if err != nil {
 				utils.LogError.Error(ErrGenerateModel(err, model.Model))
@@ -285,12 +299,6 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 			if alreadyExsit {
 				totalAvailableModels--
 			}
-			comps, err := pkg.GenerateComponents()
-			if err != nil {
-				utils.LogError.Error(ErrGenerateModel(err, model.Model))
-				return
-			}
-			lengthOfComps := len(comps)
 
 			for _, comp := range comps {
 				comp.Version = defVersion
@@ -346,6 +354,7 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 	}
 	wg.Wait()
 	close(spreadsheeetChan)
+	utils.ProcessRelationships(relationshipCSVHelper)
 	wgForSpreadsheetUpdate.Wait()
 	return nil
 }
@@ -353,6 +362,16 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 // For registrants eg: meshery, whose components needs to be directly created by referencing meshery/schemas repo.
 // the sourceURL contains the path of models component definitions
 func GenerateDefsForCoreRegistrant(model utils.ModelCSV, ComponentCSVHelper *utils.ComponentCSVHelper) error {
+	registrant := "meshery"
+	if models, exists := ComponentCSVHelper.Components[registrant]; exists {
+		if len(models) > 0 {
+			comps := models[model.Model]
+			if len(comps) == 0 {
+				utils.LogError.Error(ErrGenerateModel(fmt.Errorf("no components found for model "), model.Model))
+				return nil
+			}
+		}
+	}
 	var version string
 	parts := strings.Split(model.SourceURL, "/")
 	// Assuming the URL is always of the format "protocol://github.com/owner/repo/tree/definitions/{model-name}/version/components"
