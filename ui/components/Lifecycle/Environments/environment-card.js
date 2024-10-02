@@ -10,7 +10,6 @@ import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { Checkbox } from '@layer5/sistent';
 import { UsesSistent } from '@/components/SistentWrapper';
-import useTestIDsGenerator from '@/components/hooks/useTestIDs';
 
 export const formattoLongDate = (date) => {
   return new Date(date).toLocaleDateString('en-US', {
@@ -63,7 +62,6 @@ const EnvironmentCard = ({
   onSelect,
   onAssignConnection,
   classes,
-  dataTestId,
 }) => {
   const { data: environmentConnections } = useGetEnvironmentConnectionsQuery(
     {
@@ -74,11 +72,10 @@ const EnvironmentCard = ({
   const environmentConnectionsCount = environmentConnections?.total_count || 0;
 
   const deleted = environmentDetails.deleted_at.Valid;
-  const testIDs = useTestIDsGenerator('envCard');
 
   return (
     <FlipCard
-      dataTestId={dataTestId(`-${environmentDetails.name}`)}
+      cardName={environmentDetails.name}
       disableFlip={
         selectedEnvironments?.filter((id) => id == environmentDetails.id).length === 1
           ? true
@@ -209,7 +206,7 @@ const EnvironmentCard = ({
                     ? true
                     : !CAN(keys.EDIT_ENVIRONMENT.action, keys.EDIT_ENVIRONMENT.subject)
                 }
-                data-testid={testIDs('edit-button')}
+                data-testid={`edit-button-${environmentDetails.name}`}
               >
                 <Edit style={{ color: 'white', margin: '0 2px' }} />
               </Button>
@@ -221,7 +218,7 @@ const EnvironmentCard = ({
                     ? true
                     : !CAN(keys.DELETE_ENVIRONMENT.action, keys.DELETE_ENVIRONMENT.subject)
                 }
-                data-testid={testIDs('delete-button')}
+                data-testid={`delete-button-${environmentDetails.name}`}
               >
                 <Delete style={{ color: 'white', margin: '0 2px' }} />
               </Button>

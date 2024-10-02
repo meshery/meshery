@@ -11,8 +11,6 @@ import { UsesSistent } from './SistentWrapper';
 const MultiSelectWrapper = (props) => {
   const [selectInput, setSelectInput] = useState('');
   const allOption = { value: '*' };
-  const getOptionTestId = (optionLabel) =>
-    `environment-checkbox-${optionLabel.toLowerCase().replace(/\s+/g, '-')}`;
 
   const filterOptions = (options, input) =>
     options?.filter(({ label }) => label?.toLowerCase().includes(input.toLowerCase()));
@@ -51,7 +49,7 @@ const MultiSelectWrapper = (props) => {
                   style={{
                     padding: '0',
                   }}
-                  data-testid={getOptionTestId(props.label)}
+                  data-testid={`checkbox-${props.label}`}
                 />
               </UsesSistent>
             ) : (
@@ -63,7 +61,7 @@ const MultiSelectWrapper = (props) => {
                   style={{
                     padding: '0',
                   }}
-                  data-testid={getOptionTestId(props.label)}
+                  data-testid={`checkbox-${props.label}`}
                 />
               </UsesSistent>
             )

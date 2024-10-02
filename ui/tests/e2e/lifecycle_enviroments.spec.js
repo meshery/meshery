@@ -11,6 +11,10 @@ export const test = base.extend({
 });
 
 test.describe('Lifecycle Environments Tests', () => {
+  test.beforeAll(async () => {
+    console.log('Setting up lifecycle environments for tests...');
+  });
+
   const environmentName = 'Sample-playwright-test';
 
   test('Create a Environment', async ({ environmentPage }) => {
@@ -49,10 +53,14 @@ test.describe('Lifecycle Environments Tests', () => {
     );
   });
 
-  test('Delete Enviroment profile', async ({ environmentPage }) => {
+  test('Delete Environment profile', async ({ environmentPage }) => {
     await environmentPage.deleteEnvironmentCard(environmentName);
     await expect(environmentPage.page).toHaveURL(
       `${ENV.MESHERY_SERVER_URL}/management/environments`,
     );
+  });
+
+  test.afterAll(async () => {
+    console.log('Cleaning up test environment...');
   });
 });

@@ -55,7 +55,6 @@ export const useNotification = () => {
     dataTestID = 'notify',
     details = null,
     event_type,
-    dataTestID = 'notify',
     timestamp = null,
     customEvent = null,
     showInNotificationCenter = false,
