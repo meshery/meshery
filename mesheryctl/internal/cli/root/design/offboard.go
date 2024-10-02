@@ -72,7 +72,7 @@ mesheryctl design offboard -f [filepath]
 		if isID {
 			err := utils.DeleteConfiguration(mctlCfg.GetBaseMesheryURL(), pattern, "pattern")
 			if err != nil {
-				utils.Log.Error(err)
+				// utils.Log.Error(err)
 				return errors.Wrap(err, utils.DesignError(fmt.Sprintf("failed to delete design %s", args[0])))
 			}
 			utils.Log.Info("pattern ", args[0], " deleted successfully")
@@ -86,7 +86,7 @@ mesheryctl design offboard -f [filepath]
 		if !govalidator.IsURL(file) {
 			content, err := os.ReadFile(file)
 			if err != nil {
-				utils.Log.Error(utils.ErrFileRead(err))
+				// utils.Log.Error(utils.ErrFileRead(err))
 				return utils.ErrFileRead(err)
 			}
 

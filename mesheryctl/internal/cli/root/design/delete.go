@@ -63,7 +63,7 @@ mesheryctl design delete [file | URL]
 		if isID {
 			err := utils.DeleteConfiguration(mctlCfg.GetBaseMesheryURL(), pattern, "pattern")
 			if err != nil {
-				utils.Log.Error(err)
+				// utils.Log.Error(err)
 				return errors.Wrap(err, utils.DesignError(fmt.Sprintf("failed to delete design %s", args[0])))
 			}
 			utils.Log.Info("Design ", args[0], " deleted successfully")
@@ -77,7 +77,7 @@ mesheryctl design delete [file | URL]
 		if !govalidator.IsURL(file) {
 			content, err := os.ReadFile(file)
 			if err != nil {
-				utils.Log.Error(utils.ErrFileRead(errors.New(utils.DesignError(fmt.Sprintf("failed to read file %s. Ensure the filename or URL is valid", file)))))
+				// utils.Log.Error(utils.ErrFileRead(errors.New(utils.DesignError(fmt.Sprintf("failed to read file %s. Ensure the filename or URL is valid", file)))))
 				return utils.ErrFileRead(errors.New(utils.DesignError(fmt.Sprintf("failed to read file %s. Ensure the filename or URL is valid", file))))
 			}
 
@@ -86,7 +86,7 @@ mesheryctl design delete [file | URL]
 			// Else treat it like a URL
 			url, path, err := utils.ParseURLGithub(file)
 			if err != nil {
-				utils.Log.Error(utils.ErrParseGithubFile(err, file))
+				// utils.Log.Error(utils.ErrParseGithubFile(err, file))
 				return utils.ErrParseGithubFile(err, file)
 			}
 
@@ -149,13 +149,13 @@ mesheryctl design delete [file | URL]
 
 		req, err = utils.NewRequest("DELETE", deployURL, bytes.NewBuffer(patternFileByt))
 		if err != nil {
-			utils.Log.Error(err)
+			// utils.Log.Error(err)
 			return utils.ErrCreatingRequest(err)
 		}
 
 		res, err := utils.MakeRequest(req)
 		if err != nil {
-			utils.Log.Error(err)
+			// utils.Log.Error(err)
 			return utils.ErrRequestResponse(err)
 		}
 
