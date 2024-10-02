@@ -55,7 +55,7 @@ export const LoadSessionGuard = ({ children }) => {
   if (error) {
     return (
       <CustomErrorMessage
-        message={error.message || 'An error occurred while fetching your organisation permissions'}
+        message={error.message || 'An error occurred while fetching your organization permissions'}
       />
     );
   }
