@@ -144,52 +144,50 @@ const components = {
 // NOTE: This is a wrapper for react-select
 // It is used to customize the look and feel of the react-select component
 // NOTE: Migrate to functional component and move to sistent
-class ReactSelectWrapper extends React.Component {
-  render() {
-    const {
-      classes,
-      theme,
-      label,
-      placeholder,
-      onChange,
-      onInputChange,
-      value,
-      options,
-      error,
-      isMulti = false,
-      noOptionsMessage = 'Type to create a new Environment',
-    } = this.props;
+const ReactSelectWrapper = (props) => {
+  const {
+    classes,
+    theme,
+    label,
+    placeholder,
+    onChange,
+    onInputChange,
+    value,
+    options,
+    error,
+    isMulti = false,
+    noOptionsMessage = 'Type to create a new Environment',
+  } = props;
 
-    const selectStyles = {
-      input: (base) => ({
-        ...base,
-        color: theme.palette.text.primary,
-        '& input': { font: 'inherit' },
-      }),
-    };
+  const selectStyles = {
+    input: (base) => ({
+      ...base,
+      color: theme.palette.text.primary,
+      '& input': { font: 'inherit' },
+    }),
+  };
 
-    return (
-      <div className={classes.root}>
-        <NoSsr>
-          <CreateSelect
-            classes={classes}
-            styles={selectStyles}
-            textFieldProps={{ label, InputLabelProps: { shrink: true }, error }}
-            options={options}
-            components={components}
-            value={value}
-            onChange={onChange}
-            onInputChange={onInputChange}
-            placeholder={placeholder}
-            isClearable
-            isMulti={isMulti}
-            noOptionsMessage={() => noOptionsMessage}
-          />
-        </NoSsr>
-      </div>
-    );
-  }
-}
+  return (
+    <div className={classes.root}>
+      <NoSsr>
+        <CreateSelect
+          classes={classes}
+          styles={selectStyles}
+          textFieldProps={{ label, InputLabelProps: { shrink: true }, error }}
+          options={options}
+          components={components}
+          value={value}
+          onChange={onChange}
+          onInputChange={onInputChange}
+          placeholder={placeholder}
+          isClearable
+          isMulti={isMulti}
+          noOptionsMessage={() => noOptionsMessage}
+        />
+      </NoSsr>
+    </div>
+  );
+};
 
 ReactSelectWrapper.propTypes = {
   classes: PropTypes.object.isRequired,
