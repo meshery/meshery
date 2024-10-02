@@ -16,8 +16,10 @@ package registry
 
 import (
 	"bytes"
+	"context"
 	"encoding/csv"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -26,7 +28,9 @@ import (
 	"time"
 
 	"github.com/layer5io/meshkit/encoding"
+	"github.com/layer5io/meshkit/generators"
 	"github.com/layer5io/meshkit/models/meshmodel/entity"
+	"golang.org/x/sync/semaphore"
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	mutils "github.com/layer5io/meshkit/utils"
@@ -67,7 +71,7 @@ var generateCmd = &cobra.Command{
 	Long:  "Prerequisite: Excecute this command from the root of a meshery/meshery repo fork.\n\nGiven a Google Sheet with a list of model names and source locations, generate models and components any Registrant (e.g. GitHub, Artifact Hub) repositories.\n\nGenerated Model files are written to local filesystem under `/server/models/<model-name>`.",
 	Example: `
 // Generate Meshery Models from a Google Spreadsheet (i.e. "Meshery Integrations" spreadsheet).
-./mesheryctl registry generate --spreadsheet-id "1zCsmm9oGxZsp3dYbdtGHQ4P8gIpoj6J2ra9hkMDCAfc" --spreadsheet-cred $CRED
+mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred 
 // Directly generate models from one of the supported registrants by using Registrant Connection Definition and (optional) Registrant Credential Definition
 mesheryctl registry generate --registrant-def [path to connection definition] --registrant-cred [path to credential definition]
 // Generate a specific Model from a Google Spreadsheet (i.e. "Meshery Integrations" spreadsheet).
@@ -177,9 +181,9 @@ type compGenerateTracker struct {
 var modelToCompGenerateTracker = store.NewGenericThreadSafeStore[compGenerateTracker]()
 
 func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
-	// weightedSem := semaphore.NewWeighted(20)
+	weightedSem := semaphore.NewWeighted(20)
 	url := GoogleSpreadSheetURL + spreadsheeetID
-	// totalAvailableModels := 0
+	totalAvailableModels := 0
 	spreadsheeetChan := make(chan utils.SpreadsheetData)
 	relationshipCSVHelper, err := parseRelationshipSheet(url)
 	if err != nil {
@@ -201,24 +205,22 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 		totalAggregateComponents = 0
 	}()
 
-	// modelCSVHelper, err := parseModelSheet(url)
-	// if err != nil {
-	// 	return err
-	// }
+	modelCSVHelper, err := parseModelSheet(url)
+	if err != nil {
+		return err
+	}
 
 	componentCSVHelper, err := parseComponentSheet(url)
 	if err != nil {
 		return err
 	}
 
-	// multiWriter := io.MultiWriter(os.Stdout, logFile)
-	// multiErrorWriter := io.MultiWriter(os.Stdout, errorLogFile)
+	multiWriter := io.MultiWriter(os.Stdout, logFile)
+	multiErrorWriter := io.MultiWriter(os.Stdout, errorLogFile)
 
-	// utils.Log.UpdateLogOutput(multiWriter)
-	// utils.LogError.UpdateLogOutput(multiErrorWriter)
+	utils.Log.UpdateLogOutput(multiWriter)
+	utils.LogError.UpdateLogOutput(multiErrorWriter)
 
-	utils.Log.UpdateLogOutput(logFile)
-	utils.LogError.UpdateLogOutput(errorLogFile)
 	var wgForSpreadsheetUpdate sync.WaitGroup
 	wgForSpreadsheetUpdate.Add(1)
 
@@ -228,120 +230,120 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 
 	}()
 	// Iterate models from the spreadsheet
-	// for _, model := range modelCSVHelper.Models {
-	// 	if modelName != "" && modelName != model.Model {
-	// 		continue
-	// 	}
-	// 	totalAvailableModels++
-	// 	ctx := context.Background()
+	for _, model := range modelCSVHelper.Models {
+		if modelName != "" && modelName != model.Model {
+			continue
+		}
+		totalAvailableModels++
+		ctx := context.Background()
 
-	// 	err := weightedSem.Acquire(ctx, 1)
-	// 	if err != nil {
-	// 		break
-	// 	}
-	// 	wg.Add(1)
-	// 	go func(model utils.ModelCSV) {
-	// 		defer func() {
-	// 			wg.Done()
-	// 			weightedSem.Release(1)
-	// 		}()
-	// 		if mutils.ReplaceSpacesAndConvertToLowercase(model.Registrant) == "meshery" {
-	// 			err = GenerateDefsForCoreRegistrant(model, componentCSVHelper)
-	// 			if err != nil {
-	// 				utils.LogError.Error(err)
-	// 			}
-	// 			return
-	// 		}
+		err := weightedSem.Acquire(ctx, 1)
+		if err != nil {
+			break
+		}
+		wg.Add(1)
+		go func(model utils.ModelCSV) {
+			defer func() {
+				wg.Done()
+				weightedSem.Release(1)
+			}()
+			if mutils.ReplaceSpacesAndConvertToLowercase(model.Registrant) == "meshery" {
+				err = GenerateDefsForCoreRegistrant(model, componentCSVHelper)
+				if err != nil {
+					utils.LogError.Error(err)
+				}
+				return
+			}
 
-	// 		generator, err := generators.NewGenerator(model.Registrant, model.SourceURL, model.Model)
-	// 		if err != nil {
-	// 			utils.LogError.Error(ErrGenerateModel(err, model.Model))
-	// 			return
-	// 		}
+			generator, err := generators.NewGenerator(model.Registrant, model.SourceURL, model.Model)
+			if err != nil {
+				utils.LogError.Error(ErrGenerateModel(err, model.Model))
+				return
+			}
 
-	// 		if mutils.ReplaceSpacesAndConvertToLowercase(model.Registrant) == "artifacthub" {
-	// 			rateLimitArtifactHub()
+			if mutils.ReplaceSpacesAndConvertToLowercase(model.Registrant) == "artifacthub" {
+				rateLimitArtifactHub()
 
-	// 		}
-	// 		pkg, err := generator.GetPackage()
-	// 		if err != nil {
-	// 			utils.LogError.Error(ErrGenerateModel(err, model.Model))
-	// 			return
-	// 		}
+			}
+			pkg, err := generator.GetPackage()
+			if err != nil {
+				utils.LogError.Error(ErrGenerateModel(err, model.Model))
+				return
+			}
 
-	// 		version := pkg.GetVersion()
-	// 		modelDirPath, compDirPath, err := createVersionedDirectoryForModelAndComp(version, model.Model)
-	// 		if err != nil {
-	// 			utils.LogError.Error(ErrGenerateModel(err, model.Model))
-	// 			return
-	// 		}
-	// modelDef, alreadyExsit, err := writeModelDefToFileSystem(&model, version, modelDirPath)
-	// 		if err != nil {
-	// 			utils.LogError.Error(err)
-	// 			return
-	// 		}
-	// 		if alreadyExsit {
-	// 			totalAvailableModels--
-	// 		}
-	// 		comps, err := pkg.GenerateComponents()
-	// 		if err != nil {
-	// 			utils.LogError.Error(ErrGenerateModel(err, model.Model))
-	// 			return
-	// 		}
-	// 		lengthOfComps := len(comps)
+			version := pkg.GetVersion()
+			modelDirPath, compDirPath, err := createVersionedDirectoryForModelAndComp(version, model.Model)
+			if err != nil {
+				utils.LogError.Error(ErrGenerateModel(err, model.Model))
+				return
+			}
+			modelDef, alreadyExsit, err := writeModelDefToFileSystem(&model, version, modelDirPath)
+			if err != nil {
+				utils.LogError.Error(err)
+				return
+			}
+			if alreadyExsit {
+				totalAvailableModels--
+			}
+			comps, err := pkg.GenerateComponents()
+			if err != nil {
+				utils.LogError.Error(ErrGenerateModel(err, model.Model))
+				return
+			}
+			lengthOfComps := len(comps)
 
-	// 		for _, comp := range comps {
-	// 			comp.Version = defVersion
-	// 			// Assign the component status corresponding to model status.
-	// 			// i.e. If model is enabled comps are also "enabled". Ultimately all individual comps itself will have ability to control their status.
-	// 			// The status "enabled" indicates that the component will be registered inside the registry.
-	// 			if modelDef.Metadata == nil {
-	// 				modelDef.Metadata = &v1beta1Model.ModelDefinition_Metadata{}
-	// 			}
-	// 			if modelDef.Metadata.AdditionalProperties == nil {
-	// 				modelDef.Metadata.AdditionalProperties = make(map[string]interface{})
-	// 			}
+			for _, comp := range comps {
+				comp.Version = defVersion
+				// Assign the component status corresponding to model status.
+				// i.e. If model is enabled comps are also "enabled". Ultimately all individual comps itself will have ability to control their status.
+				// The status "enabled" indicates that the component will be registered inside the registry.
+				if modelDef.Metadata == nil {
+					modelDef.Metadata = &v1beta1Model.ModelDefinition_Metadata{}
+				}
+				if modelDef.Metadata.AdditionalProperties == nil {
+					modelDef.Metadata.AdditionalProperties = make(map[string]interface{})
+				}
 
-	// 			if comp.Model.Metadata.AdditionalProperties != nil {
-	// 				modelDef.Metadata.AdditionalProperties["source_uri"] = comp.Model.Metadata.AdditionalProperties["source_uri"]
-	// 			}
-	// 			comp.Model = *modelDef
+				if comp.Model.Metadata.AdditionalProperties != nil {
+					modelDef.Metadata.AdditionalProperties["source_uri"] = comp.Model.Metadata.AdditionalProperties["source_uri"]
+				}
+				comp.Model = *modelDef
 
-	// 			utils.AssignDefaultsForCompDefs(&comp, modelDef)
-	// 			compAlreadyExist, err := comp.WriteComponentDefinition(compDirPath, "json")
-	// 			if compAlreadyExist {
-	// 				lengthOfComps--
-	// 			}
-	// 			if err != nil {
-	// 				utils.Log.Info(err)
-	// 			}
-	// 		}
-	// 		if !alreadyExsit {
-	// 			if len(comps) == 0 {
-	// 				utils.LogError.Error(ErrGenerateModel(fmt.Errorf("no components found for model "), model.Model))
-	// 			} else {
-	// 				utils.Log.Info("Current model: ", model.Model)
-	// 				utils.Log.Info(" extracted ", lengthOfComps, " components for ", model.ModelDisplayName, " (", model.Model, ")")
-	// 			}
-	// 		} else {
-	// 			if len(comps) > 0 {
-	// 				utils.Log.Info("Model already exists: ", model.Model)
-	// 			} else {
-	// 				utils.LogError.Error(ErrGenerateModel(fmt.Errorf("no components found for model "), model.Model))
-	// 			}
-	// 		}
-	// 		spreadsheeetChan <- utils.SpreadsheetData{
-	// 			Model:      &model,
-	// 			Components: comps,
-	// 		}
+				utils.AssignDefaultsForCompDefs(&comp, modelDef)
+				compAlreadyExist, err := comp.WriteComponentDefinition(compDirPath, "json")
+				if compAlreadyExist {
+					lengthOfComps--
+				}
+				if err != nil {
+					utils.Log.Info(err)
+				}
+			}
+			if !alreadyExsit {
+				if len(comps) == 0 {
+					utils.LogError.Error(ErrGenerateModel(fmt.Errorf("no components found for model "), model.Model))
+				} else {
+					utils.Log.Info("Current model: ", model.Model)
+					utils.Log.Info(" extracted ", lengthOfComps, " components for ", model.ModelDisplayName, " (", model.Model, ")")
+				}
+			} else {
+				if len(comps) > 0 {
+					utils.Log.Info("Model already exists: ", model.Model)
+				} else {
+					utils.LogError.Error(ErrGenerateModel(fmt.Errorf("no components found for model "), model.Model))
+				}
+			}
+			spreadsheeetChan <- utils.SpreadsheetData{
+				Model:      &model,
+				Components: comps,
+			}
 
-	// 		modelToCompGenerateTracker.Set(model.Model, compGenerateTracker{
-	// 			totalComps: lengthOfComps,
-	// 			version:    version,
-	// 		})
-	// 	}(model)
+			modelToCompGenerateTracker.Set(model.Model, compGenerateTracker{
+				totalComps: lengthOfComps,
+				version:    version,
+			})
+		}(model)
 
-	// }
+	}
 	wg.Wait()
 	close(spreadsheeetChan)
 	wgForSpreadsheetUpdate.Wait()
