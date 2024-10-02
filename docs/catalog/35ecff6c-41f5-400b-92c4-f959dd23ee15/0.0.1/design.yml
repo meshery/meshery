@@ -1,0 +1,1572 @@
+name: Autoscaling based on Metrics in GKE
+version: 0.0.3
+services:
+  custom-metrics:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: custom-metrics
+    namespace: default
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: fbf86ba4-518e-4263-b4dc-e9c6655b9e41
+        meshmodel-metadata:
+          capabilities: |2-
+             {
+              "designer": {
+                "edit": {
+                  "shape": {
+                    "convert-shape": false
+                  }
+                }
+              }
+            }
+          defaultData: ""
+          genealogy: parent
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: false
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: rectangle
+          shapePolygonPoints: ""
+          styleOverrides:
+            background-image: none
+            background-opacity: 0.5
+            border-style: dashed
+            border-width: 2
+            z-index: 22
+          styles: '{"background-image":"none","border-width":2,"border-style":"dashed","background-opacity":0.5}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/namespace-color.svg
+          svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/namespace-complete.svg
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/namespace-white.svg
+        position:
+          posX: 750
+          posY: 310
+        whiteboardData:
+          style: {}
+    type: Namespace
+    version: ""
+  custom-metrics-auth-reader:
+    annotations: {}
+    apiVersion: rbac.authorization.k8s.io/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: custom-metrics-auth-reader
+    namespace: kube-system
+    settings:
+      role Ref:
+        api Group: rbac.authorization.k8s.io
+        kind: Role
+        name: extension-apiserver-authentication-reader
+      subjects:
+      - kind: ServiceAccount
+        name: custom-metrics-stackdriver-adapter
+        namespace: custom-metrics
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 62b216ac-d169-4690-ac91-96ace9f0d998
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-rectangle
+          shapePolygonPoints: ""
+          styleOverrides: '{"height":"25px","width":"25px","x":"7", "y":"7","z-index":4}'
+          styles: '{"height":"25px","width":"25px","x":"7", "y":"7","z-index":4}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/rolebinding-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/rolebinding-white.svg
+        position:
+          posX: 530
+          posY: 430
+        whiteboardData:
+          style: {}
+    type: RoleBinding
+    version: ""
+  custom-metrics-resource-reader:
+    annotations: {}
+    apiVersion: rbac.authorization.k8s.io/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: custom-metrics-resource-reader
+    namespace: default
+    settings:
+      role Ref:
+        api Group: rbac.authorization.k8s.io
+        kind: ClusterRole
+        name: view
+      subjects:
+      - kind: ServiceAccount
+        name: custom-metrics-stackdriver-adapter
+        namespace: custom-metrics
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 8ad56406-72ac-47d6-9640-03e96db5d0ef
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: false
+          logoURL: Created by Meshery Authors
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-rectangle
+          shapePolygonPoints: ""
+          styleOverrides:
+            height: 25px
+            width: 25px
+            x: "7"
+            "y": "7"
+            z-index: 18
+          styles: '{"height":"25px","width":"25px","x":"7", "y":"7"}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/clusterrolebinding-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/clusterrolebinding-white.svg
+        position:
+          posX: 510
+          posY: 370
+        whiteboardData:
+          style: {}
+    type: ClusterRoleBinding
+    version: ""
+  custom-metrics-stackdriver-adapter-fthmm:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels:
+      k8s-app: custom-metrics-stackdriver-adapter
+      kubernetes.io/cluster-service: "true"
+      kubernetes.io/name: Adapter
+      run: custom-metrics-stackdriver-adapter
+    model: kubernetes
+    name: custom-metrics-stackdriver-adapter
+    namespace: custom-metrics
+    settings:
+      spec:
+        ports:
+        - port: 443
+          protocol: TCP
+          target Port: 443
+        selector:
+          k8s-app: custom-metrics-stackdriver-adapter
+          run: custom-metrics-stackdriver-adapter
+        type: ClusterIP
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: fd73dace-2570-479e-88d3-172e4cf77294
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-triangle
+          shapePolygonPoints: ""
+          styleOverrides:
+            background-position-y: 4.5
+            height: 20
+            padding: 12
+            width: 20
+            x: 10px
+            "y": 12px
+            z-index: 17
+          styles: '{"height":20,"width":20,"padding":12,"background-position-y":4.5,"x":"10px","y":"12px"}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/service-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/service-white.svg
+        position:
+          posX: 630
+          posY: 350
+        whiteboardData:
+          style: {}
+    type: Service
+    version: ""
+  custom-metrics-stackdriver-adapter-gmayf:
+    annotations: {}
+    apiVersion: apps/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels:
+      k8s-app: custom-metrics-stackdriver-adapter
+      run: custom-metrics-stackdriver-adapter
+    model: kubernetes
+    name: custom-metrics-stackdriver-adapter
+    namespace: custom-metrics
+    settings:
+      spec:
+        replicas: 1
+        selector:
+          match Labels:
+            k8s-app: custom-metrics-stackdriver-adapter
+            run: custom-metrics-stackdriver-adapter
+        template:
+          metadata:
+            labels:
+              k8s-app: custom-metrics-stackdriver-adapter
+              kubernetes.io/cluster-service: "true"
+              run: custom-metrics-stackdriver-adapter
+          spec:
+            containers:
+            - command:
+              - /adapter
+              - --use-new-resource-model=true
+              - --fallback-for-container-metrics=true
+              image: gcr.io/gke-release/custom-metrics-stackdriver-adapter:v0.12.0-gke.0
+              image Pull Policy: Always
+              name: pod-custom-metrics-stackdriver-adapter
+              resources:
+                limits:
+                  cpu: 250m
+                  memory: 200Mi
+                requests:
+                  cpu: 250m
+                  memory: 200Mi
+            service Account Name: custom-metrics-stackdriver-adapter
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 6007d43b-2eeb-48f4-a78e-880035b5984f
+        meshmodel-metadata:
+          capabilities: |2-
+             {
+              "designer": {
+                "edit": {
+                  "shape": {
+                    "convert-shape": false
+                  }
+                }
+              }
+            }
+          defaultData: ""
+          genealogy: parent
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: Created by Meshery Authors
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-pentagon
+          shapePolygonPoints: ""
+          styleOverrides:
+            background-opacity: 0.5
+            border-width: 2
+            z-index: 12
+          styles: '{"border-width":2,"background-opacity":0.5}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg
+          svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/deployment-complete.svg
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/deployment-white.svg
+        position:
+          posX: 610
+          posY: 410
+        whiteboardData:
+          style: {}
+    type: Deployment
+    version: ""
+  custom-metrics-stackdriver-adapter-guius:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: custom-metrics-stackdriver-adapter
+    namespace: custom-metrics
+    settings:
+      image Pull Secrets: []
+      secrets: []
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: dda84c41-e97b-4fca-88be-83803a2dee0f
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: bottom-round-rectangle
+          shapePolygonPoints: ""
+          styleOverrides:
+            z-index: 19
+          styles: ""
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/serviceaccount-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/serviceaccount-white.svg
+        position:
+          posX: 750
+          posY: 370
+        whiteboardData:
+          style: {}
+    type: ServiceAccount
+    version: ""
+  custom-metrics:system:auth-delegator:
+    annotations: {}
+    apiVersion: rbac.authorization.k8s.io/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: custom-metrics:system:auth-delegator
+    namespace: default
+    settings:
+      role Ref:
+        api Group: rbac.authorization.k8s.io
+        kind: ClusterRole
+        name: system:auth-delegator
+      subjects:
+      - kind: ServiceAccount
+        name: custom-metrics-stackdriver-adapter
+        namespace: custom-metrics
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 53145db2-54cf-4589-98ba-b29a9b217e78
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: false
+          logoURL: Created by Meshery Authors
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-rectangle
+          shapePolygonPoints: ""
+          styleOverrides:
+            height: 25px
+            width: 25px
+            x: "7"
+            "y": "7"
+            z-index: 16
+          styles: '{"height":"25px","width":"25px","x":"7", "y":"7"}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/clusterrolebinding-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/clusterrolebinding-white.svg
+        position:
+          posX: 630
+          posY: 470
+        whiteboardData:
+          style: {}
+    type: ClusterRoleBinding
+    version: ""
+  external-metrics-reader-aoinj:
+    annotations: {}
+    apiVersion: rbac.authorization.k8s.io/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: external-metrics-reader
+    namespace: default
+    settings:
+      rules:
+      - api Groups:
+        - external.metrics.k8s.io
+        resources:
+        - '*'
+        verbs:
+        - list
+        - get
+        - watch
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 0c060e29-18bc-40fa-a1a9-8f2d11cbe117
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: false
+          logoURL: Created by Meshery Authors
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-rectangle
+          shapePolygonPoints: ""
+          styleOverrides:
+            height: 22px
+            width: 22px
+            x: "8.5"
+            "y": "7.5"
+            z-index: 15
+          styles: '{"height":"22px", "width":"22px", "x":"8.5", "y":"7.5"}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/clusterrole-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/clusterrole-white.svg
+        position:
+          posX: 570
+          posY: 450
+        whiteboardData:
+          style: {}
+    type: ClusterRole
+    version: ""
+  external-metrics-reader-dovdp:
+    annotations: {}
+    apiVersion: rbac.authorization.k8s.io/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: external-metrics-reader
+    namespace: default
+    settings:
+      role Ref:
+        api Group: rbac.authorization.k8s.io
+        kind: ClusterRole
+        name: external-metrics-reader
+      subjects:
+      - kind: ServiceAccount
+        name: horizontal-pod-autoscaler
+        namespace: kube-system
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 5a8daec5-1c8c-47d5-ad21-f01fc0722407
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: false
+          logoURL: Created by Meshery Authors
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-rectangle
+          shapePolygonPoints: ""
+          styleOverrides:
+            height: 25px
+            width: 25px
+            x: "7"
+            "y": "7"
+            z-index: 21
+          styles: '{"height":"25px","width":"25px","x":"7", "y":"7"}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/clusterrolebinding-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/clusterrolebinding-white.svg
+        position:
+          posX: 630
+          posY: 230
+        whiteboardData:
+          style: {}
+    type: ClusterRoleBinding
+    version: ""
+  nodegroupinventorywallet-mecfz:
+    annotations: {}
+    apiVersion: core.meshery.io/v1alpha1
+    dependsOn:
+    - workload-metrics
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: meshery-core
+    name: NodeGroupInventoryWallet
+    namespace: ""
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 28aecbc2-3c43-4389-a7c7-6c486dacf8de
+        label: NodeGroupInventoryWallet
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          components: []
+          displayName: Meshery Core
+          hostID: 00000000-0000-0000-0000-000000000000
+          id: 5400b823-94ee-543c-8877-4ca3e299fcc4
+          metadata:
+            isAnnotation: false
+            published: true
+            subCategory: App Definition and Development
+            svgColor: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+            svgComplete: ""
+            svgWhite: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+          name: meshery-core
+          relationships: []
+          status: registered
+          version: 0.7.1
+        meshmodel-metadata:
+          capabilities: '{"designer":{"edit":{"config":false,"lock":true,"shape":{"convert-shape":false},"style":false},"label":{"edit":true,"show":false,"sync-with-config-property":"label"}}}'
+          defaultData: '{"label":""}'
+          genealogy: parent
+          hasInvalidSchema: true
+          isAnnotation: true
+          primaryColor: '#00B39F'
+          published: true
+          secondaryColor: '#00D3A9'
+          shape: round-rectangle
+          shapePolygonPoints: ""
+          styleOverrides:
+            background-image: none
+            background-opacity: 0.1
+            border-style: dashed
+            border-width: 0
+            data:
+              label: ""
+            height: 30px
+            width: 30px
+            z-index: 25
+          styles: '{"height":"30px","width":"30px", "background-image":"none","border-width":1,"border-style":"dashed","background-opacity":0.1}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/meshery-core/color/anchornode-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/meshery-core/white/anchornode-white.svg
+        parent: ca7bbfcc-4b2f-4070-acca-847775070255
+        position:
+          posX: 670
+          posY: 330
+        whiteboardData: {}
+    type: NodeGroupInventoryWallet
+    version: 0.7.1
+  nodegroupinventorywallet-nbddd:
+    annotations: {}
+    apiVersion: core.meshery.io/v1alpha1
+    dependsOn:
+    - workload-metrics-hpa
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: meshery-core
+    name: NodeGroupInventoryWallet
+    namespace: ""
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: bf93e095-8f34-402e-a04e-f5ee8f5a8244
+        label: NodeGroupInventoryWallet
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          components: []
+          displayName: Meshery Core
+          hostID: 00000000-0000-0000-0000-000000000000
+          id: 5400b823-94ee-543c-8877-4ca3e299fcc4
+          metadata:
+            isAnnotation: false
+            published: true
+            subCategory: App Definition and Development
+            svgColor: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+            svgComplete: ""
+            svgWhite: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+          name: meshery-core
+          relationships: []
+          status: registered
+          version: 0.7.1
+        meshmodel-metadata:
+          capabilities: '{"designer":{"edit":{"config":false,"lock":true,"shape":{"convert-shape":false},"style":false},"label":{"edit":true,"show":false,"sync-with-config-property":"label"}}}'
+          defaultData: '{"label":""}'
+          genealogy: parent
+          hasInvalidSchema: true
+          isAnnotation: true
+          primaryColor: '#00B39F'
+          published: true
+          secondaryColor: '#00D3A9'
+          shape: round-rectangle
+          shapePolygonPoints: ""
+          styleOverrides:
+            background-image: none
+            background-opacity: 0.1
+            border-style: dashed
+            border-width: 0
+            data:
+              label: ""
+            height: 30px
+            width: 30px
+            z-index: 24
+          styles: '{"height":"30px","width":"30px", "background-image":"none","border-width":1,"border-style":"dashed","background-opacity":0.1}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/meshery-core/color/anchornode-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/meshery-core/white/anchornode-white.svg
+        parent: 4deeb512-c783-4071-8205-5aec904dabad
+        position:
+          posX: 630
+          posY: 370
+        whiteboardData: {}
+    type: NodeGroupInventoryWallet
+    version: 0.7.1
+  nodegroupinventorywallet-umceo:
+    annotations: {}
+    apiVersion: core.meshery.io/v1alpha1
+    dependsOn:
+    - custom-metrics-stackdriver-adapter-gmayf
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: meshery-core
+    name: NodeGroupInventoryWallet
+    namespace: ""
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: b0897154-7a83-44c5-89b0-718a581e10e9
+        label: NodeGroupInventoryWallet
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          components: []
+          displayName: Meshery Core
+          hostID: 00000000-0000-0000-0000-000000000000
+          id: 5400b823-94ee-543c-8877-4ca3e299fcc4
+          metadata:
+            isAnnotation: false
+            published: true
+            subCategory: App Definition and Development
+            svgColor: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+            svgComplete: ""
+            svgWhite: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+          name: meshery-core
+          relationships: []
+          status: registered
+          version: 0.7.1
+        meshmodel-metadata:
+          capabilities: '{"designer":{"edit":{"config":false,"lock":true,"shape":{"convert-shape":false},"style":false},"label":{"edit":true,"show":false,"sync-with-config-property":"label"}}}'
+          defaultData: '{"label":""}'
+          genealogy: parent
+          hasInvalidSchema: true
+          isAnnotation: true
+          primaryColor: '#00B39F'
+          published: true
+          secondaryColor: '#00D3A9'
+          shape: round-rectangle
+          shapePolygonPoints: ""
+          styleOverrides:
+            background-image: none
+            background-opacity: 0.1
+            border-style: dashed
+            border-width: 0
+            data:
+              label: ""
+            height: 30px
+            width: 30px
+            z-index: 23
+          styles: '{"height":"30px","width":"30px", "background-image":"none","border-width":1,"border-style":"dashed","background-opacity":0.1}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/meshery-core/color/anchornode-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/meshery-core/white/anchornode-white.svg
+        parent: 6007d43b-2eeb-48f4-a78e-880035b5984f
+        position:
+          posX: 610
+          posY: 410
+        whiteboardData: {}
+    type: NodeGroupInventoryWallet
+    version: 0.7.1
+  v1beta1.custom.metrics.k8s.io:
+    annotations: {}
+    apiVersion: apiregistration.k8s.io/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: v1beta1.custom.metrics.k8s.io
+    namespace: default
+    settings:
+      spec:
+        group: custom.metrics.k8s.io
+        group Priority Minimum: 100
+        insecure Skip TLS Verify: true
+        service:
+          name: custom-metrics-stackdriver-adapter
+          namespace: custom-metrics
+        version: v1beta1
+        version Priority: 100
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 15798341-cd07-4d6f-86e3-d80b62b53e57
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: false
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: triangle
+          shapePolygonPoints: ""
+          styleOverrides:
+            height: 23px
+            width: 23px
+            x: "7"
+            "y": "14"
+            z-index: 14
+          styles: '{"height":"23px","width":"23px","x":"7", "y":"14"}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/gcp/color/gcp migrate for anthos-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/apiservice-white.svg
+        position:
+          posX: 730
+          posY: 270
+        whiteboardData:
+          style: {}
+    type: APIService
+    version: ""
+  v1beta1.external.metrics.k8s.io:
+    annotations: {}
+    apiVersion: apiregistration.k8s.io/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: v1beta1.external.metrics.k8s.io
+    namespace: default
+    settings:
+      spec:
+        group: external.metrics.k8s.io
+        group Priority Minimum: 100
+        insecure Skip TLS Verify: true
+        service:
+          name: custom-metrics-stackdriver-adapter
+          namespace: custom-metrics
+        version: v1beta1
+        version Priority: 100
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: db38f6a8-31c3-4d4e-99a4-6105c454690d
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: false
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: triangle
+          shapePolygonPoints: ""
+          styleOverrides:
+            height: 23px
+            width: 23px
+            x: "7"
+            "y": "14"
+            z-index: 20
+          styles: '{"height":"23px","width":"23px","x":"7", "y":"14"}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/gcp/color/gcp migrate for anthos-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/apiservice-white.svg
+        position:
+          posX: 730
+          posY: 430
+        whiteboardData:
+          style: {}
+    type: APIService
+    version: ""
+  v1beta2.custom.metrics.k8s.io:
+    annotations: {}
+    apiVersion: apiregistration.k8s.io/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: v1beta2.custom.metrics.k8s.io
+    namespace: default
+    settings:
+      spec:
+        group: custom.metrics.k8s.io
+        group Priority Minimum: 100
+        insecure Skip TLS Verify: true
+        service:
+          name: custom-metrics-stackdriver-adapter
+          namespace: custom-metrics
+        version: v1beta2
+        version Priority: 200
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 65258122-8694-4cbd-9372-ddb1fe0fe506
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: false
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: triangle
+          shapePolygonPoints: ""
+          styleOverrides:
+            height: 23px
+            width: 23px
+            x: "7"
+            "y": "14"
+            z-index: 13
+          styles: '{"height":"23px","width":"23px","x":"7", "y":"14"}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/gcp/color/gcp migrate for anthos-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/apiservice-white.svg
+        position:
+          posX: 690
+          posY: 450
+        whiteboardData:
+          style: {}
+    type: APIService
+    version: ""
+  workload-metrics:
+    annotations: {}
+    apiVersion: apps/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels:
+      app: workload-metrics
+    model: kubernetes
+    name: workload-metrics
+    namespace: gke-workload-metrics
+    settings:
+      spec:
+        selector:
+          match Labels:
+            app: workload-metrics
+        template:
+          metadata:
+            labels:
+              app: workload-metrics
+          spec:
+            containers:
+            - command:
+              - /workload-metrics
+              - --process-metrics
+              - --go-metrics
+              image: us-docker.pkg.dev/google-samples/containers/workload-metrics:1.0
+              image Pull Policy: Always
+              name: workload-metrics
+              ports:
+              - container Port: 1234
+                name: metrics-port
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: ca7bbfcc-4b2f-4070-acca-847775070255
+        meshmodel-metadata:
+          capabilities: |2-
+             {
+              "designer": {
+                "edit": {
+                  "shape": {
+                    "convert-shape": false
+                  }
+                }
+              }
+            }
+          defaultData: ""
+          genealogy: parent
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: Created by Meshery Authors
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-pentagon
+          shapePolygonPoints: ""
+          styleOverrides:
+            active-bg-color: rgb(0,0,0)
+            active-bg-opacity: "0.15"
+            active-bg-size: 30px
+            activeBgColor: rgb(0,0,0)
+            activeBgOpacity: "0.15"
+            activeBgSize: 30px
+            arrow-scale: "1"
+            arrowScale: "1"
+            background-blacken: "0"
+            background-clip: none
+            background-color: rgb(50,108,229)
+            background-fill: solid
+            background-fit: contain
+            background-gradient-direction: to-bottom
+            background-gradient-stop-colors: rgb(153,153,153)
+            background-gradient-stop-positions: 0%
+            background-height: auto
+            background-height-relative-to: inner
+            background-image: url(https://playground.meshery.io/ui/public/static/img/meshmodels/kubernetes/complete/deployment-complete.svg)
+            background-image-containment: inside
+            background-image-crossorigin: anonymous
+            background-image-opacity: "1"
+            background-image-smoothing: "yes"
+            background-offset-x: 0px
+            background-offset-y: 0px
+            background-opacity: "0.5"
+            background-position-x: 50%
+            background-position-y: 50%
+            background-repeat: no-repeat
+            background-width: auto
+            background-width-relative-to: inner
+            backgroundBlacken: "0"
+            backgroundClip: none
+            backgroundColor: rgb(50,108,229)
+            backgroundFill: solid
+            backgroundFit: contain
+            backgroundGradientDirection: to-bottom
+            backgroundGradientStopColors: rgb(153,153,153)
+            backgroundGradientStopPositions: 0%
+            backgroundHeight: auto
+            backgroundHeightRelativeTo: inner
+            backgroundImage: url(https://playground.meshery.io/ui/public/static/img/meshmodels/kubernetes/complete/deployment-complete.svg)
+            backgroundImageContainment: inside
+            backgroundImageCrossorigin: anonymous
+            backgroundImageOpacity: "1"
+            backgroundImageSmoothing: "yes"
+            backgroundOffsetX: 0px
+            backgroundOffsetY: 0px
+            backgroundOpacity: "0.5"
+            backgroundPositionX: 50%
+            backgroundPositionY: 50%
+            backgroundRepeat: no-repeat
+            backgroundWidth: auto
+            backgroundWidthRelativeTo: inner
+            border-color: rgb(60,129,255)
+            border-opacity: "1"
+            border-style: solid
+            border-width: 2px
+            borderColor: rgb(60,129,255)
+            borderOpacity: "1"
+            borderStyle: solid
+            borderWidth: 2px
+            bounds-expansion: 0px
+            boundsExpansion: 0px
+            color: rgb(0,0,0)
+            compound-sizing-wrt-labels: include
+            compoundSizingWrtLabels: include
+            content: ""
+            control-point-step-size: 40px
+            control-point-weight: "0.5"
+            control-point-weights: "0.5"
+            controlPointStepSize: 40px
+            controlPointWeight: "0.5"
+            controlPointWeights: "0.5"
+            curve-style: haystack
+            curveStyle: haystack
+            display: element
+            edge-distances: intersection
+            edge-text-rotation: none
+            edgeDistances: intersection
+            edgeTextRotation: none
+            events: "yes"
+            font-family: Qanelas Soft, sans-serif
+            font-size: 8px
+            font-style: normal
+            font-weight: "300"
+            fontFamily: Qanelas Soft, sans-serif
+            fontSize: 8px
+            fontStyle: normal
+            fontWeight: "300"
+            ghost: "no"
+            ghost-offset-x: 0px
+            ghost-offset-y: 0px
+            ghost-opacity: "0"
+            ghostOffsetX: 0px
+            ghostOffsetY: 0px
+            ghostOpacity: "0"
+            haystack-radius: "0"
+            haystackRadius: "0"
+            height: "20"
+            label: ""
+            line-cap: butt
+            line-color: rgb(153,153,153)
+            line-dash-offset: "0"
+            line-dash-pattern: 6 3
+            line-fill: solid
+            line-gradient-stop-colors: rgb(153,153,153)
+            line-gradient-stop-positions: 0%
+            line-height: "1"
+            line-opacity: "1"
+            line-style: solid
+            lineCap: butt
+            lineColor: rgb(153,153,153)
+            lineDashOffset: "0"
+            lineDashPattern: 6 3
+            lineFill: solid
+            lineGradientStopColors: rgb(153,153,153)
+            lineGradientStopPositions: 0%
+            lineHeight: "1"
+            lineOpacity: "1"
+            lineStyle: solid
+            loop-direction: -45deg
+            loop-sweep: -90deg
+            loopDirection: -45deg
+            loopSweep: -90deg
+            mid-source-arrow-color: rgb(153,153,153)
+            mid-source-arrow-fill: filled
+            mid-source-arrow-shape: none
+            mid-source-arrow-width: 1px
+            mid-target-arrow-color: rgb(153,153,153)
+            mid-target-arrow-fill: filled
+            mid-target-arrow-shape: none
+            mid-target-arrow-width: 1px
+            midSourceArrowColor: rgb(153,153,153)
+            midSourceArrowFill: filled
+            midSourceArrowShape: none
+            midSourceArrowWidth: 1px
+            midTargetArrowColor: rgb(153,153,153)
+            midTargetArrowFill: filled
+            midTargetArrowShape: none
+            midTargetArrowWidth: 1px
+            min-height: 0px
+            min-height-bias-bottom: 0px
+            min-height-bias-top: 0px
+            min-width: 0px
+            min-width-bias-left: 0px
+            min-width-bias-right: 0px
+            min-zoomed-font-size: 12px
+            minHeight: 0px
+            minHeightBiasBottom: 0px
+            minHeightBiasTop: 0px
+            minWidth: 0px
+            minWidthBiasLeft: 0px
+            minWidthBiasRight: 0px
+            minZoomedFontSize: 12px
+            opacity: "1"
+            outline-color: rgb(153,153,153)
+            outline-offset: 0px
+            outline-opacity: "1"
+            outline-style: solid
+            outline-width: 0px
+            outlineColor: rgb(153,153,153)
+            outlineOffset: 0px
+            outlineOpacity: "1"
+            outlineStyle: solid
+            outlineWidth: 0px
+            outside-texture-bg-color: rgb(0,0,0)
+            outside-texture-bg-opacity: "0.125"
+            outsideTextureBgColor: rgb(0,0,0)
+            outsideTextureBgOpacity: "0.125"
+            overlay-color: rgb(0,0,0)
+            overlay-opacity: "0"
+            overlay-padding: 10px
+            overlay-shape: round-rectangle
+            overlayColor: rgb(0,0,0)
+            overlayOpacity: "0"
+            overlayPadding: 10px
+            overlayShape: round-rectangle
+            padding: 6px
+            padding-bottom: 6px
+            padding-left: 6px
+            padding-relative-to: width
+            padding-right: 6px
+            padding-top: 6px
+            paddingBottom: 6px
+            paddingLeft: 6px
+            paddingRelativeTo: width
+            paddingRight: 6px
+            paddingTop: 6px
+            pie-1-background-color: rgb(0,0,0)
+            pie-1-background-opacity: "1"
+            pie-1-background-size: 0%
+            pie-2-background-color: rgb(0,0,0)
+            pie-2-background-opacity: "1"
+            pie-2-background-size: 0%
+            pie-3-background-color: rgb(0,0,0)
+            pie-3-background-opacity: "1"
+            pie-3-background-size: 0%
+            pie-4-background-color: rgb(0,0,0)
+            pie-4-background-opacity: "1"
+            pie-4-background-size: 0%
+            pie-5-background-color: rgb(0,0,0)
+            pie-5-background-opacity: "1"
+            pie-5-background-size: 0%
+            pie-6-background-color: rgb(0,0,0)
+            pie-6-background-opacity: "1"
+            pie-6-background-size: 0%
+            pie-7-background-color: rgb(0,0,0)
+            pie-7-background-opacity: "1"
+            pie-7-background-size: 0%
+            pie-8-background-color: rgb(0,0,0)
+            pie-8-background-opacity: "1"
+            pie-8-background-size: 0%
+            pie-9-background-color: rgb(0,0,0)
+            pie-9-background-opacity: "1"
+            pie-9-background-size: 0%
+            pie-10-background-color: rgb(0,0,0)
+            pie-10-background-opacity: "1"
+            pie-10-background-size: 0%
+            pie-11-background-color: rgb(0,0,0)
+            pie-11-background-opacity: "1"
+            pie-11-background-size: 0%
+            pie-12-background-color: rgb(0,0,0)
+            pie-12-background-opacity: "1"
+            pie-12-background-size: 0%
+            pie-13-background-color: rgb(0,0,0)
+            pie-13-background-opacity: "1"
+            pie-13-background-size: 0%
+            pie-14-background-color: rgb(0,0,0)
+            pie-14-background-opacity: "1"
+            pie-14-background-size: 0%
+            pie-15-background-color: rgb(0,0,0)
+            pie-15-background-opacity: "1"
+            pie-15-background-size: 0%
+            pie-16-background-color: rgb(0,0,0)
+            pie-16-background-opacity: "1"
+            pie-16-background-size: 0%
+            pie-size: 100%
+            pie1BackgroundColor: rgb(0,0,0)
+            pie1BackgroundOpacity: "1"
+            pie1BackgroundSize: 0%
+            pie2BackgroundColor: rgb(0,0,0)
+            pie2BackgroundOpacity: "1"
+            pie2BackgroundSize: 0%
+            pie3BackgroundColor: rgb(0,0,0)
+            pie3BackgroundOpacity: "1"
+            pie3BackgroundSize: 0%
+            pie4BackgroundColor: rgb(0,0,0)
+            pie4BackgroundOpacity: "1"
+            pie4BackgroundSize: 0%
+            pie5BackgroundColor: rgb(0,0,0)
+            pie5BackgroundOpacity: "1"
+            pie5BackgroundSize: 0%
+            pie6BackgroundColor: rgb(0,0,0)
+            pie6BackgroundOpacity: "1"
+            pie6BackgroundSize: 0%
+            pie7BackgroundColor: rgb(0,0,0)
+            pie7BackgroundOpacity: "1"
+            pie7BackgroundSize: 0%
+            pie8BackgroundColor: rgb(0,0,0)
+            pie8BackgroundOpacity: "1"
+            pie8BackgroundSize: 0%
+            pie9BackgroundColor: rgb(0,0,0)
+            pie9BackgroundOpacity: "1"
+            pie9BackgroundSize: 0%
+            pie10BackgroundColor: rgb(0,0,0)
+            pie10BackgroundOpacity: "1"
+            pie10BackgroundSize: 0%
+            pie11BackgroundColor: rgb(0,0,0)
+            pie11BackgroundOpacity: "1"
+            pie11BackgroundSize: 0%
+            pie12BackgroundColor: rgb(0,0,0)
+            pie12BackgroundOpacity: "1"
+            pie12BackgroundSize: 0%
+            pie13BackgroundColor: rgb(0,0,0)
+            pie13BackgroundOpacity: "1"
+            pie13BackgroundSize: 0%
+            pie14BackgroundColor: rgb(0,0,0)
+            pie14BackgroundOpacity: "1"
+            pie14BackgroundSize: 0%
+            pie15BackgroundColor: rgb(0,0,0)
+            pie15BackgroundOpacity: "1"
+            pie15BackgroundSize: 0%
+            pie16BackgroundColor: rgb(0,0,0)
+            pie16BackgroundOpacity: "1"
+            pie16BackgroundSize: 0%
+            pieSize: 100%
+            position: origin
+            segment-distances: 20px
+            segment-weights: "0.5"
+            segmentDistances: 20px
+            segmentWeights: "0.5"
+            selection-box-border-color: rgb(170,170,170)
+            selection-box-border-width: 1px
+            selection-box-color: rgb(221,221,221)
+            selection-box-opacity: "0.65"
+            selectionBoxBorderColor: rgb(170,170,170)
+            selectionBoxBorderWidth: 1px
+            selectionBoxColor: rgb(221,221,221)
+            selectionBoxOpacity: "0.65"
+            shape: round-pentagon
+            shape-polygon-points: -1 -1 1 -1 1 1 -1 1
+            shapePolygonPoints: -1 -1 1 -1 1 1 -1 1
+            source-arrow-color: rgb(153,153,153)
+            source-arrow-fill: filled
+            source-arrow-shape: none
+            source-arrow-width: 1px
+            source-distance-from-node: 0px
+            source-endpoint: outside-to-node
+            source-label: ""
+            source-text-margin-x: 0px
+            source-text-margin-y: 0px
+            source-text-offset: 0px
+            source-text-rotation: none
+            sourceArrowColor: rgb(153,153,153)
+            sourceArrowFill: filled
+            sourceArrowShape: none
+            sourceArrowWidth: 1px
+            sourceDistanceFromNode: 0px
+            sourceEndpoint: outside-to-node
+            sourceLabel: ""
+            sourceTextMarginX: 0px
+            sourceTextMarginY: 0px
+            sourceTextOffset: 0px
+            sourceTextRotation: none
+            target-arrow-color: rgb(153,153,153)
+            target-arrow-fill: filled
+            target-arrow-shape: none
+            target-arrow-width: 1px
+            target-distance-from-node: 0px
+            target-endpoint: outside-to-node
+            target-label: ""
+            target-text-margin-x: 0px
+            target-text-margin-y: 0px
+            target-text-offset: 0px
+            target-text-rotation: none
+            targetArrowColor: rgb(153,153,153)
+            targetArrowFill: filled
+            targetArrowShape: none
+            targetArrowWidth: 1px
+            targetDistanceFromNode: 0px
+            targetEndpoint: outside-to-node
+            targetLabel: ""
+            targetTextMarginX: 0px
+            targetTextMarginY: 0px
+            targetTextOffset: 0px
+            targetTextRotation: none
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            taxiDirection: auto
+            taxiTurn: 50%
+            taxiTurnMinDistance: 10px
+            text-background-color: rgb(210,212,210)
+            text-background-opacity: "0.7"
+            text-background-padding: 2px
+            text-background-shape: round-rectangle
+            text-border-color: rgb(0,0,0)
+            text-border-opacity: "0"
+            text-border-style: solid
+            text-border-width: 0px
+            text-events: "no"
+            text-halign: center
+            text-justification: auto
+            text-margin-x: 0px
+            text-margin-y: 7px
+            text-max-width: 50px
+            text-opacity: "1"
+            text-outline-color: rgb(0,0,0)
+            text-outline-opacity: "1"
+            text-outline-width: 0px
+            text-overflow-wrap: whitespace
+            text-rotation: none
+            text-transform: none
+            text-valign: bottom
+            text-wrap: ellipsis
+            textBackgroundColor: rgb(210,212,210)
+            textBackgroundOpacity: "0.7"
+            textBackgroundPadding: 2px
+            textBackgroundShape: round-rectangle
+            textBorderColor: rgb(0,0,0)
+            textBorderOpacity: "0"
+            textBorderStyle: solid
+            textBorderWidth: 0px
+            textEvents: "no"
+            textHalign: center
+            textJustification: auto
+            textMarginX: 0px
+            textMarginY: 7px
+            textMaxWidth: 50px
+            textOpacity: "1"
+            textOutlineColor: rgb(0,0,0)
+            textOutlineOpacity: "1"
+            textOutlineWidth: 0px
+            textOverflowWrap: whitespace
+            textRotation: none
+            textTransform: none
+            textValign: bottom
+            textWrap: ellipsis
+            transition-delay: 0ms
+            transition-duration: 0ms
+            transition-property: none
+            transition-timing-function: linear
+            transitionDelay: 0ms
+            transitionDuration: 0ms
+            transitionProperty: none
+            transitionTimingFunction: linear
+            underlay-color: rgb(0,0,0)
+            underlay-opacity: "0"
+            underlay-padding: 10px
+            underlay-shape: round-rectangle
+            underlayColor: rgb(0,0,0)
+            underlayOpacity: "0"
+            underlayPadding: 10px
+            underlayShape: round-rectangle
+            visibility: visible
+            width: "20"
+            z-compound-depth: auto
+            z-index: 12
+            z-index-compare: manual
+            zCompoundDepth: auto
+            zIndex: "2"
+            zIndexCompare: manual
+          styles: '{"border-width":2,"background-opacity":0.5}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg
+          svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/deployment-complete.svg
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/deployment-white.svg
+        position:
+          posX: 670
+          posY: 330
+        whiteboardData:
+          style: {}
+    type: Deployment
+    version: ""
+  workload-metrics-hpa:
+    annotations: {}
+    apiVersion: autoscaling/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: workload-metrics-hpa
+    namespace: gke-workload-metrics
+    settings:
+      spec:
+        max Replicas: 5
+        metrics:
+        - pods:
+            metric:
+              name: workload.googleapis.com|example_requests_total
+            target:
+              average Value: 1
+              type: AverageValue
+          type: Pods
+        min Replicas: 1
+        scale Target Ref:
+          api Version: apps/v1
+          kind: Deployment
+          name: workload-metrics
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 4deeb512-c783-4071-8205-5aec904dabad
+        meshmodel-metadata:
+          capabilities: |2-
+             {
+              "designer": {
+                "edit": {
+                  "shape": {
+                    "convert-shape": false
+                  }
+                }
+              }
+            }
+          defaultData: ""
+          genealogy: parent
+          isAnnotation: false
+          isCustomResource: false
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-rectangle
+          shapePolygonPoints: ""
+          styleOverrides:
+            background-opacity: 0.5
+            border-width: 2
+            z-index: 5
+          styles: '{"border-width":2,"background-opacity":0.5}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/horizontalpodautoscaler-color.svg
+          svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/horizontalpodautoscaler-complete.svg
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/horizontalpodautoscaler-white.svg
+        position:
+          posX: 630
+          posY: 370
+        whiteboardData:
+          style: {}
+    type: HorizontalPodAutoscaler
+    version: ""
+  workload-metrics-podmon:
+    annotations: {}
+    apiVersion: monitoring.coreos.com/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: couchbase-monitor-stack
+    name: workload-metrics-podmon
+    namespace: default
+    settings:
+      spec:
+        namespace Selector:
+          match Names: []
+        pod Metrics Endpoints: []
+        pod Target Labels: []
+        selector:
+          match Expressions: []
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 4444322f-2b7a-41b0-82a1-771a6f842a6f
+        label: Pod Monitor
+        meshmodel-data:
+          category:
+            metadata: null
+            name: App Definition and Development
+          components: []
+          displayName: Couchbase Monitor Stack
+          hostID: 00000000-0000-0000-0000-000000000000
+          id: 3ca6bd96-e401-51c8-9935-8d906180ee71
+          metadata:
+            isAnnotation: false
+            published: true
+            subCategory: Database
+            svgColor: ui/public/static/img/meshmodels/couchbase-monitor-stack/color/couchbase-monitor-stack-color.svg
+            svgComplete: ""
+            svgWhite: ui/public/static/img/meshmodels/couchbase-monitor-stack/white/couchbase-monitor-stack-white.svg
+          name: couchbase-monitor-stack
+          relationships: []
+          status: registered
+          version: 2.1.2
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isNamespaced: true
+          primaryColor: '#00B39F'
+          published: true
+          secondaryColor: '#00D3A9'
+          shape: circle
+          shapePolygonPoints: ""
+          styleOverrides:
+            z-index: 11
+          styles: ""
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/couchbase-monitor-stack/color/alertmanager-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/couchbase-monitor-stack/white/alertmanager-white.svg
+        position:
+          posX: 690
+          posY: 230
+        whiteboardData: {}
+    type: PodMonitor
+    version: 2.1.2

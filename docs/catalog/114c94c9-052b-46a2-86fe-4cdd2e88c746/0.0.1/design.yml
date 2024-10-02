@@ -1,0 +1,401 @@
+name: my first app design
+version: 0.0.5
+services:
+  build-ir:
+    annotations: {}
+    apiVersion: camel.apache.org/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: camel-k
+    name: build-ir
+    namespace: M K
+    settings:
+      spec:
+        tasks: []
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 8d3c0e7c-44fd-4a94-bcfb-bbc2948a2583
+        label: build-ir
+        meshmodel-data:
+          category:
+            metadata: null
+            name: App Definition and Development
+          displayName: Camel K
+          displayhostname: ""
+          hostID: 00000000-0000-0000-0000-000000000000
+          hostname: ""
+          metadata:
+            source_uri: https://apache.github.io/camel-k/charts/camel-k-2.0.0.tgz
+            svgColor: ui/public/static/img/meshmodels/camel-k/color/build-color.svg
+            svgWhite: ui/public/static/img/meshmodels/camel-k/white/build-white.svg
+          name: camel-k
+          version: 0.13.0
+        meshmodel-metadata:
+          genealogy: ""
+          isNamespaced: true
+          logoURL: https://www.tigera.io/app/uploads/2021/07/calico_logo_white.svg
+          model: camel-k
+          modelDisplayName: Camel K
+          primaryColor: '#F69923'
+          published: true
+          secondaryColor: '#00D3A9'
+          shape: circle
+          styleOverrides:
+            z-index: 10005
+          subCategory: Application Definition & Image Build
+          svgColor: ui/public/static/img/meshmodels/camel-k/color/build-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/camel-k/white/build-white.svg
+        parent: 29c92597-d0a0-428b-91fa-86258cb2e013
+        position:
+          posX: 390
+          posY: 270
+        whiteboardData:
+          style:
+            z-index: 10008
+    type: Build
+    version: 0.13.0
+  cd-pipeline-ti:
+    annotations: {}
+    apiVersion: v2.edp.epam.com/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: cd-pipeline-operator
+    name: cd-pipeline-ti
+    namespace: defaultss
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 897011fa-9db5-4813-bd6c-5adee989d947
+        label: cd-pipeline-ti
+        meshmodel-data:
+          category:
+            metadata: null
+            name: App Definition and Development
+          displayName: CD Pipeline Operator
+          displayhostname: ""
+          hostID: 00000000-0000-0000-0000-000000000000
+          hostname: ""
+          metadata:
+            source_uri: https://epam.github.io/edp-helm-charts/snapshot/packages/cd-pipeline-operator-2.15.0-SNAPSHOT.24.tgz
+            svgColor: ui/public/static/img/meshmodels/admin-console-operator/color/adminconsole-color.svg
+            svgWhite: ui/public/static/img/meshmodels/admin-console-operator/white/adminconsole-white.svg
+          name: cd-pipeline-operator
+          version: 2.14.0-SNAPSHOT.32
+        meshmodel-metadata:
+          genealogy: ""
+          isNamespaced: true
+          logoURL: https://www.epam.com/content/dam/epam/global/logo_white-blue.svg
+          model: cd-pipeline-operator
+          modelDisplayName: CD Pipeline Operator
+          primaryColor: '#00ABCD'
+          published: true
+          secondaryColor: '#00D3A9'
+          shape: circle
+          styleOverrides:
+            z-index: 10001
+          subCategory: Continuous Integration & Delivery
+          svgColor: ui/public/static/img/meshmodels/admin-console-operator/color/adminconsole-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/admin-console-operator/white/adminconsole-white.svg
+        position:
+          posX: 310
+          posY: 350
+        whiteboardData:
+          style:
+            z-index: 10002
+    type: CDPipeline
+    version: 2.14.0-SNAPSHOT.32
+  customer:
+    annotations: {}
+    apiVersion: jiraservicedesk.stakater.com/v1alpha1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: jira-service-desk-operator
+    name: customer
+    namespace: default
+    settings:
+      spec:
+        email: xyz@gmail.com
+        legacy Customer: true
+        name: xyz
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 4ef07b31-a0ad-4edc-bf8d-a66dbfd4298a
+        label: customer
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Tools
+          displayName: Jira Service Desk Operator
+          metadata:
+            source_uri: https://stakater.github.io/stakater-charts/jira-service-desk-operator-0.0.50.tgz
+            svgColor: ui/public/static/img/meshmodels/jira-service-desk-operator/color/customer-color.svg
+            svgWhite: ui/public/static/img/meshmodels/jira-service-desk-operator/white/customer-white.svg
+          name: jira-service-desk-operator
+          version: 0.0.50
+        meshmodel-metadata:
+          genealogy: ""
+          isNamespaced: true
+          logoURL: ""
+          model: jira-service-desk-operator
+          modelDisplayName: Jira Service Desk Operator
+          primaryColor: '#0052cc'
+          published: true
+          secondaryColor: '#2684ff'
+          shape: circle
+          styleOverrides:
+            z-index: 10006
+          subCategory: Tools
+          svgColor: ui/public/static/img/meshmodels/jira-service-desk-operator/color/customer-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/jira-service-desk-operator/white/customer-white.svg
+        position:
+          posX: 430
+          posY: 350
+        whiteboardData:
+          style:
+            z-index: 10003
+    type: Customer
+    version: 0.0.50
+  notebook:
+    annotations: {}
+    apiVersion: kubeflow.org/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubeflow
+    name: notebook
+    namespace: defaultsd
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 96346590-94e3-401c-8486-bb9d713e035b
+        label: notebook
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Machine Learning
+          displayName: Kubeflow
+          metadata:
+            source_uri: https://github.com/alauda/kubeflow-chart/releases/download/kubeflow-1.6.2/kubeflow-1.6.2.tgz
+            svgColor: ui/public/static/img/meshmodels/kubeflow/color/authcode-color.svg
+            svgWhite: ui/public/static/img/meshmodels/kubeflow/white/authcode-white.svg
+          name: kubeflow
+          version: 1.6.1
+        meshmodel-metadata:
+          genealogy: ""
+          isNamespaced: true
+          logoURL: ""
+          model: kubeflow
+          modelDisplayName: Kubeflow
+          primaryColor: '#014BD1'
+          published: true
+          secondaryColor: '#6CA1FF'
+          shape: circle
+          styleOverrides:
+            z-index: 10002
+          subCategory: Machine Learning
+          svgColor: ui/public/static/img/meshmodels/kubeflow/color/authcode-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubeflow/white/authcode-white.svg
+        position:
+          posX: 370
+          posY: 350
+        whiteboardData:
+          style:
+            z-index: 10004
+    type: Notebook
+    version: 1.6.1
+  persistent-volume-ac:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: persistent-volume-ac
+    namespace: ""
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 3d713d61-3492-4000-b854-8fc9aecbf8fb
+        label: persistent-volume-ac
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          displayName: Kubernetes
+          displayhostname: ""
+          hostID: 00000000-0000-0000-0000-000000000000
+          hostname: ""
+          metadata:
+            svgColor: ui/public/static/img/meshmodels/kubernetes/color/apiservice-color.svg
+            svgWhite: ui/public/static/img/meshmodels/kubernetes/white/apiservice-white.svg
+          name: kubernetes
+          version: v1.25.2
+        meshmodel-metadata:
+          genealogy: ""
+          isCustomResource: false
+          isNamespaced: false
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: cylinder
+          styleOverrides:
+            background-clip: none
+            background-image-containment: over
+            background-opacity: 0
+            border-opacity: 0
+            bounds-expansion: 20
+            height: 32
+            pading: 0
+            width: 32
+            z-index: 10003
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/persistentvolume-color.svg
+          svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/persistentvolume-complete.svg
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/color/persistentvolume-color.svg
+        position:
+          posX: 490
+          posY: 170
+        whiteboardData:
+          style:
+            z-index: 10005
+    type: PersistentVolume
+    version: v1.25.2
+  persistent-volume-claim-fm:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: persistent-volume-claim-fm
+    namespace: 29c92597-d0a0-428b-91fa-86258cb2e013
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 96d0bb49-8f4f-4807-a5b8-361981a27c95
+        label: persistent-volume-claim-fm
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          displayName: Kubernetes
+          displayhostname: ""
+          hostID: 00000000-0000-0000-0000-000000000000
+          hostname: ""
+          metadata:
+            svgColor: ui/public/static/img/meshmodels/kubernetes/color/apiservice-color.svg
+            svgWhite: ui/public/static/img/meshmodels/kubernetes/white/apiservice-white.svg
+          name: kubernetes
+          version: v1.25.2
+        meshmodel-metadata:
+          genealogy: ""
+          isCustomResource: false
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: cylinder
+          styleOverrides: '{"height":32,"width":32,"pading":0,"background-clip":"none","background-image-containment":"over","border-opacity":0,"background-opacity":0,"bounds-expansion":20,
+            "z-index": 9999}'
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/persistentvolume-color.svg
+          svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/persistentvolume-complete.svg
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/color/persistentvolume-color.svg
+        parent: 29c92597-d0a0-428b-91fa-86258cb2e013
+        position:
+          posX: 430
+          posY: 190
+        whiteboardData:
+          style:
+            z-index: 10006
+    type: PersistentVolumeClaim
+    version: v1.25.2
+  pod-en:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: pod-en
+    namespace: 29c92597-d0a0-428b-91fa-86258cb2e013
+    settings:
+      spec:
+        volumes: []
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: c8bf7e5b-f2e8-4fb0-b89e-5e0e164b7835
+        label: pod-en
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          displayName: Kubernetes
+          displayhostname: ""
+          hostID: 00000000-0000-0000-0000-000000000000
+          hostname: ""
+          metadata:
+            svgColor: ui/public/static/img/meshmodels/kubernetes/color/apiservice-color.svg
+            svgWhite: ui/public/static/img/meshmodels/kubernetes/white/apiservice-white.svg
+          name: kubernetes
+          version: v1.25.2
+        meshmodel-metadata:
+          genealogy: ""
+          isCustomResource: false
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-rectangle
+          styleOverrides:
+            z-index: 10004
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/apiservice-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/apiservice-white.svg
+        parent: 29c92597-d0a0-428b-91fa-86258cb2e013
+        position:
+          posX: 510
+          posY: 170
+        whiteboardData:
+          style:
+            z-index: 10007
+    type: Pod
+    version: v1.25.2

@@ -1,0 +1,43 @@
+name: First-Time Contributor Welcome
+on:
+  pull_request:
+    types: [opened]
+jobs:
+  welcome:
+    runs-on: ubuntu-latest
+    if: >-
+      (github.repository == 'meshery/meshery') &&
+      (github.event.action == 'opened') &&
+      (github.event.pull_request.author_association == 'FIRST_TIME_CONTRIBUTOR')
+    steps:
+      - name: Leave Welcome Comment
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GH_ACCESS_TOKEN }}
+          script: |
+            const message = `Welcome, @${{ github.event.pull_request.user.login }}! Thank you for your first contribution! 🎉 A contributor will be by to give feedback soon. In the meantime, please review the [Newcomers' Guide](https://layer5.io/community/newcomers) and be sure to join the [community Slack](https://slack.meshery.io/).
+
+            <p align="center" width="100%">
+            <img src="https://github.com/user-attachments/assets/ba4699dc-18b2-4884-9dce-36ed47c38e93" width="30%"  />
+            </p>
+
+            Be sure to double-check that you have signed your commits. 
+            Here are instructions for [making signing an implicit activity while performing a commit](https://docs.meshery.io/project/contributing#general-contribution-flow).`;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: message
+            });
+      - name: Label Pull Request (Optional)
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GH_ACCESS_TOKEN }}
+          script: |
+            github.rest.issues.addLabels({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: ['first-time contributor']
+            });

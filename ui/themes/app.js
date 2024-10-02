@@ -569,6 +569,8 @@ theme = {
   mixins: { ...theme.mixins },
 };
 
+export const lightTheme = theme;
+
 export default theme;
 
 export const notificationColors = {

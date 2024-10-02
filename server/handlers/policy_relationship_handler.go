@@ -5,12 +5,14 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/pattern/core"
+	"github.com/layer5io/meshery/server/models/pattern/utils"
 	"github.com/meshery/schemas/models/v1alpha3/relationship"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
@@ -143,6 +145,8 @@ func processEvaluationResponse(registry *registry.RegistryManager, evalPayload p
 		_component.Id = _c.Id
 		if _c.DisplayName != "" {
 			_component.DisplayName = _c.DisplayName
+		} else {
+			_component.DisplayName = fmt.Sprintf("%s-%s", strings.ToLower(_component.DisplayName), utils.GetRandomAlphabetsOfDigit(3))
 		}
 		_component.Configuration = _c.Configuration
 		compsAdded = append(compsAdded, *_component)
@@ -190,7 +194,7 @@ func processEvaluationResponse(registry *registry.RegistryManager, evalPayload p
 
 	for _, cmp := range designComponents {
 		_c := cmp
-		
+
 		for _, c := range cmps {
 			if c.Id == _c.Id {
 				_c = &c

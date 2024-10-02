@@ -17,11 +17,11 @@ package registry
 import (
 	"bytes"
 	"context"
+	"encoding/csv"
 	"fmt"
 	"io"
 	"os"
 	"path/filepath"
-	"reflect"
 	"strconv"
 	"strings"
 	"sync"
@@ -70,12 +70,13 @@ var generateCmd = &cobra.Command{
 	Long:  "Prerequisite: Excecute this command from the root of a meshery/meshery repo fork.\n\nGiven a Google Sheet with a list of model names and source locations, generate models and components any Registrant (e.g. GitHub, Artifact Hub) repositories.\n\nGenerated Model files are written to local filesystem under `/server/models/<model-name>`.",
 	Example: `
 // Generate Meshery Models from a Google Spreadsheet (i.e. "Meshery Integrations" spreadsheet).
-mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred 
+mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred
 // Directly generate models from one of the supported registrants by using Registrant Connection Definition and (optional) Registrant Credential Definition
 mesheryctl registry generate --registrant-def [path to connection definition] --registrant-cred [path to credential definition]
 // Generate a specific Model from a Google Spreadsheet (i.e. "Meshery Integrations" spreadsheet).
 mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred --model "[model-name]"
-
+// Generate Meshery Models and Component from csv files in a local directory.
+mesheryctl registry generate -directory <DIRECTORY_PATH>
     `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		// Prerequisite check is needed - https://github.com/meshery/meshery/issues/10369
@@ -113,22 +114,50 @@ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tu
 		}
 		var err error
 
-		srv, err = mutils.NewSheetSRV(spreadsheeetCred)
-		if err != nil {
-			utils.LogError.Error(ErrUpdateRegistry(err, modelLocation))
-			return err
-		}
+		// isCsvPathPresent := modelCSVFilePath != "" && componentCSVFilePath != ""
+		if csvDirectory == "" {
+			srv, err = mutils.NewSheetSRV(spreadsheeetCred)
+			if err != nil {
+				utils.LogError.Error(ErrUpdateRegistry(err, modelLocation))
+				return err
+			}
 
-		resp, err := srv.Spreadsheets.Get(spreadsheeetID).Fields().Do()
-		if err != nil || resp.HTTPStatusCode != 200 {
-			utils.LogError.Error(ErrUpdateRegistry(err, outputLocation))
-			return err
-		}
+			resp, err := srv.Spreadsheets.Get(spreadsheeetID).Fields().Do()
+			if err != nil || resp.HTTPStatusCode != 200 {
+				utils.LogError.Error(ErrUpdateRegistry(err, outputLocation))
+				return err
+			}
 
-		// Collect list of Models by name from spreadsheet
-		sheetGID = GetSheetIDFromTitle(resp, "Models")
-		// Collect list of corresponding Components by name from spreadsheet
-		componentSpredsheetGID = GetSheetIDFromTitle(resp, "Components")
+			// Collect list of Models by name from spreadsheet
+			sheetGID = GetSheetIDFromTitle(resp, "Models")
+			// Collect list of corresponding Components by name from spreadsheet
+			componentSpredsheetGID = GetSheetIDFromTitle(resp, "Components")
+		} else {
+			// Get all files in the directory
+			files, err := os.ReadDir(csvDirectory)
+			if err != nil {
+				return fmt.Errorf("error reading the directory: %v", err)
+			}
+			for _, file := range files {
+				filePath := filepath.Join(csvDirectory, file.Name())
+				if !file.IsDir() && strings.HasSuffix(file.Name(), ".csv") {
+					headers, secondRow, err := getCSVHeader(filePath)
+					if utils.Contains("modelDisplayName", headers) != -1 || utils.Contains("modelDisplayName", secondRow) != -1 {
+						modelCSVFilePath = filePath
+					} else if utils.Contains("component", headers) != -1 || utils.Contains("component", secondRow) != -1 { // Check if the file matches the ComponentCSV structure
+						componentCSVFilePath = filePath
+					}
+					if err != nil {
+						return fmt.Errorf("error checking file %s: %v", file.Name(), err)
+					}
+
+				}
+			}
+
+			if modelCSVFilePath == "" || componentCSVFilePath == "" {
+				return fmt.Errorf("both ModelCSV and ComponentCSV files must be present in the directory")
+			}
+		}
 
 		err = InvokeGenerationFromSheet(&wg)
 		if err != nil {
@@ -149,7 +178,6 @@ type compGenerateTracker struct {
 var modelToCompGenerateTracker = store.NewGenericThreadSafeStore[compGenerateTracker]()
 
 func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
-
 	weightedSem := semaphore.NewWeighted(20)
 	url := GoogleSpreadSheetURL + spreadsheeetID
 	totalAvailableModels := 0
@@ -186,9 +214,10 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 	utils.LogError.UpdateLogOutput(multiErrorWriter)
 	var wgForSpreadsheetUpdate sync.WaitGroup
 	wgForSpreadsheetUpdate.Add(1)
+
 	go func() {
 		utils.ProcessModelToComponentsMap(componentCSVHelper.Components)
-		utils.VerifyandUpdateSpreadsheet(spreadsheeetCred, &wgForSpreadsheetUpdate, srv, spreadsheeetChan, spreadsheeetID)
+		utils.VerifyandUpdateSpreadsheet(spreadsheeetCred, &wgForSpreadsheetUpdate, srv, spreadsheeetChan, spreadsheeetID, modelCSVFilePath, componentCSVFilePath)
 	}()
 	// Iterate models from the spreadsheet
 	for _, model := range modelCSVHelper.Models {
@@ -270,8 +299,8 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 				}
 				comp.Model = *modelDef
 
-				assignDefaultsForCompDefs(&comp, modelDef)
-				compAlreadyExist, err := comp.WriteComponentDefinition(compDirPath)
+				utils.AssignDefaultsForCompDefs(&comp, modelDef)
+				compAlreadyExist, err := comp.WriteComponentDefinition(compDirPath, "json")
 				if compAlreadyExist {
 					lengthOfComps--
 				}
@@ -309,93 +338,6 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 	close(spreadsheeetChan)
 	wgForSpreadsheetUpdate.Wait()
 	return nil
-}
-
-func assignDefaultsForCompDefs(componentDef *component.ComponentDefinition, modelDef *v1beta1Model.ModelDefinition) {
-	// Assign the status from the model to the component
-	compStatus := component.ComponentDefinitionStatus(modelDef.Status)
-	componentDef.Status = &compStatus
-
-	// Initialize AdditionalProperties and Styles if nil
-	if componentDef.Metadata.AdditionalProperties == nil {
-		componentDef.Metadata.AdditionalProperties = make(map[string]interface{})
-	}
-	if componentDef.Styles == nil {
-		componentDef.Styles = &component.Styles{}
-	}
-
-	// Use reflection to map model metadata to component styles
-	stylesValue := reflect.ValueOf(componentDef.Styles).Elem()
-
-	// Iterate through modelDef.Metadata
-	if modelDef.Metadata != nil {
-		if modelDef.Metadata.AdditionalProperties["styleOverrides"] != nil {
-			styleOverrides, ok := modelDef.Metadata.AdditionalProperties["styleOverrides"].(string)
-			if ok {
-				err := encoding.Unmarshal([]byte(styleOverrides), &componentDef.Styles)
-				if err != nil {
-					utils.LogError.Error(err)
-				}
-			}
-		}
-		if (modelDef.Metadata.Capabilities) != nil {
-			componentDef.Capabilities = modelDef.Metadata.Capabilities
-		}
-		if modelDef.Metadata.PrimaryColor != nil {
-			componentDef.Styles.PrimaryColor = *modelDef.Metadata.PrimaryColor
-		}
-		if modelDef.Metadata.SecondaryColor != nil {
-			componentDef.Styles.SecondaryColor = modelDef.Metadata.SecondaryColor
-		}
-		if modelDef.Metadata.SvgColor != "" {
-			componentDef.Styles.SvgColor = modelDef.Metadata.SvgColor
-		}
-		if modelDef.Metadata.SvgComplete != nil {
-			componentDef.Styles.SvgComplete = *modelDef.Metadata.SvgComplete
-		}
-		if modelDef.Metadata.SvgWhite != "" {
-			componentDef.Styles.SvgWhite = modelDef.Metadata.SvgWhite
-		}
-
-		// Iterate through AdditionalProperties and assign appropriately
-		for k, v := range modelDef.Metadata.AdditionalProperties {
-			if k == "styleOverrides" {
-				continue
-			}
-			// Check if the field exists in Styles
-			if field := stylesValue.FieldByNameFunc(func(name string) bool {
-				return strings.EqualFold(k, name)
-			}); field.IsValid() && field.CanSet() {
-				switch field.Kind() {
-				case reflect.Ptr:
-					ptrType := field.Type().Elem()
-					val := reflect.New(ptrType).Elem()
-
-					if val.Kind() == reflect.String {
-						val.SetString(v.(string))
-					} else if val.Kind() == reflect.Float32 {
-						val.SetFloat(v.(float64))
-					} else if val.Kind() == reflect.Int {
-						val.SetInt(int64(v.(int)))
-					} else {
-						val.Set(reflect.ValueOf(v))
-					}
-
-					field.Set(val.Addr())
-				case reflect.String:
-					field.SetString(v.(string))
-				case reflect.Float32:
-					field.SetFloat(v.(float64))
-				case reflect.Int:
-					field.SetInt(int64(v.(int)))
-				default:
-					field.Set(reflect.ValueOf(v))
-				}
-			} else {
-				componentDef.Metadata.AdditionalProperties[k] = v
-			}
-		}
-	}
 }
 
 // For registrants eg: meshery, whose components needs to be directly created by referencing meshery/schemas repo.
@@ -453,7 +395,7 @@ func GenerateDefsForCoreRegistrant(model utils.ModelCSV, ComponentCSVHelper *uti
 				}
 				componentDef.Status = &_status
 				componentDef.Model = *modelDef
-				alreadyExists, err = componentDef.WriteComponentDefinition(compDirPath)
+				alreadyExists, err = componentDef.WriteComponentDefinition(compDirPath, "json")
 				if err != nil {
 					err = ErrGenerateComponent(err, comp.Model, componentDef.DisplayName)
 					utils.LogError.Error(err)
@@ -493,7 +435,7 @@ func GenerateDefsForCoreRegistrant(model utils.ModelCSV, ComponentCSVHelper *uti
 }
 
 func parseModelSheet(url string) (*utils.ModelCSVHelper, error) {
-	modelCSVHelper, err := utils.NewModelCSVHelper(url, "Models", sheetGID)
+	modelCSVHelper, err := utils.NewModelCSVHelper(url, "Models", sheetGID, modelCSVFilePath)
 	if err != nil {
 		return nil, err
 	}
@@ -515,10 +457,11 @@ func rateLimitArtifactHub() {
 	artifactHubCount++
 }
 func parseComponentSheet(url string) (*utils.ComponentCSVHelper, error) {
-	compCSVHelper, err := utils.NewComponentCSVHelper(url, "Components", componentSpredsheetGID)
+	compCSVHelper, err := utils.NewComponentCSVHelper(url, "Components", componentSpredsheetGID, componentCSVFilePath)
 	if err != nil {
 		return nil, err
 	}
+
 	err = compCSVHelper.ParseComponentsSheet(modelName)
 	if err != nil {
 		return nil, ErrGenerateModel(err, "unable to start model generation")
@@ -601,6 +544,27 @@ func logModelGenerationSummary(modelToCompGenerateTracker *store.GenerticThreadS
 	utils.Log.Info(fmt.Sprintf("-----------------------------\n-----------------------------\nGenerated %d models and %d components", totalAggregateModel, totalAggregateComponents))
 }
 
+func getCSVHeader(filePath string) (headers, secondRow []string, err error) {
+	file, err := os.Open(filePath)
+	if err != nil {
+		return headers, secondRow, err
+	}
+	defer file.Close()
+
+	reader := csv.NewReader(file)
+	headers, err = reader.Read() // Read the first line
+
+	if err != nil {
+		return headers, secondRow, err
+	}
+
+	secondRow, err = reader.Read()
+	if err != nil {
+		return headers, secondRow, err
+	}
+	return headers, secondRow, nil
+}
+
 func init() {
 	generateCmd.PersistentFlags().StringVar(&spreadsheeetID, "spreadsheet-id", "", "spreadsheet ID for the integration spreadsheet")
 	generateCmd.PersistentFlags().StringVar(&spreadsheeetCred, "spreadsheet-cred", "", "base64 encoded credential to download the spreadsheet")
@@ -616,4 +580,7 @@ func init() {
 	generateCmd.MarkFlagsMutuallyExclusive("spreadsheet-cred", "registrant-cred")
 	generateCmd.PersistentFlags().StringVarP(&modelName, "model", "m", "", "specific model name to be generated")
 	generateCmd.PersistentFlags().StringVarP(&outputLocation, "output", "o", "../server/meshmodel", "location to output generated models, defaults to ../server/meshmodels")
+
+	generateCmd.PersistentFlags().StringVarP(&csvDirectory, "directory", "d", "", "Directory containing the Model and Component CSV files")
+
 }

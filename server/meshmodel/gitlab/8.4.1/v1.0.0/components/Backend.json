@@ -1,0 +1,195 @@
+{
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "Backend",
+   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"config\": {\n     \"description\": \"HAProxy backend configuration\",\n     \"properties\": {\n      \"abortonclose\": {\n       \"enum\": [\n        \"enabled\",\n        \"disabled\"\n       ],\n       \"type\": \"string\"\n      },\n      \"adv_check\": {\n       \"enum\": [\n        \"ssl-hello-chk\",\n        \"smtpchk\",\n        \"ldap-check\",\n        \"mysql-check\",\n        \"pgsql-check\",\n        \"tcp-check\",\n        \"redis-check\",\n        \"httpchk\"\n       ],\n       \"type\": \"string\"\n      },\n      \"allbackups\": {\n       \"enum\": [\n        \"enabled\",\n        \"disabled\"\n       ],\n       \"type\": \"string\"\n      },\n      \"balance\": {\n       \"properties\": {\n        \"algorithm\": {\n         \"enum\": [\n          \"roundrobin\",\n          \"static-rr\",\n          \"leastconn\",\n          \"first\",\n          \"source\",\n          \"uri\",\n          \"url_param\",\n          \"hdr\",\n          \"random\",\n          \"rdp-cookie\"\n         ],\n         \"type\": \"string\"\n        },\n        \"hdr_name\": {\n         \"type\": \"string\"\n        },\n        \"hdr_use_domain_only\": {\n         \"type\": \"boolean\"\n        },\n        \"random_draws\": {\n         \"type\": \"integer\"\n        },\n        \"rdp_cookie_name\": {\n         \"pattern\": \"^[^\\\\s]+$\",\n         \"type\": \"string\"\n        },\n        \"uri_depth\": {\n         \"type\": \"integer\"\n        },\n        \"uri_len\": {\n         \"type\": \"integer\"\n        },\n        \"uri_path_only\": {\n         \"type\": \"boolean\"\n        },\n        \"uri_whole\": {\n         \"type\": \"boolean\"\n        },\n        \"url_param\": {\n         \"pattern\": \"^[^\\\\s]+$\",\n         \"type\": \"string\"\n        },\n        \"url_param_check_post\": {\n         \"type\": \"integer\"\n        },\n        \"url_param_max_wait\": {\n         \"type\": \"integer\"\n        }\n       },\n       \"required\": [\n        \"algorithm\"\n       ],\n       \"type\": \"object\"\n      },\n      \"bind_process\": {\n       \"pattern\": \"^[^\\\\s]+$\",\n       \"type\": \"string\"\n      },\n      \"check_timeout\": {\n       \"nullable\": true,\n       \"type\": \"integer\"\n      },\n      \"connect_timeout\": {\n       \"nullable\": true,\n       \"type\": \"integer\"\n      },\n      \"cookie\": {\n       \"properties\": {\n        \"domain\": {\n         \"items\": {\n          \"properties\": {\n           \"value\": {\n            \"pattern\": \"^[^\\\\s]+$\",\n            \"type\": \"string\"\n           }\n          },\n          \"type\": \"object\"\n         },\n         \"type\": \"array\"\n        },\n        \"dynamic\": {\n         \"type\": \"boolean\"\n        },\n        \"httponly\": {\n         \"type\": \"boolean\"\n        },\n        \"indirect\": {\n         \"type\": \"boolean\"\n        },\n        \"maxidle\": {\n         \"type\": \"integer\"\n        },\n        \"maxlife\": {\n         \"type\": \"integer\"\n        },\n        \"name\": {\n         \"pattern\": \"^[^\\\\s]+$\",\n         \"type\": \"string\"\n        },\n        \"nocache\": {\n         \"type\": \"boolean\"\n        },\n        \"postonly\": {\n         \"type\": \"boolean\"\n        },\n        \"preserve\": {\n         \"type\": \"boolean\"\n        },\n        \"secure\": {\n         \"type\": \"boolean\"\n        },\n        \"type\": {\n         \"enum\": [\n          \"rewrite\",\n          \"insert\",\n          \"prefix\"\n         ],\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"name\"\n       ],\n       \"type\": \"object\"\n      },\n      \"default_server\": {\n       \"properties\": {\n        \"address\": {\n         \"pattern\": \"^[^\\\\s]+$\",\n         \"type\": \"string\"\n        },\n        \"agent-addr\": {\n         \"pattern\": \"^[^\\\\s]+$\",\n         \"type\": \"string\"\n        },\n        \"agent-check\": {\n         \"enum\": [\n          \"enabled\",\n          \"disabled\"\n         ],\n         \"type\": \"string\"\n        },\n        \"agent-inter\": {\n         \"nullable\": true,\n         \"type\": \"integer\"\n        },\n        \"agent-port\": {\n         \"maximum\": 65535,\n         \"minimum\": 1,\n         \"nullable\": true,\n         \"type\": \"integer\"\n        },\n        \"agent-send\": {\n         \"type\": \"string\"\n        },\n        \"allow_0rtt\": {\n         \"type\": \"boolean\"\n        },\n        \"alpn\": {\n         \"pattern\": \"^[^\\\\s]+$\",\n         \"type\": \"string\"\n        },\n        \"backup\": {\n         \"enum\": [\n          \"enabled\",\n          \"disabled\"\n         ],\n         \"type\": \"string\"\n        },\n        \"ca_file\": {\n         \"type\": \"string\"\n        },\n        \"check\": {\n         \"enum\": [\n          \"enabled\",\n          \"disabled\"\n         ],\n         \"type\": \"string\"\n        },\n        \"check-send-proxy\": {\n         \"enum\": [\n          \"enabled\",\n          \"disabled\"\n         ],\n         \"type\": \"string\"\n        },\n        \"check-sni\": {\n         \"pattern\": \"^[^\\\\s]+$\",\n         \"type\": \"string\"\n        },\n        \"check-ssl\": {\n         \"enum\": [\n          \"enabled\",\n          \"disabled\"\n         ],\n         \"type\": \"string\"\n        },\n        \"check_alpn\": {\n         \"pattern\": \"^[^\\\\s]+$\",\n         \"type\": \"string\"\n        },\n        \"check_proto\": {\n         \"pattern\": \"^[^\\\\s]+$\",\n         \"type\": \"string\"\n        },\n        \"check_via_socks4\": {\n         \"enum\": [\n          \"enabled\",\n          \"disabled\"\n         ],\n         \"type\": \"string\"\n        },\n        \"ciphers\": {\n         \"type\": \"string\"\n        },\n        \"ciphersuites\": {\n         \"type\": \"string\"\n        },\n        \"cookie\": {\n         \"pattern\": \"^[^\\\\s]+$\",\n         \"type\": \"string\"\n        },\n        \"crl_file\": {\n         \"type\": \"string\"\n        },\n        \"disabled\": {\n         \"enum\": [\n          \"enabled\",\n          \"disabled\"\n         ],\n         \"type\": \"string\"\n        },\n        \"downinter\": {\n         \"nullable\": true,\n         \"type\": \"integer\"\n        },\n        \"enabled\": {\n         \"enum\": [\n          \"enabled\",\n          \"disabled\"\n         ],\n         \"type\": \"string\"\n        },\n        \"error_limit\": {\n         \"type\": \"integer\"\n        },\n        \"fall\": {\n         \"nullable\": true,\n         \"type\": \"integer\"\n        },\n        \"fastinter\": {\n         \"nullable\": true,\n         \"type\": \"integer\"\n        },\n        \"force_sslv3\": {\n         \"enum\": [\n          \"enabled\",\n          \"disabled\"\n         ],\n         \"type\": \"string\"\n        },\n        \"force_tlsv10\": {\n         \"enum\": [\n          \"enabled\",\n          \"disabled\"\n         ],\n         \"type\": \"string\"\n        },\n        \"force_tlsv11\": {\n         \"enum\": [\n          \"enabled\",\n          \"disabled\"\n         ],\n         \"type\": \"string\"\n        },\n        \"force_tlsv12\": {\n         \"enum\": [\n          \"enabled\",\n          \"disabled\"\n         ],\n         \"type\": \"string\"\n        },\n        \"force_tlsv13\": {\n         \"enum\": [\n          \"enabled\",\n          \"disabled\"\n         ],\n         \"type\": \"string\"\n        },\n        \"health_check_port\": {\n         \"maximum\": 65535,\n         \"minimum\": 1,\n         \"nullable\": true,\n         \"type\": \"integer\"\n        },\n        \"init-addr\": {\n         \"pattern\": \"^[^\\\\s]+$\",\n         \"type\": \"string\"\n        },\n        \"inter\": {\n         \"nullable\": true,\n         \"type\": \"integer\"\n        },\n        \"log_proto\": {\n         \"enum\": [\n          \"legacy\",\n          \"octet-count\"\n         ],\n         \"type\": \"string\"\n        },\n        \"max_reuse\": {\n         \"nullable\": true,\n         \"type\": \"integer\"\n        },\n        \"maxconn\": {\n         \"nullable\": true,\n         \"type\": \"integer\"\n        },\n        \"maxqueue\": {\n         \"nullable\": true,\n         \"type\": \"integer\"\n        },\n        \"minconn\": {\n         \"nullable\": true,\n         \"type\": \"integer\"\n        },\n        \"name\": {\n         \"pattern\": \"^[^\\\\s]+$\",\n         \"type\": \"string\"\n        },\n        \"namespace\": {\n         \"type\": \"string\"\n        },\n        \"no_sslv3\": {\n         \"enum\": [\n          \"enabled\",\n          \"disabled\"\n         ],\n         \"type\": \"string\"\n        },\n        \"no_tlsv10\": {\n         \"enum\": [\n          \"enabled\",\n          \"disabled\"\n         ],\n         \"type\": \"string\"\n        },\n        \"no_tlsv11\": {\n         \"enum\": [\n          \"enabled\",\n          \"disabled\"\n         ],\n         \"type\": \"string\"\n        },\n        \"no_tlsv12\": {\n         \"enum\": [\n          \"enabled\",\n          \"disabled\"\n         ],\n         \"type\": \"string\"\n        },\n        \"no_tlsv13\": {\n         \"enum\": [\n          \"enabled\",\n          \"disabled\"\n         ],\n         \"type\": \"string\"\n        },\n        \"no_verifyhost\": {\n         \"enum\": [\n          \"enabled\",\n          \"disabled\"\n         ],\n         \"type\": \"string\"\n        },\n        \"npn\": {\n         \"type\": \"string\"\n        },\n        \"observe\": {\n         \"enum\": [\n          \"layer4\",\n          \"layer7\"\n         ],\n         \"type\": \"string\"\n        },\n        \"on-error\": {\n         \"enum\": [\n          \"fastinter\",\n          \"fail-check\",\n          \"sudden-death\",\n          \"mark-down\"\n         ],\n         \"type\": \"string\"\n        },\n        \"on-marked-down\": {\n         \"enum\": [\n          \"shutdown-sessions\"\n         ],\n         \"type\": \"string\"\n        },\n        \"on-marked-up\": {\n         \"enum\": [\n          \"shutdown-backup-sessions\"\n         ],\n         \"type\": \"string\"\n        },\n        \"pool_low_conn\": {\n         \"nullable\": true,\n         \"type\": \"integer\"\n        },\n        \"pool_max_conn\": {\n         \"nullable\": true,\n         \"type\": \"integer\"\n        },\n        \"pool_purge_delay\": {\n         \"nullable\": true,\n         \"type\": \"integer\"\n        },\n        \"port\": {\n         \"maximum\": 65535,\n         \"minimum\": 1,\n         \"nullable\": true,\n         \"type\": \"integer\"\n        },\n        \"proto\": {\n         \"pattern\": \"^[^\\\\s]+$\",\n         \"type\": \"string\"\n        },\n        \"proxy-v2-options\": {\n         \"items\": {\n          \"enum\": [\n           \"ssl\",\n           \"cert-cn\",\n           \"ssl-cipher\",\n           \"cert-sig\",\n           \"cert-key\",\n           \"authority\",\n           \"crc32c\",\n           \"unique-id\"\n          ],\n          \"type\": \"string\"\n         },\n         \"type\": \"array\"\n        },\n        \"redir\": {\n         \"type\": \"string\"\n        },\n        \"resolve-net\": {\n         \"pattern\": \"^[^\\\\s]+$\",\n         \"type\": \"string\"\n        },\n        \"resolve-prefer\": {\n         \"enum\": [\n          \"ipv4\",\n          \"ipv6\"\n         ],\n         \"pattern\": \"^[^\\\\s]+$\",\n         \"type\": \"string\"\n        },\n        \"resolve_opts\": {\n         \"pattern\": \"^[^,\\\\s][^\\\\,]*[^,\\\\s]*$\",\n         \"type\": \"string\"\n        },\n        \"resolvers\": {\n         \"pattern\": \"^[^\\\\s]+$\",\n         \"type\": \"string\"\n        },\n        \"rise\": {\n         \"nullable\": true,\n         \"type\": \"integer\"\n        },\n        \"send-proxy\": {\n         \"enum\": [\n          \"enabled\",\n          \"disabled\"\n         ],\n         \"type\": \"string\"\n        },\n        \"send-proxy-v2\": {\n         \"enum\": [\n          \"enabled\",\n          \"disabled\"\n         ],\n         \"type\": \"string\"\n        },\n        \"send_proxy_v2_ssl\": {\n         \"enum\": [\n          \"enabled\",\n          \"disabled\"\n         ],\n         \"type\": \"string\"\n        },\n        \"send_proxy_v2_ssl_cn\": {\n         \"enum\": [\n          \"enabled\",\n          \"disabled\"\n         ],\n         \"type\": \"string\"\n        },\n        \"slowstart\": {\n         \"nullable\": true,\n         \"type\": \"integer\"\n        },\n        \"sni\": {\n         \"pattern\": \"^[^\\\\s]+$\",\n         \"type\": \"string\"\n        },\n        \"socks4\": {\n         \"pattern\": \"^[^\\\\s]+$\",\n         \"type\": \"string\"\n        },\n        \"source\": {\n         \"type\": \"string\"\n        },\n        \"ssl\": {\n         \"enum\": [\n          \"enabled\",\n          \"disabled\"\n         ],\n         \"type\": \"string\"\n        },\n        \"ssl_certificate\": {\n         \"pattern\": \"^[^\\\\s]+$\",\n         \"type\": \"string\"\n        },\n        \"ssl_max_ver\": {\n         \"enum\": [\n          \"SSLv3\",\n          \"TLSv1.0\",\n          \"TLSv1.1\",\n          \"TLSv1.2\",\n          \"TLSv1.3\"\n         ],\n         \"type\": \"string\"\n        },\n        \"ssl_min_ver\": {\n         \"enum\": [\n          \"SSLv3\",\n          \"TLSv1.0\",\n          \"TLSv1.1\",\n          \"TLSv1.2\",\n          \"TLSv1.3\"\n         ],\n         \"type\": \"string\"\n        },\n        \"ssl_reuse\": {\n         \"enum\": [\n          \"enabled\",\n          \"disabled\"\n         ],\n         \"type\": \"string\"\n        },\n        \"stick\": {\n         \"enum\": [\n          \"enabled\",\n          \"disabled\"\n         ],\n         \"type\": \"string\"\n        },\n        \"tcp_ut\": {\n         \"type\": \"integer\"\n        },\n        \"tfo\": {\n         \"enum\": [\n          \"enabled\",\n          \"disabled\"\n         ],\n         \"type\": \"string\"\n        },\n        \"tls_tickets\": {\n         \"enum\": [\n          \"enabled\",\n          \"disabled\"\n         ],\n         \"type\": \"string\"\n        },\n        \"track\": {\n         \"type\": \"string\"\n        },\n        \"verify\": {\n         \"enum\": [\n          \"none\",\n          \"required\"\n         ],\n         \"type\": \"string\"\n        },\n        \"verifyhost\": {\n         \"type\": \"string\"\n        },\n        \"weight\": {\n         \"nullable\": true,\n         \"type\": \"integer\"\n        }\n       },\n       \"title\": \"Default Server\",\n       \"type\": \"object\"\n      },\n      \"external_check\": {\n       \"enum\": [\n        \"enabled\",\n        \"disabled\"\n       ],\n       \"type\": \"string\"\n      },\n      \"external_check_command\": {\n       \"pattern\": \"^[^\\\\s]+$\",\n       \"type\": \"string\"\n      },\n      \"external_check_path\": {\n       \"pattern\": \"^[^\\\\s]+$\",\n       \"type\": \"string\"\n      },\n      \"forwardfor\": {\n       \"properties\": {\n        \"enabled\": {\n         \"enum\": [\n          \"enabled\"\n         ],\n         \"type\": \"string\"\n        },\n        \"except\": {\n         \"pattern\": \"^[^\\\\s]+$\",\n         \"type\": \"string\"\n        },\n        \"header\": {\n         \"pattern\": \"^[^\\\\s]+$\",\n         \"type\": \"string\"\n        },\n        \"ifnone\": {\n         \"type\": \"boolean\"\n        }\n       },\n       \"required\": [\n        \"enabled\"\n       ],\n       \"type\": \"object\"\n      },\n      \"hash_type\": {\n       \"properties\": {\n        \"function\": {\n         \"enum\": [\n          \"sdbm\",\n          \"djb2\",\n          \"wt6\",\n          \"crc32\"\n         ],\n         \"type\": \"string\"\n        },\n        \"method\": {\n         \"enum\": [\n          \"map-based\",\n          \"consistent\"\n         ],\n         \"type\": \"string\"\n        },\n        \"modifier\": {\n         \"enum\": [\n          \"avalanche\"\n         ],\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"http-buffer-request\": {\n       \"enum\": [\n        \"enabled\",\n        \"disabled\"\n       ],\n       \"type\": \"string\"\n      },\n      \"http-check\": {\n       \"properties\": {\n        \"exclamation_mark\": {\n         \"type\": \"boolean\"\n        },\n        \"match\": {\n         \"enum\": [\n          \"status\",\n          \"rstatus\",\n          \"string\",\n          \"rstring\"\n         ],\n         \"pattern\": \"^[^\\\\s]+$\",\n         \"type\": \"string\"\n        },\n        \"pattern\": {\n         \"type\": \"string\"\n        },\n        \"type\": {\n         \"enum\": [\n          \"disable-on-404\",\n          \"expect\",\n          \"send-state\"\n         ],\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"type\"\n       ],\n       \"type\": \"object\"\n      },\n      \"http-use-htx\": {\n       \"enum\": [\n        \"enabled\",\n        \"disabled\"\n       ],\n       \"pattern\": \"^[^\\\\s]+$\",\n       \"type\": \"string\"\n      },\n      \"http_connection_mode\": {\n       \"enum\": [\n        \"httpclose\",\n        \"http-server-close\",\n        \"http-keep-alive\"\n       ],\n       \"type\": \"string\"\n      },\n      \"http_keep_alive_timeout\": {\n       \"nullable\": true,\n       \"type\": \"integer\"\n      },\n      \"http_pretend_keepalive\": {\n       \"enum\": [\n        \"enabled\",\n        \"disabled\"\n       ],\n       \"type\": \"string\"\n      },\n      \"http_request_timeout\": {\n       \"nullable\": true,\n       \"type\": \"integer\"\n      },\n      \"http_reuse\": {\n       \"enum\": [\n        \"aggressive\",\n        \"always\",\n        \"never\",\n        \"safe\"\n       ],\n       \"type\": \"string\"\n      },\n      \"httpchk_params\": {\n       \"properties\": {\n        \"method\": {\n         \"enum\": [\n          \"HEAD\",\n          \"PUT\",\n          \"POST\",\n          \"GET\",\n          \"TRACE\",\n          \"PATCH\"\n         ],\n         \"type\": \"string\"\n        },\n        \"uri\": {\n         \"pattern\": \"^[^ ]*$\",\n         \"type\": \"string\"\n        },\n        \"version\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"log_tag\": {\n       \"pattern\": \"^[^\\\\s]+$\",\n       \"type\": \"string\"\n      },\n      \"mode\": {\n       \"enum\": [\n        \"http\",\n        \"tcp\"\n       ],\n       \"type\": \"string\"\n      },\n      \"mysql_check_params\": {\n       \"properties\": {\n        \"client_version\": {\n         \"enum\": [\n          \"pre-41\",\n          \"post-41\"\n         ],\n         \"type\": \"string\"\n        },\n        \"username\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"name\": {\n       \"pattern\": \"^[A-Za-z0-9-_.:]+$\",\n       \"type\": \"string\"\n      },\n      \"pgsql_check_params\": {\n       \"properties\": {\n        \"username\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"queue_timeout\": {\n       \"nullable\": true,\n       \"type\": \"integer\"\n      },\n      \"redispatch\": {\n       \"properties\": {\n        \"enabled\": {\n         \"enum\": [\n          \"enabled\",\n          \"disabled\"\n         ],\n         \"type\": \"string\"\n        },\n        \"interval\": {\n         \"type\": \"integer\"\n        }\n       },\n       \"required\": [\n        \"enabled\"\n       ],\n       \"type\": \"object\"\n      },\n      \"retries\": {\n       \"nullable\": true,\n       \"type\": \"integer\"\n      },\n      \"server_timeout\": {\n       \"nullable\": true,\n       \"type\": \"integer\"\n      },\n      \"smtpchk_params\": {\n       \"properties\": {\n        \"domain\": {\n         \"type\": \"string\"\n        },\n        \"hello\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"stats_options\": {\n       \"properties\": {\n        \"stats_enable\": {\n         \"type\": \"boolean\"\n        },\n        \"stats_hide_version\": {\n         \"type\": \"boolean\"\n        },\n        \"stats_maxconn\": {\n         \"minimum\": 1,\n         \"type\": \"integer\"\n        },\n        \"stats_refresh_delay\": {\n         \"nullable\": true,\n         \"type\": \"integer\"\n        },\n        \"stats_show_desc\": {\n         \"nullable\": true,\n         \"type\": \"string\"\n        },\n        \"stats_show_legends\": {\n         \"type\": \"boolean\"\n        },\n        \"stats_show_node_name\": {\n         \"nullable\": true,\n         \"pattern\": \"^[^\\\\s]+$\",\n         \"type\": \"string\"\n        },\n        \"stats_uri_prefix\": {\n         \"pattern\": \"^[^\\\\s]+$\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"stick_table\": {\n       \"properties\": {\n        \"expire\": {\n         \"nullable\": true,\n         \"type\": \"integer\"\n        },\n        \"keylen\": {\n         \"nullable\": true,\n         \"type\": \"integer\"\n        },\n        \"nopurge\": {\n         \"type\": \"boolean\"\n        },\n        \"peers\": {\n         \"pattern\": \"^[^\\\\s]+$\",\n         \"type\": \"string\"\n        },\n        \"size\": {\n         \"nullable\": true,\n         \"type\": \"integer\"\n        },\n        \"store\": {\n         \"pattern\": \"^[^\\\\s]+$\",\n         \"type\": \"string\"\n        },\n        \"type\": {\n         \"enum\": [\n          \"ip\",\n          \"ipv6\",\n          \"integer\",\n          \"string\",\n          \"binary\"\n         ],\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"tunnel_timeout\": {\n       \"nullable\": true,\n       \"type\": \"integer\"\n      }\n     },\n     \"title\": \"Backend\",\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Backend\",\n \"type\": \"object\"\n}",
+   "version": "core.haproxy.org/v1alpha1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "Backend",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "published": false,
+   "source_uri": "https://gitlab-charts.s3.amazonaws.com/gitlab-8.4.1.tgz"
+  },
+  "model": {
+   "category": {
+    "name": "App Definition and Development"
+   },
+   "displayName": "GitLab",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "isAnnotation": false,
+    "primaryColor": "#1988d9",
+    "secondaryColor": "#54aef0",
+    "shape": "rectangle",
+    "source_uri": "https://gitlab-charts.s3.amazonaws.com/gitlab-8.4.1.tgz",
+    "styleOverrides": "",
+    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 380 380\" fill=\"none\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M335.007 159.975L334.586 158.901L293.892 52.6984C293.065 50.6169 291.598 48.8511 289.705 47.6544C287.81 46.4781 285.6 45.9116 283.372 46.0313C281.145 46.151 279.008 46.9512 277.251 48.3239C275.512 49.7359 274.251 51.6493 273.639 53.8037L246.162 137.869H134.899L107.422 53.8037C106.826 51.6376 105.563 49.7146 103.811 48.3083C102.053 46.9356 99.916 46.1354 97.6888 46.0157C95.4617 45.896 93.2514 46.4626 91.3565 47.6389C89.467 48.8404 88.0023 50.6046 87.1688 52.6828L46.397 158.839L45.9922 159.913C40.1341 175.219 39.411 192.015 43.932 207.768C48.4529 223.522 57.9728 237.378 71.0562 247.248L71.1963 247.357L71.5699 247.622L133.561 294.045L164.229 317.256L182.91 331.36C185.095 333.02 187.764 333.918 190.507 333.918C193.251 333.918 195.919 333.02 198.104 331.36L216.786 317.256L247.454 294.045L309.818 247.342L309.974 247.217C323.028 237.345 332.526 223.503 337.04 207.771C341.554 192.039 340.84 175.267 335.007 159.975Z\" fill=\"#E24329\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M335.007 159.976L334.587 158.902C314.758 162.972 296.073 171.371 279.866 183.499L190.492 251.078C220.927 274.103 247.423 294.107 247.423 294.107L309.788 247.404L309.943 247.28C323.016 237.408 332.528 223.557 337.049 207.812C341.569 192.067 340.853 175.279 335.007 159.976Z\" fill=\"#FC6D26\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M133.561 294.107L164.229 317.319L182.91 331.423C185.095 333.082 187.764 333.98 190.507 333.98C193.251 333.98 195.919 333.082 198.104 331.423L216.786 317.319L247.454 294.107C247.454 294.107 220.927 274.041 190.492 251.078C160.057 274.041 133.561 294.107 133.561 294.107Z\" fill=\"#FCA326\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M101.102 183.499C84.9083 171.346 66.2271 162.925 46.397 158.839L45.9922 159.914C40.1341 175.22 39.411 192.016 43.932 207.769C48.4529 223.522 57.9728 237.378 71.0562 247.248L71.1963 247.357L71.5699 247.622L133.561 294.045C133.561 294.045 160.026 274.04 190.492 251.016L101.102 183.499Z\" fill=\"#FC6D26\"\u003e\u003c/path\u003e\n\u003c/svg\u003e\n",
+    "svgComplete": "",
+    "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 380 380\" fill=\"none\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M334.548 160L334.128 158.926L293.425 52.6998C292.597 50.6179 291.131 48.8517 289.237 47.6548C287.341 46.4782 285.131 45.9116 282.903 46.0313C280.675 46.151 278.538 46.9514 276.78 48.3244C275.041 49.7367 273.78 51.6506 273.167 53.8054L245.684 137.889H134.398L106.915 53.8054C106.319 51.6388 105.055 49.7154 103.303 48.3088C101.544 46.9358 99.4072 46.1355 97.1795 46.0157C94.9519 45.896 92.7412 46.4627 90.8458 47.6392C88.9559 48.841 87.4909 50.6056 86.6572 52.6842L45.8766 158.863L45.4718 159.938C39.6124 175.247 38.8892 192.047 43.4111 207.803C47.933 223.56 57.4549 237.419 70.5412 247.291L70.6813 247.4L71.055 247.665L133.059 294.098L163.734 317.314L182.419 331.422C184.605 333.081 187.274 333.98 190.018 333.98C192.762 333.98 195.431 333.081 197.617 331.422L216.302 317.314L246.977 294.098L309.355 247.385L309.51 247.26C322.567 237.386 332.067 223.541 336.582 207.806C341.097 192.071 340.383 175.295 334.548 160Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003c/svg\u003e\n"
+   },
+   "model": {
+    "version": "8.4.1"
+   },
+   "name": "gitlab",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "enabled",
+   "subCategory": "Security \u0026 Compliance",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
+   "primaryColor": "#1988d9",
+   "secondaryColor": "#54aef0",
+   "shape": "rectangle",
+   "svgColor": "\u003csvg id=\"bdb56329-4717-4410-aa13-4505ecaa4e46\" xmlns=\"http://www.w3.org/2000/svg\" width=\"18\" height=\"18\" viewBox=\"0 0 18 18\"\u003e\u003cdefs\u003e\u003clinearGradient id=\"ba2610c3-a45a-4e7e-a0c0-285cfd7e005d\" x1=\"13.25\" y1=\"13.02\" x2=\"8.62\" y2=\"4.25\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop offset=\"0\" stop-color=\"#1988d9\" /\u003e\u003cstop offset=\"0.9\" stop-color=\"#54aef0\" /\u003e\u003c/linearGradient\u003e\u003clinearGradient id=\"bd8f618b-4f2f-4cb7-aff0-2fd2d211326d\" x1=\"11.26\" y1=\"10.47\" x2=\"14.46\" y2=\"15.99\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop offset=\"0.1\" stop-color=\"#54aef0\" /\u003e\u003cstop offset=\"0.29\" stop-color=\"#4fabee\" /\u003e\u003cstop offset=\"0.51\" stop-color=\"#41a2e9\" /\u003e\u003cstop offset=\"0.74\" stop-color=\"#2a93e0\" /\u003e\u003cstop offset=\"0.88\" stop-color=\"#1988d9\" /\u003e\u003c/linearGradient\u003e\u003c/defs\u003e\u003ctitle\u003eIcon-identity-221\u003c/title\u003e\u003cpolygon points=\"1.01 10.19 8.93 15.33 16.99 10.17 18 11.35 8.93 17.19 0 11.35 1.01 10.19\" fill=\"#50e6ff\" /\u003e\u003cpolygon points=\"1.61 9.53 8.93 0.81 16.4 9.54 8.93 14.26 1.61 9.53\" fill=\"#fff\" /\u003e\u003cpolygon points=\"8.93 0.81 8.93 14.26 1.61 9.53 8.93 0.81\" fill=\"#50e6ff\" /\u003e\u003cpolygon points=\"8.93 0.81 8.93 14.26 16.4 9.54 8.93 0.81\" fill=\"url(#ba2610c3-a45a-4e7e-a0c0-285cfd7e005d)\" /\u003e\u003cpolygon points=\"8.93 7.76 16.4 9.54 8.93 14.26 8.93 7.76\" fill=\"#53b1e0\" /\u003e\u003cpolygon points=\"8.93 14.26 1.61 9.53 8.93 7.76 8.93 14.26\" fill=\"#9cebff\" /\u003e\u003cpolygon points=\"8.93 17.19 18 11.35 16.99 10.17 8.93 15.33 8.93 17.19\" fill=\"url(#bd8f618b-4f2f-4cb7-aff0-2fd2d211326d)\" /\u003e\u003c/svg\u003e",
+   "svgWhite": "\u003csvg id=\"bdb56329-4717-4410-aa13-4505ecaa4e46\" xmlns=\"http://www.w3.org/2000/svg\" width=\"18\" height=\"18\" viewBox=\"0 0 18 18\"\u003e \u003cdefs\u003e \u003clinearGradient id=\"ba2610c3-a45a-4e7e-a0c0-285cfd7e005d\" x1=\"13.25\" y1=\"13.02\" x2=\"8.62\" y2=\"4.25\" gradientUnits=\"userSpaceOnUse\"\u003e \u003cstop offset=\"0\" stop-color=\"#FFF\" /\u003e \u003cstop offset=\"0.9\" stop-color=\"#FFF\" /\u003e \u003c/linearGradient\u003e \u003clinearGradient id=\"bd8f618b-4f2f-4cb7-aff0-2fd2d211326d\" x1=\"11.26\" y1=\"10.47\" x2=\"14.46\" y2=\"15.99\" gradientUnits=\"userSpaceOnUse\"\u003e \u003cstop offset=\"0.1\" stop-color=\"#FFF\" /\u003e \u003cstop offset=\"0.29\" stop-color=\"#FFF\" /\u003e \u003cstop offset=\"0.51\" stop-color=\"#FFF\" /\u003e \u003cstop offset=\"0.74\" stop-color=\"#FFF\" /\u003e \u003cstop offset=\"0.88\" stop-color=\"#FFF\" /\u003e \u003c/linearGradient\u003e \u003c/defs\u003e \u003ctitle\u003eIcon-identity-221\u003c/title\u003e \u003cpolygon points=\"1.01 10.19 8.93 15.33 16.99 10.17 18 11.35 8.93 17.19 0 11.35 1.01 10.19\" fill=\"#FFF\" /\u003e \u003cpolygon points=\"1.61 9.53 8.93 0.81 16.4 9.54 8.93 14.26 1.61 9.53\" fill=\"#fff\" /\u003e \u003cpolygon points=\"8.93 0.81 8.93 14.26 1.61 9.53 8.93 0.81\" fill=\"#FFF\" /\u003e \u003cpolygon points=\"8.93 0.81 8.93 14.26 16.4 9.54 8.93 0.81\" fill=\"url(#ba2610c3-a45a-4e7e-a0c0-285cfd7e005d)\" /\u003e \u003cpolygon points=\"8.93 7.76 16.4 9.54 8.93 14.26 8.93 7.76\" fill=\"#FFF\" /\u003e \u003cpolygon points=\"8.93 14.26 1.61 9.53 8.93 7.76 8.93 14.26\" fill=\"#FFF\" /\u003e \u003cpolygon points=\"8.93 17.19 18 11.35 16.99 10.17 8.93 15.33 8.93 17.19\" fill=\"url(#bd8f618b-4f2f-4cb7-aff0-2fd2d211326d)\" /\u003e \u003c/svg\u003e"
+  },
+  "version": "v1.0.0"
+ }
