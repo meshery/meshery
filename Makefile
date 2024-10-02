@@ -122,7 +122,15 @@ build-server: dep-check
 
 ## Running the meshery server using binary.
 server-binary:
-	cd server/cmd; BUILD="$(GIT_VERSION)" PROVIDER_BASE_URLS=$(MESHERY_CLOUD_STAGING) ../../main; cd ../../
+	cd server/cmd; \
+	BUILD="$(GIT_VERSION)" \
+	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
+	PORT=9081 \
+	DEBUG=true \
+	ADAPTER_URLS=$(ADAPTER_URLS) \
+	APP_PATH=$(APPLICATIONCONFIGPATH) \
+	KEYS_PATH=$(KEYS_PATH) \
+	../../main; cd ../../
 
 ## Build and run Meshery Server on your local machine
 ## and point to Remote Provider in staging environment
