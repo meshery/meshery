@@ -171,7 +171,7 @@ const User = (props) => {
 
     return (
       <Link href={url}>
-        <Button variant="contained" onClick={handleLogout} color="primary">
+        <Button variant="contained" color="primary">
           Sign In
         </Button>
       </Link>
