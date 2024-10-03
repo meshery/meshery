@@ -1,4 +1,4 @@
-name: Datadog agent on k8's
+name: "Test: Datadog agent on k8s"
 services:
   NodeGroupInventoryWallet:
     name: NodeGroupInventoryWallet

@@ -1,4 +1,4 @@
-name: 'Design With Validation Errors '
+name: 'Test: Design With Validation Errors'
 services:
   Section:
     name: Section
