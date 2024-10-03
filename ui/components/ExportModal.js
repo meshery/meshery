@@ -208,7 +208,7 @@ const ExportModal = (props) => {
               <Button
                 data-testid="export-original"
                 onClick={(e) =>
-                  handleDesignDownload(e, downloadModal.content, null, 'exportKubernetes Manifest')
+                  handleDesignDownload(e, downloadModal.content, null, 'export=Kubernetes Manifest')
                 }
               >
                 <div style={exportWrpStyles}>
