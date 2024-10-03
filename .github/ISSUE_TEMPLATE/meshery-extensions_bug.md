@@ -20,6 +20,7 @@ assignees: ''
 
 - Host OS: Mac Linux Windows
 - Meshery Server Version: stable-v
+- Meshery Extension Version: stable-v
 - Meshery Client Version: stable-v
 - Platform: Docker Kubernetes
 
