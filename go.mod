@@ -339,4 +339,4 @@ require (
 	sigs.k8s.io/yaml v1.4.0 // indirect
 )
 
-replace github.com/layer5io/meshkit => github.com/MUzairS15/meshkit v0.7.24
+replace github.com/layer5io/meshkit => github.com/MUzairS15/meshkit v0.7.25
