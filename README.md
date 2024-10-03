@@ -32,7 +32,7 @@ alt="Meshery Logo" width="70%" /></picture></a><br /><br /></p>
   -->
 </p>
 
-<h5><p align="center"><i>If you’re using Meshery or if you like the project, please <a href="https://github.com/meshery/meshery/stargazers">★</a> this repository to show your support! 🤩</i></p></h5>
+<h5><p align="center"><i>If you like Meshery, please <a href="https://github.com/meshery/meshery/stargazers">★</a> this repository to show your support! 🤩</i></p></h5>
 <p align="center" >
 MESHERY IS A CLOUD NATIVE COMPUTING FOUNDATION PROJECT
 </p>
@@ -304,7 +304,7 @@ Our projects are community-built and welcome collaboration. 👍 Be sure to see 
 
 <p>MeshMates are experienced Layer5 community members, who will help you learn your way around, discover live projects, and expand your community network. Connect with a Meshmate today!</p>
 
-Find out more on the <a href="https://layer5.io/community#meshmate">Layer5 community</a>. <br />
+Find out more on the <a href="https://layer5.io/community/meshmates">Layer5 community</a>. <br />
 
 </p>
 <br /><br />

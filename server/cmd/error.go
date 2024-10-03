@@ -22,10 +22,6 @@ const (
 	ErrCreatingOPAInstanceCode                    = "meshery-server-1323"
 )
 
-var (
-	ErrCreatingOPAInstance = errors.New(ErrCreatingOPAInstanceCode, errors.Alert, []string{"Error creating OPA Instance."}, []string{"Unable to create OPA instance, policies will not be evaluated."}, []string{}, []string{})
-)
-
 func ErrInitializingRegistryManager(err error) error {
 	return errors.New(ErrInitializingRegistryManagerCode, errors.Fatal, []string{"could not initialize registry manager"}, []string{err.Error()}, []string{"could not migrate tables into the database"}, []string{"make sure the database instance passed is not nil"})
 }
@@ -76,4 +72,8 @@ func ErrClosingDatabaseInstance(err error) error {
 
 func ErrInitializingKeysRegistration(err error) error {
 	return errors.New(ErrInitializingKeysRegistrationCode, errors.Fatal, []string{"could not initialize keys registry manager"}, []string{err.Error()}, []string{"could not migrate tables into the database"}, []string{"make sure the database instance passed is not nil"})
+}
+
+func ErrCreatingOPAInstance(err error) error {
+	return errors.New(ErrCreatingOPAInstanceCode, errors.Alert, []string{"Error creating OPA Instance."}, []string{err.Error()}, []string{"Unable to create OPA instance, policies will not be evaluated."}, []string{"Ensure relationships are registered"})
 }

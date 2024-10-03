@@ -1,21 +1,11 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "models.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "name": "kubevault-catalog",
-  "displayName": "Kubevault Catalog",
-  "description": "",
-  "status": "enabled",
-  "hostID": "00000000-0000-0000-0000-000000000000",
-  "registrant": {
-    "hostname": "artifacthub"
-  },
   "category": {
-    "name": "Security \u0026 Compliance",
-    "metadata": null
+    "name": "Security \u0026 Compliance"
   },
-  "subCategory": "Uncategorized",
+  "displayName": "Kubevault Catalog",
+  "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://charts.appscode.com/stable/kubevault-catalog/kubevault-catalog-v2023.10.26-rc.0.tgz", 
     "isAnnotation": false,
     "published": true,
     "subCategory": "Uncategorized",
@@ -26,6 +16,25 @@
   "model": {
     "version": "2023.3.3"
   },
+  "name": "kubevault-catalog",
+  "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+  },
+  "connection_id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "models.meshery.io/v1beta1",
+  "status": "enabled",
+  "subCategory": "Uncategorized",
+  "version": "v1.0.0",
   "components": null,
   "relationships": null
 }

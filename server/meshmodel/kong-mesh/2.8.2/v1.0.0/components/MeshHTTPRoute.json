@@ -1,0 +1,192 @@
+{
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "MeshHTTPRoute",
+   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Spec is the specification of the Kuma MeshHTTPRoute resource.\",\n   \"properties\": {\n    \"targetRef\": {\n     \"description\": \"TargetRef is a reference to the resource the policy takes an effect on.\\nThe resource could be either a real store object or virtual resource\\ndefined inplace.\",\n     \"properties\": {\n      \"kind\": {\n       \"description\": \"Kind of the referenced resource\",\n       \"enum\": [\n        \"Mesh\",\n        \"MeshSubset\",\n        \"MeshGateway\",\n        \"MeshService\",\n        \"MeshExternalService\",\n        \"MeshServiceSubset\",\n        \"MeshHTTPRoute\"\n       ],\n       \"type\": \"string\"\n      },\n      \"labels\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"Labels are used to select group of MeshServices that match labels. Either Labels or\\nName and Namespace can be used.\",\n       \"type\": \"object\"\n      },\n      \"mesh\": {\n       \"description\": \"Mesh is reserved for future use to identify cross mesh resources.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referenced resource. Can only be used with kinds: `MeshService`,\\n`MeshServiceSubset` and `MeshGatewayRoute`\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace specifies the namespace of target resource. If empty only resources in policy namespace\\nwill be targeted.\",\n       \"type\": \"string\"\n      },\n      \"proxyTypes\": {\n       \"description\": \"ProxyTypes specifies the data plane types that are subject to the policy. When not specified,\\nall data plane types are targeted by the policy.\",\n       \"items\": {\n        \"enum\": [\n         \"Sidecar\",\n         \"Gateway\"\n        ],\n        \"type\": \"string\"\n       },\n       \"minItems\": 1,\n       \"type\": \"array\"\n      },\n      \"sectionName\": {\n       \"description\": \"SectionName is used to target specific section of resource.\\nFor example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.\",\n       \"type\": \"string\"\n      },\n      \"tags\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"Tags used to select a subset of proxies by tags. Can only be used with kinds\\n`MeshSubset` and `MeshServiceSubset`\",\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"to\": {\n     \"description\": \"To matches destination services of requests and holds configuration.\",\n     \"items\": {\n      \"properties\": {\n       \"hostnames\": {\n        \"description\": \"Hostnames is only valid when targeting MeshGateway and limits the\\neffects of the rules to requests to this hostname.\\nGiven hostnames must intersect with the hostname of the listeners the\\nroute attaches to.\",\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       },\n       \"rules\": {\n        \"description\": \"Rules contains the routing rules applies to a combination of top-level\\ntargetRef and the targetRef in this entry.\",\n        \"items\": {\n         \"properties\": {\n          \"default\": {\n           \"description\": \"Default holds routing rules that can be merged with rules from other\\npolicies.\",\n           \"properties\": {\n            \"backendRefs\": {\n             \"items\": {\n              \"description\": \"BackendRef defines where to forward traffic.\",\n              \"properties\": {\n               \"kind\": {\n                \"description\": \"Kind of the referenced resource\",\n                \"enum\": [\n                 \"Mesh\",\n                 \"MeshSubset\",\n                 \"MeshGateway\",\n                 \"MeshService\",\n                 \"MeshExternalService\",\n                 \"MeshServiceSubset\",\n                 \"MeshHTTPRoute\"\n                ],\n                \"type\": \"string\"\n               },\n               \"labels\": {\n                \"additionalProperties\": {\n                 \"type\": \"string\"\n                },\n                \"description\": \"Labels are used to select group of MeshServices that match labels. Either Labels or\\nName and Namespace can be used.\",\n                \"type\": \"object\"\n               },\n               \"mesh\": {\n                \"description\": \"Mesh is reserved for future use to identify cross mesh resources.\",\n                \"type\": \"string\"\n               },\n               \"name\": {\n                \"description\": \"Name of the referenced resource. Can only be used with kinds: `MeshService`,\\n`MeshServiceSubset` and `MeshGatewayRoute`\",\n                \"type\": \"string\"\n               },\n               \"namespace\": {\n                \"description\": \"Namespace specifies the namespace of target resource. If empty only resources in policy namespace\\nwill be targeted.\",\n                \"type\": \"string\"\n               },\n               \"port\": {\n                \"description\": \"Port is only supported when this ref refers to a real MeshService object\",\n                \"format\": \"int32\",\n                \"type\": \"integer\"\n               },\n               \"proxyTypes\": {\n                \"description\": \"ProxyTypes specifies the data plane types that are subject to the policy. When not specified,\\nall data plane types are targeted by the policy.\",\n                \"items\": {\n                 \"enum\": [\n                  \"Sidecar\",\n                  \"Gateway\"\n                 ],\n                 \"type\": \"string\"\n                },\n                \"minItems\": 1,\n                \"type\": \"array\"\n               },\n               \"sectionName\": {\n                \"description\": \"SectionName is used to target specific section of resource.\\nFor example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.\",\n                \"type\": \"string\"\n               },\n               \"tags\": {\n                \"additionalProperties\": {\n                 \"type\": \"string\"\n                },\n                \"description\": \"Tags used to select a subset of proxies by tags. Can only be used with kinds\\n`MeshSubset` and `MeshServiceSubset`\",\n                \"type\": \"object\"\n               },\n               \"weight\": {\n                \"default\": 1,\n                \"minimum\": 0,\n                \"type\": \"integer\"\n               }\n              },\n              \"type\": \"object\"\n             },\n             \"type\": \"array\"\n            },\n            \"filters\": {\n             \"items\": {\n              \"properties\": {\n               \"requestHeaderModifier\": {\n                \"description\": \"Only one action is supported per header name.\\nConfiguration to set or add multiple values for a header must use RFC 7230\\nheader value formatting, separating each value with a comma.\",\n                \"properties\": {\n                 \"add\": {\n                  \"items\": {\n                   \"properties\": {\n                    \"name\": {\n                     \"maxLength\": 256,\n                     \"minLength\": 1,\n                     \"pattern\": \"^[a-z0-9!#$%\\u0026'*+\\\\-.^_\\\\x60|~]+$\",\n                     \"type\": \"string\"\n                    },\n                    \"value\": {\n                     \"type\": \"string\"\n                    }\n                   },\n                   \"required\": [\n                    \"name\",\n                    \"value\"\n                   ],\n                   \"type\": \"object\"\n                  },\n                  \"maxItems\": 16,\n                  \"type\": \"array\",\n                  \"x-kubernetes-list-map-keys\": [\n                   \"name\"\n                  ],\n                  \"x-kubernetes-list-type\": \"map\"\n                 },\n                 \"remove\": {\n                  \"items\": {\n                   \"type\": \"string\"\n                  },\n                  \"maxItems\": 16,\n                  \"type\": \"array\"\n                 },\n                 \"set\": {\n                  \"items\": {\n                   \"properties\": {\n                    \"name\": {\n                     \"maxLength\": 256,\n                     \"minLength\": 1,\n                     \"pattern\": \"^[a-z0-9!#$%\\u0026'*+\\\\-.^_\\\\x60|~]+$\",\n                     \"type\": \"string\"\n                    },\n                    \"value\": {\n                     \"type\": \"string\"\n                    }\n                   },\n                   \"required\": [\n                    \"name\",\n                    \"value\"\n                   ],\n                   \"type\": \"object\"\n                  },\n                  \"maxItems\": 16,\n                  \"type\": \"array\",\n                  \"x-kubernetes-list-map-keys\": [\n                   \"name\"\n                  ],\n                  \"x-kubernetes-list-type\": \"map\"\n                 }\n                },\n                \"type\": \"object\"\n               },\n               \"requestMirror\": {\n                \"properties\": {\n                 \"backendRef\": {\n                  \"description\": \"TODO forbid weight\",\n                  \"properties\": {\n                   \"kind\": {\n                    \"description\": \"Kind of the referenced resource\",\n                    \"enum\": [\n                     \"Mesh\",\n                     \"MeshSubset\",\n                     \"MeshGateway\",\n                     \"MeshService\",\n                     \"MeshExternalService\",\n                     \"MeshServiceSubset\",\n                     \"MeshHTTPRoute\"\n                    ],\n                    \"type\": \"string\"\n                   },\n                   \"labels\": {\n                    \"additionalProperties\": {\n                     \"type\": \"string\"\n                    },\n                    \"description\": \"Labels are used to select group of MeshServices that match labels. Either Labels or\\nName and Namespace can be used.\",\n                    \"type\": \"object\"\n                   },\n                   \"mesh\": {\n                    \"description\": \"Mesh is reserved for future use to identify cross mesh resources.\",\n                    \"type\": \"string\"\n                   },\n                   \"name\": {\n                    \"description\": \"Name of the referenced resource. Can only be used with kinds: `MeshService`,\\n`MeshServiceSubset` and `MeshGatewayRoute`\",\n                    \"type\": \"string\"\n                   },\n                   \"namespace\": {\n                    \"description\": \"Namespace specifies the namespace of target resource. If empty only resources in policy namespace\\nwill be targeted.\",\n                    \"type\": \"string\"\n                   },\n                   \"port\": {\n                    \"description\": \"Port is only supported when this ref refers to a real MeshService object\",\n                    \"format\": \"int32\",\n                    \"type\": \"integer\"\n                   },\n                   \"proxyTypes\": {\n                    \"description\": \"ProxyTypes specifies the data plane types that are subject to the policy. When not specified,\\nall data plane types are targeted by the policy.\",\n                    \"items\": {\n                     \"enum\": [\n                      \"Sidecar\",\n                      \"Gateway\"\n                     ],\n                     \"type\": \"string\"\n                    },\n                    \"minItems\": 1,\n                    \"type\": \"array\"\n                   },\n                   \"sectionName\": {\n                    \"description\": \"SectionName is used to target specific section of resource.\\nFor example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.\",\n                    \"type\": \"string\"\n                   },\n                   \"tags\": {\n                    \"additionalProperties\": {\n                     \"type\": \"string\"\n                    },\n                    \"description\": \"Tags used to select a subset of proxies by tags. Can only be used with kinds\\n`MeshSubset` and `MeshServiceSubset`\",\n                    \"type\": \"object\"\n                   },\n                   \"weight\": {\n                    \"default\": 1,\n                    \"minimum\": 0,\n                    \"type\": \"integer\"\n                   }\n                  },\n                  \"type\": \"object\"\n                 },\n                 \"percentage\": {\n                  \"anyOf\": [\n                   {\n                    \"type\": \"integer\"\n                   },\n                   {\n                    \"type\": \"string\"\n                   }\n                  ],\n                  \"description\": \"Percentage of requests to mirror. If not specified, all requests\\nto the target cluster will be mirrored.\",\n                  \"x-kubernetes-int-or-string\": true\n                 }\n                },\n                \"required\": [\n                 \"backendRef\"\n                ],\n                \"type\": \"object\"\n               },\n               \"requestRedirect\": {\n                \"properties\": {\n                 \"hostname\": {\n                  \"description\": \"PreciseHostname is the fully qualified domain name of a network host. This\\nmatches the RFC 1123 definition of a hostname with 1 notable exception that\\nnumeric IP addresses are not allowed.\\n\\n\\nNote that as per RFC1035 and RFC1123, a *label* must consist of lower case\\nalphanumeric characters or '-', and must start and end with an alphanumeric\\ncharacter. No other punctuation is allowed.\",\n                  \"maxLength\": 253,\n                  \"minLength\": 1,\n                  \"pattern\": \"^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$\",\n                  \"type\": \"string\"\n                 },\n                 \"path\": {\n                  \"description\": \"Path defines parameters used to modify the path of the incoming request.\\nThe modified path is then used to construct the location header.\\nWhen empty, the request path is used as-is.\",\n                  \"properties\": {\n                   \"replaceFullPath\": {\n                    \"type\": \"string\"\n                   },\n                   \"replacePrefixMatch\": {\n                    \"type\": \"string\"\n                   },\n                   \"type\": {\n                    \"enum\": [\n                     \"ReplaceFullPath\",\n                     \"ReplacePrefixMatch\"\n                    ],\n                    \"type\": \"string\"\n                   }\n                  },\n                  \"required\": [\n                   \"type\"\n                  ],\n                  \"type\": \"object\"\n                 },\n                 \"port\": {\n                  \"description\": \"Port is the port to be used in the value of the `Location`\\nheader in the response.\\nWhen empty, port (if specified) of the request is used.\",\n                  \"format\": \"int32\",\n                  \"maximum\": 65535,\n                  \"minimum\": 1,\n                  \"type\": \"integer\"\n                 },\n                 \"scheme\": {\n                  \"enum\": [\n                   \"http\",\n                   \"https\"\n                  ],\n                  \"type\": \"string\"\n                 },\n                 \"statusCode\": {\n                  \"default\": 302,\n                  \"description\": \"StatusCode is the HTTP status code to be used in response.\",\n                  \"enum\": [\n                   301,\n                   302,\n                   303,\n                   307,\n                   308\n                  ],\n                  \"type\": \"integer\"\n                 }\n                },\n                \"type\": \"object\"\n               },\n               \"responseHeaderModifier\": {\n                \"description\": \"Only one action is supported per header name.\\nConfiguration to set or add multiple values for a header must use RFC 7230\\nheader value formatting, separating each value with a comma.\",\n                \"properties\": {\n                 \"add\": {\n                  \"items\": {\n                   \"properties\": {\n                    \"name\": {\n                     \"maxLength\": 256,\n                     \"minLength\": 1,\n                     \"pattern\": \"^[a-z0-9!#$%\\u0026'*+\\\\-.^_\\\\x60|~]+$\",\n                     \"type\": \"string\"\n                    },\n                    \"value\": {\n                     \"type\": \"string\"\n                    }\n                   },\n                   \"required\": [\n                    \"name\",\n                    \"value\"\n                   ],\n                   \"type\": \"object\"\n                  },\n                  \"maxItems\": 16,\n                  \"type\": \"array\",\n                  \"x-kubernetes-list-map-keys\": [\n                   \"name\"\n                  ],\n                  \"x-kubernetes-list-type\": \"map\"\n                 },\n                 \"remove\": {\n                  \"items\": {\n                   \"type\": \"string\"\n                  },\n                  \"maxItems\": 16,\n                  \"type\": \"array\"\n                 },\n                 \"set\": {\n                  \"items\": {\n                   \"properties\": {\n                    \"name\": {\n                     \"maxLength\": 256,\n                     \"minLength\": 1,\n                     \"pattern\": \"^[a-z0-9!#$%\\u0026'*+\\\\-.^_\\\\x60|~]+$\",\n                     \"type\": \"string\"\n                    },\n                    \"value\": {\n                     \"type\": \"string\"\n                    }\n                   },\n                   \"required\": [\n                    \"name\",\n                    \"value\"\n                   ],\n                   \"type\": \"object\"\n                  },\n                  \"maxItems\": 16,\n                  \"type\": \"array\",\n                  \"x-kubernetes-list-map-keys\": [\n                   \"name\"\n                  ],\n                  \"x-kubernetes-list-type\": \"map\"\n                 }\n                },\n                \"type\": \"object\"\n               },\n               \"type\": {\n                \"enum\": [\n                 \"RequestHeaderModifier\",\n                 \"ResponseHeaderModifier\",\n                 \"RequestRedirect\",\n                 \"URLRewrite\",\n                 \"RequestMirror\"\n                ],\n                \"type\": \"string\"\n               },\n               \"urlRewrite\": {\n                \"properties\": {\n                 \"hostToBackendHostname\": {\n                  \"description\": \"HostToBackendHostname rewrites the hostname to the hostname of the\\nupstream host. This option is only available when targeting MeshGateways.\",\n                  \"type\": \"boolean\"\n                 },\n                 \"hostname\": {\n                  \"description\": \"Hostname is the value to be used to replace the host header value during forwarding.\",\n                  \"maxLength\": 253,\n                  \"minLength\": 1,\n                  \"pattern\": \"^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$\",\n                  \"type\": \"string\"\n                 },\n                 \"path\": {\n                  \"description\": \"Path defines a path rewrite.\",\n                  \"properties\": {\n                   \"replaceFullPath\": {\n                    \"type\": \"string\"\n                   },\n                   \"replacePrefixMatch\": {\n                    \"type\": \"string\"\n                   },\n                   \"type\": {\n                    \"enum\": [\n                     \"ReplaceFullPath\",\n                     \"ReplacePrefixMatch\"\n                    ],\n                    \"type\": \"string\"\n                   }\n                  },\n                  \"required\": [\n                   \"type\"\n                  ],\n                  \"type\": \"object\"\n                 }\n                },\n                \"type\": \"object\"\n               }\n              },\n              \"required\": [\n               \"type\"\n              ],\n              \"type\": \"object\"\n             },\n             \"type\": \"array\"\n            }\n           },\n           \"type\": \"object\"\n          },\n          \"matches\": {\n           \"description\": \"Matches describes how to match HTTP requests this rule should be applied\\nto.\",\n           \"items\": {\n            \"properties\": {\n             \"headers\": {\n              \"items\": {\n               \"description\": \"HeaderMatch describes how to select an HTTP route by matching HTTP request\\nheaders.\",\n               \"properties\": {\n                \"name\": {\n                 \"description\": \"Name is the name of the HTTP Header to be matched. Name MUST be lower case\\nas they will be handled with case insensitivity (See https://tools.ietf.org/html/rfc7230#section-3.2).\",\n                 \"maxLength\": 256,\n                 \"minLength\": 1,\n                 \"pattern\": \"^[a-z0-9!#$%\\u0026'*+\\\\-.^_\\\\x60|~]+$\",\n                 \"type\": \"string\"\n                },\n                \"type\": {\n                 \"default\": \"Exact\",\n                 \"description\": \"Type specifies how to match against the value of the header.\",\n                 \"enum\": [\n                  \"Exact\",\n                  \"Present\",\n                  \"RegularExpression\",\n                  \"Absent\",\n                  \"Prefix\"\n                 ],\n                 \"type\": \"string\"\n                },\n                \"value\": {\n                 \"description\": \"Value is the value of HTTP Header to be matched.\",\n                 \"type\": \"string\"\n                }\n               },\n               \"required\": [\n                \"name\"\n               ],\n               \"type\": \"object\"\n              },\n              \"type\": \"array\"\n             },\n             \"method\": {\n              \"enum\": [\n               \"CONNECT\",\n               \"DELETE\",\n               \"GET\",\n               \"HEAD\",\n               \"OPTIONS\",\n               \"PATCH\",\n               \"POST\",\n               \"PUT\",\n               \"TRACE\"\n              ],\n              \"type\": \"string\"\n             },\n             \"path\": {\n              \"properties\": {\n               \"type\": {\n                \"enum\": [\n                 \"Exact\",\n                 \"PathPrefix\",\n                 \"RegularExpression\"\n                ],\n                \"type\": \"string\"\n               },\n               \"value\": {\n                \"description\": \"Exact or prefix matches must be an absolute path. A prefix matches only\\nif separated by a slash or the entire path.\",\n                \"minLength\": 1,\n                \"type\": \"string\"\n               }\n              },\n              \"required\": [\n               \"type\",\n               \"value\"\n              ],\n              \"type\": \"object\"\n             },\n             \"queryParams\": {\n              \"description\": \"QueryParams matches based on HTTP URL query parameters. Multiple matches\\nare ANDed together such that all listed matches must succeed.\",\n              \"items\": {\n               \"properties\": {\n                \"name\": {\n                 \"minLength\": 1,\n                 \"type\": \"string\"\n                },\n                \"type\": {\n                 \"enum\": [\n                  \"Exact\",\n                  \"RegularExpression\"\n                 ],\n                 \"type\": \"string\"\n                },\n                \"value\": {\n                 \"type\": \"string\"\n                }\n               },\n               \"required\": [\n                \"name\",\n                \"type\",\n                \"value\"\n               ],\n               \"type\": \"object\"\n              },\n              \"type\": \"array\"\n             }\n            },\n            \"type\": \"object\"\n           },\n           \"minItems\": 1,\n           \"type\": \"array\"\n          }\n         },\n         \"required\": [\n          \"default\",\n          \"matches\"\n         ],\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       },\n       \"targetRef\": {\n        \"description\": \"TargetRef is a reference to the resource that represents a group of\\nrequest destinations.\",\n        \"properties\": {\n         \"kind\": {\n          \"description\": \"Kind of the referenced resource\",\n          \"enum\": [\n           \"Mesh\",\n           \"MeshSubset\",\n           \"MeshGateway\",\n           \"MeshService\",\n           \"MeshExternalService\",\n           \"MeshServiceSubset\",\n           \"MeshHTTPRoute\"\n          ],\n          \"type\": \"string\"\n         },\n         \"labels\": {\n          \"additionalProperties\": {\n           \"type\": \"string\"\n          },\n          \"description\": \"Labels are used to select group of MeshServices that match labels. Either Labels or\\nName and Namespace can be used.\",\n          \"type\": \"object\"\n         },\n         \"mesh\": {\n          \"description\": \"Mesh is reserved for future use to identify cross mesh resources.\",\n          \"type\": \"string\"\n         },\n         \"name\": {\n          \"description\": \"Name of the referenced resource. Can only be used with kinds: `MeshService`,\\n`MeshServiceSubset` and `MeshGatewayRoute`\",\n          \"type\": \"string\"\n         },\n         \"namespace\": {\n          \"description\": \"Namespace specifies the namespace of target resource. If empty only resources in policy namespace\\nwill be targeted.\",\n          \"type\": \"string\"\n         },\n         \"proxyTypes\": {\n          \"description\": \"ProxyTypes specifies the data plane types that are subject to the policy. When not specified,\\nall data plane types are targeted by the policy.\",\n          \"items\": {\n           \"enum\": [\n            \"Sidecar\",\n            \"Gateway\"\n           ],\n           \"type\": \"string\"\n          },\n          \"minItems\": 1,\n          \"type\": \"array\"\n         },\n         \"sectionName\": {\n          \"description\": \"SectionName is used to target specific section of resource.\\nFor example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.\",\n          \"type\": \"string\"\n         },\n         \"tags\": {\n          \"additionalProperties\": {\n           \"type\": \"string\"\n          },\n          \"description\": \"Tags used to select a subset of proxies by tags. Can only be used with kinds\\n`MeshSubset` and `MeshServiceSubset`\",\n          \"type\": \"object\"\n         }\n        },\n        \"type\": \"object\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Mesh HTTP Route\",\n \"type\": \"object\"\n}",
+   "version": "kuma.io/v1alpha1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "Mesh HTTP Route",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "published": false
+  },
+  "model": {
+   "category": {
+    "name": "Cloud Native Network"
+   },
+   "displayName": "Kong Mesh",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "isAnnotation": false,
+    "primaryColor": "#003459",
+    "shape": "circle",
+    "source_uri": "https://github.com/Kong/kong-mesh-charts/releases/download/kong-mesh-2.8.2/kong-mesh-2.8.2.tgz",
+    "styleOverrides": "",
+    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" id=\"Layer_1\" xmlns:_xmlns=\"xmlns\" _xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 45.3 40.8\" style=\"enable-background:new 0 0 45.3 40.8;\" xml:space=\"preserve\" height=\"20\" width=\"20\"\u003e\n\u003cstyle xmlns=\"http://www.w3.org/2000/svg\" type=\"text/css\"\u003e\n        .st0{fill-rule:evenodd;clip-rule:evenodd;fill:#003459;}\n\u003c/style\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"st0\" d=\"M14.9,33.6h8.3l4.3,5.4l-0.7,1.9H16l0.3-1.9l-2.5-4L14.9,33.6z M20.8,9.7h4.5l20,23.9l-1.6,7.3h-8.6l0.5-2\u0026#xA;        L17,16.5L20.8,9.7z M28.7,0L38,7.3l-1.2,1.2l1.6,2.2v2.4L33.8,17L26,7.8h-4.5l1.8-3.4L28.7,0z M9.1,23.4l6.5-5.6l8.6,10.4L21.8,32\u0026#xA;        h-7.9l-5.5,7.2l-1.3,1.7H0V32l6.6-8.6H9.1z\"\u003e\u003c/path\u003e\n\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" id=\"Layer_1\" xmlns:_xmlns=\"xmlns\" _xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 45.3 40.8\" style=\"enable-background:new 0 0 45.3 40.8;\" xml:space=\"preserve\" height=\"20\" width=\"20\"\u003e\n\u003cstyle xmlns=\"http://www.w3.org/2000/svg\" type=\"text/css\"\u003e\n\u0026#x9;.st0{fill:#FFFFFF;}\n\u003c/style\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"st0\" d=\"M14.9,33.6h8.3l4.3,5.4l-0.7,1.9H16l0.3-1.9l-2.5-4L14.9,33.6z M20.8,9.7h4.5l20,23.9l-1.6,7.3h-8.6l0.5-2\u0026#xA;\u0026#x9;L17,16.5L20.8,9.7z M28.7,0L38,7.3l-1.2,1.2l1.6,2.2v2.4L33.8,17L26,7.8h-4.5l1.8-3.4L28.7,0z M9.1,23.4l6.5-5.6l8.6,10.4L21.8,32\u0026#xA;\u0026#x9;h-7.9l-5.5,7.2l-1.3,1.7H0V32l6.6-8.6H9.1z\"\u003e\u003c/path\u003e\n\u003c/svg\u003e"
+   },
+   "model": {
+    "version": "2.8.2"
+   },
+   "name": "kong-mesh",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "enabled",
+   "subCategory": "Service Mesh",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
+   "primaryColor": "#003471",
+   "shape": "circle",
+   "svgColor": "\u003csvg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 45.3 40.8\" style=\"enable-background:new 0 0 45.3 40.8;\" xml:space=\"preserve\"\u003e \u003cstyle type=\"text/css\"\u003e .st0{fill-rule:evenodd;clip-rule:evenodd;fill:#003459;} \u003c/style\u003e \u003cpath class=\"st0\" d=\"M14.9,33.6h8.3l4.3,5.4l-0.7,1.9H16l0.3-1.9l-2.5-4L14.9,33.6z M20.8,9.7h4.5l20,23.9l-1.6,7.3h-8.6l0.5-2 L17,16.5L20.8,9.7z M28.7,0L38,7.3l-1.2,1.2l1.6,2.2v2.4L33.8,17L26,7.8h-4.5l1.8-3.4L28.7,0z M9.1,23.4l6.5-5.6l8.6,10.4L21.8,32 h-7.9l-5.5,7.2l-1.3,1.7H0V32l6.6-8.6H9.1z\"/\u003e \u003c/svg\u003e",
+   "svgWhite": "\u003csvg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 45.3 40.8\" style=\"enable-background:new 0 0 45.3 40.8;\" xml:space=\"preserve\"\u003e \u003cstyle type=\"text/css\"\u003e .st0{fill:#FFFFFF;} \u003c/style\u003e \u003cpath class=\"st0\" d=\"M14.9,33.6h8.3l4.3,5.4l-0.7,1.9H16l0.3-1.9l-2.5-4L14.9,33.6z M20.8,9.7h4.5l20,23.9l-1.6,7.3h-8.6l0.5-2 L17,16.5L20.8,9.7z M28.7,0L38,7.3l-1.2,1.2l1.6,2.2v2.4L33.8,17L26,7.8h-4.5l1.8-3.4L28.7,0z M9.1,23.4l6.5-5.6l8.6,10.4L21.8,32 h-7.9l-5.5,7.2l-1.3,1.7H0V32l6.6-8.6H9.1z\"/\u003e \u003c/svg\u003e"
+  },
+  "version": "v1.0.0"
+ }

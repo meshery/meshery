@@ -1,0 +1,139 @@
+{
+  "capabilities": [
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Add text to nodes body",
+    "displayName": "Body Text",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "body-text",
+    "type": "style",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "LightningBolt",
+   "schema": "",
+   "version": "core.meshery.io/v1alpha1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "LightningBolt",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": true,
+   "isNamespaced": false,
+   "published": false
+  },
+  "model": {
+   "category": {
+    "name": "Orchestration \u0026 Management"
+   },
+   "displayName": "Meshery Shapes",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "isAnnotation": true,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "styleOverrides": "",
+    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 40 40\" fill=\"none\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M12.5137 36.6823C3.30027 32.2711 -0.593255 21.2252 3.81749 12.0105C5.93563 7.58552 9.7246 4.18328 14.3509 2.55224C18.9772 0.921197 24.0618 1.19497 28.4863 3.31331C37.6998 7.72454 41.5932 18.7705 37.1825 27.9851C32.7718 37.1997 21.7272 41.0935 12.5137 36.6823Z\" fill=\"#00B39F\" fill-opacity=\"0.1\" stroke=\"#00B39F\" stroke-miterlimit=\"10\"\u003e\u003c/path\u003e\n\u003c/svg\u003e\n",
+    "svgComplete": "",
+    "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 28 28\" fill=\"none\"\u003e\n  \u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M13.0064 10.0312C12.5024 7.03522 9.87043 4.73926 6.73448 4.73926C3.20654 4.73926 0.350586 7.59521 0.350586 11.1232C0.350586 14.2871 2.64655 16.8911 5.6425 17.395V12.3831C5.6425 11.0952 6.67848 10.0312 7.99446 10.0312H13.0064Z\" fill=\"#EAEFF1\"\u003e\u003c/path\u003e\n  \u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M12.9219 18.459C12.5019 17.731 12.5019 16.835 12.9219 16.107L15.5258 11.5991H7.96595C7.54596 11.5991 7.20996 11.9351 7.20996 12.3551V22.4349C7.20996 22.8549 7.54596 23.1909 7.96595 23.1909H18.0458C18.4658 23.1909 18.8018 22.8549 18.8018 22.4349V19.635H14.9658C14.1258 19.635 13.3419 19.187 12.9219 18.459Z\" fill=\"#EAEFF1\"\u003e\u003c/path\u003e\n  \u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M26.8385 16.9188L21.2386 7.20294C20.9586 6.69895 20.2026 6.69895 19.9226 7.20294L14.3227 16.9188C14.0427 17.4228 14.4067 18.0668 14.9947 18.0668H26.2225C26.7825 18.0668 27.1465 17.4228 26.8385 16.9188Z\" fill=\"#EAEFF1\"\u003e\u003c/path\u003e\n\u003c/svg\u003e"
+   },
+   "model": {
+    "version": "0.7.2"
+   },
+   "name": "meshery-shapes",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "meshery",
+    "name": "meshery",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "enabled",
+   "subCategory": "App Definition and Development",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
+   "background-image": "none",
+   "background-opacity": 0,
+   "border-color": "#00b39f",
+   "border-style": "solid",
+   "border-width": 1,
+   "height": 30,
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "polygon",
+   "shape-polygon-points": "-1.00 -0.54 -0.38 -1.00 0.08 -0.38 -0.08 -0.31 0.46 0.15 0.31 0.23 1.00 1.00 -0.08 0.46 0.08 0.38 -0.62 0.00 -0.38 -0.15",
+   "svgColor": "\u003csvg width=\"40\" height=\"40\" viewBox=\"0 0 40 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cg clip-path=\"url(#clip0_34313_30315)\"\u003e\n\u003cpath d=\"M17.9974 35.9347L19.0695 30.4117C19.1938 29.7711 19.2559 29.4509 19.0768 29.2508C18.8976 29.0505 18.571 29.0753 17.9179 29.1248L13.6958 29.4448C12.8291 29.5105 12.3958 29.5433 12.2196 29.2764C12.0433 29.0095 12.2453 28.6263 12.6491 27.8596L15.5983 22.262C16.0021 21.4953 16.2041 21.1121 16.0278 20.8452C15.8516 20.5784 15.4182 20.6112 14.5516 20.6769L9.3281 21.0728C8.64034 21.1249 8.29644 21.151 8.11684 20.9387C7.93722 20.7265 8.02136 20.3933 8.18961 19.7272L12.6718 1.9814C12.7642 1.61538 12.8104 1.43237 12.945 1.3195C13.0795 1.20664 13.2684 1.19232 13.6463 1.16368L26.1534 0.215774C27.004 0.151307 27.4294 0.119066 27.6062 0.381619C27.783 0.644149 27.5917 1.02389 27.2092 1.78335L23.2367 9.66802C22.8542 10.4275 22.6629 10.8072 22.8397 11.0698C23.0165 11.3323 23.4419 11.3001 24.2925 11.2356L26.7192 11.0517C27.6671 10.9798 28.1412 10.9439 28.314 11.2315C28.4868 11.5191 28.231 11.9182 27.7194 12.7165L24.2021 18.2049C23.6905 19.0032 23.4347 19.4023 23.6075 19.6898C23.7803 19.9774 24.2544 19.9415 25.2023 19.8697L29.4786 19.5456C30.4529 19.4717 30.94 19.4348 31.1115 19.7286C31.283 20.0224 31.01 20.4258 30.4642 21.2328L19.9704 36.7456C18.8089 38.4628 18.2281 39.3215 17.8169 39.1525C17.4058 38.9837 17.603 37.9672 17.9974 35.9347Z\" fill=\"#00B39F\" fill-opacity=\"0.1\" stroke=\"#00B39F\" stroke-miterlimit=\"10\"/\u003e\n\u003c/g\u003e\n\u003cdefs\u003e\n\u003cclipPath id=\"clip0_34313_30315\"\u003e\n\u003crect width=\"40\" height=\"40\" fill=\"white\" transform=\"matrix(-1 0 0 1 40 0)\"/\u003e\n\u003c/clipPath\u003e\n\u003c/defs\u003e\n\u003c/svg\u003e",
+   "svgWhite": "\u003csvg width=\"40\" height=\"40\" viewBox=\"0 0 40 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cg clip-path=\"url(#clip0_34313_30315)\"\u003e\n\u003cpath d=\"M17.9974 35.9347L19.0695 30.4117C19.1938 29.7711 19.2559 29.4509 19.0768 29.2508C18.8976 29.0505 18.571 29.0753 17.9179 29.1248L13.6958 29.4448C12.8291 29.5105 12.3958 29.5433 12.2196 29.2764C12.0433 29.0095 12.2453 28.6263 12.6491 27.8596L15.5983 22.262C16.0021 21.4953 16.2041 21.1121 16.0278 20.8452C15.8516 20.5784 15.4182 20.6112 14.5516 20.6769L9.3281 21.0728C8.64034 21.1249 8.29644 21.151 8.11684 20.9387C7.93722 20.7265 8.02136 20.3933 8.18961 19.7272L12.6718 1.9814C12.7642 1.61538 12.8104 1.43237 12.945 1.3195C13.0795 1.20664 13.2684 1.19232 13.6463 1.16368L26.1534 0.215774C27.004 0.151307 27.4294 0.119066 27.6062 0.381619C27.783 0.644149 27.5917 1.02389 27.2092 1.78335L23.2367 9.66802C22.8542 10.4275 22.6629 10.8072 22.8397 11.0698C23.0165 11.3323 23.4419 11.3001 24.2925 11.2356L26.7192 11.0517C27.6671 10.9798 28.1412 10.9439 28.314 11.2315C28.4868 11.5191 28.231 11.9182 27.7194 12.7165L24.2021 18.2049C23.6905 19.0032 23.4347 19.4023 23.6075 19.6898C23.7803 19.9774 24.2544 19.9415 25.2023 19.8697L29.4786 19.5456C30.4529 19.4717 30.94 19.4348 31.1115 19.7286C31.283 20.0224 31.01 20.4258 30.4642 21.2328L19.9704 36.7456C18.8089 38.4628 18.2281 39.3215 17.8169 39.1525C17.4058 38.9837 17.603 37.9672 17.9974 35.9347Z\" fill=\"white\" fill-opacity=\"0.1\" stroke=\"white\" stroke-miterlimit=\"10\"/\u003e\n\u003c/g\u003e\n\u003cdefs\u003e\n\u003cclipPath id=\"clip0_34313_30315\"\u003e\n\u003crect width=\"40\" height=\"40\" fill=\"white\" transform=\"matrix(-1 0 0 1 40 0)\"/\u003e\n\u003c/clipPath\u003e\n\u003c/defs\u003e\n\u003c/svg\u003e",
+   "width": 30
+  },
+  "version": "v1.0.0"
+ }

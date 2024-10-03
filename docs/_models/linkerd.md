@@ -8,7 +8,7 @@ docURL: https://docs.meshery.io/extensibility/adapters/linkerd
 description: 
 integrations-category: Cloud Native Network
 integrations-subcategory: Service Mesh
-registrant: Artifact Hub
+registrant: meshery
 components: 
 featureList: [
   "Visually configure and operate Linkerd with real-time topology",

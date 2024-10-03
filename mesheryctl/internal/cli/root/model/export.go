@@ -2,6 +2,7 @@ package model
 
 import (
 	"fmt"
+
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
@@ -17,31 +18,13 @@ var exportModal = &cobra.Command{
 	Long:  "export the registered model to the specified output type",
 	Example: `
 // Export a model by name
-mesheryctl model export <modelname> -o json
-mesheryctl model export <modelname> -o yaml
-mesheryctl model export <modelname> -l /home/meshery/
-mesheryctl model export <modelname> --include-components true --include-relationships true
+mesheryctl model export [model-name] -o [oci|tar]  (default is oci)
+mesheryctl model export [model-name] -t json (default is yaml)
+mesheryctl model export [model-name] -l /home/meshery/
+mesheryctl model export [model-name] --discard-components --discard-relationships
+mesheryctl model export [model-name] --version v0.7.3
+
     `,
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-		//Check prerequisite
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			return err
-		}
-		err = utils.IsServerRunning(mctlCfg.GetBaseMesheryURL())
-		if err != nil {
-			return err
-		}
-		ctx, err := mctlCfg.GetCurrentContext()
-		if err != nil {
-			return err
-		}
-		err = ctx.ValidateVersion()
-		if err != nil {
-			return err
-		}
-		return nil
-	},
 	Args: func(_ *cobra.Command, args []string) error {
 		const errMsg = "Usage: mesheryctl model export [model-name]\nRun 'mesheryctl model export --help' to see detailed help message"
 		if len(args) == 0 {
@@ -56,7 +39,18 @@ mesheryctl model export <modelname> --include-components true --include-relation
 		}
 		baseUrl := mctlCfg.GetBaseMesheryURL()
 		modelName := args[0]
-		url := fmt.Sprintf("%s/api/meshmodels/models/%s?components=%t&relationships=%t&%s", baseUrl, modelName, includeCompsFlag, includeRelsFlag, utils.GetPageQueryParameter(cmd, pageNumberFlag))
+		outFormat := "yaml"
+		if outFormatFlag == "json" {
+			outFormat = "json"
+		}
+		outfileType := "oci"
+		if outTypeFlag == "tar" {
+			outfileType = "tar"
+		}
+		url := fmt.Sprintf("%s/api/meshmodels/export?name=%s&output_format=%s&file_type=%s&components=%t&relationships=%t&%s", baseUrl, modelName, outFormat, outfileType, !discardComponentsFlag, !discardRelationshipsFlag, utils.GetPageQueryParameter(cmd, pageNumberFlag))
+		if versionFlag != "" {
+			url += fmt.Sprintf("&version=%s", versionFlag)
+		}
 		return exportModel(args[0], cmd, url, false)
 	},
 }

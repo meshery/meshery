@@ -129,3 +129,15 @@ toggleBtnMainNav.addEventListener("click",()=>{
         sidebarNav.classList.toggle("main-navbar--active")
     }
 })
+
+document.addEventListener("click", (event) => {
+    let sidebarNav = document.getElementById("main_navbar")
+    if (sidebarNav) {
+        let isClickInsideSidebar = sidebarNav.contains(event.target)
+        let isClickOnToggleButton = toggleBtnMainNav.contains(event.target)
+
+        if (!isClickInsideSidebar && !isClickOnToggleButton) {
+            sidebarNav.classList.remove("main-navbar--active")
+        }
+    }
+})

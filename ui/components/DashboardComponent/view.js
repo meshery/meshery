@@ -208,8 +208,13 @@ const View = (props) => {
   const HeaderComponent = () => {
     return (
       <>
-        <TooltipButton title="Back" placement="left" style={{ padding: '10px' }}>
-          <ArrowBack onClick={() => setView(ALL_VIEW)} />
+        <TooltipButton
+          title="Back"
+          placement="left"
+          onClick={() => setView(ALL_VIEW)}
+          style={{ padding: '10px' }}
+        >
+          <ArrowBack />
         </TooltipButton>
       </>
     );

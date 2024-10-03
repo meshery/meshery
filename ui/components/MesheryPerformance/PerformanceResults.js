@@ -18,7 +18,6 @@ import Moment from 'react-moment';
 import { withStyles } from '@material-ui/core/styles';
 import { updateResultsSelection, clearResultsSelection, updateProgress } from '../../lib/store';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
-// import dataFetch from "../../lib/data-fetch";
 import CustomToolbarSelect from '../CustomToolbarSelect';
 import MesheryChart from '../MesheryChart';
 import GrafanaCustomCharts from '../telemetry/grafana/GrafanaCustomCharts';
@@ -247,6 +246,7 @@ function generateColumnsForDisplay(
           return (
             <IconButton
               aria-label="more"
+              data-testid="open-performance-result-bar-chart"
               color="inherit"
               onClick={() => setSelectedProfileIdxForChart(tableMeta.rowIndex)}
             >

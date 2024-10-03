@@ -20,11 +20,10 @@ import { getK8sClusterIdsFromCtxId } from '../utils/multi-ctx';
 import ConfirmationModal, { SelectDeploymentTarget } from './ConfirmationModal';
 import { getComponentsinFile, generateValidatePayload } from '../utils/utils';
 import UploadImport from './UploadImport';
-import PublishModal from '../components/Modals/PublishModal';
+import InfoModal from '../components/Modals/Information/InfoModal';
 import ConfigurationSubscription from '../components/graphql/subscriptions/ConfigurationSubscription';
 import PromptComponent from './PromptComponent';
 import { CapabilitiesRegistry } from '../utils/disabledComponents';
-import TroubleshootingComponent from './TroubleshootingComponent';
 import { useNotification } from '../utils/hooks/useNotification';
 import Modal, { RJSFModalWrapper } from './Modal';
 import ExportModal from './ExportModal';
@@ -36,6 +35,11 @@ import { ValidateDesign } from './DesignLifeCycle/ValidateDesign';
 import { DryRunDesign } from './DesignLifeCycle/DryRun';
 import { DeployStepper, UnDeployStepper } from './DesignLifeCycle/DeployStepper';
 import { designValidationMachine } from 'machines/validator/designValidator';
+import Troubleshoot from './TroubleshootingComponent';
+import CAN from '@/utils/can';
+import { mesheryEventBus } from '@/utils/can';
+import { ThemeTogglerCore } from '@/themes/hooks';
+import RJSFForm from './MesheryMeshInterface/PatternService/RJSF';
 
 const requires = createRequires(getDependencies);
 const useRemoteComponent = createUseRemoteComponent({ requires });
@@ -70,7 +74,7 @@ function NavigatorExtension({
           <code>{err.toString()}</code>
         </div>
         <div style={{ marginTop: '1rem' }}>
-          <TroubleshootingComponent showDesignerButton={false} />
+          <Troubleshoot showDesignerButton={false} />
         </div>
       </div>
     );
@@ -113,7 +117,7 @@ function NavigatorExtension({
         SelectDeploymentTarget: SelectDeploymentTarget,
         getComponentsinFile,
         UploadImport,
-        PublishModal,
+        InfoModal,
         ExportModal,
         GenericRJSFModal: Modal,
         RJSFModalWrapper: RJSFModalWrapper,
@@ -129,7 +133,11 @@ function NavigatorExtension({
         DeployStepper,
         UnDeployStepper,
         designValidationMachine,
+        mesheryEventBus: mesheryEventBus,
+        ThemeTogglerCore,
+        RJSForm: RJSFForm,
         hooks: {
+          CAN: CAN,
           useFilterK8sContexts,
           useDynamicComponent,
         },

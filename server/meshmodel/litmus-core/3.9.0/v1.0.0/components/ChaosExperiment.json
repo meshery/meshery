@@ -1,0 +1,196 @@
+{
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "ChaosExperiment",
+   "schema": "{\n \"properties\": {\n  \"description\": {\n   \"additionalProperties\": {\n    \"type\": \"string\"\n   },\n   \"type\": \"object\"\n  },\n  \"spec\": {\n   \"properties\": {\n    \"definition\": {\n     \"format\": \"textarea\",\n     \"properties\": {\n      \"args\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"command\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"configMaps\": {\n       \"items\": {\n        \"minProperties\": 2,\n        \"properties\": {\n         \"mountPath\": {\n          \"allowEmptyValue\": false,\n          \"minLength\": 1,\n          \"type\": \"string\"\n         },\n         \"name\": {\n          \"allowEmptyValue\": false,\n          \"minLength\": 1,\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"env\": {\n       \"items\": {\n        \"description\": \"EnvVar represents an environment variable present in a Container.\",\n        \"properties\": {\n         \"name\": {\n          \"description\": \"Name of the environment variable. Must be a C_IDENTIFIER.\",\n          \"type\": \"string\"\n         },\n         \"value\": {\n          \"description\": \"Variable references $(VAR_NAME) are expanded using the previous defined environment variables in the container and any service environment variables. If a variable cannot be resolved, the reference in the input string will be unchanged. The $(VAR_NAME) syntax can be escaped with a double $$, ie: $$(VAR_NAME). Escaped references will never be expanded, regardless of whether the variable exists or not. Defaults to \\\"\\\".\",\n          \"type\": \"string\"\n         },\n         \"valueFrom\": {\n          \"description\": \"Source for the environment variable's value. Cannot be used if value is not empty.\",\n          \"properties\": {\n           \"configMapKeyRef\": {\n            \"description\": \"Selects a key of a ConfigMap.\",\n            \"properties\": {\n             \"key\": {\n              \"description\": \"The key to select.\",\n              \"type\": \"string\"\n             },\n             \"name\": {\n              \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?\",\n              \"type\": \"string\"\n             },\n             \"optional\": {\n              \"description\": \"Specify whether the ConfigMap or its key must be defined\",\n              \"type\": \"boolean\"\n             }\n            },\n            \"required\": [\n             \"key\"\n            ],\n            \"type\": \"object\"\n           },\n           \"fieldRef\": {\n            \"description\": \"Selects a field of the pod: supports metadata.name, metadata.namespace, metadata.labels, metadata.annotations, spec.nodeName, spec.serviceAccountName, status.hostIP, status.podIP.\",\n            \"properties\": {\n             \"apiVersion\": {\n              \"description\": \"Version of the schema the FieldPath is written in terms of, defaults to \\\"v1\\\".\",\n              \"type\": \"string\"\n             },\n             \"fieldPath\": {\n              \"description\": \"Path of the field to select in the specified API version.\",\n              \"type\": \"string\"\n             }\n            },\n            \"required\": [\n             \"fieldPath\"\n            ],\n            \"type\": \"object\"\n           },\n           \"resourceFieldRef\": {\n            \"description\": \"Selects a resource of the container: only resources limits and requests (limits.cpu, limits.memory, limits.ephemeral-storage, requests.cpu, requests.memory and requests.ephemeral-storage) are currently supported.\",\n            \"properties\": {\n             \"containerName\": {\n              \"description\": \"Container name: required for volumes, optional for env vars\",\n              \"type\": \"string\"\n             },\n             \"divisor\": {\n              \"anyOf\": [\n               {\n                \"type\": \"integer\"\n               },\n               {\n                \"type\": \"string\"\n               }\n              ],\n              \"description\": \"Specifies the output format of the exposed resources, defaults to \\\"1\\\"\",\n              \"pattern\": \"^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$\",\n              \"x-kubernetes-int-or-string\": true\n             },\n             \"resource\": {\n              \"description\": \"Required: resource to select\",\n              \"type\": \"string\"\n             }\n            },\n            \"required\": [\n             \"resource\"\n            ],\n            \"type\": \"object\"\n           },\n           \"secretKeyRef\": {\n            \"description\": \"Selects a key of a secret in the pod's namespace\",\n            \"properties\": {\n             \"key\": {\n              \"description\": \"The key of the secret to select from.  Must be a valid secret key.\",\n              \"type\": \"string\"\n             },\n             \"name\": {\n              \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?\",\n              \"type\": \"string\"\n             },\n             \"optional\": {\n              \"description\": \"Specify whether the Secret or its key must be defined\",\n              \"type\": \"boolean\"\n             }\n            },\n            \"required\": [\n             \"key\"\n            ],\n            \"type\": \"object\"\n           }\n          },\n          \"type\": \"object\"\n         }\n        },\n        \"required\": [\n         \"name\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"hostFileVolumes\": {\n       \"items\": {\n        \"minProperties\": 3,\n        \"properties\": {\n         \"mountPath\": {\n          \"allowEmptyValue\": false,\n          \"minLength\": 1,\n          \"type\": \"string\"\n         },\n         \"name\": {\n          \"allowEmptyValue\": false,\n          \"minLength\": 1,\n          \"type\": \"string\"\n         },\n         \"nodePath\": {\n          \"allowEmptyValue\": false,\n          \"minLength\": 1,\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"hostPID\": {\n       \"type\": \"boolean\"\n      },\n      \"image\": {\n       \"type\": \"string\"\n      },\n      \"imagePullPolicy\": {\n       \"type\": \"string\"\n      },\n      \"labels\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"object\"\n      },\n      \"permissions\": {\n       \"items\": {\n        \"minProperties\": 3,\n        \"properties\": {\n         \"apiGroups\": {\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         },\n         \"nonResourceURLs\": {\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         },\n         \"resourceNames\": {\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         },\n         \"resources\": {\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         },\n         \"verbs\": {\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         }\n        },\n        \"required\": [\n         \"apiGroups\",\n         \"resources\",\n         \"verbs\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"scope\": {\n       \"pattern\": \"^(Namespaced|Cluster)$\",\n       \"type\": \"string\"\n      },\n      \"secrets\": {\n       \"items\": {\n        \"minProperties\": 2,\n        \"properties\": {\n         \"mountPath\": {\n          \"allowEmptyValue\": false,\n          \"minLength\": 1,\n          \"type\": \"string\"\n         },\n         \"name\": {\n          \"allowEmptyValue\": false,\n          \"minLength\": 1,\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"securityContext\": {\n       \"format\": \"textarea\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Chaos Experiment\",\n \"type\": \"object\"\n}",
+   "version": "litmuschaos.io/v1alpha1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "Chaos Experiment",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "published": false
+  },
+  "model": {
+   "category": {
+    "name": "Observability and Analysis"
+   },
+   "displayName": "Litmus Chaos",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "defaultData": "",
+    "isAnnotation": false,
+    "primaryColor": "#878ede",
+    "secondaryColor": "#CCD3FF",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 116 146\" fill=\"none\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M115.657 0H0v135.05C0 141.098 4.855 146 10.843 146h93.971c5.989 0 10.843-4.902 10.843-10.95V0Z\" fill=\"#878EDE\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M17.794 17.804h17.793v40.95H17.793v-40.95Z\" fill=\"#4028A0\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M17.794 55.194h17.793v73H17.793v-73Zm26.69 55.197h53.38v17.805h-53.38v-17.805Z\" fill=\"#fff\"\u003e\u003c/path\u003e\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 109 147\" fill=\"none\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M31.654 60.497h-16.05V16.03h16.05v44.468Z\" fill=\"#D1D2D9\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M93.832 130.115H46.156v-15.961h47.676v15.961Zm-62.178 0h-16.05V16.029h16.05v114.086ZM.649.035v133.62c0 6.838 5.577 12.379 12.449 12.379h83.384c6.805 0 12.306-5.474 12.306-12.236V.034H.648Z\" fill=\"#fff\"\u003e\u003c/path\u003e\u003c/svg\u003e"
+   },
+   "model": {
+    "version": "3.9.0"
+   },
+   "name": "litmus-core",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "enabled",
+   "subCategory": "Chaos Engineering",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
+   "primaryColor": "#878ede",
+   "secondaryColor": "#CCD3FF",
+   "shape": "circle",
+   "svgColor": "\u003csvg width=\"116\" height=\"146\" viewBox=\"0 0 116 146\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M115.657 0H0v135.05C0 141.098 4.855 146 10.843 146h93.971c5.989 0 10.843-4.902 10.843-10.95V0Z\" fill=\"#878EDE\"/\u003e\u003cpath d=\"M17.794 17.804h17.793v40.95H17.793v-40.95Z\" fill=\"#4028A0\"/\u003e\u003cpath d=\"M17.794 55.194h17.793v73H17.793v-73Zm26.69 55.197h53.38v17.805h-53.38v-17.805Z\" fill=\"#fff\"/\u003e\u003c/svg\u003e",
+   "svgWhite": "\u003csvg width=\"109\" height=\"147\" viewBox=\"0 0 109 147\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cpath d=\"M31.654 60.497h-16.05V16.03h16.05v44.468Z\" fill=\"#D1D2D9\"/\u003e\u003cpath d=\"M93.832 130.115H46.156v-15.961h47.676v15.961Zm-62.178 0h-16.05V16.029h16.05v114.086ZM.649.035v133.62c0 6.838 5.577 12.379 12.449 12.379h83.384c6.805 0 12.306-5.474 12.306-12.236V.034H.648Z\" fill=\"#fff\"/\u003e\u003c/svg\u003e"
+  },
+  "version": "v1.0.0"
+ }

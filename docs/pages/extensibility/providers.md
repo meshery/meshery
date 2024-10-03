@@ -12,7 +12,7 @@ list: include
 Meshery offers _Providers_ as a point of extensibility. It has a built-in Local Provider, named **"None"** and supports _Remote Providers_ that are designed to be pluggable. _Remote Providers_ offer a point of extension to users / integrators to deliver enhanced functionality such as authentication and authorization, using Meshery as a platform.
 
 1. **Extensibility points offer clean separation of Meshery's core functionality versus plugin functionality.**
-   - [MeshMap]({{site.baseurl}}/extensions/meshmap) is an example of a feature to be delivered via Remote Provider.
+   - See a list of [Meshery's extensions](https://meshery.io/extensions).
 1. **Remote Providers should be able to offer custom RBAC, custom UI components, and custom backend components**
    - Dynamically loadable frameworks need to be identified or created to serve each of these purposes.
 
@@ -76,11 +76,11 @@ Name: **“None”**
 
 Meshery's Remote Provider extensibility framework is designed to enable the following functionalities:
 
-1. **Pluggable UI Functionality:**
+1. **Pluggable UI Functionality**
    - Out-of-tree custom UI components with seamless user experience.
    - A system of remote retrieval of extension packages (ReactJS components and Golang binaries).
 
-1. **Pluggable Backend Functionality:**
+1. **Pluggable Backend Functionality**
    - Remote Providers have any number of capabilities unbeknownst to Meshery.
 
 1. **Pluggable AuthZ**

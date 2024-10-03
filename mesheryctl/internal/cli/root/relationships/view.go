@@ -25,11 +25,8 @@ import (
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/components"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/models/meshmodel/entity"
-
+	"github.com/meshery/schemas/models/v1alpha3/relationship"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -43,27 +40,6 @@ var ViewRelationshipsCmd = &cobra.Command{
 // View relationships of a model
 mesheryctl exp relationship view [model-name]
 	`,
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-		//Check prerequisite
-
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			return utils.ErrLoadConfig(err)
-		}
-		err = utils.IsServerRunning(mctlCfg.GetBaseMesheryURL())
-		if err != nil {
-			return err
-		}
-		ctx, err := mctlCfg.GetCurrentContext()
-		if err != nil {
-			return system.ErrGetCurrentContext(err)
-		}
-		err = ctx.ValidateVersion()
-		if err != nil {
-			return err
-		}
-		return nil
-	},
 	Args: func(cmd *cobra.Command, args []string) error {
 		const errMsg = "Usage: mesheryctl exp relationships view [model-name]\nRun 'mesheryctl exp relationships view --help' to see detailed help message"
 		if len(args) == 0 {
@@ -101,23 +77,23 @@ mesheryctl exp relationship view [model-name]
 			return err
 		}
 
-		relationshipsResponse := &models.MeshmodelRelationshipsAPIResponse{}
+		relationshipsResponse := &MeshmodelRelationshipsAPIResponse{}
+
 		err = json.Unmarshal(data, relationshipsResponse)
 		if err != nil {
 			return err
 		}
 
-		var selectedModel entity.Entity
+		var selectedModel *relationship.RelationshipDefinition
 
 		if relationshipsResponse.Count == 0 {
 			utils.Log.Info("No relationship(s) found for the given name ", model)
 			return nil
 		} else if relationshipsResponse.Count == 1 {
-			selectedModel = relationshipsResponse.Relationships[0]
+			selectedModel = &relationshipsResponse.Relationships[0]
 		} else {
 			selectedModel = selectRelationshipPrompt(relationshipsResponse.Relationships)
 		}
-
 		var output []byte
 
 		// user may pass flag in lower or upper case but we have to keep it lower

@@ -1,5 +1,5 @@
 import { Box, Button, Grid, NoSsr, Typography, withStyles } from '@material-ui/core';
-import { Provider, connect } from 'react-redux';
+import { connect } from 'react-redux';
 import { withRouter } from 'next/router';
 import { Pagination, PaginationItem } from '@material-ui/lab';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
@@ -7,7 +7,6 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import DesignsIcon from '../../../assets/icons/DesignIcon';
 import classNames from 'classnames';
 
-import { store } from '../../../store';
 import WorkspaceIcon from '../../../assets/icons/Workspace';
 import { EmptyState, GenericModal } from '../General';
 import {
@@ -16,6 +15,9 @@ import {
   ModalBody,
   ModalFooter,
   PrimaryActionButtons,
+  createAndEditWorkspaceSchema,
+  createAndEditWorkspaceUiSchema,
+  ErrorBoundary,
 } from '@layer5/sistent';
 import useStyles from '../../../assets/styles/general/tool.styles';
 import styles from '../Environments/styles';
@@ -47,7 +49,6 @@ import theme from '../../../themes/app';
 import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
 import DefaultError from '@/components/General/error-404/index';
-import { useGetSchemaQuery } from '@/rtk-query/schema';
 import { UsesSistent } from '@/components/SistentWrapper';
 
 const ACTION_TYPES = {
@@ -182,10 +183,6 @@ const Workspaces = ({ organization, classes }) => {
     },
   );
 
-  const { data: schemaWorkspace } = useGetSchemaQuery({
-    schemaName: 'workspace',
-  });
-
   const [assignDesignToWorkspace] = useAssignDesignToWorkspaceMutation();
 
   const [unassignDesignFromWorkspace] = useUnassignDesignFromWorkspaceMutation();
@@ -284,14 +281,17 @@ const Workspaces = ({ organization, classes }) => {
   }, [organization]);
 
   const fetchSchema = () => {
-    const updatedSchema = { ...schemaWorkspace };
-    updatedSchema.rjsfSchema?.properties?.organization &&
-      ((updatedSchema.rjsfSchema = {
-        ...updatedSchema.rjsfSchema,
+    const updatedSchema = {
+      schema: createAndEditWorkspaceSchema,
+      uiSchema: createAndEditWorkspaceUiSchema,
+    };
+    updatedSchema.schema?.properties?.organization &&
+      ((updatedSchema.schema = {
+        ...updatedSchema.schema,
         properties: {
-          ...updatedSchema.rjsfSchema.properties,
+          ...updatedSchema.schema.properties,
           organization: {
-            ...updatedSchema.rjsfSchema.properties.organization,
+            ...updatedSchema.schema.properties.organization,
             enum: [organization?.id],
             enumNames: [organization?.name],
           },
@@ -605,7 +605,7 @@ const Workspaces = ({ organization, classes }) => {
               onSearch={(value) => {
                 setSearch(value);
               }}
-              placeholder="Search connections..."
+              placeholder="Search Workspaces..."
               expanded={isSearchExpanded}
               setExpanded={setIsSearchExpanded}
             />
@@ -694,7 +694,7 @@ const Workspaces = ({ organization, classes }) => {
                   title={actionType === ACTION_TYPES.CREATE ? 'Create Workspace' : 'Edit Workspace'}
                 >
                   <RJSFModalWrapper
-                    schema={workspaceModal.schema.rjsfSchema}
+                    schema={workspaceModal.schema.schema}
                     uiSchema={workspaceModal.schema.uiSchema}
                     handleSubmit={
                       actionType === ACTION_TYPES.CREATE
@@ -714,6 +714,7 @@ const Workspaces = ({ organization, classes }) => {
               closeModal={handleAssignEnvironmentModalClose}
               title={`Assign Environments to ${environmentAssignWorkspace.name}`}
               headerIcon={<EnvironmentIcon height="2rem" width="2rem" fill="white" />}
+              maxWidth="md"
             >
               <ModalBody>
                 <TransferList
@@ -773,6 +774,7 @@ const Workspaces = ({ organization, classes }) => {
               closeModal={handleAssignDesignModalClose}
               title={`Assign Designs to ${designAssignWorkspace.name}`}
               headerIcon={<DesignsIcon height="2rem" width="2rem" fill="#ffffff" />}
+              maxWidth="md"
             >
               <ModalBody>
                 <TransferList
@@ -830,12 +832,16 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default withStyles(styles)(
-  connect(mapStateToProps)(
-    withRouter((props) => (
-      <Provider store={store}>
+const WorkspacesPageWithErrorBoundary = (props) => {
+  return (
+    <NoSsr>
+      <ErrorBoundary>
         <Workspaces {...props} />
-      </Provider>
-    )),
-  ),
+      </ErrorBoundary>
+    </NoSsr>
+  );
+};
+
+export default withStyles(styles)(
+  connect(mapStateToProps)(withRouter(WorkspacesPageWithErrorBoundary)),
 );

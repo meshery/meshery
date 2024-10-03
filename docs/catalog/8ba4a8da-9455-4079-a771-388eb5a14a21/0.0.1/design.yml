@@ -1,0 +1,414 @@
+name: Load Balanced AWS Architecture
+version: 0.0.6
+services:
+  ec2-gh:
+    annotations: {}
+    apiVersion: core.meshery.io/v1alpha1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: aws
+    name: ec2-gh
+    namespace: default
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 3100e754-1ac8-454a-980c-8829d3a0cac2
+        label: EC2
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Provisioning
+          components: []
+          displayName: Amazon Web Services
+          displayhostname: ""
+          hostID: 00000000-0000-0000-0000-000000000000
+          hostname: ""
+          metadata:
+            isAnnotation: true
+            svgColor: ui/public/static/img/meshmodels/aws/color/aws-color.svg
+            svgWhite: ui/public/static/img/meshmodels/aws/white/aws-white.svg
+          name: aws
+          relationships: []
+          version: 1.0.0
+        meshmodel-metadata:
+          capabilities: '{ "designer": { "edit": { "config": false, "lock": true,
+            "shape": { "convert-shape": true }, "style": true }, "label": { "edit":
+            true, "show": true, "sync-with-config-property": "label" } } }'
+          genealogy: ""
+          isAnnotation: true
+          isModelAnnotation: "TRUE"
+          isNamespaced: "false"
+          logoURL: ""
+          model: aws
+          modelDisplayName: Amazon Web Services
+          primaryColor: '#ED7100'
+          published: true
+          secondaryColor: ""
+          shape: rectangle
+          styleOverrides:
+            z-index: 7
+          subCategory: Compute
+          svgColor: ui/public/static/img/meshmodels/aws/color/ec2-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/aws/white/ec2-white.svg
+        position:
+          posX: 270
+          posY: 90
+        whiteboardData:
+          style:
+            z-index: 5
+    type: EC2
+    version: 1.0.0
+  ec2-tf:
+    annotations: {}
+    apiVersion: core.meshery.io/v1alpha1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: aws
+    name: ec2-tf
+    namespace: default
+    settings: {}
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: 5196252d-c2d9-4040-a601-b24762ebda9e
+            source: 687bf864-0ff9-4e67-8daa-bbc786d2bddf
+            subType: Annotation
+            target: dbecf01e-71a1-449a-9844-58c88746ed14
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: 687bf864-0ff9-4e67-8daa-bbc786d2bddf
+        label: EC2
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Provisioning
+          components: []
+          displayName: Amazon Web Services
+          displayhostname: ""
+          hostID: 00000000-0000-0000-0000-000000000000
+          hostname: ""
+          metadata:
+            isAnnotation: true
+            svgColor: ui/public/static/img/meshmodels/aws/color/aws-color.svg
+            svgWhite: ui/public/static/img/meshmodels/aws/white/aws-white.svg
+          name: aws
+          relationships: []
+          version: 1.0.0
+        meshmodel-metadata:
+          capabilities: '{ "designer": { "edit": { "config": false, "lock": true,
+            "shape": { "convert-shape": true }, "style": true }, "label": { "edit":
+            true, "show": true, "sync-with-config-property": "label" } } }'
+          genealogy: ""
+          isAnnotation: true
+          isModelAnnotation: "TRUE"
+          isNamespaced: "false"
+          logoURL: ""
+          model: aws
+          modelDisplayName: Amazon Web Services
+          primaryColor: '#ED7100'
+          published: true
+          secondaryColor: ""
+          shape: rectangle
+          styleOverrides: ""
+          subCategory: Compute
+          svgColor: ui/public/static/img/meshmodels/aws/color/ec2-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/aws/white/ec2-white.svg
+        position:
+          posX: 270
+          posY: 30
+        whiteboardData:
+          style:
+            z-index: 4
+    type: EC2
+    version: 1.0.0
+  ec2-xo:
+    annotations: {}
+    apiVersion: core.meshery.io/v1alpha1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: aws
+    name: ec2-xo
+    namespace: default
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 42fa0db4-b997-4f9f-8a71-a75994594551
+        label: EC2
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Provisioning
+          components: []
+          displayName: Amazon Web Services
+          displayhostname: ""
+          hostID: 00000000-0000-0000-0000-000000000000
+          hostname: ""
+          metadata:
+            isAnnotation: true
+            svgColor: ui/public/static/img/meshmodels/aws/color/aws-color.svg
+            svgWhite: ui/public/static/img/meshmodels/aws/white/aws-white.svg
+          name: aws
+          relationships: []
+          version: 1.0.0
+        meshmodel-metadata:
+          capabilities: '{ "designer": { "edit": { "config": false, "lock": true,
+            "shape": { "convert-shape": true }, "style": true }, "label": { "edit":
+            true, "show": true, "sync-with-config-property": "label" } } }'
+          genealogy: ""
+          isAnnotation: true
+          isModelAnnotation: "TRUE"
+          isNamespaced: "false"
+          logoURL: ""
+          model: aws
+          modelDisplayName: Amazon Web Services
+          primaryColor: '#ED7100'
+          published: true
+          secondaryColor: ""
+          shape: rectangle
+          styleOverrides:
+            z-index: 3
+          subCategory: Compute
+          svgColor: ui/public/static/img/meshmodels/aws/color/ec2-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/aws/white/ec2-white.svg
+        position:
+          posX: 270
+          posY: 150
+        whiteboardData:
+          style:
+            z-index: 6
+    type: EC2
+    version: 1.0.0
+  elastic-load-balancing-im:
+    annotations: {}
+    apiVersion: core.meshery.io/v1alpha1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: aws
+    name: elastic-load-balancing-im
+    namespace: default
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 2e29dbbd-604e-4cd5-8e6b-e6ee0c23219e
+        label: Elastic Load Balancing
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Provisioning
+          components: []
+          displayName: Amazon Web Services
+          displayhostname: ""
+          hostID: 00000000-0000-0000-0000-000000000000
+          hostname: ""
+          metadata:
+            isAnnotation: true
+            svgColor: ui/public/static/img/meshmodels/aws/color/aws-color.svg
+            svgWhite: ui/public/static/img/meshmodels/aws/white/aws-white.svg
+          name: aws
+          relationships: []
+          version: 1.0.0
+        meshmodel-metadata:
+          capabilities: '{ "designer": { "edit": { "config": false, "lock": true,
+            "shape": { "convert-shape": true }, "style": true }, "label": { "edit":
+            true, "show": true, "sync-with-config-property": "label" } } }'
+          genealogy: ""
+          isAnnotation: true
+          isModelAnnotation: "TRUE"
+          isNamespaced: "false"
+          logoURL: ""
+          model: aws
+          modelDisplayName: Amazon Web Services
+          primaryColor: '#8C4FFF'
+          published: true
+          secondaryColor: ""
+          shape: rectangle
+          styleOverrides:
+            z-index: 4
+          subCategory: Networking Content Delivery
+          svgColor: ui/public/static/img/meshmodels/aws/color/elastic load balancing-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/aws/white/elastic load balancing-white.svg
+        position:
+          posX: 170
+          posY: 90
+        whiteboardData:
+          style:
+            z-index: 3
+    type: Elastic Load Balancing
+    version: 1.0.0
+  rds-va:
+    annotations: {}
+    apiVersion: core.meshery.io/v1alpha1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: aws
+    name: rds-va
+    namespace: default
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: a2dca259-6615-4f6b-9bdf-bbc24d15f756
+        label: RDS
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Provisioning
+          components: []
+          displayName: Amazon Web Services
+          displayhostname: ""
+          hostID: 00000000-0000-0000-0000-000000000000
+          hostname: ""
+          metadata:
+            isAnnotation: true
+            svgColor: ui/public/static/img/meshmodels/aws/color/aws-color.svg
+            svgWhite: ui/public/static/img/meshmodels/aws/white/aws-white.svg
+          name: aws
+          relationships: []
+          version: 1.0.0
+        meshmodel-metadata:
+          capabilities: '{ "designer": { "edit": { "config": false, "lock": true,
+            "shape": { "convert-shape": true }, "style": true }, "label": { "edit":
+            true, "show": true, "sync-with-config-property": "label" } } }'
+          genealogy: ""
+          isAnnotation: true
+          isModelAnnotation: "TRUE"
+          isNamespaced: "false"
+          logoURL: ""
+          model: aws
+          modelDisplayName: Amazon Web Services
+          primaryColor: '#C925D1'
+          published: true
+          secondaryColor: ""
+          shape: rectangle
+          styleOverrides:
+            z-index: 5
+          subCategory: Database
+          svgColor: ui/public/static/img/meshmodels/aws/color/rds-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/aws/white/rds-white.svg
+        position:
+          posX: 390
+          posY: 110
+        whiteboardData:
+          style:
+            z-index: 8
+    type: RDS
+    version: 1.0.0
+  s3-on-outposts-rr:
+    annotations: {}
+    apiVersion: core.meshery.io/v1alpha1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: aws
+    name: s3-on-outposts-rr
+    namespace: default
+    settings: {}
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: 5196252d-c2d9-4040-a601-b24762ebda9e
+            source: 687bf864-0ff9-4e67-8daa-bbc786d2bddf
+            subType: Annotation
+            target: dbecf01e-71a1-449a-9844-58c88746ed14
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: dbecf01e-71a1-449a-9844-58c88746ed14
+        label: S3 on Outposts
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Provisioning
+          components: []
+          displayName: Amazon Web Services
+          displayhostname: ""
+          hostID: 00000000-0000-0000-0000-000000000000
+          hostname: ""
+          metadata:
+            isAnnotation: true
+            svgColor: ui/public/static/img/meshmodels/aws/color/aws-color.svg
+            svgWhite: ui/public/static/img/meshmodels/aws/white/aws-white.svg
+          name: aws
+          relationships: []
+          version: 1.0.0
+        meshmodel-metadata:
+          capabilities: '{ "designer": { "edit": { "config": false, "lock": true,
+            "shape": { "convert-shape": true }, "style": true }, "label": { "edit":
+            true, "show": true, "sync-with-config-property": "label" } } }'
+          genealogy: ""
+          isAnnotation: true
+          isModelAnnotation: "TRUE"
+          isNamespaced: "false"
+          logoURL: ""
+          model: aws
+          modelDisplayName: Amazon Web Services
+          primaryColor: '#7AA116'
+          published: true
+          secondaryColor: ""
+          shape: rectangle
+          styleOverrides:
+            z-index: 6
+          subCategory: Storage
+          svgColor: ui/public/static/img/meshmodels/aws/color/s3 on outposts-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/aws/white/s3 on outposts-white.svg
+        position:
+          posX: 370
+          posY: 30
+        whiteboardData:
+          style:
+            z-index: 7
+    type: S3 on Outposts
+    version: 1.0.0

@@ -13,21 +13,14 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Check out code
-        uses: actions/checkout@master
+        uses: actions/checkout@v4
         with:
           repository: meshery/meshery
           fetch-depth: 1
       - name: Setup Go
-        uses: actions/setup-go@master
+        uses: actions/setup-go@v5
         with:
           go-version: "1.21"
-      - name: Setup Cache
-        uses: actions/cache@v4
-        with:
-          path: ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-
       - run: |
           GOPROXY=https://proxy.golang.org,direct GOSUMDB=off GO111MODULE=on go build -tags draft ./server/cmd/main.go ./server/cmd/error.go
       - name: Upload artifacts
@@ -40,40 +33,18 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Check out code
-        uses: actions/checkout@master
+        uses: actions/checkout@v4
         with:
           repository: meshery/meshery
           fetch-depth: 1
       - uses: actions/setup-node@v4
         with:
           node-version: 18
-      - name: Cache node modules
-        id: node-cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/cache
-            ~/.cache
-            /home/runner/.cache
-            !~/cache/exclude
-            **/node_modules
-            /home/runner/.cache/Cypress
-          key: ${{ runner.os }}-node-${{ hashFiles('**/lockfiles') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
+          cache: "npm"
+          cache-dependency-path: '**/package-lock.json'
       - name: Install dependencies
         run: |
-          cd ui
-          npm i
-          cd ..
-          cd provider-ui
-          npm i
-      - name: build meshery-ui
-        run: |
-          make ui-meshery-build
-      - name: build provider-ui
-        run: |
-          make ui-provider-build
+          make ui-build
       - name: upload meshery-ui artifact
         uses: actions/upload-artifact@v4
         with:

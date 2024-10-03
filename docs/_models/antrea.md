@@ -70,6 +70,14 @@ components:
   colorIcon: assets/img/integrations/antrea/components/group/icons/color/group-color.svg
   whiteIcon: assets/img/integrations/antrea/components/group/icons/white/group-white.svg
   description: 
+- name: bgp-policy
+  colorIcon: assets/img/integrations/antrea/components/bgp-policy/icons/color/bgp-policy-color.svg
+  whiteIcon: assets/img/integrations/antrea/components/bgp-policy/icons/white/bgp-policy-white.svg
+  description: 
+- name: node-latency-monitor
+  colorIcon: assets/img/integrations/antrea/components/node-latency-monitor/icons/color/node-latency-monitor-color.svg
+  whiteIcon: assets/img/integrations/antrea/components/node-latency-monitor/icons/white/node-latency-monitor-white.svg
+  description: 
 featureList: [
   "Network policy enforcement",
   "Kubernetes network policy integration",
