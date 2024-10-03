@@ -116,7 +116,7 @@ func (h *Handler) PatternFileHandler(
 		event := eventBuilder.Build()
 		_ = provider.PersistEvent(event)
 		go h.config.EventBroadcaster.Publish(userID, event)
-		
+
 		if err != nil {
 			h.log.Error(err)
 			http.Error(rw, err.Error(), http.StatusInternalServerError)

@@ -1,0 +1,249 @@
+name: MySQL Deployment
+version: 0.0.12
+services:
+  mysql-pv-claim:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels:
+      app: wordpress
+    model: kubernetes
+    name: mysql-pv-claim
+    namespace: default
+    settings:
+      spec:
+        access Modes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 20Gi
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 7bbe358e-a645-4b27-b40e-7c15259b378e
+        label: mysql-pv-claim
+        meshmodel-metadata:
+          capabilities: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: cylinder
+          styleOverrides: '{"height":"15","width":"15","x":"12","y":"20","background-opacity":"0"}'
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/persistentvolume-color.svg
+          svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/persistentvolume-complete.svg
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/color/persistentvolume-color.svg
+        position:
+          posX: 170
+          posY: 90
+        whiteboardData:
+          style:
+            z-index: 3
+    type: PersistentVolumeClaim
+    version: ""
+  wordpress-mysql-fnvfk:
+    annotations: {}
+    apiVersion: apps/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels:
+      app: wordpress
+    model: kubernetes
+    name: wordpress-mysql
+    namespace: default
+    settings:
+      spec:
+        selector:
+          match Expressions:
+          - key: ""
+            operator: ""
+            values:
+            - ""
+          match Labels:
+            app: wordpress
+            tier: mysql
+        strategy:
+          type: Recreate
+        template:
+          metadata:
+            labels:
+              app: wordpress
+              tier: mysql
+          spec:
+            containers:
+            - env:
+              - name: MYSQL_ROOT_PASSWORD
+                value From:
+                  secret Key Ref:
+                    key: password
+                    name: mysql-pass
+              image: mysql:5.6
+              liveness Probe:
+                tcp Socket:
+                  port: 3306
+              name: mysql
+              ports:
+              - container Port: 3306
+                name: mysql
+              volume Mounts:
+              - mount Path: /var/lib/mysql
+                name: mysql-persistent-storage
+            volumes:
+            - name: mysql-persistent-storage
+              persistent Volume Claim:
+                claim Name: mysql-pv-claim
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: 0cba58eb-4e0b-45e1-b3cf-9330d36abe77
+            metadata:
+              port: 3306
+              protocol: TCP
+            source: f8c27c9b-8e54-4ed2-a612-467ad2bb0397
+            subType: Network
+            target: 4fd2c98d-55a8-4ee6-8c44-74fb737d3d2a
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: 4fd2c98d-55a8-4ee6-8c44-74fb737d3d2a
+        label: wordpress-mysql
+        meshmodel-metadata:
+          capabilities: ""
+          genealogy: parent
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: Created by Meshery Authors
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-pentagon
+          styleOverrides:
+            background-image: none
+            background-opacity: 0.5
+            border-width: 2
+            z-index: 4
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg
+          svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/deployment-complete.svg
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg
+        position:
+          posX: 270
+          posY: 110
+        whiteboardData:
+          style:
+            z-index: 7
+    type: Deployment
+    version: ""
+  wordpress-mysql-sddgw:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels:
+      app: wordpress
+    model: kubernetes
+    name: wordpress-mysql
+    namespace: default
+    settings:
+      spec:
+        cluster IP: None
+        ports:
+        - port: 3306
+        selector:
+          app: wordpress
+          tier: mysql
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: 0cba58eb-4e0b-45e1-b3cf-9330d36abe77
+            metadata:
+              port: 3306
+              protocol: TCP
+            source: f8c27c9b-8e54-4ed2-a612-467ad2bb0397
+            subType: Network
+            target: 4fd2c98d-55a8-4ee6-8c44-74fb737d3d2a
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: f8c27c9b-8e54-4ed2-a612-467ad2bb0397
+        label: wordpress-mysql
+        meshmodel-metadata:
+          capabilities: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-triangle
+          styleOverrides:
+            background-fit: none
+            background-position-y: 4.5
+            height: 20
+            padding: 12
+            width: 20
+            x: 10px
+            "y": 12px
+            z-index: 3
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/connection-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/connection-white.svg
+        position:
+          posX: 90
+          posY: 150
+        whiteboardData:
+          style:
+            z-index: 6
+    type: Service
+    version: ""

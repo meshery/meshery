@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect } from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import AppBar from '@material-ui/core/AppBar';
 import Grid from '@material-ui/core/Grid';
@@ -208,22 +208,6 @@ async function loadActiveK8sContexts() {
   } catch (e) {
     console.error('An error occurred while loading k8sconfig', e);
   }
-}
-
-function LoadTheme({ themeSetter }) {
-  const defaultTheme = 'light';
-
-  useLayoutEffect(() => {
-    // disable dark mode in extension
-
-    if (localStorage.getItem('Theme') === null) {
-      themeSetter(defaultTheme);
-    } else {
-      themeSetter(localStorage.getItem('Theme'));
-    }
-  }, []);
-
-  return <></>;
 }
 
 const K8sContextConnectionChip_ = ({
@@ -520,23 +504,14 @@ class Header extends React.PureComponent {
   };
 
   render() {
-    const {
-      classes,
-      title,
-      onDrawerToggle,
-      isBeta,
-      theme,
-      themeSetter,
-      onDrawerCollapse,
-      abilityUpdated,
-    } = this.props;
+    const { classes, title, onDrawerToggle, isBeta, onDrawerCollapse, abilityUpdated } = this.props;
     const loaderType = 'circular';
 
     return (
       <NoSsr>
         <React.Fragment>
-          <LoadTheme theme={theme} themeSetter={themeSetter} />
           <AppBar
+            id="top-navigation-bar"
             color="primary"
             position="sticky"
             // elevation={1}
@@ -612,8 +587,6 @@ class Header extends React.PureComponent {
                   <span className={classes.userSpan}>
                     <User
                       classes={classes}
-                      theme={theme}
-                      themeSetter={themeSetter}
                       color="inherit"
                       iconButtonClassName={classes.iconButtonAvatar}
                       avatarClassName={classes.avatar}

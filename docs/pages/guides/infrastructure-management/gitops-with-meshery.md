@@ -10,16 +10,16 @@ list: include
 published: true
 ---
 
-## <img style="height: 4rem; width: 4rem;" src="{{site.baseurl}}/assets/img/meshmap-icon-color.svg" />  MeshMap Snapshot GitHub Action
+## <img style="height: 4rem; width: 4rem;" src="{{site.baseurl}}/assets/img/kanvas-icon-color.svg" /> Kanvas Snapshot GitHub Action
 
 - See your deployment before you merge
-- Connect MeshMap to your GitHub repo and see changes pull request-to-pull request
+- Connect Kanvas to your GitHub repo and see changes pull request-to-pull request
 - Get snapshots of your infrastructure directly in your PRs
 
 <h3>Using Meshery's SnapShot GitHub Action</h3>
-See your deployment before you merge. Connect MeshMap to your GitHub repo and see changes pull request-to-pull request. Get snapshots of your infrastructure directly in your PRs.
+See your deployment before you merge. Connect Kanvas to your GitHub repo and see changes pull request-to-pull request. Get snapshots of your infrastructure directly in your PRs.
 
-See [Extension: MeshMap Snapshot](/extensions/snapshot) for more details.
+See [Extension: Kanvas Snapshot](/extensions/snapshot) for more details.
 
 ## <img src="{{ site.baseurl }}/assets/img/smp-dark-text-side.svg" className="image-left-no-shadow" alt="service mesh performance logo" style="width: 60%; max-width: 200px;vertical-align:middle" /> Service Mesh Performance GitHub Action
 
