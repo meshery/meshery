@@ -18,6 +18,7 @@ import { CustomTextTooltip } from '@/components/MesheryMeshInterface/PatternServ
 import InfoOutlinedIcon from '@/assets/icons/InfoOutlined';
 import { DialogActions } from '@layer5/sistent';
 import { Colors } from '@/themes/app';
+import KubernetesIcon from '@/assets/icons/technology/kubernetes';
 
 const styles = (theme) => ({
   dialogTitle: {
@@ -176,40 +177,9 @@ const ExportModal = (props) => {
             flexWrap: 'wrap',
           }}
         >
-          {downloadModal?.content?.type?.String && (
-            <div>
-              <Typography
-                component={'h4'}
-                style={{ paddingBottom: '1.5rem', maxWidth: '9rem' }}
-                className={classes.text}
-              >
-                Original ({downloadModal?.content?.type?.String})
-              </Typography>
-              <div style={exportBtnStyles}>
-                <Button
-                  data-testid="export-original"
-                  onClick={(e) =>
-                    handleDesignDownload(
-                      e,
-                      downloadModal.content,
-                      downloadModal?.content.type?.String,
-                    )
-                  }
-                >
-                  <div style={exportWrpStyles}>
-                    <OriginalApplicationFileIcon width={75} height={75} />
-                    <div style={{ display: 'flex', padding: '0.8rem' }}>
-                      <Typography> EXPORT </Typography>
-                      <GetAppIcon />
-                    </div>
-                  </div>
-                </Button>
-              </div>
-            </div>
-          )}
           <div>
             <Typography component="p" style={{ paddingBottom: '1.5rem' }} className={classes.text}>
-              Current
+              Design File
             </Typography>
             <div style={exportBtnStyles}>
               <Button
@@ -219,6 +189,31 @@ const ExportModal = (props) => {
                 <div style={exportWrpStyles}>
                   <ModifiedApplicationFileIcon width={75} height={82} />
                   <div style={{ display: 'flex', padding: '0.4rem' }}>
+                    <Typography> EXPORT </Typography>
+                    <GetAppIcon />
+                  </div>
+                </div>
+              </Button>
+            </div>
+          </div>
+          <div>
+            <Typography
+              component={'h4'}
+              style={{ paddingBottom: '1.5rem', maxWidth: '9rem' }}
+              className={classes.text}
+            >
+              Kubernetes Manifest
+            </Typography>
+            <div style={exportBtnStyles}>
+              <Button
+                data-testid="export-original"
+                onClick={(e) =>
+                  handleDesignDownload(e, downloadModal.content, null, 'exportKubernetes Manifest')
+                }
+              >
+                <div style={exportWrpStyles}>
+                  <KubernetesIcon width={75} height={75} />
+                  <div style={{ display: 'flex', padding: '0.8rem' }}>
                     <Typography> EXPORT </Typography>
                     <GetAppIcon />
                   </div>
