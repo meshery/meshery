@@ -12,9 +12,11 @@ import (
 
 var ModelsPath = "../meshmodel"
 
-func getModelDirectoryPaths() ([]string, error) {
+const PoliciesPath = "../meshmodel/kubernetes/v1.25.2/v1.0.0/policies"
+
+func GetModelDirectoryPaths(modelPath string) ([]string, error) {
 	dirEntries := make([]string, 0)
-	modelsDirs, err := os.ReadDir(ModelsPath)
+	modelsDirs, err := os.ReadDir(modelPath)
 	if err != nil {
 		return dirEntries, err
 	}
@@ -22,7 +24,7 @@ func getModelDirectoryPaths() ([]string, error) {
 		if !modelDir.IsDir() {
 			continue
 		}
-		modelVersionsDirPath := filepath.Join(ModelsPath, modelDir.Name())
+		modelVersionsDirPath := filepath.Join(modelPath, modelDir.Name())
 		modelVersionsDir, err := os.ReadDir(modelVersionsDirPath)
 		if err != nil {
 			return dirEntries, err
@@ -51,7 +53,7 @@ func getModelDirectoryPaths() ([]string, error) {
 func SeedComponents(log logger.Handler, hc *HandlerConfig, regm *meshmodel.RegistryManager) {
 	regErrorStore := NewRegistrationFailureLogHandler()
 	regHelper := registration.NewRegistrationHelper(utils.UI, regm, regErrorStore)
-	modelDirPaths, err := getModelDirectoryPaths()
+	modelDirPaths, err := GetModelDirectoryPaths(ModelsPath)
 	if err != nil {
 		log.Error(ErrSeedingComponents(err))
 	}

@@ -2,6 +2,7 @@ package model
 
 import (
 	"bytes"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -33,14 +34,11 @@ var importModelCmd = &cobra.Command{
 	Long:  "Import models by specifying the directory, file, or URL. You can also provide a template JSON file and registrant name.",
 	Example: `
 	mesehryctl model import -f [ URI ]
-	mesehryctl model import -f [ URI ] -t [ path to template file ] ( only required in case of URL )
-	mesehryctl model import -f [ URI ] -t [ path to template file ] -r ( to skip registration by default registration is true)
  
+	mesehryctl model import -f URL 
 	mesehryctl model import -f OCI 
 	mesehryctl model import -f model.tar.gz 
-	mesehryctl model import --f /path/to/models
-    mesehryctl model import --f http://example.com/model -t /path/to/template.json 
-	mesehryctl model import --f http://example.com/model -t /path/to/template.json -r
+	mesehryctl model import -f /path/to/models
 	`,
 	Args: func(_ *cobra.Command, args []string) error {
 		const errMsg = "Usage: mesheryctl model import [ file | filePath | URL ]\nRun 'mesheryctl model import --help' to see detailed help message"
@@ -58,31 +56,17 @@ var importModelCmd = &cobra.Command{
 		} else {
 			path = args[0]
 		}
-
-		validURL := strings.HasPrefix(path, "http://") || strings.HasPrefix(path, "https://") || strings.HasPrefix(path, "git://")
-		if validURL {
-			if templateFile == "" {
-				return fmt.Errorf("a template file must be specified when importing from a URL")
-			}
-
-			fileData, err := os.ReadFile(templateFile)
-			if err != nil {
-				return fmt.Errorf("could not read the specified template file: %v", err)
-			}
-			err = registerModel(fileData, "", "url", path, !register)
+		if utils.IsValidUrl(path) {
+			err := registerModel(nil, nil, "", "urlImport", path, true)
 			if err != nil {
 				utils.Log.Error(err)
 				return nil
 			}
-			locationForModel := utils.MesheryFolder + "/models"
-			utils.Log.Info("Model can be accessed from ", locationForModel)
 			return nil
 		}
-
-		// Handle the case when the path is a file or directory
 		info, err := os.Stat(path)
 		if err != nil {
-			return fmt.Errorf("could not access the specified path: %v", err)
+			return models.ErrFolderStat(err, path)
 		}
 
 		var tarData []byte
@@ -99,13 +83,13 @@ var importModelCmd = &cobra.Command{
 		} else {
 			fileData, err := os.ReadFile(path)
 			if err != nil {
-				return fmt.Errorf("could not read the specified file: %v", err)
+				return utils.ErrFileRead(err)
 			}
 			tarData = fileData
 			fileName = filepath.Base(path)
 		}
 
-		err = registerModel(tarData, fileName, "file", "", !register)
+		err = registerModel(tarData, nil, fileName, "file", "", true)
 		if err != nil {
 			utils.Log.Error(err)
 			return nil
@@ -114,7 +98,7 @@ var importModelCmd = &cobra.Command{
 	},
 }
 
-func registerModel(data []byte, filename string, dataType string, sourceURI string, register bool) error {
+func registerModel(data []byte, componentData []byte, filename string, dataType string, sourceURI string, register bool) error {
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
 		return err
@@ -124,12 +108,17 @@ func registerModel(data []byte, filename string, dataType string, sourceURI stri
 	url := baseURL + "/api/meshmodels/register"
 	var importRequest schemav1beta1.ImportRequest
 	importRequest.UploadType = dataType
-	if dataType == "file" {
+	if dataType == "csv" {
+		importRequest.ImportBody.ModelCsv = "data:text/csv;base64," + base64.StdEncoding.EncodeToString(data)
+		importRequest.ImportBody.ComponentCsv = "data:text/csv;base64," + base64.StdEncoding.EncodeToString(componentData)
+	} else if dataType == "file" {
 		importRequest.ImportBody.ModelFile = data
 	} else {
-		err = encoding.Unmarshal(data, &importRequest.ImportBody.Model)
-		if err != nil {
-			return err
+		if data != nil {
+			err = encoding.Unmarshal(data, &importRequest.ImportBody.Model)
+			if err != nil {
+				return err
+			}
 		}
 	}
 	importRequest.ImportBody.Url = sourceURI
@@ -431,7 +420,5 @@ func init() {
 	})
 
 	importModelCmd.Flags().StringVarP(&location, "file", "f", "", "Specify path to the file or directory")
-	importModelCmd.Flags().StringVarP(&templateFile, "template", "t", "", "Specify path to the template JSON file")
-	importModelCmd.Flags().BoolVarP(&register, "register", "r", false, "Skip registration of the model")
 
 }

@@ -30,7 +30,6 @@ func SetupMeshkitLogger(name string, debugLevel bool, output io.Writer) logger.H
 	if !debugLevel {
 		logLevel = int(log.DebugLevel)
 	}
-
 	logger, err := logger.New(name, logger.Options{
 		Format:   logger.TerminalLogFormat,
 		LogLevel: logLevel,

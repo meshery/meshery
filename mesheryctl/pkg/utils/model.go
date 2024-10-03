@@ -1,31 +1,63 @@
 package utils
 
 import (
+	"bytes"
+	"context"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"reflect"
 	"strconv"
 	"strings"
+	"sync"
+	"time"
 
 	"github.com/layer5io/meshkit/encoding"
 	"github.com/layer5io/meshkit/generators"
 	"github.com/layer5io/meshkit/generators/models"
+	meshkitutils "github.com/layer5io/meshkit/utils"
+	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
+	"golang.org/x/sync/semaphore"
+	"google.golang.org/api/sheets/v4"
 
 	"github.com/layer5io/meshkit/models/meshmodel/entity"
 	"github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshkit/utils/csv"
+	"github.com/layer5io/meshkit/utils/store"
 	"github.com/meshery/schemas/models/v1alpha1/capability"
 	"github.com/meshery/schemas/models/v1beta1"
 	"github.com/meshery/schemas/models/v1beta1/category"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/connection"
-	"github.com/meshery/schemas/models/v1beta1/model"
+	_model "github.com/meshery/schemas/models/v1beta1/model"
 )
 
+var modelToCompGenerateTracker = store.NewGenericThreadSafeStore[compGenerateTracker]()
+
+type compGenerateTracker struct {
+	totalComps int
+	version    string
+}
+
+var (
+	GoogleSpreadSheetURL     = "https://docs.google.com/spreadsheets/d/"
+	srv                      *sheets.Service
+	totalAggregateComponents int
+	totalAggregateModel      int
+	logDirPath               = filepath.Join(utils.GetHome(), ".meshery", "logs", "registry")
+)
 var (
 	shouldRegisterMod = "publishToSites"
 )
+var (
+	artifactHubCount        = 0
+	artifactHubRateLimit    = 100
+	artifactHubRateLimitDur = 5 * time.Minute
+	artifactHubMutex        sync.Mutex
+)
+var defVersion = "v1.0.0"
 
 type ModelCSV struct {
 	Registrant         string `json:"registrant" csv:"registrant"`
@@ -69,10 +101,10 @@ var modelMetadataValues = []string{
 	"primaryColor", "secondaryColor", "svgColor", "svgWhite", "svgComplete", "styleOverrides", "capabilities", "isAnnotation", "shape",
 }
 
-func (m *ModelCSV) UpdateModelDefinition(modelDef *model.ModelDefinition) error {
+func (m *ModelCSV) UpdateModelDefinition(modelDef *_model.ModelDefinition) error {
 	metadata := modelDef.Metadata
 	if metadata == nil {
-		metadata = &model.ModelDefinition_Metadata{}
+		metadata = &_model.ModelDefinition_Metadata{}
 	}
 	if metadata.AdditionalProperties == nil {
 		metadata.AdditionalProperties = make(map[string]interface{})
@@ -137,7 +169,7 @@ func (m *ModelCSV) UpdateModelDefinition(modelDef *model.ModelDefinition) error 
 	modelDef.Metadata = metadata
 	return nil
 }
-func (mcv *ModelCSV) CreateModelDefinition(version, defVersion string) model.ModelDefinition {
+func (mcv *ModelCSV) CreateModelDefinition(version, defVersion string) _model.ModelDefinition {
 	status := entity.Ignored
 	if strings.ToLower(mcv.PublishToRegistry) == "true" {
 		status = entity.Enabled
@@ -146,17 +178,17 @@ func (mcv *ModelCSV) CreateModelDefinition(version, defVersion string) model.Mod
 	catname.Name = mcv.Category
 	registrant := createNewRegistrant(mcv.Registrant)
 
-	model := model.ModelDefinition{
+	model := _model.ModelDefinition{
 		Category:    catname,
 		Description: mcv.Description,
 		DisplayName: mcv.ModelDisplayName,
 
 		SchemaVersion: v1beta1.ModelSchemaVersion,
 		Name:          mcv.Model,
-		Status:        model.ModelDefinitionStatus(status),
+		Status:        _model.ModelDefinitionStatus(status),
 		Registrant:    registrant,
 		SubCategory:   mcv.SubCategory,
-		Model: model.Model{
+		Model: _model.Model{
 			Version: version,
 		},
 		Version: defVersion,
@@ -190,7 +222,7 @@ func NewModelCSVHelper(sheetURL, spreadsheetName string, spreadsheetID int64, lo
 		// Set the CSV file path
 		csvPath = filepath.Join(dirPath, "models.csv")
 		sheetURL = sheetURL + "/pub?output=csv" + "&gid=" + strconv.FormatInt(spreadsheetID, 10)
-		Log.Info("Downloading CSV from: ", sheetURL, csvPath)
+		Log.Info("Downloading CSV from: ", sheetURL)
 		err = utils.DownloadFile(csvPath, sheetURL)
 		if err != nil {
 			return nil, utils.ErrReadingRemoteFile(err)
@@ -215,7 +247,6 @@ func (mch *ModelCSVHelper) ParseModelsSheet(parseForDocs bool, modelName string)
 	errorChan := make(chan error, 1)
 	csvReader, err := csv.NewCSVParser[ModelCSV](mch.CSVPath, rowIndex, nil, func(columns []string, currentRow []string) bool {
 		index := 0
-
 		if parseForDocs {
 			index = GetIndexForRegisterCol(columns, shouldRegisterMod)
 		} else {
@@ -229,7 +260,6 @@ func (mch *ModelCSVHelper) ParseModelsSheet(parseForDocs bool, modelName string)
 		}
 		return false
 	})
-
 	if err != nil {
 		return ErrFileRead(err)
 	}
@@ -249,7 +279,6 @@ func (mch *ModelCSVHelper) ParseModelsSheet(parseForDocs bool, modelName string)
 				continue
 			}
 			mch.Models = append(mch.Models, data)
-			Log.Info(fmt.Sprintf("Reading registrant [%s] model [%s]", data.Registrant, data.Model))
 		case err := <-errorChan:
 			return ErrFileRead(err)
 
@@ -446,7 +475,7 @@ func (m ModelCSVHelper) Cleanup() error {
 
 	return nil
 }
-func AssignDefaultsForCompDefs(componentDef *component.ComponentDefinition, modelDef *model.ModelDefinition) {
+func AssignDefaultsForCompDefs(componentDef *component.ComponentDefinition, modelDef *_model.ModelDefinition) {
 	// Assign the status from the model to the component
 	compStatus := component.ComponentDefinitionStatus(modelDef.Status)
 	componentDef.Status = &compStatus
@@ -532,7 +561,7 @@ func AssignDefaultsForCompDefs(componentDef *component.ComponentDefinition, mode
 		}
 	}
 }
-func GenerateComponentsFromPkg(pkg models.Package, compDirPath string, defVersion string, modelDef model.ModelDefinition) (int, int, error) {
+func GenerateComponentsFromPkg(pkg models.Package, compDirPath string, defVersion string, modelDef _model.ModelDefinition) (int, int, error) {
 	comps, err := pkg.GenerateComponents()
 	if err != nil {
 		return 0, 0, err
@@ -541,7 +570,7 @@ func GenerateComponentsFromPkg(pkg models.Package, compDirPath string, defVersio
 	for _, comp := range comps {
 		comp.Version = defVersion
 		if modelDef.Metadata == nil {
-			modelDef.Metadata = &model.ModelDefinition_Metadata{}
+			modelDef.Metadata = &_model.ModelDefinition_Metadata{}
 		}
 		if modelDef.Metadata.AdditionalProperties == nil {
 			modelDef.Metadata.AdditionalProperties = make(map[string]interface{})
@@ -573,4 +602,418 @@ func GenerateModels(registrant string, sourceURl string, modelName string) (mode
 	}
 	version := pkg.GetVersion()
 	return pkg, version, nil
+}
+
+func RateLimitArtifactHub() {
+	artifactHubMutex.Lock()
+	defer artifactHubMutex.Unlock()
+
+	if artifactHubCount > 0 && artifactHubCount%artifactHubRateLimit == 0 {
+		Log.Info("Rate limit reached for Artifact Hub. Waiting for ", artifactHubRateLimitDur)
+		time.Sleep(artifactHubRateLimitDur)
+	}
+	artifactHubCount++
+}
+func createVersionedDirectoryForModelAndComp(version, modelName, storeLocation string) (string, string, error) {
+	modelDirPath := filepath.Join(storeLocation, modelName, version, defVersion)
+	err := utils.CreateDirectory(modelDirPath)
+	if err != nil {
+		return "", "", err
+	}
+
+	compDirPath := filepath.Join(modelDirPath, "components")
+	err = utils.CreateDirectory(compDirPath)
+	return modelDirPath, compDirPath, err
+}
+
+func writeModelDefToFileSystem(model *ModelCSV, version, modelDefPath string) (*_model.ModelDefinition, bool, error) {
+	modelDef := model.CreateModelDefinition(version, defVersion)
+	filePath := filepath.Join(modelDefPath, "model.json")
+	tmpFilePath := filepath.Join(modelDefPath, "tmp_model.json")
+
+	// Ensure the temporary file is removed regardless of what happens
+	defer func() {
+		_ = os.Remove(tmpFilePath)
+	}()
+
+	// Check if the file exists
+
+	if _, err := os.Stat(filePath); err == nil {
+		existingData, err := os.ReadFile(filePath)
+		if err != nil {
+			goto NewGen
+		}
+
+		err = modelDef.WriteModelDefinition(tmpFilePath, "json")
+		if err != nil {
+			goto NewGen
+		}
+
+		newData, err := os.ReadFile(tmpFilePath)
+		if err != nil {
+			goto NewGen
+		}
+
+		// Compare the existing and new data
+		if bytes.Equal(existingData, newData) {
+			var oldModelDef _model.ModelDefinition
+			err = encoding.Unmarshal(existingData, &oldModelDef)
+			if err != nil {
+				goto NewGen
+			}
+			// If they are the same, return without changes
+			return &oldModelDef, true, nil
+		}
+	}
+NewGen:
+	// Write the model definition to the actual file if it's new or different
+	err := modelDef.WriteModelDefinition(filePath, "json")
+	if err != nil {
+		return nil, false, err
+	}
+
+	return &modelDef, false, nil
+}
+func parseModelSheet(url string, modelName string, sheetGID int64, modelCSVFilePath string) (*ModelCSVHelper, error) {
+	modelCSVHelper, err := NewModelCSVHelper(url, "Models", sheetGID, modelCSVFilePath)
+	if err != nil {
+		return nil, err
+	}
+
+	err = modelCSVHelper.ParseModelsSheet(false, modelName)
+	if err != nil {
+		return nil, ErrGenerateModel(err, "unable to start model generation")
+	}
+	return modelCSVHelper, nil
+}
+func parseComponentSheet(url string, modelName string, componentSpredsheetGID int64, componentCSVFilePath string) (*ComponentCSVHelper, error) {
+	compCSVHelper, err := NewComponentCSVHelper(url, "Components", componentSpredsheetGID, componentCSVFilePath)
+	if err != nil {
+		return nil, err
+	}
+
+	err = compCSVHelper.ParseComponentsSheet(modelName)
+	if err != nil {
+		return nil, ErrGenerateModel(err, "unable to start model generation")
+	}
+	return compCSVHelper, nil
+}
+func logModelGenerationSummary(modelToCompGenerateTracker *store.GenerticThreadSafeStore[compGenerateTracker]) {
+	for key, val := range modelToCompGenerateTracker.GetAllPairs() {
+		Log.Info(fmt.Sprintf("Generated %d components for model [%s] %s", val.totalComps, key, val.version))
+		totalAggregateComponents += val.totalComps
+		if val.totalComps > 0 {
+			totalAggregateModel++
+		}
+	}
+
+	Log.Info(fmt.Sprintf("-----------------------------\n-----------------------------\nGenerated %d models and %d components", totalAggregateModel, totalAggregateComponents))
+}
+func InvokeGenerationFromSheet(wg *sync.WaitGroup, path string, modelsheetID, componentSheetID int64, spreadsheeetID string, modelName string, modelCSVFilePath, componentCSVFilePath, spreadsheeetCred string) error {
+	weightedSem := semaphore.NewWeighted(20)
+	url := GoogleSpreadSheetURL + spreadsheeetID
+	totalAvailableModels := 0
+	spreadsheeetChan := make(chan SpreadsheetData)
+	defer func() {
+		logModelGenerationSummary(modelToCompGenerateTracker)
+
+		// Log.UpdateLogOutput(os.Stdout)
+		Log.Info(fmt.Sprintf("Summary: %d models, %d components generated.", totalAggregateModel, totalAggregateComponents))
+
+		Log.Info("See ", logDirPath, " for detailed logs.")
+
+		totalAggregateModel = 0
+		totalAggregateComponents = 0
+	}()
+	modelCSVHelper, err := parseModelSheet(url, modelName, modelsheetID, modelCSVFilePath)
+	if err != nil {
+		return err
+	}
+
+	componentCSVHelper, err := parseComponentSheet(url, modelName, componentSheetID, componentCSVFilePath)
+	if err != nil {
+		return err
+	}
+
+	var wgForSpreadsheetUpdate sync.WaitGroup
+	wgForSpreadsheetUpdate.Add(1)
+
+	go func() {
+		ProcessModelToComponentsMap(componentCSVHelper.Components)
+		VerifyandUpdateSpreadsheet(spreadsheeetCred, &wgForSpreadsheetUpdate, srv, spreadsheeetChan, spreadsheeetID, modelCSVFilePath, componentCSVFilePath)
+	}()
+
+	// Iterate models from the spreadsheet
+	for _, model := range modelCSVHelper.Models {
+		if modelName != "" && modelName != model.Model {
+			continue
+		}
+		totalAvailableModels++
+		ctx := context.Background()
+
+		err := weightedSem.Acquire(ctx, 1)
+		if err != nil {
+			break
+		}
+		wg.Add(1)
+		go func(model ModelCSV) {
+			defer func() {
+				wg.Done()
+				weightedSem.Release(1)
+			}()
+			var err error
+
+			if utils.ReplaceSpacesAndConvertToLowercase(model.Registrant) == "meshery" {
+				err = GenerateDefsForCoreRegistrant(model, componentCSVHelper, path, modelName)
+				if err != nil {
+					LogError.Error(err)
+				}
+				return
+			}
+
+			generator, err := generators.NewGenerator(model.Registrant, model.SourceURL, model.Model)
+			if err != nil {
+				err = ErrGenerateModel(err, model.Model)
+				LogError.Error(err)
+				return
+			}
+
+			if utils.ReplaceSpacesAndConvertToLowercase(model.Registrant) == "artifacthub" {
+				RateLimitArtifactHub()
+			}
+
+			pkg, err := generator.GetPackage()
+			if err != nil {
+				err = ErrGenerateModel(err, model.Model)
+				LogError.Error(err)
+				return
+			}
+
+			version := pkg.GetVersion()
+			modelDirPath, compDirPath, err := createVersionedDirectoryForModelAndComp(version, model.Model, path)
+			if err != nil {
+				err = ErrGenerateModel(err, model.Model)
+				LogError.Error(err)
+				return
+			}
+			modelDef, alreadyExist, err := writeModelDefToFileSystem(&model, version, modelDirPath)
+			if err != nil {
+				err = ErrGenerateModel(err, model.Model)
+				LogError.Error(err)
+				return
+			}
+			if alreadyExist {
+				totalAvailableModels--
+			}
+			comps, err := pkg.GenerateComponents()
+			if err != nil {
+				err = ErrGenerateModel(err, model.Model)
+				LogError.Error(err)
+				return
+			}
+			lengthOfComps := len(comps)
+
+			for _, comp := range comps {
+				comp.Version = defVersion
+				// Assign the component status corresponding to model status.
+				// i.e., If model is enabled, comps are also "enabled". Ultimately, all individual comps will have the ability to control their status.
+				// The status "enabled" indicates that the component will be registered inside the registry.
+				if modelDef.Metadata == nil {
+					modelDef.Metadata = &_model.ModelDefinition_Metadata{}
+				}
+				if modelDef.Metadata.AdditionalProperties == nil {
+					modelDef.Metadata.AdditionalProperties = make(map[string]interface{})
+				}
+
+				if comp.Model.Metadata.AdditionalProperties != nil {
+					modelDef.Metadata.AdditionalProperties["source_uri"] = comp.Model.Metadata.AdditionalProperties["source_uri"]
+				}
+				comp.Model = *modelDef
+
+				AssignDefaultsForCompDefs(&comp, modelDef)
+				compAlreadyExist, err := comp.WriteComponentDefinition(compDirPath, "json")
+				if compAlreadyExist {
+					lengthOfComps--
+				}
+				if err != nil {
+					err = ErrGenerateModel(err, model.Model)
+					LogError.Error(err)
+					return
+				}
+			}
+			if !alreadyExist {
+				if len(comps) == 0 {
+					err = ErrGenerateModel(fmt.Errorf("no components found for model"), model.Model)
+					LogError.Error(err)
+
+				} else {
+					log.Info("Current model: ", model.Model)
+					log.Info("Extracted ", lengthOfComps, " components for ", model.ModelDisplayName, " (", model.Model, ")")
+				}
+			} else {
+				if len(comps) > 0 {
+					log.Info("Model already exists: ", model.Model)
+				} else {
+					err = ErrGenerateModel(fmt.Errorf("no components found for model"), model.Model)
+					LogError.Error(err)
+				}
+			}
+			spreadsheeetChan <- SpreadsheetData{
+				Model:      &model,
+				Components: comps,
+			}
+
+			modelToCompGenerateTracker.Set(model.Model, compGenerateTracker{
+				totalComps: lengthOfComps,
+				version:    version,
+			})
+		}(model)
+	}
+
+	wg.Wait()
+	close(spreadsheeetChan)
+	wgForSpreadsheetUpdate.Wait()
+	return nil
+}
+
+// For registrants eg: meshery, whose components needs to be directly created by referencing meshery/schemas repo.
+// the sourceURL contains the path of models component definitions
+func GenerateDefsForCoreRegistrant(model ModelCSV, ComponentCSVHelper *ComponentCSVHelper, path string, modelName string) error {
+	var version string
+	parts := strings.Split(model.SourceURL, "/")
+	// Assuming the URL is always of the format "protocol://github.com/owner/repo/tree/definitions/{model-name}/version/components"
+	// We know the version is the 7th element (0-indexed) in the split URL
+	if len(parts) >= 8 {
+		version = parts[8] // Fetch the version from the expected position
+	} else {
+		return fmt.Errorf("invalid SourceURL format: %s", model.SourceURL)
+	}
+	isModelPublished, _ := strconv.ParseBool(model.PublishToRegistry)
+	var compDefComps []component.ComponentDefinition
+	alreadyExist := false
+	actualCompCount := 0
+	defer func() {
+		modelToCompGenerateTracker.Set(model.Model, compGenerateTracker{
+			totalComps: len(compDefComps) - actualCompCount,
+			version:    version,
+		})
+	}()
+	status := entity.Ignored
+	if isModelPublished {
+		status = entity.Enabled
+	}
+	_status := component.ComponentDefinitionStatus(status)
+	modelDirPath, compDirPath, err := createVersionedDirectoryForModelAndComp(version, model.Model, path)
+	if err != nil {
+		err = ErrGenerateModel(err, model.Model)
+		return err
+	}
+	modelDef, alreadyExists, err := writeModelDefToFileSystem(&model, version, modelDirPath)
+	if err != nil {
+		return ErrGenerateModel(err, model.Model)
+	}
+	isModelPublishToSite, _ := strconv.ParseBool(model.PublishToSites)
+	alreadyExist = alreadyExists
+
+	for registrant, models := range ComponentCSVHelper.Components {
+		if registrant != "meshery" {
+			continue
+		}
+		for _, comps := range models {
+			for _, comp := range comps {
+				if comp.Model != model.Model {
+					continue
+				}
+				var componentDef component.ComponentDefinition
+				componentDef, err = comp.CreateComponentDefinition(isModelPublishToSite, "v1.0.0")
+				if err != nil {
+					if LogError != nil {
+						LogError.Error(ErrUpdateComponent(err, modelName, comp.Component))
+						continue
+					}
+					Log.Error(ErrUpdateComponent(err, modelName, comp.Component))
+					continue
+				}
+				componentDef.Status = &_status
+				componentDef.Model = *modelDef
+				alreadyExists, err = componentDef.WriteComponentDefinition(compDirPath, "json")
+				if err != nil {
+					err = ErrGenerateComponent(err, comp.Model, componentDef.DisplayName)
+					if LogError != nil {
+						LogError.Error(ErrUpdateComponent(err, modelName, comp.Component))
+						continue
+					}
+					Log.Error(ErrUpdateComponent(err, modelName, comp.Component))
+					continue
+				}
+				if alreadyExists {
+					actualCompCount++
+				}
+				compDefComps = append(compDefComps, componentDef)
+			}
+		}
+	}
+
+	if !alreadyExist {
+		if len(compDefComps) == 0 {
+			err = ErrGenerateModel(fmt.Errorf("no components found for model "), model.Model)
+			return err
+		} else if len(compDefComps)-actualCompCount == 0 {
+			Log.Info("Current model: ", model.Model)
+			Log.Info(" no change in components for ", model.ModelDisplayName, " (", model.Model, ")")
+		} else {
+			Log.Info("Current model: ", model.Model)
+			Log.Info(" extracted ", len(compDefComps)-actualCompCount, " components for ", model.ModelDisplayName, " (", model.Model, ")")
+		}
+	} else {
+		if len(compDefComps) > 0 {
+			if len(compDefComps)-actualCompCount == 0 {
+				Log.Info("Model already exists: ", model.Model)
+			} else {
+				Log.Info("Current model: ", model.Model)
+				Log.Info(" extracted ", len(compDefComps)-actualCompCount, " components for ", model.ModelDisplayName, " (", model.Model, ")")
+			}
+		} else {
+			err = ErrGenerateModel(fmt.Errorf("no components found for model "), model.Model)
+			return err
+		}
+	}
+	if err != nil {
+		return ErrGenerateModel(err, model.Model)
+	}
+	return nil
+}
+func SetLogger(ismultiWriter bool) error {
+	logDirPath := filepath.Join(meshkitutils.GetHome(), ".meshery", "logs", "registry")
+	err := os.MkdirAll(logDirPath, 0755)
+	if err != nil {
+		return err
+	}
+	logFilePath := filepath.Join(logDirPath, "model-generation.log")
+	logFile, err := os.Create(logFilePath)
+	if err != nil {
+		return err
+	}
+
+	logErrorFilePath := filepath.Join(logDirPath, "registry-errors.log")
+	errorLogFile, err := os.Create(logErrorFilePath)
+	if err != nil {
+		return err
+	}
+	if Log == nil {
+		Log = SetupMeshkitLogger("mesheryctl", true, logFile)
+		LogError = SetupMeshkitLogger("mesheryctl-error", true, errorLogFile)
+	}
+	Log.SetLevel(logrus.DebugLevel)
+	LogError.SetLevel(logrus.ErrorLevel)
+	multiWriter := io.MultiWriter(logFile)
+	multiErrorWriter := io.MultiWriter(errorLogFile)
+	if ismultiWriter {
+		multiWriter = io.MultiWriter(os.Stdout, logFile)
+		multiErrorWriter = io.MultiWriter(os.Stdout, errorLogFile)
+	}
+
+	Log.UpdateLogOutput(multiWriter)
+	LogError.UpdateLogOutput(multiErrorWriter)
+	return nil
 }

@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -29,7 +30,7 @@ const (
 	HelmChartOperatorName = "meshery-operator"
 	MesheryFolder         = ".meshery"
 	ManifestsFolder       = "manifests"
-	registryLocation      = ".meshery/models"
+	RegistryLocation      = ".meshery/models"
 	DefVersion            = "1.0.0"
 )
 
@@ -501,7 +502,7 @@ func ReplaceSVGData(model *model.ModelDefinition) error {
 	return nil
 }
 func CreateVersionedDirectoryForModelAndComp(version, modelName string) (string, string, error) {
-	modelLocation := filepath.Join(os.Getenv("HOME"), registryLocation)
+	modelLocation := filepath.Join(os.Getenv("HOME"), RegistryLocation)
 	modelDirPath := filepath.Join(modelLocation, modelName, version, DefVersion)
 	err := utils.CreateDirectory(modelDirPath)
 	if err != nil {
@@ -511,4 +512,59 @@ func CreateVersionedDirectoryForModelAndComp(version, modelName string) (string,
 	compDirPath := filepath.Join(modelDirPath, "components")
 	err = utils.CreateDirectory(compDirPath)
 	return modelDirPath, compDirPath, err
+}
+func CopyDirectory(src string, dst string) error {
+	entries, err := os.ReadDir(src)
+	if err != nil {
+		return err
+	}
+
+	for _, entry := range entries {
+		srcPath := filepath.Join(src, entry.Name())
+		dstPath := filepath.Join(dst, entry.Name())
+
+		info, err := entry.Info()
+		if err != nil {
+			return err
+		}
+
+		if info.IsDir() {
+			if err := os.MkdirAll(dstPath, info.Mode()); err != nil {
+				return err
+			}
+			if err := CopyDirectory(srcPath, dstPath); err != nil {
+				return err
+			}
+		} else {
+			if err := copyFile(srcPath, dstPath); err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}
+
+func copyFile(src, dst string) error {
+	srcFile, err := os.Open(src)
+	if err != nil {
+		return err
+	}
+	defer srcFile.Close()
+
+	dstFile, err := os.Create(dst)
+	if err != nil {
+		return err
+	}
+	defer dstFile.Close()
+
+	if _, err := io.Copy(dstFile, srcFile); err != nil {
+		return err
+	}
+
+	// Ensure the destination file has the same permissions as the source
+	srcInfo, err := os.Stat(src)
+	if err != nil {
+		return err
+	}
+	return os.Chmod(dst, srcInfo.Mode())
 }

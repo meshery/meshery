@@ -6,10 +6,13 @@ import (
 	"encoding/csv"
 	"fmt"
 	"os"
+	"path/filepath"
+	"strings"
 	"sync"
 
 	cuecsv "cuelang.org/go/pkg/encoding/csv"
 	"github.com/gocarina/gocsv"
+	"github.com/layer5io/meshkit/utils"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"google.golang.org/api/sheets/v4"
 )
@@ -262,4 +265,54 @@ func marshalStructToCSValues[K any](data []*K) ([][]interface{}, error) {
 	}
 
 	return results, nil
+}
+func GetCsv(csvDirectory string) (string, string, error) {
+	files, err := os.ReadDir(csvDirectory)
+	if err != nil {
+		return "", "", utils.ErrReadDir(err, csvDirectory)
+	}
+	var modelCSVFilePath, componentCSVFilePath string
+
+	for _, file := range files {
+		filePath := filepath.Join(csvDirectory, file.Name())
+		if !file.IsDir() && strings.HasSuffix(file.Name(), ".csv") {
+			headers, secondRow, err := getCSVHeader(filePath)
+			if Contains("modelDisplayName", headers) != -1 || Contains("modelDisplayName", secondRow) != -1 {
+				modelCSVFilePath = filePath
+			} else if Contains("component", headers) != -1 || Contains("component", secondRow) != -1 {
+				componentCSVFilePath = filePath
+			}
+			if err != nil {
+				return "", "", err
+			}
+
+		}
+	}
+
+	if modelCSVFilePath == "" || componentCSVFilePath == "" {
+		return "", "", ErrCSVFileNotFound(csvDirectory)
+	}
+	return modelCSVFilePath, componentCSVFilePath, nil
+}
+func getCSVHeader(filePath string) (headers, secondRow []string, err error) {
+	file, err := os.Open(filePath)
+	if err != nil {
+		err = utils.ErrOpenFile(filePath)
+		return headers, secondRow, err
+	}
+	defer file.Close()
+
+	reader := csv.NewReader(file)
+	headers, err = reader.Read()
+	if err != nil {
+		err = ErrReadCSVRow(err, "header")
+		return headers, secondRow, err
+	}
+
+	secondRow, err = reader.Read()
+	if err != nil {
+		err = ErrReadCSVRow(err, "second row")
+		return headers, secondRow, err
+	}
+	return headers, secondRow, nil
 }

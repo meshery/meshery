@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Typography, Grid, Box, styled, List, ListItem } from '@layer5/sistent';
+import { Typography, Grid, Box, List, ListItem } from '@layer5/sistent';
 import { Launch as LaunchIcon } from '@material-ui/icons';
-import { alpha } from '@mui/material';
-import { SEVERITY_STYLE, SEVERITY } from '../NotificationCenter/constants';
 import {
   FormatStructuredData,
   SectionBody,
@@ -14,13 +12,6 @@ import { canTruncateDescription } from './notification';
 import { FormatDryRunResponse } from '../DesignLifeCycle/DryRun';
 import { formatDryRunResponse } from 'machines/validator/designValidator';
 import { DeploymentSummaryFormatter } from '../DesignLifeCycle/DeploymentSummary';
-
-const StyledDetailBox = styled(Box)(({ theme, severityColor, bgOpacity }) => ({
-  padding: theme.spacing(2),
-  backgroundColor: alpha(severityColor, bgOpacity),
-  border: `1px solid ${theme.palette.divider}`,
-  display: 'flex',
-}));
 
 const DryRunResponse = ({ response }) => {
   return <FormatDryRunResponse dryRunErrors={formatDryRunResponse(response)} />;
@@ -88,8 +79,6 @@ const UnsuccessfulEntityWithError = ({ modelName, error }) => {
   );
 };
 
-const imageCache = {};
-
 const checkImageExists = async (url) => {
   try {
     const response = await fetch(url);
@@ -105,35 +94,37 @@ const ComponentWithIcon = ({ component }) => {
   const kind = Metadata.toLowerCase();
 
   const paths = [
-    `ui/public/static/img/meshmodels/${modelname}/color/${modelname}-color.svg`,
-    `ui/public/static/img/meshmodels/${modelname}/white/${modelname}-white.svg`,
     `ui/public/static/img/meshmodels/${modelname}/color/${kind}-color.svg`,
     `ui/public/static/img/meshmodels/${modelname}/white/${kind}-white.svg`,
+    `ui/public/static/img/meshmodels/${modelname}/color/${modelname}-color.svg`,
+    `ui/public/static/img/meshmodels/${modelname}/white/${modelname}-white.svg`,
   ];
 
-  const [finalPath, setFinalPath] = useState(
-    'ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg',
-  );
+  const defaultPath = 'ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg';
+
+  const [finalPath, setFinalPath] = useState(defaultPath);
 
   useEffect(() => {
     const loadImages = async () => {
-      if (imageCache[modelname]) {
-        setFinalPath(imageCache[modelname]);
-        return;
+      for (let i = 0; i < 2; i++) {
+        const exists = await checkImageExists(paths[i]);
+        if (exists) {
+          setFinalPath(paths[i]);
+          return;
+        }
       }
 
-      for (const path of paths) {
-        const exists = await checkImageExists(path);
+      for (let i = 2; i < 4; i++) {
+        const exists = await checkImageExists(paths[i]);
         if (exists) {
-          imageCache[modelname] = path;
-          setFinalPath(path);
+          setFinalPath(paths[i]);
           return;
         }
       }
     };
 
     loadImages();
-  }, [modelname, paths]);
+  }, [modelname, kind, paths]);
 
   const version = Version
     ? Version.startsWith('v')
@@ -340,60 +331,36 @@ const ModelImportedSection = ({ modelDetails }) => {
             </Typography>
             {hasComponents && (
               <>
-                <StyledDetailBox
-                  severityColor={SEVERITY_STYLE[SEVERITY.SUCCESS].color}
-                  bgOpacity={0.2}
-                  display="flex"
-                  gap={2}
-                  flexDirection="column"
-                >
-                  <Typography variant="body1">
-                    <span style={{ fontWeight: 'bold', fontSize: '14px', marginLeft: '1rem' }}>
-                      {isMultipleComponents ? 'COMPONENTS:' : 'COMPONENT:'}
-                    </span>
-                  </Typography>
-                  {detail.Components.map((component, idx) => (
-                    <Box key={idx} ml={2}>
-                      <ComponentWithIcon component={component} />
-                    </Box>
-                  ))}
-                </StyledDetailBox>
+                <Typography variant="body1">
+                  <span style={{ fontWeight: 'bold', fontSize: '14px', marginLeft: '1rem' }}>
+                    {isMultipleComponents ? 'COMPONENTS:' : 'COMPONENT:'}
+                  </span>
+                </Typography>
+                {detail.Components.map((component, idx) => (
+                  <Box key={idx} ml={2}>
+                    <ComponentWithIcon component={component} />
+                  </Box>
+                ))}
               </>
             )}
             {hasRelationships && (
               <>
-                <StyledDetailBox
-                  severityColor={SEVERITY_STYLE[SEVERITY.SUCCESS].color}
-                  bgOpacity={0.2}
-                  display="flex"
-                  gap={2}
-                  flexDirection="column"
-                >
-                  <Typography variant="body1">
-                    <span style={{ fontWeight: 'bold', fontSize: '14px', marginLeft: '1rem' }}>
-                      {isMultipleRelationships ? 'RELATIONSHIPS:' : 'RELATIONSHIP:'}
-                    </span>
-                  </Typography>
-                  {detail.Relationships.map((relationship, idx) => (
-                    <Box key={idx} ml={2}>
-                      <RelationshipDetail relationship={relationship} />
-                    </Box>
-                  ))}
-                </StyledDetailBox>
+                <Typography variant="body1">
+                  <span style={{ fontWeight: 'bold', fontSize: '14px', marginLeft: '1rem' }}>
+                    {isMultipleRelationships ? 'RELATIONSHIPS:' : 'RELATIONSHIP:'}
+                  </span>
+                </Typography>
+                {detail.Relationships.map((relationship, idx) => (
+                  <Box key={idx} ml={2}>
+                    <RelationshipDetail relationship={relationship} />
+                  </Box>
+                ))}
               </>
             )}
             {hasErrors &&
               detail.Errors.map((error, idx) => (
                 <Box key={idx}>
-                  <StyledDetailBox
-                    severityColor={SEVERITY_STYLE[SEVERITY.ERROR].color}
-                    bgOpacity={0.2}
-                    display="flex"
-                    gap={2}
-                    flexDirection="column"
-                  >
-                    <UnsuccessfulEntityWithError modelName={modelName} error={error} />
-                  </StyledDetailBox>
+                  <UnsuccessfulEntityWithError modelName={modelName} error={error} />
                 </Box>
               ))}
           </Box>
@@ -424,31 +391,9 @@ export const FormattedMetadata = ({ event }) => {
     ViewLink: (value) => (
       <TitleLink href={'/api/system/fileView?file=' + encodeURIComponent(value)}>View</TitleLink>
     ),
-    ModelImportMessage: (value) =>
-      value && (
-        <StyledDetailBox
-          severityColor={SEVERITY_STYLE[SEVERITY.INFO].color}
-          bgOpacity={0.1}
-          display="flex"
-          gap={2}
-          flexDirection="column"
-        >
-          <ModelImportMessages message={value} />
-        </StyledDetailBox>
-      ),
+    ModelImportMessage: (value) => value && <ModelImportMessages message={value} />,
 
-    ModelDetails: (value) =>
-      value && (
-        <StyledDetailBox
-          severityColor={SEVERITY_STYLE[SEVERITY.INFO].color}
-          bgOpacity={0.1}
-          display="flex"
-          gap={2}
-          flexDirection="column"
-        >
-          <ModelImportedSection modelDetails={value} />
-        </StyledDetailBox>
-      ),
+    ModelDetails: (value) => value && <ModelImportedSection modelDetails={value} />,
   };
 
   const EventTypeFormatters = {

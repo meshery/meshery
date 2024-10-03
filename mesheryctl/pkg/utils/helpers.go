@@ -1296,3 +1296,10 @@ func GetPageQueryParameter(cmd *cobra.Command, page int) string {
 	}
 	return fmt.Sprintf("page=%d", page)
 }
+func IsValidUrl(path string) bool {
+	u, err := url.Parse(path)
+	if err != nil {
+		return false
+	}
+	return u.Scheme != "" && u.Host != ""
+}
