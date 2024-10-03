@@ -1386,6 +1386,18 @@ components:
   colorIcon: assets/img/integrations/k8s-config-connector/components/secure-source-manager-instance/icons/color/secure-source-manager-instance-color.svg
   whiteIcon: assets/img/integrations/k8s-config-connector/components/secure-source-manager-instance/icons/white/secure-source-manager-instance-white.svg
   description: 
+- name: firestore-database
+  colorIcon: assets/img/integrations/k8s-config-connector/components/firestore-database/icons/color/firestore-database-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/firestore-database/icons/white/firestore-database-white.svg
+  description: 
+- name: network-connectivity-service-connection-policy
+  colorIcon: assets/img/integrations/k8s-config-connector/components/network-connectivity-service-connection-policy/icons/color/network-connectivity-service-connection-policy-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/network-connectivity-service-connection-policy/icons/white/network-connectivity-service-connection-policy-white.svg
+  description: 
+- name: redis-cluster
+  colorIcon: assets/img/integrations/k8s-config-connector/components/redis-cluster/icons/color/redis-cluster-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/redis-cluster/icons/white/redis-cluster-white.svg
+  description: 
 featureList: [
   "Provides a wide range of cloud services",
   "Integrates with Kubernetes",

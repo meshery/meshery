@@ -1,0 +1,604 @@
+name: prometheus-postgres-exporter
+version: 0.0.10
+services:
+  NodeGroupInventoryWallet:
+    annotations: {}
+    apiVersion: core.meshery.io/v1alpha1
+    dependsOn:
+    - prometheus-postgres-exporter-cwmgp
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: meshery-core
+    name: NodeGroupInventoryWallet
+    namespace: ""
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: ce260f70-6758-4526-99ee-2f2aec24e38a
+        label: NodeGroupInventoryWallet
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          components: null
+          description: ""
+          displayName: Meshery Core
+          hostID: 26e64aa8-2d86-57bd-92b3-2a73160d27b4
+          id: 3e2db384-d3af-5fac-8af2-684fc3c29446
+          metadata:
+            isAnnotation: false
+            subCategory: App Definition and Development
+            svgColor: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+            svgComplete: ""
+            svgWhite: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+          model:
+            version: 0.7.1
+          name: meshery-core
+          registrant:
+            hostname: artifacthub
+          relationships: null
+          schemaVersion: core.meshery.io/v1beta1
+          status: enabled
+          subCategory: App Definition and Development
+          version: v1.0.0
+        meshmodel-metadata:
+          capabilities: |-
+            {
+              "designer": {
+                "pass-events-to": "parent",
+                "edit": {
+                  "config": false,
+                  "copy": false,
+                  "delete": false,
+                  "duplicate": false,
+                  "reset-styles": false,
+                  "resolve": false,
+                  "lock": false,
+                  "shape": {
+                    "convert-shape": false
+                  },
+                  "style": false
+                },
+                "label": {
+                  "edit": false,
+                  "show": false,
+                  "sync-with-config-property": "none"
+                }
+              }
+            }
+          defaultData: '{"label":""}'
+          genealogy: parent
+          hasInvalidSchema: true
+          isAnnotation: true
+          primaryColor: '#00B39F'
+          secondaryColor: '#00D3A9'
+          shape: round-rectangle
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides:
+            background-image: none
+            background-opacity: 0.1
+            border-style: dashed
+            border-width: 0
+            data:
+              label: ""
+            height: 30px
+            width: 30px
+            z-index: 1003
+          styles: '{"height":"30px","width":"30px", "background-image":"none","border-width":0,"border-style":"dashed","background-opacity":0.1}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/meshery-core/color/anchornode-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/meshery-core/white/anchornode-white.svg
+        parent: e5ad43fd-d220-4d60-9271-08b3786a1277
+        position:
+          posX: 290
+          posY: 250
+        whiteboardData: {}
+    type: NodeGroupInventoryWallet
+    version: 0.7.1
+  prometheus-postgres-exporter-aiuep:
+    annotations: {}
+    apiVersion: rbac.authorization.k8s.io/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels:
+      app: prometheus-postgres-exporter
+      chart: prometheus-postgres-exporter-6.0.0
+      heritage: Helm
+      release: prometheus-postgres-exporter
+    model: kubernetes
+    name: prometheus-postgres-exporter
+    namespace: default
+    settings:
+      rules: []
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: 88edad82-4749-47fc-8b6d-4fdf0003b6ee
+            metadata:
+              binded_by: 9e2743df-93b9-46b9-b554-71f6c7755b9a
+            source: 8c341388-e5f9-45ce-b716-7da34a61e083
+            subType: Permission
+            target: c0ddf04d-a2bc-49ed-a5f3-3b1a17f2c51c
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: 8c341388-e5f9-45ce-b716-7da34a61e083
+        label: prometheus-postgres-exporter
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          secondaryColor: '#7aa1f0'
+          shape: round-rectangle
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides: '{"height":"22px", "width":"22px", "x":"8.5", "y":"7.5","z-index":4}'
+          styles: '{"height":"22px", "width":"22px", "x":"8.5", "y":"7.5","z-index":4}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/role-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/role-white.svg
+        position:
+          posX: 50
+          posY: 110
+        whiteboardData: {}
+    type: Role
+    version: ""
+  prometheus-postgres-exporter-cwmgp:
+    annotations: {}
+    apiVersion: apps/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels:
+      app: prometheus-postgres-exporter
+      chart: prometheus-postgres-exporter-6.0.0
+      heritage: Helm
+      release: prometheus-postgres-exporter
+    model: kubernetes
+    name: prometheus-postgres-exporter
+    namespace: default
+    settings:
+      spec:
+        replicas: 1
+        selector:
+          match Labels:
+            app: prometheus-postgres-exporter
+            release: prometheus-postgres-exporter
+        template:
+          metadata:
+            annotations:
+              checksum/config: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
+            labels:
+              app: prometheus-postgres-exporter
+              release: prometheus-postgres-exporter
+          spec:
+            automount Service Account Token: false
+            containers:
+            - args:
+              - --config.file=/etc/postgres_exporter.yml
+              - --web.listen-address=:9187
+              env:
+              - name: DATA_SOURCE_URI
+                value: :5432/?sslmode=disable
+              - name: DATA_SOURCE_USER
+                value: postgres
+              - name: DATA_SOURCE_PASS
+                value From:
+                  secret Key Ref:
+                    key: data_source_password
+                    name: prometheus-postgres-exporter
+              image: quay.io/prometheuscommunity/postgres-exporter:v0.15.0
+              image Pull Policy: IfNotPresent
+              liveness Probe:
+                http Get:
+                  path: /
+                  port: http
+                initial Delay Seconds: 0
+                timeout Seconds: 3
+              name: prometheus-postgres-exporter
+              ports:
+              - container Port: 9187
+                name: http
+                protocol: TCP
+              readiness Probe:
+                http Get:
+                  path: /
+                  port: http
+                initial Delay Seconds: 0
+                timeout Seconds: 1
+              resources: {}
+              security Context:
+                allow Privilege Escalation: false
+                capabilities:
+                  drop:
+                  - ALL
+                privileged: false
+                read Only Root Filesystem: true
+              volume Mounts: null
+            security Context:
+              run As Group: 1001
+              run As Non Root: true
+              run As User: 1001
+              seccomp Profile:
+                type: RuntimeDefault
+            service Account Name: prometheus-postgres-exporter
+            volumes: null
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: c204526a-6bdd-4313-9552-29978c138ef8
+            metadata:
+              port: 80
+              protocol: TCP
+            source: a572890d-0bd7-45c6-8746-46767d325a3a
+            subType: Network
+            target: e5ad43fd-d220-4d60-9271-08b3786a1277
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: e5ad43fd-d220-4d60-9271-08b3786a1277
+        label: prometheus-postgres-exporter
+        meshmodel-metadata:
+          capabilities: |2-
+             {
+              "designer": {
+                "edit": {
+                  "shape": {
+                    "convert-shape": false
+                  }
+                }
+              }
+            }
+          defaultData: ""
+          genealogy: parent
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: Created by Meshery Authors
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          secondaryColor: '#7aa1f0'
+          shape: round-pentagon
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides:
+            background-opacity: 0.5
+            border-width: 2
+            z-index: 1001
+          styles: '{"border-width":2,"background-opacity":0.5}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg
+          svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/deployment-complete.svg
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/deployment-white.svg
+        position:
+          posX: 290
+          posY: 250
+        whiteboardData: {}
+    type: Deployment
+    version: ""
+  prometheus-postgres-exporter-qwfrc:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels:
+      app: prometheus-postgres-exporter
+      chart: prometheus-postgres-exporter-6.0.0
+      heritage: Helm
+      release: prometheus-postgres-exporter
+    model: kubernetes
+    name: prometheus-postgres-exporter
+    namespace: default
+    settings:
+      spec:
+        ports:
+        - name: http
+          port: 80
+          protocol: TCP
+          target Port: 9187
+        selector:
+          app: prometheus-postgres-exporter
+          release: prometheus-postgres-exporter
+        type: ClusterIP
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: c204526a-6bdd-4313-9552-29978c138ef8
+            metadata:
+              port: 80
+              protocol: TCP
+            source: a572890d-0bd7-45c6-8746-46767d325a3a
+            subType: Network
+            target: e5ad43fd-d220-4d60-9271-08b3786a1277
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: a572890d-0bd7-45c6-8746-46767d325a3a
+        label: prometheus-postgres-exporter
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          secondaryColor: '#7aa1f0'
+          shape: round-triangle
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides: '{"height":20,"width":20,"padding":12,"background-position-y":4.5,"x":"10px","y":"12px"}'
+          styles: '{"height":20,"width":20,"padding":12,"background-position-y":4.5,"x":"10px","y":"12px"}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/service-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/service-white.svg
+        position:
+          posX: 50
+          posY: 50
+        whiteboardData: {}
+    type: Service
+    version: ""
+  prometheus-postgres-exporter-wihhf:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels:
+      app: prometheus-postgres-exporter
+      chart: prometheus-postgres-exporter-6.0.0
+      heritage: Helm
+      release: prometheus-postgres-exporter
+    model: kubernetes
+    name: prometheus-postgres-exporter
+    namespace: default
+    settings:
+      data:
+        data_source_password: c29tZXBhc3d3b3Jk
+      type: Opaque
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 3a76e8b7-6b0b-4050-b85b-cc50e15fb979
+        label: prometheus-postgres-exporter
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: Created by Meshery Authors
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          secondaryColor: '#7aa1f0'
+          shape: shield
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides:
+            background-clip: node
+            background-image-containment: over
+            background-opacity: "0"
+            height: 32
+            padding: 1
+            width: 32
+            z-index: 1002
+          styles: '{"height":32,"width":32,"background-clip":"node","background-image-containment":"over","padding":1,"background-opacity":"0"}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/secret-color.svg
+          svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/secret-complete.svg
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/secret-white.svg
+        position:
+          posX: 110
+          posY: 110
+        whiteboardData: {}
+    type: Secret
+    version: ""
+  prometheus-postgres-exporter-yqsbw:
+    annotations: {}
+    apiVersion: rbac.authorization.k8s.io/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels:
+      app: prometheus-postgres-exporter
+      chart: prometheus-postgres-exporter-6.0.0
+      heritage: Helm
+      release: prometheus-postgres-exporter
+    model: kubernetes
+    name: prometheus-postgres-exporter
+    namespace: default
+    settings:
+      role Ref:
+        api Group: rbac.authorization.k8s.io
+        kind: Role
+        name: prometheus-postgres-exporter
+      subjects:
+      - kind: ServiceAccount
+        name: prometheus-postgres-exporter
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 9e2743df-93b9-46b9-b554-71f6c7755b9a
+        label: prometheus-postgres-exporter
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          secondaryColor: '#7aa1f0'
+          shape: round-rectangle
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides:
+            height: 25px
+            width: 25px
+            x: "7"
+            "y": "7"
+            z-index: 5
+          styles: '{"height":"25px","width":"25px","x":"7", "y":"7","z-index":4}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/rolebinding-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/rolebinding-white.svg
+        position:
+          posX: 50
+          posY: 130.10625
+        whiteboardData:
+          style:
+            height: 10.5
+            width: 10.5
+            z-index: 1000
+    type: RoleBinding
+    version: ""
+  prometheus-postgres-exporter-zynoz:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels:
+      app: prometheus-postgres-exporter
+      chart: prometheus-postgres-exporter-6.0.0
+      heritage: Helm
+      release: prometheus-postgres-exporter
+    model: kubernetes
+    name: prometheus-postgres-exporter
+    namespace: default
+    settings:
+      automount Service Account Token: false
+      image Pull Secrets: []
+      secrets: []
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: 88edad82-4749-47fc-8b6d-4fdf0003b6ee
+            metadata:
+              binded_by: 9e2743df-93b9-46b9-b554-71f6c7755b9a
+            source: 8c341388-e5f9-45ce-b716-7da34a61e083
+            subType: Permission
+            target: c0ddf04d-a2bc-49ed-a5f3-3b1a17f2c51c
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: c0ddf04d-a2bc-49ed-a5f3-3b1a17f2c51c
+        label: prometheus-postgres-exporter
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          secondaryColor: '#7aa1f0'
+          shape: bottom-round-rectangle
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides:
+            z-index: 5
+          styles: ""
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/serviceaccount-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/serviceaccount-white.svg
+        position:
+          posX: 50
+          posY: 150
+        whiteboardData: {}
+    type: ServiceAccount
+    version: ""

@@ -1,0 +1,1990 @@
+name: Kubernetes Global  Balancer
+version: 0.0.3
+services:
+  coredns-azmzu:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels:
+      app.kubernetes.io/instance: k8gb
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: coredns
+      helm.sh/chart: coredns-1.15.3
+    model: kubernetes
+    name: coredns
+    namespace: default
+    settings: {}
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: ae27f68d-e5ea-4665-91d6-328ab5f00a6f
+            metadata:
+              binded_by: 028fae42-110c-4275-87ed-41dd812fe708
+            source: 12a729ac-9292-4141-bfbf-9d304b042f36
+            subType: Permission
+            target: 2c5be621-fc29-4226-9d09-5ccd27777766
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        - data:
+            id: 0250838d-6b2f-4296-88bc-7eb2256c5a57
+            metadata:
+              binded_by: 100f78a6-cc2f-4b33-bd81-82887622b0d1
+            source: 0a383edc-b5f8-48f2-a234-01ac347d42e3
+            subType: Permission
+            target: 2c5be621-fc29-4226-9d09-5ccd27777766
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: 2c5be621-fc29-4226-9d09-5ccd27777766
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          secondaryColor: '#7aa1f0'
+          shape: bottom-round-rectangle
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides:
+            z-index: 3
+          styles: ""
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/serviceaccount-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/serviceaccount-white.svg
+        position:
+          posX: -122
+          posY: 128.5
+        whiteboardData:
+          style: {}
+    type: ServiceAccount
+    version: ""
+  coredns-cluster-role:
+    annotations: {}
+    apiVersion: rbac.authorization.k8s.io/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: coredns-cluster-role
+    namespace: ""
+    settings:
+      rules:
+      - api Groups:
+        - ""
+        resources:
+        - namespaces
+        verbs:
+        - list
+        - watch
+      - api Groups:
+        - externaldns.k8s.io
+        resources:
+        - dnsendpoints
+        verbs:
+        - list
+        - watch
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: 0250838d-6b2f-4296-88bc-7eb2256c5a57
+            metadata:
+              binded_by: 100f78a6-cc2f-4b33-bd81-82887622b0d1
+            source: 0a383edc-b5f8-48f2-a234-01ac347d42e3
+            subType: Permission
+            target: 2c5be621-fc29-4226-9d09-5ccd27777766
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: 0a383edc-b5f8-48f2-a234-01ac347d42e3
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: false
+          logoURL: Created by Meshery Authors
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          secondaryColor: '#7aa1f0'
+          shape: round-rectangle
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides:
+            height: 22px
+            width: 22px
+            x: "8.5"
+            "y": "7.5"
+            z-index: 15
+          styles: '{"height":"22px", "width":"22px", "x":"8.5", "y":"7.5"}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/clusterrole-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/clusterrole-white.svg
+        position:
+          posX: -99.5
+          posY: -26.5
+        whiteboardData:
+          style: {}
+    type: ClusterRole
+    version: ""
+  coredns-clusterrole-binding:
+    annotations: {}
+    apiVersion: rbac.authorization.k8s.io/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: coredns-clusterrole-binding
+    namespace: ""
+    settings:
+      role Ref:
+        api Group: rbac.authorization.k8s.io
+        kind: ClusterRole
+        name: coredns-cluster-role
+      subjects:
+      - kind: ServiceAccount
+        name: coredns
+        namespace: default
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 100f78a6-cc2f-4b33-bd81-82887622b0d1
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: false
+          logoURL: Created by Meshery Authors
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          secondaryColor: '#7aa1f0'
+          shape: round-rectangle
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides:
+            height: 25px
+            width: 25px
+            x: "7"
+            "y": "7"
+            z-index: 9
+          styles: '{"height":"25px","width":"25px","x":"7", "y":"7"}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/clusterrolebinding-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/clusterrolebinding-white.svg
+        position:
+          posX: -110.76601623722465
+          posY: 51.11033407865869
+        whiteboardData:
+          style:
+            height: 10.5
+            width: 10.5
+            z-index: 1000
+    type: ClusterRoleBinding
+    version: ""
+  coredns-mmmdb:
+    annotations: {}
+    apiVersion: ""
+    dependsOn:
+    - k8gb-coredns-hkvut
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: meshery-core
+    name: coredns
+    namespace: ""
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        elementType: FIELD_REF_NODE
+        fieldRefData:
+          elementType: FIELD_REF_NODE
+          fieldPath: spec.template.spec.containers[0]
+          jsonSchemaPath: properties.spec.allOf[0].properties.template.allOf[0].properties.spec.allOf[0].properties.containers.items.allOf[0]
+        id: cc6ea9d6-c86d-4aa1-90b0-f3e80c1018cc
+        label: spec.template.spec.containers[0]
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          components: null
+          description: ""
+          displayName: Meshery Core
+          hostID: 26e64aa8-2d86-57bd-92b3-2a73160d27b4
+          id: 71af0d59-f11b-5151-924a-f9f805edb3df
+          metadata:
+            isAnnotation: false
+            subCategory: App Definition and Development
+            svgColor: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+            svgComplete: ""
+            svgWhite: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+          model:
+            version: 0.7.2
+          name: meshery-core
+          registrant:
+            hostname: artifacthub
+          relationships: null
+          schemaVersion: models.meshery.io/v1beta1
+          status: enabled
+          subCategory: App Definition and Development
+          version: v1.0.0
+        meshmodel-metadata:
+          capabilities: |-
+            {
+              "designer": {
+                "capabilities": {
+                  "config": true,
+                  "label": false,
+                  "policy": false,
+                  "relationships": true,
+                  "json-schema": false,
+                  "permissions": false,
+                  "workflow": false,
+                  "gitops": false,
+                  "history": false
+                },
+                "supportsCompoundDragAndDrop": false,
+                "edit": {
+                  "config": true,
+                  "copy": false,
+                  "delete": true,
+                  "duplicate": false,
+                  "reset-styles": false,
+                  "resolve": false,
+                  "lock": false,
+                  "shape": {
+                    "convert-shape": true
+                  },
+                  "style": true
+                },
+                "label": {
+                  "edit": false,
+                  "show": true,
+                  "sync-with-config-property": "name"
+                }
+              }
+            }
+          defaultData: ""
+          genealogy: ""
+          hasInvalidSchema: true
+          isAnnotation: true
+          primaryColor: '#326CE5'
+          secondaryColor: '#00D3A9'
+          shape: circle
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides:
+            z-index: 16
+          styles: ""
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/meshery-core/color/container-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/meshery-core/white/container-white.svg
+        parent: 8d6fcd26-d16a-45ee-9321-43829c1921d4
+        position:
+          posX: -11.5
+          posY: -112.5
+        whiteboardData: {}
+    type: Container
+    version: ""
+  dnsendpoints.externaldns.k8s.io:
+    annotations:
+      api-approved.kubernetes.io: https://github.com/kubernetes-sigs/external-dns/pull/2007
+      controller-gen.kubebuilder.io/version: v0.5.0
+    apiVersion: apiextensions.k8s.io/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: dnsendpoints.externaldns.k8s.io
+    namespace: ""
+    settings:
+      spec:
+        group: externaldns.k8s.io
+        names:
+          kind: DNSEndpoint
+          list Kind: DNSEndpointList
+          plural: dnsendpoints
+          singular: dnsendpoint
+        scope: Namespaced
+        versions:
+        - name: v1alpha1
+          schema:
+            open APIV3Schema:
+              properties:
+                api Version:
+                  description: 'APIVersion defines the versioned schema of this representation
+                    of an object. Servers should convert recognized schemas to the
+                    latest internal value, and may reject unrecognized values. More
+                    info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+                  type: string
+                kind:
+                  description: 'Kind is a string value representing the REST resource
+                    this object represents. Servers may infer this from the endpoint
+                    the client submits requests to. Cannot be updated. In CamelCase.
+                    More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+                  type: string
+                metadata:
+                  type: object
+                spec:
+                  description: DNSEndpointSpec defines the desired state of DNSEndpoint
+                  properties:
+                    endpoints:
+                      items:
+                        description: Endpoint is a high-level way of a connection
+                          between a service and an IP
+                        properties:
+                          dns Name:
+                            description: The hostname of the DNS record
+                            type: string
+                          labels:
+                            additionalProperties:
+                              type: string
+                            description: Labels stores labels defined for the Endpoint
+                            type: object
+                          provider Specific:
+                            description: ProviderSpecific stores provider specific
+                              config
+                            items:
+                              description: ProviderSpecificProperty holds the name
+                                and value of a configuration which is specific to
+                                individual DNS providers
+                              properties:
+                                name:
+                                  type: string
+                                value:
+                                  type: string
+                              type: object
+                            type: array
+                          record TTL:
+                            description: TTL for the record
+                            format: int64
+                            type: integer
+                          record Type:
+                            description: RecordType type of record, e.g. CNAME, A,
+                              SRV, TXT etc
+                            type: string
+                          set Identifier:
+                            description: Identifier to distinguish multiple records
+                              with the same name and type (e.g. Route53 records with
+                              routing policies other than 'simple')
+                            type: string
+                          targets:
+                            description: The targets the DNS record points to
+                            items:
+                              type: string
+                            type: array
+                        type: object
+                      type: array
+                  type: object
+                status:
+                  description: DNSEndpointStatus defines the observed state of DNSEndpoint
+                  properties:
+                    observed Generation:
+                      description: The generation observed by the external-dns controller.
+                      format: int64
+                      type: integer
+                  type: object
+              type: object
+          served: true
+          storage: true
+          subresources:
+            status: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: e90cd467-9566-4825-92c0-4764c1731990
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isNamespaced: false
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          secondaryColor: '#7aa1f0'
+          shape: circle
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides:
+            z-index: 7
+          styles: ""
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/customresourcedefinition-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/customresourcedefinition-white.svg
+        position:
+          posX: -3.5
+          posY: -27.5
+        whiteboardData:
+          style: {}
+    type: CustomResourceDefinition
+    version: ""
+  gslbs.k8gb.absa.oss:
+    annotations:
+      controller-gen.kubebuilder.io/version: v0.15.0
+    apiVersion: apiextensions.k8s.io/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: gslbs.k8gb.absa.oss
+    namespace: ""
+    settings:
+      spec:
+        group: k8gb.absa.oss
+        names:
+          kind: Gslb
+          list Kind: GslbList
+          plural: gslbs
+          singular: gslb
+        scope: Namespaced
+        versions:
+        - additional Printer Columns:
+          - json Path: .spec.strategy.type
+            name: strategy
+            type: string
+          - json Path: .status.geoTag
+            name: geoTag
+            type: string
+          - json Path: .status.hosts
+            name: hosts
+            priority: 1
+            type: string
+          name: v1beta1
+          schema:
+            open APIV3Schema:
+              description: Gslb is the Schema for the gslbs API
+              properties:
+                api Version:
+                  description: |-
+                    APIVersion defines the versioned schema of this representation of an object.
+                    Servers should convert recognized schemas to the latest internal value, and
+                    may reject unrecognized values.
+                    More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+                  type: string
+                kind:
+                  description: |-
+                    Kind is a string value representing the REST resource this object represents.
+                    Servers may infer this from the endpoint the client submits requests to.
+                    Cannot be updated.
+                    In CamelCase.
+                    More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+                  type: string
+                metadata:
+                  type: object
+                spec:
+                  description: GslbSpec defines the desired state of Gslb
+                  properties:
+                    ingress:
+                      description: Gslb-enabled Ingress Spec
+                      properties:
+                        backend:
+                          description: |-
+                            A default backend capable of servicing requests that don't match any
+                            rule. At least one of 'backend' or 'rules' must be specified. This field
+                            is optional to allow the loadbalancer controller or defaulting logic to
+                            specify a global default.
+                          properties:
+                            resource:
+                              description: |-
+                                resource is an ObjectRef to another Kubernetes resource in the namespace
+                                of the Ingress object. If resource is specified, a service.Name and
+                                service.Port must not be specified.
+                                This is a mutually exclusive setting with "Service".
+                              properties:
+                                api Group:
+                                  description: |-
+                                    APIGroup is the group for the resource being referenced.
+                                    If APIGroup is not specified, the specified Kind must be in the core API group.
+                                    For any other third-party types, APIGroup is required.
+                                  type: string
+                                kind:
+                                  description: Kind is the type of resource being
+                                    referenced
+                                  type: string
+                                name:
+                                  description: Name is the name of resource being
+                                    referenced
+                                  type: string
+                              required:
+                              - kind
+                              - name
+                              type: object
+                              x-kubernetes-map-type: atomic
+                            service:
+                              description: |-
+                                service references a service as a backend.
+                                This is a mutually exclusive setting with "Resource".
+                              properties:
+                                name:
+                                  description: |-
+                                    name is the referenced service. The service must exist in
+                                    the same namespace as the Ingress object.
+                                  type: string
+                                port:
+                                  description: |-
+                                    port of the referenced service. A port name or port number
+                                    is required for a IngressServiceBackend.
+                                  properties:
+                                    name:
+                                      description: |-
+                                        name is the name of the port on the Service.
+                                        This is a mutually exclusive setting with "Number".
+                                      type: string
+                                    number:
+                                      description: |-
+                                        number is the numerical port number (e.g. 80) on the Service.
+                                        This is a mutually exclusive setting with "Name".
+                                      format: int32
+                                      type: integer
+                                  type: object
+                              required:
+                              - name
+                              type: object
+                          type: object
+                        ingress Class Name:
+                          description: |-
+                            IngressClassName is the name of the IngressClass cluster resource. The
+                            associated IngressClass defines which controller will implement the
+                            resource. This replaces the deprecated `kubernetes.io/ingress.class`
+                            annotation. For backwards compatibility, when that annotation is set, it
+                            must be given precedence over this field. The controller may emit a
+                            warning if the field and annotation have different values.
+                            Implementations of this API should ignore Ingresses without a class
+                            specified. An IngressClass resource may be marked as default, which can
+                            be used to set a default value for this field. For more information,
+                            refer to the IngressClass documentation.
+                          type: string
+                        rules:
+                          description: |-
+                            A list of host rules used to configure the Ingress. If unspecified, or
+                            no rule matches, all traffic is sent to the default backend.
+                          items:
+                            description: |-
+                              IngressRule represents the rules mapping the paths under a specified host to
+                              the related backend services. Incoming requests are first evaluated for a host
+                              match, then routed to the backend associated with the matching IngressRuleValue.
+                            properties:
+                              host:
+                                description: "Host is the fully qualified domain name
+                                  of a network host, as defined by RFC 3986.\nNote
+                                  the following deviations from the \"host\" part
+                                  of the\nURI as defined in RFC 3986:\n1. IPs are
+                                  not allowed. Currently an IngressRuleValue can only
+                                  apply to\n   the IP in the Spec of the parent Ingress.\n2.
+                                  The `:` delimiter is not respected because ports
+                                  are not allowed.\n\t  Currently the port of an Ingress
+                                  is implicitly :80 for http and\n\t  :443 for https.\nBoth
+                                  these may change in the future.\nIncoming requests
+                                  are matched against the host before the\nIngressRuleValue.
+                                  If the host is unspecified, the Ingress routes all\ntraffic
+                                  based on the specified IngressRuleValue.\n\n\nHost
+                                  can be \"precise\" which is a domain name without
+                                  the terminating dot of\na network host (e.g. \"foo.bar.com\")
+                                  or \"wildcard\", which is a domain name\nprefixed
+                                  with a single wildcard label (e.g. \"*.foo.com\").\nThe
+                                  wildcard character '*' must appear by itself as
+                                  the first DNS label and\nmatches only a single label.
+                                  You cannot have a wildcard label by itself (e.g.
+                                  Host == \"*\").\nRequests will be matched against
+                                  the Host field in the following way:\n1. If Host
+                                  is precise, the request matches this rule if the
+                                  http host header is equal to Host.\n2. If Host is
+                                  a wildcard, then the request matches this rule if
+                                  the http host header\nis to equal to the suffix
+                                  (removing the first label) of the wildcard rule."
+                                type: string
+                              http:
+                                description: |-
+                                  HTTPIngressRuleValue is a list of http selectors
+                                  pointing to backends. In the example: http://<host>/<path>?<searchpart>
+                                  -> backend where where parts of the url correspond to
+                                  RFC 3986, this resource will be used to match against
+                                  everything after the last '/' and before the first '?'
+                                  or '#'.
+                                properties:
+                                  paths:
+                                    description: paths is a collection of paths that
+                                      map requests to backends.
+                                    items:
+                                      description: |-
+                                        HTTPIngressPath associates a path with a backend. Incoming urls matching the
+                                        path are forwarded to the backend.
+                                      properties:
+                                        backend:
+                                          description: |-
+                                            backend defines the referenced service endpoint to which the traffic
+                                            will be forwarded to.
+                                          properties:
+                                            resource:
+                                              description: |-
+                                                resource is an ObjectRef to another Kubernetes resource in the namespace
+                                                of the Ingress object. If resource is specified, a service.Name and
+                                                service.Port must not be specified.
+                                                This is a mutually exclusive setting with "Service".
+                                              properties:
+                                                api Group:
+                                                  description: |-
+                                                    APIGroup is the group for the resource being referenced.
+                                                    If APIGroup is not specified, the specified Kind must be in the core API group.
+                                                    For any other third-party types, APIGroup is required.
+                                                  type: string
+                                                kind:
+                                                  description: Kind is the type of
+                                                    resource being referenced
+                                                  type: string
+                                                name:
+                                                  description: Name is the name of
+                                                    resource being referenced
+                                                  type: string
+                                              required:
+                                              - kind
+                                              - name
+                                              type: object
+                                              x-kubernetes-map-type: atomic
+                                            service:
+                                              description: |-
+                                                service references a service as a backend.
+                                                This is a mutually exclusive setting with "Resource".
+                                              properties:
+                                                name:
+                                                  description: |-
+                                                    name is the referenced service. The service must exist in
+                                                    the same namespace as the Ingress object.
+                                                  type: string
+                                                port:
+                                                  description: |-
+                                                    port of the referenced service. A port name or port number
+                                                    is required for a IngressServiceBackend.
+                                                  properties:
+                                                    name:
+                                                      description: |-
+                                                        name is the name of the port on the Service.
+                                                        This is a mutually exclusive setting with "Number".
+                                                      type: string
+                                                    number:
+                                                      description: |-
+                                                        number is the numerical port number (e.g. 80) on the Service.
+                                                        This is a mutually exclusive setting with "Name".
+                                                      format: int32
+                                                      type: integer
+                                                  type: object
+                                              required:
+                                              - name
+                                              type: object
+                                          type: object
+                                        path:
+                                          description: |-
+                                            path is matched against the path of an incoming request. Currently it can
+                                            contain characters disallowed from the conventional "path" part of a URL
+                                            as defined by RFC 3986. Paths must begin with a '/' and must be present
+                                            when using PathType with value "Exact" or "Prefix".
+                                          type: string
+                                        path Type:
+                                          description: |-
+                                            pathType determines the interpretation of the path matching. PathType can
+                                            be one of the following values:
+                                            * Exact: Matches the URL path exactly.
+                                            * Prefix: Matches based on a URL path prefix split by '/'. Matching is
+                                              done on a path element by element basis. A path element refers is the
+                                              list of labels in the path split by the '/' separator. A request is a
+                                              match for path p if every p is an element-wise prefix of p of the
+                                              request path. Note that if the last element of the path is a substring
+                                              of the last element in request path, it is not a match (e.g. /foo/bar
+                                              matches /foo/bar/baz, but does not match /foo/barbaz).
+                                            * ImplementationSpecific: Interpretation of the Path matching is up to
+                                              the IngressClass. Implementations can treat this as a separate PathType
+                                              or treat it identically to Prefix or Exact path types.
+                                            Implementations are required to support all path types.
+                                          type: string
+                                      required:
+                                      - backend
+                                      - pathType
+                                      type: object
+                                    type: array
+                                    x-kubernetes-list-type: atomic
+                                required:
+                                - paths
+                                type: object
+                            required:
+                            - http
+                            type: object
+                          type: array
+                        tls:
+                          description: |-
+                            TLS configuration. Currently the Ingress only supports a single TLS
+                            port, 443. If multiple members of this list specify different hosts, they
+                            will be multiplexed on the same port according to the hostname specified
+                            through the SNI TLS extension, if the ingress controller fulfilling the
+                            ingress supports SNI.
+                          items:
+                            description: IngressTLS describes the transport layer
+                              security associated with an ingress.
+                            properties:
+                              hosts:
+                                description: |-
+                                  hosts is a list of hosts included in the TLS certificate. The values in
+                                  this list must match the name/s used in the tlsSecret. Defaults to the
+                                  wildcard host setting for the loadbalancer controller fulfilling this
+                                  Ingress, if left unspecified.
+                                items:
+                                  type: string
+                                type: array
+                                x-kubernetes-list-type: atomic
+                              secret Name:
+                                description: |-
+                                  secretName is the name of the secret used to terminate TLS traffic on
+                                  port 443. Field is left optional to allow TLS routing based on SNI
+                                  hostname alone. If the SNI host in a listener conflicts with the "Host"
+                                  header field used by an IngressRule, the SNI host is used for termination
+                                  and value of the "Host" header is used for routing.
+                                type: string
+                            type: object
+                          type: array
+                      type: object
+                    resource Ref:
+                      description: ResourceRef spec
+                      properties:
+                        ingress:
+                          description: Ingress selects a kubernetes.networking.k8s.io/v1.Ingress
+                            resource
+                          properties:
+                            match Expressions:
+                              description: matchExpressions is a list of label selector
+                                requirements. The requirements are ANDed.
+                              items:
+                                description: |-
+                                  A label selector requirement is a selector that contains values, a key, and an operator that
+                                  relates the key and values.
+                                properties:
+                                  key:
+                                    description: key is the label key that the selector
+                                      applies to.
+                                    type: string
+                                  operator:
+                                    description: |-
+                                      operator represents a key's relationship to a set of values.
+                                      Valid operators are In, NotIn, Exists and DoesNotExist.
+                                    type: string
+                                  values:
+                                    description: |-
+                                      values is an array of string values. If the operator is In or NotIn,
+                                      the values array must be non-empty. If the operator is Exists or DoesNotExist,
+                                      the values array must be empty. This array is replaced during a strategic
+                                      merge patch.
+                                    items:
+                                      type: string
+                                    type: array
+                                required:
+                                - key
+                                - operator
+                                type: object
+                              type: array
+                            match Labels:
+                              additionalProperties:
+                                type: string
+                              description: |-
+                                matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels
+                                map is equivalent to an element of matchExpressions, whose key field is "key", the
+                                operator is "In", and the values array contains only "value". The requirements are ANDed.
+                              type: object
+                          type: object
+                          x-kubernetes-map-type: atomic
+                      type: object
+                    strategy:
+                      description: Gslb Strategy spec
+                      properties:
+                        dns Ttl Seconds:
+                          description: Defines DNS record TTL in seconds
+                          type: integer
+                        primary Geo Tag:
+                          description: Primary Geo Tag. Valid for failover strategy
+                            only
+                          type: string
+                        split Brain Threshold Seconds:
+                          description: Split brain TXT record expiration in seconds
+                          type: integer
+                        type:
+                          description: Load balancing strategy type:(roundRobin|failover)
+                          type: string
+                        weight:
+                          additionalProperties:
+                            type: integer
+                          description: Weight is defined by map region:weight
+                          type: object
+                      required:
+                      - type
+                      type: object
+                  required:
+                  - strategy
+                  type: object
+                status:
+                  description: GslbStatus defines the observed state of Gslb
+                  properties:
+                    geo Tag:
+                      description: Cluster Geo Tag
+                      type: string
+                    healthy Records:
+                      additionalProperties:
+                        items:
+                          type: string
+                        type: array
+                      description: Current Healthy DNS record structure
+                      type: object
+                    hosts:
+                      description: Comma-separated list of hosts
+                      type: string
+                    load Balancer:
+                      description: LoadBalancer configuration
+                      properties:
+                        exposed Ips:
+                          description: ExposedIPs on the local Load Balancer
+                          items:
+                            type: string
+                          type: array
+                      type: object
+                    servers:
+                      description: Servers configuration
+                      items:
+                        description: Servers holds the GSLB's servers' configuration
+                        properties:
+                          host:
+                            description: Hostname exposed by the GSLB
+                            type: string
+                          services:
+                            description: Kubernetes Services backing the load balanced
+                              application
+                            items:
+                              description: NamespacedName holds a reference to a k8s
+                                resource
+                              properties:
+                                name:
+                                  description: Name of the resource
+                                  type: string
+                                namespace:
+                                  description: Namespace where the resource can be
+                                    found
+                                  type: string
+                              required:
+                              - name
+                              - namespace
+                              type: object
+                            type: array
+                        type: object
+                      type: array
+                    service Health:
+                      additionalProperties:
+                        type: string
+                      description: Associated Service status
+                      type: object
+                  required:
+                  - geoTag
+                  - healthyRecords
+                  - loadBalancer
+                  - servers
+                  - serviceHealth
+                  type: object
+              type: object
+          served: true
+          storage: true
+          subresources:
+            status: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 0c401c3c-05ac-4d73-94ad-540b9cce69bb
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isNamespaced: false
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          secondaryColor: '#7aa1f0'
+          shape: circle
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides:
+            z-index: 11
+          styles: ""
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/customresourcedefinition-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/customresourcedefinition-white.svg
+        position:
+          posX: -101
+          posY: 37.5
+        whiteboardData:
+          style: {}
+    type: CustomResourceDefinition
+    version: ""
+  k8gb-cbdxf:
+    annotations: {}
+    apiVersion: rbac.authorization.k8s.io/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels:
+      app.kubernetes.io/instance: k8gb
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: k8gb
+      app.kubernetes.io/version: v0.13.0
+      helm.sh/chart: k8gb-v0.13.0
+    model: kubernetes
+    name: k8gb
+    namespace: ""
+    settings:
+      role Ref:
+        api Group: rbac.authorization.k8s.io
+        kind: ClusterRole
+        name: k8gb
+      subjects:
+      - kind: ServiceAccount
+        name: k8gb
+        namespace: default
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 37836487-cfa9-43fc-8023-6b589cd7bb0e
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: false
+          logoURL: Created by Meshery Authors
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          secondaryColor: '#7aa1f0'
+          shape: round-rectangle
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides:
+            height: 25px
+            width: 25px
+            x: "7"
+            "y": "7"
+            z-index: 4
+          styles: '{"height":"25px","width":"25px","x":"7", "y":"7"}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/clusterrolebinding-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/clusterrolebinding-white.svg
+        position:
+          posX: -51.3936528137712
+          posY: 128.99763672919494
+        whiteboardData:
+          style:
+            height: 10.5
+            width: 10.5
+            z-index: 1000
+    type: ClusterRoleBinding
+    version: ""
+  k8gb-coredns-hkvut:
+    annotations: {}
+    apiVersion: apps/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels:
+      app.kubernetes.io/instance: k8gb
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: coredns
+      app.kubernetes.io/version: 1.8.0
+      helm.sh/chart: coredns-1.15.3
+    model: kubernetes
+    name: k8gb-coredns
+    namespace: default
+    settings:
+      spec:
+        replicas: 1
+        selector:
+          match Labels:
+            app.kubernetes.io/instance: k8gb
+            app.kubernetes.io/name: coredns
+        strategy:
+          rolling Update:
+            max Surge: 25%
+            max Unavailable: 1
+          type: RollingUpdate
+        template:
+          metadata:
+            annotations:
+              checksum/config: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
+            labels:
+              app.kubernetes.io/instance: k8gb
+              app.kubernetes.io/name: coredns
+          spec:
+            containers:
+            - args:
+              - -conf
+              - /etc/coredns/Corefile
+              image: absaoss/k8s_crd:v0.0.11
+              image Pull Policy: IfNotPresent
+              liveness Probe:
+                failure Threshold: 5
+                http Get:
+                  path: /health
+                  port: 8080
+                  scheme: HTTP
+                initial Delay Seconds: 60
+                period Seconds: 10
+                success Threshold: 1
+                timeout Seconds: 5
+              name: coredns
+              ports:
+              - container Port: 5353
+                name: udp-5353
+                protocol: UDP
+              - container Port: 5353
+                name: tcp-5353
+                protocol: TCP
+              readiness Probe:
+                failure Threshold: 5
+                http Get:
+                  path: /ready
+                  port: 8181
+                  scheme: HTTP
+                initial Delay Seconds: 30
+                period Seconds: 10
+                success Threshold: 1
+                timeout Seconds: 5
+              resources:
+                limits:
+                  cpu: 100m
+                  memory: 128Mi
+                requests:
+                  cpu: 100m
+                  memory: 128Mi
+              volume Mounts:
+              - mount Path: /etc/coredns
+                name: config-volume
+            service Account Name: coredns
+            termination Grace Period Seconds: 30
+            volumes:
+            - config Map:
+                items:
+                - key: Corefile
+                  path: Corefile
+                name: k8gb-coredns
+              name: config-volume
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: 8d46a8ef-c4db-4e97-b394-454da0986d03
+            metadata:
+              port: 53
+              protocol: UDP
+            source: cc05d0e3-909d-49f4-ad18-5c5c109a995f
+            subType: Network
+            target: 8d6fcd26-d16a-45ee-9321-43829c1921d4
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: 8d6fcd26-d16a-45ee-9321-43829c1921d4
+        meshmodel-metadata:
+          capabilities: |-
+            {
+              "fieldRefs": [
+                {
+                  "fieldPath": "spec.template.spec.containers",
+                  "jsonSchemaPath": "properties.spec.allOf[0].properties.template.allOf[0].properties.spec.allOf[0].properties.containers.items.allOf[0]",
+                  "component": {
+                    "kind": "Container",
+                    "model": "meshery-core"
+                  },
+                  "renderChildren": true
+                },
+                {
+                  "fieldPath": "spec.template.spec.init Containers",
+                  "jsonSchemaPath": "properties.spec.allOf[0].properties.template.allOf[0].properties.spec.allOf[0].properties.init Containers.items.allOf[0]",
+                  "component": {
+                    "kind": "Container",
+                    "model": "meshery-core"
+                  },
+                  "renderChildren": true
+                }
+              ],
+              "designer": {
+                "edit": {
+                  "shape": {
+                    "convert-shape": false
+                  }
+                }
+              }
+            }
+          defaultData: ""
+          genealogy: parent
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: Created by Meshery Authors
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          secondaryColor: '#7aa1f0'
+          shape: round-rectangle
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides:
+            background-opacity: 0.5
+            border-width: 2
+            z-index: 6
+          styles: '{"border-width":2,"background-opacity":0.5}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg
+          svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/deployment-complete.svg
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/deployment-white.svg
+        position:
+          posX: -11.5
+          posY: -103.5
+        whiteboardData:
+          style: {}
+    type: Deployment
+    version: ""
+  k8gb-coredns-hscas:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels:
+      app.kubernetes.io/instance: k8gb
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: coredns
+      helm.sh/chart: coredns-1.15.3
+    model: kubernetes
+    name: k8gb-coredns
+    namespace: default
+    settings:
+      spec:
+        ports:
+        - name: udp-5353
+          port: 53
+          protocol: UDP
+          target Port: 5353
+        selector:
+          app.kubernetes.io/instance: k8gb
+          app.kubernetes.io/name: coredns
+        type: ClusterIP
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: 8d46a8ef-c4db-4e97-b394-454da0986d03
+            metadata:
+              port: 53
+              protocol: UDP
+            source: cc05d0e3-909d-49f4-ad18-5c5c109a995f
+            subType: Network
+            target: 8d6fcd26-d16a-45ee-9321-43829c1921d4
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: cc05d0e3-909d-49f4-ad18-5c5c109a995f
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          secondaryColor: '#7aa1f0'
+          shape: round-triangle
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides:
+            background-position-y: 4.5
+            height: 20
+            padding: 12
+            width: 20
+            x: 10px
+            "y": 12px
+            z-index: 13
+          styles: '{"height":20,"width":20,"padding":12,"background-position-y":4.5,"x":"10px","y":"12px"}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/service-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/service-white.svg
+        position:
+          posX: -18.5
+          posY: 43.5
+        whiteboardData:
+          style: {}
+    type: Service
+    version: ""
+  k8gb-coredns-uqevv:
+    annotations: {}
+    apiVersion: rbac.authorization.k8s.io/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels:
+      app.kubernetes.io/instance: k8gb
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: coredns
+      helm.sh/chart: coredns-1.15.3
+    model: kubernetes
+    name: k8gb-coredns
+    namespace: ""
+    settings:
+      rules:
+      - api Groups:
+        - ""
+        resources:
+        - endpoints
+        - services
+        - pods
+        - namespaces
+        verbs:
+        - list
+        - watch
+      - api Groups:
+        - discovery.k8s.io
+        resources:
+        - endpointslices
+        verbs:
+        - list
+        - watch
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: ae27f68d-e5ea-4665-91d6-328ab5f00a6f
+            metadata:
+              binded_by: 028fae42-110c-4275-87ed-41dd812fe708
+            source: 12a729ac-9292-4141-bfbf-9d304b042f36
+            subType: Permission
+            target: 2c5be621-fc29-4226-9d09-5ccd27777766
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: 12a729ac-9292-4141-bfbf-9d304b042f36
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: false
+          logoURL: Created by Meshery Authors
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          secondaryColor: '#7aa1f0'
+          shape: round-rectangle
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides:
+            height: 22px
+            width: 22px
+            x: "8.5"
+            "y": "7.5"
+            z-index: 10
+          styles: '{"height":"22px", "width":"22px", "x":"8.5", "y":"7.5"}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/clusterrole-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/clusterrole-white.svg
+        position:
+          posX: 81.5
+          posY: -26.5
+        whiteboardData:
+          style: {}
+    type: ClusterRole
+    version: ""
+  k8gb-coredns-ycyut:
+    annotations: {}
+    apiVersion: rbac.authorization.k8s.io/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels:
+      app.kubernetes.io/instance: k8gb
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: coredns
+      helm.sh/chart: coredns-1.15.3
+    model: kubernetes
+    name: k8gb-coredns
+    namespace: ""
+    settings:
+      role Ref:
+        api Group: rbac.authorization.k8s.io
+        kind: ClusterRole
+        name: k8gb-coredns
+      subjects:
+      - kind: ServiceAccount
+        name: coredns
+        namespace: default
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 028fae42-110c-4275-87ed-41dd812fe708
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: false
+          logoURL: Created by Meshery Authors
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          secondaryColor: '#7aa1f0'
+          shape: round-rectangle
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides:
+            height: 25px
+            width: 25px
+            x: "7"
+            "y": "7"
+            z-index: 5
+          styles: '{"height":"25px","width":"25px","x":"7", "y":"7"}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/clusterrolebinding-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/clusterrolebinding-white.svg
+        position:
+          posX: -20.478693014893906
+          posY: 51.17418878284301
+        whiteboardData:
+          style:
+            height: 10.5
+            width: 10.5
+            z-index: 1000
+    type: ClusterRoleBinding
+    version: ""
+  k8gb-coredns-zyuvj:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels:
+      app.kubernetes.io/instance: k8gb
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: k8gb
+      app.kubernetes.io/version: v0.13.0
+      helm.sh/chart: k8gb-v0.13.0
+    model: kubernetes
+    name: k8gb-coredns
+    namespace: default
+    settings:
+      data:
+        Corefile: |-
+          cloud.example.com:5353 {
+              errors
+              health
+              ready
+              prometheus 0.0.0.0:9153
+              forward . /etc/resolv.conf
+              k8s_crd {
+                  filter k8gb.absa.oss/dnstype=local
+                  negttl 300
+                  loadbalance weight
+              }
+          }
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 553cdc73-63b1-4180-87f7-c34c3c4f5974
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          secondaryColor: '#7aa1f0'
+          shape: bottom-round-rectangle
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides: ""
+          styles: ""
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/configmap-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/configmap-white.svg
+        position:
+          posX: 110.5
+          posY: 37.5
+        whiteboardData:
+          style: {}
+    type: ConfigMap
+    version: ""
+  k8gb-dmbcs:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels:
+      app.kubernetes.io/instance: k8gb
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: k8gb
+      app.kubernetes.io/version: v0.13.0
+      helm.sh/chart: k8gb-v0.13.0
+    model: kubernetes
+    name: k8gb
+    namespace: default
+    settings:
+      image Pull Secrets: []
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: 830cb9c0-6286-44ea-b533-fccfbc17d6a4
+            metadata:
+              binded_by: 37836487-cfa9-43fc-8023-6b589cd7bb0e
+            source: f650a8ed-1dcf-4649-a247-a319c75a05e9
+            subType: Permission
+            target: 3e0a9cf7-d926-44a6-991b-79137b153951
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: 3e0a9cf7-d926-44a6-991b-79137b153951
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          secondaryColor: '#7aa1f0'
+          shape: bottom-round-rectangle
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides:
+            z-index: 8
+          styles: ""
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/serviceaccount-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/serviceaccount-white.svg
+        position:
+          posX: -29
+          posY: 128.5
+        whiteboardData:
+          style: {}
+    type: ServiceAccount
+    version: ""
+  k8gb-jbqky:
+    annotations: {}
+    apiVersion: ""
+    dependsOn:
+    - k8gb-oycpy
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: meshery-core
+    name: k8gb
+    namespace: ""
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        elementType: FIELD_REF_NODE
+        fieldRefData:
+          elementType: FIELD_REF_NODE
+          fieldPath: spec.template.spec.containers[0]
+          jsonSchemaPath: properties.spec.allOf[0].properties.template.allOf[0].properties.spec.allOf[0].properties.containers.items.allOf[0]
+        id: 2f8894c2-d8fe-43d5-af42-857558c48fec
+        label: spec.template.spec.containers[0]
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          components: null
+          description: ""
+          displayName: Meshery Core
+          hostID: 26e64aa8-2d86-57bd-92b3-2a73160d27b4
+          id: 71af0d59-f11b-5151-924a-f9f805edb3df
+          metadata:
+            isAnnotation: false
+            subCategory: App Definition and Development
+            svgColor: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+            svgComplete: ""
+            svgWhite: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+          model:
+            version: 0.7.2
+          name: meshery-core
+          registrant:
+            hostname: artifacthub
+          relationships: null
+          schemaVersion: models.meshery.io/v1beta1
+          status: enabled
+          subCategory: App Definition and Development
+          version: v1.0.0
+        meshmodel-metadata:
+          capabilities: |-
+            {
+              "designer": {
+                "capabilities": {
+                  "config": true,
+                  "label": false,
+                  "policy": false,
+                  "relationships": true,
+                  "json-schema": false,
+                  "permissions": false,
+                  "workflow": false,
+                  "gitops": false,
+                  "history": false
+                },
+                "supportsCompoundDragAndDrop": false,
+                "edit": {
+                  "config": true,
+                  "copy": false,
+                  "delete": true,
+                  "duplicate": false,
+                  "reset-styles": false,
+                  "resolve": false,
+                  "lock": false,
+                  "shape": {
+                    "convert-shape": true
+                  },
+                  "style": true
+                },
+                "label": {
+                  "edit": false,
+                  "show": true,
+                  "sync-with-config-property": "name"
+                }
+              }
+            }
+          defaultData: ""
+          genealogy: ""
+          hasInvalidSchema: true
+          isAnnotation: true
+          primaryColor: '#326CE5'
+          secondaryColor: '#00D3A9'
+          shape: circle
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides:
+            z-index: 17
+          styles: ""
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/meshery-core/color/container-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/meshery-core/white/container-white.svg
+        parent: 0056a997-df11-429b-ad0f-5a82d8e366e3
+        position:
+          posX: 46
+          posY: 43.5
+        whiteboardData: {}
+    type: Container
+    version: ""
+  k8gb-ojrxz:
+    annotations: {}
+    apiVersion: rbac.authorization.k8s.io/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels:
+      app.kubernetes.io/instance: k8gb
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: k8gb
+      app.kubernetes.io/version: v0.13.0
+      helm.sh/chart: k8gb-v0.13.0
+    model: kubernetes
+    name: k8gb
+    namespace: ""
+    settings:
+      rules:
+      - api Groups:
+        - ""
+        resources:
+        - endpoints
+        - services
+        verbs:
+        - get
+        - list
+        - watch
+      - api Groups:
+        - k8gb.absa.oss
+        resources:
+        - '*'
+        - gslbs
+        verbs:
+        - '*'
+      - api Groups:
+        - networking.k8s.io
+        resources:
+        - ingresses
+        verbs:
+        - '*'
+      - api Groups:
+        - externaldns.k8s.io
+        resources:
+        - dnsendpoints
+        verbs:
+        - '*'
+      - api Groups:
+        - ""
+        resources:
+        - namespaces
+        verbs:
+        - list
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: 830cb9c0-6286-44ea-b533-fccfbc17d6a4
+            metadata:
+              binded_by: 37836487-cfa9-43fc-8023-6b589cd7bb0e
+            source: f650a8ed-1dcf-4649-a247-a319c75a05e9
+            subType: Permission
+            target: 3e0a9cf7-d926-44a6-991b-79137b153951
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: f650a8ed-1dcf-4649-a247-a319c75a05e9
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: false
+          logoURL: Created by Meshery Authors
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          secondaryColor: '#7aa1f0'
+          shape: round-rectangle
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides:
+            height: 22px
+            width: 22px
+            x: "8.5"
+            "y": "7.5"
+            z-index: 12
+          styles: '{"height":"22px", "width":"22px", "x":"8.5", "y":"7.5"}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/clusterrole-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/clusterrole-white.svg
+        position:
+          posX: -74
+          posY: 129.5
+        whiteboardData:
+          style: {}
+    type: ClusterRole
+    version: ""
+  k8gb-oycpy:
+    annotations: {}
+    apiVersion: apps/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels:
+      app.kubernetes.io/instance: k8gb
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: k8gb
+      app.kubernetes.io/version: v0.13.0
+      helm.sh/chart: k8gb-v0.13.0
+    model: kubernetes
+    name: k8gb
+    namespace: default
+    settings:
+      spec:
+        replicas: 1
+        selector:
+          match Labels:
+            name: k8gb
+        template:
+          metadata:
+            annotations:
+              kubectl.kubernetes.io/default-container: k8gb
+            labels:
+              name: k8gb
+          spec:
+            containers:
+            - env:
+              - name: WATCH_NAMESPACE
+                value: ""
+              - name: POD_NAME
+                value From:
+                  field Ref:
+                    field Path: metadata.name
+              - name: POD_NAMESPACE
+                value From:
+                  field Ref:
+                    field Path: metadata.namespace
+              - name: OPERATOR_NAME
+                value: k8gb
+              - name: CLUSTER_GEO_TAG
+                value: eu
+              - name: EXT_GSLB_CLUSTERS_GEO_TAGS
+                value: us
+              - name: EDGE_DNS_ZONE
+                value: example.com
+              - name: EDGE_DNS_SERVERS
+                value: 1.1.1.1
+              - name: DNS_ZONE
+                value: cloud.example.com
+              - name: RECONCILE_REQUEUE_SECONDS
+                value: "30"
+              - name: LOG_FORMAT
+                value: simple
+              - name: LOG_LEVEL
+                value: info
+              - name: NO_COLOR
+                value: "true"
+              - name: SPLIT_BRAIN_CHECK
+                value: "false"
+              - name: METRICS_ADDRESS
+                value: 0.0.0.0:8080
+              image: docker.io/absaoss/k8gb:v0.13.0
+              image Pull Policy: IfNotPresent
+              name: k8gb
+              ports:
+              - container Port: 8080
+                name: metrics
+              resources:
+                limits:
+                  cpu: 500m
+                  memory: 128Mi
+                requests:
+                  cpu: 100m
+                  memory: 32Mi
+              security Context:
+                allow Privilege Escalation: false
+                read Only Root Filesystem: true
+                run As Non Root: true
+                run As User: 1000
+            service Account Name: k8gb
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 0056a997-df11-429b-ad0f-5a82d8e366e3
+        meshmodel-metadata:
+          capabilities: |-
+            {
+              "fieldRefs": [
+                {
+                  "fieldPath": "spec.template.spec.containers",
+                  "jsonSchemaPath": "properties.spec.allOf[0].properties.template.allOf[0].properties.spec.allOf[0].properties.containers.items.allOf[0]",
+                  "component": {
+                    "kind": "Container",
+                    "model": "meshery-core"
+                  },
+                  "renderChildren": true
+                },
+                {
+                  "fieldPath": "spec.template.spec.init Containers",
+                  "jsonSchemaPath": "properties.spec.allOf[0].properties.template.allOf[0].properties.spec.allOf[0].properties.init Containers.items.allOf[0]",
+                  "component": {
+                    "kind": "Container",
+                    "model": "meshery-core"
+                  },
+                  "renderChildren": true
+                }
+              ],
+              "designer": {
+                "edit": {
+                  "shape": {
+                    "convert-shape": false
+                  }
+                }
+              }
+            }
+          defaultData: ""
+          genealogy: parent
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: Created by Meshery Authors
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          secondaryColor: '#7aa1f0'
+          shape: round-rectangle
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides:
+            background-opacity: 0.5
+            border-width: 2
+            z-index: 14
+          styles: '{"border-width":2,"background-opacity":0.5}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg
+          svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/deployment-complete.svg
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/deployment-white.svg
+        position:
+          posX: 46
+          posY: 52.5
+        whiteboardData:
+          style: {}
+    type: Deployment
+    version: ""

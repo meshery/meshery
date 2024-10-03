@@ -122,17 +122,12 @@
   "schemaVersion": "components.meshery.io/v1beta1",
   "status": "enabled",
   "styles": {
-   "background-image": "none",
-   "background-opacity": 0.1,
-   "border-style": "solid",
-   "border-width": 1,
-   "height": 30,
+   "background-opacity": 0,
    "primaryColor": "#00B39F",
    "secondaryColor": "#00D3A9",
    "shape": "circle",
-   "svgColor": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1024 1024\"\u003e\u003cpath d=\"M480 674V192c0-18 14-32 32-32s32 14 32 32v482h-64zm0 63h64v60h-64v-60zM0 512C0 229 229 0 512 0s512 229 512 512-229 512-512 512S0 795 0 512zm961 0c0-247-202-448-449-448S64 265 64 512s201 448 448 448 449-201 449-448z\"/\u003e\u003c/svg\u003e",
-   "svgWhite": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1024 1024\"\u003e\u003cpath d=\"M480 674V192c0-18 14-32 32-32s32 14 32 32v482h-64zm0 63h64v60h-64v-60zM0 512C0 229 229 0 512 0s512 229 512 512-229 512-512 512S0 795 0 512zm961 0c0-247-202-448-449-448S64 265 64 512s201 448 448 448 449-201 449-448z\"/\u003e\u003c/svg\u003e",
-   "width": 30
+   "svgColor": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"170\" height=\"180\" viewBox=\"0 0 1024 1024\"\u003e\u003cpath d=\"M480 674V192c0-18 14-32 32-32s32 14 32 32v482h-64zm0 63h64v60h-64v-60zM0 512C0 229 229 0 512 0s512 229 512 512-229 512-512 512S0 795 0 512zm961 0c0-247-202-448-449-448S64 265 64 512s201 448 448 448 449-201 449-448z\"/\u003e\u003c/svg\u003e",
+   "svgWhite": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" fill=\"white\" width=\"170\" height=\"180\" viewBox=\"0 0 1024 1024\"\u003e\u003cpath d=\"M480 674V192c0-18 14-32 32-32s32 14 32 32v482h-64zm0 63h64v60h-64v-60zM0 512C0 229 229 0 512 0s512 229 512 512-229 512-512 512S0 795 0 512zm961 0c0-247-202-448-449-448S64 265 64 512s201 448 448 448 449-201 449-448z\"/\u003e\u003c/svg\u003e"
   },
   "version": "v1.0.0"
  }

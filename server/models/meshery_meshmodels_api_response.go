@@ -3,8 +3,8 @@ package models
 import (
 	models "github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	"github.com/layer5io/meshkit/models/meshmodel/entity"
-	"github.com/meshery/schemas/models/v1beta1/model"
 	"github.com/meshery/schemas/models/v1beta1/component"
+	"github.com/meshery/schemas/models/v1beta1/model"
 )
 
 // API response model for meshmodel models API
@@ -25,9 +25,9 @@ type MeshmodelsDuplicateAPIResponse struct {
 
 // API response model for meshmodel components API
 type MeshmodelComponentsAPIResponse struct {
-	Page       int                         `json:"page"`
-	PageSize   int                         `json:"page_size"`
-	Count      int64                       `json:"total_count"`
+	Page       int                             `json:"page"`
+	PageSize   int                             `json:"page_size"`
+	Count      int64                           `json:"total_count"`
 	Components []component.ComponentDefinition `json:"components"`
 }
 
@@ -45,6 +45,27 @@ type MeshmodelRelationshipsAPIResponse struct {
 	PageSize      int             `json:"page_size"`
 	Count         int64           `json:"total_count"`
 	Relationships []entity.Entity `json:"relationships"`
+}
+type EntityCount struct {
+	CompCount     int `json:"comp_count"`
+	RelCount      int `json:"rel_count"`
+	ModelCount    int `json:"model_count"`
+	ErrCompCount  int `json:"err_comp_count"`
+	ErrRelCount   int `json:"err_rel_count"`
+	ErrModelCount int `json:"err_model_count"`
+	TotalErrCount int `json:"total_err_count"`
+}
+type EntityTypeSummary struct {
+	SuccessfulComponents            []map[string]interface{} `json:"successful_components"`
+	SuccessfulRelationships         []map[string]interface{} `json:"successful_relationships"`
+	SuccessfulModels                []map[string]interface{} `json:"successful_models"`
+	UnsuccessfulEntityNameWithError []interface{}            `json:"unsuccessful_component_names"`
+}
+type RegistryAPIResponse struct {
+	EntityCount       EntityCount       `json:"entity_count"`
+	ErrMsg            string            `json:"err_msg"`
+	EntityTypeSummary EntityTypeSummary `json:"entity_type_summary"`
+	ModelName         []string          `json:"model_name"`
 }
 
 // API response model for meshmodel categories API

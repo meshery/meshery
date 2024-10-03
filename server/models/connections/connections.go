@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/layer5io/meshkit/models/events"
+	"github.com/spf13/viper"
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/helpers/utils"
@@ -115,4 +116,35 @@ type ConnectionStatusInfo struct {
 // swagger:response ConnectionsStatusPage
 type ConnectionsStatusPage struct {
 	ConnectionsStatus []*ConnectionStatusInfo `json:"connections_status"`
+}
+
+type ConnectionPayload struct {
+	ID                         uuid.UUID              `json:"id,omitempty"`
+	Kind                       string                 `json:"kind,omitempty"`
+	SubType                    string                 `json:"sub_type,omitempty"`
+	Type                       string                 `json:"type,omitempty"`
+	MetaData                   map[string]interface{} `json:"metadata,omitempty"`
+	Status                     ConnectionStatus       `json:"status,omitempty"`
+	CredentialSecret           map[string]interface{} `json:"credential_secret,omitempty"`
+	Name                       string                 `json:"name,omitempty"`
+	CredentialID               *uuid.UUID             `json:"credential_id,omitempty"`
+	Model                      string                 `json:"model,omitempty"`
+	SkipCredentialVerification bool                   `json:"skip_credential_verification"`
+}
+
+func BuildMesheryConnectionPayload(serverURL string, credential map[string]interface{}) *ConnectionPayload {
+	metadata := map[string]interface{}{
+		"server_id":        viper.GetString("INSTANCE_ID"),
+		"server_version":   viper.GetString("BUILD"),
+		"server_build_sha": viper.GetString("COMMITSHA"),
+		"server_location":  serverURL,
+	}
+	return &ConnectionPayload{
+		Kind:             "meshery",
+		Type:             "platform",
+		SubType:          "management",
+		MetaData:         metadata,
+		Status:           CONNECTED,
+		CredentialSecret: credential,
+	}
 }

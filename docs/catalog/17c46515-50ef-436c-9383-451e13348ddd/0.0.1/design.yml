@@ -1,0 +1,59 @@
+name: Pod Multi Containers
+version: 0.0.6
+services:
+  pods-multi-container-pod:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: pods-multi-container-pod
+    namespace: default
+    settings:
+      spec:
+        containers:
+        - command:
+          - sleep
+          - "3600"
+          image: busybox
+          name: pods-multi-container-container-1
+        - command:
+          - sleep
+          - "3601"
+          image: busybox
+          name: pods-multi-container-container-2
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: ce25cc98-4b5c-4855-ab26-ca8129098e2b
+        label: pods-multi-container-pod
+        meshmodel-metadata:
+          capabilities: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-rectangle
+          styleOverrides: ""
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
+        position:
+          posX: 170
+          posY: 170
+        whiteboardData:
+          style:
+            z-index: 3
+    type: Pod
+    version: ""

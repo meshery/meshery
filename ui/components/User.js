@@ -21,6 +21,7 @@ import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
+import { Button } from '@material-ui/core';
 
 const LinkDiv = styled('div')(() => ({
   display: 'inline-flex',
@@ -42,6 +43,10 @@ function exportToJsonFile(jsonData, filename) {
   linkElement.remove();
 }
 
+/**
+ * Extension Point: Avatar behavior for User Modes
+ * Insert custom logic here to handle Single User mode, Anonymous User mode, Multi User mode behavior.
+ */
 const User = (props) => {
   const [userLoaded, setUserLoaded] = useState(false);
   const [account, setAccount] = useState([]);
@@ -160,6 +165,19 @@ const User = (props) => {
   const { color, iconButtonClassName, avatarClassName, classes } = props;
 
   const open = Boolean(anchorEl);
+
+  if (userData?.status == 'anonymous') {
+    const url = `${capabilitiesRegistry?.provider_url}?anonymousUserID=${userData?.id}&redirect=${window.location.pathname}`;
+
+    return (
+      <Link href={url}>
+        <Button variant="contained" color="primary">
+          Sign In
+        </Button>
+      </Link>
+    );
+  }
+
   return (
     <div>
       <NoSsr>
@@ -208,17 +226,7 @@ const User = (props) => {
                           Get Token
                         </MenuItem>
                       )}
-                      <MenuItem
-                        onClick={handlePreference}
-                        // disabled={
-                        //   !CAN(
-                        //     keys.VIEW_MESHERY_USER_PREFERENCES.action,
-                        //     keys.VIEW_MESHERY_USER_PREFERENCES.subject,
-                        //   )
-                        // }
-                      >
-                        Preferences
-                      </MenuItem>
+                      <MenuItem onClick={handlePreference}>Preferences</MenuItem>
                       <MenuItem onClick={handleLogout}>Logout</MenuItem>
                     </MenuList>
                   </ClickAwayListener>

@@ -1,0 +1,48 @@
+name: GlusterFS Service
+version: 0.0.16
+services:
+  glusterfs-cluster:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: glusterfs-cluster
+    namespace: default
+    settings:
+      spec:
+        ports:
+        - port: 1
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 6fbea870-5234-402c-944d-c85ae82f1be7
+        label: glusterfs-cluster
+        meshmodel-metadata:
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-triangle
+          styleOverrides: '{"height":20,"width":20,"padding":12,"background-fit":"none","background-position-y":4.5,"x":"10px","y":"12px"}'
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
+        position:
+          posX: 270
+          posY: 270
+        whiteboardData:
+          style:
+            z-index: 3
+    type: Service
+    version: ""

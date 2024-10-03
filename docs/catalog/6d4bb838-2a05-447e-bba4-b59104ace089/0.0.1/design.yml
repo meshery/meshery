@@ -1,0 +1,300 @@
+name: Redis_using_configmap
+version: 0.0.16
+services:
+  auth-service-mx:
+    annotations: {}
+    apiVersion: getambassador.io/v2
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: ambassador
+    name: auth-service-mx
+    namespace: default
+    settings:
+      spec:
+        allowed_authorization_headers: []
+        allowed_request_headers: []
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 2c414d18-425d-4b88-8656-6b9b2314f374
+        label: auth-service-mx
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Cloud Native Network
+          displayName: Ambassador
+          displayhostname: ""
+          hostID: 00000000-0000-0000-0000-000000000000
+          hostname: ""
+          metadata:
+            source_uri: https://wenerme.github.io/charts/ambassador-6.9.5.tgz
+            svgColor: ui/public/static/img/meshmodels/ambassador/color/ambassador-color.svg
+            svgWhite: ui/public/static/img/meshmodels/ambassador/white/authservice-white.svg
+          name: ambassador
+          version: 6.9.5
+        meshmodel-metadata:
+          genealogy: ""
+          isNamespaced: true
+          logoURL: https://layer5.io/company/brand
+          model: ambassador
+          modelDisplayName: Ambassador
+          primaryColor: '#795CEC'
+          published: true
+          secondaryColor: '#00D3A9'
+          shape: circle
+          styleOverrides:
+            z-index: 4
+          subCategory: API Gateway
+          svgColor: ui/public/static/img/meshmodels/ambassador/color/authservice-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/ambassador/white/authservice-white.svg
+        position:
+          posX: 410
+          posY: 330
+        whiteboardData:
+          style:
+            z-index: 7
+    type: AuthService
+    version: 6.9.5
+  cluster-role-yd:
+    annotations: {}
+    apiVersion: rbac.authorization.k8s.io/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: cluster-role-yd
+    namespace: default
+    settings:
+      rules: []
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: a9ce6846-b477-4f38-8069-992bdcb80d3b
+        label: cluster-role-yd
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          displayName: Kubernetes
+          displayhostname: ""
+          hostID: 00000000-0000-0000-0000-000000000000
+          hostname: ""
+          metadata:
+            svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
+            svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
+          name: kubernetes
+          version: v1.25.2
+        meshmodel-metadata:
+          genealogy: ""
+          isCustomResource: false
+          isNamespaced: false
+          logoURL: Created by leecalcote
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-rectangle
+          styleOverrides:
+            height: 22px
+            width: 22px
+            x: "8.5"
+            "y": "7.5"
+            z-index: 3
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/clusterrole-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/clusterrole-white.svg
+        position:
+          posX: 490
+          posY: 370
+        whiteboardData:
+          style:
+            z-index: 4
+    type: ClusterRole
+    version: v1.25.2
+  comment-yc:
+    annotations: {}
+    apiVersion: core.meshery.io/v1alpha1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: meshery
+    name: comment-yc
+    namespace: ""
+    settings:
+      usersMessages:
+      - avatarUrl: https://cdn-icons-png.flaticon.com/512/5556/5556499.png
+        firstName: Miles
+        lastName: Albertson
+        message: Over here
+        timestamp: "2023-11-14T13:34:11.210Z"
+        userid: b26fc444-c246-4be8-9863-dfffeb70c41f
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 774496f5-d9f1-4dbf-85cc-480e8085bd6a
+        label: Comment
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          displayName: Meshery
+          displayhostname: ""
+          hostID: 00000000-0000-0000-0000-000000000000
+          hostname: ""
+          metadata:
+            svgColor: ui/public/static/img/meshmodels/meshery/color/broker-color.svg
+            svgWhite: ui/public/static/img/meshmodels/aws-node-termination-handler-2/white/terminator-white.svg
+          name: meshery
+          version: v1.0.0
+        meshmodel-metadata:
+          genealogy: ""
+          isAnnotation: true
+          isNamespaced: false
+          logoURL: ""
+          model: meshery
+          modelDisplayName: Meshery
+          primaryColor: '#FFDE00'
+          published: true
+          secondaryColor: '#FFDE00'
+          shape: tag
+          styleOverrides:
+            height: 22px
+            width: 22px
+            x: 3.5px
+            "y": 7.5px
+            z-index: 6
+          subCategory: App Definition and Development
+          svgColor: ui/public/static/img/meshmodels/meshery/color/comment-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/meshery/color/comment-color.svg
+        position:
+          posX: 390
+          posY: 370
+        whiteboardData:
+          style:
+            z-index: 6
+    type: Comment
+    version: v1.0.0
+  consul-resolver-dd:
+    annotations: {}
+    apiVersion: getambassador.io/v2
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: ambassador
+    name: consul-resolver-dd
+    namespace: default
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 24a22853-1f0d-4be3-9624-06f4523093fe
+        label: consul-resolver-dd
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Cloud Native Network
+          displayName: Ambassador
+          displayhostname: ""
+          hostID: 00000000-0000-0000-0000-000000000000
+          hostname: ""
+          metadata:
+            source_uri: https://wenerme.github.io/charts/ambassador-6.9.5.tgz
+            svgColor: ui/public/static/img/meshmodels/ambassador/color/ambassador-color.svg
+            svgWhite: ui/public/static/img/meshmodels/ambassador/white/authservice-white.svg
+          name: ambassador
+          version: 6.9.5
+        meshmodel-metadata:
+          genealogy: ""
+          isNamespaced: true
+          logoURL: https://layer5.io/company/brand
+          model: ambassador
+          modelDisplayName: Ambassador
+          primaryColor: '#795CEC'
+          published: true
+          secondaryColor: '#00D3A9'
+          shape: circle
+          styleOverrides: ""
+          subCategory: API Gateway
+          svgColor: ui/public/static/img/meshmodels/ambassador/color/ambassador-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/ambassador/white/authservice-white.svg
+        position:
+          posX: 470
+          posY: 330
+        whiteboardData:
+          style:
+            z-index: 8
+    type: ConsulResolver
+    version: 6.9.5
+  default:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: default
+    namespace: default
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 36720d5a-06e4-483f-b119-90d8a4e91455
+        label: default
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          displayName: Kubernetes
+          displayhostname: ""
+          hostID: 00000000-0000-0000-0000-000000000000
+          hostname: ""
+          metadata:
+            svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
+            svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
+          name: kubernetes
+          version: v1.25.2
+        meshmodel-metadata:
+          genealogy: parent
+          isCustomResource: false
+          isNamespaced: false
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: rectangle
+          styleOverrides:
+            background-image: none
+            background-opacity: 0.5
+            border-style: dashed
+            border-width: 2
+            z-index: 5
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/namespace-color.svg
+          svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/namespace-complete.svg
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/color/namespace-color.svg
+        position:
+          posX: 310
+          posY: 230
+        whiteboardData:
+          style:
+            z-index: 9
+    type: Namespace
+    version: v1.25.2

@@ -49,13 +49,7 @@ const UserPref = (props) => {
             <title>Preferences | Meshery</title>
           </Head>
           <Paper className={props.classes.paper}>
-            {/* {should meshmap specific user preferences be placed along with general preferences or from the remote provider} */}
-            <UserPreferences
-              anonymousStats={anonymousStats}
-              perfResultStats={perfResultStats}
-              theme={props.theme}
-              themeSetter={props.themeSetter}
-            />
+            <UserPreferences anonymousStats={anonymousStats} perfResultStats={perfResultStats} />
           </Paper>
         </NoSsr>
       )}

@@ -438,6 +438,18 @@ components:
   colorIcon: assets/img/integrations/kubedb-crds/components/zoo-keeper-ops-request/icons/color/zoo-keeper-ops-request-color.svg
   whiteIcon: assets/img/integrations/kubedb-crds/components/zoo-keeper-ops-request/icons/white/zoo-keeper-ops-request-white.svg
   description: 
+- name: cassandra-autoscaler
+  colorIcon: assets/img/integrations/kubedb-crds/components/cassandra-autoscaler/icons/color/cassandra-autoscaler-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/cassandra-autoscaler/icons/white/cassandra-autoscaler-white.svg
+  description: 
+- name: cassandra-version
+  colorIcon: assets/img/integrations/kubedb-crds/components/cassandra-version/icons/color/cassandra-version-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/cassandra-version/icons/white/cassandra-version-white.svg
+  description: 
+- name: cassandra
+  colorIcon: assets/img/integrations/kubedb-crds/components/cassandra/icons/color/cassandra-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/cassandra/icons/white/cassandra-white.svg
+  description: 
 featureList: [
   "KubeDB simplifies many of the difficult or tedious management tasks of running a production grade databases on private and public clouds. Maintain one stack for all your stateless and stateful applications and simplify the operational complexity.",
   "Standard Kubernetes is all you need. If you can run Kubernetes, you can provision and manage databases using KubeDB. Use standard Kubernetes CLI and API to provision and manage databases.",
