@@ -1,6 +1,7 @@
 module github.com/layer5io/meshery
 
 go 1.21
+toolchain go1.22.5
 
 replace (
 	github.com/docker/cli => github.com/docker/cli v23.0.6+incompatible
@@ -13,7 +14,7 @@ replace (
 )
 
 require (
-	cuelang.org/go v0.6.0
+	cuelang.org/go v0.10.0
 	fortio.org/fortio v1.66.2
 	github.com/99designs/gqlgen v0.17.45
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2
@@ -254,7 +255,6 @@ require (
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/monochromegane/go-gitignore v0.0.0-20200626010858-205db1a8cc00 // indirect
 	github.com/morikuni/aec v1.0.0 // indirect
-	github.com/mpvl/unique v0.0.0-20150818121801-cbe035fff7de // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
 	github.com/nats-io/nats.go v1.34.0 // indirect
 	github.com/nats-io/nkeys v0.4.7 // indirect
@@ -309,6 +309,7 @@ require (
 	golang.org/x/crypto v0.27.0 // indirect
 	golang.org/x/crypto/x509roots/fallback v0.0.0-20240904212608-c9da6b9a4008 // indirect
 	golang.org/x/exp v0.0.0-20240904232852-e7e105dedf7e // indirect
+	golang.org/x/mod v0.20.0 // indirect
 	golang.org/x/net v0.29.0 // indirect
 	golang.org/x/sys v0.25.0 // indirect
 	golang.org/x/term v0.24.0 // indirect
