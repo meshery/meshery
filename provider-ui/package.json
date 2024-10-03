@@ -35,7 +35,7 @@
   "devDependencies": {
     "eslint": "^8.57.0",
     "eslint-config-next": "^14.2.7",
-    "start-server-and-test": "^2.0.5"
+    "start-server-and-test": "^2.0.8"
   },
   "engines": {
     "node": "^16 || ^18"
