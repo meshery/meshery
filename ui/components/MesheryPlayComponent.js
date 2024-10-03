@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { connect } from 'react-redux';
 import NoSsr from '@material-ui/core/NoSsr';
 import {
@@ -12,7 +12,7 @@ import {
 } from '@material-ui/core';
 import { blue } from '@material-ui/core/colors';
 import PropTypes from 'prop-types';
-import { withRouter } from 'next/router';
+import { useRouter } from 'next/router';
 import SettingsIcon from '@material-ui/icons/Settings';
 import MesheryAdapterPlayComponent from './MesheryAdapterPlayComponent';
 import { bindActionCreators } from 'redux';
@@ -84,41 +84,42 @@ const styles = (theme) => ({
 });
 
 const MesheryPlayComponent = (props) => {
+  const router = useRouter();
   const { meshAdapters, classes } = props;
-  const [adapter, setAdapter] = useState({});
+  const [adapter, setAdapterState] = useState({});
+
+  const handleRouteChange = useCallback(() => {
+    const queryParam = router.query.adapter;
+    if (queryParam) {
+      const selectedAdapter = meshAdapters.find(
+        ({ adapter_location }) => adapter_location === queryParam,
+      );
+      if (selectedAdapter) {
+        setAdapterState(selectedAdapter);
+      }
+    } else if (meshAdapters.size > 0) {
+      setAdapterState(meshAdapters.get(0));
+    }
+  }, [router.query.adapter, meshAdapters]);
 
   useEffect(() => {
-    const handleRouteChange = () => {
-      const queryParam = props?.router?.query?.adapter;
-      if (queryParam) {
-        const selectedAdapter = props.meshAdapters.find(
-          ({ adapter_location }) => adapter_location === queryParam,
-        );
-        if (selectedAdapter) {
-          setAdapter({ adapter: selectedAdapter });
-        }
-      } else if (props.meshAdapters.size > 0) {
-        setAdapter({ adapter: props.meshAdapters.get(0) });
-      }
-    };
-
     // mount
-    props.router.events.on('routeChangeComplete', handleRouteChange);
+    router.events.on('routeChangeComplete', handleRouteChange);
 
     // unmount
     return () => {
-      props.router.events.off('routeChangeComplete', handleRouteChange);
+      router.events.off('routeChangeComplete', handleRouteChange);
     };
-  }, [props.router]);
+  }, [router, handleRouteChange]);
 
   useEffect(() => {
     if (meshAdapters?.size > 0) {
-      setAdapter(meshAdapters[0]);
+      handleRouteChange();
     }
-  }, [meshAdapters]);
+  }, [meshAdapters, handleRouteChange]);
 
   const handleConfigure = () => {
-    props.router.push('/settings#service-mesh');
+    router.push('/settings#service-mesh');
   };
 
   const pickImage = (adapter) => {
@@ -138,7 +139,7 @@ const MesheryPlayComponent = (props) => {
           ({ adapter_location }) => adapter_location === event.target.value,
         );
         if (selectedAdapter && selectedAdapter.size === 1) {
-          setAdapter({ adapter: selectedAdapter[0] });
+          setAdapterState({ adapter: selectedAdapter[0] });
           setAdapter({ selectedAdapter: selectedAdapter[0].name });
         }
       }
@@ -222,7 +223,7 @@ const MesheryPlayComponent = (props) => {
                 value={adapter && adapter.adapter_location ? adapter.adapter_location : ''}
                 margin="normal"
                 variant="outlined"
-                onChange={handleAdapterChange()}
+                onChange={handleAdapterChange}
                 SelectProps={{
                   MenuProps: {
                     anchorOrigin: {
@@ -276,5 +277,5 @@ const mapStateToProps = (state) => {
 };
 
 export default withStyles(styles)(
-  connect(mapStateToProps, mapDispatchToProps)(withRouter(MesheryPlayComponent)),
+  connect(mapStateToProps, mapDispatchToProps)(MesheryPlayComponent),
 );
