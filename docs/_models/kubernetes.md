@@ -7,7 +7,7 @@ permalink: extensibility/integrations/kubernetes
 docURL: https://docs.meshery.io/installation/kubernetes
 description: 
 integrations-category: Orchestration & Management
-integrations-subcategory: Orchestration & Management
+integrations-subcategory: Scheduling & Orchestration
 registrant: Artifact Hub
 components: 
 - name: namespace
