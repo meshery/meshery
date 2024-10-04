@@ -197,7 +197,7 @@ Using a GitOps-centric approach, visually and collaboratively design and manage 
 
 Assess your cloud native infrastructure configuration against deployment and operational best practices with Meshery's configuration validator. Manage your workloads with confidence. Check your Kubernetes configuration for anti-patterns and avoid common pitfalls.
 
-<a href=".github/assets/images/readme/cloud-native-alignment.png"><img alt="Meshery Integrations" src=".github/assets/images/readme/cloud-native-alignment.png"  style="margin-right:10px;margin-bottom:10px;" width="100%" align="center"/></a>
+<a href=".github/assets/images/readme/cloud-native-integrations.png"><img alt="Meshery Integrations" src=".github/assets/images/readme/cloud-native-integrations.png"  style="margin-right:10px;margin-bottom:10px;" width="100%" align="center"/></a>
 <br /><br />
 
 </p>
