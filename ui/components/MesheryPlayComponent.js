@@ -95,10 +95,10 @@ const MesheryPlayComponent = (props) => {
         ({ adapter_location }) => adapter_location === queryParam,
       );
       if (selectedAdapter) {
-        setAdapterState(selectedAdapter);
+        setAdapterState({ adapter: selectedAdapter });
       }
     } else if (meshAdapters.size > 0) {
-      setAdapterState(meshAdapters.get(0));
+      setAdapterState({ adapter: meshAdapters[0] });
     }
   }, [router.query.adapter, meshAdapters]);
 
