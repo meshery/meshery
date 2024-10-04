@@ -149,7 +149,6 @@ mesheryctl design delete [file | URL]
 
 		req, err = utils.NewRequest("DELETE", deployURL, bytes.NewBuffer(patternFileByt))
 		if err != nil {
-			// utils.Log.Error(err)
 			return utils.ErrCreatingRequest(err)
 		}
 
