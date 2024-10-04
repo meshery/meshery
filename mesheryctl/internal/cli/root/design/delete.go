@@ -155,7 +155,6 @@ mesheryctl design delete [file | URL]
 
 		res, err := utils.MakeRequest(req)
 		if err != nil {
-			// utils.Log.Error(err)
 			return utils.ErrRequestResponse(err)
 		}
 
