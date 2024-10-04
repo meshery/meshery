@@ -1,6 +1,6 @@
 {
   "id": "00000000-0000-0000-0000-000000000000",
-  "evaluationQuery": "edge_binding_relationships",
+  "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
    "description": "A relationship that act as a firewall for ingress and egress traffic from Pods.",

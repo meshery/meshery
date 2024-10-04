@@ -1,6 +1,6 @@
 {
   "id": "00000000-0000-0000-0000-000000000000",
-  "evaluationQuery": "heirarchical_inventory_relationship",
+  "evaluationQuery": "",
   "kind": "hierarchical",
   "metadata": {
    "description": "A relationship that defines whether a component can be a parent of other components. It is read like: `from` can be a child of `to`, where from and to are any components that match the from and to selectors respectively.",

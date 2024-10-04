@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-   "description": "A relationship that defines network edges between components",
+   "description": "",
    "styles": {
     "primaryColor": "",
     "svgColor": "",
@@ -17,9 +17,9 @@
    "displayName": "",
    "id": "00000000-0000-0000-0000-000000000000",
    "model": {
-    "version": "1.16.0"
+    "version": "v1.4.2"
    },
-   "name": "istio-base",
+   "name": "aws-rds-controller",
    "registrant": {
     "created_at": "0001-01-01T00:00:00Z",
     "credential_id": "00000000-0000-0000-0000-000000000000",
@@ -47,7 +47,7 @@
      "from": [
       {
        "id": null,
-       "kind": "VirtualService",
+       "kind": "DBCluster",
        "match": {},
        "model": {
         "category": {
@@ -58,14 +58,14 @@
         "model": {
          "version": ""
         },
-        "name": "istio-base",
+        "name": "aws-rds-controller",
         "registrant": {
          "created_at": "0001-01-01T00:00:00Z",
          "credential_id": "00000000-0000-0000-0000-000000000000",
          "deleted_at": "0001-01-01T00:00:00Z",
          "id": "00000000-0000-0000-0000-000000000000",
-         "kind": "artifacthub",
-         "name": "",
+         "kind": "",
+         "name": "github",
          "status": "",
          "sub_type": "",
          "type": "",
@@ -79,13 +79,21 @@
         "components": null,
         "relationships": null
        },
-       "patch": null
+       "patch": {
+        "patchStrategy": "merge",
+        "mutatorRef": [
+         [
+          "spec",
+          "dbSubnetGroupName"
+         ]
+        ]
+       }
       }
      ],
      "to": [
       {
        "id": null,
-       "kind": "Service",
+       "kind": "DBSubnetGroup",
        "match": {},
        "model": {
         "category": {
@@ -96,14 +104,14 @@
         "model": {
          "version": ""
         },
-        "name": "kubernetes",
+        "name": "aws-rds-controller",
         "registrant": {
          "created_at": "0001-01-01T00:00:00Z",
          "credential_id": "00000000-0000-0000-0000-000000000000",
          "deleted_at": "0001-01-01T00:00:00Z",
          "id": "00000000-0000-0000-0000-000000000000",
-         "kind": "artifacthub",
-         "name": "",
+         "kind": "",
+         "name": "github",
          "status": "",
          "sub_type": "",
          "type": "",
@@ -117,7 +125,15 @@
         "components": null,
         "relationships": null
        },
-       "patch": null
+       "patch": {
+        "patchStrategy": "replace",
+        "mutatedRef": [
+         [
+          "status",
+          "subnetIDs"
+         ]
+        ]
+       }
       }
      ]
     }
@@ -125,6 +141,6 @@
   ],
   "subType": "network",
   "status": "enabled",
-  "type": "nonbinding",
+  "type": "non-binding",
   "version": "v1.0.0"
  }

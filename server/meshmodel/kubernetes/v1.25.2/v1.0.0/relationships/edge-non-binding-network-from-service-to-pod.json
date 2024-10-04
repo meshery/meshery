@@ -1,6 +1,6 @@
 {
   "id": "00000000-0000-0000-0000-000000000000",
-  "evaluationQuery": "edge_binding_relationship",
+  "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
    "description": "A relationship that defines network edges between components",
@@ -320,6 +320,6 @@
   ],
   "subType": "network",
   "status": "enabled",
-  "type": "nonbinding",
+  "type": "non-binding",
   "version": "v1.0.0"
  }
