@@ -82,12 +82,13 @@ A self-service engineering platform, <a href="https://meshery.io">Meshery</a>, i
 <h2>Cloud Native Lifecycle Management</h2>
 Meshery manages the provisioning, configuration and operation of your Kubernetes clusters while supporting hundreds of different types of cloud native infrastructure integrations. Meshery also offers a <a href="https://meshery.io/catalog">catalog of curated design templates</a> filled with configuration best practices.
 
-Using a GitOps-centric approach, visually and collaboratively design and manage your infrastructure and microservices. Extend Meshery as your self-service engineering platform by taking advantage of its [vast set of extensibility features](https://docs.meshery.io/extensibility), including gRPC adapters, hot-loadable Reactjs packages and Golang plugins, subscriptions on NATS topics, consumable _and_ extendable API interfaces via REST and GraphQL. 
-
 <!--
 <a href="https://www.youtube.com/watch?v=034nVaQUyME"><img alt="Meshery cloud native management" src="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/readme/meshmap.gif"  style="margin-left:10px; margin-bottom:10px;" width="100%" align="center" /></a>
 <br /><br />-->
 </p>
+
+
+Using a GitOps-centric approach, visually and collaboratively design and manage your infrastructure and microservices. Extend Meshery as your self-service engineering platform by taking advantage of its [vast set of extensibility features](https://docs.meshery.io/extensibility), including gRPC adapters, hot-loadable Reactjs packages and Golang plugins, subscriptions on NATS topics, consumable _and_ extendable API interfaces via REST and GraphQL. 
 
 <p style="clear:both;">
  
@@ -196,7 +197,7 @@ Using a GitOps-centric approach, visually and collaboratively design and manage 
 
 Assess your cloud native infrastructure configuration against deployment and operational best practices with Meshery's configuration validator. Manage your workloads with confidence. Check your Kubernetes configuration for anti-patterns and avoid common pitfalls.
 
-<a href="https://docs.meshery.io/assets/img/readme/meshery_lifecycle_management.png"><img alt="Layer5 Service Mesh Configuration Management" src="https://docs.meshery.io/assets/img/readme/meshery_lifecycle_management.png"  style="margin-right:10px;margin-bottom:10px;" width="100%" align="center"/></a>
+<a href=".github/assets/images/readme/meshery--integrations.png"><img alt="Meshery Integrations" src=".github/assets/images/readme/meshery--integrations.png"  style="margin-right:10px;margin-bottom:10px;" width="100%" align="center"/></a>
 <br /><br />
 
 </p>
