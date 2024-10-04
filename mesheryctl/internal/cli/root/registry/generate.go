@@ -363,11 +363,9 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 // the sourceURL contains the path of models component definitions
 func GenerateDefsForCoreRegistrant(model utils.ModelCSV, ComponentCSVHelper *utils.ComponentCSVHelper) error {
 	registrant := "meshery"
-	if comps, exists := ComponentCSVHelper.Components[registrant][model.Model]; exists {
-		if len(comps) == 0 {
-			utils.LogError.Error(ErrGenerateModel(fmt.Errorf("no components found for model "), model.Model))
-			return nil
-		}
+	if _, exists := ComponentCSVHelper.Components[registrant][model.Model]; !exists {
+		utils.LogError.Error(ErrGenerateModel(fmt.Errorf("no components found for model "), model.Model))
+		return nil
 
 	}
 	var version string
