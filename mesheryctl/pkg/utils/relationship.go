@@ -125,9 +125,9 @@ func ProcessRelationships(relationshipCSVHelper *RelationshipCSVHelper) {
 			}
 			var rel _rel.RelationshipDefinition
 			rel.SchemaVersion = v1alpha3.RelationshipSchemaVersion
-			rel.Kind = _rel.RelationshipDefinitionKind(utils.ReplaceSpacesAndConvertToLowercase(relationship.KIND))
-			rel.RelationshipType = utils.ReplaceSpacesAndConvertToLowercase(relationship.Type)
-			rel.SubType = utils.ReplaceSpacesAndConvertToLowercase(relationship.SubType)
+			rel.Kind = _rel.RelationshipDefinitionKind(utils.ReplaceSpacesWithHyphenAndConvertToLowercase(relationship.KIND))
+			rel.RelationshipType = utils.ReplaceSpacesWithHyphenAndConvertToLowercase(relationship.Type)
+			rel.SubType = utils.ReplaceSpacesWithHyphenAndConvertToLowercase(relationship.SubType)
 			rel.EvaluationQuery = &relationship.EvalPolicy
 
 			rel.Version = "v1.0.0"
@@ -164,7 +164,6 @@ func ProcessRelationships(relationshipCSVHelper *RelationshipCSVHelper) {
 				}
 				rel.Selectors = &selectorSet
 			}
-
 			fullPath, err := ConstructRelationshipPath(relationship.Model, version, rel.Version, "../server/meshmodel", rel)
 			if err != nil {
 				Log.Error(err)
