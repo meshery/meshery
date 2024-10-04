@@ -69,7 +69,7 @@ import classNames from 'classnames';
 import { forwardRef } from 'react';
 import { formatToTitleCase } from '@/utils/utils';
 import { useThemePreference } from '@/themes/hooks';
-import { CircularProgress } from '@layer5/sistent';
+import { CircularProgress, RenderMarkdown } from '@layer5/sistent';
 import LoadingScreen from '@/components/LoadingComponents/LoadingComponentServer';
 import { LoadSessionGuard } from '@/rtk-query/ability';
 
@@ -627,21 +627,41 @@ class MesheryApp extends App {
     //eslint-disable-next-line
     const ThemeResponsiveSnackbar = forwardRef((props, forwardedRef) => {
       const { variant, message, action, key } = props;
+
+      const styleMap = {
+        info: {
+          dark: classes.darknotifInfo,
+          light: classes.notifInfo,
+        },
+        success: {
+          dark: classes.darknotifSuccess,
+          light: classes.notifSuccess,
+        },
+        warning: {
+          dark: classes.darknotifWarn,
+          light: classes.notifWarn,
+        },
+        error: {
+          dark: classes.darknotifError,
+          light: classes.notifError,
+        },
+        loading: {
+          dark: classes.darknotifInfo,
+          light: classes.notifInfo,
+        },
+        default: {
+          dark: classes.darknotifInfo,
+          light: classes.notifInfo,
+        },
+      };
+
+      const theme = this.state.theme === 'dark' ? 'dark' : 'light';
+      const currentStyle = styleMap?.[variant]?.[theme] || styleMap.default[theme];
+
       return (
         <SnackbarContent
           ref={forwardedRef}
-          className={classNames(classes[variant], {
-            [classes.darknotifInfo]: variant === 'info' && this.state.theme === 'dark',
-            [classes.notifInfo]: variant === 'info' && this.state.theme !== 'dark',
-            [classes.darknotifSuccess]: variant === 'success' && this.state.theme === 'dark',
-            [classes.notifSuccess]: variant === 'success' && this.state.theme !== 'dark',
-            [classes.darknotifWarn]: variant === 'warning' && this.state.theme === 'dark',
-            [classes.notifWarn]: variant === 'warning' && this.state.theme !== 'dark',
-            [classes.darknotifError]: variant === 'error' && this.state.theme === 'dark',
-            [classes.notifError]: variant === 'error' && this.state.theme !== 'dark',
-            [classes.notifInfo]: variant === 'loading' && this.state.theme !== 'dark',
-            [classes.darknotifInfo]: variant === 'loading' && this.state.theme === 'dark',
-          })}
+          className={classNames(classes[variant], currentStyle)}
           style={{
             borderRadius: '0.3rem',
           }}
@@ -664,7 +684,9 @@ class MesheryApp extends App {
             ) : variant === 'loading' ? (
               <CircularProgress size={24} style={{ marginRight: '0.5rem' }} />
             ) : null}
-            <div className={classes.message}>{message}</div>
+            <div className={classes.message}>
+              <RenderMarkdown content={message} />
+            </div>
 
             <div
               style={{
