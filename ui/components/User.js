@@ -166,8 +166,9 @@ const User = (props) => {
 
   const open = Boolean(anchorEl);
 
+  const refURL = btoa(new URL('/api/user/token', window.location.origin));
   if (userData?.status == 'anonymous') {
-    const url = `${capabilitiesRegistry?.provider_url}?anonymousUserID=${userData?.id}&redirect=${window.location.pathname}`;
+    const url = `${capabilitiesRegistry?.provider_url}?anonymousUserID=${userData?.id}&source=${refURL}`;
 
     return (
       <Link href={url}>
