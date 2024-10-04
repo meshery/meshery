@@ -49,8 +49,8 @@ A self-service engineering platform, <a href="https://meshery.io">Meshery</a>, i
 
 <!-- [Meshery](https://meshery.io) is the cloud native management plane offering lifecycle, configuration, and performance management of Kubernetes, service meshes, and your workloads. -->
 <div align="center" width="100%">
-<!-- <a href="https://youtu.be/Do7htKrRzDA"><img src="https://play.meshery.io/static/media/meshery-playground-meshmap.5242722a8cd9c3855f42.png" width="800px" /></a> -->
- <br />Try Meshery in the <a href="https://play.meshery.io">Cloud Native Playground</a> (<a href="https://youtu.be/Do7htKrRzDA">teaser video</a>)
+ <a href="https://youtu.be/Do7htKrRzDA"><img src=".github/assets/images/readme/thumbnail.png" width="800px" /></a>
+ <br />Try Meshery in the <a href="https://play.meshery.io">Cloud Native Playground</a> (<a href="https://www.youtube.com/watch?v=034nVaQUyME&list=PL3A-A6hPO2IO_yzN83wSJJUNQActzCJvO&index=9">teaser video</a>)
 </div>
 
 <br />
