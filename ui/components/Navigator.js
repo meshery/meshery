@@ -375,8 +375,8 @@ const getNavigatorComponents = (/** @type {CapabilitiesRegistry} */ capabilityRe
         show: capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, ENVIRONMENT]),
         link: true,
         permission: {
-          action: keys.VIEW_ENVIRONMENTS.action,
-          subject: keys.VIEW_ENVIRONMENTS.subject,
+          action: keys.VIEW_ENVIRONMENT.action,
+          subject: keys.VIEW_ENVIRONMENT.subject,
         },
       },
       {

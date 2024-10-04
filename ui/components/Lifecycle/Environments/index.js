@@ -443,7 +443,7 @@ const Environments = ({ organization, classes }) => {
 
   return (
     <NoSsr>
-      {CAN(keys.VIEW_ENVIRONMENTS.action, keys.VIEW_ENVIRONMENTS.subject) ? (
+      {CAN(keys.VIEW_ENVIRONMENT.action, keys.VIEW_ENVIRONMENT.subject) ? (
         <>
           <div className={StyleClass.toolWrapper} style={{ marginBottom: '20px', display: 'flex' }}>
             <div className={classes.createButtonWrapper}>
