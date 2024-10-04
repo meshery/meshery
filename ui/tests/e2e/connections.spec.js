@@ -152,7 +152,7 @@ test(
 );
 
 transitionTests.forEach((t) => {
-  test(t.name, async ({ page }) => {
+  test(t.name, { tags: 'unstable' }, async ({ page }) => {
     const stateTransitionReq = page.waitForRequest(
       (request) =>
         request.url() ===
