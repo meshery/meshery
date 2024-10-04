@@ -28,10 +28,11 @@ import (
 	"time"
 
 	"github.com/layer5io/meshkit/encoding"
+	"github.com/layer5io/meshkit/generators"
 	"github.com/layer5io/meshkit/models/meshmodel/entity"
+	"golang.org/x/sync/semaphore"
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/layer5io/meshkit/generators"
 	mutils "github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshkit/utils/store"
 	"github.com/meshery/schemas/models/v1beta1/component"
@@ -39,12 +40,12 @@ import (
 
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-	"golang.org/x/sync/semaphore"
 	"google.golang.org/api/sheets/v4"
 )
 
 var (
 	componentSpredsheetGID         int64
+	relationshipSpredsheetGID      int64
 	outputLocation                 string
 	pathToRegistrantConnDefinition string
 	pathToRegistrantCredDefinition string
@@ -70,7 +71,7 @@ var generateCmd = &cobra.Command{
 	Long:  "Prerequisite: Excecute this command from the root of a meshery/meshery repo fork.\n\nGiven a Google Sheet with a list of model names and source locations, generate models and components any Registrant (e.g. GitHub, Artifact Hub) repositories.\n\nGenerated Model files are written to local filesystem under `/server/models/<model-name>`.",
 	Example: `
 // Generate Meshery Models from a Google Spreadsheet (i.e. "Meshery Integrations" spreadsheet).
-mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred
+mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred 
 // Directly generate models from one of the supported registrants by using Registrant Connection Definition and (optional) Registrant Credential Definition
 mesheryctl registry generate --registrant-def [path to connection definition] --registrant-cred [path to credential definition]
 // Generate a specific Model from a Google Spreadsheet (i.e. "Meshery Integrations" spreadsheet).
@@ -132,6 +133,8 @@ mesheryctl registry generate -directory <DIRECTORY_PATH>
 			sheetGID = GetSheetIDFromTitle(resp, "Models")
 			// Collect list of corresponding Components by name from spreadsheet
 			componentSpredsheetGID = GetSheetIDFromTitle(resp, "Components")
+			// Collect list of corresponding relationship by name from spreadsheet
+			relationshipSpredsheetGID = GetSheetIDFromTitle(resp, "Relationships")
 		} else {
 			// Get all files in the directory
 			files, err := os.ReadDir(csvDirectory)
@@ -207,17 +210,25 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 	if err != nil {
 		return err
 	}
+
+	relationshipCSVHelper, err := parseRelationshipSheet(url)
+	if err != nil {
+		return err
+	}
+
 	multiWriter := io.MultiWriter(os.Stdout, logFile)
 	multiErrorWriter := io.MultiWriter(os.Stdout, errorLogFile)
 
 	utils.Log.UpdateLogOutput(multiWriter)
 	utils.LogError.UpdateLogOutput(multiErrorWriter)
+
 	var wgForSpreadsheetUpdate sync.WaitGroup
 	wgForSpreadsheetUpdate.Add(1)
 
 	go func() {
 		utils.ProcessModelToComponentsMap(componentCSVHelper.Components)
 		utils.VerifyandUpdateSpreadsheet(spreadsheeetCred, &wgForSpreadsheetUpdate, srv, spreadsheeetChan, spreadsheeetID, modelCSVFilePath, componentCSVFilePath)
+
 	}()
 	// Iterate models from the spreadsheet
 	for _, model := range modelCSVHelper.Models {
@@ -262,6 +273,19 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 			}
 
 			version := pkg.GetVersion()
+
+			comps, err := pkg.GenerateComponents()
+			if err != nil {
+				utils.LogError.Error(ErrGenerateModel(err, model.Model))
+				return
+			}
+			lengthOfComps := len(comps)
+			if len(comps) == 0 {
+				totalAvailableModels--
+				utils.LogError.Error(ErrGenerateModel(fmt.Errorf("no components found for model "), model.Model))
+				return
+			}
+
 			modelDirPath, compDirPath, err := createVersionedDirectoryForModelAndComp(version, model.Model)
 			if err != nil {
 				utils.LogError.Error(ErrGenerateModel(err, model.Model))
@@ -275,12 +299,6 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 			if alreadyExsit {
 				totalAvailableModels--
 			}
-			comps, err := pkg.GenerateComponents()
-			if err != nil {
-				utils.LogError.Error(ErrGenerateModel(err, model.Model))
-				return
-			}
-			lengthOfComps := len(comps)
 
 			for _, comp := range comps {
 				comp.Version = defVersion
@@ -336,6 +354,7 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 	}
 	wg.Wait()
 	close(spreadsheeetChan)
+	utils.ProcessRelationships(relationshipCSVHelper)
 	wgForSpreadsheetUpdate.Wait()
 	return nil
 }
@@ -343,6 +362,12 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 // For registrants eg: meshery, whose components needs to be directly created by referencing meshery/schemas repo.
 // the sourceURL contains the path of models component definitions
 func GenerateDefsForCoreRegistrant(model utils.ModelCSV, ComponentCSVHelper *utils.ComponentCSVHelper) error {
+	registrant := "meshery"
+	if _, exists := ComponentCSVHelper.Components[registrant][model.Model]; !exists {
+		utils.LogError.Error(ErrGenerateModel(fmt.Errorf("no components found for model "), model.Model))
+		return nil
+
+	}
 	var version string
 	parts := strings.Split(model.SourceURL, "/")
 	// Assuming the URL is always of the format "protocol://github.com/owner/repo/tree/definitions/{model-name}/version/components"
@@ -442,7 +467,7 @@ func parseModelSheet(url string) (*utils.ModelCSVHelper, error) {
 
 	err = modelCSVHelper.ParseModelsSheet(false, modelName)
 	if err != nil {
-		return nil, ErrGenerateModel(err, "unable to start model generation")
+		return nil, ErrParsingSheet(err, "Models")
 	}
 	return modelCSVHelper, nil
 }
@@ -464,9 +489,21 @@ func parseComponentSheet(url string) (*utils.ComponentCSVHelper, error) {
 
 	err = compCSVHelper.ParseComponentsSheet(modelName)
 	if err != nil {
-		return nil, ErrGenerateModel(err, "unable to start model generation")
+		return nil, ErrParsingSheet(err, "Components")
 	}
 	return compCSVHelper, nil
+}
+
+func parseRelationshipSheet(url string) (*utils.RelationshipCSVHelper, error) {
+	relationshipCSVHelper, err := utils.NewRelationshipCSVHelper(url, "Relationships", relationshipSpredsheetGID, relationshipCSVFilePath)
+	if err != nil {
+		return nil, err
+	}
+	err = relationshipCSVHelper.ParseRelationshipsSheet(modelName)
+	if err != nil {
+		return nil, ErrParsingSheet(err, "Relationships")
+	}
+	return relationshipCSVHelper, nil
 }
 
 // version corresponds to the version of the pacakge from which model was sourced and not the definition version.
