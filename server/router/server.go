@@ -400,6 +400,9 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 	gMux.Handle("/api/integrations/connections/{connectionId}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DeleteConnection), models.ProviderAuth))).
 		Methods("DELETE")
 
+	gMux.HandleFunc("/auth/redirect", h.ProviderUIHandler).
+		Methods("GET")
+
 	// Swagger Interactive Playground
 	swaggerOpts := middleware.SwaggerUIOpts{SpecURL: "./swagger.yaml"}
 	swaggerSh := middleware.SwaggerUI(swaggerOpts, nil)
