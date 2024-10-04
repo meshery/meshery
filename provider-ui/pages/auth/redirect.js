@@ -16,8 +16,7 @@ const Redirect = () => {
 
     }, [])
     return (
-        <div>
-        </div>
+        <></>
     )
 }
 
