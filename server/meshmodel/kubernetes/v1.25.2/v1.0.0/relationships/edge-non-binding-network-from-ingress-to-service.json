@@ -17,7 +17,7 @@
    "displayName": "",
    "id": "00000000-0000-0000-0000-000000000000",
    "model": {
-    "version": "v1.31.1"
+    "version": "v1.25.2"
    },
    "name": "kubernetes",
    "registrant": {
@@ -165,6 +165,6 @@
   ],
   "subType": "network",
   "status": "enabled",
-  "type": "nonbinding",
+  "type": "non-binding",
   "version": "v1.0.0"
  }

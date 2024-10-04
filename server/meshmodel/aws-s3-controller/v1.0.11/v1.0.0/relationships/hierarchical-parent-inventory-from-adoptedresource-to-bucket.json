@@ -1,6 +1,6 @@
 {
   "id": "00000000-0000-0000-0000-000000000000",
-  "evaluationQuery": "heirarchical_inventory_relationship",
+  "evaluationQuery": "",
   "kind": "hierarchical",
   "metadata": {
    "description": "A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. E.g Secret-\u003ePod, ConfigMaps-\u003eDeployment, etc...",

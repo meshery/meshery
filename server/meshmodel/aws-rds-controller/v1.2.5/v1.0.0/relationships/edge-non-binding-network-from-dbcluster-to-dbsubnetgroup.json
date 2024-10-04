@@ -1,17 +1,13 @@
 {
   "id": "00000000-0000-0000-0000-000000000000",
-  "evaluationQuery": "?",
+  "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-   "description": "A relationship that defines annotation edges between components",
+   "description": "",
    "styles": {
-    "line-color": "#00B39F",
-    "line-style": "solid",
     "primaryColor": "",
     "svgColor": "",
-    "svgWhite": "",
-    "target-arrow-color": "#00B39F",
-    "target-arrow-shape": "triangle"
+    "svgWhite": ""
    }
   },
   "model": {
@@ -21,9 +17,9 @@
    "displayName": "",
    "id": "00000000-0000-0000-0000-000000000000",
    "model": {
-    "version": "0.7.2"
+    "version": "v1.2.5"
    },
-   "name": "meshery-shapes",
+   "name": "aws-rds-controller",
    "registrant": {
     "created_at": "0001-01-01T00:00:00Z",
     "credential_id": "00000000-0000-0000-0000-000000000000",
@@ -51,7 +47,7 @@
      "from": [
       {
        "id": null,
-       "kind": "*",
+       "kind": "DBCluster",
        "match": {},
        "model": {
         "category": {
@@ -62,14 +58,14 @@
         "model": {
          "version": ""
         },
-        "name": "*",
+        "name": "aws-rds-controller",
         "registrant": {
          "created_at": "0001-01-01T00:00:00Z",
          "credential_id": "00000000-0000-0000-0000-000000000000",
          "deleted_at": "0001-01-01T00:00:00Z",
          "id": "00000000-0000-0000-0000-000000000000",
          "kind": "",
-         "name": "",
+         "name": "github",
          "status": "",
          "sub_type": "",
          "type": "",
@@ -83,13 +79,21 @@
         "components": null,
         "relationships": null
        },
-       "patch": null
+       "patch": {
+        "patchStrategy": "merge",
+        "mutatorRef": [
+         [
+          "spec",
+          "dbSubnetGroupName"
+         ]
+        ]
+       }
       }
      ],
      "to": [
       {
        "id": null,
-       "kind": "*",
+       "kind": "DBSubnetGroup",
        "match": {},
        "model": {
         "category": {
@@ -100,14 +104,14 @@
         "model": {
          "version": ""
         },
-        "name": "*",
+        "name": "aws-rds-controller",
         "registrant": {
          "created_at": "0001-01-01T00:00:00Z",
          "credential_id": "00000000-0000-0000-0000-000000000000",
          "deleted_at": "0001-01-01T00:00:00Z",
          "id": "00000000-0000-0000-0000-000000000000",
          "kind": "",
-         "name": "",
+         "name": "github",
          "status": "",
          "sub_type": "",
          "type": "",
@@ -121,14 +125,22 @@
         "components": null,
         "relationships": null
        },
-       "patch": null
+       "patch": {
+        "patchStrategy": "replace",
+        "mutatedRef": [
+         [
+          "status",
+          "subnetIDs"
+         ]
+        ]
+       }
       }
      ]
     }
    }
   ],
-  "subType": "annotation",
+  "subType": "network",
   "status": "enabled",
-  "type": "nonbinding",
+  "type": "non-binding",
   "version": "v1.0.0"
  }
