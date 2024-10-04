@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "DeviceClass",
    "schema": "{\"description\":\"DeviceClass is a vendor- or admin-provided resource that contains device configuration and selectors. It can be referenced in the device requests of a claim to apply these presets. Cluster scoped.\\n\\nThis is an alpha type and requires enabling the DynamicResourceAllocation feature gate.\",\"properties\":{\"spec\":{\"allOf\":[{\"description\":\"DeviceClassSpec is used in a [DeviceClass] to define what can be allocated and how to configure it.\",\"properties\":{\"config\":{\"description\":\"Config defines configuration parameters that apply to each device that is claimed via this class. Some classses may potentially be satisfied by multiple drivers, so each instance of a vendor configuration applies to exactly one driver.\\n\\nThey are passed to the driver, but are not considered while allocating the claim.\",\"items\":{\"allOf\":[{\"description\":\"DeviceClassConfiguration is used in DeviceClass.\",\"properties\":{\"opaque\":{\"allOf\":[{\"description\":\"OpaqueDeviceConfiguration contains configuration parameters for a driver in a format defined by the driver vendor.\",\"properties\":{\"driver\":{\"default\":\"\",\"description\":\"Driver is used to determine which kubelet plugin needs to be passed these configuration parameters.\\n\\nAn admission policy provided by the driver developer could use this to decide whether it needs to validate them.\\n\\nMust be a DNS subdomain and should end with a DNS domain owned by the vendor of the driver.\",\"type\":\"string\"},\"parameters\":{\"allOf\":[{\"description\":\"RawExtension is used to hold extensions in external versions.\\n\\nTo use this, make a field which has RawExtension as its type in your external, versioned struct, and Object in your internal struct. You also need to register your various plugin types.\\n\\n// Internal package:\\n\\n\\ttype MyAPIObject struct {\\n\\t\\truntime.TypeMeta `json:\\\",inline\\\"`\\n\\t\\tMyPlugin runtime.Object `json:\\\"myPlugin\\\"`\\n\\t}\\n\\n\\ttype PluginA struct {\\n\\t\\tAOption string `json:\\\"aOption\\\"`\\n\\t}\\n\\n// External package:\\n\\n\\ttype MyAPIObject struct {\\n\\t\\truntime.TypeMeta `json:\\\",inline\\\"`\\n\\t\\tMyPlugin runtime.RawExtension `json:\\\"myPlugin\\\"`\\n\\t}\\n\\n\\ttype PluginA struct {\\n\\t\\tAOption string `json:\\\"aOption\\\"`\\n\\t}\\n\\n// On the wire, the JSON will look something like this:\\n\\n\\t{\\n\\t\\t\\\"kind\\\":\\\"MyAPIObject\\\",\\n\\t\\t\\\"apiVersion\\\":\\\"v1\\\",\\n\\t\\t\\\"myPlugin\\\": {\\n\\t\\t\\t\\\"kind\\\":\\\"PluginA\\\",\\n\\t\\t\\t\\\"aOption\\\":\\\"foo\\\",\\n\\t\\t},\\n\\t}\\n\\nSo what happens? Decode first uses json or yaml to unmarshal the serialized data into your external MyAPIObject. That causes the raw JSON to be stored, but not unpacked. The next step is to copy (using pkg/conversion) into the internal struct. The runtime package's DefaultScheme has conversion functions installed which will unpack the JSON stored in RawExtension, turning it into the correct object type, and storing it in the Object. (TODO: In the case where the object is of an unknown type, a runtime.Unknown object will be created and stored.)\",\"type\":\"object\"}],\"description\":\"Parameters can contain arbitrary data. It is the responsibility of the driver developer to handle validation and versioning. Typically this includes self-identification and a version (\\\"kind\\\" + \\\"apiVersion\\\" for Kubernetes types), with conversion between different versions.\"}},\"required\":[\"driver\",\"parameters\"],\"type\":\"object\"}],\"description\":\"Opaque provides driver-specific configuration parameters.\"}},\"type\":\"object\"}],\"default\":{}},\"type\":\"array\",\"x-kubernetes-list-type\":\"atomic\"},\"selectors\":{\"description\":\"Each selector must be satisfied by a device which is claimed via this class.\",\"items\":{\"allOf\":[{\"description\":\"DeviceSelector must have exactly one field set.\",\"properties\":{\"cel\":{\"allOf\":[{\"description\":\"CELDeviceSelector contains a CEL expression for selecting a device.\",\"properties\":{\"expression\":{\"default\":\"\",\"description\":\"Expression is a CEL expression which evaluates a single device. It must evaluate to true when the device under consideration satisfies the desired criteria, and false when it does not. Any other result is an error and causes allocation of devices to abort.\\n\\nThe expression's input is an object named \\\"device\\\", which carries the following properties:\\n - driver (string): the name of the driver which defines this device.\\n - attributes (map[string]object): the device's attributes, grouped by prefix\\n   (e.g. device.attributes[\\\"dra.example.com\\\"] evaluates to an object with all\\n   of the attributes which were prefixed by \\\"dra.example.com\\\".\\n - capacity (map[string]object): the device's capacities, grouped by prefix.\\n\\nExample: Consider a device with driver=\\\"dra.example.com\\\", which exposes two attributes named \\\"model\\\" and \\\"ext.example.com/family\\\" and which exposes one capacity named \\\"modules\\\". This input to this expression would have the following fields:\\n\\n    device.driver\\n    device.attributes[\\\"dra.example.com\\\"].model\\n    device.attributes[\\\"ext.example.com\\\"].family\\n    device.capacity[\\\"dra.example.com\\\"].modules\\n\\nThe device.driver field can be used to check for a specific driver, either as a high-level precondition (i.e. you only want to consider devices from this driver) or as part of a multi-clause expression that is meant to consider devices from different drivers.\\n\\nThe value type of each attribute is defined by the device definition, and users who write these expressions must consult the documentation for their specific drivers. The value type of each capacity is Quantity.\\n\\nIf an unknown prefix is used as a lookup in either device.attributes or device.capacity, an empty map will be returned. Any reference to an unknown field will cause an evaluation error and allocation to abort.\\n\\nA robust expression should check for the existence of attributes before referencing them.\\n\\nFor ease of use, the cel.bind() function is enabled, and can be used to simplify expressions that access multiple attributes with the same domain. For example:\\n\\n    cel.bind(dra, device.attributes[\\\"dra.example.com\\\"], dra.someBool \\u0026\\u0026 dra.anotherBool)\",\"type\":\"string\"}},\"required\":[\"expression\"],\"type\":\"object\"}],\"description\":\"CEL contains a CEL expression for selecting a device.\"}},\"type\":\"object\"}],\"default\":{}},\"type\":\"array\",\"x-kubernetes-list-type\":\"atomic\"},\"suitableNodes\":{\"allOf\":[{\"description\":\"A node selector represents the union of the results of one or more label queries over a set of nodes; that is, it represents the OR of the selectors represented by the node selector terms.\",\"properties\":{\"nodeSelectorTerms\":{\"description\":\"Required. A list of node selector terms. The terms are ORed.\",\"items\":{\"allOf\":[{\"description\":\"A null or empty node selector term matches no objects. The requirements of them are ANDed. The TopologySelectorTerm type implements a subset of the NodeSelectorTerm.\",\"properties\":{\"matchExpressions\":{\"description\":\"A list of node selector requirements by node's labels.\",\"items\":{\"allOf\":[{\"description\":\"A node selector requirement is a selector that contains values, a key, and an operator that relates the key and values.\",\"properties\":{\"key\":{\"default\":\"\",\"description\":\"The label key that the selector applies to.\",\"type\":\"string\"},\"operator\":{\"default\":\"\",\"description\":\"Represents a key's relationship to a set of values. Valid operators are In, NotIn, Exists, DoesNotExist. Gt, and Lt.\",\"type\":\"string\"},\"values\":{\"description\":\"An array of string values. If the operator is In or NotIn, the values array must be non-empty. If the operator is Exists or DoesNotExist, the values array must be empty. If the operator is Gt or Lt, the values array must have a single element, which will be interpreted as an integer. This array is replaced during a strategic merge patch.\",\"items\":{\"default\":\"\",\"type\":\"string\"},\"type\":\"array\",\"x-kubernetes-list-type\":\"atomic\"}},\"required\":[\"key\",\"operator\"],\"type\":\"object\"}],\"default\":{}},\"type\":\"array\",\"x-kubernetes-list-type\":\"atomic\"},\"matchFields\":{\"description\":\"A list of node selector requirements by node's fields.\",\"items\":{\"allOf\":[{\"description\":\"A node selector requirement is a selector that contains values, a key, and an operator that relates the key and values.\",\"properties\":{\"key\":{\"default\":\"\",\"description\":\"The label key that the selector applies to.\",\"type\":\"string\"},\"operator\":{\"default\":\"\",\"description\":\"Represents a key's relationship to a set of values. Valid operators are In, NotIn, Exists, DoesNotExist. Gt, and Lt.\",\"type\":\"string\"},\"values\":{\"description\":\"An array of string values. If the operator is In or NotIn, the values array must be non-empty. If the operator is Exists or DoesNotExist, the values array must be empty. If the operator is Gt or Lt, the values array must have a single element, which will be interpreted as an integer. This array is replaced during a strategic merge patch.\",\"items\":{\"default\":\"\",\"type\":\"string\"},\"type\":\"array\",\"x-kubernetes-list-type\":\"atomic\"}},\"required\":[\"key\",\"operator\"],\"type\":\"object\"}],\"default\":{}},\"type\":\"array\",\"x-kubernetes-list-type\":\"atomic\"}},\"type\":\"object\",\"x-kubernetes-map-type\":\"atomic\"}],\"default\":{}},\"type\":\"array\",\"x-kubernetes-list-type\":\"atomic\"}},\"required\":[\"nodeSelectorTerms\"],\"type\":\"object\",\"x-kubernetes-map-type\":\"atomic\"}],\"description\":\"Only nodes matching the selector will be considered by the scheduler when trying to find a Node that fits a Pod when that Pod uses a claim that has not been allocated yet *and* that claim gets allocated through a control plane controller. It is ignored when the claim does not use a control plane controller for allocation.\\n\\nSetting this field is optional. If unset, all Nodes are candidates.\\n\\nThis is an alpha field and requires enabling the DRAControlPlaneController feature gate.\"}},\"type\":\"object\"}],\"default\":{},\"description\":\"Spec defines what can be allocated and how to configure it.\\n\\nThis is mutable. Consumers have to be prepared for classes changing at any time, either because they get updated or replaced. Claim allocations are done once based on whatever was set in classes at the time of allocation.\\n\\nChanging the spec automatically increments the metadata.generation number.\"}},\"required\":[\"spec\"],\"type\":\"object\",\"x-kubernetes-group-version-kind\":[{\"group\":\"resource.k8s.io\",\"kind\":\"DeviceClass\",\"version\":\"v1alpha3\"}]}",
