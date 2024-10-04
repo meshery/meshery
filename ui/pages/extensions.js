@@ -1,3 +1,4 @@
+'use client';
 import React, { useEffect, useState } from 'react';
 import Head from 'next/head';
 import { bindActionCreators } from 'redux';
@@ -15,16 +16,20 @@ import { useNotification } from '../utils/hooks/useNotification';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { LARGE_6_MED_12_GRID_STYLE } from '../css/grid.style';
+import { useTheme } from '@mui/material/styles';
 
-const StyledCard = styled('div')(() => ({
-  padding: '32px',
-  position: 'relative',
-  boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2)',
-  minHeight: '250px',
-  borderRadius: '8px',
-  transformStyle: 'preserve-3d',
-  backgroundColor: '#FFF',
-}));
+const StyledCard = styled('div')(() => {
+  const theme = useTheme();
+  return {
+    padding: '32px',
+    position: 'relative',
+    boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2)',
+    minHeight: '250px',
+    borderRadius: '8px',
+    transformStyle: 'preserve-3d',
+    backgroundColor: theme.palette.mode === 'dark' ? '#202020' : '#FFF',
+  };
+});
 
 const StyledButton = styled(Button)(({ theme }) => ({
   color: '#fff',
