@@ -24,7 +24,7 @@
     "@emotion/styled": "^11.11.5",
     "@mui/icons-material": "^5.15.16",
     "@mui/material": "^5.15.11",
-    "babel-plugin-istanbul": "^6.1.1",
+    "babel-plugin-istanbul": "^7.0.0",
     "http-proxy": "^1.18.1",
     "isomorphic-unfetch": "^4.0.2",
     "next": "^13.5.4",
