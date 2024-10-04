@@ -12,7 +12,7 @@ var (
 	ErrUpdateModelCode       = "mesheryctl-1057"
 	ErrUpdateComponentCode   = "mesheryctl-1058"
 	ErrUpdateRegistryCode    = "mesheryctl-1059"
-	ErrParsingSheetCode      = "replace_me"
+	ErrParsingSheetCode      = "mesheryctl-1128"
 )
 
 func ErrUpdateRegistry(err error, path string) error {
