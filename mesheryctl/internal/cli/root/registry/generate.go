@@ -363,14 +363,12 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 // the sourceURL contains the path of models component definitions
 func GenerateDefsForCoreRegistrant(model utils.ModelCSV, ComponentCSVHelper *utils.ComponentCSVHelper) error {
 	registrant := "meshery"
-	if models, exists := ComponentCSVHelper.Components[registrant]; exists {
-		if len(models) > 0 {
-			comps := models[model.Model]
-			if len(comps) == 0 {
-				utils.LogError.Error(ErrGenerateModel(fmt.Errorf("no components found for model "), model.Model))
-				return nil
-			}
+	if comps, exists := ComponentCSVHelper.Components[registrant][model.Model]; exists {
+		if len(comps) == 0 {
+			utils.LogError.Error(ErrGenerateModel(fmt.Errorf("no components found for model "), model.Model))
+			return nil
 		}
+
 	}
 	var version string
 	parts := strings.Split(model.SourceURL, "/")
@@ -471,7 +469,7 @@ func parseModelSheet(url string) (*utils.ModelCSVHelper, error) {
 
 	err = modelCSVHelper.ParseModelsSheet(false, modelName)
 	if err != nil {
-		return nil, ErrGenerateModel(err, "unable to start model generation")
+		return nil, ErrParsingSheet(err, "Models")
 	}
 	return modelCSVHelper, nil
 }
@@ -493,7 +491,7 @@ func parseComponentSheet(url string) (*utils.ComponentCSVHelper, error) {
 
 	err = compCSVHelper.ParseComponentsSheet(modelName)
 	if err != nil {
-		return nil, ErrGenerateModel(err, "unable to start model generation")
+		return nil, ErrParsingSheet(err, "Components")
 	}
 	return compCSVHelper, nil
 }
@@ -505,7 +503,7 @@ func parseRelationshipSheet(url string) (*utils.RelationshipCSVHelper, error) {
 	}
 	err = relationshipCSVHelper.ParseRelationshipsSheet(modelName)
 	if err != nil {
-		return nil, ErrGenerateModel(err, "unable to start model generation")
+		return nil, ErrParsingSheet(err, "Relationships")
 	}
 	return relationshipCSVHelper, nil
 }
