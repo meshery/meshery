@@ -5,7 +5,7 @@
   "Datadog seed content": {
     "id": "428fa922-c501-4774-b6c6-a1abc111bd21",
     "name": "Datadog seed content",
-    "pattern_file": "{\"id\":\"00000000-0000-0000-0000-000000000000\",\"components\":null,\"name\":\"Datadog agent on k8's\",\"relationships\":null,\"schemaVersion\":\"\",\"version\":\"0.0.1\"}",
+    "pattern_file": "{\"id\":\"00000000-0000-0000-0000-000000000000\",\"components\":null,\"name\":\"Test: Datadog agent on k8s\",\"relationships\":null,\"schemaVersion\":\"\",\"version\":\"0.0.1\"}",
     "user_id": "2e246a4a-11e3-4b99-8c79-e42f8565e4be",
     "location": {},
     "visibility": "public",
@@ -35,10 +35,10 @@
       "noOfComponentsWithValidationIssues": 0
     }
   },
-  "Design With Validation Errors": {
+  "Test: Design With Validation Errors": {
     "id": "6751f6f7-01e1-4563-90c4-077abeb0b215",
-    "name": "Design With Validation Errors",
-    "pattern_file": "{\"id\":\"00000000-0000-0000-0000-000000000000\",\"components\":null,\"name\":\"Design With Validation Errors \",\"relationships\":null,\"schemaVersion\":\"\",\"version\":\"0.0.1\"}",
+    "name": "Test: Design With Validation Errors",
+    "pattern_file": "{\"id\":\"00000000-0000-0000-0000-000000000000\",\"components\":null,\"name\":\"Test: Design With Validation Errors\",\"relationships\":null,\"schemaVersion\":\"\",\"version\":\"0.0.1\"}",
     "user_id": "2e246a4a-11e3-4b99-8c79-e42f8565e4be",
     "location": {},
     "visibility": "public",

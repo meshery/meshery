@@ -1,6 +1,9 @@
 table {
   border-collapse: collapse;
   font-size: 1rem;
+  display: block;
+  overflow-x: auto; 
+  width: 100%;
 }
 .table,
 .td-box .row.section > table,
@@ -13,7 +16,17 @@ table {
 table th { 
   font-weight: bold;
   background-color: var(--color-primary-dark); 
+  border: 1px solid #dddddd;
+  padding: 8px;
+  text-align: left;
 }
+
+table td{
+  border: 1px solid #dddddd;
+  padding: 8px;
+  text-align: left;
+}
+
 .td-box .row.section > table th,
 .td-content > table th,
 .table td,
