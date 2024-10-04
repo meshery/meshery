@@ -2,9 +2,7 @@ import { useLegacySelector } from 'lib/store';
 import { ability } from '../utils/can';
 import { useGetUserKeysQuery } from './userKeys';
 import _ from 'lodash';
-import AnimatedMeshery from '@/components/LoadingComponents/Animations/AnimatedMeshery';
 import CustomErrorMessage from '@/components/ErrorPage';
-import { Box, useTheme } from '@material-ui/core';
 import LoadingScreen from '@/components/LoadingComponents/LoadingComponentServer';
 
 export const useGetUserAbilities = (org, skip) => {
@@ -54,7 +52,10 @@ export const LoadSessionGuard = ({ children }) => {
   }
 
   return (
-    <LoadingScreen isLoading={isLoading || !org?.id} message="This loading screen is temporary. Your YAML-induced suffering is eternal.">
+    <LoadingScreen
+      isLoading={isLoading || !org?.id}
+      message="This loading screen is temporary. Your YAML-induced suffering is eternal."
+    >
       {children}
     </LoadingScreen>
   );

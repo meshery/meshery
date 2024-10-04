@@ -82,15 +82,15 @@ const styles = (theme) => ({
   },
   toolbarOnDrawerClosed: {
     minHeight: 59,
-    padding: theme.spacing(0.5),
-    paddingLeft: theme.spacing(0.5),
+    padding: theme.spacing(2),
+    paddingLeft: 34,
     paddingRight: 34,
     backgroundColor: theme.palette.secondary.mainBackground,
     boxShadow: `3px 0px 4px ${theme.palette.secondary.focused}`,
   },
   toolbarOnDrawerOpen: {
     minHeight: 58,
-    padding: theme.spacing(0.5),
+    padding: theme.spacing(2),
     paddingLeft: 34,
     paddingRight: 34,
     backgroundColor: theme.palette.secondary.mainBackground,
