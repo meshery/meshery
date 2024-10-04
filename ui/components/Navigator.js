@@ -1150,7 +1150,7 @@ class Navigator_ extends React.Component {
   }
 
   render() {
-    const { classes, isDrawerCollapsed, ...other } = this.props;
+    const { classes, isDrawerCollapsed } = this.props;
     const { path, showHelperButton, navigatorComponents } = this.state;
     this.updatenavigatorComponentsMenus();
 
@@ -1413,7 +1413,6 @@ class Navigator_ extends React.Component {
       <NoSsr>
         <Drawer
           variant="permanent"
-          {...other}
           className={isDrawerCollapsed ? classes.sidebarCollapsed : classes.sidebarExpanded}
           classes={{
             paper: isDrawerCollapsed ? classes.sidebarCollapsed : classes.sidebarExpanded,
