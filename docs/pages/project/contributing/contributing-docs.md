@@ -106,6 +106,7 @@ Meshery documentation is built using the following components:
   sudo apt-get install autoconf bison build-essential libssl-dev libyaml-dev libreadline6-dev zlib1g-dev libncurses5-dev libffi-dev libgdbm3 libgdbm-dev
   </code>
   </div></pre>
+{% include alert.html type="info" title="Note" content="Latest versions of debian based OS does not support libgdbm3, so if you encounter any issue with its installation then try replacing it with libgdbm6 or libgdbm5." %}
 
 #### Installing rbenv
 
