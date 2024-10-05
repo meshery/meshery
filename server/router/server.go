@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/go-openapi/runtime/middleware"
 
@@ -42,6 +43,14 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 		Methods("GET", "POST", "OPTIONS", "PUT", "DELETE")
 	gMux.Handle("/api/provider/capabilities", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ProviderCapabilityHandler), models.ProviderAuth))).
 		Methods("GET")
+	gMux.HandleFunc("/provider/favicon.ico", func(w http.ResponseWriter, r *http.Request) {
+		handlers.ServeUI(w, r, "/provider", "../../provider-ui/out/")
+	})
+	gMux.PathPrefix("/provider/_next").
+		Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			handlers.ServeUI(w, r, "/provider", "../../provider-ui/out/")
+		}))
+
 	gMux.PathPrefix("/provider").
 		Handler(http.HandlerFunc(h.ProviderUIHandler)).
 		Methods("GET")
@@ -339,7 +348,7 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 	//gMux.PathPrefix("/api/system/graphql").Handler(h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GraphqlSystemHandler)))).Methods("GET", "POST")
 
 	gMux.Handle("/user/logout", h.ProviderMiddleware(h.SessionInjectorMiddleware(func(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
-		h.LogoutHandler(w, req,  user, provider)
+		h.LogoutHandler(w, req, user, provider)
 	})))
 	gMux.Handle("/user/login", h.ProviderMiddleware(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		providerI := req.Context().Value(models.ProviderCtxKey)
@@ -399,6 +408,19 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 		Methods("POST", "DELETE")
 	gMux.Handle("/api/integrations/connections/{connectionId}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DeleteConnection), models.ProviderAuth))).
 		Methods("DELETE")
+
+	gMux.HandleFunc("/auth/redirect", func(w http.ResponseWriter, r *http.Request) {
+		token := r.URL.Query().Get("token")
+		http.SetCookie(w, &http.Cookie{
+			Name:     models.TokenCookieName,
+			Value:    token,
+			Path:     "/",
+			HttpOnly: true,
+			Expires:  time.Now().Add(24 * time.Hour),
+		})
+		handlers.ServeUI(w, r, "/provider", "../../provider-ui/out/")
+	}).
+		Methods("GET")
 
 	// Swagger Interactive Playground
 	swaggerOpts := middleware.SwaggerUIOpts{SpecURL: "./swagger.yaml"}

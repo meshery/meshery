@@ -11,13 +11,13 @@ import React from 'react';
 import PatternIcon from '@/assets/icons/Pattern';
 import { CloseIcon } from '@layer5/sistent';
 import { GetApp as GetAppIcon } from '@material-ui/icons';
-import OriginalApplicationFileIcon from '@/assets/icons/OriginalApplicationIcon';
 import ModifiedApplicationFileIcon from '@/assets/icons/ModifiedApplicationIcon';
 import { withStyles } from '@material-ui/core/styles';
 import { CustomTextTooltip } from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
 import InfoOutlinedIcon from '@/assets/icons/InfoOutlined';
 import { DialogActions } from '@layer5/sistent';
 import { Colors } from '@/themes/app';
+import KubernetesIcon from '@/assets/icons/technology/kubernetes';
 
 const styles = (theme) => ({
   dialogTitle: {
@@ -176,40 +176,9 @@ const ExportModal = (props) => {
             flexWrap: 'wrap',
           }}
         >
-          {downloadModal?.content?.type?.String && (
-            <div>
-              <Typography
-                component={'h4'}
-                style={{ paddingBottom: '1.5rem', maxWidth: '9rem' }}
-                className={classes.text}
-              >
-                Original ({downloadModal?.content?.type?.String})
-              </Typography>
-              <div style={exportBtnStyles}>
-                <Button
-                  data-testid="export-original"
-                  onClick={(e) =>
-                    handleDesignDownload(
-                      e,
-                      downloadModal.content,
-                      downloadModal?.content.type?.String,
-                    )
-                  }
-                >
-                  <div style={exportWrpStyles}>
-                    <OriginalApplicationFileIcon width={75} height={75} />
-                    <div style={{ display: 'flex', padding: '0.8rem' }}>
-                      <Typography> EXPORT </Typography>
-                      <GetAppIcon />
-                    </div>
-                  </div>
-                </Button>
-              </div>
-            </div>
-          )}
           <div>
             <Typography component="p" style={{ paddingBottom: '1.5rem' }} className={classes.text}>
-              Current
+              Design File
             </Typography>
             <div style={exportBtnStyles}>
               <Button
@@ -219,6 +188,31 @@ const ExportModal = (props) => {
                 <div style={exportWrpStyles}>
                   <ModifiedApplicationFileIcon width={75} height={82} />
                   <div style={{ display: 'flex', padding: '0.4rem' }}>
+                    <Typography> EXPORT </Typography>
+                    <GetAppIcon />
+                  </div>
+                </div>
+              </Button>
+            </div>
+          </div>
+          <div>
+            <Typography
+              component={'h4'}
+              style={{ paddingBottom: '1.5rem', maxWidth: '9rem' }}
+              className={classes.text}
+            >
+              Kubernetes Manifest
+            </Typography>
+            <div style={exportBtnStyles}>
+              <Button
+                data-testid="export-original"
+                onClick={(e) =>
+                  handleDesignDownload(e, downloadModal.content, null, 'export=Kubernetes Manifest')
+                }
+              >
+                <div style={exportWrpStyles}>
+                  <KubernetesIcon width={75} height={75} />
+                  <div style={{ display: 'flex', padding: '0.8rem' }}>
                     <Typography> EXPORT </Typography>
                     <GetAppIcon />
                   </div>

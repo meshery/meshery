@@ -1,5 +1,66 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Add text to nodes body",
+    "displayName": "Body Text",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "body-text",
+    "type": "style",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "NetworkConnectivityServiceConnectionPolicy",
    "schema": "{\n \"description\": \"NetworkConnectivityServiceConnectionPolicy is the Schema for the NetworkConnectivityServiceConnectionPolicy API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"NetworkConnectivityServiceConnectionPolicySpec defines the desired state of NetworkConnectivityServiceConnectionPolicy\",\n   \"properties\": {\n    \"description\": {\n     \"description\": \"A description of this resource.\",\n     \"type\": \"string\"\n    },\n    \"location\": {\n     \"description\": \"Immutable. Location of the resource.\",\n     \"type\": \"string\"\n    },\n    \"networkRef\": {\n     \"description\": \"The resource path of the consumer network. Example: - projects/{projectNumOrId}/global/networks/{resourceId}.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"A reference to an externally managed Compute Network resource. Should be in the format `projects/\\u003cprojectID\\u003e/global/networks/\\u003cnetwork\\u003e`.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"The `name` field of a `ComputeNetwork` resource.\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"The `namespace` field of a `ComputeNetwork` resource.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"projectRef\": {\n     \"description\": \"Immutable. The Project that this resource belongs to.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"The `projectID` field of a project, when not managed by Config Connector.\",\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"description\": \"The kind of the Project resource; optional but must be `Project` if provided.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"The `name` field of a `Project` resource.\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"The `namespace` field of a `Project` resource.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"pscConfig\": {\n     \"description\": \"Configuration used for Private Service Connect connections. Used when Infrastructure is PSC.\",\n     \"properties\": {\n      \"limit\": {\n       \"description\": \"Optional. Max number of PSC connections for this policy.\",\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"producerInstanceLocation\": {\n       \"description\": \"Required. ProducerInstanceLocation is used to specify which authorization mechanism to use to determine which projects the Producer instance can be within.\",\n       \"type\": \"string\"\n      },\n      \"subnetworkRefs\": {\n       \"description\": \"The resource paths of subnetworks to use for IP address management. Example: projects/{projectNumOrId}/regions/{region}/subnetworks/{resourceId}.\",\n       \"items\": {\n        \"oneOf\": [\n         {\n          \"not\": {\n           \"required\": [\n            \"external\"\n           ]\n          },\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"not\": {\n           \"anyOf\": [\n            {\n             \"required\": [\n              \"name\"\n             ]\n            },\n            {\n             \"required\": [\n              \"namespace\"\n             ]\n            }\n           ]\n          },\n          \"required\": [\n           \"external\"\n          ]\n         }\n        ],\n        \"properties\": {\n         \"external\": {\n          \"description\": \"The ComputeSubnetwork selflink of form \\\"projects/{{project}}/regions/{{region}}/subnetworks/{{name}}\\\", when not managed by Config Connector.\",\n          \"type\": \"string\"\n         },\n         \"name\": {\n          \"description\": \"The `name` field of a `ComputeSubnetwork` resource.\",\n          \"type\": \"string\"\n         },\n         \"namespace\": {\n          \"description\": \"The `namespace` field of a `ComputeSubnetwork` resource.\",\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"The NetworkConnectivityServiceConnectionPolicy name. If not given, the metadata.name will be used.\",\n     \"type\": \"string\"\n    },\n    \"serviceClass\": {\n     \"description\": \"The service class identifier for which this ServiceConnectionPolicy is for. The service class identifier is a unique, symbolic representation of a ServiceClass. It is provided by the Service Producer. Google services have a prefix of gcp. For example, gcp-cloud-sql. 3rd party services do not. For example, test-service-a3dfcx.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"location\",\n    \"projectRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Network Connectivity Service Connection Policy\",\n \"type\": \"object\"\n}",
