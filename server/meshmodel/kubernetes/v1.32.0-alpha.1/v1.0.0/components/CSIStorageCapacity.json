@@ -1,0 +1,195 @@
+{
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "CSIStorageCapacity",
+   "schema": "{\"description\":\"CSIStorageCapacity stores the result of one CSI GetCapacity call. For a given StorageClass, this describes the available capacity in a particular topology segment.  This can be used when considering where to instantiate new PersistentVolumes.\\n\\nFor example this can express things like: - StorageClass \\\"standard\\\" has \\\"1234 GiB\\\" available in \\\"topology.kubernetes.io/zone=us-east1\\\" - StorageClass \\\"localssd\\\" has \\\"10 GiB\\\" available in \\\"kubernetes.io/hostname=knode-abc123\\\"\\n\\nThe following three cases all imply that no capacity is available for a certain combination: - no object exists with suitable topology and storage class name - such an object exists, but the capacity is unset - such an object exists, but the capacity is zero\\n\\nThe producer of these objects can decide which approach is more suitable.\\n\\nThey are consumed by the kube-scheduler when a CSI driver opts into capacity-aware scheduling with CSIDriverSpec.StorageCapacity. The scheduler compares the MaximumVolumeSize against the requested size of pending volumes to filter out unsuitable nodes. If MaximumVolumeSize is unset, it falls back to a comparison against the less precise Capacity. If that is also unset, the scheduler assumes that capacity is insufficient and tries some other node.\",\"properties\":{\"capacity\":{\"allOf\":[{\"description\":\"Quantity is a fixed-point representation of a number. It provides convenient marshaling/unmarshaling in JSON and YAML, in addition to String() and AsInt64() accessors.\\n\\nThe serialization format is:\\n\\n``` \\u003cquantity\\u003e        ::= \\u003csignedNumber\\u003e\\u003csuffix\\u003e\\n\\n\\t(Note that \\u003csuffix\\u003e may be empty, from the \\\"\\\" case in \\u003cdecimalSI\\u003e.)\\n\\n\\u003cdigit\\u003e           ::= 0 | 1 | ... | 9 \\u003cdigits\\u003e          ::= \\u003cdigit\\u003e | \\u003cdigit\\u003e\\u003cdigits\\u003e \\u003cnumber\\u003e          ::= \\u003cdigits\\u003e | \\u003cdigits\\u003e.\\u003cdigits\\u003e | \\u003cdigits\\u003e. | .\\u003cdigits\\u003e \\u003csign\\u003e            ::= \\\"+\\\" | \\\"-\\\" \\u003csignedNumber\\u003e    ::= \\u003cnumber\\u003e | \\u003csign\\u003e\\u003cnumber\\u003e \\u003csuffix\\u003e          ::= \\u003cbinarySI\\u003e | \\u003cdecimalExponent\\u003e | \\u003cdecimalSI\\u003e \\u003cbinarySI\\u003e        ::= Ki | Mi | Gi | Ti | Pi | Ei\\n\\n\\t(International System of units; See: http://physics.nist.gov/cuu/Units/binary.html)\\n\\n\\u003cdecimalSI\\u003e       ::= m | \\\"\\\" | k | M | G | T | P | E\\n\\n\\t(Note that 1024 = 1Ki but 1000 = 1k; I didn't choose the capitalization.)\\n\\n\\u003cdecimalExponent\\u003e ::= \\\"e\\\" \\u003csignedNumber\\u003e | \\\"E\\\" \\u003csignedNumber\\u003e ```\\n\\nNo matter which of the three exponent forms is used, no quantity may represent a number greater than 2^63-1 in magnitude, nor may it have more than 3 decimal places. Numbers larger or more precise will be capped or rounded up. (E.g.: 0.1m will rounded up to 1m.) This may be extended in the future if we require larger or smaller quantities.\\n\\nWhen a Quantity is parsed from a string, it will remember the type of suffix it had, and will use the same type again when it is serialized.\\n\\nBefore serializing, Quantity will be put in \\\"canonical form\\\". This means that Exponent/suffix will be adjusted up or down (with a corresponding increase or decrease in Mantissa) such that:\\n\\n- No precision is lost - No fractional digits will be emitted - The exponent (or suffix) is as large as possible.\\n\\nThe sign will be omitted unless the number is negative.\\n\\nExamples:\\n\\n- 1.5 will be serialized as \\\"1500m\\\" - 1.5Gi will be serialized as \\\"1536Mi\\\"\\n\\nNote that the quantity will NEVER be internally represented by a floating point number. That is the whole point of this exercise.\\n\\nNon-canonical values will still parse as long as they are well formed, but will be re-emitted in their canonical form. (So always use canonical form, or don't diff.)\\n\\nThis format is intended to make it difficult to use these numbers without writing some sort of special handling code in the hopes that that will cause implementors to also use a fixed point implementation.\",\"oneOf\":[{\"type\":\"string\"},{\"type\":\"number\"}]}],\"description\":\"capacity is the value reported by the CSI driver in its GetCapacityResponse for a GetCapacityRequest with topology and parameters that match the previous fields.\\n\\nThe semantic is currently (CSI spec 1.2) defined as: The available capacity, in bytes, of the storage that can be used to provision volumes. If not set, that information is currently unavailable.\"},\"maximumVolumeSize\":{\"allOf\":[{\"description\":\"Quantity is a fixed-point representation of a number. It provides convenient marshaling/unmarshaling in JSON and YAML, in addition to String() and AsInt64() accessors.\\n\\nThe serialization format is:\\n\\n``` \\u003cquantity\\u003e        ::= \\u003csignedNumber\\u003e\\u003csuffix\\u003e\\n\\n\\t(Note that \\u003csuffix\\u003e may be empty, from the \\\"\\\" case in \\u003cdecimalSI\\u003e.)\\n\\n\\u003cdigit\\u003e           ::= 0 | 1 | ... | 9 \\u003cdigits\\u003e          ::= \\u003cdigit\\u003e | \\u003cdigit\\u003e\\u003cdigits\\u003e \\u003cnumber\\u003e          ::= \\u003cdigits\\u003e | \\u003cdigits\\u003e.\\u003cdigits\\u003e | \\u003cdigits\\u003e. | .\\u003cdigits\\u003e \\u003csign\\u003e            ::= \\\"+\\\" | \\\"-\\\" \\u003csignedNumber\\u003e    ::= \\u003cnumber\\u003e | \\u003csign\\u003e\\u003cnumber\\u003e \\u003csuffix\\u003e          ::= \\u003cbinarySI\\u003e | \\u003cdecimalExponent\\u003e | \\u003cdecimalSI\\u003e \\u003cbinarySI\\u003e        ::= Ki | Mi | Gi | Ti | Pi | Ei\\n\\n\\t(International System of units; See: http://physics.nist.gov/cuu/Units/binary.html)\\n\\n\\u003cdecimalSI\\u003e       ::= m | \\\"\\\" | k | M | G | T | P | E\\n\\n\\t(Note that 1024 = 1Ki but 1000 = 1k; I didn't choose the capitalization.)\\n\\n\\u003cdecimalExponent\\u003e ::= \\\"e\\\" \\u003csignedNumber\\u003e | \\\"E\\\" \\u003csignedNumber\\u003e ```\\n\\nNo matter which of the three exponent forms is used, no quantity may represent a number greater than 2^63-1 in magnitude, nor may it have more than 3 decimal places. Numbers larger or more precise will be capped or rounded up. (E.g.: 0.1m will rounded up to 1m.) This may be extended in the future if we require larger or smaller quantities.\\n\\nWhen a Quantity is parsed from a string, it will remember the type of suffix it had, and will use the same type again when it is serialized.\\n\\nBefore serializing, Quantity will be put in \\\"canonical form\\\". This means that Exponent/suffix will be adjusted up or down (with a corresponding increase or decrease in Mantissa) such that:\\n\\n- No precision is lost - No fractional digits will be emitted - The exponent (or suffix) is as large as possible.\\n\\nThe sign will be omitted unless the number is negative.\\n\\nExamples:\\n\\n- 1.5 will be serialized as \\\"1500m\\\" - 1.5Gi will be serialized as \\\"1536Mi\\\"\\n\\nNote that the quantity will NEVER be internally represented by a floating point number. That is the whole point of this exercise.\\n\\nNon-canonical values will still parse as long as they are well formed, but will be re-emitted in their canonical form. (So always use canonical form, or don't diff.)\\n\\nThis format is intended to make it difficult to use these numbers without writing some sort of special handling code in the hopes that that will cause implementors to also use a fixed point implementation.\",\"oneOf\":[{\"type\":\"string\"},{\"type\":\"number\"}]}],\"description\":\"maximumVolumeSize is the value reported by the CSI driver in its GetCapacityResponse for a GetCapacityRequest with topology and parameters that match the previous fields.\\n\\nThis is defined since CSI spec 1.4.0 as the largest size that may be used in a CreateVolumeRequest.capacity_range.required_bytes field to create a volume with the same parameters as those in GetCapacityRequest. The corresponding value in the Kubernetes API is ResourceRequirements.Requests in a volume claim.\"},\"nodeTopology\":{\"allOf\":[{\"description\":\"A label selector is a label query over a set of resources. The result of matchLabels and matchExpressions are ANDed. An empty label selector matches all objects. A null label selector matches no objects.\",\"properties\":{\"matchExpressions\":{\"description\":\"matchExpressions is a list of label selector requirements. The requirements are ANDed.\",\"items\":{\"allOf\":[{\"description\":\"A label selector requirement is a selector that contains values, a key, and an operator that relates the key and values.\",\"properties\":{\"key\":{\"default\":\"\",\"description\":\"key is the label key that the selector applies to.\",\"type\":\"string\"},\"operator\":{\"default\":\"\",\"description\":\"operator represents a key's relationship to a set of values. Valid operators are In, NotIn, Exists and DoesNotExist.\",\"type\":\"string\"},\"values\":{\"description\":\"values is an array of string values. If the operator is In or NotIn, the values array must be non-empty. If the operator is Exists or DoesNotExist, the values array must be empty. This array is replaced during a strategic merge patch.\",\"items\":{\"default\":\"\",\"type\":\"string\"},\"type\":\"array\",\"x-kubernetes-list-type\":\"atomic\"}},\"required\":[\"key\",\"operator\"],\"type\":\"object\"}],\"default\":{}},\"type\":\"array\",\"x-kubernetes-list-type\":\"atomic\"},\"matchLabels\":{\"additionalProperties\":{\"default\":\"\",\"type\":\"string\"},\"description\":\"matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels map is equivalent to an element of matchExpressions, whose key field is \\\"key\\\", the operator is \\\"In\\\", and the values array contains only \\\"value\\\". The requirements are ANDed.\",\"type\":\"object\"}},\"type\":\"object\",\"x-kubernetes-map-type\":\"atomic\"}],\"description\":\"nodeTopology defines which nodes have access to the storage for which capacity was reported. If not set, the storage is not accessible from any node in the cluster. If empty, the storage is accessible from all nodes. This field is immutable.\"},\"storageClassName\":{\"default\":\"\",\"description\":\"storageClassName represents the name of the StorageClass that the reported capacity applies to. It must meet the same requirements as the name of a StorageClass object (non-empty, DNS subdomain). If that object no longer exists, the CSIStorageCapacity object is obsolete and should be removed by its creator. This field is immutable.\",\"type\":\"string\"}},\"required\":[\"storageClassName\"],\"type\":\"object\",\"x-kubernetes-group-version-kind\":[{\"group\":\"storage.k8s.io\",\"kind\":\"CSIStorageCapacity\",\"version\":\"v1\"}]}",
+   "version": "storage.k8s.io/v1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "CSI Storage Capacity",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": false,
+   "published": false,
+   "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
+  },
+  "model": {
+   "category": {
+    "name": "Orchestration \u0026 Management"
+   },
+   "displayName": "Kubernetes",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "isAnnotation": false,
+    "primaryColor": "#326CE5",
+    "secondaryColor": "#7aa1f0",
+    "shape": "circle",
+    "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3",
+    "styleOverrides": "",
+    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" viewBox=\"-0.17 0.08 230.10 223.35\" height=\"20\" width=\"20\"\u003e\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cstyle xmlns=\"http://www.w3.org/2000/svg\"\u003e.cls-1{fill:#fff}.cls-2{fill:#326ce5}\u003c/style\u003e\u003c/defs\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M134.358 126.466a3.59 3.59 0 0 0-.855-.065 3.685 3.685 0 0 0-1.425.37 3.725 3.725 0 0 0-1.803 4.825l-.026.037 8.528 20.603a43.53 43.53 0 0 0 17.595-22.102l-21.976-3.714zm-34.194 2.92a3.72 3.72 0 0 0-3.568-2.894 3.656 3.656 0 0 0-.733.065l-.037-.045-21.785 3.698a43.695 43.695 0 0 0 17.54 21.946l8.442-20.4-.066-.08a3.683 3.683 0 0 0 .207-2.29zm18.245 8a3.718 3.718 0 0 0-6.557.008h-.018l-10.713 19.372a43.637 43.637 0 0 0 23.815 1.225q2.197-.5 4.292-1.2l-10.738-19.406zm33.914-45l-16.483 14.753.009.047a3.725 3.725 0 0 0 1.46 6.395l.02.089 21.35 6.15a44.278 44.278 0 0 0-6.356-27.432zM121.7 94.039a3.725 3.725 0 0 0 5.913 2.84l.065.027 18.036-12.788a43.85 43.85 0 0 0-25.287-12.19l1.253 22.105zm-19.1 2.921a3.72 3.72 0 0 0 5.904-2.85l.092-.043 1.253-22.14a44.682 44.682 0 0 0-4.501.776 43.467 43.467 0 0 0-20.937 11.409l18.154 12.869zm-9.678 16.729a3.72 3.72 0 0 0 1.462-6.396l.018-.088-16.574-14.824a43.454 43.454 0 0 0-6.168 27.51l21.245-6.13zm16.098 6.512l6.114 2.94 6.096-2.934 1.514-6.581-4.219-5.276h-6.79l-4.231 5.268z\" class=\"cls-2\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M216.208 133.167l-17.422-75.675a13.602 13.602 0 0 0-7.293-9.073l-70.521-33.67a13.589 13.589 0 0 0-11.705 0L38.76 48.437a13.598 13.598 0 0 0-7.295 9.072l-17.394 75.673a13.315 13.315 0 0 0-.004 5.81 13.506 13.506 0 0 0 .491 1.718 13.1 13.1 0 0 0 1.343 2.726c.239.365.491.72.765 1.064l48.804 60.678c.213.264.448.505.681.75a13.423 13.423 0 0 0 2.574 2.133 13.924 13.924 0 0 0 3.857 1.677 13.298 13.298 0 0 0 3.43.473h.759l77.504-.018a12.993 12.993 0 0 0 1.41-.083 13.47 13.47 0 0 0 1.989-.378 13.872 13.872 0 0 0 1.381-.442c.353-.135.705-.27 1.045-.433a13.941 13.941 0 0 0 1.479-.822 13.303 13.303 0 0 0 3.237-2.865l1.488-1.85 47.299-58.84a13.185 13.185 0 0 0 2.108-3.785 13.67 13.67 0 0 0 .5-1.724 13.282 13.282 0 0 0-.004-5.81zm-73.147 29.432a14.516 14.516 0 0 0 .703 1.703 3.314 3.314 0 0 0-.327 2.49 39.372 39.372 0 0 0 3.742 6.7 35.06 35.06 0 0 1 2.263 3.364c.17.315.392.803.553 1.136a4.24 4.24 0 1 1-7.63 3.607c-.161-.33-.385-.77-.522-1.082a35.275 35.275 0 0 1-1.225-3.868 39.305 39.305 0 0 0-2.896-7.097 3.335 3.335 0 0 0-2.154-1.307c-.135-.233-.635-1.15-.903-1.623a54.617 54.617 0 0 1-38.948-.1l-.955 1.73a3.429 3.429 0 0 0-1.819.887 29.517 29.517 0 0 0-3.268 7.582 34.9 34.9 0 0 1-1.218 3.868c-.135.31-.361.744-.522 1.073v.009l-.007.008a4.238 4.238 0 1 1-7.619-3.616c.159-.335.372-.82.54-1.135a35.177 35.177 0 0 1 2.262-3.373 41.228 41.228 0 0 0 3.82-6.866 4.188 4.188 0 0 0-.376-2.387l.768-1.84a54.922 54.922 0 0 1-24.338-30.387l-1.839.313a4.68 4.68 0 0 0-2.428-.855 39.524 39.524 0 0 0-7.356 2.165 35.589 35.589 0 0 1-3.787 1.45c-.305.084-.745.168-1.093.244-.028.01-.052.022-.08.029a.605.605 0 0 1-.065.006 4.236 4.236 0 1 1-1.874-8.224l.061-.015.037-.01c.353-.083.805-.2 1.127-.262a35.27 35.27 0 0 1 4.05-.326 39.388 39.388 0 0 0 7.564-1.242 5.835 5.835 0 0 0 1.814-1.83l1.767-.516a54.613 54.613 0 0 1 8.613-38.073l-1.353-1.206a4.688 4.688 0 0 0-.848-2.436 39.366 39.366 0 0 0-6.277-4.41 35.25 35.25 0 0 1-3.499-2.046c-.256-.191-.596-.478-.874-.704l-.063-.044a4.473 4.473 0 0 1-1.038-6.222 4.066 4.066 0 0 1 3.363-1.488 5.03 5.03 0 0 1 2.942 1.11c.287.225.68.526.935.745a35.253 35.253 0 0 1 2.78 2.95 39.383 39.383 0 0 0 5.69 5.142 3.333 3.333 0 0 0 2.507.243q.754.55 1.522 1.082A54.289 54.289 0 0 1 102.86 61.89a55.052 55.052 0 0 1 7.63-1.173l.1-1.784a4.6 4.6 0 0 0 1.37-2.184 39.476 39.476 0 0 0-.47-7.654 35.466 35.466 0 0 1-.576-4.014c-.011-.307.006-.731.01-1.081 0-.04-.01-.08-.01-.118a4.242 4.242 0 1 1 8.441-.004c0 .37.022.86.009 1.2a35.109 35.109 0 0 1-.579 4.013 39.533 39.533 0 0 0-.478 7.656 3.344 3.344 0 0 0 1.379 2.11c.015.305.065 1.323.102 1.884a55.309 55.309 0 0 1 35.032 16.927l1.606-1.147a4.69 4.69 0 0 0 2.56-.278 39.532 39.532 0 0 0 5.69-5.148 35.004 35.004 0 0 1 2.787-2.95c.259-.222.65-.52.936-.746a4.242 4.242 0 1 1 5.258 6.598c-.283.229-.657.548-.929.75a35.095 35.095 0 0 1-3.507 2.046 39.495 39.495 0 0 0-6.277 4.41 3.337 3.337 0 0 0-.792 2.39c-.235.216-1.06.947-1.497 1.343a54.837 54.837 0 0 1 8.792 37.983l1.704.496a4.745 4.745 0 0 0 1.82 1.83 39.464 39.464 0 0 0 7.568 1.246 35.64 35.64 0 0 1 4.046.324c.355.065.868.207 1.23.29a4.236 4.236 0 1 1-1.878 8.223l-.061-.008c-.028-.007-.054-.022-.083-.03-.348-.075-.785-.151-1.09-.231a35.14 35.14 0 0 1-3.785-1.462 39.477 39.477 0 0 0-7.363-2.165 3.337 3.337 0 0 0-2.362.877q-.9-.171-1.804-.316a54.92 54.92 0 0 1-24.328 30.605z\" class=\"cls-2\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M225.407 135.107L206.4 52.547a14.838 14.838 0 0 0-7.958-9.9l-76.935-36.73a14.825 14.825 0 0 0-12.771 0L31.808 42.669a14.838 14.838 0 0 0-7.961 9.895L4.873 135.129a14.668 14.668 0 0 0 1.995 11.185c.261.4.538.788.838 1.162l53.246 66.205a14.98 14.98 0 0 0 11.499 5.487l85.387-.02a14.986 14.986 0 0 0 11.5-5.48l53.227-66.211a14.72 14.72 0 0 0 2.842-12.347zm-9.197 3.866a13.677 13.677 0 0 1-.498 1.723 13.184 13.184 0 0 1-2.11 3.786l-47.299 58.838-1.486 1.852a13.305 13.305 0 0 1-3.24 2.865 13.945 13.945 0 0 1-1.474.822q-.513.237-1.045.43a13.873 13.873 0 0 1-1.383.445 13.473 13.473 0 0 1-1.989.379 12.988 12.988 0 0 1-1.41.082l-77.504.018h-.76a13.298 13.298 0 0 1-3.429-.472 13.925 13.925 0 0 1-3.855-1.679 13.424 13.424 0 0 1-2.576-2.132c-.233-.246-.468-.487-.68-.75l-48.805-60.679q-.408-.514-.765-1.066a13.102 13.102 0 0 1-1.343-2.726 13.505 13.505 0 0 1-.491-1.719 13.315 13.315 0 0 1 .004-5.809l17.394-75.675a13.598 13.598 0 0 1 7.295-9.07l70.508-33.685a13.589 13.589 0 0 1 11.705 0l70.519 33.67a13.602 13.602 0 0 1 7.293 9.073l17.422 75.674a13.282 13.282 0 0 1 .002 5.807z\" class=\"cls-1\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M185.814 127.106c-.36-.083-.874-.225-1.227-.29a35.642 35.642 0 0 0-4.046-.326 39.464 39.464 0 0 1-7.57-1.242 4.745 4.745 0 0 1-1.82-1.832l-1.704-.496a54.837 54.837 0 0 0-8.79-37.983c.436-.396 1.262-1.127 1.495-1.342a3.338 3.338 0 0 1 .792-2.39 39.495 39.495 0 0 1 6.277-4.41 35.095 35.095 0 0 0 3.507-2.046c.272-.202.644-.522.929-.75a4.242 4.242 0 1 0-5.256-6.6c-.288.227-.68.525-.936.747a35.004 35.004 0 0 0-2.789 2.95 39.533 39.533 0 0 1-5.69 5.148 4.69 4.69 0 0 1-2.56.278l-1.606 1.147a55.309 55.309 0 0 0-35.032-16.927c-.039-.561-.087-1.577-.102-1.884a3.344 3.344 0 0 1-1.377-2.11 39.533 39.533 0 0 1 .478-7.656 35.112 35.112 0 0 0 .575-4.012c.013-.34-.007-.834-.007-1.201a4.242 4.242 0 1 0-8.441.004c0 .04.009.078.01.118-.004.35-.021.774-.01 1.08a35.476 35.476 0 0 0 .576 4.015 39.475 39.475 0 0 1 .47 7.654 4.601 4.601 0 0 1-1.37 2.182l-.1 1.786a55.052 55.052 0 0 0-7.63 1.173 54.289 54.289 0 0 0-27.574 15.754q-.77-.531-1.526-1.082a3.333 3.333 0 0 1-2.506-.243 39.383 39.383 0 0 1-5.69-5.141 35.255 35.255 0 0 0-2.777-2.95c-.257-.22-.65-.52-.938-.75a5.03 5.03 0 0 0-2.942-1.11 4.066 4.066 0 0 0-3.363 1.49 4.473 4.473 0 0 0 1.038 6.222l.065.046c.276.226.616.515.872.702a35.256 35.256 0 0 0 3.499 2.048 39.367 39.367 0 0 1 6.276 4.412 4.69 4.69 0 0 1 .849 2.434l1.351 1.208a54.613 54.613 0 0 0-8.611 38.073l-1.767.514a5.835 5.835 0 0 1-1.814 1.827 39.39 39.39 0 0 1-7.565 1.247 35.266 35.266 0 0 0-4.049.326c-.324.06-.774.174-1.127.262l-.037.008-.06.018a4.236 4.236 0 1 0 1.875 8.224l.063-.01c.028-.006.052-.02.08-.025.348-.08.786-.163 1.092-.246a35.59 35.59 0 0 0 3.786-1.451 39.527 39.527 0 0 1 7.358-2.165 4.68 4.68 0 0 1 2.426.857l1.84-.315a54.922 54.922 0 0 0 24.34 30.387l-.769 1.84a4.188 4.188 0 0 1 .377 2.387 41.228 41.228 0 0 1-3.82 6.864 35.183 35.183 0 0 0-2.263 3.372c-.168.318-.381.805-.542 1.138a4.238 4.238 0 1 0 7.621 3.616l.007-.008v-.01c.16-.33.387-.763.522-1.072a34.903 34.903 0 0 0 1.218-3.868 29.517 29.517 0 0 1 3.268-7.582 3.43 3.43 0 0 1 1.819-.888l.957-1.73a54.617 54.617 0 0 0 38.946.099c.268.478.768 1.392.9 1.623a3.335 3.335 0 0 1 2.155 1.31 39.306 39.306 0 0 1 2.898 7.096 35.275 35.275 0 0 0 1.225 3.868c.137.312.36.75.522 1.082a4.24 4.24 0 1 0 7.63-3.607c-.161-.333-.383-.82-.55-1.136a35.06 35.06 0 0 0-2.263-3.364 39.372 39.372 0 0 1-3.742-6.7 3.314 3.314 0 0 1 .324-2.49 14.519 14.519 0 0 1-.703-1.703 54.92 54.92 0 0 0 24.328-30.605c.546.087 1.497.253 1.806.316a3.337 3.337 0 0 1 2.36-.877 39.476 39.476 0 0 1 7.36 2.165 35.135 35.135 0 0 0 3.788 1.462c.305.08.74.156 1.09.233.029.008.055.02.083.028l.06.009a4.236 4.236 0 1 0 1.878-8.224zm-40.1-42.987l-18.037 12.787-.063-.03a3.723 3.723 0 0 1-5.913-2.838l-.02-.01-1.253-22.103a43.85 43.85 0 0 1 25.285 12.194zm-33.978 24.228h6.788l4.22 5.276-1.513 6.58-6.096 2.934-6.114-2.94-1.516-6.583zm-6.386-35.648a44.672 44.672 0 0 1 4.503-.774l-1.255 22.137-.092.044a3.72 3.72 0 0 1-5.904 2.852l-.035.02-18.154-12.872a43.467 43.467 0 0 1 20.937-11.407zm-27.52 19.68l16.574 14.824-.018.09a3.72 3.72 0 0 1-1.462 6.395l-.017.072-21.245 6.13a43.454 43.454 0 0 1 6.168-27.51zm22.191 39.38l-8.441 20.397a43.696 43.696 0 0 1-17.536-21.948l21.783-3.7.037.049a3.655 3.655 0 0 1 .73-.065 3.72 3.72 0 0 1 3.364 5.185zm24.916 26.23a43.637 43.637 0 0 1-23.815-1.223l10.713-19.372h.018a3.725 3.725 0 0 1 6.557-.006h.08l10.74 19.404q-2.091.698-4.293 1.199zm13.841-5.751l-8.528-20.605.026-.037a3.725 3.725 0 0 1 1.803-4.823 3.685 3.685 0 0 1 1.425-.37 3.59 3.59 0 0 1 .855.063l.037-.046 21.977 3.714a43.53 43.53 0 0 1-17.595 22.105zm19.903-32.42l-21.352-6.15-.02-.09a3.725 3.725 0 0 1-1.46-6.395l-.008-.043 16.482-14.751a44.279 44.279 0 0 1 6.357 27.43z\" class=\"cls-1\"\u003e\u003c/path\u003e\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" viewBox=\"9.70 9.20 210.86 204.86\" height=\"20\" width=\"20\"\u003e\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cstyle xmlns=\"http://www.w3.org/2000/svg\"\u003e.cls-1{fill:#fff}\u003c/style\u003e\u003c/defs\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M134.358 126.46551a3.59023 3.59023 0 0 0-.855-.065 3.68515 3.68515 0 0 0-1.425.37 3.725 3.725 0 0 0-1.803 4.825l-.026.037 8.528 20.603a43.53012 43.53012 0 0 0 17.595-22.102l-21.976-3.714zm-34.194 2.92a3.72 3.72 0 0 0-3.568-2.894 3.6556 3.6556 0 0 0-.733.065l-.037-.045-21.785 3.698a43.69506 43.69506 0 0 0 17.54 21.946l8.442-20.399-.066-.08a3.68318 3.68318 0 0 0 .207-2.291zm18.245 8a3.718 3.718 0 0 0-6.557.008h-.018l-10.713 19.372a43.637 43.637 0 0 0 23.815 1.225q2.197-.5 4.292-1.199l-10.738-19.407zm33.914-45l-16.483 14.753.009.047a3.725 3.725 0 0 0 1.46 6.395l.02.089 21.35 6.15a44.278 44.278 0 0 0-6.356-27.432zM121.7 94.0385a3.725 3.725 0 0 0 5.913 2.84l.065.028 18.036-12.789a43.85 43.85 0 0 0-25.287-12.19l1.253 22.105zm-19.1 2.922a3.72 3.72 0 0 0 5.904-2.85l.092-.044 1.253-22.139a44.68209 44.68209 0 0 0-4.501.775 43.4669 43.4669 0 0 0-20.937 11.409l18.154 12.869zm-9.678 16.728a3.72 3.72 0 0 0 1.462-6.396l.018-.087-16.574-14.825a43.454 43.454 0 0 0-6.168 27.511l21.245-6.13zm16.098 6.512l6.114 2.94 6.096-2.933 1.514-6.582-4.219-5.276h-6.79l-4.231 5.268z\" class=\"cls-1\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M216.208 133.16651l-17.422-75.675a13.60207 13.60207 0 0 0-7.293-9.073l-70.521-33.67a13.589 13.589 0 0 0-11.705 0l-70.507 33.688a13.598 13.598 0 0 0-7.295 9.072l-17.394 75.673a13.315 13.315 0 0 0-.004 5.81 13.50607 13.50607 0 0 0 .491 1.718 13.0998 13.0998 0 0 0 1.343 2.726c.239.365.491.72.765 1.064l48.804 60.678c.213.264.448.505.681.75a13.42334 13.42334 0 0 0 2.574 2.133 13.9237 13.9237 0 0 0 3.857 1.677 13.29785 13.29785 0 0 0 3.43.473h.759l77.504-.018a12.99345 12.99345 0 0 0 1.41-.083 13.46921 13.46921 0 0 0 1.989-.378 13.872 13.872 0 0 0 1.381-.442c.353-.135.705-.27 1.045-.433a13.94127 13.94127 0 0 0 1.479-.822 13.30347 13.30347 0 0 0 3.237-2.865l1.488-1.85 47.299-58.84a13.185 13.185 0 0 0 2.108-3.785 13.67036 13.67036 0 0 0 .5-1.724 13.28215 13.28215 0 0 0-.004-5.809zm-73.147 29.432a14.51575 14.51575 0 0 0 .703 1.703 3.314 3.314 0 0 0-.327 2.49 39.37244 39.37244 0 0 0 3.742 6.7 35.06044 35.06044 0 0 1 2.263 3.364c.17.315.392.803.553 1.136a4.24 4.24 0 1 1-7.63 3.607c-.161-.33-.385-.77-.522-1.082a35.27528 35.27528 0 0 1-1.225-3.868 39.3046 39.3046 0 0 0-2.896-7.097 3.335 3.335 0 0 0-2.154-1.307c-.135-.233-.635-1.149-.903-1.623a54.617 54.617 0 0 1-38.948-.1l-.955 1.731a3.429 3.429 0 0 0-1.819.886 29.51728 29.51728 0 0 0-3.268 7.582 34.89931 34.89931 0 0 1-1.218 3.868c-.135.31-.361.744-.522 1.073v.009l-.007.008a4.238 4.238 0 1 1-7.619-3.616c.159-.335.372-.82.54-1.135a35.17706 35.17706 0 0 1 2.262-3.373 41.22786 41.22786 0 0 0 3.82-6.866 4.18792 4.18792 0 0 0-.376-2.387l.768-1.84a54.922 54.922 0 0 1-24.338-30.387l-1.839.313a4.68007 4.68007 0 0 0-2.428-.855 39.52352 39.52352 0 0 0-7.356 2.165 35.58886 35.58886 0 0 1-3.787 1.45c-.305.084-.745.168-1.093.244-.028.01-.052.022-.08.029a.60518.60518 0 0 1-.065.006 4.236 4.236 0 1 1-1.874-8.224l.061-.015.037-.01c.353-.083.805-.2 1.127-.262a35.27 35.27 0 0 1 4.05-.326 39.38835 39.38835 0 0 0 7.564-1.242 5.83506 5.83506 0 0 0 1.814-1.83l1.767-.516a54.613 54.613 0 0 1 8.613-38.073l-1.353-1.206a4.688 4.688 0 0 0-.848-2.436 39.36558 39.36558 0 0 0-6.277-4.41 35.2503 35.2503 0 0 1-3.499-2.046c-.256-.191-.596-.478-.874-.704l-.063-.044a4.473 4.473 0 0 1-1.038-6.222 4.066 4.066 0 0 1 3.363-1.488 5.03 5.03 0 0 1 2.942 1.11c.287.225.68.526.935.745a35.25285 35.25285 0 0 1 2.78 2.95 39.38314 39.38314 0 0 0 5.69 5.142 3.333 3.333 0 0 0 2.507.243q.754.55 1.522 1.082a54.28892 54.28892 0 0 1 27.577-15.754 55.05181 55.05181 0 0 1 7.63-1.173l.1-1.784a4.6001 4.6001 0 0 0 1.37-2.184 39.47551 39.47551 0 0 0-.47-7.654 35.466 35.466 0 0 1-.576-4.014c-.011-.307.006-.731.01-1.081 0-.04-.01-.079-.01-.118a4.242 4.242 0 1 1 8.441-.004c0 .37.022.861.009 1.2a35.109 35.109 0 0 1-.579 4.013 39.53346 39.53346 0 0 0-.478 7.656 3.344 3.344 0 0 0 1.379 2.11c.015.305.065 1.323.102 1.884a55.309 55.309 0 0 1 35.032 16.927l1.606-1.147a4.6901 4.6901 0 0 0 2.56-.278 39.53152 39.53152 0 0 0 5.69-5.148 35.00382 35.00382 0 0 1 2.787-2.95c.259-.222.65-.52.936-.746a4.242 4.242 0 1 1 5.258 6.598c-.283.229-.657.548-.929.75a35.09523 35.09523 0 0 1-3.507 2.046 39.49476 39.49476 0 0 0-6.277 4.41 3.337 3.337 0 0 0-.792 2.39c-.235.216-1.06.947-1.497 1.343a54.837 54.837 0 0 1 8.792 37.983l1.704.496a4.7449 4.7449 0 0 0 1.82 1.831 39.46448 39.46448 0 0 0 7.568 1.245 35.64041 35.64041 0 0 1 4.046.324c.355.065.868.207 1.23.29a4.236 4.236 0 1 1-1.878 8.223l-.061-.008c-.028-.007-.054-.022-.083-.029-.348-.076-.785-.152-1.09-.232a35.1407 35.1407 0 0 1-3.785-1.462 39.47672 39.47672 0 0 0-7.363-2.165 3.337 3.337 0 0 0-2.362.877q-.9-.171-1.804-.316a54.91994 54.91994 0 0 1-24.328 30.605z\" class=\"cls-1\"\u003e\u003c/path\u003e\u003c/svg\u003e"
+   },
+   "model": {
+    "version": "v1.32.0-alpha.1"
+   },
+   "name": "kubernetes",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "github",
+    "name": "Github",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "enabled",
+   "subCategory": "Scheduling \u0026 Orchestration",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
+   "primaryColor": "#326CE5",
+   "secondaryColor": "#7aa1f0",
+   "shape": "round-rectangle",
+   "svgColor": "\u003csvg width=\"90\" height=\"90\" viewBox=\"0 0 90 90\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M83.5966 16.3142C83.5966 14.6515 82.8073 13.2155 81.6922 12.0503C80.5854 10.8937 79.0588 9.89158 77.2816 9.02255L76.44 10.7437C75.3487 10.2101 74.1055 9.70657 72.7278 9.23825L73.3445 7.42427C69 5.94743 63.4495 4.83013 57.2103 4.19279L57.0156 6.0988C55.7142 5.96587 54.3795 5.85391 53.0163 5.7643L53.1419 3.8525C50.5169 3.67996 47.7898 3.58908 44.9923 3.58908C42.1948 3.58908 39.4677 3.67996 36.8427 3.8525L36.9683 5.7643C35.6051 5.85391 34.2704 5.96587 32.9691 6.0988L32.7744 4.1928C26.5352 4.83013 20.9846 5.94743 16.6402 7.42427L17.2568 9.23825C15.8792 9.70657 14.6359 10.2101 13.5446 10.7437L12.703 9.02256C10.9258 9.89158 9.39921 10.8937 8.29246 12.0503C7.17737 13.2155 6.38803 14.6515 6.38803 16.3142C6.38803 17.9769 7.17737 19.4129 8.29246 20.5782C9.39921 21.7347 10.9258 22.7368 12.703 23.6059L13.5446 21.8847C14.6359 22.4183 15.8792 22.9219 17.2568 23.3902L16.6402 25.2042C20.9846 26.681 26.5352 27.7983 32.7744 28.4356L32.9691 26.5296C34.2704 26.6626 35.6051 26.7745 36.9684 26.8641L36.8427 28.7759C39.4677 28.9485 42.1948 29.0393 44.9923 29.0393C47.7898 29.0393 50.5169 28.9485 53.1419 28.7759L53.0163 26.8641C54.3795 26.7745 55.7142 26.6626 57.0156 26.5296L57.2103 28.4356C63.4495 27.7983 69.0001 26.681 73.3445 25.2042L72.7278 23.3902C74.1055 22.9219 75.3487 22.4183 76.44 21.8847L77.2816 23.6059C79.0588 22.7368 80.5854 21.7347 81.6922 20.5782C82.8073 19.4129 83.5966 17.9769 83.5966 16.3142Z\" stroke=\"#326CE5\" stroke-width=\"3.83185\" stroke-dasharray=\"16 4\"/\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M81.6726 57.9649V71.3195C81.6726 72.7321 81.358 73.6243 80.8117 74.0904C78.5476 76.0219 73.8546 77.6987 67.4808 78.8714C61.2194 80.0234 53.6871 80.6301 46.0837 80.6619C38.4807 80.6936 30.8686 80.1503 24.4479 79.0283C17.9343 77.89 12.9617 76.2066 10.3605 74.1636C9.65314 73.608 9.24924 72.5448 9.22328 71.0061L8.99953 57.7467C9.2956 57.9905 9.59645 58.2181 9.89623 58.4296C12.2044 60.0586 15.2955 61.3693 18.7702 62.4065C25.7687 64.4956 35.2082 65.7325 45.4719 65.7325C55.7355 65.7325 65.175 64.4956 72.1735 62.4065C75.6482 61.3693 78.7393 60.0586 81.0475 58.4296C81.256 58.2825 81.465 58.1276 81.6726 57.9649ZM81.6726 50.8206V51.3623C81.1911 57.2069 65.1678 61.9007 45.4719 61.9007C25.4726 61.9007 9.25997 57.0612 9.25997 51.0915C9.25997 45.1217 25.4726 40.2823 45.4719 40.2823C65.1678 40.2823 81.1911 44.976 81.6726 50.8206ZM85.5044 50.6849V16.7839H81.6726V44.2181C81.465 44.0554 81.256 43.9005 81.0475 43.7533C78.7393 42.1244 75.6482 40.8137 72.1735 39.7765C65.175 37.6874 55.7355 36.4504 45.4719 36.4504C35.2082 36.4504 25.7687 37.6874 18.7702 39.7765C15.2955 40.8137 12.2044 42.1244 9.89623 43.7533C9.52137 44.0179 9.14484 44.3075 8.77806 44.6224L8.31568 17.2216L4.48438 17.2862L5.39197 71.0708C5.42533 73.0472 5.93628 75.5612 7.99371 77.1771C11.3934 79.8472 17.1891 81.6497 23.7883 82.8029C30.4802 83.9724 38.3251 84.5262 46.0997 84.4937C53.8739 84.4612 61.6399 83.8422 68.1742 82.64C74.5961 81.4585 80.1959 79.6525 83.2986 77.0056C85.1558 75.4212 85.5044 73.0661 85.5044 71.3195V51.498C85.5118 51.3641 85.5156 51.2286 85.5156 51.0915C85.5156 50.9544 85.5118 50.8189 85.5044 50.6849Z\" fill=\"#326CE5\"/\u003e\n\u003c/svg\u003e\n",
+   "svgWhite": "\u003csvg width=\"90\" height=\"90\" viewBox=\"0 0 90 90\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M83.6045 16.3143C83.6045 14.6514 82.815 13.2153 81.6999 12.05C80.593 10.8934 79.0664 9.89122 77.2891 9.0222L76.4473 10.7439C75.356 10.2103 74.1128 9.70672 72.7351 9.23842L73.3519 7.42392C69.0075 5.94709 63.4568 4.82981 57.2176 4.19249L57.0229 6.09903C55.7215 5.9661 54.3868 5.85415 53.0236 5.76454L53.1493 3.8522C50.5243 3.67966 47.7971 3.58878 44.9996 3.58878C42.2022 3.58878 39.475 3.67966 36.85 3.8522L36.9757 5.76454C35.6124 5.85415 34.2778 5.9661 32.9764 6.09903L32.7817 4.19249C26.5424 4.82981 20.9918 5.94709 16.6474 7.42392L17.2642 9.23842C15.8865 9.70672 14.6433 10.2103 13.552 10.7439L12.7102 9.0222C10.9329 9.89122 9.40624 10.8934 8.29942 12.05C7.18426 13.2153 6.39481 14.6514 6.39481 16.3143C6.39481 17.9772 7.18426 19.4133 8.29942 20.5786C9.40624 21.7352 10.9329 22.7373 12.7102 23.6064L13.552 21.8847C14.6432 22.4183 15.8865 22.9218 17.2642 23.3901L16.6474 25.2046C20.9918 26.6815 26.5424 27.7988 32.7817 28.4361L32.9764 26.5295C34.2778 26.6625 35.6124 26.7744 36.9757 26.864L36.85 28.7764C39.475 28.9489 42.2022 29.0398 44.9996 29.0398C47.7971 29.0398 50.5243 28.9489 53.1493 28.7764L53.0236 26.864C54.3868 26.7744 55.7215 26.6625 57.0229 26.5295L57.2176 28.4361C63.4568 27.7988 69.0075 26.6815 73.3519 25.2046L72.7351 23.3901C74.1128 22.9218 75.356 22.4183 76.4473 21.8847L77.2891 23.6064C79.0664 22.7373 80.593 21.7352 81.6999 20.5786C82.815 19.4133 83.6045 17.9772 83.6045 16.3143Z\" stroke=\"white\" stroke-width=\"3.83293\" stroke-dasharray=\"16 4\"/\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M81.6721 57.9656V71.3181C81.6721 72.7311 81.3574 73.6236 80.811 74.0897C78.5467 76.0209 73.8537 77.6976 67.4801 78.8702C61.2189 80.0221 53.6868 80.6287 46.0837 80.6605C38.481 80.6923 30.8693 80.149 24.4487 79.027C17.9354 77.8889 12.9628 76.2056 10.3615 74.1629C9.65387 73.6073 9.24983 72.5438 9.22386 71.0046L9.00017 57.7488C9.2956 57.992 9.59577 58.219 9.89488 58.4301C12.2032 60.0591 15.2944 61.3698 18.7691 62.407C25.7678 64.4961 35.2073 65.733 45.4711 65.733C55.7349 65.733 65.1744 64.4961 72.1731 62.407C75.6478 61.3698 78.739 60.0591 81.0473 58.4301C81.2557 58.283 81.4646 58.1282 81.6721 57.9656ZM81.6721 50.8235V51.3587C81.1963 57.2047 65.1707 61.9001 45.4711 61.9001C25.4718 61.9001 9.25921 57.0607 9.25921 51.0911C9.25921 45.1214 25.4718 40.282 45.4711 40.282C65.1707 40.282 81.1963 44.9775 81.6721 50.8235ZM85.5051 50.6894V16.7842H81.6721V44.2166C81.4646 44.054 81.2557 43.8992 81.0473 43.7521C78.739 42.1231 75.6478 40.8123 72.1731 39.7751C65.1744 37.6861 55.7349 36.4491 45.4711 36.4491C35.2073 36.4491 25.7678 37.6861 18.7691 39.7751C15.2944 40.8123 12.2032 42.1231 9.89488 43.7521C9.52067 44.0162 9.1448 44.3052 8.77861 44.6195L8.31627 17.2218L4.48389 17.2865L5.39147 71.0693C5.42483 73.0463 5.93597 75.5612 7.99421 77.1774L9.14315 75.7143L7.99421 77.1774C11.3942 79.8473 17.19 81.6496 23.789 82.8027C30.4808 83.9721 38.3254 84.5259 46.0997 84.4934C53.8737 84.4609 61.6395 83.842 68.1736 82.6399C74.5954 81.4584 80.1953 79.6526 83.2983 77.0059C85.1562 75.4212 85.5051 73.0652 85.5051 71.3181V51.4928C85.5123 51.3604 85.5159 51.2265 85.5159 51.0911C85.5159 50.9557 85.5123 50.8218 85.5051 50.6894Z\" fill=\"white\"/\u003e\n\u003c/svg\u003e"
+  },
+  "version": "v1.0.0"
+ }
