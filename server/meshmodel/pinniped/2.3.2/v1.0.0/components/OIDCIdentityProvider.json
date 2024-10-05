@@ -1,0 +1,195 @@
+{
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "OIDCIdentityProvider",
+   "schema": "{\n \"description\": \"OIDCIdentityProvider describes the configuration of an upstream OpenID Connect identity provider.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Spec for configuring the identity provider.\",\n   \"properties\": {\n    \"authorizationConfig\": {\n     \"description\": \"AuthorizationConfig holds information about how to form the OAuth2 authorization request\\nparameters to be used with this OIDC identity provider.\",\n     \"properties\": {\n      \"additionalAuthorizeParameters\": {\n       \"description\": \"additionalAuthorizeParameters are extra query parameters that should be included in the authorize request to your\\nOIDC provider in the authorization request during an OIDC Authorization Code Flow. By default, no extra\\nparameters are sent. The standard parameters that will be sent are \\\"response_type\\\", \\\"scope\\\", \\\"client_id\\\",\\n\\\"state\\\", \\\"nonce\\\", \\\"code_challenge\\\", \\\"code_challenge_method\\\", and \\\"redirect_uri\\\". These parameters cannot be\\nincluded in this setting. Additionally, the \\\"hd\\\" parameter cannot be included in this setting at this time.\\nThe \\\"hd\\\" parameter is used by Google's OIDC provider to provide a hint as to which \\\"hosted domain\\\" the user\\nshould use during login. However, Pinniped does not yet support validating the hosted domain in the resulting\\nID token, so it is not yet safe to use this feature of Google's OIDC provider with Pinniped.\\nThis setting does not influence the parameters sent to the token endpoint in the Resource Owner Password\\nCredentials Grant. The Pinniped Supervisor requires that your OIDC provider returns refresh tokens to the\\nSupervisor from the authorization flows. Some OIDC providers may require a certain value for the \\\"prompt\\\"\\nparameter in order to properly request refresh tokens. See the documentation of your OIDC provider's\\nauthorization endpoint for its requirements for what to include in the request in order to receive a refresh\\ntoken in the response, if anything. If your provider requires the prompt parameter to request a refresh token,\\nthen include it here. Also note that most providers also require a certain scope to be requested in order to\\nreceive refresh tokens. See the additionalScopes setting for more information about using scopes to request\\nrefresh tokens.\",\n       \"items\": {\n        \"description\": \"Parameter is a key/value pair which represents a parameter in an HTTP request.\",\n        \"properties\": {\n         \"name\": {\n          \"description\": \"The name of the parameter. Required.\",\n          \"minLength\": 1,\n          \"type\": \"string\"\n         },\n         \"value\": {\n          \"description\": \"The value of the parameter.\",\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"name\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\",\n       \"x-kubernetes-list-map-keys\": [\n        \"name\"\n       ],\n       \"x-kubernetes-list-type\": \"map\"\n      },\n      \"additionalScopes\": {\n       \"description\": \"additionalScopes are the additional scopes that will be requested from your OIDC provider in the authorization\\nrequest during an OIDC Authorization Code Flow and in the token request during a Resource Owner Password Credentials\\nGrant. Note that the \\\"openid\\\" scope will always be requested regardless of the value in this setting, since it is\\nalways required according to the OIDC spec. By default, when this field is not set, the Supervisor will request\\nthe following scopes: \\\"openid\\\", \\\"offline_access\\\", \\\"email\\\", and \\\"profile\\\". See\\nhttps://openid.net/specs/openid-connect-core-1_0.html#ScopeClaims for a description of the \\\"profile\\\" and \\\"email\\\"\\nscopes. See https://openid.net/specs/openid-connect-core-1_0.html#OfflineAccess for a description of the\\n\\\"offline_access\\\" scope. This default value may change in future versions of Pinniped as the standard evolves,\\nor as common patterns used by providers who implement the standard in the ecosystem evolve.\\nBy setting this list to anything other than an empty list, you are overriding the\\ndefault value, so you may wish to include some of \\\"offline_access\\\", \\\"email\\\", and \\\"profile\\\" in your override list.\\nIf you do not want any of these scopes to be requested, you may set this list to contain only \\\"openid\\\".\\nSome OIDC providers may also require a scope to get access to the user's group membership, in which case you\\nmay wish to include it in this list. Sometimes the scope to request the user's group membership is called\\n\\\"groups\\\", but unfortunately this is not specified in the OIDC standard.\\nGenerally speaking, you should include any scopes required to cause the appropriate claims to be the returned by\\nyour OIDC provider in the ID token or userinfo endpoint results for those claims which you would like to use in\\nthe oidcClaims settings to determine the usernames and group memberships of your Kubernetes users. See\\nyour OIDC provider's documentation for more information about what scopes are available to request claims.\\nAdditionally, the Pinniped Supervisor requires that your OIDC provider returns refresh tokens to the Supervisor\\nfrom these authorization flows. For most OIDC providers, the scope required to receive refresh tokens will be\\n\\\"offline_access\\\". See the documentation of your OIDC provider's authorization and token endpoints for its\\nrequirements for what to include in the request in order to receive a refresh token in the response, if anything.\\nNote that it may be safe to send \\\"offline_access\\\" even to providers which do not require it, since the provider\\nmay ignore scopes that it does not understand or require (see\\nhttps://datatracker.ietf.org/doc/html/rfc6749#section-3.3). In the unusual case that you must avoid sending the\\n\\\"offline_access\\\" scope, then you must override the default value of this setting. This is required if your OIDC\\nprovider will reject the request when it includes \\\"offline_access\\\" (e.g. GitLab's OIDC provider).\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"allowPasswordGrant\": {\n       \"description\": \"allowPasswordGrant, when true, will allow the use of OAuth 2.0's Resource Owner Password Credentials Grant\\n(see https://datatracker.ietf.org/doc/html/rfc6749#section-4.3) to authenticate to the OIDC provider using a\\nusername and password without a web browser, in addition to the usual browser-based OIDC Authorization Code Flow.\\nThe Resource Owner Password Credentials Grant is not officially part of the OIDC specification, so it may not be\\nsupported by your OIDC provider. If your OIDC provider supports returning ID tokens from a Resource Owner Password\\nCredentials Grant token request, then you can choose to set this field to true. This will allow end users to choose\\nto present their username and password to the kubectl CLI (using the Pinniped plugin) to authenticate to the\\ncluster, without using a web browser to log in as is customary in OIDC Authorization Code Flow. This may be\\nconvenient for users, especially for identities from your OIDC provider which are not intended to represent a human\\nactor, such as service accounts performing actions in a CI/CD environment. Even if your OIDC provider supports it,\\nyou may wish to disable this behavior by setting this field to false when you prefer to only allow users of this\\nOIDCIdentityProvider to log in via the browser-based OIDC Authorization Code Flow. Using the Resource Owner Password\\nCredentials Grant means that the Pinniped CLI and Pinniped Supervisor will directly handle your end users' passwords\\n(similar to LDAPIdentityProvider), and you will not be able to require multi-factor authentication or use the other\\nweb-based login features of your OIDC provider during Resource Owner Password Credentials Grant logins.\\nallowPasswordGrant defaults to false.\",\n       \"type\": \"boolean\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"claims\": {\n     \"description\": \"Claims provides the names of token claims that will be used when inspecting an identity from\\nthis OIDC identity provider.\",\n     \"properties\": {\n      \"additionalClaimMappings\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"AdditionalClaimMappings allows for additional arbitrary upstream claim values to be mapped into the\\n\\\"additionalClaims\\\" claim of the ID tokens generated by the Supervisor. This should be specified as a map of\\nnew claim names as the keys, and upstream claim names as the values. These new claim names will be nested\\nunder the top-level \\\"additionalClaims\\\" claim in ID tokens generated by the Supervisor when this\\nOIDCIdentityProvider was used for user authentication. These claims will be made available to all clients.\\nThis feature is not required to use the Supervisor to provide authentication for Kubernetes clusters, but can be\\nused when using the Supervisor for other authentication purposes. When this map is empty or the upstream claims\\nare not available, the \\\"additionalClaims\\\" claim will be excluded from the ID tokens generated by the Supervisor.\",\n       \"type\": \"object\"\n      },\n      \"groups\": {\n       \"description\": \"Groups provides the name of the ID token claim or userinfo endpoint response claim that will be used to ascertain\\nthe groups to which an identity belongs. By default, the identities will not include any group memberships when\\nthis setting is not configured.\",\n       \"type\": \"string\"\n      },\n      \"username\": {\n       \"description\": \"Username provides the name of the ID token claim or userinfo endpoint response claim that will be used to\\nascertain an identity's username. When not set, the username will be an automatically constructed unique string\\nwhich will include the issuer URL of your OIDC provider along with the value of the \\\"sub\\\" (subject) claim from\\nthe ID token.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"client\": {\n     \"description\": \"OIDCClient contains OIDC client information to be used used with this OIDC identity\\nprovider.\",\n     \"properties\": {\n      \"secretName\": {\n       \"description\": \"SecretName contains the name of a namespace-local Secret object that provides the clientID and\\nclientSecret for an OIDC client. If only the SecretName is specified in an OIDCClient\\nstruct, then it is expected that the Secret is of type \\\"secrets.pinniped.dev/oidc-client\\\" with keys\\n\\\"clientID\\\" and \\\"clientSecret\\\".\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"secretName\"\n     ],\n     \"type\": \"object\"\n    },\n    \"issuer\": {\n     \"description\": \"Issuer is the issuer URL of this OIDC identity provider, i.e., where to fetch\\n/.well-known/openid-configuration.\",\n     \"minLength\": 1,\n     \"pattern\": \"^https://\",\n     \"type\": \"string\"\n    },\n    \"tls\": {\n     \"description\": \"TLS configuration for discovery/JWKS requests to the issuer.\",\n     \"properties\": {\n      \"certificateAuthorityData\": {\n       \"description\": \"X.509 Certificate Authority (base64-encoded PEM bundle). If omitted, a default set of system roots will be trusted.\",\n       \"type\": \"string\"\n      },\n      \"certificateAuthorityDataSource\": {\n       \"description\": \"Reference to a CA bundle in a secret or a configmap.\\nAny changes to the CA bundle in the secret or configmap will be dynamically reloaded.\",\n       \"properties\": {\n        \"key\": {\n         \"description\": \"Key is the key name within the secret or configmap from which to read the CA bundle.\\nThe value found at this key in the secret or configmap must not be empty, and must be a valid PEM-encoded\\ncertificate bundle.\",\n         \"minLength\": 1,\n         \"type\": \"string\"\n        },\n        \"kind\": {\n         \"description\": \"Kind configures whether the CA bundle is being sourced from a Kubernetes secret or a configmap.\\nAllowed values are \\\"Secret\\\" or \\\"ConfigMap\\\".\\n\\\"ConfigMap\\\" uses a Kubernetes configmap to source CA Bundles.\\n\\\"Secret\\\" uses Kubernetes secrets of type kubernetes.io/tls or Opaque to source CA Bundles.\",\n         \"enum\": [\n          \"Secret\",\n          \"ConfigMap\"\n         ],\n         \"type\": \"string\"\n        },\n        \"name\": {\n         \"description\": \"Name is the resource name of the secret or configmap from which to read the CA bundle.\\nThe referenced secret or configmap must be created in the same namespace where Pinniped Supervisor is installed.\",\n         \"minLength\": 1,\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"key\",\n        \"kind\",\n        \"name\"\n       ],\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"client\",\n    \"issuer\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"OIDC Identity Provider\",\n \"type\": \"object\"\n}",
+   "version": "idp.supervisor.pinniped.dev/v1alpha1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "OIDC Identity Provider",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "published": false,
+   "source_uri": "https://charts.bitnami.com/bitnami/pinniped-2.3.2.tgz"
+  },
+  "model": {
+   "category": {
+    "name": "Security \u0026 Compliance"
+   },
+   "displayName": "Pinniped",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "source_uri": "https://charts.bitnami.com/bitnami/pinniped-2.3.2.tgz",
+    "styleOverrides": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "model": {
+    "version": "2.3.2"
+   },
+   "name": "pinniped",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "subCategory": "Key Management",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "svgColor": "",
+   "svgWhite": ""
+  },
+  "version": "v1.0.0"
+ }
