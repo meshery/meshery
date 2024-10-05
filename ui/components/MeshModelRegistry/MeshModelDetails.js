@@ -29,7 +29,10 @@ import { JustifyAndAlignCenter } from './MeshModel.style';
 import { withSuppressedErrorBoundary } from '../General/ErrorBoundary';
 import ReactJson from 'react-json-view';
 import { reactJsonTheme } from './helper';
-
+import Accordion from '@material-ui/core/Accordion';
+import AccordionDetails from '@material-ui/core/AccordionDetails';
+import AccordionSummary from '@material-ui/core/AccordionSummary';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 const ExportAvailable = true;
 const KeyValue = ({ property, value }) => {
   let formattedValue = value;
@@ -106,19 +109,28 @@ const RenderContents = ({
         </div>
       </div>
       {jsonData && (
-        <ReactJson
-          theme={reactJsonTheme(theme.palette.type)}
-          name={false}
-          displayDataTypes={false}
-          iconStyle="circle"
-          src={jsonData}
-          style={{
-            fontSize: 'inherit',
-            minHeight: 'inherit',
-            padding: '1.1rem',
-          }}
-          collapsed={1} // expanded upto 1 level
-        />
+        <Accordion
+          style={{ borderRadius: '6px', backgroundColor: theme.palette.secondary.toolbarBg2 }}
+        >
+          <AccordionSummary expandIcon={<ExpandMoreIcon fill={'white'} />}>
+            Advanced Details
+          </AccordionSummary>
+          <AccordionDetails>
+            <ReactJson
+              theme={reactJsonTheme(theme.palette.type)}
+              name={false}
+              displayDataTypes={false}
+              iconStyle="circle"
+              src={jsonData}
+              style={{
+                fontSize: 'inherit',
+                minHeight: 'inherit',
+                padding: '1.1rem',
+              }}
+              collapsed={1} // expanded upto 1 level
+            />
+          </AccordionDetails>
+        </Accordion>
       )}
     </div>
   );
