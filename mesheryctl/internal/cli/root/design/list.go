@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package pattern
+package design
 
 import (
 	"encoding/json"
@@ -39,17 +39,17 @@ var (
 
 var linkDocPatternList = map[string]string{
 	"link":    "![pattern-list-usage](/assets/img/mesheryctl/patternList.png)",
-	"caption": "Usage of mesheryctl pattern list",
+	"caption": "Usage of mesheryctl design list",
 }
 
 var listCmd = &cobra.Command{
 	Use:   "list",
-	Short: "List patterns",
-	Long:  `Display list of all available pattern files.`,
+	Short: "List designs",
+	Long:  `Display list of all available design files.`,
 	Args:  cobra.MinimumNArgs(0),
 	Example: `
-// list all available patterns
-mesheryctl pattern list
+// list all available designs
+mesheryctl design list
 	`,
 	Annotations: linkDocPatternList,
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -95,8 +95,8 @@ mesheryctl pattern list
 
 		provider := tokenObj["meshery-provider"]
 		var data [][]string
-		provider_header := []string{"PATTERN ID", "USER ID", "NAME", "CREATED", "UPDATED"}
-		non_provider_header := []string{"PATTERN ID", "NAME", "CREATED", "UPDATED"}
+		provider_header := []string{"DESIGN ID", "USER ID", "NAME", "CREATED", "UPDATED"}
+		non_provider_header := []string{"DESIGN ID", "NAME", "CREATED", "UPDATED"}
 
 		if verbose {
 			if provider == "None" {
@@ -158,13 +158,12 @@ mesheryctl pattern list
 		processData(cmd, data, provider_header, int64(response.TotalCount))
 
 		return nil
-
 	},
 }
 
 func init() {
-	listCmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "Display full length user and pattern file identifiers")
-	listCmd.Flags().IntVarP(&pageNumber, "page", "p", 1, "(optional) List next set of patterns with --page (default = 1)")
+	listCmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "Display full length user and design file identifiers")
+	listCmd.Flags().IntVarP(&pageNumber, "page", "p", 1, "(optional) List next set of designs with --page (default = 1)")
 }
 
 func processData(cmd *cobra.Command, data [][]string, header []string, totalCount int64) {

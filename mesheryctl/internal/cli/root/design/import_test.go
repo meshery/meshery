@@ -1,4 +1,4 @@
-package pattern
+package design
 
 import (
 	"testing"
@@ -21,13 +21,13 @@ func Test_importPattern_DisplayErrorsMissingFlags(t *testing.T) {
 		{
 			name:    "Import missing source type flag",
 			args:    args{"", "file.yaml", "", false},
-			want:    ErrPatternSourceType(),
+			want:    ErrDesignSourceType(),
 			wantErr: true,
 		},
 		{
 			name:    "Import missing file flag",
 			args:    args{"helm", "", "", false},
-			want:    ErrPatternManifest(),
+			want:    ErrDesignManifest(),
 			wantErr: true,
 		},
 	}

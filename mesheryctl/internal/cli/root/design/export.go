@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package pattern
+package design
 
 import (
 	"bytes"
@@ -27,7 +27,7 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/encoding"
+	encoding "github.com/layer5io/meshkit/encoding"
 	meshkitutils "github.com/layer5io/meshkit/utils"
 	"github.com/manifoldco/promptui"
 	"github.com/spf13/cobra"
@@ -55,16 +55,16 @@ By default, the exported design will be saved in the current directory. The diff
 type allowed are oci, original, and current. The default design type is current.`,
 	Example: `
 	# Export a design with a specific ID
-	mesheryctl pattern export [pattern-name | ID]
+	mesheryctl design export [pattern-name | ID]
 	
 	# Export a design with a specific ID and type
-	mesheryctl pattern export [pattern-name | ID] --type [design-type]
+	mesheryctl design export [pattern-name | ID] --type [design-type]
 	
 	# Export a design and save it to a specific directory
-	mesheryctl pattern export [pattern-name | ID] --output ./designs
+	mesheryctl design export [pattern-name | ID] --output ./designs
 	
 	# Export a design with a specific type and save it to a directory
-	mesheryctl pattern export [pattern-name | ID] --type [design-type] --output ./exports
+	mesheryctl design export [pattern-name | ID] --type [design-type] --output ./exports
 	`,
 	Args: cobra.MinimumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -132,7 +132,7 @@ func fetchPatternIDByName(baseUrl, patternName string) (string, error) {
 	}
 
 	if response.TotalCount == 0 {
-		return "", ErrPatternFound()
+		return "", ErrDesignNotFound()
 	} else if response.TotalCount == 1 {
 		return response.Patterns[0].ID.String(), nil
 	}
@@ -199,7 +199,7 @@ func fetchPatternData(dataURL string) (*models.MesheryPattern, error) {
 	}
 
 	var pattern models.MesheryPattern
-	if err = encoding.Unmarshal((buf.Bytes()), &pattern); err != nil {
+	if err = encoding.Unmarshal(buf.Bytes(), &pattern); err != nil {
 		return nil, err
 	}
 
@@ -262,7 +262,7 @@ func getOwnerName(ownerID string, baseURL string) (string, error) {
 		return "", ErrReadFromBody(err)
 	}
 
-	if err := encoding.Unmarshal(body, &userProfile); err != nil {
+	if err := encoding.Unmarshal([]byte(body), &userProfile); err != nil {
 		return "", err
 	}
 
@@ -270,7 +270,7 @@ func getOwnerName(ownerID string, baseURL string) (string, error) {
 }
 
 func selectPatternPrompt(patterns []models.MesheryPattern, baseURL string) models.MesheryPattern {
-	columns := []string{"Pattern Name", "Created At", "Updated At", "Type", "Owner", "Pattern ID"}
+	columns := []string{"Design Name", "Created At", "Updated At", "Type", "Owner", "Pattern ID"}
 	widths := []int{20, 20, 20, 20, 20, 10}
 
 	headingParts := make([]string, len(columns))
@@ -313,7 +313,7 @@ func selectPatternPrompt(patterns []models.MesheryPattern, baseURL string) model
 	}
 
 	prompt := promptui.Select{
-		Label: "Select a pattern",
+		Label: "Select a design",
 		Items: patternInfos,
 		Templates: &promptui.SelectTemplates{
 			Label:    "{{ . }}",

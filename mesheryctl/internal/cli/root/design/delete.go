@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package pattern
+package design
 
 import (
 	"bytes"
@@ -34,12 +34,12 @@ import (
 
 var deleteCmd = &cobra.Command{
 	Use:   "delete",
-	Short: "Delete pattern file",
-	Long:  `delete pattern file will trigger deletion of the pattern file`,
+	Short: "Delete design file",
+	Long:  `delete design file will trigger deletion of the design file`,
 	Args:  cobra.MinimumNArgs(0),
 	Example: `
-// delete a pattern file
-mesheryctl pattern delete [file | URL]
+// delete a design file
+mesheryctl design delete [file | URL]
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var req *http.Request
@@ -63,10 +63,9 @@ mesheryctl pattern delete [file | URL]
 		if isID {
 			err := utils.DeleteConfiguration(mctlCfg.GetBaseMesheryURL(), pattern, "pattern")
 			if err != nil {
-				utils.Log.Error(err)
-				return errors.Wrap(err, utils.PatternError(fmt.Sprintf("failed to delete pattern %s", args[0])))
+				return errors.Wrap(err, utils.DesignError(fmt.Sprintf("failed to delete design %s", args[0])))
 			}
-			utils.Log.Info("Pattern ", args[0], " deleted successfully")
+			utils.Log.Info("Design ", args[0], " deleted successfully")
 			return nil
 		}
 		deployURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern/deploy"
@@ -77,8 +76,7 @@ mesheryctl pattern delete [file | URL]
 		if !govalidator.IsURL(file) {
 			content, err := os.ReadFile(file)
 			if err != nil {
-				utils.Log.Error(utils.ErrFileRead(errors.New(utils.PatternError(fmt.Sprintf("failed to read file %s. Ensure the filename or URL is valid", file)))))
-				return utils.ErrFileRead(errors.New(utils.PatternError(fmt.Sprintf("failed to read file %s. Ensure the filename or URL is valid", file))))
+				return utils.ErrFileRead(errors.New(utils.DesignError(fmt.Sprintf("failed to read file %s. Ensure the filename or URL is valid", file))))
 			}
 
 			patternFileByt = content
@@ -86,7 +84,6 @@ mesheryctl pattern delete [file | URL]
 			// Else treat it like a URL
 			url, path, err := utils.ParseURLGithub(file)
 			if err != nil {
-				utils.Log.Error(utils.ErrParseGithubFile(err, file))
 				return utils.ErrParseGithubFile(err, file)
 			}
 
@@ -138,7 +135,7 @@ mesheryctl pattern delete [file | URL]
 			}
 
 			if len(response) == 0 {
-				return ErrPatternNotFound()
+				return ErrDesignNotFound()
 			}
 
 			patternFileByt, err = yaml.Marshal(response[0].PatternFile)
@@ -149,13 +146,11 @@ mesheryctl pattern delete [file | URL]
 
 		req, err = utils.NewRequest("DELETE", deployURL, bytes.NewBuffer(patternFileByt))
 		if err != nil {
-			utils.Log.Error(err)
 			return utils.ErrCreatingRequest(err)
 		}
 
 		res, err := utils.MakeRequest(req)
 		if err != nil {
-			utils.Log.Error(err)
 			return utils.ErrRequestResponse(err)
 		}
 
@@ -173,5 +168,5 @@ mesheryctl pattern delete [file | URL]
 }
 
 func init() {
-	deleteCmd.Flags().StringVarP(&file, "file", "f", "", "Path to pattern file")
+	deleteCmd.Flags().StringVarP(&file, "file", "f", "", "Path to design file")
 }

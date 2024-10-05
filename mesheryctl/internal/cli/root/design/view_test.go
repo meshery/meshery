@@ -1,4 +1,4 @@
-package pattern
+package design
 
 import (
 	"path/filepath"
@@ -9,7 +9,7 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 )
 
-func TestPatternView(t *testing.T) {
+func TestDesignView(t *testing.T) {
 	// setup current context
 	utils.SetupContextEnv(t)
 
@@ -38,10 +38,10 @@ func TestPatternView(t *testing.T) {
 		ExpectError      bool
 	}{
 		{
-			Name:             "Fetch Pattern View",
+			Name:             "Fetch Design View",
 			Args:             []string{"view", "design"},
-			ExpectedResponse: "view.pattern.output.golden",
-			Fixture:          "view.pattern.api.response.golden",
+			ExpectedResponse: "view.design.output.golden",
+			Fixture:          "view.design.api.response.golden",
 			URL:              testContext.BaseURL + "/api/pattern",
 			Token:            filepath.Join(fixturesDir, "token.golden"),
 			ExpectError:      false,
@@ -66,9 +66,9 @@ func TestPatternView(t *testing.T) {
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
 
 			b := utils.SetupMeshkitLoggerTesting(t, false)
-			PatternCmd.SetOutput(b)
-			PatternCmd.SetArgs(tt.Args)
-			err := PatternCmd.Execute()
+			DesignCmd.SetOutput(b)
+			DesignCmd.SetArgs(tt.Args)
+			err := DesignCmd.Execute()
 			if err != nil {
 				// if we're supposed to get an error
 				if tt.ExpectError {
@@ -96,7 +96,7 @@ func TestPatternView(t *testing.T) {
 
 			utils.Equals(t, expectedResponse, actualResponse)
 		})
-		t.Log("View Pattern test Passed")
+		t.Log("View Design test Passed")
 	}
 
 	// stop mock server

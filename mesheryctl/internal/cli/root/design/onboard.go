@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package pattern
+package design
 
 import (
 	"bufio"
@@ -42,23 +42,23 @@ var (
 
 var linkDocpatternOnboard = map[string]string{
 	"link":    "![pattern-onboard-usage](/assets/img/mesheryctl/pattern-onboard.png)",
-	"caption": "Usage of mesheryctl pattern onboard",
+	"caption": "Usage of mesheryctl design onboard",
 }
 
 var onboardCmd = &cobra.Command{
 	Use:   "onboard",
-	Short: "Onboard pattern",
-	Long:  `Command will trigger deploy of pattern`,
+	Short: "Onboard design",
+	Long:  `Command will trigger deploy of design`,
 	Example: `
-// Onboard pattern by providing file path
-mesheryctl pattern onboard -f [filepath] -s [source type]
-mesheryctl pattern onboard -f ./pattern.yml -s "Kubernetes Manifest"
+// Onboard design by providing file path
+mesheryctl design onboard -f [filepath] -s [source type]
+mesheryctl design onboard -f ./pattern.yml -s "Kubernetes Manifest"
 	`,
 	Annotations: linkDocpatternOnboard,
 	Args: func(_ *cobra.Command, args []string) error {
 
 		if file == "" && len(args) == 0 {
-			return ErrOnboardPattern()
+			return ErrOnboardDesign()
 		}
 		return nil
 	},
@@ -113,7 +113,7 @@ mesheryctl pattern onboard -f ./pattern.yml -s "Kubernetes Manifest"
 
 			index := 0
 			if len(response.Patterns) == 0 {
-				utils.Log.Error(utils.ErrNotFound(errors.New("no pattern found with the given name")))
+				utils.Log.Error(utils.ErrNotFound(errors.New("no design found with the given name")))
 				return nil
 			} else if len(response.Patterns) == 1 {
 
@@ -168,7 +168,7 @@ mesheryctl pattern onboard -f ./pattern.yml -s "Kubernetes Manifest"
 		}
 
 		if res.StatusCode == 200 {
-			utils.Log.Info("pattern successfully onboarded")
+			utils.Log.Info("design successfully onboarded")
 		}
 		utils.Log.Info(string(body))
 		return nil
@@ -190,7 +190,7 @@ func multiplepatternsConfirmation(profiles []models.MesheryPattern) int {
 	}
 
 	for {
-		fmt.Printf("Enter the index of pattern: ")
+		fmt.Printf("Enter the index of design: ")
 		response, err := reader.ReadString('\n')
 		if err != nil {
 			utils.Log.Info(err)
@@ -266,7 +266,7 @@ func getFullSourceType(sType string) (string, error) {
 }
 
 func init() {
-	onboardCmd.Flags().StringVarP(&file, "file", "f", "", "Path to pattern file")
-	onboardCmd.Flags().BoolVarP(&skipSave, "skip-save", "", false, "Skip saving a pattern")
+	onboardCmd.Flags().StringVarP(&file, "file", "f", "", "Path to design file")
+	onboardCmd.Flags().BoolVarP(&skipSave, "skip-save", "", false, "Skip saving a design")
 	onboardCmd.Flags().StringVarP(&sourceType, "source-type", "s", "", "Type of source file (ex. manifest / compose / helm)")
 }
