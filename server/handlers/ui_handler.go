@@ -5,7 +5,9 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/layer5io/meshery/server/models"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 )
 
 var dynamicUIEndpoints = map[string]string{
@@ -43,6 +45,9 @@ func ServeUI(w http.ResponseWriter, r *http.Request, reqBasePath, baseFolderPath
 	// 	return
 	// }
 	reqURL := r.URL.Path
+	if viper.GetString("RELEASE_CHANNEL") == (models.Kanvas{}).String() {
+		reqURL = "/extension/meshmap"
+	}
 	reqURL = strings.Replace(reqURL, reqBasePath, "", 1)
 
 	var filePath strings.Builder
