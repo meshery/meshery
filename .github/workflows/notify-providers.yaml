@@ -31,7 +31,7 @@ jobs:
       if: github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/') && success()
       uses: layer5io/trigger-remote-provider-action@master
       with:
-        name: "Build and Publish"
-        repo: layer5labs/meshery-extensions
+        name: "Build and Release Kanvas"
+        repo: layer5labs/meshery-extensions-packages
         token: ${{ secrets.GH_ACCESS_TOKEN }}
         version: ${{ steps.vars.outputs.tag }}
