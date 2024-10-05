@@ -783,7 +783,7 @@ func ForceCleanupCluster() error {
 	deploymentInterface := client.KubeClient.AppsV1().Deployments(MesheryNamespace)
 	deploymentList, err := deploymentInterface.List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
-		return ErrConnectionRefused()
+		return ErrMesheryHealthCheck(err)
 	}
 
 	for _, deployment := range deploymentList.Items {
