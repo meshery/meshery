@@ -68,7 +68,7 @@ const (
 	filterViewURL                  = docsBaseURL + "reference/mesheryctl/filter/view"
 	designUsageURL                 = docsBaseURL + "reference/mesheryctl/design"
 	designViewURL                  = docsBaseURL + "reference/mesheryctl/design/view"
-	designExportURL               = docsBaseURL + "reference/mesheryctl/design/export"
+	designExportURL                = docsBaseURL + "reference/mesheryctl/design/export"
 	contextDeleteURL               = docsBaseURL + "reference/mesheryctl/system/context/delete"
 	contextViewURL                 = docsBaseURL + "reference/mesheryctl/system/context/view"
 	contextCreateURL               = docsBaseURL + "reference/mesheryctl/system/context/create"
