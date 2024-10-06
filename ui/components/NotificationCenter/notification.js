@@ -15,7 +15,7 @@ import {
   useTheme,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core';
-import { SEVERITY_STYLE, STATUS } from './constants';
+import { SEVERITY, SEVERITY_STYLE, STATUS } from './constants';
 import { iconLarge, iconMedium } from '../../css/icons.styles';
 import { MoreVert as MoreVertIcon } from '@material-ui/icons';
 import FacebookIcon from '../../assets/icons/FacebookIcon';
@@ -327,7 +327,7 @@ export const ChangeStatus = ({ event }) => {
 export const Notification = withErrorBoundary(({ event_id }) => {
   const event = useSelector((state) => selectEventById(state, event_id));
   const isVisible = useSelector((state) => selectIsEventVisible(state, event.id));
-  const severityStyles = SEVERITY_STYLE[event.severity];
+  const severityStyles = SEVERITY_STYLE[event.severity] || SEVERITY_STYLE[SEVERITY.INFO];
   const classes = useStyles({
     notificationColor: severityStyles?.color,
     status: event?.status,
