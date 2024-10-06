@@ -1,22 +1,33 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/router';
 import { connect } from 'react-redux';
-import NoSsr from '@material-ui/core/NoSsr';
+import NoSsr from '@mui/material/NoSsr';
 import {
-  withStyles,
   Button,
   Divider,
   MenuItem,
   TextField,
   Grid,
   Typography,
-} from '@material-ui/core';
-import { blue } from '@material-ui/core/colors';
+} from '@mui/material';
+import { blue } from '@mui/material/colors';
 import PropTypes from 'prop-types';
 import { withRouter } from 'next/router';
-import SettingsIcon from '@material-ui/icons/Settings';
-import MesheryAdapterPlayComponent from './MesheryAdapterPlayComponent';
+import SettingsIcon from '@mui/icons-material/Settings';
 import { bindActionCreators } from 'redux';
 import { setAdapter } from '../lib/store';
+import { styled } from '@mui/material/styles';
+import MesheryAdapterPlayComponent from './MesheryAdapterPlayComponent';
+
+const StyledButton = styled(Button)(({ theme }) => ({
+  backgroundColor: blue[500],
+  color: theme.palette.getContrastText(blue[500]),
+}));
+
+const PlayRoot = styled('div')(({ theme }) => ({
+  padding: theme.spacing(0),
+  marginBottom: theme.spacing(2),
+}));
 
 const styles = (theme) => ({
   icon: {
@@ -83,59 +94,48 @@ const styles = (theme) => ({
   },
 });
 
-class MesheryPlayComponent extends React.Component {
-  constructor(props) {
-    super(props);
+const MesheryPlayComponent = ({ meshAdapters, setAdapter, classes }) => {
+  const [adapter, setAdapterState] = useState(null);
+  const router = useRouter();
+  const prevMeshAdaptersRef = useRef();
 
-    const { meshAdapters } = props;
-    let adapter = {};
-    if (meshAdapters && meshAdapters.size > 0) {
-      adapter = meshAdapters[0];
-    }
-    this.state = {
-      adapter,
-    };
-  }
-
-  handleRouteChange = () => {
-    const queryParam = this.props?.router?.query?.adapter;
+  const handleRouteChange = () => {
+    const queryParam = router?.query?.adapter;
     if (queryParam) {
-      const selectedAdapter = this.props.meshAdapters.find(
+      const selectedAdapter = meshAdapters.find(
         ({ adapter_location }) => adapter_location === queryParam,
       );
       if (selectedAdapter) {
-        this.setState({ adapter: selectedAdapter });
+        setAdapterState(selectedAdapter);
       }
-    } else if (this.props.meshAdapters.size > 0) {
-      this.setState({ adapter: this.props.meshAdapters.get(0) });
+    } else if (meshAdapters.size > 0) {
+      setAdapterState(meshAdapters.get(0));
     }
   };
 
-  componentDidMount() {
-    const { router } = this.props;
-    router.events.on('routeChangeComplete', this.handleRouteChange);
-  }
+  useEffect(() => {
+    // componentDidMount
+    router.events.on('routeChangeComplete', handleRouteChange);
 
-  componentDidUpdate(prevProps) {
-    // update the adapter when the meshadapters props are changed
-    if (
-      prevProps.meshAdapters?.size !== this.props.meshAdapters?.size &&
-      this.props.meshAdapters.size > 0
-    ) {
-      this.handleRouteChange();
+    return () => {
+      // componentWillUnmount
+      router.events.off('routeChangeComplete', handleRouteChange);
+    };
+  }, []);
+
+  useEffect(() => {
+    // componentDidUpdate
+    if (prevMeshAdaptersRef.current?.size !== meshAdapters.size && meshAdapters.size > 0) {
+      handleRouteChange();
     }
-  }
+    prevMeshAdaptersRef.current = meshAdapters;
+  }, [meshAdapters]);
 
-  componentWillUnmount() {
-    this.props.router.events.off('routeChangeComplete', this.handleRouteChange);
-  }
-
-  handleConfigure = () => {
-    this.props.router.push('/settings#service-mesh');
+  const handleConfigure = () => {
+    router.push('/settings#service-mesh');
   };
 
-  pickImage(adapter) {
-    const { classes } = this.props;
+  const pickImage = (adapter) => {
     let image = '/static/img/meshery-logo.png';
     let imageIcon = <img src={image} className={classes.expTitleIcon} />;
     if (adapter && adapter.name) {
@@ -143,42 +143,39 @@ class MesheryPlayComponent extends React.Component {
       imageIcon = <img src={image} className={classes.expTitleIcon} />;
     }
     return imageIcon;
-  }
-
-  handleAdapterChange = () => {
-    const self = this;
-    return (event) => {
-      const { setAdapter, meshAdapters } = self.props;
-      if (event.target.value !== '') {
-        const selectedAdapter = meshAdapters.filter(
-          ({ adapter_location }) => adapter_location === event.target.value,
-        );
-        if (selectedAdapter && selectedAdapter.size === 1) {
-          self.setState({ adapter: selectedAdapter.get(0) });
-          setAdapter({ selectedAdapter: selectedAdapter.get(0).name });
-        }
-      }
-    };
   };
 
-  renderIndividualAdapter() {
-    const { meshAdapters } = this.props;
+  const handleAdapterChange = (event) => {
+    if (event.target.value !== '') {
+      const selectedAdapter = meshAdapters.filter(
+        ({ adapter_location }) => adapter_location === event.target.value,
+      );
+      if (selectedAdapter && selectedAdapter.length === 1) {
+        setAdapterState(selectedAdapter[0]);
+        setAdapter({ selectedAdapter: selectedAdapter[0].name });
+      }
+    }
+  };
+
+  const renderIndividualAdapter = () => {
     let adapCount = 0;
-    let adapter;
+    let selectedAdapter;
+
     meshAdapters.forEach((adap) => {
-      if (adap.adapter_location === this.props.adapter) {
-        adapter = adap;
+      if (adap.adapter_location === adapter?.adapter_location) {
+        selectedAdapter = adap;
         meshAdapters.forEach((ad) => {
-          if (ad.name == adap.name) adapCount += 1;
+          if (ad.name === adap.name) adapCount += 1;
         });
       }
     });
-    if (adapter) {
-      const imageIcon = this.pickImage(adapter);
+
+    if (selectedAdapter) {
+      const imageIcon = pickImage(selectedAdapter);
       return (
         <React.Fragment>
           <MesheryAdapterPlayComponent
-            adapter={adapter}
+            adapter={selectedAdapter}
             adapCount={adapCount}
             adapter_icon={imageIcon}
           />
@@ -186,114 +183,106 @@ class MesheryPlayComponent extends React.Component {
       );
     }
     return '';
-  }
+  };
 
-  render() {
-    const { classes, meshAdapters } = this.props;
-    let { adapter } = this.state;
-
-    if (meshAdapters.size === 0) {
-      return (
-        <NoSsr>
-          <React.Fragment>
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '1rem',
-                height: '100%',
-                width: '100%',
-              }}
-            >
-              <Typography variant="h6">Adapter Unavailable</Typography>
-              <Typography variant="subtitle">Connect Meshery Adapter(s) in Settings</Typography>
-              <Button
-                variant="contained"
-                color="primary"
-                size="large"
-                onClick={this.handleConfigure}
-              >
-                <SettingsIcon className={classes.icon} />
-                Configure Settings
-              </Button>
-            </div>
-          </React.Fragment>
-        </NoSsr>
-      );
-    }
-
-    if (this.props.adapter && this.props.adapter !== '') {
-      const indContent = this.renderIndividualAdapter();
-      if (indContent !== '') {
-        return indContent;
-      } // else it will render all the available adapters
-    }
-
-    const self = this;
-    const imageIcon = self.pickImage(adapter);
+  if (meshAdapters.size === 0) {
     return (
       <NoSsr>
         <React.Fragment>
-          <div className={classes.playRoot}>
-            <Grid container>
-              <Grid item xs={12} className={classes.paneSection}>
-                <TextField
-                  select
-                  id="adapter_id"
-                  name="adapter_name"
-                  label="Select Meshery Adapter"
-                  data-cy="lifecycle-service-mesh-type"
-                  fullWidth
-                  value={adapter && adapter.adapter_location ? adapter.adapter_location : ''}
-                  margin="normal"
-                  variant="outlined"
-                  onChange={this.handleAdapterChange()}
-                  SelectProps={{
-                    MenuProps: {
-                      anchorOrigin: {
-                        vertical: 'bottom',
-                        horizontal: 'left',
-                      },
-                      transformOrigin: {
-                        vertical: 'top',
-                        horizontal: 'left',
-                      },
-                      getContentAnchorEl: null,
-                    },
-                  }}
-                >
-                  {meshAdapters.map((ada) => (
-                    <MenuItem
-                      key={`${ada.adapter_location}_${new Date().getTime()}`}
-                      value={ada.adapter_location}
-                    >
-                      {/* <ListItemIcon> */}
-                      {self.pickImage(ada)}
-                      {/* </ListItemIcon> */}
-                      <span className={classes.expTitle}>{ada.adapter_location}</span>
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Grid>
-            </Grid>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '1rem',
+              height: '100%',
+              width: '100%',
+            }}
+          >
+            <Typography variant="h6">Adapter Unavailable</Typography>
+            <Typography variant="subtitle">Connect Meshery Adapter(s) in Settings</Typography>
+            <Button
+              variant="contained"
+              color="primary"
+              size="large"
+              onClick={handleConfigure}
+            >
+              <SettingsIcon className={classes.icon} />
+              Configure Settings
+            </Button>
           </div>
-          <Divider variant="fullWidth" light />
-          {adapter && adapter.adapter_location && (
-            <MesheryAdapterPlayComponent adapter={adapter} adapter_icon={imageIcon} />
-          )}
         </React.Fragment>
       </NoSsr>
     );
   }
-}
 
-MesheryPlayComponent.propTypes = { classes: PropTypes.object.isRequired };
+  if (adapter && adapter !== '') {
+    const indContent = renderIndividualAdapter();
+    if (indContent !== '') {
+      return indContent;
+    }
+  }
 
-const mapDispatchToProps = (dispatch) => ({
-  setAdapter: bindActionCreators(setAdapter, dispatch),
-});
+  const imageIcon = pickImage(adapter);
+  return (
+    <NoSsr>
+      <React.Fragment>
+        <div className={classes.playRoot}>
+          <Grid container>
+            <Grid item xs={12} className={classes.paneSection}>
+              <TextField
+                select
+                id="adapter_id"
+                name="adapter_name"
+                label="Select Meshery Adapter"
+                data-cy="lifecycle-service-mesh-type"
+                fullWidth
+                value={adapter?.adapter_location || ''}
+                margin="normal"
+                variant="outlined"
+                onChange={handleAdapterChange}
+                SelectProps={{
+                  MenuProps: {
+                    anchorOrigin: {
+                      vertical: 'bottom',
+                      horizontal: 'left',
+                    },
+                    transformOrigin: {
+                      vertical: 'top',
+                      horizontal: 'left',
+                    },
+                    getContentAnchorEl: null,
+                  },
+                }}
+              >
+                {meshAdapters.map((ada) => (
+                  <MenuItem
+                    key={`${ada.adapter_location}_${new Date().getTime()}`}
+                    value={ada.adapter_location}
+                  >
+                    {pickImage(ada)}
+                    <span className={classes.expTitle}>{ada.adapter_location}</span>
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+          </Grid>
+        </div>
+        <Divider variant="fullWidth" light />
+        {adapter?.adapter_location && (
+          <MesheryAdapterPlayComponent adapter={adapter} adapter_icon={imageIcon} />
+        )}
+      </React.Fragment>
+    </NoSsr>
+  );
+};
+
+MesheryPlayComponent.propTypes = {
+  meshAdapters: PropTypes.array.isRequired,
+  setAdapter: PropTypes.func.isRequired,
+  classes: PropTypes.object.isRequired,
+};
 
 const mapStateToProps = (state) => {
   const k8sconfig = state.get('k8sConfig');
@@ -303,6 +292,6 @@ const mapStateToProps = (state) => {
   return { k8sconfig, meshAdapters, meshAdaptersts, selectedAdapter };
 };
 
-export default withStyles(styles)(
-  connect(mapStateToProps, mapDispatchToProps)(withRouter(MesheryPlayComponent)),
-);
+const mapDispatchToProps = (dispatch) => bindActionCreators({ setAdapter }, dispatch);
+
+export default connect(mapStateToProps, mapDispatchToProps)(MesheryPlayComponent);
