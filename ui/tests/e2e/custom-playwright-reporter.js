@@ -7,7 +7,7 @@ class MyReporter {
   introMessage = '';
   totalTests = '';
   expectedTest = '';
-  testTable = `| Test | Browser | Test Case | Result | Retries |
+  testTable = `| Test | Browser | Test Case | Tags | Result |
 | :---: | :---: | :--- | :---: | :---: |`;
   passed = 0;
   failed = 0;
@@ -37,8 +37,8 @@ class MyReporter {
     const status = test.outcome();
     const project = test.parent.project().name;
 
-    this.displayLogs(project, test.title, status, result);
-    this.addTestTable(project, test.title, status, result.retry, test.retries);
+    this.displayLogs(project, test.title, test.tags, status, result);
+    this.addTestTable(project, test.title, test.tags, status, result.retry, test.retries);
   }
 
   async onEnd(result) {
@@ -51,12 +51,15 @@ class MyReporter {
     }
   }
 
-  displayLogs(project, title, status, result) {
+  displayLogs(project, title, tags, status, result) {
+    const allTags = tags.map((item) => item.replace('@', '')).join(', ');
+
     const logs = `${
       this.countLog
-    }. Project: ${project}, Test: ${title}, Status: ${this.getStatusEmoji(status)}, Retry: ${
-      result.retry
-    } ${
+    }. Project: ${project}, Test: ${title}, Status: ${this.getStatusEmoji(
+      tags,
+      status,
+    )}, Tags: ${allTags} ${
       status === 'unexpected' && result.error !== undefined
         ? '\n' +
             `File Location: ${result.error.location?.file ?? 'Not Found'}` +
@@ -70,8 +73,8 @@ class MyReporter {
     this.countLog++;
   }
 
-  addTestTable(project, title, status, retry, retries) {
-    this.countTestStatus(status, retry, retries);
+  addTestTable(project, title, tags, status, retry, retries) {
+    this.countTestStatus(tags, status, retry, retries);
 
     if (status === 'expected') return;
 
@@ -83,47 +86,54 @@ class MyReporter {
       return;
     }
 
-    const message = `| ${this.countTable} | ${project} | ${title} | ${this.getStatusEmoji(
-      status,
-    )} | ${retry} |`;
+    const allTags = tags.map((item) => item.replace('@', '')).join(', ');
+
+    const message = `| ${
+      this.countTable
+    } | ${project} | ${title} | ${allTags} | ${this.getStatusEmoji(tags, status)} |`;
 
     this.testTable += `\n${message}`;
     this.countTable++;
   }
 
-  countTestStatus(status, retry, retries) {
+  countTestStatus(tags, status, retry, retries) {
     const lastRetriesRun = retry === retries;
     const isFail = status === 'unexpected';
     const isSkipped = status === 'skipped';
     const isFlaky = status === 'flaky';
 
+    const isUnstableTest = tags.includes('@unstable');
+
     if (status === 'expected') {
       this.passed++;
     }
-    if (isFlaky) {
+    if (isFlaky || (isUnstableTest && isFail)) {
       this.flaky++;
     }
-    if (isFail && lastRetriesRun) {
+    if (isFail && lastRetriesRun && !isUnstableTest) {
       this.failed++;
     }
-    if (isSkipped && lastRetriesRun) {
+    if (isSkipped && lastRetriesRun && !isUnstableTest) {
       this.skipped++;
     }
   }
 
-  getStatusEmoji(status) {
+  getStatusEmoji(tags, status) {
+    const isFlakyTest = tags.includes('@unstable');
+
     if (status === 'expected') {
       return '✅';
     }
-    if (status === 'unexpected') {
+    if (status === 'unexpected' && !isFlakyTest) {
       return '❌';
     }
-    if (status === 'flaky') {
+    if (status === 'flaky' || isFlakyTest) {
       return '⚠️';
     }
     if (status === 'skipped') {
-      return '⏩';
+      return '➖';
     }
+    return '➖';
   }
 
   async buildMessage(result) {
