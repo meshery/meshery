@@ -13,7 +13,7 @@ const Error = () => {
   }, [updatepagepath]);
 
   return (
-    <NoSsr>
+    <NoSsr> 
       <Head>
         <title>404 - Page Not Found</title>
       </Head>
