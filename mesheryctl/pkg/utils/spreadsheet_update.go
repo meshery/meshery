@@ -157,6 +157,35 @@ func VerifyandUpdateSpreadsheet(cred string, wg *sync.WaitGroup, srv *sheets.Ser
 		return
 	}
 }
+func (mrh *RelationshipCSVHelper) UpdateRelationshipSheet(srv *sheets.Service, cred, sheetId, csvPath string) error {
+	if len(mrh.UpdatedRelationships) == 0 {
+		return nil
+	}
+
+	var dataToUpdate []*sheets.ValueRange
+
+	for _, rel := range mrh.UpdatedRelationships {
+		row := rel.RowIndex
+		// Column O corresponds to column 15 in A1 notation (O is the 15th letter)
+		rangeStr := fmt.Sprintf("Relationships!O%d", row)
+		valueRange := &sheets.ValueRange{
+			Range:  rangeStr,
+			Values: [][]interface{}{{rel.Filename}},
+		}
+		dataToUpdate = append(dataToUpdate, valueRange)
+	}
+
+	batchUpdateValuesRequest := &sheets.BatchUpdateValuesRequest{
+		ValueInputOption: "USER_ENTERED",
+		Data:             dataToUpdate,
+	}
+
+	_, err := srv.Spreadsheets.Values.BatchUpdate(sheetId, batchUpdateValuesRequest).Context(context.Background()).Do()
+	if err != nil {
+		return ErrUpdateToSheet(err, sheetId)
+	}
+	return nil
+}
 
 func updateModelsSheet(srv *sheets.Service, cred, sheetId string, values []*ModelCSV) error {
 	marshalledValues, err := marshalStructToCSValues[ModelCSV](values)
