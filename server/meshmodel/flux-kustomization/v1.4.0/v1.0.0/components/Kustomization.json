@@ -1,0 +1,129 @@
+{
+  "capabilities": [
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Add text to nodes body",
+    "displayName": "Body Text",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "body-text",
+    "type": "style",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "Kustomization",
+   "schema": "{\n \"description\": \"Kustomization is the Schema for the kustomizations API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"KustomizationSpec defines the configuration to calculate the desired state\\nfrom a Source using Kustomize.\",\n   \"properties\": {\n    \"commonMetadata\": {\n     \"description\": \"CommonMetadata specifies the common labels and annotations that are\\napplied to all resources. Any existing label or annotation will be\\noverridden if its key matches a common one.\",\n     \"properties\": {\n      \"annotations\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"Annotations to be added to the object's metadata.\",\n       \"type\": \"object\"\n      },\n      \"labels\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"Labels to be added to the object's metadata.\",\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"components\": {\n     \"description\": \"Components specifies relative paths to specifications of other Components.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"decryption\": {\n     \"description\": \"Decrypt Kubernetes secrets before applying them on the cluster.\",\n     \"properties\": {\n      \"provider\": {\n       \"description\": \"Provider is the name of the decryption engine.\",\n       \"enum\": [\n        \"sops\"\n       ],\n       \"type\": \"string\"\n      },\n      \"secretRef\": {\n       \"description\": \"The secret name containing the private OpenPGP keys used for decryption.\",\n       \"properties\": {\n        \"name\": {\n         \"description\": \"Name of the referent.\",\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"name\"\n       ],\n       \"type\": \"object\"\n      }\n     },\n     \"required\": [\n      \"provider\"\n     ],\n     \"type\": \"object\"\n    },\n    \"dependsOn\": {\n     \"description\": \"DependsOn may contain a meta.NamespacedObjectReference slice\\nwith references to Kustomization resources that must be ready before this\\nKustomization can be reconciled.\",\n     \"items\": {\n      \"description\": \"NamespacedObjectReference contains enough information to locate the referenced Kubernetes resource object in any\\nnamespace.\",\n      \"properties\": {\n       \"name\": {\n        \"description\": \"Name of the referent.\",\n        \"type\": \"string\"\n       },\n       \"namespace\": {\n        \"description\": \"Namespace of the referent, when not specified it acts as LocalObjectReference.\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"name\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"force\": {\n     \"default\": false,\n     \"description\": \"Force instructs the controller to recreate resources\\nwhen patching fails due to an immutable field change.\",\n     \"type\": \"boolean\"\n    },\n    \"healthChecks\": {\n     \"description\": \"A list of resources to be included in the health assessment.\",\n     \"items\": {\n      \"description\": \"NamespacedObjectKindReference contains enough information to locate the typed referenced Kubernetes resource object\\nin any namespace.\",\n      \"properties\": {\n       \"apiVersion\": {\n        \"description\": \"API version of the referent, if not specified the Kubernetes preferred version will be used.\",\n        \"type\": \"string\"\n       },\n       \"kind\": {\n        \"description\": \"Kind of the referent.\",\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"description\": \"Name of the referent.\",\n        \"type\": \"string\"\n       },\n       \"namespace\": {\n        \"description\": \"Namespace of the referent, when not specified it acts as LocalObjectReference.\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"kind\",\n       \"name\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"images\": {\n     \"description\": \"Images is a list of (image name, new name, new tag or digest)\\nfor changing image names, tags or digests. This can also be achieved with a\\npatch, but this operator is simpler to specify.\",\n     \"items\": {\n      \"description\": \"Image contains an image name, a new name, a new tag or digest, which will replace the original name and tag.\",\n      \"properties\": {\n       \"digest\": {\n        \"description\": \"Digest is the value used to replace the original image tag.\\nIf digest is present NewTag value is ignored.\",\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"description\": \"Name is a tag-less image name.\",\n        \"type\": \"string\"\n       },\n       \"newName\": {\n        \"description\": \"NewName is the value used to replace the original name.\",\n        \"type\": \"string\"\n       },\n       \"newTag\": {\n        \"description\": \"NewTag is the value used to replace the original tag.\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"name\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"interval\": {\n     \"description\": \"The interval at which to reconcile the Kustomization.\\nThis interval is approximate and may be subject to jitter to ensure\\nefficient use of resources.\",\n     \"pattern\": \"^([0-9]+(\\\\.[0-9]+)?(ms|s|m|h))+$\",\n     \"type\": \"string\"\n    },\n    \"kubeConfig\": {\n     \"description\": \"The KubeConfig for reconciling the Kustomization on a remote cluster.\\nWhen used in combination with KustomizationSpec.ServiceAccountName,\\nforces the controller to act on behalf of that Service Account at the\\ntarget cluster.\\nIf the --default-service-account flag is set, its value will be used as\\na controller level fallback for when KustomizationSpec.ServiceAccountName\\nis empty.\",\n     \"properties\": {\n      \"secretRef\": {\n       \"description\": \"SecretRef holds the name of a secret that contains a key with\\nthe kubeconfig file as the value. If no key is set, the key will default\\nto 'value'.\\nIt is recommended that the kubeconfig is self-contained, and the secret\\nis regularly updated if credentials such as a cloud-access-token expire.\\nCloud specific `cmd-path` auth helpers will not function without adding\\nbinaries and credentials to the Pod that is responsible for reconciling\\nKubernetes resources.\",\n       \"properties\": {\n        \"key\": {\n         \"description\": \"Key in the Secret, when not specified an implementation-specific default key is used.\",\n         \"type\": \"string\"\n        },\n        \"name\": {\n         \"description\": \"Name of the Secret.\",\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"name\"\n       ],\n       \"type\": \"object\"\n      }\n     },\n     \"required\": [\n      \"secretRef\"\n     ],\n     \"type\": \"object\"\n    },\n    \"namePrefix\": {\n     \"description\": \"NamePrefix will prefix the names of all managed resources.\",\n     \"maxLength\": 200,\n     \"minLength\": 1,\n     \"type\": \"string\"\n    },\n    \"nameSuffix\": {\n     \"description\": \"NameSuffix will suffix the names of all managed resources.\",\n     \"maxLength\": 200,\n     \"minLength\": 1,\n     \"type\": \"string\"\n    },\n    \"patches\": {\n     \"description\": \"Strategic merge and JSON patches, defined as inline YAML objects,\\ncapable of targeting objects based on kind, label and annotation selectors.\",\n     \"items\": {\n      \"description\": \"Patch contains an inline StrategicMerge or JSON6902 patch, and the target the patch should\\nbe applied to.\",\n      \"properties\": {\n       \"patch\": {\n        \"description\": \"Patch contains an inline StrategicMerge patch or an inline JSON6902 patch with\\nan array of operation objects.\",\n        \"type\": \"string\"\n       },\n       \"target\": {\n        \"description\": \"Target points to the resources that the patch document should be applied to.\",\n        \"properties\": {\n         \"annotationSelector\": {\n          \"description\": \"AnnotationSelector is a string that follows the label selection expression\\nhttps://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#api\\nIt matches with the resource annotations.\",\n          \"type\": \"string\"\n         },\n         \"group\": {\n          \"description\": \"Group is the API group to select resources from.\\nTogether with Version and Kind it is capable of unambiguously identifying and/or selecting resources.\\nhttps://github.com/kubernetes/community/blob/master/contributors/design-proposals/api-machinery/api-group.md\",\n          \"type\": \"string\"\n         },\n         \"kind\": {\n          \"description\": \"Kind of the API Group to select resources from.\\nTogether with Group and Version it is capable of unambiguously\\nidentifying and/or selecting resources.\\nhttps://github.com/kubernetes/community/blob/master/contributors/design-proposals/api-machinery/api-group.md\",\n          \"type\": \"string\"\n         },\n         \"labelSelector\": {\n          \"description\": \"LabelSelector is a string that follows the label selection expression\\nhttps://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#api\\nIt matches with the resource labels.\",\n          \"type\": \"string\"\n         },\n         \"name\": {\n          \"description\": \"Name to match resources with.\",\n          \"type\": \"string\"\n         },\n         \"namespace\": {\n          \"description\": \"Namespace to select resources from.\",\n          \"type\": \"string\"\n         },\n         \"version\": {\n          \"description\": \"Version of the API Group to select resources from.\\nTogether with Group and Kind it is capable of unambiguously identifying and/or selecting resources.\\nhttps://github.com/kubernetes/community/blob/master/contributors/design-proposals/api-machinery/api-group.md\",\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       }\n      },\n      \"required\": [\n       \"patch\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"path\": {\n     \"description\": \"Path to the directory containing the kustomization.yaml file, or the\\nset of plain YAMLs a kustomization.yaml should be generated for.\\nDefaults to 'None', which translates to the root path of the SourceRef.\",\n     \"type\": \"string\"\n    },\n    \"postBuild\": {\n     \"description\": \"PostBuild describes which actions to perform on the YAML manifest\\ngenerated by building the kustomize overlay.\",\n     \"properties\": {\n      \"substitute\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"Substitute holds a map of key/value pairs.\\nThe variables defined in your YAML manifests that match any of the keys\\ndefined in the map will be substituted with the set value.\\nIncludes support for bash string replacement functions\\ne.g. ${var:=default}, ${var:position} and ${var/substring/replacement}.\",\n       \"type\": \"object\"\n      },\n      \"substituteFrom\": {\n       \"description\": \"SubstituteFrom holds references to ConfigMaps and Secrets containing\\nthe variables and their values to be substituted in the YAML manifests.\\nThe ConfigMap and the Secret data keys represent the var names, and they\\nmust match the vars declared in the manifests for the substitution to\\nhappen.\",\n       \"items\": {\n        \"description\": \"SubstituteReference contains a reference to a resource containing\\nthe variables name and value.\",\n        \"properties\": {\n         \"kind\": {\n          \"description\": \"Kind of the values referent, valid values are ('Secret', 'ConfigMap').\",\n          \"enum\": [\n           \"Secret\",\n           \"ConfigMap\"\n          ],\n          \"type\": \"string\"\n         },\n         \"name\": {\n          \"description\": \"Name of the values referent. Should reside in the same namespace as the\\nreferring resource.\",\n          \"maxLength\": 253,\n          \"minLength\": 1,\n          \"type\": \"string\"\n         },\n         \"optional\": {\n          \"default\": false,\n          \"description\": \"Optional indicates whether the referenced resource must exist, or whether to\\ntolerate its absence. If true and the referenced resource is absent, proceed\\nas if the resource was present but empty, without any variables defined.\",\n          \"type\": \"boolean\"\n         }\n        },\n        \"required\": [\n         \"kind\",\n         \"name\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"prune\": {\n     \"description\": \"Prune enables garbage collection.\",\n     \"type\": \"boolean\"\n    },\n    \"retryInterval\": {\n     \"description\": \"The interval at which to retry a previously failed reconciliation.\\nWhen not specified, the controller uses the KustomizationSpec.Interval\\nvalue to retry failures.\",\n     \"pattern\": \"^([0-9]+(\\\\.[0-9]+)?(ms|s|m|h))+$\",\n     \"type\": \"string\"\n    },\n    \"serviceAccountName\": {\n     \"description\": \"The name of the Kubernetes service account to impersonate\\nwhen reconciling this Kustomization.\",\n     \"type\": \"string\"\n    },\n    \"sourceRef\": {\n     \"description\": \"Reference of the source where the kustomization file is.\",\n     \"properties\": {\n      \"apiVersion\": {\n       \"description\": \"API version of the referent.\",\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"description\": \"Kind of the referent.\",\n       \"enum\": [\n        \"OCIRepository\",\n        \"GitRepository\",\n        \"Bucket\"\n       ],\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent.\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent, defaults to the namespace of the Kubernetes\\nresource object that contains the reference.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"kind\",\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"suspend\": {\n     \"description\": \"This flag tells the controller to suspend subsequent kustomize executions,\\nit does not apply to already started executions. Defaults to false.\",\n     \"type\": \"boolean\"\n    },\n    \"targetNamespace\": {\n     \"description\": \"TargetNamespace sets or overrides the namespace in the\\nkustomization.yaml file.\",\n     \"maxLength\": 63,\n     \"minLength\": 1,\n     \"type\": \"string\"\n    },\n    \"timeout\": {\n     \"description\": \"Timeout for validation, apply and health checking operations.\\nDefaults to 'Interval' duration.\",\n     \"pattern\": \"^([0-9]+(\\\\.[0-9]+)?(ms|s|m|h))+$\",\n     \"type\": \"string\"\n    },\n    \"wait\": {\n     \"description\": \"Wait instructs the controller to check the health of all the reconciled\\nresources. When enabled, the HealthChecks are ignored. Defaults to false.\",\n     \"type\": \"boolean\"\n    }\n   },\n   \"required\": [\n    \"interval\",\n    \"prune\",\n    \"sourceRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Kustomization\",\n \"type\": \"object\"\n}",
+   "version": "kustomize.toolkit.fluxcd.io/v1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "Kustomization",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "published": false,
+   "source_uri": "git://github.com/fluxcd/kustomize-controller/main/config/crd/bases"
+  },
+  "model": {
+   "category": {
+    "name": "App Definition and Development"
+   },
+   "displayName": "Flux Kustomization",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "isAnnotation": false,
+    "shape": "",
+    "source_uri": "git://github.com/fluxcd/kustomize-controller/main/config/crd/bases",
+    "styleOverrides": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "model": {
+    "version": "v1.4.0"
+   },
+   "name": "flux-kustomization",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "github",
+    "name": "Github",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "subCategory": "Continuous Integration \u0026 Delivery",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
+   "primaryColor": "",
+   "svgColor": "",
+   "svgWhite": ""
+  },
+  "version": "v1.0.0"
+ }

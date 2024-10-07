@@ -101,54 +101,58 @@ test('Verify that UI components are displayed', async ({ page }) => {
   expect((await page.locator('tr').count()) - 2).toEqual(connectionCount); // -2 for not considering header and footer
 });
 
-test('Add a cluster connection by uploading kubeconfig file', async ({ page }) => {
-  // Navigate to 'Connections' tab
-  await page.getByRole('tab', { name: 'Connections' }).click();
+test(
+  'Add a cluster connection by uploading kubeconfig file',
+  { tags: '@unstable' },
+  async ({ page }) => {
+    // Navigate to 'Connections' tab
+    await page.getByRole('tab', { name: 'Connections' }).click();
 
-  const addConnectionReq = page.waitForRequest(
-    (request) =>
-      request.url() === `${ENV.MESHERY_SERVER_URL}/api/system/kubernetes` &&
-      request.method() === 'POST',
-  );
-  const addConnectionRes = page.waitForResponse(
-    (response) =>
-      response.url() === `${ENV.MESHERY_SERVER_URL}/api/system/kubernetes` &&
-      response.status() === 200,
-  );
+    const addConnectionReq = page.waitForRequest(
+      (request) =>
+        request.url() === `${ENV.MESHERY_SERVER_URL}/api/system/kubernetes` &&
+        request.method() === 'POST',
+    );
+    const addConnectionRes = page.waitForResponse(
+      (response) =>
+        response.url() === `${ENV.MESHERY_SERVER_URL}/api/system/kubernetes` &&
+        response.status() === 200,
+    );
 
-  // Click Add Cluster button
-  await page.getByTestId('connection-addCluster').click();
+    // Click Add Cluster button
+    await page.getByTestId('connection-addCluster').click();
 
-  // Verify "Add Kubernetes Cluster(s)" modal opens
-  await expect(page.getByTestId('connection-addKubernetesModal')).toBeVisible();
+    // Verify "Add Kubernetes Cluster(s)" modal opens
+    await expect(page.getByTestId('connection-addKubernetesModal')).toBeVisible();
 
-  const fileChooserPromise = page.waitForEvent('filechooser');
-  await page.getByTestId('connection-uploadKubeConfig').click();
-  const fileChooser = await fileChooserPromise;
+    const fileChooserPromise = page.waitForEvent('filechooser');
+    await page.getByTestId('connection-uploadKubeConfig').click();
+    const fileChooser = await fileChooserPromise;
 
-  // Attach existing kubeconfig file of the system, to test the upload without making any changes in configuration
-  const kubeConfigPath = `${os.homedir()}/.kube/config`;
-  await fileChooser.setFiles(kubeConfigPath);
+    // Attach existing kubeconfig file of the system, to test the upload without making any changes in configuration
+    const kubeConfigPath = `${os.homedir()}/.kube/config`;
+    await fileChooser.setFiles(kubeConfigPath);
 
-  // Click "IMPORT" button
-  await page.getByRole('button', { name: 'IMPORT', exact: true }).click();
+    // Click "IMPORT" button
+    await page.getByRole('button', { name: 'IMPORT', exact: true }).click();
 
-  // Verify requests and responses
-  await addConnectionReq;
-  await addConnectionRes;
+    // Verify requests and responses
+    await addConnectionReq;
+    await addConnectionRes;
 
-  // Verify displaying of success modal
-  await expect(page.getByTestId('connection-discoveredModal')).toBeVisible();
+    // Verify displaying of success modal
+    await expect(page.getByTestId('connection-discoveredModal')).toBeVisible();
 
-  // Verify available contexts were connected
-  await expect(page.getByRole('menuitem', { name: 'connected' })).toBeVisible();
+    // Verify available contexts were connected
+    await expect(page.getByRole('menuitem', { name: 'connected' })).toBeVisible();
 
-  // Click "OK" button to close success modal
-  await page.getByRole('button', { name: 'OK', exact: true }).click();
-});
+    // Click "OK" button to close success modal
+    await page.getByRole('button', { name: 'OK', exact: true }).click();
+  },
+);
 
 transitionTests.forEach((t) => {
-  test(t.name, async ({ page }) => {
+  test(t.name, { tags: '@unstable' }, async ({ page }) => {
     const stateTransitionReq = page.waitForRequest(
       (request) =>
         request.url() ===

@@ -2941,6 +2941,12 @@ type Subscription {
     connectionIDs: [String!]
   ): [MesheryControllersStatusListItem!]! @KubernetesMiddleware
 
+  # Listen to the events that MeshSync is sending through Meshery Broker.
+  # Note: It does not listen to the changes in meshery database, but to meshsync events
+  # subscribeMeshSyncEvents(
+  #  connectionIDs: [String!]
+  #  eventTypes: [MeshSyncEventType!]
+  #) : MeshSyncEvent! @KubernetesMiddleware
 
   subscribeConfiguration( patternSelector: PageFilter!, filterSelector: PageFilter!) : ConfigurationPage!
 
