@@ -114,17 +114,15 @@ const MesheryPlayComponent = ({ meshAdapters, setAdapter, classes }) => {
   };
 
   useEffect(() => {
-    // componentDidMount
+ 
     router.events.on('routeChangeComplete', handleRouteChange);
 
-    return () => {
-      // componentWillUnmount
+    return () => { 
       router.events.off('routeChangeComplete', handleRouteChange);
     };
   }, []);
 
   useEffect(() => {
-    // componentDidUpdate
     if (prevMeshAdaptersRef.current?.size !== meshAdapters.size && meshAdapters.size > 0) {
       handleRouteChange();
     }
