@@ -11,12 +11,14 @@ import { Colors } from '@/themes/app';
 import { InfoTooltip } from '@layer5/sistent';
 import { IconButton } from '@layer5/sistent';
 import { OCIImageIcon } from '@/assets/icons/OciImage';
+import HelmIcon from '@/assets/icons/technology/HelmIcon';
 
 const ExportOption = ({
   title,
   Icon,
   onClick,
   content,
+  disabled = false,
   description = 'Download the design in the selected format',
 }) => {
   const theme = useTheme();
@@ -27,10 +29,11 @@ const ExportOption = ({
         flexDirection: 'column',
         gap: '0.5rem',
         borderRadius: '0.25rem',
+        opacity: disabled ? 0.5 : 1,
         marginBottom: '1rem',
         border: `1px solid ${theme.palette.border.normal}`,
         boxShadow: theme.shadows[1],
-        cursor: 'pointer',
+        cursor: disabled ? 'not-allowed' : 'default',
         '&:hover': {
           borderColor: theme.palette.border.brand,
         },
@@ -50,6 +53,7 @@ const ExportOption = ({
         <ListItemText primary={title} />
         <InfoTooltip placement="top" title={description} content={description} />
         <IconButton
+          disabled={disabled}
           onClick={onClick}
           sx={{
             marginLeft: '0.5rem',
@@ -62,7 +66,6 @@ const ExportOption = ({
     </ListItem>
   );
 };
-
 const ExportModal = (props) => {
   const {
     downloadModal,
@@ -85,14 +88,22 @@ const ExportModal = (props) => {
       onClick: (e) =>
         handleDesignDownload(e, downloadModal.content, null, 'export=Kubernetes Manifest'),
       description:
-        'Download the design as a Kubernetes Manifest file, that can be applied to a Kubernetes cluster. This is a lossy export as some metadata gets stripped off.',
+        'Download the design as a Kubernetes Manifest file, that can be applied to a Kubernetes cluster. This is a lossy export as some meshery specific  metadata gets stripped off.',
     },
     {
       title: 'OCI Image',
       icon: <OCIImageIcon width={'30'} height="30" />,
       onClick: (e) => handleDesignDownload(e, downloadModal.content, null, 'export=OCI Image'),
       description:
-        'Download the design as an OCI Image, that can be used to deploy the design as a container image.',
+        'Download the design as an OCI Image, that can be pushed to a container registry. This is a lossless export.',
+    },
+    {
+      title: 'Helm Chart (Coming Soon)',
+      icon: <HelmIcon width={'30'} height="30" />,
+      onClick: () => {},
+      disabled: true,
+      description:
+        'Download the design as a Helm Chart. This is a lossy export as some meshery specific metadata gets stripped off.',
     },
     ...extensionExportOptions,
   ];
@@ -116,6 +127,7 @@ const ExportModal = (props) => {
               title={option.title}
               Icon={option.icon}
               content={option.content}
+              disabled={option.disabled}
               description={option.description}
               onClick={(e) => option.onClick(e)}
             />
