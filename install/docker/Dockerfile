@@ -9,13 +9,47 @@ WORKDIR /github.com/meshery/meshery
 ADD . .
 RUN go clean -modcache; cd server; cd cmd; GOPROXY=https://proxy.golang.org GOSUMDB=off go build -ldflags="-w -s -X main.globalTokenForAnonymousResults=$TOKEN -X main.version=$GIT_VERSION -X main.commitsha=$GIT_COMMITSHA -X main.releasechannel=$RELEASE_CHANNEL" -tags draft -a -o /meshery .
 
-FROM node:lts as ui
-ADD ui ui
-RUN cd ui; npm install --omit=dev; npm run build && npm run export; mv out /; mv public /
+# This image will be reuse for both UI & UI Provider
+FROM node:18.13.0-alpine3.17 as base-node
 
-FROM node:lts as provider-ui
-ADD provider-ui provider-ui
-RUN cd provider-ui; npm install --omit=dev; npm run build && npm run export; mv out /
+FROM base-node as ui-deps
+RUN apk add --no-cache libc6-compat
+WORKDIR /app
+
+COPY ui/package.json ui/package-lock.json ./
+ENV HUSKY=0
+RUN npm ci --omit=dev --legacy-peer-deps --ignore-scripts
+
+FROM base-node AS ui-builder
+WORKDIR /app
+COPY --from=ui-deps /app/node_modules ./node_modules
+COPY ui .
+
+# Next.js collects completely anonymous telemetry data about general usage.
+# Learn more here: https://nextjs.org/telemetry
+# Uncomment the following line in case you want to disable telemetry during the build.
+ENV NEXT_TELEMETRY_DISABLED 1
+
+RUN npm run build && npm run export
+
+FROM base-node as ui-provider-deps
+RUN apk add --no-cache libc6-compat
+WORKDIR /app
+# Install dependencies based on the preferred package manager
+COPY provider-ui/package.json provider-ui/package-lock.json ./
+RUN npm ci --omit=dev --legacy-peer-deps
+
+FROM base-node AS ui-provider-builder
+WORKDIR /app
+COPY --from=ui-provider-deps /app/node_modules ./node_modules
+
+# Next.js collects completely anonymous telemetry data about general usage.
+# Learn more here: https://nextjs.org/telemetry
+# Uncomment the following line in case you want to disable telemetry during the build.
+ENV NEXT_TELEMETRY_DISABLED 1
+
+COPY provider-ui .
+RUN npm run build && npm run export
 
 FROM ubuntu as wrk2
 RUN apt-get -y update && apt-get -y install git && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/man/?? /usr/share/man/??_*
@@ -87,9 +121,9 @@ COPY ./server/permissions /app/server/permissions/
 COPY --from=meshery-server /meshery /app/server/cmd/
 COPY --from=meshery-server /etc/passwd /etc/passwd
 COPY --from=meshery-server /github.com/meshery/meshery/server/helpers/swagger.yaml /app/server/helpers/swagger.yaml
-COPY --from=ui /out /app/ui/out
-COPY --from=ui /public /app/ui/public
-COPY --from=provider-ui /out /app/provider-ui/out
+COPY --from=ui-builder /app/out /app/ui/out
+COPY --from=ui-builder /app/public /app/ui/public
+COPY --from=ui-provider-builder /app/out /app/provider-ui/out
 COPY --from=wrk2 /wrk2 /app/server/cmd/wrk2
 COPY --from=wrk2 /wrk2/wrk /usr/local/bin
 COPY --from=seed_content /seed_content /home/appuser/.meshery/seed_content
