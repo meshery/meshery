@@ -72,6 +72,7 @@ import { useThemePreference } from '@/themes/hooks';
 import { CircularProgress, RenderMarkdown } from '@layer5/sistent';
 import LoadingScreen from '@/components/LoadingComponents/LoadingComponentServer';
 import { LoadSessionGuard } from '@/rtk-query/ability';
+import { randomLoadingMessage } from '@/components/LoadingComponents/loadingMessages';
 
 if (typeof window !== 'undefined') {
   require('codemirror/mode/yaml/yaml');
@@ -704,7 +705,7 @@ class MesheryApp extends App {
     const canShowNav = !this.state.isFullScreenMode && uiConfig?.components?.navigator !== false;
 
     return (
-      <LoadingScreen message="Meshery Loading..." isLoading={this.state.isLoading}>
+      <LoadingScreen message={randomLoadingMessage} isLoading={this.state.isLoading}>
         <DynamicComponentProvider>
           <RelayEnvironmentProvider environment={relayEnvironment}>
             <MesheryThemeProvider>
