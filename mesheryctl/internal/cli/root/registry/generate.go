@@ -185,8 +185,10 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 	url := GoogleSpreadSheetURL + spreadsheeetID
 	totalAvailableModels := 0
 	spreadsheeetChan := make(chan utils.SpreadsheetData)
+	relationshipUpdateChan := make(chan utils.RelationshipCSV)
 
 	defer func() {
+
 		logModelGenerationSummary(modelToCompGenerateTracker)
 
 		utils.Log.UpdateLogOutput(os.Stdout)
@@ -199,6 +201,7 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 		_ = errorLogFile.Close()
 		totalAggregateModel = 0
 		totalAggregateComponents = 0
+
 	}()
 
 	modelCSVHelper, err := parseModelSheet(url)
@@ -229,6 +232,15 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 		utils.ProcessModelToComponentsMap(componentCSVHelper.Components)
 		utils.VerifyandUpdateSpreadsheet(spreadsheeetCred, &wgForSpreadsheetUpdate, srv, spreadsheeetChan, spreadsheeetID, modelCSVFilePath, componentCSVFilePath)
 
+	}()
+	var wgForRelationshipUpdates sync.WaitGroup
+	wgForRelationshipUpdates.Add(1)
+	go func() {
+		defer wgForRelationshipUpdates.Done()
+		for updatedRelationship := range relationshipUpdateChan {
+			// Collect the updated relationships
+			relationshipCSVHelper.UpdatedRelationships = append(relationshipCSVHelper.UpdatedRelationships, updatedRelationship)
+		}
 	}()
 	// Iterate models from the spreadsheet
 	for _, model := range modelCSVHelper.Models {
@@ -354,7 +366,13 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 	}
 	wg.Wait()
 	close(spreadsheeetChan)
-	utils.ProcessRelationships(relationshipCSVHelper)
+	utils.ProcessRelationships(relationshipCSVHelper, relationshipUpdateChan)
+	close(relationshipUpdateChan)
+	wgForRelationshipUpdates.Wait()
+	err = relationshipCSVHelper.UpdateRelationshipSheet(srv, spreadsheeetCred, spreadsheeetID, relationshipCSVFilePath)
+	if err == nil {
+		utils.Log.Info("Updated relationship to sheet.")
+	}
 	wgForSpreadsheetUpdate.Wait()
 	return nil
 }
