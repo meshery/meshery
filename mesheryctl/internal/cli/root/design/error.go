@@ -25,7 +25,6 @@ const (
 	ErrImportDesignCode          = "mesheryctl-1001"
 	ErrInValidSourceCode         = "mesheryctl-1002"
 	ErrOnboardDesignCode         = "mesheryctl-1003"
-	ErrDesignFoundCode           = "mesheryctl-1004"
 	ErrOffboardDesignCode        = "mesheryctl-1005"
 	ErrDesignFlagCode            = "mesheryctl-1006"
 	ErrDesignManifestCode        = "mesheryctl-1007"
