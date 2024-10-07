@@ -29,10 +29,9 @@ import { JustifyAndAlignCenter } from './MeshModel.style';
 import { withSuppressedErrorBoundary } from '../General/ErrorBoundary';
 import ReactJson from 'react-json-view';
 import { reactJsonTheme } from './helper';
-import Accordion from '@material-ui/core/Accordion';
-import AccordionDetails from '@material-ui/core/AccordionDetails';
-import AccordionSummary from '@material-ui/core/AccordionSummary';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { Accordion, AccordionDetails, AccordionSummary } from '@layer5/sistent';
+
 const ExportAvailable = true;
 const KeyValue = ({ property, value }) => {
   let formattedValue = value;
@@ -110,9 +109,15 @@ const RenderContents = ({
       </div>
       {jsonData && (
         <Accordion
-          style={{ borderRadius: '6px', backgroundColor: theme.palette.secondary.toolbarBg2 }}
+          style={{
+            borderRadius: '6px',
+            backgroundColor: theme.palette.secondary.toolbarBg2,
+            color: theme.palette.secondary.text,
+          }}
         >
-          <AccordionSummary expandIcon={<ExpandMoreIcon fill={'white'} />}>
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon style={{ fill: theme.palette.secondary.text }} />}
+          >
             Advanced Details
           </AccordionSummary>
           <AccordionDetails>
