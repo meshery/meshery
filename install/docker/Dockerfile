@@ -9,45 +9,36 @@ WORKDIR /github.com/meshery/meshery
 ADD . .
 RUN go clean -modcache; cd server; cd cmd; GOPROXY=https://proxy.golang.org GOSUMDB=off go build -ldflags="-w -s -X main.globalTokenForAnonymousResults=$TOKEN -X main.version=$GIT_VERSION -X main.commitsha=$GIT_COMMITSHA -X main.releasechannel=$RELEASE_CHANNEL" -tags draft -a -o /meshery .
 
-# This image will be reuse for both UI & UI Provider
 FROM node:18.13.0-alpine3.17 as base-node
 
-FROM base-node as ui-deps
+# Installing NodeJS Dependencies
+FROM base-node as meshery-ui-deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
-
 COPY ui/package.json ui/package-lock.json ./
 ENV HUSKY=0
 RUN npm ci --omit=dev --legacy-peer-deps --ignore-scripts
 
-FROM base-node AS ui-builder
-WORKDIR /app
-COPY --from=ui-deps /app/node_modules ./node_modules
-COPY ui .
-
-# Next.js collects completely anonymous telemetry data about general usage.
-# Learn more here: https://nextjs.org/telemetry
-# Uncomment the following line in case you want to disable telemetry during the build.
-ENV NEXT_TELEMETRY_DISABLED 1
-
-RUN npm run build && npm run export
-
-FROM base-node as ui-provider-deps
+FROM base-node as meshery-ui-provider-deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
-# Install dependencies based on the preferred package manager
 COPY provider-ui/package.json provider-ui/package-lock.json ./
 RUN npm ci --omit=dev --legacy-peer-deps
 
-FROM base-node AS ui-provider-builder
+# Build NextJS Application
+FROM base-node AS meshery-ui-builder
 WORKDIR /app
-COPY --from=ui-provider-deps /app/node_modules ./node_modules
-
-# Next.js collects completely anonymous telemetry data about general usage.
-# Learn more here: https://nextjs.org/telemetry
-# Uncomment the following line in case you want to disable telemetry during the build.
+COPY --from=meshery-ui-deps /app/node_modules ./node_modules
+COPY ui .
+# Disable NextJS Telemetry data collect
 ENV NEXT_TELEMETRY_DISABLED 1
+RUN npm run build && npm run export
 
+FROM base-node AS meshery-ui-provider-builder
+WORKDIR /app
+COPY --from=meshery-ui-provider-deps /app/node_modules ./node_modules
+# Disable NextJS Telemetry data collect
+ENV NEXT_TELEMETRY_DISABLED 1
 COPY provider-ui .
 RUN npm run build && npm run export
 
@@ -68,14 +59,12 @@ RUN lines=$(curl -s https://api.github.com/repos/layer5io/wasm-filters/releases/
     do \
     curl -LO $line \
     done
-
 # bundling patterns
 RUN curl -L -s https://github.com/service-mesh-patterns/service-mesh-patterns/tarball/master -o service-mesh-patterns.tgz \
     && mkdir service-mesh-patterns \
     && mkdir -p /seed_content/patterns \
     && tar xzf service-mesh-patterns.tgz --directory=service-mesh-patterns \
     && mv service-mesh-patterns/*/samples/* /seed_content/patterns/
-
 # bundling applications
 RUN mkdir -p /seed_content/applications && cd /seed_content/applications \
     && curl -LO https://raw.githubusercontent.com/istio/istio/master/samples/bookinfo/platform/kube/bookinfo.yaml \
@@ -94,7 +83,6 @@ RUN mkdir -p /seed_content/applications && cd /seed_content/applications \
 #RUN git config --global user.name "meshery"
 #RUN git clone https://github.com/layer5io/nighthawk-go
 #RUN cd nighthawk-go/apinighthawk/bin && chmod +x ./nighthawk_client
-
 
 FROM alpine:3.15.3
 ENV GLIBC_REPO=https://github.com/sgerrand/alpine-pkg-glibc
@@ -121,9 +109,9 @@ COPY ./server/permissions /app/server/permissions/
 COPY --from=meshery-server /meshery /app/server/cmd/
 COPY --from=meshery-server /etc/passwd /etc/passwd
 COPY --from=meshery-server /github.com/meshery/meshery/server/helpers/swagger.yaml /app/server/helpers/swagger.yaml
-COPY --from=ui-builder /app/out /app/ui/out
-COPY --from=ui-builder /app/public /app/ui/public
-COPY --from=ui-provider-builder /app/out /app/provider-ui/out
+COPY --from=meshery-ui-builder /app/out /app/ui/out
+COPY --from=meshery-ui-builder /app/public /app/ui/public
+COPY --from=meshery-ui-provider-builder /app/out /app/provider-ui/out
 COPY --from=wrk2 /wrk2 /app/server/cmd/wrk2
 COPY --from=wrk2 /wrk2/wrk /usr/local/bin
 COPY --from=seed_content /seed_content /home/appuser/.meshery/seed_content
