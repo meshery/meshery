@@ -6,6 +6,7 @@
 | Aadhitya Amarendiran    | alphaX86          | Citi        |
 | Jerod Culpepper         | cpepper96         | SAIC        |
 | Antonette Caldwell      | acald-creator     | Acquia      |
+| Matthieu Evrin          | lekaf974          | Independent |
 
 ### UI Maintainers
 
@@ -51,4 +52,3 @@
 | ----------------------  | -----------  | -------------- |
 | Nikhil Ladha            | Nikhil-Ladha | Red Hat        |
 | Aaditya Narayan Subedy  | asubedy      | Fast Retailing |
- 
