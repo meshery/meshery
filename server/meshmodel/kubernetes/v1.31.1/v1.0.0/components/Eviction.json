@@ -1,5 +1,128 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "Eviction",
    "schema": "{\"description\":\"Eviction evicts a pod from its node subject to certain policies and safety constraints. This is a subresource of Pod.  A request to cause such an eviction is created by POSTing to .../pods/\\u003cpod name\\u003e/evictions.\",\"properties\":{\"deleteOptions\":{\"allOf\":[{\"description\":\"DeleteOptions may be provided when deleting an API object.\",\"properties\":{\"apiVersion\":{\"description\":\"APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources\",\"type\":\"string\"},\"dryRun\":{\"description\":\"When present, indicates that modifications should not be persisted. An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request. Valid values are: - All: all dry run stages will be processed\",\"items\":{\"default\":\"\",\"type\":\"string\"},\"type\":\"array\",\"x-kubernetes-list-type\":\"atomic\"},\"gracePeriodSeconds\":{\"description\":\"The duration in seconds before the object should be deleted. Value must be non-negative integer. The value zero indicates delete immediately. If this value is nil, the default grace period for the specified type will be used. Defaults to a per object value if not specified. zero means delete immediately.\",\"format\":\"int64\",\"type\":\"integer\"},\"kind\":{\"description\":\"Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds\",\"type\":\"string\"},\"orphanDependents\":{\"description\":\"Deprecated: please use the PropagationPolicy, this field will be deprecated in 1.7. Should the dependent objects be orphaned. If true/false, the \\\"orphan\\\" finalizer will be added to/removed from the object's finalizers list. Either this field or PropagationPolicy may be set, but not both.\",\"type\":\"boolean\"},\"preconditions\":{\"allOf\":[{\"description\":\"Preconditions must be fulfilled before an operation (update, delete, etc.) is carried out.\",\"properties\":{\"resourceVersion\":{\"description\":\"Specifies the target ResourceVersion\",\"type\":\"string\"},\"uid\":{\"description\":\"Specifies the target UID.\",\"type\":\"string\"}},\"type\":\"object\"}],\"description\":\"Must be fulfilled before a deletion is carried out. If not possible, a 409 Conflict status will be returned.\"},\"propagationPolicy\":{\"description\":\"Whether and how garbage collection will be performed. Either this field or OrphanDependents may be set, but not both. The default policy is decided by the existing finalizer set in the metadata.finalizers and the resource-specific default policy. Acceptable values are: 'Orphan' - orphan the dependents; 'Background' - allow the garbage collector to delete the dependents in the background; 'Foreground' - a cascading policy that deletes all dependents in the foreground.\",\"type\":\"string\"}},\"type\":\"object\",\"x-kubernetes-group-version-kind\":[{\"group\":\"\",\"kind\":\"DeleteOptions\",\"version\":\"v1\"},{\"group\":\"admission.k8s.io\",\"kind\":\"DeleteOptions\",\"version\":\"v1\"},{\"group\":\"admission.k8s.io\",\"kind\":\"DeleteOptions\",\"version\":\"v1beta1\"},{\"group\":\"admissionregistration.k8s.io\",\"kind\":\"DeleteOptions\",\"version\":\"v1\"},{\"group\":\"admissionregistration.k8s.io\",\"kind\":\"DeleteOptions\",\"version\":\"v1alpha1\"},{\"group\":\"admissionregistration.k8s.io\",\"kind\":\"DeleteOptions\",\"version\":\"v1beta1\"},{\"group\":\"apiextensions.k8s.io\",\"kind\":\"DeleteOptions\",\"version\":\"v1\"},{\"group\":\"apiextensions.k8s.io\",\"kind\":\"DeleteOptions\",\"version\":\"v1beta1\"},{\"group\":\"apiregistration.k8s.io\",\"kind\":\"DeleteOptions\",\"version\":\"v1\"},{\"group\":\"apiregistration.k8s.io\",\"kind\":\"DeleteOptions\",\"version\":\"v1beta1\"},{\"group\":\"apps\",\"kind\":\"DeleteOptions\",\"version\":\"v1\"},{\"group\":\"apps\",\"kind\":\"DeleteOptions\",\"version\":\"v1beta1\"},{\"group\":\"apps\",\"kind\":\"DeleteOptions\",\"version\":\"v1beta2\"},{\"group\":\"authentication.k8s.io\",\"kind\":\"DeleteOptions\",\"version\":\"v1\"},{\"group\":\"authentication.k8s.io\",\"kind\":\"DeleteOptions\",\"version\":\"v1alpha1\"},{\"group\":\"authentication.k8s.io\",\"kind\":\"DeleteOptions\",\"version\":\"v1beta1\"},{\"group\":\"authorization.k8s.io\",\"kind\":\"DeleteOptions\",\"version\":\"v1\"},{\"group\":\"authorization.k8s.io\",\"kind\":\"DeleteOptions\",\"version\":\"v1beta1\"},{\"group\":\"autoscaling\",\"kind\":\"DeleteOptions\",\"version\":\"v1\"},{\"group\":\"autoscaling\",\"kind\":\"DeleteOptions\",\"version\":\"v2\"},{\"group\":\"autoscaling\",\"kind\":\"DeleteOptions\",\"version\":\"v2beta1\"},{\"group\":\"autoscaling\",\"kind\":\"DeleteOptions\",\"version\":\"v2beta2\"},{\"group\":\"batch\",\"kind\":\"DeleteOptions\",\"version\":\"v1\"},{\"group\":\"batch\",\"kind\":\"DeleteOptions\",\"version\":\"v1beta1\"},{\"group\":\"certificates.k8s.io\",\"kind\":\"DeleteOptions\",\"version\":\"v1\"},{\"group\":\"certificates.k8s.io\",\"kind\":\"DeleteOptions\",\"version\":\"v1alpha1\"},{\"group\":\"certificates.k8s.io\",\"kind\":\"DeleteOptions\",\"version\":\"v1beta1\"},{\"group\":\"coordination.k8s.io\",\"kind\":\"DeleteOptions\",\"version\":\"v1\"},{\"group\":\"coordination.k8s.io\",\"kind\":\"DeleteOptions\",\"version\":\"v1alpha1\"},{\"group\":\"coordination.k8s.io\",\"kind\":\"DeleteOptions\",\"version\":\"v1beta1\"},{\"group\":\"discovery.k8s.io\",\"kind\":\"DeleteOptions\",\"version\":\"v1\"},{\"group\":\"discovery.k8s.io\",\"kind\":\"DeleteOptions\",\"version\":\"v1beta1\"},{\"group\":\"events.k8s.io\",\"kind\":\"DeleteOptions\",\"version\":\"v1\"},{\"group\":\"events.k8s.io\",\"kind\":\"DeleteOptions\",\"version\":\"v1beta1\"},{\"group\":\"extensions\",\"kind\":\"DeleteOptions\",\"version\":\"v1beta1\"},{\"group\":\"flowcontrol.apiserver.k8s.io\",\"kind\":\"DeleteOptions\",\"version\":\"v1\"},{\"group\":\"flowcontrol.apiserver.k8s.io\",\"kind\":\"DeleteOptions\",\"version\":\"v1beta1\"},{\"group\":\"flowcontrol.apiserver.k8s.io\",\"kind\":\"DeleteOptions\",\"version\":\"v1beta2\"},{\"group\":\"flowcontrol.apiserver.k8s.io\",\"kind\":\"DeleteOptions\",\"version\":\"v1beta3\"},{\"group\":\"imagepolicy.k8s.io\",\"kind\":\"DeleteOptions\",\"version\":\"v1alpha1\"},{\"group\":\"internal.apiserver.k8s.io\",\"kind\":\"DeleteOptions\",\"version\":\"v1alpha1\"},{\"group\":\"networking.k8s.io\",\"kind\":\"DeleteOptions\",\"version\":\"v1\"},{\"group\":\"networking.k8s.io\",\"kind\":\"DeleteOptions\",\"version\":\"v1alpha1\"},{\"group\":\"networking.k8s.io\",\"kind\":\"DeleteOptions\",\"version\":\"v1beta1\"},{\"group\":\"node.k8s.io\",\"kind\":\"DeleteOptions\",\"version\":\"v1\"},{\"group\":\"node.k8s.io\",\"kind\":\"DeleteOptions\",\"version\":\"v1alpha1\"},{\"group\":\"node.k8s.io\",\"kind\":\"DeleteOptions\",\"version\":\"v1beta1\"},{\"group\":\"policy\",\"kind\":\"DeleteOptions\",\"version\":\"v1\"},{\"group\":\"policy\",\"kind\":\"DeleteOptions\",\"version\":\"v1beta1\"},{\"group\":\"rbac.authorization.k8s.io\",\"kind\":\"DeleteOptions\",\"version\":\"v1\"},{\"group\":\"rbac.authorization.k8s.io\",\"kind\":\"DeleteOptions\",\"version\":\"v1alpha1\"},{\"group\":\"rbac.authorization.k8s.io\",\"kind\":\"DeleteOptions\",\"version\":\"v1beta1\"},{\"group\":\"resource.k8s.io\",\"kind\":\"DeleteOptions\",\"version\":\"v1alpha3\"},{\"group\":\"scheduling.k8s.io\",\"kind\":\"DeleteOptions\",\"version\":\"v1\"},{\"group\":\"scheduling.k8s.io\",\"kind\":\"DeleteOptions\",\"version\":\"v1alpha1\"},{\"group\":\"scheduling.k8s.io\",\"kind\":\"DeleteOptions\",\"version\":\"v1beta1\"},{\"group\":\"storage.k8s.io\",\"kind\":\"DeleteOptions\",\"version\":\"v1\"},{\"group\":\"storage.k8s.io\",\"kind\":\"DeleteOptions\",\"version\":\"v1alpha1\"},{\"group\":\"storage.k8s.io\",\"kind\":\"DeleteOptions\",\"version\":\"v1beta1\"},{\"group\":\"storagemigration.k8s.io\",\"kind\":\"DeleteOptions\",\"version\":\"v1alpha1\"}]}],\"description\":\"DeleteOptions may be provided\"}},\"type\":\"object\",\"x-kubernetes-group-version-kind\":[{\"group\":\"policy\",\"kind\":\"Eviction\",\"version\":\"v1\"}]}",

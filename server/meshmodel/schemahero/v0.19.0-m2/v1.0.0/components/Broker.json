@@ -183,7 +183,7 @@
    "relationships": null
   },
   "schemaVersion": "components.meshery.io/v1beta1",
-  "status": "ignored",
+  "status": "enabled",
   "styles": {
    "primaryColor": "#1d4493",
    "secondaryColor": "#34579e",
