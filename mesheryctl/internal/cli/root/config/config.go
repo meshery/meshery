@@ -96,6 +96,8 @@ func (mc *MesheryCtlConfig) CheckIfCurrentContextIsValid() (*Context, error) {
 
 	return &Context{}, errors.New("current context " + mc.CurrentContext + " does not exist")
 }
+
+// CheckIfGivenContextIsValid checks if given context is valid
 func (mc *MesheryCtlConfig) CheckIfGivenContextIsValid(name string) (*Context, error) {
 	ctx, exists := mc.Contexts[name]
 	if exists {
@@ -115,6 +117,7 @@ func (mc *MesheryCtlConfig) GetBaseMesheryURL() string {
 	return currentContext.Endpoint
 }
 
+// GetCurrentContextName returns the current context name
 func (mc *MesheryCtlConfig) GetCurrentContextName() string {
 	return mc.CurrentContext
 }
@@ -129,7 +132,7 @@ func (mc *MesheryCtlConfig) GetCurrentContext() (*Context, error) {
 	return currentContext, err
 }
 
-// Get any context
+// GetContext Get any context
 func (mc *MesheryCtlConfig) GetContext(name string) (*Context, error) {
 	context, err := mc.CheckIfGivenContextIsValid(name)
 	if err != nil {
@@ -422,6 +425,7 @@ func DeleteTokenFromConfig(tokenName string, configPath string) error {
 	return errors.New("no such token exists")
 }
 
+// SetTokenToConfig  set token config
 func SetTokenToConfig(tokenName string, configPath string, ctxName string) error {
 	if _, err := os.Stat(configPath); os.IsNotExist(err) {
 		return err

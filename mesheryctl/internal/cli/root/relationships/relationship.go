@@ -41,6 +41,7 @@ type MeshmodelRelationshipsAPIResponse struct {
 	Relationships []relationship.RelationshipDefinition `json:"relationships"`
 }
 
+// RelationshipCmd is the entry point for the relationship command group.
 var RelationshipCmd = &cobra.Command{
 	Use:   "relationship",
 	Short: "View list of relationships and details of relationship",

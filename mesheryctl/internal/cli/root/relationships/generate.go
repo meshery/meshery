@@ -34,6 +34,7 @@ type CustomValueRange struct {
 	VisualizationExample string `json:"VisualizationExample"`
 }
 
+// GenerateRelationshipDocsCmd generates relationship docs
 var GenerateRelationshipDocsCmd = &cobra.Command{
 	Use:   "generate",
 	Short: "generate relationships docs",

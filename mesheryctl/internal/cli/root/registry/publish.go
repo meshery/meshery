@@ -269,6 +269,7 @@ func init() {
 	// publishCmd.MarkFlagRequired("imgs-output-path")
 }
 
+// WriteModelDefToFileSystem writes the model definition to the file system
 func WriteModelDefToFileSystem(model *utils.ModelCSV, version string, location string) (string, *model.ModelDefinition, error) {
 	modelDef := model.CreateModelDefinition(version, defVersion)
 	modelDefPath := filepath.Join(location, modelDef.Name)

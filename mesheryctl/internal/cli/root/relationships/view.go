@@ -32,6 +32,7 @@ import (
 	"github.com/spf13/viper"
 )
 
+// ViewRelationshipsCmd represents the view command
 var ViewRelationshipsCmd = &cobra.Command{
 	Use:   "view",
 	Short: "view relationships of a model by its name",
