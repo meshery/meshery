@@ -42,8 +42,8 @@ var (
 	ErrInvalidArgumentCode        = "mesheryctl-1118"
 	ErrGeneratingIconsCode        = "mesheryctl-1119"
 	ErrClearLineCode              = "mesheryctl-1120"
-	ErrUpdateToSheetCode          = "replace_me"
-	ErrUpdateRelationshipFileCode = "replace_me"
+	ErrUpdateToSheetCode          = "mesheryctl-1129"
+	ErrUpdateRelationshipFileCode = "mesheryctl-1130"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at

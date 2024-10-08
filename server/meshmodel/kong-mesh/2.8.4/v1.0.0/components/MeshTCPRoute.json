@@ -1,0 +1,193 @@
+{
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "MeshTCPRoute",
+   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Spec is the specification of the Kuma MeshTCPRoute resource.\",\n   \"properties\": {\n    \"targetRef\": {\n     \"description\": \"TargetRef is a reference to the resource the policy takes an effect on.\\nThe resource could be either a real store object or virtual resource\\ndefined in-place.\",\n     \"properties\": {\n      \"kind\": {\n       \"description\": \"Kind of the referenced resource\",\n       \"enum\": [\n        \"Mesh\",\n        \"MeshSubset\",\n        \"MeshGateway\",\n        \"MeshService\",\n        \"MeshExternalService\",\n        \"MeshServiceSubset\",\n        \"MeshHTTPRoute\"\n       ],\n       \"type\": \"string\"\n      },\n      \"labels\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"Labels are used to select group of MeshServices that match labels. Either Labels or\\nName and Namespace can be used.\",\n       \"type\": \"object\"\n      },\n      \"mesh\": {\n       \"description\": \"Mesh is reserved for future use to identify cross mesh resources.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referenced resource. Can only be used with kinds: `MeshService`,\\n`MeshServiceSubset` and `MeshGatewayRoute`\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace specifies the namespace of target resource. If empty only resources in policy namespace\\nwill be targeted.\",\n       \"type\": \"string\"\n      },\n      \"proxyTypes\": {\n       \"description\": \"ProxyTypes specifies the data plane types that are subject to the policy. When not specified,\\nall data plane types are targeted by the policy.\",\n       \"items\": {\n        \"enum\": [\n         \"Sidecar\",\n         \"Gateway\"\n        ],\n        \"type\": \"string\"\n       },\n       \"minItems\": 1,\n       \"type\": \"array\"\n      },\n      \"sectionName\": {\n       \"description\": \"SectionName is used to target specific section of resource.\\nFor example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.\",\n       \"type\": \"string\"\n      },\n      \"tags\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"Tags used to select a subset of proxies by tags. Can only be used with kinds\\n`MeshSubset` and `MeshServiceSubset`\",\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"to\": {\n     \"description\": \"To list makes a match between the consumed services and corresponding\\nconfigurations\",\n     \"items\": {\n      \"properties\": {\n       \"rules\": {\n        \"description\": \"Rules contains the routing rules applies to a combination of top-level\\ntargetRef and the targetRef in this entry.\",\n        \"items\": {\n         \"properties\": {\n          \"default\": {\n           \"description\": \"Default holds routing rules that can be merged with rules from other\\npolicies.\",\n           \"properties\": {\n            \"backendRefs\": {\n             \"items\": {\n              \"description\": \"BackendRef defines where to forward traffic.\",\n              \"properties\": {\n               \"kind\": {\n                \"description\": \"Kind of the referenced resource\",\n                \"enum\": [\n                 \"Mesh\",\n                 \"MeshSubset\",\n                 \"MeshGateway\",\n                 \"MeshService\",\n                 \"MeshExternalService\",\n                 \"MeshServiceSubset\",\n                 \"MeshHTTPRoute\"\n                ],\n                \"type\": \"string\"\n               },\n               \"labels\": {\n                \"additionalProperties\": {\n                 \"type\": \"string\"\n                },\n                \"description\": \"Labels are used to select group of MeshServices that match labels. Either Labels or\\nName and Namespace can be used.\",\n                \"type\": \"object\"\n               },\n               \"mesh\": {\n                \"description\": \"Mesh is reserved for future use to identify cross mesh resources.\",\n                \"type\": \"string\"\n               },\n               \"name\": {\n                \"description\": \"Name of the referenced resource. Can only be used with kinds: `MeshService`,\\n`MeshServiceSubset` and `MeshGatewayRoute`\",\n                \"type\": \"string\"\n               },\n               \"namespace\": {\n                \"description\": \"Namespace specifies the namespace of target resource. If empty only resources in policy namespace\\nwill be targeted.\",\n                \"type\": \"string\"\n               },\n               \"port\": {\n                \"description\": \"Port is only supported when this ref refers to a real MeshService object\",\n                \"format\": \"int32\",\n                \"type\": \"integer\"\n               },\n               \"proxyTypes\": {\n                \"description\": \"ProxyTypes specifies the data plane types that are subject to the policy. When not specified,\\nall data plane types are targeted by the policy.\",\n                \"items\": {\n                 \"enum\": [\n                  \"Sidecar\",\n                  \"Gateway\"\n                 ],\n                 \"type\": \"string\"\n                },\n                \"minItems\": 1,\n                \"type\": \"array\"\n               },\n               \"sectionName\": {\n                \"description\": \"SectionName is used to target specific section of resource.\\nFor example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.\",\n                \"type\": \"string\"\n               },\n               \"tags\": {\n                \"additionalProperties\": {\n                 \"type\": \"string\"\n                },\n                \"description\": \"Tags used to select a subset of proxies by tags. Can only be used with kinds\\n`MeshSubset` and `MeshServiceSubset`\",\n                \"type\": \"object\"\n               },\n               \"weight\": {\n                \"default\": 1,\n                \"minimum\": 0,\n                \"type\": \"integer\"\n               }\n              },\n              \"type\": \"object\"\n             },\n             \"minItems\": 1,\n             \"type\": \"array\"\n            }\n           },\n           \"required\": [\n            \"backendRefs\"\n           ],\n           \"type\": \"object\"\n          }\n         },\n         \"required\": [\n          \"default\"\n         ],\n         \"type\": \"object\"\n        },\n        \"maxItems\": 1,\n        \"type\": \"array\"\n       },\n       \"targetRef\": {\n        \"description\": \"TargetRef is a reference to the resource that represents a group of\\ndestinations.\",\n        \"properties\": {\n         \"kind\": {\n          \"description\": \"Kind of the referenced resource\",\n          \"enum\": [\n           \"Mesh\",\n           \"MeshSubset\",\n           \"MeshGateway\",\n           \"MeshService\",\n           \"MeshExternalService\",\n           \"MeshServiceSubset\",\n           \"MeshHTTPRoute\"\n          ],\n          \"type\": \"string\"\n         },\n         \"labels\": {\n          \"additionalProperties\": {\n           \"type\": \"string\"\n          },\n          \"description\": \"Labels are used to select group of MeshServices that match labels. Either Labels or\\nName and Namespace can be used.\",\n          \"type\": \"object\"\n         },\n         \"mesh\": {\n          \"description\": \"Mesh is reserved for future use to identify cross mesh resources.\",\n          \"type\": \"string\"\n         },\n         \"name\": {\n          \"description\": \"Name of the referenced resource. Can only be used with kinds: `MeshService`,\\n`MeshServiceSubset` and `MeshGatewayRoute`\",\n          \"type\": \"string\"\n         },\n         \"namespace\": {\n          \"description\": \"Namespace specifies the namespace of target resource. If empty only resources in policy namespace\\nwill be targeted.\",\n          \"type\": \"string\"\n         },\n         \"proxyTypes\": {\n          \"description\": \"ProxyTypes specifies the data plane types that are subject to the policy. When not specified,\\nall data plane types are targeted by the policy.\",\n          \"items\": {\n           \"enum\": [\n            \"Sidecar\",\n            \"Gateway\"\n           ],\n           \"type\": \"string\"\n          },\n          \"minItems\": 1,\n          \"type\": \"array\"\n         },\n         \"sectionName\": {\n          \"description\": \"SectionName is used to target specific section of resource.\\nFor example, you can target port from MeshService.ports[] by its name. Only traffic to this port will be affected.\",\n          \"type\": \"string\"\n         },\n         \"tags\": {\n          \"additionalProperties\": {\n           \"type\": \"string\"\n          },\n          \"description\": \"Tags used to select a subset of proxies by tags. Can only be used with kinds\\n`MeshSubset` and `MeshServiceSubset`\",\n          \"type\": \"object\"\n         }\n        },\n        \"type\": \"object\"\n       }\n      },\n      \"required\": [\n       \"targetRef\"\n      ],\n      \"type\": \"object\"\n     },\n     \"minItems\": 1,\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"targetRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Mesh TCP Route\",\n \"type\": \"object\"\n}",
+   "version": "kuma.io/v1alpha1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "Mesh TCP Route",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "published": false,
+   "source_uri": "https://github.com/Kong/kong-mesh-charts/releases/download/kong-mesh-2.8.4/kong-mesh-2.8.4.tgz"
+  },
+  "model": {
+   "category": {
+    "name": "Cloud Native Network"
+   },
+   "displayName": "Kong Mesh",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "isAnnotation": false,
+    "primaryColor": "#003459",
+    "shape": "circle",
+    "source_uri": "https://github.com/Kong/kong-mesh-charts/releases/download/kong-mesh-2.8.4/kong-mesh-2.8.4.tgz",
+    "styleOverrides": "",
+    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" id=\"Layer_1\" xmlns:_xmlns=\"xmlns\" _xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 45.3 40.8\" style=\"enable-background:new 0 0 45.3 40.8;\" xml:space=\"preserve\" height=\"20\" width=\"20\"\u003e\n\u003cstyle xmlns=\"http://www.w3.org/2000/svg\" type=\"text/css\"\u003e\n        .st0{fill-rule:evenodd;clip-rule:evenodd;fill:#003459;}\n\u003c/style\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"st0\" d=\"M14.9,33.6h8.3l4.3,5.4l-0.7,1.9H16l0.3-1.9l-2.5-4L14.9,33.6z M20.8,9.7h4.5l20,23.9l-1.6,7.3h-8.6l0.5-2\u0026#xA;        L17,16.5L20.8,9.7z M28.7,0L38,7.3l-1.2,1.2l1.6,2.2v2.4L33.8,17L26,7.8h-4.5l1.8-3.4L28.7,0z M9.1,23.4l6.5-5.6l8.6,10.4L21.8,32\u0026#xA;        h-7.9l-5.5,7.2l-1.3,1.7H0V32l6.6-8.6H9.1z\"\u003e\u003c/path\u003e\n\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" id=\"Layer_1\" xmlns:_xmlns=\"xmlns\" _xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 45.3 40.8\" style=\"enable-background:new 0 0 45.3 40.8;\" xml:space=\"preserve\" height=\"20\" width=\"20\"\u003e\n\u003cstyle xmlns=\"http://www.w3.org/2000/svg\" type=\"text/css\"\u003e\n\u0026#x9;.st0{fill:#FFFFFF;}\n\u003c/style\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"st0\" d=\"M14.9,33.6h8.3l4.3,5.4l-0.7,1.9H16l0.3-1.9l-2.5-4L14.9,33.6z M20.8,9.7h4.5l20,23.9l-1.6,7.3h-8.6l0.5-2\u0026#xA;\u0026#x9;L17,16.5L20.8,9.7z M28.7,0L38,7.3l-1.2,1.2l1.6,2.2v2.4L33.8,17L26,7.8h-4.5l1.8-3.4L28.7,0z M9.1,23.4l6.5-5.6l8.6,10.4L21.8,32\u0026#xA;\u0026#x9;h-7.9l-5.5,7.2l-1.3,1.7H0V32l6.6-8.6H9.1z\"\u003e\u003c/path\u003e\n\u003c/svg\u003e"
+   },
+   "model": {
+    "version": "2.8.4"
+   },
+   "name": "kong-mesh",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "enabled",
+   "subCategory": "Service Mesh",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
+   "primaryColor": "#003494",
+   "shape": "circle",
+   "svgColor": "\u003csvg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 45.3 40.8\" style=\"enable-background:new 0 0 45.3 40.8;\" xml:space=\"preserve\"\u003e \u003cstyle type=\"text/css\"\u003e .st0{fill-rule:evenodd;clip-rule:evenodd;fill:#003459;} \u003c/style\u003e \u003cpath class=\"st0\" d=\"M14.9,33.6h8.3l4.3,5.4l-0.7,1.9H16l0.3-1.9l-2.5-4L14.9,33.6z M20.8,9.7h4.5l20,23.9l-1.6,7.3h-8.6l0.5-2 L17,16.5L20.8,9.7z M28.7,0L38,7.3l-1.2,1.2l1.6,2.2v2.4L33.8,17L26,7.8h-4.5l1.8-3.4L28.7,0z M9.1,23.4l6.5-5.6l8.6,10.4L21.8,32 h-7.9l-5.5,7.2l-1.3,1.7H0V32l6.6-8.6H9.1z\"/\u003e \u003c/svg\u003e",
+   "svgWhite": "\u003csvg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 45.3 40.8\" style=\"enable-background:new 0 0 45.3 40.8;\" xml:space=\"preserve\"\u003e \u003cstyle type=\"text/css\"\u003e .st0{fill:#FFFFFF;} \u003c/style\u003e \u003cpath class=\"st0\" d=\"M14.9,33.6h8.3l4.3,5.4l-0.7,1.9H16l0.3-1.9l-2.5-4L14.9,33.6z M20.8,9.7h4.5l20,23.9l-1.6,7.3h-8.6l0.5-2 L17,16.5L20.8,9.7z M28.7,0L38,7.3l-1.2,1.2l1.6,2.2v2.4L33.8,17L26,7.8h-4.5l1.8-3.4L28.7,0z M9.1,23.4l6.5-5.6l8.6,10.4L21.8,32 h-7.9l-5.5,7.2l-1.3,1.7H0V32l6.6-8.6H9.1z\"/\u003e \u003c/svg\u003e"
+  },
+  "version": "v1.0.0"
+ }

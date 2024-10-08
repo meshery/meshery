@@ -16,7 +16,7 @@ Display a design content
 
 ## Synopsis
 
-Displays the contents of a specific design based on name or id
+Display the content of a specific design based on name or id
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl design view design name [flags]
