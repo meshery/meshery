@@ -85,6 +85,7 @@ const styles = (theme) => ({
 
 const MesheryPlayComponent = (props) => {
   const router = useRouter();
+
   const { meshAdapters, classes } = props;
   const [adapter, setAdapterState] = useState({});
 
