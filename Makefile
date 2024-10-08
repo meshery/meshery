@@ -15,20 +15,6 @@
 include install/Makefile.core.mk
 include install/Makefile.show-help.mk
 
-
-#-----------------------------------------------------------------------------
-# INITIALIZE ENVIRONMENT
-#-----------------------------------------------------------------------------
-
-args-set:
-
-ifdef PORT  # Check if parameter is set
-	@echo "Using PORT: $(PORT)"
-else
-	@echo "Using PORT: $(PORT)"
-# @echo "Building at Meshery tag: $(MESHERY_VERSION)"
-endif
-
 #-----------------------------------------------------------------------------
 # Docker-based Builds
 #-----------------------------------------------------------------------------
@@ -164,7 +150,7 @@ server: dep-check args-set
 	cd server; cd cmd; go mod tidy; \
 	BUILD="$(GIT_VERSION)" \
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
-	PORT=9081 \
+	PORT=$(PORT) \
 	DEBUG=true \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	KEYS_PATH=$(KEYS_PATH) \
