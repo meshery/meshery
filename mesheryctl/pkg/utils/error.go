@@ -234,14 +234,14 @@ func FilterViewError(msg string) string {
 	return formatError(msg, cmdFilterView)
 }
 
-// PatternError returns a formatted error message with a link to 'pattern' command usage page in addition to the error message
-func PatternError(msg string) string {
-	return formatError(msg, cmdPattern)
+// DesignError returns a formatted error message with a link to 'design' command usage page in addition to the error message
+func DesignError(msg string) string {
+	return formatError(msg, cmdDesign)
 }
 
-// PatternViewError returns a formatted error message with a link to the 'pattern view' commad usage page in addition to the error message
-func PatternViewError(msg string) string {
-	return formatError(msg, cmdPatternView)
+// DesignViewError returns a formatted error message with a link to the 'design view' commad usage page in addition to the error message
+func DesignViewError(msg string) string {
+	return formatError(msg, cmdDesignView)
 }
 
 // formatError returns a formatted error message with a link to the meshery command URL
@@ -277,12 +277,12 @@ func formatError(msg string, cmd cmdType) string {
 		return formatUsageDetails(msg, filterListURL)
 	case cmdFilterView:
 		return formatUsageDetails(msg, filterViewURL)
-	case cmdPattern:
-		return formatUsageDetails(msg, patternUsageURL)
-	case cmdPatternView:
-		return formatUsageDetails(msg, patternViewURL)
-	case cmdPatternExport:
-		return formatUsageDetails(msg, patternExportURL)
+	case cmdDesign:
+		return formatUsageDetails(msg, designUsageURL)
+	case cmdDesignView:
+		return formatUsageDetails(msg, designViewURL)
+	case cmdDesignExport:
+		return formatUsageDetails(msg, designExportURL)
 	case cmdContextDelete:
 		return formatUsageDetails(msg, contextDeleteURL)
 	case cmdContextCreate:
