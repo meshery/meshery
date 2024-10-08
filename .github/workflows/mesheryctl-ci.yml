@@ -62,7 +62,7 @@ jobs:
           RELEASE_CHANNEL: "edge"
         with:
           version: latest
-          args: release --snapshot --skip-publish --clean
+          args: release --snapshot --skip publish --clean -f .github/.goreleaser.yml
   mesheryctl_docs:
     if: "always() && github.event_name != 'pull_request' && github.repository == 'meshery/meshery' "
     runs-on: ubuntu-22.04
