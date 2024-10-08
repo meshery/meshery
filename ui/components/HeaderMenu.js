@@ -21,7 +21,6 @@ import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
-import { Button } from '@material-ui/core';
 
 const LinkDiv = styled('div')(() => ({
   display: 'inline-flex',
@@ -154,21 +153,10 @@ const HeaderMenu = (props) => {
 
   const open = Boolean(anchorEl);
 
-  const source = new URL('/api/user/token', window.location.origin);
-  const sourceURL = btoa(source.toString());
-  const refURL = btoa(window.location.origin);
-
   if (userData?.status == 'anonymous') {
-    const url = `${capabilitiesRegistry?.provider_url}?anonymousUserID=${userData?.id}&source=${sourceURL}&ref=${refURL}`;
-
-    return (
-      <Link href={url}>
-        <Button variant="contained" color="primary">
-          Sign In
-        </Button>
-      </Link>
-    );
+    return null;
   }
+
   return (
     <div>
       <NoSsr>
