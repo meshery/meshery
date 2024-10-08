@@ -16,16 +16,12 @@ import (
 var update = flag.Bool("update", false, "update golden files")
 
 func TestDesignList(t *testing.T) {
-	// setup current context
 	utils.SetupContextEnv(t)
 
-	// initialize mock server for handling requests
 	utils.StartMockery(t)
 
-	// create a test helper
 	testContext := utils.NewTestHelper(t)
 
-	// get current directory
 	_, filename, _, ok := runtime.Caller(0)
 	if !ok {
 		t.Fatal("Not able to get current working directory")
@@ -63,20 +59,15 @@ func TestDesignList(t *testing.T) {
 		},
 	}
 
-	// Run tests
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			// View api response from golden files
 			apiResponse := utils.NewGoldenFile(t, tt.Fixture, fixturesDir).Load()
 
-			// set token
 			utils.TokenFlag = tt.Token
 
-			// mock response
 			httpmock.RegisterResponder("GET", tt.URL,
 				httpmock.NewStringResponder(200, apiResponse))
 
-			// Expected response
 			testdataDir := filepath.Join(currDir, "testdata")
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
 
@@ -107,24 +98,25 @@ func TestDesignList(t *testing.T) {
 			out, _ := io.ReadAll(r)
 			os.Stdout = rescueStdout
 
-			// response being printed in console
 			actualResponse := string(out)
 
-			// write it in file
 			if *update {
 				golden.Write(actualResponse)
 			}
 			expectedResponse := golden.Load()
 			expectedResponse = trimLastNLines(expectedResponse, 2)
 
-			utils.Equals(t, expectedResponse, actualResponse)
+			cleanedActualResponse := utils.CleanStringFromHandlePagination(actualResponse)
+			cleanedExceptedResponse := utils.CleanStringFromHandlePagination(expectedResponse)
+
+			utils.Equals(t, cleanedExceptedResponse, cleanedActualResponse)
 		})
 		t.Log("List Design test Passed")
 	}
 
-	// stop mock server
 	utils.StopMockery(t)
 }
+
 
 func trimLastNLines(s string, n int) string {
 	lines := strings.Split(s, "\n")
