@@ -15,6 +15,20 @@
 include install/Makefile.core.mk
 include install/Makefile.show-help.mk
 
+
+#-----------------------------------------------------------------------------
+# INITIALIZE ENVIRONMENT
+#-----------------------------------------------------------------------------
+
+args-set:
+
+ifdef PORT  # Check if parameter is set
+	@echo "Using PORT: $(PORT)"
+else
+	@echo "Using PORT: $(PORT)"
+# @echo "Building at Meshery tag: $(MESHERY_VERSION)"
+endif
+
 #-----------------------------------------------------------------------------
 # Docker-based Builds
 #-----------------------------------------------------------------------------
@@ -146,7 +160,7 @@ server-stg: dep-check
 	go run main.go error.go;
 
 ## Build and run Meshery Server on your local machine.
-server: dep-check
+server: dep-check args-set
 	cd server; cd cmd; go mod tidy; \
 	BUILD="$(GIT_VERSION)" \
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
