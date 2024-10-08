@@ -145,7 +145,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.RELEASE_NOTES_PAT }}
           RELEASE_CHANNEL: "stable"
         with:
-          version: '~> v2'
+          version: 2
           args: release --clean --skip=validate -f .github/.goreleaser.yml
       - name: bump homebrew-core formula
         uses: mislav/bump-homebrew-formula-action@v3
