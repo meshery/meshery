@@ -1,0 +1,286 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "evaluationQuery": "",
+  "kind": "hierarchical",
+  "metadata": {
+    "description": "This relationship defines how various Dapr components (HTTPEndpoint, Resiliency, Configuration, and Subscription) are applied to a sidecar container running daprd. It represents a hierarchical inventory relationship where the child components (Dapr resources) patch the configuration of the parent component (sidecar container).",
+    "styles": {
+      "primaryColor": "",
+      "svgColor": "",
+      "svgWhite": ""
+    }
+  },
+  "model": {
+    "category": {
+      "name": ""
+    },
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": "1.13.0"
+    },
+    "name": "dapr",
+    "registrant": {
+      "created_at": "0001-01-01T00:00:00Z",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "deleted_at": "0001-01-01T00:00:00Z",
+      "id": "00000000-0000-0000-0000-000000000000",
+      "kind": "",
+      "name": "",
+      "status": "",
+      "sub_type": "",
+      "type": "",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "user_id": "00000000-0000-0000-0000-000000000000"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "",
+    "status": "",
+    "version": "",
+    "components": null,
+    "relationships": null
+  },
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "id": null,
+            "kind": "HTTPEndpoint",
+            "match": {},
+            "model": {
+              "category": {
+                "name": ""
+              },
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "dapr",
+              "registrant": {
+                "created_at": "0001-01-01T00:00:00Z",
+                "credential_id": "00000000-0000-0000-0000-000000000000",
+                "deleted_at": "0001-01-01T00:00:00Z",
+                "id": "00000000-0000-0000-0000-000000000000",
+                "kind": "artifacthub",
+                "name": "",
+                "status": "",
+                "sub_type": "",
+                "type": "",
+                "updated_at": "0001-01-01T00:00:00Z",
+                "user_id": "00000000-0000-0000-0000-000000000000"
+              },
+              "connection_id": "00000000-0000-0000-0000-000000000000",
+              "schemaVersion": "",
+              "status": "",
+              "version": "",
+              "components": null,
+              "relationships": null
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "routes"
+                ]
+              ]
+            }
+          },
+          {
+            "id": null,
+            "kind": "Resiliency",
+            "match": {},
+            "model": {
+              "category": {
+                "name": ""
+              },
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "dapr",
+              "registrant": {
+                "created_at": "0001-01-01T00:00:00Z",
+                "credential_id": "00000000-0000-0000-0000-000000000000",
+                "deleted_at": "0001-01-01T00:00:00Z",
+                "id": "00000000-0000-0000-0000-000000000000",
+                "kind": "artifacthub",
+                "name": "",
+                "status": "",
+                "sub_type": "",
+                "type": "",
+                "updated_at": "0001-01-01T00:00:00Z",
+                "user_id": "00000000-0000-0000-0000-000000000000"
+              },
+              "connection_id": "00000000-0000-0000-0000-000000000000",
+              "schemaVersion": "",
+              "status": "",
+              "version": "",
+              "components": null,
+              "relationships": null
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "policies"
+                ]
+              ]
+            }
+          },
+          {
+            "id": null,
+            "kind": "Configuration",
+            "match": {},
+            "model": {
+              "category": {
+                "name": ""
+              },
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "dapr",
+              "registrant": {
+                "created_at": "0001-01-01T00:00:00Z",
+                "credential_id": "00000000-0000-0000-0000-000000000000",
+                "deleted_at": "0001-01-01T00:00:00Z",
+                "id": "00000000-0000-0000-0000-000000000000",
+                "kind": "artifacthub",
+                "name": "",
+                "status": "",
+                "sub_type": "",
+                "type": "",
+                "updated_at": "0001-01-01T00:00:00Z",
+                "user_id": "00000000-0000-0000-0000-000000000000"
+              },
+              "connection_id": "00000000-0000-0000-0000-000000000000",
+              "schemaVersion": "",
+              "status": "",
+              "version": "",
+              "components": null,
+              "relationships": null
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "spec"
+                ]
+              ]
+            }
+          },
+          {
+            "id": null,
+            "kind": "Subscription",
+            "match": {},
+            "model": {
+              "category": {
+                "name": ""
+              },
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "dapr",
+              "registrant": {
+                "created_at": "0001-01-01T00:00:00Z",
+                "credential_id": "00000000-0000-0000-0000-000000000000",
+                "deleted_at": "0001-01-01T00:00:00Z",
+                "id": "00000000-0000-0000-0000-000000000000",
+                "kind": "artifacthub",
+                "name": "",
+                "status": "",
+                "sub_type": "",
+                "type": "",
+                "updated_at": "0001-01-01T00:00:00Z",
+                "user_id": "00000000-0000-0000-0000-000000000000"
+              },
+              "connection_id": "00000000-0000-0000-0000-000000000000",
+              "schemaVersion": "",
+              "status": "",
+              "version": "",
+              "components": null,
+              "relationships": null
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "topic"
+                ],
+                [
+                  "configuration",
+                  "spec",
+                  "routes"
+                ]
+              ]
+            }
+          }
+        ],
+        "to": [
+          {
+            "id": null,
+            "kind": "Container",
+            "match": {},
+            "model": {
+              "category": {
+                "name": ""
+              },
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "meshery-core",
+              "registrant": {
+                "created_at": "0001-01-01T00:00:00Z",
+                "credential_id": "00000000-0000-0000-0000-000000000000",
+                "deleted_at": "0001-01-01T00:00:00Z",
+                "id": "00000000-0000-0000-0000-000000000000",
+                "kind": "meshery",
+                "name": "",
+                "status": "",
+                "sub_type": "",
+                "type": "",
+                "updated_at": "0001-01-01T00:00:00Z",
+                "user_id": "00000000-0000-0000-0000-000000000000"
+              },
+              "connection_id": "00000000-0000-0000-0000-000000000000",
+              "schemaVersion": "",
+              "status": "",
+              "version": "",
+              "components": null,
+              "relationships": null
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "args"
+                ]
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "subType": "inventory",
+  "status": "enabled",
+  "type": "parent",
+  "version": "v1.0.0"
+}
