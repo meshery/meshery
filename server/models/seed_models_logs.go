@@ -3,7 +3,6 @@ package models
 import (
 	"fmt"
 
-
 	gofrs "github.com/gofrs/uuid"
 	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/models/events"
@@ -13,7 +12,6 @@ import (
 	mutils "github.com/layer5io/meshkit/utils"
 	"github.com/spf13/viper"
 	"strings"
-
 )
 
 var TAB = "    "
@@ -230,4 +228,3 @@ func (rfl *RegistrationFailureLog) GetEntityRegErrors() []EntityRegError {
 	}
 	return errors
 }
-
