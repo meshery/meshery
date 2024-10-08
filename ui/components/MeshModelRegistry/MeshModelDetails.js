@@ -82,29 +82,63 @@ const RenderContents = ({
   PropertyFormattersRight,
   orderLeft,
   orderRight,
+  jsonData,
 }) => {
   const StyleClass = useStyles();
-
+  const theme = useTheme();
   return (
-    <div className={StyleClass.segment}>
-      <div
-        className={StyleClass.fullWidth}
-        style={{ display: 'flex', flexDirection: 'column', paddingRight: '1rem' }}
-      >
-        <FormatStructuredData
-          data={reorderObjectProperties(metaDataLeft, orderLeft)}
-          propertyFormatters={PropertyFormattersLeft}
-          order={orderLeft}
-        />
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+      <div className={StyleClass.segment}>
+        <div
+          className={StyleClass.fullWidth}
+          style={{ display: 'flex', flexDirection: 'column', paddingRight: '1rem' }}
+        >
+          <FormatStructuredData
+            data={reorderObjectProperties(metaDataLeft, orderLeft)}
+            propertyFormatters={PropertyFormattersLeft}
+            order={orderLeft}
+          />
+        </div>
+
+        <div className={StyleClass.fullWidth} style={{ display: 'flex', flexDirection: 'column' }}>
+          <FormatStructuredData
+            data={reorderObjectProperties(metaDataRight, orderRight)}
+            propertyFormatters={PropertyFormattersRight}
+            order={orderRight}
+          />
+        </div>
       </div>
 
-      <div className={StyleClass.fullWidth} style={{ display: 'flex', flexDirection: 'column' }}>
-        <FormatStructuredData
-          data={reorderObjectProperties(metaDataRight, orderRight)}
-          propertyFormatters={PropertyFormattersRight}
-          order={orderRight}
-        />
-      </div>
+      {jsonData && (
+        <Accordion
+          style={{
+            borderRadius: '6px',
+            backgroundColor: theme.palette.secondary.toolbarBg2,
+            color: theme.palette.secondary.text,
+          }}
+        >
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon style={{ fill: theme.palette.secondary.text }} />}
+          >
+            Advanced Details
+          </AccordionSummary>
+          <AccordionDetails>
+            <ReactJson
+              theme={reactJsonTheme(theme.palette.type)}
+              name={false}
+              displayDataTypes={false}
+              iconStyle="circle"
+              src={jsonData}
+              style={{
+                fontSize: 'inherit',
+                minHeight: 'inherit',
+                padding: '1.1rem',
+              }}
+              collapsed={1} // expanded upto 1 level
+            />
+          </AccordionDetails>
+        </Accordion>
+      )}
     </div>
   );
 };
@@ -197,6 +231,7 @@ const ModelContents = withSuppressedErrorBoundary(({ modelDef }) => {
         PropertyFormattersRight={PropertyFormattersRight}
         orderLeft={orderdMetadataLeft}
         orderRight={orderdMetadataRight}
+        jsonData={modelDef}
       />
     </div>
   );
@@ -261,6 +296,7 @@ const ComponentContents = withSuppressedErrorBoundary(({ componentDef }) => {
             PropertyFormattersRight={PropertyFormattersRight}
             orderLeft={orderdMetadataLeft}
             orderRight={orderdMetadataRight}
+            jsonData={componentData}
           />
         </div>
       ) : (
@@ -313,6 +349,7 @@ const RelationshipContents = withSuppressedErrorBoundary(({ relationshipDef }) =
         PropertyFormattersRight={PropertyFormattersRight}
         orderLeft={orderdMetadataLeft}
         orderRight={orderdMetadataRight}
+        jsonData={relationshipDef}
       />
     </div>
   );
@@ -356,6 +393,7 @@ const RegistrantContent = withSuppressedErrorBoundary(({ registrant }) => {
         PropertyFormattersRight={PropertyFormattersRight}
         orderLeft={orderdMetadataLeft}
         orderRight={orderdMetadataRight}
+        jsonData={registrant}
       />
     </div>
   );
