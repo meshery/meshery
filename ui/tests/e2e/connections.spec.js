@@ -151,6 +151,43 @@ test(
   },
 );
 
+test('Delete Kubernetes cluster connections', async ({ page }) => {
+  // Navigate to 'Connections' tab
+  await page.getByRole('tab', { name: 'Connections' }).click();
+  // Find the row with the connection to be deleted
+  const row = page
+    .locator('tr')
+    .filter({ hasText: 'kubernetes' })
+    .filter({ hasText: 'connected' })
+    .first();
+  //find the checkbox in the row
+  const checkbox = row.locator('input[type="checkbox"]').first();
+  await checkbox.check();
+
+  // Click "Delete" button in the table
+  await page.getByRole('button', { name: 'Delete', exact: true }).click();
+  // Verify that Confirmation modal opened and delete
+  await expect(page.getByText('Delete Connections')).toBeVisible();
+
+  const connectionsReq = page.waitForResponse(
+    (response) =>
+      response.url().startsWith(`${ENV.MESHERY_SERVER_URL}/api/integrations/connections`) &&
+      response.status() === 200,
+  );
+
+  await page.getByRole('button', { name: 'Delete', exact: true }).click();
+
+  await connectionsReq;
+
+  expect(
+    await page
+      .locator('tr')
+      .filter({ hasText: 'kubernetes' })
+      .filter({ hasText: 'connected' })
+      .count(),
+  ).toEqual(0);
+});
+
 transitionTests.forEach((t) => {
   test(t.name, { tags: '@unstable' }, async ({ page }) => {
     const stateTransitionReq = page.waitForRequest(
