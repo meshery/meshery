@@ -1,6 +1,8 @@
 package utils
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -15,13 +17,16 @@ import (
 )
 
 type RelationshipCSVHelper struct {
-	SpreadsheetID  int64
-	SpreadsheetURL string
-	Title          string
-	CSVPath        string
-	Relationships  []RelationshipCSV
+	SpreadsheetID        int64
+	SpreadsheetURL       string
+	Title                string
+	CSVPath              string
+	Relationships        []RelationshipCSV
+	UpdatedRelationships []RelationshipCSV
 }
+
 type RelationshipCSV struct {
+	RowIndex    int    `json:"-" csv:"-"`
 	Model       string `json:"Model" csv:"Model"`
 	Version     string `json:"Version" csv:"Version"`
 	KIND        string `json:"kind" csv:"kind"`
@@ -31,6 +36,7 @@ type RelationshipCSV struct {
 	Styles      string `json:"metadata.styles" csv:"metadata.styles"`
 	EvalPolicy  string `json:"evalPolicy" csv:"evalPolicy"`
 	Selector    string `json:"selector" csv:"selector"`
+	Filename    string `json:"filename" csv:"filename"`
 }
 
 func NewRelationshipCSVHelper(sheetURL, spreadsheetName string, spreadsheetID int64, localCsvPath string) (*RelationshipCSVHelper, error) {
@@ -68,6 +74,9 @@ func (mrh *RelationshipCSVHelper) ParseRelationshipsSheet(modelName string) erro
 		return ErrFileRead(err)
 	}
 
+	rowIndex := 3 //first 2 are headers
+	currentRow := rowIndex
+
 	go func() {
 		Log.Info("Parsing Relationships...")
 
@@ -79,21 +88,22 @@ func (mrh *RelationshipCSVHelper) ParseRelationshipsSheet(modelName string) erro
 
 	for {
 		select {
-
 		case data := <-ch:
 			if modelName != "" && data.Model != modelName {
 				continue
 			}
+			data.RowIndex = currentRow
+			currentRow++
 			mrh.Relationships = append(mrh.Relationships, data)
 		case err := <-errorChan:
 			Log.Error(err)
-
 		case <-csvReader.Context.Done():
 			return nil
 		}
 	}
 }
-func ProcessRelationships(relationshipCSVHelper *RelationshipCSVHelper) {
+
+func ProcessRelationships(relationshipCSVHelper *RelationshipCSVHelper, spreadsheetUpdateChan chan RelationshipCSV) {
 	for _, relationship := range relationshipCSVHelper.Relationships {
 		var versions []string
 
@@ -125,9 +135,9 @@ func ProcessRelationships(relationshipCSVHelper *RelationshipCSVHelper) {
 			}
 			var rel _rel.RelationshipDefinition
 			rel.SchemaVersion = v1alpha3.RelationshipSchemaVersion
-			rel.Kind = _rel.RelationshipDefinitionKind(utils.ReplaceSpacesAndConvertToLowercase(relationship.KIND))
-			rel.RelationshipType = utils.ReplaceSpacesAndConvertToLowercase(relationship.Type)
-			rel.SubType = utils.ReplaceSpacesAndConvertToLowercase(relationship.SubType)
+			rel.Kind = _rel.RelationshipDefinitionKind(utils.ReplaceSpacesWithHyphenAndConvertToLowercase(relationship.KIND))
+			rel.RelationshipType = utils.ReplaceSpacesWithHyphenAndConvertToLowercase(relationship.Type)
+			rel.SubType = utils.ReplaceSpacesWithHyphenAndConvertToLowercase(relationship.SubType)
 			rel.EvaluationQuery = &relationship.EvalPolicy
 
 			rel.Version = "v1.0.0"
@@ -165,60 +175,84 @@ func ProcessRelationships(relationshipCSVHelper *RelationshipCSVHelper) {
 				rel.Selectors = &selectorSet
 			}
 
-			fullPath, err := ConstructRelationshipPath(relationship.Model, version, rel.Version, "../server/meshmodel", rel)
+			filenameGenerated := false
+			if relationship.Filename == "" {
+				relationship.Filename = fmt.Sprintf("%s-%s-%s-%s.json", rel.Kind, rel.RelationshipType, rel.SubType, utils.GetRandomAlphabetsOfDigit(5))
+				filenameGenerated = true
+			}
+
+			fullPath, err := ConstructRelationshipPath(relationship.Model, version, rel.Version, "../server/meshmodel", relationship.Filename)
 			if err != nil {
 				Log.Error(err)
 				continue
 			}
 
-			err = utils.WriteJSONToFile(fullPath, rel)
+			// Call the separate function to handle file operations
+			fileUpdated, err := HandleRelationshipFile(fullPath, rel)
 			if err != nil {
-				Log.Error(err)
+				Log.Error(ErrUpdateRelationshipFile(err))
 				continue
 			}
 
-			Log.Info(fmt.Sprintf("Relationship written to %s", fullPath))
+			if fileUpdated {
+				Log.Info(fmt.Sprintf("Relationship written to %s", fullPath))
+			} else {
+				Log.Info(fmt.Sprintf("No changes detected in %s, skipping write.", fullPath))
+			}
+
+			if filenameGenerated {
+				spreadsheetUpdateChan <- relationship
+			}
 		}
 	}
 }
 
-func ConstructRelationshipPath(modelName, version, defVersion, outputLocation string, rel _rel.RelationshipDefinition) (string, error) {
-	// Construct the base path using model and version
-	basePath := fmt.Sprintf("%s/%s/%s/v1.0.0", outputLocation, modelName, version)
+func ConstructRelationshipPath(modelName, version, defVersion, outputLocation, filename string) (string, error) {
+	basePath := fmt.Sprintf("%s/%s/%s/%s", outputLocation, modelName, version, defVersion)
 	if _, err := os.Stat(basePath); os.IsNotExist(err) {
 		return "", err
 	}
 
-	var fromKind, toKind string
-
-	if rel.Selectors != nil && len(*rel.Selectors) > 0 {
-		firstSelector := (*rel.Selectors)[0]
-		if len(firstSelector.Allow.From) > 0 && len(firstSelector.Allow.To) > 0 {
-			if firstSelector.Allow.From[0].Kind != nil {
-				fromKind = *firstSelector.Allow.From[0].Kind
-			}
-			if firstSelector.Allow.To[0].Kind != nil {
-				toKind = *firstSelector.Allow.To[0].Kind
-			}
-		}
-	}
-	// Construct the filename
-	//filename:- kind-type-subtype-from-{selector from kind}-to-{selector to kind}.json
-	filename := fmt.Sprintf("%s-%s-%s-from-%s-to-%s.json",
-		rel.Kind, rel.RelationshipType, rel.SubType,
-		utils.ReplaceSpacesAndConvertToLowercase(fromKind),
-		utils.ReplaceSpacesAndConvertToLowercase(toKind),
-	)
-
-	relationshipsPath := filepath.Join(basePath, "relationships")
-
-	if _, err := os.Stat(relationshipsPath); os.IsNotExist(err) {
-		err = os.MkdirAll(relationshipsPath, os.ModePerm)
-		if err != nil {
-			err = utils.ErrCreateDir(err, relationshipsPath)
+	fullPath := filepath.Join(basePath, "relationships", filename)
+	if _, err := os.Stat(fullPath); os.IsNotExist(err) {
+		if err := os.MkdirAll(filepath.Dir(fullPath), os.ModePerm); err != nil {
 			return "", err
 		}
 	}
-	fullPath := filepath.Join(relationshipsPath, filename)
 	return fullPath, nil
+}
+
+// HandleRelationshipFile checks if the file exists and compares its content.
+// It writes the new data only if the file doesn't exist or the contents differ.
+// Returns true if the file was written or updated, false if no changes were made.
+func HandleRelationshipFile(filePath string, rel _rel.RelationshipDefinition) (bool, error) {
+	newData, err := json.MarshalIndent(rel, "", "  ")
+	if err != nil {
+		return false, err
+	}
+
+	if _, err := os.Stat(filePath); err == nil {
+		existingData, err := os.ReadFile(filePath)
+		if err != nil {
+			return false, err
+		}
+
+		if bytes.Equal(existingData, newData) {
+			return false, nil
+		} else {
+			err = os.WriteFile(filePath, newData, 0644)
+			if err != nil {
+				return false, err
+			}
+			return true, nil
+		}
+	} else if os.IsNotExist(err) {
+		err = os.WriteFile(filePath, newData, 0644)
+		if err != nil {
+			return false, err
+		}
+		return true, nil
+	} else {
+		return false, err
+	}
 }
