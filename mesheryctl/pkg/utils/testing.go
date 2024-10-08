@@ -280,3 +280,17 @@ func StartMockMesheryServer(t *testing.T) error {
 	time.Sleep(100 * time.Millisecond)
 	return nil
 }
+
+// The HandlePagination function add special characters that is not
+// handle properly in test. This function will remove undesired characters
+// and spaces to ensure excepted versus actual result match when using http.MockURL 
+func CleanStringFromHandlePagination(actualResponse string) string {
+	toRemove := []string{"\x1b", "[1m", "[0m", "\t", "\n"}
+	cleaned := actualResponse
+	for _ , value := range toRemove {
+
+		cleaned = strings.ReplaceAll(cleaned, value, "")
+	}
+	cleaned = strings.ReplaceAll(cleaned, " ", "")
+	return cleaned
+}
