@@ -1398,6 +1398,10 @@ components:
   colorIcon: assets/img/integrations/k8s-config-connector/components/redis-cluster/icons/color/redis-cluster-color.svg
   whiteIcon: assets/img/integrations/k8s-config-connector/components/redis-cluster/icons/white/redis-cluster-white.svg
   description: 
+- name: gke-hub-feature
+  colorIcon: assets/img/integrations/k8s-config-connector/components/gke-hub-feature/icons/color/gke-hub-feature-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/gke-hub-feature/icons/white/gke-hub-feature-white.svg
+  description: 
 featureList: [
   "Provides a wide range of cloud services",
   "Integrates with Kubernetes",
