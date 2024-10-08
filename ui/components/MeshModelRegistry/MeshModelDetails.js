@@ -27,10 +27,11 @@ import {
 import _ from 'lodash';
 import { JustifyAndAlignCenter } from './MeshModel.style';
 import { withSuppressedErrorBoundary } from '../General/ErrorBoundary';
-import ReactJson from 'react-json-view';
 import { reactJsonTheme } from './helper';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Accordion, AccordionDetails, AccordionSummary } from '@layer5/sistent';
+import dynamic from 'next/dynamic';
+const ReactJson = dynamic(() => import('react-json-view'), { ssr: false });
 
 const ExportAvailable = true;
 const KeyValue = ({ property, value }) => {
