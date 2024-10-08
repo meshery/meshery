@@ -10,6 +10,10 @@ integrations-category: Orchestration & Management
 integrations-subcategory: Provisioning
 registrant: GitHub
 components: 
+- name: 
+  colorIcon: assets/img/integrations/k8s-config-connector/components/icons/color/-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/icons/white/-white.svg
+  description: 
 - name: access-context-manager-access-level-condition
   colorIcon: assets/img/integrations/k8s-config-connector/components/access-context-manager-access-level-condition/icons/color/access-context-manager-access-level-condition-color.svg
   whiteIcon: assets/img/integrations/k8s-config-connector/components/access-context-manager-access-level-condition/icons/white/access-context-manager-access-level-condition-white.svg
@@ -841,10 +845,6 @@ components:
 - name: gke-backup-backup-plan
   colorIcon: assets/img/integrations/k8s-config-connector/components/gke-backup-backup-plan/icons/color/gke-backup-backup-plan-color.svg
   whiteIcon: assets/img/integrations/k8s-config-connector/components/gke-backup-backup-plan/icons/white/gke-backup-backup-plan-white.svg
-  description: 
-- name: gke-hub-feature
-  colorIcon: assets/img/integrations/k8s-config-connector/components/gke-hub-feature/icons/color/gke-hub-feature-color.svg
-  whiteIcon: assets/img/integrations/k8s-config-connector/components/gke-hub-feature/icons/white/gke-hub-feature-white.svg
   description: 
 - name: gke-hub-feature-membership
   colorIcon: assets/img/integrations/k8s-config-connector/components/gke-hub-feature-membership/icons/color/gke-hub-feature-membership-color.svg

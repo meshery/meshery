@@ -9,7 +9,6 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 
 	"github.com/gorilla/mux"
-	"github.com/layer5io/meshery/server/handlers"
 	"github.com/layer5io/meshery/server/models"
 )
 
@@ -44,11 +43,11 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 	gMux.Handle("/api/provider/capabilities", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ProviderCapabilityHandler), models.ProviderAuth))).
 		Methods("GET")
 	gMux.HandleFunc("/provider/favicon.ico", func(w http.ResponseWriter, r *http.Request) {
-		handlers.ServeUI(w, r, "/provider", "../../provider-ui/out/")
+		h.ServeUI(w, r, "/provider", "../../provider-ui/out/")
 	})
 	gMux.PathPrefix("/provider/_next").
 		Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			handlers.ServeUI(w, r, "/provider", "../../provider-ui/out/")
+			h.ServeUI(w, r, "/provider", "../../provider-ui/out/")
 		}))
 
 	gMux.PathPrefix("/provider").
@@ -418,7 +417,7 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 			HttpOnly: true,
 			Expires:  time.Now().Add(24 * time.Hour),
 		})
-		handlers.ServeUI(w, r, "/provider", "../../provider-ui/out/")
+		h.ServeUI(w, r, "/provider", "../../provider-ui/out/")
 	}).
 		Methods("GET")
 
@@ -431,7 +430,7 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 	gMux.PathPrefix("/ui/public/static/img/meshmodels").Handler(http.StripPrefix("/ui/", fs)).Methods("GET")
 	gMux.PathPrefix("/").
 		Handler(h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			handlers.ServeUI(w, r, "", "../../ui/out/")
+			h.ServeUI(w, r, "", "../../ui/out/")
 		}), models.ProviderAuth))).
 		Methods("GET")
 
