@@ -966,7 +966,7 @@ components:
 exp:
   connections:
     name: connections
-    description: Manage connections
+    description: Manage Meshery connections
     usage: mesheryctl exp connections [command] [flags]
     flags:
       help:
