@@ -1,4 +1,3 @@
-version: "3"
 services:
   meshery:
     image: layer5/meshery:stable-latest

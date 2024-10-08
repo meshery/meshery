@@ -1,0 +1,262 @@
+name: Azure-monitor-containers
+version: 0.0.14
+services:
+  ama-logs:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels:
+      chart: azuremonitor-containers-3.1.20
+      heritage: Helm
+      release: azuremonitor-containers
+    model: kubernetes
+    name: ama-logs
+    namespace: kube-system
+    settings:
+      image Pull Secrets: []
+      secrets: []
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: 7c8801e7-a66f-4095-b540-2de76b3a4d59
+            metadata:
+              binded_by: 75b8b189-c56e-4cfa-9f29-80788439c2e7
+            source: bc14d604-4afe-485d-8f5c-d3b5461ecc21
+            subType: Permission
+            target: ac809b05-e8fc-474c-96d7-8b8a5a970c33
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: ac809b05-e8fc-474c-96d7-8b8a5a970c33
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          secondaryColor: '#7aa1f0'
+          shape: bottom-round-rectangle
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides:
+            z-index: 3
+          styles: ""
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/serviceaccount-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/serviceaccount-white.svg
+        position:
+          posX: 110
+          posY: 170
+        whiteboardData:
+          style: {}
+    type: ServiceAccount
+    version: ""
+  ama-logs-reader:
+    annotations: {}
+    apiVersion: rbac.authorization.k8s.io/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels:
+      chart: azuremonitor-containers-3.1.20
+      heritage: Helm
+      release: azuremonitor-containers
+    model: kubernetes
+    name: ama-logs-reader
+    namespace: ""
+    settings:
+      rules:
+      - api Groups:
+        - ""
+        resources:
+        - pods
+        - events
+        - nodes
+        - nodes/stats
+        - nodes/metrics
+        - nodes/spec
+        - nodes/proxy
+        - namespaces
+        - services
+        - persistentvolumes
+        verbs:
+        - list
+        - get
+        - watch
+      - api Groups:
+        - apps
+        - extensions
+        - autoscaling
+        resources:
+        - replicasets
+        - deployments
+        - horizontalpodautoscalers
+        verbs:
+        - list
+      - api Groups:
+        - clusterconfig.azure.com
+        resources:
+        - azureclusteridentityrequests
+        - azureclusteridentityrequests/status
+        verbs:
+        - get
+        - create
+        - patch
+        - list
+        - update
+        - delete
+      - non Resource URLs:
+        - /metrics
+        verbs:
+        - get
+      - api Groups:
+        - ""
+        resource Names:
+        - container-insights-clusteridentityrequest-token
+        resources:
+        - secrets
+        verbs:
+        - get
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: 7c8801e7-a66f-4095-b540-2de76b3a4d59
+            metadata:
+              binded_by: 75b8b189-c56e-4cfa-9f29-80788439c2e7
+            source: bc14d604-4afe-485d-8f5c-d3b5461ecc21
+            subType: Permission
+            target: ac809b05-e8fc-474c-96d7-8b8a5a970c33
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: bc14d604-4afe-485d-8f5c-d3b5461ecc21
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: false
+          logoURL: Created by Meshery Authors
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          secondaryColor: '#7aa1f0'
+          shape: round-rectangle
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides: '{"height":"22px", "width":"22px", "x":"8.5", "y":"7.5"}'
+          styles: '{"height":"22px", "width":"22px", "x":"8.5", "y":"7.5"}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/clusterrole-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/clusterrole-white.svg
+        position:
+          posX: 210
+          posY: 110
+        whiteboardData:
+          style: {}
+    type: ClusterRole
+    version: ""
+  amalogsclusterrolebinding:
+    annotations: {}
+    apiVersion: rbac.authorization.k8s.io/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels:
+      chart: azuremonitor-containers-3.1.20
+      heritage: Helm
+      release: azuremonitor-containers
+    model: kubernetes
+    name: amalogsclusterrolebinding
+    namespace: ""
+    settings:
+      role Ref:
+        api Group: rbac.authorization.k8s.io
+        kind: ClusterRole
+        name: ama-logs-reader
+      subjects:
+      - kind: ServiceAccount
+        name: ama-logs
+        namespace: kube-system
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 75b8b189-c56e-4cfa-9f29-80788439c2e7
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: false
+          logoURL: Created by Meshery Authors
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          secondaryColor: '#7aa1f0'
+          shape: round-rectangle
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides:
+            height: 25px
+            width: 25px
+            x: "7"
+            "y": "7"
+            z-index: 3
+          styles: '{"height":"25px","width":"25px","x":"7", "y":"7"}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/clusterrolebinding-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/clusterrolebinding-white.svg
+        position:
+          posX: 150
+          posY: 150
+        whiteboardData:
+          style:
+            height: 10.5
+            width: 10.5
+            z-index: 1000
+    type: ClusterRoleBinding
+    version: ""

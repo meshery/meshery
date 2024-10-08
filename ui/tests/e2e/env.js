@@ -1,19 +1,19 @@
-const core = require('@actions/core');
-
 const MESHERY_SERVER_URL = process.env.MESHERY_SERVER_URL || 'http://localhost:9081';
-const REMOTE_PROVIDER_URL = process.env.REMOTE_PROVIDER_URL || 'https://staging-meshery.layer5.io';
+const REMOTE_PROVIDER_URL = process.env.REMOTE_PROVIDER_URL || 'https://meshery.layer5.io';
 
 const USER_EMAIL = process.env.REMOTE_PROVIDER_USER_EMAIL;
 const USER_PASSWORD = process.env.REMOTE_PROVIDER_USER_PASSWORD;
 
 const REMOTE_PROVIDER_USER = {
-  email: USER_EMAIL || 'test-admin@layer5.io',
-  password: USER_PASSWORD || 'test-admin',
+  email: USER_EMAIL,
+  password: USER_PASSWORD,
 };
 const PROVIDER_SELECTION_URL = `${MESHERY_SERVER_URL}/provider`;
 const PROVIDER_TOKEN = process.env.PROVIDER_TOKEN;
 
 if (process.env.CI) {
+  const core = require('@actions/core');
+
   if (!USER_EMAIL && !USER_PASSWORD) {
     core.warning('Using default email and password on auth');
   } else if (!USER_EMAIL || !USER_PASSWORD) {
@@ -22,7 +22,7 @@ if (process.env.CI) {
 
   if (!PROVIDER_TOKEN) {
     core.setFailed(
-      'Token is required, please provide token from Meshery Cloud Provider https://meshery.layer5.io/security/tokens',
+      'Token is required, please provide token from Meshery Cloud Provider https://staging-meshery.layer5.io/security/tokens',
     );
   }
 } else {

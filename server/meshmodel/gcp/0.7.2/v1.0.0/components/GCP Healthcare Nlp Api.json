@@ -1,0 +1,130 @@
+{
+  "capabilities": [
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Add text to nodes body",
+    "displayName": "Body Text",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "body-text",
+    "type": "style",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "GCP Healthcare Nlp Api",
+   "schema": "",
+   "version": "core.meshery.io/v1alpha1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "GCP Healthcare Nlp Api",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": true,
+   "isNamespaced": false,
+   "published": true
+  },
+  "model": {
+   "category": {
+    "name": "Provisioning"
+   },
+   "displayName": "Google Cloud Platform",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "isAnnotation": true,
+    "primaryColor": "#3C494F",
+    "shape": "circle",
+    "styleOverrides": "",
+    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" id=\"Layer_1\" width=\"20\" height=\"20\" viewBox=\"0 0 512 512\"\u003e\u003cstyle xmlns=\"http://www.w3.org/2000/svg\"\u003e.st0{fill:#f8bb16}.st1{fill:#ea4334}.st2{fill:#0074bc}.st3{fill:#e2e3e4}\u003c/style\u003e\u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Layer_1_1_\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"path22\" class=\"st0\" d=\"M322.4 140.9l-44.1-76.8H162.6c-10.3 0-19.9 5.5-24.9 14.5L44.1 241.7c-5.1 8.9-5.1 19.7 0 28.7l35.6 62.1 44-76.4 66.2-115.2h132.5z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"path26\" class=\"st1\" d=\"M468.2 241.7L374.6 78.6c-5.2-8.9-14.7-14.5-24.9-14.5h-71.4l44.1 76.8 66.2 115.2-66.2 115.2h88l57.8-100.9c5-8.9 5-19.8 0-28.7\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"path30\" class=\"st2\" d=\"M410.3 371.2H189.7L123.5 256l-44 76.4 58 101c5.2 8.9 14.7 14.5 24.9 14.5h187.1c10.3 0 19.9-5.5 24.9-14.5l35.9-62.2z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"st3\" d=\"M322.2 371.2H189.6L123.5 256l66.2-115.2h132.5L388.6 256l-66.4 115.2zM256 198.5c-31.9 0-57.6 25.7-57.6 57.6s25.7 57.6 57.6 57.6 57.6-25.7 57.6-57.6-25.8-57.6-57.6-57.6z\"\u003e\u003c/path\u003e\u003c/g\u003e\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 25 22\" fill=\"none\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M19.0571 1.31425C18.9391 1.11285 18.7703 0.945566 18.5672 0.828955C18.3642 0.712344 18.134 0.650454 17.8995 0.649414L10.855 0.658722V0.650744L7.26718 0.66404C7.03246 0.664981 6.80206 0.726817 6.59879 0.843427C6.39552 0.960036 6.22643 1.12737 6.10826 1.32887L2.89648 6.8563L5.06443 10.6139L8.68705 4.40573H20.8798L19.0571 1.31425Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M14.3535 21.69L17.9668 21.6727C18.201 21.672 18.4309 21.6103 18.6336 21.4936C18.8363 21.3769 19.0046 21.2095 19.1217 21.0079L22.6386 14.9433V14.9513L24.4211 11.8531C24.5375 11.6507 24.5987 11.4215 24.5987 11.1883C24.5987 10.9551 24.5375 10.726 24.4211 10.5235L21.1986 4.9668H16.8467L20.4519 11.2043L16.8386 17.4112H16.8547L14.3535 21.69Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M6.08719 21.0185C6.20515 21.2199 6.37401 21.3872 6.57705 21.5038C6.78008 21.6204 7.01026 21.6823 7.24477 21.6834L13.7004 21.7007L15.8858 17.9616L8.64189 17.935L8.5616 17.7954L2.57565 7.43066L0.777057 10.5368C0.660768 10.7393 0.599609 10.9684 0.599609 11.2016C0.599609 11.4348 0.660768 11.6639 0.777057 11.8664L4.28994 17.9271H4.28057L6.08719 21.0185Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M12.6006 14.4683C14.4306 14.4683 15.9141 12.9944 15.9141 11.1761C15.9141 9.35779 14.4306 7.88379 12.6006 7.88379C10.7706 7.88379 9.28711 9.35779 9.28711 11.1761C9.28711 12.9944 10.7706 14.4683 12.6006 14.4683Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003c/svg\u003e\n"
+   },
+   "model": {
+    "version": "0.7.2"
+   },
+   "name": "gcp",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "meshery",
+    "name": "meshery",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "enabled",
+   "subCategory": "Cloud Provider",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
+   "primaryColor": "#4285f4",
+   "shape": "rectangle",
+   "svgColor": "\u003csvg height=\"24\" viewBox=\"0 0 24 24\" width=\"24\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cpath d=\"m4.86997026 12.3278609c1.56987117-.4432256 3.20931133.4515454 3.65946465 1.9972568.45015331 1.5457113-.45860321 3.159921-2.02847438 3.6031466-.52215281.1474206-1.04840193.143809-1.54197841.0229679l-.16326496-.0445758-1.55381137 2.7600103-1.03196903-.5632264 1.55218038-2.7656107c-.42462106-.3589256-.75426026-.835581-.92062126-1.4068221-.45015332-1.5457114.4586032-3.159921 2.02847438-3.6031466zm8.66849124 6.1533233v1.5147851h-3.076923v-1.5147851zm3.0769231-3.0295702v1.5147851h-6.1538461v-1.5147851zm-9.2235375-.8053184c-.2691134-.9240665-1.25716885-1.4633259-2.19567879-1.198354-.93850994.2649718-1.48619802 1.2378214-1.21708463 2.1618879.2691134.9240666 1.25716885 1.4633259 2.19567879 1.1983541s1.48619802-1.2378214 1.21708463-2.161888zm12.3004606-2.2242518v1.5147851h-9.2307692v-1.5147851zm2.3076923-3.02957013v1.51478513h-20v-1.51478513zm0-3.02957017v1.51478509h-20v-1.51478509zm-10.7211538-3.02957017v1.51478509h-6.97115389v-1.51478509zm8.4134615 0v1.51478509h-6.9711539v-1.51478509z\" fill=\"#4285f4\" fill-rule=\"evenodd\"/\u003e\u003c/svg\u003e",
+   "svgComplete": "\u003csvg height=\"24\" viewBox=\"0 0 24 24\" width=\"24\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cpath d=\"m4.86997026 12.3278609c1.56987117-.4432256 3.20931133.4515454 3.65946465 1.9972568.45015331 1.5457113-.45860321 3.159921-2.02847438 3.6031466-.52215281.1474206-1.04840193.143809-1.54197841.0229679l-.16326496-.0445758-1.55381137 2.7600103-1.03196903-.5632264 1.55218038-2.7656107c-.42462106-.3589256-.75426026-.835581-.92062126-1.4068221-.45015332-1.5457114.4586032-3.159921 2.02847438-3.6031466zm8.66849124 6.1533233v1.5147851h-3.076923v-1.5147851zm3.0769231-3.0295702v1.5147851h-6.1538461v-1.5147851zm-9.2235375-.8053184c-.2691134-.9240665-1.25716885-1.4633259-2.19567879-1.198354-.93850994.2649718-1.48619802 1.2378214-1.21708463 2.1618879.2691134.9240666 1.25716885 1.4633259 2.19567879 1.1983541s1.48619802-1.2378214 1.21708463-2.161888zm12.3004606-2.2242518v1.5147851h-9.2307692v-1.5147851zm2.3076923-3.02957013v1.51478513h-20v-1.51478513zm0-3.02957017v1.51478509h-20v-1.51478509zm-10.7211538-3.02957017v1.51478509h-6.97115389v-1.51478509zm8.4134615 0v1.51478509h-6.9711539v-1.51478509z\" fill=\"#4285f4\" fill-rule=\"evenodd\"/\u003e\u003c/svg\u003e",
+   "svgWhite": "\u003csvg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M4.86997 12.3275C6.43984 11.8843 8.07928 12.7791 8.52944 14.3248C8.97959 15.8705 8.07083 17.4847 6.50096 17.9279C5.97881 18.0754 5.45256 18.0717 4.95898 17.9509L4.79572 17.9063L3.24191 20.6663L2.20994 20.1031L3.76212 17.3375C3.3375 16.9786 3.00786 16.5019 2.8415 15.9307C2.39134 14.385 3.3001 12.7708 4.86997 12.3275ZM13.5385 18.4809V19.9956H10.4615V18.4809H13.5385ZM16.6154 15.4513V16.9661H10.4615V15.4513H16.6154ZM7.39185 14.646C7.12273 13.7219 6.13468 13.1826 5.19617 13.4476C4.25766 13.7126 3.70997 14.6854 3.97908 15.6095C4.2482 16.5336 5.23625 17.0728 6.17476 16.8079C7.11327 16.5429 7.66096 15.57 7.39185 14.646ZM19.6923 12.4217V13.9365H10.4615V12.4217H19.6923ZM22 9.39215V10.9069H2V9.39215H22ZM22 6.36258V7.87736H2V6.36258H22ZM11.2788 3.33301V4.84779H4.30769V3.33301H11.2788ZM19.6923 3.33301V4.84779H12.7212V3.33301H19.6923Z\" fill=\"white\"/\u003e\n\u003c/svg\u003e\n"
+  },
+  "version": "v1.0.0"
+ }

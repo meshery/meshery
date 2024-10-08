@@ -29,7 +29,14 @@ mesheryctl model export [flags]
 Export a model by name
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl model export [model-name] -o [oci/json/yaml] (default is oci)
+mesheryctl model export [model-name] -o [oci|tar]  (default is oci)
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl model export [model-name] -t json (default is yaml)
 
 </div>
 </pre> 
@@ -50,6 +57,13 @@ mesheryctl model export [model-name] --discard-components --discard-relationship
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+mesheryctl model export [model-name] --version v0.7.3
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
     
 
 </div>
@@ -62,8 +76,10 @@ mesheryctl model export [model-name] --discard-components --discard-relationship
   -c, --discard-components       (optional) whether to discard components in the exported model definition (default = false)
   -r, --discard-relationships    (optional) whether to discard relationships in the exported model definition (default = false)
   -h, --help                     help for export
+  -t, --output-format string     (optional) format to display in [json|yaml] (default = yaml) (default "yaml")
   -l, --output-location string   (optional) output location (default = current directory) (default "./")
-  -o, --output-type string       (optional) format to display in [oci|json|yaml] (default = oci) (default "oci")
+  -o, --output-type string       (optional) format to display in [oci|tar] (default = oci) (default "oci")
+      --version string           (optional) model version to export (default = "")
 
 </div>
 </pre>

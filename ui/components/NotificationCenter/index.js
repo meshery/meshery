@@ -59,6 +59,7 @@ import DeleteIcon from '../../assets/icons/DeleteIcon';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { useActorRef } from '@xstate/react';
 import { operationsCenterActor } from 'machines/operationsCenter';
+import { useSelectorRtk } from '@/store/hooks';
 
 export const NotificationCenterContext = React.createContext({
   drawerAnchorEl: null,
@@ -176,11 +177,20 @@ const NotificationCountChip = withErrorBoundary(
 );
 
 const Header = withErrorBoundary(({ handleFilter, handleClose }) => {
-  const { data } = useGetEventsSummaryQuery();
-  const { count_by_severity_level, total_count } = data || {
+  const { data } = useGetEventsSummaryQuery({
+    status: STATUS.UNREAD,
+  });
+  const { count_by_severity_level } = data || {
     count_by_severity_level: [],
     total_count: 0,
   };
+  const {
+    data: { total_count: read_count } = {
+      total_count: 0,
+    },
+  } = useGetEventsSummaryQuery({
+    status: STATUS.READ,
+  });
   const classes = useStyles();
   const onClickSeverity = (severity) => {
     handleFilter({
@@ -195,8 +205,6 @@ const Header = withErrorBoundary(({ handleFilter, handleClose }) => {
     });
   };
 
-  const unreadCount =
-    total_count - count_by_severity_level.reduce((acc, item) => acc + item.count, 0);
   return (
     <div className={classNames(classes.container, classes.header)}>
       <div className={classes.title}>
@@ -223,7 +231,7 @@ const Header = withErrorBoundary(({ handleFilter, handleClose }) => {
           handleClick={() => onClickStatus(STATUS.READ)}
           type={STATUS.READ}
           severity={STATUS.READ}
-          count={unreadCount}
+          count={read_count}
         />
       </div>
     </div>
@@ -459,6 +467,8 @@ const NotificationCenterDrawer = () => {
   const [fetchEvents, { isFetching }] = useLazyGetEventsQuery();
   const hasMore = useSelector((state) => state.events.current_view.has_more);
 
+  const [isLoadingFilters, setIsLoadingFilters] = useState(false); // whether we are loading filters and basically should show loading spinner as we are loading the whole page
+
   useEffect(() => {
     dispatch(
       loadEvents(fetchEvents, 0, {
@@ -481,9 +491,10 @@ const NotificationCenterDrawer = () => {
   const classes = useStyles();
   // const { showFullNotificationCenter } = props;
   const open = Boolean(anchorEl) || isNotificationCenterOpen;
-
-  const handleFilter = (filters) => {
-    dispatch(loadEvents(fetchEvents, 1, filters));
+  const handleFilter = async (filters) => {
+    setIsLoadingFilters(true);
+    await dispatch(loadEvents(fetchEvents, 0, filters));
+    setIsLoadingFilters(false);
   };
   const drawerRef = useRef();
   const clickwayHandler = (e) => {
@@ -526,11 +537,16 @@ const NotificationCenterDrawer = () => {
                   <Filter handleFilter={handleFilter}></Filter>
                   <CurrentFilterView handleFilter={handleFilter} />
                   <BulkActions />
-                  <EventsView
-                    handleLoadNextPage={loadMore}
-                    isFetching={isFetching}
-                    hasMore={hasMore}
-                  />
+
+                  {isLoadingFilters ? (
+                    <Loading />
+                  ) : (
+                    <EventsView
+                      handleLoadNextPage={loadMore}
+                      isFetching={isFetching}
+                      hasMore={hasMore}
+                    />
+                  )}
                 </div>
               </div>
             </div>
@@ -579,6 +595,12 @@ export const NotificationDrawerButton = () => {
 };
 
 const NotificationCenter = (props) => {
+  const isOpen = useSelectorRtk((state) => state.events.isNotificationCenterOpen);
+
+  if (!isOpen) {
+    return null;
+  }
+
   return (
     <NoSsr>
       <ErrorBoundary

@@ -5,6 +5,7 @@
   "displayName": "Litmus Chaos",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://github.com/litmuschaos/litmus-helm/releases/download/litmus-core-2.14.1/litmus-core-2.14.1.tgz", 
     "isAnnotation": false,
     "published": true,
     "subCategory": "Chaos Engineering",

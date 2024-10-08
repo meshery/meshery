@@ -125,7 +125,7 @@
   ],
   "component": {
    "kind": "KubernetesConnection",
-   "schema": "{\"properties\":{\"id\":{\"type\":\"string\",\"format\":\"uuid\"},\"name\":{\"type\":\"string\",\"format\":\"uuid\"},\"cluster\":{\"type\":\"object\",\"additionalProperties\":true},\"server\":{\"type\":\"string\"},\"meshery_instance_id\":{\"type\":\"string\",\"format\":\"uuid\"},\"kubernetes_server_id\":{\"type\":\"string\",\"format\":\"uuid\"},\"deployment_type\":{\"type\":\"string\"},\"updated_at\":{\"type\":\"string\",\"format\":\"date-time\"},\"created_at\":{\"type\":\"string\",\"format\":\"date-time\"}}}",
+   "schema": "{\"properties\": {\"id\": {\"type\": \"string\", \"format\": \"uuid\"}, \"name\": {\"type\": \"string\", \"format\": \"uuid\"}, \"cluster\": {\"type\": \"object\", \"additionalProperties\": true}, \"server\": {\"type\": \"string\"}, \"meshery_instance_id\": {\"type\": \"string\", \"format\": \"uuid\"}, \"kubernetes_server_id\": {\"type\": \"string\", \"format\": \"uuid\"}, \"deployment_type\": {\"type\": \"string\"}, \"updated_at\": {\"type\": \"string\", \"format\": \"date-time\"}, \"created_at\": {\"type\": \"string\", \"format\": \"date-time\"}}}",
    "version": "meshery.layer5.io/v1alpha1"
   },
   "configuration": null,
@@ -134,13 +134,46 @@
   "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
-   "defaultData": "",
    "genealogy": "",
    "isAnnotation": false,
+   "isNamespaced": false,
    "published": false,
-   "shapePolygonPoints": "",
-   "styleOverrides": "",
-   "styles": ""
+   "transitions": {
+    "connected": [
+     "disconnected",
+     "ignored",
+     "not found",
+     "deleted"
+    ],
+    "deleted": [],
+    "disconnected": [
+     "connected",
+     "deleted"
+    ],
+    "discovered": [
+     "registered",
+     "not found",
+     "deleted"
+    ],
+    "ignored": [
+     "deleted",
+     "registered"
+    ],
+    "maintenance": [
+     "registered",
+     "connected",
+     "ignored",
+     "not found"
+    ],
+    "not found": [
+     "discovered",
+     "deleted"
+    ],
+    "registered": [
+     "connected",
+     "ignored"
+    ]
+   }
   },
   "model": {
    "category": {

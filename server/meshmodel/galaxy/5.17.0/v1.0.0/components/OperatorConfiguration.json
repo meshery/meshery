@@ -1,0 +1,195 @@
+{
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "OperatorConfiguration",
+   "schema": "{\n \"properties\": {\n  \"configuration\": {\n   \"properties\": {\n    \"aws_or_gcp\": {\n     \"properties\": {\n      \"additional_secret_mount\": {\n       \"type\": \"string\"\n      },\n      \"additional_secret_mount_path\": {\n       \"default\": \"/meta/credentials\",\n       \"type\": \"string\"\n      },\n      \"aws_region\": {\n       \"default\": \"eu-central-1\",\n       \"type\": \"string\"\n      },\n      \"enable_ebs_gp3_migration\": {\n       \"default\": false,\n       \"type\": \"boolean\"\n      },\n      \"enable_ebs_gp3_migration_max_size\": {\n       \"default\": 1000,\n       \"type\": \"integer\"\n      },\n      \"gcp_credentials\": {\n       \"type\": \"string\"\n      },\n      \"kube_iam_role\": {\n       \"type\": \"string\"\n      },\n      \"log_s3_bucket\": {\n       \"type\": \"string\"\n      },\n      \"wal_az_storage_account\": {\n       \"type\": \"string\"\n      },\n      \"wal_gs_bucket\": {\n       \"type\": \"string\"\n      },\n      \"wal_s3_bucket\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"connection_pooler\": {\n     \"properties\": {\n      \"connection_pooler_default_cpu_limit\": {\n       \"default\": \"1\",\n       \"pattern\": \"^(\\\\d+m|\\\\d+(\\\\.\\\\d{1,3})?)$\",\n       \"type\": \"string\"\n      },\n      \"connection_pooler_default_cpu_request\": {\n       \"default\": \"500m\",\n       \"pattern\": \"^(\\\\d+m|\\\\d+(\\\\.\\\\d{1,3})?)$\",\n       \"type\": \"string\"\n      },\n      \"connection_pooler_default_memory_limit\": {\n       \"default\": \"100Mi\",\n       \"pattern\": \"^(\\\\d+(e\\\\d+)?|\\\\d+(\\\\.\\\\d+)?(e\\\\d+)?[EPTGMK]i?)$\",\n       \"type\": \"string\"\n      },\n      \"connection_pooler_default_memory_request\": {\n       \"default\": \"100Mi\",\n       \"pattern\": \"^(\\\\d+(e\\\\d+)?|\\\\d+(\\\\.\\\\d+)?(e\\\\d+)?[EPTGMK]i?)$\",\n       \"type\": \"string\"\n      },\n      \"connection_pooler_image\": {\n       \"default\": \"registry.opensource.zalan.do/acid/pgbouncer:master-26\",\n       \"type\": \"string\"\n      },\n      \"connection_pooler_max_db_connections\": {\n       \"default\": 60,\n       \"type\": \"integer\"\n      },\n      \"connection_pooler_mode\": {\n       \"default\": \"transaction\",\n       \"enum\": [\n        \"session\",\n        \"transaction\"\n       ],\n       \"type\": \"string\"\n      },\n      \"connection_pooler_number_of_instances\": {\n       \"default\": 2,\n       \"minimum\": 1,\n       \"type\": \"integer\"\n      },\n      \"connection_pooler_schema\": {\n       \"default\": \"pooler\",\n       \"type\": \"string\"\n      },\n      \"connection_pooler_user\": {\n       \"default\": \"pooler\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"crd_categories\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"nullable\": true,\n     \"type\": \"array\"\n    },\n    \"debug\": {\n     \"properties\": {\n      \"debug_logging\": {\n       \"default\": true,\n       \"type\": \"boolean\"\n      },\n      \"enable_database_access\": {\n       \"default\": true,\n       \"type\": \"boolean\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"docker_image\": {\n     \"default\": \"ghcr.io/zalando/spilo-15:2.1-p9\",\n     \"type\": \"string\"\n    },\n    \"enable_crd_registration\": {\n     \"default\": true,\n     \"type\": \"boolean\"\n    },\n    \"enable_crd_validation\": {\n     \"default\": true,\n     \"description\": \"deprecated\",\n     \"type\": \"boolean\"\n    },\n    \"enable_lazy_spilo_upgrade\": {\n     \"default\": false,\n     \"type\": \"boolean\"\n    },\n    \"enable_pgversion_env_var\": {\n     \"default\": true,\n     \"type\": \"boolean\"\n    },\n    \"enable_shm_volume\": {\n     \"default\": true,\n     \"type\": \"boolean\"\n    },\n    \"enable_spilo_wal_path_compat\": {\n     \"default\": false,\n     \"type\": \"boolean\"\n    },\n    \"enable_team_id_clustername_prefix\": {\n     \"default\": false,\n     \"type\": \"boolean\"\n    },\n    \"etcd_host\": {\n     \"default\": \"\",\n     \"type\": \"string\"\n    },\n    \"ignore_instance_limits_annotation_key\": {\n     \"type\": \"string\"\n    },\n    \"kubernetes\": {\n     \"properties\": {\n      \"additional_pod_capabilities\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"cluster_domain\": {\n       \"default\": \"cluster.local\",\n       \"type\": \"string\"\n      },\n      \"cluster_labels\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"default\": {\n        \"application\": \"spilo\"\n       },\n       \"type\": \"object\"\n      },\n      \"cluster_name_label\": {\n       \"default\": \"cluster-name\",\n       \"type\": \"string\"\n      },\n      \"custom_pod_annotations\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"object\"\n      },\n      \"delete_annotation_date_key\": {\n       \"type\": \"string\"\n      },\n      \"delete_annotation_name_key\": {\n       \"type\": \"string\"\n      },\n      \"downscaler_annotations\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"enable_cross_namespace_secret\": {\n       \"default\": false,\n       \"type\": \"boolean\"\n      },\n      \"enable_init_containers\": {\n       \"default\": true,\n       \"type\": \"boolean\"\n      },\n      \"enable_pod_antiaffinity\": {\n       \"default\": false,\n       \"type\": \"boolean\"\n      },\n      \"enable_pod_disruption_budget\": {\n       \"default\": true,\n       \"type\": \"boolean\"\n      },\n      \"enable_readiness_probe\": {\n       \"default\": false,\n       \"type\": \"boolean\"\n      },\n      \"enable_sidecars\": {\n       \"default\": true,\n       \"type\": \"boolean\"\n      },\n      \"ignored_annotations\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"infrastructure_roles_secret_name\": {\n       \"type\": \"string\"\n      },\n      \"infrastructure_roles_secrets\": {\n       \"items\": {\n        \"properties\": {\n         \"defaultrolevalue\": {\n          \"type\": \"string\"\n         },\n         \"defaultuservalue\": {\n          \"type\": \"string\"\n         },\n         \"details\": {\n          \"type\": \"string\"\n         },\n         \"passwordkey\": {\n          \"type\": \"string\"\n         },\n         \"rolekey\": {\n          \"type\": \"string\"\n         },\n         \"secretname\": {\n          \"type\": \"string\"\n         },\n         \"template\": {\n          \"type\": \"boolean\"\n         },\n         \"userkey\": {\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"secretname\",\n         \"userkey\",\n         \"passwordkey\"\n        ],\n        \"type\": \"object\"\n       },\n       \"nullable\": true,\n       \"type\": \"array\"\n      },\n      \"inherited_annotations\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"inherited_labels\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"master_pod_move_timeout\": {\n       \"default\": \"20m\",\n       \"type\": \"string\"\n      },\n      \"node_readiness_label\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"object\"\n      },\n      \"node_readiness_label_merge\": {\n       \"enum\": [\n        \"AND\",\n        \"OR\"\n       ],\n       \"type\": \"string\"\n      },\n      \"oauth_token_secret_name\": {\n       \"default\": \"postgresql-operator\",\n       \"type\": \"string\"\n      },\n      \"pdb_name_format\": {\n       \"default\": \"postgres-{cluster}-pdb\",\n       \"type\": \"string\"\n      },\n      \"pod_antiaffinity_preferred_during_scheduling\": {\n       \"default\": false,\n       \"type\": \"boolean\"\n      },\n      \"pod_antiaffinity_topology_key\": {\n       \"default\": \"kubernetes.io/hostname\",\n       \"type\": \"string\"\n      },\n      \"pod_environment_configmap\": {\n       \"type\": \"string\"\n      },\n      \"pod_environment_secret\": {\n       \"type\": \"string\"\n      },\n      \"pod_management_policy\": {\n       \"default\": \"ordered_ready\",\n       \"enum\": [\n        \"ordered_ready\",\n        \"parallel\"\n       ],\n       \"type\": \"string\"\n      },\n      \"pod_priority_class_name\": {\n       \"type\": \"string\"\n      },\n      \"pod_role_label\": {\n       \"default\": \"spilo-role\",\n       \"type\": \"string\"\n      },\n      \"pod_service_account_definition\": {\n       \"default\": \"\",\n       \"type\": \"string\"\n      },\n      \"pod_service_account_name\": {\n       \"default\": \"postgres-pod\",\n       \"type\": \"string\"\n      },\n      \"pod_service_account_role_binding_definition\": {\n       \"default\": \"\",\n       \"type\": \"string\"\n      },\n      \"pod_terminate_grace_period\": {\n       \"default\": \"5m\",\n       \"type\": \"string\"\n      },\n      \"secret_name_template\": {\n       \"default\": \"{username}.{cluster}.credentials.{tprkind}.{tprgroup}\",\n       \"type\": \"string\"\n      },\n      \"share_pgsocket_with_sidecars\": {\n       \"default\": false,\n       \"type\": \"boolean\"\n      },\n      \"spilo_allow_privilege_escalation\": {\n       \"default\": true,\n       \"type\": \"boolean\"\n      },\n      \"spilo_fsgroup\": {\n       \"type\": \"integer\"\n      },\n      \"spilo_privileged\": {\n       \"default\": false,\n       \"type\": \"boolean\"\n      },\n      \"spilo_runasgroup\": {\n       \"type\": \"integer\"\n      },\n      \"spilo_runasuser\": {\n       \"type\": \"integer\"\n      },\n      \"storage_resize_mode\": {\n       \"default\": \"pvc\",\n       \"enum\": [\n        \"ebs\",\n        \"mixed\",\n        \"pvc\",\n        \"off\"\n       ],\n       \"type\": \"string\"\n      },\n      \"toleration\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"object\"\n      },\n      \"watched_namespace\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"kubernetes_use_configmaps\": {\n     \"default\": false,\n     \"type\": \"boolean\"\n    },\n    \"load_balancer\": {\n     \"properties\": {\n      \"custom_service_annotations\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"object\"\n      },\n      \"db_hosted_zone\": {\n       \"default\": \"db.example.com\",\n       \"type\": \"string\"\n      },\n      \"enable_master_load_balancer\": {\n       \"default\": true,\n       \"type\": \"boolean\"\n      },\n      \"enable_master_pooler_load_balancer\": {\n       \"default\": false,\n       \"type\": \"boolean\"\n      },\n      \"enable_replica_load_balancer\": {\n       \"default\": false,\n       \"type\": \"boolean\"\n      },\n      \"enable_replica_pooler_load_balancer\": {\n       \"default\": false,\n       \"type\": \"boolean\"\n      },\n      \"external_traffic_policy\": {\n       \"default\": \"Cluster\",\n       \"enum\": [\n        \"Cluster\",\n        \"Local\"\n       ],\n       \"type\": \"string\"\n      },\n      \"master_dns_name_format\": {\n       \"default\": \"{cluster}.{namespace}.{hostedzone}\",\n       \"type\": \"string\"\n      },\n      \"master_legacy_dns_name_format\": {\n       \"default\": \"{cluster}.{team}.{hostedzone}\",\n       \"type\": \"string\"\n      },\n      \"replica_dns_name_format\": {\n       \"default\": \"{cluster}-repl.{namespace}.{hostedzone}\",\n       \"type\": \"string\"\n      },\n      \"replica_legacy_dns_name_format\": {\n       \"default\": \"{cluster}-repl.{team}.{hostedzone}\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"logging_rest_api\": {\n     \"properties\": {\n      \"api_port\": {\n       \"default\": 8080,\n       \"type\": \"integer\"\n      },\n      \"cluster_history_entries\": {\n       \"default\": 1000,\n       \"type\": \"integer\"\n      },\n      \"ring_log_lines\": {\n       \"default\": 100,\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"logical_backup\": {\n     \"properties\": {\n      \"logical_backup_azure_storage_account_key\": {\n       \"type\": \"string\"\n      },\n      \"logical_backup_azure_storage_account_name\": {\n       \"type\": \"string\"\n      },\n      \"logical_backup_azure_storage_container\": {\n       \"type\": \"string\"\n      },\n      \"logical_backup_cpu_limit\": {\n       \"pattern\": \"^(\\\\d+m|\\\\d+(\\\\.\\\\d{1,3})?)$\",\n       \"type\": \"string\"\n      },\n      \"logical_backup_cpu_request\": {\n       \"pattern\": \"^(\\\\d+m|\\\\d+(\\\\.\\\\d{1,3})?)$\",\n       \"type\": \"string\"\n      },\n      \"logical_backup_docker_image\": {\n       \"default\": \"registry.opensource.zalan.do/acid/logical-backup:v1.9.0\",\n       \"type\": \"string\"\n      },\n      \"logical_backup_google_application_credentials\": {\n       \"type\": \"string\"\n      },\n      \"logical_backup_job_prefix\": {\n       \"default\": \"logical-backup-\",\n       \"type\": \"string\"\n      },\n      \"logical_backup_memory_limit\": {\n       \"pattern\": \"^(\\\\d+(e\\\\d+)?|\\\\d+(\\\\.\\\\d+)?(e\\\\d+)?[EPTGMK]i?)$\",\n       \"type\": \"string\"\n      },\n      \"logical_backup_memory_request\": {\n       \"pattern\": \"^(\\\\d+(e\\\\d+)?|\\\\d+(\\\\.\\\\d+)?(e\\\\d+)?[EPTGMK]i?)$\",\n       \"type\": \"string\"\n      },\n      \"logical_backup_provider\": {\n       \"default\": \"s3\",\n       \"enum\": [\n        \"az\",\n        \"gcs\",\n        \"s3\"\n       ],\n       \"type\": \"string\"\n      },\n      \"logical_backup_s3_access_key_id\": {\n       \"type\": \"string\"\n      },\n      \"logical_backup_s3_bucket\": {\n       \"type\": \"string\"\n      },\n      \"logical_backup_s3_endpoint\": {\n       \"type\": \"string\"\n      },\n      \"logical_backup_s3_region\": {\n       \"type\": \"string\"\n      },\n      \"logical_backup_s3_retention_time\": {\n       \"type\": \"string\"\n      },\n      \"logical_backup_s3_secret_access_key\": {\n       \"type\": \"string\"\n      },\n      \"logical_backup_s3_sse\": {\n       \"type\": \"string\"\n      },\n      \"logical_backup_schedule\": {\n       \"default\": \"30 00 * * *\",\n       \"pattern\": \"^(\\\\d+|\\\\*)(/\\\\d+)?(\\\\s+(\\\\d+|\\\\*)(/\\\\d+)?){4}$\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"major_version_upgrade\": {\n     \"properties\": {\n      \"major_version_upgrade_mode\": {\n       \"default\": \"off\",\n       \"type\": \"string\"\n      },\n      \"major_version_upgrade_team_allow_list\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"minimal_major_version\": {\n       \"default\": \"11\",\n       \"type\": \"string\"\n      },\n      \"target_major_version\": {\n       \"default\": \"15\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"max_instances\": {\n     \"default\": -1,\n     \"description\": \"-1 = disabled\",\n     \"minimum\": -1,\n     \"type\": \"integer\"\n    },\n    \"min_instances\": {\n     \"default\": -1,\n     \"description\": \"-1 = disabled\",\n     \"minimum\": -1,\n     \"type\": \"integer\"\n    },\n    \"patroni\": {\n     \"properties\": {\n      \"failsafe_mode\": {\n       \"default\": false,\n       \"type\": \"boolean\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"postgres_pod_resources\": {\n     \"properties\": {\n      \"default_cpu_limit\": {\n       \"default\": \"1\",\n       \"pattern\": \"^(\\\\d+m|\\\\d+(\\\\.\\\\d{1,3})?)$\",\n       \"type\": \"string\"\n      },\n      \"default_cpu_request\": {\n       \"default\": \"100m\",\n       \"pattern\": \"^(\\\\d+m|\\\\d+(\\\\.\\\\d{1,3})?)$\",\n       \"type\": \"string\"\n      },\n      \"default_memory_limit\": {\n       \"default\": \"500Mi\",\n       \"pattern\": \"^(\\\\d+(e\\\\d+)?|\\\\d+(\\\\.\\\\d+)?(e\\\\d+)?[EPTGMK]i?)$\",\n       \"type\": \"string\"\n      },\n      \"default_memory_request\": {\n       \"default\": \"100Mi\",\n       \"pattern\": \"^(\\\\d+(e\\\\d+)?|\\\\d+(\\\\.\\\\d+)?(e\\\\d+)?[EPTGMK]i?)$\",\n       \"type\": \"string\"\n      },\n      \"max_cpu_request\": {\n       \"pattern\": \"^(\\\\d+m|\\\\d+(\\\\.\\\\d{1,3})?)$\",\n       \"type\": \"string\"\n      },\n      \"max_memory_request\": {\n       \"pattern\": \"^(\\\\d+(e\\\\d+)?|\\\\d+(\\\\.\\\\d+)?(e\\\\d+)?[EPTGMK]i?)$\",\n       \"type\": \"string\"\n      },\n      \"min_cpu_limit\": {\n       \"default\": \"250m\",\n       \"pattern\": \"^(\\\\d+m|\\\\d+(\\\\.\\\\d{1,3})?)$\",\n       \"type\": \"string\"\n      },\n      \"min_memory_limit\": {\n       \"default\": \"250Mi\",\n       \"pattern\": \"^(\\\\d+(e\\\\d+)?|\\\\d+(\\\\.\\\\d+)?(e\\\\d+)?[EPTGMK]i?)$\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"repair_period\": {\n     \"default\": \"5m\",\n     \"type\": \"string\"\n    },\n    \"resync_period\": {\n     \"default\": \"30m\",\n     \"type\": \"string\"\n    },\n    \"scalyr\": {\n     \"properties\": {\n      \"scalyr_api_key\": {\n       \"type\": \"string\"\n      },\n      \"scalyr_cpu_limit\": {\n       \"default\": \"1\",\n       \"pattern\": \"^(\\\\d+m|\\\\d+(\\\\.\\\\d{1,3})?)$\",\n       \"type\": \"string\"\n      },\n      \"scalyr_cpu_request\": {\n       \"default\": \"100m\",\n       \"pattern\": \"^(\\\\d+m|\\\\d+(\\\\.\\\\d{1,3})?)$\",\n       \"type\": \"string\"\n      },\n      \"scalyr_image\": {\n       \"type\": \"string\"\n      },\n      \"scalyr_memory_limit\": {\n       \"default\": \"500Mi\",\n       \"pattern\": \"^(\\\\d+(e\\\\d+)?|\\\\d+(\\\\.\\\\d+)?(e\\\\d+)?[EPTGMK]i?)$\",\n       \"type\": \"string\"\n      },\n      \"scalyr_memory_request\": {\n       \"default\": \"50Mi\",\n       \"pattern\": \"^(\\\\d+(e\\\\d+)?|\\\\d+(\\\\.\\\\d+)?(e\\\\d+)?[EPTGMK]i?)$\",\n       \"type\": \"string\"\n      },\n      \"scalyr_server_url\": {\n       \"default\": \"https://upload.eu.scalyr.com\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"set_memory_request_to_limit\": {\n     \"default\": false,\n     \"type\": \"boolean\"\n    },\n    \"sidecar_docker_images\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"object\"\n    },\n    \"sidecars\": {\n     \"items\": {\n      \"format\": \"textarea\",\n      \"type\": \"string\"\n     },\n     \"nullable\": true,\n     \"type\": \"array\"\n    },\n    \"teams_api\": {\n     \"properties\": {\n      \"enable_admin_role_for_users\": {\n       \"default\": true,\n       \"type\": \"boolean\"\n      },\n      \"enable_postgres_team_crd\": {\n       \"default\": true,\n       \"type\": \"boolean\"\n      },\n      \"enable_postgres_team_crd_superusers\": {\n       \"default\": false,\n       \"type\": \"boolean\"\n      },\n      \"enable_team_member_deprecation\": {\n       \"default\": false,\n       \"type\": \"boolean\"\n      },\n      \"enable_team_superuser\": {\n       \"default\": false,\n       \"type\": \"boolean\"\n      },\n      \"enable_teams_api\": {\n       \"default\": true,\n       \"type\": \"boolean\"\n      },\n      \"pam_configuration\": {\n       \"default\": \"https://info.example.com/oauth2/tokeninfo?access_token= uid realm=/employees\",\n       \"type\": \"string\"\n      },\n      \"pam_role_name\": {\n       \"default\": \"zalandos\",\n       \"type\": \"string\"\n      },\n      \"postgres_superuser_teams\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"protected_role_names\": {\n       \"default\": [\n        \"admin\",\n        \"cron_admin\"\n       ],\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"role_deletion_suffix\": {\n       \"default\": \"_deleted\",\n       \"type\": \"string\"\n      },\n      \"team_admin_role\": {\n       \"default\": \"admin\",\n       \"type\": \"string\"\n      },\n      \"team_api_role_configuration\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"default\": {\n        \"log_statement\": \"all\"\n       },\n       \"type\": \"object\"\n      },\n      \"teams_api_url\": {\n       \"default\": \"https://teams.example.com/api/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"timeouts\": {\n     \"properties\": {\n      \"patroni_api_check_interval\": {\n       \"default\": \"1s\",\n       \"type\": \"string\"\n      },\n      \"patroni_api_check_timeout\": {\n       \"default\": \"5s\",\n       \"type\": \"string\"\n      },\n      \"pod_deletion_wait_timeout\": {\n       \"default\": \"10m\",\n       \"type\": \"string\"\n      },\n      \"pod_label_wait_timeout\": {\n       \"default\": \"10m\",\n       \"type\": \"string\"\n      },\n      \"ready_wait_interval\": {\n       \"default\": \"4s\",\n       \"type\": \"string\"\n      },\n      \"ready_wait_timeout\": {\n       \"default\": \"30s\",\n       \"type\": \"string\"\n      },\n      \"resource_check_interval\": {\n       \"default\": \"3s\",\n       \"type\": \"string\"\n      },\n      \"resource_check_timeout\": {\n       \"default\": \"10m\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"users\": {\n     \"properties\": {\n      \"additional_owner_roles\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"nullable\": true,\n       \"type\": \"array\"\n      },\n      \"enable_password_rotation\": {\n       \"default\": false,\n       \"type\": \"boolean\"\n      },\n      \"password_rotation_interval\": {\n       \"default\": 90,\n       \"type\": \"integer\"\n      },\n      \"password_rotation_user_retention\": {\n       \"default\": 180,\n       \"type\": \"integer\"\n      },\n      \"replication_username\": {\n       \"default\": \"standby\",\n       \"type\": \"string\"\n      },\n      \"super_username\": {\n       \"default\": \"postgres\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"workers\": {\n     \"default\": 8,\n     \"minimum\": 1,\n     \"type\": \"integer\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"kind\",\n  \"apiVersion\",\n  \"configuration\"\n ],\n \"title\": \"Operator Configuration\",\n \"type\": \"object\"\n}",
+   "version": "acid.zalan.do/v1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "Operator Configuration",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "published": false,
+   "source_uri": "https://raw.githubusercontent.com/cloudve/helm-charts/master/charts/galaxy-5.17.0.tgz"
+  },
+  "model": {
+   "category": {
+    "name": "Uncategorized"
+   },
+   "displayName": "Galaxy",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "source_uri": "https://raw.githubusercontent.com/cloudve/helm-charts/master/charts/galaxy-5.17.0.tgz",
+    "styleOverrides": "",
+    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 506 397\" fill=\"none\"\u003e\n\u003crect xmlns=\"http://www.w3.org/2000/svg\" width=\"377\" height=\"109\" rx=\"8\" fill=\"#58585A\"\u003e\u003c/rect\u003e\n\u003crect xmlns=\"http://www.w3.org/2000/svg\" y=\"149\" width=\"377\" height=\"109\" rx=\"8\" fill=\"#58585A\"\u003e\u003c/rect\u003e\n\u003crect xmlns=\"http://www.w3.org/2000/svg\" x=\"129\" y=\"288\" width=\"377\" height=\"109\" rx=\"8\" fill=\"url(#paint0_linear_27226_21870)\"\u003e\u003c/rect\u003e\n\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"paint0_linear_27226_21870\" x1=\"129\" y1=\"342.5\" x2=\"506\" y2=\"342.5\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop xmlns=\"http://www.w3.org/2000/svg\" stop-color=\"#D1BE06\"\u003e\u003c/stop\u003e\n\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"1\" stop-color=\"#E7E5DE\"\u003e\u003c/stop\u003e\n\u003c/linearGradient\u003e\n\u003c/defs\u003e\n\u003c/svg\u003e\n",
+    "svgComplete": "",
+    "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 506 397\" fill=\"none\"\u003e\n\u003crect xmlns=\"http://www.w3.org/2000/svg\" width=\"377\" height=\"109\" rx=\"8\" fill=\"white\"\u003e\u003c/rect\u003e\n\u003crect xmlns=\"http://www.w3.org/2000/svg\" y=\"149\" width=\"377\" height=\"109\" rx=\"8\" fill=\"white\"\u003e\u003c/rect\u003e\n\u003crect xmlns=\"http://www.w3.org/2000/svg\" x=\"129\" y=\"288\" width=\"377\" height=\"109\" rx=\"8\" fill=\"white\"\u003e\u003c/rect\u003e\n\u003c/svg\u003e\n"
+   },
+   "model": {
+    "version": "5.17.0"
+   },
+   "name": "galaxy",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "subCategory": "Uncategorized",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "svgColor": "\u003csvg width=\"506\" height=\"397\" viewBox=\"0 0 506 397\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003crect width=\"377\" height=\"109\" rx=\"8\" fill=\"#58585A\"/\u003e\n\u003crect y=\"149\" width=\"377\" height=\"109\" rx=\"8\" fill=\"#58585A\"/\u003e\n\u003crect x=\"129\" y=\"288\" width=\"377\" height=\"109\" rx=\"8\" fill=\"url(#paint0_linear_27226_21870)\"/\u003e\n\u003cdefs\u003e\n\u003clinearGradient id=\"paint0_linear_27226_21870\" x1=\"129\" y1=\"342.5\" x2=\"506\" y2=\"342.5\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop stop-color=\"#D1BE06\"/\u003e\n\u003cstop offset=\"1\" stop-color=\"#E7E5DE\"/\u003e\n\u003c/linearGradient\u003e\n\u003c/defs\u003e\n\u003c/svg\u003e\n",
+   "svgWhite": "\u003csvg width=\"506\" height=\"397\" viewBox=\"0 0 506 397\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003crect width=\"377\" height=\"109\" rx=\"8\" fill=\"white\"/\u003e\n\u003crect y=\"149\" width=\"377\" height=\"109\" rx=\"8\" fill=\"white\"/\u003e\n\u003crect x=\"129\" y=\"288\" width=\"377\" height=\"109\" rx=\"8\" fill=\"white\"/\u003e\n\u003c/svg\u003e\n"
+  },
+  "version": "v1.0.0"
+ }

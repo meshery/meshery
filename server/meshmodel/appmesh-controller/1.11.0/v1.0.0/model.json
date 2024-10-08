@@ -5,6 +5,7 @@
   "displayName": "AWS App Mesh",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://aws.github.io/eks-charts/appmesh-controller-1.12.7.tgz", 
     "isAnnotation": false,
     "published": true,
     "subCategory": "Service Mesh",

@@ -1,0 +1,195 @@
+{
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "GitHubIdentityProvider",
+   "schema": "{\n \"description\": \"GitHubIdentityProvider describes the configuration of an upstream GitHub identity provider.\\nThis upstream provider can be configured with either a GitHub App or a GitHub OAuth2 App.\\n\\n\\nRight now, only web-based logins are supported, for both the pinniped-cli client and clients configured\\nas OIDCClients.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Spec for configuring the identity provider.\",\n   \"properties\": {\n    \"allowAuthentication\": {\n     \"description\": \"AllowAuthentication allows customization of who can authenticate using this IDP and how.\",\n     \"properties\": {\n      \"organizations\": {\n       \"description\": \"Organizations allows customization of which organizations can authenticate using this IDP.\",\n       \"properties\": {\n        \"allowed\": {\n         \"description\": \"Allowed, when specified, indicates that only users with membership in at least one of the listed\\nGitHub organizations may log in. In addition, the group membership presented to Kubernetes will only include\\nteams within the listed GitHub organizations. Additional login rules or group filtering can optionally be\\nprovided as policy expression on any Pinniped Supervisor FederationDomain that includes this IDP.\\n\\n\\nThe configured GitHub App or GitHub OAuth App must be allowed to see membership in the listed organizations,\\notherwise Pinniped will not be aware that the user belongs to the listed organization or any teams\\nwithin that organization.\\n\\n\\nIf no organizations are listed, you must set organizations: AllGitHubUsers.\",\n         \"items\": {\n          \"type\": \"string\"\n         },\n         \"maxItems\": 64,\n         \"type\": \"array\",\n         \"x-kubernetes-list-type\": \"set\"\n        },\n        \"policy\": {\n         \"default\": \"OnlyUsersFromAllowedOrganizations\",\n         \"description\": \"Allowed values are \\\"OnlyUsersFromAllowedOrganizations\\\" or \\\"AllGitHubUsers\\\".\\nDefaults to \\\"OnlyUsersFromAllowedOrganizations\\\".\\n\\n\\nMust be set to \\\"AllGitHubUsers\\\" if the allowed field is empty.\\n\\n\\nThis field only exists to ensure that Pinniped administrators are aware that an empty list of\\nallowedOrganizations means all GitHub users are allowed to log in.\",\n         \"enum\": [\n          \"OnlyUsersFromAllowedOrganizations\",\n          \"AllGitHubUsers\"\n         ],\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\",\n       \"x-kubernetes-validations\": [\n        {\n         \"message\": \"spec.allowAuthentication.organizations.policy must be 'OnlyUsersFromAllowedOrganizations' when spec.allowAuthentication.organizations.allowed has organizations listed\",\n         \"rule\": \"!(has(self.allowed) \\u0026\\u0026 size(self.allowed) \\u003e 0 \\u0026\\u0026 self.policy == 'AllGitHubUsers')\"\n        },\n        {\n         \"message\": \"spec.allowAuthentication.organizations.policy must be 'AllGitHubUsers' when spec.allowAuthentication.organizations.allowed is empty\",\n         \"rule\": \"!((!has(self.allowed) || size(self.allowed) == 0) \\u0026\\u0026 self.policy == 'OnlyUsersFromAllowedOrganizations')\"\n        }\n       ]\n      }\n     },\n     \"required\": [\n      \"organizations\"\n     ],\n     \"type\": \"object\"\n    },\n    \"claims\": {\n     \"default\": {},\n     \"description\": \"Claims allows customization of the username and groups claims.\",\n     \"properties\": {\n      \"groups\": {\n       \"default\": \"slug\",\n       \"description\": \"Groups configures which property of the GitHub team record shall determine the group names in Kubernetes.\\n\\n\\nCan be either \\\"name\\\" or \\\"slug\\\". Defaults to \\\"slug\\\".\\n\\n\\nGitHub team names can contain upper and lower case characters, whitespace, and punctuation (e.g. \\\"Kube admins!\\\").\\n\\n\\nGitHub team slugs are lower case alphanumeric characters and may contain dashes and underscores (e.g. \\\"kube-admins\\\").\\n\\n\\nGroup names as presented to Kubernetes will always be prefixed by the GitHub organization name followed by a\\nforward slash (e.g. \\\"my-org/my-team\\\"). GitHub organization login names can only contain alphanumeric characters\\nor single hyphens, so the first forward slash `/` will be the separator between the organization login name and\\nthe team name or slug.\\n\\n\\nIf desired, an admin could configure identity transformation expressions on the Pinniped Supervisor's\\nFederationDomain to further customize how these group names are presented to Kubernetes.\\n\\n\\nSee the response schema for\\n[List teams for the authenticated user](https://docs.github.com/en/rest/teams/teams?apiVersion=2022-11-28#list-teams-for-the-authenticated-user).\",\n       \"enum\": [\n        \"name\",\n        \"slug\"\n       ],\n       \"type\": \"string\"\n      },\n      \"username\": {\n       \"default\": \"login:id\",\n       \"description\": \"Username configures which property of the GitHub user record shall determine the username in Kubernetes.\\n\\n\\nCan be either \\\"id\\\", \\\"login\\\", or \\\"login:id\\\". Defaults to \\\"login:id\\\".\\n\\n\\nGitHub's user login attributes can only contain alphanumeric characters and non-repeating hyphens,\\nand may not start or end with hyphens. GitHub users are allowed to change their login name,\\nalthough it is inconvenient. If a GitHub user changed their login name from \\\"foo\\\" to \\\"bar\\\",\\nthen a second user might change their name from \\\"baz\\\" to \\\"foo\\\" in order to take the old\\nusername of the first user. For this reason, it is not as safe to make authorization decisions\\nbased only on the user's login attribute.\\n\\n\\nIf desired, an admin could configure identity transformation expressions on the Pinniped Supervisor's\\nFederationDomain to further customize how these usernames are presented to Kubernetes.\\n\\n\\nDefaults to \\\"login:id\\\", which is the user login attribute, followed by a colon, followed by the unique and\\nunchanging integer ID number attribute. This blends human-readable login names with the unchanging ID value\\nfrom GitHub. Colons are not allowed in GitHub login attributes or ID numbers, so this is a reasonable\\nchoice to concatenate the two values.\\n\\n\\nSee the response schema for\\n[Get the authenticated user](https://docs.github.com/en/rest/users/users?apiVersion=2022-11-28#get-the-authenticated-user).\",\n       \"enum\": [\n        \"id\",\n        \"login\",\n        \"login:id\"\n       ],\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"client\": {\n     \"description\": \"Client identifies the secret with credentials for a GitHub App or GitHub OAuth2 App (a GitHub client).\",\n     \"properties\": {\n      \"secretName\": {\n       \"description\": \"SecretName contains the name of a namespace-local Secret object that provides the clientID and\\nclientSecret for an GitHub App or GitHub OAuth2 client.\\n\\n\\nThis secret must be of type \\\"secrets.pinniped.dev/github-client\\\" with keys \\\"clientID\\\" and \\\"clientSecret\\\".\",\n       \"minLength\": 1,\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"secretName\"\n     ],\n     \"type\": \"object\"\n    },\n    \"githubAPI\": {\n     \"default\": {},\n     \"description\": \"GitHubAPI allows configuration for GitHub Enterprise Server\",\n     \"properties\": {\n      \"host\": {\n       \"default\": \"github.com\",\n       \"description\": \"Host is required only for GitHub Enterprise Server.\\nDefaults to using GitHub's public API (\\\"github.com\\\").\\nFor convenience, specifying \\\"github.com\\\" is equivalent to specifying \\\"api.github.com\\\".\\nDo not specify a protocol or scheme since \\\"https://\\\" will always be used.\\nPort is optional. Do not specify a path, query, fragment, or userinfo.\\nOnly specify domain name or IP address, subdomains (optional), and port (optional).\\nIPv4 and IPv6 are supported. If using an IPv6 address with a port, you must enclose the IPv6 address\\nin square brackets. Example: \\\"[::1]:443\\\".\",\n       \"minLength\": 1,\n       \"type\": \"string\"\n      },\n      \"tls\": {\n       \"description\": \"TLS configuration for GitHub Enterprise Server.\\nNote that this field should not be needed when using GitHub's public API (\\\"github.com\\\").\\nHowever, if you choose to specify this field when using GitHub's public API, you must\\nspecify a CA bundle that will verify connections to \\\"api.github.com\\\".\",\n       \"properties\": {\n        \"certificateAuthorityData\": {\n         \"description\": \"X.509 Certificate Authority (base64-encoded PEM bundle). If omitted, a default set of system roots will be trusted.\",\n         \"type\": \"string\"\n        },\n        \"certificateAuthorityDataSource\": {\n         \"description\": \"Reference to a CA bundle in a secret or a configmap.\\nAny changes to the CA bundle in the secret or configmap will be dynamically reloaded.\",\n         \"properties\": {\n          \"key\": {\n           \"description\": \"Key is the key name within the secret or configmap from which to read the CA bundle.\\nThe value found at this key in the secret or configmap must not be empty, and must be a valid PEM-encoded\\ncertificate bundle.\",\n           \"minLength\": 1,\n           \"type\": \"string\"\n          },\n          \"kind\": {\n           \"description\": \"Kind configures whether the CA bundle is being sourced from a Kubernetes secret or a configmap.\\nAllowed values are \\\"Secret\\\" or \\\"ConfigMap\\\".\\n\\\"ConfigMap\\\" uses a Kubernetes configmap to source CA Bundles.\\n\\\"Secret\\\" uses Kubernetes secrets of type kubernetes.io/tls or Opaque to source CA Bundles.\",\n           \"enum\": [\n            \"Secret\",\n            \"ConfigMap\"\n           ],\n           \"type\": \"string\"\n          },\n          \"name\": {\n           \"description\": \"Name is the resource name of the secret or configmap from which to read the CA bundle.\\nThe referenced secret or configmap must be created in the same namespace where Pinniped Supervisor is installed.\",\n           \"minLength\": 1,\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"key\",\n          \"kind\",\n          \"name\"\n         ],\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"allowAuthentication\",\n    \"client\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Git Hub Identity Provider\",\n \"type\": \"object\"\n}",
+   "version": "idp.supervisor.pinniped.dev/v1alpha1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "Git Hub Identity Provider",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "published": false,
+   "source_uri": "https://charts.bitnami.com/bitnami/pinniped-2.3.1.tgz"
+  },
+  "model": {
+   "category": {
+    "name": "Security \u0026 Compliance"
+   },
+   "displayName": "Pinniped",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "source_uri": "https://charts.bitnami.com/bitnami/pinniped-2.3.1.tgz",
+    "styleOverrides": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "model": {
+    "version": "2.3.1"
+   },
+   "name": "pinniped",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "subCategory": "Key Management",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "svgColor": "",
+   "svgWhite": ""
+  },
+  "version": "v1.0.0"
+ }

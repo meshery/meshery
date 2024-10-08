@@ -1,0 +1,195 @@
+{
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "WasmPlugin",
+   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Extend the functionality provided by the Istio proxy through WebAssembly filters. See more details at: https://istio.io/docs/reference/config/proxy_extensions/wasm-plugin.html\",\n   \"properties\": {\n    \"failStrategy\": {\n     \"description\": \"Specifies the failure behavior for the plugin due to fatal errors.\\n\\nValid Options: FAIL_CLOSE, FAIL_OPEN\",\n     \"enum\": [\n      \"FAIL_CLOSE\",\n      \"FAIL_OPEN\"\n     ],\n     \"type\": \"string\"\n    },\n    \"imagePullPolicy\": {\n     \"description\": \"The pull behaviour to be applied when fetching Wasm module by either OCI image or `http/https`.\\n\\nValid Options: IfNotPresent, Always\",\n     \"enum\": [\n      \"UNSPECIFIED_POLICY\",\n      \"IfNotPresent\",\n      \"Always\"\n     ],\n     \"type\": \"string\"\n    },\n    \"imagePullSecret\": {\n     \"description\": \"Credentials to use for OCI image pulling.\",\n     \"maxLength\": 253,\n     \"minLength\": 1,\n     \"type\": \"string\"\n    },\n    \"match\": {\n     \"description\": \"Specifies the criteria to determine which traffic is passed to WasmPlugin.\",\n     \"items\": {\n      \"properties\": {\n       \"mode\": {\n        \"description\": \"Criteria for selecting traffic by their direction.\\n\\nValid Options: CLIENT, SERVER, CLIENT_AND_SERVER\",\n        \"enum\": [\n         \"UNDEFINED\",\n         \"CLIENT\",\n         \"SERVER\",\n         \"CLIENT_AND_SERVER\"\n        ],\n        \"type\": \"string\"\n       },\n       \"ports\": {\n        \"description\": \"Criteria for selecting traffic by their destination port.\",\n        \"items\": {\n         \"properties\": {\n          \"number\": {\n           \"maximum\": 65535,\n           \"minimum\": 1,\n           \"type\": \"integer\"\n          }\n         },\n         \"required\": [\n          \"number\"\n         ],\n         \"type\": \"object\"\n        },\n        \"type\": \"array\",\n        \"x-kubernetes-list-map-keys\": [\n         \"number\"\n        ],\n        \"x-kubernetes-list-type\": \"map\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"phase\": {\n     \"description\": \"Determines where in the filter chain this `WasmPlugin` is to be injected.\\n\\nValid Options: AUTHN, AUTHZ, STATS\",\n     \"enum\": [\n      \"UNSPECIFIED_PHASE\",\n      \"AUTHN\",\n      \"AUTHZ\",\n      \"STATS\"\n     ],\n     \"type\": \"string\"\n    },\n    \"pluginConfig\": {\n     \"description\": \"The configuration that will be passed on to the plugin.\",\n     \"format\": \"textarea\",\n     \"type\": \"string\"\n    },\n    \"pluginName\": {\n     \"description\": \"The plugin name to be used in the Envoy configuration (used to be called `rootID`).\",\n     \"maxLength\": 256,\n     \"minLength\": 1,\n     \"type\": \"string\"\n    },\n    \"priority\": {\n     \"description\": \"Determines ordering of `WasmPlugins` in the same `phase`.\",\n     \"format\": \"int32\",\n     \"nullable\": true,\n     \"type\": \"integer\"\n    },\n    \"selector\": {\n     \"description\": \"Criteria used to select the specific set of pods/VMs on which this plugin configuration should be applied.\",\n     \"properties\": {\n      \"matchLabels\": {\n       \"additionalProperties\": {\n        \"maxLength\": 63,\n        \"type\": \"string\",\n        \"x-kubernetes-validations\": [\n         {\n          \"message\": \"wildcard not allowed in label value match\",\n          \"rule\": \"!self.contains('*')\"\n         }\n        ]\n       },\n       \"description\": \"One or more labels that indicate a specific set of pods/VMs on which a policy should be applied.\",\n       \"maxProperties\": 4096,\n       \"type\": \"object\",\n       \"x-kubernetes-validations\": [\n        {\n         \"message\": \"wildcard not allowed in label key match\",\n         \"rule\": \"self.all(key, !key.contains('*'))\"\n        },\n        {\n         \"message\": \"key must not be empty\",\n         \"rule\": \"self.all(key, key.size() != 0)\"\n        }\n       ]\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"sha256\": {\n     \"description\": \"SHA256 checksum that will be used to verify Wasm module or OCI container.\",\n     \"pattern\": \"(^$|^[a-f0-9]{64}$)\",\n     \"type\": \"string\"\n    },\n    \"targetRef\": {\n     \"properties\": {\n      \"group\": {\n       \"description\": \"group is the group of the target resource.\",\n       \"maxLength\": 253,\n       \"pattern\": \"^$|^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$\",\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"description\": \"kind is kind of the target resource.\",\n       \"maxLength\": 63,\n       \"minLength\": 1,\n       \"pattern\": \"^[a-zA-Z]([-a-zA-Z0-9]*[a-zA-Z0-9])?$\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"name is the name of the target resource.\",\n       \"maxLength\": 253,\n       \"minLength\": 1,\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"namespace is the namespace of the referent.\",\n       \"type\": \"string\",\n       \"x-kubernetes-validations\": [\n        {\n         \"message\": \"cross namespace referencing is not currently supported\",\n         \"rule\": \"self.size() == 0\"\n        }\n       ]\n      }\n     },\n     \"required\": [\n      \"kind\",\n      \"name\"\n     ],\n     \"type\": \"object\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"Support kinds are core/Service and gateway.networking.k8s.io/Gateway\",\n       \"rule\": \"[self.group, self.kind] in [['core','Service'], ['','Service'], ['gateway.networking.k8s.io','Gateway']]\"\n      }\n     ]\n    },\n    \"targetRefs\": {\n     \"description\": \"Optional.\",\n     \"items\": {\n      \"properties\": {\n       \"group\": {\n        \"description\": \"group is the group of the target resource.\",\n        \"maxLength\": 253,\n        \"pattern\": \"^$|^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$\",\n        \"type\": \"string\"\n       },\n       \"kind\": {\n        \"description\": \"kind is kind of the target resource.\",\n        \"maxLength\": 63,\n        \"minLength\": 1,\n        \"pattern\": \"^[a-zA-Z]([-a-zA-Z0-9]*[a-zA-Z0-9])?$\",\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"description\": \"name is the name of the target resource.\",\n        \"maxLength\": 253,\n        \"minLength\": 1,\n        \"type\": \"string\"\n       },\n       \"namespace\": {\n        \"description\": \"namespace is the namespace of the referent.\",\n        \"type\": \"string\",\n        \"x-kubernetes-validations\": [\n         {\n          \"message\": \"cross namespace referencing is not currently supported\",\n          \"rule\": \"self.size() == 0\"\n         }\n        ]\n       }\n      },\n      \"required\": [\n       \"kind\",\n       \"name\"\n      ],\n      \"type\": \"object\",\n      \"x-kubernetes-validations\": [\n       {\n        \"message\": \"Support kinds are core/Service and gateway.networking.k8s.io/Gateway\",\n        \"rule\": \"[self.group, self.kind] in [['core','Service'], ['','Service'], ['gateway.networking.k8s.io','Gateway']]\"\n       }\n      ]\n     },\n     \"type\": \"array\"\n    },\n    \"type\": {\n     \"description\": \"Specifies the type of Wasm Extension to be used.\\n\\nValid Options: HTTP, NETWORK\",\n     \"enum\": [\n      \"UNSPECIFIED_PLUGIN_TYPE\",\n      \"HTTP\",\n      \"NETWORK\"\n     ],\n     \"type\": \"string\"\n    },\n    \"url\": {\n     \"description\": \"URL of a Wasm module or OCI container.\",\n     \"minLength\": 1,\n     \"type\": \"string\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"url must have schema one of [http, https, file, oci]\",\n       \"rule\": \"isURL(self) ? (url(self).getScheme() in ['', 'http', 'https', 'oci', 'file']) : (isURL('http://' + self) \\u0026\\u0026 url('http://' +self).getScheme() in ['', 'http', 'https', 'oci', 'file'])\"\n      }\n     ]\n    },\n    \"verificationKey\": {\n     \"type\": \"string\"\n    },\n    \"vmConfig\": {\n     \"description\": \"Configuration for a Wasm VM.\",\n     \"properties\": {\n      \"env\": {\n       \"description\": \"Specifies environment variables to be injected to this VM.\",\n       \"items\": {\n        \"properties\": {\n         \"name\": {\n          \"description\": \"Name of the environment variable.\",\n          \"maxLength\": 256,\n          \"minLength\": 1,\n          \"type\": \"string\"\n         },\n         \"value\": {\n          \"description\": \"Value for the environment variable.\",\n          \"maxLength\": 2048,\n          \"type\": \"string\"\n         },\n         \"valueFrom\": {\n          \"description\": \"Source for the environment variable's value.\\n\\nValid Options: INLINE, HOST\",\n          \"enum\": [\n           \"INLINE\",\n           \"HOST\"\n          ],\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"name\"\n        ],\n        \"type\": \"object\",\n        \"x-kubernetes-validations\": [\n         {\n          \"message\": \"value may only be set when valueFrom is INLINE\",\n          \"rule\": \"(has(self.valueFrom) ? self.valueFrom : '') != 'HOST' || !has(self.value)\"\n         }\n        ]\n       },\n       \"maxItems\": 256,\n       \"type\": \"array\",\n       \"x-kubernetes-list-map-keys\": [\n        \"name\"\n       ],\n       \"x-kubernetes-list-type\": \"map\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"url\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Wasm Plugin\",\n \"type\": \"object\"\n}",
+   "version": "extensions.istio.io/v1alpha1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "Wasm Plugin",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "published": false,
+   "source_uri": "https://istio-release.storage.googleapis.com/charts/base-1.23.1.tgz"
+  },
+  "model": {
+   "category": {
+    "name": "Uncategorized"
+   },
+   "displayName": "base",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "source_uri": "https://istio-release.storage.googleapis.com/charts/base-1.23.1.tgz",
+    "styleOverrides": "",
+    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 160 240\" fill=\"none\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M0 210H160L60 240L0 210Z\" fill=\"#466BB0\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M0 200L60 190V80L0 200Z\" fill=\"#466BB0\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M70 190L160 200L70 0V190Z\" fill=\"#466BB0\"\u003e\u003c/path\u003e\n\u003c/svg\u003e\n",
+    "svgComplete": "",
+    "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"6.386270046234131 3.7419400215148926 18.227430820465088 25.258059978485107\" fill=\"none\" height=\"20\" width=\"20\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M6.38627 24.7904L13.2215 23.738V12.1613L6.38627 24.7904Z\" fill=\"white\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M6.38627 25.8427H24.6137L13.2215 29L6.38627 25.8427Z\" fill=\"white\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M14.3608 23.7379L24.6137 24.7904L14.3608 3.74194V23.7379Z\" fill=\"white\"\u003e\u003c/path\u003e\u003c/svg\u003e"
+   },
+   "model": {
+    "version": "1.23.1"
+   },
+   "name": "base",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "subCategory": "Uncategorized",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "svgColor": "\u003csvg width=\"160\" height=\"240\" viewBox=\"0 0 160 240\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M0 210H160L60 240L0 210Z\" fill=\"#466BB0\"/\u003e\n\u003cpath d=\"M0 200L60 190V80L0 200Z\" fill=\"#466BB0\"/\u003e\n\u003cpath d=\"M70 190L160 200L70 0V190Z\" fill=\"#466BB0\"/\u003e\n\u003c/svg\u003e\n",
+   "svgWhite": "\u003csvg viewBox=\"6.386270046234131 3.7419400215148926 18.227430820465088 25.258059978485107\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cpath d=\"M6.38627 24.7904L13.2215 23.738V12.1613L6.38627 24.7904Z\" fill=\"white\"/\u003e\u003cpath d=\"M6.38627 25.8427H24.6137L13.2215 29L6.38627 25.8427Z\" fill=\"white\"/\u003e\u003cpath d=\"M14.3608 23.7379L24.6137 24.7904L14.3608 3.74194V23.7379Z\" fill=\"white\"/\u003e\u003c/svg\u003e"
+  },
+  "version": "v1.0.0"
+ }

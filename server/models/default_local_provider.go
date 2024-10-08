@@ -4,7 +4,6 @@ import (
 	"archive/tar"
 	"bytes"
 	"compress/gzip"
-	"database/sql"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
@@ -38,6 +37,7 @@ import (
 // DefaultLocalProvider - represents a local provider
 type DefaultLocalProvider struct {
 	*MapPreferencePersister
+	*UserCapabilitiesPersister
 	*EventsPersister
 	ProviderProperties
 	ProviderBaseURL                 string
@@ -87,6 +87,10 @@ func (l *DefaultLocalProvider) Name() string {
 	return l.ProviderName
 }
 
+func (l *DefaultLocalProvider) GetProviderURL() string {
+	return l.ProviderBaseURL
+}
+
 // Description - returns a short description of the provider for display in the Provider UI
 func (l *DefaultLocalProvider) Description() []string {
 	return l.ProviderDescription
@@ -95,6 +99,13 @@ func (l *DefaultLocalProvider) Description() []string {
 // GetProviderType - Returns ProviderType
 func (l *DefaultLocalProvider) GetProviderType() ProviderType {
 	return l.ProviderType
+}
+
+func (l *DefaultLocalProvider) DownloadProviderExtensionPackage() {
+}
+
+func (l *DefaultLocalProvider) SetProviderProperties(providerProperties ProviderProperties) {
+	l.ProviderProperties = providerProperties
 }
 
 // GetProviderProperties - Returns all the provider properties required
@@ -108,8 +119,14 @@ func (l *DefaultLocalProvider) PackageLocation() string {
 	return ""
 }
 
+func (l *DefaultLocalProvider) SetJWTCookie(_ http.ResponseWriter, _ string) {
+}
+
+func (l *DefaultLocalProvider) UnSetJWTCookie(_ http.ResponseWriter) {
+}
+
 // GetProviderCapabilities returns all of the provider properties
-func (l *DefaultLocalProvider) GetProviderCapabilities(w http.ResponseWriter, _ *http.Request) {
+func (l *DefaultLocalProvider) GetProviderCapabilities(w http.ResponseWriter, _ *http.Request, _ string) {
 	encoder := json.NewEncoder(w)
 	if err := encoder.Encode(l.ProviderProperties); err != nil {
 		http.Error(w, "failed to encode provider capabilities", http.StatusInternalServerError)
@@ -251,7 +268,7 @@ func (l *DefaultLocalProvider) SaveK8sContext(_ string, k8sContext K8sContext) (
 		"cluster": k8sContext.Cluster,
 	}
 
-	conn := &ConnectionPayload{
+	conn := &connections.ConnectionPayload{
 		ID:      connID,
 		Kind:    "kubernetes",
 		Name:    k8sContext.Name,
@@ -267,6 +284,9 @@ func (l *DefaultLocalProvider) SaveK8sContext(_ string, k8sContext K8sContext) (
 	if err != nil {
 		return connections.Connection{}, fmt.Errorf("error in saving k8s context %v", err)
 	}
+
+	k8sContext.ConnectionID = connID.String()
+
 	_, _ = l.MesheryK8sContextPersister.SaveMesheryK8sContext(k8sContext)
 	return *connectionCreated, nil
 }
@@ -1055,7 +1075,7 @@ func (l *DefaultLocalProvider) ExtensionProxy(_ *http.Request) (*ExtensionProxyR
 	return nil, ErrLocalProviderSupport
 }
 
-func (l *DefaultLocalProvider) SaveConnection(conn *ConnectionPayload, _ string, _ bool) (*connections.Connection, error) {
+func (l *DefaultLocalProvider) SaveConnection(conn *connections.ConnectionPayload, _ string, _ bool) (*connections.Connection, error) {
 	id := uuid.Nil
 	if conn.ID != uuid.Nil {
 		id = conn.ID
@@ -1124,7 +1144,7 @@ func (l *DefaultLocalProvider) UpdateConnectionStatusByID(token string, connecti
 	return updatedConnection, http.StatusOK, nil
 }
 
-func (l *DefaultLocalProvider) UpdateConnectionById(req *http.Request, conn *ConnectionPayload, _ string) (*connections.Connection, error) {
+func (l *DefaultLocalProvider) UpdateConnectionById(req *http.Request, conn *connections.ConnectionPayload, _ string) (*connections.Connection, error) {
 	connection := connections.Connection{
 		ID:           conn.ID,
 		Name:         conn.Name,
@@ -1166,44 +1186,72 @@ func (l *DefaultLocalProvider) GetKubeClient() *mesherykube.Client {
 	return l.KubeClient
 }
 
-// SeedContent- to seed various contents with local provider-like patterns, filters, and applications
 func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 	seededUUIDs := make([]uuid.UUID, 0)
-	seedContents := []string{"Pattern", "Application", "Filter"}
+	seedContents := []string{"Pattern", "Filter"}
 	nilUserID := ""
+
+	// Use the relative directory for patterns
+	catalogDir := filepath.Join("..", "..", "docs", "catalog")
+
 	for _, seedContent := range seedContents {
 		go func(comp string, log logger.Handler, seededUUIDs *[]uuid.UUID) {
-			names, content, err := getSeededComponents(comp, log)
-			if err != nil {
-				log.Error(ErrGettingSeededComponents(err, comp))
-			} else {
-				log.Info("seeding sample ", comp, "s")
-				switch comp {
-				case "Pattern":
-					for i, name := range names {
-						id, _ := uuid.NewV4()
+			switch comp {
+			case "Pattern":
+				files, err := walker.WalkLocalDirectory(catalogDir)
+				if err != nil {
+					log.Error(err)
+					return
+				}
 
-						var pattern = &MesheryPattern{
-							PatternFile: content[i],
-							Name:        name,
-							ID:          &id,
-							UserID:      &nilUserID,
-							Visibility:  Published,
-							Location: map[string]interface{}{
-								"host":   "",
-								"path":   "",
-								"type":   "local",
-								"branch": "",
-							},
-						}
-						log.Debug("seeding "+comp+": ", name)
-						_, err := l.MesheryPatternPersister.SaveMesheryPattern(pattern)
-						if err != nil {
-							log.Error(ErrGettingSeededComponents(err, comp+"s"))
-						}
-						*seededUUIDs = append(*seededUUIDs, id)
+				log.Info("seeding sample ", comp, "s")
+				var wg sync.WaitGroup
+
+				for i, file := range files {
+					// Ensure only design.yml is imported
+					if file.Name == "design.yml" {
+						wg.Add(1)
+						go func(file *walker.File, index int) {
+							defer wg.Done()
+							id, _ := uuid.NewV4()
+
+							patternName, err := GetPatternName(file.Content)
+							if err != nil {
+								log.Error(err)
+								return
+							}
+
+							var pattern = &MesheryPattern{
+								PatternFile: file.Content,
+								Name:        patternName,
+								ID:          &id,
+								UserID:      &nilUserID,
+								Visibility:  Published,
+								Location: map[string]interface{}{
+									"host":   "",
+									"path":   "",
+									"type":   "local",
+									"branch": "",
+								},
+							}
+							log.Debug("seeding "+comp+": ", pattern.Name)
+							if _, err := l.MesheryPatternPersister.SaveMesheryPattern(pattern); err != nil {
+								log.Error(ErrGettingSeededComponents(err, comp+"s"))
+							}
+							*seededUUIDs = append(*seededUUIDs, id)
+						}(file, i)
 					}
-				case "Filter":
+				}
+
+				wg.Wait()
+
+			case "Filter":
+				// Keep the existing behavior for filters
+				names, content, err := getSeededComponents(comp, log)
+				if err != nil {
+					log.Error(ErrGettingSeededComponents(err, comp))
+				} else {
+					log.Info("seeding sample ", comp, "s")
 					for i, name := range names {
 						id, _ := uuid.NewV4()
 						var filter = &MesheryFilter{
@@ -1226,52 +1274,12 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 						}
 						*seededUUIDs = append(*seededUUIDs, id)
 					}
-				case "Application":
-					mapNameToTypeToContent := make(map[string]map[string]string)
-					for i, name := range names {
-						ss := strings.Split(name, "_")
-						if len(ss) < 2 {
-							continue
-						}
-						if mapNameToTypeToContent[ss[0]] == nil {
-							mapNameToTypeToContent[ss[0]] = make(map[string]string)
-						}
-						mapNameToTypeToContent[ss[0]][ss[1]] = content[i]
-					}
-					for name, contents := range mapNameToTypeToContent {
-						id, _ := uuid.NewV4()
-						var k8sfile string
-						var patternfile string
-						for typ, content := range contents {
-							if strings.Contains(typ, "k8s") {
-								k8sfile = content
-							} else {
-								patternfile = content
-							}
-						}
-						var app = &MesheryApplication{
-							ApplicationFile: patternfile,
-							Type: sql.NullString{
-								String: string(K8sManifest),
-								Valid:  true,
-							},
-							SourceContent: []byte(k8sfile),
-							Name:          name,
-							ID:            &id,
-						}
-						log.Debug("seeding "+comp+": ", name)
-						_, err := l.MesheryApplicationPersister.SaveMesheryApplication(app)
-						if err != nil {
-							log.Error(ErrGettingSeededComponents(err, comp+"s"))
-						}
-						*seededUUIDs = append(*seededUUIDs, id)
-					}
 				}
 			}
 		}(seedContent, log, &seededUUIDs)
 	}
 
-	// seed default organization
+	// Seed default organization
 	go func() {
 		id, _ := uuid.NewV4()
 		org := &Organization{
@@ -1291,6 +1299,7 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 		}
 	}()
 }
+
 func (l *DefaultLocalProvider) Cleanup() error {
 	if err := l.MesheryK8sContextPersister.DB.Migrator().DropTable(&K8sContext{}); err != nil {
 		return err
@@ -1693,8 +1702,7 @@ func getSeededComponents(comp string, log logger.Handler) ([]string, []string, e
 		wd = filepath.Join(wd, ".meshery", "content", "patterns")
 	case "Filter":
 		wd = filepath.Join(wd, ".meshery", "content", "filters", "binaries")
-	case "Application":
-		wd = filepath.Join(wd, ".meshery", "content", "applications")
+
 	}
 	_, err := os.Stat(wd)
 	if err != nil && !os.IsNotExist(err) {
@@ -1761,25 +1769,7 @@ func downloadContent(comp string, downloadpath string) error {
 		}).Walk()
 	case "Filter":
 		return getFiltersFromWasmFiltersRepo(downloadpath)
-	case "Application":
-		walk := walker.NewGit()
-		return walk.Owner("service-mesh-patterns").Repo("service-mesh-patterns").Root("samples/applications/").Branch("master").RegisterDirInterceptor(func(d walker.Directory) error {
-			err := os.Mkdir(downloadpath, 0777)
-			if err != nil && !os.IsExist(err) {
-				return err
-			}
-			walkfile := walker.NewGit()
-			return walkfile.Owner("service-mesh-patterns").Repo("service-mesh-patterns").Root("samples/applications/" + d.Name).Branch("master").RegisterFileInterceptor(func(f walker.File) error {
-				path := filepath.Join(downloadpath, d.Name+"_"+f.Name)
-				file, err := os.Create(path)
-				if err != nil {
-					return err
-				}
-				defer file.Close()
-				fmt.Fprintf(file, "%s", f.Content)
-				return nil
-			}).Walk()
-		}).Walk()
+
 	}
 	return nil
 }

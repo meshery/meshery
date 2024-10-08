@@ -1,0 +1,195 @@
+{
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "StatefulSet",
+   "schema": "{\n \"description\": \"StatefulSet is the Schema for the statefulsets API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"StatefulSetSpec defines the desired state of StatefulSet\",\n   \"properties\": {\n    \"podManagementPolicy\": {\n     \"description\": \"podManagementPolicy controls how pods are created during initial scale up,\\nwhen replacing pods on nodes, or when scaling down. The default policy is\\n`OrderedReady`, where pods are created in increasing order (pod-0, then\\npod-1, etc) and the controller will wait until each pod is ready before\\ncontinuing. When scaling down, the pods are removed in the opposite order.\\nThe alternative policy is `Parallel` which will create pods in parallel\\nto match the desired scale without waiting, and on scale down will delete\\nall pods at once.\",\n     \"type\": \"string\"\n    },\n    \"replicas\": {\n     \"description\": \"replicas is the desired number of replicas of the given Template.\\nThese are replicas in the sense that they are instantiations of the\\nsame Template, but individual replicas also have a consistent identity.\\nIf unspecified, defaults to 1.\\nTODO: Consider a rename of this field.\",\n     \"format\": \"int32\",\n     \"type\": \"integer\"\n    },\n    \"revisionHistoryLimit\": {\n     \"description\": \"revisionHistoryLimit is the maximum number of revisions that will\\nbe maintained in the StatefulSet's revision history. The revision history\\nconsists of all revisions not represented by a currently applied\\nStatefulSetSpec version. The default value is 10.\",\n     \"format\": \"int32\",\n     \"type\": \"integer\"\n    },\n    \"selector\": {\n     \"description\": \"selector is a label query over pods that should match the replica count.\\nIt must match the pod template's labels.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#label-selectors\",\n     \"properties\": {\n      \"matchExpressions\": {\n       \"description\": \"matchExpressions is a list of label selector requirements. The requirements are ANDed.\",\n       \"items\": {\n        \"description\": \"A label selector requirement is a selector that contains values, a key, and an operator that\\nrelates the key and values.\",\n        \"properties\": {\n         \"key\": {\n          \"description\": \"key is the label key that the selector applies to.\",\n          \"type\": \"string\"\n         },\n         \"operator\": {\n          \"description\": \"operator represents a key's relationship to a set of values.\\nValid operators are In, NotIn, Exists and DoesNotExist.\",\n          \"type\": \"string\"\n         },\n         \"values\": {\n          \"description\": \"values is an array of string values. If the operator is In or NotIn,\\nthe values array must be non-empty. If the operator is Exists or DoesNotExist,\\nthe values array must be empty. This array is replaced during a strategic\\nmerge patch.\",\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         }\n        },\n        \"required\": [\n         \"key\",\n         \"operator\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"matchLabels\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels\\nmap is equivalent to an element of matchExpressions, whose key field is \\\"key\\\", the\\noperator is \\\"In\\\", and the values array contains only \\\"value\\\". The requirements are ANDed.\",\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    },\n    \"serviceName\": {\n     \"description\": \"serviceName is the name of the service that governs this StatefulSet.\\nThis service must exist before the StatefulSet, and is responsible for\\nthe network identity of the set. Pods get DNS/hostnames that follow the\\npattern: pod-specific-string.serviceName.default.svc.cluster.local\\nwhere \\\"pod-specific-string\\\" is managed by the StatefulSet controller.\",\n     \"type\": \"string\"\n    },\n    \"template\": {\n     \"description\": \"template is the object that describes the pod that will be created if\\ninsufficient replicas are detected. Each pod stamped out by the StatefulSet\\nwill fulfill this Template, but have a unique identity from the rest\\nof the StatefulSet.\",\n     \"format\": \"textarea\",\n     \"type\": \"string\"\n    },\n    \"updateStrategy\": {\n     \"description\": \"updateStrategy indicates the StatefulSetUpdateStrategy that will be\\nemployed to update Pods in the StatefulSet when a revision is made to\\nTemplate.\",\n     \"properties\": {\n      \"rollingUpdate\": {\n       \"description\": \"RollingUpdate is used to communicate parameters when Type is RollingUpdateStatefulSetStrategyType.\",\n       \"properties\": {\n        \"inPlaceUpdateStrategy\": {\n         \"description\": \"InPlaceUpdateStrategy contains strategies for in-place update.\",\n         \"properties\": {\n          \"gracePeriodSeconds\": {\n           \"description\": \"GracePeriodSeconds is the timespan between set Pod status to not-ready and update images in Pod spec\\nwhen in-place update a Pod.\",\n           \"format\": \"int32\",\n           \"type\": \"integer\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"maxUnavailable\": {\n         \"anyOf\": [\n          {\n           \"type\": \"integer\"\n          },\n          {\n           \"type\": \"string\"\n          }\n         ],\n         \"description\": \"The maximum number of pods that can be unavailable during the update.\\nValue can be an absolute number (ex: 5) or a percentage of desired pods (ex: 10%).\\nAbsolute number is calculated from percentage by rounding down.\\nAlso, maxUnavailable can just be allowed to work with Parallel podManagementPolicy.\\nDefaults to 1.\",\n         \"x-kubernetes-int-or-string\": true\n        },\n        \"minReadySeconds\": {\n         \"description\": \"MinReadySeconds indicates how long will the pod be considered ready after it's updated.\\nMinReadySeconds works with both OrderedReady and Parallel podManagementPolicy.\\nIt affects the pod scale up speed when the podManagementPolicy is set to be OrderedReady.\\nCombined with MaxUnavailable, it affects the pod update speed regardless of podManagementPolicy.\\nDefault value is 0, max is 300.\",\n         \"format\": \"int32\",\n         \"type\": \"integer\"\n        },\n        \"partition\": {\n         \"description\": \"Partition indicates the ordinal at which the StatefulSet should be partitioned by default.\\nBut if unorderedUpdate has been set:\\n  - Partition indicates the number of pods with non-updated revisions when rolling update.\\n  - It means controller will update $(replicas - partition) number of pod.\\nDefault value is 0.\",\n         \"format\": \"int32\",\n         \"type\": \"integer\"\n        },\n        \"paused\": {\n         \"description\": \"Paused indicates that the StatefulSet is paused.\\nDefault value is false\",\n         \"type\": \"boolean\"\n        },\n        \"podUpdatePolicy\": {\n         \"description\": \"PodUpdatePolicy indicates how pods should be updated\\nDefault value is \\\"ReCreate\\\"\",\n         \"type\": \"string\"\n        },\n        \"unorderedUpdate\": {\n         \"description\": \"UnorderedUpdate contains strategies for non-ordered update.\\nIf it is not nil, pods will be updated with non-ordered sequence.\\nNoted that UnorderedUpdate can only be allowed to work with Parallel podManagementPolicy\",\n         \"properties\": {\n          \"priorityStrategy\": {\n           \"description\": \"Priorities are the rules for calculating the priority of updating pods.\\nEach pod to be updated, will pass through these terms and get a sum of weights.\",\n           \"properties\": {\n            \"orderPriority\": {\n             \"description\": \"Order priority terms, pods will be sorted by the value of orderedKey.\\nFor example:\\n```\\norderPriority:\\n- orderedKey: key1\\n- orderedKey: key2\\n```\\nFirst, all pods which have key1 in labels will be sorted by the value of key1.\\nThen, the left pods which have no key1 but have key2 in labels will be sorted by\\nthe value of key2 and put behind those pods have key1.\",\n             \"items\": {\n              \"description\": \"UpdatePriorityOrderTerm defines order priority.\",\n              \"properties\": {\n               \"orderedKey\": {\n                \"description\": \"Calculate priority by value of this key.\\nValues of this key, will be sorted by GetInt(val). GetInt method will find the last int in value,\\nsuch as getting 5 in value '5', getting 10 in value 'sts-10'.\",\n                \"type\": \"string\"\n               }\n              },\n              \"required\": [\n               \"orderedKey\"\n              ],\n              \"type\": \"object\"\n             },\n             \"type\": \"array\"\n            },\n            \"weightPriority\": {\n             \"description\": \"Weight priority terms, pods will be sorted by the sum of all terms weight.\",\n             \"items\": {\n              \"description\": \"UpdatePriorityWeightTerm defines weight priority.\",\n              \"properties\": {\n               \"matchSelector\": {\n                \"description\": \"MatchSelector is used to select by pod's labels.\",\n                \"properties\": {\n                 \"matchExpressions\": {\n                  \"description\": \"matchExpressions is a list of label selector requirements. The requirements are ANDed.\",\n                  \"items\": {\n                   \"description\": \"A label selector requirement is a selector that contains values, a key, and an operator that\\nrelates the key and values.\",\n                   \"properties\": {\n                    \"key\": {\n                     \"description\": \"key is the label key that the selector applies to.\",\n                     \"type\": \"string\"\n                    },\n                    \"operator\": {\n                     \"description\": \"operator represents a key's relationship to a set of values.\\nValid operators are In, NotIn, Exists and DoesNotExist.\",\n                     \"type\": \"string\"\n                    },\n                    \"values\": {\n                     \"description\": \"values is an array of string values. If the operator is In or NotIn,\\nthe values array must be non-empty. If the operator is Exists or DoesNotExist,\\nthe values array must be empty. This array is replaced during a strategic\\nmerge patch.\",\n                     \"items\": {\n                      \"type\": \"string\"\n                     },\n                     \"type\": \"array\"\n                    }\n                   },\n                   \"required\": [\n                    \"key\",\n                    \"operator\"\n                   ],\n                   \"type\": \"object\"\n                  },\n                  \"type\": \"array\"\n                 },\n                 \"matchLabels\": {\n                  \"additionalProperties\": {\n                   \"type\": \"string\"\n                  },\n                  \"description\": \"matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels\\nmap is equivalent to an element of matchExpressions, whose key field is \\\"key\\\", the\\noperator is \\\"In\\\", and the values array contains only \\\"value\\\". The requirements are ANDed.\",\n                  \"type\": \"object\"\n                 }\n                },\n                \"type\": \"object\",\n                \"x-kubernetes-map-type\": \"atomic\"\n               },\n               \"weight\": {\n                \"description\": \"Weight associated with matching the corresponding matchExpressions, in the range 1-100.\",\n                \"format\": \"int32\",\n                \"type\": \"integer\"\n               }\n              },\n              \"required\": [\n               \"matchSelector\",\n               \"weight\"\n              ],\n              \"type\": \"object\"\n             },\n             \"type\": \"array\"\n            }\n           },\n           \"type\": \"object\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"type\": {\n       \"description\": \"Type indicates the type of the StatefulSetUpdateStrategy.\\nDefault is RollingUpdate.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"volumeClaimTemplates\": {\n     \"description\": \"volumeClaimTemplates is a list of claims that pods are allowed to reference.\\nThe StatefulSet controller is responsible for mapping network identities to\\nclaims in a way that maintains the identity of a pod. Every claim in\\nthis list must have at least one matching (by name) volumeMount in one\\ncontainer in the template. A claim in this list takes precedence over\\nany volumes in the template, with the same name.\\nTODO: Define the behavior if a claim already exists with the same name.\",\n     \"format\": \"textarea\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"selector\",\n    \"template\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Stateful Set\",\n \"type\": \"object\"\n}",
+   "version": "apps.kruise.io/v1alpha1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "Stateful Set",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "published": false,
+   "source_uri": "git://github.com/openkruise/kruise/master/config/crd/bases"
+  },
+  "model": {
+   "category": {
+    "name": "App Definition and Development"
+   },
+   "displayName": "Openkruise",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "isAnnotation": false,
+    "primaryColor": "#0090ff",
+    "secondaryColor": "#1a9bff",
+    "shape": "circle",
+    "source_uri": "git://github.com/openkruise/kruise/master/config/crd/bases",
+    "styleOverrides": "",
+    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" id=\"图层_1\" data-name=\"图层 1\" xmlns:_xmlns=\"xmlns\" _xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewBox=\"0 0 56.69 56.69\" height=\"20\" width=\"20\"\u003e\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cstyle xmlns=\"http://www.w3.org/2000/svg\"\u003e.cls-1{fill:url(#未命名的渐变_60);}.cls-2{fill:url(#未命名的渐变_89);}.cls-3{fill:url(#未命名的渐变_43);}\u003c/style\u003e\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"未命名的渐变_60\" x1=\"28.35\" y1=\"54.33\" x2=\"28.35\" y2=\"2\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"0\" stop-color=\"#0071ff\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"1\" stop-color=\"#009bff\"\u003e\u003c/stop\u003e\u003c/linearGradient\u003e\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"未命名的渐变_89\" x1=\"11.77\" y1=\"35.48\" x2=\"44.79\" y2=\"35.48\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"0\" stop-color=\"#0050fa\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"1\" stop-color=\"#00a0ff\" stop-opacity=\"0\"\u003e\u003c/stop\u003e\u003c/linearGradient\u003e\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"未命名的渐变_43\" x1=\"35.73\" y1=\"41.11\" x2=\"35.73\" y2=\"7.93\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"0\" stop-color=\"#00a0dc\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"1\" stop-color=\"#3cfaff\"\u003e\u003c/stop\u003e\u003c/linearGradient\u003e\u003c/defs\u003e\u003ctitle xmlns=\"http://www.w3.org/2000/svg\"\u003eopenkruise\u003c/title\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"cls-1\" d=\"M28.35,2A26.17,26.17,0,1,0,54.51,28.16,26.17,26.17,0,0,0,28.35,2Zm0,35.46a9.3,9.3,0,1,1,9.29-9.3A9.3,9.3,0,0,1,28.36,37.46Z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"cls-2\" d=\"M43,38.88A16.58,16.58,0,0,1,20.3,32.81l0,0A9.25,9.25,0,0,1,27.6,18.91,16.57,16.57,0,1,0,44.79,37.64,15.58,15.58,0,0,1,43,38.88Z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"cls-3\" d=\"M49,16.23a16.57,16.57,0,0,0-20.67-7,14.38,14.38,0,0,1,2,1A16.58,16.58,0,0,1,36.4,32.81,6.86,6.86,0,0,1,35.58,34a9.22,9.22,0,0,1-15.37-1.36,1.45,1.45,0,0,0,.09.22A16.58,16.58,0,0,0,49,16.23Z\"\u003e\u003c/path\u003e\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" id=\"图层_1\" data-name=\"图层 1\" xmlns:_xmlns=\"xmlns\" _xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewBox=\"0 0 56.69 56.69\" height=\"20\" width=\"20\"\u003e\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cstyle xmlns=\"http://www.w3.org/2000/svg\"\u003e.cls-1,.cls-2{fill:#fff;}.cls-2{opacity:0.7;}.cls-3{fill:url(#未命名的渐变_5);}\u003c/style\u003e\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"未命名的渐变_5\" x1=\"11.77\" y1=\"35.48\" x2=\"44.79\" y2=\"35.48\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"0\" stop-color=\"#fff\" stop-opacity=\"0\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"1\" stop-color=\"#fff\"\u003e\u003c/stop\u003e\u003c/linearGradient\u003e\u003c/defs\u003e\u003ctitle xmlns=\"http://www.w3.org/2000/svg\"\u003eopenkruise\u003c/title\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"cls-1\" d=\"M28.35,2A26.17,26.17,0,1,0,54.51,28.16,26.17,26.17,0,0,0,28.35,2ZM44.79,37.64A16.58,16.58,0,1,1,27.27,18.91a7.83,7.83,0,0,1,1.09,0,9.28,9.28,0,0,1,8.51,13,16.56,16.56,0,0,0-6.55-21.72,14.38,14.38,0,0,0-2-1A16.58,16.58,0,0,1,44.79,37.64Z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"cls-2\" d=\"M49,16.16a16.53,16.53,0,0,0-20.69-7,14.38,14.38,0,0,1,2,1A16.54,16.54,0,0,1,36.4,32.79a6.21,6.21,0,0,1-.81,1.13A9.21,9.21,0,0,1,20.2,32.56a2.18,2.18,0,0,0,.09.23A16.61,16.61,0,1,0,49,16.16Z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"cls-3\" d=\"M43,38.88A16.58,16.58,0,0,1,20.3,32.81s0,0,0,0a9.28,9.28,0,0,1,7.3-13.9A16.57,16.57,0,1,0,44.79,37.64,15.58,15.58,0,0,1,43,38.88Z\"\u003e\u003c/path\u003e\u003c/svg\u003e"
+   },
+   "model": {
+    "version": "v1.7.0"
+   },
+   "name": "openkruise",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "github",
+    "name": "Github",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "subCategory": "Continuous Integration \u0026 Delivery",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
+   "primaryColor": "#0090ff",
+   "secondaryColor": "#1a9bff",
+   "shape": "circle",
+   "svgColor": "\u003csvg id=\"图层_1\" data-name=\"图层 1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewBox=\"0 0 56.69 56.69\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:url(#未命名的渐变_60);}.cls-2{fill:url(#未命名的渐变_89);}.cls-3{fill:url(#未命名的渐变_43);}\u003c/style\u003e\u003clinearGradient id=\"未命名的渐变_60\" x1=\"28.35\" y1=\"54.33\" x2=\"28.35\" y2=\"2\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop offset=\"0\" stop-color=\"#0071ff\"/\u003e\u003cstop offset=\"1\" stop-color=\"#009bff\"/\u003e\u003c/linearGradient\u003e\u003clinearGradient id=\"未命名的渐变_89\" x1=\"11.77\" y1=\"35.48\" x2=\"44.79\" y2=\"35.48\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop offset=\"0\" stop-color=\"#0050fa\"/\u003e\u003cstop offset=\"1\" stop-color=\"#00a0ff\" stop-opacity=\"0\"/\u003e\u003c/linearGradient\u003e\u003clinearGradient id=\"未命名的渐变_43\" x1=\"35.73\" y1=\"41.11\" x2=\"35.73\" y2=\"7.93\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop offset=\"0\" stop-color=\"#00a0dc\"/\u003e\u003cstop offset=\"1\" stop-color=\"#3cfaff\"/\u003e\u003c/linearGradient\u003e\u003c/defs\u003e\u003ctitle\u003eopenkruise\u003c/title\u003e\u003cpath class=\"cls-1\" d=\"M28.35,2A26.17,26.17,0,1,0,54.51,28.16,26.17,26.17,0,0,0,28.35,2Zm0,35.46a9.3,9.3,0,1,1,9.29-9.3A9.3,9.3,0,0,1,28.36,37.46Z\"/\u003e\u003cpath class=\"cls-2\" d=\"M43,38.88A16.58,16.58,0,0,1,20.3,32.81l0,0A9.25,9.25,0,0,1,27.6,18.91,16.57,16.57,0,1,0,44.79,37.64,15.58,15.58,0,0,1,43,38.88Z\"/\u003e\u003cpath class=\"cls-3\" d=\"M49,16.23a16.57,16.57,0,0,0-20.67-7,14.38,14.38,0,0,1,2,1A16.58,16.58,0,0,1,36.4,32.81,6.86,6.86,0,0,1,35.58,34a9.22,9.22,0,0,1-15.37-1.36,1.45,1.45,0,0,0,.09.22A16.58,16.58,0,0,0,49,16.23Z\"/\u003e\u003c/svg\u003e",
+   "svgWhite": "\u003csvg id=\"图层_1\" data-name=\"图层 1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewBox=\"0 0 56.69 56.69\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1,.cls-2{fill:#fff;}.cls-2{opacity:0.7;}.cls-3{fill:url(#未命名的渐变_5);}\u003c/style\u003e\u003clinearGradient id=\"未命名的渐变_5\" x1=\"11.77\" y1=\"35.48\" x2=\"44.79\" y2=\"35.48\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop offset=\"0\" stop-color=\"#fff\" stop-opacity=\"0\"/\u003e\u003cstop offset=\"1\" stop-color=\"#fff\"/\u003e\u003c/linearGradient\u003e\u003c/defs\u003e\u003ctitle\u003eopenkruise\u003c/title\u003e\u003cpath class=\"cls-1\" d=\"M28.35,2A26.17,26.17,0,1,0,54.51,28.16,26.17,26.17,0,0,0,28.35,2ZM44.79,37.64A16.58,16.58,0,1,1,27.27,18.91a7.83,7.83,0,0,1,1.09,0,9.28,9.28,0,0,1,8.51,13,16.56,16.56,0,0,0-6.55-21.72,14.38,14.38,0,0,0-2-1A16.58,16.58,0,0,1,44.79,37.64Z\"/\u003e\u003cpath class=\"cls-2\" d=\"M49,16.16a16.53,16.53,0,0,0-20.69-7,14.38,14.38,0,0,1,2,1A16.54,16.54,0,0,1,36.4,32.79a6.21,6.21,0,0,1-.81,1.13A9.21,9.21,0,0,1,20.2,32.56a2.18,2.18,0,0,0,.09.23A16.61,16.61,0,1,0,49,16.16Z\"/\u003e\u003cpath class=\"cls-3\" d=\"M43,38.88A16.58,16.58,0,0,1,20.3,32.81s0,0,0,0a9.28,9.28,0,0,1,7.3-13.9A16.57,16.57,0,1,0,44.79,37.64,15.58,15.58,0,0,1,43,38.88Z\"/\u003e\u003c/svg\u003e"
+  },
+  "version": "v1.0.0"
+ }

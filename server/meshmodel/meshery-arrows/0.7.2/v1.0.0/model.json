@@ -1,0 +1,43 @@
+{
+  "category": {
+   "name": "Orchestration \u0026 Management"
+  },
+  "description": "Icons that used for pointing out",
+  "displayName": "Meshery Arrows",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "capabilities": null,
+   "isAnnotation": true,
+   "primaryColor": "#2196F3",
+   "secondaryColor": "#00D3A9",
+   "shape": "polygon",
+   "styleOverrides": "",
+   "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 40 40\" fill=\"none\"\u003e\n\u003ccircle xmlns=\"http://www.w3.org/2000/svg\" cx=\"20\" cy=\"20\" r=\"20\" fill=\"none\"\u003e\u003c/circle\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M5 16H23V10L35 20L23 30V24H5L9.5 20L5 16Z\" fill=\"#00B39F\" fill-opacity=\"0.1\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M5 16H23V10L35 20L23 30V24H5L9.5 20L5 16Z\" stroke=\"#00B39F\" stroke-width=\"1.25\" stroke-miterlimit=\"10\"\u003e\u003c/path\u003e\n\u003c/svg\u003e",
+   "svgComplete": "",
+   "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 40 40\" fill=\"none\"\u003e\n\u003ccircle xmlns=\"http://www.w3.org/2000/svg\" cx=\"20\" cy=\"20\" r=\"20\" fill=\"none\"\u003e\u003c/circle\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M5 16H23V10L35 20L23 30V24H5L9.5 20L5 16Z\" fill=\"white\" fill-opacity=\"0.1\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M5 16H23V10L35 20L23 30V24H5L9.5 20L5 16Z\" stroke=\"white\" stroke-width=\"1.25\" stroke-miterlimit=\"10\"\u003e\u003c/path\u003e\n\u003c/svg\u003e"
+  },
+  "model": {
+   "version": "0.7.2"
+  },
+  "name": "meshery-arrows",
+  "registrant": {
+   "created_at": "0001-01-01T00:00:00Z",
+   "credential_id": "00000000-0000-0000-0000-000000000000",
+   "deleted_at": "0001-01-01T00:00:00Z",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "kind": "meshery",
+   "name": "meshery",
+   "status": "discovered",
+   "sub_type": "",
+   "type": "registry",
+   "updated_at": "0001-01-01T00:00:00Z",
+   "user_id": "00000000-0000-0000-0000-000000000000"
+  },
+  "connection_id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "models.meshery.io/v1beta1",
+  "status": "enabled",
+  "subCategory": "Application Definition \u0026 Image Build",
+  "version": "v1.0.0",
+  "components": null,
+  "relationships": null
+ }

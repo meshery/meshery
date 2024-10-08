@@ -1,0 +1,195 @@
+{
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "Shovel",
+   "schema": "{\n \"description\": \"Shovel is the Schema for the shovels API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ShovelSpec defines the desired state of Shovel For how to configure Shovel, see: https://www.rabbitmq.com/shovel.html.\",\n   \"properties\": {\n    \"ackMode\": {\n     \"enum\": [\n      \"on-confirm\",\n      \"on-publish\",\n      \"no-ack\"\n     ],\n     \"type\": \"string\"\n    },\n    \"addForwardHeaders\": {\n     \"type\": \"boolean\"\n    },\n    \"deleteAfter\": {\n     \"type\": \"string\"\n    },\n    \"destAddForwardHeaders\": {\n     \"type\": \"boolean\"\n    },\n    \"destAddTimestampHeader\": {\n     \"type\": \"boolean\"\n    },\n    \"destAddress\": {\n     \"type\": \"string\"\n    },\n    \"destApplicationProperties\": {\n     \"type\": \"string\"\n    },\n    \"destExchange\": {\n     \"type\": \"string\"\n    },\n    \"destExchangeKey\": {\n     \"type\": \"string\"\n    },\n    \"destProperties\": {\n     \"type\": \"string\"\n    },\n    \"destProtocol\": {\n     \"type\": \"string\"\n    },\n    \"destPublishProperties\": {\n     \"type\": \"string\"\n    },\n    \"destQueue\": {\n     \"type\": \"string\"\n    },\n    \"name\": {\n     \"description\": \"Required property; cannot be updated\",\n     \"type\": \"string\"\n    },\n    \"prefetchCount\": {\n     \"type\": \"integer\"\n    },\n    \"rabbitmqClusterReference\": {\n     \"description\": \"Reference to the RabbitmqCluster that this Shovel will be created in. Required property.\",\n     \"properties\": {\n      \"connectionSecret\": {\n       \"description\": \"Secret contains the http management uri for the RabbitMQ cluster. The Secret must contain the key `uri`, `username` and `password` or operator will error. Have to set either name or connectionSecret, but not both.\",\n       \"properties\": {\n        \"name\": {\n         \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"name\": {\n       \"description\": \"The name of the RabbitMQ cluster to reference. Have to set either name or connectionSecret, but not both.\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"The namespace of the RabbitMQ cluster to reference. Defaults to the namespace of the requested resource if omitted.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"reconnectDelay\": {\n     \"type\": \"integer\"\n    },\n    \"srcAddress\": {\n     \"type\": \"string\"\n    },\n    \"srcDeleteAfter\": {\n     \"type\": \"string\"\n    },\n    \"srcExchange\": {\n     \"type\": \"string\"\n    },\n    \"srcExchangeKey\": {\n     \"type\": \"string\"\n    },\n    \"srcPrefetchCount\": {\n     \"type\": \"integer\"\n    },\n    \"srcProtocol\": {\n     \"type\": \"string\"\n    },\n    \"srcQueue\": {\n     \"type\": \"string\"\n    },\n    \"uriSecret\": {\n     \"description\": \"Secret contains the AMQP URI(s) to configure Shovel destination and source. The Secret must contain the key `destUri` and `srcUri` or operator will error. Both fields should be one or multiple uris separated by ','. Required property.\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"vhost\": {\n     \"default\": \"/\",\n     \"description\": \"Default to vhost '/'; cannot be updated\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"name\",\n    \"rabbitmqClusterReference\",\n    \"uriSecret\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Shovel\",\n \"type\": \"object\"\n}",
+   "version": "rabbitmq.com/v1beta1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "Shovel",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "published": false,
+   "source_uri": "https://raw.githubusercontent.com/cloudve/helm-charts/master/charts/galaxy-5.17.0.tgz"
+  },
+  "model": {
+   "category": {
+    "name": "Uncategorized"
+   },
+   "displayName": "Galaxy",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "source_uri": "https://raw.githubusercontent.com/cloudve/helm-charts/master/charts/galaxy-5.17.0.tgz",
+    "styleOverrides": "",
+    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 506 397\" fill=\"none\"\u003e\n\u003crect xmlns=\"http://www.w3.org/2000/svg\" width=\"377\" height=\"109\" rx=\"8\" fill=\"#58585A\"\u003e\u003c/rect\u003e\n\u003crect xmlns=\"http://www.w3.org/2000/svg\" y=\"149\" width=\"377\" height=\"109\" rx=\"8\" fill=\"#58585A\"\u003e\u003c/rect\u003e\n\u003crect xmlns=\"http://www.w3.org/2000/svg\" x=\"129\" y=\"288\" width=\"377\" height=\"109\" rx=\"8\" fill=\"url(#paint0_linear_27226_21870)\"\u003e\u003c/rect\u003e\n\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"paint0_linear_27226_21870\" x1=\"129\" y1=\"342.5\" x2=\"506\" y2=\"342.5\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop xmlns=\"http://www.w3.org/2000/svg\" stop-color=\"#D1BE06\"\u003e\u003c/stop\u003e\n\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"1\" stop-color=\"#E7E5DE\"\u003e\u003c/stop\u003e\n\u003c/linearGradient\u003e\n\u003c/defs\u003e\n\u003c/svg\u003e\n",
+    "svgComplete": "",
+    "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 506 397\" fill=\"none\"\u003e\n\u003crect xmlns=\"http://www.w3.org/2000/svg\" width=\"377\" height=\"109\" rx=\"8\" fill=\"white\"\u003e\u003c/rect\u003e\n\u003crect xmlns=\"http://www.w3.org/2000/svg\" y=\"149\" width=\"377\" height=\"109\" rx=\"8\" fill=\"white\"\u003e\u003c/rect\u003e\n\u003crect xmlns=\"http://www.w3.org/2000/svg\" x=\"129\" y=\"288\" width=\"377\" height=\"109\" rx=\"8\" fill=\"white\"\u003e\u003c/rect\u003e\n\u003c/svg\u003e\n"
+   },
+   "model": {
+    "version": "5.17.0"
+   },
+   "name": "galaxy",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "subCategory": "Uncategorized",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "svgColor": "\u003csvg width=\"506\" height=\"397\" viewBox=\"0 0 506 397\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003crect width=\"377\" height=\"109\" rx=\"8\" fill=\"#58585A\"/\u003e\n\u003crect y=\"149\" width=\"377\" height=\"109\" rx=\"8\" fill=\"#58585A\"/\u003e\n\u003crect x=\"129\" y=\"288\" width=\"377\" height=\"109\" rx=\"8\" fill=\"url(#paint0_linear_27226_21870)\"/\u003e\n\u003cdefs\u003e\n\u003clinearGradient id=\"paint0_linear_27226_21870\" x1=\"129\" y1=\"342.5\" x2=\"506\" y2=\"342.5\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop stop-color=\"#D1BE06\"/\u003e\n\u003cstop offset=\"1\" stop-color=\"#E7E5DE\"/\u003e\n\u003c/linearGradient\u003e\n\u003c/defs\u003e\n\u003c/svg\u003e\n",
+   "svgWhite": "\u003csvg width=\"506\" height=\"397\" viewBox=\"0 0 506 397\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003crect width=\"377\" height=\"109\" rx=\"8\" fill=\"white\"/\u003e\n\u003crect y=\"149\" width=\"377\" height=\"109\" rx=\"8\" fill=\"white\"/\u003e\n\u003crect x=\"129\" y=\"288\" width=\"377\" height=\"109\" rx=\"8\" fill=\"white\"/\u003e\n\u003c/svg\u003e\n"
+  },
+  "version": "v1.0.0"
+ }

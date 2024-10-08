@@ -1,19 +1,19 @@
 package utils
 
 import (
-	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
 	"strconv"
 	"strings"
 
-	"github.com/meshery/schemas/models/v1alpha1/capability"
-	schmeaVersion "github.com/meshery/schemas/models/v1beta1"
-
+	"github.com/layer5io/meshkit/encoding"
+	"github.com/layer5io/meshkit/models/meshmodel/entity"
 	"github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshkit/utils/csv"
 	"github.com/layer5io/meshkit/utils/manifests"
+	"github.com/meshery/schemas/models/v1alpha1/capability"
+	schmeaVersion "github.com/meshery/schemas/models/v1beta1"
 	"github.com/meshery/schemas/models/v1beta1/component"
 )
 
@@ -23,17 +23,17 @@ const (
 )
 
 type ComponentCSV struct {
-	Registrant     string `json:"registrant" csv:"registrant"`
-	Model          string `json:"model" csv:"model"`
-	Component      string `json:"component" csv:"component"`
-	Description    string `json:"description" csv:"description"`
-	Shape          string `json:"shape" csv:"shape"`
-	PrimaryColor   string `json:"primaryColor" csv:"primaryColor"`
-	SecondaryColor string `json:"secondaryColor" csv:"secondaryColor"`
-	SVGColor       string `json:"svgColor" csv:"svgColor"`
-	SVGWhite       string `json:"svgWhite" csv:"svgWhite"`
-	SVGComplete    string `json:"svgComplete" csv:"svgComplete"`
-	// HasSchema          string `json:"hasSchema" csv:"hasSchema"` No column in the CSV
+	Registrant         string `json:"registrant" csv:"registrant"`
+	Model              string `json:"model" csv:"model"`
+	Component          string `json:"component" csv:"component"`
+	Description        string `json:"description" csv:"description"`
+	Shape              string `json:"shape" csv:"shape"`
+	PrimaryColor       string `json:"primaryColor" csv:"primaryColor"`
+	SecondaryColor     string `json:"secondaryColor" csv:"secondaryColor"`
+	SVGColor           string `json:"svgColor" csv:"svgColor"`
+	SVGWhite           string `json:"svgWhite" csv:"svgWhite"`
+	SVGComplete        string `json:"svgComplete" csv:"svgComplete"`
+	Schema             string `json:"schema" csv:"schema"`
 	Docs               string `json:"docs" csv:"docs"`
 	StyleOverrides     string `json:"styleOverrides" csv:"styleOverrides"`
 	Styles             string `json:"styles" csv:"styles"`
@@ -43,44 +43,74 @@ type ComponentCSV struct {
 	LogoURL            string `json:"logoURL" csv:"logoURL"`
 	Genealogy          string `json:"genealogy" csv:"genealogy"`
 	IsAnnotation       string `json:"isAnnotation" csv:"isAnnotation"`
+	Version            string `json:"version" csv:"version"`
 
 	ModelDisplayName string `json:"modelDisplayName" csv:"-"`
 	Category         string `json:"category" csv:"-"`
 	SubCategory      string `json:"subCategory" csv:"-"`
+
+	Status string `json:"status" csv:"status"`
 }
 
 // The Component Definition generated assumes or is only for components which have registrant as "meshery"
 func (c *ComponentCSV) CreateComponentDefinition(isModelPublished bool, defVersion string) (component.ComponentDefinition, error) {
-	var capabilities []capability.Capability
-	if c.Capabilities != "" {
-		err := json.Unmarshal([]byte(c.Capabilities), &capabilities)
-		if err != nil {
-			Log.Error(err)
+	status := entity.Enabled
+	if c.Status != "" {
+		if utils.ReplaceSpacesAndConvertToLowercase(c.Status) == "false" {
+			status = entity.Ignored
 		}
 	}
 	componentDefinition := &component.ComponentDefinition{
 		SchemaVersion: schmeaVersion.ComponentSchemaVersion,
-		Capabilities:  &capabilities,
 		DisplayName:   c.Component,
 		Format:        "JSON",
 		Version:       defVersion,
 		Metadata: component.ComponentDefinition_Metadata{
 			Published: isModelPublished,
 		},
-		Component: component.Component{},
+		Status: (*component.ComponentDefinitionStatus)(&status),
+		Component: component.Component{
+			Kind:    c.Component,
+			Schema:  c.Schema,
+			Version: c.Version,
+		},
+	}
+	if c.Description != "" {
+		componentDefinition.Description = c.Description
 	}
 	err := c.UpdateCompDefinition(componentDefinition)
 	return *componentDefinition, err
 }
 
 var compMetadataValues = []string{
-	"styleOverrides", "styles", "shapePolygonPoints", "defaultData", "genealogy", "isAnnotation",
+	"genealogy", "isAnnotation", "styleOverrides",
 }
 var compStyleValues = []string{
 	"primaryColor", "secondaryColor", "svgColor", "svgWhite", "svgComplete", "shape",
 }
 
 func (c *ComponentCSV) UpdateCompDefinition(compDef *component.ComponentDefinition) error {
+	status := entity.Enabled
+	if c.Status != "" {
+		if utils.ReplaceSpacesAndConvertToLowercase(c.Status) == "false" {
+			status = entity.Ignored
+		}
+	}
+	compDef.Status = (*component.ComponentDefinitionStatus)(&status)
+	var existingAddditionalProperties map[string]interface{}
+	if c.Description != "" {
+		compDef.Description = c.Description
+	}
+	if c.Schema != "" {
+		compDef.Component.Schema = c.Schema
+	}
+	if c.Version != "" {
+		compDef.Component.Version = c.Version
+	}
+	if compDef.Metadata.AdditionalProperties != nil {
+		existingAddditionalProperties = compDef.Metadata.AdditionalProperties
+	}
+
 	metadata := map[string]interface{}{}
 	compMetadata, err := utils.MarshalAndUnmarshal[ComponentCSV, map[string]interface{}](*c)
 	if err != nil {
@@ -88,8 +118,7 @@ func (c *ComponentCSV) UpdateCompDefinition(compDef *component.ComponentDefiniti
 	}
 	var capabilities []capability.Capability
 	if c.Capabilities != "" {
-
-		err := json.Unmarshal([]byte(c.Capabilities), &capabilities)
+		err := encoding.Unmarshal([]byte(c.Capabilities), &capabilities)
 		if err != nil {
 			Log.Error(err)
 		}
@@ -97,18 +126,50 @@ func (c *ComponentCSV) UpdateCompDefinition(compDef *component.ComponentDefiniti
 
 	compDef.Capabilities = &capabilities
 	compDefStyles := &component.Styles{}
-	if c.Shape != "" {
-		shape := c.Shape
-		compDefStyles.Shape = (*component.ComponentDefinitionStylesShape)(&shape)
-	}
-	if c.PrimaryColor != "" {
 
-		compDefStyles.PrimaryColor = c.PrimaryColor
+	//Addtional properties from file
+	for key, value := range existingAddditionalProperties {
+		metadata[key] = value
 	}
-	if c.SecondaryColor != "" {
-		compDefStyles.SecondaryColor = &c.SecondaryColor
+
+	//metadata properties from csv
+	for _, key := range compMetadataValues {
+		if key == "genealogy" {
+			genealogy, err := utils.Cast[string](compMetadata[key])
+			if err == nil {
+				compDef.Metadata.Genealogy = genealogy
+			}
+		} else if key == "isAnnotation" {
+			if strings.ToLower(c.IsAnnotation) == "true" {
+				compDef.Metadata.IsAnnotation = true
+			} else {
+				compDef.Metadata.IsAnnotation = false
+			}
+		} else if key == "styleOverrides" {
+			if c.StyleOverrides != "" {
+				err := encoding.Unmarshal([]byte(c.StyleOverrides), &compDefStyles)
+				if err != nil {
+					return err
+				}
+			}
+		} else {
+			metadata[key] = compMetadata[key]
+		}
 	}
+
+	//styling properties from csv
 	for _, key := range compStyleValues {
+		if c.Shape != "" {
+			shape := c.Shape
+			compDefStyles.Shape = (*component.ComponentDefinitionStylesShape)(&shape)
+		}
+		if c.PrimaryColor != "" {
+
+			compDefStyles.PrimaryColor = c.PrimaryColor
+		}
+		if c.SecondaryColor != "" {
+			compDefStyles.SecondaryColor = &c.SecondaryColor
+		}
 		if key == "svgColor" {
 			compDefStyles.SvgColor, err = utils.Cast[string](compMetadata[key])
 			if err != nil {
@@ -129,25 +190,7 @@ func (c *ComponentCSV) UpdateCompDefinition(compDef *component.ComponentDefiniti
 		}
 
 	}
-
 	compDef.Styles = compDefStyles
-
-	for _, key := range compMetadataValues {
-		if key == "genealogy" {
-			genealogy, err := utils.Cast[string](compMetadata[key])
-			if err == nil {
-				compDef.Metadata.Genealogy = genealogy
-			}
-		} else if key == "isAnnotation" {
-			if strings.ToLower(c.IsAnnotation) == "true" {
-				compDef.Metadata.IsAnnotation = true
-			} else {
-				compDef.Metadata.IsAnnotation = false
-			}
-		} else {
-			metadata[key] = compMetadata[key]
-		}
-	}
 	compDef.Metadata.AdditionalProperties = metadata
 	return nil
 }
@@ -160,15 +203,20 @@ type ComponentCSVHelper struct {
 	Components     map[string]map[string][]ComponentCSV
 }
 
-func NewComponentCSVHelper(sheetURL, spreadsheetName string, spreadsheetID int64) (*ComponentCSVHelper, error) {
-	sheetURL = sheetURL + "/pub?output=csv" + "&gid=" + strconv.FormatInt(spreadsheetID, 10)
-	Log.Info("Downloading CSV from: ", sheetURL)
-	dirPath := filepath.Join(utils.GetHome(), ".meshery", "content")
-	_ = os.MkdirAll(dirPath, 0755)
-	csvPath := filepath.Join(dirPath, "components.csv")
-	err := utils.DownloadFile(csvPath, sheetURL)
-	if err != nil {
-		return nil, utils.ErrReadingRemoteFile(err)
+func NewComponentCSVHelper(sheetURL, spreadsheetName string, spreadsheetID int64, localCsvPath string) (*ComponentCSVHelper, error) {
+	var csvPath string
+	if localCsvPath == "" {
+		sheetURL = sheetURL + "/pub?output=csv" + "&gid=" + strconv.FormatInt(spreadsheetID, 10)
+		Log.Info("Downloading CSV from: ", sheetURL)
+		dirPath := filepath.Join(utils.GetHome(), ".meshery", "content")
+		_ = os.MkdirAll(dirPath, 0755)
+		csvPath = filepath.Join(dirPath, "components.csv")
+		err := utils.DownloadFile(csvPath, sheetURL)
+		if err != nil {
+			return nil, utils.ErrReadingRemoteFile(err)
+		}
+	} else {
+		csvPath = localCsvPath
 	}
 
 	return &ComponentCSVHelper{

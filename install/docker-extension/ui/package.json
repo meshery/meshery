@@ -11,7 +11,7 @@
     "@fortawesome/fontawesome-svg-core": "^6.1.1",
     "@fortawesome/free-solid-svg-icons": "^6.1.1",
     "@fortawesome/react-fontawesome": "^0.1.18",
-    "@layer5/sistent": "^0.14.87",
+    "@layer5/sistent": "^0.14.90",
     "@mui/icons-material": "^5.5.1",
     "@mui/material": "^5.5.3",
     "@mui/styled-engine-sc": "^5.5.2",
@@ -40,7 +40,8 @@
     "styled-components": "^5.3.5",
     "url": "^0.11.4",
     "web-pingjs": "^1.0.1",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "xstate": "^5.17.4"
   },
   "scripts": {
     "start": "react-app-rewired start",

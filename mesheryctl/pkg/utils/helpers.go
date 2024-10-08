@@ -3,7 +3,6 @@ package utils
 import (
 	"bufio"
 	"bytes"
-	"encoding/json"
 	"fmt"
 	"io"
 	"math/rand"
@@ -25,8 +24,8 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/constants"
 	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshkit/encoding"
 	"github.com/layer5io/meshkit/logger"
-	"github.com/layer5io/meshkit/utils"
 	"github.com/olekukonko/tablewriter"
 	"github.com/pkg/browser"
 	"github.com/pkg/errors"
@@ -67,9 +66,9 @@ const (
 	filterDeleteURL                = docsBaseURL + "reference/mesheryctl/filter/delete"
 	filterListURL                  = docsBaseURL + "reference/mesheryctl/filter/list"
 	filterViewURL                  = docsBaseURL + "reference/mesheryctl/filter/view"
-	patternUsageURL                = docsBaseURL + "reference/mesheryctl/pattern"
-	patternViewURL                 = docsBaseURL + "reference/mesheryctl/pattern/view"
-	patternExportURL               = docsBaseURL + "reference/mesheryctl/pattern/export"
+	designUsageURL                 = docsBaseURL + "reference/mesheryctl/design"
+	designViewURL                  = docsBaseURL + "reference/mesheryctl/design/view"
+	designExportURL                = docsBaseURL + "reference/mesheryctl/design/export"
 	contextDeleteURL               = docsBaseURL + "reference/mesheryctl/system/context/delete"
 	contextViewURL                 = docsBaseURL + "reference/mesheryctl/system/context/view"
 	contextCreateURL               = docsBaseURL + "reference/mesheryctl/system/context/create"
@@ -135,9 +134,9 @@ const (
 	cmdFilterDelete             cmdType = "filter delete"
 	cmdFilterList               cmdType = "filter list"
 	cmdFilterView               cmdType = "filter view"
-	cmdPattern                  cmdType = "pattern"
-	cmdPatternView              cmdType = "pattern view"
-	cmdPatternExport            cmdType = "pattern export"
+	cmdDesign                   cmdType = "design"
+	cmdDesignView               cmdType = "design view"
+	cmdDesignExport             cmdType = "design export"
 	cmdContext                  cmdType = "context"
 	cmdContextDelete            cmdType = "delete"
 	cmdContextCreate            cmdType = "create"
@@ -554,6 +553,9 @@ func TruncateID(id string) string {
 	ShortenedID := id[0:8]
 	return ShortenedID
 }
+func BoldString(s string) string {
+	return fmt.Sprintf("\033[1m%s\033[0m", s)
+}
 
 // PrintToTable prints the given data into a table format
 func PrintToTable(header []string, data [][]string) {
@@ -569,7 +571,14 @@ func PrintToTable(header []string, data [][]string) {
 	table.SetHeaderLine(false)
 	table.SetBorder(false)
 	table.SetTablePadding("\t")
-	table.SetNoWhiteSpace(true)
+	table.SetNoWhiteSpace(false)
+
+	boldHeader := make([]tablewriter.Colors, len(header))
+	for i := range header {
+		boldHeader[i] = tablewriter.Colors{tablewriter.Bold}
+	}
+	table.SetHeaderColor(boldHeader...)
+
 	table.AppendBulk(data) // The data in the table
 	table.Render()         // Render the table
 }
@@ -589,6 +598,13 @@ func PrintToTableWithFooter(header []string, data [][]string, footer []string) {
 	table.SetBorder(false)
 	table.SetTablePadding("\t")
 	table.SetNoWhiteSpace(true)
+
+	boldHeader := make([]tablewriter.Colors, len(header))
+	for i := range header {
+		boldHeader[i] = tablewriter.Colors{tablewriter.Bold}
+	}
+	table.SetHeaderColor(boldHeader...)
+
 	table.AppendBulk(data) // The data in the table
 	table.SetFooter(footer)
 	table.Render() // Render the table
@@ -650,7 +666,7 @@ func GetID(mesheryServerUrl, configuration string) ([]string, error) {
 		return idList, ErrReadResponseBody(err)
 	}
 	var dat map[string]interface{}
-	if err = json.Unmarshal(body, &dat); err != nil {
+	if err = encoding.Unmarshal(body, &dat); err != nil {
 		return idList, ErrUnmarshal(errors.Wrap(err, "failed to unmarshal response body"))
 	}
 	if dat == nil {
@@ -686,7 +702,7 @@ func GetName(mesheryServerUrl, configuration string) (map[string]string, error) 
 		return nameIdMap, ErrReadResponseBody(err)
 	}
 	var dat map[string]interface{}
-	if err = json.Unmarshal(body, &dat); err != nil {
+	if err = encoding.Unmarshal(body, &dat); err != nil {
 		return nameIdMap, ErrUnmarshal(errors.Wrap(err, "failed to unmarshal response body"))
 	}
 	if dat == nil {
@@ -862,7 +878,7 @@ func GetSessionData(mctlCfg *config.MesheryCtlConfig) (*models.Preference, error
 	}
 
 	prefs := &models.Preference{}
-	err = utils.Unmarshal(string(body), prefs)
+	err = encoding.Unmarshal(body, prefs)
 	if err != nil {
 		return nil, errors.New("Failed to process JSON data. Please sign into Meshery")
 	}

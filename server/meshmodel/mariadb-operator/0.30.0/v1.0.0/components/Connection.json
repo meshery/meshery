@@ -1,0 +1,195 @@
+{
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "Connection",
+   "schema": "{\n \"description\": \"Connection is the Schema for the connections API. It is used to configure connection strings for the applications connecting to MariaDB.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ConnectionSpec defines the desired state of Connection\",\n   \"properties\": {\n    \"database\": {\n     \"description\": \"Database to use when configuring the Connection.\",\n     \"type\": \"string\"\n    },\n    \"healthCheck\": {\n     \"description\": \"HealthCheck to be used in the Connection.\",\n     \"properties\": {\n      \"interval\": {\n       \"description\": \"Interval used to perform health checks.\",\n       \"type\": \"string\"\n      },\n      \"retryInterval\": {\n       \"description\": \"RetryInterval is the interval used to perform health check retries.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"host\": {\n     \"description\": \"Host to connect to. If not provided, it defaults to the MariaDB host or to the MaxScale host.\",\n     \"type\": \"string\"\n    },\n    \"mariaDbRef\": {\n     \"description\": \"MariaDBRef is a reference to the MariaDB to connect to. Either MariaDBRef or MaxScaleRef must be provided.\",\n     \"properties\": {\n      \"apiVersion\": {\n       \"description\": \"API version of the referent.\",\n       \"type\": \"string\"\n      },\n      \"fieldPath\": {\n       \"description\": \"If referring to a piece of an object instead of an entire object, this string\\nshould contain a valid JSON/Go field access statement, such as desiredState.manifest.containers[2].\\nFor example, if the object reference is to a container within a pod, this would take on a value like:\\n\\\"spec.containers{name}\\\" (where \\\"name\\\" refers to the name of the container that triggered\\nthe event) or if no container name is specified \\\"spec.containers[2]\\\" (container with\\nindex 2 in this pod). This syntax is chosen only to have some well-defined way of\\nreferencing a part of an object.\",\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"description\": \"Kind of the referent.\\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      },\n      \"resourceVersion\": {\n       \"description\": \"Specific resourceVersion to which this reference is made, if any.\\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#concurrency-control-and-consistency\",\n       \"type\": \"string\"\n      },\n      \"uid\": {\n       \"description\": \"UID of the referent.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#uids\",\n       \"type\": \"string\"\n      },\n      \"waitForIt\": {\n       \"default\": true,\n       \"description\": \"WaitForIt indicates whether the controller using this reference should wait for MariaDB to be ready.\",\n       \"type\": \"boolean\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    },\n    \"maxScaleRef\": {\n     \"description\": \"MaxScaleRef is a reference to the MaxScale to connect to. Either MariaDBRef or MaxScaleRef must be provided.\",\n     \"properties\": {\n      \"apiVersion\": {\n       \"description\": \"API version of the referent.\",\n       \"type\": \"string\"\n      },\n      \"fieldPath\": {\n       \"description\": \"If referring to a piece of an object instead of an entire object, this string\\nshould contain a valid JSON/Go field access statement, such as desiredState.manifest.containers[2].\\nFor example, if the object reference is to a container within a pod, this would take on a value like:\\n\\\"spec.containers{name}\\\" (where \\\"name\\\" refers to the name of the container that triggered\\nthe event) or if no container name is specified \\\"spec.containers[2]\\\" (container with\\nindex 2 in this pod). This syntax is chosen only to have some well-defined way of\\nreferencing a part of an object.\",\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"description\": \"Kind of the referent.\\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      },\n      \"resourceVersion\": {\n       \"description\": \"Specific resourceVersion to which this reference is made, if any.\\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#concurrency-control-and-consistency\",\n       \"type\": \"string\"\n      },\n      \"uid\": {\n       \"description\": \"UID of the referent.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#uids\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    },\n    \"params\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"Params to be used in the Connection.\",\n     \"type\": \"object\"\n    },\n    \"passwordSecretKeyRef\": {\n     \"description\": \"PasswordSecretKeyRef is a reference to the password to use for configuring the Connection.\\nIf the referred Secret is labeled with \\\"k8s.mariadb.com/watch\\\", updates may be performed to the Secret in order to update the password.\",\n     \"properties\": {\n      \"key\": {\n       \"description\": \"The key of the secret to select from.  Must be a valid secret key.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"default\": \"\",\n       \"description\": \"Name of the referent.\\nThis field is effectively required, but due to backwards compatibility is\\nallowed to be empty. Instances of this type with an empty value here are\\nalmost certainly wrong.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"optional\": {\n       \"description\": \"Specify whether the Secret or its key must be defined\",\n       \"type\": \"boolean\"\n      }\n     },\n     \"required\": [\n      \"key\"\n     ],\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    },\n    \"port\": {\n     \"description\": \"Port to connect to. If not provided, it defaults to the MariaDB port or to the first MaxScale listener.\",\n     \"format\": \"int32\",\n     \"type\": \"integer\"\n    },\n    \"secretName\": {\n     \"description\": \"SecretName to be used in the Connection.\",\n     \"type\": \"string\"\n    },\n    \"secretTemplate\": {\n     \"description\": \"SecretTemplate to be used in the Connection.\",\n     \"properties\": {\n      \"databaseKey\": {\n       \"description\": \"DatabaseKey to be used in the Secret.\",\n       \"type\": \"string\"\n      },\n      \"format\": {\n       \"description\": \"Format to be used in the Secret.\",\n       \"type\": \"string\"\n      },\n      \"hostKey\": {\n       \"description\": \"HostKey to be used in the Secret.\",\n       \"type\": \"string\"\n      },\n      \"key\": {\n       \"description\": \"Key to be used in the Secret.\",\n       \"type\": \"string\"\n      },\n      \"metadata\": {\n       \"description\": \"Metadata to be added to the Secret object.\",\n       \"properties\": {\n        \"annotations\": {\n         \"additionalProperties\": {\n          \"type\": \"string\"\n         },\n         \"description\": \"Annotations to be added to children resources.\",\n         \"type\": \"object\"\n        },\n        \"labels\": {\n         \"additionalProperties\": {\n          \"type\": \"string\"\n         },\n         \"description\": \"Labels to be added to children resources.\",\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"passwordKey\": {\n       \"description\": \"PasswordKey to be used in the Secret.\",\n       \"type\": \"string\"\n      },\n      \"portKey\": {\n       \"description\": \"PortKey to be used in the Secret.\",\n       \"type\": \"string\"\n      },\n      \"usernameKey\": {\n       \"description\": \"UsernameKey to be used in the Secret.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"serviceName\": {\n     \"description\": \"ServiceName to be used in the Connection.\",\n     \"type\": \"string\"\n    },\n    \"username\": {\n     \"description\": \"Username to use for configuring the Connection.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"passwordSecretKeyRef\",\n    \"username\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Connection\",\n \"type\": \"object\"\n}",
+   "version": "k8s.mariadb.com/v1alpha1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "Connection",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "published": false,
+   "source_uri": "https://helm.mariadb.com/mariadb-operator/releases/download/helm-chart-0.30.0/mariadb-operator-0.30.0.tgz"
+  },
+  "model": {
+   "category": {
+    "name": "Uncategorized"
+   },
+   "displayName": "MariaDB Operator",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "source_uri": "https://helm.mariadb.com/mariadb-operator/releases/download/helm-chart-0.30.0/mariadb-operator-0.30.0.tgz",
+    "styleOverrides": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "model": {
+    "version": "0.30.0"
+   },
+   "name": "mariadb-operator",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "subCategory": "Uncategorized",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "svgColor": "",
+   "svgWhite": ""
+  },
+  "version": "v1.0.0"
+ }

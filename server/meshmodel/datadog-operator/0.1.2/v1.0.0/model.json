@@ -5,6 +5,7 @@
   "displayName": "Datadog Operator",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://raw.githubusercontent.com/Aevin1387/helm-charts/aevin/apiversion/datadog-operator-0.1.2.tgz", 
     "isAnnotation": false,
     "published": false,
     "subCategory": "Monitoring",

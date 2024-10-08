@@ -13,7 +13,6 @@ module.exports = {
   extends: [
     'eslint:recommended',
     'plugin:react/recommended',
-    'plugin:cypress/recommended',
     'next',
     'plugin:prettier/recommended',
   ],
@@ -30,7 +29,7 @@ module.exports = {
     ecmaVersion: 2018,
     sourceType: 'module',
   },
-  plugins: ['react', 'cypress', 'prettier'],
+  plugins: ['react', 'prettier'],
   rules: {
     '@next/next/no-img-element': 'off',
     'react-hooks/rules-of-hooks': 'warn',

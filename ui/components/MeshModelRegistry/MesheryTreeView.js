@@ -32,6 +32,7 @@ const VersionedModelComponentTree = ({
   modelDef,
   versionedModelDef,
   setShowDetailsData,
+  showDetailsData,
 }) => {
   const { notify } = useNotification();
   const {
@@ -43,6 +44,27 @@ const VersionedModelComponentTree = ({
     model: versionedModelDef.name,
     params: { version: versionedModelDef.model.version },
   });
+  const { selectedItemUUID } = useRegistryRouter();
+
+  useEffect(() => {
+    if (componentsData && componentsData.components && componentsData.components.length > 0) {
+      const selectedIdArr = selectedItemUUID.split('.');
+      // Check if selected item is a component
+      if (
+        selectedIdArr.length > 0 &&
+        selectedIdArr[0] === modelDef.id &&
+        selectedIdArr[1] === versionedModelDef.id
+      ) {
+        const showData = getFilteredDataForDetailsComponent(
+          componentsData.components,
+          selectedIdArr[selectedIdArr.length - 1],
+        );
+        if (JSON.stringify(showData) !== JSON.stringify(showDetailsData)) {
+          setShowDetailsData(showData);
+        }
+      }
+    }
+  }, [componentsData, showDetailsData]);
 
   useEffect(() => {
     if (isError) {
@@ -169,6 +191,8 @@ const ComponentTree = ({
   handleSelect,
   data,
   setShowDetailsData,
+  lastComponentRef,
+  isComponentFetching,
 }) => {
   return (
     <TreeView
@@ -197,6 +221,8 @@ const ComponentTree = ({
           }}
         />
       ))}
+      <div ref={lastComponentRef} style={{ height: '3rem' }}></div>
+      {isComponentFetching ? <CircularProgress color="inherit" /> : null}
     </TreeView>
   );
 };
@@ -210,6 +236,8 @@ const RelationshipTree = ({
   setShowDetailsData,
   view = RELATIONSHIPS,
   idForKindAsProp,
+  lastRegistrantRef,
+  isRelationshipFetching,
 }) => {
   return (
     <TreeView
@@ -261,6 +289,8 @@ const RelationshipTree = ({
           </StyledTreeItem>
         );
       })}
+      <div ref={lastRegistrantRef} style={{ height: '3rem' }}></div>
+      {isRelationshipFetching ? <CircularProgress color="inherit" /> : null}
     </TreeView>
   );
 };
@@ -269,6 +299,7 @@ const MesheryTreeViewItem = ({
   modelDef,
   registrantID,
   setShowDetailsData,
+  showDetailsData,
   handleToggle,
   handleSelect,
   selected,
@@ -328,6 +359,7 @@ const MesheryTreeViewItem = ({
               modelDef={modelDef}
               versionedModelDef={versionedModelDef}
               setShowDetailsData={setShowDetailsData}
+              showDetailsData={showDetailsData}
             />
             <VersionedModelRelationshipTree
               registrantID={registrantID}
@@ -354,6 +386,7 @@ const MesheryTreeViewModel = ({
   setShowDetailsData,
   lastModelRef,
   isModelFetching,
+  showDetailsData,
 }) => {
   return (
     <TreeView
@@ -376,6 +409,7 @@ const MesheryTreeViewModel = ({
           expanded={expanded}
           selected={selected}
           setShowDetailsData={setShowDetailsData}
+          showDetailsData={showDetailsData}
         />
       ))}
       <div ref={lastModelRef} style={{ height: '3rem' }}></div>
@@ -394,6 +428,7 @@ const MesheryTreeViewRegistrants = ({
   setShowDetailsData,
   lastRegistrantRef,
   isRegistrantFetching,
+  showDetailsData,
 }) => {
   return (
     <TreeView
@@ -440,6 +475,7 @@ const MesheryTreeViewRegistrants = ({
                   setShow={setShow}
                   registrantID={registrant.id}
                   setShowDetailsData={setShowDetailsData}
+                  showDetailsData={showDetailsData}
                 />
               ))}
             </StyledTreeItem>
@@ -488,6 +524,7 @@ const MesheryTreeViewWrapper = styled('div')(() => ({
   display: 'flex',
   flexDirection: 'column',
 }));
+
 const MesheryTreeView = ({
   data,
   view,
@@ -507,6 +544,7 @@ const MesheryTreeView = ({
   const [selected, setSelected] = React.useState([]);
   const { width } = useWindowDimensions();
   const [isSearchExpanded, setIsSearchExpanded] = useState(searchText ? true : false);
+  const [prevState, setPrevState] = useState({ data: [], uuid: '' });
   const scrollRef = useRef();
 
   const handleScroll = (scrollingView) => (event) => {
@@ -542,8 +580,15 @@ const MesheryTreeView = ({
         // parent id will be same as relationships[0].id
         // so we can use that id for expanding first level tree for relationships
         arr.push(parent.relationships[0].id);
+      } else if (view === REGISTRANTS) {
+        arr.push(parent.id);
+        arr.push(`${parent.id}.1`);
       } else {
         arr.push(parent.id);
+        parent.versionBasedData.map((child) => {
+          arr.push(`${parent.id}.${child.id}`);
+          arr.push(`${parent.id}.${child.id}.1`);
+        });
       }
     });
     setExpanded(arr);
@@ -572,20 +617,42 @@ const MesheryTreeView = ({
   };
 
   useEffect(() => {
+    // Compare previous data with current data and uuid
+    if (
+      prevState.data &&
+      JSON.stringify(prevState.data) === JSON.stringify(data) &&
+      prevState.uuid === selectedItemUUID
+    ) {
+      return;
+    }
+
+    // Update the state with the current data and uuid
+    setPrevState({ data, uuid: selectedItemUUID });
+
+    // No data present then return
+    if (data.length === 0) {
+      return;
+    }
+
     let selectedIdArr = selectedItemUUID.split('.');
     if (selectedIdArr.length >= 0) {
       // Check if showDetailsData data matches with item from route
       // This will prevent unnecessary state update
       if (showDetailsData.data.id !== selectedIdArr[selectedIdArr.length - 1]) {
-        setExpanded(
-          selectedIdArr.reduce(
-            (acc, id, index) => [...acc, index > 0 ? `${acc[index - 1]}.${id}` : id],
-            [],
-          ),
+        const newExpanded = selectedIdArr.reduce(
+          (acc, id, index) => [...acc, index > 0 ? `${acc[index - 1]}.${id}` : id],
+          [],
         );
-        setSelected([selectedItemUUID]);
+        if (JSON.stringify(newExpanded) !== JSON.stringify(expanded)) {
+          setExpanded(newExpanded);
+        }
+        if (JSON.stringify([selectedItemUUID]) !== JSON.stringify(selected)) {
+          setSelected([selectedItemUUID]);
+        }
         const showData = getFilteredDataForDetailsComponent(data, selectedItemUUID);
-        setShowDetailsData(showData);
+        if (JSON.stringify(showData) !== JSON.stringify(showDetailsData)) {
+          setShowDetailsData(showData);
+        }
       }
     } else {
       setExpanded([]);
@@ -595,7 +662,7 @@ const MesheryTreeView = ({
         data: {},
       });
     }
-  }, [view, selectedItemUUID]);
+  }, [selectedItemUUID, data, showDetailsData]);
 
   useEffect(() => {
     let selectedIdArr = selectedItemUUID.split('.');
@@ -741,6 +808,7 @@ const MesheryTreeView = ({
             expanded={expanded}
             selected={selected}
             setShowDetailsData={setShowDetailsData}
+            showDetailsData={showDetailsData}
             lastModelRef={lastItemRef[MODELS]}
             isModelFetching={isFetching[MODELS]}
           />,
@@ -755,6 +823,7 @@ const MesheryTreeView = ({
             expanded={expanded}
             selected={selected}
             setShowDetailsData={setShowDetailsData}
+            showDetailsData={showDetailsData}
             lastRegistrantRef={lastItemRef[REGISTRANTS]}
             isRegistrantFetching={isFetching[REGISTRANTS]}
           />,
@@ -770,9 +839,10 @@ const MesheryTreeView = ({
             data={data}
             setExpanded={setExpanded}
             setSelected={setSelected}
-            handleScroll={handleScroll}
             setSearchText={setSearchText}
             setShowDetailsData={setShowDetailsData}
+            lastComponentRef={lastItemRef[COMPONENTS]}
+            isComponentFetching={isFetching[COMPONENTS]}
           />,
           COMPONENTS,
         )}
@@ -785,6 +855,8 @@ const MesheryTreeView = ({
             selected={selected}
             data={data}
             setShowDetailsData={setShowDetailsData}
+            lastRegistrantRef={lastItemRef[RELATIONSHIPS]}
+            isRelationshipFetching={isFetching[RELATIONSHIPS]}
           />,
           RELATIONSHIPS,
         )}

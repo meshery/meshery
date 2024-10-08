@@ -5,6 +5,7 @@
   "displayName": "Kuma",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://github.com/kumahq/charts/releases/download/kuma-2.6.0/kuma-2.6.0.tgz", 
     "isAnnotation": false,
     "published": true,
     "subCategory": "Service Mesh",

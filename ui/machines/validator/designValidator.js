@@ -102,6 +102,7 @@ export const formatDryRunResponse = (dryRunResponse) => {
         if (!errorAndMeta.success) {
           errorList.push({
             compName,
+            component: errorAndMeta.component,
             contextId: contextKey,
             errors: getErrors(errorAndMeta.error),
           });
@@ -143,11 +144,7 @@ const dryRunValidatorMachine = dataValidatorMachine.provide({
 });
 
 const getAllComponentsDefsInDesign = async (design) => {
-  console.log('getting', design);
   const { components } = processDesign(design);
-
-  console.log('get All Components', components);
-
   const componentDefs = (
     await Promise.allSettled(
       components.map(async (component) =>
@@ -158,18 +155,14 @@ const getAllComponentsDefsInDesign = async (design) => {
       ),
     )
   )
-    .filter((result) => result.status === 'fulfilled')
+    .filter((result) => result.status === 'fulfilled' && result.value)
     .map((result) => result.value);
-
-  console.log('Component Defs', componentDefs);
 
   const componentStore = componentDefs.reduce((acc, componentDef) => {
     const key = componentKey(componentDef);
     acc[key] = componentDef;
     return acc;
   }, {});
-
-  console.log('component store', componentStore);
 
   return componentStore;
 };
@@ -241,7 +234,6 @@ export const designValidationMachine = createMachine({
             annotations: 'include',
           });
 
-          console.log('bundle component for validation', component, def);
           return {
             validationPayload: {
               ...input.event.data,
@@ -271,7 +263,6 @@ export const designValidationMachine = createMachine({
       invoke: {
         input: ({ context, event }) => ({ context, event }),
         src: fromPromise(async ({ input }) => {
-          console.log('validate design schema wooo', input);
           const { event } = input;
           const def = await getAllComponentsDefsInDesign(event.data.design);
           return {

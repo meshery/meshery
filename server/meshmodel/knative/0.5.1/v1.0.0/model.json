@@ -5,6 +5,7 @@
   "displayName": "Knative",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://mesosphere.github.io/charts/staging/knative-1.10.7.tgz", 
     "isAnnotation": false,
     "published": true,
     "subCategory": "Installable Platform",

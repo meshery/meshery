@@ -1,7 +1,6 @@
 /* eslint-disable react/display-name */
 import {
   Box,
-  Button,
   Dialog,
   DialogActions,
   DialogContent,
@@ -102,6 +101,7 @@ import { ValidateDesign } from './DesignLifeCycle/ValidateDesign';
 import PatternConfigureIcon from '@/assets/icons/PatternConfigure';
 // import { useGetUserPrefQuery } from '@/rtk-query/user';
 import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
+import TooltipButton from '@/utils/TooltipButton';
 
 const genericClickHandler = (ev, fn) => {
   ev.stopPropagation();
@@ -196,7 +196,7 @@ const styles = (theme) => ({
   },
   btnText: {
     display: 'block',
-    '@media (max-width: 1450px)': {
+    '@media (max-width: 765px)': {
       display: 'none',
     },
   },
@@ -394,7 +394,7 @@ function MesheryPatterns({
     pagesize: pageSize,
     search: search,
     order: sortOrder,
-    visibility: JSON.stringify([visibilityFilter]),
+    visibility: visibilityFilter ? JSON.stringify([visibilityFilter]) : '',
   });
   const [clonePattern] = useClonePatternMutation();
   const [publishCatalog] = usePublishPatternMutation();
@@ -575,12 +575,16 @@ function MesheryPatterns({
       disposeConfSubscriptionRef.current.dispose();
     }
     const configurationSubscription = ConfigurationSubscription(
-      (result) => {
+      () => {
         // stillLoading(false);
-        setPage(result.configuration?.patterns?.page || 0);
-        setPageSize(result.configuration?.patterns?.page_size || 0);
-        setCount(result.configuration?.patterns?.total_count || 0);
-        handleSetPatterns(result.configuration?.patterns?.patterns);
+        /**
+         * We are not using pattern subscription and this code is commented to prevent
+         * unnecessary state updates
+         */
+        // setPage(result.configuration?.patterns?.page || 0);
+        // setPageSize(result.configuration?.patterns?.page_size || 10);
+        // setCount(result.configuration?.patterns?.total_count || 0);
+        // handleSetPatterns(result.configuration?.patterns?.patterns);
       },
       {
         applicationSelector: {
@@ -1530,11 +1534,12 @@ function MesheryPatterns({
           <div className={StyleClass.toolWrapper}>
             {width < 600 && isSearchExpanded ? null : (
               <div style={{ display: 'flex' }}>
-                {!selectedPattern.show && (patterns.length > 0 || viewType === 'table') && (
+                {!selectedPattern.show && (patterns.length >= 0 || viewType === 'table') && (
                   <div className={classes.createButton}>
                     {disableCreateImportDesignButton ? null : (
                       <div style={{ display: 'flex', order: '1' }}>
-                        <Button
+                        <TooltipButton
+                          title="Create Design"
                           aria-label="Add Pattern"
                           variant="contained"
                           color="primary"
@@ -1548,8 +1553,9 @@ function MesheryPatterns({
                         >
                           <AddIcon className={classes.addIcon} />
                           <span className={classes.btnText}> Create Design </span>
-                        </Button>
-                        <Button
+                        </TooltipButton>
+                        <TooltipButton
+                          title="Import Design"
                           aria-label="Add Pattern"
                           variant="contained"
                           color="primary"
@@ -1561,7 +1567,7 @@ function MesheryPatterns({
                         >
                           <PublishIcon className={classes.addIcon} />
                           <span className={classes.btnText}> Import Design </span>
-                        </Button>
+                        </TooltipButton>
                       </div>
                     )}
                   </div>

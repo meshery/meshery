@@ -91,13 +91,17 @@ format_path(s) := result if {
 
 group_by_id(objects) := {obj |
 	some val in objects
-	grouped_objects := [temp_obj |
+	grouped_objects := [p |
 		some o in objects
 		o.declaration_id == val.declaration_id
-		temp_obj := o.mutated_declaration
+		some p in o.patches
 	]
 
-	obj := grouped_objects
+	obj := {
+		"declaration_id": val.declaration_id,
+		"declaration": val.declaration,
+		"patches": grouped_objects,
+	}
 }
 
 extract_components(declarations, selectors) := {declaration.id: declaration |
@@ -108,7 +112,7 @@ extract_components(declarations, selectors) := {declaration.id: declaration |
 }
 
 extract_components_by_type(declarations, selector) := {result |
-	declaration := declarations[_]
+	some declaration in declarations
 
 	is_relationship_feasible(selector, declaration.component.kind)
 	result := declaration
@@ -118,10 +122,18 @@ extract_components_by_type(declarations, selector) := {result |
 # 1. when operators/regex are used in the version fields
 # 2. deny selctor
 
-is_relationship_feasible(selector, compType) if {
+is_relationship_feasible(selector, comp_type) if {
 	selector.kind == "*"
 }
 
-is_relationship_feasible(selector, compType) if {
-	selector.kind == compType
+is_relationship_feasible(selector, comp_type) if {
+	selector.kind == comp_type
 }
+
+extract_values(component, refs) := [component_value |
+	some ref in refs
+	path := resolve_path(ref, component)
+	formatted_path := format_json_path(path)
+	component_value := object.get(component, formatted_path, null)
+	component_value != null
+]

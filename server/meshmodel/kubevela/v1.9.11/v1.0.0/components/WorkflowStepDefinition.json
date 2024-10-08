@@ -1,0 +1,195 @@
+{
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "WorkflowStepDefinition",
+   "schema": "{\n \"description\": \"WorkflowStepDefinition is the Schema for the workflowstepdefinitions API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"WorkflowStepDefinitionSpec defines the desired state of WorkflowStepDefinition\",\n   \"properties\": {\n    \"definitionRef\": {\n     \"description\": \"Reference to the CustomResourceDefinition that defines this trait kind.\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of the referenced CustomResourceDefinition.\",\n       \"type\": \"string\"\n      },\n      \"version\": {\n       \"description\": \"Version indicate which version should be used if CRD has multiple versions by default it will use the first one if not specified\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"schematic\": {\n     \"description\": \"Schematic defines the data format and template of the encapsulation of the workflow step definition. Only CUE schematic is supported for now.\",\n     \"properties\": {\n      \"cue\": {\n       \"description\": \"CUE defines the encapsulation in CUE format\",\n       \"properties\": {\n        \"template\": {\n         \"description\": \"Template defines the abstraction template data of the capability, it will replace the old CUE template in extension field. Template is a required field if CUE is defined in Capability Definition.\",\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"template\"\n       ],\n       \"type\": \"object\"\n      },\n      \"terraform\": {\n       \"description\": \"Terraform is the struct to describe cloud resources managed by Hashicorp Terraform\",\n       \"properties\": {\n        \"configuration\": {\n         \"description\": \"Configuration is Terraform Configuration\",\n         \"type\": \"string\"\n        },\n        \"customRegion\": {\n         \"description\": \"Region is cloud provider's region. It will override the region in the region field of ProviderReference\",\n         \"type\": \"string\"\n        },\n        \"deleteResource\": {\n         \"default\": true,\n         \"description\": \"DeleteResource will determine whether provisioned cloud resources will be deleted when CR is deleted\",\n         \"type\": \"boolean\"\n        },\n        \"gitCredentialsSecretReference\": {\n         \"description\": \"GitCredentialsSecretReference specifies the reference to the secret containing the git credentials\",\n         \"properties\": {\n          \"name\": {\n           \"description\": \"name is unique within a namespace to reference a secret resource.\",\n           \"type\": \"string\"\n          },\n          \"namespace\": {\n           \"description\": \"namespace defines the space within which the secret name must be unique.\",\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\",\n         \"x-kubernetes-map-type\": \"atomic\"\n        },\n        \"path\": {\n         \"description\": \"Path is the sub-directory of remote git repository. It's valid when remote is set\",\n         \"type\": \"string\"\n        },\n        \"providerRef\": {\n         \"description\": \"ProviderReference specifies the reference to Provider\",\n         \"properties\": {\n          \"name\": {\n           \"description\": \"Name of the referenced object.\",\n           \"type\": \"string\"\n          },\n          \"namespace\": {\n           \"default\": \"default\",\n           \"description\": \"Namespace of the referenced object.\",\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"name\"\n         ],\n         \"type\": \"object\"\n        },\n        \"type\": {\n         \"default\": \"hcl\",\n         \"description\": \"Type specifies which Terraform configuration it is, HCL or JSON syntax\",\n         \"enum\": [\n          \"hcl\",\n          \"json\",\n          \"remote\"\n         ],\n         \"type\": \"string\"\n        },\n        \"writeConnectionSecretToRef\": {\n         \"description\": \"WriteConnectionSecretToReference specifies the namespace and name of a Secret to which any connection details for this managed resource should be written. Connection details frequently include the endpoint, username, and password required to connect to the managed resource.\",\n         \"properties\": {\n          \"name\": {\n           \"description\": \"Name of the secret.\",\n           \"type\": \"string\"\n          },\n          \"namespace\": {\n           \"description\": \"Namespace of the secret.\",\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"name\"\n         ],\n         \"type\": \"object\"\n        }\n       },\n       \"required\": [\n        \"configuration\"\n       ],\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Workflow Step Definition\",\n \"type\": \"object\"\n}",
+   "version": "core.oam.dev/v1beta1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "Workflow Step Definition",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "published": false,
+   "source_uri": "git://github.com/kubevela/kubevela/master/charts/vela-core/crds"
+  },
+  "model": {
+   "category": {
+    "name": "App Definition and Development"
+   },
+   "displayName": "Kubevela",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "isAnnotation": false,
+    "primaryColor": "#006fff",
+    "secondaryColor": "#45B4FF\n",
+    "shape": "circle",
+    "source_uri": "git://github.com/kubevela/kubevela/master/charts/vela-core/crds",
+    "styleOverrides": "",
+    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" id=\"图层_1\" data-name=\"图层 1\" viewBox=\"0 0 122.5 122.5\" height=\"20\" width=\"20\"\u003e\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cstyle xmlns=\"http://www.w3.org/2000/svg\"\u003e.cls-1{fill:#006fff;}\u003c/style\u003e\u003c/defs\u003e\u003ctitle xmlns=\"http://www.w3.org/2000/svg\"\u003eKubeVela \u003c/title\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M32.05,96.24a11.58,11.58,0,0,0,10,5.79,11.34,11.34,0,0,0,5.62-1.47,6,6,0,0,1,5.89,0A11.33,11.33,0,0,0,59.19,102a11.52,11.52,0,0,0,5.27-1.27,6.17,6.17,0,0,1,5.7,0,11.55,11.55,0,0,0,15.28-4.52Z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"cls-1\" d=\"M91.52,76.27,91.38,74C90,51.79,81.7,30.91,68.07,15.23h0v60Z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"cls-1\" d=\"M64.86,75.05V27.8A79.26,79.26,0,0,0,42,74Z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M43.87,78.38,42,74,20.35,73l6,14.12h0a10.16,10.16,0,0,0,8.79,5.08A10,10,0,0,0,40,91a7.32,7.32,0,0,1,7.17,0,10,10,0,0,0,9.78,0,7.3,7.3,0,0,1,7.17,0,10,10,0,0,0,9.78,0,7.32,7.32,0,0,1,7.17,0A10,10,0,0,0,86,92.23a10.16,10.16,0,0,0,8.79-5.08l2.46-5L46,79.84A2.38,2.38,0,0,1,43.87,78.38Z\"\u003e\u003c/path\u003e\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" id=\"图层_1\" data-name=\"图层 1\" viewBox=\"0 0 122.5 122.5\" height=\"20\" width=\"20\"\u003e\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cstyle xmlns=\"http://www.w3.org/2000/svg\"\u003e.cls-1{fill:#fff;}\u003c/style\u003e\u003c/defs\u003e\u003ctitle xmlns=\"http://www.w3.org/2000/svg\"\u003eKubeVela \u003c/title\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"cls-1\" d=\"M32.05,96.24a11.58,11.58,0,0,0,10,5.79,11.34,11.34,0,0,0,5.62-1.47,6,6,0,0,1,5.89,0A11.33,11.33,0,0,0,59.19,102a11.52,11.52,0,0,0,5.27-1.27,6.17,6.17,0,0,1,5.7,0,11.55,11.55,0,0,0,15.28-4.52Z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"cls-1\" d=\"M91.52,76.27,91.38,74C90,51.79,81.7,30.91,68.07,15.23h0v60Z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"cls-1\" d=\"M64.86,75.05V27.8A79.26,79.26,0,0,0,42,74Z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"cls-1\" d=\"M43.87,78.38,42,74,20.35,73l6,14.12h0a10.16,10.16,0,0,0,8.79,5.08A10,10,0,0,0,40,91a7.32,7.32,0,0,1,7.17,0,10,10,0,0,0,9.78,0,7.3,7.3,0,0,1,7.17,0,10,10,0,0,0,9.78,0,7.32,7.32,0,0,1,7.17,0A10,10,0,0,0,86,92.23a10.16,10.16,0,0,0,8.79-5.08l2.46-5L46,79.84A2.38,2.38,0,0,1,43.87,78.38Z\"\u003e\u003c/path\u003e\u003c/svg\u003e"
+   },
+   "model": {
+    "version": "v1.9.11"
+   },
+   "name": "kubevela",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "github",
+    "name": "Github",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "subCategory": "Application Definition \u0026 Image Build",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
+   "primaryColor": "#006fff",
+   "secondaryColor": "#45B4FF\n",
+   "shape": "circle",
+   "svgColor": "\u003csvg id=\"图层_1\" data-name=\"图层 1\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 122.5 122.5\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#006fff;}\u003c/style\u003e\u003c/defs\u003e\u003ctitle\u003eKubeVela \u003c/title\u003e\u003cpath d=\"M32.05,96.24a11.58,11.58,0,0,0,10,5.79,11.34,11.34,0,0,0,5.62-1.47,6,6,0,0,1,5.89,0A11.33,11.33,0,0,0,59.19,102a11.52,11.52,0,0,0,5.27-1.27,6.17,6.17,0,0,1,5.7,0,11.55,11.55,0,0,0,15.28-4.52Z\"/\u003e\u003cpath class=\"cls-1\" d=\"M91.52,76.27,91.38,74C90,51.79,81.7,30.91,68.07,15.23h0v60Z\"/\u003e\u003cpath class=\"cls-1\" d=\"M64.86,75.05V27.8A79.26,79.26,0,0,0,42,74Z\"/\u003e\u003cpath d=\"M43.87,78.38,42,74,20.35,73l6,14.12h0a10.16,10.16,0,0,0,8.79,5.08A10,10,0,0,0,40,91a7.32,7.32,0,0,1,7.17,0,10,10,0,0,0,9.78,0,7.3,7.3,0,0,1,7.17,0,10,10,0,0,0,9.78,0,7.32,7.32,0,0,1,7.17,0A10,10,0,0,0,86,92.23a10.16,10.16,0,0,0,8.79-5.08l2.46-5L46,79.84A2.38,2.38,0,0,1,43.87,78.38Z\"/\u003e\u003c/svg\u003e",
+   "svgWhite": "\u003csvg id=\"图层_1\" data-name=\"图层 1\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 122.5 122.5\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#fff;}\u003c/style\u003e\u003c/defs\u003e\u003ctitle\u003eKubeVela \u003c/title\u003e\u003cpath class=\"cls-1\" d=\"M32.05,96.24a11.58,11.58,0,0,0,10,5.79,11.34,11.34,0,0,0,5.62-1.47,6,6,0,0,1,5.89,0A11.33,11.33,0,0,0,59.19,102a11.52,11.52,0,0,0,5.27-1.27,6.17,6.17,0,0,1,5.7,0,11.55,11.55,0,0,0,15.28-4.52Z\"/\u003e\u003cpath class=\"cls-1\" d=\"M91.52,76.27,91.38,74C90,51.79,81.7,30.91,68.07,15.23h0v60Z\"/\u003e\u003cpath class=\"cls-1\" d=\"M64.86,75.05V27.8A79.26,79.26,0,0,0,42,74Z\"/\u003e\u003cpath class=\"cls-1\" d=\"M43.87,78.38,42,74,20.35,73l6,14.12h0a10.16,10.16,0,0,0,8.79,5.08A10,10,0,0,0,40,91a7.32,7.32,0,0,1,7.17,0,10,10,0,0,0,9.78,0,7.3,7.3,0,0,1,7.17,0,10,10,0,0,0,9.78,0,7.32,7.32,0,0,1,7.17,0A10,10,0,0,0,86,92.23a10.16,10.16,0,0,0,8.79-5.08l2.46-5L46,79.84A2.38,2.38,0,0,1,43.87,78.38Z\"/\u003e\u003c/svg\u003e"
+  },
+  "version": "v1.0.0"
+ }

@@ -5,6 +5,7 @@
   "displayName": "Armory Spinnaker Operator",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://armory.jfrog.io/artifactory/charts/armory-spinnaker-operator-1.8.11.tgz", 
     "isAnnotation": false,
     "published": true,
     "subCategory": "Continuous Integration \u0026 Delivery",

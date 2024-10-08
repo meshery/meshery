@@ -5,6 +5,7 @@
   "displayName": "Kubevault Operator",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://charts.appscode.com/stable/kubevault-operator/kubevault-operator-v0.16.0.tgz", 
     "isAnnotation": false,
     "published": true,
     "subCategory": "Uncategorized",

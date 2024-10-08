@@ -1,0 +1,130 @@
+{
+  "capabilities": [
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Add text to nodes body",
+    "displayName": "Body Text",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "body-text",
+    "type": "style",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "GCP Looker",
+   "schema": "",
+   "version": "core.meshery.io/v1alpha1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "GCP Looker",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": true,
+   "isNamespaced": false,
+   "published": true
+  },
+  "model": {
+   "category": {
+    "name": "Provisioning"
+   },
+   "displayName": "Google Cloud Platform",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "isAnnotation": true,
+    "primaryColor": "#3C494F",
+    "shape": "circle",
+    "styleOverrides": "",
+    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" id=\"Layer_1\" width=\"20\" height=\"20\" viewBox=\"0 0 512 512\"\u003e\u003cstyle xmlns=\"http://www.w3.org/2000/svg\"\u003e.st0{fill:#f8bb16}.st1{fill:#ea4334}.st2{fill:#0074bc}.st3{fill:#e2e3e4}\u003c/style\u003e\u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Layer_1_1_\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"path22\" class=\"st0\" d=\"M322.4 140.9l-44.1-76.8H162.6c-10.3 0-19.9 5.5-24.9 14.5L44.1 241.7c-5.1 8.9-5.1 19.7 0 28.7l35.6 62.1 44-76.4 66.2-115.2h132.5z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"path26\" class=\"st1\" d=\"M468.2 241.7L374.6 78.6c-5.2-8.9-14.7-14.5-24.9-14.5h-71.4l44.1 76.8 66.2 115.2-66.2 115.2h88l57.8-100.9c5-8.9 5-19.8 0-28.7\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"path30\" class=\"st2\" d=\"M410.3 371.2H189.7L123.5 256l-44 76.4 58 101c5.2 8.9 14.7 14.5 24.9 14.5h187.1c10.3 0 19.9-5.5 24.9-14.5l35.9-62.2z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"st3\" d=\"M322.2 371.2H189.6L123.5 256l66.2-115.2h132.5L388.6 256l-66.4 115.2zM256 198.5c-31.9 0-57.6 25.7-57.6 57.6s25.7 57.6 57.6 57.6 57.6-25.7 57.6-57.6-25.8-57.6-57.6-57.6z\"\u003e\u003c/path\u003e\u003c/g\u003e\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 25 22\" fill=\"none\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M19.0571 1.31425C18.9391 1.11285 18.7703 0.945566 18.5672 0.828955C18.3642 0.712344 18.134 0.650454 17.8995 0.649414L10.855 0.658722V0.650744L7.26718 0.66404C7.03246 0.664981 6.80206 0.726817 6.59879 0.843427C6.39552 0.960036 6.22643 1.12737 6.10826 1.32887L2.89648 6.8563L5.06443 10.6139L8.68705 4.40573H20.8798L19.0571 1.31425Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M14.3535 21.69L17.9668 21.6727C18.201 21.672 18.4309 21.6103 18.6336 21.4936C18.8363 21.3769 19.0046 21.2095 19.1217 21.0079L22.6386 14.9433V14.9513L24.4211 11.8531C24.5375 11.6507 24.5987 11.4215 24.5987 11.1883C24.5987 10.9551 24.5375 10.726 24.4211 10.5235L21.1986 4.9668H16.8467L20.4519 11.2043L16.8386 17.4112H16.8547L14.3535 21.69Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M6.08719 21.0185C6.20515 21.2199 6.37401 21.3872 6.57705 21.5038C6.78008 21.6204 7.01026 21.6823 7.24477 21.6834L13.7004 21.7007L15.8858 17.9616L8.64189 17.935L8.5616 17.7954L2.57565 7.43066L0.777057 10.5368C0.660768 10.7393 0.599609 10.9684 0.599609 11.2016C0.599609 11.4348 0.660768 11.6639 0.777057 11.8664L4.28994 17.9271H4.28057L6.08719 21.0185Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M12.6006 14.4683C14.4306 14.4683 15.9141 12.9944 15.9141 11.1761C15.9141 9.35779 14.4306 7.88379 12.6006 7.88379C10.7706 7.88379 9.28711 9.35779 9.28711 11.1761C9.28711 12.9944 10.7706 14.4683 12.6006 14.4683Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003c/svg\u003e\n"
+   },
+   "model": {
+    "version": "0.7.2"
+   },
+   "name": "gcp",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "meshery",
+    "name": "meshery",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "enabled",
+   "subCategory": "Cloud Provider",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
+   "primaryColor": "#4285F4",
+   "shape": "rectangle",
+   "svgColor": "\u003csvg version=\"1.1\" baseProfile=\"tiny\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"\n         x=\"0px\" y=\"0px\" width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\" overflow=\"visible\" xml:space=\"preserve\"\u003e\n\u003cg transform=\"scale(0.889,0.889)\"\u003e\n        \u003cpath fill=\"#D2E3FC\" d=\"M7.4,1.5c-1.2,0-2.1,0.9-2.1,2.1c0,0.4,0.1,0.8,0.4,1.2l0.9-0.9c0-0.1,0-0.2,0-0.3c0-0.5,0.4-0.9,0.9-0.9\n                s0.9,0.4,0.9,0.9c0,0.5-0.4,0.9-0.9,0.9c-0.1,0-0.2,0-0.3,0L6.3,5.3c1,0.6,2.3,0.4,2.9-0.6c0.6-1,0.4-2.3-0.6-2.9\n                C8.3,1.6,7.9,1.5,7.4,1.5z\"/\u003e\n        \u003cpath fill=\"#5E97F6\" d=\"M6.6,7.6c0-0.7-0.2-1.4-0.6-2L4.8,6.8C4.9,7.1,5,7.3,5,7.6c0,0.5-0.2,0.9-0.5,1.2l0.6,1.6\n                C6.1,9.8,6.6,8.7,6.6,7.6z\"/\u003e\n        \u003cpath fill=\"#5E97F6\" d=\"M3.4,9.3L3.4,9.3c-0.9,0-1.7-0.7-1.7-1.6c0-0.9,0.7-1.7,1.6-1.7c0.3,0,0.7,0.1,1,0.3l1.2-1.1\n                C4.8,4.6,4.1,4.3,3.3,4.3C1.5,4.3,0,5.8,0,7.6c0,1.8,1.4,3.3,3.3,3.3c0.2,0,0.5,0,0.7-0.1L3.4,9.3z\"/\u003e\n        \u003cpath fill=\"#4285F4\" d=\"M7.5,10.6c-0.7,0-1.4,0.1-2.1,0.3l0.9,2.2C6.7,13.1,7.1,13,7.5,13c2.8,0,5,2.3,5,5c0,2.8-2.3,5-5,5\n                c-2.8,0-5-2.3-5-5c0-1.9,1-3.6,2.7-4.4l-0.9-2.2c-3.7,1.8-5.2,6.3-3.4,9.9c1.8,3.7,6.3,5.2,9.9,3.4c3.7-1.8,5.2-6.3,3.4-9.9\n                C12.9,12.3,10.3,10.6,7.5,10.6z\"/\u003e\n\u003c/g\u003e\n\u003c/svg\u003e\n",
+   "svgComplete": "\u003csvg version=\"1.1\" baseProfile=\"tiny\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"\n         x=\"0px\" y=\"0px\" width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\" overflow=\"visible\" xml:space=\"preserve\"\u003e\n\u003cg transform=\"scale(0.889,0.889)\"\u003e\n        \u003cpath fill=\"#D2E3FC\" d=\"M7.4,1.5c-1.2,0-2.1,0.9-2.1,2.1c0,0.4,0.1,0.8,0.4,1.2l0.9-0.9c0-0.1,0-0.2,0-0.3c0-0.5,0.4-0.9,0.9-0.9\n                s0.9,0.4,0.9,0.9c0,0.5-0.4,0.9-0.9,0.9c-0.1,0-0.2,0-0.3,0L6.3,5.3c1,0.6,2.3,0.4,2.9-0.6c0.6-1,0.4-2.3-0.6-2.9\n                C8.3,1.6,7.9,1.5,7.4,1.5z\"/\u003e\n        \u003cpath fill=\"#5E97F6\" d=\"M6.6,7.6c0-0.7-0.2-1.4-0.6-2L4.8,6.8C4.9,7.1,5,7.3,5,7.6c0,0.5-0.2,0.9-0.5,1.2l0.6,1.6\n                C6.1,9.8,6.6,8.7,6.6,7.6z\"/\u003e\n        \u003cpath fill=\"#5E97F6\" d=\"M3.4,9.3L3.4,9.3c-0.9,0-1.7-0.7-1.7-1.6c0-0.9,0.7-1.7,1.6-1.7c0.3,0,0.7,0.1,1,0.3l1.2-1.1\n                C4.8,4.6,4.1,4.3,3.3,4.3C1.5,4.3,0,5.8,0,7.6c0,1.8,1.4,3.3,3.3,3.3c0.2,0,0.5,0,0.7-0.1L3.4,9.3z\"/\u003e\n        \u003cpath fill=\"#4285F4\" d=\"M7.5,10.6c-0.7,0-1.4,0.1-2.1,0.3l0.9,2.2C6.7,13.1,7.1,13,7.5,13c2.8,0,5,2.3,5,5c0,2.8-2.3,5-5,5\n                c-2.8,0-5-2.3-5-5c0-1.9,1-3.6,2.7-4.4l-0.9-2.2c-3.7,1.8-5.2,6.3-3.4,9.9c1.8,3.7,6.3,5.2,9.9,3.4c3.7-1.8,5.2-6.3,3.4-9.9\n                C12.9,12.3,10.3,10.6,7.5,10.6z\"/\u003e\n\u003c/g\u003e\n\u003c/svg\u003e\n",
+   "svgWhite": "\u003csvg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M6.57857 1.33398C5.51177 1.33398 4.71167 2.13408 4.71167 3.20088C4.71167 3.55648 4.80057 3.91208 5.06727 4.26768L5.86737 3.46758C5.86737 3.37868 5.86737 3.28978 5.86737 3.20088C5.86737 2.75638 6.22297 2.40078 6.66747 2.40078C7.11197 2.40078 7.46757 2.75638 7.46757 3.20088C7.46757 3.64538 7.11197 4.00098 6.66747 4.00098C6.57857 4.00098 6.48967 4.00098 6.40077 4.00098L5.60067 4.71218C6.48967 5.24558 7.64537 5.06778 8.17877 4.17878C8.71217 3.28978 8.53437 2.13408 7.64537 1.60068C7.37867 1.42288 7.02307 1.33398 6.57857 1.33398Z\" fill=\"white\"/\u003e\n\u003cpath d=\"M5.86739 6.75652C5.86739 6.13422 5.68959 5.51192 5.33399 4.97852L4.26719 6.04532C4.35609 6.31202 4.44499 6.48982 4.44499 6.75652C4.44499 7.20102 4.26719 7.55662 4.00049 7.82332L4.53389 9.24572C5.42289 8.71232 5.86739 7.73442 5.86739 6.75652Z\" fill=\"#DDDDDD\"/\u003e\n\u003cpath d=\"M3.0226 8.26824C2.2225 8.26824 1.5113 7.64594 1.5113 6.84584C1.5113 6.04574 2.1336 5.33454 2.9337 5.33454C3.2004 5.33454 3.556 5.42344 3.8227 5.60124L4.8895 4.62334C4.2672 4.08994 3.6449 3.82324 2.9337 3.82324C1.3335 3.82324 0 5.15674 0 6.75694C0 8.35714 1.2446 9.69064 2.9337 9.69064C3.1115 9.69064 3.3782 9.69064 3.556 9.60174L3.0226 8.26824Z\" fill=\"#DDDDDD\"/\u003e\n\u003cpath d=\"M6.66738 9.42383C6.04508 9.42383 5.42278 9.51273 4.80048 9.69053L5.60058 11.6463C5.95618 11.6463 6.31178 11.5574 6.66738 11.5574C9.15658 11.5574 11.1124 13.6021 11.1124 16.0024C11.1124 18.4916 9.06768 20.4474 6.66738 20.4474C4.17818 20.4474 2.22238 18.4027 2.22238 16.0024C2.22238 14.3133 3.11138 12.802 4.62268 12.0908L3.82258 10.135C0.533278 11.7352 -0.800222 15.7357 0.799978 18.9361C2.40018 22.2254 6.40068 23.5589 9.60108 21.9587C12.8904 20.3585 14.2239 16.358 12.6237 13.1576C11.468 10.9351 9.15658 9.42383 6.66738 9.42383Z\" fill=\"white\"/\u003e\n\u003c/svg\u003e\n"
+  },
+  "version": "v1.0.0"
+ }

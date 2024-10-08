@@ -5,6 +5,7 @@
   "displayName": "Jenkins Operator",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://epam.github.io/edp-helm-charts/stable/packages/jenkins-operator-2.15.3.tgz", 
     "isAnnotation": false,
     "published": true,
     "subCategory": "Continuous Integration \u0026 Delivery",

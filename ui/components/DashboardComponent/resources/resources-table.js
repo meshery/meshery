@@ -91,7 +91,6 @@ const ResourcesTable = (props) => {
   const [tableCols, updateCols] = useState(tableConfig.columns);
 
   useEffect(() => {
-    updateCols(tableConfig.columns);
     if (!loading) {
       getMeshsyncResources(page, pageSize, search, sortOrder);
     }

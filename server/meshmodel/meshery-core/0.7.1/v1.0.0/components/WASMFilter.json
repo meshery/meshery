@@ -125,7 +125,7 @@
   ],
   "component": {
    "kind": "WASMFilter",
-   "schema": "",
+   "schema": "{\"properties\":{\"wasmFilter\":{\"description\":\"Location (URL) of WASM filter accessible by Istio/Kubernetes.\",\"type\":\"string\"},\"config\":{\"description\":\"Configuration of the `spec.configPatches.patch.value` of the Istio Envoy Filter resource for your specific filter.\",\"type\":\"string\",\"format\":\"textarea\"}},\"required\":[\"wasmFilter\"],\"title\":\"WASM Filter\",\"type\":\"object\"}",
    "version": "core.meshery.io/v1alpha1"
   },
   "configuration": null,
@@ -134,13 +134,10 @@
   "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
-   "defaultData": "",
    "genealogy": "",
    "isAnnotation": true,
-   "published": false,
-   "shapePolygonPoints": "",
-   "styleOverrides": "",
-   "styles": ""
+   "isNamespaced": false,
+   "published": false
   },
   "model": {
    "category": {

@@ -79,7 +79,7 @@ token: your token"%}
 
 ### Endpoints
 
-Each of the API endpoints are exposed through [server.go](https://github.com/meshery/meshery/blob/master/router/server.go). Endpoints are grouped by function (e.g. /api/mesh or /api/perf).
+Each of the API endpoints are exposed through [server.go](https://github.com/meshery/meshery/blob/master/router/server.go). Endpoints are grouped by function (e.g. `/api/mesh` or `/api/perf`).
 
 Alternatively, [Remote Providers](./providers) can extend Meshery's endpoints behind the `/api/extensions/` endpoint.
 

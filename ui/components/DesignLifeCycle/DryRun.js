@@ -21,7 +21,6 @@ import {
 } from '../../machines/validator/designValidator';
 import { ErrorIcon } from '@layer5/sistent';
 import { NOTIFICATIONCOLORS } from '@/themes/index';
-import { getComponentFromDesign } from '@/utils/utils';
 
 function breakCapitalizedWords(input) {
   // Use regular expression to split capitalized words
@@ -230,7 +229,6 @@ const ExpandableComponentErrors = withStyles(styles)(({
 
 export const FormatDryRunResponse = withStyles(styles)(({
   dryRunErrors,
-  designJson,
   configurableComponentsCount,
   annotationComponentsCount,
   validationMachine,
@@ -283,7 +281,7 @@ export const FormatDryRunResponse = withStyles(styles)(({
         dryRunErrors?.map((err) => (
           <ExpandableComponentErrors
             key={`${err.compName}`}
-            component={designJson && getComponentFromDesign(designJson, err.compName)}
+            component={err.component}
             componentName={err.compName}
             validationMachine={validationMachine}
             currentComponentName={currentComponentName}
@@ -311,7 +309,7 @@ const DryRunComponent = (props) => {
 
   const dryRunErrors = useDryRunValidationResults(validationMachine);
   const isLoading = useIsValidatingDryRun(validationMachine);
-  const { designJson, configurableComponents, annotationComponents } = processDesign(design);
+  const { configurableComponents, annotationComponents } = processDesign(design);
 
   useEffect(() => {
     const dryRunCommand =
@@ -348,7 +346,6 @@ const DryRunComponent = (props) => {
   return (
     <FormatDryRunResponse
       dryRunErrors={dryRunErrors}
-      designJson={designJson}
       annotationComponentsCount={annotationComponents.length}
       configurableComponentsCount={configurableComponents.length}
       validationMachine={validationMachine}

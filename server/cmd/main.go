@@ -202,6 +202,7 @@ func main() {
 		&models.PatternResource{},
 		&models.MesheryApplication{},
 		&models.UserPreference{},
+		&models.UserCapabilities{},
 		&models.PerformanceTestConfig{},
 		&models.SmiResultWithID{},
 		models.K8sContext{},
@@ -223,6 +224,7 @@ func main() {
 	lProv := &models.DefaultLocalProvider{
 		ProviderBaseURL:                 DefaultProviderURL,
 		MapPreferencePersister:          preferencePersister,
+		UserCapabilitiesPersister:       &models.UserCapabilitiesPersister{DB: dbHandler},
 		ResultPersister:                 &models.MesheryResultsPersister{DB: dbHandler},
 		SmiResultPersister:              &models.SMIResultsPersister{DB: dbHandler},
 		TestProfilesPersister:           &models.TestProfilesPersister{DB: dbHandler},
@@ -259,10 +261,9 @@ func main() {
 		PrometheusClient:         models.NewPrometheusClient(&log),
 		PrometheusClientForQuery: models.NewPrometheusClientWithHTTPClient(&http.Client{Timeout: time.Second}, &log),
 
-		ApplicationChannel:        models.NewBroadcaster(),
-		PatternChannel:            models.NewBroadcaster(),
-		FilterChannel:             models.NewBroadcaster(),
-		EventBroadcaster:          models.NewBroadcaster(),
+		PatternChannel:            models.NewBroadcaster("Patterns"),
+		FilterChannel:             models.NewBroadcaster("Filters"),
+		EventBroadcaster:          models.NewBroadcaster("Events"),
 		DashboardK8sResourcesChan: models.NewDashboardK8sResourcesHelper(),
 		MeshModelSummaryChannel:   mesherymeshmodel.NewSummaryHelper(),
 
@@ -280,11 +281,11 @@ func main() {
 		models.SeedComponents(log, hc, regManager)
 		r, err := policies.NewRegoInstance(PoliciesPath, regManager)
 		if err != nil {
-			log.Warn(ErrCreatingOPAInstance)
+			log.Warn(ErrCreatingOPAInstance(err))
 		} else {
 			rego = *r
 		}
-		
+
 		krh.SeedKeys(viper.GetString("KEYS_PATH"))
 		hc.MeshModelSummaryChannel.Publish()
 	}()
@@ -307,6 +308,7 @@ func main() {
 			TokenStore:                 make(map[string]string),
 			LoginCookieDuration:        1 * time.Hour,
 			SessionPreferencePersister: &models.SessionPreferencePersister{DB: dbHandler},
+			UserCapabilitiesPersister:  &models.UserCapabilitiesPersister{DB: dbHandler},
 			ProviderVersion:            version,
 			SmiResultPersister:         &models.SMIResultsPersister{DB: dbHandler},
 			GenericPersister:           dbHandler,

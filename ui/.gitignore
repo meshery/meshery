@@ -1,6 +1,3 @@
-# Cypress Tests Files
-cypress/videos
-cypress/screenshots
 # Code coverage
 coverage
 .nyc_output
@@ -35,3 +32,4 @@ node_modules/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+test-report.md

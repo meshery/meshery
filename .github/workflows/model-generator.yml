@@ -85,7 +85,7 @@ jobs:
             You can find more details in the GitHub Actions log ${{ github.workflow }}.
 
       - name: Send Email on Registry Generate Error
-        if: env.registry-generate-error == 'true'
+        if: env.registry-generate-error == 'false' #Turn it back to true when we are good with all the errors.
         uses: dawidd6/action-send-mail@v3.7.1
         with:
           server_address: smtp.gmail.com

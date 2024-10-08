@@ -134,13 +134,10 @@
   "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
-   "defaultData": "",
    "genealogy": "",
    "isAnnotation": false,
-   "published": false,
-   "shapePolygonPoints": "",
-   "styleOverrides": "",
-   "styles": ""
+   "isNamespaced": true,
+   "published": false
   },
   "model": {
    "category": {
@@ -180,7 +177,7 @@
    "relationships": null
   },
   "schemaVersion": "components.meshery.io/v1beta1",
-  "status": "",
+  "status": "enabled",
   "styles": {
    "primaryColor": "#e00000",
    "secondaryColor": "#00D3A9",

@@ -1,0 +1,195 @@
+{
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "FederationDomain",
+   "schema": "{\n \"description\": \"FederationDomain describes the configuration of an OIDC provider.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Spec of the OIDC provider.\",\n   \"properties\": {\n    \"identityProviders\": {\n     \"description\": \"IdentityProviders is the list of identity providers available for use by this FederationDomain.\\n\\n\\nAn identity provider CR (e.g. OIDCIdentityProvider or LDAPIdentityProvider) describes how to connect to a server,\\nhow to talk in a specific protocol for authentication, and how to use the schema of that server/protocol to\\nextract a normalized user identity. Normalized user identities include a username and a list of group names.\\nIn contrast, IdentityProviders describes how to use that normalized identity in those Kubernetes clusters which\\nbelong to this FederationDomain. Each entry in IdentityProviders can be configured with arbitrary transformations\\non that normalized identity. For example, a transformation can add a prefix to all usernames to help avoid\\naccidental conflicts when multiple identity providers have different users with the same username (e.g.\\n\\\"idp1:ryan\\\" versus \\\"idp2:ryan\\\"). Each entry in IdentityProviders can also implement arbitrary authentication\\nrejection policies. Even though a user was able to authenticate with the identity provider, a policy can disallow\\nthe authentication to the Kubernetes clusters that belong to this FederationDomain. For example, a policy could\\ndisallow the authentication unless the user belongs to a specific group in the identity provider.\\n\\n\\nFor backwards compatibility with versions of Pinniped which predate support for multiple identity providers,\\nan empty IdentityProviders list will cause the FederationDomain to use all available identity providers which\\nexist in the same namespace, but also to reject all authentication requests when there is more than one identity\\nprovider currently defined. In this backwards compatibility mode, the name of the identity provider resource\\n(e.g. the Name of an OIDCIdentityProvider resource) will be used as the name of the identity provider in this\\nFederationDomain. This mode is provided to make upgrading from older versions easier. However, instead of\\nrelying on this backwards compatibility mode, please consider this mode to be deprecated and please instead\\nexplicitly list the identity provider using this IdentityProviders field.\",\n     \"items\": {\n      \"description\": \"FederationDomainIdentityProvider describes how an identity provider is made available in this FederationDomain.\",\n      \"properties\": {\n       \"displayName\": {\n        \"description\": \"DisplayName is the name of this identity provider as it will appear to clients. This name ends up in the\\nkubeconfig of end users, so changing the name of an identity provider that is in use by end users will be a\\ndisruptive change for those users.\",\n        \"minLength\": 1,\n        \"type\": \"string\"\n       },\n       \"objectRef\": {\n        \"description\": \"ObjectRef is a reference to a Pinniped identity provider resource. A valid reference is required.\\nIf the reference cannot be resolved then the identity provider will not be made available.\\nMust refer to a resource of one of the Pinniped identity provider types, e.g. OIDCIdentityProvider,\\nLDAPIdentityProvider, ActiveDirectoryIdentityProvider.\",\n        \"properties\": {\n         \"apiGroup\": {\n          \"description\": \"APIGroup is the group for the resource being referenced.\\nIf APIGroup is not specified, the specified Kind must be in the core API group.\\nFor any other third-party types, APIGroup is required.\",\n          \"type\": \"string\"\n         },\n         \"kind\": {\n          \"description\": \"Kind is the type of resource being referenced\",\n          \"type\": \"string\"\n         },\n         \"name\": {\n          \"description\": \"Name is the name of resource being referenced\",\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"kind\",\n         \"name\"\n        ],\n        \"type\": \"object\",\n        \"x-kubernetes-map-type\": \"atomic\"\n       },\n       \"transforms\": {\n        \"description\": \"Transforms is an optional way to specify transformations to be applied during user authentication and\\nsession refresh.\",\n        \"properties\": {\n         \"constants\": {\n          \"description\": \"Constants defines constant variables and their values which will be made available to the transform expressions.\",\n          \"items\": {\n           \"description\": \"FederationDomainTransformsConstant defines a constant variable and its value which will be made available to\\nthe transform expressions. This is a union type, and Type is the discriminator field.\",\n           \"properties\": {\n            \"name\": {\n             \"description\": \"Name determines the name of the constant. It must be a valid identifier name.\",\n             \"maxLength\": 64,\n             \"minLength\": 1,\n             \"pattern\": \"^[a-zA-Z][_a-zA-Z0-9]*$\",\n             \"type\": \"string\"\n            },\n            \"stringListValue\": {\n             \"description\": \"StringListValue should hold the value when Type is \\\"stringList\\\", and is otherwise ignored.\",\n             \"items\": {\n              \"type\": \"string\"\n             },\n             \"type\": \"array\"\n            },\n            \"stringValue\": {\n             \"description\": \"StringValue should hold the value when Type is \\\"string\\\", and is otherwise ignored.\",\n             \"type\": \"string\"\n            },\n            \"type\": {\n             \"description\": \"Type determines the type of the constant, and indicates which other field should be non-empty.\\nAllowed values are \\\"string\\\" or \\\"stringList\\\".\",\n             \"enum\": [\n              \"string\",\n              \"stringList\"\n             ],\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"name\",\n            \"type\"\n           ],\n           \"type\": \"object\"\n          },\n          \"type\": \"array\",\n          \"x-kubernetes-list-map-keys\": [\n           \"name\"\n          ],\n          \"x-kubernetes-list-type\": \"map\"\n         },\n         \"examples\": {\n          \"description\": \"Examples can optionally be used to ensure that the sequence of transformation expressions are working as\\nexpected. Examples define sample input identities which are then run through the expression list, and the\\nresults are compared to the expected results. If any example in this list fails, then this\\nidentity provider will not be available for use within this FederationDomain, and the error(s) will be\\nadded to the FederationDomain status. This can be used to help guard against programming mistakes in the\\nexpressions, and also act as living documentation for other administrators to better understand the expressions.\",\n          \"items\": {\n           \"description\": \"FederationDomainTransformsExample defines a transform example.\",\n           \"properties\": {\n            \"expects\": {\n             \"description\": \"Expects is the expected output of the entire sequence of transforms when they are run against the\\ninput Username and Groups.\",\n             \"properties\": {\n              \"groups\": {\n               \"description\": \"Groups is the expected list of group names after the transformations have been applied.\",\n               \"items\": {\n                \"type\": \"string\"\n               },\n               \"type\": \"array\"\n              },\n              \"message\": {\n               \"description\": \"Message is the expected error message of the transforms. When Rejected is true, then Message is the expected\\nmessage for the policy which rejected the authentication attempt. When Rejected is true and Message is blank,\\nthen Message will be treated as the default error message for authentication attempts which are rejected by a\\npolicy. When Rejected is false, then Message is the expected error message for some other non-policy\\ntransformation error, such as a runtime error. When Rejected is false, there is no default expected Message.\",\n               \"type\": \"string\"\n              },\n              \"rejected\": {\n               \"description\": \"Rejected is a boolean that indicates whether authentication is expected to be rejected by a policy expression\\nafter the transformations have been applied. True means that it is expected that the authentication would be\\nrejected. The default value of false means that it is expected that the authentication would not be rejected\\nby any policy expression.\",\n               \"type\": \"boolean\"\n              },\n              \"username\": {\n               \"description\": \"Username is the expected username after the transformations have been applied.\",\n               \"type\": \"string\"\n              }\n             },\n             \"type\": \"object\"\n            },\n            \"groups\": {\n             \"description\": \"Groups is the input list of group names.\",\n             \"items\": {\n              \"type\": \"string\"\n             },\n             \"type\": \"array\"\n            },\n            \"username\": {\n             \"description\": \"Username is the input username.\",\n             \"minLength\": 1,\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"expects\",\n            \"username\"\n           ],\n           \"type\": \"object\"\n          },\n          \"type\": \"array\"\n         },\n         \"expressions\": {\n          \"description\": \"Expressions are an optional list of transforms and policies to be executed in the order given during every\\nauthentication attempt, including during every session refresh.\\nEach is a CEL expression. It may use the basic CEL language as defined in\\nhttps://github.com/google/cel-spec/blob/master/doc/langdef.md plus the CEL string extensions defined in\\nhttps://github.com/google/cel-go/tree/master/ext#strings.\\n\\n\\nThe username and groups extracted from the identity provider, and the constants defined in this CR, are\\navailable as variables in all expressions. The username is provided via a variable called `username` and\\nthe list of group names is provided via a variable called `groups` (which may be an empty list).\\nEach user-provided constants is provided via a variable named `strConst.varName` for string constants\\nand `strListConst.varName` for string list constants.\\n\\n\\nThe only allowed types for expressions are currently policy/v1, username/v1, and groups/v1.\\nEach policy/v1 must return a boolean, and when it returns false, no more expressions from the list are evaluated\\nand the authentication attempt is rejected.\\nTransformations of type policy/v1 do not return usernames or group names, and therefore cannot change the\\nusername or group names.\\nEach username/v1 transform must return the new username (a string), which can be the same as the old username.\\nTransformations of type username/v1 do not return group names, and therefore cannot change the group names.\\nEach groups/v1 transform must return the new groups list (list of strings), which can be the same as the old\\ngroups list.\\nTransformations of type groups/v1 do not return usernames, and therefore cannot change the usernames.\\nAfter each expression, the new (potentially changed) username or groups get passed to the following expression.\\n\\n\\nAny compilation or static type-checking failure of any expression will cause an error status on the FederationDomain.\\nDuring an authentication attempt, any unexpected runtime evaluation errors (e.g. division by zero) cause the\\nauthentication attempt to fail. When all expressions evaluate successfully, then the (potentially changed) username\\nand group names have been decided for that authentication attempt.\",\n          \"items\": {\n           \"description\": \"FederationDomainTransformsExpression defines a transform expression.\",\n           \"properties\": {\n            \"expression\": {\n             \"description\": \"Expression is a CEL expression that will be evaluated based on the Type during an authentication.\",\n             \"minLength\": 1,\n             \"type\": \"string\"\n            },\n            \"message\": {\n             \"description\": \"Message is only used when Type is policy/v1. It defines an error message to be used when the policy rejects\\nan authentication attempt. When empty, a default message will be used.\",\n             \"type\": \"string\"\n            },\n            \"type\": {\n             \"description\": \"Type determines the type of the expression. It must be one of the supported types.\\nAllowed values are \\\"policy/v1\\\", \\\"username/v1\\\", or \\\"groups/v1\\\".\",\n             \"enum\": [\n              \"policy/v1\",\n              \"username/v1\",\n              \"groups/v1\"\n             ],\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"expression\",\n            \"type\"\n           ],\n           \"type\": \"object\"\n          },\n          \"type\": \"array\"\n         }\n        },\n        \"type\": \"object\"\n       }\n      },\n      \"required\": [\n       \"displayName\",\n       \"objectRef\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"issuer\": {\n     \"description\": \"Issuer is the OIDC Provider's issuer, per the OIDC Discovery Metadata document, as well as the\\nidentifier that it will use for the iss claim in issued JWTs. This field will also be used as\\nthe base URL for any endpoints used by the OIDC Provider (e.g., if your issuer is\\nhttps://example.com/foo, then your authorization endpoint will look like\\nhttps://example.com/foo/some/path/to/auth/endpoint).\\n\\n\\nSee\\nhttps://openid.net/specs/openid-connect-discovery-1_0.html#rfc.section.3 for more information.\",\n     \"minLength\": 1,\n     \"type\": \"string\"\n    },\n    \"tls\": {\n     \"description\": \"TLS specifies a secret which will contain Transport Layer Security (TLS) configuration for the FederationDomain.\",\n     \"properties\": {\n      \"secretName\": {\n       \"description\": \"SecretName is an optional name of a Secret in the same namespace, of type `kubernetes.io/tls`, which contains\\nthe TLS serving certificate for the HTTPS endpoints served by this FederationDomain. When provided, the TLS Secret\\nnamed here must contain keys named `tls.crt` and `tls.key` that contain the certificate and private key to use\\nfor TLS.\\n\\n\\nServer Name Indication (SNI) is an extension to the Transport Layer Security (TLS) supported by all major browsers.\\n\\n\\nSecretName is required if you would like to use different TLS certificates for issuers of different hostnames.\\nSNI requests do not include port numbers, so all issuers with the same DNS hostname must use the same\\nSecretName value even if they have different port numbers.\\n\\n\\nSecretName is not required when you would like to use only the HTTP endpoints (e.g. when the HTTP listener is\\nconfigured to listen on loopback interfaces or UNIX domain sockets for traffic from a service mesh sidecar).\\nIt is also not required when you would like all requests to this OIDC Provider's HTTPS endpoints to\\nuse the default TLS certificate, which is configured elsewhere.\\n\\n\\nWhen your Issuer URL's host is an IP address, then this field is ignored. SNI does not work for IP addresses.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"issuer\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Federation Domain\",\n \"type\": \"object\"\n}",
+   "version": "config.supervisor.pinniped.dev/v1alpha1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "Federation Domain",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "published": false,
+   "source_uri": "https://charts.bitnami.com/bitnami/pinniped-2.3.2.tgz"
+  },
+  "model": {
+   "category": {
+    "name": "Security \u0026 Compliance"
+   },
+   "displayName": "Pinniped",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "source_uri": "https://charts.bitnami.com/bitnami/pinniped-2.3.2.tgz",
+    "styleOverrides": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "model": {
+    "version": "2.3.2"
+   },
+   "name": "pinniped",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "subCategory": "Key Management",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "svgColor": "",
+   "svgWhite": ""
+  },
+  "version": "v1.0.0"
+ }

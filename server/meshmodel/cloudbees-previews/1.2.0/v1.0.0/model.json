@@ -6,17 +6,14 @@
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
    "capabilities": null,
-   "defaultData": "",
    "isAnnotation": false,
    "primaryColor": "#00B39F",
    "secondaryColor": "#00D3A9",
    "shape": "circle",
-   "shapePolygonPoints": "",
    "styleOverrides": "",
-   "styles": "",
-   "svgColor": "",
+   "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M36.36 17.11l-8.764.22c0-3.287-1.972-6.354-5.04-7.67s-6.573-.657-8.983 1.753-3.068 5.916-1.753 8.983 4.382 5.04 7.67 5.04h6.354V34.2H19.5c-7.23 0-13.585-4.382-15.995-11.174S2.837 8.785 8.315 4.184C11.602 1.335 15.984-.198 20.147.02c2.63 0 5.26.876 7.67 2.19-.22.22 8.107 4.382 8.545 14.9z\" fill=\"#335061\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M44.687 64c-9.422 0-17.1-7.67-17.1-17.1V19.083h8.764V46.9c0 3.287 1.972 6.354 5.04 7.67s6.573.657 8.983-1.753 3.068-5.916 1.753-8.983-4.382-5.04-7.67-5.04h-6.354v-8.764h6.354c9.422 0 17.1 7.67 17.1 17.1.22 9.203-7.45 16.87-16.87 16.87z\" fill=\"#1997b5\"\u003e\u003c/path\u003e\u003c/svg\u003e",
    "svgComplete": "",
-   "svgWhite": ""
+   "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" fill=\"#ffffff\" viewBox=\"0 0 32 32\" stroke=\"#ffffff\" height=\"20\" width=\"20\"\u003e\u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"SVGRepo_bgCarrier\" stroke-width=\"0\"\u003e\u003c/g\u003e\u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"SVGRepo_tracerCarrier\" stroke-linecap=\"round\" stroke-linejoin=\"round\"\u003e\u003c/g\u003e\u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"SVGRepo_iconCarrier\"\u003e \u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M4.735 8.547c0-1.599 0.973-3.041 2.505-3.735 1.541-0.681 3.328-0.484 4.681 0.521l3.36-3.136c-3.12-2.557-7.5-2.916-10.989-0.891-3.396 1.887-5.032 5.876-3.932 9.6 1.271 3.76 4.833 6.265 8.801 6.187h3.437v-4.4h-3.437c-2.443-0.027-4.427-1.881-4.427-4.163zM22.745 14.855h-3.439v4.4h3.439c2.443 0 4.427 1.865 4.427 4.131 0 2.297-1.984 4.136-4.427 4.136-2.439 0-4.428-1.828-4.428-4.109v-14.881c0-2.104-0.839-4.145-2.344-5.719l-3.359 3.161c0.625 0.709 0.973 1.625 0.973 2.573v14.855c0 4.719 4.105 8.547 9.157 8.547 5.067 0 9.161-3.828 9.161-8.547s-4.095-8.547-9.161-8.547z\"\u003e\u003c/path\u003e \u003c/g\u003e\u003c/svg\u003e"
   },
   "model": {
    "version": "1.2.0"
@@ -37,7 +34,7 @@
   },
   "connection_id": "00000000-0000-0000-0000-000000000000",
   "schemaVersion": "models.meshery.io/v1beta1",
-  "status": "ignored",
+  "status": "enabled",
   "subCategory": "Continuous Integration \u0026 Delivery",
   "version": "v1.0.0",
   "components": null,

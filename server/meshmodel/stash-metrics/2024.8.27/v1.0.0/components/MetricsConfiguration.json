@@ -1,0 +1,195 @@
+{
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "MetricsConfiguration",
+   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"MetricsConfigurationSpec is the spec of MetricsConfiguration object.\",\n   \"properties\": {\n    \"commonLabels\": {\n     \"description\": \"CommonLabels defines the common labels added to all the exported metrics\",\n     \"items\": {\n      \"description\": \"Label contains the information of a metric label. Given labels are always added in the metrics along with resource name and namespace. Resource's name and namespace are always added in the labels by default. No configuration is needed for name and namespace labels. \\n Example: kube_pod_info{pod=\\\"\\u003cpod_name\\u003e\\\", namespace=\\\"\\u003cpod_namespace\\u003e\\\", host_ip=\\\"172.18.0.2\\\", pod_ip=\\\"10.244.0.14\\\", node=\\\"kind-control-plane\\\"}  1 In the example pod, namespace, host_ip, pod_ip, node are labels. pod(resource name) and namespace are default labels. No configurations is needed for those. \\n To generate others labels, config should be given in the following way \\n labels: - key: host_ip valuePath: .status.hostIP - key: pod_ip valuePath: .status.podIP - key: node valuePath: .spec.nodeName \\n Either Value or ValuePath must be specified for a Label. If both is specified, ValuePath is ignored. Note that if a valuePath doesn't exist for a label key, the label will be ignored.\",\n      \"properties\": {\n       \"key\": {\n        \"description\": \"Key defines the label key\",\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"description\": \"Value defines the hard coded label value. Example: labels: - key: unit value: byte - key: environment value: production\",\n        \"type\": \"string\"\n       },\n       \"valuePath\": {\n        \"description\": \"ValuePath defines the label value path. Example: To add deployment's resource version as labels, labels: - key: version valuePath: .metadata.resourceVersion\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"key\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"metrics\": {\n     \"description\": \"List of Metrics configuration for the resource object defined in TargetRef\",\n     \"items\": {\n      \"description\": \"Metrics contains the configuration of a metric in prometheus style.\",\n      \"properties\": {\n       \"field\": {\n        \"description\": \"Field defines the metric value path of the manifest file and the type of that value\",\n        \"properties\": {\n         \"path\": {\n          \"description\": \"Path defines the json path of the object. Example: For deployment spec replica count, the path will be .spec.replicas\",\n          \"type\": \"string\"\n         },\n         \"type\": {\n          \"description\": \"Type defines the type of the value in the given Path Type can be \\\"Integer\\\" for integer value like .spec.replicas, \\\"DateTime\\\" for time stamp value like .metadata.creationTimestamp \\\"Array\\\" for array field like .spec.containers \\\"String\\\" for string field like .statue.phase (for pod status)\",\n          \"enum\": [\n           \"Integer\",\n           \"DateTime\",\n           \"Array\",\n           \"String\"\n          ],\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"path\",\n         \"type\"\n        ],\n        \"type\": \"object\"\n       },\n       \"help\": {\n        \"description\": \"Help is used to describe the metrics. Example: For kube_deployment_spec_replicas, help string can be \\\"Number of desired pods for a deployment.\\\"\",\n        \"type\": \"string\"\n       },\n       \"labels\": {\n        \"description\": \"Labels defines the metric labels as a key-value pair\",\n        \"items\": {\n         \"description\": \"Label contains the information of a metric label. Given labels are always added in the metrics along with resource name and namespace. Resource's name and namespace are always added in the labels by default. No configuration is needed for name and namespace labels. \\n Example: kube_pod_info{pod=\\\"\\u003cpod_name\\u003e\\\", namespace=\\\"\\u003cpod_namespace\\u003e\\\", host_ip=\\\"172.18.0.2\\\", pod_ip=\\\"10.244.0.14\\\", node=\\\"kind-control-plane\\\"}  1 In the example pod, namespace, host_ip, pod_ip, node are labels. pod(resource name) and namespace are default labels. No configurations is needed for those. \\n To generate others labels, config should be given in the following way \\n labels: - key: host_ip valuePath: .status.hostIP - key: pod_ip valuePath: .status.podIP - key: node valuePath: .spec.nodeName \\n Either Value or ValuePath must be specified for a Label. If both is specified, ValuePath is ignored. Note that if a valuePath doesn't exist for a label key, the label will be ignored.\",\n         \"properties\": {\n          \"key\": {\n           \"description\": \"Key defines the label key\",\n           \"type\": \"string\"\n          },\n          \"value\": {\n           \"description\": \"Value defines the hard coded label value. Example: labels: - key: unit value: byte - key: environment value: production\",\n           \"type\": \"string\"\n          },\n          \"valuePath\": {\n           \"description\": \"ValuePath defines the label value path. Example: To add deployment's resource version as labels, labels: - key: version valuePath: .metadata.resourceVersion\",\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"key\"\n         ],\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       },\n       \"metricValue\": {\n        \"description\": \"MetricValue defines the configuration to obtain metric value. \\n Metrics must contain either States or MetricValue. If both are specified, MetricValue will be ignored.\",\n        \"properties\": {\n         \"value\": {\n          \"description\": \"Value contains the metric value. It is always equal to 1. It is defined when some information of the object is collected as labels but there is no specific metric value. \\n Example: For metrics \\\"kube_pod_info\\\", there are some information like host_ip, pod_ip, node name is collected as labels. As there must be a metric value, metric value is kept as 1. The metric will look like `kube_pod_info{host_ip=\\\"172.18.0.2\\\", pod_ip=\\\"10.244.0.14\\\", node=\\\"kind-control-plane\\\" .....}  1`\",\n          \"format\": \"double\",\n          \"type\": \"number\"\n         },\n         \"valueFromExpression\": {\n          \"description\": \"ValueFromExpression contains an expression for the metric value expression can be a function as well. Parameters is used in the expression string \\n Available expression evaluation functions are: \\n int() returns 1 if the expression is true otherwise 0, example: int(phase == 'Running') \\n percentage(percent, total, roundUp) returns the value of (percent * total%) when `percent` contains the percent(%) value. If percent represents an Integer value, then it will simply return it. roundUp is an optional field. By default, its value is false. If roundUp is set as `true`, the resultant value will be rounded up. example: (i) percentage(\\\"25%\\\", 4) will return 1. (ii) percentage(\\\"25%\\\", 1 , true) will return 1 as roundUp is set as true. (iii) percentage(2, 4) will return 2 as percent is representing an Integer value. \\n cpu_cores() returns the cpu in unit core example: cpu_cores(cpu), for cpu value 150m, it will return 0.15 \\n bytes() returns the memory size in byte example: bytes(memory), for memory value 1 ki, it will return 1024 \\n unix() returns the DateTime string into unix format. example: unix(dateTime) will return the corresponding unix value for the given dateTime \\n in above examples phase, replicas, maxUnavailable, cpu, memory, dateTime are Parameter's key those values will come from corresponding Parameter's value \\n Some expression evaluation functions are used for calculating resource requests and limits. Those functions are stated here: https://github.com/kmodules/resource-metrics/blob/master/eval.go\",\n          \"type\": \"string\"\n         },\n         \"valueFromPath\": {\n          \"description\": \"ValueFromPath contains the field path of the manifest file of a object. ValueFromPath is used when the metric value is coming from any specific json path of the object. \\n Example: For metrics \\\"kube_deployment_spec_replicas\\\", the metricValue is coming from a specific path .spec.replicas In this case, valueFromPath: .spec.replicas Some example of json path: .metadata.observedGeneration, .spec.restartPolicy, .status.startTime \\n Some example of json path which is coming from an element of an array: .spec.containers[*].image, .status.containerStatuses[*].restartCount\",\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"name\": {\n        \"description\": \"Name defines the metrics name. Name should be in snake case. Example: kube_deployment_spec_replicas\",\n        \"type\": \"string\"\n       },\n       \"params\": {\n        \"description\": \"Params is list of parameters configuration used in expression evaluation\",\n        \"items\": {\n         \"description\": \"Parameter contains the information of a parameter used in expression evaluation Parameter should contain an user defined key and corresponding Value or ValuePath. Either Value or ValuePath must be specified. If both are specified, ValuePath is ignored.\",\n         \"properties\": {\n          \"key\": {\n           \"description\": \"Key defines the parameter's key\",\n           \"type\": \"string\"\n          },\n          \"value\": {\n           \"description\": \"Value defines user defined parameter's value.\",\n           \"type\": \"string\"\n          },\n          \"valuePath\": {\n           \"description\": \"ValuePath defines the manifest field path for the parameter's value. Example: To add deployment's spec replica count as parameter, params: - key: replica valuePath: .spec.replicas\",\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"key\"\n         ],\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       },\n       \"states\": {\n        \"description\": \"States handle metrics with label cardinality. States specify the possible states for a label and their corresponding MetricValue configuration. \\n Metrics must contain either States or MetricValue. If both are specified, MetricValue will be ignored.\",\n        \"properties\": {\n         \"labelKey\": {\n          \"description\": \"LabelKey defines an user defined label key of the label which label cardinality is greater than one. Example: For metric \\\"kube_pod_status_phase\\\", the LabelKey can be \\\"phase\\\"\",\n          \"type\": \"string\"\n         },\n         \"values\": {\n          \"description\": \"Values contains the list of state values. The size of the list is always equal to the cardinality of that label. Example: \\\"kube_pod_statue_phase\\\" metric has a label \\\"phase\\\" which cardinality is equal to 5. So Values should have StateValues config for all of them.\",\n          \"items\": {\n           \"description\": \"StateValues contains the information of a state value. StateValues is used to define state with all possible label values and corresponding MetricValue.\",\n           \"properties\": {\n            \"labelValue\": {\n             \"description\": \"LabelValue defines the value of the label. Example: For labelKey \\\"phase\\\" (metric: kube_pod_status_phase path: .status.phase ) label value can be \\\"Running\\\", \\\"Succeeded\\\", \\\"Failed\\\", \\\"Unknown\\\" and \\\"Pending\\\"\",\n             \"type\": \"string\"\n            },\n            \"metricValue\": {\n             \"description\": \"MetricValue defines the configuration of the metric value for the corresponding LabelValue\",\n             \"properties\": {\n              \"value\": {\n               \"description\": \"Value contains the metric value. It is always equal to 1. It is defined when some information of the object is collected as labels but there is no specific metric value. \\n Example: For metrics \\\"kube_pod_info\\\", there are some information like host_ip, pod_ip, node name is collected as labels. As there must be a metric value, metric value is kept as 1. The metric will look like `kube_pod_info{host_ip=\\\"172.18.0.2\\\", pod_ip=\\\"10.244.0.14\\\", node=\\\"kind-control-plane\\\" .....}  1`\",\n               \"format\": \"double\",\n               \"type\": \"number\"\n              },\n              \"valueFromExpression\": {\n               \"description\": \"ValueFromExpression contains an expression for the metric value expression can be a function as well. Parameters is used in the expression string \\n Available expression evaluation functions are: \\n int() returns 1 if the expression is true otherwise 0, example: int(phase == 'Running') \\n percentage(percent, total, roundUp) returns the value of (percent * total%) when `percent` contains the percent(%) value. If percent represents an Integer value, then it will simply return it. roundUp is an optional field. By default, its value is false. If roundUp is set as `true`, the resultant value will be rounded up. example: (i) percentage(\\\"25%\\\", 4) will return 1. (ii) percentage(\\\"25%\\\", 1 , true) will return 1 as roundUp is set as true. (iii) percentage(2, 4) will return 2 as percent is representing an Integer value. \\n cpu_cores() returns the cpu in unit core example: cpu_cores(cpu), for cpu value 150m, it will return 0.15 \\n bytes() returns the memory size in byte example: bytes(memory), for memory value 1 ki, it will return 1024 \\n unix() returns the DateTime string into unix format. example: unix(dateTime) will return the corresponding unix value for the given dateTime \\n in above examples phase, replicas, maxUnavailable, cpu, memory, dateTime are Parameter's key those values will come from corresponding Parameter's value \\n Some expression evaluation functions are used for calculating resource requests and limits. Those functions are stated here: https://github.com/kmodules/resource-metrics/blob/master/eval.go\",\n               \"type\": \"string\"\n              },\n              \"valueFromPath\": {\n               \"description\": \"ValueFromPath contains the field path of the manifest file of a object. ValueFromPath is used when the metric value is coming from any specific json path of the object. \\n Example: For metrics \\\"kube_deployment_spec_replicas\\\", the metricValue is coming from a specific path .spec.replicas In this case, valueFromPath: .spec.replicas Some example of json path: .metadata.observedGeneration, .spec.restartPolicy, .status.startTime \\n Some example of json path which is coming from an element of an array: .spec.containers[*].image, .status.containerStatuses[*].restartCount\",\n               \"type\": \"string\"\n              }\n             },\n             \"type\": \"object\"\n            }\n           },\n           \"required\": [\n            \"labelValue\",\n            \"metricValue\"\n           ],\n           \"type\": \"object\"\n          },\n          \"type\": \"array\"\n         }\n        },\n        \"required\": [\n         \"labelKey\",\n         \"values\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": {\n        \"description\": \"Type defines the metrics type. For kubernetes based object, types can only be \\\"gauge\\\"\",\n        \"enum\": [\n         \"gauge\"\n        ],\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"help\",\n       \"name\",\n       \"type\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"targetRef\": {\n     \"description\": \"TargetRef defines the object for which metrics will be collected\",\n     \"properties\": {\n      \"apiVersion\": {\n       \"description\": \"APIVersion defines the versioned schema of this representation of an object.\",\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"description\": \"Kind is a string value representing the REST resource this object represents. In CamelCase.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"apiVersion\",\n      \"kind\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"metrics\",\n    \"targetRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Metrics Configuration\",\n \"type\": \"object\"\n}",
+   "version": "metrics.appscode.com/v1alpha1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "Metrics Configuration",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": false,
+   "published": false,
+   "source_uri": "https://charts.appscode.com/stable/stash-metrics/stash-metrics-v2024.8.27.tgz"
+  },
+  "model": {
+   "category": {
+    "name": "Uncategorized"
+   },
+   "displayName": "Stash Metrics",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "source_uri": "https://charts.appscode.com/stable/stash-metrics/stash-metrics-v2024.8.27.tgz",
+    "styleOverrides": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "model": {
+    "version": "2024.8.27"
+   },
+   "name": "stash-metrics",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "subCategory": "Uncategorized",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "svgColor": "",
+   "svgWhite": ""
+  },
+  "version": "v1.0.0"
+ }

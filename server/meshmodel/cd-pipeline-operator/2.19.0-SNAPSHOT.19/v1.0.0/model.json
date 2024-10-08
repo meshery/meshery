@@ -5,6 +5,7 @@
   "displayName": "CD Pipeline Operator",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://epam.github.io/edp-helm-charts/snapshot/packages/cd-pipeline-operator-2.19.0-SNAPSHOT.19.tgz", 
     "isAnnotation": false,
     "published": true,
     "subCategory": "Continuous Integration \u0026 Delivery",

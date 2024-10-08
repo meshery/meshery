@@ -5,6 +5,7 @@
   "displayName": "KEDA HTTP Scaler",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://kedacore.github.io/charts/keda-add-ons-http-0.8.0.tgz", 
     "capabilities": null,
     "defaultData": "",
     "isAnnotation": false,

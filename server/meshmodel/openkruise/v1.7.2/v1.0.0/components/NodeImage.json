@@ -1,0 +1,195 @@
+{
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "NodeImage",
+   "schema": "{\n \"description\": \"NodeImage is the Schema for the nodeimages API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"NodeImageSpec defines the desired state of NodeImage\",\n   \"properties\": {\n    \"images\": {\n     \"additionalProperties\": {\n      \"description\": \"ImageSpec defines the pulling spec of an image\",\n      \"properties\": {\n       \"pullSecrets\": {\n        \"description\": \"PullSecrets is an optional list of references to secrets in the same namespace to use for pulling the image.\\nIf specified, these secrets will be passed to individual puller implementations for them to use.  For example,\\nin the case of docker, only DockerConfig type secrets are honored.\",\n        \"items\": {\n         \"description\": \"ReferenceObject comprises a resource name, with a mandatory namespace,\\nrendered as \\\"\\u003cnamespace\\u003e/\\u003cname\\u003e\\\".\",\n         \"properties\": {\n          \"name\": {\n           \"type\": \"string\"\n          },\n          \"namespace\": {\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       },\n       \"sandboxConfig\": {\n        \"description\": \"SandboxConfig support attach metadata in PullImage CRI interface during ImagePulljobs\",\n        \"properties\": {\n         \"annotations\": {\n          \"additionalProperties\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"object\"\n         },\n         \"labels\": {\n          \"additionalProperties\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"object\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"tags\": {\n        \"description\": \"Tags is a list of versions of this image\",\n        \"items\": {\n         \"description\": \"ImageTagSpec defines the pulling spec of an image tag\",\n         \"properties\": {\n          \"createdAt\": {\n           \"description\": \"Specifies the create time of this tag\",\n           \"format\": \"date-time\",\n           \"type\": \"string\"\n          },\n          \"imagePullPolicy\": {\n           \"description\": \"Image pull policy.\\nOne of Always, IfNotPresent. Defaults to IfNotPresent.\",\n           \"type\": \"string\"\n          },\n          \"ownerReferences\": {\n           \"description\": \"List of objects depended by this object. If this image is managed by a controller,\\nthen an entry in this list will point to this controller.\",\n           \"items\": {\n            \"description\": \"ObjectReference contains enough information to let you inspect or modify the referred object.\\n---\\nNew uses of this type are discouraged because of difficulty describing its usage when embedded in APIs.\\n 1. Ignored fields.  It includes many fields which are not generally honored.  For instance, ResourceVersion and FieldPath are both very rarely valid in actual usage.\\n 2. Invalid usage help.  It is impossible to add specific help for individual usage.  In most embedded usages, there are particular\\n    restrictions like, \\\"must refer only to types A and B\\\" or \\\"UID not honored\\\" or \\\"name must be restricted\\\".\\n    Those cannot be well described when embedded.\\n 3. Inconsistent validation.  Because the usages are different, the validation rules are different by usage, which makes it hard for users to predict what will happen.\\n 4. The fields are both imprecise and overly precise.  Kind is not a precise mapping to a URL. This can produce ambiguity\\n    during interpretation and require a REST mapping.  In most cases, the dependency is on the group,resource tuple\\n    and the version of the actual struct is irrelevant.\\n 5. We cannot easily change it.  Because this type is embedded in many locations, updates to this type\\n    will affect numerous schemas.  Don't make new APIs embed an underspecified API type they do not control.\\n\\n\\nInstead of using this type, create a locally provided and used type that is well-focused on your reference.\\nFor example, ServiceReferences for admission registration: https://github.com/kubernetes/api/blob/release-1.17/admissionregistration/v1/types.go#L533 .\",\n            \"properties\": {\n             \"apiVersion\": {\n              \"description\": \"API version of the referent.\",\n              \"type\": \"string\"\n             },\n             \"fieldPath\": {\n              \"description\": \"If referring to a piece of an object instead of an entire object, this string\\nshould contain a valid JSON/Go field access statement, such as desiredState.manifest.containers[2].\\nFor example, if the object reference is to a container within a pod, this would take on a value like:\\n\\\"spec.containers{name}\\\" (where \\\"name\\\" refers to the name of the container that triggered\\nthe event) or if no container name is specified \\\"spec.containers[2]\\\" (container with\\nindex 2 in this pod). This syntax is chosen only to have some well-defined way of\\nreferencing a part of an object.\\nTODO: this design is not final and this field is subject to change in the future.\",\n              \"type\": \"string\"\n             },\n             \"kind\": {\n              \"description\": \"Kind of the referent.\\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds\",\n              \"type\": \"string\"\n             },\n             \"name\": {\n              \"description\": \"Name of the referent.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n              \"type\": \"string\"\n             },\n             \"namespace\": {\n              \"description\": \"Namespace of the referent.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n              \"type\": \"string\"\n             },\n             \"resourceVersion\": {\n              \"description\": \"Specific resourceVersion to which this reference is made, if any.\\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#concurrency-control-and-consistency\",\n              \"type\": \"string\"\n             },\n             \"uid\": {\n              \"description\": \"UID of the referent.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#uids\",\n              \"type\": \"string\"\n             }\n            },\n            \"type\": \"object\",\n            \"x-kubernetes-map-type\": \"atomic\"\n           },\n           \"type\": \"array\"\n          },\n          \"pullPolicy\": {\n           \"description\": \"PullPolicy is an optional field to set parameters of the pulling task. If not specified,\\nthe system will use the default values.\",\n           \"properties\": {\n            \"activeDeadlineSeconds\": {\n             \"description\": \"ActiveDeadlineSeconds specifies the duration in seconds relative to the startTime that the task may be active\\nbefore the system tries to terminate it; value must be positive integer.\\nif not specified, the system will never terminate it.\",\n             \"format\": \"int64\",\n             \"type\": \"integer\"\n            },\n            \"backoffLimit\": {\n             \"description\": \"Specifies the number of retries before marking the pulling task failed.\\nDefaults to 3\",\n             \"format\": \"int32\",\n             \"type\": \"integer\"\n            },\n            \"timeoutSeconds\": {\n             \"description\": \"Specifies the timeout of the pulling task.\\nDefaults to 600\",\n             \"format\": \"int32\",\n             \"type\": \"integer\"\n            },\n            \"ttlSecondsAfterFinished\": {\n             \"description\": \"TTLSecondsAfterFinished limits the lifetime of a pulling task that has finished execution (either Complete or Failed).\\nIf this field is set, ttlSecondsAfterFinished after the task finishes, it is eligible to be automatically deleted.\\nIf this field is unset, the task won't be automatically deleted.\\nIf this field is set to zero, the task becomes eligible to be deleted immediately after it finishes.\",\n             \"format\": \"int32\",\n             \"type\": \"integer\"\n            }\n           },\n           \"type\": \"object\"\n          },\n          \"tag\": {\n           \"description\": \"Specifies the image tag\",\n           \"type\": \"string\"\n          },\n          \"version\": {\n           \"description\": \"An opaque value that represents the internal version of this tag that can\\nbe used by clients to determine when objects have changed. May be used for optimistic\\nconcurrency, change detection, and the watch operation on a resource or set of resources.\\nClients must treat these values as opaque and passed unmodified back to the server.\\n\\n\\nPopulated by the system.\\nRead-only.\\nValue must be treated as opaque by clients and .\",\n           \"format\": \"int64\",\n           \"type\": \"integer\"\n          }\n         },\n         \"required\": [\n          \"tag\"\n         ],\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       }\n      },\n      \"required\": [\n       \"tags\"\n      ],\n      \"type\": \"object\"\n     },\n     \"description\": \"Specifies images to be pulled on this node\\nIt can not be more than 256 for each NodeImage\",\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Node Image\",\n \"type\": \"object\"\n}",
+   "version": "apps.kruise.io/v1alpha1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "Node Image",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": false,
+   "published": false,
+   "source_uri": "git://github.com/openkruise/kruise/master/config/crd/bases"
+  },
+  "model": {
+   "category": {
+    "name": "App Definition and Development"
+   },
+   "displayName": "Openkruise",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "isAnnotation": false,
+    "primaryColor": "#0090ff",
+    "secondaryColor": "#1a9bff",
+    "shape": "circle",
+    "source_uri": "git://github.com/openkruise/kruise/master/config/crd/bases",
+    "styleOverrides": "",
+    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" id=\"图层_1\" data-name=\"图层 1\" xmlns:_xmlns=\"xmlns\" _xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewBox=\"0 0 56.69 56.69\" height=\"20\" width=\"20\"\u003e\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cstyle xmlns=\"http://www.w3.org/2000/svg\"\u003e.cls-1{fill:url(#未命名的渐变_60);}.cls-2{fill:url(#未命名的渐变_89);}.cls-3{fill:url(#未命名的渐变_43);}\u003c/style\u003e\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"未命名的渐变_60\" x1=\"28.35\" y1=\"54.33\" x2=\"28.35\" y2=\"2\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"0\" stop-color=\"#0071ff\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"1\" stop-color=\"#009bff\"\u003e\u003c/stop\u003e\u003c/linearGradient\u003e\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"未命名的渐变_89\" x1=\"11.77\" y1=\"35.48\" x2=\"44.79\" y2=\"35.48\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"0\" stop-color=\"#0050fa\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"1\" stop-color=\"#00a0ff\" stop-opacity=\"0\"\u003e\u003c/stop\u003e\u003c/linearGradient\u003e\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"未命名的渐变_43\" x1=\"35.73\" y1=\"41.11\" x2=\"35.73\" y2=\"7.93\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"0\" stop-color=\"#00a0dc\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"1\" stop-color=\"#3cfaff\"\u003e\u003c/stop\u003e\u003c/linearGradient\u003e\u003c/defs\u003e\u003ctitle xmlns=\"http://www.w3.org/2000/svg\"\u003eopenkruise\u003c/title\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"cls-1\" d=\"M28.35,2A26.17,26.17,0,1,0,54.51,28.16,26.17,26.17,0,0,0,28.35,2Zm0,35.46a9.3,9.3,0,1,1,9.29-9.3A9.3,9.3,0,0,1,28.36,37.46Z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"cls-2\" d=\"M43,38.88A16.58,16.58,0,0,1,20.3,32.81l0,0A9.25,9.25,0,0,1,27.6,18.91,16.57,16.57,0,1,0,44.79,37.64,15.58,15.58,0,0,1,43,38.88Z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"cls-3\" d=\"M49,16.23a16.57,16.57,0,0,0-20.67-7,14.38,14.38,0,0,1,2,1A16.58,16.58,0,0,1,36.4,32.81,6.86,6.86,0,0,1,35.58,34a9.22,9.22,0,0,1-15.37-1.36,1.45,1.45,0,0,0,.09.22A16.58,16.58,0,0,0,49,16.23Z\"\u003e\u003c/path\u003e\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" id=\"图层_1\" data-name=\"图层 1\" xmlns:_xmlns=\"xmlns\" _xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewBox=\"0 0 56.69 56.69\" height=\"20\" width=\"20\"\u003e\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cstyle xmlns=\"http://www.w3.org/2000/svg\"\u003e.cls-1,.cls-2{fill:#fff;}.cls-2{opacity:0.7;}.cls-3{fill:url(#未命名的渐变_5);}\u003c/style\u003e\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"未命名的渐变_5\" x1=\"11.77\" y1=\"35.48\" x2=\"44.79\" y2=\"35.48\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"0\" stop-color=\"#fff\" stop-opacity=\"0\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"1\" stop-color=\"#fff\"\u003e\u003c/stop\u003e\u003c/linearGradient\u003e\u003c/defs\u003e\u003ctitle xmlns=\"http://www.w3.org/2000/svg\"\u003eopenkruise\u003c/title\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"cls-1\" d=\"M28.35,2A26.17,26.17,0,1,0,54.51,28.16,26.17,26.17,0,0,0,28.35,2ZM44.79,37.64A16.58,16.58,0,1,1,27.27,18.91a7.83,7.83,0,0,1,1.09,0,9.28,9.28,0,0,1,8.51,13,16.56,16.56,0,0,0-6.55-21.72,14.38,14.38,0,0,0-2-1A16.58,16.58,0,0,1,44.79,37.64Z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"cls-2\" d=\"M49,16.16a16.53,16.53,0,0,0-20.69-7,14.38,14.38,0,0,1,2,1A16.54,16.54,0,0,1,36.4,32.79a6.21,6.21,0,0,1-.81,1.13A9.21,9.21,0,0,1,20.2,32.56a2.18,2.18,0,0,0,.09.23A16.61,16.61,0,1,0,49,16.16Z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"cls-3\" d=\"M43,38.88A16.58,16.58,0,0,1,20.3,32.81s0,0,0,0a9.28,9.28,0,0,1,7.3-13.9A16.57,16.57,0,1,0,44.79,37.64,15.58,15.58,0,0,1,43,38.88Z\"\u003e\u003c/path\u003e\u003c/svg\u003e"
+   },
+   "model": {
+    "version": "v1.7.2"
+   },
+   "name": "openkruise",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "github",
+    "name": "Github",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "enabled",
+   "subCategory": "Continuous Integration \u0026 Delivery",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
+   "primaryColor": "#0090ff",
+   "secondaryColor": "#1a9bff",
+   "shape": "circle",
+   "svgColor": "\u003csvg id=\"图层_1\" data-name=\"图层 1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewBox=\"0 0 56.69 56.69\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:url(#未命名的渐变_60);}.cls-2{fill:url(#未命名的渐变_89);}.cls-3{fill:url(#未命名的渐变_43);}\u003c/style\u003e\u003clinearGradient id=\"未命名的渐变_60\" x1=\"28.35\" y1=\"54.33\" x2=\"28.35\" y2=\"2\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop offset=\"0\" stop-color=\"#0071ff\"/\u003e\u003cstop offset=\"1\" stop-color=\"#009bff\"/\u003e\u003c/linearGradient\u003e\u003clinearGradient id=\"未命名的渐变_89\" x1=\"11.77\" y1=\"35.48\" x2=\"44.79\" y2=\"35.48\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop offset=\"0\" stop-color=\"#0050fa\"/\u003e\u003cstop offset=\"1\" stop-color=\"#00a0ff\" stop-opacity=\"0\"/\u003e\u003c/linearGradient\u003e\u003clinearGradient id=\"未命名的渐变_43\" x1=\"35.73\" y1=\"41.11\" x2=\"35.73\" y2=\"7.93\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop offset=\"0\" stop-color=\"#00a0dc\"/\u003e\u003cstop offset=\"1\" stop-color=\"#3cfaff\"/\u003e\u003c/linearGradient\u003e\u003c/defs\u003e\u003ctitle\u003eopenkruise\u003c/title\u003e\u003cpath class=\"cls-1\" d=\"M28.35,2A26.17,26.17,0,1,0,54.51,28.16,26.17,26.17,0,0,0,28.35,2Zm0,35.46a9.3,9.3,0,1,1,9.29-9.3A9.3,9.3,0,0,1,28.36,37.46Z\"/\u003e\u003cpath class=\"cls-2\" d=\"M43,38.88A16.58,16.58,0,0,1,20.3,32.81l0,0A9.25,9.25,0,0,1,27.6,18.91,16.57,16.57,0,1,0,44.79,37.64,15.58,15.58,0,0,1,43,38.88Z\"/\u003e\u003cpath class=\"cls-3\" d=\"M49,16.23a16.57,16.57,0,0,0-20.67-7,14.38,14.38,0,0,1,2,1A16.58,16.58,0,0,1,36.4,32.81,6.86,6.86,0,0,1,35.58,34a9.22,9.22,0,0,1-15.37-1.36,1.45,1.45,0,0,0,.09.22A16.58,16.58,0,0,0,49,16.23Z\"/\u003e\u003c/svg\u003e",
+   "svgWhite": "\u003csvg id=\"图层_1\" data-name=\"图层 1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewBox=\"0 0 56.69 56.69\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1,.cls-2{fill:#fff;}.cls-2{opacity:0.7;}.cls-3{fill:url(#未命名的渐变_5);}\u003c/style\u003e\u003clinearGradient id=\"未命名的渐变_5\" x1=\"11.77\" y1=\"35.48\" x2=\"44.79\" y2=\"35.48\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop offset=\"0\" stop-color=\"#fff\" stop-opacity=\"0\"/\u003e\u003cstop offset=\"1\" stop-color=\"#fff\"/\u003e\u003c/linearGradient\u003e\u003c/defs\u003e\u003ctitle\u003eopenkruise\u003c/title\u003e\u003cpath class=\"cls-1\" d=\"M28.35,2A26.17,26.17,0,1,0,54.51,28.16,26.17,26.17,0,0,0,28.35,2ZM44.79,37.64A16.58,16.58,0,1,1,27.27,18.91a7.83,7.83,0,0,1,1.09,0,9.28,9.28,0,0,1,8.51,13,16.56,16.56,0,0,0-6.55-21.72,14.38,14.38,0,0,0-2-1A16.58,16.58,0,0,1,44.79,37.64Z\"/\u003e\u003cpath class=\"cls-2\" d=\"M49,16.16a16.53,16.53,0,0,0-20.69-7,14.38,14.38,0,0,1,2,1A16.54,16.54,0,0,1,36.4,32.79a6.21,6.21,0,0,1-.81,1.13A9.21,9.21,0,0,1,20.2,32.56a2.18,2.18,0,0,0,.09.23A16.61,16.61,0,1,0,49,16.16Z\"/\u003e\u003cpath class=\"cls-3\" d=\"M43,38.88A16.58,16.58,0,0,1,20.3,32.81s0,0,0,0a9.28,9.28,0,0,1,7.3-13.9A16.57,16.57,0,1,0,44.79,37.64,15.58,15.58,0,0,1,43,38.88Z\"/\u003e\u003c/svg\u003e"
+  },
+  "version": "v1.0.0"
+ }

@@ -5,6 +5,7 @@
   "displayName": "Goldilocks",
   "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://charts.fairwinds.com/stable/goldilocks-8.0.0.tgz", 
     "isAnnotation": false,
     "published": false,
     "subCategory": "Security \u0026 Compliance",

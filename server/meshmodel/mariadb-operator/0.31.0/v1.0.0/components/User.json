@@ -1,0 +1,195 @@
+{
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "User",
+   "schema": "{\n \"description\": \"User is the Schema for the users API.  It is used to define grants as if you were running a 'CREATE USER' statement.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"UserSpec defines the desired state of User\",\n   \"properties\": {\n    \"cleanupPolicy\": {\n     \"description\": \"CleanupPolicy defines the behavior for cleaning up a SQL resource.\",\n     \"enum\": [\n      \"Skip\",\n      \"Delete\"\n     ],\n     \"type\": \"string\"\n    },\n    \"host\": {\n     \"description\": \"Host related to the User.\",\n     \"maxLength\": 255,\n     \"type\": \"string\"\n    },\n    \"mariaDbRef\": {\n     \"description\": \"MariaDBRef is a reference to a MariaDB object.\",\n     \"properties\": {\n      \"apiVersion\": {\n       \"description\": \"API version of the referent.\",\n       \"type\": \"string\"\n      },\n      \"fieldPath\": {\n       \"description\": \"If referring to a piece of an object instead of an entire object, this string\\nshould contain a valid JSON/Go field access statement, such as desiredState.manifest.containers[2].\\nFor example, if the object reference is to a container within a pod, this would take on a value like:\\n\\\"spec.containers{name}\\\" (where \\\"name\\\" refers to the name of the container that triggered\\nthe event) or if no container name is specified \\\"spec.containers[2]\\\" (container with\\nindex 2 in this pod). This syntax is chosen only to have some well-defined way of\\nreferencing a part of an object.\",\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"description\": \"Kind of the referent.\\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      },\n      \"resourceVersion\": {\n       \"description\": \"Specific resourceVersion to which this reference is made, if any.\\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#concurrency-control-and-consistency\",\n       \"type\": \"string\"\n      },\n      \"uid\": {\n       \"description\": \"UID of the referent.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#uids\",\n       \"type\": \"string\"\n      },\n      \"waitForIt\": {\n       \"default\": true,\n       \"description\": \"WaitForIt indicates whether the controller using this reference should wait for MariaDB to be ready.\",\n       \"type\": \"boolean\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    },\n    \"maxUserConnections\": {\n     \"default\": 10,\n     \"description\": \"MaxUserConnections defines the maximum number of connections that the User can establish.\",\n     \"format\": \"int32\",\n     \"type\": \"integer\"\n    },\n    \"name\": {\n     \"description\": \"Name overrides the default name provided by metadata.name.\",\n     \"maxLength\": 80,\n     \"type\": \"string\"\n    },\n    \"passwordHashSecretKeyRef\": {\n     \"description\": \"PasswordHashSecretKeyRef is a reference to the password hash to be used by the User.\\nIf the referred Secret is labeled with \\\"k8s.mariadb.com/watch\\\", updates may be performed to the Secret in order to update the password hash.\",\n     \"properties\": {\n      \"key\": {\n       \"description\": \"The key of the secret to select from.  Must be a valid secret key.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"default\": \"\",\n       \"description\": \"Name of the referent.\\nThis field is effectively required, but due to backwards compatibility is\\nallowed to be empty. Instances of this type with an empty value here are\\nalmost certainly wrong.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"optional\": {\n       \"description\": \"Specify whether the Secret or its key must be defined\",\n       \"type\": \"boolean\"\n      }\n     },\n     \"required\": [\n      \"key\"\n     ],\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    },\n    \"passwordPlugin\": {\n     \"description\": \"PasswordPlugin is a reference to the password plugin and arguments to be used by the User.\",\n     \"properties\": {\n      \"pluginArgSecretKeyRef\": {\n       \"description\": \"PluginArgSecretKeyRef is a reference to the arguments to be provided to the authentication plugin for the User.\\nIf the referred Secret is labeled with \\\"k8s.mariadb.com/watch\\\", updates may be performed to the Secret in order to update the authentication plugin arguments.\",\n       \"properties\": {\n        \"key\": {\n         \"description\": \"The key of the secret to select from.  Must be a valid secret key.\",\n         \"type\": \"string\"\n        },\n        \"name\": {\n         \"default\": \"\",\n         \"description\": \"Name of the referent.\\nThis field is effectively required, but due to backwards compatibility is\\nallowed to be empty. Instances of this type with an empty value here are\\nalmost certainly wrong.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n         \"type\": \"string\"\n        },\n        \"optional\": {\n         \"description\": \"Specify whether the Secret or its key must be defined\",\n         \"type\": \"boolean\"\n        }\n       },\n       \"required\": [\n        \"key\"\n       ],\n       \"type\": \"object\",\n       \"x-kubernetes-map-type\": \"atomic\"\n      },\n      \"pluginNameSecretKeyRef\": {\n       \"description\": \"PluginNameSecretKeyRef is a reference to the authentication plugin to be used by the User.\\nIf the referred Secret is labeled with \\\"k8s.mariadb.com/watch\\\", updates may be performed to the Secret in order to update the authentication plugin.\",\n       \"properties\": {\n        \"key\": {\n         \"description\": \"The key of the secret to select from.  Must be a valid secret key.\",\n         \"type\": \"string\"\n        },\n        \"name\": {\n         \"default\": \"\",\n         \"description\": \"Name of the referent.\\nThis field is effectively required, but due to backwards compatibility is\\nallowed to be empty. Instances of this type with an empty value here are\\nalmost certainly wrong.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n         \"type\": \"string\"\n        },\n        \"optional\": {\n         \"description\": \"Specify whether the Secret or its key must be defined\",\n         \"type\": \"boolean\"\n        }\n       },\n       \"required\": [\n        \"key\"\n       ],\n       \"type\": \"object\",\n       \"x-kubernetes-map-type\": \"atomic\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"passwordSecretKeyRef\": {\n     \"description\": \"PasswordSecretKeyRef is a reference to the password to be used by the User.\\nIf not provided, the account will be locked and the password will expire.\\nIf the referred Secret is labeled with \\\"k8s.mariadb.com/watch\\\", updates may be performed to the Secret in order to update the password.\",\n     \"properties\": {\n      \"key\": {\n       \"description\": \"The key of the secret to select from.  Must be a valid secret key.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"default\": \"\",\n       \"description\": \"Name of the referent.\\nThis field is effectively required, but due to backwards compatibility is\\nallowed to be empty. Instances of this type with an empty value here are\\nalmost certainly wrong.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"optional\": {\n       \"description\": \"Specify whether the Secret or its key must be defined\",\n       \"type\": \"boolean\"\n      }\n     },\n     \"required\": [\n      \"key\"\n     ],\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    },\n    \"requeueInterval\": {\n     \"description\": \"RequeueInterval is used to perform requeue reconciliations.\",\n     \"type\": \"string\"\n    },\n    \"retryInterval\": {\n     \"description\": \"RetryInterval is the interval used to perform retries.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"mariaDbRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"User\",\n \"type\": \"object\"\n}",
+   "version": "k8s.mariadb.com/v1alpha1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "User",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "published": false,
+   "source_uri": "https://helm.mariadb.com/mariadb-operator/releases/download/helm-chart-0.31.0/mariadb-operator-0.31.0.tgz"
+  },
+  "model": {
+   "category": {
+    "name": "Uncategorized"
+   },
+   "displayName": "MariaDB Operator",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "source_uri": "https://helm.mariadb.com/mariadb-operator/releases/download/helm-chart-0.31.0/mariadb-operator-0.31.0.tgz",
+    "styleOverrides": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "model": {
+    "version": "0.31.0"
+   },
+   "name": "mariadb-operator",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "subCategory": "Uncategorized",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "svgColor": "",
+   "svgWhite": ""
+  },
+  "version": "v1.0.0"
+ }
