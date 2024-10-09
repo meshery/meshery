@@ -128,9 +128,9 @@ func (h *Handler) handlePatternPOST(
 	}()
 
 	var err error
-	action := models.Create
+	action := models.Import
 	userID := uuid.FromStringOrNil(user.ID)
-	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction("create").ActedUpon(userID).WithSeverity(events.Informational)
+	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction(action).ActedUpon(userID).WithSeverity(events.Informational)
 
 	sourcetype := mux.Vars(r)["sourcetype"]
 	parsedBody := &MesheryPatternPOSTRequestBody{}
@@ -317,7 +317,9 @@ func (h *Handler) handlePatternPOST(
 				event := eventBuilder.Build()
 				_ = provider.PersistEvent(event)
 				// Create the event but do not notify the client immediately, as the evaluations are frequent and takes up the view area.
-				// go h.config.EventBroadcaster.Publish(userID, event)
+				if action == models.Import {
+					go h.config.EventBroadcaster.Publish(userID, event)
+				}
 				go h.config.PatternChannel.Publish(uuid.FromStringOrNil(user.ID), struct{}{})
 				return
 			}
@@ -1810,14 +1812,14 @@ func (h *Handler) formatPatternOutput(rw http.ResponseWriter, content []byte, fo
 	var response string
 	if URL == "" {
 		actionDesc := "updated"
-		if action == models.Create {
-			actionDesc = "created"
+		if action == models.Import {
+			actionDesc = "imported"
 		}
 		response = fmt.Sprintf("%s \"%s\" %s.", sourcetype, strings.Join(names, ","), actionDesc)
 	} else {
 		response = fmt.Sprintf("%s \"%s\" imported from URL %s", sourcetype, strings.Join(names, ","), URL)
 	}
-	eventBuilder.WithDescription(response)
+	eventBuilder.WithAction(action).WithDescription(response)
 	rw.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(rw, string(data))
 }
