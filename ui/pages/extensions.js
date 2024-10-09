@@ -3,8 +3,17 @@ import React, { useEffect, useState } from 'react';
 import Head from 'next/head';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { CatalogIcon, Button, Grid, Switch, Typography, Box } from '@layer5/sistent';
-import { styled } from '@mui/material/styles';
+import {
+  CatalogIcon,
+  Button,
+  Grid,
+  Switch,
+  Typography,
+  Box,
+  styled,
+  Card,
+  useTheme,
+} from '@layer5/sistent';
 import { useGetUserPrefQuery, useUpdateUserPrefMutation } from '@/rtk-query/user';
 import { UsesSistent } from '@/components/SistentWrapper';
 import { Adapters } from '../components/extensions';
@@ -16,9 +25,8 @@ import { useNotification } from '../utils/hooks/useNotification';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { LARGE_6_MED_12_GRID_STYLE } from '../css/grid.style';
-import { useTheme } from '@mui/material/styles';
 
-const StyledCard = styled('div')(() => {
+const StyledCard = styled(Card)(() => {
   const theme = useTheme();
   return {
     padding: '32px',
@@ -27,17 +35,26 @@ const StyledCard = styled('div')(() => {
     minHeight: '250px',
     borderRadius: '8px',
     transformStyle: 'preserve-3d',
-    backgroundColor: theme.palette.mode === 'dark' ? '#202020' : '#FFF',
+    backgroundColor:
+      theme.palette.mode === 'dark'
+        ? theme.palette.background.border?.strong
+        : theme.palette.background.constant?.white,
   };
 });
 
 const StyledButton = styled(Button)(({ theme }) => ({
-  color: '#fff',
+  color: theme.palette.background.constant?.white,
   minWidth: '100px',
   borderRadius: '5px',
-  backgroundColor: '#607d8b',
+  backgroundColor:
+    theme.palette.mode === 'dark'
+      ? theme.palette.background.brand?.default
+      : theme.palette.icon.weather,
   '&:hover': {
-    backgroundColor: theme.palette.grey[700],
+    backgroundColor:
+      theme.palette.mode === 'dark'
+        ? theme.palette.background.brand?.secondary
+        : theme.palette.background.supplementary,
   },
 }));
 
@@ -45,8 +62,7 @@ const StyledImg = styled('img')(() => ({
   paddingRight: '1rem',
   height: 'auto',
   width: 'auto',
-  maxWidth: '220px',
-  maxHeight: '150px',
+  maxHeight: '120px',
 }));
 
 const MeshMapSignUpcard = ({ hasAccessToMeshMap = false }) => {
@@ -83,10 +99,6 @@ const MeshMapSignUpcard = ({ hasAccessToMeshMap = false }) => {
   );
 };
 
-const MeshMapSnapShotLogo = () => {
-  return <StyledImg src="/static/img/meshmap-snapshot-logo.svg" alt="MeshMap Snapshot Logo" />;
-};
-
 const MeshMapSnapShotCard = ({ githubActionEnabled = false }) => {
   const handleEnable = (e) => {
     window.open('https://meshery.layer5.io/connect/github/new/', '_blank');
@@ -102,7 +114,7 @@ const MeshMapSnapShotCard = ({ githubActionEnabled = false }) => {
           </Typography>
 
           <Box sx={{ display: 'flex', alignItems: 'center', padding: '16px 0' }}>
-            <MeshMapSnapShotLogo />
+            <StyledImg src="/static/img/meshmap.svg" alt="MeshMap" style={{ maxWidth: '150px' }} />
             <Typography variant="body1" sx={{ fontSize: '14px' }}>
               Connect Kanvas to your GitHub repo and see changes pull request-to-pull request. Get
               snapshots of your infrastructure directly in your PRs.
@@ -149,7 +161,7 @@ const MesheryPerformanceAction = ({ githubActionEnabled = false }) => {
             <MesheryPerformanceActionLogo
               src="/static/img/smp-dark.svg"
               alt="Performance Action Logo"
-              sx={{ marginRight: '1rem', width: 'auto', height: 'auto', maxWidth: '150px' }} // Adjust size and spacing
+              sx={{ marginRight: '1rem', width: 'auto', height: 'auto', maxWidth: '150px' }}
             />
             <Typography variant="body1" sx={{ fontSize: '14px' }}>
               Characterize the performance of your services using Meshery&apos;s performance
@@ -239,7 +251,7 @@ const MesheryDesignEmbedExtension = () => {
             <MesheryDesignEmbedLogo
               src="/static/img/meshmap.svg"
               alt="Design Embed Logo"
-              sx={{ marginRight: '1rem', width: 'auto', height: 'auto', maxWidth: '150px' }} // Adjust size and spacing
+              sx={{ marginRight: '1rem', width: 'auto', height: 'auto', maxWidth: '150px' }}
             />
             <Typography variant="body1" sx={{ fontSize: '14px' }}>
               Meshery Design Embedding lets you export designs in an interactive format that
