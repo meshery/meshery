@@ -2,9 +2,8 @@ import { useLegacySelector } from 'lib/store';
 import { ability } from '../utils/can';
 import { useGetUserKeysQuery } from './userKeys';
 import _ from 'lodash';
-import { Box } from '@layer5/sistent';
-import AnimatedMeshery from '@/components/LoadingComponents/Animations/AnimatedMeshery';
 import CustomErrorMessage from '@/components/ErrorPage';
+import LoadingScreen from '@/components/LoadingComponents/LoadingComponentServer';
 
 export const useGetUserAbilities = (org, skip) => {
   const { data, ...res } = useGetUserKeysQuery(
@@ -44,14 +43,6 @@ export const LoadSessionGuard = ({ children }) => {
   const org = useLegacySelector((state) => state.get('organization'));
   const { isLoading, error } = useGetCurrentAbilities(org, () => {});
 
-  if (!org?.id || isLoading) {
-    return (
-      <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
-        <AnimatedMeshery />
-      </Box>
-    );
-  }
-
   if (error) {
     return (
       <CustomErrorMessage
@@ -60,5 +51,12 @@ export const LoadSessionGuard = ({ children }) => {
     );
   }
 
-  return children;
+  return (
+    <LoadingScreen
+      isLoading={isLoading || !org?.id}
+      message="This loading screen is temporary. Your YAML-induced suffering is eternal."
+    >
+      {children}
+    </LoadingScreen>
+  );
 };
