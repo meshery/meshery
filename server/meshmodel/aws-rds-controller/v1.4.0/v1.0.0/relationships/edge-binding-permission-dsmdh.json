@@ -1,0 +1,130 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "evaluationQuery": "",
+  "kind": "edge",
+  "metadata": {
+    "description": "",
+    "styles": {
+      "primaryColor": "",
+      "svgColor": "",
+      "svgWhite": ""
+    }
+  },
+  "model": {
+    "category": {
+      "name": ""
+    },
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": "v1.4.0"
+    },
+    "name": "aws-rds-controller",
+    "registrant": {
+      "created_at": "0001-01-01T00:00:00Z",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "deleted_at": "0001-01-01T00:00:00Z",
+      "id": "00000000-0000-0000-0000-000000000000",
+      "kind": "",
+      "name": "",
+      "status": "",
+      "sub_type": "",
+      "type": "",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "user_id": "00000000-0000-0000-0000-000000000000"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "",
+    "status": "",
+    "version": "",
+    "components": null,
+    "relationships": null
+  },
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "id": null,
+            "kind": "DBCluster",
+            "match": {},
+            "model": {
+              "category": {
+                "name": ""
+              },
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "aws-rds-controller",
+              "registrant": {
+                "created_at": "0001-01-01T00:00:00Z",
+                "credential_id": "00000000-0000-0000-0000-000000000000",
+                "deleted_at": "0001-01-01T00:00:00Z",
+                "id": "00000000-0000-0000-0000-000000000000",
+                "kind": "",
+                "name": "",
+                "status": "",
+                "sub_type": "",
+                "type": "",
+                "updated_at": "0001-01-01T00:00:00Z",
+                "user_id": "00000000-0000-0000-0000-000000000000"
+              },
+              "connection_id": "00000000-0000-0000-0000-000000000000",
+              "schemaVersion": "",
+              "status": "",
+              "version": "",
+              "components": null,
+              "relationships": null
+            },
+            "patch": null
+          }
+        ],
+        "to": [
+          {
+            "id": null,
+            "kind": "Role",
+            "match": {},
+            "model": {
+              "category": {
+                "name": ""
+              },
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "aws-rds-controller",
+              "registrant": {
+                "created_at": "0001-01-01T00:00:00Z",
+                "credential_id": "00000000-0000-0000-0000-000000000000",
+                "deleted_at": "0001-01-01T00:00:00Z",
+                "id": "00000000-0000-0000-0000-000000000000",
+                "kind": "",
+                "name": "",
+                "status": "",
+                "sub_type": "",
+                "type": "",
+                "updated_at": "0001-01-01T00:00:00Z",
+                "user_id": "00000000-0000-0000-0000-000000000000"
+              },
+              "connection_id": "00000000-0000-0000-0000-000000000000",
+              "schemaVersion": "",
+              "status": "",
+              "version": "",
+              "components": null,
+              "relationships": null
+            },
+            "patch": null
+          }
+        ]
+      }
+    }
+  ],
+  "subType": "permission",
+  "status": "enabled",
+  "type": "binding",
+  "version": "v1.0.0"
+}

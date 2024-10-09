@@ -1,0 +1,146 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "evaluationQuery": "",
+  "kind": "hierarchical",
+  "metadata": {
+    "description": "",
+    "styles": {
+      "primaryColor": "",
+      "svgColor": "",
+      "svgWhite": ""
+    }
+  },
+  "model": {
+    "category": {
+      "name": ""
+    },
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": "v1.2.1"
+    },
+    "name": "aws-rds-controller",
+    "registrant": {
+      "created_at": "0001-01-01T00:00:00Z",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "deleted_at": "0001-01-01T00:00:00Z",
+      "id": "00000000-0000-0000-0000-000000000000",
+      "kind": "",
+      "name": "",
+      "status": "",
+      "sub_type": "",
+      "type": "",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "user_id": "00000000-0000-0000-0000-000000000000"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "",
+    "status": "",
+    "version": "",
+    "components": null,
+    "relationships": null
+  },
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "id": null,
+            "kind": "GlobalCluster",
+            "match": {},
+            "model": {
+              "category": {
+                "name": ""
+              },
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "aws-rds-controller",
+              "registrant": {
+                "created_at": "0001-01-01T00:00:00Z",
+                "credential_id": "00000000-0000-0000-0000-000000000000",
+                "deleted_at": "0001-01-01T00:00:00Z",
+                "id": "00000000-0000-0000-0000-000000000000",
+                "kind": "",
+                "name": "github",
+                "status": "",
+                "sub_type": "",
+                "type": "",
+                "updated_at": "0001-01-01T00:00:00Z",
+                "user_id": "00000000-0000-0000-0000-000000000000"
+              },
+              "connection_id": "00000000-0000-0000-0000-000000000000",
+              "schemaVersion": "",
+              "status": "",
+              "version": "",
+              "components": null,
+              "relationships": null
+            },
+            "patch": {
+              "patchStrategy": "merge",
+              "mutatorRef": [
+                [
+                  "spec",
+                  "globalClusterIdentifier"
+                ]
+              ]
+            }
+          }
+        ],
+        "to": [
+          {
+            "id": null,
+            "kind": "DBClusterSnapshot",
+            "match": {},
+            "model": {
+              "category": {
+                "name": ""
+              },
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "aws-rds-controller",
+              "registrant": {
+                "created_at": "0001-01-01T00:00:00Z",
+                "credential_id": "00000000-0000-0000-0000-000000000000",
+                "deleted_at": "0001-01-01T00:00:00Z",
+                "id": "00000000-0000-0000-0000-000000000000",
+                "kind": "",
+                "name": "github",
+                "status": "",
+                "sub_type": "",
+                "type": "",
+                "updated_at": "0001-01-01T00:00:00Z",
+                "user_id": "00000000-0000-0000-0000-000000000000"
+              },
+              "connection_id": "00000000-0000-0000-0000-000000000000",
+              "schemaVersion": "",
+              "status": "",
+              "version": "",
+              "components": null,
+              "relationships": null
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "status",
+                  "dbClusterIdentifier"
+                ]
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "subType": "backup",
+  "status": "enabled",
+  "type": "sibling",
+  "version": "v1.0.0"
+}
