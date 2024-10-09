@@ -42,7 +42,7 @@ var (
 	ErrInvalidArgumentCode    = "mesheryctl-1118"
 	ErrGeneratingIconsCode    = "mesheryctl-1119"
 	ErrClearLineCode          = "mesheryctl-1120"
-	ErrMesheryHealthCheckCode = "mesheryctl-1128"
+	ErrMesheryHealthCheckCode = "replace_me"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
