@@ -36,7 +36,7 @@ func ErrExportModel(err error, name string) error {
 func ErrTemplateFileEmptyImportModel() error {
 	return errors.New(ErrTemplateFileEmptyImportModelCode, errors.Fatal,
 		[]string{"Error template file is empty on model import"},
-		[]string{fmt.Sprintf("Template file is required to import model from an URL")},
+		[]string{"Template file is required to import model from an URL"},
 		[]string{"Import a model from a URL required a template file"},
 		[]string{"Ensure to provide a template file to import a model from an URL"})
 }
