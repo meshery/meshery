@@ -125,7 +125,7 @@
   ],
   "component": {
    "kind": "GrafanaConnection",
-   "schema": "{\"type\":\"object\",\"properties\":{\"name\":{\"type\":\"string\"},\"url\":{\"type\":\"string\",\"format\":\"uri\"}}}",
+   "schema": "{\"type\": \"object\", \"properties\": {\"name\": {\"type\": \"string\"}, \"url\": {\"type\": \"string\", \"format\": \"uri\"}}}",
    "version": "meshery.layer5.io/v1alpha1"
   },
   "configuration": null,
