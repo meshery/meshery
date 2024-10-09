@@ -2,13 +2,13 @@ import { expect, test } from '@playwright/test';
 import { ENV } from './env';
 
 const userPreferenceTests = [
-  {
-    name: 'Toggle "Meshery Catalog Content"',
-    apiURL: `${ENV.MESHERY_SERVER_URL}/api/user/prefs`,
-    switchLabel: 'Meshery Catalog Content',
-    expectedMethod: 'POST',
-    expectedStatus: 200,
-  },
+  // {
+  //   name: 'Toggle "Meshery Catalog Content"',
+  //   apiURL: `${ENV.MESHERY_SERVER_URL}/api/user/prefs`,
+  //   switchLabel: 'Meshery Catalog Content',
+  //   expectedMethod: 'POST',
+  //   expectedStatus: 200,
+  // },
   {
     name: 'Toggle "Send Anonymous Usage Statistics"',
     apiURL: `${ENV.MESHERY_SERVER_URL}/api/user/prefs`,

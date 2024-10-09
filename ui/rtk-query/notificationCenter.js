@@ -101,9 +101,9 @@ export const notificationCenterApi = api
         providesTags: [PROVIDER_TAGS.EVENT],
       }),
       getEventsSummary: builder.query({
-        query: () => {
+        query: ({ status }) => {
           return {
-            url: `v2/events?page=$1&pagesize=1`,
+            url: `v2/events?page=0&pagesize=1&status=${status}`,
           };
         },
         transformResponse: (response) => {

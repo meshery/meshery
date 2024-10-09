@@ -4,6 +4,7 @@ import { useGetUserKeysQuery } from './userKeys';
 import _ from 'lodash';
 import CustomErrorMessage from '@/components/ErrorPage';
 import LoadingScreen from '@/components/LoadingComponents/LoadingComponentServer';
+import { randomLoadingMessage } from '@/components/LoadingComponents/loadingMessages';
 
 export const useGetUserAbilities = (org, skip) => {
   const { data, ...res } = useGetUserKeysQuery(
@@ -52,10 +53,7 @@ export const LoadSessionGuard = ({ children }) => {
   }
 
   return (
-    <LoadingScreen
-      isLoading={isLoading || !org?.id}
-      message="This loading screen is temporary. Your YAML-induced suffering is eternal."
-    >
+    <LoadingScreen isLoading={isLoading || !org?.id} message={randomLoadingMessage}>
       {children}
     </LoadingScreen>
   );
