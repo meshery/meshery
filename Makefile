@@ -146,7 +146,7 @@ server-stg: dep-check
 	go run main.go error.go;
 
 ## Build and run Meshery Server on your local machine.
-server: dep-check args-set
+server: dep-check
 	cd server; cd cmd; go mod tidy; \
 	BUILD="$(GIT_VERSION)" \
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
