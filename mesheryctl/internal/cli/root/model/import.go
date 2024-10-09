@@ -38,9 +38,9 @@ var importModelCmd = &cobra.Command{
  
 	mesehryctl model import -f OCI 
 	mesehryctl model import -f model.tar.gz 
-	mesehryctl model import --f /path/to/models
-    mesehryctl model import --f http://example.com/model -t /path/to/template.json 
-	mesehryctl model import --f http://example.com/model -t /path/to/template.json -r
+	mesehryctl model import -f /path/to/models
+    mesehryctl model import -f http://example.com/model -t /path/to/template.json
+	mesehryctl model import -f http://example.com/model -t /path/to/template.json -r
 	`,
 	Args: func(_ *cobra.Command, args []string) error {
 		const errMsg = "Usage: mesheryctl model import [ file | filePath | URL ]\nRun 'mesheryctl model import --help' to see detailed help message"
@@ -59,59 +59,96 @@ var importModelCmd = &cobra.Command{
 			path = args[0]
 		}
 
-		validURL := strings.HasPrefix(path, "http://") || strings.HasPrefix(path, "https://") || strings.HasPrefix(path, "git://")
-		if validURL {
-			if templateFile == "" {
-				return fmt.Errorf("a template file must be specified when importing from a URL")
-			}
-
-			fileData, err := os.ReadFile(templateFile)
-			if err != nil {
-				return fmt.Errorf("could not read the specified template file: %v", err)
-			}
-			err = registerModel(fileData, "", "url", path, !register)
+		if isPathValidUrl(path) {
+			err := registerModelFromUrl(templateFile, path, !register)
 			if err != nil {
 				utils.Log.Error(err)
-				return nil
 			}
-			locationForModel := utils.MesheryFolder + "/models"
-			utils.Log.Info("Model can be accessed from ", locationForModel)
 			return nil
 		}
 
-		// Handle the case when the path is a file or directory
-		info, err := os.Stat(path)
-		if err != nil {
-			return fmt.Errorf("could not access the specified path: %v", err)
-		}
-
-		var tarData []byte
-		var fileName string
-
-		if info.IsDir() {
-			var buf bytes.Buffer
-			err = meshkitutils.Compress(path, &buf)
-			if err != nil {
-				return err
-			}
-			tarData = buf.Bytes()
-			fileName = filepath.Base(path) + ".tar.gz"
-		} else {
-			fileData, err := os.ReadFile(path)
-			if err != nil {
-				return fmt.Errorf("could not read the specified file: %v", err)
-			}
-			tarData = fileData
-			fileName = filepath.Base(path)
-		}
-
-		err = registerModel(tarData, fileName, "file", "", !register)
+		isPathDirectory, err := isPathDirectory(path)
 		if err != nil {
 			utils.Log.Error(err)
 			return nil
 		}
+
+		if isPathDirectory {
+			err := registerModelFromDirectory(path, !register)
+			if err != nil {
+				utils.Log.Error(err)
+			}
+			return nil
+		}
+
+		var fileName = filepath.Base(path)
+		fileData, err := os.ReadFile(path)
+		if err != nil {
+			utils.Log.Error(ErrReadFilePathModel(err, "import"))
+			return nil
+		}
+		err = registerModelFromFile(fileData, fileName, !register)
+		if err != nil {
+			utils.Log.Error(err)
+		}
 		return nil
 	},
+}
+
+func registerModelFromDirectory(path string, registerFlag bool) error {
+	var buf bytes.Buffer
+	err := meshkitutils.Compress(path, &buf)
+	if err != nil {
+		return err
+	}
+	tarData := buf.Bytes()
+	fileName := filepath.Base(path) + ".tar.gz"
+	err = registerModelFromFile(tarData, fileName, registerFlag)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func registerModelFromFile(data []byte, fileName string, registerFlag bool) error {
+	err := registerModel(data, fileName, "file", "", registerFlag)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func isPathDirectory(path string) (bool, error) {
+	info, err := os.Stat(path)
+	if err != nil {
+		return false, ErrPathErrorModel(err, "apply")
+	}
+	return info.IsDir(), nil
+}
+
+func isPathValidUrl(path string) bool {
+	return strings.HasPrefix(path, "http://") || strings.HasPrefix(path, "https://") || strings.HasPrefix(path, "git://")
+}
+
+func registerModelFromUrl(templateFile string, path string, registerFlag bool) error {
+	if templateFile == "" {
+		return ErrTemplateFileEmptyImportModel()
+	}
+
+	fileData, err := os.ReadFile(templateFile)
+	if err != nil {
+		return ErrReadTemplateFileEmptyImportModel(err)
+	}
+
+	err = registerModel(fileData, "", "url", path, registerFlag)
+	if err != nil {
+		return ErrRegisterModel(err)
+	}
+
+	locationForModel := utils.MesheryFolder + "/models"
+
+	utils.Log.Info("Model can be accessed from ", locationForModel)
+	return nil
 }
 
 func registerModel(data []byte, filename string, dataType string, sourceURI string, register bool) error {

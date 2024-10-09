@@ -96,7 +96,6 @@ func TestDesignList(t *testing.T) {
 						golden.Write(err.Error())
 					}
 					expectedResponse := golden.Load()
-
 					utils.Equals(t, expectedResponse, err.Error())
 					return
 				}
