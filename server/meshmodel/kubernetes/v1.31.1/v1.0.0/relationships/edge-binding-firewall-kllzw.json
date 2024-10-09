@@ -1,0 +1,168 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "evaluationQuery": "",
+  "kind": "edge",
+  "metadata": {
+    "description": "A relationship that act as a firewall for ingress and egress traffic from Pods.",
+    "styles": {
+      "primaryColor": "",
+      "svgColor": "",
+      "svgWhite": ""
+    }
+  },
+  "model": {
+    "category": {
+      "name": ""
+    },
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": "v1.31.1"
+    },
+    "name": "kubernetes",
+    "registrant": {
+      "created_at": "0001-01-01T00:00:00Z",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "deleted_at": "0001-01-01T00:00:00Z",
+      "id": "00000000-0000-0000-0000-000000000000",
+      "kind": "",
+      "name": "",
+      "status": "",
+      "sub_type": "",
+      "type": "",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "user_id": "00000000-0000-0000-0000-000000000000"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "",
+    "status": "",
+    "version": "",
+    "components": null,
+    "relationships": null
+  },
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "id": null,
+            "kind": "Pod",
+            "match": {
+              "from": [
+                {
+                  "id": null,
+                  "kind": "self",
+                  "mutatedRef": [
+                    []
+                  ]
+                }
+              ],
+              "to": [
+                {
+                  "id": null,
+                  "kind": "NetworkPolicy",
+                  "mutatorRef": [
+                    []
+                  ]
+                }
+              ]
+            },
+            "model": {
+              "category": {
+                "name": ""
+              },
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "kubernetes",
+              "registrant": {
+                "created_at": "0001-01-01T00:00:00Z",
+                "credential_id": "00000000-0000-0000-0000-000000000000",
+                "deleted_at": "0001-01-01T00:00:00Z",
+                "id": "00000000-0000-0000-0000-000000000000",
+                "kind": "artifacthub",
+                "name": "",
+                "status": "",
+                "sub_type": "",
+                "type": "",
+                "updated_at": "0001-01-01T00:00:00Z",
+                "user_id": "00000000-0000-0000-0000-000000000000"
+              },
+              "connection_id": "00000000-0000-0000-0000-000000000000",
+              "schemaVersion": "",
+              "status": "",
+              "version": "",
+              "components": null,
+              "relationships": null
+            },
+            "patch": null
+          }
+        ],
+        "to": [
+          {
+            "id": null,
+            "kind": "Pod",
+            "match": {
+              "from": [
+                {
+                  "id": null,
+                  "kind": "NetworkPolicy",
+                  "mutatedRef": [
+                    []
+                  ]
+                }
+              ],
+              "to": [
+                {
+                  "id": null,
+                  "kind": "self",
+                  "mutatorRef": [
+                    []
+                  ]
+                }
+              ]
+            },
+            "model": {
+              "category": {
+                "name": ""
+              },
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "kubernetes",
+              "registrant": {
+                "created_at": "0001-01-01T00:00:00Z",
+                "credential_id": "00000000-0000-0000-0000-000000000000",
+                "deleted_at": "0001-01-01T00:00:00Z",
+                "id": "00000000-0000-0000-0000-000000000000",
+                "kind": "artifacthub",
+                "name": "",
+                "status": "",
+                "sub_type": "",
+                "type": "",
+                "updated_at": "0001-01-01T00:00:00Z",
+                "user_id": "00000000-0000-0000-0000-000000000000"
+              },
+              "connection_id": "00000000-0000-0000-0000-000000000000",
+              "schemaVersion": "",
+              "status": "",
+              "version": "",
+              "components": null,
+              "relationships": null
+            },
+            "patch": null
+          }
+        ]
+      }
+    }
+  ],
+  "subType": "firewall",
+  "status": "enabled",
+  "type": "binding",
+  "version": "v1.0.0"
+}

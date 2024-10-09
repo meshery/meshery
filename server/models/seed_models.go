@@ -57,9 +57,6 @@ func GetModelDirectoryPaths(modelPath string) ([]string, error) {
 		if len(sortedVersionDirs) == 0 {
 			continue
 		}
-		if modelName == "kubernetes" {
-			sortedVersionDirs[0] = sortedVersionDirs[1]
-		}
 		modelDefDirPath, err := getLatestModelDefDir(sortedVersionDirs[0])
 		if err != nil {
 			continue

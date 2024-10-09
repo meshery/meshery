@@ -146,6 +146,10 @@ components:
   colorIcon: assets/img/integrations/kubernetes/components/kubernetes-connection/icons/color/kubernetes-connection-color.svg
   whiteIcon: assets/img/integrations/kubernetes/components/kubernetes-connection/icons/white/kubernetes-connection-white.svg
   description: 
+- name: kubernetes-credential
+  colorIcon: assets/img/integrations/kubernetes/components/kubernetes-credential/icons/color/kubernetes-credential-color.svg
+  whiteIcon: assets/img/integrations/kubernetes/components/kubernetes-credential/icons/white/kubernetes-credential-white.svg
+  description: 
 - name: limit-range
   colorIcon: assets/img/integrations/kubernetes/components/limit-range/icons/color/limit-range-color.svg
   whiteIcon: assets/img/integrations/kubernetes/components/limit-range/icons/white/limit-range-white.svg
