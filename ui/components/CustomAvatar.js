@@ -1,16 +1,14 @@
 import React from 'react';
-import Badge from '@mui/material/Badge';
-import { styled } from '@mui/material/styles';
+import { Badge, styled, useTheme } from '@layer5/sistent';
+import { UsesSistent } from '@/components/SistentWrapper';
 
 const StyledBadge = styled(Badge)(({ theme, color }) => ({
   '& .MuiBadge-badge': {
-    backgroundColor: color || '#44b700',
-    color: color || '#44b700',
+    backgroundColor: color || theme.palette.success.main,
+    color: theme.palette.background.paper,
     boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
     '&::after': {
       position: 'absolute',
-      top: 0,
-      left: 0,
       width: '100%',
       height: '100%',
       borderRadius: '50%',
@@ -25,7 +23,7 @@ const StyledBadge = styled(Badge)(({ theme, color }) => ({
       opacity: 1,
     },
     '100%': {
-      transform: 'scale(1.8)',
+      transform: 'scale(2.4)',
       opacity: 0,
     },
   },
@@ -39,20 +37,27 @@ const Root = styled('div')(({ theme }) => ({
   },
 }));
 
-export default function BadgeAvatars({ children, color }) {
+function CustomAvatar({ children, color }) {
+  const theme = useTheme();
+
   return (
-    <Root>
-      <StyledBadge
-        overlap="circular"
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'right',
-        }}
-        variant="dot"
-        color={color}
-      >
-        {children}
-      </StyledBadge>
-    </Root>
+    <UsesSistent>
+      <Root theme={theme}>
+        <StyledBadge
+          overlap="circular"
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'right',
+          }}
+          variant="dot"
+          color={color}
+          theme={theme}
+        >
+          {children}
+        </StyledBadge>
+      </Root>
+    </UsesSistent>
   );
 }
+
+export default CustomAvatar;
