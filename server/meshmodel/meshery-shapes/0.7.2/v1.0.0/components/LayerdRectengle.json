@@ -125,14 +125,15 @@
    "background-opacity": 0,
    "border-color": "#00b39f",
    "border-style": "solid",
-   "border-width": 1,
+   "border-width": 0,
    "height": 30,
    "primaryColor": "#00B39F",
    "secondaryColor": "#00D3A9",
    "shape": "polygon",
    "shape-polygon-points": "-1 0.46 -1 -0.77 0.69 -0.77 0.69 0.46 -1 0.46 -0.85 0.46 -0.85 0.62 0.85 0.62 0.85 -0.62 0.69 -0.62 0.85 -0.62 0.85 -0.46 1 -0.46 1 0.77 -0.69 0.77 -0.69 0.62 -0.85 0.62 0.85 0.62 0.85 -0.62 0.69 -0.62 0.69 0.46",
-   "svgColor": "\u003csvg width=\"40\" height=\"40\" viewBox=\"0 0 40 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M4.7334 12.7332H38.3334V31.3998H4.7334V12.7332Z\" fill=\"#00B39F\" fill-opacity=\"0.1\" stroke=\"#00B39F\" stroke-miterlimit=\"10\"/\u003e\n\u003cpath d=\"M2.8667 10.8667H36.4667V29.5334H2.8667V10.8667Z\" fill=\"#00B39F\" fill-opacity=\"0.1\" stroke=\"#00B39F\" stroke-miterlimit=\"10\"/\u003e\n\u003cpath d=\"M1 9H34.6V27.6667H1V9Z\" fill=\"#00B39F\" fill-opacity=\"0.1\" stroke=\"#00B39F\" stroke-miterlimit=\"10\"/\u003e\n\u003c/svg\u003e",
-   "svgWhite": "\u003csvg width=\"40\" height=\"40\" viewBox=\"0 0 40 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M4.7334 12.7332H38.3334V31.3998H4.7334V12.7332Z\" fill=\"white\" fill-opacity=\"0.1\" stroke=\"white\" stroke-miterlimit=\"10\"/\u003e\n\u003cpath d=\"M2.8667 10.8667H36.4667V29.5334H2.8667V10.8667Z\" fill=\"white\" fill-opacity=\"0.1\" stroke=\"white\" stroke-miterlimit=\"10\"/\u003e\n\u003cpath d=\"M1 9H34.6V27.6667H1V9Z\" fill=\"white\" fill-opacity=\"0.1\" stroke=\"white\" stroke-miterlimit=\"10\"/\u003e\n\u003c/svg\u003e",
+   "svgColor": "\u003csvg width=\"40\" height=\"40\" viewBox=\"0 0 40 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M5 29H29.5V6M5 29V32.5M5 29H1.5V2.5H29.5V6M5 32.5H8.5M5 32.5H34M34 32.5H8.5M34 32.5V10M29.5 6H34V10M8.5 32.5V36.5H38V10H34\" stroke=\"#00B39F\" stroke-miterlimit=\"10\"/\u003e\n\u003c/svg\u003e",
+   "svgComplete": "\u003csvg width=\"40\" height=\"40\" viewBox=\"0 0 40 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M5 29H29.5V6M5 29V32.5M5 29H1.5V2.5H29.5V6M5 32.5H8.5M5 32.5H34M34 32.5H8.5M34 32.5V10M29.5 6H34V10M8.5 32.5V36.5H38V10H34\" stroke=\"#00B39F\" stroke-miterlimit=\"10\"/\u003e\n\u003c/svg\u003e",
+   "svgWhite": "\u003csvg width=\"40\" height=\"40\" viewBox=\"0 0 40 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M5 29H29.5V6M5 29V32.5M5 29H1.5V2.5H29.5V6M5 32.5H8.5M5 32.5H34M34 32.5H8.5M34 32.5V10M29.5 6H34V10M8.5 32.5V36.5H38V10H34\" stroke=\"white\" stroke-miterlimit=\"10\"/\u003e\n\u003c/svg\u003e",
    "width": 30
   },
   "version": "v1.0.0"

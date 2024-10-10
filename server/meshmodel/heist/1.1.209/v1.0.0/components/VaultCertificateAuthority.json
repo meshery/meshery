@@ -1,0 +1,195 @@
+{
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "VaultCertificateAuthority",
+   "schema": "{\n \"description\": \"VaultCertificateAuthority is the Schema for the VaultCertificateAuthorities API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"VaultCertificateAuthoritySpec defines the desired state of VaultCertificateAuthority.\",\n   \"properties\": {\n    \"deleteProtection\": {\n     \"description\": \"DeleteProtection configures that the secret should not be able to be deleted. Defaults to false.\",\n     \"type\": \"boolean\"\n    },\n    \"import\": {\n     \"description\": \"Import can be used to import an already existing certificate.\",\n     \"properties\": {\n      \"certificate\": {\n       \"description\": \"Certificate contains the certificate matching the private key that should be imported. Can be either encrypted, or plain text.\",\n       \"type\": \"string\"\n      },\n      \"privateKey\": {\n       \"description\": \"PrivateKey is the private key that should be imported. The private key must be encrypted with the default Heist transit engine to ensure no secrets are stored in plaintext as a Kubernetes object.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"issuer\": {\n     \"description\": \"Issuer implicitly defines whether the CA is an intermediate or a root CA. If left empty the CA is assumed to be a root CA and will be self-signed. Otherwise, the configured name is a reference to the parent CAs Kubernetes object.\",\n     \"type\": \"string\"\n    },\n    \"plugin\": {\n     \"description\": \"Plugin configures the plugin backend used for this engine. Defaults to pki.\",\n     \"type\": \"string\"\n    },\n    \"settings\": {\n     \"description\": \"Settings configures the key pair of the Certificate Authority\",\n     \"properties\": {\n      \"excludeCNFromSans\": {\n       \"description\": \"ExcludeCNFromSans configures if the common name set in the subject should be excluded from the subject alternative names extension.\",\n       \"type\": \"boolean\"\n      },\n      \"exported\": {\n       \"description\": \"Exported configures if the CA should be generated in exported mode. If this is set to true then the private key of the CA can be bound to and accessed by applications. If it is set to false then the private key will be inaccessible. Defaults to false. This setting can not be changed after the PKI is created.\",\n       \"type\": \"boolean\"\n      },\n      \"ipSans\": {\n       \"description\": \"IPSans sets the IP subject alternative names extension for the certificate.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"keyBits\": {\n       \"default\": 2048,\n       \"description\": \"KeyBits sets the size of the key of the certificate authority. The KeyBits value provided must be a valid value for the configured KeyType.\",\n       \"enum\": [\n        224,\n        256,\n        384,\n        521,\n        2048,\n        3072,\n        4096\n       ],\n       \"type\": \"integer\"\n      },\n      \"keyType\": {\n       \"default\": \"rsa\",\n       \"description\": \"KeyType sets the key algorithm of the CA certificate. Can be either rsa or ec.\",\n       \"enum\": [\n        \"rsa\",\n        \"ec\"\n       ],\n       \"type\": \"string\"\n      },\n      \"otherSans\": {\n       \"description\": \"OtherSans sets subject alternative names extension that do not fall into the other categories for the certificate.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"permittedDNSDomains\": {\n       \"description\": \"PermittedDNSDomains configures an allow list of domains for which certificates can be issued using the certificate authority.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"subjectAlternativeNames\": {\n       \"description\": \"SubjectAlternativeNames sets subject alternative names extensions for the certificate.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"ttl\": {\n       \"description\": \"TTL sets the validity period of the CA certificate.\",\n       \"type\": \"string\"\n      },\n      \"uriSans\": {\n       \"description\": \"URISans sets URI subject alternative names extension for the certificate.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"required\": [\n      \"keyBits\",\n      \"keyType\"\n     ],\n     \"type\": \"object\"\n    },\n    \"subject\": {\n     \"description\": \"Subject configures the subject fields of the Certificate Authority It is recommended to set a least one field im the Subject section\",\n     \"properties\": {\n      \"commonName\": {\n       \"description\": \"CommonName sets the CN (common name) field in the certificate subject\",\n       \"type\": \"string\"\n      },\n      \"country\": {\n       \"description\": \"Country sets the C (country) field in the certificate's subject.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"locality\": {\n       \"description\": \"Locality sets the L (locality) field in the certificate's subject.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"organization\": {\n       \"description\": \"Organization sets the organization (O) field in the certificate's subject.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"ou\": {\n       \"description\": \"OrganizationalUnit sets the OU (organizational unit) field in the certificate's subject.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"postalCode\": {\n       \"description\": \"PostalCode sets the postal code field in the certificate's subject.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"province\": {\n       \"description\": \"Province sets the ST (province) field in the certificate's subject.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"streetAddress\": {\n       \"description\": \"StreetAddress sets the street address field in the certificate's subject.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"tuning\": {\n     \"description\": \"Tuning can be used to tune the PKI Secret Engine in Vault\",\n     \"properties\": {\n      \"defaultLeaseTTL\": {\n       \"description\": \"DefaultLeaseTTL sets the default validity of certificates issued by the PKI secret engine.\",\n       \"type\": \"string\"\n      },\n      \"description\": {\n       \"description\": \"Description sets the description of the PKI secret engine in Vault.\",\n       \"type\": \"string\"\n      },\n      \"maxLeaseTTL\": {\n       \"description\": \"MaxLeaseTTL sets the maximum validity of any certificate issued by the PKI secret engine.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Vault Certificate Authority\",\n \"type\": \"object\"\n}",
+   "version": "heist.youniqx.com/v1alpha1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "Vault Certificate Authority",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "published": false,
+   "source_uri": "https://github.com/youniqx/helm-charts/releases/download/heist-1.1.209/heist-1.1.209.tgz"
+  },
+  "model": {
+   "category": {
+    "name": "Uncategorized"
+   },
+   "displayName": "Heist",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "source_uri": "https://github.com/youniqx/helm-charts/releases/download/heist-1.1.209/heist-1.1.209.tgz",
+    "styleOverrides": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "model": {
+    "version": "1.1.209"
+   },
+   "name": "heist",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "subCategory": "Uncategorized",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "svgColor": "",
+   "svgWhite": ""
+  },
+  "version": "v1.0.0"
+ }

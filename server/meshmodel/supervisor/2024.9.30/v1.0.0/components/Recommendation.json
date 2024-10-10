@@ -1,0 +1,195 @@
+{
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "Recommendation",
+   "schema": "{\n \"description\": \"Recommendation is the Schema for the recommendations API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"RecommendationSpec defines the desired state of Recommendation\",\n   \"properties\": {\n    \"backoffLimit\": {\n     \"description\": \"BackoffLimit specifies the number of retries before marking this recommendation failed. By default set as five(5). If BackoffLimit is zero(0), the operation will be tried to executed only once.\",\n     \"format\": \"int32\",\n     \"maximum\": 10,\n     \"minimum\": 0,\n     \"type\": \"integer\"\n    },\n    \"deadline\": {\n     \"description\": \"The recommendation will be executed within the given Deadline. To maintain deadline, Parallelism can be compromised.\",\n     \"format\": \"date-time\",\n     \"type\": \"string\"\n    },\n    \"description\": {\n     \"description\": \"Description specifies the reason why this recommendation is generated.\",\n     \"type\": \"string\"\n    },\n    \"operation\": {\n     \"description\": \"Operation holds a kubernetes object yaml which will be applied when this recommendation will be executed. It should be a valid kubernetes resource yaml containing apiVersion, kind and metadata fields.\",\n     \"format\": \"textarea\",\n     \"type\": \"string\",\n     \"x-kubernetes-embedded-resource\": true\n    },\n    \"recommender\": {\n     \"description\": \"Recommender holds the name and namespace of the component which generate this recommendation.\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"requireExplicitApproval\": {\n     \"description\": \"If RequireExplicitApproval is set to `true` then the Recommendation must be Approved manually. Recommendation won't be executed without manual approval and any kind of ApprovalPolicy will be ignored.\",\n     \"type\": \"boolean\"\n    },\n    \"rules\": {\n     \"description\": \"Rules defines OperationPhaseRules. It contains three identification rules of successful execution of the operation, progressing execution of the operation \\u0026 failed execution of the operation. Example: rules: success:    `has(self.status.phase) \\u0026\\u0026 self.status.phase == 'Successful'` inProgress: `has(self.status.phase) \\u0026\\u0026 self.status.phase == 'Progressing'` failed:     `has(self.status.phase) \\u0026\\u0026 self.status.phase == 'Failed'`\",\n     \"properties\": {\n      \"failed\": {\n       \"description\": \"Failed defines a rule to identify that applied operation is failed. Example: inProgress: `has(self.status.phase) \\u0026\\u0026 self.status.phase == 'Failed'` Here self.status.phase is pointing to .status.phase field of the Operation object. When .status.phase field presents and becomes `Failed`, the Failed rule will satisfy.\",\n       \"type\": \"string\"\n      },\n      \"inProgress\": {\n       \"description\": \"InProgress defines a rule to identify that applied operation is progressing. Example: inProgress: `has(self.status.phase) \\u0026\\u0026 self.status.phase == 'Progressing'` Here self.status.phase is pointing to .status.phase field of the Operation object. When .status.phase field presents and becomes `Progressing`, the InProgress rule will satisfy.\",\n       \"type\": \"string\"\n      },\n      \"success\": {\n       \"description\": \"Success defines a rule to identify the successful execution of the operation. Example: success: `has(self.status.phase) \\u0026\\u0026 self.status.phase == 'Successful'` Here self.status.phase is pointing to .status.phase field of the Operation object. When .status.phase field presents and becomes `Successful`, the Success rule will satisfy.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"failed\",\n      \"inProgress\",\n      \"success\"\n     ],\n     \"type\": \"object\"\n    },\n    \"target\": {\n     \"description\": \"Target specifies the APIGroup, Kind \\u0026 Name of the target resource for which the recommendation is generated\",\n     \"properties\": {\n      \"apiGroup\": {\n       \"description\": \"APIGroup is the group for the resource being referenced. If APIGroup is not specified, the specified Kind must be in the core API group. For any other third-party types, APIGroup is required.\",\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"description\": \"Kind is the type of resource being referenced\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name is the name of resource being referenced\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"kind\",\n      \"name\"\n     ],\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    },\n    \"vulnerabilityReport\": {\n     \"description\": \"VulnerabilityReport specifies any kind vulnerability report like cve fixed information\",\n     \"properties\": {\n      \"fixed\": {\n       \"description\": \"Fixed represents the list of CVEs fixed if the recommendation is applied\",\n       \"properties\": {\n        \"count\": {\n         \"additionalProperties\": {\n          \"type\": \"integer\"\n         },\n         \"type\": \"object\"\n        },\n        \"vulnerabilities\": {\n         \"items\": {\n          \"properties\": {\n           \"primaryURL\": {\n            \"type\": \"string\"\n           },\n           \"severity\": {\n            \"type\": \"string\"\n           },\n           \"vulnerabilityID\": {\n            \"type\": \"string\"\n           }\n          },\n          \"type\": \"object\"\n         },\n         \"type\": \"array\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"known\": {\n       \"description\": \"Known represents the list of CVEs known to exist after the recommendation is applied\",\n       \"properties\": {\n        \"count\": {\n         \"additionalProperties\": {\n          \"type\": \"integer\"\n         },\n         \"type\": \"object\"\n        },\n        \"vulnerabilities\": {\n         \"items\": {\n          \"properties\": {\n           \"primaryURL\": {\n            \"type\": \"string\"\n           },\n           \"severity\": {\n            \"type\": \"string\"\n           },\n           \"vulnerabilityID\": {\n            \"type\": \"string\"\n           }\n          },\n          \"type\": \"object\"\n         },\n         \"type\": \"array\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"message\": {\n       \"type\": \"string\"\n      },\n      \"status\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"operation\",\n    \"recommender\",\n    \"rules\",\n    \"target\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Recommendation\",\n \"type\": \"object\"\n}",
+   "version": "supervisor.appscode.com/v1alpha1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "Recommendation",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "published": false,
+   "source_uri": "https://charts.appscode.com/stable/supervisor/supervisor-v2024.9.30.tgz"
+  },
+  "model": {
+   "category": {
+    "name": "Uncategorized"
+   },
+   "displayName": "Supervisor",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "source_uri": "https://charts.appscode.com/stable/supervisor/supervisor-v2024.9.30.tgz",
+    "styleOverrides": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "model": {
+    "version": "2024.9.30"
+   },
+   "name": "supervisor",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "subCategory": "Uncategorized",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "svgColor": "",
+   "svgWhite": ""
+  },
+  "version": "v1.0.0"
+ }

@@ -1,0 +1,1009 @@
+name: 'Serve an LLM with multiple GPUs in GKE '
+version: 0.0.3
+services:
+  generic node-jtfom:
+    annotations: {}
+    apiVersion: core.meshery.io/v1alpha1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: meshery-core
+    name: Generic Node
+    namespace: ""
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 846ae1fe-b009-4a3f-8e12-4e36c42954da
+        label: Generic Node
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          components: []
+          displayName: Meshery Core
+          hostID: 00000000-0000-0000-0000-000000000000
+          id: abf31830-2ad6-54c4-90e1-d4c52807deef
+          metadata:
+            isAnnotation: false
+            svgColor: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+            svgWhite: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+          name: meshery-core
+          relationships: []
+          status: registered
+          version: v1.0.0
+        meshmodel-metadata:
+          capabilities: '{"designer":{"edit":{"config":false,"lock":true,"shape":{"convert-shape":false},"style":false},"label":{"edit":true,"show":false,"sync-with-config-property":"none"}}}'
+          defaultData: '{"label":""}'
+          genealogy: ""
+          isAnnotation: true
+          isModelAnnotation: "TRUE"
+          isNamespaced: false
+          logoURL: ""
+          model: meshery-core
+          modelDisplayName: Meshery Core
+          primaryColor: '#00B39F'
+          published: true
+          secondaryColor: '#00D3A9'
+          shape: circle
+          shapePolygonPoints: ""
+          styleOverrides:
+            background-image: none
+            border-style: dashed
+            border-width: 0
+            data:
+              label: ""
+            height: 30px
+            width: 30px
+            z-index: 9
+          styles: '{"height":"30px","width":"30px", "background-image":"none","border-width":0,"border-style":"dashed"}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/meshery-core/color/genericnode-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/meshery-core/white/genericnode-white.svg
+        parent: 704a3220-2ad9-44fb-952e-9ed1ec219199
+        position:
+          posX: -30
+          posY: -30
+        whiteboardData:
+          style:
+            backgroundOpacity: 0
+            visibility: hidden
+            z-index: 26
+    type: GenericNode
+    version: v1.0.0
+  generic node-mgapj:
+    annotations: {}
+    apiVersion: core.meshery.io/v1alpha1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: meshery-core
+    name: Generic Node
+    namespace: ""
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 02bf4296-80b5-4de9-a025-11498eceeeb9
+        label: Generic Node
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          components: []
+          displayName: Meshery Core
+          hostID: 00000000-0000-0000-0000-000000000000
+          id: abf31830-2ad6-54c4-90e1-d4c52807deef
+          metadata:
+            isAnnotation: false
+            svgColor: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+            svgWhite: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+          name: meshery-core
+          relationships: []
+          status: registered
+          version: v1.0.0
+        meshmodel-metadata:
+          capabilities: '{"designer":{"edit":{"config":false,"lock":true,"shape":{"convert-shape":false},"style":false},"label":{"edit":true,"show":false,"sync-with-config-property":"none"}}}'
+          defaultData: '{"label":""}'
+          genealogy: ""
+          isAnnotation: true
+          isModelAnnotation: "TRUE"
+          isNamespaced: false
+          logoURL: ""
+          model: meshery-core
+          modelDisplayName: Meshery Core
+          primaryColor: '#00B39F'
+          published: true
+          secondaryColor: '#00D3A9'
+          shape: circle
+          shapePolygonPoints: ""
+          styleOverrides:
+            background-image: none
+            border-style: dashed
+            border-width: 0
+            data:
+              label: ""
+            height: 30px
+            width: 30px
+            z-index: 13
+          styles: '{"height":"30px","width":"30px", "background-image":"none","border-width":0,"border-style":"dashed"}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/meshery-core/color/genericnode-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/meshery-core/white/genericnode-white.svg
+        parent: 11aebffd-54f0-4685-b2e7-f8143d3ef847
+        position:
+          posX: 190
+          posY: 50
+        whiteboardData:
+          style:
+            backgroundOpacity: 0
+            visibility: hidden
+            z-index: 7
+    type: GenericNode
+    version: v1.0.0
+  generic node-qpitr:
+    annotations: {}
+    apiVersion: core.meshery.io/v1alpha1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: meshery-core
+    name: Generic Node
+    namespace: ""
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: db4032ca-084d-4062-857d-00cde7fb981f
+        label: Generic Node
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          components: []
+          displayName: Meshery Core
+          hostID: 00000000-0000-0000-0000-000000000000
+          id: abf31830-2ad6-54c4-90e1-d4c52807deef
+          metadata:
+            isAnnotation: false
+            svgColor: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+            svgWhite: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+          name: meshery-core
+          relationships: []
+          status: registered
+          version: v1.0.0
+        meshmodel-metadata:
+          capabilities: '{"designer":{"edit":{"config":false,"lock":true,"shape":{"convert-shape":false},"style":false},"label":{"edit":true,"show":false,"sync-with-config-property":"none"}}}'
+          defaultData: '{"label":""}'
+          genealogy: ""
+          isAnnotation: true
+          isModelAnnotation: "TRUE"
+          isNamespaced: false
+          logoURL: ""
+          model: meshery-core
+          modelDisplayName: Meshery Core
+          primaryColor: '#00B39F'
+          published: true
+          secondaryColor: '#00D3A9'
+          shape: circle
+          shapePolygonPoints: ""
+          styleOverrides:
+            background-image: none
+            border-style: dashed
+            border-width: 0
+            data:
+              label: ""
+            height: 30px
+            width: 30px
+            z-index: 16
+          styles: '{"height":"30px","width":"30px", "background-image":"none","border-width":0,"border-style":"dashed"}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/meshery-core/color/genericnode-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/meshery-core/white/genericnode-white.svg
+        parent: efc6ed98-44e8-44b9-82d5-47eddf9ad974
+        position:
+          posX: -110
+          posY: 110
+        whiteboardData:
+          style:
+            backgroundOpacity: 0
+            visibility: hidden
+            z-index: 13
+    type: GenericNode
+    version: v1.0.0
+  generic node-umdvy:
+    annotations: {}
+    apiVersion: core.meshery.io/v1alpha1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: meshery-core
+    name: Generic Node
+    namespace: llm
+    settings:
+      user Messages: []
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 4dc650f9-fe59-4a7d-8982-00ee7ca57fdf
+        label: Generic Node
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          components: []
+          displayName: Meshery Core
+          hostID: 00000000-0000-0000-0000-000000000000
+          id: abf31830-2ad6-54c4-90e1-d4c52807deef
+          metadata:
+            isAnnotation: false
+            svgColor: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+            svgWhite: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+          name: meshery-core
+          relationships: []
+          status: registered
+          version: v1.0.0
+        meshmodel-metadata:
+          capabilities: '{"designer":{"edit":{"config":false,"lock":true,"shape":{"convert-shape":false},"style":false},"label":{"edit":true,"show":false,"sync-with-config-property":"none"}}}'
+          defaultData: '{"label":""}'
+          genealogy: ""
+          isAnnotation: true
+          isModelAnnotation: "TRUE"
+          isNamespaced: false
+          logoURL: ""
+          model: meshery-core
+          modelDisplayName: Meshery Core
+          primaryColor: '#00B39F'
+          published: true
+          secondaryColor: '#00D3A9'
+          shape: circle
+          shapePolygonPoints: ""
+          styleOverrides:
+            background-image: none
+            border-style: dashed
+            border-width: 0
+            data:
+              label: ""
+            height: 30px
+            width: 30px
+            z-index: 15
+          styles: '{"height":"30px","width":"30px", "background-image":"none","border-width":0,"border-style":"dashed"}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/meshery-core/color/genericnode-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/meshery-core/white/genericnode-white.svg
+        parent: 635d895e-c09e-4b9c-8bc1-da7e6765625c
+        position:
+          posX: 310
+          posY: 50
+        whiteboardData:
+          style:
+            backgroundOpacity: 0
+            visibility: hidden
+            z-index: 17
+    type: GenericNode
+    version: v1.0.0
+  generic node-xgrgy:
+    annotations: {}
+    apiVersion: core.meshery.io/v1alpha1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: meshery-core
+    name: Generic Node
+    namespace: ""
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: e108745b-ff1b-4ec1-b02a-5e4e3dd9bb3b
+        label: Generic Node
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          components: []
+          displayName: Meshery Core
+          hostID: 00000000-0000-0000-0000-000000000000
+          id: abf31830-2ad6-54c4-90e1-d4c52807deef
+          metadata:
+            isAnnotation: false
+            svgColor: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+            svgWhite: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+          name: meshery-core
+          relationships: []
+          status: registered
+          version: v1.0.0
+        meshmodel-metadata:
+          capabilities: '{"designer":{"edit":{"config":false,"lock":true,"shape":{"convert-shape":false},"style":false},"label":{"edit":true,"show":false,"sync-with-config-property":"none"}}}'
+          defaultData: '{"label":""}'
+          genealogy: ""
+          isAnnotation: true
+          isModelAnnotation: "TRUE"
+          isNamespaced: false
+          logoURL: ""
+          model: meshery-core
+          modelDisplayName: Meshery Core
+          primaryColor: '#00B39F'
+          published: true
+          secondaryColor: '#00D3A9'
+          shape: circle
+          shapePolygonPoints: ""
+          styleOverrides:
+            background-image: none
+            border-style: dashed
+            border-width: 0
+            data:
+              label: ""
+            height: 30px
+            width: 30px
+            z-index: 12
+          styles: '{"height":"30px","width":"30px", "background-image":"none","border-width":0,"border-style":"dashed"}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/meshery-core/color/genericnode-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/meshery-core/white/genericnode-white.svg
+        parent: 5d48e78a-127f-41ff-9ed0-a6127f8df47a
+        position:
+          posX: 190
+          posY: 130
+        whiteboardData:
+          style:
+            backgroundOpacity: 0
+            visibility: hidden
+            z-index: 23
+    type: GenericNode
+    version: v1.0.0
+  gradio-service-tgzgv:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: gradio-service
+    namespace: default
+    settings:
+      spec:
+        ports:
+        - port: 80
+          protocol: TCP
+          target Port: 7860
+        - port: 80
+          protocol: TCP
+        selector:
+          app: gradio
+        type: LoadBalancer
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: 8455fe48-3b13-46b1-952e-f149e2df16b5
+            metadata:
+              port: 80
+              protocol: TCP
+            source: 227e6335-a405-4a31-a81a-43f3f49686c4
+            subType: Network
+            target: efc6ed98-44e8-44b9-82d5-47eddf9ad974
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        - data:
+            id: d8d6694c-4a1b-4658-980e-4f494132c065
+            metadata:
+              port: 80
+              protocol: TCP
+            source: 227e6335-a405-4a31-a81a-43f3f49686c4
+            subType: Network
+            target: 5d48e78a-127f-41ff-9ed0-a6127f8df47a
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: 227e6335-a405-4a31-a81a-43f3f49686c4
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-triangle
+          shapePolygonPoints: ""
+          styleOverrides:
+            background-position-y: 4.5
+            height: 20
+            padding: 12
+            width: 20
+            x: 10px
+            "y": 12px
+            z-index: 4
+          styles: '{"height":20,"width":20,"padding":12,"background-position-y":4.5,"x":"10px","y":"12px"}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/service-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/service-white.svg
+        position:
+          posX: 250
+          posY: 50
+        whiteboardData:
+          style:
+            z-index: 20
+    type: Service
+    version: ""
+  gradio-service-wjfwj:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: gradio-service
+    namespace: default
+    settings:
+      spec:
+        ports:
+        - port: 80
+          protocol: TCP
+          target Port: 7860
+        - port: 80
+          protocol: TCP
+        selector:
+          app: gradio
+        type: LoadBalancer
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: 5278ee0e-9c8f-4c2d-8fec-725d402976eb
+            metadata:
+              port: 80
+              protocol: TCP
+            source: 5822706f-1040-4e99-acd1-4f99244374c9
+            subType: Network
+            target: efc6ed98-44e8-44b9-82d5-47eddf9ad974
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        - data:
+            id: 9e455723-1a3a-4bfa-96c4-f31cf73dcd14
+            metadata:
+              port: 80
+              protocol: TCP
+            source: 5822706f-1040-4e99-acd1-4f99244374c9
+            subType: Network
+            target: 5d48e78a-127f-41ff-9ed0-a6127f8df47a
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: 5822706f-1040-4e99-acd1-4f99244374c9
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-triangle
+          shapePolygonPoints: ""
+          styleOverrides:
+            background-position-y: 4.5
+            height: 20
+            padding: 12
+            width: 20
+            x: 10px
+            "y": 12px
+            z-index: 5
+          styles: '{"height":20,"width":20,"padding":12,"background-position-y":4.5,"x":"10px","y":"12px"}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/service-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/service-white.svg
+        position:
+          posX: -10
+          posY: 50
+        whiteboardData:
+          style:
+            z-index: 10
+    type: Service
+    version: ""
+  llm-service:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: llm-service
+    namespace: default
+    settings:
+      spec:
+        ports:
+        - port: 80
+          protocol: TCP
+          target Port: 8080
+        selector:
+          app: llm
+        type: ClusterIP
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 7506b1fc-248d-40a1-9db2-ee6e2b98886d
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-triangle
+          shapePolygonPoints: ""
+          styleOverrides:
+            background-position-y: 4.5
+            height: 20
+            padding: 12
+            width: 20
+            x: 10px
+            "y": 12px
+            z-index: 6
+          styles: '{"height":20,"width":20,"padding":12,"background-position-y":4.5,"x":"10px","y":"12px"}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/service-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/service-white.svg
+        position:
+          posX: 130
+          posY: 130
+        whiteboardData:
+          style:
+            z-index: 3
+    type: Service
+    version: ""
+  node group inventory wallet-kzbwv:
+    annotations: {}
+    apiVersion: core.meshery.io/v1alpha1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: meshery-core
+    name: Node Group Inventory Wallet
+    namespace: gradio
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 005df7c6-49a9-4b32-b014-3f9d7e04f540
+        label: Node Group Inventory Wallet
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          components: []
+          displayName: Meshery Core
+          hostID: 00000000-0000-0000-0000-000000000000
+          id: abf31830-2ad6-54c4-90e1-d4c52807deef
+          metadata:
+            isAnnotation: false
+            svgColor: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+            svgWhite: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+          name: meshery-core
+          relationships: []
+          status: registered
+          version: v1.0.0
+        meshmodel-metadata:
+          capabilities: '{"designer":{"edit":{"config":false,"lock":true,"shape":{"convert-shape":false},"style":false},"label":{"edit":true,"show":false,"sync-with-config-property":"label"}}}'
+          defaultData: '{"label":""}'
+          genealogy: parent
+          isAnnotation: true
+          isModelAnnotation: "TRUE"
+          isNamespaced: false
+          logoURL: ""
+          model: meshery-core
+          modelDisplayName: Meshery Core
+          primaryColor: '#00B39F'
+          published: true
+          secondaryColor: '#00D3A9'
+          shape: round-rectangle
+          shapePolygonPoints: ""
+          styleOverrides:
+            background-image: none
+            background-opacity: 0.1
+            border-style: dashed
+            border-width: 1
+            data:
+              label: ""
+            height: 30px
+            width: 30px
+            z-index: 7
+          styles: '{"height":"30px","width":"30px", "background-image":"none","border-width":1,"border-style":"dashed","background-opacity":0.1}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/meshery-core/color/genericnode-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/meshery-core/white/genericnode-white.svg
+        parent: efc6ed98-44e8-44b9-82d5-47eddf9ad974
+        position:
+          posX: -150
+          posY: 10
+        whiteboardData:
+          style:
+            z-index: 12
+    type: NodeGroupInventoryWallet
+    version: v1.0.0
+  node group inventory wallet-tpezd:
+    annotations: {}
+    apiVersion: core.meshery.io/v1alpha1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: meshery-core
+    name: Node Group Inventory Wallet
+    namespace: gradio
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: a05baa58-5c2f-4203-ad5c-08732f6f0265
+        label: Node Group Inventory Wallet
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          components: []
+          displayName: Meshery Core
+          hostID: 00000000-0000-0000-0000-000000000000
+          id: abf31830-2ad6-54c4-90e1-d4c52807deef
+          metadata:
+            isAnnotation: false
+            svgColor: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+            svgWhite: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+          name: meshery-core
+          relationships: []
+          status: registered
+          version: v1.0.0
+        meshmodel-metadata:
+          capabilities: '{"designer":{"edit":{"config":false,"lock":true,"shape":{"convert-shape":false},"style":false},"label":{"edit":true,"show":false,"sync-with-config-property":"label"}}}'
+          defaultData: '{"label":""}'
+          genealogy: parent
+          isAnnotation: true
+          isModelAnnotation: "TRUE"
+          isNamespaced: false
+          logoURL: ""
+          model: meshery-core
+          modelDisplayName: Meshery Core
+          primaryColor: '#00B39F'
+          published: true
+          secondaryColor: '#00D3A9'
+          shape: round-rectangle
+          shapePolygonPoints: ""
+          styleOverrides:
+            background-image: none
+            background-opacity: 0.1
+            border-style: dashed
+            border-width: 1
+            data:
+              label: ""
+            height: 30px
+            width: 30px
+            z-index: 8
+          styles: '{"height":"30px","width":"30px", "background-image":"none","border-width":1,"border-style":"dashed","background-opacity":0.1}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/meshery-core/color/genericnode-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/meshery-core/white/genericnode-white.svg
+        parent: 5d48e78a-127f-41ff-9ed0-a6127f8df47a
+        position:
+          posX: 170
+          posY: 30
+        whiteboardData:
+          style:
+            z-index: 22
+    type: NodeGroupInventoryWallet
+    version: v1.0.0
+  node group inventory wallet-uakdm:
+    annotations: {}
+    apiVersion: core.meshery.io/v1alpha1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: meshery-core
+    name: Node Group Inventory Wallet
+    namespace: deployment-bk
+    settings:
+      user Messages: []
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: a3b2612f-6cc9-4eeb-81b8-990bdf98e944
+        label: Node Group Inventory Wallet
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          components: []
+          displayName: Meshery Core
+          hostID: 00000000-0000-0000-0000-000000000000
+          id: abf31830-2ad6-54c4-90e1-d4c52807deef
+          metadata:
+            isAnnotation: false
+            svgColor: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+            svgWhite: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+          name: meshery-core
+          relationships: []
+          status: registered
+          version: v1.0.0
+        meshmodel-metadata:
+          capabilities: '{"designer":{"edit":{"config":false,"lock":true,"shape":{"convert-shape":false},"style":false},"label":{"edit":true,"show":false,"sync-with-config-property":"label"}}}'
+          defaultData: '{"label":""}'
+          genealogy: parent
+          isAnnotation: true
+          isModelAnnotation: "TRUE"
+          isNamespaced: false
+          logoURL: ""
+          model: meshery-core
+          modelDisplayName: Meshery Core
+          primaryColor: '#00B39F'
+          published: true
+          secondaryColor: '#00D3A9'
+          shape: round-rectangle
+          shapePolygonPoints: ""
+          styleOverrides:
+            background-image: none
+            background-opacity: 0.1
+            border-style: dashed
+            border-width: 1
+            data:
+              label: ""
+            height: 30px
+            width: 30px
+            z-index: 14
+          styles: '{"height":"30px","width":"30px", "background-image":"none","border-width":1,"border-style":"dashed","background-opacity":0.1}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/meshery-core/color/genericnode-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/meshery-core/white/genericnode-white.svg
+        parent: 704a3220-2ad9-44fb-952e-9ed1ec219199
+        position:
+          posX: -70
+          posY: -70
+        whiteboardData:
+          style:
+            z-index: 25
+    type: NodeGroupInventoryWallet
+    version: v1.0.0
+  node group inventory wallet-vyhha:
+    annotations: {}
+    apiVersion: core.meshery.io/v1alpha1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: meshery-core
+    name: Node Group Inventory Wallet
+    namespace: llm
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: a7cc9ba5-a761-4a2f-876a-3abcf4aed9b3
+        label: Node Group Inventory Wallet
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          components: []
+          displayName: Meshery Core
+          hostID: 00000000-0000-0000-0000-000000000000
+          id: abf31830-2ad6-54c4-90e1-d4c52807deef
+          metadata:
+            isAnnotation: false
+            svgColor: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+            svgWhite: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+          name: meshery-core
+          relationships: []
+          status: registered
+          version: v1.0.0
+        meshmodel-metadata:
+          capabilities: '{"designer":{"edit":{"config":false,"lock":true,"shape":{"convert-shape":false},"style":false},"label":{"edit":true,"show":false,"sync-with-config-property":"label"}}}'
+          defaultData: '{"label":""}'
+          genealogy: parent
+          isAnnotation: true
+          isModelAnnotation: "TRUE"
+          isNamespaced: false
+          logoURL: ""
+          model: meshery-core
+          modelDisplayName: Meshery Core
+          primaryColor: '#00B39F'
+          published: true
+          secondaryColor: '#00D3A9'
+          shape: round-rectangle
+          shapePolygonPoints: ""
+          styleOverrides:
+            background-image: none
+            background-opacity: 0.1
+            border-style: dashed
+            border-width: 1
+            data:
+              label: ""
+            height: 30px
+            width: 30px
+            z-index: 11
+          styles: '{"height":"30px","width":"30px", "background-image":"none","border-width":1,"border-style":"dashed","background-opacity":0.1}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/meshery-core/color/genericnode-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/meshery-core/white/genericnode-white.svg
+        parent: 635d895e-c09e-4b9c-8bc1-da7e6765625c
+        position:
+          posX: 270
+          posY: -50
+        whiteboardData:
+          style:
+            z-index: 16
+    type: NodeGroupInventoryWallet
+    version: v1.0.0
+  node group inventory wallet-xfqbb:
+    annotations: {}
+    apiVersion: core.meshery.io/v1alpha1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: meshery-core
+    name: Node Group Inventory Wallet
+    namespace: llm
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 215099c8-ee12-4683-af21-ab7a3a4a590c
+        label: Node Group Inventory Wallet
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          components: []
+          displayName: Meshery Core
+          hostID: 00000000-0000-0000-0000-000000000000
+          id: abf31830-2ad6-54c4-90e1-d4c52807deef
+          metadata:
+            isAnnotation: false
+            svgColor: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+            svgWhite: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+          name: meshery-core
+          relationships: []
+          status: registered
+          version: v1.0.0
+        meshmodel-metadata:
+          capabilities: '{"designer":{"edit":{"config":false,"lock":true,"shape":{"convert-shape":false},"style":false},"label":{"edit":true,"show":false,"sync-with-config-property":"label"}}}'
+          defaultData: '{"label":""}'
+          genealogy: parent
+          isAnnotation: true
+          isModelAnnotation: "TRUE"
+          isNamespaced: false
+          logoURL: ""
+          model: meshery-core
+          modelDisplayName: Meshery Core
+          primaryColor: '#00B39F'
+          published: true
+          secondaryColor: '#00D3A9'
+          shape: round-rectangle
+          shapePolygonPoints: ""
+          styleOverrides:
+            background-image: none
+            background-opacity: 0.1
+            border-style: dashed
+            border-width: 1
+            data:
+              label: ""
+            height: 30px
+            width: 30px
+            z-index: 10
+          styles: '{"height":"30px","width":"30px", "background-image":"none","border-width":1,"border-style":"dashed","background-opacity":0.1}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/meshery-core/color/genericnode-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/meshery-core/white/genericnode-white.svg
+        parent: 11aebffd-54f0-4685-b2e7-f8143d3ef847
+        position:
+          posX: 170
+          posY: -50
+        whiteboardData:
+          style:
+            z-index: 6
+    type: NodeGroupInventoryWallet
+    version: v1.0.0

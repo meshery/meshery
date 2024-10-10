@@ -1,0 +1,195 @@
+{
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "WorkloadDefinition",
+   "schema": "{\n \"description\": \"A WorkloadDefinition registers a kind of Kubernetes custom resource as a valid OAM workload kind by referencing its CustomResourceDefinition. The CRD is used to validate the schema of the workload when it is embedded in an OAM Component.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"A WorkloadDefinitionSpec defines the desired state of a WorkloadDefinition.\",\n   \"properties\": {\n    \"childResourceKinds\": {\n     \"description\": \"ChildResourceKinds are the list of GVK of the child resources this workload generates\",\n     \"items\": {\n      \"description\": \"A ChildResourceKind defines a child Kubernetes resource kind with a selector\",\n      \"properties\": {\n       \"apiVersion\": {\n        \"description\": \"APIVersion of the child resource\",\n        \"type\": \"string\"\n       },\n       \"kind\": {\n        \"description\": \"Kind of the child resource\",\n        \"type\": \"string\"\n       },\n       \"selector\": {\n        \"additionalProperties\": {\n         \"type\": \"string\"\n        },\n        \"description\": \"Selector to select the child resources that the workload wants to expose to traits\",\n        \"type\": \"object\"\n       }\n      },\n      \"required\": [\n       \"apiVersion\",\n       \"kind\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"definitionRef\": {\n     \"description\": \"Reference to the CustomResourceDefinition that defines this workload kind.\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of the referenced CustomResourceDefinition.\",\n       \"type\": \"string\"\n      },\n      \"version\": {\n       \"description\": \"Version indicate which version should be used if CRD has multiple versions by default it will use the first one if not specified\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"extension\": {\n     \"description\": \"Extension is used for extension needs by OAM platform builders\",\n     \"format\": \"textarea\",\n     \"type\": \"string\"\n    },\n    \"podSpecPath\": {\n     \"description\": \"PodSpecPath indicates where/if this workload has K8s podSpec field if one workload has podSpec, trait can do lot's of assumption such as port, env, volume fields.\",\n     \"type\": \"string\"\n    },\n    \"revisionLabel\": {\n     \"description\": \"RevisionLabel indicates which label for underlying resources(e.g. pods) of this workload can be used by trait to create resource selectors(e.g. label selector for pods).\",\n     \"type\": \"string\"\n    },\n    \"schematic\": {\n     \"description\": \"Schematic defines the data format and template of the encapsulation of the workload\",\n     \"properties\": {\n      \"cue\": {\n       \"description\": \"CUE defines the encapsulation in CUE format\",\n       \"properties\": {\n        \"template\": {\n         \"description\": \"Template defines the abstraction template data of the capability, it will replace the old CUE template in extension field. Template is a required field if CUE is defined in Capability Definition.\",\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"template\"\n       ],\n       \"type\": \"object\"\n      },\n      \"helm\": {\n       \"description\": \"A Helm represents resources used by a Helm module\",\n       \"properties\": {\n        \"release\": {\n         \"description\": \"Release records a Helm release used by a Helm module workload.\",\n         \"format\": \"textarea\",\n         \"type\": \"string\"\n        },\n        \"repository\": {\n         \"description\": \"HelmRelease records a Helm repository used by a Helm module workload.\",\n         \"format\": \"textarea\",\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"release\",\n        \"repository\"\n       ],\n       \"type\": \"object\"\n      },\n      \"kube\": {\n       \"description\": \"Kube defines the encapsulation in raw Kubernetes resource format\",\n       \"properties\": {\n        \"parameters\": {\n         \"description\": \"Parameters defines configurable parameters\",\n         \"items\": {\n          \"description\": \"A KubeParameter defines a configurable parameter of a component.\",\n          \"properties\": {\n           \"description\": {\n            \"description\": \"Description of this parameter.\",\n            \"type\": \"string\"\n           },\n           \"fieldPaths\": {\n            \"description\": \"FieldPaths specifies an array of fields within this workload that will be overwritten by the value of this parameter. \\tAll fields must be of the same type. Fields are specified as JSON field paths without a leading dot, for example 'spec.replicas'.\",\n            \"items\": {\n             \"type\": \"string\"\n            },\n            \"type\": \"array\"\n           },\n           \"name\": {\n            \"description\": \"Name of this parameter\",\n            \"type\": \"string\"\n           },\n           \"required\": {\n            \"default\": false,\n            \"description\": \"Required specifies whether or not a value for this parameter must be supplied when authoring an Application.\",\n            \"type\": \"boolean\"\n           },\n           \"type\": {\n            \"description\": \"ValueType indicates the type of the parameter value, and only supports basic data types: string, number, boolean.\",\n            \"enum\": [\n             \"string\",\n             \"number\",\n             \"boolean\"\n            ],\n            \"type\": \"string\"\n           }\n          },\n          \"required\": [\n           \"fieldPaths\",\n           \"name\",\n           \"type\"\n          ],\n          \"type\": \"object\"\n         },\n         \"type\": \"array\"\n        },\n        \"template\": {\n         \"description\": \"Template defines the raw Kubernetes resource\",\n         \"format\": \"textarea\",\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"template\"\n       ],\n       \"type\": \"object\"\n      },\n      \"terraform\": {\n       \"description\": \"Terraform is the struct to describe cloud resources managed by Hashicorp Terraform\",\n       \"properties\": {\n        \"configuration\": {\n         \"description\": \"Configuration is Terraform Configuration\",\n         \"type\": \"string\"\n        },\n        \"customRegion\": {\n         \"description\": \"Region is cloud provider's region. It will override the region in the region field of ProviderReference\",\n         \"type\": \"string\"\n        },\n        \"deleteResource\": {\n         \"default\": true,\n         \"description\": \"DeleteResource will determine whether provisioned cloud resources will be deleted when CR is deleted\",\n         \"type\": \"boolean\"\n        },\n        \"gitCredentialsSecretReference\": {\n         \"description\": \"GitCredentialsSecretReference specifies the reference to the secret containing the git credentials\",\n         \"properties\": {\n          \"name\": {\n           \"description\": \"name is unique within a namespace to reference a secret resource.\",\n           \"type\": \"string\"\n          },\n          \"namespace\": {\n           \"description\": \"namespace defines the space within which the secret name must be unique.\",\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\",\n         \"x-kubernetes-map-type\": \"atomic\"\n        },\n        \"path\": {\n         \"description\": \"Path is the sub-directory of remote git repository. It's valid when remote is set\",\n         \"type\": \"string\"\n        },\n        \"providerRef\": {\n         \"description\": \"ProviderReference specifies the reference to Provider\",\n         \"properties\": {\n          \"name\": {\n           \"description\": \"Name of the referenced object.\",\n           \"type\": \"string\"\n          },\n          \"namespace\": {\n           \"default\": \"default\",\n           \"description\": \"Namespace of the referenced object.\",\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"name\"\n         ],\n         \"type\": \"object\"\n        },\n        \"type\": {\n         \"default\": \"hcl\",\n         \"description\": \"Type specifies which Terraform configuration it is, HCL or JSON syntax\",\n         \"enum\": [\n          \"hcl\",\n          \"json\",\n          \"remote\"\n         ],\n         \"type\": \"string\"\n        },\n        \"writeConnectionSecretToRef\": {\n         \"description\": \"WriteConnectionSecretToReference specifies the namespace and name of a Secret to which any connection details for this managed resource should be written. Connection details frequently include the endpoint, username, and password required to connect to the managed resource.\",\n         \"properties\": {\n          \"name\": {\n           \"description\": \"Name of the secret.\",\n           \"type\": \"string\"\n          },\n          \"namespace\": {\n           \"description\": \"Namespace of the secret.\",\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"name\"\n         ],\n         \"type\": \"object\"\n        }\n       },\n       \"required\": [\n        \"configuration\"\n       ],\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"status\": {\n     \"description\": \"Status defines the custom health policy and status message for workload\",\n     \"properties\": {\n      \"customStatus\": {\n       \"description\": \"CustomStatus defines the custom status message that could display to user\",\n       \"type\": \"string\"\n      },\n      \"healthPolicy\": {\n       \"description\": \"HealthPolicy defines the health check policy for the abstraction\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"definitionRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Workload Definition\",\n \"type\": \"object\"\n}",
+   "version": "core.oam.dev/v1alpha2"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "Workload Definition",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "published": false,
+   "source_uri": "https://kubevela.github.io/charts/vela-core-1.9.13.tgz"
+  },
+  "model": {
+   "category": {
+    "name": "App Definition and Development"
+   },
+   "displayName": "Vela Core",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "source_uri": "https://kubevela.github.io/charts/vela-core-1.9.13.tgz",
+    "styleOverrides": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "model": {
+    "version": "1.9.13"
+   },
+   "name": "vela-core",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "subCategory": "Application Definition \u0026 Image Build",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "svgColor": "",
+   "svgWhite": ""
+  },
+  "version": "v1.0.0"
+ }

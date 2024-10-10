@@ -36,13 +36,13 @@ Learn how to create, manage, and explore _Kubernetes Pods and Services_ within t
 #### Access Meshery Playground
 
 - Log in to the [Meshery Playground](https://meshery.layer5.io/) using your credentials. On successful login, you should be at the dashboard. Press the **X** on the _Where do you want to start?_ popup to close it (if required).
-- Click **Explore** in the Cloud Native Playground tile to navigate to _MeshMap_.
+- Click **Explore** in the Cloud Native Playground tile to navigate to _Kanvas_.
 
-> **_NOTE:_** MeshMap is still in beta.
+> **_NOTE:_** Kanvas is still in beta.
 
 #### Create a simple stand-alone Pod
 
-1. In the MeshMap screen, rename the design from _Untitled Design_ to a name of choice. This helps in identifying the design later easily.
+1. In the Kanvas screen, rename the design from _Untitled Design_ to a name of choice. This helps in identifying the design later easily.
 2. Click **Components** tab.
 3. Search for **Pod** in the list of components.
     ![](./screenshots/2024-02-22_18-20.png)
@@ -87,7 +87,7 @@ You should see a few alerts on the bottom right about the deployment.
 
 #### Visualizing the Pod
 
-To view the resources deployed we will use the **Visualize** section of the _MeshMap_. A view is created with necessary filters to show the relevant resources.
+To view the resources deployed we will use the **Visualize** section of the _Kanvas_. A view is created with necessary filters to show the relevant resources.
 
 1.  Click **Visualize** to begin.
 2.  Give the view a name (rename).

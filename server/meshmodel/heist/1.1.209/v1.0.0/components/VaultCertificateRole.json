@@ -1,0 +1,195 @@
+{
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "VaultCertificateRole",
+   "schema": "{\n \"description\": \"VaultCertificateRole is the Schema for the VaultCertificateRole API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"VaultCertificateRoleSpec defines the desired state of VaultCertificateRole.\",\n   \"properties\": {\n    \"issuer\": {\n     \"description\": \"Issuer specifies the certificate authority used to issue the certificate.\",\n     \"type\": \"string\"\n    },\n    \"settings\": {\n     \"description\": \"Settings configures the settings of the certificate.\",\n     \"properties\": {\n      \"allowAnyName\": {\n       \"description\": \"AllowAnyName configures if certificates can be issued for any common name. Additional information: https://www.vaultproject.io/api-docs/secret/pki#allow_any_name.\",\n       \"type\": \"boolean\"\n      },\n      \"allowBareDomains\": {\n       \"description\": \"AllowBareDomains configures if certificates can be issued for bare domains. Additional information: https://www.vaultproject.io/api-docs/secret/pki#allow_bare_domains.\",\n       \"type\": \"boolean\"\n      },\n      \"allowGlobDomains\": {\n       \"description\": \"AllowGlobDomains configures if certificates can be issued for wildcard domains. Additional information: https://www.vaultproject.io/api-docs/secret/pki#allow_glob_domains.\",\n       \"type\": \"boolean\"\n      },\n      \"allowIPSans\": {\n       \"description\": \"AllowIPSans configures if certificates with IP subject alternative names can be issued. Additional information: https://www.vaultproject.io/api-docs/secret/pki#allow_ip_sans.\",\n       \"type\": \"boolean\"\n      },\n      \"allowLocalhost\": {\n       \"description\": \"AllowLocalhost configures if the certificate is valid for localhost. Additional information: https://www.vaultproject.io/api-docs/secret/pki#allow_localhost.\",\n       \"type\": \"boolean\"\n      },\n      \"allowSubdomains\": {\n       \"description\": \"AllowSubdomains configures if certificates can be issued for subdomains. Additional information: https://www.vaultproject.io/api-docs/secret/pki#allow_subdomains.\",\n       \"type\": \"boolean\"\n      },\n      \"allowedDomains\": {\n       \"description\": \"AllowedDomains configures a list of domains for which this certificate can be issued. Additional information: https://www.vaultproject.io/api-docs/secret/pki#allowed_domains.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"allowedDomainsTemplate\": {\n       \"description\": \"AllowedDomainsTemplate configures if the list of allowed domains can make used of templates. Additional information: https://www.vaultproject.io/api-docs/secret/pki#allowed_domains_template.\",\n       \"type\": \"boolean\"\n      },\n      \"allowedOtherSans\": {\n       \"description\": \"AllowedOtherSans configures an allow list of other subject alternative names for which certificates can be issued. Additional information: https://www.vaultproject.io/api-docs/secret/pki#allowed_other_sans.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"allowedURISans\": {\n       \"description\": \"AllowedURISans configures an allow list of URI subject alternative names for which certificates can be issued. Additional information: https://www.vaultproject.io/api-docs/secret/pki#allowed_uri_sans.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"basicConstraintsValidForNonCA\": {\n       \"description\": \"BasicConstraintsValidForNonCA configures if basic constraints should be valid when issuing non-ca certificates. Additional information: https://www.vaultproject.io/api-docs/secret/pki#basic_constraints_valid_for_non_ca.\",\n       \"type\": \"boolean\"\n      },\n      \"clientFlag\": {\n       \"description\": \"ClientFlag configures if issued certificates should have the client flag set. Additional information: https://www.vaultproject.io/api-docs/secret/pki#client_flag.\",\n       \"type\": \"boolean\"\n      },\n      \"codeSigningFlag\": {\n       \"description\": \"CodeSigningFlag configures if issued certificates should have the code signing flag set. Additional information: https://www.vaultproject.io/api-docs/secret/pki#code_signing_flag.\",\n       \"type\": \"boolean\"\n      },\n      \"emailProtectionFlag\": {\n       \"description\": \"EmailProtectionFlag configures if issued certificates should have the email protection flag set. Additional information: https://www.vaultproject.io/api-docs/secret/pki#email_protection_flag.\",\n       \"type\": \"boolean\"\n      },\n      \"enforceHostNames\": {\n       \"description\": \"EnforceHostNames configures if host names should be enforced. Additional information: https://www.vaultproject.io/api-docs/secret/pki#enforce_hostnames.\",\n       \"type\": \"boolean\"\n      },\n      \"extKeyUsage\": {\n       \"description\": \"ExtendedKeyUsage configures a list of extended key usages issued certificate should allow. Additional information: https://www.vaultproject.io/api-docs/secret/pki#ext_key_usage-1.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"extKeyUsageOIDS\": {\n       \"description\": \"ExtendedKeyUsageOIDS configures a list of key usage OIDs issued certificate should allow. Additional information: https://www.vaultproject.io/api-docs/secret/pki#ext_key_usage_oids-1.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"keyBits\": {\n       \"description\": \"KeyBits sets the size of the key of the certificate authority. Ignored in signing operations when KeyType is `any`. Additional information: https://www.vaultproject.io/api-docs/secret/pki#key_bits-3.\",\n       \"enum\": [\n        224,\n        256,\n        384,\n        521,\n        2048,\n        3072,\n        4096\n       ],\n       \"type\": \"integer\"\n      },\n      \"keyType\": {\n       \"default\": \"any\",\n       \"description\": \"KeyType sets the key algorithm of the CA certificate. Can be either rsa, ec or any if either type and any bit size should be supported. ED25519 is not supported yet. Additional information: https://www.vaultproject.io/api-docs/secret/pki#key_type-3.\",\n       \"enum\": [\n        \"rsa\",\n        \"ec\",\n        \"any\"\n       ],\n       \"type\": \"string\"\n      },\n      \"keyUsage\": {\n       \"description\": \"KeyUsage configures a list of usages issued certificate should allow. Additional information: https://www.vaultproject.io/api-docs/secret/pki#key_usage-1.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"maxTTL\": {\n       \"description\": \"MaxTTL configures the maximum validity of the certificate. Additional information: https://www.vaultproject.io/api-docs/secret/pki#max_ttl.\",\n       \"type\": \"string\"\n      },\n      \"notBeforeDuration\": {\n       \"description\": \"NotBeforeDuration configures a delay which has to elapse for any issued certificate to become valid. Additional information: https://www.vaultproject.io/api-docs/secret/pki#not_before_duration-2.\",\n       \"type\": \"string\"\n      },\n      \"policyIdentifiers\": {\n       \"description\": \"PolicyIdentifiers configures a list of policy OIDs which should be set on issued certificates. Additional information: https://www.vaultproject.io/api-docs/secret/pki#policy_identifiers.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"requireCN\": {\n       \"description\": \"RequireCommonName configures if setting a common name is required when issuing certificates. Additional information: https://www.vaultproject.io/api-docs/secret/pki#require_cn.\",\n       \"type\": \"boolean\"\n      },\n      \"serverFlag\": {\n       \"description\": \"ServerFlag configures if issued certificates should have the server flag set. Additional information: https://www.vaultproject.io/api-docs/secret/pki#server_flag.\",\n       \"type\": \"boolean\"\n      },\n      \"ttl\": {\n       \"description\": \"TTL configures the validity of the certificate. Additional information: https://www.vaultproject.io/api-docs/secret/pki#ttl.\",\n       \"type\": \"string\"\n      },\n      \"useCSRCommonName\": {\n       \"description\": \"UseCSRCommonName configures if the common name from a CSR should be set in issued certificate. Additional information: https://www.vaultproject.io/api-docs/secret/pki#use_csr_common_name.\",\n       \"type\": \"boolean\"\n      },\n      \"useCSRSans\": {\n       \"description\": \"UseCSRSans configures if the subject alternative names from a CSR should be included in issued certificates. Additional information: https://www.vaultproject.io/api-docs/secret/pki#use_csr_sans.\",\n       \"type\": \"boolean\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"subject\": {\n     \"description\": \"Subject configures the subject fields of the Certificate.\",\n     \"properties\": {\n      \"country\": {\n       \"description\": \"Country sets the country field (C) in the certificate subject.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"locality\": {\n       \"description\": \"Locality sets the locality field (L) in the certificate subject.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"organization\": {\n       \"description\": \"Organization sets the organization (O) field in the certificate subject.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"ou\": {\n       \"description\": \"OrganizationalUnit sets the organizational unit (OU) field in the certificate subject.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"postalCode\": {\n       \"description\": \"PostalCode sets the postal code field in the certificate subject.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"province\": {\n       \"description\": \"Province sets the state or province field (ST) in the certificate subject.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"streetAddress\": {\n       \"description\": \"StreetAddress sets the street address field in the certificate subject.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Vault Certificate Role\",\n \"type\": \"object\"\n}",
+   "version": "heist.youniqx.com/v1alpha1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "Vault Certificate Role",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "published": false,
+   "source_uri": "https://github.com/youniqx/helm-charts/releases/download/heist-1.1.209/heist-1.1.209.tgz"
+  },
+  "model": {
+   "category": {
+    "name": "Uncategorized"
+   },
+   "displayName": "Heist",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "source_uri": "https://github.com/youniqx/helm-charts/releases/download/heist-1.1.209/heist-1.1.209.tgz",
+    "styleOverrides": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "model": {
+    "version": "1.1.209"
+   },
+   "name": "heist",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "subCategory": "Uncategorized",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "svgColor": "",
+   "svgWhite": ""
+  },
+  "version": "v1.0.0"
+ }

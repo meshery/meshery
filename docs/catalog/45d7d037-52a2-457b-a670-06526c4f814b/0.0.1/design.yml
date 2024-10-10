@@ -1,0 +1,710 @@
+name: mongoDB-Sample-app
+version: 0.0.12
+services:
+  sample-app-backend-vgykk:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels:
+      app: sample-app-backend
+      app.kubernetes.io/instance: sample-app
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: sample-app
+      app.kubernetes.io/version: 0.1.0
+      helm.sh/chart: sample-app-0.1.0
+    model: kubernetes
+    name: sample-app-backend
+    namespace: default
+    settings:
+      spec:
+        ports:
+        - name: http
+          port: 8000
+          protocol: TCP
+          target Port: http
+        selector:
+          app: sample-app-backend
+          app.kubernetes.io/instance: sample-app
+          app.kubernetes.io/name: sample-app
+        type: ClusterIP
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: c276617a-5c31-42e4-9519-b43bdc79e1fa
+            metadata:
+              port: 8000
+              protocol: TCP
+            source: ac414466-82c8-4d4e-aa5b-b6a98c3879b4
+            subType: Network
+            target: 01823411-984c-47f4-926c-d0793cdb4ebe
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: ac414466-82c8-4d4e-aa5b-b6a98c3879b4
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          secondaryColor: '#7aa1f0'
+          shape: round-triangle
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides:
+            background-position-y: 4.5
+            height: 20
+            padding: 12
+            width: 20
+            x: 10px
+            "y": 12px
+            z-index: 3
+          styles: '{"height":20,"width":20,"padding":12,"background-position-y":4.5,"x":"10px","y":"12px"}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/service-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/service-white.svg
+        position:
+          posX: 50
+          posY: 130
+        whiteboardData:
+          style: {}
+    type: Service
+    version: ""
+  sample-app-backend-zbnlc:
+    annotations: {}
+    apiVersion: apps/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels:
+      app.kubernetes.io/instance: sample-app
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: sample-app
+      app.kubernetes.io/version: 0.1.0
+      helm.sh/chart: sample-app-0.1.0
+    model: kubernetes
+    name: sample-app-backend
+    namespace: default
+    settings:
+      spec:
+        replicas: 1
+        selector:
+          match Labels:
+            app: sample-app-backend
+            app.kubernetes.io/instance: sample-app
+            app.kubernetes.io/name: sample-app
+        template:
+          metadata:
+            labels:
+              app: sample-app-backend
+              app.kubernetes.io/instance: sample-app
+              app.kubernetes.io/name: sample-app
+          spec:
+            containers:
+            - command:
+              - python3
+              - main.py
+              env:
+              - name: DB_URL
+                value From:
+                  secret Key Ref:
+                    key: connectionString.standard
+                    name: <resource-name>-<database>-<user>
+              - name: DB_NAME
+                value: admin
+              image: quay.io/mongodb/farm-intro-backend:0.1
+              image Pull Policy: Always
+              name: sample-app
+              ports:
+              - container Port: 8000
+                name: http
+                protocol: TCP
+              resources: {}
+              security Context: {}
+            security Context: {}
+            service Account Name: sample-app
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: c276617a-5c31-42e4-9519-b43bdc79e1fa
+            metadata:
+              port: 8000
+              protocol: TCP
+            source: ac414466-82c8-4d4e-aa5b-b6a98c3879b4
+            subType: Network
+            target: 01823411-984c-47f4-926c-d0793cdb4ebe
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: 01823411-984c-47f4-926c-d0793cdb4ebe
+        meshmodel-metadata:
+          capabilities: |-
+            {
+              "fieldRefs": [
+                {
+                  "fieldPath": "spec.template.spec.containers",
+                  "jsonSchemaPath": "properties.spec.allOf[0].properties.template.allOf[0].properties.spec.allOf[0].properties.containers.items.allOf[0]",
+                  "component": {
+                    "kind": "Container",
+                    "model": "meshery-core"
+                  },
+                  "renderChildren": true
+                }
+              ],
+              "designer": {
+                "edit": {
+                  "shape": {
+                    "convert-shape": false
+                  }
+                }
+              }
+            }
+          defaultData: ""
+          genealogy: parent
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: Created by Meshery Authors
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          secondaryColor: '#7aa1f0'
+          shape: round-rectangle
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides:
+            background-opacity: 0.5
+            border-width: 2
+            z-index: 4
+          styles: '{"border-width":2,"background-opacity":0.5}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg
+          svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/deployment-complete.svg
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/deployment-white.svg
+        position:
+          posX: 230
+          posY: 119
+        whiteboardData:
+          style: {}
+    type: Deployment
+    version: ""
+  sample-app-frontend-jiccw:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels:
+      app: sample-app-frontend
+      app.kubernetes.io/instance: sample-app
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: sample-app
+      app.kubernetes.io/version: 0.1.0
+      helm.sh/chart: sample-app-0.1.0
+    model: kubernetes
+    name: sample-app-frontend
+    namespace: default
+    settings:
+      spec:
+        ports:
+        - name: http
+          port: 3000
+          protocol: TCP
+          target Port: http
+        selector:
+          app: sample-app-frontend
+          app.kubernetes.io/instance: sample-app
+          app.kubernetes.io/name: sample-app
+        type: ClusterIP
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: 0274aef1-7b3d-49a1-91fd-9c8978e74a25
+            metadata:
+              port: 3000
+              protocol: TCP
+            source: 141a267b-480a-451e-b7a6-4af5692dbca8
+            subType: Network
+            target: 348d4e06-f4c8-4a0f-bbe5-94c79fea7ea7
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: 141a267b-480a-451e-b7a6-4af5692dbca8
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          secondaryColor: '#7aa1f0'
+          shape: round-triangle
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides:
+            background-position-y: 4.5
+            height: 20
+            padding: 12
+            width: 20
+            x: 10px
+            "y": 12px
+            z-index: 6
+          styles: '{"height":20,"width":20,"padding":12,"background-position-y":4.5,"x":"10px","y":"12px"}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/service-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/service-white.svg
+        position:
+          posX: 150
+          posY: 130
+        whiteboardData:
+          style: {}
+    type: Service
+    version: ""
+  sample-app-frontend-venyd:
+    annotations: {}
+    apiVersion: apps/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels:
+      app: sample-app-frontend
+      app.kubernetes.io/instance: sample-app
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: sample-app
+      app.kubernetes.io/version: 0.1.0
+      helm.sh/chart: sample-app-0.1.0
+    model: kubernetes
+    name: sample-app-frontend
+    namespace: default
+    settings:
+      spec:
+        replicas: 1
+        selector:
+          match Labels:
+            app: sample-app-frontend
+            app.kubernetes.io/instance: sample-app
+            app.kubernetes.io/name: sample-app
+        template:
+          metadata:
+            labels:
+              app: sample-app-frontend
+              app.kubernetes.io/instance: sample-app
+              app.kubernetes.io/name: sample-app
+          spec:
+            containers:
+            - env:
+              - name: DANGEROUSLY_DISABLE_HOST_CHECK
+                value: "true"
+              - name: SVC_BACKEND
+                value: sample-app-backend:8000
+              image: quay.io/mongodb/farm-intro-frontend:0.1
+              image Pull Policy: Always
+              name: sample-app
+              ports:
+              - container Port: 3000
+                name: http
+                protocol: TCP
+              resources: {}
+              security Context: {}
+            security Context: {}
+            service Account Name: sample-app
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: 0274aef1-7b3d-49a1-91fd-9c8978e74a25
+            metadata:
+              port: 3000
+              protocol: TCP
+            source: 141a267b-480a-451e-b7a6-4af5692dbca8
+            subType: Network
+            target: 348d4e06-f4c8-4a0f-bbe5-94c79fea7ea7
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: 348d4e06-f4c8-4a0f-bbe5-94c79fea7ea7
+        meshmodel-metadata:
+          capabilities: |-
+            {
+              "fieldRefs": [
+                {
+                  "fieldPath": "spec.template.spec.containers",
+                  "jsonSchemaPath": "properties.spec.allOf[0].properties.template.allOf[0].properties.spec.allOf[0].properties.containers.items.allOf[0]",
+                  "component": {
+                    "kind": "Container",
+                    "model": "meshery-core"
+                  },
+                  "renderChildren": true
+                }
+              ],
+              "designer": {
+                "edit": {
+                  "shape": {
+                    "convert-shape": false
+                  }
+                }
+              }
+            }
+          defaultData: ""
+          genealogy: parent
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: Created by Meshery Authors
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          secondaryColor: '#7aa1f0'
+          shape: round-rectangle
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides:
+            background-opacity: 0.5
+            border-width: 2
+            z-index: 5
+          styles: '{"border-width":2,"background-opacity":0.5}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg
+          svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/deployment-complete.svg
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/deployment-white.svg
+        position:
+          posX: 130
+          posY: 119
+        whiteboardData:
+          style: {}
+    type: Deployment
+    version: ""
+  sample-app-mjppo:
+    annotations: {}
+    apiVersion: ""
+    dependsOn:
+    - sample-app-backend-zbnlc
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: meshery-core
+    name: sample-app
+    namespace: ""
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        elementType: FIELD_REF_NODE
+        fieldRefData:
+          elementType: FIELD_REF_NODE
+          fieldPath: spec.template.spec.containers[0]
+          jsonSchemaPath: properties.spec.allOf[0].properties.template.allOf[0].properties.spec.allOf[0].properties.containers.items.allOf[0]
+        id: dbb68564-2415-42aa-985f-4292e5124fa1
+        label: spec.template.spec.containers[0]
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          components: null
+          description: ""
+          displayName: Meshery Core
+          hostID: 26e64aa8-2d86-57bd-92b3-2a73160d27b4
+          id: 71af0d59-f11b-5151-924a-f9f805edb3df
+          metadata:
+            isAnnotation: false
+            subCategory: App Definition and Development
+            svgColor: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+            svgComplete: ""
+            svgWhite: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+          model:
+            version: 0.7.2
+          name: meshery-core
+          registrant:
+            hostname: artifacthub
+          relationships: null
+          schemaVersion: models.meshery.io/v1beta1
+          status: enabled
+          subCategory: App Definition and Development
+          version: v1.0.0
+        meshmodel-metadata:
+          capabilities: |-
+            {
+              "designer": {
+                "capabilities": {
+                  "config": true,
+                  "label": false,
+                  "policy": false,
+                  "relationships": true,
+                  "json-schema": false,
+                  "permissions": false,
+                  "workflow": false,
+                  "gitops": false,
+                  "history": false
+                },
+                "supportsCompoundDragAndDrop": false,
+                "edit": {
+                  "config": true,
+                  "copy": false,
+                  "delete": true,
+                  "duplicate": false,
+                  "reset-styles": false,
+                  "resolve": false,
+                  "lock": false,
+                  "shape": {
+                    "convert-shape": true
+                  },
+                  "style": true
+                },
+                "label": {
+                  "edit": false,
+                  "show": true,
+                  "sync-with-config-property": "name"
+                }
+              }
+            }
+          defaultData: ""
+          genealogy: ""
+          hasInvalidSchema: true
+          isAnnotation: true
+          primaryColor: '#326CE5'
+          secondaryColor: '#00D3A9'
+          shape: circle
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides:
+            z-index: 7
+          styles: ""
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/meshery-core/color/container-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/meshery-core/white/container-white.svg
+        parent: 01823411-984c-47f4-926c-d0793cdb4ebe
+        position:
+          posX: 230
+          posY: 110
+        whiteboardData: {}
+    type: Container
+    version: ""
+  sample-app-ucwix:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels:
+      app.kubernetes.io/instance: sample-app
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: sample-app
+      app.kubernetes.io/version: 0.1.0
+      helm.sh/chart: sample-app-0.1.0
+    model: kubernetes
+    name: sample-app
+    namespace: default
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 9a0ca95c-ffcc-4678-a14d-2145126d4e4a
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          secondaryColor: '#7aa1f0'
+          shape: bottom-round-rectangle
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides: ""
+          styles: ""
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/serviceaccount-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/serviceaccount-white.svg
+        position:
+          posX: 30
+          posY: 190
+        whiteboardData:
+          style: {}
+    type: ServiceAccount
+    version: ""
+  sample-app-vyonc:
+    annotations: {}
+    apiVersion: ""
+    dependsOn:
+    - sample-app-frontend-venyd
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: meshery-core
+    name: sample-app
+    namespace: ""
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        elementType: FIELD_REF_NODE
+        fieldRefData:
+          elementType: FIELD_REF_NODE
+          fieldPath: spec.template.spec.containers[0]
+          jsonSchemaPath: properties.spec.allOf[0].properties.template.allOf[0].properties.spec.allOf[0].properties.containers.items.allOf[0]
+        id: 6fa14ccb-ed79-4cea-85c4-8eebc18265e7
+        label: spec.template.spec.containers[0]
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          components: null
+          description: ""
+          displayName: Meshery Core
+          hostID: 26e64aa8-2d86-57bd-92b3-2a73160d27b4
+          id: 71af0d59-f11b-5151-924a-f9f805edb3df
+          metadata:
+            isAnnotation: false
+            subCategory: App Definition and Development
+            svgColor: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+            svgComplete: ""
+            svgWhite: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+          model:
+            version: 0.7.2
+          name: meshery-core
+          registrant:
+            hostname: artifacthub
+          relationships: null
+          schemaVersion: models.meshery.io/v1beta1
+          status: enabled
+          subCategory: App Definition and Development
+          version: v1.0.0
+        meshmodel-metadata:
+          capabilities: |-
+            {
+              "designer": {
+                "capabilities": {
+                  "config": true,
+                  "label": false,
+                  "policy": false,
+                  "relationships": true,
+                  "json-schema": false,
+                  "permissions": false,
+                  "workflow": false,
+                  "gitops": false,
+                  "history": false
+                },
+                "supportsCompoundDragAndDrop": false,
+                "edit": {
+                  "config": true,
+                  "copy": false,
+                  "delete": true,
+                  "duplicate": false,
+                  "reset-styles": false,
+                  "resolve": false,
+                  "lock": false,
+                  "shape": {
+                    "convert-shape": true
+                  },
+                  "style": true
+                },
+                "label": {
+                  "edit": false,
+                  "show": true,
+                  "sync-with-config-property": "name"
+                }
+              }
+            }
+          defaultData: ""
+          genealogy: ""
+          hasInvalidSchema: true
+          isAnnotation: true
+          primaryColor: '#326CE5'
+          secondaryColor: '#00D3A9'
+          shape: circle
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides:
+            z-index: 8
+          styles: ""
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/meshery-core/color/container-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/meshery-core/white/container-white.svg
+        parent: 348d4e06-f4c8-4a0f-bbe5-94c79fea7ea7
+        position:
+          posX: 130
+          posY: 110
+        whiteboardData: {}
+    type: Container
+    version: ""
