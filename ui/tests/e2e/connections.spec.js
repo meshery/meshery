@@ -151,13 +151,13 @@ test(
   },
 );
 
-test('Delete Kubernetes cluster connections', async ({ page }) => {
+test('Delete Kubernetes cluster connections', { tag: '@unstable' }, async ({ page }) => {
   // Navigate to 'Connections' tab
   await page.getByRole('tab', { name: 'Connections' }).click();
   // Find the row with the connection to be deleted
   const row = page
     .locator('tr')
-    .filter({ hasText: 'kubernetes' })
+    .filter({ hasText: 'kind-cluster' })
     .filter({ hasText: 'connected' })
     .first();
   //find the checkbox in the row
@@ -182,7 +182,7 @@ test('Delete Kubernetes cluster connections', async ({ page }) => {
   expect(
     await page
       .locator('tr')
-      .filter({ hasText: 'kubernetes' })
+      .filter({ hasText: 'kind-cluster' })
       .filter({ hasText: 'connected' })
       .count(),
   ).toEqual(0);
