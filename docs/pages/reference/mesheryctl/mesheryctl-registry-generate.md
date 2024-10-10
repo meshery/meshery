@@ -54,20 +54,14 @@ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tu
 </div>
 </pre> 
 
-Easily generate Meshery models and components from CSV files in a local directory using the following command. To get started, you can use a sample template folder provided [here](https://github.com/meshery/meshery/tree/master/docs/assets/model-and-component-csv-templates)
+Easily generate Meshery models and components from CSV files in a local directory using the following command. To get started, you can use a sample template directory provided [here](https://github.com/meshery/meshery/tree/master/docs/assets/model-and-component-csv-templates)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl registry generate --directory <DIRECTORY_PATH>
 
 </div>
 </pre> 
-<!-- 
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-    
 
-</div>
-</pre>  -->
 
 ## Options
 
