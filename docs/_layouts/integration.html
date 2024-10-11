@@ -40,6 +40,21 @@ layout: default
 {% include_cached integration/models-components.html %}
 {% include_cached integration/meshery-registry.html %}
 
+<section class="relatedDesignSection">
+    <button>{{page.docURL}}</button>
+    {% assign tech = page.docURL | split: '/' | last %}
+    <ul>
+        <li>{{ tech }}</li>
+    {% for design in site.catalog %}
+    {% if design.compatibility contains tech %}
+    <li class="gygy">
+       {{design.name}}
+    </li>
+    {% endif %}
+    {% endfor %}
+</ul>
+</section>
+
 {% if page.suggested-reading != false and page.title and page.type and page.category and page.url %}
 {% assign related_models_by_category = site.models | where_exp: "model", "model.integrations-category == page.integrations-category" %}
 {% include_cached suggested-reading.html reading=related_models_by_category h2_text="Related Models" title=page.title type=page.type category=page.category
