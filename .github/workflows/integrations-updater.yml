@@ -130,7 +130,7 @@ jobs:
 
       - name: Send Email on Model Publish Failure
         if: failure()
-        uses: dawidd6/action-send-mail@v3.7.1
+        uses: dawidd6/action-send-mail@v3
         with:
           server_address: smtp.gmail.com
           server_port: 465
