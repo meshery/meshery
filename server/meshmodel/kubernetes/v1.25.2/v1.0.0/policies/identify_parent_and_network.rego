@@ -28,12 +28,13 @@ identify_relationship(
 		some selectors in selector_set.allow.to
 		kind := selectors.kind
 	}
+	deny_selectors := object.get(selector_set, "deny", [])
 
 	# contains "selectors.from" components only, eg: Role/ClusterRole(s) comps only
 	from := extract_components(design_file.components, from_selectors)
 	to := extract_components(design_file.components, to_selectors)
 
-	evaluation_results := evaluate_hierarchy(relationship, from, to, from_selectors, to_selectors, selector_set.deny)
+	evaluation_results := evaluate_hierarchy(relationship, from, to, from_selectors, to_selectors, deny_selectors)
 }
 
 evaluate_hierarchy(relationship, from, to, from_selectors, to_selectors, deny_selectors) := {result |

@@ -42,6 +42,7 @@ identify_relationship(
 		match_selector[0].kind != "self"
 		type = match_selector[0].kind
 	}
+	deny_selectors := object.get(selector_set, "deny", [])
 
 	# This is a set of set,
 	# It contains results for a particular binding_type and each binding_type can be binded by different type of nodes.
@@ -50,8 +51,7 @@ identify_relationship(
 		binding_declarations := extract_components(design_file.components, [{"kind": comp}])
 
 		count(binding_declarations) > 0
-
-		result := evaluate_bindings(binding_declarations, relationship, from, to, from_selectors, to_selectors, selector_set.deny)
+		result := evaluate_bindings(binding_declarations, relationship, from, to, from_selectors, to_selectors, deny_selectors)
 	})
 }
 
