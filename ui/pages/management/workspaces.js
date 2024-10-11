@@ -3,7 +3,7 @@ import { NoSsr } from '@mui/material';
 import { connect } from 'react-redux';
 import Head from 'next/head';
 import { WorkspacesComponent } from '../../components/Lifecycle';
-import { Box } from '@mui/material';
+import { Box } from '@layer5/sistent';
 
 const Workspaces = () => {
   return (

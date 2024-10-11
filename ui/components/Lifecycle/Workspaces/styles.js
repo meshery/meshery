@@ -1,13 +1,12 @@
-import { styled } from '@mui/material/styles';
-import theme, { Colors } from '../../../themes/app';
-import { Checkbox, Box, Button, Card, Typography } from '@layer5/sistent';
+import { Colors } from '../../../themes/app';
+import { Checkbox, Box, Button, Card, Typography, styled, useTheme } from '@layer5/sistent';
 
 /** Workspace card wrapper */
 export const CardWrapper = styled(Card)(({ theme }) => ({
   width: '100%',
   display: 'flex',
   flexDirection: 'column',
-  backgroundColor: theme.palette.secondary.elevatedComponents,
+  backgroundColor: theme.palette.text.inverse,
   padding: '20px',
   '&:hover': {
     cursor: 'pointer',
@@ -79,13 +78,19 @@ export const DescriptionLabel = styled(EmptyDescription)({
   },
 });
 
-export const AllocationButton = styled(Box)({
-  background: theme.palette.secondary.focused,
-  padding: '10px 10px 1px 10px',
-  borderRadius: '4px',
-  height: '100%',
-  display: 'flex',
-  width: '100%',
+export const AllocationButton = styled(Box)(() => {
+  const theme = useTheme();
+  return {
+    background:
+      theme.palette.mode === 'dark'
+        ? theme.palette.background.brand.default
+        : theme.palette.icon.weather,
+    padding: '10px 10px 1px 10px',
+    borderRadius: '4px',
+    height: '100%',
+    display: 'flex',
+    width: '100%',
+  };
 });
 
 export const AllocationWorkspace = styled(AllocationButton)({
@@ -98,17 +103,17 @@ export const AllocationWorkspace = styled(AllocationButton)({
   },
 });
 
-export const PopupButton = styled(Button)(() => ({
+export const PopupButton = styled(Button)(({ theme }) => ({
   width: '100%',
   borderRadius: '4px',
-  background: theme.palette.secondary.white,
+  background: theme.palette.text.default,
   boxShadow: '0px 4px 4px 0px rgba(0, 0, 0, 0.25)',
   display: 'flex',
   flexDirection: 'column',
   marginBottom: '10px',
   color: Colors.charcoal,
   '&:hover': {
-    background: theme.palette.secondary.white,
+    background: theme.palette.text.default,
   },
   padding: '15px 10px',
 }));
@@ -128,17 +133,17 @@ export const TabCount = styled('p')({
   marginBottom: '5px',
 });
 
-export const ViewButton = styled(Button)(() => ({
+export const ViewButton = styled(Button)(({ theme }) => ({
   width: '100%',
   borderRadius: '4px',
-  background: theme.palette.secondary.white,
+  background: theme.palette.text.default,
   boxShadow: '0px 4px 4px 0px rgba(0, 0, 0, 0.25)',
   display: 'flex',
   flexDirection: 'column',
   marginBottom: '10px',
   color: `${Colors.charcoal}30 !important`,
   '&:hover': {
-    background: theme.palette.secondary.white,
+    background: theme.palette.text.default,
   },
   padding: '15px 10px',
 }));

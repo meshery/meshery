@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { ArrowForward, Edit } from '@mui/icons-material';
-import { DeleteIcon, Grid, Button } from '@layer5/sistent';
+import { DeleteIcon, Grid, Button, useTheme } from '@layer5/sistent';
 import {
   BulkSelectCheckbox,
   CardTitle,
@@ -33,6 +33,7 @@ export const formattoLongDate = (date) => {
 };
 
 export const TransferButton = ({ title, count, onAssign, disabled }) => {
+  const theme = useTheme();
   return (
     <UsesSistent>
       <PopupButton
@@ -40,12 +41,12 @@ export const TransferButton = ({ title, count, onAssign, disabled }) => {
         disabled={disabled}
         color="primary"
         sx={{
-          color: '#3C494F',
-          backgroundColor: '#ffffff',
+          color: theme.palette.background.neutral?.default,
+          backgroundColor: theme.palette.background.constant.table,
           margin: '0px 0px 10px',
           padding: '20px 10px',
           '&:hover': {
-            backgroundColor: '#ffffff',
+            backgroundColor: theme.palette.background.constant.table,
             boxShadow: 'none',
           },
         }}
@@ -278,7 +279,7 @@ const CardBack = ({
                 <BulkSelectCheckbox onClick={(e) => e.stopPropagation()} onChange={onSelect} />
               </UsesSistent>
               <CardTitle
-                sx={{ color: theme.palette.secondary.white }}
+                sx={{ color: theme.palette.text.default }}
                 variant="body2"
                 onClick={(e) => e.stopPropagation()}
               >
@@ -325,7 +326,7 @@ const CardBack = ({
                     : !CAN(keys.DELETE_WORKSPACE.action, keys.DELETE_WORKSPACE.subject)
                 }
               >
-                <DeleteIcon fill={theme.palette.secondary.whiteIcon} />
+                <DeleteIcon fill={theme.palette.text.default} />
               </Button>
             </Grid>
           </Grid>
@@ -337,7 +338,7 @@ const CardBack = ({
             position: 'absolute',
             bottom: '20px',
             width: '100%',
-            color: `${theme.palette.secondary.white}99`,
+            color: `${theme.palette.text.default}99`,
           }}
         >
           <Grid xs={6} sx={{ textAlign: 'left' }}>

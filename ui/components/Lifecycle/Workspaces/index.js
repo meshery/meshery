@@ -1,11 +1,10 @@
 import { NoSsr } from '@mui/material';
 import { connect } from 'react-redux';
 import { withRouter } from 'next/router';
-import { Pagination, PaginationItem } from '@material-ui/lab';
+// import { Pagination, PaginationItem } from '@material-ui/lab';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import DesignsIcon from '../../../assets/icons/DesignIcon';
-import { styled } from '@mui/material/styles';
 
 import WorkspaceIcon from '../../../assets/icons/Workspace';
 import { EmptyState, GenericModal } from '../General';
@@ -23,6 +22,10 @@ import {
   DeleteIcon,
   SearchBar,
   ErrorBoundary,
+  styled,
+  Pagination,
+  PaginationItem,
+  useTheme,
 } from '@layer5/sistent';
 import AddIconCircleBorder from '../../../assets/icons/AddIconCircleBorder';
 import { useEffect, useRef, useState } from 'react';
@@ -46,7 +49,7 @@ import PromptComponent, { PROMPT_VARIANTS } from '../../PromptComponent';
 import { debounce } from 'lodash';
 import { EVENT_TYPES } from '../../../lib/event-types';
 import EnvironmentIcon from '../../../assets/icons/Environment';
-import theme from '../../../themes/app';
+// import theme from '../../../themes/app';
 import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
 import DefaultError from '@/components/General/error-404/index';
@@ -59,18 +62,24 @@ export const CreateButtonWrapper = styled('div')({
   whiteSpace: 'nowrap',
 });
 
-export const ToolWrapper = styled('div')(({ theme }) => ({
-  marginBottom: '3rem',
-  display: 'flex',
-  justifyContent: 'space-between',
-  backgroundColor: theme.palette.mode === 'dark' ? '#464646' : '#FFFFFF',
-  boxShadow: '0px 2px 4px -1px rgba(0,0,0,0.2)',
-  height: '4rem',
-  padding: '0.68rem',
-  borderRadius: '0.5rem',
-  position: 'relative',
-  zIndex: 101,
-}));
+export const ToolWrapper = styled('div')(() => {
+  const theme = useTheme();
+  return {
+    marginBottom: '3rem',
+    display: 'flex',
+    justifyContent: 'space-between',
+    backgroundColor:
+      theme.palette.mode === 'dark'
+        ? theme.palette.text.inverse
+        : theme.palette.background.constant?.white,
+    boxShadow: '0px 2px 4px -1px rgba(0,0,0,0.2)',
+    height: '4rem',
+    padding: '0.68rem',
+    borderRadius: '0.5rem',
+    position: 'relative',
+    zIndex: 101,
+  };
+});
 
 export const BulkActionWrapper = styled(`div`)({
   width: '100%',
@@ -90,6 +99,7 @@ const ACTION_TYPES = {
 };
 
 const Workspaces = ({ organization }) => {
+  const theme = useTheme();
   const [workspaceModal, setWorkspaceModal] = useState({
     open: false,
     schema: {},
@@ -606,36 +616,36 @@ const Workspaces = ({ organization }) => {
     <NoSsr>
       {CAN(keys.VIEW_WORKSPACE.action, keys.VIEW_WORKSPACE.subject) ? (
         <>
-          <ToolWrapper>
-            <CreateButtonWrapper>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                size="large"
-                onClick={(e) => handleWorkspaceModalOpen(e, ACTION_TYPES.CREATE)}
-                sx={{
-                  backgroundColor: '#607d8b',
-                  padding: '8px',
-                  borderRadius: '5px',
-                  marginRight: '2rem',
-                }}
-                disabled={!CAN(keys.CREATE_WORKSPACE.action, keys.CREATE_WORKSPACE.subject)}
-                data-cy="btnResetDatabase"
-              >
-                <AddIconCircleBorder sx={{ width: '20px', height: '20px' }} />
-                <Typography
+          <UsesSistent>
+            <ToolWrapper>
+              <CreateButtonWrapper>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  onClick={(e) => handleWorkspaceModalOpen(e, ACTION_TYPES.CREATE)}
                   sx={{
-                    paddingLeft: '4px',
-                    marginRight: '4px',
-                    textTransform: 'none',
+                    backgroundColor: '#607d8b',
+                    padding: '8px',
+                    borderRadius: '5px',
+                    marginRight: '2rem',
                   }}
+                  disabled={!CAN(keys.CREATE_WORKSPACE.action, keys.CREATE_WORKSPACE.subject)}
+                  data-cy="btnResetDatabase"
                 >
-                  Create
-                </Typography>
-              </Button>
-            </CreateButtonWrapper>
-            <UsesSistent>
+                  <AddIconCircleBorder sx={{ width: '20px', height: '20px' }} />
+                  <Typography
+                    sx={{
+                      paddingLeft: '4px',
+                      marginRight: '4px',
+                      textTransform: 'none',
+                    }}
+                  >
+                    Create
+                  </Typography>
+                </Button>
+              </CreateButtonWrapper>
               <SearchBar
                 onSearch={(value) => {
                   setSearch(value);
@@ -644,8 +654,8 @@ const Workspaces = ({ organization }) => {
                 expanded={isSearchExpanded}
                 setExpanded={setIsSearchExpanded}
               />
-            </UsesSistent>
-          </ToolWrapper>
+            </ToolWrapper>
+          </UsesSistent>
           {selectedWorkspaces.length > 0 && (
             <BulkActionWrapper>
               <Typography>
@@ -655,7 +665,7 @@ const Workspaces = ({ organization }) => {
               </Typography>
               <Button>
                 <DeleteIcon
-                  fill={theme.palette.secondary.error}
+                  fill={theme.palette.text.default}
                   onClick={handleDeleteWorkspacesModalOpen}
                   disabled={
                     CAN(keys.DELETE_WORKSPACE.action, keys.DELETE_WORKSPACE.subject) &&
