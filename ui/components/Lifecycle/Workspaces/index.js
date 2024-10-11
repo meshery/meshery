@@ -1,7 +1,7 @@
 import { NoSsr } from '@mui/material';
 import { connect } from 'react-redux';
 import { withRouter } from 'next/router';
-// import { Pagination, PaginationItem } from '@material-ui/lab';
+import { Pagination, PaginationItem } from '@material-ui/lab';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import DesignsIcon from '../../../assets/icons/DesignIcon';
@@ -23,8 +23,6 @@ import {
   SearchBar,
   ErrorBoundary,
   styled,
-  Pagination,
-  PaginationItem,
   useTheme,
 } from '@layer5/sistent';
 import AddIconCircleBorder from '../../../assets/icons/AddIconCircleBorder';
@@ -49,7 +47,6 @@ import PromptComponent, { PROMPT_VARIANTS } from '../../PromptComponent';
 import { debounce } from 'lodash';
 import { EVENT_TYPES } from '../../../lib/event-types';
 import EnvironmentIcon from '../../../assets/icons/Environment';
-// import theme from '../../../themes/app';
 import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
 import DefaultError from '@/components/General/error-404/index';
