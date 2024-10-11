@@ -260,12 +260,12 @@ func (ep *EnvironmentPersister) GetEnvironmentConnections(environmentID uuid.UUI
 		// Query for connection that are assigned to given environment
 		query = ep.DB.Table("environment_connection_mappings").
 			Joins("JOIN connections ON connections.id = environment_connection_mappings.connection_id").
-			Select("connections.name, connections.id").
+			Select("connections.name, connections.id, connections.metadata, connections.status, connections.type, connections.sub_type, connections.created_at, connections.updated_at, connections.deleted_at, connections.kind, connections.user_id").
 			Where("environment_connection_mappings.environment_id = ?", environmentID)
 	} else {
 		// Query for connections that are not assigned to the given environment
 		query = ep.DB.Table("connections").
-			Select("connections.name, connections.id").
+			Select("connections.name, connections.id, connections.metadata, connections.status, connections.type, connections.sub_type, connections.created_at, connections.updated_at, connections.deleted_at, connections.kind, connections.user_id").
 			Joins("LEFT JOIN environment_connection_mappings ON environment_connection_mappings.connection_id = connections.id AND environment_connection_mappings.environment_id = ?", environmentID).
 			Where("environment_connection_mappings.connection_id IS NULL")
 	}
