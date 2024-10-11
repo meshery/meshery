@@ -4,17 +4,6 @@ layout: default
 
 {{ page.subtitle }}
 {{ content }}
-<script>
-    function handleImageError(image) {
-        image.onerror = null;
-        image.src = '{{ page.image }}';
-    }
-    const designLinks = document.querySelectorAll('.design-link');
-    if (designLinks.length === 0) {
-        document.getElementById('related-designs-header').style.display = 'none';
-    }
-
-</script>
 
 <!-- components -->
 <div>
@@ -64,3 +53,15 @@ layout: default
 {% include_cached suggested-reading.html reading=related_models_by_category h2_text="Related Models" title=page.title type=page.type category=page.category
 url=page.url language="en" %}
 {% endif %}
+
+<script>
+    function handleImageError(image) {
+        image.onerror = null;
+        image.src = '{{ page.image }}';
+    }
+    const designLinks = document.querySelectorAll('.design-link');
+    if (designLinks.length === 0) {
+        document.getElementById('related-designs-header').style.display = 'none';
+    }
+
+</script>
