@@ -504,8 +504,8 @@ const UserPreference = (props) => {
                             ? '#3D4F57'
                             : '#293B43'
                           : index % 2 === 0
-                          ? '#E7EFF3'
-                          : '#C9DBE3',
+                            ? '#E7EFF3'
+                            : '#C9DBE3',
                     }}
                   >
                     <Typography variant="body1">{capability.feature}</Typography>
@@ -522,8 +522,8 @@ const UserPreference = (props) => {
                             ? '#3D4F57'
                             : '#293B43'
                           : index % 2 === 0
-                          ? '#E7EFF3'
-                          : '#C9DBE3',
+                            ? '#E7EFF3'
+                            : '#C9DBE3',
                     }}
                   >
                     <Typography variant="body1">{capability.endpoint}</Typography>

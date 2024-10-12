@@ -66,10 +66,10 @@ const BaseInput = (props) => {
             props.options?.inputType === 'file'
               ? null
               : additional && props?.value === 'New Value'
-              ? ''
-              : props?.value && xEncodeInURI
-              ? decodeURIComponent(props?.value)
-              : props?.value
+                ? ''
+                : props?.value && xEncodeInURI
+                  ? decodeURIComponent(props?.value)
+                  : props?.value
           } // remove the default value i.e. New Value for additionalFields
           id={props.id}
           margin="dense"
@@ -84,8 +84,8 @@ const BaseInput = (props) => {
                   e.target.value === ''
                     ? props.options.emptyValue
                     : xEncodeInURI
-                    ? encodeURIComponent(e.target.value)
-                    : e.target.value,
+                      ? encodeURIComponent(e.target.value)
+                      : e.target.value,
                 )
           }
           InputLabelProps={{
