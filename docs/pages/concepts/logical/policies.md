@@ -20,6 +20,8 @@ The relationships are a powerful way to design your infrastructure and each of t
 
 Meshery Server has a built-in policy engine, based on Open Policy Agent (OPA). Currently, Meshery Server is the only place where the policy evals occur. Policy evaluation is invoked each time a design is updated, and each time a design is imported. By default, policies evaluate for all registered relationships.
 
+The evaluation engine is singularly responsible for the auto-incrementation of design versions. <!--Implicitly, this means there is no offline-mode between; that any and every save action performed on a design must invoke and have a positive response from the evaluation engine.-->
+
 In any given Meshery deployment, you can reference and search the full set of registered policies (in Meshery's internal registry) in using either of Meshery's client interfaces.
 
 {% include alert.html type="info" title="Viewing All Registered Relationships" content='<p>You can view all registered relationships using either Meshery UI or Meshery CLI.</p><dl><dt>Using Meshery UI...</dt><dd>Navigate to <i>Settings</i>, then to <i>Registry</i></dd>.<dt>Using Meshery CLI...</dt><dd><code>mesheryctl policy list</code></dd></dl>' %}
