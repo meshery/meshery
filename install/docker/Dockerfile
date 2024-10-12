@@ -1,4 +1,4 @@
-FROM golang:1.21 as meshery-server
+FROM golang:1.21 AS meshery-server
 ARG TOKEN
 ARG GIT_VERSION
 ARG GIT_COMMITSHA
@@ -9,17 +9,17 @@ WORKDIR /github.com/meshery/meshery
 ADD . .
 RUN go clean -modcache; cd server; cd cmd; GOPROXY=https://proxy.golang.org GOSUMDB=off go build -ldflags="-w -s -X main.globalTokenForAnonymousResults=$TOKEN -X main.version=$GIT_VERSION -X main.commitsha=$GIT_COMMITSHA -X main.releasechannel=$RELEASE_CHANNEL" -tags draft -a -o /meshery .
 
-FROM node:18.13.0-alpine3.17 as base-node
+FROM node:18.13.0-alpine3.17 AS base-node
 
 # Installing NodeJS Dependencies
-FROM base-node as meshery-ui-deps
+FROM base-node AS meshery-ui-deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 COPY ui/package.json ui/package-lock.json ./
 ENV HUSKY=0
 RUN npm ci --omit=dev --legacy-peer-deps --ignore-scripts
 
-FROM base-node as meshery-ui-provider-deps
+FROM base-node AS meshery-ui-provider-deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 COPY provider-ui/package.json provider-ui/package-lock.json ./
@@ -42,14 +42,14 @@ ENV NEXT_TELEMETRY_DISABLED 1
 COPY provider-ui .
 RUN npm run build && npm run export
 
-FROM ubuntu as wrk2
+FROM ubuntu AS wrk2
 RUN apt-get -y update && apt-get -y install git && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/man/?? /usr/share/man/??_*
 RUN apt-get -y update && apt-get -y  install build-essential libssl-dev git zlib1g-dev
 RUN git config --global user.email "meshery@layer5.io"
 RUN git config --global user.name "meshery"
 RUN git clone --depth=1 https://github.com/layer5io/wrk2 && cd wrk2 && make
 
-FROM alpine:3.15.3 as seed_content
+FROM alpine:3.15.3 AS seed_content
 RUN apk add --no-cache curl
 WORKDIR /
 RUN lines=$(curl -s https://api.github.com/repos/layer5io/wasm-filters/releases/latest | grep "browser_download_url.*wasm" | cut -d : -f 2,3 | sed 's/"//g') \
@@ -76,7 +76,7 @@ RUN mkdir -p /seed_content/applications && cd /seed_content/applications \
     https://raw.githubusercontent.com/BuoyantIO/emojivoto/main/kustomize/deployment/web.yml) \
     && awk 'FNR==1 && NR>1 { printf("\n%s\n\n","---") } 1' /emojivoto/*.yml > /seed_content/applications/emojivoto.yml
 
-#FROM ubuntu as nighthawk
+#FROM ubuntu AS nighthawk
 #RUN apt-get -y update && apt-get -y install git && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/man/?? /usr/share/man/??_*
 #RUN apt-get -y update && apt-get -y  install build-essential libssl-dev git zlib1g-dev
 #RUN git config --global user.email "meshery@layer5.io"
