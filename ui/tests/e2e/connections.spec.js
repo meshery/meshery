@@ -103,7 +103,7 @@ test('Verify that UI components are displayed', async ({ page }) => {
 
 test(
   'Add a cluster connection by uploading kubeconfig file',
-  { tags: '@unstable' },
+  { tag: '@unstable' },
   async ({ page }) => {
     // Navigate to 'Connections' tab
     await page.getByRole('tab', { name: 'Connections' }).click();
@@ -189,7 +189,7 @@ test('Delete Kubernetes cluster connections', { tag: '@unstable' }, async ({ pag
 });
 
 transitionTests.forEach((t) => {
-  test(t.name, { tags: '@unstable' }, async ({ page }) => {
+  test(t.name, { tag: '@unstable' }, async ({ page }) => {
     const stateTransitionReq = page.waitForRequest(
       (request) =>
         request.url() ===
