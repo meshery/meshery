@@ -18,6 +18,8 @@ import { bindActionCreators } from 'redux';
 import { setAdapter } from '../lib/store';
 import { styled } from '@mui/material/styles';
 import MesheryAdapterPlayComponent from './MesheryAdapterPlayComponent';
+import { UsesSistent } from './SistentWrapper'; 
+import { Button, useTheme } from '@layer5/sistent';
 
 const StyledButton = styled(Button)(({ theme }) => ({
   backgroundColor: blue[500],
@@ -98,6 +100,7 @@ const MesheryPlayComponent = ({ meshAdapters, setAdapter, classes }) => {
   const [adapter, setAdapterState] = useState(null);
   const router = useRouter();
   const prevMeshAdaptersRef = useRef();
+  const theme = useTheme();
 
   const handleRouteChange = () => {
     const queryParam = router?.query?.adapter;
@@ -171,6 +174,7 @@ const MesheryPlayComponent = ({ meshAdapters, setAdapter, classes }) => {
     if (selectedAdapter) {
       const imageIcon = pickImage(selectedAdapter);
       return (
+        <UsesSistent>
         <React.Fragment>
           <MesheryAdapterPlayComponent
             adapter={selectedAdapter}
@@ -178,6 +182,7 @@ const MesheryPlayComponent = ({ meshAdapters, setAdapter, classes }) => {
             adapter_icon={imageIcon}
           />
         </React.Fragment>
+              </UsesSistent>
       );
     }
     return '';
@@ -185,6 +190,7 @@ const MesheryPlayComponent = ({ meshAdapters, setAdapter, classes }) => {
 
   if (meshAdapters.size === 0) {
     return (
+      <UsesSistent>
       <NoSsr>
         <React.Fragment>
           <div
@@ -212,6 +218,7 @@ const MesheryPlayComponent = ({ meshAdapters, setAdapter, classes }) => {
           </div>
         </React.Fragment>
       </NoSsr>
+                </UsesSistent>
     );
   }
 
@@ -224,6 +231,7 @@ const MesheryPlayComponent = ({ meshAdapters, setAdapter, classes }) => {
 
   const imageIcon = pickImage(adapter);
   return (
+    <UsesSistent>
     <NoSsr>
       <React.Fragment>
         <div className={classes.playRoot}>
@@ -273,6 +281,7 @@ const MesheryPlayComponent = ({ meshAdapters, setAdapter, classes }) => {
         )}
       </React.Fragment>
     </NoSsr>
+                  </UsesSistent>
   );
 };
 
