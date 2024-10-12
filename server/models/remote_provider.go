@@ -1668,7 +1668,7 @@ func (l *RemoteProvider) SaveMesheryPattern(tokenString string, pattern *Meshery
 
 	switch resp.StatusCode {
 		case http.StatusRequestEntityTooLarge:
-			err = ErrPost(fmt.Errorf("failed to send design %s to remote provider %s: Payload too large. Try reducing the design size or check the remote provider's upload limit.", pattern.Name, l.ProviderName), "", resp.StatusCode)
+			err = ErrPost(fmt.Errorf("failed to send design %s to remote provider %s: Design file is too large to upload. Reduce the file size and try again", pattern.Name, l.ProviderName), "", resp.StatusCode)
 			l.Log.Error(err)
 			return bdr, err
 		case http.StatusUnauthorized:
