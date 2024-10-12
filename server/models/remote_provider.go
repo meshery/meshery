@@ -160,13 +160,15 @@ func (l *ProviderProperties) DownloadProviderExtensionPackage(log logger.Handler
 	// Location for the package to be stored
 	loc := l.PackageLocation()
 
+	log.Infof("Package location %s", loc)
+
 	// Skip download if the file is already present
 	if _, err := os.Stat(loc); err == nil {
 		log.Debug(fmt.Sprintf("[Initialize]: Package found at %s skipping download", loc))
 		return
 	}
 
-	log.Debug(fmt.Sprintf("[Initialize]: Package not found at %s proceeding to download", loc))
+	log.Info(fmt.Sprintf("[Initialize]: Package not found at %s proceeding to download", loc))
 	// logrus the provider package
 	if err := TarXZF(l.PackageURL, loc, log); err != nil {
 		log.Error(ErrDownloadPackage(err, "provider package"))
@@ -3474,7 +3476,7 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ 
 	redirectURL := "/"
 	isPlayGround, _ := strconv.ParseBool(viper.GetString("PLAYGROUND"))
 	if isPlayGround {
-		redirectURL = getRedirectURLForNavigatorExtension(&providerProperties)
+		redirectURL = GetRedirectURLForNavigatorExtension(&providerProperties)
 	}
 
 	refQueryParam := r.URL.Query().Get("ref")
