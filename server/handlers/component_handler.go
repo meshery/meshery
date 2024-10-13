@@ -212,6 +212,7 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 	returnAnnotationComp := queryParams.Get("annotations")
 
 	filter := &regv1beta1.ModelFilter{
+		Id:          queryParams.Get("id"),
 		Registrant:  queryParams.Get("registrant"),
 		Version:     v,
 		Limit:       limit,
@@ -771,6 +772,7 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 
 	returnAnnotationComp := queryParams.Get("annotations")
 	filter := &regv1beta1.ComponentFilter{
+		Id:          queryParams.Get("id"),
 		ModelName:   typ,
 		Version:     v,
 		Trim:        queryParams.Get("trim") == "true",

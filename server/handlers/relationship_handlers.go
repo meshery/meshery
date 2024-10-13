@@ -131,6 +131,7 @@ func (h *Handler) GetAllMeshmodelRelationships(rw http.ResponseWriter, r *http.R
 	typ := mux.Vars(r)["model"]
 
 	entities, count, _, _ := h.registryManager.GetEntities(&regv1alpha3.RelationshipFilter{
+		Id:               r.URL.Query().Get("id"),
 		Version:          r.URL.Query().Get("version"),
 		ModelName:        typ,
 		Limit:            limit,
