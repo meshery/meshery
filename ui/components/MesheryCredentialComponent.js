@@ -422,7 +422,7 @@ const MesheryCredentialComponent = ({ updateProgress, classes, connectionMetadat
               borderRadius: 5,
               marginRight: '2rem',
             }}
-            data-cy="btnResetDatabase"
+            data-testid="btnResetDatabase"
           >
             <AddIconCircleBorder style={{ width: '1.25rem' }} />
             <Typography
