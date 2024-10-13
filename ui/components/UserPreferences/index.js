@@ -662,7 +662,7 @@ const UserPreference = (props) => {
                           track: props.classes.track,
                           checked: props.classes.checked,
                         }}
-                        data-cy="CatalogContentPreference"
+                        data-testid="CatalogContentPreference"
                       />
                     }
                     labelPlacement="end"
@@ -689,7 +689,7 @@ const UserPreference = (props) => {
                           track: props.classes.track,
                           checked: props.classes.checked,
                         }}
-                        data-cy="UsageStatsPreference"
+                        data-testid="UsageStatsPreference"
                       />
                     }
                     labelPlacement="end"
@@ -707,7 +707,7 @@ const UserPreference = (props) => {
                           track: props.classes.track,
                           checked: props.classes.checked,
                         }}
-                        data-cy="PerfResultPreference"
+                        data-testid="PerfResultPreference"
                       />
                     }
                     labelPlacement="end"

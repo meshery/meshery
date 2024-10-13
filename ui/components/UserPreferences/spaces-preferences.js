@@ -63,7 +63,7 @@ const SpacesPreferences = (props) => {
                   key="SpacesPreferences"
                   control={
                     <Grid container spacing={1} alignItems="flex-end">
-                      <Grid item xs={12} data-cy="mesh-adapter-url">
+                      <Grid item xs={12} data-testid="mesh-adapter-url">
                         <Select
                           value={organization.id}
                           onChange={handleOrgSelect}

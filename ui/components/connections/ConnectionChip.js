@@ -66,7 +66,7 @@ export const _ConnectionChip = ({ handlePing, onDelete, iconSrc, status, title, 
       }
       variant="filled"
       className={classes.Chip}
-      data-cy="chipContextName"
+      data-testid="chipContextName"
       style={chipStyle}
     />
     // </Tooltip>

@@ -240,7 +240,7 @@ function UploadImport(props) {
                           disabled={sourceType === 'Helm Chart'}
                           hidden
                           name="upload-button"
-                          data-cy="file-upload-button"
+                          data-testid="file-upload-button"
                         />
                         Browse
                       </Button>

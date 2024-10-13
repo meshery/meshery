@@ -124,7 +124,7 @@ function OrgMenu(props) {
                 key="SpacesPreferences"
                 control={
                   <Grid container spacing={1} alignItems="flex-end">
-                    <Grid item xs={12} data-cy="mesh-adapter-url">
+                    <Grid item xs={12} data-testid="mesh-adapter-url">
                       <StyledSelect
                         value={organization.id}
                         onChange={handleOrgSelect}
@@ -220,7 +220,7 @@ export function WorkspaceSwitcher({ organization, open, workspace, setWorkspace 
                 key="SpacesPreferences"
                 control={
                   <Grid container spacing={1} alignItems="flex-end">
-                    <Grid item xs={12} data-cy="mesh-adapter-url">
+                    <Grid item xs={12} data-testid="mesh-adapter-url">
                       <StyledSelect
                         value={workspace.id}
                         onChange={handleWorkspaceSelect}
@@ -278,7 +278,7 @@ export const FileNameInput = ({
 
 function DefaultHeader({ title, isBeta }) {
   return (
-    <StyledHeader color="inherit" variant="h5" data-cy="headerPageTitle">
+    <StyledHeader color="inherit" variant="h5" data-testid="headerPageTitle">
       {title}
       {isBeta ? <StyledBetaHeader>BETA</StyledBetaHeader> : ''}
     </StyledHeader>
