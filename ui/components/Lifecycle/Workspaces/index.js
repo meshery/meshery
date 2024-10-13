@@ -588,7 +588,7 @@ const Workspaces = ({ organization, classes }) => {
                   marginRight: '2rem',
                 }}
                 disabled={!CAN(keys.CREATE_WORKSPACE.action, keys.CREATE_WORKSPACE.subject)}
-                data-cy="btnResetDatabase"
+                data-testid="btnResetDatabase"
               >
                 <AddIconCircleBorder style={{ width: '20px', height: '20px' }} />
                 <Typography

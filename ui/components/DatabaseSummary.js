@@ -159,7 +159,7 @@ const DatabaseSummary = (props) => {
             disabled={!CAN(keys.RESET_DATABASE.action, keys.RESET_DATABASE.subject)}
             onClick={handleResetDatabase()}
             className={classes.DBBtn}
-            data-cy="btnResetDatabase"
+            data-testid="btnResetDatabase"
           >
             <Typography align="center" variant="subtitle2">
               {' '}

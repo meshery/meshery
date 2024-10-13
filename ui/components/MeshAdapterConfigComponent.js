@@ -454,7 +454,7 @@ const MeshAdapterConfigComponent = (props) => {
                     </BadgeAvatars>
                   }
                   variant="outlined"
-                  data-cy="chipAdapterLocation"
+                  data-testid="chipAdapterLocation"
                 />
               </Tooltip>
             );
@@ -465,11 +465,11 @@ const MeshAdapterConfigComponent = (props) => {
 
     return (
       <NoSsr>
-        <div className={classes.wrapperClass} data-cy="mesh-adapter-connections">
+        <div className={classes.wrapperClass} data-testid="mesh-adapter-connections">
           {showAdapters}
 
           <Grid container spacing={1} alignItems="flex-end">
-            <Grid item xs={12} data-cy="mesh-adapter-url">
+            <Grid item xs={12} data-testid="mesh-adapter-url">
               <ReactSelectWrapper
                 onChange={handleMeshLocURLChange}
                 options={setAdapterURLs}
@@ -505,7 +505,7 @@ const MeshAdapterConfigComponent = (props) => {
                 size="large"
                 onClick={handleSubmit}
                 className={classes.button}
-                data-cy="btnSubmitMeshAdapter"
+                data-testid="btnSubmitMeshAdapter"
                 disabled={!CAN(keys.CONNECT_ADAPTER.action, keys.CONNECT_ADAPTER.subject)}
               >
                 Connect
