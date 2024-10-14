@@ -442,6 +442,7 @@ PLATFORMS
   arm64-darwin-21
   arm64-darwin-22
   arm64-darwin-23
+  arm64-darwin-24
   x64-mingw-ucrt
   x64-unknown
   x86_64-darwin-22
@@ -459,7 +460,7 @@ DEPENDENCIES
   webrick (~> 1.8)
 
 RUBY VERSION
-   ruby 3.2.2p53
+   ruby 3.2.5p208
 
 BUNDLED WITH
    2.4.14
