@@ -4,7 +4,6 @@ import AppBar from '@material-ui/core/AppBar';
 import Grid from '@material-ui/core/Grid';
 import Hidden from '@material-ui/core/Hidden';
 import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
 import Toolbar from '@material-ui/core/Toolbar';
 import { withStyles } from '@material-ui/core/styles';
 import { connect, useSelector } from 'react-redux';
@@ -36,7 +35,7 @@ import { useNotification, withNotify } from '../utils/hooks/useNotification';
 import useKubernetesHook, { useControllerStatus } from './hooks/useKubernetesHook';
 import { formatToTitleCase } from '../utils/utils';
 import { CONNECTION_KINDS } from '../utils/Enum';
-import { Checkbox, OutlinedSettingsIcon } from '@layer5/sistent';
+import { Checkbox, MenuIcon, OutlinedSettingsIcon } from '@layer5/sistent';
 import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomTextTooltip';
 import { Colors } from '@/themes/app';
 import { CanShow } from '@/utils/can';
@@ -44,6 +43,7 @@ import { keys } from '@/utils/permission_constants';
 import SpaceSwitcher from './SpacesSwitcher/SpaceSwitcher';
 import { UsesSistent } from './SistentWrapper';
 import Router from 'next/router';
+import HeaderMenu from './HeaderMenu';
 
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 const styles = (theme) => ({
@@ -538,11 +538,7 @@ class Header extends React.PureComponent {
                 <Grid item xs container alignItems="center" className={classes.pageTitleWrapper}>
                   <SpaceSwitcher title={title} isBeta={isBeta} />
                 </Grid>
-                <Grid
-                  item
-                  className={classes.userContainer}
-                  style={{ position: 'relative', right: '-27px' }}
-                >
+                <Grid item className={classes.userContainer} style={{ position: 'relative' }}>
                   {/* According to the capabilities load the component */}
                   {this.state.collaboratorExt && (
                     <ExtensionSandbox
@@ -584,8 +580,18 @@ class Header extends React.PureComponent {
                   <div data-test="notification-button">
                     <NotificationDrawerButton />
                   </div>
+
                   <span className={classes.userSpan}>
                     <User
+                      classes={classes}
+                      color="inherit"
+                      iconButtonClassName={classes.iconButtonAvatar}
+                      avatarClassName={classes.avatar}
+                      updateExtensionType={this.props.updateExtensionType}
+                    />
+                  </span>
+                  <span className={classes.userSpan}>
+                    <HeaderMenu
                       classes={classes}
                       color="inherit"
                       iconButtonClassName={classes.iconButtonAvatar}

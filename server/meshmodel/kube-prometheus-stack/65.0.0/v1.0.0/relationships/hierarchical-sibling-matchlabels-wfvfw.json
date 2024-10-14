@@ -1,0 +1,138 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "evaluationQuery": "",
+  "kind": "hierarchical",
+  "metadata": {
+    "description": "Sibling relationships represent connections between components that are at the same hierarchical level or share a common parent. An example of this relationship is a Service and a Pod in Kubernetes. In kube-prometheus-stack, ServiceMonitor and PodMonitor resources configure Prometheus to scrape metrics from Kubernetes services and Pods respectively.",
+    "styles": {
+      "primaryColor": "",
+      "svgColor": "",
+      "svgWhite": ""
+    }
+  },
+  "model": {
+    "category": {
+      "name": ""
+    },
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": "65.0.0"
+    },
+    "name": "kube-prometheus-stack",
+    "registrant": {
+      "created_at": "0001-01-01T00:00:00Z",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "deleted_at": "0001-01-01T00:00:00Z",
+      "id": "00000000-0000-0000-0000-000000000000",
+      "kind": "",
+      "name": "",
+      "status": "",
+      "sub_type": "",
+      "type": "",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "user_id": "00000000-0000-0000-0000-000000000000"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "",
+    "status": "",
+    "version": "",
+    "components": null,
+    "relationships": null
+  },
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "id": null,
+            "kind": "PodMonitor",
+            "match": {
+              "refs": [
+                []
+              ]
+            },
+            "model": {
+              "category": {
+                "name": ""
+              },
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "kube-prometheus-stack",
+              "registrant": {
+                "created_at": "0001-01-01T00:00:00Z",
+                "credential_id": "00000000-0000-0000-0000-000000000000",
+                "deleted_at": "0001-01-01T00:00:00Z",
+                "id": "00000000-0000-0000-0000-000000000000",
+                "kind": "artifacthub",
+                "name": "",
+                "status": "",
+                "sub_type": "",
+                "type": "",
+                "updated_at": "0001-01-01T00:00:00Z",
+                "user_id": "00000000-0000-0000-0000-000000000000"
+              },
+              "connection_id": "00000000-0000-0000-0000-000000000000",
+              "schemaVersion": "",
+              "status": "",
+              "version": "",
+              "components": null,
+              "relationships": null
+            },
+            "patch": null
+          }
+        ],
+        "to": [
+          {
+            "id": null,
+            "kind": "Pod",
+            "match": {
+              "refs": [
+                []
+              ]
+            },
+            "model": {
+              "category": {
+                "name": ""
+              },
+              "displayName": "",
+              "id": "00000000-0000-0000-0000-000000000000",
+              "model": {
+                "version": ""
+              },
+              "name": "kubernetes",
+              "registrant": {
+                "created_at": "0001-01-01T00:00:00Z",
+                "credential_id": "00000000-0000-0000-0000-000000000000",
+                "deleted_at": "0001-01-01T00:00:00Z",
+                "id": "00000000-0000-0000-0000-000000000000",
+                "kind": "artifacthub",
+                "name": "",
+                "status": "",
+                "sub_type": "",
+                "type": "",
+                "updated_at": "0001-01-01T00:00:00Z",
+                "user_id": "00000000-0000-0000-0000-000000000000"
+              },
+              "connection_id": "00000000-0000-0000-0000-000000000000",
+              "schemaVersion": "",
+              "status": "",
+              "version": "",
+              "components": null,
+              "relationships": null
+            },
+            "patch": null
+          }
+        ]
+      }
+    }
+  ],
+  "subType": "matchlabels",
+  "status": "enabled",
+  "type": "sibling",
+  "version": "v1.0.0"
+}

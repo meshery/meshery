@@ -7,7 +7,9 @@
   "metadata": {
    "capabilities": null,
    "isAnnotation": false,
-   "shape": "",
+   "primaryColor": "#326ce5",
+   "secondaryColor": "#77B1FF",
+   "shape": "circle",
    "styleOverrides": "",
    "svgColor": "",
    "svgComplete": "",
