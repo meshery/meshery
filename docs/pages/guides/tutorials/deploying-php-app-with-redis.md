@@ -61,43 +61,32 @@ These YAML files contain the Service definitions and Deployment configurations f
 
 1. In the left sidebar, click on the upward arrow symbol(import icon) to import the designs into Meshery.
 
-2. In the modal that appears:
-   - Enter a name for your design in the "Design File Name" field (e.g.`redis-leader-deployment`).
+2. On doing so, a modal appears.In the modal that appears, enter a name for your design in the "Design File Name" field (e.g.`redis-leader-deployment`).
 
-   - Select `Kubernetes Manifest` from the "Design Type" dropdown menu.
+3. Now select `Kubernetes Manifest` from the "Design Type" dropdown menu.
 
-   - Choose `URL Import` for the upload method, and input the URL.
+4. Then choose `URL Import` for the upload method.
 
-   - Then, click on `Import`
+5. Now input the URL.
 
-        ![Import redis-leader-deployment](./screenshots/redis-leader-deployment.png)
+6. Then, click on `Import`
 
-3. Now, follow the same steps (1-2) to import the rest of the files.
+![Import redis-leader-deployment](./screenshots/redis-leader-deployment.png)
 
-4. Under the “Designs” tab, you will see that we have successfully imported the manifest as designs, then you can drag and drop them in the canvas. This will "Merge" all the designs since it's all just one application
-    ![merging all designs](./screenshots/app-canvas.png)
 
-#### Scaling Deployments
-You might be wondering how you would go about scaling your microservice. Here we will, explore how to scale individual components of the microservices application by adjusting the replicas in the Deployment configuration.
-1. 
+Now, follow the same steps (1-6) to import the rest of the files.
 
+Under the “Designs” tab, you will see that we have successfully imported the manifest as designs, then you can drag and drop them in the canvas. This will "Merge" all the designs since it's all just one application
+
+![merging all designs](./screenshots/app-canvas.png)
 
 
 #### 4. **Updating Deployments:**
    - Learn how to update the microservices application by rolling out changes to the Deployment.
 
-\```bash
+```bash
 kubectl set image deployment/<deployment-name> <container-name>=new-image:tag
-\```
-
-#### 6. **Monitoring and Troubleshooting Deployments:**
-  - Utilize Meshery Playground to monitor the status of Deployments and troubleshoot common issues.
-
-
-
-### Saving and Sharing
-  - Save your scenario in Meshery Playground for future reference.
-  - Share your Deployment scenarios with the Meshery community for collaborative learning.
+```
 
 ### Deleting the resources
 
