@@ -246,6 +246,8 @@
           grandchildren:
           - title: "End-to-End Testing"
             url: project/contributing/contributing-ui-tests
+          - title: "Github Actions"
+            url: project/contributing/contributing-github-actions
         - title: Adapters
           url: project/contributing/contributing-adapters
         - title: CLI ↆ
