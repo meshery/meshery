@@ -8,18 +8,12 @@ import { UsesSistent } from '@/components/SistentWrapper';
  */
 const ErrorBoundary = ({ children }) => {
   const theme = useTheme();
-
+  
   return (
     <UsesSistent>
       <SistentErrorBoundary
         fallback={({ error, resetErrorBoundary }) => (
-          <div
-            className="alert alert-danger"
-            style={{
-              background: theme.palette.error.light,
-              color: theme.palette.error.contrastText,
-            }}
-          >
+          <div className="alert alert-danger" style={{ background: theme.palette.error.light, color: theme.palette.error.contrastText }}>
             <p>Couldn&apos;t open form. Encountered the following error:</p>
             <pre>{error.message}</pre>
             <Button color="primary" variant="contained" onClick={resetErrorBoundary}>
