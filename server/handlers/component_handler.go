@@ -224,6 +224,7 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 		Components:    queryParams.Get("components") == "true",
 		Relationships: queryParams.Get("relationships") == "true",
 		Status:        queryParams.Get("status"),
+		Trim:          queryParams.Get("trim") == "true",
 	}
 	if search != "" {
 		filter.DisplayName = search
