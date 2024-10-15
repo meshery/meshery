@@ -54,7 +54,11 @@
                   "id": null,
                   "kind": "self",
                   "mutatedRef": [
-                    []
+                    [
+                      "configuration", 
+                      "metadata", 
+                      "labels"
+                    ]
                   ]
                 }
               ],
@@ -63,7 +67,10 @@
                   "id": null,
                   "kind": "NetworkPolicy",
                   "mutatorRef": [
-                    []
+                    ["configuration", "spec", "podSelector", "matchLabels"],
+                    ["configuration", "spec", "policyTypes","_"],
+                    ["configuration", "spec", "ingress", "_", "from", "_", "podSelector", "matchLabels"],
+                    ["configuration", "spec", "egress", "_", "to", "_", "podSelector", "matchLabels"]
                   ]
                 }
               ]
@@ -111,7 +118,10 @@
                   "id": null,
                   "kind": "NetworkPolicy",
                   "mutatedRef": [
-                    []
+                    ["configuration", "spec", "podSelector", "matchLabels"],
+                    ["configuration", "spec", "policyTypes","_"],
+                    ["configuration", "spec", "ingress", "_", "from", "_", "podSelector", "matchLabels"],
+                    ["configuration", "spec", "egress", "_", "to", "_", "podSelector", "matchLabels"]
                   ]
                 }
               ],
@@ -120,7 +130,11 @@
                   "id": null,
                   "kind": "self",
                   "mutatorRef": [
-                    []
+                    [
+                      "configuration", 
+                      "metadata", 
+                      "labels"
+                    ]
                   ]
                 }
               ]
