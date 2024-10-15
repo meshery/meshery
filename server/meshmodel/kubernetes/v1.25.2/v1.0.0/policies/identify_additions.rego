@@ -62,7 +62,7 @@ identify_additions(
         }
 }
 
-find_in_comp_array(comps, id) = comp if {
+find_in_comp_array(comps, id) := comp if {
         some key, comp in comps
         comp.id == id
 }
