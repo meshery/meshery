@@ -19,11 +19,10 @@ evaluate := eval_results if {
 	resultant_patches := {patched_object |
 		some rel in rels_in_design_file
 
-
-        #  do not evaluate relationships which have status as "deleted".
-	    status := lower(rel.status);
-        allowed_status := {"pending", "approved"};
-        allowed_status[status];
+		#  do not evaluate relationships which have status as "deleted".
+		status := lower(rel.status)
+		allowed_status := {"pending", "approved"}
+		allowed_status[status]
 
 		resultant_patch := perform_eval(input, rel)
 
