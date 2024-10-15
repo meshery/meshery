@@ -23,19 +23,19 @@ In this tutorial, we'll see how to export a Design from Meshery which we will us
 ## Steps
 
 ### 1. Click on MeshMap
-![](./screenshots/publish-to-artifacthub/2024-07-30_1.png)
+![](./publish-to-artifacthub/2024-07-30_1.png)
 
 
 ### 2. Find the Design in the Side Panel
-![](./screenshots/publish-to-artifacthub/2024-07-30_2.png)
+![](./publish-to-artifacthub/2024-07-30_2.png)
 
 
 ### 3. Click on Export Design
-![](./screenshots/publish-to-artifacthub/2024-07-30_3.png)
+![](./publish-to-artifacthub/2024-07-30_3.png)
 
 
 ### 4. Click on EXPORT under OCI
-![](./screenshots/publish-to-artifacthub/2024-07-30_4.png)
+![](./publish-to-artifacthub/2024-07-30_4.png)
 
 ### Prepare your ArtifactHub repo
 You will need to have an ArtifactHub repository already created with `Kind` as `Meshery Designs`. See [ArtifactHub documentation](https://artifacthub.io/docs/topics/repositories/meshery-designs/) for more information on managing repositories.
