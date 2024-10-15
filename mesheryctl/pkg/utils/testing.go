@@ -294,29 +294,32 @@ func CleanStringFromHandlePagination(data string) string {
 // removeANSICodes removes ANSI escape codes from a string.
 //
 // Parameters:
-//   text - The input string that may contain ANSI escape sequences.
+//
+//	text - The input string that may contain ANSI escape sequences.
 //
 // Returns:
-//   A string with the ANSI escape codes removed.
+//
+//	A string with the ANSI escape codes removed.
 func stripAnsiEscapeCodes(text string) string {
-    ansi := regexp.MustCompile(`\x1b\[[0-9;]*[a-zA-Z]`)
-    return ansi.ReplaceAllString(text, "")
+	ansi := regexp.MustCompile(`\x1b\[[0-9;]*[a-zA-Z]`)
+	return ansi.ReplaceAllString(text, "")
 }
-
 
 // formatToTabs replaces multiple spaces with tabs and trims spaces
 //
 // Parameters:
-//   s - The input string containing columns separated by multiple spaces.
+//
+//	s - The input string containing columns separated by multiple spaces.
 //
 // Returns:
-//   A string where multiple spaces are replaced with a single tab between columns, and leading/trailing spaces are removed.
+//
+//	A string where multiple spaces are replaced with a single tab between columns, and leading/trailing spaces are removed.
 func formatToTabs(data string) string {
-    s := strings.TrimSpace(data)
+	s := strings.TrimSpace(data)
 
-    // Replace multiple spaces with a single tab
-    re := regexp.MustCompile(`\s{2,}`) // Match 2 or more spaces
-    s = re.ReplaceAllString(s, "\t")
+	// Replace multiple spaces with a single tab
+	re := regexp.MustCompile(`\s{2,}`) // Match 2 or more spaces
+	s = re.ReplaceAllString(s, "\t")
 
-    return s
+	return s
 }

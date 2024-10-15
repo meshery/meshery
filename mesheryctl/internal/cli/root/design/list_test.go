@@ -117,7 +117,6 @@ func TestDesignList(t *testing.T) {
 	utils.StopMockery(t)
 }
 
-
 func trimLastNLines(s string, n int) string {
 	lines := strings.Split(s, "\n")
 	if len(lines) <= n {
