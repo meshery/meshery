@@ -20,11 +20,11 @@ identify_relationship(
 		some selectors in selector_set.allow.to
 		kind := selectors.kind
 	}
-
+	deny_selectors := object.get(selector_set, "deny", [])
 	from := extract_components(design_file.components, from_selectors)
 	to := extract_components(design_file.components, to_selectors)
 
-	evaluation_results := evaluate_siblings(relationship, from, to, from_selectors, to_selectors, selector_set.deny)
+	evaluation_results := evaluate_siblings(relationship, from, to, from_selectors, to_selectors, deny_selectors)
 }
 
 evaluate_siblings(relationship, from, to, from_selectors, to_selectors, deny_selectors) := {result |
