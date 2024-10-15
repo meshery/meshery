@@ -48,7 +48,7 @@ export const LoadingMessages = [
   'Tip: You can create your own Meshery models.',
   'Tip: Designs can be cloned. Designs can also be merged.',
   'Tip: Designs can be exported as JSON files or OCI images.',
-  'Tip: Find existing or publish your own Meshery Designn on Artifact Hub',
+  'Tip: Find existing or publish your own Meshery Design on Artifact Hub',
   'Designs can be snapshotted. Snapshots are immutable. Snapshots can be compared for differences between Design versions.',
   'Tip: Share your designs and collaborate with colleagues.',
   'Tip: Publish reusable designs to the Meshery Catalog.',
