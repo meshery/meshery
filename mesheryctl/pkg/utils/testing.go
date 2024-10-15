@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"regexp"
 	"runtime"
 	"strings"
 	"testing"
@@ -279,4 +280,43 @@ func StartMockMesheryServer(t *testing.T) error {
 	// Give the server some time to start
 	time.Sleep(100 * time.Millisecond)
 	return nil
+}
+
+// The HandlePagination function add special characters that is not
+// handle properly in test. This function will remove undesired characters
+// and spaces to ensure excepted versus actual result match when using http.MockURL
+func CleanStringFromHandlePagination(data string) string {
+	cleaned := stripAnsiEscapeCodes(data)
+	cleaned = formatToTabs(cleaned)
+	return cleaned
+}
+
+// removeANSICodes removes ANSI escape codes from a string.
+//
+// Parameters:
+//   text - The input string that may contain ANSI escape sequences.
+//
+// Returns:
+//   A string with the ANSI escape codes removed.
+func stripAnsiEscapeCodes(text string) string {
+    ansi := regexp.MustCompile(`\x1b\[[0-9;]*[a-zA-Z]`)
+    return ansi.ReplaceAllString(text, "")
+}
+
+
+// formatToTabs replaces multiple spaces with tabs and trims spaces
+//
+// Parameters:
+//   s - The input string containing columns separated by multiple spaces.
+//
+// Returns:
+//   A string where multiple spaces are replaced with a single tab between columns, and leading/trailing spaces are removed.
+func formatToTabs(data string) string {
+    s := strings.TrimSpace(data)
+
+    // Replace multiple spaces with a single tab
+    re := regexp.MustCompile(`\s{2,}`) // Match 2 or more spaces
+    s = re.ReplaceAllString(s, "\t")
+
+    return s
 }
