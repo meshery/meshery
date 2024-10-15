@@ -6,7 +6,7 @@ has_key(x, k) if {
 	x[k]
 }
 
-declaration_with_id(design_file, id) = d if {
+declaration_with_id(design_file, id) := d if {
 	declarations := design_file.components
 	count([d | some d in declarations; d.id == id]) == 1
 	some d in declarations
