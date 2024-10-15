@@ -6,11 +6,12 @@ has_key(x, k) if {
 	x[k]
 }
 
-declaration_with_id(design_file, id) := d if {
+declaration_with_id(design_file, id) := result if {
 	declarations := design_file.components
-	count([d | some d in declarations; d.id == id]) == 1
-	some d in declarations
-	d.id == id
+	some declaration in declarations
+
+	declaration.id == id
+	result = declaration
 }
 
 resolve_path(arr, mutated) := path if {
@@ -107,7 +108,6 @@ extract_components(declarations, selectors) := {declaration.id: declaration |
 	selector := selectors[_]
 	declaration := declarations[_]
 	is_relationship_feasible(selector, declaration.component.kind)
-	not declaration.id in {d.id | d := declarations[_]; d != declaration} # Ensure uniqueness
 	component := declaration
 }
 
