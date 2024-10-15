@@ -6,11 +6,11 @@ has_key(x, k) if {
 	x[k]
 }
 
-declaration_with_id(design_file, id) := result if {
+declaration_with_id(design_file, id) = d if {
 	declarations := design_file.components
-	count([d | d := declarations[_]; d.id == id]) == 1
-	result := declarations[_]
-	result.id == id
+	count([d | some d in declarations; d.id == id]) == 1
+	some d in declarations
+	d.id == id
 }
 
 resolve_path(arr, mutated) := path if {
