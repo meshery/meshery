@@ -7,12 +7,11 @@ has_key(x, k) if {
 }
 
 declaration_with_id(design_file, id) := result if {
-    declarations := design_file.components
-    count([d | d := declarations[_]; d.id == id]) == 1
-    result := declarations[_]
-    result.id == id
+	declarations := design_file.components
+	count([d | d := declarations[_]; d.id == id]) == 1
+	result := declarations[_]
+	result.id == id
 }
-
 
 resolve_path(arr, mutated) := path if {
 	arr_contains(arr, "_")
@@ -111,7 +110,6 @@ extract_components(declarations, selectors) := {declaration.id: declaration |
 	not declaration.id in {d.id | d := declarations[_]; d != declaration} # Ensure uniqueness
 	component := declaration
 }
-
 
 extract_components_by_type(declarations, selector) := {result |
 	some declaration in declarations
