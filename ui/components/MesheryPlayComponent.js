@@ -2,24 +2,24 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
 import { connect } from 'react-redux';
 import NoSsr from '@mui/material/NoSsr';
-import {
-  Button,
-  Divider,
-  MenuItem,
-  TextField,
-  Grid,
-  Typography,
-} from '@mui/material';
 import { blue } from '@mui/material/colors';
 import PropTypes from 'prop-types';
 import { withRouter } from 'next/router';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { bindActionCreators } from 'redux';
 import { setAdapter } from '../lib/store';
-import { styled } from '@mui/material/styles';
 import MesheryAdapterPlayComponent from './MesheryAdapterPlayComponent';
 import { UsesSistent } from './SistentWrapper'; 
-import { Button, useTheme } from '@layer5/sistent';
+import { 
+  Button, 
+  useTheme,
+  Divider,
+  MenuItem,
+  TextField,
+  Grid,
+  Typography,
+  styled
+  } from '@layer5/sistent';
 
 const StyledButton = styled(Button)(({ theme }) => ({
   backgroundColor: blue[500],
