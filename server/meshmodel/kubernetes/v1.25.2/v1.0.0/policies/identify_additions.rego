@@ -62,10 +62,9 @@ identify_additions(
 	}
 }
 
-find_in_comp_array(comps, id) := result if {
+find_in_comp_array(comps, id) := comp if {
 	some key, comp in comps
 	comp.id == id
-	result := comp
 }
 
 process_comps_to_add(
@@ -101,9 +100,9 @@ process_comps_to_add(
 	resultant_patches_to_apply := ensure_parent_paths_exist(intermediate_patches, component)
 
 	declaration := json.patch(component, resultant_patches_to_apply)
-	
+
 	now := format_int(time.now_ns(), 10)
-	
+
 	id := uuid.rfc4122(sprintf("%s%s", [json.marshal(declaration), now]))
 	declaration_with_id := json.patch(declaration, [{
 		"op": "add",
