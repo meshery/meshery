@@ -8,7 +8,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import { bindActionCreators } from 'redux';
 import { setAdapter } from '../lib/store';
 import MesheryAdapterPlayComponent from './MesheryAdapterPlayComponent';
-import { UsesSistent } from './SistentWrapper'; 
+import { UsesSistent } from './SistentWrapper';
 import {
   Button,
   useTheme,
@@ -17,7 +17,7 @@ import {
   TextField,
   Grid,
   Typography,
-  styled
+  styled,
 } from '@layer5/sistent';
 
 const StyledButton = styled(Button)(({ theme }) => ({
