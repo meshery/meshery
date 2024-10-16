@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "A relationship that act as a firewall for ingress and egress traffic from Pods.",
+    "description": "A relationship that allows traffic from one Pod to another Pod via a NetworkPolicy.",
     "styles": {
       "primaryColor": "",
       "svgColor": "",
@@ -38,7 +38,9 @@
     "status": "",
     "version": "",
     "components": null,
-    "relationships": null
+    "relationships": null,
+    "components_count": 0,
+    "relationships_count": 0
   },
   "schemaVersion": "relationships.meshery.io/v1alpha3",
   "selectors": [
@@ -54,7 +56,12 @@
                   "id": null,
                   "kind": "self",
                   "mutatedRef": [
-                    []
+                    [
+                      "configuration",
+                      "spec",
+                      "_",
+                      "networkPolicy"
+                    ]
                   ]
                 }
               ],
@@ -63,7 +70,9 @@
                   "id": null,
                   "kind": "NetworkPolicy",
                   "mutatorRef": [
-                    []
+                    [
+                      "displayName"
+                    ]
                   ]
                 }
               ]
@@ -96,7 +105,9 @@
               "status": "",
               "version": "",
               "components": null,
-              "relationships": null
+              "relationships": null,
+              "components_count": 0,
+              "relationships_count": 0
             },
             "patch": null
           }
@@ -111,7 +122,17 @@
                   "id": null,
                   "kind": "NetworkPolicy",
                   "mutatedRef": [
-                    []
+                    [
+                      "configuration",
+                      "spec",
+                      "ingress"
+                    ],
+                    [
+                      "configuration",
+                      "spec",
+                      "selector",
+                      "matchLabels"
+                    ]
                   ]
                 }
               ],
@@ -120,7 +141,14 @@
                   "id": null,
                   "kind": "self",
                   "mutatorRef": [
-                    []
+                    [
+                      "displayName"
+                    ],
+                    [
+                      "configuration",
+                      "metadata",
+                      "labels"
+                    ]
                   ]
                 }
               ]
@@ -153,7 +181,9 @@
               "status": "",
               "version": "",
               "components": null,
-              "relationships": null
+              "relationships": null,
+              "components_count": 0,
+              "relationships_count": 0
             },
             "patch": null
           }
