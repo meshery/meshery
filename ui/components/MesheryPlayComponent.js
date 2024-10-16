@@ -4,14 +4,13 @@ import { connect } from 'react-redux';
 import NoSsr from '@mui/material/NoSsr';
 import { blue } from '@mui/material/colors';
 import PropTypes from 'prop-types';
-import { withRouter } from 'next/router';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { bindActionCreators } from 'redux';
 import { setAdapter } from '../lib/store';
 import MesheryAdapterPlayComponent from './MesheryAdapterPlayComponent';
 import { UsesSistent } from './SistentWrapper'; 
-import { 
-  Button, 
+import {
+  Button,
   useTheme,
   Divider,
   MenuItem,
@@ -19,7 +18,7 @@ import {
   Grid,
   Typography,
   styled
-  } from '@layer5/sistent';
+} from '@layer5/sistent';
 
 const StyledButton = styled(Button)(({ theme }) => ({
   backgroundColor: blue[500],
@@ -117,14 +116,11 @@ const MesheryPlayComponent = ({ meshAdapters, setAdapter, classes }) => {
   };
 
   useEffect(() => {
- 
     router.events.on('routeChangeComplete', handleRouteChange);
-
     return () => { 
       router.events.off('routeChangeComplete', handleRouteChange);
     };
-  }, []);
-
+  },[]);
   useEffect(() => {
     if (prevMeshAdaptersRef.current?.size !== meshAdapters.size && meshAdapters.size > 0) {
       handleRouteChange();
@@ -187,7 +183,6 @@ const MesheryPlayComponent = ({ meshAdapters, setAdapter, classes }) => {
     }
     return '';
   };
-
   if (meshAdapters.size === 0) {
     return (
       <UsesSistent>
@@ -202,16 +197,10 @@ const MesheryPlayComponent = ({ meshAdapters, setAdapter, classes }) => {
               gap: '1rem',
               height: '100%',
               width: '100%',
-            }}
-          >
+            }}>
             <Typography variant="h6">Adapter Unavailable</Typography>
             <Typography variant="subtitle">Connect Meshery Adapter(s) in Settings</Typography>
-            <Button
-              variant="contained"
-              color="primary"
-              size="large"
-              onClick={handleConfigure}
-            >
+            <Button variant="contained" color="primary" size="large" onClick={handleConfigure}>
               <SettingsIcon className={classes.icon} />
               Configure Settings
             </Button>
@@ -221,14 +210,12 @@ const MesheryPlayComponent = ({ meshAdapters, setAdapter, classes }) => {
                 </UsesSistent>
     );
   }
-
-  if (adapter && adapter !== '') {
+  if (adapter && adapter !== ''){
     const indContent = renderIndividualAdapter();
     if (indContent !== '') {
       return indContent;
     }
   }
-
   const imageIcon = pickImage(adapter);
   return (
     <UsesSistent>
@@ -265,8 +252,7 @@ const MesheryPlayComponent = ({ meshAdapters, setAdapter, classes }) => {
                 {meshAdapters.map((ada) => (
                   <MenuItem
                     key={`${ada.adapter_location}_${new Date().getTime()}`}
-                    value={ada.adapter_location}
-                  >
+                    value={ada.adapter_location} >
                     {pickImage(ada)}
                     <span className={classes.expTitle}>{ada.adapter_location}</span>
                   </MenuItem>
