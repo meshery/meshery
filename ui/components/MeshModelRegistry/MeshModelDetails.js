@@ -21,8 +21,8 @@ import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import {
   useUpdateEntityStatusMutation,
-  useGetModelByNameQuery,
-  useGetComponentByNameQuery,
+  useGetComponentsQuery,
+  useGetMeshModelsQuery,
 } from '@/rtk-query/meshModel';
 import _ from 'lodash';
 import { JustifyAndAlignCenter } from './MeshModel.style';
@@ -234,9 +234,9 @@ const ModelContents = withSuppressedErrorBoundary(({ modelDef }) => {
 });
 
 const ComponentContents = withSuppressedErrorBoundary(({ componentDef }) => {
-  const { data, isSuccess } = useGetComponentByNameQuery({
-    name: componentDef.component.kind,
+  const { data, isSuccess } = useGetComponentsQuery({
     params: {
+      id: componentDef.id,
       apiVersion: componentDef.component.version,
       trim: false,
     },
@@ -414,9 +414,9 @@ const StatusChip = withSuppressedErrorBoundary(
   withStyles(styles)(({ classes, entityData, entityType }) => {
     const nextStatus = Object.values(REGISTRY_ITEM_STATES);
     const [updateEntityStatus] = useUpdateEntityStatusMutation();
-    const { data: modelData, isSuccess } = useGetModelByNameQuery({
-      name: entityData.name,
+    const { data: modelData, isSuccess } = useGetMeshModelsQuery({
       params: {
+        id: entityData.model.id,
         version: entityData.model.version,
       },
     });
