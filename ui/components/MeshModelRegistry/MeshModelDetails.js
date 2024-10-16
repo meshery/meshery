@@ -156,16 +156,12 @@ const ModelContents = withSuppressedErrorBoundary(({ modelDef }) => {
     let relationships = 0;
     if (modelDef?.versionBasedData) {
       modelDef?.versionBasedData.forEach((modelDefVersion) => {
-        components =
-          components +
-          (modelDefVersion?.components === null ? 0 : modelDefVersion.components.length);
-        relationships =
-          relationships +
-          (modelDefVersion?.relationships === null ? 0 : modelDefVersion.relationships.length);
+        components = components + modelDefVersion?.components_count;
+        relationships = relationships + modelDefVersion?.relationships_count;
       });
     } else {
-      components = modelDef?.components === null ? 0 : modelDef?.components?.length;
-      relationships = modelDef?.relationships === null ? 0 : modelDef?.relationships?.length;
+      components = modelDef?.components_count;
+      relationships = modelDef?.relationships_count;
     }
     return {
       components,
