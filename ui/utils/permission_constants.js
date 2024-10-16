@@ -36,7 +36,7 @@ export const keys = {
     subject: 'View Sessions',
     action: '26cf042a-91db-4237-8644-4d617a0d49e1',
   },
-  LOGOUT_SESSION_FROM_A_SESSION: {
+  LOGOUT_FROM_A_SESSION: {
     subject: 'Logout from a Session',
     action: '177b928b-71ee-4ecd-a30b-3154ff4ba0d9',
   },
@@ -108,7 +108,7 @@ export const keys = {
     subject: 'View Connections',
     action: 'b35c9ce0-e787-4de6-8560-631007b0b947',
   },
-  VIEW_ENVIRONMENTS: {
+  VIEW_ENVIRONMENT: {
     subject: 'View Environment',
     action: 'e3656bbc-fba2-483d-9996-34f8614cd21b',
   },
