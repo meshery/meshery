@@ -42,7 +42,9 @@
     "status": "",
     "version": "",
     "components": null,
-    "relationships": null
+    "relationships": null,
+    "components_count": 0,
+    "relationships_count": 0
   },
   "schemaVersion": "relationships.meshery.io/v1alpha3",
   "selectors": [
@@ -81,7 +83,9 @@
               "status": "",
               "version": "",
               "components": null,
-              "relationships": null
+              "relationships": null,
+              "components_count": 0,
+              "relationships_count": 0
             },
             "patch": null
           }
@@ -119,7 +123,9 @@
               "status": "",
               "version": "",
               "components": null,
-              "relationships": null
+              "relationships": null,
+              "components_count": 0,
+              "relationships_count": 0
             },
             "patch": null
           }
