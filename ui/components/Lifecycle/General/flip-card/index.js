@@ -49,7 +49,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const FlipCard = ({ frontComponents, backComponents, disableFlip }) => {
+const FlipCard = ({ frontComponents, backComponents, disableFlip, cardName }) => {
   const classes = useStyles();
 
   const [isFlipped, setIsFlipped] = useState(false);
@@ -62,14 +62,18 @@ const FlipCard = ({ frontComponents, backComponents, disableFlip }) => {
 
   return (
     <>
-      <div className={classes.flipCardWrapper}>
+      <div className={classes.flipCardWrapper} data-testid={`flip-card-${cardName}`}>
         <div
           className={classes.flipCardInner}
           onClick={handleFlip}
           style={{ transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)' }}
         >
-          <div className={classes.flipCardFront}>{frontComponents}</div>
-          <div className={classes.flipCardBack}>{backComponents}</div>
+          <div className={classes.flipCardFront} data-testid={`flip-card-front-${cardName}`}>
+            {frontComponents}
+          </div>
+          <div className={classes.flipCardBack} data-testid={`flip-card-back-${cardName}`}>
+            {backComponents}
+          </div>
         </div>
       </div>
     </>
