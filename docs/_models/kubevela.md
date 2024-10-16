@@ -54,6 +54,10 @@ components:
   colorIcon: assets/img/integrations/kubevela/components/workload-definition/icons/color/workload-definition-color.svg
   whiteIcon: assets/img/integrations/kubevela/components/workload-definition/icons/white/workload-definition-white.svg
   description: 
+- name: package
+  colorIcon: assets/img/integrations/kubevela/components/package/icons/color/package-color.svg
+  whiteIcon: assets/img/integrations/kubevela/components/package/icons/white/package-white.svg
+  description: 
 featureList: [
   "Application-centric approach",
   "Infrastructure-agnostic",
