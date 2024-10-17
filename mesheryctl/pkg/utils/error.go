@@ -45,7 +45,7 @@ var (
 	ErrClearLineCode              = "mesheryctl-1120"
 	ErrUpdateToSheetCode          = "mesheryctl-1129"
 	ErrUpdateRelationshipFileCode = "mesheryctl-1130"
-  ErrMesheryHealthCheckCode = "replace_me"
+    ErrMesheryHealthCheckCode = "replace_me"
 
 )
 
