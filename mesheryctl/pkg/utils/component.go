@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/layer5io/meshkit/encoding"
+	"github.com/layer5io/meshkit/models/meshmodel/entity"
 	"github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshkit/utils/csv"
 	"github.com/layer5io/meshkit/utils/manifests"
@@ -47,11 +48,18 @@ type ComponentCSV struct {
 	ModelDisplayName string `json:"modelDisplayName" csv:"-"`
 	Category         string `json:"category" csv:"-"`
 	SubCategory      string `json:"subCategory" csv:"-"`
+
+	Status string `json:"status" csv:"status"`
 }
 
 // The Component Definition generated assumes or is only for components which have registrant as "meshery"
 func (c *ComponentCSV) CreateComponentDefinition(isModelPublished bool, defVersion string) (component.ComponentDefinition, error) {
-
+	status := entity.Enabled
+	if c.Status != "" {
+		if utils.ReplaceSpacesAndConvertToLowercase(c.Status) == "false" {
+			status = entity.Ignored
+		}
+	}
 	componentDefinition := &component.ComponentDefinition{
 		SchemaVersion: schmeaVersion.ComponentSchemaVersion,
 		DisplayName:   c.Component,
@@ -60,6 +68,7 @@ func (c *ComponentCSV) CreateComponentDefinition(isModelPublished bool, defVersi
 		Metadata: component.ComponentDefinition_Metadata{
 			Published: isModelPublished,
 		},
+		Status: (*component.ComponentDefinitionStatus)(&status),
 		Component: component.Component{
 			Kind:    c.Component,
 			Schema:  c.Schema,
@@ -81,6 +90,13 @@ var compStyleValues = []string{
 }
 
 func (c *ComponentCSV) UpdateCompDefinition(compDef *component.ComponentDefinition) error {
+	status := entity.Enabled
+	if c.Status != "" {
+		if utils.ReplaceSpacesAndConvertToLowercase(c.Status) == "false" {
+			status = entity.Ignored
+		}
+	}
+	compDef.Status = (*component.ComponentDefinitionStatus)(&status)
 	var existingAddditionalProperties map[string]interface{}
 	if c.Description != "" {
 		compDef.Description = c.Description
@@ -187,15 +203,20 @@ type ComponentCSVHelper struct {
 	Components     map[string]map[string][]ComponentCSV
 }
 
-func NewComponentCSVHelper(sheetURL, spreadsheetName string, spreadsheetID int64) (*ComponentCSVHelper, error) {
-	sheetURL = sheetURL + "/pub?output=csv" + "&gid=" + strconv.FormatInt(spreadsheetID, 10)
-	Log.Info("Downloading CSV from: ", sheetURL)
-	dirPath := filepath.Join(utils.GetHome(), ".meshery", "content")
-	_ = os.MkdirAll(dirPath, 0755)
-	csvPath := filepath.Join(dirPath, "components.csv")
-	err := utils.DownloadFile(csvPath, sheetURL)
-	if err != nil {
-		return nil, utils.ErrReadingRemoteFile(err)
+func NewComponentCSVHelper(sheetURL, spreadsheetName string, spreadsheetID int64, localCsvPath string) (*ComponentCSVHelper, error) {
+	var csvPath string
+	if localCsvPath == "" {
+		sheetURL = sheetURL + "/pub?output=csv" + "&gid=" + strconv.FormatInt(spreadsheetID, 10)
+		Log.Info("Downloading CSV from: ", sheetURL)
+		dirPath := filepath.Join(utils.GetHome(), ".meshery", "content")
+		_ = os.MkdirAll(dirPath, 0755)
+		csvPath = filepath.Join(dirPath, "components.csv")
+		err := utils.DownloadFile(csvPath, sheetURL)
+		if err != nil {
+			return nil, utils.ErrReadingRemoteFile(err)
+		}
+	} else {
+		csvPath = localCsvPath
 	}
 
 	return &ComponentCSVHelper{

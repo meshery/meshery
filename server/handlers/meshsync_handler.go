@@ -45,7 +45,7 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 	page, offset, limit, search, order, sort, _ := getPaginationParams(r)
 	var resources []model.KubernetesResource
 	var totalCount int64
-	
+
 	apiVersion := r.URL.Query().Get("apiVersion")
 	spec, _ := strconv.ParseBool(r.URL.Query().Get("spec"))
 	status, _ := strconv.ParseBool(r.URL.Query().Get("status"))

@@ -1,0 +1,124 @@
+name: Busybox (single)
+version: 0.0.3
+services:
+  busybox-pod:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: busybox-pod
+    namespace: default
+    settings:
+      spec:
+        containers:
+        - image: busybox
+          image Pull Policy: Always
+          name: busybox
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 7998bf70-168d-43d8-a208-3be128bddcc8
+        label: busybox-pod
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          displayName: Kubernetes
+          metadata:
+            svgColor: ui/public/static/img/meshmodels/kubernetes/color/apiservice-color.svg
+            svgWhite: ui/public/static/img/meshmodels/kubernetes/white/apiservice-white.svg
+          name: kubernetes
+          version: v1.25.2
+        meshmodel-metadata:
+          genealogy: ""
+          isCustomResource: false
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-rectangle
+          styleOverrides:
+            z-index: 3
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/apiservice-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/apiservice-white.svg
+        parent: c84bb621-2979-42ac-8740-8d1674bc0e5f
+        position:
+          posX: 430
+          posY: 250
+        whiteboardData:
+          style:
+            z-index: 5
+    type: Pod
+    version: v1.25.2
+  nginx:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: nginx
+    namespace: layer5-test-ns
+    settings:
+      spec:
+        containers:
+        - image: nginx
+          image Pull Policy: Always
+          name: nginx
+          ports:
+          - container Port: 80
+            host Port: 8080
+            name: nginx-port
+            protocol: TCP
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: fd751fe3-ee76-4120-aafc-57978320aeb0
+        label: nginx
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          displayName: Kubernetes
+          metadata:
+            svgColor: ui/public/static/img/meshmodels/kubernetes/color/apiservice-color.svg
+            svgWhite: ui/public/static/img/meshmodels/kubernetes/white/apiservice-white.svg
+          name: kubernetes
+          version: v1.25.2
+        meshmodel-metadata:
+          genealogy: ""
+          isCustomResource: false
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-rectangle
+          styleOverrides:
+            z-index: 4
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/apiservice-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/apiservice-white.svg
+        parent: c84bb621-2979-42ac-8740-8d1674bc0e5f
+        position:
+          posX: 490
+          posY: 250
+        whiteboardData:
+          style:
+            z-index: 6
+    type: Pod
+    version: v1.25.2

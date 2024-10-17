@@ -1,0 +1,56 @@
+name: Persistence-volume-claim
+version: 0.0.4
+services:
+  my-app-uploads:
+    annotations:
+      source_url: git@gitlab.com:kisphp/example.git
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: my-app-uploads
+    namespace: default
+    settings:
+      spec:
+        access Modes:
+        - ReadWriteMany
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 10Gi
+        selector:
+          match Labels:
+            node-type: storage
+        storage Class Name: manual
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: b4c17920-1218-4cd5-bd63-7399d622efa4
+        label: my-app-uploads
+        meshmodel-metadata:
+          genealogy: ""
+          isCustomResource: false
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: cylinder
+          styleOverrides: '{"height":"15","width":"15","x":"12","y":"20","background-opacity":"0"}'
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/persistentvolume-color.svg
+          svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/persistentvolume-complete.svg
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/color/persistentvolume-color.svg
+        position:
+          posX: 90
+          posY: 90
+        whiteboardData:
+          style:
+            z-index: 3
+    type: PersistentVolumeClaim
+    version: ""

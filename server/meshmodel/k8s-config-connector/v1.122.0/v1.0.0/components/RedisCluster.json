@@ -1,5 +1,66 @@
 {
-  "capabilities": null,
+  "capabilities": [
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Add text to nodes body",
+    "displayName": "Body Text",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "body-text",
+    "type": "style",
+    "version": "0.7.0"
+   }
+  ],
   "component": {
    "kind": "RedisCluster",
    "schema": "{\n \"description\": \"RedisCluster is the Schema for the RedisCluster API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"RedisClusterSpec defines the desired state of RedisCluster\",\n   \"properties\": {\n    \"authorizationMode\": {\n     \"description\": \"Optional. The authorization mode of the Redis cluster. If not provided, auth feature is disabled for the cluster.\",\n     \"type\": \"string\"\n    },\n    \"deletionProtectionEnabled\": {\n     \"description\": \"Optional. The delete operation will fail when the value is set to true.\",\n     \"type\": \"boolean\"\n    },\n    \"nodeType\": {\n     \"description\": \"Optional. The type of a redis node in the cluster. NodeType determines the underlying machine-type of a redis node.\",\n     \"type\": \"string\"\n    },\n    \"persistenceConfig\": {\n     \"description\": \"Optional. Persistence config (RDB, AOF) for the cluster.\",\n     \"properties\": {\n      \"aofConfig\": {\n       \"description\": \"Optional. AOF configuration. This field will be ignored if mode is not AOF.\",\n       \"properties\": {\n        \"appendFsync\": {\n         \"description\": \"Optional. fsync configuration.\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"mode\": {\n       \"description\": \"Optional. The mode of persistence.\",\n       \"type\": \"string\"\n      },\n      \"rdbConfig\": {\n       \"description\": \"Optional. RDB configuration. This field will be ignored if mode is not RDB.\",\n       \"properties\": {\n        \"rdbSnapshotPeriod\": {\n         \"description\": \"Optional. Period between RDB snapshots.\",\n         \"type\": \"string\"\n        },\n        \"rdbSnapshotStartTime\": {\n         \"description\": \"Optional. The time that the first snapshot was/will be attempted, and to which future snapshots will be aligned. If not provided, the current time will be used.\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"pscConfigs\": {\n     \"description\": \"Required. Each PscConfig configures the consumer network where IPs will be designated to the cluster for client access through Private Service Connect Automation. Currently, only one PscConfig is supported.\",\n     \"items\": {\n      \"properties\": {\n       \"networkRef\": {\n        \"description\": \"Required. The network where the IP address of the discovery endpoint will be reserved, in the form of projects/{network_project}/global/networks/{network_id}.\",\n        \"oneOf\": [\n         {\n          \"not\": {\n           \"required\": [\n            \"external\"\n           ]\n          },\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"not\": {\n           \"anyOf\": [\n            {\n             \"required\": [\n              \"name\"\n             ]\n            },\n            {\n             \"required\": [\n              \"namespace\"\n             ]\n            }\n           ]\n          },\n          \"required\": [\n           \"external\"\n          ]\n         }\n        ],\n        \"properties\": {\n         \"external\": {\n          \"description\": \"The compute network selflink of form \\\"projects/\\u003cproject\\u003e/global/networks/\\u003cnetwork\\u003e\\\", when not managed by KCC.\",\n          \"type\": \"string\"\n         },\n         \"name\": {\n          \"description\": \"The `name` field of a `ComputeNetwork` resource.\",\n          \"type\": \"string\"\n         },\n         \"namespace\": {\n          \"description\": \"The `namespace` field of a `ComputeNetwork` resource.\",\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"redisConfigs\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"Optional. Key/Value pairs of customer overrides for mutable Redis Configs\",\n     \"type\": \"object\"\n    },\n    \"replicaCount\": {\n     \"description\": \"Optional. The number of replica nodes per shard.\",\n     \"format\": \"int32\",\n     \"type\": \"integer\"\n    },\n    \"resourceID\": {\n     \"description\": \"The RedisCluster name. If not given, the metadata.name will be used.\",\n     \"type\": \"string\"\n    },\n    \"shardCount\": {\n     \"description\": \"Required. Number of shards for the Redis cluster.\",\n     \"format\": \"int32\",\n     \"type\": \"integer\"\n    },\n    \"transitEncryptionMode\": {\n     \"description\": \"Optional. The in-transit encryption for the Redis cluster. If not provided, encryption  is disabled for the cluster.\",\n     \"type\": \"string\"\n    },\n    \"zoneDistributionConfig\": {\n     \"description\": \"Optional. This config will be used to determine how the customer wants us to distribute cluster resources within the region.\",\n     \"properties\": {\n      \"mode\": {\n       \"description\": \"Optional. The mode of zone distribution. Defaults to MULTI_ZONE, when not specified.\",\n       \"type\": \"string\"\n      },\n      \"zone\": {\n       \"description\": \"Optional. When SINGLE ZONE distribution is selected, zone field would be used to allocate all resources in that zone. This is not applicable to MULTI_ZONE, and would be ignored for MULTI_ZONE clusters.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Redis Cluster\",\n \"type\": \"object\"\n}",
@@ -56,7 +117,9 @@
    "subCategory": "Provisioning",
    "version": "v1.0.0",
    "components": null,
-   "relationships": null
+   "relationships": null,
+   "components_count": 0,
+   "relationships_count": 0
   },
   "schemaVersion": "components.meshery.io/v1beta1",
   "status": "enabled",

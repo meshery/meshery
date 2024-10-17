@@ -6,16 +6,16 @@
 | Aadhitya Amarendiran    | alphaX86          | Citi        |
 | Jerod Culpepper         | cpepper96         | SAIC        |
 | Antonette Caldwell      | acald-creator     | Acquia      |
+| Matthieu Evrin          | lekaf974          | Independent |
 
 ### UI Maintainers
 
 | Name                | GitHub                 | Affiliation |
 | ------------------- | ---------------------- | ----------- |
-| Uzair Shaikh        | MUzairS15              | Layer5      |
 | Nikhil Ladha        | Nikhil-Ladha           | Red Hat     |
 | Antonette Caldwell  | acald-creator          | Acquia      |
 | Aabid Sofi          | aabidsofi19            | Layer5      |
-| Yash Sharma         | Yashsharma1911         | Layer5      |
+| Yash Sharma         | Yashsharma1911         | Independent |
 
 ### Adapter Maintainers
 
@@ -51,4 +51,3 @@
 | ----------------------  | -----------  | -------------- |
 | Nikhil Ladha            | Nikhil-Ladha | Red Hat        |
 | Aaditya Narayan Subedy  | asubedy      | Fast Retailing |
- 

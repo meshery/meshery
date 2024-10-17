@@ -1,10 +1,9 @@
-import React, { useEffect, useLayoutEffect } from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import AppBar from '@material-ui/core/AppBar';
 import Grid from '@material-ui/core/Grid';
 import Hidden from '@material-ui/core/Hidden';
 import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
 import Toolbar from '@material-ui/core/Toolbar';
 import { withStyles } from '@material-ui/core/styles';
 import { connect, useSelector } from 'react-redux';
@@ -36,7 +35,7 @@ import { useNotification, withNotify } from '../utils/hooks/useNotification';
 import useKubernetesHook, { useControllerStatus } from './hooks/useKubernetesHook';
 import { formatToTitleCase } from '../utils/utils';
 import { CONNECTION_KINDS } from '../utils/Enum';
-import { Checkbox, OutlinedSettingsIcon } from '@layer5/sistent';
+import { Checkbox, MenuIcon, OutlinedSettingsIcon } from '@layer5/sistent';
 import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomTextTooltip';
 import { Colors } from '@/themes/app';
 import { CanShow } from '@/utils/can';
@@ -44,6 +43,7 @@ import { keys } from '@/utils/permission_constants';
 import SpaceSwitcher from './SpacesSwitcher/SpaceSwitcher';
 import { UsesSistent } from './SistentWrapper';
 import Router from 'next/router';
+import HeaderMenu from './HeaderMenu';
 
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 const styles = (theme) => ({
@@ -82,15 +82,15 @@ const styles = (theme) => ({
   },
   toolbarOnDrawerClosed: {
     minHeight: 59,
-    padding: theme.spacing(0.5),
-    paddingLeft: theme.spacing(0.5),
+    padding: theme.spacing(2),
+    paddingLeft: 34,
     paddingRight: 34,
     backgroundColor: theme.palette.secondary.mainBackground,
     boxShadow: `3px 0px 4px ${theme.palette.secondary.focused}`,
   },
   toolbarOnDrawerOpen: {
     minHeight: 58,
-    padding: theme.spacing(0.5),
+    padding: theme.spacing(2),
     paddingLeft: 34,
     paddingRight: 34,
     backgroundColor: theme.palette.secondary.mainBackground,
@@ -208,22 +208,6 @@ async function loadActiveK8sContexts() {
   } catch (e) {
     console.error('An error occurred while loading k8sconfig', e);
   }
-}
-
-function LoadTheme({ themeSetter }) {
-  const defaultTheme = 'light';
-
-  useLayoutEffect(() => {
-    // disable dark mode in extension
-
-    if (localStorage.getItem('Theme') === null) {
-      themeSetter(defaultTheme);
-    } else {
-      themeSetter(localStorage.getItem('Theme'));
-    }
-  }, []);
-
-  return <></>;
 }
 
 const K8sContextConnectionChip_ = ({
@@ -520,23 +504,14 @@ class Header extends React.PureComponent {
   };
 
   render() {
-    const {
-      classes,
-      title,
-      onDrawerToggle,
-      isBeta,
-      theme,
-      themeSetter,
-      onDrawerCollapse,
-      abilityUpdated,
-    } = this.props;
+    const { classes, title, onDrawerToggle, isBeta, onDrawerCollapse, abilityUpdated } = this.props;
     const loaderType = 'circular';
 
     return (
       <NoSsr>
         <React.Fragment>
-          <LoadTheme theme={theme} themeSetter={themeSetter} />
           <AppBar
+            id="top-navigation-bar"
             color="primary"
             position="sticky"
             // elevation={1}
@@ -563,11 +538,7 @@ class Header extends React.PureComponent {
                 <Grid item xs container alignItems="center" className={classes.pageTitleWrapper}>
                   <SpaceSwitcher title={title} isBeta={isBeta} />
                 </Grid>
-                <Grid
-                  item
-                  className={classes.userContainer}
-                  style={{ position: 'relative', right: '-27px' }}
-                >
+                <Grid item className={classes.userContainer} style={{ position: 'relative' }}>
                   {/* According to the capabilities load the component */}
                   {this.state.collaboratorExt && (
                     <ExtensionSandbox
@@ -609,11 +580,19 @@ class Header extends React.PureComponent {
                   <div data-test="notification-button">
                     <NotificationDrawerButton />
                   </div>
+
                   <span className={classes.userSpan}>
                     <User
                       classes={classes}
-                      theme={theme}
-                      themeSetter={themeSetter}
+                      color="inherit"
+                      iconButtonClassName={classes.iconButtonAvatar}
+                      avatarClassName={classes.avatar}
+                      updateExtensionType={this.props.updateExtensionType}
+                    />
+                  </span>
+                  <span className={classes.userSpan}>
+                    <HeaderMenu
+                      classes={classes}
                       color="inherit"
                       iconButtonClassName={classes.iconButtonAvatar}
                       avatarClassName={classes.avatar}

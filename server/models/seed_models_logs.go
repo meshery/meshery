@@ -1,17 +1,17 @@
 package models
 
 import (
-
 	"fmt"
-	"strings"
+
 	gofrs "github.com/gofrs/uuid"
+	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/models/events"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	"github.com/layer5io/meshkit/models/meshmodel/entity"
+	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 	mutils "github.com/layer5io/meshkit/utils"
 	"github.com/spf13/viper"
-	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
-	"github.com/layer5io/meshkit/logger"
+	"strings"
 )
 
 var TAB = "    "
@@ -22,42 +22,49 @@ type RegistrationFailureLog struct {
 	// for models, the structure will be like this:
 	// {'artifacthub': {'': 'model': {'model': error}}}
 	// think of it like every model belongs to a global model called ''
-	failureData map[string](map[string](map[string]((map[string]error))))
+	failureData map[string](map[string](map[string](map[string]error)))
 
 	// invalid definitions while parsing the given input (oci, tar, dir) into meshmodel entities
 	invalidDefinitions map[string](error)
 }
+type EntityRegError struct {
+	HostName   string
+	ModelName  string
+	EntityType entity.EntityType
+	EntityName string
+	Err        error
+}
 
 func NewRegistrationFailureLogHandler() *RegistrationFailureLog {
 	return &RegistrationFailureLog{
-		failureData: make(map[string](map[string](map[string]((map[string]error))))),
-		invalidDefinitions:  make(map[string]error),
+		failureData:        make(map[string](map[string](map[string](map[string]error)))),
+		invalidDefinitions: make(map[string]error),
 	}
 }
 
-func (rfl *RegistrationFailureLog) AddInvalidDefinition(path string, err error){
+func (rfl *RegistrationFailureLog) AddInvalidDefinition(path string, err error) {
 	rfl.invalidDefinitions[path] = err
 }
 
-func (rfl *RegistrationFailureLog) InsertEntityRegError(hostname string, modelName string,entityType entity.EntityType, name string, err error){
-	if(rfl.failureData[hostname] == nil ) {
+func (rfl *RegistrationFailureLog) InsertEntityRegError(hostname string, modelName string, entityType entity.EntityType, name string, err error) {
+	if rfl.failureData[hostname] == nil {
 		rfl.failureData[hostname] = make(map[string]map[string]map[string]error)
 	}
-	if(rfl.failureData[hostname][modelName] == nil){
+	if rfl.failureData[hostname][modelName] == nil {
 		rfl.failureData[hostname][modelName] = make(map[string]map[string]error)
 	}
-	if(rfl.failureData[hostname][modelName][string(entityType)] == nil){
+	if rfl.failureData[hostname][modelName][string(entityType)] == nil {
 		rfl.failureData[hostname][modelName][string(entityType)] = make(map[string]error)
 	}
 	rfl.failureData[hostname][modelName][string(entityType)][name] = err
 }
 
-func (rfl *RegistrationFailureLog) GetNonRegisteredEntitiesCount()map[string]v1beta1.EntitySummary{
+func (rfl *RegistrationFailureLog) GetNonRegisteredEntitiesCount() map[string]v1beta1.EntitySummary {
 	res := make(map[string]v1beta1.EntitySummary)
 	for registrant, modelNamespacedData := range rfl.failureData {
 		entitySummary := v1beta1.EntitySummary{}
 		for modelName, entityTypeNamespacedData := range modelNamespacedData {
-			if(modelName == ""){
+			if modelName == "" {
 				modelsCount := len(entityTypeNamespacedData[string(entity.Model)])
 				entitySummary.Models = int64(modelsCount)
 				continue
@@ -70,7 +77,6 @@ func (rfl *RegistrationFailureLog) GetNonRegisteredEntitiesCount()map[string]v1b
 	}
 	return res
 }
-
 
 func failedMsgCompute(failedMsg string, hostName string, regLog *RegistrationFailureLog) (string, error) {
 	nonImportModel := regLog.GetNonRegisteredEntitiesCount()[hostName]
@@ -103,9 +109,9 @@ func FailedEventCompute(hostname string, mesheryInstanceID gofrs.UUID, provider 
 		errorEventBuilder.WithSeverity(events.Error).WithDescription(failedMsg)
 		errorEvent := errorEventBuilder.Build()
 		errorEventBuilder.WithMetadata(map[string]interface{}{
-			"DownloadLink":         filePath,
-			"ViewLink":             filePath,
-			"error": ErrImportFailure(hostname, failedMsg),
+			"DownloadLink": filePath,
+			"ViewLink":     filePath,
+			"error":        ErrImportFailure(hostname, failedMsg),
 		})
 		_ = (*provider).PersistEvent(errorEvent)
 		if userID != "" {
@@ -117,7 +123,6 @@ func FailedEventCompute(hostname string, mesheryInstanceID gofrs.UUID, provider 
 	return failedMsg, nil
 }
 
-
 func writeLogsToFiles(regLog *RegistrationFailureLog) error {
 	filePath := viper.GetString("REGISTRY_LOG_FILE")
 	// Initialize the formatted log message
@@ -125,24 +130,24 @@ func writeLogsToFiles(regLog *RegistrationFailureLog) error {
 
 	logMessage.WriteString("Invalid Definitions: \n")
 	for path, err := range regLog.invalidDefinitions {
-		logMessage.WriteString(TAB + "[" + path + "] " + err.Error() + " \n" )
+		logMessage.WriteString(TAB + "[" + path + "] " + err.Error() + " \n")
 	}
 	logMessage.WriteString("---------------------------------------- \n")
 	for host, modelNamespacedData := range regLog.failureData {
-	logMessage.WriteString(fmt.Sprintf("%s failed to register:\n", host))
+		logMessage.WriteString(fmt.Sprintf("%s failed to register:\n", host))
 		for modelName, entityTypeNamespacedData := range modelNamespacedData {
-			if(modelName == "") {
-			logMessage.WriteString(fmt.Sprintf("%sModels:\n", TAB))
-				for name, modelData := range entityTypeNamespacedData[string(entity.Model)]{
-					logMessage.WriteString(TAB + TAB + name + ": " + modelData.Error()+ "\n")
+			if modelName == "" {
+				logMessage.WriteString(fmt.Sprintf("%sModels:\n", TAB))
+				for name, modelData := range entityTypeNamespacedData[string(entity.Model)] {
+					logMessage.WriteString(TAB + TAB + name + ": " + modelData.Error() + "\n")
 				}
 				continue
 			}
 			logMessage.WriteString(fmt.Sprintf("%sFor Model %s:\n", TAB, modelName))
 			for entityType, entityNameNamespacedData := range entityTypeNamespacedData {
-				logMessage.WriteString(fmt.Sprintf("%s%s%s:\n", TAB,TAB, entityType))
+				logMessage.WriteString(fmt.Sprintf("%s%s%s:\n", TAB, TAB, entityType))
 				for name, err := range entityNameNamespacedData {
-				logMessage.WriteString(fmt.Sprintf("%s%s%s%s: %s\n", TAB,TAB, TAB, name, err.Error() ))
+					logMessage.WriteString(fmt.Sprintf("%s%s%s%s: %s\n", TAB, TAB, TAB, name, err.Error()))
 				}
 
 			}
@@ -156,7 +161,7 @@ func writeLogsToFiles(regLog *RegistrationFailureLog) error {
 	return nil
 }
 
-func RegistryLog(log logger.Handler, handlerConfig *HandlerConfig, regManager *meshmodel.RegistryManager, regErrorStore *RegistrationFailureLog ) {
+func RegistryLog(log logger.Handler, handlerConfig *HandlerConfig, regManager *meshmodel.RegistryManager, regErrorStore *RegistrationFailureLog) {
 	provider := handlerConfig.Providers["None"]
 
 	systemID := viper.GetString("INSTANCE_ID")
@@ -201,4 +206,25 @@ func RegistryLog(log logger.Handler, handlerConfig *HandlerConfig, regManager *m
 	if err != nil {
 		log.Error(err)
 	}
+}
+
+func (rfl *RegistrationFailureLog) GetEntityRegErrors() []EntityRegError {
+	var errors []EntityRegError
+	for host, modelData := range rfl.failureData {
+		for modelName, entityTypeData := range modelData {
+			for entityTypeStr, entityNameData := range entityTypeData {
+				entityType := entity.EntityType(entityTypeStr)
+				for entityName, err := range entityNameData {
+					errors = append(errors, EntityRegError{
+						HostName:   host,
+						ModelName:  modelName,
+						EntityType: entityType,
+						EntityName: entityName,
+						Err:        err,
+					})
+				}
+			}
+		}
+	}
+	return errors
 }
