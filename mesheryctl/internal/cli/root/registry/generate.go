@@ -77,7 +77,7 @@ mesheryctl registry generate --registrant-def [path to connection definition] --
 // Generate a specific Model from a Google Spreadsheet (i.e. "Meshery Integrations" spreadsheet).
 mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred --model "[model-name]"
 // Generate Meshery Models and Component from csv files in a local directory.
-mesheryctl registry generate -directory <DIRECTORY_PATH>
+mesheryctl registry generate --directory <DIRECTORY_PATH>
     `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		// Prerequisite check is needed - https://github.com/meshery/meshery/issues/10369
