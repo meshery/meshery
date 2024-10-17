@@ -167,26 +167,44 @@ const styles = (theme) => ({
 });
 
 const ThemeToggler = ({ classes }) => {
-  const Component = ({ mode, toggleTheme }) => {
-    return (
-      <div>
-        <Switch
-          color="primary"
-          classes={{
-            switchBase: classes.switchBase,
-            track: classes.track,
-            checked: classes.checked,
-            font: classes.checked,
-          }}
-          checked={mode === 'dark'}
-          onChange={toggleTheme}
+  return (
+    <ThemeTogglerCore
+      Component={({ mode, toggleTheme }) => (
+        <FormControlLabel
+          control={
+            <Switch
+              color="primary"
+              classes={{
+                switchBase: classes.switchBase,
+                track: classes.track,
+                checked: classes.checked,
+                font: classes.checked,
+              }}
+              checked={mode === 'dark'}
+              onChange={toggleTheme}
+            />
+          }
+          label="Dark Mode"
+          labelPlacement="end"
         />
-        Dark Mode
-      </div>
-    );
-  };
+      )}
+    />
+  );
+};
 
-  return <ThemeTogglerCore Component={Component}></ThemeTogglerCore>;
+const FormControlWrapper = (props) => {
+  return (
+    <div className={props.classes.formContainer}>
+      <FormControl component="fieldset" className={props.classes.formGrp}>
+        <FormLabel component="legend" className={props.classes.formLegend}>
+          Theme
+        </FormLabel>
+        <FormGroup>
+          <ThemeToggler handleUpdateUserPref={props.handleUpdateUserPref} classes={props.classes} />
+        </FormGroup>
+      </FormControl>
+    </div>
+  );
 };
 
 const UserPreference = (props) => {
@@ -716,27 +734,10 @@ const UserPreference = (props) => {
                 </FormGroup>
               </FormControl>
             </div>
-
-            <div className={props.classes.formContainer}>
-              <FormControl component="fieldset" className={props.classes.formGrp}>
-                <FormLabel component="legend" className={props.classes.formLegend}>
-                  Theme
-                </FormLabel>
-
-                <FormGroup>
-                  <FormControlLabel
-                    key="ThemePreference"
-                    control={
-                      <ThemeToggler
-                        handleUpdateUserPref={handleUpdateUserPref}
-                        classes={props.classes}
-                      />
-                    }
-                    labelPlacement="end"
-                  />
-                </FormGroup>
-              </FormControl>
-            </div>
+            <FormControlWrapper
+              handleUpdateUserPref={handleUpdateUserPref}
+              classes={props.classes}
+            />
           </>
         )}
         {tabVal === 1 && <MesherySettingsPerformanceComponent />}
