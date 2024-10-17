@@ -133,33 +133,6 @@ Troubleshooting guides to using Meshery's various features and components.
   {% endfor %}
 </tbody>
 </table>
- <a href="#error-code-reference">Top</a>
-  <hr>
-  <br>
-
-  {% for files in site.data.errorref %}    
-  {% for eachFile in files %}
-    {% for component in eachFile %}
-      {% capture thecycle %}{% cycle 'odd', 'even' %}{% endcapture %}
-      {% if thecycle == 'even' %}
-        {% if component[1].component_type == 'adapter' %}
-          {% capture heading %}
-            Meshery Adapter for {{ component[1].component_name }}
-          {% endcapture %}
-        {% elsif component[1].component_type == 'client' %}
-          {% capture heading %}
-            {{ component[1].component_name }} client
-          {% endcapture %}
-        {% elsif component[1].component_type == 'library' %}
-          {% capture heading %}
-            {{ component[1].component_name }} {{ component[1].component_type | camelcase }}
-          {% endcapture %}
-        {% elsif component[1].component_name == 'meshery-server' %}
-          {% capture heading %}
-            Meshery Server
-          {% endcapture %}
-        {% endif %}
-
 
 <h2 class="title">{{ heading }}</h2>
 <table class="tbl">
