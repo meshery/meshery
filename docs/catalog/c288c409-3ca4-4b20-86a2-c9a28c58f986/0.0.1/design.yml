@@ -1,0 +1,965 @@
+name: Guestbook App (All-in-One)
+version: 0.0.13
+services:
+  comment-jt:
+    annotations: {}
+    apiVersion: core.meshery.io/v1alpha1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: meshery-core
+    name: comment-jt
+    namespace: default
+    settings:
+      lastUpdated: "2023-12-24T22:46:09.565Z"
+      status: false
+      user Messages: []
+      usersMessages:
+      - firstName: Akshay
+        lastName: Sharma
+        message: 'working fine for me '
+        timestamp: "2023-12-15T14:12:33.596Z"
+        userid: 51f49d2c-0050-4bdb-9bce-fdddcb4742be
+      - avatarUrl: https://pbs.twimg.com/profile_images/880205475643441152/V_vhfnzb_400x400.jpg
+        firstName: Lee
+        lastName: Calcote
+        message: "\U0001FAE0"
+        timestamp: "2023-12-16T02:47:36.924Z"
+        userid: 090e7114-509a-4046-81f1-9c5fb8daf724
+      - avatarUrl: https://avatars.githubusercontent.com/u/73700530?v=4
+        firstName: Pranav
+        lastName: Singh
+        message: "Tag set issue resolved here:\nhttps://github.com/meshery/meshery/pull/9714 "
+        timestamp: "2023-12-24T22:46:09.565Z"
+        userid: a550f4d6-d3bd-44f1-9b4c-167114452062
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: c4dbac50-2d6a-48b9-9bb0-eaa69b509280
+        label: Comment
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          components: []
+          displayName: Meshery Core
+          displayhostname: ""
+          hostID: 00000000-0000-0000-0000-000000000000
+          hostname: ""
+          metadata:
+            isAnnotation: false
+            svgColor: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+            svgWhite: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+          name: meshery-core
+          relationships: []
+          version: v1.0.0
+        meshmodel-metadata:
+          capabilities: ""
+          genealogy: ""
+          isAnnotation: true
+          isModelAnnotation: "FALSE"
+          isNamespaced: false
+          logoURL: ""
+          model: meshery-core
+          modelDisplayName: Meshery Core
+          primaryColor: '#FFDE00'
+          published: true
+          secondaryColor: '#FFDE00'
+          shape: tag
+          styleOverrides: '{"height":"22px","width":"22px","x":"3.5px","y":"7.5px"}'
+          subCategory: App Definition and Development
+          svgColor: ui/public/static/img/meshmodels/meshery-core/color/comment-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/meshery-core/color/comment-color.svg
+        position:
+          posX: 630
+          posY: 250
+        whiteboardData:
+          style:
+            z-index: 20
+    type: Comment
+    version: v1.0.0
+  comment-uy:
+    annotations: {}
+    apiVersion: core.meshery.io/v1alpha1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: meshery-core
+    name: comment-uy
+    namespace: default
+    settings:
+      lastUpdated: "2023-12-24T21:02:48.640Z"
+      status: false
+      user Messages: []
+      usersMessages:
+      - avatarUrl: https://avatars.githubusercontent.com/u/73700530?v=4
+        firstName: Pranav
+        lastName: Singh
+        message: "hello @[Pranav Singh](a550f4d6-d3bd-44f1-9b4c-167114452062) \n"
+        timestamp: "2023-12-24T21:02:48.640Z"
+        userid: a550f4d6-d3bd-44f1-9b4c-167114452062
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 0541029d-094c-43a0-9d3a-c103f6cbc58f
+        label: Comment
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          components: []
+          displayName: Meshery Core
+          displayhostname: ""
+          hostID: 00000000-0000-0000-0000-000000000000
+          hostname: ""
+          metadata:
+            isAnnotation: false
+            svgColor: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+            svgWhite: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+          name: meshery-core
+          relationships: []
+          version: v1.0.0
+        meshmodel-metadata:
+          capabilities: ""
+          genealogy: ""
+          isAnnotation: true
+          isModelAnnotation: "FALSE"
+          isNamespaced: false
+          logoURL: ""
+          model: meshery-core
+          modelDisplayName: Meshery Core
+          primaryColor: '#FFDE00'
+          published: true
+          secondaryColor: '#FFDE00'
+          shape: tag
+          styleOverrides:
+            height: 22px
+            width: 22px
+            x: 3.5px
+            "y": 7.5px
+            z-index: 6
+          subCategory: App Definition and Development
+          svgColor: ui/public/static/img/meshmodels/meshery-core/color/comment-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/meshery-core/color/comment-color.svg
+        position:
+          posX: 750
+          posY: 610
+        whiteboardData:
+          style:
+            z-index: 12
+    type: Comment
+    version: v1.0.0
+  frontend-dzytm:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels:
+      app: guestbook
+      tier: backend
+    model: kubernetes
+    name: frontend
+    namespace: default
+    settings:
+      spec:
+        ports:
+        - port: 80
+          protocol: TCP
+        - port: 80
+          protocol: TCP
+        selector:
+          app: guestbook
+          tier: frontend
+        type: NodePort
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: 36119b39-2529-4ca2-9d6f-410287c6de22
+            metadata:
+              port: 80
+              protocol: TCP
+            source: a39108f2-136d-45c2-92ef-fa0125257e27
+            subType: Network
+            target: 11bd2f2c-70b6-448e-b16b-7f2ac2215b1f
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: a39108f2-136d-45c2-92ef-fa0125257e27
+        label: frontend
+        meshmodel-metadata:
+          capabilities: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-triangle
+          styleOverrides:
+            background-fit: none
+            background-position-y: 4.5
+            height: 20
+            padding: 12
+            width: 20
+            x: 10px
+            "y": 12px
+            z-index: 7
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/connection-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/connection-white.svg
+        position:
+          posX: 430
+          posY: 350
+        whiteboardData:
+          style:
+            z-index: 9
+    type: Service
+    version: ""
+  frontend-uczit:
+    annotations: {}
+    apiVersion: apps/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels:
+      app: redis
+      env: stg
+    model: kubernetes
+    name: frontend
+    namespace: default
+    settings:
+      spec:
+        replicas: 3
+        selector:
+          match Labels:
+            app: guestbook
+            tier: frontend
+        template:
+          metadata:
+            labels:
+              app: guestbook
+              tier: frontend
+          spec:
+            containers:
+            - env:
+              - name: GET_HOSTS_FROM
+                value: dns
+              image: gcr.io/google-samples/gb-frontend:v4
+              name: php-redis
+              ports:
+              - container Port: 80
+              resources:
+                requests:
+                  cpu: 100m
+                  memory: 100Mi
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: 36119b39-2529-4ca2-9d6f-410287c6de22
+            metadata:
+              port: 80
+              protocol: TCP
+            source: a39108f2-136d-45c2-92ef-fa0125257e27
+            subType: Network
+            target: 11bd2f2c-70b6-448e-b16b-7f2ac2215b1f
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: 11bd2f2c-70b6-448e-b16b-7f2ac2215b1f
+        label: frontend
+        meshmodel-metadata:
+          capabilities: ""
+          genealogy: parent
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: Created by leecalcote
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-pentagon
+          styleOverrides:
+            background-image: none
+            background-opacity: 0.5
+            border-width: 2
+            z-index: 3
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg
+          svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/deployment-complete.svg
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg
+        position:
+          posX: 590
+          posY: 550
+        whiteboardData:
+          style:
+            z-index: 33
+    type: Deployment
+    version: ""
+  redis-master-gumqh:
+    annotations: {}
+    apiVersion: apps/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels:
+      app: backend
+      env: prod
+    model: kubernetes
+    name: redis-master
+    namespace: default
+    settings:
+      spec:
+        replicas: 1
+        selector:
+          match Labels:
+            app: redis
+            role: master
+            tier: backend
+        template:
+          metadata:
+            labels:
+              app: redis
+              role: master
+              tier: backend
+          spec:
+            containers:
+            - image: registry.k8s.io/redis:e2e
+              name: master
+              ports:
+              - container Port: 6379
+              resources:
+                requests:
+                  cpu: 100m
+                  memory: 100Mi
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: 3d1f1503-91bc-49b1-a5eb-cf33e1539b1b
+            metadata:
+              port: 6379
+              protocol: TCP
+            source: a8126c59-8ff5-4736-8d8a-0aadfcfe19f0
+            subType: Network
+            target: 8aae645a-1f9e-48dd-9ed6-0457d2ebe4ae
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        - data:
+            id: 9dca6b25-1a41-41fb-a22b-465f464e51ed
+            metadata:
+              port: 6379
+              protocol: TCP
+            source: 5fec14fc-0873-4232-ab86-ceb6592a9767
+            subType: Network
+            target: 8aae645a-1f9e-48dd-9ed6-0457d2ebe4ae
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: 8aae645a-1f9e-48dd-9ed6-0457d2ebe4ae
+        label: redis-master
+        meshmodel-metadata:
+          capabilities: ""
+          genealogy: parent
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: Created by leecalcote
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-pentagon
+          styleOverrides:
+            background-image: none
+            background-opacity: 0.5
+            border-width: 2
+            z-index: 8
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg
+          svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/deployment-complete.svg
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg
+        position:
+          posX: 670
+          posY: 390
+        whiteboardData:
+          style:
+            z-index: 29
+    type: Deployment
+    version: ""
+  redis-master-nlnta:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels:
+      against: me
+      app: redis
+      role: master
+      tier: backend
+    model: kubernetes
+    name: redis-master
+    namespace: default
+    settings:
+      spec:
+        allocate Load Balancer Node Ports: true
+        ports:
+        - port: 6379
+          protocol: TCP
+          target Port: 6379
+        - port: 6379
+          protocol: TCP
+        - port: 6379
+          protocol: TCP
+        - port: 6379
+          protocol: TCP
+        selector:
+          app: redis
+          role: master
+          tier: backend
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: 3d1f1503-91bc-49b1-a5eb-cf33e1539b1b
+            metadata:
+              port: 6379
+              protocol: TCP
+            source: a8126c59-8ff5-4736-8d8a-0aadfcfe19f0
+            subType: Network
+            target: 8aae645a-1f9e-48dd-9ed6-0457d2ebe4ae
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        - data:
+            id: 66f17ab6-a3d7-4c1a-8af3-e812d8341d2d
+            metadata:
+              port: 6379
+              protocol: TCP
+            source: a8126c59-8ff5-4736-8d8a-0aadfcfe19f0
+            subType: Network
+            target: 83acbd17-dfcb-4092-80c7-be033e38876d
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: a8126c59-8ff5-4736-8d8a-0aadfcfe19f0
+        label: redis-master
+        meshmodel-metadata:
+          capabilities: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-triangle
+          styleOverrides:
+            background-fit: none
+            background-position-y: 4.5
+            height: 20
+            padding: 12
+            width: 20
+            x: 10px
+            "y": 12px
+            z-index: 4
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/connection-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/connection-white.svg
+        position:
+          posX: 1250
+          posY: 250
+        whiteboardData:
+          style:
+            z-index: 6
+    type: Service
+    version: ""
+  redis-replica-cmjdd:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels:
+      against: me
+      app: redis
+      role: replica
+      tier: backend
+    model: kubernetes
+    name: redis-replica
+    namespace: default
+    settings:
+      spec:
+        ports:
+        - port: 6379
+          protocol: TCP
+        - port: 6379
+          protocol: TCP
+        - port: 6379
+          protocol: TCP
+        - port: 6379
+          protocol: TCP
+        selector:
+          app: redis
+          role: replica
+          tier: backend
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: 9dca6b25-1a41-41fb-a22b-465f464e51ed
+            metadata:
+              port: 6379
+              protocol: TCP
+            source: 5fec14fc-0873-4232-ab86-ceb6592a9767
+            subType: Network
+            target: 8aae645a-1f9e-48dd-9ed6-0457d2ebe4ae
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        - data:
+            id: fcf4a44e-3ac2-4b82-80be-3eccb3170de4
+            metadata:
+              port: 6379
+              protocol: TCP
+            source: 5fec14fc-0873-4232-ab86-ceb6592a9767
+            subType: Network
+            target: 83acbd17-dfcb-4092-80c7-be033e38876d
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: 5fec14fc-0873-4232-ab86-ceb6592a9767
+        label: redis-replica
+        meshmodel-metadata:
+          capabilities: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-triangle
+          styleOverrides:
+            background-fit: none
+            background-position-y: 4.5
+            height: 20
+            padding: 12
+            width: 20
+            x: 10px
+            "y": 12px
+            z-index: 9
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/connection-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/connection-white.svg
+        position:
+          posX: 930
+          posY: 170
+        whiteboardData:
+          style:
+            z-index: 5
+    type: Service
+    version: ""
+  redis-replica-jdgja:
+    annotations:
+      env: stg
+    apiVersion: apps/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels:
+      app: backend
+      env: stg
+    model: kubernetes
+    name: redis-replica
+    namespace: default
+    settings:
+      spec:
+        replicas: 2
+        selector:
+          match Labels:
+            app: redis
+            role: replica
+            tier: backend
+        template:
+          metadata:
+            labels:
+              app: redis
+              role: replica
+              tier: backend
+          spec:
+            containers:
+            - env:
+              - name: GET_HOSTS_FROM
+                value: dns
+              image: gcr.io/google_samples/gb-redisslave:v1
+              name: replica
+              ports:
+              - container Port: 6379
+              resources:
+                requests:
+                  cpu: 100m
+                  memory: 100Mi
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: fcf4a44e-3ac2-4b82-80be-3eccb3170de4
+            metadata:
+              port: 6379
+              protocol: TCP
+            source: 5fec14fc-0873-4232-ab86-ceb6592a9767
+            subType: Network
+            target: 83acbd17-dfcb-4092-80c7-be033e38876d
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        - data:
+            id: 66f17ab6-a3d7-4c1a-8af3-e812d8341d2d
+            metadata:
+              port: 6379
+              protocol: TCP
+            source: a8126c59-8ff5-4736-8d8a-0aadfcfe19f0
+            subType: Network
+            target: 83acbd17-dfcb-4092-80c7-be033e38876d
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: 83acbd17-dfcb-4092-80c7-be033e38876d
+        label: redis-replica
+        meshmodel-metadata:
+          capabilities: ""
+          genealogy: parent
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: Created by leecalcote
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-pentagon
+          styleOverrides:
+            background-image: none
+            background-opacity: 0.5
+            border-width: 2
+            z-index: 5
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg
+          svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/deployment-complete.svg
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg
+        position:
+          posX: 990
+          posY: 530
+        whiteboardData:
+          style:
+            z-index: 31
+    type: Deployment
+    version: ""
+  text-box-kd:
+    annotations: {}
+    apiVersion: core.meshery.io/v1alpha1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: meshery-core
+    name: text-box-kd
+    namespace: default
+    settings:
+      content: '[Lee] I can''t open this second comment. Hmm.'
+      user Messages: []
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: b9529fc8-fd70-4e4f-8ef6-406b12a0a890
+        label: text-box-kd
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          components: []
+          displayName: Meshery Core
+          displayhostname: ""
+          hostID: 00000000-0000-0000-0000-000000000000
+          hostname: ""
+          metadata:
+            isAnnotation: false
+            svgColor: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+            svgWhite: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+          name: meshery-core
+          relationships: []
+          version: v1.0.0
+        meshmodel-metadata:
+          capabilities: '{"designer":{"edit":{"text":true, "config":false,"lock":true,"shape":{"convert-shape":true},"style":true},"label":{"edit":true,"show":true,"sync-with-config-property":"label"}}}'
+          genealogy: ""
+          isAnnotation: true
+          isModelAnnotation: "FALSE"
+          isNamespaced: false
+          logoURL: ""
+          model: meshery-core
+          modelDisplayName: Meshery Core
+          primaryColor: '#00B39F'
+          published: true
+          secondaryColor: '#00D3A9'
+          shape: rectangle
+          styleOverrides:
+            background-image: none
+            background-opacity: 0
+            border-color: '#808080'
+            border-style: dashed
+            border-width: 1
+            data:
+              label: ""
+            height: 20px
+            width: 40px
+            z-index: 10
+          subCategory: App Definition and Development
+          svgColor: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/aws-node-termination-handler-2/white/terminator-white.svg
+        position:
+          posX: 610
+          posY: 430
+        whiteboardData:
+          style:
+            z-index: 28
+    type: TextBox
+    version: v1.0.0
+  text-box-ul:
+    annotations: {}
+    apiVersion: core.meshery.io/v1alpha1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: meshery-core
+    name: text-box-ul
+    namespace: default
+    settings:
+      color: rgb(0,179,159)
+      content: |
+        [Lee] Both of the Redis services have the same label for "tier: backend", but neither share the same bubbleset.
+      font-size: "37"
+      font-weight: 400
+      user Messages: []
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 00ba93f4-5bcb-4c6e-8e37-0d10c3b81743
+        label: Text Box
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          components: []
+          displayName: Meshery Core
+          displayhostname: ""
+          hostID: 00000000-0000-0000-0000-000000000000
+          hostname: ""
+          metadata:
+            isAnnotation: false
+            svgColor: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+            svgWhite: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+          name: meshery-core
+          relationships: []
+          version: v1.0.0
+        meshmodel-metadata:
+          capabilities: '{"designer":{"edit":{"text":true, "config":false,"lock":true,"shape":{"convert-shape":true},"style":true},"label":{"edit":true,"show":true,"sync-with-config-property":"label"}}}'
+          genealogy: ""
+          isAnnotation: true
+          isModelAnnotation: "FALSE"
+          isNamespaced: false
+          logoURL: ""
+          model: meshery-core
+          modelDisplayName: Meshery Core
+          primaryColor: '#00B39F'
+          published: true
+          secondaryColor: '#00D3A9'
+          shape: rectangle
+          styleOverrides:
+            background-image: none
+            background-opacity: 0
+            border-color: '#808080'
+            border-style: dashed
+            border-width: 1
+            data:
+              label: ""
+            height: 20px
+            width: 40px
+            z-index: 11
+          subCategory: App Definition and Development
+          svgColor: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/aws-node-termination-handler-2/white/terminator-white.svg
+        position:
+          posX: 910
+          posY: 630
+        whiteboardData:
+          style:
+            height: 49.71625466515845
+            width: 91.59933166502319
+            z-index: 25
+    type: TextBox
+    version: v1.0.0

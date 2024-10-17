@@ -1,0 +1,24 @@
+version: 0.0.16
+name: iscsi-pod-creation
+displayName: ISCSI pod creation
+createdAt: "2024-08-15T19:39:40Z"
+description: ' Connect Kubernetes clusters to iSCSI devices for scalable storage solutions, supporting direct or multipath connections with CHAP authentication.'
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/ae801c1f-8134-4f48-bc2e-d97c14f6a99c/0.0.16/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Ensure compatibility of Kubernetes and iSCSI versions, configure network settings appropriately, and monitor performance and scalability of both storage and network infrastructure.\n\n\n \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 65a09154-3ae0-47c4-b19a-e0185ffb694f
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/ae801c1f-8134-4f48-bc2e-d97c14f6a99c-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/ae801c1f-8134-4f48-bc2e-d97c14f6a99c-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

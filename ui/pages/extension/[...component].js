@@ -19,7 +19,7 @@ import { bindActionCreators } from 'redux';
 import React from 'react';
 import RemoteComponent from '../../components/RemoteComponent';
 import _ from 'lodash';
-import { MeshMapEarlyAccessCard } from '../../components/Popup';
+import { MesheryExtensionEarlyAccessCardPopup } from '../../components/Popup';
 import dataFetch from '../../lib/data-fetch';
 import ExtensionPointSchemaValidator from '../../utils/ExtensionPointSchemaValidator';
 import { withRouter } from 'next/router';
@@ -161,7 +161,7 @@ class RemoteExtension extends React.Component {
           </NoSsr>
         ) : !isLoading ? (
           <Box display="flex" justifyContent="center">
-            <MeshMapEarlyAccessCard
+            <MesheryExtensionEarlyAccessCardPopup
               rootStyle={{ position: 'relative' }}
               capabilitiesRegistry={capabilitiesRegistry}
             />

@@ -39,6 +39,7 @@ import Troubleshoot from './TroubleshootingComponent';
 import CAN from '@/utils/can';
 import { mesheryEventBus } from '@/utils/can';
 import { ThemeTogglerCore } from '@/themes/hooks';
+import RJSFForm from './MesheryMeshInterface/PatternService/RJSF';
 
 const requires = createRequires(getDependencies);
 const useRemoteComponent = createUseRemoteComponent({ requires });
@@ -134,7 +135,8 @@ function NavigatorExtension({
         designValidationMachine,
         mesheryEventBus: mesheryEventBus,
         ThemeTogglerCore,
-         hooks: {
+        RJSForm: RJSFForm,
+        hooks: {
           CAN: CAN,
           useFilterK8sContexts,
           useDynamicComponent,

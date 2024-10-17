@@ -1,0 +1,16 @@
+{
+    "modelDisplayName": "Harmonizer",
+    "registrant": "apple",
+    "model": "harmonizer",
+    "category": "Provisioning",
+    "subCategory": "Security & Compliance",
+    "shape": "rectangle",
+    "primaryColor": "#1988d9",
+    "secondaryColor": "#54aef0",
+    "svgColor": "",
+    "svgWhite": "",
+    "svgComplete": "",
+    "isAnnotation": false,
+    "publishToRegistry": true
+  }
+  

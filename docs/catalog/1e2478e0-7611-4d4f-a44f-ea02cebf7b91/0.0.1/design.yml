@@ -1,0 +1,145 @@
+name: postgreSQL cluster
+version: 0.0.10
+services:
+  gke-pg-cluster:
+    annotations: {}
+    apiVersion: postgresql.cnpg.io/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: jitsi
+    name: gke-pg-cluster
+    namespace: default
+    settings:
+      spec:
+        affinity:
+          additional Pod Affinity:
+            preferred During Scheduling Ignored During Execution:
+            - pod Affinity Term:
+                label Selector:
+                  match Expressions:
+                  - key: app.component
+                    operator: In
+                    values:
+                    - pg-cluster
+                namespace Selector:
+                  match Expressions: []
+                namespaces: []
+                topology Key: topology.kubernetes.io/zone
+              weight: 1
+            required During Scheduling Ignored During Execution: []
+          additional Pod Anti Affinity:
+            preferred During Scheduling Ignored During Execution: []
+            required During Scheduling Ignored During Execution: []
+          enable Pod Anti Affinity: true
+          tolerations:
+          - effect: NoSchedule
+            key: cnpg.io/cluster
+            operator: Equal
+            value: gke-pg-cluster
+        bootstrap:
+          initdb:
+            database: app
+            import:
+              databases: []
+              post Import Application SQL: []
+              roles: []
+              source: {}
+            options: []
+            post Init Application SQL: []
+            post Init Application SQL Refs:
+              config Map Refs: []
+              secret Refs: []
+            post Init SQL: []
+            post Init Template SQL: []
+        certificates:
+          server Alt DNS Names: []
+        description: Standard GKE PostgreSQL cluster
+        enable Superuser Access: true
+        external Clusters: []
+        image Name: ghcr.io/cloudnative-pg/postgresql:16.2
+        image Pull Secrets: []
+        instances: 3
+        log Level: info
+        max Sync Replicas: 0
+        min Sync Replicas: 0
+        monitoring:
+          custom Queries Config Map: []
+          custom Queries Secret: []
+          disable Default Queries: false
+          enable Pod Monitor: true
+        node Maintenance Window:
+          in Progress: false
+          reuse PVC: true
+        postgres GID: 26
+        postgres UID: 26
+        postgresql:
+          pg_hba:
+          - host all all 10.48.0.0/20 md5
+          shared_preload_libraries: []
+          sync Replica Election Constraint:
+            node Labels Anti Affinity: []
+        primary Update Method: switchover
+        primary Update Strategy: unsupervised
+        replication Slots:
+          high Availability:
+            slot Prefix: _cnpg_
+          update Interval: 30
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 1Gi
+          requests:
+            cpu: 1000m
+            memory: 1Gi
+        start Delay: 300
+        stop Delay: 30
+        storage:
+          pvc Template:
+            access Modes: []
+            selector:
+              match Expressions: []
+          resize In Use Volumes: true
+          size: 2Gi
+          storage Class: premium-rwo
+        switchover Delay: 4e+07
+        wal Storage:
+          pvc Template:
+            access Modes: []
+            selector:
+              match Expressions: []
+          resize In Use Volumes: true
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: f96665aa-e05e-4607-8cb2-bf5522256d27
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: https://layer5.io/company/brand
+          model: jitsi
+          modelDisplayName: Jitsi
+          primaryColor: '#1176bc'
+          published: true
+          secondaryColor: '#00D3A9'
+          shape: circle
+          shapePolygonPoints: ""
+          styleOverrides: ""
+          styles: ""
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/jitsi/color/addresspool-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/jitsi/white/addresspool-white.svg
+        position:
+          posX: 110
+          posY: 110
+        whiteboardData:
+          style: {}
+    type: Cluster
+    version: ""

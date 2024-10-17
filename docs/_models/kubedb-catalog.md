@@ -102,6 +102,10 @@ components:
   colorIcon: assets/img/integrations/kubedb-catalog/components/zoo-keeper-version/icons/color/zoo-keeper-version-color.svg
   whiteIcon: assets/img/integrations/kubedb-catalog/components/zoo-keeper-version/icons/white/zoo-keeper-version-white.svg
   description: 
+- name: cassandra-version
+  colorIcon: assets/img/integrations/kubedb-catalog/components/cassandra-version/icons/color/cassandra-version-color.svg
+  whiteIcon: assets/img/integrations/kubedb-catalog/components/cassandra-version/icons/white/cassandra-version-white.svg
+  description: 
 featureList: [
   "KubeDB simplifies many of the difficult or tedious management tasks of running a production grade databases on private and public clouds. Maintain one stack for all your stateless and stateful applications and simplify the operational complexity.",
   "Standard Kubernetes is all you need. If you can run Kubernetes, you can provision and manage databases using KubeDB. Use standard Kubernetes CLI and API to provision and manage databases.",

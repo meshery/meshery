@@ -1,0 +1,789 @@
+name: the-new-stack
+version: 0.0.4
+services:
+  app-qgwuz:
+    annotations: {}
+    apiVersion: apps/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: app
+    namespace: default
+    settings:
+      spec:
+        replicas: 1
+        selector:
+          match Labels:
+            name: app
+        template:
+          metadata:
+            labels:
+              name: app
+          spec:
+            containers:
+            - args:
+              - -log.level=debug
+              - http://db
+              env:
+              - name: JAEGER_AGENT_HOST
+                value: jaeger.default.svc.cluster.local
+              - name: JAEGER_TAGS
+                value: cluster=docker,namespace=default
+              - name: JAEGER_SAMPLER_TYPE
+                value: const
+              - name: JAEGER_SAMPLER_PARAM
+                value: "1"
+              image: grafana/tns-app:latest
+              image Pull Policy: IfNotPresent
+              name: app
+              ports:
+              - container Port: 80
+                name: http-metrics
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: d8c0b3d9-46f3-48b8-bd66-08586a8d55f5
+            metadata:
+              port: 80
+              protocol: TCP
+            source: 7e9cfa03-6811-41c5-b202-0202018303c7
+            subType: Network
+            target: 7e395701-cb8b-4cec-b56a-5b16e232f180
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        - data:
+            id: 6d2ad6a6-bcca-4f38-b0a4-d46fb112b22a
+            metadata:
+              port: 80
+              protocol: TCP
+            source: f5ecce46-1371-46c6-8b99-203c374aaf99
+            subType: Network
+            target: 7e395701-cb8b-4cec-b56a-5b16e232f180
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        - data:
+            id: a2238904-f7f1-4936-a55e-80a43d223ec5
+            metadata:
+              port: 80
+              protocol: TCP
+            source: 095664f6-1025-4108-bd74-65f6427d3f78
+            subType: Network
+            target: 7e395701-cb8b-4cec-b56a-5b16e232f180
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: 7e395701-cb8b-4cec-b56a-5b16e232f180
+        label: app
+        meshmodel-metadata:
+          genealogy: parent
+          isCustomResource: false
+          isNamespaced: true
+          logoURL: Created by leecalcote
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-pentagon
+          styleOverrides:
+            background-image: none
+            background-opacity: 0.5
+            border-width: 2
+            z-index: 5
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg
+          svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/deployment-complete.svg
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg
+        position:
+          posX: 130
+          posY: 130
+        whiteboardData: {}
+    type: Deployment
+    version: ""
+  app-zduxi:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: app
+    namespace: default
+    settings:
+      spec:
+        ports:
+        - node Port: 30030
+          port: 80
+          protocol: TCP
+          target Port: 80
+        selector:
+          name: app
+        type: NodePort
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: 206c4ca0-9466-481d-bb9b-9d6ffa40dbb6
+            metadata:
+              port: 80
+              protocol: TCP
+            source: f5ecce46-1371-46c6-8b99-203c374aaf99
+            subType: Network
+            target: 6134ffc4-26f3-4f37-9d2d-407d35dbae6d
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        - data:
+            id: 6d2ad6a6-bcca-4f38-b0a4-d46fb112b22a
+            metadata:
+              port: 80
+              protocol: TCP
+            source: f5ecce46-1371-46c6-8b99-203c374aaf99
+            subType: Network
+            target: 7e395701-cb8b-4cec-b56a-5b16e232f180
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        - data:
+            id: 5c0e9d6f-78ea-4a12-b440-9bbf19cba9be
+            metadata:
+              port: 80
+              protocol: TCP
+            source: f5ecce46-1371-46c6-8b99-203c374aaf99
+            subType: Network
+            target: 5d255ed5-8532-4bdc-b8c4-01aa553f144a
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: f5ecce46-1371-46c6-8b99-203c374aaf99
+        label: app
+        meshmodel-metadata:
+          genealogy: ""
+          isCustomResource: false
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-triangle
+          styleOverrides:
+            background-fit: none
+            background-position-y: 4.5
+            height: 16
+            padding: 12
+            width: 17
+            z-index: 4
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
+        position:
+          posX: -90
+          posY: 90
+        whiteboardData:
+          style: {}
+    type: Service
+    version: ""
+  db-bkzdw:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: db
+    namespace: default
+    settings:
+      spec:
+        ports:
+        - port: 80
+          protocol: TCP
+          target Port: 80
+        selector:
+          name: db
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: a6b30cba-a601-4829-9f4a-e59ef9f0aa23
+            metadata:
+              port: 80
+              protocol: TCP
+            source: 095664f6-1025-4108-bd74-65f6427d3f78
+            subType: Network
+            target: 6134ffc4-26f3-4f37-9d2d-407d35dbae6d
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        - data:
+            id: a2238904-f7f1-4936-a55e-80a43d223ec5
+            metadata:
+              port: 80
+              protocol: TCP
+            source: 095664f6-1025-4108-bd74-65f6427d3f78
+            subType: Network
+            target: 7e395701-cb8b-4cec-b56a-5b16e232f180
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        - data:
+            id: ffda542a-dd0b-4fdd-b4dd-6dc978cd9d25
+            metadata:
+              port: 80
+              protocol: TCP
+            source: 095664f6-1025-4108-bd74-65f6427d3f78
+            subType: Network
+            target: 5d255ed5-8532-4bdc-b8c4-01aa553f144a
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: 095664f6-1025-4108-bd74-65f6427d3f78
+        label: db
+        meshmodel-metadata:
+          genealogy: ""
+          isCustomResource: false
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-triangle
+          styleOverrides:
+            background-fit: none
+            background-position-y: 4.5
+            height: 16
+            padding: 12
+            width: 17
+            z-index: 6
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
+        position:
+          posX: -10
+          posY: 130
+        whiteboardData:
+          style: {}
+    type: Service
+    version: ""
+  db-mkhvv:
+    annotations: {}
+    apiVersion: apps/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: db
+    namespace: default
+    settings:
+      spec:
+        replicas: 1
+        selector:
+          match Labels:
+            name: db
+        template:
+          metadata:
+            labels:
+              name: db
+          spec:
+            containers:
+            - args:
+              - -log.level=debug
+              env:
+              - name: JAEGER_AGENT_HOST
+                value: jaeger.default.svc.cluster.local
+              - name: JAEGER_TAGS
+                value: cluster=docker,namespace=default
+              - name: JAEGER_SAMPLER_TYPE
+                value: const
+              - name: JAEGER_SAMPLER_PARAM
+                value: "1"
+              image: grafana/tns-db:latest
+              image Pull Policy: IfNotPresent
+              name: db
+              ports:
+              - container Port: 80
+                name: http-metrics
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: 7086641f-6892-4d7a-b5b7-aa328746aff9
+            metadata:
+              port: 80
+              protocol: TCP
+            source: 7e9cfa03-6811-41c5-b202-0202018303c7
+            subType: Network
+            target: 5d255ed5-8532-4bdc-b8c4-01aa553f144a
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        - data:
+            id: 5c0e9d6f-78ea-4a12-b440-9bbf19cba9be
+            metadata:
+              port: 80
+              protocol: TCP
+            source: f5ecce46-1371-46c6-8b99-203c374aaf99
+            subType: Network
+            target: 5d255ed5-8532-4bdc-b8c4-01aa553f144a
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        - data:
+            id: ffda542a-dd0b-4fdd-b4dd-6dc978cd9d25
+            metadata:
+              port: 80
+              protocol: TCP
+            source: 095664f6-1025-4108-bd74-65f6427d3f78
+            subType: Network
+            target: 5d255ed5-8532-4bdc-b8c4-01aa553f144a
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: 5d255ed5-8532-4bdc-b8c4-01aa553f144a
+        label: db
+        meshmodel-metadata:
+          genealogy: parent
+          isCustomResource: false
+          isNamespaced: true
+          logoURL: Created by leecalcote
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-pentagon
+          styleOverrides:
+            background-image: none
+            background-opacity: 0.5
+            border-width: 2
+            z-index: 7
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg
+          svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/deployment-complete.svg
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg
+        position:
+          posX: 130
+          posY: -10
+        whiteboardData: {}
+    type: Deployment
+    version: ""
+  loadgen-fxydb:
+    annotations: {}
+    apiVersion: apps/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: loadgen
+    namespace: default
+    settings:
+      spec:
+        replicas: 1
+        selector:
+          match Labels:
+            name: loadgen
+        template:
+          metadata:
+            labels:
+              name: loadgen
+          spec:
+            containers:
+            - args:
+              - -log.level=debug
+              - http://app
+              env:
+              - name: JAEGER_AGENT_HOST
+                value: jaeger.default.svc.cluster.local
+              - name: JAEGER_TAGS
+                value: cluster=docker,namespace=default
+              - name: JAEGER_SAMPLER_TYPE
+                value: const
+              - name: JAEGER_SAMPLER_PARAM
+                value: "1"
+              image: grafana/tns-loadgen:latest
+              image Pull Policy: IfNotPresent
+              name: loadgen
+              ports:
+              - container Port: 80
+                name: http-metrics
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: 206c4ca0-9466-481d-bb9b-9d6ffa40dbb6
+            metadata:
+              port: 80
+              protocol: TCP
+            source: f5ecce46-1371-46c6-8b99-203c374aaf99
+            subType: Network
+            target: 6134ffc4-26f3-4f37-9d2d-407d35dbae6d
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        - data:
+            id: a6b30cba-a601-4829-9f4a-e59ef9f0aa23
+            metadata:
+              port: 80
+              protocol: TCP
+            source: 095664f6-1025-4108-bd74-65f6427d3f78
+            subType: Network
+            target: 6134ffc4-26f3-4f37-9d2d-407d35dbae6d
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        - data:
+            id: 2565e728-13cd-4a15-a381-0d72b0786d5b
+            metadata:
+              port: 80
+              protocol: TCP
+            source: 7e9cfa03-6811-41c5-b202-0202018303c7
+            subType: Network
+            target: 6134ffc4-26f3-4f37-9d2d-407d35dbae6d
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: 6134ffc4-26f3-4f37-9d2d-407d35dbae6d
+        label: loadgen
+        meshmodel-metadata:
+          genealogy: parent
+          isCustomResource: false
+          isNamespaced: true
+          logoURL: Created by leecalcote
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-pentagon
+          styleOverrides: '{"background-image":"none","border-width":2,"background-opacity":0.5}'
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg
+          svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/deployment-complete.svg
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg
+        position:
+          posX: -30
+          posY: -10
+        whiteboardData: {}
+    type: Deployment
+    version: ""
+  loadgen-mmoqe:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: loadgen
+    namespace: default
+    settings:
+      spec:
+        ports:
+        - port: 80
+          protocol: TCP
+          target Port: 80
+        selector:
+          name: loadgen
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: 2565e728-13cd-4a15-a381-0d72b0786d5b
+            metadata:
+              port: 80
+              protocol: TCP
+            source: 7e9cfa03-6811-41c5-b202-0202018303c7
+            subType: Network
+            target: 6134ffc4-26f3-4f37-9d2d-407d35dbae6d
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        - data:
+            id: 7086641f-6892-4d7a-b5b7-aa328746aff9
+            metadata:
+              port: 80
+              protocol: TCP
+            source: 7e9cfa03-6811-41c5-b202-0202018303c7
+            subType: Network
+            target: 5d255ed5-8532-4bdc-b8c4-01aa553f144a
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        - data:
+            id: d8c0b3d9-46f3-48b8-bd66-08586a8d55f5
+            metadata:
+              port: 80
+              protocol: TCP
+            source: 7e9cfa03-6811-41c5-b202-0202018303c7
+            subType: Network
+            target: 7e395701-cb8b-4cec-b56a-5b16e232f180
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: 7e9cfa03-6811-41c5-b202-0202018303c7
+        label: loadgen
+        meshmodel-metadata:
+          genealogy: ""
+          isCustomResource: false
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-triangle
+          styleOverrides:
+            background-fit: none
+            background-position-y: 4.5
+            height: 16
+            padding: 12
+            width: 17
+            z-index: 3
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
+        position:
+          posX: 50
+          posY: -50
+        whiteboardData:
+          style: {}
+    type: Service
+    version: ""

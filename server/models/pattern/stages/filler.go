@@ -32,7 +32,6 @@ func Filler(skipPrintLogs bool) ChainStageFunction {
 			next(data, err)
 			return
 		}
-		fmt.Println("skipPrintLogs: ---", skipPrintLogs)	
 		// Flatten the service map to perform queries
 		flattenedComponent := map[string]interface{}{}
 		utils.FlattenMap("", utils.ToMapStringInterface(data.Pattern), flattenedComponent)

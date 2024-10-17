@@ -550,6 +550,7 @@ const MesheryPerformanceComponent = (props) => {
         notify({
           message: 'fetched the data.',
           event_type: EVENT_TYPES.SUCCESS,
+          dataTestID: 'notify-fetch-data',
         });
         props.updateLoadTestData({
           loadTest: {
@@ -1225,6 +1226,7 @@ const MesheryPerformanceComponent = (props) => {
                   </Button>
                   <Button
                     type="submit"
+                    data-testid="run-performance-test"
                     variant="contained"
                     color="primary"
                     size="large"
