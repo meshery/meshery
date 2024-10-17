@@ -1,0 +1,148 @@
+name: E2E Report on Pull Request Comment
+on:
+  workflow_run:
+    workflows: ['Meshery UI and Server']
+    types: [completed]
+  
+permissions:
+  issues: write
+  contents: read
+  pull-requests: write
+
+jobs:
+  tests-ui-e2e:
+    name: UI end-to-end tests
+    if: github.repository == 'meshery/meshery'
+    environment: staging-playground
+    runs-on: ubuntu-22.04
+    timeout-minutes: 60
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v4
+      with:
+          fetch-depth: 0
+    - name: Check out meshery-istio code
+      uses: actions/checkout@v4
+      with:
+        repository: layer5io/meshery-istio
+        path: ./meshery-istio
+    # - name: Check out meshery-consul code
+    #   uses: actions/checkout@v4
+    #   with:
+    #     repository: layer5io/meshery-consul
+    #     path: ./meshery-consul
+    - name: Download meshery docker artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: meshery-testing
+        path: /tmp/meshery-testing.tar
+        github-token: ${{ secrets.GH_ACCESS_TOKEN }}
+        run-id: ${{ github.event.workflow_run.id }}
+    - name: Setup Go
+      uses: actions/setup-go@master
+      with:
+        go-version: "1.21"
+    - name: Setup node
+      uses: actions/setup-node@v4
+      with:
+        node-version: 18
+        cache: 'npm'
+        cache-dependency-path: '**/package-lock.json'
+    - name: Create k8s Kind Cluster
+      uses: helm/kind-action@v1.10.0
+      with:
+        cluster_name: "kind-cluster"
+    - name: Run meshery-istio
+      run: |
+        mkdir -p /home/runner/.meshery/bin
+        cd ./meshery-istio
+        go run main.go &
+        sleep 60
+    # - name: Run meshery-consul
+    #   run: |
+    #     mkdir -p /home/runner/.meshery/bin
+    #     cd ./meshery-consul
+    #     go run main.go &
+    #     sleep 60
+    - name: Load Meshery image from artifact
+      run: |
+        docker load --input /tmp/meshery-testing.tar
+        docker image ls -a 
+    - name: Running the Meshery docker images
+      run: |
+        make docker-testing-env
+    - name: Install Meshery UI NodeJS Dependencies
+      run: npm ci
+      working-directory: ui
+    - name: Install Playwright Browsers
+      run: npx playwright install --with-deps
+      working-directory: ui
+    - name: Run Playwright End-to-End Tests
+      env:
+        MESHERY_SERVER_URL: "http://localhost:9081"
+        REMOTE_PROVIDER_URL: "https://meshery.layer5.io"
+        REMOTE_PROVIDER_USER_EMAIL: ${{ secrets.REMOTE_PROVIDER_USER_EMAIL }}
+        REMOTE_PROVIDER_USER_PASSWORD: ${{ secrets.REMOTE_PROVIDER_USER_PASS }}
+        PROVIDER_TOKEN: ${{ secrets.PROVIDER_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GH_ACCESS_TOKEN  }}
+      run: npx playwright test --project=chromium --project=firefox --reporter="./tests/e2e/custom-playwright-reporter.js" --max-failures=4
+      working-directory: ui
+    - name: Save PR number
+      if: ${{ !cancelled() }}
+      run: |
+        mkdir -p ./pr
+        echo ${{ github.event.number }} > ./pr/number
+    - name: Upload Test Report
+      if: ${{ !cancelled() }}
+      uses: actions/upload-artifact@834a144ee995460fba8ed112a2fc961b36a5ec5a # v4.3.6
+      with:
+        name: e2e-test-reporter
+        path: |
+            ui/test-report.md
+            pr/number
+        retention-days: 14
+  e2e-testing-reporter:
+    name: UI end-to-end tests Comment Reporter
+    runs-on: ubuntu-latest
+    steps:
+    - name: Download e2e test report artifact
+      uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
+      with:
+        name: e2e-test-reporter
+        github-token: ${{ secrets.GH_ACCESS_TOKEN }}
+    - name: Retrieve PR Number
+      run: |
+        echo "PULL_REQUEST=$(cat ./pr/number)" >> $GITHUB_OUTPUT
+      id: pr
+    - name: Find Comment
+      uses: peter-evans/find-comment@3eae4d37986fb5a8592848f6a574fdf654e61f9e # v3.1.0
+      id: fc
+      with:
+        issue-number: ${{ steps.pr.outputs.PULL_REQUEST }}
+        comment-author: 'github-actions[bot]'
+        body-includes: END-TO-END TESTS
+    - name: Delete Previous Comment
+      if: steps.fc.outputs.comment-id != ''
+      uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+      with:
+        script: |
+          github.rest.issues.deleteComment({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            comment_id: ${{ steps.fc.outputs.comment-id }}
+          })
+    - name: Comment on staging url
+      if: ${{ !cancelled() }}
+      uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+      with:
+        script: |
+            const fs = require('fs')
+            const PRNumber = Number(fs.readFileSync('./pr/number'))
+            const E2ETestReporter = String(fs.readFileSync('./ui/test-report.md'))
+
+            await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: PRNumber,
+                body: E2ETestReporter
+            })
