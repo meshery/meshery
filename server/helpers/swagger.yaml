@@ -652,6 +652,15 @@ paths:
             tags:
                 - PostConnection
     /api/integrations/connections/{connectionId}:
+        get:
+            description: Get existing connection by connection ID
+            operationId: idGetConnectionById
+            responses:
+                "200":
+                    $ref: '#/responses/mesheryConnectionResponseWrapper'
+            summary: Handle GET request for getting an existing connection by connection ID
+            tags:
+                - GetConnectionById
         delete:
             description: Deletes existing connection
             operationId: idDeleteConnection
