@@ -54,23 +54,55 @@ Requests to any of the API endpoints must be authenticated and include a valid J
 
 {% include alert.html type="dark" title="What are authentication tokens?" content="Meshery authentication tokens allow users or systems to authenticate with Meshery Server via either its two clients, <a href='/reference/mesheryctl'>Meshery >CLI</a> and <a href='/extensibility/api#how-to-get-your-token'>UI</a>, or its two APIs: <a href='/reference/rest-apis'>REST</a> or <a href='/reference/graphql-apis'>GraphQL</a>. <p>Meshery's authentication token system provide secure access to Meshery's powerful management features.</p>" %}
 
-### How to get your token
+## How to Get Your Token
 
-There are two ways to get your authentication token:
+There are two ways to obtain your authentication token in Meshery: via the Meshery UI or the Meshery CLI. The process varies slightly depending on whether you are using Local or Remote Providers.
 
-1. Meshery UI
-2. Meshery CLI
+### Using Meshery UI
 
-Using Meshery UI, you can get a copy of your authentication token by following these steps:
+1. **Log in to Meshery**:
+   - For Local Providers: Navigate to `http://<meshery-server>:9081/provider` and select your identity provider.
+   - For Remote Providers: Follow the specific URL provided by your remote provider to log in.
 
-1. Log into Meshery by selecting your identity provider of choice (typically found at `http:<meshery-server>:9081/provider`)
-2. Navigate to your user's avatar in the upper lefthand corner and select "Get Token" from the dropdown of profile section.
+2. **Retrieve Your Token**:
+   - Click on your user avatar in the upper left corner.
+   - Select “Get Token” from the dropdown menu in your profile section.
+   - Copy the token value from the displayed information.
 
-Using Meshery CLI, you can get a copy of your authentication token by executing this command:
+### Using Meshery CLI
 
-{% include code.html code="mesheryctl system login" %}
+1. **Execute Login Command**:
+   - Run the following command:
 
-In order to use this command, you must have a web browser available on your system (this command cannot be executed on a headless system).
+     ```bash
+     mesheryctl system login
+     ```
+
+   **Note**: You must have a web browser available, as this command cannot be executed on a headless system.
+
+2. **Obtain Your Token**:
+   - Once logged in, your token will be displayed in the CLI output. Copy the token value.
+
+## Using the Token for Requests to the Meshery REST API
+
+1. **Download Your Token**:
+   - From the Meshery UI, copy the token value from the downloaded file.
+
+2. **Set Up API Client**:
+   - Configure your API client to include the token:
+
+     ```
+     Provider: Meshery
+     Token: [your token]
+     ```
+
+3. **Configure Cookies**:
+   - Navigate to the cookies section of your API testing platform.
+   - Set the appropriate cookie name and value, then save the configuration.
+
+4. **Send Requests**:
+   - Your requests to the Meshery API will now use the configured cookies for authentication.
+
 
 {% include alert.html type="dark" title="How to use the token for requests to Meshery Rest API using API clients" content=" Download your token from Meshery UI and copy the token value from the downloaded file, this will be used for authentication." %}
 {% include code.html code="meshery-provider: Meshery
