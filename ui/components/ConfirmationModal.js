@@ -362,7 +362,7 @@ function ConfirmationMsg(props) {
           >
             {!!validationBody && (
               <Tab
-                data-cy="validate-btn-modal"
+                data-testid="validate-btn-modal"
                 className={classes.tab}
                 onClick={(event) => handleTabValChange(event, 0)}
                 label={
@@ -395,7 +395,7 @@ function ConfirmationMsg(props) {
                 !CAN(keys.UNDEPLOY_DESIGN.action, keys.UNDEPLOY_DESIGN.subject) ||
                 (CAN(keys.UNDEPLOY_DESIGN.action, keys.UNDEPLOY_DESIGN.subject) && disabled)
               }
-              data-cy="Undeploy-btn-modal"
+              data-testid="Undeploy-btn-modal"
               className={classes.tab}
               onClick={(event) => handleTabValChange(event, 1)}
               label={
@@ -413,7 +413,7 @@ function ConfirmationMsg(props) {
                 !CAN(keys.DEPLOY_DESIGN.action, keys.DEPLOY_DESIGN.subject) ||
                 (CAN(keys.DEPLOY_DESIGN.action, keys.DEPLOY_DESIGN.subject) && disabled)
               }
-              data-cy="deploy-btn-modal"
+              data-testid="deploy-btn-modal"
               className={classes.tab}
               onClick={(event) => handleTabValChange(event, 2)}
               label={
@@ -512,7 +512,7 @@ function ConfirmationMsg(props) {
                                     />
                                   }
                                   variant="outlined"
-                                  data-cy="chipContextName"
+                                  data-testid="chipContextName"
                                 />
                               </div>
                             </Tooltip>
@@ -571,7 +571,7 @@ function ConfirmationMsg(props) {
                   type="submit"
                   variant="contained"
                   color="primary"
-                  data-cy="deploy-btn-confirm"
+                  data-testid="deploy-btn-confirm"
                   disabled={disabled}
                 >
                   <Typography variant body2>

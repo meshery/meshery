@@ -906,7 +906,7 @@ function MesheryFilters({
                   !CAN(keys.DOWNLOAD_A_WASM_FILTER.action, keys.DOWNLOAD_A_WASM_FILTER.subject)
                 }
               >
-                <GetAppIcon data-cy="download-button" />
+                <GetAppIcon data-testid="download-button" />
               </TooltipIcon>
               <TooltipIcon
                 title="Filter Information"
@@ -915,7 +915,7 @@ function MesheryFilters({
                   !CAN(keys.DETAILS_OF_WASM_FILTER.action, keys.DETAILS_OF_WASM_FILTER.subject)
                 }
               >
-                <InfoOutlinedIcon data-cy="information-button" />
+                <InfoOutlinedIcon data-testid="information-button" />
               </TooltipIcon>
               {canPublishFilter && visibility !== VISIBILITY.PUBLISHED ? (
                 <TooltipIcon
@@ -923,7 +923,7 @@ function MesheryFilters({
                   onClick={(ev) => handlePublishModal(ev, rowData)}
                   disabled={!CAN(keys.PUBLISH_WASM_FILTER.action, keys.PUBLISH_WASM_FILTER.subject)}
                 >
-                  <PublicIcon fill="#F91313" data-cy="publish-button" />
+                  <PublicIcon fill="#F91313" data-testid="publish-button" />
                 </TooltipIcon>
               ) : (
                 <TooltipIcon
@@ -933,7 +933,7 @@ function MesheryFilters({
                     !CAN(keys.UNPUBLISH_WASM_FILTER.action, keys.UNPUBLISH_WASM_FILTER.subject)
                   }
                 >
-                  <PublicIcon fill="#F91313" data-cy="unpublish-button" />
+                  <PublicIcon fill="#F91313" data-testid="unpublish-button" />
                 </TooltipIcon>
               )}
             </Box>
@@ -1063,12 +1063,12 @@ function MesheryFilters({
     },
     setRowProps: (row, dataIndex, rowIndex) => {
       return {
-        'data-cy': `config-row-${rowIndex}`,
+        'data-testid': `config-row-${rowIndex}`,
       };
     },
     setTableProps: () => {
       return {
-        'data-cy': 'filters-grid',
+        'data-testid': 'filters-grid',
       };
     },
   };
@@ -1201,7 +1201,7 @@ function MesheryFilters({
                           <PublishIcon
                             style={iconMedium}
                             className={classes.addIcon}
-                            data-cy="import-button"
+                            data-testid="import-button"
                           />
                           <span className={classes.btnText}> Import Filters </span>
                         </Button>
@@ -1250,7 +1250,7 @@ function MesheryFilters({
                 </UsesSistent>
 
                 {!selectedFilter.show && (
-                  <ViewSwitch data-cy="table-view" view={viewType} changeView={setViewType} />
+                  <ViewSwitch data-testid="table-view" view={viewType} changeView={setViewType} />
                 )}
               </div>
             </div>
