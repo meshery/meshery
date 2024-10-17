@@ -1,20 +1,18 @@
 import React from 'react';
-import Badge from '@material-ui/core/Badge';
-import { makeStyles, withStyles } from '@material-ui/core/styles';
+import { Badge, styled, useTheme } from '@layer5/sistent';
+import { UsesSistent } from '@/components/SistentWrapper';
 
-const StyledBadge = withStyles((theme) => ({
-  badge: {
-    backgroundColor: ({ color }) => color || '#44b700',
-    color: ({ color }) => color || '#44b700',
+const StyledBadge = styled(Badge)(({ theme, color }) => ({
+  '& .MuiBadge-badge': {
+    backgroundColor: color || theme.palette.success.main,
+    color: theme.palette.background.paper,
     boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
     '&::after': {
       position: 'absolute',
-      top: 0,
-      left: 0,
       width: '100%',
       height: '100%',
       borderRadius: '50%',
-      animation: '$ripple 1.2s infinite ease-in-out',
+      animation: 'ripple 1.2s infinite ease-in-out',
       border: '1px solid currentColor',
       content: '""',
     },
@@ -25,38 +23,41 @@ const StyledBadge = withStyles((theme) => ({
       opacity: 1,
     },
     '100%': {
-      transform: 'scale(1.8)',
+      transform: 'scale(2.4)',
       opacity: 0,
-    },
-  },
-}))(Badge);
-
-const useStyles = makeStyles((theme) => ({
-  root: {
-    display: 'flex',
-    '& > *': {
-      marginLeft: theme.spacing(0.5),
-      marginRight: -theme.spacing(0.75),
     },
   },
 }));
 
-export default function BadgeAvatars({ children, color }) {
-  const classes = useStyles();
+const Root = styled('div')(({ theme }) => ({
+  display: 'flex',
+  '& > *': {
+    marginLeft: theme.spacing(0.5),
+    marginRight: theme.spacing(-0.75),
+  },
+}));
+
+function CustomAvatar({ children, color }) {
+  const theme = useTheme();
 
   return (
-    <div className={classes.root}>
-      <StyledBadge
-        overlap="circular"
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'right',
-        }}
-        variant="dot"
-        color={color}
-      >
-        {children}
-      </StyledBadge>
-    </div>
+    <UsesSistent>
+      <Root theme={theme}>
+        <StyledBadge
+          overlap="circular"
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'right',
+          }}
+          variant="dot"
+          color={color}
+          theme={theme}
+        >
+          {children}
+        </StyledBadge>
+      </Root>
+    </UsesSistent>
   );
 }
+
+export default CustomAvatar;
