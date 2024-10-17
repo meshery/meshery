@@ -11,6 +11,7 @@ import (
 // https://docs.meshery.io/project/contributing/contributing-error
 // https://github.com/meshery/meshkit/blob/master/errors/errors.go
 var (
+
 	ErrFailRequestCode            = "mesheryctl-1090"
 	ErrInvalidTokenCode           = "mesheryctl-1091"
 	ErrFailReqStatusCode          = "mesheryctl-1092"
@@ -44,6 +45,8 @@ var (
 	ErrClearLineCode              = "mesheryctl-1120"
 	ErrUpdateToSheetCode          = "mesheryctl-1129"
 	ErrUpdateRelationshipFileCode = "mesheryctl-1130"
+    ErrMesheryHealthCheckCode = "replace_me"
+
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -634,4 +637,11 @@ func ErrClearLine(err error) error {
 		[]string{err.Error()},
 		[]string{"Error occurred while attempting to clear the command-line interface"},
 		[]string{"Check if the required clear commands ('clear' or 'cls') are available in the system's PATH"})
+}
+
+func ErrMesheryHealthCheck(err error) error {
+	return errors.New(ErrMesheryHealthCheckCode, errors.Alert, []string{"Meshery Server connection refused"},
+		[]string{err.Error(), "\n\nUse `mesheryctl system status` to confirm or switch contexts."},
+		[]string{"Error occured while attempting to connect to meshery server."},
+		[]string{"Check your network connection and the status of Meshery Server via `mesheryctl system status`."})
 }
