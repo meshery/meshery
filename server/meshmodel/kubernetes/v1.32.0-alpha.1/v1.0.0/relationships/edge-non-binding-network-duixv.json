@@ -38,7 +38,9 @@
     "status": "",
     "version": "",
     "components": null,
-    "relationships": null
+    "relationships": null,
+    "components_count": 0,
+    "relationships_count": 0
   },
   "schemaVersion": "relationships.meshery.io/v1alpha3",
   "selectors": [
@@ -77,7 +79,9 @@
               "status": "",
               "version": "",
               "components": null,
-              "relationships": null
+              "relationships": null,
+              "components_count": 0,
+              "relationships_count": 0
             },
             "patch": {
               "patchStrategy": "replace",
@@ -92,14 +96,7 @@
                   "spec",
                   "ports",
                   "_",
-                  "targetPort"
-                ],
-                [
-                  "configuration",
-                  "spec",
-                  "ports",
-                  "_",
-                  "protocol"
+                  "port"
                 ]
               ]
             }
@@ -138,7 +135,9 @@
               "status": "",
               "version": "",
               "components": null,
-              "relationships": null
+              "relationships": null,
+              "components_count": 0,
+              "relationships_count": 0
             },
             "patch": {
               "patchStrategy": "replace",
@@ -155,16 +154,7 @@
                   "0",
                   "ports",
                   "_",
-                  "containerPort"
-                ],
-                [
-                  "configuration",
-                  "spec",
-                  "containers",
-                  "0",
-                  "ports",
-                  "_",
-                  "protocol"
+                  "port"
                 ]
               ]
             }
@@ -201,7 +191,9 @@
               "status": "",
               "version": "",
               "components": null,
-              "relationships": null
+              "relationships": null,
+              "components_count": 0,
+              "relationships_count": 0
             },
             "patch": {
               "patchStrategy": "replace",
@@ -220,18 +212,7 @@
                   "0",
                   "ports",
                   "_",
-                  "containerPort"
-                ],
-                [
-                  "configuration",
-                  "spec",
-                  "template",
-                  "spec",
-                  "containers",
-                  "0",
-                  "ports",
-                  "_",
-                  "protocol"
+                  "port"
                 ]
               ]
             }
@@ -272,7 +253,9 @@
               "status": "",
               "version": "",
               "components": null,
-              "relationships": null
+              "relationships": null,
+              "components_count": 0,
+              "relationships_count": 0
             },
             "patch": null
           }
@@ -310,7 +293,9 @@
               "status": "",
               "version": "",
               "components": null,
-              "relationships": null
+              "relationships": null,
+              "components_count": 0,
+              "relationships_count": 0
             },
             "patch": null
           }
