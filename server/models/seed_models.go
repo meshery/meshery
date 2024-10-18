@@ -16,7 +16,7 @@ import (
 
 var ModelsPath = "../meshmodel"
 
-const PoliciesPath = "../meshmodel/kubernetes/v1.25.2/v1.0.0/policies"
+const PoliciesPath = "../meshmodel/meshery-core/0.7.2/v1.0.0/policies"
 
 // versionInfo holds information about a version directory
 type versionInfo struct {
