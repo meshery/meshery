@@ -2,6 +2,8 @@ package relationship_evaluation_policy
 
 import rego.v1
 
+# should be always loaded.
+
 ensure_parent_paths_exist(patches, obj) := result if {
 	# Extract paths from the patches to a set of paths
 	paths := {p.path | some p in patches}

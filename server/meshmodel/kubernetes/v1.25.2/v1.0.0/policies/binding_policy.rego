@@ -2,6 +2,7 @@ package relationship_evaluation_policy
 
 import rego.v1
 
+# For relationship of kind egde and type binding,
 # performs the evaluation to mutate the declaration according to the
 # selectors defined inside the relationship definition.
 perform_eval(
