@@ -2,6 +2,8 @@ package relationship_evaluation_policy
 
 import rego.v1
 
+# This file needs to be loaded as it contains a helper function is_feasible
+
 identify_relationship(
 	design_file,
 	relationship,
@@ -147,7 +149,7 @@ is_valid_binding(resource1, resource2, selectors) if {
 		result == true
 		i := result
 	]
-
+   # if this count is true then only the binding is valid.
 	count(match_results) == count(valid_results)
 }
 

@@ -2,6 +2,8 @@ package relationship_evaluation_policy
 
 import rego.v1
 
+# should be always loaded.
+
 apply_patch(design_file, mutator_object, to_mutate_object) := result if {
 	# both mutator_object.paths and to_mutate_object.paths are paths to the config which gets manipulated.
 	# Both should be of same length.

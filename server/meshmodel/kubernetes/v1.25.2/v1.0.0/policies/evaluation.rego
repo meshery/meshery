@@ -2,12 +2,18 @@ package relationship_evaluation_policy
 
 import rego.v1
 
+# Should be loaded always
+# This is the first file that is executed that is this is the entry point of the policy
+# The flow that the policy follows from evaluation to final trace
 default rels_in_design_file := []
 
+
+# Counts the total number of relationships in the design file
 rels_in_design_file := input.relationships if {
 	count(input.relationships) > 0
 }
 
+# This rule is used to filter out the relationships which are pending
 filter_pending_relationships(rel, relationships) := rel if {
 	every relationship in relationships {
 		relationship.id == rel.id
@@ -24,6 +30,7 @@ evaluate := eval_results if {
 		allowed_status := {"pending", "approved"}
 		allowed_status[status]
 
+		# each kind and subtype have there own perform_eval rule which can be found in there respective files
 		resultant_patch := perform_eval(input, rel)
 
 		# change status for pending relationship
