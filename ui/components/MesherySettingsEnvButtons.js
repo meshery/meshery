@@ -210,7 +210,7 @@ const MesherySettingsEnvButtons = () => {
           marginRight: '2rem',
         }}
         disabled={!CAN(keys.ADD_CLUSTER.action, keys.ADD_CLUSTER.subject)}
-        data-cy="btnResetDatabase"
+        data-testid="btnResetDatabase"
       >
         <AddIconCircleBorder style={{ width: '20px', height: '20px' }} />
         <Typography

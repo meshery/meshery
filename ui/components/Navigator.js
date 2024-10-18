@@ -679,7 +679,7 @@ class Navigator_ extends React.Component {
     const { classes } = this.props;
 
     let content = (
-      <div className={classNames(classes.link)} data-cy={name}>
+      <div className={classNames(classes.link)} data-testid={name}>
         <CustomTooltip
           title={name}
           placement="right"
@@ -991,7 +991,7 @@ class Navigator_ extends React.Component {
                 return (
                   <div key={idc} className={!showc ? classes.cursorNotAllowed : null}>
                     <ListItem
-                      data-cy={idc}
+                      data-testid={idc}
                       button
                       key={idc}
                       className={classNames(
@@ -1231,7 +1231,7 @@ class Navigator_ extends React.Component {
                   disabled={permission ? !CAN(permission.action, permission.subject) : false}
                 >
                   <Link href={link ? href : ''}>
-                    <div data-cy={childId} className={classNames(classes.link)}>
+                    <div data-testid={childId} className={classNames(classes.link)}>
                       <CustomTooltip
                         title={childId}
                         placement="right"

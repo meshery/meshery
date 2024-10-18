@@ -1200,7 +1200,7 @@ function MesheryPatterns({
                 }
                 disabled={!CAN(keys.VALIDATE_DESIGN.action, keys.VALIDATE_DESIGN.subject)}
               >
-                <CheckIcon data-cy="verify-button" />
+                <CheckIcon data-testid="verify-button" />
               </TooltipIcon>
               <TooltipIcon
                 placement="top"
@@ -1208,7 +1208,7 @@ function MesheryPatterns({
                 onClick={(e) => openDryRunModal(e, rowData.pattern_file, rowData.name, rowData.id)}
                 disabled={!CAN(keys.VALIDATE_DESIGN.action, keys.VALIDATE_DESIGN.subject)}
               >
-                <DryRunIcon data-cy="verify-button" />
+                <DryRunIcon data-testid="verify-button" />
               </TooltipIcon>
 
               <TooltipIcon
@@ -1219,7 +1219,7 @@ function MesheryPatterns({
                   openUndeployModal(e, rowData.pattern_file, rowData.name, rowData.id)
                 }
               >
-                <UndeployIcon fill="#F91313" data-cy="undeploy-button" />
+                <UndeployIcon fill="#F91313" data-testid="undeploy-button" />
               </TooltipIcon>
               <TooltipIcon
                 placement="bottom"
@@ -1229,14 +1229,14 @@ function MesheryPatterns({
                   openDeployModal(e, rowData.pattern_file, rowData.name, rowData.id);
                 }}
               >
-                <DoneAllIcon data-cy="deploy-button" />
+                <DoneAllIcon data-testid="deploy-button" />
               </TooltipIcon>
               <TooltipIcon
                 title="Download"
                 disabled={!CAN(keys.DOWNLOAD_A_DESIGN.action, keys.DOWNLOAD_A_DESIGN.subject)}
                 onClick={(e) => handleDesignDownloadModal(e, rowData)}
               >
-                <GetAppIcon data-cy="download-button" />
+                <GetAppIcon data-testid="download-button" />
               </TooltipIcon>
 
               <TooltipIcon
@@ -1244,7 +1244,7 @@ function MesheryPatterns({
                 disabled={!CAN(keys.DETAILS_OF_DESIGN.action, keys.DETAILS_OF_DESIGN.subject)}
                 onClick={(ev) => genericClickHandler(ev, () => handleInfoModal(rowData))}
               >
-                <InfoOutlinedIcon data-cy="information-button" />
+                <InfoOutlinedIcon data-testid="information-button" />
               </TooltipIcon>
 
               {canPublishPattern && visibility !== VISIBILITY.PUBLISHED ? (
@@ -1254,7 +1254,7 @@ function MesheryPatterns({
                   disabled={!CAN(keys.PUBLISH_DESIGN.action, keys.PUBLISH_DESIGN.subject)}
                   onClick={(ev) => handlePublishModal(ev, rowData)}
                 >
-                  <PublicIcon fill="#F91313" data-cy="publish-button" />
+                  <PublicIcon fill="#F91313" data-testid="publish-button" />
                 </TooltipIcon>
               ) : (
                 <TooltipIcon
@@ -1262,7 +1262,7 @@ function MesheryPatterns({
                   disabled={!CAN(keys.UNPUBLISH_DESIGN.action, keys.UNPUBLISH_DESIGN.subject)}
                   onClick={(ev) => handleUnpublishModal(ev, rowData)()}
                 >
-                  <PublicIcon fill="#F91313" data-cy="unpublish-button" />
+                  <PublicIcon fill="#F91313" data-testid="unpublish-button" />
                 </TooltipIcon>
               )}
             </Box>
@@ -1425,12 +1425,12 @@ function MesheryPatterns({
     },
     setRowProps: (row, dataIndex, rowIndex) => {
       return {
-        'data-cy': `config-row-${rowIndex}`,
+        'data-testid': `config-row-${rowIndex}`,
       };
     },
     setTableProps: () => {
       return {
-        'data-cy': 'filters-grid',
+        'data-testid': 'filters-grid',
       };
     },
   };
