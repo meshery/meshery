@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { updateProgress } from '../lib/store';
-import { Button, Typography, withStyles } from '@material-ui/core';
+import { Button, Typography, useTheme } from '@layer5/sistent';
+import { UsesSistent } from '@/components/SistentWrapper';
 import { Provider, connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
@@ -10,47 +11,27 @@ import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
 import ResponsiveDataTable from '../utils/data-table';
 import SearchBar from '../utils/custom-search';
-import useStyles from '../assets/styles/general/tool.styles';
 import { PROMPT_VARIANTS } from './PromptComponent';
 import { store } from '../store';
 import { useGetDatabaseSummaryQuery } from '@/rtk-query/system';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 
-const styles = (theme) => ({
-  textCenter: {
-    textAlign: 'center',
-  },
-  textEnd: {
-    textAlign: 'end',
-  },
-  gapBottom: {
-    paddingBottom: '0.5rem',
-  },
-  DBBtn: {
-    margin: theme.spacing(0.5),
-    padding: theme.spacing(1),
-    borderRadius: 5,
-    backgroundColor: '#8F1F00',
-    '&:hover': {
-      backgroundColor: '#B32700',
-    },
-  },
-  container: {
-    display: 'flex',
-    justifyContent: 'center',
-    marginTop: theme.spacing(2),
-  },
-});
-
 const DatabaseSummary = (props) => {
-  const { classes } = props;
+  const theme = useTheme();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [searchText, setSearchText] = useState('');
   const { notify } = useNotification();
-  const StyleClass = useStyles();
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+  const [tableCols, updateCols] = useState(columns);
+  const [columnVisibility] = useState(() => {
+    const initialVisibility = {};
+    columns.forEach((col) => {
+      initialVisibility[col.name] = col.options?.display !== false;
+    });
+    return initialVisibility;
+  });
 
   const handleError = (msg) => (error) => {
     props.updateProgress({ showProgress: false });
@@ -121,62 +102,30 @@ const DatabaseSummary = (props) => {
   };
 
   const columns = [
-    {
-      name: 'name',
-      label: 'Name',
-    },
-    {
-      name: 'count',
-      label: 'Count',
-    },
+    { name: 'name', label: 'Name' },
+    { name: 'count', label: 'Count' },
   ];
 
-  const [tableCols, updateCols] = useState(columns);
-
-  const [columnVisibility] = useState(() => {
-    // Initialize column visibility based on the original columns' visibility
-    const initialVisibility = {};
-    columns.forEach((col) => {
-      initialVisibility[col.name] = col.options?.display !== false;
-    });
-    return initialVisibility;
-  });
-
-  const customInlineStyle = {
-    marginBottom: '0.5rem',
-    marginTop: '1rem',
-  };
-
   return (
-    <>
-      <div className={StyleClass.toolWrapper} style={customInlineStyle}>
-        <div>
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            size="medium"
-            disabled={!CAN(keys.RESET_DATABASE.action, keys.RESET_DATABASE.subject)}
-            onClick={handleResetDatabase()}
-            className={classes.DBBtn}
-            data-cy="btnResetDatabase"
-          >
-            <Typography align="center" variant="subtitle2">
-              {' '}
-              RESET DATABASE{' '}
-            </Typography>
-          </Button>
-        </div>
-        <div>
-          <SearchBar
-            onSearch={(value) => {
-              setSearchText(value);
-            }}
-            expanded={isSearchExpanded}
-            setExpanded={setIsSearchExpanded}
-            placeholder="Search"
-          />
-        </div>
+    <UsesSistent>
+      <div style={{ marginBottom: theme.spacing(1), marginTop: theme.spacing(2) }}>
+        <Button
+          variant="contained"
+          color="error"
+          disabled={!CAN(keys.RESET_DATABASE.action, keys.RESET_DATABASE.subject)}
+          onClick={handleResetDatabase()}
+          data-cy="btnResetDatabase"
+        >
+          <Typography variant="subtitle2">RESET DATABASE</Typography>
+        </Button>
+        <SearchBar
+          onSearch={(value) => {
+            setSearchText(value);
+          }}
+          expanded={isSearchExpanded}
+          setExpanded={setIsSearchExpanded}
+          placeholder="Search"
+        />
       </div>
       <ResponsiveDataTable
         data={databaseSummary?.tables}
@@ -186,28 +135,21 @@ const DatabaseSummary = (props) => {
         updateCols={updateCols}
         columnVisibility={columnVisibility}
       />
-    </>
+    </UsesSistent>
   );
 };
-
-const mapStateToProps = () => ({});
-
-const mapDispatchToProps = (dispatch) => ({
-  updateProgress: bindActionCreators(updateProgress, dispatch),
-});
 
 DatabaseSummary.propTypes = {
   promptRef: PropTypes.object.isRequired,
+  updateProgress: PropTypes.func.isRequired,
 };
 
-const DatabaseSummaryTable = (props) => {
-  return (
-    <Provider store={store}>
-      <DatabaseSummary {...props} />
-    </Provider>
-  );
-};
-
-export default withStyles(styles, { withTheme: true })(
-  connect(mapStateToProps, mapDispatchToProps)(DatabaseSummaryTable),
+const DatabaseSummaryTable = (props) => (
+  <Provider store={store}>
+    <DatabaseSummary {...props} />
+  </Provider>
 );
+
+export default connect(null, (dispatch) => ({
+  updateProgress: bindActionCreators(updateProgress, dispatch),
+}))(DatabaseSummaryTable);
