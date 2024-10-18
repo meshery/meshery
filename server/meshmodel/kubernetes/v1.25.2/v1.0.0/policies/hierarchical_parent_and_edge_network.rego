@@ -2,6 +2,9 @@ package relationship_evaluation_policy
 
 import rego.v1
 
+# This function for kind "hierarchical" and type "parent" 
+# and kind "edge" and type "non-binding" are considered for evaluation.
+
 perform_eval(
 	design_file,
 	relationship,

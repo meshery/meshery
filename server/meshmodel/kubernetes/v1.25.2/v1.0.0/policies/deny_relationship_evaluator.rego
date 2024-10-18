@@ -2,6 +2,8 @@ package relationship_evaluation_policy
 
 import rego.v1
 
+# should be always loaded.
+
 is_relationship_denied(from_declaration, to_declaration, deny_selectors) if {
 	some denied_from_selector in deny_selectors.from
 	some denied_to_selector in deny_selectors.to

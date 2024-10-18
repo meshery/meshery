@@ -2,6 +2,8 @@ package relationship_evaluation_policy
 
 import rego.v1
 
+# Should be loaded always
+# contains all the helper functions that are used in the policy
 has_key(x, k) if {
 	x[k]
 }
@@ -49,6 +51,7 @@ array_index_to_patch(no_of_elements) := index if {
 	index = format_int(no_of_elements - 1, 10)
 }
 
+# update this to return multiple paths
 arr_contains(arr, key) if {
 	some element in arr
 	key == element
