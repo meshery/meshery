@@ -167,28 +167,36 @@ const styles = (theme) => ({
 });
 
 const ThemeToggler = ({ classes }) => {
-  const Component = ({ mode, toggleTheme }) => {
-    return (
-      <div>
-        <Switch
-          color="primary"
-          classes={{
-            switchBase: classes.switchBase,
-            track: classes.track,
-            checked: classes.checked,
-            font: classes.checked,
-          }}
-          checked={mode === 'dark'}
-          onChange={toggleTheme}
-        />
-        Dark Mode
-      </div>
-    );
+  const [mode, setMode] = useState('light');
+
+  const toggleTheme = () => {
+    setMode(mode === 'light' ? 'dark' : 'light');
   };
 
-  return <ThemeTogglerCore Component={Component}></ThemeTogglerCore>;
+  return (
+    <ThemeTogglerCore
+      Component={() => (
+        <FormControlLabel
+          control={
+            <Switch
+              color="primary"
+              checked={mode === 'dark'}
+              onChange={toggleTheme}
+              classes={{
+                switchBase: classes.switchBase,
+                track: classes.track,
+                checked: classes.checked,
+                font: classes.checked,
+              }}
+            />
+          }
+          label="Dark Mode"
+          labelPlacement="end"
+        />
+      )}
+    />
+  );
 };
-
 const UserPreference = (props) => {
   const [anonymousStats, setAnonymousStats] = useState(props.anonymousStats);
   const [perfResultStats, setPerfResultStats] = useState(props.perfResultStats);
@@ -716,23 +724,15 @@ const UserPreference = (props) => {
                 </FormGroup>
               </FormControl>
             </div>
-
             <div className={props.classes.formContainer}>
               <FormControl component="fieldset" className={props.classes.formGrp}>
                 <FormLabel component="legend" className={props.classes.formLegend}>
                   Theme
                 </FormLabel>
-
                 <FormGroup>
-                  <FormControlLabel
-                    key="ThemePreference"
-                    control={
-                      <ThemeToggler
-                        handleUpdateUserPref={handleUpdateUserPref}
-                        classes={props.classes}
-                      />
-                    }
-                    labelPlacement="end"
+                  <ThemeToggler
+                    handleUpdateUserPref={handleUpdateUserPref}
+                    classes={props.classes}
                   />
                 </FormGroup>
               </FormControl>
