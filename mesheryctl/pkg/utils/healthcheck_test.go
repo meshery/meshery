@@ -1,8 +1,12 @@
 package utils
 
 import (
+	"fmt"
+	"os"
+	"path/filepath"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
 	"k8s.io/apimachinery/pkg/version"
 )
 
@@ -33,7 +37,7 @@ func TestGetK8sVersion(t *testing.T) {
 	}
 }
 
-func TestCheckKubectlVersion(t *testing.T) {
+func TestParseKubectlShortVersion(t *testing.T) {
 	tests := []struct {
 		version  string // input
 		expected [3]int // expected output
@@ -100,35 +104,48 @@ func TestCheckKubectlVersion(t *testing.T) {
 
 func TestCheckK8sVersion(t *testing.T) {
 	tests := []struct {
-		version  *version.Info
-		expected [3]int
+		name        string
+		versionInfo *version.Info
+		expectError bool
 	}{
 		{
-			version: &version.Info{
-				Major:        "1",
-				Minor:        "2",
-				GitVersion:   "v1.12.0",
-				GitCommit:    "abcdefg",
-				GitTreeState: "clean",
-				BuildDate:    "2023-06-20",
-				GoVersion:    "go1.16",
-				Compiler:     "gc",
-				Platform:     "linux/amd64",
+			name: "Compatible version",
+			versionInfo: &version.Info{
+				Major:      "1",
+				Minor:      "18",
+				GitVersion: "v1.18.0",
 			},
-			expected: [3]int{1, 12, 0},
+			expectError: false,
+		},
+		{
+			name: "Incompatible major version",
+			versionInfo: &version.Info{
+				Major:      "0",
+				Minor:      "18",
+				GitVersion: "v0.18.0",
+			},
+			expectError: true,
+		},
+		{
+			name: "Invalid version string",
+			versionInfo: &version.Info{
+				Major:      "1",
+				Minor:      "12",
+				GitVersion: "invalid-version",
+			},
+			expectError: true,
 		},
 	}
 
 	for _, tt := range tests {
-		t.Run("Check K8s Version", func(t *testing.T) {
-			if got := CheckK8sVersion(tt.version); got != nil {
-				t.Errorf("getK8sVersion() = %v, want %v", got, tt.expected)
+		t.Run(tt.name, func(t *testing.T) {
+			err := CheckK8sVersion(tt.versionInfo)
+			if (err != nil) != tt.expectError {
+				t.Errorf("CheckK8sVersion() error = %v, expectError %v", err, tt.expectError)
 			}
 		})
 	}
-
 }
-
 func TestIsCompatibleVersion(t *testing.T) {
 	tests := []struct {
 		minimum  [3]int
@@ -209,4 +226,51 @@ func TestCheckMesheryNsDelete(t *testing.T) {
 			t.Errorf("Namespace not deleted got %v want %v ", got, expected)
 		}
 	})
+}
+
+func TestCheckKubectlVersion(t *testing.T) {
+	tests := []struct {
+		name           string
+		kubectlOutput  string
+		expectedError  bool
+		expectedErrMsg string
+	}{
+		{
+			name:          "Valid kubectl version",
+			kubectlOutput: "Client Version: v1.20.0\n",
+			expectedError: false,
+		},
+		{
+			name:           "Invalid kubectl version",
+			kubectlOutput:  "Client Version: v1.10.0\n",
+			expectedError:  true,
+			expectedErrMsg: "kubectl is on version [1.10.0], but version [1.12.0] or more recent is required",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// Create a temporary directory to hold the fake kubectl binary
+			tempDir := t.TempDir()
+			fakeKubectlPath := filepath.Join(tempDir, "kubectl")
+
+			// Write the fake kubectl binary
+			err := os.WriteFile(fakeKubectlPath, []byte(fmt.Sprintf("#!/bin/sh\necho '%s'", tt.kubectlOutput)), 0755)
+			assert.NoError(t, err)
+
+			// Prepend the temporary directory to the PATH
+			originalPath := os.Getenv("PATH")
+			defer os.Setenv("PATH", originalPath)
+			os.Setenv("PATH", fmt.Sprintf("%s:%s", tempDir, originalPath))
+
+			err = CheckKubectlVersion()
+
+			if tt.expectedError {
+				assert.Error(t, err)
+				assert.Contains(t, err.Error(), tt.expectedErrMsg)
+			} else {
+				assert.NoError(t, err)
+			}
+		})
+	}
 }
