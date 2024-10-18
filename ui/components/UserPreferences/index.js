@@ -499,7 +499,7 @@ const UserPreference = (props) => {
                     style={{
                       padding: '20px 20px',
                       backgroundColor:
-                        props.theme === 'dark'
+                        userData?.remoteProviderPreferences?.theme === 'dark'
                           ? index % 2 === 0
                             ? '#3D4F57'
                             : '#293B43'
@@ -517,7 +517,7 @@ const UserPreference = (props) => {
                     style={{
                       padding: '20px 20px',
                       backgroundColor:
-                        props.theme === 'dark'
+                        userData?.remoteProviderPreferences?.theme === 'dark'
                           ? index % 2 === 0
                             ? '#3D4F57'
                             : '#293B43'
