@@ -161,7 +161,7 @@ func IsMesheryRunning(currPlatform string) (bool, error) {
 			deploymentList, err := deploymentInterface.List(context.TODO(), metav1.ListOptions{})
 
 			if err != nil {
-				return false, err
+				return false, ErrMesheryHealthCheck(err)
 			}
 			for _, deployment := range deploymentList.Items {
 				if deployment.GetName() == "meshery" {
