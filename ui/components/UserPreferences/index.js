@@ -166,37 +166,32 @@ const styles = (theme) => ({
   },
 });
 
-const ThemeToggler = ({ classes }) => {
-  const [mode, setMode] = useState('light');
+const ThemeToggler = ({ classes, handleUpdateUserPref }) => (
+  <ThemeTogglerCore
+    Component={({ mode, toggleTheme }) => (
+      <FormControlLabel
+        control={
+          <Switch
+            color="primary"
+            classes={{
+              switchBase: classes.switchBase,
+              track: classes.track,
+              checked: classes.checked,
+            }}
+            checked={mode === 'dark'}
+            onChange={() => {
+              toggleTheme();
+              handleUpdateUserPref(mode === 'dark' ? 'light' : 'dark');
+            }}
+          />
+        }
+        label="Dark Mode"
+        labelPlacement="end"
+      />
+    )}
+  />
+);
 
-  const toggleTheme = () => {
-    setMode(mode === 'light' ? 'dark' : 'light');
-  };
-
-  return (
-    <ThemeTogglerCore
-      Component={() => (
-        <FormControlLabel
-          control={
-            <Switch
-              color="primary"
-              checked={mode === 'dark'}
-              onChange={toggleTheme}
-              classes={{
-                switchBase: classes.switchBase,
-                track: classes.track,
-                checked: classes.checked,
-                font: classes.checked,
-              }}
-            />
-          }
-          label="Dark Mode"
-          labelPlacement="end"
-        />
-      )}
-    />
-  );
-};
 const UserPreference = (props) => {
   const [anonymousStats, setAnonymousStats] = useState(props.anonymousStats);
   const [perfResultStats, setPerfResultStats] = useState(props.perfResultStats);
