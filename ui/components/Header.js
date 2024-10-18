@@ -562,7 +562,7 @@ class Header extends React.PureComponent {
                     />
                   </div>
 
-                  <div data-test="settings-button" aria-describedby={abilityUpdated}>
+                  <div data-testid="settings-button" aria-describedby={abilityUpdated}>
                     <CanShow Key={keys.VIEW_SETTINGS}>
                       <IconButton onClick={() => Router.push('/settings')} color="inherit">
                         <OutlinedSettingsIcon
@@ -577,7 +577,7 @@ class Header extends React.PureComponent {
                     </CanShow>
                   </div>
 
-                  <div data-test="notification-button">
+                  <div data-testid="notification-button">
                     <NotificationDrawerButton />
                   </div>
 
