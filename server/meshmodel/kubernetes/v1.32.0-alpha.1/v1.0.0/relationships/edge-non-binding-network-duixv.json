@@ -212,7 +212,7 @@
                   "0",
                   "ports",
                   "_",
-                  "port"
+                  "containerPort"
                 ]
               ]
             }
