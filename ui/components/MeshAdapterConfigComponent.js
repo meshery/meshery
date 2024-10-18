@@ -1,21 +1,35 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
-
-import Grid from '@material-ui/core/Grid';
-import { NoSsr, Chip, Button, TextField, Tooltip, Avatar, makeStyles } from '@material-ui/core';
-import blue from '@material-ui/core/colors/blue';
-import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 import { withRouter } from 'next/router';
-import ReactSelectWrapper from './ReactSelectWrapper';
-import { updateAdaptersInfo, updateProgress } from '../lib/store';
-import dataFetch from '../lib/data-fetch';
-import changeAdapterState from './graphql/mutations/AdapterStatusMutation';
+import {
+  Avatar,
+  Button,
+  Chip,
+  Grid,
+  makeStyles,
+  NoSsr,
+  TextField,
+  Tooltip,
+} from '@material-ui/core';
+import blue from '@material-ui/core/colors/blue';
+
 import { useNotification } from '../utils/hooks/useNotification';
+import { updateAdaptersInfo, updateProgress } from '../lib/store';
 import { EVENT_TYPES } from '../lib/event-types';
+import changeAdapterState from './graphql/mutations/AdapterStatusMutation';
+import ReactSelectWrapper from './ReactSelectWrapper';
 import BadgeAvatars from './CustomAvatar';
-import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
+import { keys } from '@/utils/permission_constants';
+import {
+  useConnectAdapterMutation,
+  useDeleteAdapterMutation,
+  useGetAdaptersUrlQuery,
+  useGetAvailableAdaptersQuery,
+  usePingAdapterQuery,
+} from '@/rtk-query/adapter';
 
 const useStyles = makeStyles((theme) => ({
   wrapperClass: {
@@ -89,8 +103,31 @@ const MeshAdapterConfigComponent = (props) => {
   const [meshDeployURL, setMeshDeployURL] = useState();
   const [meshDeployURLError, setMeshDeployURLError] = useState();
   const [selectedAvailableAdapter, setSelectedAvailableAdapter] = useState();
+  const [adapterLocation, setAdapterLocation] = useState('');
+
   const classes = useStyles();
   const { notify } = useNotification();
+
+  const {
+    data: adaptersUrlData,
+    isSuccess: isAdaptersUrlFetched,
+    isError: isErrorInFetchingAdaptersUrl,
+  } = useGetAdaptersUrlQuery();
+
+  const {
+    data: availableAdaptersData,
+    isSuccess: isAvailableAdaptersFetched,
+    isError: isErrorInFetchingAvailableAdapters,
+  } = useGetAvailableAdaptersQuery();
+
+  const {
+    data: adapterData,
+    isSuccess: isAdapterPinged,
+    isError: isErrorInPingingAdapter,
+  } = usePingAdapterQuery({ adapterLoc: adapterLocation });
+
+  const [connectAdapter] = useConnectAdapterMutation();
+  const [deleteAdapter] = useDeleteAdapterMutation();
 
   useEffect(() => {
     if (props.meshAdapterStates > ts) {
@@ -103,52 +140,40 @@ const MeshAdapterConfigComponent = (props) => {
     fetchSetAdapterURLs();
     fetchAvailableAdapters();
     setAdapterStatesFunction();
-  }, []);
+  }, [adaptersUrlData, adapterData]);
 
   const fetchSetAdapterURLs = () => {
     updateProgress({ showProgress: true });
 
-    dataFetch(
-      '/api/system/adapters',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      (result) => {
-        updateProgress({ showProgress: false });
-        if (typeof result !== 'undefined') {
-          const options = result.map((res) => ({
-            value: res.adapter_location,
-            label: res.adapter_location,
-          }));
-          setSetAdapterURLs(options);
-        }
-      },
-      handleError('Unable to fetch available adapters'),
-    );
+    if (isAdaptersUrlFetched && adaptersUrlData) {
+      updateProgress({ showProgress: false });
+      const options = adaptersUrlData.map((res) => ({
+        value: res.adapter_location,
+        label: res.adapter_location,
+      }));
+      setSetAdapterURLs(options);
+    } else if (isErrorInFetchingAdaptersUrl) {
+      handleError('Unable to fetch available adapters');
+      return;
+    }
   };
 
   const fetchAvailableAdapters = () => {
     updateProgress({ showProgress: true });
 
-    dataFetch(
-      '/api/system/availableAdapters',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      (result) => {
-        updateProgress({ showProgress: false });
-        if (typeof result !== 'undefined') {
-          const options = result.map((res) => ({
-            value: res.adapter_location,
-            label: res.name,
-          }));
-          setAvailableAdapters(options);
-        }
-      },
-      handleError('Unable to fetch available adapters'),
-    );
+    if (isErrorInFetchingAvailableAdapters) {
+      handleError('Unable to fetch available adapters');
+      return;
+    }
+
+    if (isAvailableAdaptersFetched && availableAdaptersData) {
+      updateProgress({ showProgress: false });
+      const options = availableAdaptersData.map((res) => ({
+        value: res.adapter_location,
+        label: res.name,
+      }));
+      setAvailableAdapters(options);
+    }
   };
 
   const setAdapterStatesFunction = () => {
@@ -228,18 +253,11 @@ const MeshAdapterConfigComponent = (props) => {
 
     updateProgress({ showProgress: true });
 
-    dataFetch(
-      '/api/system/adapter/manage',
-      {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
-        body: params,
-      },
-      (result) => {
+    connectAdapter({ params })
+      .unwrap()
+      .then((result) => {
         updateProgress({ showProgress: false });
-        if (typeof result !== 'undefined') {
-          // self.setState({ meshAdapters : result, meshLocationURL : "" });
+        if (result) {
           setMeshAdapters(result);
           setMeshLocationURL('');
 
@@ -247,47 +265,40 @@ const MeshAdapterConfigComponent = (props) => {
           updateAdaptersInfo({ meshAdapters: result });
           fetchSetAdapterURLs();
         }
-      },
-      handleError('Adapter was not configured due to an error'),
-    );
+      })
+      .catch(() => {
+        handleError('Adapter was not configured due to an error');
+      });
   };
+
   const handleDelete = (adapterLoc) => () => {
     updateProgress({ showProgress: true });
-
-    dataFetch(
-      `/api/system/adapter/manage?adapter=${encodeURIComponent(adapterLoc)}`,
-      {
-        method: 'DELETE',
-        credentials: 'include',
-      },
-      (result) => {
+    deleteAdapter({ adapterLoc })
+      .unwrap()
+      .then((result) => {
         updateProgress({ showProgress: false });
-        if (typeof result !== 'undefined') {
+        if (result) {
           setMeshAdapters(result);
           notify({ message: 'Adapter was removed!', event_type: EVENT_TYPES.SUCCESS });
           updateAdaptersInfo({ meshAdapters: result });
         }
-      },
-      handleError('Adapter was not removed due to an error'),
-    );
+      })
+      .catch(() => {
+        handleError('Adapter was not removed due to an error');
+      });
   };
 
   const handleClick = (adapterLoc) => () => {
     updateProgress({ showProgress: true });
-
-    dataFetch(
-      `/api/system/adapters?adapter=${encodeURIComponent(adapterLoc)}`,
-      {
-        credentials: 'include',
-      },
-      (result) => {
-        updateProgress({ showProgress: false });
-        if (typeof result !== 'undefined') {
-          notify({ message: 'Adapter was pinged!', event_type: EVENT_TYPES.SUCCESS });
-        }
-      },
-      handleError('error'),
-    );
+    setAdapterLocation(adapterLoc);
+    if (isAdapterPinged) {
+      updateProgress({ showProgress: false });
+      if (typeof adapterData !== 'undefined') {
+        notify({ message: 'Adapter was pinged!', event_type: EVENT_TYPES.SUCCESS });
+      }
+    } else if (isErrorInPingingAdapter) {
+      handleError('error');
+    }
   };
 
   const handleAdapterDeploy = () => {
