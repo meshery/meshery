@@ -6,6 +6,7 @@ import { ErrorBoundary as SistentErrorBoundary } from '@layer5/sistent';
  * ErrorBoundary is a React component that catches JavaScript errors in its child components and renders a fallback UI when an error occurs.
  * It should be used as a wrapper around components that might throw errors.
  */
+
 function ErrorBoundary({ children }) {
   return (
     <SistentErrorBoundary
