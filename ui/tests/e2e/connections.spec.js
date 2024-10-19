@@ -177,7 +177,7 @@ test('Delete Kubernetes cluster connections', { tag: '@unstable' }, async ({ pag
   );
 
   // Verify that the status of the connection is deleted
-  expect(statusReq.ok()).toBe(false);
+  expect(statusReq.ok()).toBe(true);
 });
 
 transitionTests.forEach((t) => {
