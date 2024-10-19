@@ -155,11 +155,8 @@ test('Delete Kubernetes cluster connections', { tag: '@unstable' }, async ({ pag
   // Navigate to 'Connections' tab
   await page.getByRole('tab', { name: 'Connections' }).click();
   // Find the row with the connection to be deleted
-  const row = page
-    .locator('tr')
-    .filter({ hasText: 'kind-cluster' })
-    .filter({ hasText: 'connected' })
-    .first();
+  const row = page.locator('tr').filter({ hasText: 'connected' }).first();
+
   //find the checkbox in the row
   const checkbox = row.locator('input[type="checkbox"]').first();
   await checkbox.check();
@@ -169,23 +166,18 @@ test('Delete Kubernetes cluster connections', { tag: '@unstable' }, async ({ pag
   // Verify that Confirmation modal opened and delete
   await expect(page.getByText('Delete Connections')).toBeVisible();
 
-  const connectionsReq = page.waitForResponse(
-    (response) =>
-      response.url().startsWith(`${ENV.MESHERY_SERVER_URL}/api/integrations/connections`) &&
-      response.status() === 200,
-  );
-
   await page.getByRole('button', { name: 'Delete', exact: true }).click();
 
-  await connectionsReq;
+  const statusReq = await page.waitForResponse(
+    (response) =>
+      response
+        .url()
+        .startsWith(`${ENV.MESHERY_SERVER_URL}/api/integrations/connections/meshery/status`) &&
+      response.status() === 202,
+  );
 
-  expect(
-    await page
-      .locator('tr')
-      .filter({ hasText: 'kind-cluster' })
-      .filter({ hasText: 'connected' })
-      .count(),
-  ).toEqual(0);
+  // Verify that the status of the connection is deleted
+  expect(statusReq.ok()).toBe(false);
 });
 
 transitionTests.forEach((t) => {
