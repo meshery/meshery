@@ -1,6 +1,5 @@
-import { Button } from '@mui/material';
 import React from 'react';
-import { ErrorBoundary as SistentErrorBoundary } from '@layer5/sistent';
+import { Button, ErrorBoundary as SistentErrorBoundary } from '@layer5/sistent';
 
 /**
  * ErrorBoundary is a React component that catches JavaScript errors in its child components and renders a fallback UI when an error occurs.
