@@ -27,10 +27,7 @@ function handleError(error) {
 
 function ErrorBoundary({ children }) {
   return (
-    <SistentErrorBoundary 
-      FallbackComponent={FallbackComponent} 
-      onError={handleError}
-    >
+    <SistentErrorBoundary FallbackComponent={FallbackComponent} onError={handleError}>
       {children}
     </SistentErrorBoundary>
   );
