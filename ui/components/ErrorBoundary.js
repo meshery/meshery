@@ -18,9 +18,6 @@ function FallbackComponent({ error, resetErrorBoundary }) {
   );
 }
 
-/**
- * Error handler function that logs the error.
- */
 function handleError(error) {
   console.error('Error in Spaces Preferences Component', error);
 }
