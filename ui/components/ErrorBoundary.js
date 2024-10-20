@@ -1,26 +1,30 @@
-import { Button } from '@mui/material';
 import React from 'react';
-import { ErrorBoundary as SistentErrorBoundary } from '@layer5/sistent';
+import { Button, ErrorBoundary as SistentErrorBoundary } from '@layer5/sistent';
 
 /**
  * ErrorBoundary is a React component that catches JavaScript errors in its child components and renders a fallback UI when an error occurs.
  * It should be used as a wrapper around components that might throw errors.
  */
 
+function FallbackComponent({ error, resetErrorBoundary }) {
+  return (
+    <div className="alert alert-danger">
+      <p>Couldn&apos;t open form. Encountered the following error:</p>
+      <pre>{error.message}</pre>
+      <Button color="primary" variant="contained" onClick={resetErrorBoundary}>
+        Refresh Form
+      </Button>
+    </div>
+  );
+}
+
+function handleError(error) {
+  console.error('Error in Spaces Preferences Component', error);
+}
+
 function ErrorBoundary({ children }) {
   return (
-    <SistentErrorBoundary
-      FallbackComponent={({ error, resetErrorBoundary }) => (
-        <div className="alert alert-danger">
-          <p>Couldn&apos;t open form. Encountered the following error:</p>
-          <pre>{error.message}</pre>
-          <Button color="primary" variant="contained" onClick={resetErrorBoundary}>
-            Refresh Form
-          </Button>
-        </div>
-      )}
-      onError={(error) => console.error('Error in Spaces Preferences Component', error)}
-    >
+    <SistentErrorBoundary FallbackComponent={FallbackComponent} onError={handleError}>
       {children}
     </SistentErrorBoundary>
   );
