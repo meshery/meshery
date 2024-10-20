@@ -1,51 +1,36 @@
-import { Button } from '@material-ui/core';
 import React from 'react';
+import { Button, ErrorBoundary as SistentErrorBoundary } from '@layer5/sistent';
 
 /**
  * ErrorBoundary is a React component that catches JavaScript errors in its child components and renders a fallback UI when an error occurs.
  * It should be used as a wrapper around components that might throw errors.
- * @deprecated use error boundary from sistent instead
  */
-const ErrorBoundary = ({ children }) => {
-  const [hasError, setHasError] = useState(false);
-  const [error, setError] = useState(null);
 
-  const resetErrorBoundary = () => {
-    setHasError(false);
-    setError(null);
-  };
+function FallbackComponent({ error, resetErrorBoundary }) {
+  return (
+    <div className="alert alert-danger">
+      <p>Couldn&apos;t open form. Encountered the following error:</p>
+      <pre>{error.message}</pre>
+      <Button color="primary" variant="contained" onClick={resetErrorBoundary}>
+        Refresh Form
+      </Button>
+    </div>
+  );
+}
 
-  useEffect(() => {
-    if (hasError && error) {
-      // Log the error, send to analytics, etc.
-      console.error(error);
-    }
-  }, [hasError, error]);
+/**
+ * Error handler function that logs the error.
+ */
+function handleError(error) {
+  console.error('Error in Spaces Preferences Component', error);
+}
 
-  // React Error boundary behavior
-  const ErrorCatcher = ({ children }) => {
-    try {
-      return children;
-    } catch (err) {
-      setHasError(true);
-      setError(err);
-      return null;
-    }
-  };
-
-  if (hasError && error) {
-    return (
-      <div className="alert alert-danger">
-        <p>Couldn&apos;t open form. Encountered the following error:</p>
-        <pre>{error.message}</pre>
-        <Button color="primary" variant="contained" onClick={resetErrorBoundary}>
-          Refresh Form
-        </Button>
-      </div>
-    );
-  }
-
-  return <ErrorCatcher>{children}</ErrorCatcher>;
-};
+function ErrorBoundary({ children }) {
+  return (
+    <SistentErrorBoundary FallbackComponent={FallbackComponent} onError={handleError}>
+      {children}
+    </SistentErrorBoundary>
+  );
+}
 
 export default ErrorBoundary;
