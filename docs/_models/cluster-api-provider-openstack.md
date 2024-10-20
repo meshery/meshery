@@ -34,6 +34,10 @@ components:
   colorIcon: assets/img/integrations/cluster-api-provider-openstack/components/open-stack-machine-template/icons/color/open-stack-machine-template-color.svg
   whiteIcon: assets/img/integrations/cluster-api-provider-openstack/components/open-stack-machine-template/icons/white/open-stack-machine-template-white.svg
   description: 
+- name: open-stack-server
+  colorIcon: assets/img/integrations/cluster-api-provider-openstack/components/open-stack-server/icons/color/open-stack-server-color.svg
+  whiteIcon: assets/img/integrations/cluster-api-provider-openstack/components/open-stack-server/icons/white/open-stack-server-white.svg
+  description: 
 featureList: [
   "Automates Kubernetes cluster provisioning",
   "Supports various OpenStack distributions",
