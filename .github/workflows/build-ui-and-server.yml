@@ -111,11 +111,9 @@ jobs:
           make server &
           sleep 90
       - name: Install Playwright
-        run: npm ci
-        working-directory: ui
+        run: make ui-setup-ci
       - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
-        working-directory: ui
+        run: make test-setup-ui
       - name: Run Playwright End-to-End Tests
         env:
           MESHERY_SERVER_URL: "http://localhost:9081"
@@ -124,22 +122,28 @@ jobs:
           REMOTE_PROVIDER_USER_PASSWORD: ${{ secrets.REMOTE_PROVIDER_USER_PASS }}
           PROVIDER_TOKEN: ${{ secrets.PROVIDER_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GH_ACCESS_TOKEN  }}
-        run: npx playwright test --project=chromium --project=firefox --reporter="./tests/e2e/custom-playwright-reporter.js" --max-failures=8
-        working-directory: ui
+        run: make test-e2e-ci
       - name: Save PR number
         if: ${{ !cancelled() }}
         run: |
-            mkdir -p ./pr
-            echo ${{ github.event.number }} > ./pr/number
+          mkdir -p ./pr
+          echo ${{ github.event.number }} > ./pr/number
       - name: Upload Test Report
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@834a144ee995460fba8ed112a2fc961b36a5ec5a # v4.3.6
         with:
-            name: e2e-test-reporter
-            path: |
-                ui/test-report.md
-                pr/number
-            retention-days: 14
+          name: e2e-test-reporter
+          path: |
+            ui/test-report.md
+            pr/number
+          retention-days: 14
+      - name: Upload Test Trace
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: ui/test-results/
+          retention-days: 14
   docker-build-test:
     name: Docker build
     if: github.repository == 'meshery/meshery'
