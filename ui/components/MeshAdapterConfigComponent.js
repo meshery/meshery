@@ -454,7 +454,7 @@ const MeshAdapterConfigComponent = (props) => {
                     </BadgeAvatars>
                   }
                   variant="outlined"
-                  data-testid="chipAdapterLocation"
+                  data-testid="chip-adapter-location"
                 />
               </Tooltip>
             );
@@ -505,7 +505,7 @@ const MeshAdapterConfigComponent = (props) => {
                 size="large"
                 onClick={handleSubmit}
                 className={classes.button}
-                data-testid="btnSubmitMeshAdapter"
+                data-testid="btn-submit-mesh-adapter"
                 disabled={!CAN(keys.CONNECT_ADAPTER.action, keys.CONNECT_ADAPTER.subject)}
               >
                 Connect
