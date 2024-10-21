@@ -448,6 +448,13 @@ test-e2e-ci:
 	cd ui; npm run test:e2e:ci; cd ..
 
 #-----------------------------------------------------------------------------
+# Rego Policies
+#-----------------------------------------------------------------------------
+rego-eval:	
+	opa eval -i policies/test/input.json -d relationships:policies/test/all_relationships.json -d server/meshmodel/kubernetes/v1.25.2/v1.0.0/policies/ \
+	'data.relationship_evaluation_policy.evaluate' --format=pretty
+
+#-----------------------------------------------------------------------------
 # Dependencies
 #-----------------------------------------------------------------------------
 .PHONY: dep-check

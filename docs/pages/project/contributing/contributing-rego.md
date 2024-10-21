@@ -32,11 +32,8 @@ Working with the Meshery Policy Engine can feel complex because of the large num
 
 ## Executing OPA 
 
-Now that you have the necessary prerequisites you can try running the Rego policies locally. From your local version of Meshery Server navigate to the policies directory:
-{% capture code_content %}cd server/meshmodel/kubernetes/v1.25.2/v1.0.0/policies{% endcapture %}
-{% include code.html code=code_content %}
+You can evaluate the Rego policies against test data stored in the `policies/test` folder:
 
-Assuming you have the design you are testing in the parent directory in a file named **input.json** and the relationship data in the parent directory in a file named **all_relationships.json** you can evaluate the design against the Rego policies using this command:
-{% capture code_content %}opa eval -i ../input.json -d relationships:../all_relationships.json -d . 'data.relationship_evaluation_policy.evaluate'{% endcapture %}
+{% capture code_content %}make rego-eval{% endcapture %}
 {% include code.html code=code_content %}
 
