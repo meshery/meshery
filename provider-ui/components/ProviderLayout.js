@@ -17,4 +17,3 @@ export default function ProviderLayout({ children }) {
 ProviderLayout.propTypes = {
   children : PropTypes.node.isRequired,
 };
-

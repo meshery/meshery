@@ -466,9 +466,11 @@ const MeshAdapterConfigComponent = (props) => {
     return (
       <NoSsr>
         <div className={classes.wrapperClass} data-testid="mesh-adapter-connections">
+        <div className={classes.wrapperClass} data-testid="mesh-adapter-connections">
           {showAdapters}
 
           <Grid container spacing={1} alignItems="flex-end">
+            <Grid item xs={12} data-testid="mesh-adapter-url">
             <Grid item xs={12} data-testid="mesh-adapter-url">
               <ReactSelectWrapper
                 onChange={handleMeshLocURLChange}
