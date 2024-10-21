@@ -1248,7 +1248,7 @@ function Connections(props) {
                   <Button
                     type="submit"
                     onClick={handleFlushMeshSync(rowData.rowIndex)}
-                    data-testid="btnResetDatabase"
+                    data-testid="btn-reset-database"
                     className={classes.button}
                     disabled={
                       !CAN(keys.FLUSH_MESHSYNC_DATA.action, keys.FLUSH_MESHSYNC_DATA.subject)

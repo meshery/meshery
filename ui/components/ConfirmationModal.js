@@ -512,7 +512,7 @@ function ConfirmationMsg(props) {
                                     />
                                   }
                                   variant="outlined"
-                                  data-testid="chipContextName"
+                                  data-testid="chip-context-name"
                                 />
                               </div>
                             </Tooltip>

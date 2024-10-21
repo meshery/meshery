@@ -340,7 +340,7 @@ class MesherySettings extends React.Component {
                     className={classes.tab}
                     icon={<FontAwesomeIcon icon={faMendeley} style={iconMedium} />}
                     label="Adapters"
-                    data-testid="tabServiceMeshes"
+                    data-testid="tab-service-meshes"
                     value={ADAPTERS}
                     disabled={
                       !CAN(

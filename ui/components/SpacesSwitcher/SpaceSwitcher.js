@@ -278,7 +278,7 @@ export const FileNameInput = ({
 
 function DefaultHeader({ title, isBeta }) {
   return (
-    <StyledHeader color="inherit" variant="h5" data-testid="headerPageTitle">
+    <StyledHeader color="inherit" variant="h5" data-testid="header-page-title">
       {title}
       {isBeta ? <StyledBetaHeader>BETA</StyledBetaHeader> : ''}
     </StyledHeader>

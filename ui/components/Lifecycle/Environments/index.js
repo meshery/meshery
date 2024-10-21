@@ -459,7 +459,7 @@ const Environments = ({ organization, classes }) => {
                   marginRight: '2rem',
                 }}
                 disabled={!CAN(keys.CREATE_ENVIRONMENT.action, keys.CREATE_ENVIRONMENT.subject)}
-                data-testid="btnResetDatabase"
+                data-testid="btn-reset-database"
               >
                 <AddIconCircleBorder style={{ width: '20px', height: '20px' }} />
                 <Typography
