@@ -49,6 +49,7 @@ const MultiSelectWrapper = (props) => {
                   style={{
                     padding: '0',
                   }}
+                  data-testid={`checkbox-${props.label}`}
                 />
               </UsesSistent>
             ) : (
@@ -60,6 +61,7 @@ const MultiSelectWrapper = (props) => {
                   style={{
                     padding: '0',
                   }}
+                  data-testid={`checkbox-${props.label}`}
                 />
               </UsesSistent>
             )

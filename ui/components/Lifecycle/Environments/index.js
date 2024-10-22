@@ -186,6 +186,7 @@ const Environments = ({ organization, classes }) => {
     notify({
       message: msg,
       event_type: EVENT_TYPES.SUCCESS,
+      dataTestID: 'notification-success-bar',
     });
   };
 
@@ -629,9 +630,11 @@ const Environments = ({ organization, classes }) => {
                   primaryButtonProps={{
                     onClick: handleAssignConnection,
                     disabled: disableTranferButton,
+                    'data-testid': 'assign-conn-save-button',
                   }}
                   secondaryButtonProps={{
                     onClick: handleonAssignConnectionModalClose,
+                    'data-testid': 'assign-conn-cancel-button',
                   }}
                 />
               </ModalFooter>

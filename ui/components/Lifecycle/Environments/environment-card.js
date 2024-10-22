@@ -19,7 +19,7 @@ export const formattoLongDate = (date) => {
   });
 };
 
-export const TransferButton = ({ title, count, onAssign, classes, disabled }) => {
+export const TransferButton = ({ title, count, onAssign, classes, disabled, dataTestId }) => {
   return (
     <Button
       variant="contained"
@@ -27,6 +27,7 @@ export const TransferButton = ({ title, count, onAssign, classes, disabled }) =>
       disabled={disabled}
       className={classes.popupButton}
       onClick={onAssign}
+      data-testid={dataTestId}
     >
       <Grid>
         <Typography className={classes.tabCount}>{count}</Typography>
@@ -74,6 +75,7 @@ const EnvironmentCard = ({
 
   return (
     <FlipCard
+      cardName={environmentDetails.name}
       disableFlip={
         selectedEnvironments?.filter((id) => id == environmentDetails.id).length === 1
           ? true
@@ -139,6 +141,7 @@ const EnvironmentCard = ({
                   onAssign={onAssignConnection}
                   classes={classes}
                   disabled={!CAN(keys.VIEW_CONNECTIONS.action, keys.VIEW_CONNECTIONS.subject)}
+                  dataTestId={`assigned-conn-${environmentDetails.name}`}
                 />
               </Box>
               {/* temporary disable workspace allocation button  */}
@@ -203,6 +206,7 @@ const EnvironmentCard = ({
                     ? true
                     : !CAN(keys.EDIT_ENVIRONMENT.action, keys.EDIT_ENVIRONMENT.subject)
                 }
+                data-testid={`edit-button-${environmentDetails.name}`}
               >
                 <Edit style={{ color: 'white', margin: '0 2px' }} />
               </Button>
@@ -214,6 +218,7 @@ const EnvironmentCard = ({
                     ? true
                     : !CAN(keys.DELETE_ENVIRONMENT.action, keys.DELETE_ENVIRONMENT.subject)
                 }
+                data-testid={`delete-button-${environmentDetails.name}`}
               >
                 <Delete style={{ color: 'white', margin: '0 2px' }} />
               </Button>
