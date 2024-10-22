@@ -1,14 +1,5 @@
 import React, { useState, useRef } from 'react';
 import MenuIcon from '@material-ui/icons/Menu';
-import ClickAwayListener from '@material-ui/core/ClickAwayListener';
-import Grow from '@material-ui/core/Grow';
-import IconButton from '@material-ui/core/IconButton';
-import MenuItem from '@material-ui/core/MenuItem';
-import MenuList from '@material-ui/core/MenuList';
-import NoSsr from '@material-ui/core/NoSsr';
-import Paper from '@material-ui/core/Paper';
-import Popper from '@material-ui/core/Popper';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { Provider, connect } from 'react-redux';
 import { store } from '../store';
@@ -16,43 +7,33 @@ import { bindActionCreators } from 'redux';
 import { useGetLoggedInUserQuery, useLazyGetTokenQuery } from '@/rtk-query/user';
 import { updateUser } from '../lib/store';
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
-import { styled } from '@mui/material/styles';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
-
-const LinkDiv = styled('div')(() => ({
-  display: 'inline-flex',
-  width: '100%',
-  height: '30px',
-  alignItems: 'self-end',
-}));
+// import { Logout, Settings, VpnKey } from '@material-ui/icons';
+import { NavigationNavbar } from '@layer5/sistent';
+import { Popover, IconButton } from '@material-ui/core';
+import { UsesSistent } from './SistentWrapper';
+import theme from '@/themes/app';
 
 function exportToJsonFile(jsonData, filename) {
   let dataStr = JSON.stringify(jsonData);
   let dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
-
-  let exportFileDefaultName = filename;
-
   let linkElement = document.createElement('a');
   linkElement.setAttribute('href', dataUri);
-  linkElement.setAttribute('download', exportFileDefaultName);
+  linkElement.setAttribute('download', filename);
   linkElement.click();
   linkElement.remove();
 }
 
-/**
- * Extension Point: Avatar behavior for User Modes
- * Insert custom logic here to handle Single User mode, Anonymous User mode, Multi User mode behavior.
- */
 const HeaderMenu = (props) => {
   const [userLoaded, setUserLoaded] = useState(false);
   const [account, setAccount] = useState([]);
   const capabilitiesLoadedRef = useRef(false);
   const { notify } = useNotification();
-  const [anchorEl, setAnchorEl] = useState(null);
   const router = useRouter();
+  const [anchorEl, setAnchorEl] = useState(null);
 
   const {
     data: userData,
@@ -60,24 +41,19 @@ const HeaderMenu = (props) => {
     isError: isGetUserError,
     error: getUserError,
   } = useGetLoggedInUserQuery();
+
   const [triggerGetToken, { isError: isTokenError, error: tokenError }] = useLazyGetTokenQuery();
 
   const { capabilitiesRegistry } = props;
 
-  const handleOpen = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
   const handleLogout = () => {
     window.location = '/user/logout';
+    handleClose();
   };
 
   const handlePreference = () => {
     router.push('/user/preferences');
+    handleClose();
   };
 
   const handleGetToken = () => {
@@ -85,6 +61,7 @@ const HeaderMenu = (props) => {
       .unwrap()
       .then((data) => {
         exportToJsonFile(data, 'auth.json');
+        handleClose();
       });
   };
 
@@ -112,117 +89,109 @@ const HeaderMenu = (props) => {
     setAccount(ExtensionPointSchemaValidator('account')(capabilitiesRegistry?.extensions?.account));
   }
 
-  /**
-   * @param {import("../utils/ExtensionPointSchemaValidator").AccountSchema[]} children
-   */
-  function renderAccountExtension(children) {
-    if (children && children.length > 0) {
-      return (
-        <>
-          {children.map(({ id, href, title, show: showc }) => {
-            if (typeof showc !== 'undefined' && !showc) {
-              return '';
-            }
-            return (
-              <React.Fragment key={id}>
-                <MenuItem button key={id}>
-                  {extensionPointContent(href, title)}
-                </MenuItem>
-              </React.Fragment>
-            );
-          })}
-        </>
-      );
-    }
-  }
+  const getAccountNavigationItems = () => {
+    // Convert account extensions to navigation items
+    const accountItems = account.map((item) => ({
+      id: item.id,
+      title: item.title,
+      onClick: () => {
+        if (item.href) {
+          router.push(item.href);
+          handleClose();
+        }
+      },
+      permission: typeof item.show === 'undefined' ? true : item.show,
+    }));
 
-  function extensionPointContent(href, name) {
-    const content = <LinkDiv>{name}</LinkDiv>;
-    if (href) {
-      return (
-        <Link onClick={() => props.updateExtensionType(name)} href={href}>
-          {content}
-        </Link>
-      );
-    }
+    // Default menu items that should always be present
+    const defaultItems = [
+      {
+        id: 'get-token',
+        title: 'Get Token',
+        onClick: handleGetToken,
+        permission: CAN(keys.DOWNLOAD_TOKEN.action, keys.DOWNLOAD_TOKEN.subject),
+      },
+      {
+        id: 'preferences',
+        title: 'Preferences',
+        onClick: handlePreference,
+        permission: true,
+      },
+      {
+        id: 'logout',
+        title: 'Logout',
+        onClick: handleLogout,
+        permission: true,
+      },
+    ];
 
-    return content;
-  }
+    // Combine both arrays - account items followed by default items
+    return [...accountItems, ...defaultItems];
+  };
 
-  const { color, iconButtonClassName, classes } = props;
-
-  const open = Boolean(anchorEl);
-
-  if (userData?.status == 'anonymous') {
+  if (userData?.status === 'anonymous') {
     return null;
   }
 
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const open = Boolean(anchorEl);
+  const id = open ? 'menu-popover' : undefined;
+
   return (
     <div>
-      <NoSsr>
-        <div>
-          <IconButton
-            color={color}
-            className={iconButtonClassName}
-            ref={anchorEl}
-            onClick={handleOpen}
-            aria-owns={open ? 'menu-list-grow' : undefined}
-            aria-haspopup="true"
-          >
-            <MenuIcon />
-          </IconButton>
-        </div>
-        <div>
-          <Popper
-            open={open}
-            anchorEl={anchorEl}
-            transition
-            style={{ zIndex: 10000 }}
-            placement="top-end"
-            onClose={handleClose}
-          >
-            {({ TransitionProps, placement }) => (
-              <Grow
-                {...TransitionProps}
-                id="menu-list-grow"
-                style={{
-                  marginTop: '1rem',
-                  transformOrigin: placement === 'bottom' ? 'left top' : 'left bottom',
-                }}
-              >
-                <Paper className={classes.popover}>
-                  <ClickAwayListener onClickAway={handleClose}>
-                    <MenuList>
-                      {account && account.length ? renderAccountExtension(account) : null}
-                      {!account?.length && (
-                        <MenuItem
-                          disabled={!CAN(keys.DOWNLOAD_TOKEN.action, keys.DOWNLOAD_TOKEN.subject)}
-                          onClick={handleGetToken}
-                        >
-                          Get Token
-                        </MenuItem>
-                      )}
-                      <MenuItem onClick={handlePreference}>Preferences</MenuItem>
-                      <MenuItem onClick={handleLogout}>Logout</MenuItem>
-                    </MenuList>
-                  </ClickAwayListener>
-                </Paper>
-              </Grow>
-            )}
-          </Popper>
-        </div>
-      </NoSsr>
+      <IconButton
+        aria-describedby={id}
+        onClick={handleClick}
+        color={props.color}
+        className={props.iconButtonClassName}
+      >
+        <MenuIcon />
+      </IconButton>
+      <UsesSistent>
+        <Popover
+          id={id}
+          open={open}
+          anchorEl={anchorEl}
+          onClose={handleClose}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'right',
+          }}
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'right',
+          }}
+          style={{ marginTop: '1rem' }}
+        >
+          <NavigationNavbar
+            navigationItems={getAccountNavigationItems()}
+            ListItemTextProps={{
+              primaryTypographyProps: {
+                sx: {
+                  fontFamily: theme.typography.fontFamily,
+                  fontSize: '1rem',
+                },
+              },
+            }}
+          />
+        </Popover>
+      </UsesSistent>
     </div>
   );
 };
 
-const MenuProvider = (props) => {
-  return (
-    <Provider store={store}>
-      <HeaderMenu {...props} />
-    </Provider>
-  );
-};
+const MenuProvider = (props) => (
+  <Provider store={store}>
+    <HeaderMenu {...props} />
+  </Provider>
+);
 
 const mapDispatchToProps = (dispatch) => ({
   updateUser: bindActionCreators(updateUser, dispatch),
