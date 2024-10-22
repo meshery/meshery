@@ -1,4 +1,5 @@
 import React from 'react';
+import { useState, useCallback } from 'react';
 import {
   withStyles,
   Typography,
@@ -75,118 +76,135 @@ export const PROMPT_VARIANTS = {
   CONFIRMATION: 'confirmation',
 };
 
-class PromptComponent extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      show: false,
-      title: '',
-      subtitle: '',
-      options: [],
-      isChecked: false,
-      showCheckbox: false,
-      showInfoIcon: null,
-    };
-    this.promiseInfo = {};
-    this.variant = this.props.variant;
-  }
+const PromptComponent = ({ classes, variant: initialVariant }) => {
+  const [state, setState] = useState({
+    show: false,
+    title: '',
+    subtitle: '',
+    options: [],
+    isChecked: false,
+    showCheckbox: false,
+    showInfoIcon: null,
+  });
 
-  show = async (passed) => {
+  const [variant, setVariant] = useState(initialVariant);
+  const promiseRef = React.useRef({});
+
+  const show = useCallback(async (passed) => {
     return new Promise((resolve, reject) => {
-      this.promiseInfo = { resolve, reject };
-      this.variant = passed.variant;
-      this.setState({
+      promiseRef.current = { resolve, reject };
+      setVariant(passed.variant);
+      setState(prev => ({
+        ...prev,
         title: passed.title,
         subtitle: passed.subtitle,
         options: passed.options,
         showCheckbox: !!passed.showCheckbox,
         show: true,
         showInfoIcon: passed.showInfoIcon || null,
-      });
+      }));
     });
+  }, []);
+
+  const hide = useCallback(() => {
+    setState(prev => ({ ...prev, show: false }));
+  }, []);
+
+  const handleCheckboxChange = useCallback(() => {
+    setState(prev => ({ ...prev, isChecked: !prev.isChecked }));
+  }, []);
+
+  const getCheckboxState = () => {
+    return state.isChecked;
   };
 
-  hide = () => {
-    this.setState({ show: false });
-  };
+  const { show: showModal, options, title, subtitle, isChecked, showCheckbox, showInfoIcon } = state;
+  const { resolve } = promiseRef.current;
 
-  handleCheckboxChange = () => {
-    this.setState((prevState) => ({
-      isChecked: !prevState.isChecked,
-    }));
-  };
-
-  getCheckboxState = () => {
-    return this.state.isChecked;
-  };
-
-  render() {
-    const { show, options, title, subtitle, isChecked, showCheckbox, showInfoIcon } = this.state;
-    const { classes } = this.props;
-    const { resolve } = this.promiseInfo;
-    return (
-      <div className={classes.root}>
-        <UsesSistent>
-          <Modal open={show} closeModal={this.hide} title={title}>
-            {subtitle !== '' && (
-              <ModalBody>
-                <DialogContentText id="alert-dialog-description" className={classes.subtitle}>
-                  <Typography variant="body1">{subtitle}</Typography>
-                </DialogContentText>
-                {showCheckbox && (
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={isChecked}
-                        onChange={this.handleCheckboxChange}
-                        className={classes.checkbox}
-                        color="primary"
-                      />
-                    }
-                    label={<span className={classes.checkboxLabelStyle}>Do not show again</span>}
-                  />
-                )}
-              </ModalBody>
-            )}
-            <ModalFooter variant="filled" helpText={showInfoIcon}>
-              <Box style={{ width: '100%', display: 'flex', gap: '1rem', justifyContent: 'end' }}>
-                {options.length > 1 && (
-                  <ModalButtonSecondary
-                    onClick={() => {
-                      this.hide();
-                      resolve(options[1]);
-                    }}
-                    key={options[1]}
-                  >
-                    <Typography variant body2>
-                      {' '}
-                      {options[1]}{' '}
-                    </Typography>
-                  </ModalButtonSecondary>
-                )}
-                <ModalButtonPrimary
-                  color="primary"
+  return (
+    <div className={classes.root}>
+      <UsesSistent>
+        <Modal open={showModal} closeModal={hide} title={title}>
+          {subtitle !== '' && (
+            <ModalBody>
+              <DialogContentText id="alert-dialog-description" className={classes.subtitle}>
+                <Typography variant="body1">{subtitle}</Typography>
+              </DialogContentText>
+              {showCheckbox && (
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={isChecked}
+                      onChange={handleCheckboxChange}
+                      className={classes.checkbox}
+                      color="primary"
+                    />
+                  }
+                  label={<span className={classes.checkboxLabelStyle}>Do not show again</span>}
+                />
+              )}
+            </ModalBody>
+          )}
+          <ModalFooter variant="filled" helpText={showInfoIcon}>
+            <Box style={{ width: '100%', display: 'flex', gap: '1rem', justifyContent: 'end' }}>
+              {options.length > 1 && (
+                <ModalButtonSecondary
                   onClick={() => {
-                    this.hide();
-                    resolve(options[0]);
+                    hide();
+                    resolve(options[1]);
                   }}
-                  key={options[0]}
-                  promptVariant={this.variant}
-                  style={this.variant && { backgroundColor: theme.palette.secondary[this.variant] }}
-                  type="submit"
-                  variant="contained"
+                  key={options[1]}
                 >
-                  <Typography variant body2>
-                    {options[0]}{' '}
+                  <Typography variant="body2">
+                    {options[1]}
                   </Typography>
-                </ModalButtonPrimary>
-              </Box>
-            </ModalFooter>
-          </Modal>
-        </UsesSistent>
-      </div>
-    );
-  }
-}
+                </ModalButtonSecondary>
+              )}
+              <ModalButtonPrimary
+                color="primary"
+                onClick={() => {
+                  hide();
+                  resolve(options[0]);
+                }}
+                key={options[0]}
+                promptVariant={variant}
+                style={variant && { backgroundColor: theme.palette.secondary[variant] }}
+                type="submit"
+                variant="contained"
+              >
+                <Typography variant="body2">
+                  {options[0]}
+                </Typography>
+              </ModalButtonPrimary>
+            </Box>
+          </ModalFooter>
+        </Modal>
+      </UsesSistent>
+    </div>
+  );
+};
 
-export default withStyles(styles)(PromptComponent);
+const PromptComponentWithStatic = withStyles(styles)((props) => {
+  const componentRef = React.useRef();
+  const WrappedComponent = React.forwardRef((props, ref) => {
+    const promptRef = React.useRef();
+
+    React.useEffect(() => {
+      if (promptRef.current) {
+        componentRef.current = promptRef.current;
+      }
+    }, []);
+
+    return <PromptComponent {...props} ref={promptRef} />;
+  });
+
+  WrappedComponent.show = (...args) => {
+    if (componentRef.current && componentRef.current.show) {
+      return componentRef.current.show(...args);
+    }
+  };
+
+  return <WrappedComponent {...props} />;
+});
+
+export default PromptComponentWithStatic;
