@@ -12,11 +12,11 @@ subcommand: connections
 
 # mesheryctl exp connections
 
-Manage connections
+Manage Meshery connections
 
 ## Synopsis
 
-Manage connections
+View and manage your Meshery connections
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp connections [flags]
@@ -30,6 +30,14 @@ List all the connections
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp connections list
+
+</div>
+</pre> 
+
+Delete a connection
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl exp connections delete [connection_id]
 
 </div>
 </pre> 

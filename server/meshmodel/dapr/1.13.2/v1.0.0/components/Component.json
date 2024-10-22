@@ -174,10 +174,12 @@
    "subCategory": "Framework",
    "version": "v1.0.0",
    "components": null,
-   "relationships": null
+   "relationships": null,
+   "components_count": 0,
+   "relationships_count": 0
   },
   "schemaVersion": "components.meshery.io/v1beta1",
-  "status": "",
+  "status": "enabled",
   "styles": {
    "primaryColor": "#0d2192",
    "secondaryColor": "#5266D7",

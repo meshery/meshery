@@ -86,7 +86,7 @@ func (h *Handler) ProviderUIHandler(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, redirectURL, http.StatusFound)
 		return
 	}
-	ServeUI(w, r, "/provider", "../../provider-ui/out/")
+	h.ServeUI(w, r, "/provider", "../../provider-ui/out/")
 }
 
 // swagger:route GET /api/provider/capabilities ProvidersAPI idGetProviderCapabilities

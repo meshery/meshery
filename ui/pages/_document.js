@@ -57,7 +57,7 @@ class MesheryDocument extends Document {
             }
           </style>
         </Head>
-        <body>
+        <body style={{ margin: 0 }}>
           {/* Google Tag Manager (noscript) */}
           <noscript
             dangerouslySetInnerHTML={{

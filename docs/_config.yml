@@ -101,6 +101,8 @@ collections:
     name: mesheryctlcommands
   models:
     output: true
+  catalog:
+    output: true
   # integrations:
   #   output: true
   #   permalink: /extensibility/:collection/:path    

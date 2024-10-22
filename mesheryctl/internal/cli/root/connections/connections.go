@@ -18,11 +18,15 @@ var (
 
 var ConnectionsCmd = &cobra.Command{
 	Use:   "connections",
-	Short: "Manage connections",
-	Long:  `Manage connections`,
+	Short: "Manage Meshery connections",
+	Long:  `View and manage your Meshery connections`,
 	Example: `
 // List all the connections
 mesheryctl exp connections list
+
+// Delete a connection
+mesheryctl exp connections delete [connection_id]
+
 `,
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {

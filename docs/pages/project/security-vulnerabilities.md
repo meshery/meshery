@@ -11,7 +11,6 @@ list: include
 
 ## List of Announced Vulnerabilities
 
-
 <table>
 <tr>
   <th> DATE ANNOUNCED </th>

@@ -66,6 +66,26 @@ components:
   colorIcon: assets/img/integrations/kube-arangodb/components/arango-profile/icons/color/arango-profile-color.svg
   whiteIcon: assets/img/integrations/kube-arangodb/components/arango-profile/icons/white/arango-profile-white.svg
   description: 
+- name: arango-route
+  colorIcon: assets/img/integrations/kube-arangodb/components/arango-route/icons/color/arango-route-color.svg
+  whiteIcon: assets/img/integrations/kube-arangodb/components/arango-route/icons/white/arango-route-white.svg
+  description: 
+- name: arango-scheduler-batch-job
+  colorIcon: assets/img/integrations/kube-arangodb/components/arango-scheduler-batch-job/icons/color/arango-scheduler-batch-job-color.svg
+  whiteIcon: assets/img/integrations/kube-arangodb/components/arango-scheduler-batch-job/icons/white/arango-scheduler-batch-job-white.svg
+  description: 
+- name: arango-scheduler-cron-job
+  colorIcon: assets/img/integrations/kube-arangodb/components/arango-scheduler-cron-job/icons/color/arango-scheduler-cron-job-color.svg
+  whiteIcon: assets/img/integrations/kube-arangodb/components/arango-scheduler-cron-job/icons/white/arango-scheduler-cron-job-white.svg
+  description: 
+- name: arango-scheduler-deployment
+  colorIcon: assets/img/integrations/kube-arangodb/components/arango-scheduler-deployment/icons/color/arango-scheduler-deployment-color.svg
+  whiteIcon: assets/img/integrations/kube-arangodb/components/arango-scheduler-deployment/icons/white/arango-scheduler-deployment-white.svg
+  description: 
+- name: arango-scheduler-pod
+  colorIcon: assets/img/integrations/kube-arangodb/components/arango-scheduler-pod/icons/color/arango-scheduler-pod-color.svg
+  whiteIcon: assets/img/integrations/kube-arangodb/components/arango-scheduler-pod/icons/white/arango-scheduler-pod-white.svg
+  description: 
 featureList: [
   "Automated deployment and management of ArangoDB on Kubernetes",
   "Scaling and high availability of ArangoDB",

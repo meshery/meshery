@@ -25,7 +25,7 @@ const CurrentSessionInfo = (props) => {
     // isSuccess: isRolesSuccess,
     // isError: isRolesError,
     // error: rolesError,
-  } = useGetUserOrgRolesQuery({ orgId: organization?.id });
+  } = useGetUserOrgRolesQuery({ orgId: organization?.id }, { skip: !organization?.id });
 
   const {
     data: providerRolesRes,

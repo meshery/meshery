@@ -18,4 +18,4 @@ jobs:
           version: 0.25.0
 
       - name: Lint
-        run: regal lint --format github ./server/meshmodel      
+        run: regal lint --config-file ./policies/wasm/policies/.regal/config.yaml --format github ./server/meshmodel  

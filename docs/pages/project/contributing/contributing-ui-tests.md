@@ -18,17 +18,20 @@ Before diving into Meshery's testing environment, certain prerequisites are nece
 - A verified account in your choosen provider which integrate with Meshery.
 - A compatible browser such as Chromium, Chrome, or Firefox.
 - Installations of Golang, NodeJS, and Makefiles for Native OS build (Optional for docker based build).
-- Kubernetes clusters (Required for several test cases)
-- Already have [Meshery Adapters](https://docs.meshery.io/concepts/architecture/adapters) up and running (Required for several test cases)
+- Kubernetes clusters (Required for connection to Kubernetes test cases)
+- Already have [Meshery Adapters](https://docs.meshery.io/concepts/architecture/adapters) up and running (Required for adapters test cases)
 
 ## Setting up environment variable
 
 To run the tests successfully, three environment variables must be configured:  
 • `REMOTE_PROVIDER_USER_EMAIL`: The email associated with your account within your provider.  
 • `REMOTE_PROVIDER_USER_PASSWORD` : The password associated with your account within your provider.  
-• `PROVIDER_TOKEN`: You're provider token, that can be generated from your provider account  
+• `PROVIDER_TOKEN`: Your provider token, can be generated from an account registered within your provider  
 
-In the case you are using Layer5 Cloud as provider, you can generate your token on [Layer5 cloud account token](https://meshery.layer5.io/security/tokens)
+{% include alert.html
+    type="info"
+    title="Layer5 Cloud Provider"
+    content='In the case you are using Layer5 Cloud as provider, you can generate your token on <a href="https://meshery.layer5.io/security/tokens">Layer5 cloud account token</a>' %}
 
 During the setup phase, Playwright utilizes these environment variables to log in and store credentials securely in the `playwright/.auth` directory. To protect sensitive data, the `.gitignore` file is configured to exclude the `.env` file and any JSON files within the `/playwright/.auth` directory from the GitHub repository.
 
@@ -38,33 +41,38 @@ There are several tools to help you to working with environment variables locall
 
 There are a few ways to set up the Meshery UI and server, but for end-to-end testing, we aim to get as close to a production environment as possible. We know developers might need to make some tweaks for UI and Server. Rebuilding the whole project can take time, and we don’t support hot reload because it’s more for development than for end-to-end testing.
 
-{% include alert.html type="warning" content="Some test cases required you to have kubernetes cluster and build meshery adapter as well, be aware of that. Which is out of scope for this documentation" %}
+{% include alert.html type="warning" title="Several Test may break" content='Some test cases required you to have kubernetes cluster and build meshery adapter as well, be aware of that. Which is out of scope for this documentation<ul><li><a href="https://docs.meshery.io/installation/kubernetes/minikube">Kubernetes Cluster</a>: Instalation of kubernetes cluster with Minikube.</li>
+<li><a href="https://docs.meshery.io/installation/multiple-adapters">Meshery Adapters</a>: Using Multiple Adapters</li></ul>' %}
 
-### Native OS
+### Native OS (Recommended)
 
 This approach is very quick to build, but also dependent on your operating system, so you need to have all dependencies necessary to be able compile and running the server.
 
-- Install & Build the NextJS static site generator application for both the UI and UI Provider
+- Install & Build the NextJS application for both the UI and UI Provider
 
 ```bash
 make ui-build
 ```
 
-- Compile golang server
+- Compile the Golang into binary file for Meshery Server
 
 ```bash
 make build-server
 ```
 
-- Run the server locally on port 8080
+- Run the Meshery Server on localhost port 9081
 
 ```bash
 make server-binary
 ```
 
+### Meshery CLI
+
+There is also Meshery CLI which can help you run the UI and Server, for more detail, you go to [Meshery CLI documentation](https://docs.meshery.io/project/contributing/contributing-cli-guide#process)
+
 ### Docker Based
 
-Alternatively, a Docker-based setup can be utilized, which simplifies the process, ensures consistency across different environments and also more close to production environment as well compare to native solution. 
+Alternatively, a Docker-based setup can be utilized, simplifying the process, and ensuring consistency across different environments. It is closer to the production environment than the native solution but slower in terms of build time.
 
 - Build the docker container locally:
 
@@ -78,15 +86,11 @@ make docker-testing-env-build
 make docker-testing-env
 ```
 
-### Meshery CLI
-
-There is also Meshery CLI which can help you run the UI and Server, for more detail, you go to [Meshery CLI documentation](https://docs.meshery.io/project/contributing/contributing-cli-guide#process)
-
 ## Setup playwright & Run the test cases
 
-For playwrights always try to use a Native OS as possible, the docker based approach is for unsupported OS only and always not recommended because it runs on top of Ubuntu images, which is very washed if you were already running Ubuntu or Windows.
+For playwrights, always try to use a native OS whenever possible. The Docker-based approach is intended only for unsupported OSes and is generally not recommended because it runs on top of Ubuntu images, which can be redundant if you already using Ubuntu or Windows.
 
-### Native OS
+### Native OS (Recommended)
 
 Setup playwright:
 
@@ -108,7 +112,7 @@ The first step is to pull the docker image from [Azure Container Registry](http
 docker pull mcr.microsoft.com/playwright:<version>-<base-image>
 ```
 
-{% include alert.html type="warning" content="Make sure the version you are using matches the version of `@playwright/test` in the `package.json` dev dependencies" %}
+{% include alert.html type="warning" title="Playwright Versioning" content="Make sure the version you are using matches the version of `@playwright/test` in the `package.json` dev dependencies" %}
 
 Here is the example of pulling playwright v1.44.0 with Ubuntu 22.04 LTS
 
@@ -122,10 +126,14 @@ Starting up playwright docker server:
 docker run --rm --network host --init -it mcr.microsoft.com/playwright:v1.44.0-jammy /bin/sh -c "cd /home/pwuser && npx -y playwright@1.44.0 run-server --port 8080"
 ```
 
-{% include alert.html type="warning" content="Keep in mind this is just for development purposes inside your local system and don’t try to expose your container network to the host system using --network host on production or CI" %}
+{% include alert.html type="warning" title="Unsafe Environment" content="Keep in mind this is just for development purposes inside your local system and don’t try to expose your container network to the host system using --network host on production or CI" %}
 
-In the last step, run this command to run the test cases:
+In the last step go to ui folder, 
+```bash
+cd ui;
+```
 
+And run this command for running the test cases:
 ```bash
 PW_TEST_CONNECT_WS_ENDPOINT=ws://localhost:8080/ npx playwright test
 ```

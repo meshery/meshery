@@ -1,5 +1,1 @@
-<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <path d="M12.3008862,4.00003179 L18.9908678,7.90329279 L19,11.4442164 L14.973309,9.0680926 L14.973309,10.8562526 L16.9806355,12.0276231 L16.9918433,15.1064843 L14.973309,13.9136004 L14.973309,18.415105 L12.3008862,20 L12.3008862,4.00003179 Z M11.6991138,4 L11.6991138,19.9999682 L9.02669102,18.4150732 L9.02669102,9.06816678 L5,11.4441846 L5.00913223,7.903261 L11.6991138,4 Z" fill="#4285F4"></path>
-    </g>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 24 24"><defs><style>.cls-1{fill:#aecbfa;}.cls-2{fill:#4285f4;}.cls-3{fill:#669df6;}</style></defs><g data-name="Product Icons"><path class="cls-1" d="M6,8h4V4H3A1,1,0,0,0,2,5V21a1,1,0,0,0,.28.68L6,18Z"/><path class="cls-2" d="M16,18l3.72,3.72A1,1,0,0,0,20,21V14H16Z"/><path class="cls-3" d="M21.71,2.28,18,6h0v4h4V3A1,1,0,0,0,21.71,2.28Z"/><path class="cls-1" d="M18,6l3.72-3.72A1,1,0,0,0,21,2H14V6Z"/><polygon class="cls-3" points="2 22 6 18 16 18 20 22 2 22"/></g></svg>

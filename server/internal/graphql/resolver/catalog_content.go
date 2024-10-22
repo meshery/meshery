@@ -25,24 +25,46 @@ type catalogFilterPage struct {
 }
 
 func (r *queryResolver) fetchCatalogPattern(ctx context.Context, provider models.Provider, selector *model.CatalogSelector) ([]*model.CatalogPattern, error) {
-	token := ctx.Value(models.TokenCtxKey).(string)
-	metrics := "false"
-	if selector.Metrics != nil {
-		metrics = *selector.Metrics
-	}
-	resp, err := provider.GetCatalogMesheryPatterns(token, selector.Page, selector.Pagesize, selector.Search, selector.Order, metrics)
+    token := ctx.Value(models.TokenCtxKey).(string)
+    metrics := "false"
 
-	if err != nil {
-		r.Log.Error(err)
-		return nil, err
-	}
-	var catalog catalogPatternPage
-	err = json.Unmarshal(resp, &catalog)
-	if err != nil {
-		r.Log.Error(models.ErrUnmarshal(err, "catalog data"))
-		return nil, err
-	}
-	return catalog.Patterns, nil
+    // Convert []*string to []string for class
+    class := []string{}
+    for _, classPtr := range selector.Class {
+        if classPtr != nil {
+            class = append(class, *classPtr)
+        }
+    }
+
+    // Convert []*string to []string for technology
+    technology := []string{}
+    for _, techPtr := range selector.Technology {
+        if techPtr != nil {
+            technology = append(technology, *techPtr)
+        }
+    }
+
+    // Convert []*string to []string for patternType
+    patternType := []string{}
+    for _, typePtr := range selector.PatternType {
+        if typePtr != nil {
+            patternType = append(patternType, *typePtr)
+        }
+    }
+
+    resp, err := provider.GetCatalogMesheryPatterns(token, selector.Page, selector.Pagesize, selector.Search, selector.Order, metrics, class, technology, patternType)
+
+    if err != nil {
+        r.Log.Error(err)
+        return nil, err
+    }
+    var catalog catalogPatternPage
+    err = json.Unmarshal(resp, &catalog)
+    if err != nil {
+        r.Log.Error(models.ErrUnmarshal(err, "catalog data"))
+        return nil, err
+    }
+    return catalog.Patterns, nil
 }
 
 func (r *queryResolver) fetchCatalogFilter(ctx context.Context, provider models.Provider, selector *model.CatalogSelector) ([]*model.CatalogFilter, error) {

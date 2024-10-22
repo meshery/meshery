@@ -10,6 +10,10 @@ integrations-category: Runtime
 integrations-subcategory: Cloud Native Storage
 registrant: Github
 components: 
+- name: ceph-connection
+  colorIcon: assets/img/integrations/rook/components/ceph-connection/icons/color/ceph-connection-color.svg
+  whiteIcon: assets/img/integrations/rook/components/ceph-connection/icons/white/ceph-connection-white.svg
+  description: 
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

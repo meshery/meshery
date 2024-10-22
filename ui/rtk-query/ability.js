@@ -1,43 +1,60 @@
-import { useState, useEffect } from 'react';
+import { useLegacySelector } from 'lib/store';
 import { ability } from '../utils/can';
-import { useLazyGetUserKeysQuery } from './userKeys';
+import { useGetUserKeysQuery } from './userKeys';
 import _ from 'lodash';
+import CustomErrorMessage from '@/components/ErrorPage';
+import LoadingScreen from '@/components/LoadingComponents/LoadingComponentServer';
+import { randomLoadingMessage } from '@/components/LoadingComponents/loadingMessages';
 
 export const useGetUserAbilities = (org, skip) => {
-  const [data, setData] = useState(null);
+  const { data, ...res } = useGetUserKeysQuery(
+    {
+      orgId: org?.id,
+    },
+    {
+      skip,
+    },
+  );
 
-  /**
-   * RTk Lazy Query
-   */
-  const [getUserQuery] = useLazyGetUserKeysQuery();
+  const abilities =
+    data?.keys?.map((key) => ({
+      action: key.id,
+      subject: _.lowerCase(key.function),
+    })) || [];
 
-  useEffect(() => {
-    getUserQuery({ orgId: org?.id }, { skip })
-      .unwrap()
-      .then((res) => {
-        const abilities = res.keys?.map((key) => ({
-          action: key.id,
-          subject: _.lowerCase(key.function),
-        }));
-
-        setData({
-          ...res,
-          abilities: abilities,
-        });
-      })
-      .catch((error) => {
-        console.error('Error when fetching keys in useGetUserAbilities custom hook', error);
-      });
-  }, [org?.id, getUserQuery, skip]);
-
-  return data;
+  return {
+    ...res,
+    abilities,
+  };
 };
 
-export const useGetCurrentAbilities = (org, setKeys, skip) => {
-  const res = useGetUserAbilities(org, skip);
+export const useGetCurrentAbilities = (org, setKeys) => {
+  const shouldSkip = !org || !org.id;
+  const res = useGetUserAbilities(org, shouldSkip);
   if (res?.abilities) {
     ability.update(res.abilities);
     setKeys({ keys: res.keys });
   }
   return res;
+};
+
+export const LoadSessionGuard = ({ children }) => {
+  // this assumes that the organization is already loaded at the app mount time
+  // otherwise, this will not work
+  const org = useLegacySelector((state) => state.get('organization'));
+  const { isLoading, error } = useGetCurrentAbilities(org, () => {});
+
+  if (error) {
+    return (
+      <CustomErrorMessage
+        message={error.message || 'An error occurred while fetching your organization permissions'}
+      />
+    );
+  }
+
+  return (
+    <LoadingScreen isLoading={isLoading || !org?.id} message={randomLoadingMessage}>
+      {children}
+    </LoadingScreen>
+  );
 };

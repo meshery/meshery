@@ -23,4 +23,4 @@ const userKeysApi = api
     }),
   });
 
-export const { useLazyGetUserKeysQuery } = userKeysApi;
+export const { useLazyGetUserKeysQuery, useGetUserKeysQuery } = userKeysApi;

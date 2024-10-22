@@ -111,3 +111,26 @@ export const removeDuplicateVersions = (data) => {
 
   return result;
 };
+
+/**
+ * Function takes theme type and returns the theme object
+ * @param {object} - theme type
+ */
+export const reactJsonTheme = (themeType) => ({
+  base00: themeType === 'dark' ? '#303030' : '#ffffff',
+  base01: '#444c56',
+  base02: themeType === 'dark' ? '#586069' : '#abb2bf',
+  base03: '#6a737d',
+  base04: '#477E96',
+  base05: '#9ea7a6',
+  base06: '#d8dee9',
+  base07: themeType === 'dark' ? '#FFF3C5' : '#002B36',
+  base08: '#2a5491',
+  base09: '#d19a66',
+  base0A: '#EBC017',
+  base0B: '#237986',
+  base0C: '#56b6c2',
+  base0D: '#B1B6B8',
+  base0E: '#e1e6cf',
+  base0F: '#647881',
+});

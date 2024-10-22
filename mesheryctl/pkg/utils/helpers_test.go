@@ -359,14 +359,14 @@ func TestParseURLGithub(t *testing.T) {
 		},
 		{
 			name:          "test with github.com",
-			url:           "https://github.com/layer5io/meshery/blob/master/.goreleaser.yml",
-			rawRepoOutput: "https://github.com/layer5io/meshery/master",
+			url:           "https://github.com/layer5io/meshery/blob/master/.github/.goreleaser.yml",
+			rawRepoOutput: "https://github.com/layer5io/meshery/master/.github",
 			pathOutput:    ".goreleaser.yml",
 		},
 		{
 			name:          "test with raw.githubusercontent.com",
-			url:           "https://raw.githubusercontent.com/layer5io/meshery/master/.goreleaser.yml",
-			rawRepoOutput: "https://raw.githubusercontent.com/layer5io/meshery/master/.goreleaser.yml",
+			url:           "https://raw.githubusercontent.com/layer5io/meshery/master/.github/.goreleaser.yml",
+			rawRepoOutput: "https://raw.githubusercontent.com/layer5io/meshery/master/.github/.goreleaser.yml",
 			pathOutput:    "",
 		},
 	}

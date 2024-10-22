@@ -56,13 +56,13 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-go-
       - name: goreleaser WITHOUT tag
-        uses: goreleaser/goreleaser-action@v5
+        uses: goreleaser/goreleaser-action@v6
         if: success() && startsWith(github.ref, 'refs/tags/') == false
         env:
           RELEASE_CHANNEL: "edge"
         with:
-          version: latest
-          args: release --snapshot --skip-publish --clean
+          version: 2
+          args: release --snapshot --skip publish --clean -f .github/.goreleaser.yml
   mesheryctl_docs:
     if: "always() && github.event_name != 'pull_request' && github.repository == 'meshery/meshery' "
     runs-on: ubuntu-22.04

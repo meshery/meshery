@@ -48,6 +48,7 @@ MESHERY_CLOUD_STAGING="https://staging-meshery.layer5.io"
 #-----------------------------------------------------------------------------
 MESHERY_K8S_SKIP_COMP_GEN ?= TRUE
 APPLICATIONCONFIGPATH="./apps.json"
+PORT:=9081
 
 #-----------------------------------------------------------------------------
 # Build

@@ -181,10 +181,12 @@
    "subCategory": "Security \u0026 Compliance",
    "version": "v1.0.0",
    "components": null,
-   "relationships": null
+   "relationships": null,
+   "components_count": 0,
+   "relationships_count": 0
   },
   "schemaVersion": "components.meshery.io/v1beta1",
-  "status": "ignored",
+  "status": "enabled",
   "styles": {
    "primaryColor": "#1988d9",
    "secondaryColor": "#54aef0",

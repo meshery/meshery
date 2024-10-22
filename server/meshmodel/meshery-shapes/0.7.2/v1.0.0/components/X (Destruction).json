@@ -116,13 +116,15 @@
    "subCategory": "App Definition and Development",
    "version": "v1.0.0",
    "components": null,
-   "relationships": null
+   "relationships": null,
+   "components_count": 0,
+   "relationships_count": 0
   },
   "schemaVersion": "components.meshery.io/v1beta1",
   "status": "enabled",
   "styles": {
    "background-image": "none",
-   "background-opacity": 0,
+   "background-opacity": 0.1,
    "border-color": "#00b39f",
    "border-style": "solid",
    "border-width": 1,
@@ -132,6 +134,7 @@
    "shape": "polygon",
    "shape-polygon-points": "1 1 -1 -1 0 0 1 -1 -1 1 0 0",
    "svgColor": "\u003csvg width=\"40\" height=\"40\" viewBox=\"0 0 40 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M3 3L38 38M3 38L38 3\" stroke=\"#00B39F\" stroke-miterlimit=\"10\"/\u003e\n\u003c/svg\u003e",
+   "svgComplete": "\u003csvg width=\"40\" height=\"40\" viewBox=\"0 0 40 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M3 3L38 38M3 38L38 3\" stroke=\"#00B39F\" stroke-miterlimit=\"10\"/\u003e\n\u003c/svg\u003e",
    "svgWhite": "\u003csvg width=\"40\" height=\"40\" viewBox=\"0 0 40 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M3 3L38 38M3 38L38 3\" stroke=\"white\" stroke-miterlimit=\"10\"/\u003e\n\u003c/svg\u003e",
    "width": 30
   },

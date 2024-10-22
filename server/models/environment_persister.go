@@ -238,15 +238,37 @@ func (ep *EnvironmentPersister) GetEnvironmentConnections(environmentID uuid.UUI
 	// Sanitize the order input
 	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
 	if order == "" {
-		order = "updated_at desc"
+		order = "connections.updated_at desc"
 	}
 
-	// Build the query to find connections associated with the given environment ID
-	query := ep.DB.Table("environment_connection_mappings").
-		Select("connections.*").
-		Joins("JOIN connections ON environment_connection_mappings.connection_id = connections.id").
-		Where("environment_connection_mappings.environment_id = ?", environmentID)
+	isAssigned := true
+	// Parse the filter JSON string
+	if filter != "" {
+		var filterMap map[string]interface{}
+		err := json.Unmarshal([]byte(filter), &filterMap)
+		if err != nil {
+			return nil, err
+		}
 
+		if assignedVal, ok := filterMap["assigned"]; ok {
+			isAssigned = assignedVal.(bool)
+		}
+	}
+
+	var query *gorm.DB
+	if isAssigned {
+		// Query for connection that are assigned to given environment
+		query = ep.DB.Table("environment_connection_mappings").
+			Joins("JOIN connections ON connections.id = environment_connection_mappings.connection_id").
+			Select("connections.name, connections.id, connections.metadata, connections.status, connections.type, connections.sub_type, connections.created_at, connections.updated_at, connections.deleted_at, connections.kind, connections.user_id").
+			Where("environment_connection_mappings.environment_id = ?", environmentID)
+	} else {
+		// Query for connections that are not assigned to the given environment
+		query = ep.DB.Table("connections").
+			Select("connections.name, connections.id, connections.metadata, connections.status, connections.type, connections.sub_type, connections.created_at, connections.updated_at, connections.deleted_at, connections.kind, connections.user_id").
+			Joins("LEFT JOIN environment_connection_mappings ON environment_connection_mappings.connection_id = connections.id AND environment_connection_mappings.environment_id = ?", environmentID).
+			Where("environment_connection_mappings.connection_id IS NULL")
+	}
 	// Apply search filter
 	if search != "" {
 		like := "%" + strings.ToLower(search) + "%"
@@ -279,7 +301,6 @@ func (ep *EnvironmentPersister) GetEnvironmentConnections(environmentID uuid.UUI
 		// Fetch connections with pagination
 		Paginate(uint(pageUint), uint(pageSizeUint))(query).Find(&connectionsFetched)
 	}
-
 	connectionsPage := &connections.ConnectionPage{
 		Page:        int(pageUint),
 		PageSize:    len(connectionsFetched),

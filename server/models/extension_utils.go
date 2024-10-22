@@ -4,7 +4,7 @@ import (
 	"net/url"
 )
 
-func getRedirectURLForNavigatorExtension(remoteProviderProperties *ProviderProperties) string {
+func GetRedirectURLForNavigatorExtension(remoteProviderProperties *ProviderProperties) string {
 	redirectURL := "/"
 	// This is not ideal as it only considers for 1st navigator extension.
 	// The navigator extension to which redirection should happen must be available, either pre-configured with server/ via user selection
