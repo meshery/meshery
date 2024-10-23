@@ -24,7 +24,7 @@ Kanvas Snapshot is a screenshot service provided via Kanvas for your designs. Vi
 <img src="{{site.baseurl}}/assets/img/kanvas/kanvas-snapshot.png" />
 </details>
 
-<h3>Installing Meshmap Snapshot: Github Pull Request</h3>
+<h3>Installing Kanvas Snapshot: Github Pull Request</h3>
 
 Connect MeshMap to your GitHub repo and see changes pull request-to-pull request. Get snapshots of your infrastructure directly in your PRs.
 <ul>
@@ -202,6 +202,7 @@ After testing you can [create a v1 tag](https://github.com/actions/toolkit/blob/
 
 [Kanvas Snapshot Release Page](https://github.com/layer5labs/kanvas-snapshot/releases)
 
+
 ```
  - id: test_result
         uses: layer5labs/MeshMap-Snapshot@v0.0.5 # <-- Update the version to latest from the Kanvas-Snapshot release page
@@ -211,6 +212,6 @@ After testing you can [create a v1 tag](https://github.com/actions/toolkit/blob/
 
 ## Upgrade/Migrate Guide - For Meshery
 
-1. Given changes done in `action.yml` in MeshMap Snapshot, updating the workflows is required.
-2. Given changes done other than in `action.yml` in MeshMap Snapshot, the update in the `.github/worflows` is not a hard requirement, but doesnt hurt.
+1. Given changes done in `action.yml` in Kanvas Snapshot, updating the workflows is required.
+2. Given changes done other than in `action.yml` in Kanvas Snapshot, the update in the `.github/worflows` is not a hard requirement, but doesnt hurt.
 
