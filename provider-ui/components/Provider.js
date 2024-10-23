@@ -98,7 +98,7 @@ export default function Provider() {
       },
       (error) => {
         console.log(`there was an error fetching providers: ${error}`);
-      },
+      }
     );
   }
 
@@ -109,7 +109,7 @@ export default function Provider() {
     setIsLoading(true);
     const existingQueryString = window.location.search;
     const existingQueryParams = new URLSearchParams(existingQueryString);
-    existingQueryParams.append("provider", encodeURIComponent(provider))
+    existingQueryParams.append("provider", encodeURIComponent(provider));
     window.location.href = `/api/provider?${existingQueryParams.toString()}`;
   };
 
@@ -134,7 +134,7 @@ export default function Provider() {
                 variant="contained"
                 onClick={handleClick}
                 aria-label="Select Provider"
-                data-cy="select_provider"
+                data-testid="select_provider"
                 disableElevation
               >
                 {isLoading && <CircularProgress size={20} sx={{ color : "white", marginRight : 8 }} />}
@@ -196,7 +196,7 @@ export default function Provider() {
           <Tooltip
             title="Learn more about providers"
             placement="bottom"
-            data-cy="providers-tooltip"
+            data-testid="providers-tooltip"
             sx={{
               color : "#00B39F",
               cursor : "pointer",
@@ -222,7 +222,7 @@ export default function Provider() {
         aria-labelledby="customized-dialog-title"
         open={openModal}
         disableScrollLock={true}
-        data-cy="providers-modal"
+        data-testid="providers-modal"
       >
         <CustomDialogTitle id="customized-dialog-title" onClose={handleModalClose} style={{ background : "#eee" }}>
           <b>Choosing a Provider</b>
@@ -280,7 +280,12 @@ export default function Provider() {
             </a>
           </div>
 
-          <Button onClick={handleModalClose} color="primary" data-cy="providers-modal-button-ok" variant="contained">
+          <Button
+            onClick={handleModalClose}
+            color="primary"
+            data-testid="providers-modal-button-ok"
+            variant="contained"
+          >
             {" "}
             OK
           </Button>
@@ -289,3 +294,4 @@ export default function Provider() {
     </ProviderLayout>
   );
 }
+
