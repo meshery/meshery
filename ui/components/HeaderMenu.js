@@ -25,6 +25,10 @@ function exportToJsonFile(jsonData, filename) {
   linkElement.remove();
 }
 
+/**
+ * Extension Point: Avatar behavior for User Modes
+ * Insert custom logic here to handle Single User mode, Anonymous User mode, Multi User mode behavior.
+ */
 const HeaderMenu = (props) => {
   const [userLoaded, setUserLoaded] = useState(false);
   const [account, setAccount] = useState([]);
