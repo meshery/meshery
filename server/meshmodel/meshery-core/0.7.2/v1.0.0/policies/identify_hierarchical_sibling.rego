@@ -42,16 +42,20 @@ evaluate_siblings(relationship, from, to, from_selectors, to_selectors, deny_sel
 
 	is_valid_siblings(from_decl, to_decl, from_selector, to_selector)
 
+	sorted_ids := sort([from_decl.id, to_decl.id])
+
+	from_decl.id == sorted_ids[0]
+
 	match_selector_for_from := json.patch(from_selector, [{
 		"op": "add",
 		"path": "/id",
-		"value": from_decl.id,
+		"value": sorted_ids[0],
 	}])
 
 	match_selector_for_to := json.patch(to_selector, [{
 		"op": "add",
 		"path": "/id",
-		"value": to_decl.id,
+		"value": sorted_ids[1],
 	}])
 
 	now := format_int(time.now_ns(), 10)
