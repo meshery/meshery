@@ -1,6 +1,6 @@
 ---
 layout: default
-title: MeshMap Snapshot
+title: Kanvas Snapshot
 permalink: extensions/snapshot
 language: en
 abstract: Screenshot service provided via Meshmap to capture a snapshot of your infrastructure at any given time.
@@ -10,11 +10,11 @@ type: extensions
 category: kanvas
 ---
 
-# <img style="height: 4rem; width: 4rem;" src="{{site.baseurl}}/assets/img/kanvas-icon-color.svg" /> MeshMap Snapshot
+# <img style="height: 4rem; width: 4rem;" src="{{site.baseurl}}/assets/img/kanvas-icon-color.svg" /> Kanvas Snapshot
 
 Walks in application and takes a shot of your infrastructure using Meshery Extension MeshMap
 
-MeshMap Snapshot is a screenshot service provided via MeshMap for your designs. Visualize changes to your code-base with each pull request made. The SnapShot GitHub Action is configurable from within your Cloud account.
+Kanvas Snapshot is a screenshot service provided via MeshMap for your designs. Visualize changes to your code-base with each pull request made. The SnapShot GitHub Action is configurable from within your Cloud account.
 
 <details>
 <summary>How the SnapShot service works</summary>
@@ -24,15 +24,15 @@ MeshMap Snapshot is a screenshot service provided via MeshMap for your designs. 
 <img src="{{site.baseurl}}/assets/img/meshmap/kanvas-snapshot.png" />
 </details>
 
-<h3>Installing Meshmap Snapshot: Github Pull Request</h3>
+<h3>Installing Kanvas Snapshot: Github Pull Request</h3>
 
 Connect MeshMap to your GitHub repo and see changes pull request-to-pull request. Get snapshots of your infrastructure directly in your PRs.
 <ul>
 <li>Step 1: Log in to your Meshery Dashboard.</li>
-<li>Step 2: Navigate to Extensions and Enable GitHub Action: MeshMap Snapshot.</li>
+<li>Step 2: Navigate to Extensions and Enable GitHub Action: Kanvas Snapshot.</li>
 <li>Step 3: You will be directed to Meshery Cloud.</li>
 <li>Step 4: Click on the "Let's Go" button in the onboarding modal.</li>
-<li>Step 5: Now, select the second option, 'GitOps your infrastructure with MeshMap Snapshot'.</li>
+<li>Step 5: Now, select the second option, 'GitOps your infrastructure with Kanvas Snapshot'.</li>
 <li>Step 6: Once that's complete, follow the guided instructions.</li>
 </ul>
 
@@ -43,7 +43,7 @@ The Snapshot service does not need access to your Meshery deployment. It is a st
 ### When Infrastructure is located in the file-system
 
 ```yaml
-name: "MeshMap Snapshot With File-located in Fs"
+name: "Kanvas Snapshot With File-located in Fs"
 on: # rebuild any PRs and main branch changes
   pull_request:
   push:
@@ -79,7 +79,7 @@ jobs:
 ### When Infrastructure is identified via URL
 
 ```yaml
-name: "MeshMap Snapshot With URL-Upload"
+name: "Kanvas Snapshot With URL-Upload"
 on: # rebuild any PRs and main branch changes
   pull_request:
   push:
@@ -173,7 +173,7 @@ on:
       - synchronize
 ```
 
-Specific events that are relevant to the MeshMap Snapshot Action are:
+Specific events that are relevant to the Kanvas Snapshot Action are:
 
 - **push:** This event is triggered when code is pushed to the repository. It is the most common event used to trigger workflows.
 - **pull_request:** This event is triggered when a pull request is opened or updated. It is often used to trigger workflows that run tests or linters on the pull request's code.
@@ -184,7 +184,7 @@ For a comprehensive list of events that can be used in GitHub Actions, please re
 
 ## What Happens to Workflow Customizations on Upgrade?
 
-Customizations to the trigger criteria for the MeshMap Snapshot actions are preserved when upgrading to a new version of the action. However, there may be some cases where customizations are lost, such as when the syntax for specifying the trigger criteria changes in a new version of the action.
+Customizations to the trigger criteria for the Kanvas Snapshot actions are preserved when upgrading to a new version of the action. However, there may be some cases where customizations are lost, such as when the syntax for specifying the trigger criteria changes in a new version of the action.
 
 Here are some examples of cases where customizations may be lost:
 
@@ -192,7 +192,7 @@ Here are some examples of cases where customizations may be lost:
 
 - You have a workflow that is triggered on a custom event, and the custom event is no longer supported in a new version of the action.
 
-It is always a good practice to test your workflows after upgrading to a new version of the MeshMap Snapshot Action to make sure that your customizations are still working as expected.
+It is always a good practice to test your workflows after upgrading to a new version of the Kanvas Snapshot Action to make sure that your customizations are still working as expected.
 
 ## Usage:
 
@@ -200,7 +200,7 @@ After testing you can [create a v1 tag](https://github.com/actions/toolkit/blob/
 
 # General Upgrade Guide
 
-[MeshMap Snapshot Release Page](https://github.com/layer5labs/meshmap-snapshot/releases)
+[Kanvas Snapshot Release Page](https://github.com/layer5labs/meshmap-snapshot/releases)
 
 ```
  - id: test_result
@@ -211,6 +211,6 @@ After testing you can [create a v1 tag](https://github.com/actions/toolkit/blob/
 
 ## Upgrade/Migrate Guide - For Meshery
 
-1. Given changes done in `action.yml` in MeshMap Snapshot, updating the workflows is required.
-2. Given changes done other than in `action.yml` in MeshMap Snapshot, the update in the `.github/worflows` is not a hard requirement, but doesnt hurt.
+1. Given changes done in `action.yml` in Kanvas Snapshot, updating the workflows is required.
+2. Given changes done other than in `action.yml` in Kanvas Snapshot, the update in the `.github/worflows` is not a hard requirement, but doesnt hurt.
 

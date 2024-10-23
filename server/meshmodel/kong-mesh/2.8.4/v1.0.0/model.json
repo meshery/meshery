@@ -37,5 +37,7 @@
   "subCategory": "Service Mesh",
   "version": "v1.0.0",
   "components": null,
-  "relationships": null
+  "relationships": null,
+  "components_count": 0,
+  "relationships_count": 0
  }
