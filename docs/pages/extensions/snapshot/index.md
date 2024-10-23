@@ -3,7 +3,7 @@ layout: default
 title: Kanvas Snapshot
 permalink: extensions/snapshot
 language: en
-abstract: Screenshot service provided via Meshmap to capture a snapshot of your infrastructure at any given time.
+abstract: Screenshot service provided via Kanvas to capture a snapshot of your infrastructure at any given time.
 display-title: "false"
 list: include
 type: extensions
@@ -12,16 +12,16 @@ category: kanvas
 
 # <img style="height: 4rem; width: 4rem;" src="{{site.baseurl}}/assets/img/kanvas-icon-color.svg" /> Kanvas Snapshot
 
-Walks in application and takes a shot of your infrastructure using Meshery Extension MeshMap
+Walks in application and takes a shot of your infrastructure using Meshery Extension Kanvas
 
-Kanvas Snapshot is a screenshot service provided via MeshMap for your designs. Visualize changes to your code-base with each pull request made. The SnapShot GitHub Action is configurable from within your Cloud account.
+Kanvas Snapshot is a screenshot service provided via Kanvas for your designs. Visualize changes to your code-base with each pull request made. The SnapShot GitHub Action is configurable from within your Cloud account.
 
 <details>
 <summary>How the SnapShot service works</summary>
 
 <h3>Functional Sequence Diagram</h3>
 
-<img src="{{site.baseurl}}/assets/img/meshmap/kanvas-snapshot.png" />
+<img src="{{site.baseurl}}/assets/img/kanvas/kanvas-snapshot.png" />
 </details>
 
 <h3>Installing Kanvas Snapshot: Github Pull Request</h3>
@@ -64,7 +64,7 @@ jobs:
       - uses: actions/checkout@v3 #this step would go and would be no longer needed to be written
         with:
           path: action
-          repository: layer5labs/meshmap-snapshot
+          repository: layer5labs/kanvas-snapshot
       - id: test_result
         uses: layer5labs/MeshMap-Snapshot@v0.0.4
         with:
@@ -99,7 +99,7 @@ jobs:
       - uses: actions/checkout@v3 #this step would go and would be no longer needed to be written
         with:
           path: action
-          repository: layer5labs/meshmap-snapshot
+          repository: layer5labs/kanvas-snapshot
       - id: test_result
         uses: layer5labs/MeshMap-Snapshot@v0.0.4
         with:
@@ -200,11 +200,12 @@ After testing you can [create a v1 tag](https://github.com/actions/toolkit/blob/
 
 # General Upgrade Guide
 
-[Kanvas Snapshot Release Page](https://github.com/layer5labs/meshmap-snapshot/releases)
+[Kanvas Snapshot Release Page](https://github.com/layer5labs/kanvas-snapshot/releases)
+
 
 ```
  - id: test_result
-        uses: layer5labs/MeshMap-Snapshot@v0.0.5 # <-- Update the version to latest from the MeshMap-Snapshot release page
+        uses: layer5labs/MeshMap-Snapshot@v0.0.5 # <-- Update the version to latest from the Kanvas-Snapshot release page
         with:
         ...
 ```
