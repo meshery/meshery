@@ -11,10 +11,8 @@ import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
-// import { Logout, Settings, VpnKey } from '@material-ui/icons';
 import { NavigationNavbar } from '@layer5/sistent';
 import { Popover, IconButton } from '@material-ui/core';
-import { UsesSistent } from './SistentWrapper';
 import theme from '@/themes/app';
 
 function exportToJsonFile(jsonData, filename) {
@@ -90,12 +88,12 @@ const HeaderMenu = (props) => {
   }
 
   const getAccountNavigationItems = () => {
-    // Convert account extensions to navigation items
     const accountItems = account.map((item) => ({
       id: item.id,
       title: item.title,
       onClick: () => {
         if (item.href) {
+          props.updateExtensionType?.(item.title);
           router.push(item.href);
           handleClose();
         }
@@ -103,14 +101,20 @@ const HeaderMenu = (props) => {
       permission: typeof item.show === 'undefined' ? true : item.show,
     }));
 
-    // Default menu items that should always be present
-    const defaultItems = [
-      {
+    const defaultItems = [];
+
+    // Only add Get Token if there are no account items
+    if (!account.length) {
+      defaultItems.push({
         id: 'get-token',
         title: 'Get Token',
         onClick: handleGetToken,
         permission: CAN(keys.DOWNLOAD_TOKEN.action, keys.DOWNLOAD_TOKEN.subject),
-      },
+      });
+    }
+
+    // Always add these items
+    defaultItems.push(
       {
         id: 'preferences',
         title: 'Preferences',
@@ -123,9 +127,8 @@ const HeaderMenu = (props) => {
         onClick: handleLogout,
         permission: true,
       },
-    ];
+    );
 
-    // Combine both arrays - account items followed by default items
     return [...accountItems, ...defaultItems];
   };
 
@@ -154,35 +157,34 @@ const HeaderMenu = (props) => {
       >
         <MenuIcon />
       </IconButton>
-      <UsesSistent>
-        <Popover
-          id={id}
-          open={open}
-          anchorEl={anchorEl}
-          onClose={handleClose}
-          anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'right',
-          }}
-          transformOrigin={{
-            vertical: 'top',
-            horizontal: 'right',
-          }}
-          style={{ marginTop: '1rem' }}
-        >
-          <NavigationNavbar
-            navigationItems={getAccountNavigationItems()}
-            ListItemTextProps={{
-              primaryTypographyProps: {
-                sx: {
-                  fontFamily: theme.typography.fontFamily,
-                  fontSize: '1rem',
-                },
+
+      <Popover
+        id={id}
+        open={open}
+        anchorEl={anchorEl}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'right',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
+        style={{ marginTop: '1rem' }}
+      >
+        <NavigationNavbar
+          navigationItems={getAccountNavigationItems()}
+          ListItemTextProps={{
+            primaryTypographyProps: {
+              sx: {
+                fontFamily: theme.typography.fontFamily,
+                fontSize: '1rem',
               },
-            }}
-          />
-        </Popover>
-      </UsesSistent>
+            },
+          }}
+        />
+      </Popover>
     </div>
   );
 };
