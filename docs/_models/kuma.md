@@ -198,6 +198,14 @@ components:
   colorIcon: assets/img/integrations/kuma/components/hostname-generator/icons/color/hostname-generator-color.svg
   whiteIcon: assets/img/integrations/kuma/components/hostname-generator/icons/white/hostname-generator-white.svg
   description: 
+- name: mesh-multi-zone-service
+  colorIcon: assets/img/integrations/kuma/components/mesh-multi-zone-service/icons/color/mesh-multi-zone-service-color.svg
+  whiteIcon: assets/img/integrations/kuma/components/mesh-multi-zone-service/icons/white/mesh-multi-zone-service-white.svg
+  description: 
+- name: mesh-tls
+  colorIcon: assets/img/integrations/kuma/components/mesh-tls/icons/color/mesh-tls-color.svg
+  whiteIcon: assets/img/integrations/kuma/components/mesh-tls/icons/white/mesh-tls-white.svg
+  description: 
 featureList: [
   "Lightweight and flexible service mesh",
   "Supports multiple data planes",

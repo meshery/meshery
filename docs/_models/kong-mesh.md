@@ -222,6 +222,14 @@ components:
   colorIcon: assets/img/integrations/kong-mesh/components/mesh-passthrough/icons/color/mesh-passthrough-color.svg
   whiteIcon: assets/img/integrations/kong-mesh/components/mesh-passthrough/icons/white/mesh-passthrough-white.svg
   description: 
+- name: mesh-multi-zone-service
+  colorIcon: assets/img/integrations/kong-mesh/components/mesh-multi-zone-service/icons/color/mesh-multi-zone-service-color.svg
+  whiteIcon: assets/img/integrations/kong-mesh/components/mesh-multi-zone-service/icons/white/mesh-multi-zone-service-white.svg
+  description: 
+- name: mesh-tls
+  colorIcon: assets/img/integrations/kong-mesh/components/mesh-tls/icons/color/mesh-tls-color.svg
+  whiteIcon: assets/img/integrations/kong-mesh/components/mesh-tls/icons/white/mesh-tls-white.svg
+  description: 
 featureList: [
   "Built on top of Envoy with 50+ observability charts out of the box, you can collect metrics, traces and logs of all L4-L7 traffic.",
   "Integrate with Kong Ingress Controller to implement authentication, transformations, and other functionalities across Kubernetes clusters with zero downtime.",

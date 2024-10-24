@@ -62,39 +62,23 @@ These YAML files contain the Service definitions, Persistent Volume Claims, and 
 
    - Select `Kubernetes Manifest` from the "Design Type" dropdown menu.
 
-<<<<<<< HEAD
         ![Import modal](./wordpress-mysql-persistentvolume/wp1.png)
-=======
-        ![Import modal](./screenshots/wordpress-mysql-persistentvolume/wp1.png)
->>>>>>> 8d96cfe825 (Migrated all screenshots to separate folders in tutorials)
 
    - Choose `File Upload` for the upload method, and select the file you just downloaded.
 
    - Then, click on `Import`
 
-<<<<<<< HEAD
         ![Import mysql-deployment](./wordpress-mysql-persistentvolume/wp2.png)
-=======
-        ![Import mysql-deployment](./screenshots/wordpress-mysql-persistentvolume/wp2.png)
->>>>>>> 8d96cfe825 (Migrated all screenshots to separate folders in tutorials)
 
 3. Under the "Designs" tab, you will see that we have successfully imported the `mysql-deployment` design.
 
    When you click on the names of the designs on the `Designs` tab, you can see the visual representations of the various Kubernetes resources and their relationships on the canvas.
 
-<<<<<<< HEAD
     ![Imported designs on canvas](./wordpress-mysql-persistentvolume/wp3.png)
 
 4. Now, follow the same steps to import the `wordpress-deployment` file.
 
     ![wordpress-deployment](./wordpress-mysql-persistentvolume/wp4.png)
-=======
-    ![Imported designs on canvas](./screenshots/wordpress-mysql-persistentvolume/wp3.png)
-
-4. Now, follow the same steps to import the `wordpress-deployment` file.
-
-    ![wordpress-deployment](./screenshots/wordpress-mysql-persistentvolume/wp4.png)
->>>>>>> 8d96cfe825 (Migrated all screenshots to separate folders in tutorials)
 
 #### Merging the Designs
 
@@ -103,7 +87,6 @@ Next, we will combine the WordPress and MySQL designs into a single design file.
 To merge the MySQL deployment design with the WordPress deployment design:/
 1. Click and drag the `mysql-deployment` design from the left panel and drop it onto the design canvas of the `wordpress-deployment`.
 
-<<<<<<< HEAD
     ![drag and drop design](./wordpress-mysql-persistentvolume/wp5.png)
 
 2. This action will open a merge modal asking if you want to merge the design, Click on `Merge`.
@@ -113,17 +96,6 @@ To merge the MySQL deployment design with the WordPress deployment design:/
 3. Click on `Save As` and enter `wordpress-mysql-deployment` as the new file name.
 
     ![save design](./wordpress-mysql-persistentvolume/wp7.png)
-=======
-    ![drag and drop design](./screenshots/wordpress-mysql-persistentvolume/wp5.png)
-
-2. This action will open a merge modal asking if you want to merge the design, Click on `Merge`.
-
-    ![merge modal](./screenshots/wordpress-mysql-persistentvolume/wp6.png)
-
-3. Click on `Save As` and enter `wordpress-mysql-deployment` as the new file name.
-
-    ![save design](./screenshots/wordpress-mysql-persistentvolume/wp7.png)
->>>>>>> 8d96cfe825 (Migrated all screenshots to separate folders in tutorials)
 
 #### Create and Configure Secret for MySQL Database
 
@@ -142,11 +114,7 @@ Before you proceed, choose a password and convert it into base64 format. You can
 
 1. Click on the Kubernetes icon on the dock, search for `secret`, and click on it or drag it to the canvas.
 
-<<<<<<< HEAD
     ![Create secret component](./wordpress-mysql-persistentvolume/wp8.png)
-=======
-    ![Create secret component](./screenshots/wordpress-mysql-persistentvolume/wp8.png)
->>>>>>> 8d96cfe825 (Migrated all screenshots to separate folders in tutorials)
 
 2. Click on the Secret component to open the configuration window.
 
@@ -154,11 +122,7 @@ Before you proceed, choose a password and convert it into base64 format. You can
     - Set the _Type_ as `Opaque`.
     - Click **+** next to Data and add the secret as a key value pair `password:cGFzc3dvcmQ=`
 
-<<<<<<< HEAD
         ![Configure secret](./wordpress-mysql-persistentvolume/wp9.png)
-=======
-        ![Configure secret](./screenshots/wordpress-mysql-persistentvolume/wp9.png)
->>>>>>> 8d96cfe825 (Migrated all screenshots to separate folders in tutorials)
 
 3. Click outside the window to close the configuration tab.
 
@@ -172,11 +136,7 @@ Please note that using `hostPath` for Persistent Volumes is generally not recomm
 
 1. Click on the Kubernetes icon on the dock, search for `Persistent Volume`, and select it. We will create two PV's.
 
-<<<<<<< HEAD
     ![Create persistent volume](./wordpress-mysql-persistentvolume/wp10.png)
-=======
-    ![Create persistent volume](./screenshots/wordpress-mysql-persistentvolume/wp10.png)
->>>>>>> 8d96cfe825 (Migrated all screenshots to separate folders in tutorials)
 
 2. Click on the wordpress PV to open the configuration window.
 
@@ -184,7 +144,6 @@ Please note that using `hostPath` for Persistent Volumes is generally not recomm
     - Set the "StorageClassName" as `manual`
     - Click **+** next to "AccessMode" and enter `ReadWriteOnce`
 
-<<<<<<< HEAD
         ![Configure persistent volume](./wordpress-mysql-persistentvolume/wp11.png)
 
     - Scroll down to "Capacity" and enter in the key pair `storage:20Gi`
@@ -194,17 +153,6 @@ Please note that using `hostPath` for Persistent Volumes is generally not recomm
     - Scroll down to "Hostpath" and input `mnt/data/wp-pv` for the _path_ and `DirectoryOrCreate` for the _type_.
 
         ![Persistent volume hostpath](./wordpress-mysql-persistentvolume/wp13.png)
-=======
-        ![Configure persistent volume](./screenshots/wordpress-mysql-persistentvolume/wp11.png)
-
-    - Scroll down to "Capacity" and enter in the key pair `storage:20Gi`
-
-        ![Persistent volume capacity](./screenshots/wordpress-mysql-persistentvolume/wp12.png)
-
-    - Scroll down to "Hostpath" and input `mnt/data/wp-pv` for the _path_ and `DirectoryOrCreate` for the _type_.
-
-        ![Persistent volume hostpath](./screenshots/wordpress-mysql-persistentvolume/wp13.png)
->>>>>>> 8d96cfe825 (Migrated all screenshots to separate folders in tutorials)
 
 3. Repeat similar steps for the Mysql Persistent Volume
 
@@ -228,11 +176,7 @@ To make it easier to filter and manage our resources during visualization, let's
 3. Add the label `dev:tutorial`.
 4. Do this for **all** the resources on the canvas.
 
-<<<<<<< HEAD
     ![Add label](./wordpress-mysql-persistentvolume/wp14.png)
-=======
-    ![Add label](./screenshots/wordpress-mysql-persistentvolume/wp14.png)
->>>>>>> 8d96cfe825 (Migrated all screenshots to separate folders in tutorials)
 
 5. Now click on `Save As` and save the design.
 
@@ -242,17 +186,12 @@ The _**Group Components**_ icon on the dock below allows you to group resources 
 
 This functionality aids in visualizing the relationships between various resources, making it easier to manage them, troubleshoot issues, and understand the overall cluster architecture.
 
-<<<<<<< HEAD
 ![Group Components](./wordpress-mysql-persistentvolume/wp21.png)
-=======
-![Group Components](./screenshots/wordpress-mysql-persistentvolume/wp21.png)
->>>>>>> 8d96cfe825 (Migrated all screenshots to separate folders in tutorials)
 
 #### Deploy the Resources
 
 1. Click `Actions` in the top right corner and click on `Deploy`.
 
-<<<<<<< HEAD
     ![Actions dropdown menu](./wordpress-mysql-persistentvolume/wp15.png)
 
 2. The design will be validated to make sure there are no errors.
@@ -262,35 +201,16 @@ This functionality aids in visualizing the relationships between various resourc
 3. Choose the Kubernetes cluster you want to deploy to.
 
     ![Choose deployment Environment](./wordpress-mysql-persistentvolume/wp17.png)
-=======
-    ![Actions dropdown menu](./screenshots/wordpress-mysql-persistentvolume/wp15.png)
-
-2. The design will be validated to make sure there are no errors.
-
-    ![Validate design](./screenshots/wordpress-mysql-persistentvolume/wp16.png)
-
-3. Choose the Kubernetes cluster you want to deploy to.
-
-    ![Choose deployment Environment](./screenshots/wordpress-mysql-persistentvolume/wp17.png)
->>>>>>> 8d96cfe825 (Migrated all screenshots to separate folders in tutorials)
 
     **_Note_**: The Meshery Playground is connected to live Kubernetes cluster(s) and allows users full control over these clusters but you can also have the option to add your own Kubernetes cluster to the Playground.
 
 4. Finally click `Deploy` to deploy the application to the cluster.
 
-<<<<<<< HEAD
     ![Deploy resources](./wordpress-mysql-persistentvolume/wp18.png)
 
 5. To check the status of your deployment, click on the notification icon on the top right corner. You can click on `Open In visualizer` to navigate to the Visualize section or follow the steps below.
 
     ![Deploy resources](./wordpress-mysql-persistentvolume/wp22.png)
-=======
-    ![Deploy resources](./screenshots/wordpress-mysql-persistentvolume/wp18.png)
-
-5. To check the status of your deployment, click on the notification icon on the top right corner. You can click on `Open In visualizer` to navigate to the Visualize section or follow the steps below.
-
-    ![Deploy resources](./screenshots/wordpress-mysql-persistentvolume/wp22.png)
->>>>>>> 8d96cfe825 (Migrated all screenshots to separate folders in tutorials)
 
 
 #### Visualizing the Deployed Resources
@@ -307,11 +227,7 @@ To view the resources deployed we will use the Visualize section of the _Kanvas_
 
     After selecting your filters, you should see a view displaying only your relevant resources, as shown in the image below.
 
-<<<<<<< HEAD
     ![Filter resources](./wordpress-mysql-persistentvolume/wp19.png)
-=======
-    ![Filter resources](./screenshots/wordpress-mysql-persistentvolume/wp19.png)
->>>>>>> 8d96cfe825 (Migrated all screenshots to separate folders in tutorials)
 
 #### Resource Details
 
@@ -319,21 +235,13 @@ You can click on any resource to view more details about it in the "Details" sec
 
 **Deployment**
 
-<<<<<<< HEAD
 ![Get more details about deployment](./wordpress-mysql-persistentvolume/wp23.png)
-=======
-![Get more details about deployment](./screenshots/wordpress-mysql-persistentvolume/wp23.png)
->>>>>>> 8d96cfe825 (Migrated all screenshots to separate folders in tutorials)
 
 **Service**
 
 The Service details only display the cluster IP for now. So there is no means for us to access the application externally.
 
-<<<<<<< HEAD
 ![Get more details about service](./wordpress-mysql-persistentvolume/wp20.png)
-=======
-![Get more details about service](./screenshots/wordpress-mysql-persistentvolume/wp20.png)
->>>>>>> 8d96cfe825 (Migrated all screenshots to separate folders in tutorials)
 
 #### Deleting Resources
 

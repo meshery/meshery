@@ -1,8 +1,8 @@
 **Notes for Reviewers**
 
-This PR fixes #
+- This PR fixes #
 
-
+- For ui changes: Please add a screenshot showcasing the UI before/after changes. 
 
 **[Signed commits](https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md#signing-off-on-commits-developer-certificate-of-origin)**
 - [ ] Yes, I signed my commits.
