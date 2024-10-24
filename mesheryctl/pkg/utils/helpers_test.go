@@ -360,8 +360,8 @@ func TestParseURLGithub(t *testing.T) {
 		{
 			name:          "test with github.com",
 			url:           "https://github.com/layer5io/meshery/blob/master/.github/.goreleaser.yml",
-			rawRepoOutput: "https://github.com/layer5io/meshery/master/.github",
-			pathOutput:    ".goreleaser.yml",
+			rawRepoOutput: "https://github.com/layer5io/meshery/master",
+			pathOutput:    ".github/.goreleaser.yml",
 		},
 		{
 			name:          "test with raw.githubusercontent.com",
