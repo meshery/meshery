@@ -67,7 +67,7 @@
     "codemirror": "^5.65.8",
     "cross-env": "^7.0.3",
     "graphql": "^16.8.1",
-    "graphql-ws": "^5.14.3",
+    "graphql-ws": "^5.15.0",
     "humanize-duration": "^3.31.0",
     "isomorphic-unfetch": "^4.0.2",
     "js-yaml": "^4.1.0",
