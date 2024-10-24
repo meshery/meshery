@@ -13,11 +13,17 @@ jobs:
     name: Fetch Keys
     runs-on: ubuntu-22.04
     steps:
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: "1.20"
+
       - name: Check out code
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GH_ACCESS_TOKEN }}
           fetch-depth: 1
+
       - name: Set spreadsheet_uri as environment variable
         run: echo "spreadsheet_uri=https://docs.google.com/spreadsheets/d/e/2PACX-1vQwzrUSKfuSRcpkp7sJTw1cSB63s4HCjYLJeGPWECsvqn222hjaaONQlN4X8auKvlaB0es3BqV5rQyz/pub?gid=64355745&single=true&output=csv" >> $GITHUB_ENV
         if: inputs.spreadsheet_uri != ''
@@ -26,10 +32,20 @@ jobs:
       - name: Dump keys from the spreadsheet
         run: |
           curl -L "${{ env.spreadsheet_uri }}" -o "./keys.csv";
+
+      - name: Run Go program to generate permissions_constants.js
+        run: |
+          go run .github/scripts/permission-constants-updater/main.go keys.csv
+
+      - name: Move to utils
+        run: |
+          mv permission_constants.js ui/utils/permission_constants.js
+
       - name: Create permissions folder
         run: |
           [ ! -d "./server/permissions" ] && mkdir -p "./server/permissions";
           mv keys.csv server/permissions/keys.csv;
+
       - name: Save keys.csv to docs/assets/excel
         run: cp server/permissions/keys.csv docs/assets/excel/keys.csv
 
@@ -39,7 +55,7 @@ jobs:
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: Added permissions keys.
+          commit_message: Added permissions keys and updated permissions constants.
           branch: master
           commit_options: "--signoff"
           commit_user_name: l5io
