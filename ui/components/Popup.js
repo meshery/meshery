@@ -1,5 +1,6 @@
-import { Button, Grid, IconButton, Typography, useTheme, styled } from '@layer5/sistent';
+import { Button, Grid, IconButton, Typography, styled } from '@layer5/sistent';
 import { UsesSistent } from './SistentWrapper';
+import { useTheme } from '@material-ui/core';
 import CloseIcon from '@mui/icons-material/Close';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
@@ -11,7 +12,10 @@ import { Colors } from '@/themes/app';
 const StyledPaper = styled('div')(({ theme }) => ({
   position: 'fixed',
   width: 450,
-  backgroundColor: theme.palette.background.neutral?.default,
+  backgroundColor:
+    theme.palette.mode === 'dark'
+      ? theme.palette.background.hover
+      : theme.palette.background.neutral?.hover,
   border: '0px solid #000',
   boxShadow: theme.shadows[5],
   padding: theme.spacing(1, 2, 3, 4),
@@ -114,7 +118,7 @@ export function MesheryExtensionEarlyAccessCard({
   const { push } = useRouter();
   const theme = useTheme();
   const popupImageSrc =
-    theme.palette.mode === 'dark' ? '/static/img/aws.svg' : '/static/img/aws-light.svg';
+    theme.palette.type === 'dark' ? '/static/img/aws.svg' : '/static/img/aws-light.svg';
 
   const handleButtonClick = (e) => {
     if (buttonText === signUpText) {
@@ -138,7 +142,7 @@ export function MesheryExtensionEarlyAccessCard({
 
   return (
     <UsesSistent>
-      <StyledPaper style={rootStyle} theme={theme}>
+      <StyledPaper style={rootStyle}>
         <StyledHeaderWrapper>
           <Typography
             sx={{
@@ -169,7 +173,7 @@ export function MesheryExtensionEarlyAccessCard({
         </StyledHeaderWrapper>
 
         <StyledImgWrapper>
-          <StyledDesignerImg src={popupImageSrc} />
+          <StyledDesignerImg src={popupImageSrc} alt="pop-up" />
         </StyledImgWrapper>
         <Typography
           sx={{
