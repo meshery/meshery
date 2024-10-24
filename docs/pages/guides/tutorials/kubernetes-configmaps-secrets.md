@@ -123,6 +123,7 @@ Click on the _Pod_ component to load its configuration window. We will set the S
 
     ![Configure the ConfigMap](./kubernetes-configmaps-secrets/2024-04-16_01-00.png)
 
+
 ### Validate and Deploy the Design
 
 Click **Actions** and then Select **Validate** to ensure there are no errors. Then, select the **Deploy** tab on the same window and click **Deploy**.
