@@ -1,6 +1,6 @@
-import { Typography, Card, styled, Box, Button } from '@material-ui/core';
+import { styled } from '@mui/material/styles';
 import theme, { Colors } from '../../../themes/app';
-import { Checkbox } from '@layer5/sistent';
+import { Checkbox, Box, Button, Card, Typography } from '@layer5/sistent';
 
 /** Workspace card wrapper */
 export const CardWrapper = styled(Card)(({ theme }) => ({

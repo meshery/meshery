@@ -1,15 +1,30 @@
 import React from 'react';
-import { Button, Card, Grid, Typography, Box } from '@material-ui/core';
+// import { Button, Card, Grid, Typography, Box } from '@material-ui/core';
 import SyncAltIcon from '@mui/icons-material/SyncAlt';
-import { Delete, Edit } from '@material-ui/icons';
+import { Delete, Edit } from '@mui/icons-material';
 
 import { FlipCard } from '../General';
 import { useGetEnvironmentConnectionsQuery } from '../../../rtk-query/environments';
-import classNames from 'classnames';
+// import classNames from 'classnames';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
-import { Checkbox } from '@layer5/sistent';
+// import { Checkbox, Button, Card, Grid, Typography, Box } from '@layer5/sistent';
+import { Grid } from '@layer5/sistent';
 import { UsesSistent } from '@/components/SistentWrapper';
+import {
+  PopupButton,
+  TabCount,
+  CardWrapper,
+  TabTitle,
+  Name,
+  IconButton,
+  EmptyDescription,
+  DescriptionLabel,
+  AllocationButton,
+  BulkSelectCheckbox,
+  CardTitle,
+  DateLabel,
+} from './styles';
 
 export const formattoLongDate = (date) => {
   return new Date(date).toLocaleDateString('en-US', {
@@ -19,21 +34,26 @@ export const formattoLongDate = (date) => {
   });
 };
 
-export const TransferButton = ({ title, count, onAssign, classes, disabled }) => {
+export const TransferButton = ({ title, count, onAssign, disabled }) => {
   return (
-    <Button
-      variant="contained"
-      color="primary"
-      disabled={disabled}
-      className={classes.popupButton}
-      onClick={onAssign}
-    >
-      <Grid>
-        <Typography className={classes.tabCount}>{count}</Typography>
-        <Typography className={classes.tabTitle}>{title}</Typography>
-        <SyncAltIcon style={{ position: 'absolute', top: '10px', right: '10px' }} />
-      </Grid>
-    </Button>
+    <UsesSistent>
+      <PopupButton disabled={disabled} onClick={onAssign} sx={{
+          color: '#3C494F',
+          backgroundColor: '#ffffff',
+          margin: '0px 0px 10px',
+          padding: '20px 10px',
+          '&:hover': {
+            backgroundColor: '#ffffff',
+            boxShadow: 'none',
+          },
+        }}>
+        <Grid>
+          <TabCount>{count}</TabCount>
+          <TabTitle>{title}</TabTitle>
+          <SyncAltIcon sx={{ position: 'absolute', top: '10px', right: '10px', color:'#607d8b' }} />
+        </Grid>
+      </PopupButton>
+    </UsesSistent>
   );
 };
 
@@ -60,7 +80,6 @@ const EnvironmentCard = ({
   onEdit,
   onSelect,
   onAssignConnection,
-  classes,
 }) => {
   const { data: environmentConnections } = useGetEnvironmentConnectionsQuery(
     {
@@ -80,51 +99,46 @@ const EnvironmentCard = ({
           : false
       }
       frontComponents={
-        <Card
-          className={classes.cardWrapper}
-          style={{
+        <CardWrapper
+          // className={classes.cardWrapper}
+          sx={{
             minHeight: '320px',
             height: '320px',
+            borderRadius:2
           }}
         >
-          <Grid style={{ display: 'flex', flexDirection: 'row', pb: 1 }}>
-            <Typography
-              className={classes.name}
-              variant="body2"
-              onClick={(e) => e.stopPropagation()}
-            >
+          <Grid sx={{ display: 'flex', flexDirection: 'row', pb: 1 }}>
+            <Name variant="body2" onClick={(e) => e.stopPropagation()}>
               {environmentDetails?.name}
-            </Typography>
+            </Name>
           </Grid>
           <Grid
-            style={{
+            sx={{
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'flex-start',
             }}
           >
-            <Grid xs={12} sm={9} md={12} style={{ display: 'flex', justifyContent: 'flex-start' }}>
+            <Grid xs={12} sm={9} md={12} sx={{ display: 'flex', justifyContent: 'flex-start' }}>
               {environmentDetails.description ? (
-                <Typography
-                  className={classNames(classes.emptyDescription, classes.descriptionLabel)}
-                  onClick={(e) => e.stopPropagation()}
-                  style={{ marginBottom: { xs: 2, sm: 0 }, paddingRight: { sm: 2, lg: 0 } }}
-                >
-                  {environmentDetails.description}
-                </Typography>
+                  <DescriptionLabel
+                    onClick={(e) => e.stopPropagation()}
+                    sx={{ marginBottom: { xs: 2, sm: 0 }, paddingRight: { sm: 2, lg: 0 }, marginTop:'0px' }}
+                  >
+                    {environmentDetails.description}
+                  </DescriptionLabel>
               ) : (
-                <Typography
-                  className={classes.emptyDescription}
+                <EmptyDescription
                   onClick={(e) => e.stopPropagation()}
-                  style={{ color: 'rgba(122,132,142,1)' }}
+                  sx={{ color: 'rgba(122,132,142,1)' }}
                 >
                   No description
-                </Typography>
+                </EmptyDescription>
               )}
             </Grid>
             <Grid
               xs={12}
-              style={{
+              sx={{
                 paddingTop: '15px',
                 display: 'flex',
                 alignItems: 'flex-end',
@@ -132,71 +146,69 @@ const EnvironmentCard = ({
                 gap: '10px',
               }}
             >
-              <Box className={classes.allocationButton} onClick={(e) => e.stopPropagation()}>
+              <AllocationButton onClick={(e) => e.stopPropagation()}>
                 <TransferButton
                   title="Assigned Connections"
                   count={environmentConnectionsCount}
                   onAssign={onAssignConnection}
-                  classes={classes}
                   disabled={!CAN(keys.VIEW_CONNECTIONS.action, keys.VIEW_CONNECTIONS.subject)}
                 />
-              </Box>
+              </AllocationButton>
               {/* temporary disable workspace allocation button  */}
               {false && (
-                <Box className={classes.allocationButton} onClick={(e) => e.stopPropagation()}>
+                <AllocationButton onClick={(e) => e.stopPropagation()}>
                   <TransferButton
                     title="Assigned Workspaces"
                     count={
                       environmentDetails.workspaces ? environmentDetails.workspaces?.length : 0
                     }
                     onAssign={onAssignConnection}
-                    classes={classes}
                     disabled={!CAN(keys.VIEW_WORKSPACE.action, keys.VIEW_WORKSPACE.subject)}
                   />
-                </Box>
+                </AllocationButton>
               )}
             </Grid>
           </Grid>
-        </Card>
+        </CardWrapper>
       }
       backComponents={
-        <Card
+        <CardWrapper
           elevation={2}
-          className={classes.cardWrapper}
-          style={{
+          // className={classes.cardWrapper}
+          sx={{
             minHeight: '320px',
             background: 'linear-gradient(180deg, #007366 0%, #000 100%)',
           }}
         >
-          <Grid xs={12} style={{ display: 'flex', flexDirection: 'row', height: '40px' }}>
-            <Grid xs={6} style={{ display: 'flex', alignItems: 'flex-start' }}>
+          <Grid xs={12} sx={{ display: 'flex', flexDirection: 'row', height: '40px' }}>
+            <Grid xs={6} sx={{ display: 'flex', alignItems: 'flex-start' }}>
               <UsesSistent>
-                <Checkbox
-                  className={classes.bulkSelectCheckbox}
+                <BulkSelectCheckbox
+                  // className={classes.bulkSelectCheckbox}
                   onClick={(e) => e.stopPropagation()}
                   onChange={onSelect}
                   disabled={deleted ? true : false}
                 />
               </UsesSistent>
-              <Typography
-                className={classes.cardTitle}
-                style={{ color: 'white' }}
+              <CardTitle
+                // className={classes.cardTitle}
+                sx={{ color: 'white' }}
                 variant="body2"
                 onClick={(e) => e.stopPropagation()}
               >
                 {environmentDetails?.name}
-              </Typography>
+              </CardTitle>
             </Grid>
             <Grid
               xs={6}
-              style={{
+              sx={{
                 display: 'flex',
                 alignItems: 'flex-start',
                 justifyContent: 'flex-end',
               }}
             >
-              <Button
-                className={classes.iconButton}
+              <IconButton
+                // className={classes.iconButton}
                 onClick={onEdit}
                 disabled={
                   selectedEnvironments?.filter((id) => id == environmentDetails.id).length === 1
@@ -204,10 +216,10 @@ const EnvironmentCard = ({
                     : !CAN(keys.EDIT_ENVIRONMENT.action, keys.EDIT_ENVIRONMENT.subject)
                 }
               >
-                <Edit style={{ color: 'white', margin: '0 2px' }} />
-              </Button>
-              <Button
-                className={classes.iconButton}
+                <Edit sx={{ color: 'white', margin: '0 2px' }} />
+              </IconButton>
+              <IconButton
+                // className={classes.iconButton}
                 onClick={onDelete}
                 disabled={
                   selectedEnvironments?.filter((id) => id == environmentDetails.id).length === 1
@@ -215,31 +227,31 @@ const EnvironmentCard = ({
                     : !CAN(keys.DELETE_ENVIRONMENT.action, keys.DELETE_ENVIRONMENT.subject)
                 }
               >
-                <Delete style={{ color: 'white', margin: '0 2px' }} />
-              </Button>
+                <Delete sx={{ color: 'white', margin: '0 2px' }} />
+              </IconButton>
             </Grid>
           </Grid>
-          <Grid style={{ display: 'flex', flexDirection: 'row', color: 'white' }}>
-            <Grid xs={6} style={{ textAlign: 'left' }}>
-              <Typography
-                className={classes.dateLabel}
+          <Grid sx={{ display: 'flex', flexDirection: 'row', color: 'white' }}>
+            <Grid xs={6} sx={{ textAlign: 'left' }}>
+              <DateLabel
+                // className={classes.dateLabel}
                 variant="span"
                 onClick={(e) => e.stopPropagation()}
               >
                 Updated At: {formattoLongDate(environmentDetails?.updated_at)}
-              </Typography>
+              </DateLabel>
             </Grid>
-            <Grid xs={6} style={{ textAlign: 'left' }}>
-              <Typography
-                className={classes.dateLabel}
+            <Grid xs={6} sx={{ textAlign: 'left' }}>
+              <DateLabel
+                // className={classes.dateLabel}
                 variant="span"
                 onClick={(e) => e.stopPropagation()}
               >
                 Created At: {formattoLongDate(environmentDetails?.created_at)}
-              </Typography>
+              </DateLabel>
             </Grid>
           </Grid>
-        </Card>
+        </CardWrapper>
       }
     />
   );
