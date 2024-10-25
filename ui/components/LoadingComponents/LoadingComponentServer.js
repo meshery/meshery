@@ -24,7 +24,7 @@ function LoadingScreen(props) {
           <AnimatedLogoDark style={{ height: '100px', margin: '4px 0px 8px' }} />
           <h1
             style={{
-              fontFamily: 'sans-serif',
+              fontFamily: '"Qanelas Soft", sans-serif',
               fontSize: '18px',
               fontWeight: 'normal',
               marginTop: '1rem',

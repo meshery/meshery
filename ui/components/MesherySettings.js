@@ -18,7 +18,7 @@ import PrometheusComponent from './telemetry/prometheus/PrometheusComponent';
 import { updateProgress } from '../lib/store';
 import PromptComponent from './PromptComponent';
 import { iconMedium } from '../css/icons.styles';
-import MeshModelComponent from './MeshModelRegistry/MeshModelComponent';
+import ModelComponent from './Registry/ModelComponent';
 import DatabaseSummary from './DatabaseSummary';
 import {
   getComponentsDetail,
@@ -31,7 +31,7 @@ import { EVENT_TYPES } from '../lib/event-types';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { REGISTRY, METRICS, ADAPTERS, RESET, GRAFANA, PROMETHEUS } from '@/constants/navigator';
-import { removeDuplicateVersions } from './MeshModelRegistry/helper';
+import { removeDuplicateVersions } from './Registry/helper';
 import DefaultError from './General/error-404';
 const styles = (theme) => ({
   wrapperClss: {
@@ -449,7 +449,7 @@ class MesherySettings extends React.Component {
               <TabContainer>
                 <TabContainer>
                   <TabContainer>
-                    <MeshModelComponent
+                    <ModelComponent
                       modelsCount={this.state.modelsCount}
                       componentsCount={this.state.componentsCount}
                       relationshipsCount={this.state.relationshipsCount}

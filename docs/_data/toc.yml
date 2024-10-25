@@ -269,13 +269,13 @@
             url: project/contributing/contributing-ui-notification-center
         - title: Docker Extension
           url: project/contributing/contributing-docker-extension
-        - title: Policies
-          url: project/contributing/contributing-policies
         - title: Models ↆ
           url: project/contributing/contributing-models
           grandchildren:
           - title: Components
             url: project/contributing/contributing-components
+          - title: Policies
+            url: project/contributing/contributing-policies
           - title: Relationships
             url: project/contributing/contributing-relationships
 

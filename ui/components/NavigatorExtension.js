@@ -56,7 +56,7 @@ function NavigatorExtension({
   const [loading, err, RemoteComponent] = useRemoteComponent(url);
   console.log(err);
   if (loading) {
-    return <LoadingScreen animatedIcon="AnimatedMeshery" message="Loading Meshery Extension" />;
+    return <LoadingScreen animatedIcon="AnimatedMeshery" message="Loading Meshery Extension..." />;
   }
 
   if (err != null) {

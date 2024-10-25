@@ -18,7 +18,7 @@ import CollapseAllIcon from '@/assets/icons/CollapseAll';
 import ExpandAllIcon from '@/assets/icons/ExpandAll';
 import CircularProgress from '@mui/material/CircularProgress';
 import { Colors } from '../../themes/app';
-import { JustifyAndAlignCenter } from './MeshModel.style';
+import { JustifyAndAlignCenter } from './Registry.style';
 import { styled } from '@mui/styles';
 import {
   useGetComponentsFromModalQuery,

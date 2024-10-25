@@ -244,7 +244,7 @@ export const ValidateDesign = ({ design, currentNodeId, validationMachine }) => 
   }, []);
 
   if (isValidating) {
-    return <Loading message="Validating Design" />;
+    return <Loading message="Validating design..." />;
   }
 
   if (!validationResults) {

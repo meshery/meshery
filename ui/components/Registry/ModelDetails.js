@@ -22,10 +22,10 @@ import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import {
   useUpdateEntityStatusMutation,
   useGetComponentsQuery,
-  useGetMeshModelsQuery,
+  useGetModelsQuery,
 } from '@/rtk-query/meshModel';
 import _ from 'lodash';
-import { JustifyAndAlignCenter } from './MeshModel.style';
+import { JustifyAndAlignCenter } from './Registry.style';
 import { withSuppressedErrorBoundary } from '../General/ErrorBoundary';
 import { reactJsonTheme } from './helper';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -414,7 +414,7 @@ const StatusChip = withSuppressedErrorBoundary(
   withStyles(styles)(({ classes, entityData, entityType }) => {
     const nextStatus = Object.values(REGISTRY_ITEM_STATES);
     const [updateEntityStatus] = useUpdateEntityStatusMutation();
-    const { data: modelData, isSuccess } = useGetMeshModelsQuery({
+    const { data: modelData, isSuccess } = useGetModelsQuery({
       params: {
         id: entityData.model.id,
         version: entityData.model.version,
@@ -496,7 +496,7 @@ const StatusChip = withSuppressedErrorBoundary(
   }),
 );
 
-const MeshModelDetails = ({ view, showDetailsData }) => {
+const ModelDetails = ({ view, showDetailsData }) => {
   const theme = useTheme();
   const StyleClass = useStyles();
   const isEmptyDetails =
@@ -532,4 +532,4 @@ const MeshModelDetails = ({ view, showDetailsData }) => {
   );
 };
 
-export default MeshModelDetails;
+export default ModelDetails;

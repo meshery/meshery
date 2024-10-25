@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Box, Typography, useTheme, Checkbox } from '@material-ui/core';
 import SearchBar from '@/utils/custom-search';
 import debounce from '@/utils/debounce';
-import { StyledTreeItemRoot } from './MeshModel.style';
+import { StyledTreeItemRoot } from './Registry.style';
 import { useWindowDimensions } from '@/utils/dimension';
 import { Colors } from '@/themes/app';
 
