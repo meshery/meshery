@@ -1667,9 +1667,21 @@ func (l *RemoteProvider) SaveMesheryPattern(tokenString string, pattern *Meshery
 		l.Log.Info(fmt.Sprintf("design %s successfully sent to remote provider", pattern.Name))
 		return bdr, nil
 	}
-	err = ErrPost(fmt.Errorf("failed to send design %s to remote provider", pattern.Name), "", resp.StatusCode)
-	l.Log.Error(err)
-	return bdr, err
+
+	switch resp.StatusCode {
+		case http.StatusRequestEntityTooLarge:
+			err = ErrPost(fmt.Errorf("failed to send design %s to remote provider %s: Design file is too large to upload. Reduce the file size and try again", pattern.Name, l.ProviderName), "", resp.StatusCode)
+			return bdr, err
+		case http.StatusUnauthorized:
+			err = ErrPost(fmt.Errorf("failed to send design %s to remote provider %s: Unauthorized access. Check your credentials.", pattern.Name, l.ProviderName), "", resp.StatusCode)
+			return bdr, err
+		case http.StatusBadRequest:
+			err = ErrPost(fmt.Errorf("failed to send design %s to remote provider %s: Bad request. The design might be corrupt.", pattern.Name, l.ProviderName), "", resp.StatusCode)
+			return bdr, err
+		default:
+			err = ErrPost(fmt.Errorf("failed to send design %s to remote provider %s. Check if the design is valid or undo recent changes.", pattern.Name, l.ProviderName), "", resp.StatusCode)
+			return bdr, err
+	}
 }
 
 // GetMesheryPatterns gives the patterns stored with the provider
@@ -1741,7 +1753,7 @@ func (l *RemoteProvider) GetMesheryPatterns(tokenString string, page, pageSize, 
 }
 
 // GetCatalogMesheryPatterns gives the catalog patterns stored with the provider
-func (l *RemoteProvider) GetCatalogMesheryPatterns(tokenString string, page, pageSize, search, order, includeMetrics string) ([]byte, error) {
+func (l *RemoteProvider) GetCatalogMesheryPatterns(tokenString string, page, pageSize, search, order, includeMetrics string, class, technology, patternType []string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(MesheryPatternsCatalog) {
 		l.Log.Error(ErrOperationNotAvaibale)
 		return []byte{}, ErrInvalidCapability("MesheryPatternsCatalog", l.ProviderName)
@@ -1766,6 +1778,24 @@ func (l *RemoteProvider) GetCatalogMesheryPatterns(tokenString string, page, pag
 	if order != "" {
 		q.Set("order", order)
 	}
+	if len(class) > 0 {
+		for _, c := range class {
+				q.Add("class", c)
+		}
+	}
+
+	if len(technology) > 0 {
+		for _, t := range technology {
+			q.Add("technology", t)
+		}
+	}
+
+	if len(patternType) > 0 {
+		for _, pt := range patternType {
+				q.Add("type", pt)
+		}
+	}
+
 	remoteProviderURL.RawQuery = q.Encode()
 	l.Log.Debug("constructed catalog design url: ", remoteProviderURL.String())
 	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
