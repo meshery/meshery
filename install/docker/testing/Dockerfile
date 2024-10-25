@@ -17,6 +17,7 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
 COPY ui/package.json ui/package-lock.json ./
+COPY ui/remote-component.config.js ui/ui.config.js ./
 ENV HUSKY=0
 RUN npm ci --omit=dev --legacy-peer-deps --ignore-scripts
 
