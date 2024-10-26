@@ -945,10 +945,17 @@ func (h *Handler) GetMesheryPatternsHandler(
 //
 // ```?search={patternname}``` If search is non empty then a greedy search is performed
 //
-// ```?metrics``` Returns metrics like deployment/share/clone/view/download count for desings, default false,
+// ```?metrics``` Returns metrics like deployment/share/clone/view/download count for designs, default false,
+//
+// ```?class={class}``` Filters patterns based on class
+//
+// ```?technology={technology}``` Filters patterns based on technology
+//
+// ```?type={type}``` Filters patterns based on type
+//
 // responses:
 //
-//	200: mesheryPatternsResponseWrapper
+// 200: mesheryPatternsResponseWrapper
 func (h *Handler) GetCatalogMesheryPatternsHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -959,7 +966,7 @@ func (h *Handler) GetCatalogMesheryPatternsHandler(
 	q := r.URL.Query()
 	tokenString := r.Context().Value(models.TokenCtxKey).(string)
 
-	resp, err := provider.GetCatalogMesheryPatterns(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("metrics"))
+	resp, err := provider.GetCatalogMesheryPatterns(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("metrics"), q["class"], q["technology"], q["type"])
 	if err != nil {
 		h.log.Error(ErrFetchPattern(err))
 		http.Error(rw, ErrFetchPattern(err).Error(), http.StatusInternalServerError)

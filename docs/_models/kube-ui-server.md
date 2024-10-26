@@ -54,6 +54,10 @@ components:
   colorIcon: assets/img/integrations/kube-ui-server/components/service-monitor/icons/color/service-monitor-color.svg
   whiteIcon: assets/img/integrations/kube-ui-server/components/service-monitor/icons/white/service-monitor-white.svg
   description: 
+- name: cluster-profile
+  colorIcon: assets/img/integrations/kube-ui-server/components/cluster-profile/icons/color/cluster-profile-color.svg
+  whiteIcon: assets/img/integrations/kube-ui-server/components/cluster-profile/icons/white/cluster-profile-white.svg
+  description: 
 featureList: [
   "WhoAmI service returns the user info of the user making the api call.",
   "PodView resource exposes actual resource usage by a Pod. The resource usage information is read from Prometheus.",

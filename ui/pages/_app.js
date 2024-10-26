@@ -69,7 +69,7 @@ import classNames from 'classnames';
 import { forwardRef } from 'react';
 import { formatToTitleCase } from '@/utils/utils';
 import { useThemePreference } from '@/themes/hooks';
-import { CircularProgress, RenderMarkdown } from '@layer5/sistent';
+import { BasicMarkdown, CircularProgress } from '@layer5/sistent';
 import LoadingScreen from '@/components/LoadingComponents/LoadingComponentServer';
 import { LoadSessionGuard } from '@/rtk-query/ability';
 import { randomLoadingMessage } from '@/components/LoadingComponents/loadingMessages';
@@ -686,7 +686,7 @@ class MesheryApp extends App {
               <CircularProgress size={24} style={{ marginRight: '0.5rem' }} />
             ) : null}
             <div className={classes.message}>
-              <RenderMarkdown content={message} />
+              <BasicMarkdown content={message} />
             </div>
 
             <div
