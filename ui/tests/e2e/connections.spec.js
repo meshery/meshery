@@ -157,6 +157,13 @@ test('Delete Kubernetes cluster connections', { tag: '@unstable' }, async ({ pag
   // Find the row with the connection to be deleted
   const row = page.locator('tr').filter({ hasText: 'connected' }).first();
 
+  // Fail the test if the connection is not found
+  if ((await row.count()) === 0) {
+    throw new Error(
+      'No connected Kubernetes cluster found to delete. Ensure a connection exists before running this test.',
+    );
+  }
+
   //find the checkbox in the row
   const checkbox = row.locator('input[type="checkbox"]').first();
   await checkbox.check();
