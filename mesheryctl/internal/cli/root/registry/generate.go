@@ -79,8 +79,6 @@ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tu
 // Easily generate Meshery models and components from CSV files in a local directory using the following command
 mesheryctl registry generate --directory https://github.com/meshery/meshery/tree/master/docs/assets/model-and-component-csv-templates
     `,
-	Annotations: linkDocPatternView,
-
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		// Prerequisite check is needed - https://github.com/meshery/meshery/issues/10369
 		// TODO: Include a prerequisite check to confirm that this command IS being the executED from within a fork of the Meshery repo, and is being executed at the root of that fork.
@@ -181,10 +179,6 @@ type compGenerateTracker struct {
 }
 
 var modelToCompGenerateTracker = store.NewGenericThreadSafeStore[compGenerateTracker]()
-var linkDocPatternView = map[string]string{
-	"link":    "![generate-model-directory-usage](https://github.com/meshery/meshery/tree/master/docs/assets/model-and-component-csv-templates)",
-	"caption": "Usage of registry generate --directory",
-}
 
 func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 	weightedSem := semaphore.NewWeighted(20)
